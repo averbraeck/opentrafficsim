@@ -36,14 +36,13 @@ import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.draw.graphs.GraphPath.Section;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
-import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
+import org.opentrafficsim.kpi.sampling.KpiLane;
 import org.opentrafficsim.kpi.sampling.SamplerData;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
@@ -56,9 +55,8 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LaneDirection;
+import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
@@ -80,15 +78,15 @@ public class ContourPlotTest implements UNITS
 
     /** Mocked GraphPath. */
     @SuppressWarnings("unchecked")
-    GraphPath<KpiLaneDirection> mockedPath = Mockito.mock(GraphPath.class);
+    GraphPath<KpiLane> mockedPath = Mockito.mock(GraphPath.class);
 
-    Section<KpiLaneDirection> section0 = Mockito.mock(Section.class);
+    Section<KpiLane> section0 = Mockito.mock(Section.class);
 
-    Section<KpiLaneDirection> section1 = Mockito.mock(Section.class);
+    Section<KpiLane> section1 = Mockito.mock(Section.class);
 
-    KpiLaneDirection direction0 = Mockito.mock(KpiLaneDirection.class);
+    KpiLane direction0 = Mockito.mock(KpiLane.class);
 
-    KpiLaneDirection direction1 = Mockito.mock(KpiLaneDirection.class);
+    KpiLane direction1 = Mockito.mock(KpiLane.class);
 
     LaneDataInterface mockedLane0 = Mockito.mock(LaneDataInterface.class);
 
@@ -107,7 +105,7 @@ public class ContourPlotTest implements UNITS
      * @return GraphPath&lt;KpiLaneDirection&gt;; the dummy path
      * @throws Exception when something goes wrong (should not happen)
      */
-    private GraphPath<KpiLaneDirection> dummyPath(final OTSSimulatorInterface simulator, final OTSRoadNetwork network)
+    private GraphPath<KpiLane> dummyPath(final OTSSimulatorInterface simulator, final OTSRoadNetwork network)
             throws Exception
     {
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
@@ -121,7 +119,7 @@ public class ContourPlotTest implements UNITS
         lanes = LaneFactory.makeMultiLane(network, "BtoC", b,
                 new OTSRoadNode(network, "C", new OTSPoint3D(99999, 0, 0), Direction.ZERO), null, 1, laneType,
                 new Speed(100, KM_PER_HOUR), null);
-        return GraphLaneUtil.createPath("AtoB", new LaneDirection(lanes[0], GTUDirectionality.DIR_PLUS));
+        return GraphLaneUtil.createPath("AtoB", lanes[0]);
     }
 
     /**
@@ -138,17 +136,17 @@ public class ContourPlotTest implements UNITS
         Mockito.when(this.mockedPath.getStartDistance(this.section0)).thenReturn(Length.ZERO);
         Mockito.when(this.mockedPath.getStartDistance(this.section1)).thenReturn(Length.valueOf("1234m"));
         Mockito.when(this.mockedPath.getSpeedLimit()).thenReturn(Speed.valueOf("100 km/h"));
-        List<Section<KpiLaneDirection>> sectionList = new ArrayList<>();
+        List<Section<KpiLane>> sectionList = new ArrayList<>();
         sectionList.add(this.section0);
         sectionList.add(this.section1);
         Mockito.when(this.mockedLane0.getLength()).thenReturn(Length.valueOf("1234m"));
         Mockito.when(this.mockedLane1.getLength()).thenReturn(Length.valueOf("766m"));
         Mockito.when(this.direction0.getLaneData()).thenReturn(this.mockedLane0);
         Mockito.when(this.direction1.getLaneData()).thenReturn(this.mockedLane1);
-        Set<KpiLaneDirection> set0 = new HashSet<>();
+        Set<KpiLane> set0 = new HashSet<>();
         set0.add(this.direction0);
         Mockito.when(this.section0.iterator()).thenReturn(set0.iterator());
-        Set<KpiLaneDirection> set1 = new HashSet<>();
+        Set<KpiLane> set1 = new HashSet<>();
         set1.add(this.direction1);
         Mockito.when(this.section0.iterator()).thenReturn(set0.iterator());
         Mockito.when(this.section1.iterator()).thenReturn(set1.iterator());
@@ -199,7 +197,7 @@ public class ContourPlotTest implements UNITS
         setUp();
         OTSSimulatorInterface simulator = this.mockedSimulator;
         OTSRoadNetwork network = new OTSRoadNetwork("density contour test network", true, simulator);
-        GraphPath<KpiLaneDirection> path = dummyPath(simulator, network);
+        GraphPath<KpiLane> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(network);
         ContourDataSource<?> dataPool = new ContourDataSource<>(sampler.getSamplerData(), path);
         ContourPlotDensity dcp = new ContourPlotDensity("density", simulator, dataPool);
@@ -219,7 +217,7 @@ public class ContourPlotTest implements UNITS
         setUp();
         OTSSimulatorInterface simulator = this.mockedSimulator;
         OTSRoadNetwork network = new OTSRoadNetwork("flow contour test network", true, simulator);
-        GraphPath<KpiLaneDirection> path = dummyPath(simulator, network);
+        GraphPath<KpiLane> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(network);
         ContourDataSource<?> dataPool = new ContourDataSource<>(sampler.getSamplerData(), path);
         ContourPlotFlow fcp = new ContourPlotFlow("flow", simulator, dataPool);
@@ -239,7 +237,7 @@ public class ContourPlotTest implements UNITS
         setUp();
         OTSSimulatorInterface simulator = this.mockedSimulator;
         OTSRoadNetwork network = new OTSRoadNetwork("flow contour test network", true, simulator);
-        GraphPath<KpiLaneDirection> path = dummyPath(simulator, network);
+        GraphPath<KpiLane> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(network);
         ContourDataSource<?> dataPool = new ContourDataSource<>(sampler.getSamplerData(), path);
         ContourPlotSpeed scp = new ContourPlotSpeed("speed", simulator, dataPool);
@@ -778,8 +776,8 @@ public class ContourPlotTest implements UNITS
     {
         Length length = new Length(5.0, METER);
         Length width = new Length(2.0, METER);
-        Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
-        initialLongitudinalPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
+        Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
+        initialLongitudinalPositions.add(new LanePosition(lane, initialPosition));
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
         LaneBasedIndividualGtu gtu =
                 new LaneBasedIndividualGtu(id, gtuType, length, width, maxSpeed, length.times(0.5), simulator, network);

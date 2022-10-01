@@ -48,8 +48,7 @@ public class LaneStructureLocatable implements Locatable
         {
             return this.gtu.getLocation();
         }
-        Length position =
-                rt.getDirection().isPlus() ? rt.getStartDistance().neg() : rt.getLane().getLength().plus(rt.getStartDistance());
+        Length position = rt.getStartDistance().neg();
         position = position.lt0() ? Length.ZERO : position;
         try
         {

@@ -29,7 +29,7 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.DomainOrder;
 import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
+import org.opentrafficsim.kpi.sampling.KpiLane;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;
@@ -643,7 +643,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
      * @return Source; source for a fundamental diagram from a sampler and positions
      */
     @SuppressWarnings("methodlength")
-    public static FdSource sourceFromSampler(final Sampler<?> sampler, final GraphCrossSection<KpiLaneDirection> crossSection,
+    public static FdSource sourceFromSampler(final Sampler<?> sampler, final GraphCrossSection<KpiLane> crossSection,
             final boolean aggregateLanes, final Duration aggregationTime, final boolean harmonic)
     {
         return new CrossSectionSamplerFdSource<>(sampler, crossSection, aggregateLanes, aggregationTime, harmonic);
@@ -657,7 +657,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
      * @param aggregationTime Duration; aggregation time (and update time)
      * @return Source; source for a fundamental diagram from a sampler and positions
      */
-    public static FdSource sourceFromSampler(final Sampler<?> sampler, final GraphPath<KpiLaneDirection> path,
+    public static FdSource sourceFromSampler(final Sampler<?> sampler, final GraphPath<KpiLane> path,
             final boolean aggregateLanes, final Duration aggregationTime)
     {
         return new PathSamplerFdSource<>(sampler, path, aggregateLanes, aggregationTime);
@@ -677,7 +677,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
      * Fundamental diagram source based on a cross section.
      * @param <S> underlying source type
      */
-    private static class CrossSectionSamplerFdSource<S extends GraphCrossSection<? extends KpiLaneDirection>>
+    private static class CrossSectionSamplerFdSource<S extends GraphCrossSection<? extends KpiLane>>
             extends AbstractSpaceSamplerFdSource<S>
     {
         /** Harmonic mean. */
@@ -744,7 +744,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
      * Fundamental diagram source based on a path. Density, speed and flow over the entire path are calculated per lane.
      * @param <S> underlying source type
      */
-    private static class PathSamplerFdSource<S extends GraphPath<? extends KpiLaneDirection>>
+    private static class PathSamplerFdSource<S extends GraphPath<? extends KpiLane>>
             extends AbstractSpaceSamplerFdSource<S>
     {
         /**
@@ -797,7 +797,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
      * Abstract class that deals with updating and recalculating the fundamental diagram.
      * @param <S> underlying source type
      */
-    private abstract static class AbstractSpaceSamplerFdSource<S extends AbstractGraphSpace<? extends KpiLaneDirection>>
+    private abstract static class AbstractSpaceSamplerFdSource<S extends AbstractGraphSpace<? extends KpiLane>>
             extends AbstractFdSource
     {
         /** Period number of last calculated period. */
@@ -837,10 +837,10 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         private String aggregateName = "Aggregate";
 
         /** For each series (lane), the highest trajectory number (n) below which all trajectories were also handled (0:n). */
-        private Map<KpiLaneDirection, Integer> lastConsecutivelyAssignedTrajectories = new LinkedHashMap<>();
+        private Map<KpiLane, Integer> lastConsecutivelyAssignedTrajectories = new LinkedHashMap<>();
 
         /** For each series (lane), a list of handled trajectories above n, excluding n+1. */
-        private Map<KpiLaneDirection, SortedSet<Integer>> assignedTrajectories = new LinkedHashMap<>();
+        private Map<KpiLane, SortedSet<Integer>> assignedTrajectories = new LinkedHashMap<>();
 
         /**
          * Constructor.
@@ -857,7 +857,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             this.aggregateLanes = aggregateLanes;
             this.nSeries = aggregateLanes ? 1 : space.getNumberOfSeries();
             // create and register kpi lane directions
-            for (KpiLaneDirection laneDirection : space)
+            for (KpiLane laneDirection : space)
             {
                 sampler.registerSpaceTimeRegion(new SpaceTimeRegion(laneDirection, Length.ZERO,
                         laneDirection.getLaneData().getLength(), sampler.now(), Time.instantiateSI(Double.MAX_VALUE)));
@@ -939,7 +939,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
                                 new double[AbstractSpaceSamplerFdSource.this.nSeries][10];
                         AbstractSpaceSamplerFdSource.this.lastConsecutivelyAssignedTrajectories.clear();
                         AbstractSpaceSamplerFdSource.this.assignedTrajectories.clear();
-                        for (KpiLaneDirection lane : AbstractSpaceSamplerFdSource.this.space)
+                        for (KpiLane lane : AbstractSpaceSamplerFdSource.this.space)
                         {
                             AbstractSpaceSamplerFdSource.this.lastConsecutivelyAssignedTrajectories.put(lane, -1);
                             AbstractSpaceSamplerFdSource.this.assignedTrajectories.put(lane, new TreeSet<>());
@@ -1004,10 +1004,10 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             double second = 0.0;
             for (int series = 0; series < this.space.getNumberOfSeries(); series++)
             {
-                Iterator<? extends KpiLaneDirection> it = this.space.iterator(series);
+                Iterator<? extends KpiLane> it = this.space.iterator(series);
                 while (it.hasNext())
                 {
-                    KpiLaneDirection lane = it.next();
+                    KpiLane lane = it.next();
                     if (!this.sampler.getSamplerData().contains(lane))
                     {
                         // sampler has not yet started to record on this lane

@@ -31,7 +31,7 @@ import org.opentrafficsim.core.animation.gtu.colorer.IdGtuColorer;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.draw.core.BoundsPaintScale;
 import org.opentrafficsim.draw.graphs.GraphPath.Section;
-import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
+import org.opentrafficsim.kpi.sampling.KpiLane;
 import org.opentrafficsim.kpi.sampling.SamplerData;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 import org.opentrafficsim.kpi.sampling.Trajectory;
@@ -65,7 +65,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
     private final GraphUpdater<Time> graphUpdater;
 
     /** Counter of the number of trajectories imported per lane. */
-    private final Map<KpiLaneDirection, Integer> knownTrajectories = new LinkedHashMap<>();
+    private final Map<KpiLane, Integer> knownTrajectories = new LinkedHashMap<>();
 
     /** Per lane, mapping from series rank number to trajectory. */
     private List<List<OffsetTrajectory>> curves = new ArrayList<>();
@@ -101,7 +101,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
      * @param path GraphPath&lt;KpiLaneDirection&gt;; path
      */
     public TrajectoryPlot(final String caption, final Duration updateInterval, final OTSSimulatorInterface simulator,
-            final SamplerData<?> samplerData, final GraphPath<KpiLaneDirection> path)
+            final SamplerData<?> samplerData, final GraphPath<KpiLane> path)
     {
         super(caption, updateInterval, simulator, samplerData, path, Duration.ZERO);
         for (int i = 0; i < path.getNumberOfSeries(); i++)
@@ -118,12 +118,12 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
                 t
         ) ->
         {
-            for (Section<KpiLaneDirection> section : path.getSections())
+            for (Section<KpiLane> section : path.getSections())
             {
                 Length startDistance = path.getStartDistance(section);
                 for (int i = 0; i < path.getNumberOfSeries(); i++)
                 {
-                    KpiLaneDirection lane = section.getSource(i);
+                    KpiLane lane = section.getSource(i);
                     if (lane == null)
                     {
                         continue; // lane is not part of this section, e.g. after a lane-drop

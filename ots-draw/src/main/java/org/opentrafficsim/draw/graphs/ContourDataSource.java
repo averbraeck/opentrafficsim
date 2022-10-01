@@ -26,7 +26,7 @@ import org.opentrafficsim.core.egtf.Quantity;
 import org.opentrafficsim.core.egtf.typed.TypedQuantity;
 import org.opentrafficsim.draw.graphs.GraphPath.Section;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
-import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
+import org.opentrafficsim.kpi.sampling.KpiLane;
 import org.opentrafficsim.kpi.sampling.SamplerData;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.Trajectory.SpaceTimeView;
@@ -107,7 +107,7 @@ public class ContourDataSource<G extends GtuDataInterface>
     private final Duration delay;
 
     /** Path. */
-    private final GraphPath<KpiLaneDirection> path;
+    private final GraphPath<KpiLane> path;
 
     /** Space axis. */
     final Axis spaceAxis;
@@ -196,7 +196,7 @@ public class ContourDataSource<G extends GtuDataInterface>
      * @param samplerData SamplerData&lt;G&gt;; sampler data
      * @param path GraphPath&lt;KpiLaneDirection&gt;; path
      */
-    public ContourDataSource(final SamplerData<G> samplerData, final GraphPath<KpiLaneDirection> path)
+    public ContourDataSource(final SamplerData<G> samplerData, final GraphPath<KpiLane> path)
     {
         this(samplerData, Duration.instantiateSI(1.0), path, DEFAULT_SPACE_GRANULARITIES, DEFAULT_SPACE_GRANULARITY_INDEX,
                 DEFAULT_TIME_GRANULARITIES, DEFAULT_TIME_GRANULARITY_INDEX, DEFAULT_LOWER_TIME_BOUND,
@@ -216,7 +216,7 @@ public class ContourDataSource<G extends GtuDataInterface>
      * @param initialEnd Time; initial end time of plots, will be expanded if simulation time exceeds it
      */
     @SuppressWarnings("parameternumber")
-    public ContourDataSource(final SamplerData<G> samplerData, final Duration delay, final GraphPath<KpiLaneDirection> path,
+    public ContourDataSource(final SamplerData<G> samplerData, final Duration delay, final GraphPath<KpiLane> path,
             final double[] spaceGranularity, final int initSpaceIndex, final double[] timeGranularity, final int initTimeIndex,
             final Time start, final Time initialEnd)
     {
@@ -272,7 +272,7 @@ public class ContourDataSource<G extends GtuDataInterface>
      * Returns the path for an {@code AbstractContourPlot} using this {@code ContourDataSource}.
      * @return GraphPath&lt;KpiLaneDirection&gt;; the path
      */
-    final GraphPath<KpiLaneDirection> getPath()
+    final GraphPath<KpiLane> getPath()
     {
         return this.path;
     }
@@ -695,7 +695,7 @@ public class ContourDataSource<G extends GtuDataInterface>
                 {
                     // obtain trajectories
                     List<TrajectoryGroup<?>> trajectories = new ArrayList<>();
-                    for (Section<KpiLaneDirection> section : getPath().getSections())
+                    for (Section<KpiLane> section : getPath().getSections())
                     {
                         TrajectoryGroup<?> trajectoryGroup = this.samplerData.getTrajectoryGroup(section.getSource(series));
                         if (null == trajectoryGroup)
@@ -712,7 +712,7 @@ public class ContourDataSource<G extends GtuDataInterface>
                     for (int k = 0; k < trajectories.size(); k++)
                     {
                         TrajectoryGroup<?> trajectoryGroup = trajectories.get(k);
-                        KpiLaneDirection lane = trajectoryGroup.getLaneDirection();
+                        KpiLane lane = trajectoryGroup.getKpiLane();
                         Length startDistance = this.path.getStartDistance(this.path.get(k));
                         if (startDistance.si + this.path.get(k).getLength().si > spaceTicks[i]
                                 && startDistance.si < spaceTicks[i + 1])
@@ -722,7 +722,7 @@ public class ContourDataSource<G extends GtuDataInterface>
                             // divide by scale, so we go from base length to section length
                             xStart.add(Length.max(xFrom.minus(startDistance).divide(scale), Length.ZERO));
                             xEnd.add(Length.min(xTo.minus(startDistance).divide(scale),
-                                    trajectoryGroup.getLaneDirection().getLaneData().getLength()));
+                                    trajectoryGroup.getKpiLane().getLaneData().getLength()));
                         }
                     }
 

@@ -121,8 +121,6 @@ public class LaneStructureAnimation extends Renderable2D<LaneStructureLocatable>
             RecordLink link = (RecordLink) Try.assign(() -> sourceLinkField.get(lsr), "Exception while painting LaneStructure");
             float f1 = link.equals(RecordLink.DOWN) ? 0.9f : link.equals(RecordLink.UP) ? 0.1f : 0.5f;
             float f2 = link.equals(RecordLink.DOWN) ? 0.0f : link.equals(RecordLink.UP) ? 1.0f : 0.5f;
-            f1 = src.getDirection().isPlus() ? f1 : 1.0f - f1;
-            f2 = lsr.getDirection().isPlus() ? f2 : 1.0f - f2;
             float f3 = f1;
             float f4 = f2;
             DirectedPoint p1 = Try.assign(() -> src.getLane().getCenterLine().getLocationFraction(f3),
@@ -169,8 +167,8 @@ public class LaneStructureAnimation extends Renderable2D<LaneStructureLocatable>
         {
             return;
         }
-        float f1 = main.getDirection().isPlus() ? 0.45f : 0.55f;
-        float f2 = adj.getDirection().isPlus() ? 0.55f : 0.45f;
+        float f1 = 0.45f;
+        float f2 = 0.55f;
         DirectedPoint p1 = Try.assign(() -> main.getLane().getCenterLine().getLocationFraction(f1),
                 "Exception while painting LaneStructure");
         DirectedPoint p2 = Try.assign(() -> adj.getLane().getCenterLine().getLocationFraction(f2),
