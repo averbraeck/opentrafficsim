@@ -9,7 +9,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
+import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 /**
@@ -32,7 +32,7 @@ public interface LaneStructure
      * @param gtuType GtuType; GTU type
      * @throws GtuException on a problem while updating the structure
      */
-    void update(DirectedLanePosition pos, Route route, GtuType gtuType) throws GtuException;
+    void update(LanePosition pos, Route route, GtuType gtuType) throws GtuException;
 
     /**
      * Returns the root record.

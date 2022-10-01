@@ -80,7 +80,7 @@ public final class NeighborsUtil
                  *                                                     (--------) negative distance
                  */
                 LaneBasedGtu down = record.getLane().getGtuAhead(record.getStartDistance().neg().plus(dxSearch),
-                        record.getDirection(), otherRelativePosition, now);
+                        otherRelativePosition, now);
                 if (down != null)
                 {
                     // GTU found, add to set
@@ -163,7 +163,7 @@ public final class NeighborsUtil
                  *         (----------------) distance
                  */
                 LaneBasedGtu up = record.getLane().getGtuBehind(record.getStartDistance().neg().plus(dxSearch),
-                        record.getDirection(), otherRelativePosition, now);
+                        otherRelativePosition, now);
                 if (up != null)
                 {
                     // GTU found, add to set

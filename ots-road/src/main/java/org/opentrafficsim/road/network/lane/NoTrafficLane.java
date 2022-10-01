@@ -8,7 +8,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.RoadNetwork;
 
@@ -24,18 +23,6 @@ public class NoTrafficLane extends Lane
 {
     /** */
     private static final long serialVersionUID = 20150228L;
-
-    /**
-     * Return a Map that tells that directionality is NONE for all vehicles.
-     * @param network RoadNetwork; the network for which to define the directionality
-     * @return Map&lt;GtuType, LongitudinalDirectionality&gt;; a Map that tells that directionality is NONE for all vehicles
-     */
-    private static Map<GtuType, LongitudinalDirectionality> directionalityNone(final RoadNetwork network)
-    {
-        Map<GtuType, LongitudinalDirectionality> dirNone = new LinkedHashMap<>();
-        dirNone.put(network.getGtuType(GtuType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_NONE);
-        return dirNone;
-    }
 
     /**
      * Map that tells that speed is 0.0 for all vehicles.
