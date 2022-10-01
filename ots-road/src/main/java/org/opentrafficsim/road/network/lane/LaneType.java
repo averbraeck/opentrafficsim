@@ -2,9 +2,6 @@ package org.opentrafficsim.road.network.lane;
 
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.compatibility.GtuCompatibleInfraType;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.road.network.RoadNetwork;
 
 /**
@@ -91,8 +88,7 @@ public class LaneType extends GtuCompatibleInfraType<LaneType>
      * @param network RoadNetwork; The network to which the LaneType belongs
      * @throws NullPointerException if either the id is null, or the compatibilitySet is null
      */
-    public LaneType(final String id, final RoadNetwork network)
-            throws NullPointerException
+    public LaneType(final String id, final RoadNetwork network) throws NullPointerException
     {
         super(id);
         Throw.whenNull(network, "network cannot be null for LaneType with id = %s", id);
@@ -163,51 +159,12 @@ public class LaneType extends GtuCompatibleInfraType<LaneType>
         return this.network;
     }
 
-    /**
-     * Compatibility is solely determined by a specific lane type, and independent of compatibility in super or sub types.
-     * @param gtuType GtuType; GTU type to look for compatibility.
-     * @param direction GTUDirectionality; the direction that the GTU is moving (with respect to the direction of the design
-     *            line of the Link)
-     * @return boolean; true if this LaneType permits GTU type in the given direction
-     */
-    @Deprecated
-    public final Boolean isCompatible(final GtuType gtuType, final GTUDirectionality direction)
-    {
-        // OTS-338
-        // return this.compatibilitySet.contains(gtuType) || this.compatibilitySet.contains(GtuType.ALL);
-        return isCompatible(gtuType);
-    }
-
-    /**
-     * Get the permitted driving directions for a given GTU type on this Lane.
-     * @param gtuType GtuType; the GTU type
-     * @return LongitudinalDirectionality; the permitted directions of the GTU type on this Lane
-     */
-    @Deprecated
-    public final LongitudinalDirectionality getDirectionality(final GtuType gtuType)
-    {
-        // TEMP
-        return LongitudinalDirectionality.DIR_PLUS;
-    }
-
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
         return "LaneType [id=" + this.getId() + ", compatibilitySet=" + getGtuCompatibility() + "]";
-    }
-
-    /**
-     * TEMP.
-     * @param gtuType X
-     * @param tryParentsOfGtuType X
-     * @return X
-     */
-    @Deprecated
-    public final LongitudinalDirectionality getDirectionality(final GtuType gtuType, final boolean tryParentsOfGtuType)
-    {
-        return LongitudinalDirectionality.DIR_PLUS;
     }
 
 }
