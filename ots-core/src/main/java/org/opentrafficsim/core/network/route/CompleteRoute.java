@@ -52,7 +52,7 @@ public class CompleteRoute extends Route
         {
             if (null != fromNode)
             {
-                if (!fromNode.isDirectionallyConnectedTo(this.gtuType, toNode))
+                if (!fromNode.isConnectedTo(this.gtuType, toNode))
                 {
                     throw new NetworkException("CompleteRoute: node " + fromNode
                             + " not directly or not directionally connected to node " + toNode);
@@ -69,7 +69,7 @@ public class CompleteRoute extends Route
         if (getNodes().size() > 0)
         {
             Node lastNode = getNodes().get(getNodes().size() - 1);
-            if (!lastNode.isDirectionallyConnectedTo(this.gtuType, node))
+            if (!lastNode.isConnectedTo(this.gtuType, node))
             {
                 throw new NetworkException("CompleteRoute: last node " + lastNode
                         + " not directly or not directionally connected to node " + node);
