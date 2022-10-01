@@ -100,20 +100,20 @@ public class OTSNodeTest
             // Ignore expected exception
         }
         assertTrue("node 1 has direct connection to node 2",
-                node1.isDirectionallyConnectedTo(network.getGtuType(GtuType.DEFAULTS.VEHICLE), node2));
+                node1.isConnectedTo(network.getGtuType(GtuType.DEFAULTS.VEHICLE), node2));
         Node node5 = new OTSNode(network, "node 5", new OTSPoint3D(1000, 0, 0));
         assertFalse("node 1 has no direct connection to node 5",
-                node1.isDirectionallyConnectedTo(network.getGtuType(GtuType.DEFAULTS.VEHICLE), node5));
+                node1.isConnectedTo(network.getGtuType(GtuType.DEFAULTS.VEHICLE), node5));
         Link link5 = new OTSLink(network, "link 5", node5, node1, network.getLinkType(LinkType.DEFAULTS.FREEWAY),
                 new OTSLine3D(node1.getPoint(), node5.getPoint()));
         assertFalse("node 1 still has no direct connection to node 5",
-                node1.isDirectionallyConnectedTo(network.getGtuType(GtuType.DEFAULTS.VEHICLE), node5));
+                node1.isConnectedTo(network.getGtuType(GtuType.DEFAULTS.VEHICLE), node5));
         assertTrue("node 5 does have a direct connection to node 1",
-                node5.isDirectionallyConnectedTo(network.getGtuType(GtuType.DEFAULTS.VEHICLE), node1));
+                node5.isConnectedTo(network.getGtuType(GtuType.DEFAULTS.VEHICLE), node1));
         assertEquals("Connection from node 5 to node 1 is link5", link5, node5.getLinks().iterator().next());
         node5.removeLink(link5);
         assertFalse("node 5 no longer has direct connection to node 1",
-                node5.isDirectionallyConnectedTo(network.getGtuType(GtuType.DEFAULTS.VEHICLE), node1));
+                node5.isConnectedTo(network.getGtuType(GtuType.DEFAULTS.VEHICLE), node1));
     }
 
     /**
