@@ -21,7 +21,6 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -84,8 +83,8 @@ public class SensorTest implements UNITS
         }
 
         Length positionA = new Length(100, METER);
-        Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
-        initialLongitudinalPositions.add(new DirectedLanePosition(lanesA[1], positionA, GTUDirectionality.DIR_PLUS));
+        Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
+        initialLongitudinalPositions.add(new LanePosition(lanesA[1], positionA));
 
         // A Car needs an initial speed
         Speed initialSpeed = new Speed(50, KM_PER_HOUR);

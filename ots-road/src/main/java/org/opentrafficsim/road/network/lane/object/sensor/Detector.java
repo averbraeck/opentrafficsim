@@ -26,7 +26,6 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.CompressedFileWriter;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -64,7 +63,7 @@ public class Detector extends AbstractSensor
     {
         /** {@inheritDoc} */
         @Override
-        public boolean isCompatible(final GtuType gtuType, final GTUDirectionality directionality)
+        public boolean isCompatible(final GtuType gtuType)
         {
             return gtuType.isOfType(gtuType.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE));
         }

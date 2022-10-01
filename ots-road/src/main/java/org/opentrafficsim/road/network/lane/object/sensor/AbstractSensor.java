@@ -8,7 +8,6 @@ import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -247,9 +246,9 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
 
     /** {@inheritDoc} */
     @Override
-    public final boolean isCompatible(final GtuType gtuType, final GTUDirectionality directionality)
+    public final boolean isCompatible(final GtuType gtuType)
     {
-        return this.detectedGtuTypes.isCompatible(gtuType, directionality);
+        return this.detectedGtuTypes.isCompatible(gtuType);
     }
 
     /**
