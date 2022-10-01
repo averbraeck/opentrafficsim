@@ -16,8 +16,8 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
-import org.opentrafficsim.road.network.lane.LaneDirection;
+import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LanePosition;
 
 /**
  * An operational plan with some extra information about the lanes and lane changes so this information does not have to be
@@ -108,13 +108,12 @@ public class LaneBasedOperationalPlan extends OperationalPlan
      * @param start boolean; start (or end)
      * @return rotation at start or end of lane
      */
-    private double getRotZAtFraction(final LaneDirection lane, final boolean start)
+    private double getRotZAtFraction(final Lane lane, final boolean start)
     {
         double f = start ? 0.0 : 1.0;
         try
         {
-            return (lane.getDirection().isPlus() ? lane.getLane().getCenterLine().getLocationFraction(f)
-                    : lane.getLane().getCenterLine().getLocationFraction(1.0 - f)).getRotZ();
+            return lane.getCenterLine().getLocationFraction(f).getRotZ();
         }
         catch (OTSGeometryException exception)
         {
@@ -134,8 +133,8 @@ public class LaneBasedOperationalPlan extends OperationalPlan
     {
 
         // start lane center lines at current reference lane
-        DirectedLanePosition pos = gtu.getReferencePosition();
-        LaneDirection lane = pos.getLaneDirection();
+        LanePosition pos = gtu.getReferencePosition();
+        Lane lane = pos.getLane();
 
         // initialize loop data
         double length = -lane.coveredDistance(pos.getPosition().si / pos.getLane().getLength().si).si;
@@ -145,10 +144,10 @@ public class LaneBasedOperationalPlan extends OperationalPlan
         // move to next lane while projection fails
         while (Double.isNaN(f))
         {
-            LaneDirection nextLane = gtu.getNextLaneForRoute(lane);
+            Lane nextLane = gtu.getNextLaneForRoute(lane);
             Direction nextDir = Direction.instantiateSI(nextLane == null ? getRotZAtFraction(lane, false)
                     : .5 * getRotZAtFraction(lane, false) + .5 * getRotZAtFraction(nextLane, true));
-            f = lane.getLane().getCenterLine().projectFractional(prevDir, nextDir, point.x, point.y, FractionalFallback.NaN);
+            f = lane.getCenterLine().projectFractional(prevDir, nextDir, point.x, point.y, FractionalFallback.NaN);
 
             // check if the GTU is adjacent to the bit between the lanes (if there is such a bit)
             if (Double.isNaN(f))
@@ -164,10 +163,8 @@ public class LaneBasedOperationalPlan extends OperationalPlan
                     try
                     {
                         // compose gap line
-                        OTSPoint3D last = lane.getDirection().isPlus() ? lane.getLane().getCenterLine().getLast()
-                                : lane.getLane().getCenterLine().get(0);
-                        OTSPoint3D first = nextLane.getDirection().isPlus() ? nextLane.getLane().getCenterLine().get(0)
-                                : nextLane.getLane().getCenterLine().getLast();
+                        OTSPoint3D last = lane.getCenterLine().getLast();
+                        OTSPoint3D first = nextLane.getCenterLine().get(0);
                         if (!(last).equals(first))
                         {
                             OTSLine3D gap = new OTSLine3D(last, first);

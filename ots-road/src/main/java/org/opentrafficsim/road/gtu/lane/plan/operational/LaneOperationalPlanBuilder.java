@@ -32,9 +32,8 @@ import org.opentrafficsim.core.math.Solver;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LaneDirection;
+import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 
@@ -310,9 +309,9 @@ public final class LaneOperationalPlanBuilder // class package private for sched
         OTSLine3D path = null;
         try
         {
-            DirectedLanePosition ref = gtu.getReferencePosition();
+            LanePosition ref = gtu.getReferencePosition();
             double f = ref.getLane().fraction(ref.getPosition());
-            if (ref.getGtuDirection().isPlus() && f < 1.0)
+            if (f < 1.0)
             {
                 if (f >= 0.0)
                 {
@@ -323,23 +322,8 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                     path = ref.getLane().getCenterLine().extractFractional(0.0, 1.0);
                 }
             }
-            else if (ref.getGtuDirection().isMinus() && f > 0.0)
-            {
-                if (f <= 1.0)
-                {
-                    path = ref.getLane().getCenterLine().extractFractional(0.0, f).reverse();
-                }
-                else
-                {
-                    path = ref.getLane().getCenterLine().extractFractional(0.0, 1.0).reverse();
-                }
-            }
-            // if (gtu.getId().equals("1669") && gtu.getSimulator().getSimulatorTime().si >= 2508.9)
-            // {
-            // System.out.println("First part of path is " + path);
-            // }
-            LaneDirection prevFrom = null;
-            LaneDirection from = ref.getLaneDirection();
+            Lane prevFrom = null;
+            Lane from = ref.getLane();
             int n = 1;
             boolean alternativeTried = false;
             while (path == null || path.getLength().si < distance.si + n * Lane.MARGIN.si)
@@ -354,9 +338,8 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                 if (from == null)
                 {
                     // check sink sensor
-                    Length pos = prevFrom.getDirection().isPlus() ? prevFrom.getLength() : Length.ZERO;
-                    for (SingleSensor sensor : prevFrom.getLane().getSensors(pos, pos, gtu.getGtuType(),
-                            prevFrom.getDirection()))
+                    Length pos = prevFrom.getLength();
+                    for (SingleSensor sensor : prevFrom.getSensors(pos, pos, gtu.getGtuType()))
                     {
                         // XXX for now, the same is not done for the DestinationSensor (e.g., decrease speed for parking)
                         if (sensor instanceof SinkSensor)
@@ -426,13 +409,11 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                 }
                 if (path == null)
                 {
-                    path = from.getDirection().isPlus() ? from.getLane().getCenterLine()
-                            : from.getLane().getCenterLine().reverse();
+                    path = from.getCenterLine();
                 }
                 else
                 {
-                    path = OTSLine3D.concatenate(Lane.MARGIN.si, path, from.getDirection().isPlus()
-                            ? from.getLane().getCenterLine() : from.getLane().getCenterLine().reverse());
+                    path = OTSLine3D.concatenate(Lane.MARGIN.si, path, from.getCenterLine());
                 }
             }
         }
@@ -482,11 +463,10 @@ public final class LaneOperationalPlanBuilder // class package private for sched
         {
             // get position on from lane
             Map<Lane, Length> positions = gtu.positions(gtu.getReference());
-            DirectedLanePosition ref = gtu.getReferencePosition();
-            Iterator<Lane> iterator = ref.getLane()
-                    .accessibleAdjacentLanesPhysical(direction, gtu.getGtuType(), ref.getGtuDirection()).iterator();
+            LanePosition ref = gtu.getReferencePosition();
+            Iterator<Lane> iterator = ref.getLane().accessibleAdjacentLanesPhysical(direction, gtu.getGtuType()).iterator();
             Lane adjLane = iterator.hasNext() ? iterator.next() : null;
-            DirectedLanePosition from = null;
+            LanePosition from = null;
             if (laneChange.getDirection() == null || (adjLane != null && positions.containsKey(adjLane)))
             {
                 // reference lane is from lane, this is ok
@@ -497,10 +477,9 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                 // reference lane is to lane, this should be accounted for
                 for (Lane lane : positions.keySet())
                 {
-                    if (lane.accessibleAdjacentLanesPhysical(direction, gtu.getGtuType(), ref.getGtuDirection())
-                            .contains(ref.getLane()))
+                    if (lane.accessibleAdjacentLanesPhysical(direction, gtu.getGtuType()).contains(ref.getLane()))
                     {
-                        from = new DirectedLanePosition(lane, positions.get(lane), ref.getGtuDirection());
+                        from = new LanePosition(lane, positions.get(lane));
                         break;
                     }
                 }
