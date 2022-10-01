@@ -327,19 +327,17 @@ public interface LaneBasedGtu extends Gtu
      * Payload: [String gtuId, PositionVector initialPosition, Direction initialDirection, Length length, Length width, String
      * linkId, String laneId, Length positionOnReferenceLane, GTUDirectionality direction, GtuType gtuType]
      */
-    TimedEventType LANEBASED_INIT_EVENT = new TimedEventType("LANEBASEDGTU.INIT",
-            new MetaData("Lane based GTU created", "Lane based GTU created",
-                    new ObjectDescriptor[] {new ObjectDescriptor("GTU id", "GTU id", String.class),
-                            new ObjectDescriptor("initial position", "initial position", PositionVector.class),
-                            new ObjectDescriptor("initial direction", "initial direction", Direction.class),
-                            new ObjectDescriptor("Length", "Length", Length.class),
-                            new ObjectDescriptor("Width", "Width", Length.class),
-                            new ObjectDescriptor("Link id", "Link id", String.class),
-                            new ObjectDescriptor("Lane id", "Lane id", String.class),
-                            new ObjectDescriptor("Longitudinal position on lane", "Longitudinal position on lane",
-                                    Length.class),
-                            new ObjectDescriptor("Driving direction", "Driving direction", String.class),
-                            new ObjectDescriptor("GTU type name", "GTU type name", String.class)}));
+    TimedEventType LANEBASED_INIT_EVENT = new TimedEventType("LANEBASEDGTU.INIT", new MetaData("Lane based GTU created",
+            "Lane based GTU created",
+            new ObjectDescriptor[] {new ObjectDescriptor("GTU id", "GTU id", String.class),
+                    new ObjectDescriptor("initial position", "initial position", PositionVector.class),
+                    new ObjectDescriptor("initial direction", "initial direction", Direction.class),
+                    new ObjectDescriptor("Length", "Length", Length.class),
+                    new ObjectDescriptor("Width", "Width", Length.class),
+                    new ObjectDescriptor("Link id", "Link id", String.class),
+                    new ObjectDescriptor("Lane id", "Lane id", String.class),
+                    new ObjectDescriptor("Longitudinal position on lane", "Longitudinal position on lane", Length.class),
+                    new ObjectDescriptor("GTU type name", "GTU type name", String.class)}));
 
     /**
      * The lane-based event type for pub/sub indicating a move. <br>
@@ -358,8 +356,7 @@ public interface LaneBasedGtu extends Gtu
                     new ObjectDescriptor("Odometer", "Odometer value", Length.class),
                     new ObjectDescriptor("Link id", "Link id", String.class),
                     new ObjectDescriptor("Lane id", "Lane id", String.class),
-                    new ObjectDescriptor("Longitudinal position on lane", "Longitudinal position on lane", Length.class),
-                    new ObjectDescriptor("Driving direction", "Driving direction", String.class)}));
+                    new ObjectDescriptor("Longitudinal position on lane", "Longitudinal position on lane", Length.class)}));
 
     /**
      * The lane-based event type for pub/sub indicating destruction of the GTU. <br>
@@ -374,8 +371,7 @@ public interface LaneBasedGtu extends Gtu
                     new ObjectDescriptor("Odometer", "Odometer value", Length.class),
                     new ObjectDescriptor("Link id", "Link id", String.class),
                     new ObjectDescriptor("Lane id", "Lane id", String.class),
-                    new ObjectDescriptor("Longitudinal position on lane", "Longitudinal position on lane", Length.class),
-                    new ObjectDescriptor("Driving direction", "Driving direction", String.class)}));
+                    new ObjectDescriptor("Longitudinal position on lane", "Longitudinal position on lane", Length.class)}));
 
     // TODO: the next 2 events are never fired...
     /**
