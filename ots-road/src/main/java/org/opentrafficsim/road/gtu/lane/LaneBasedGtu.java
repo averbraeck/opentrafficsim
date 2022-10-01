@@ -12,12 +12,9 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.PositionVector;
 import org.djutils.event.EventType;
 import org.djutils.event.TimedEventType;
-import org.djutils.exceptions.Try;
-import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -26,9 +23,8 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LaneDirection;
+import org.opentrafficsim.road.network.lane.LanePosition;
 
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 
@@ -95,19 +91,19 @@ public interface LaneBasedGtu extends Gtu
     void setFinalizeLaneChangeEvent(SimEventInterface<Duration> event);
 
     /**
-     * Returns the next lane and direction for a given lane and direction to stay on the route.
-     * @param laneDirection LaneDirection; the lane and direction for which we want to know the next LaneDirection
-     * @return LaneDirection; next lane and direction, {@code null} if none
+     * Returns the next lane for a given lane to stay on the route.
+     * @param lane Lane; the lane for which we want to know the next Lane
+     * @return Lane; next lane, {@code null} if none
      */
-    LaneDirection getNextLaneForRoute(LaneDirection laneDirection);
-    
+    Lane getNextLaneForRoute(Lane lane);
+
     /**
-     * Returns a set of {@code LaneDirection}s that can be followed considering the route.
-     * @param laneDirection LaneDirection; the lane and direction for which we want to know the next LaneDirections
-     * @return set of {@code LaneDirection}s that can be followed considering the route
+     * Returns a set of {@code Lane}s that can be followed considering the route.
+     * @param lane Lane; the lane for which we want to know the next Lane
+     * @return set of {@code Lane}s that can be followed considering the route
      */
-    Set<LaneDirection> getNextLanesForRoute(LaneDirection laneDirection);
-    
+    Set<Lane> getNextLanesForRoute(Lane lane);
+
     /**
      * Get projected length on the lane.
      * @param lane Lane; lane to project the vehicle on
@@ -118,7 +114,7 @@ public interface LaneBasedGtu extends Gtu
     {
         Length front = position(lane, getFront());
         Length rear = position(lane, getRear());
-        return getDirection(lane).isPlus() ? front.minus(rear) : rear.minus(front);
+        return front.minus(rear);
     }
 
     /**
@@ -226,15 +222,7 @@ public interface LaneBasedGtu extends Gtu
      * @return DirectedLanePosition; the current Lane, position and directionality of the GTU
      * @throws GtuException in case the reference position of the GTU cannot be found on the lanes in its current path
      */
-    DirectedLanePosition getReferencePosition() throws GtuException;
-
-    /**
-     * Return the directionality of a lane on which the GTU is registered for its current operational plan.
-     * @param lane Lane; the lane for which we want to know the direction
-     * @return GTUDirectionality; the direction on the given lane
-     * @throws GtuException in case the GTU is not registered on the Lane
-     */
-    GTUDirectionality getDirection(Lane lane) throws GtuException;
+    LanePosition getReferencePosition() throws GtuException;
 
     /**
      * Add an event to the list of lane triggers scheduled for this GTU.
