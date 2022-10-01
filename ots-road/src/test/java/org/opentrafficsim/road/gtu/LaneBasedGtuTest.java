@@ -28,7 +28,6 @@ import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
@@ -48,8 +47,8 @@ import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 
@@ -121,7 +120,7 @@ public class LaneBasedGtuTest implements UNITS
         Length truckPosition = new Length(99.5, METER);
         Length truckLength = new Length(15, METER);
 
-        Set<DirectedLanePosition> truckPositions =
+        Set<LanePosition> truckPositions =
                 buildPositionsSet(truckPosition, truckLength, links, truckFromLane, truckUpToLane);
         Speed truckSpeed = new Speed(0, KM_PER_HOUR);
         Length truckWidth = new Length(2.5, METER);
@@ -147,7 +146,7 @@ public class LaneBasedGtuTest implements UNITS
                 {
                     Lane lane = (Lane) cse;
                     boolean truckPositionsOnLane = false;
-                    for (DirectedLanePosition pos : truckPositions)
+                    for (LanePosition pos : truckPositions)
                     {
                         if (pos.getLane().equals(lane))
                         {
@@ -203,7 +202,7 @@ public class LaneBasedGtuTest implements UNITS
                     continue; // Truck and car would overlap; the result of that placement is not defined :-)
                 }
                 Length carPosition = new Length(step, METER);
-                Set<DirectedLanePosition> carPositions =
+                Set<LanePosition> carPositions =
                         buildPositionsSet(carPosition, carLength, links, laneRank, laneRank + carLanesCovered - 1);
                 parameters = DefaultTestParameters.create();
 
@@ -336,7 +335,7 @@ public class LaneBasedGtuTest implements UNITS
                     }
                 }
                 assertTrue("car was not found in rightParallel", foundCar);
-                for (DirectedLanePosition pos : carPositions)
+                for (LanePosition pos : carPositions)
                 {
                     pos.getLane().removeGTU(car, true, pos.getPosition());
                 }
@@ -392,8 +391,8 @@ public class LaneBasedGtuTest implements UNITS
             Lane lane = LaneFactory.makeMultiLane(network, linkName, fromNode, toNode, null, 1, laneType,
                     new Speed(200, KM_PER_HOUR), simulator)[0];
             Length carPosition = new Length(100, METER);
-            Set<DirectedLanePosition> carPositions = new LinkedHashSet<>(1);
-            carPositions.add(new DirectedLanePosition(lane, carPosition, GTUDirectionality.DIR_PLUS));
+            Set<LanePosition> carPositions = new LinkedHashSet<>(1);
+            carPositions.add(new LanePosition(lane, carPosition));
             Speed carSpeed = new Speed(10, METER_PER_SECOND);
             Acceleration acceleration = new Acceleration(a, METER_PER_SECOND_2);
             FixedAccelerationModel fam = new FixedAccelerationModel(acceleration, new Duration(10, SECOND));
@@ -457,10 +456,10 @@ public class LaneBasedGtuTest implements UNITS
      * @param uptoLaneRank int; highest rank of lanes that the GTU must be registered on (0-based)
      * @return the Set of the LanePositions that the GTU is registered on
      */
-    private Set<DirectedLanePosition> buildPositionsSet(final Length totalLongitudinalPosition, final Length gtuLength,
+    private Set<LanePosition> buildPositionsSet(final Length totalLongitudinalPosition, final Length gtuLength,
             final ArrayList<CrossSectionLink> links, final int fromLaneRank, final int uptoLaneRank)
     {
-        Set<DirectedLanePosition> result = new LinkedHashSet<>(1);
+        Set<LanePosition> result = new LinkedHashSet<>(1);
         double cumulativeLength = 0;
         for (CrossSectionLink link : links)
         {
@@ -482,8 +481,7 @@ public class LaneBasedGtuTest implements UNITS
                     }
                     try
                     {
-                        result.add(new DirectedLanePosition(lane, new Length(rearPositionInLink, METER),
-                                GTUDirectionality.DIR_PLUS));
+                        result.add(new LanePosition(lane, new Length(rearPositionInLink, METER)));
                     }
                     catch (GtuException exception)
                     {

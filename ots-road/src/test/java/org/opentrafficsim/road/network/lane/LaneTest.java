@@ -40,11 +40,9 @@ import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.mock.MockDEVSSimulator;
@@ -108,8 +106,6 @@ public class LaneTest implements UNITS
                 2 * nodeFrom.getPoint().distanceSI(nodeTo.getPoint()) + startWidth.getSI() + endWidth.getSI();
         assertEquals("Length of contour is approximately " + approximateLengthOfContour, approximateLengthOfContour,
                 lane.getContour().getLengthSI(), 0.1);
-        assertEquals("Directionality should be " + LongitudinalDirectionality.DIR_PLUS, LongitudinalDirectionality.DIR_PLUS,
-                lane.getLaneType().getDirectionality(network.getGtuType(GtuType.DEFAULTS.VEHICLE)));
         assertEquals("SpeedLimit should be " + (new Speed(100, KM_PER_HOUR)), new Speed(100, KM_PER_HOUR),
                 lane.getSpeedLimit(network.getGtuType(GtuType.DEFAULTS.VEHICLE)));
         assertEquals("There should be no GTUs on the lane", 0, lane.getGtuList().size());
@@ -231,27 +227,25 @@ public class LaneTest implements UNITS
         assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
         assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
         sensors = lane.getSensors(Length.ZERO, Length.instantiateSI(length / 3),
-                lane.getParentLink().getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), GTUDirectionality.DIR_PLUS);
+                lane.getParentLink().getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE));
         assertEquals("first third of lane contains 1 sensor", 1, sensors.size());
         assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
         sensors = lane.getSensors(Length.instantiateSI(length / 3), Length.instantiateSI(length),
-                lane.getParentLink().getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), GTUDirectionality.DIR_PLUS);
+                lane.getParentLink().getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE));
         assertEquals("last two-thirds of lane contains 1 sensor", 1, sensors.size());
         assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
-        sensors = lane.getSensors(lane.getParentLink().getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE),
-                GTUDirectionality.DIR_PLUS);
+        sensors = lane.getSensors(lane.getParentLink().getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE));
         // NB. The mocked sensor is compatible with all GTU types in all directions.
         assertEquals("sensor list contains two sensors", 2, sensors.size());
         assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
         assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
-        sensors = lane.getSensors(lane.getParentLink().getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE),
-                GTUDirectionality.DIR_MINUS);
+        sensors = lane.getSensors(lane.getParentLink().getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE));
         // NB. The mocked sensor is compatible with all GTU types in all directions.
         assertEquals("sensor list contains two sensors", 2, sensors.size());
         assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
         assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
-        SortedMap<Double, List<SingleSensor>> sensorMap = lane.getSensorMap(
-                lane.getParentLink().getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), GTUDirectionality.DIR_PLUS);
+        SortedMap<Double, List<SingleSensor>> sensorMap =
+                lane.getSensorMap(lane.getParentLink().getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE));
         assertEquals("sensor map contains two entries", 2, sensorMap.size());
         for (Double d : sensorMap.keySet())
         {
@@ -350,7 +344,7 @@ public class LaneTest implements UNITS
                 expected = new ArrayList<>();
                 expected.add(nextObject);
             }
-            List<LaneBasedObject> got = lane.getObjectAhead(Length.instantiateSI(positionSI), GTUDirectionality.DIR_PLUS);
+            List<LaneBasedObject> got = lane.getObjectAhead(Length.instantiateSI(positionSI));
             assertEquals("First bunch of objects ahead of d", expected, got);
 
             nextObject = positionSI > lbo2.getLongitudinalPosition().si ? lbo2
@@ -361,7 +355,7 @@ public class LaneTest implements UNITS
                 expected = new ArrayList<>();
                 expected.add(nextObject);
             }
-            got = lane.getObjectAhead(Length.instantiateSI(positionSI), GTUDirectionality.DIR_MINUS);
+            got = lane.getObjectAhead(Length.instantiateSI(positionSI));
             assertEquals("First bunch of objects behind d", expected, got);
         }
 
@@ -465,7 +459,7 @@ public class LaneTest implements UNITS
             Mockito.when(this.mockSensor.getLongitudinalPosition()).thenReturn(this.position);
             Mockito.when(this.mockSensor.getSimulator()).thenReturn(this.simulator);
             Mockito.when(this.mockSensor.getFullId()).thenReturn(this.id);
-            Mockito.when(this.mockSensor.isCompatible(Mockito.any(), Mockito.any())).thenReturn(true);
+            Mockito.when(this.mockSensor.isCompatible(Mockito.any())).thenReturn(true);
         }
 
         /**
@@ -568,8 +562,7 @@ public class LaneTest implements UNITS
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         OTSRoadNetwork network = new OTSRoadNetwork("contour test network", true, simulator);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
-        Map<GtuType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
-        directionalityMap.put(network.getGtuType(GtuType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_PLUS);
+        laneType.addCompatibleGtuType(network.getGtuType(GtuType.DEFAULTS.VEHICLE));
         Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
         speedMap.put(network.getGtuType(GtuType.DEFAULTS.VEHICLE), new Speed(50, KM_PER_HOUR));
         OTSRoadNode start = new OTSRoadNode(network, "start", from, Direction.ZERO);
@@ -650,8 +643,7 @@ public class LaneTest implements UNITS
                     simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
                     OTSRoadNetwork network = new OTSRoadNetwork("contour test network", true, simulator);
                     LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
-                    Map<GtuType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
-                    directionalityMap.put(network.getGtuType(GtuType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_PLUS);
+                    laneType.addCompatibleGtuType(network.getGtuType(GtuType.DEFAULTS.VEHICLE));
                     Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
                     speedMap.put(network.getGtuType(GtuType.DEFAULTS.VEHICLE), new Speed(50, KM_PER_HOUR));
                     OTSRoadNode start =
