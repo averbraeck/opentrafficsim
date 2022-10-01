@@ -1451,7 +1451,7 @@ public abstract class AbstractLaneBasedGtu2 extends AbstractGtu implements LaneB
         {
             fireTimedEvent(LaneBasedGtu.LANEBASED_DESTROY_EVENT,
                     new Object[] {getId(), new OTSPoint3D(location).doubleVector(PositionUnit.METER),
-                            OTSPoint3D.direction(location, DirectionUnit.EAST_RADIAN), getOdometer(), null, null, null, null},
+                            OTSPoint3D.direction(location, DirectionUnit.EAST_RADIAN), getOdometer(), null, null, null},
                     getSimulator().getSimulatorTime());
         }
         cancelAllEvents();
