@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -1062,6 +1063,38 @@ public class Lane extends CrossSectionElement implements Serializable
     }
 
     /**
+     * Get the first GTU where the relativePosition is behind a certain position on the lane, in a driving direction on this
+     * lane, compared to the DESIGN LINE.
+     * @param position Length; the position before which the relative position of a GTU will be searched.
+     * @param relativePosition RelativePosition.TYPE; the relative position of the GTU we are looking for.
+     * @param when Time; the time for which to evaluate the positions.
+     * @return LaneBasedGtu; the first GTU after a position on this lane in the given direction, or null if no GTU could be
+     *         found.
+     * @throws GtuException when there is a problem with the position of the GTUs on the lane.
+     */
+    public final LaneBasedGtu getGtuBehind(final Length position, final RelativePosition.TYPE relativePosition, final Time when)
+            throws GtuException
+    {
+        List<LaneBasedGtu> list = this.gtuList.get(when);
+        if (list.isEmpty())
+        {
+            return null;
+        }
+        int[] search = lineSearch((
+                final int index
+        ) ->
+        {
+            LaneBasedGtu gtu = list.get(index);
+            return gtu.position(this, gtu.getRelativePositions().get(relativePosition), when).si;
+        }, list.size(), position.si);
+        if (search[0] >= 0)
+        {
+            return list.get(search[0]);
+        }
+        return null;
+    }
+
+    /**
      * Searches for objects just before and after a given position.
      * @param positions Positions; functional interface returning positions at indices
      * @param listSize int; number of objects in the underlying list
@@ -1158,25 +1191,16 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final List<LaneBasedObject> getObjectBehind(final Length position)
     {
-        // TODO: this looks wrong...
-        return getObjectAhead(position);
-    }
-
-    /**
-     * Get the first GTU where the relativePosition is behind a certain position on the lane, in a driving direction on this
-     * lane, compared to the DESIGN LINE.
-     * @param position Length; the position before which the relative position of a GTU will be searched.
-     * @param relativePosition RelativePosition.TYPE; the relative position of the GTU we are looking for.
-     * @param when Time; the time for which to evaluate the positions.
-     * @return LaneBasedGtu; the first GTU after a position on this lane in the given direction, or null if no GTU could be
-     *         found.
-     * @throws GtuException when there is a problem with the position of the GTUs on the lane.
-     */
-    public final LaneBasedGtu getGtuBehind(final Length position, final RelativePosition.TYPE relativePosition, final Time when)
-            throws GtuException
-    {
-        // TODO: this looks wrong...
-        return getGtuAhead(position, relativePosition, when);
+        NavigableMap<Double, List<LaneBasedObject>> reverseLBO =
+                (NavigableMap<Double, List<LaneBasedObject>>) this.laneBasedObjects;
+        for (double distance : reverseLBO.descendingKeySet())
+        {
+            if (distance < position.si)
+            {
+                return new ArrayList<>(this.laneBasedObjects.get(distance));
+            }
+        }
+        return null;
     }
 
     /*
