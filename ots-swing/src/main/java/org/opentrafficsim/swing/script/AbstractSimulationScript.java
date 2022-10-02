@@ -23,7 +23,7 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
@@ -301,7 +301,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
      * Creates animations for nodes, links and lanes. This can be used if the network is not read from XML.
      * @param net OTSNetwork; network
      */
-    protected void animateNetwork(final OTSNetwork net)
+    protected void animateNetwork(final OtsNetwork net)
     {
         try
         {

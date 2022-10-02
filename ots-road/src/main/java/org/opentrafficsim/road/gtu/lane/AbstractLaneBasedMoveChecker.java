@@ -6,7 +6,7 @@ import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.opentrafficsim.core.gtu.MoveCheckerException;
 import org.opentrafficsim.core.network.Network;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OtsNetwork;
 
 /**
  * Abstract class that listens to move events of GTUs so checks can be performed.
@@ -24,13 +24,13 @@ public abstract class AbstractLaneBasedMoveChecker implements EventListenerInter
     private static final long serialVersionUID = 1L;
 
     /** Network. */
-    private final OTSNetwork network;
+    private final OtsNetwork network;
 
     /**
      * Constructor.
      * @param network OTSNetwork; network
      */
-    public AbstractLaneBasedMoveChecker(final OTSNetwork network)
+    public AbstractLaneBasedMoveChecker(final OtsNetwork network)
     {
         network.addListener(this, Network.GTU_ADD_EVENT);
         network.addListener(this, Network.GTU_REMOVE_EVENT);

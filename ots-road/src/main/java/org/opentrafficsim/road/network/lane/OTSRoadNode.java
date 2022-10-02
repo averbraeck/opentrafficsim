@@ -6,7 +6,7 @@ import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.core.network.OtsNode;
 
 /**
  * The Node is a point with an id and a direction. It is used in the network to connect Links.
@@ -18,7 +18,7 @@ import org.opentrafficsim.core.network.OTSNode;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class OTSRoadNode extends OTSNode
+public class OTSRoadNode extends OtsNode
 {
     /** ... */
     private static final long serialVersionUID = 20190528L;

@@ -7,8 +7,8 @@ import java.util.Set;
 import javax.naming.NamingException;
 
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.core.network.OTSNetworkUtils;
+import org.opentrafficsim.core.network.OtsNetwork;
+import org.opentrafficsim.core.network.OtsNetworkUtils;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
@@ -38,7 +38,7 @@ public final class OTSNetworkAnimationUtils
      * @param simulator OTSSimulatorInterface; the simulator of the old network
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public static void destroy(final OTSNetwork network, final OtsSimulatorInterface simulator)
+    public static void destroy(final OtsNetwork network, final OtsSimulatorInterface simulator)
     {
         Set<Renderable2DInterface<?>> animationObjects = new LinkedHashSet<>();
         try
@@ -69,7 +69,7 @@ public final class OTSNetworkAnimationUtils
         }
 
         // destroy the network, GTUs, Routes, etc.
-        OTSNetworkUtils.destroy(network);
+        OtsNetworkUtils.destroy(network);
     }
 
     /**

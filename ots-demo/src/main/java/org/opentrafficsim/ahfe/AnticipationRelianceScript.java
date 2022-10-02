@@ -50,7 +50,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.core.perception.HistoryManagerDEVS;
 import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
@@ -448,7 +448,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected void animateNetwork(final OTSNetwork net)
+    protected void animateNetwork(final OtsNetwork net)
     {
         try
         {

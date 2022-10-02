@@ -18,7 +18,7 @@ import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.mock.MockSimulator;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OtsNetwork;
 
 /**
  * Test the StaticObject class.
@@ -75,7 +75,7 @@ public class StaticObjectTest implements EventListenerInterface
             // Ignore expected exception
         }
         this.lastEvent = null;
-        OTSNetwork network = new OTSNetwork("Test network for static object test", false, MockSimulator.createMock());
+        OtsNetwork network = new OtsNetwork("Test network for static object test", false, MockSimulator.createMock());
         network.addListener(this, Network.ANIMATION_OBJECT_ADD_EVENT);
         StaticObject so = new StaticObject(id, geometry, height);
         assertNull("Constructor should not have fired an event", this.lastEvent);

@@ -9,7 +9,7 @@ import org.djutils.immutablecollections.ImmutableHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.road.gtu.lane.tactical.routesystem.RouteSystem;
 import org.opentrafficsim.road.network.lane.LaneType;
 
@@ -21,7 +21,7 @@ import org.opentrafficsim.road.network.lane.LaneType;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class OTSRoadNetwork extends OTSNetwork implements RoadNetwork
+public class OTSRoadNetwork extends OtsNetwork implements RoadNetwork
 {
     /** */
     private static final long serialVersionUID = 1L;

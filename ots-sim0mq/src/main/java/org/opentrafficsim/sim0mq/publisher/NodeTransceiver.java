@@ -11,7 +11,7 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OtsNetwork;
 import org.sim0mq.Sim0MQException;
 
 /**
@@ -27,7 +27,7 @@ import org.sim0mq.Sim0MQException;
 public class NodeTransceiver extends AbstractTransceiver
 {
     /** The OTS network. */
-    private final OTSNetwork network;
+    private final OtsNetwork network;
 
     /** Transceiver for the Node ids. */
     private final TransceiverInterface nodeIdSource;
@@ -37,7 +37,7 @@ public class NodeTransceiver extends AbstractTransceiver
      * @param network OTSNetwork; the network
      * @param nodeIdSource NodeIdTransceiver; the transceiver that can produce all Node ids in the Network
      */
-    public NodeTransceiver(final OTSNetwork network, final NodeIdTransceiver nodeIdSource)
+    public NodeTransceiver(final OtsNetwork network, final NodeIdTransceiver nodeIdSource)
     {
         super("Node transceiver",
                 new MetaData("Node id", "Node id",

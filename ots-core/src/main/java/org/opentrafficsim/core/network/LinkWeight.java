@@ -44,9 +44,9 @@ public interface LinkWeight
         @Override
         public double getWeight(final Link link)
         {
-            if (link instanceof OTSLink)
+            if (link instanceof OtsLink)
             {
-                OTSLink otsLink = (OTSLink) link;
+                OtsLink otsLink = (OtsLink) link;
                 if (otsLink.getLinkType().isConnector())
                 {
                     return PROHIBITIVE_CONNECTOR_LENGTH;

@@ -10,10 +10,10 @@ import org.opentrafficsim.core.gtu.Gtu;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public final class OTSNetworkUtils
+public final class OtsNetworkUtils
 {
     /** */
-    private OTSNetworkUtils()
+    private OtsNetworkUtils()
     {
         // utility class
     }
@@ -22,7 +22,7 @@ public final class OTSNetworkUtils
      * Remove all objects and animation in the network.
      * @param network OTSNetwork; the network to destroy
      */
-    public static void destroy(final OTSNetwork network)
+    public static void destroy(final OtsNetwork network)
     {
         for (Gtu gtu : network.getGTUs())
         {

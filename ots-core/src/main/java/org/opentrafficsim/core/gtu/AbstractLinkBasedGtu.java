@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.gtu;
 
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OtsNetwork;
 
 /**
  * <p>
@@ -17,7 +17,7 @@ public abstract class AbstractLinkBasedGtu extends AbstractGtu
     private static final long serialVersionUID = 20151114L;
 
     /** The network in which this GTU is (initially) registered. */
-    private OTSNetwork network;
+    private OtsNetwork network;
 
     /**
      * @param id String; the id of the GTU
@@ -26,7 +26,7 @@ public abstract class AbstractLinkBasedGtu extends AbstractGtu
      * @throws GtuException when the construction of the original waiting path fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractLinkBasedGtu(final String id, final GtuType gtuType, final OTSNetwork network) throws GtuException
+    public AbstractLinkBasedGtu(final String id, final GtuType gtuType, final OtsNetwork network) throws GtuException
     {
         super(id, gtuType, network.getSimulator(), network);
         this.network = network;
@@ -35,7 +35,7 @@ public abstract class AbstractLinkBasedGtu extends AbstractGtu
     /**
      * @return the network in which the GTU is registered
      */
-    public final OTSNetwork getNetwork()
+    public final OtsNetwork getNetwork()
     {
         return this.network;
     }
@@ -43,7 +43,7 @@ public abstract class AbstractLinkBasedGtu extends AbstractGtu
     /**
      * @param network OTSNetwork; change the network this GTU is registered in
      */
-    public final void setNetwork(final OTSNetwork network)
+    public final void setNetwork(final OtsNetwork network)
     {
         this.network = network;
     }

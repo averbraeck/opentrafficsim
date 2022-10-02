@@ -51,7 +51,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
@@ -725,7 +725,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
 
         /** {@inheritDoc} */
         @Override
-        public OTSNetwork getNetwork()
+        public OtsNetwork getNetwork()
         {
             return this.network;
         }

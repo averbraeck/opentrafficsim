@@ -29,10 +29,10 @@ public class LinkPositionTest
     @Test
     public void linkPositionTest() throws NetworkException, OtsGeometryException
     {
-        OTSNetwork network = new OTSNetwork("test network for LinkPosition test", true, MockSimulator.createMock());
-        Node nodeA = new OTSNode(network, "A", new OtsPoint3D(10, 10, 10));
-        Node nodeB = new OTSNode(network, "B", new OtsPoint3D(110, 10, 10));
-        Link link = new OTSLink(network, "A to B", nodeA, nodeB, network.getLinkType(LinkType.DEFAULTS.ROAD),
+        OtsNetwork network = new OtsNetwork("test network for LinkPosition test", true, MockSimulator.createMock());
+        Node nodeA = new OtsNode(network, "A", new OtsPoint3D(10, 10, 10));
+        Node nodeB = new OtsNode(network, "B", new OtsPoint3D(110, 10, 10));
+        Link link = new OtsLink(network, "A to B", nodeA, nodeB, network.getLinkType(LinkType.DEFAULTS.ROAD),
                 new OtsLine3D(nodeA.getPoint(), nodeB.getPoint()));
         double linkLength = link.getLength().si;
         // Apparently (reading the source), LinkPosition is not restricted to the length-range of the link

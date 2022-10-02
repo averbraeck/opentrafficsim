@@ -25,7 +25,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class OTSLink extends EventProducer implements Link, Serializable, Locatable
+public class OtsLink extends EventProducer implements Link, Serializable, Locatable
 {
     /** */
     private static final long serialVersionUID = 20150101L;
@@ -63,7 +63,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
      *             or the end node of the link are not registered in the network.
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public OTSLink(final Network network, final String id, final Node startNode, final Node endNode, final LinkType linkType,
+    public OtsLink(final Network network, final String id, final Node startNode, final Node endNode, final LinkType linkType,
             final OtsLine3D designLine) throws NetworkException
     {
         Throw.whenNull(network, "network cannot be null");
@@ -237,7 +237,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
             return false;
         if (getClass() != obj.getClass())
             return false;
-        OTSLink other = (OTSLink) obj;
+        OtsLink other = (OtsLink) obj;
         if (this.endNode == null)
         {
             if (other.endNode != null)

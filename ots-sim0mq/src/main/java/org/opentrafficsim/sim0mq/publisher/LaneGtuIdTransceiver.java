@@ -7,7 +7,7 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -27,13 +27,13 @@ import org.sim0mq.Sim0MQException;
 public class LaneGtuIdTransceiver extends AbstractTransceiver
 {
     /** The network. */
-    private final OTSNetwork network;
+    private final OtsNetwork network;
 
     /**
      * Construct a GtuIdTransceiver.
      * @param network OTSNetwork; the OTS network
      */
-    public LaneGtuIdTransceiver(final OTSNetwork network)
+    public LaneGtuIdTransceiver(final OtsNetwork network)
     {
         super("Lane GTU id transceiver",
                 new MetaData("Link id, lane id", "Link id, lane id",

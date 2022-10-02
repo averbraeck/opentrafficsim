@@ -4,7 +4,7 @@ import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableLinkedHashSet;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OtsNetwork;
 
 /**
  * Transceiver for GTU ids.
@@ -22,7 +22,7 @@ public class GtuIdTransceiver extends AbstractIdTransceiver
      * Construct a GtuIdTransceiver.
      * @param network OTSNetwork; the OTS network
      */
-    public GtuIdTransceiver(final OTSNetwork network)
+    public GtuIdTransceiver(final OtsNetwork network)
     {
         super(network, "GTU id transceiver");
     }

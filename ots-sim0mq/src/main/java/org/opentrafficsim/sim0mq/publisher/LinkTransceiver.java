@@ -6,8 +6,8 @@ import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.OTSLink;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OtsLink;
+import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.sim0mq.Sim0MQException;
 
@@ -24,7 +24,7 @@ import org.sim0mq.Sim0MQException;
 public class LinkTransceiver extends AbstractTransceiver
 {
     /** The OTS network. */
-    private final OTSNetwork network;
+    private final OtsNetwork network;
 
     /** Transceiver for the GTU ids. */
     private final TransceiverInterface linkIdSource;
@@ -34,7 +34,7 @@ public class LinkTransceiver extends AbstractTransceiver
      * @param network OTSNetwork; the network
      * @param linkIdSource LinkIdTransceiver; the transceiver that can produce all Link ids in the Network
      */
-    public LinkTransceiver(final OTSNetwork network, final LinkIdTransceiver linkIdSource)
+    public LinkTransceiver(final OtsNetwork network, final LinkIdTransceiver linkIdSource)
     {
         super("Link transceiver",
                 new MetaData("Link id", "Link id",
@@ -73,7 +73,7 @@ public class LinkTransceiver extends AbstractTransceiver
             return null;
         }
         return new Object[] {link.getId(), link.getLinkType().getId(), link.getStartNode().getId(), link.getEndNode().getId(),
-                link instanceof OTSLink ? ((OTSLink) link).getDesignLine().size() : 0, link.getGTUCount(),
+                link instanceof OtsLink ? ((OtsLink) link).getDesignLine().size() : 0, link.getGTUCount(),
                 link instanceof CrossSectionLink ? ((CrossSectionLink) link).getCrossSectionElementList().size() : 0};
     }
 

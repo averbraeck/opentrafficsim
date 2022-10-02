@@ -39,7 +39,7 @@ import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
@@ -546,7 +546,7 @@ class Sim0MQOTSModel extends AbstractOtsModel
 
     /** {@inheritDoc} */
     @Override
-    public OTSNetwork getNetwork()
+    public OtsNetwork getNetwork()
     {
         return this.network;
     }

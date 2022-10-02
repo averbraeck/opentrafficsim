@@ -29,7 +29,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.core.network.OtsNode;
 import org.opentrafficsim.core.units.distributions.ContinuousDistMass;
 import org.opentrafficsim.road.gtu.generator.od.DefaultGtuCharacteristicsGeneratorOD;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier;
@@ -205,10 +205,10 @@ public class SteeringSimulation extends AbstractSimulationScript
         new Stripe(linkBC, laneWidth.neg(), laneWidth.neg(), stripeWidth);
 
         // OD
-        List<OTSNode> origins = new ArrayList<>();
+        List<OtsNode> origins = new ArrayList<>();
         origins.add(nodeA);
         origins.add(nodeE);
-        List<OTSNode> destinations = new ArrayList<>();
+        List<OtsNode> destinations = new ArrayList<>();
         destinations.add(nodeD);
         TimeVector timeVector = DoubleVector.instantiate(new double[] {0.0, 0.5, 1.0}, TimeUnit.BASE_HOUR, StorageType.DENSE);
         Interpolation interpolation = Interpolation.LINEAR; // or STEPWISE

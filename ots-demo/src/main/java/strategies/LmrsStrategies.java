@@ -68,8 +68,8 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSLink;
-import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.core.network.OtsLink;
+import org.opentrafficsim.core.network.OtsNode;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
@@ -504,8 +504,8 @@ public class LmrsStrategies implements EventListenerInterface
         protected void setAnimationToggles()
         {
             AnimationToggles.setIconAnimationTogglesFull(getAnimationPanel());
-            getAnimationPanel().getAnimationPanel().toggleClass(OTSLink.class);
-            getAnimationPanel().getAnimationPanel().toggleClass(OTSNode.class);
+            getAnimationPanel().getAnimationPanel().toggleClass(OtsLink.class);
+            getAnimationPanel().getAnimationPanel().toggleClass(OtsNode.class);
             getAnimationPanel().getAnimationPanel().toggleClass(GtuGeneratorQueue.class);
             getAnimationPanel().getAnimationPanel().showClass(SpeedSign.class);
         }

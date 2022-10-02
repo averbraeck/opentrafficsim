@@ -9,8 +9,8 @@ import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSLink;
-import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.core.network.OtsLink;
+import org.opentrafficsim.core.network.OtsNode;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -42,10 +42,10 @@ public class LaneBasedStrategicalRoutePlannerTest
         OtsSimulatorInterface simulator = MockSimulator.createMock();
         OTSRoadNetwork network = new OTSRoadNetwork("next link direction test", true, simulator);
         // Build a really simple network
-        OTSNode fromNode = new OTSNode(network, "from", new OtsPoint3D(0, 0, 0));
-        OTSNode toNode = new OTSNode(network, "to", new OtsPoint3D(100, 0, 0));
+        OtsNode fromNode = new OtsNode(network, "from", new OtsPoint3D(0, 0, 0));
+        OtsNode toNode = new OtsNode(network, "to", new OtsPoint3D(100, 0, 0));
         OtsLine3D designLine = new OtsLine3D(fromNode.getPoint(), toNode.getPoint());
-        OTSLink link = new OTSLink(network, "link", fromNode, toNode, network.getLinkType(LinkType.DEFAULTS.ROAD), designLine);
+        OtsLink link = new OtsLink(network, "link", fromNode, toNode, network.getLinkType(LinkType.DEFAULTS.ROAD), designLine);
         CarFollowingModel cfm = new IDMPlus();
         LaneBasedCFLCTacticalPlanner tacticalPlanner = new LaneBasedCFLCTacticalPlanner(null, null, null);
         Parameters params = DefaultTestParameters.create();

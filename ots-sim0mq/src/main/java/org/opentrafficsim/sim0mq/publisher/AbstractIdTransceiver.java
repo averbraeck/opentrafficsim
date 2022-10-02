@@ -6,7 +6,7 @@ import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OtsNetwork;
 import org.sim0mq.Sim0MQException;
 
 /**
@@ -22,14 +22,14 @@ import org.sim0mq.Sim0MQException;
 public abstract class AbstractIdTransceiver extends AbstractTransceiver
 {
     /** The network. */
-    private final OTSNetwork network;
+    private final OtsNetwork network;
 
     /**
      * Construct a GtuIdTransceiver.
      * @param network OTSNetwork; the OTS network
      * @param id String; name of the IdTransceiver
      */
-    public AbstractIdTransceiver(final OTSNetwork network, final String id)
+    public AbstractIdTransceiver(final OtsNetwork network, final String id)
     {
         super(id, new MetaData("No address", "empty address", new ObjectDescriptor[0]),
                 new MetaData("No address", "empty address", new ObjectDescriptor[] {new ObjectDescriptor("String array",
@@ -70,7 +70,7 @@ public abstract class AbstractIdTransceiver extends AbstractTransceiver
      * Retrieve the network.
      * @return OTSNetwork; the network
      */
-    final OTSNetwork getNetwork()
+    final OtsNetwork getNetwork()
     {
         return this.network;
     }

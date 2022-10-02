@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -38,7 +38,7 @@ public class FundamentalDiagramModel extends AbstractOtsModel
 
     /** {@inheritDoc} */
     @Override
-    public OTSNetwork getNetwork()
+    public OtsNetwork getNetwork()
     {
         return this.network;
     }

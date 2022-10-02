@@ -37,7 +37,7 @@ import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.core.network.OtsNode;
 import org.opentrafficsim.core.perception.HistoryManagerDEVS;
 import org.opentrafficsim.draw.graphs.ContourDataSource;
 import org.opentrafficsim.draw.graphs.ContourPlotSpeed;
@@ -326,10 +326,10 @@ public class SdmSimulation extends AbstractSimulationScript
         }
 
         // OD
-        List<OTSNode> origins = new ArrayList<>();
+        List<OtsNode> origins = new ArrayList<>();
         origins.add(nodeA);
         origins.add(nodeB);
-        List<OTSNode> destinations = new ArrayList<>();
+        List<OtsNode> destinations = new ArrayList<>();
         destinations.add(nodeF);
         double wut = sim.getReplication().getWarmupPeriod().si;
         double rl = sim.getReplication().getRunLength().si;

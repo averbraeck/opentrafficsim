@@ -41,7 +41,7 @@ import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.core.perception.PerceivableContext;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -76,7 +76,7 @@ public class GtuDumperTest implements OtsModelInterface
     private GtuDumper gtuDumper;
 
     /** The network. */
-    private OTSNetwork network;
+    private OtsNetwork network;
 
     /**
      * Test the GTUDumper class.
@@ -92,7 +92,7 @@ public class GtuDumperTest implements OtsModelInterface
         this.containerDir = this.testDir.newFolder("subfolder");
         // System.out.println("containerDir is " + this.containerDir);
         this.simulator = new OtsSimulator("Simulator for testing GTUDumper class");
-        this.network = new OTSNetwork("Network for testing GTUDumper class", true, this.simulator);
+        this.network = new OtsNetwork("Network for testing GTUDumper class", true, this.simulator);
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this);
         this.simulator.scheduleEventAbsTime(new Time(40, TimeUnit.BASE_SECOND), this, this, "createGTU", new Object[] {});
         this.simulator.start();
@@ -472,7 +472,7 @@ public class GtuDumperTest implements OtsModelInterface
     }
 
     @Override
-    public final OTSNetwork getNetwork()
+    public final OtsNetwork getNetwork()
     {
         return null;
     }
@@ -514,7 +514,7 @@ public class GtuDumperTest implements OtsModelInterface
     {
         this.containerDir = this.testDir.newFolder("subfolder");
         this.simulator = new OtsSimulator("Simulator for testing GTUDumper class");
-        this.network = new OTSNetwork("Network for testing GTUDumper class", true, this.simulator);
+        this.network = new OtsNetwork("Network for testing GTUDumper class", true, this.simulator);
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this);
         try
         {

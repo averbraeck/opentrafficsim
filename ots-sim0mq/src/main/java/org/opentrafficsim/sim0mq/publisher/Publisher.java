@@ -13,7 +13,7 @@ import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.sim0mq.Sim0MQException;
 
@@ -55,14 +55,14 @@ public class Publisher extends AbstractTransceiver
 
     /** The OTS network. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    final OTSNetwork network;
+    final OtsNetwork network;
 
     /**
      * Construct a Publisher for an OTS network with no additional subscription handlers.
      * @param network OTSNetwork; the OTS network
      * @throws RemoteException ...
      */
-    public Publisher(final OTSNetwork network) throws RemoteException
+    public Publisher(final OtsNetwork network) throws RemoteException
     {
         this(network, null, null);
     }
@@ -76,7 +76,7 @@ public class Publisher extends AbstractTransceiver
      *            be null).
      * @throws RemoteException ...
      */
-    public Publisher(final OTSNetwork network, final List<SubscriptionHandler> additionalSubscriptionHandlers,
+    public Publisher(final OtsNetwork network, final List<SubscriptionHandler> additionalSubscriptionHandlers,
             final List<IncomingDataHandler> incomingDataHandlers) throws RemoteException
     {
         super("Publisher for " + Throw.whenNull(network, "Network may not be null").getId(),

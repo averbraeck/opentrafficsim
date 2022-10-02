@@ -24,7 +24,7 @@ import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.trafficcontrol.FixedTimeController;
@@ -141,7 +141,7 @@ public class TestFixedTimeController
         Map<String, TrafficLight> trafficLightMap = new LinkedHashMap<String, TrafficLight>();
         String networkId = "networkID";
         trafficLightMap.put(trafficLightId, createTrafficLightMock(trafficLightId, networkId, simulator));
-        OTSNetwork network = new OTSNetwork(networkId, true, simulator);
+        OtsNetwork network = new OtsNetwork(networkId, true, simulator);
         network.addObject(trafficLightMap.get(trafficLightId));
 
         Duration cycleTime = Duration.instantiateSI(90);
@@ -293,7 +293,7 @@ public class TestFixedTimeController
         Map<String, TrafficLight> trafficLightMap = new LinkedHashMap<String, TrafficLight>();
         String networkId = "networkID";
         trafficLightMap.put(trafficLightId, createTrafficLightMock(trafficLightId, networkId, simulator));
-        OTSNetwork network = new OTSNetwork(networkId, true, simulator);
+        OtsNetwork network = new OtsNetwork(networkId, true, simulator);
         network.addObject(trafficLightMap.get(trafficLightId));
 
         Duration cycleTime = Duration.instantiateSI(90);
@@ -356,7 +356,7 @@ public class TestFixedTimeController
                                 String networkId = "networkID";
                                 trafficLightMap.put(trafficLightId,
                                         createTrafficLightMock(trafficLightId, networkId, simulator));
-                                OTSNetwork network = new OTSNetwork(networkId, true, simulator);
+                                OtsNetwork network = new OtsNetwork(networkId, true, simulator);
                                 network.addObject(trafficLightMap.get(trafficLightId));
                                 // System.out.println(cycle);
                                 FixedTimeController ftc =

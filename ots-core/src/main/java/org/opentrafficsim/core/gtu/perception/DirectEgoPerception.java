@@ -6,7 +6,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OtsNetwork;
 
 /**
  * <p>
@@ -104,7 +104,7 @@ public class DirectEgoPerception<G extends Gtu, P extends Perception<G>> extends
             {
                 System.out.println("GetSpeed: GTU is " + getGtu() + " this.speed is " + this.speed + " cached speed is null");
                 System.out.println(getGtu().getOperationalPlan());
-                System.out.println(((OTSNetwork) getGtu().getGtuType().getNetwork()).getGTUs());
+                System.out.println(((OtsNetwork) getGtu().getGtuType().getNetwork()).getGTUs());
             }
         }
         catch (GtuException e1)

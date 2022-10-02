@@ -9,7 +9,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.core.network.OtsNode;
 
 /**
  * <p>
@@ -146,10 +146,10 @@ public class RouteGeneratorTest
     private FixedRouteGenerator createRouteGenerator(final Network network, final String endNodeName) throws NetworkException
     {
         List<Node> nodes = new ArrayList<Node>();
-        nodes.add(new OTSNode(network, "n1", new OtsPoint3D(0, 0, 0)));
-        nodes.add(new OTSNode(network, "n2", new OtsPoint3D(1000, 0, 0)));
-        nodes.add(new OTSNode(network, "n3", new OtsPoint3D(1000, 1000, 0)));
-        nodes.add(new OTSNode(network, endNodeName, new OtsPoint3D(2000, 1000, 0)));
+        nodes.add(new OtsNode(network, "n1", new OtsPoint3D(0, 0, 0)));
+        nodes.add(new OtsNode(network, "n2", new OtsPoint3D(1000, 0, 0)));
+        nodes.add(new OtsNode(network, "n3", new OtsPoint3D(1000, 1000, 0)));
+        nodes.add(new OtsNode(network, endNodeName, new OtsPoint3D(2000, 1000, 0)));
         return new FixedRouteGenerator(new CompleteRoute("fixed route", network.getGtuType(GtuType.DEFAULTS.VEHICLE), nodes));
     }
 }

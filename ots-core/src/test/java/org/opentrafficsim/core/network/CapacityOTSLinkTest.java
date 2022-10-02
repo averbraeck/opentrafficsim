@@ -36,14 +36,14 @@ public class CapacityOTSLinkTest
     {
         OtsPoint3D fromPoint = new OtsPoint3D(100, 200, 300);
         OtsPoint3D toPoint = new OtsPoint3D(1000, 2000, 330);
-        OTSNetwork network = new OTSNetwork("testNetworkForCapacityOTSLink", true, MockSimulator.createMock());
-        Node fromNode = new OTSNode(network, "startNode", fromPoint);
-        Node toNode = new OTSNode(network, "endNode", toPoint);
+        OtsNetwork network = new OtsNetwork("testNetworkForCapacityOTSLink", true, MockSimulator.createMock());
+        Node fromNode = new OtsNode(network, "startNode", fromPoint);
+        Node toNode = new OtsNode(network, "endNode", toPoint);
         LinkType linkType = network.getLinkType(LinkType.DEFAULTS.ROAD);
         OtsLine3D designLine = new OtsLine3D(fromPoint, toPoint);
         Frequency initialCapacity = new Frequency(1234, FrequencyUnit.PER_HOUR);
         Frequency finalCapacity = new Frequency(1234, FrequencyUnit.PER_HOUR);
-        CapacityOTSLink link = new CapacityOTSLink(network, "link", fromNode, toNode, linkType, designLine, initialCapacity);
+        CapacityOtsLink link = new CapacityOtsLink(network, "link", fromNode, toNode, linkType, designLine, initialCapacity);
         assertTrue("from point matches", fromPoint.equals(link.getDesignLine().get(0)));
         assertTrue("to point matches", toPoint.equals(link.getDesignLine().get(1)));
         assertTrue("from node matches", fromNode.equals(link.getStartNode()));

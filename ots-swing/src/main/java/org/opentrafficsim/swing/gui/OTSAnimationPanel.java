@@ -48,7 +48,7 @@ import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Network;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OtsNetwork;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
@@ -157,7 +157,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      * @throws DSOLException when simulator does not implement AnimatorInterface
      */
     public OTSAnimationPanel(final Rectangle2D extent, final Dimension size, final OtsAnimator simulator,
-            final OtsModelInterface otsModel, final GtuColorer gtuColorer, final OTSNetwork network)
+            final OtsModelInterface otsModel, final GtuColorer gtuColorer, final OtsNetwork network)
             throws RemoteException, DSOLException
     {
         super(simulator, otsModel);
@@ -866,7 +866,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         private static final long serialVersionUID = 20180430L;
 
         /** Network. */
-        private final OTSNetwork network;
+        private final OtsNetwork network;
 
         /** Last GTU that was followed. */
         private Gtu lastGtu;
@@ -881,7 +881,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
          * @throws DSOLException when simulator does not implement AnimatorInterface
          */
         AutoAnimationPanel(final Rectangle2D extent, final Dimension size, final OtsSimulatorInterface simulator,
-                final OTSNetwork network) throws RemoteException, DSOLException
+                final OtsNetwork network) throws RemoteException, DSOLException
         {
             super(new Bounds2d(extent.getMinX(), extent.getMaxX(), extent.getMinY(), extent.getMaxY()), simulator);
             this.network = network;

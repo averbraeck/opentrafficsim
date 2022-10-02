@@ -29,7 +29,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
@@ -148,7 +148,7 @@ public class PublisherTest implements OtsModelInterface
     }
 
     @Override
-    public final OTSNetwork getNetwork()
+    public final OtsNetwork getNetwork()
     {
         return null;
     }
@@ -250,7 +250,7 @@ public class PublisherTest implements OtsModelInterface
 
         /** {@inheritDoc} */
         @Override
-        public OTSNetwork getNetwork()
+        public OtsNetwork getNetwork()
         {
             return this.network;
         }

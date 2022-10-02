@@ -27,7 +27,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class OTSNode implements Node, Locatable, Serializable
+public class OtsNode implements Node, Locatable, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150722L;
@@ -65,7 +65,7 @@ public class OTSNode implements Node, Locatable, Serializable
      * @param point OTSPoint3D; the point with usually an x and y setting.
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
-    public OTSNode(final Network network, final String id, final OtsPoint3D point) throws NetworkException
+    public OtsNode(final Network network, final String id, final OtsPoint3D point) throws NetworkException
     {
         this(network, id, point, Double.NaN);
     }
@@ -78,7 +78,7 @@ public class OTSNode implements Node, Locatable, Serializable
      * @param heading double; heading
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
-    public OTSNode(final Network network, final String id, final OtsPoint3D point, final double heading) throws NetworkException
+    public OtsNode(final Network network, final String id, final OtsPoint3D point, final double heading) throws NetworkException
     {
         Throw.whenNull(network, "network cannot be null");
         Throw.whenNull(id, "id cannot be null");
@@ -397,7 +397,7 @@ public class OTSNode implements Node, Locatable, Serializable
             return false;
         if (getClass() != obj.getClass())
             return false;
-        OTSNode other = (OTSNode) obj;
+        OtsNode other = (OtsNode) obj;
         if (this.id == null)
         {
             if (other.id != null)

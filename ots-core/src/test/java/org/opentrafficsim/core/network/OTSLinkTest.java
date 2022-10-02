@@ -54,14 +54,14 @@ public class OTSLinkTest implements EventListenerInterface
     @Test
     public final void testOTSLink() throws NetworkException, OtsGeometryException
     {
-        OTSNetwork network = new OTSNetwork("OTSLinkTestNetwork", true, MockSimulator.createMock());
-        Node startNode = new OTSNode(network, "start", new OtsPoint3D(10, 20, 0));
-        Node endNode = new OTSNode(network, "end", new OtsPoint3D(1000, 2000, 10));
+        OtsNetwork network = new OtsNetwork("OTSLinkTestNetwork", true, MockSimulator.createMock());
+        Node startNode = new OtsNode(network, "start", new OtsPoint3D(10, 20, 0));
+        Node endNode = new OtsNode(network, "end", new OtsPoint3D(1000, 2000, 10));
         GtuCompatibility<LinkType> compatibility = new GtuCompatibility<LinkType>((LinkType) null)
                 .addIncompatibleGtuType(network.getGtuType(GtuType.DEFAULTS.VEHICLE));
         LinkType linkType = new LinkType("myLinkType", network.getLinkType(LinkType.DEFAULTS.ROAD), network);
         OtsLine3D designLine = new OtsLine3D(startNode.getPoint(), endNode.getPoint());
-        OTSLink link = new OTSLink(network, "link1", startNode, endNode, linkType, designLine);
+        OtsLink link = new OtsLink(network, "link1", startNode, endNode, linkType, designLine);
         assertTrue("network contains the newly constructed link", network.containsLink(link));
         // directionalityMap is currently empty
         assertEquals("The link contains no GTUs", 0, link.getGTUCount());
@@ -125,13 +125,13 @@ public class OTSLinkTest implements EventListenerInterface
         assertFalse("link is not equal to null", link.equals(null));
         assertFalse("link is not equal to some other object", link.equals("Hello World!"));
         // Make another link to test the rest of equals
-        OTSLink otherLink = new OTSLink(network, "link5", startNode, endNode, linkType, designLine);
+        OtsLink otherLink = new OtsLink(network, "link5", startNode, endNode, linkType, designLine);
         assertFalse("link is not equal to extremely similar link with different id", link.equals(otherLink));
         // make a link with the same name in another network
-        OTSNetwork otherNetwork = new OTSNetwork("other", true, MockSimulator.createMock());
+        OtsNetwork otherNetwork = new OtsNetwork("other", true, MockSimulator.createMock());
         linkType = new LinkType("myLinkType4", network.getLinkType(LinkType.DEFAULTS.ROAD), network);
-        otherLink = new OTSLink(otherNetwork, "link4", new OTSNode(otherNetwork, "start", new OtsPoint3D(10, 20, 0)),
-                new OTSNode(otherNetwork, "end", new OtsPoint3D(1000, 2000, 10)), linkType, designLine);
+        otherLink = new OtsLink(otherNetwork, "link4", new OtsNode(otherNetwork, "start", new OtsPoint3D(10, 20, 0)),
+                new OtsNode(otherNetwork, "end", new OtsPoint3D(1000, 2000, 10)), linkType, designLine);
         assertTrue("link is equal to extremely similar link with same id but different network", link.equals(otherLink));
     }
 

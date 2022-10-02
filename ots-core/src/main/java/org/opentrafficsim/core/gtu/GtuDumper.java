@@ -8,7 +8,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OtsNetwork;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -53,7 +53,7 @@ public class GtuDumper
     private final Duration interval;
 
     /** The network with the GTUs to dump. */
-    private final OTSNetwork network;
+    private final OtsNetwork network;
 
     /** Directory and first part of the file names. */
     private final String fileNamePrefix;
@@ -70,7 +70,7 @@ public class GtuDumper
      *            appended to the file name. The file type will be .txt
      * @throws SimRuntimeException when scheduling the first dump time fails
      */
-    public GtuDumper(final Time firstDumpTime, final Duration interval, final OTSNetwork network, final String fileNamePrefix)
+    public GtuDumper(final Time firstDumpTime, final Duration interval, final OtsNetwork network, final String fileNamePrefix)
             throws SimRuntimeException
     {
         Throw.whenNull(network, "Network may not be null");

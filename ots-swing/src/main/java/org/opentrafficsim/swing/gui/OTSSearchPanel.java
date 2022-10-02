@@ -19,7 +19,7 @@ import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OtsNetwork;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 
@@ -62,21 +62,21 @@ public class OTSSearchPanel extends JPanel implements ActionListener, FocusListe
         ObjectKind<?>[] objectKinds = new ObjectKind[] {new ObjectKind<Gtu>("GTU")
         {
             @Override
-            Gtu searchNetwork(final OTSNetwork network, final String id)
+            Gtu searchNetwork(final OtsNetwork network, final String id)
             {
                 return network.getGTU(id);
             }
         }, new ObjectKind<Node>("Node")
         {
             @Override
-            Node searchNetwork(final OTSNetwork network, final String id)
+            Node searchNetwork(final OtsNetwork network, final String id)
             {
                 return network.getNode(id);
             }
         }, new ObjectKind<Link>("Link")
         {
             @Override
-            Link searchNetwork(final OTSNetwork network, final String id)
+            Link searchNetwork(final OtsNetwork network, final String id)
             {
                 return network.getLink(id);
             }
@@ -223,7 +223,7 @@ public class OTSSearchPanel extends JPanel implements ActionListener, FocusListe
          * @param id String; id of the object to return
          * @return T; the object in the network of the correct type and matching id, or null if no matching object was found.
          */
-        abstract T searchNetwork(OTSNetwork network, String id);
+        abstract T searchNetwork(OtsNetwork network, String id);
 
         /**
          * Produce the text that will appear in the combo box. This method should be overridden to implement localization.

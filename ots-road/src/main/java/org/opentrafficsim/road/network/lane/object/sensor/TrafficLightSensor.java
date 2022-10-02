@@ -25,7 +25,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.trafficlight.FlankSensor;
@@ -71,7 +71,7 @@ public class TrafficLightSensor extends EventProducer
     private final Set<Lane> lanes = new LinkedHashSet<>();
 
     /** The OTS network. */
-    private final OTSNetwork network;
+    private final OtsNetwork network;
 
     /** Design line of the sensor. */
     private final OtsLine3D path;

@@ -41,7 +41,7 @@ import org.opentrafficsim.core.perception.PerceivableContext;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class OTSNetwork extends EventProducer implements Network, PerceivableContext, Serializable
+public class OtsNetwork extends EventProducer implements Network, PerceivableContext, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150722;
@@ -85,7 +85,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
      * @param addDefaultTypes add the default GtuTypes and LinkTypes, or not
      * @param simulator OTSSimulatorInterface; the DSOL simulator engine
      */
-    public OTSNetwork(final String id, final boolean addDefaultTypes, final OtsSimulatorInterface simulator)
+    public OtsNetwork(final String id, final boolean addDefaultTypes, final OtsSimulatorInterface simulator)
     {
         this.id = id;
         this.simulator = simulator;
@@ -661,7 +661,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         // TODO: take connections into account, and possibly do node expansion to build the graph
         @SuppressWarnings({"unchecked"})
         // TODO: the next line with .class has problems compiling... So used a dirty hack instead for now...
-        Class<LinkEdge<Link>> linkEdgeClass = (Class<LinkEdge<Link>>) new LinkEdge<OTSLink>(null).getClass();
+        Class<LinkEdge<Link>> linkEdgeClass = (Class<LinkEdge<Link>>) new LinkEdge<OtsLink>(null).getClass();
         SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = new SimpleDirectedWeightedGraph<>(linkEdgeClass);
         for (Node node : this.nodeMap.values())
         {

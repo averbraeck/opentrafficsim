@@ -23,7 +23,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.core.network.OtsNode;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -114,7 +114,7 @@ public final class LaneFactory
      * @return OTSLine3D; line
      * @throws OtsGeometryException if no valid line can be created
      */
-    private static OtsLine3D makeLine(final OTSNode from, final OTSNode to) throws OtsGeometryException
+    private static OtsLine3D makeLine(final OtsNode from, final OtsNode to) throws OtsGeometryException
     {
         // Straight or bezier?
         double rotCrow = Math.atan2(to.getLocation().y - from.getLocation().y, to.getLocation().x - from.getLocation().x);
@@ -530,7 +530,7 @@ public final class LaneFactory
      * @return line between n2 and n3 with start-direction n1--&gt;n2 and end-direction n3--&gt;n4
      * @throws OtsGeometryException on failure of Bezier curve creation
      */
-    public static OtsLine3D makeBezier(final OTSNode n1, final OTSNode n2, final OTSNode n3, final OTSNode n4)
+    public static OtsLine3D makeBezier(final OtsNode n1, final OtsNode n2, final OtsNode n3, final OtsNode n4)
             throws OtsGeometryException
     {
         OtsPoint3D p1 = n1.getPoint();

@@ -4,7 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OtsNetwork;
 
 /**
  * Checker that invokes multiple checkers.
@@ -26,7 +26,7 @@ public class MultiLaneBasedMoveChecker extends AbstractLaneBasedMoveChecker
      * Constructor.
      * @param network OTSNetwork; network
      */
-    public MultiLaneBasedMoveChecker(final OTSNetwork network)
+    public MultiLaneBasedMoveChecker(final OtsNetwork network)
     {
         super(network);
     }
@@ -36,7 +36,7 @@ public class MultiLaneBasedMoveChecker extends AbstractLaneBasedMoveChecker
      * @param network OTSNetwork; network
      * @param checkers AbstractLaneBasedMoveChecker...; checkers
      */
-    public MultiLaneBasedMoveChecker(final OTSNetwork network, final AbstractLaneBasedMoveChecker... checkers)
+    public MultiLaneBasedMoveChecker(final OtsNetwork network, final AbstractLaneBasedMoveChecker... checkers)
     {
         super(network);
         for (AbstractLaneBasedMoveChecker checker : checkers)
