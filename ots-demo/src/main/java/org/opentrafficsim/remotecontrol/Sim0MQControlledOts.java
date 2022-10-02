@@ -53,7 +53,7 @@ import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
-import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
@@ -653,10 +653,10 @@ public class Sim0MQControlledOts implements EventListenerInterface
         /**
          * @param model OTSModelInterface; the model
          * @param panel OTSAnimationPanel; the panel of the main screen
-         * @throws OTSDrawingException on animation error
+         * @throws OtsDrawingException on animation error
          */
         Sim0MQRemoteControlSwingApplication(final OtsModelInterface model, final OTSAnimationPanel panel)
-                throws OTSDrawingException
+                throws OtsDrawingException
         {
             super(model, panel);
         }

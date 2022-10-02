@@ -73,7 +73,7 @@ import org.opentrafficsim.core.network.OtsNode;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
-import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.draw.gtu.GtuGeneratorQueueAnimation;
 import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation;
@@ -492,9 +492,9 @@ public class LmrsStrategies implements EventListenerInterface
         /**
          * @param model OTSModelInterface; the model
          * @param panel OTSAnimationPanel; the animation panel
-         * @throws OTSDrawingException on animation error
+         * @throws OtsDrawingException on animation error
          */
-        LmrsStrategiesAnimation(final OtsModelInterface model, final OTSAnimationPanel panel) throws OTSDrawingException
+        LmrsStrategiesAnimation(final OtsModelInterface model, final OTSAnimationPanel panel) throws OtsDrawingException
         {
             super(model, panel);
         }

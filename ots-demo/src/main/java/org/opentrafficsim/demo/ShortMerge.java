@@ -50,7 +50,7 @@ import org.opentrafficsim.core.parameters.ParameterFactory;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.demo.ShortMerge.ShortMergeModel;
-import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.road.gtu.colorer.LmrsSwitchableColorer;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
@@ -146,9 +146,9 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
      * @param title String; the title of the Frame
      * @param panel OTSAnimationPanel; the tabbed panel to display
      * @param model ShortMergeModel; the model
-     * @throws OTSDrawingException on animation error
+     * @throws OtsDrawingException on animation error
      */
-    public ShortMerge(final String title, final OTSAnimationPanel panel, final ShortMergeModel model) throws OTSDrawingException
+    public ShortMerge(final String title, final OTSAnimationPanel panel, final ShortMergeModel model) throws OtsDrawingException
     {
         super(model, panel);
     }
@@ -189,7 +189,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | IndexOutOfBoundsException
+        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | IndexOutOfBoundsException
                 | DSOLException exception)
         {
             exception.printStackTrace();

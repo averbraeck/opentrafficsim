@@ -31,7 +31,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.demo.FundamentalDiagrams.FundamentalDiagramPlotsModel;
-import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.draw.graphs.FundamentalDiagram;
 import org.opentrafficsim.draw.graphs.FundamentalDiagram.Quantity;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
@@ -84,11 +84,11 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
      * @param title String; the title of the Frame
      * @param panel OTSAnimationPanel; the tabbed panel to display
      * @param model FundamentalDiagramPlotsModel; the model
-     * @throws OTSDrawingException on animation error
+     * @throws OtsDrawingException on animation error
      * @throws OtsSimulationException on graph error
      */
     public FundamentalDiagrams(final String title, final OTSAnimationPanel panel, final FundamentalDiagramPlotsModel model)
-            throws OTSDrawingException, OtsSimulationException
+            throws OtsDrawingException, OtsSimulationException
     {
         super(model, panel);
         OTSRoadNetwork network = model.getNetwork();
@@ -139,7 +139,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
                 }
             }
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | OtsSimulationException
+        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | OtsSimulationException
                 | DSOLException exception)
         {
             exception.printStackTrace();

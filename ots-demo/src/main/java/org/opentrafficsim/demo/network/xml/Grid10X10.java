@@ -22,7 +22,7 @@ import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.demo.network.xml.Grid10X10.TestXMLModelGrid;
-import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
@@ -202,9 +202,9 @@ public class Grid10X10 extends OTSSimulationApplication<TestXMLModelGrid>
     /**
      * @param model model
      * @param panel panel
-     * @throws OTSDrawingException on error
+     * @throws OtsDrawingException on error
      */
-    public Grid10X10(final TestXMLModelGrid model, final OTSAnimationPanel panel) throws OTSDrawingException
+    public Grid10X10(final TestXMLModelGrid model, final OTSAnimationPanel panel) throws OtsDrawingException
     {
         super(model, panel);
         // System.out.println("ANIMATEMAP.SIZE = " + this.defaultAnimationFactory.animatedObjects.size());
@@ -215,10 +215,10 @@ public class Grid10X10 extends OTSSimulationApplication<TestXMLModelGrid>
 
     /**
      * Creates the animation objects. This method is overridable. The default uses {@code DefaultAnimationFactory}.
-     * @throws OTSDrawingException on animation error
+     * @throws OtsDrawingException on animation error
      */
     @Override
-    protected void animateNetwork() throws OTSDrawingException
+    protected void animateNetwork() throws OtsDrawingException
     {
         this.defaultAnimationFactory = DefaultAnimationFactory.animateNetwork(getModel().getNetwork(),
                 getModel().getSimulator(), getAnimationPanel().getGtuColorer());
@@ -284,7 +284,7 @@ public class Grid10X10 extends OTSSimulationApplication<TestXMLModelGrid>
                     new Grid10X10(xmlModel, animationPanel);
                     animationPanel.enableSimulationControlButtons();
                 }
-                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
+                catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DSOLException exception)
                 {
                     exception.printStackTrace();
                 }

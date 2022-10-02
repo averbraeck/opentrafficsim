@@ -22,7 +22,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
@@ -52,9 +52,9 @@ public class FourStop extends OTSSimulationApplication<OtsModelInterface>
     /**
      * @param model the model
      * @param animationPanel the animation panel
-     * @throws OTSDrawingException on drawing error
+     * @throws OtsDrawingException on drawing error
      */
-    public FourStop(final OtsModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
+    public FourStop(final OtsModelInterface model, final OTSAnimationPanel animationPanel) throws OtsDrawingException
     {
         super(model, animationPanel);
     }
@@ -81,7 +81,7 @@ public class FourStop extends OTSSimulationApplication<OtsModelInterface>
                     new FourStop(xmlModel, animationPanel);
                     animationPanel.enableSimulationControlButtons();
                 }
-                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
+                catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DSOLException exception)
                 {
                     exception.printStackTrace();
                 }

@@ -54,7 +54,7 @@ import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
-import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiLane;
@@ -454,7 +454,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         {
             DefaultAnimationFactory.animateXmlNetwork(net, getGtuColorer());
         }
-        catch (OTSDrawingException exception)
+        catch (OtsDrawingException exception)
         {
             throw new RuntimeException("Exception while creating network animation.", exception);
         }

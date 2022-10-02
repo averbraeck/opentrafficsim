@@ -24,7 +24,7 @@ import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.OtsNetwork;
-import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.swing.gui.AnimationToggles;
@@ -238,7 +238,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 
                 /** {@inheritDoc} */
                 @Override
-                protected void animateNetwork() throws OTSDrawingException
+                protected void animateNetwork() throws OtsDrawingException
                 {
                     // override with nothing to prevent double toggles
                 }
@@ -307,7 +307,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         {
             DefaultAnimationFactory.animateNetwork(net, net.getSimulator(), getGtuColorer());
         }
-        catch (OTSDrawingException exception)
+        catch (OtsDrawingException exception)
         {
             throw new RuntimeException("Exception while creating network animation.", exception);
         }

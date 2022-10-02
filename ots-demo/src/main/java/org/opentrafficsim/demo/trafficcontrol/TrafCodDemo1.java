@@ -28,7 +28,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.demo.trafficcontrol.TrafCodDemo1.TrafCODModel;
-import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
@@ -60,9 +60,9 @@ public class TrafCodDemo1 extends OTSSimulationApplication<TrafCODModel>
      * @param title String; the title of the Frame
      * @param panel OTSAnimationPanel; the tabbed panel to display
      * @param model TrafCODModel; the model
-     * @throws OTSDrawingException on animation error
+     * @throws OtsDrawingException on animation error
      */
-    public TrafCodDemo1(final String title, final OTSAnimationPanel panel, final TrafCODModel model) throws OTSDrawingException
+    public TrafCodDemo1(final String title, final OTSAnimationPanel panel, final TrafCODModel model) throws OtsDrawingException
     {
         super(model, panel);
     }
@@ -113,7 +113,7 @@ public class TrafCodDemo1 extends OTSSimulationApplication<TrafCODModel>
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DSOLException exception)
         {
             exception.printStackTrace();
         }

@@ -20,7 +20,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.draw.graphs.GraphPath;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
@@ -60,10 +60,10 @@ public class NetworksSwing extends OTSSimulationApplication<NetworksModel> imple
      * @param title String; the title of the Frame
      * @param panel OTSAnimationPanel; the tabbed panel to display
      * @param model NetworksModel; the model
-     * @throws OTSDrawingException on animation error
+     * @throws OtsDrawingException on animation error
      */
     public NetworksSwing(final String title, final OTSAnimationPanel panel, final NetworksModel model)
-            throws OTSDrawingException
+            throws OtsDrawingException
     {
         super(model, panel);
         OTSRoadNetwork network = model.getNetwork();
@@ -113,7 +113,7 @@ public class NetworksSwing extends OTSSimulationApplication<NetworksModel> imple
                 }
             }
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DSOLException exception)
         {
             exception.printStackTrace();
         }

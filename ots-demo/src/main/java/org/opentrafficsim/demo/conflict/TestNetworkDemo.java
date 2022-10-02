@@ -18,7 +18,7 @@ import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.demo.conflict.TestNetworkDemo.TestNetworkModel;
-import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -49,10 +49,10 @@ public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
      * @param title String; the title of the Frame
      * @param panel OTSAnimationPanel; the tabbed panel to display
      * @param model TestNetworkModel; the model
-     * @throws OTSDrawingException on animation error
+     * @throws OtsDrawingException on animation error
      */
     public TestNetworkDemo(final String title, final OTSAnimationPanel panel, final TestNetworkModel model)
-            throws OTSDrawingException
+            throws OtsDrawingException
     {
         super(model, panel);
     }
@@ -84,7 +84,7 @@ public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DSOLException exception)
         {
             exception.printStackTrace();
         }

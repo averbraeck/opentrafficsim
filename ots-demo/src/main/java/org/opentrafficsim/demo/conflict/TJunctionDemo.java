@@ -19,7 +19,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.demo.conflict.TJunctionDemo.TJunctionModel;
-import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
@@ -53,10 +53,10 @@ public class TJunctionDemo extends OTSSimulationApplication<TJunctionModel>
      * @param title String; the title of the Frame
      * @param panel OTSAnimationPanel; the tabbed panel to display
      * @param model TJunctionModel; the model
-     * @throws OTSDrawingException on animation error
+     * @throws OtsDrawingException on animation error
      */
     public TJunctionDemo(final String title, final OTSAnimationPanel panel, final TJunctionModel model)
-            throws OTSDrawingException
+            throws OtsDrawingException
     {
         super(model, panel);
     }
@@ -87,7 +87,7 @@ public class TJunctionDemo extends OTSSimulationApplication<TJunctionModel>
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DSOLException exception)
         {
             exception.printStackTrace();
         }

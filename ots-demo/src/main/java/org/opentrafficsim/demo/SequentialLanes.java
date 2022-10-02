@@ -31,7 +31,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.demo.SequentialLanes.SequentialModel;
-import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.draw.graphs.ContourDataSource;
 import org.opentrafficsim.draw.graphs.ContourPlotAcceleration;
 import org.opentrafficsim.draw.graphs.ContourPlotDensity;
@@ -92,10 +92,10 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
      * @param title String; the title of the Frame
      * @param panel OTSAnimationPanel; the tabbed panel to display
      * @param model SequentialModel; the model
-     * @throws OTSDrawingException on animation error
+     * @throws OtsDrawingException on animation error
      */
     public SequentialLanes(final String title, final OTSAnimationPanel panel, final SequentialModel model)
-            throws OTSDrawingException
+            throws OtsDrawingException
     {
         super(model, panel);
         OTSRoadNetwork network = model.getNetwork();
@@ -145,7 +145,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
                 }
             }
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DSOLException exception)
         {
             exception.printStackTrace();
         }

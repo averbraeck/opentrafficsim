@@ -31,7 +31,7 @@ import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
@@ -67,9 +67,9 @@ public class LoadXml extends OTSSimulationApplication<OtsModelInterface>
     /**
      * @param model OTSModelInterface; the model
      * @param animationPanel OTSAnimationPanel; the animation panel
-     * @throws OTSDrawingException on drawing error
+     * @throws OtsDrawingException on drawing error
      */
-    public LoadXml(final OtsModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
+    public LoadXml(final OtsModelInterface model, final OTSAnimationPanel animationPanel) throws OtsDrawingException
     {
         super(model, animationPanel);
     }
@@ -144,7 +144,7 @@ public class LoadXml extends OTSSimulationApplication<OtsModelInterface>
                     simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
             new LoadXml(xmlModel, animationPanel);
         }
-        catch (SimRuntimeException | OTSDrawingException sre)
+        catch (SimRuntimeException | OtsDrawingException sre)
         {
             JOptionPane.showMessageDialog(null, sre.getMessage(), "Exception occured", JOptionPane.ERROR_MESSAGE);
             System.exit(1);

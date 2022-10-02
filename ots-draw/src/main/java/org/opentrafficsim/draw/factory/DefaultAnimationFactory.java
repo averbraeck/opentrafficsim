@@ -23,7 +23,7 @@ import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.core.object.ObjectInterface;
-import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation;
 import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation;
@@ -81,10 +81,10 @@ public class DefaultAnimationFactory implements EventListenerInterface
      * @param network OTSNetwork; the network
      * @param gtuColorer GtuColorer; GTU colorer
      * @param animateNetwork boolean; whether to animate the current network objects
-     * @throws OTSDrawingException on drawing error
+     * @throws OtsDrawingException on drawing error
      */
     protected DefaultAnimationFactory(final OtsNetwork network, final GtuColorer gtuColorer, final boolean animateNetwork)
-            throws OTSDrawingException
+            throws OtsDrawingException
     {
         this.simulator = network.getSimulator();
         this.gtuColorer = gtuColorer;
@@ -162,7 +162,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
         }
         catch (RemoteException | NamingException | OtsGeometryException exception)
         {
-            throw new OTSDrawingException("Exception while creating network animation.", exception);
+            throw new OtsDrawingException("Exception while creating network animation.", exception);
         }
 
     }
@@ -174,10 +174,10 @@ public class DefaultAnimationFactory implements EventListenerInterface
      * @param simulator OTSSimulatorInterface; the simulator
      * @param gtuColorer GtuColorer; GTU colorer
      * @return the DefaultAnimationFactory
-     * @throws OTSDrawingException on drawing error
+     * @throws OtsDrawingException on drawing error
      */
     public static DefaultAnimationFactory animateNetwork(final OtsNetwork network, final OtsSimulatorInterface simulator,
-            final GtuColorer gtuColorer) throws OTSDrawingException
+            final GtuColorer gtuColorer) throws OtsDrawingException
     {
         return new DefaultAnimationFactory(network, gtuColorer, true);
     }
@@ -188,10 +188,10 @@ public class DefaultAnimationFactory implements EventListenerInterface
      * @param network OTSNetwork; the network
      * @param gtuColorer GtuColorer; GTU colorer
      * @return the DefaultAnimationFactory
-     * @throws OTSDrawingException on drawing error
+     * @throws OtsDrawingException on drawing error
      */
     public static DefaultAnimationFactory animateXmlNetwork(final OtsNetwork network, final GtuColorer gtuColorer)
-            throws OTSDrawingException
+            throws OtsDrawingException
     {
         return new DefaultAnimationFactory(network, gtuColorer, false);
     }

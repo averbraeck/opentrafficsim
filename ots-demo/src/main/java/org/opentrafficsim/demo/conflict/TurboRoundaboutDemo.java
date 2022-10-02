@@ -19,7 +19,7 @@ import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.demo.conflict.TurboRoundaboutDemo.TurboRoundaboutModel;
-import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
@@ -52,10 +52,10 @@ public class TurboRoundaboutDemo extends OTSSimulationApplication<TurboRoundabou
      * @param title String; the title of the Frame
      * @param panel OTSAnimationPanel; the tabbed panel to display
      * @param model TurboRoundaboutModel; the model
-     * @throws OTSDrawingException on animation error
+     * @throws OtsDrawingException on animation error
      */
     public TurboRoundaboutDemo(final String title, final OTSAnimationPanel panel, final TurboRoundaboutModel model)
-            throws OTSDrawingException
+            throws OtsDrawingException
     {
         super(model, panel);
     }
@@ -87,7 +87,7 @@ public class TurboRoundaboutDemo extends OTSSimulationApplication<TurboRoundabou
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DSOLException exception)
         {
             exception.printStackTrace();
         }

@@ -8,13 +8,13 @@ package org.opentrafficsim.draw.core;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class OTSDrawingException extends Exception
+public class OtsDrawingException extends Exception
 {
     /** */
     private static final long serialVersionUID = 1L;
 
     /** */
-    public OTSDrawingException()
+    public OtsDrawingException()
     {
         //
     }
@@ -22,7 +22,7 @@ public class OTSDrawingException extends Exception
     /**
      * @param message String; the error message
      */
-    public OTSDrawingException(final String message)
+    public OtsDrawingException(final String message)
     {
         super(message);
     }
@@ -30,7 +30,7 @@ public class OTSDrawingException extends Exception
     /**
      * @param cause Throwable; the cause of the exception to be included
      */
-    public OTSDrawingException(final Throwable cause)
+    public OtsDrawingException(final Throwable cause)
     {
         super(cause);
     }
@@ -39,7 +39,7 @@ public class OTSDrawingException extends Exception
      * @param message String; the error message
      * @param cause Throwable; the cause of the exception to be included
      */
-    public OTSDrawingException(final String message, final Throwable cause)
+    public OtsDrawingException(final String message, final Throwable cause)
     {
         super(message, cause);
     }

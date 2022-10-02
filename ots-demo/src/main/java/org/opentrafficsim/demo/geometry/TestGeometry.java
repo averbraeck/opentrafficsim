@@ -14,7 +14,7 @@ import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsReplication;
-import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
@@ -54,11 +54,11 @@ public class TestGeometry extends DSOLApplication implements UNITS
      * @throws RemoteException if error
      * @throws SimRuntimeException if error
      * @throws NamingException if error
-     * @throws OTSDrawingException if error
+     * @throws OtsDrawingException if error
      * @throws DSOLException when the simulator does not implement AnimatorInterface
      */
     public static void main(final String[] args)
-            throws SimRuntimeException, NamingException, RemoteException, OTSDrawingException, DSOLException
+            throws SimRuntimeException, NamingException, RemoteException, OtsDrawingException, DSOLException
     {
         OtsAnimator simulator = new OtsAnimator("TestGeometry");
         OtsModelInterface model = new TestModel(simulator);

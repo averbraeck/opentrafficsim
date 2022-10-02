@@ -9,7 +9,7 @@ import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OtsAnimator;
-import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
@@ -36,10 +36,10 @@ public class CrossingTrafficLightsSwing extends OTSSimulationApplication<Crossin
      * @param title String; the title of the Frame
      * @param panel OTSAnimationPanel; the tabbed panel to display
      * @param model CrossingTrafficLightsModel; the model
-     * @throws OTSDrawingException on animation error
+     * @throws OtsDrawingException on animation error
      */
     public CrossingTrafficLightsSwing(final String title, final OTSAnimationPanel panel, final CrossingTrafficLightsModel model)
-            throws OTSDrawingException
+            throws OtsDrawingException
     {
         super(model, panel);
         OTSRoadNetwork network = model.getNetwork();
@@ -83,7 +83,7 @@ public class CrossingTrafficLightsSwing extends OTSSimulationApplication<Crossin
                 }
             }
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DSOLException exception)
         {
             exception.printStackTrace();
         }

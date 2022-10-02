@@ -29,7 +29,7 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.AbstractGtu;
-import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiLane;
 import org.opentrafficsim.kpi.sampling.Sampler;
@@ -79,9 +79,9 @@ public class AhfeAnimation extends OTSSimulationApplication<AHFEModel>
      * @param title String; the title of the Frame
      * @param panel OTSAnimationPanel; the tabbed panel to display
      * @param model AHFEModel; the model
-     * @throws OTSDrawingException on animation error
+     * @throws OtsDrawingException on animation error
      */
-    public AhfeAnimation(final String title, final OTSAnimationPanel panel, final AHFEModel model) throws OTSDrawingException
+    public AhfeAnimation(final String title, final OTSAnimationPanel panel, final AHFEModel model) throws OtsDrawingException
     {
         super(model, panel);
     }
@@ -389,7 +389,7 @@ public class AhfeAnimation extends OTSSimulationApplication<AHFEModel>
 
                     }
                 }
-                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
+                catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DSOLException exception)
                 {
                     exception.printStackTrace();
                 }

@@ -42,7 +42,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactory;
 import org.opentrafficsim.demo.conflict.BusStreetDemo.BusStreetModel;
-import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
@@ -102,10 +102,10 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
      * @param title String; the title of the Frame
      * @param panel OTSAnimationPanel; the tabbed panel to display
      * @param model BusStreetModel; the model
-     * @throws OTSDrawingException on animation error
+     * @throws OtsDrawingException on animation error
      */
     public BusStreetDemo(final String title, final OTSAnimationPanel panel, final BusStreetModel model)
-            throws OTSDrawingException
+            throws OtsDrawingException
     {
         super(model, panel);
         OTSRoadNetwork network = model.getNetwork();
@@ -138,7 +138,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DSOLException exception)
         {
             exception.printStackTrace();
         }

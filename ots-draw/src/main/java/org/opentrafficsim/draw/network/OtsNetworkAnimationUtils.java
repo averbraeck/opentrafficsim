@@ -24,10 +24,10 @@ import nl.tudelft.simulation.naming.context.util.ContextUtil;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public final class OTSNetworkAnimationUtils
+public final class OtsNetworkAnimationUtils
 {
     /** */
-    private OTSNetworkAnimationUtils()
+    private OtsNetworkAnimationUtils()
     {
         // utility class
     }
