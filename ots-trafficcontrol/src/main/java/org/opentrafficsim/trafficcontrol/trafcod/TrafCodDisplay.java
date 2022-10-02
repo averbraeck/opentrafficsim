@@ -38,7 +38,7 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColo
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class TrafCODDisplay extends JPanel implements MouseMotionListener, MouseListener
+public class TrafCodDisplay extends JPanel implements MouseMotionListener, MouseListener
 {
     /** */
     private static final long serialVersionUID = 20161115L;
@@ -58,7 +58,7 @@ public class TrafCODDisplay extends JPanel implements MouseMotionListener, Mouse
      *            Modifications of the image after calling this constructor might have <i>interesting</i> consequences, but
      *            should not result in crashes.
      */
-    public TrafCODDisplay(final BufferedImage image)
+    public TrafCodDisplay(final BufferedImage image)
     {
         this.image = image;
         super.setPreferredSize(new Dimension(this.image.getWidth(), this.image.getHeight()));
@@ -196,7 +196,7 @@ class DetectorImage implements TrafCODObject, EventListenerInterface
     private static final long serialVersionUID = 20200313L;
 
     /** The TrafCOD display. */
-    private final TrafCODDisplay display;
+    private final TrafCodDisplay display;
 
     /** X-coordinate on the TrafCOD display image where this traffic light must be drawn. */
     private final int x;
@@ -229,7 +229,7 @@ class DetectorImage implements TrafCODObject, EventListenerInterface
      * @param id String; id used to match this detector with the TrafCOD detector input
      * @param description String; name of the detector (displayed as tool tip text)
      */
-    DetectorImage(final TrafCODDisplay display, final Point2D center, final String id, final String description)
+    DetectorImage(final TrafCodDisplay display, final Point2D center, final String id, final String description)
     {
         this.display = display;
         this.x = (int) center.getX();
@@ -297,7 +297,7 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
     private static final long serialVersionUID = 20200313L;
 
     /** The TrafCOD display. */
-    private final TrafCODDisplay display;
+    private final TrafCodDisplay display;
 
     /** X-coordinate on the TrafCOD display image where this traffic light must be drawn. */
     private final int x;
@@ -317,7 +317,7 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
      * @param center Point2D; coordinates in the image where this traffic light is centered on
      * @param description String; tool tip text for the new traffic light image
      */
-    TrafficLightImage(final TrafCODDisplay display, final Point2D center, final String description)
+    TrafficLightImage(final TrafCodDisplay display, final Point2D center, final String description)
     {
         this.display = display;
         this.x = (int) center.getX();

@@ -57,7 +57,7 @@ import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 import org.opentrafficsim.swing.gui.OtsSwingApplication;
 import org.opentrafficsim.swing.script.AbstractSimulationScript;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
-import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
+import org.opentrafficsim.trafficcontrol.trafcod.TrafCod;
 import org.sim0mq.Sim0MQException;
 import org.sim0mq.message.Sim0MQMessage;
 import org.xml.sax.SAXException;
@@ -259,9 +259,9 @@ public final class Sim0MQPublisher
             ImmutableMap<String, InvisibleObjectInterface> invisibleObjectMap = this.model.getNetwork().getInvisibleObjectMap();
             for (InvisibleObjectInterface ioi : invisibleObjectMap.values())
             {
-                if (ioi instanceof TrafCOD)
+                if (ioi instanceof TrafCod)
                 {
-                    TrafCOD trafCOD = (TrafCOD) ioi;
+                    TrafCod trafCOD = (TrafCod) ioi;
                     Container controllerDisplayPanel = trafCOD.getDisplayContainer();
                     if (null != controllerDisplayPanel)
                     {

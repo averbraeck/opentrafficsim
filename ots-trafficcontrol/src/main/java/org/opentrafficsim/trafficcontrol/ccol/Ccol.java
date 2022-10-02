@@ -39,7 +39,7 @@ import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class CCOL extends EventProducer implements ActuatedTrafficController
+public class Ccol extends EventProducer implements ActuatedTrafficController
 {
     /** */
     private static final long serialVersionUID = 20170126L;
@@ -83,7 +83,7 @@ public class CCOL extends EventProducer implements ActuatedTrafficController
      * @throws TrafficControlException on failure to initialize the connection to the external CCOL program
      * @throws SimRuntimeException on failure to schedule the first evaluation event
      */
-    public CCOL(final String id, final String controlProgram, final Set<TrafficLight> trafficLights,
+    public Ccol(final String id, final String controlProgram, final Set<TrafficLight> trafficLights,
             final Set<TrafficLightSensor> sensors, final OtsSimulator simulator)
             throws TrafficControlException, SimRuntimeException
     {
@@ -100,7 +100,7 @@ public class CCOL extends EventProducer implements ActuatedTrafficController
                 {
                     try
                     {
-                        setClientSocket(CCOL.this.serverSocket.accept());
+                        setClientSocket(Ccol.this.serverSocket.accept());
                     }
                     catch (IOException exception)
                     {

@@ -43,7 +43,7 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 import org.opentrafficsim.trafficcontrol.TrafficController;
-import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
+import org.opentrafficsim.trafficcontrol.trafcod.TrafCod;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.language.DSOLException;
@@ -133,7 +133,7 @@ public class DemoTrafcodAndTurbo extends OtsSimulationApplication<TrafCODModel>
         private OtsRoadNetwork network;
 
         /** The TrafCOD controller. */
-        private TrafCOD trafCOD;
+        private TrafCod trafCOD;
 
         /** TrafCOD controller display. */
         private JPanel controllerDisplayPanel = new JPanel(new BorderLayout());
@@ -246,7 +246,7 @@ public class DemoTrafcodAndTurbo extends OtsSimulationApplication<TrafCODModel>
                     }
                 }
                 String controllerName = "Not so simple TrafCOD controller";
-                this.trafCOD = new TrafCOD(controllerName,
+                this.trafCOD = new TrafCod(controllerName,
                         URLResource.getResource("/resources/conflictAndControl/Intersection12Dir.tfc"), this.simulator,
                         this.controllerDisplayPanel, null, null);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
@@ -294,7 +294,7 @@ public class DemoTrafcodAndTurbo extends OtsSimulationApplication<TrafCODModel>
         /**
          * @return trafCOD
          */
-        public final TrafCOD getTrafCOD()
+        public final TrafCod getTrafCOD()
         {
             return this.trafCOD;
         }

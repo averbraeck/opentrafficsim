@@ -29,7 +29,7 @@ import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 import org.opentrafficsim.trafficcontrol.TrafficController;
-import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
+import org.opentrafficsim.trafficcontrol.trafcod.TrafCod;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.language.DSOLException;
@@ -143,7 +143,7 @@ public class TrafCodDemo2_Generators extends OtsSimulationApplication<TrafCODMod
         private final String xml;
 
         /** The TrafCOD controller. */
-        private TrafCOD trafCOD;
+        private TrafCod trafCOD;
 
         /** TrafCOD controller display. */
         private JPanel controllerDisplayPanel = new JPanel(new BorderLayout());
@@ -172,7 +172,7 @@ public class TrafCodDemo2_Generators extends OtsSimulationApplication<TrafCODMod
 
                 String controllerName = "TrafCOD_complex";
                 this.trafCOD =
-                        new TrafCOD(controllerName, URLResource.getResource("/resources/TrafCODDemo2/Intersection12Dir.tfc"),
+                        new TrafCod(controllerName, URLResource.getResource("/resources/TrafCODDemo2/Intersection12Dir.tfc"),
                                 getSimulator(), this.controllerDisplayPanel, null, null);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
@@ -210,7 +210,7 @@ public class TrafCodDemo2_Generators extends OtsSimulationApplication<TrafCODMod
         /**
          * @return trafCOD
          */
-        public final TrafCOD getTrafCOD()
+        public final TrafCod getTrafCOD()
         {
             return this.trafCOD;
         }

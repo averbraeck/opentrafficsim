@@ -30,7 +30,7 @@ import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
 import org.opentrafficsim.trafficcontrol.FixedTimeController;
 import org.opentrafficsim.trafficcontrol.FixedTimeController.SignalGroup;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
-import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
+import org.opentrafficsim.trafficcontrol.trafcod.TrafCod;
 import org.opentrafficsim.xml.generated.CONTROL;
 import org.opentrafficsim.xml.generated.CONTROL.FIXEDTIME;
 import org.opentrafficsim.xml.generated.CONTROL.TRAFCOD;
@@ -124,7 +124,7 @@ public final class ControlParser
             {
                 String controllerName = trafCod.getID();
                 String programString = trafCod.getPROGRAM().getValue();
-                List<String> program = null == programString ? TrafCOD.loadTextFromURL(new URL(trafCod.getPROGRAMFILE()))
+                List<String> program = null == programString ? TrafCod.loadTextFromURL(new URL(trafCod.getPROGRAMFILE()))
                         : Arrays.asList(programString.split("\n"));
                 // Obtain the background image for the TrafCOD controller state display
                 TRAFCOD.CONSOLE.MAP mapData = trafCod.getCONSOLE().getMAP();
@@ -158,9 +158,9 @@ public final class ControlParser
                 }
                 String objectLocationsString = trafCODConsole.getCOORDINATES().getValue();
                 List<String> displayObjectLocations = null == objectLocationsString
-                        ? TrafCOD.loadTextFromURL(new URL(trafCod.getCONSOLE().getCOORDINATESFILE()))
+                        ? TrafCod.loadTextFromURL(new URL(trafCod.getCONSOLE().getCOORDINATESFILE()))
                         : Arrays.asList(objectLocationsString.split("\n"));
-                TrafCOD trafCOD = new TrafCOD(controllerName, program, simulator, backgroundImage, displayObjectLocations);
+                TrafCod trafCOD = new TrafCod(controllerName, program, simulator, backgroundImage, displayObjectLocations);
                 otsNetwork.addInvisibleObject(trafCOD);
                 // this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
                 // this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);

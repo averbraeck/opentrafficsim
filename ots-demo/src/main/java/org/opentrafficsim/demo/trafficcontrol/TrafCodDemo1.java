@@ -34,7 +34,7 @@ import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 import org.opentrafficsim.trafficcontrol.TrafficController;
-import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
+import org.opentrafficsim.trafficcontrol.trafcod.TrafCod;
 import org.opentrafficsim.xml.generated.CONTROL;
 import org.opentrafficsim.xml.generated.OTS;
 
@@ -144,7 +144,7 @@ public class TrafCodDemo1 extends OtsSimulationApplication<TrafCODModel>
         private OtsRoadNetwork network;
 
         /** The TrafCOD controller. */
-        private TrafCOD trafCOD;
+        private TrafCod trafCOD;
 
         /** The XML. */
         private final String xml;
@@ -178,13 +178,13 @@ public class TrafCodDemo1 extends OtsSimulationApplication<TrafCODModel>
                         "OTS contains wrong number of traffic controllers (should be 1, got %1)", trafficControllerList.size());
                 for (InvisibleObjectInterface ioi : this.network.getInvisibleObjectMap().values())
                 {
-                    if (ioi instanceof TrafCOD)
+                    if (ioi instanceof TrafCod)
                     {
                         if (null != this.trafCOD)
                         {
                             throw new NetworkException("More than one TrafCOD controller found in network");
                         }
-                        this.trafCOD = (TrafCOD) ioi;
+                        this.trafCOD = (TrafCod) ioi;
                     }
                 }
                 if (null == this.trafCOD)
@@ -227,7 +227,7 @@ public class TrafCodDemo1 extends OtsSimulationApplication<TrafCODModel>
         /**
          * @return trafCOD
          */
-        public final TrafCOD getTrafCOD()
+        public final TrafCod getTrafCOD()
         {
             return this.trafCOD;
         }

@@ -65,7 +65,7 @@ import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 import org.opentrafficsim.swing.gui.OtsSwingApplication;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.opentrafficsim.trafficcontrol.TrafficController;
-import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
+import org.opentrafficsim.trafficcontrol.trafcod.TrafCod;
 import org.pmw.tinylog.Level;
 import org.sim0mq.Sim0MQException;
 import org.sim0mq.message.Sim0MQMessage;
@@ -299,9 +299,9 @@ public class Sim0MQControlledOts implements EventListenerInterface
                 animator.addListener(this, SimulatorInterface.TIME_CHANGED_EVENT);
                 for (InvisibleObjectInterface ioi : invisibleObjectMap.values())
                 {
-                    if (ioi instanceof TrafCOD)
+                    if (ioi instanceof TrafCod)
                     {
-                        TrafCOD trafCOD = (TrafCOD) ioi;
+                        TrafCod trafCOD = (TrafCod) ioi;
                         Container controllerDisplayPanel = trafCOD.getDisplayContainer();
                         if (null != controllerDisplayPanel)
                         {

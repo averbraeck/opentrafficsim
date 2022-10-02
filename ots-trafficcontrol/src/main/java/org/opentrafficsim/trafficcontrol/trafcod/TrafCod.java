@@ -53,7 +53,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * <p>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class TrafCOD extends AbstractTrafficController implements ActuatedTrafficController, EventListenerInterface
+public class TrafCod extends AbstractTrafficController implements ActuatedTrafficController, EventListenerInterface
 {
     /** */
     private static final long serialVersionUID = 20161014L;
@@ -137,7 +137,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
     private final List<String> displayObjectLocations;
 
     /** Animation of the current state of this TrafCOD controller. */
-    private TrafCODDisplay stateDisplay = null;
+    private TrafCodDisplay stateDisplay = null;
 
     /** The simulation engine. */
     private final OtsSimulatorInterface simulator;
@@ -158,7 +158,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
      * @throws SimRuntimeException when scheduling the first evaluation event fails
      * @throws IOException when loading the TrafCOD rules from the URL fails
      */
-    public TrafCOD(final String controllerName, final URL trafCodURL, final OtsSimulatorInterface simulator,
+    public TrafCod(final String controllerName, final URL trafCodURL, final OtsSimulatorInterface simulator,
             final Container display, final BufferedImage displayBackground, final List<String> displayObjectLocations)
             throws TrafficControlException, SimRuntimeException, IOException
     {
@@ -176,7 +176,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
      * @throws TrafficControlException when a rule cannot be parsed
      * @throws SimRuntimeException when scheduling the first evaluation event fails
      */
-    public TrafCOD(final String controllerName, final List<String> trafCODRules, final OtsSimulatorInterface simulator,
+    public TrafCod(final String controllerName, final List<String> trafCODRules, final OtsSimulatorInterface simulator,
             final BufferedImage displayBackground, final List<String> displayObjectLocations)
             throws TrafficControlException, SimRuntimeException
     {
@@ -204,7 +204,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
         }
         if (null != this.displayContainer && null != this.displayBackground && null != this.displayObjectLocations)
         {
-            this.stateDisplay = new TrafCODDisplay(this.displayBackground);
+            this.stateDisplay = new TrafCodDisplay(this.displayBackground);
             this.displayContainer.add(this.stateDisplay);
             try
             {
@@ -2058,7 +2058,7 @@ class Variable implements EventListenerInterface
     private static final long serialVersionUID = 20200313L;
 
     /** The TrafCOD engine. */
-    private final TrafCOD trafCOD;
+    private final TrafCod trafCOD;
 
     /** Flags. */
     private EnumSet<Flags> flags = EnumSet.noneOf(Flags.class);
@@ -2121,7 +2121,7 @@ class Variable implements EventListenerInterface
      * @param stream short; stream number to which the new Variable is associated
      * @param trafCOD TrafCOD; the TrafCOD engine
      */
-    Variable(final String name, final short stream, final TrafCOD trafCOD)
+    Variable(final String name, final short stream, final TrafCod trafCOD)
     {
         this.name = name.toUpperCase(Locale.US);
         this.stream = stream;
@@ -2278,7 +2278,7 @@ class Variable implements EventListenerInterface
      * @return boolean; true if the value of this variable changed
      */
     public boolean setValue(final int newValue, final int timeStamp10, final CausePrinter cause,
-            final TrafCOD trafCODController)
+            final TrafCod trafCODController)
     {
         boolean result = false;
         if (this.value != newValue)
@@ -2713,7 +2713,7 @@ class CausePrinter
         {
             try
             {
-                return TrafCOD.printRule((Object[]) this.cause, true);
+                return TrafCod.printRule((Object[]) this.cause, true);
             }
             catch (TrafficControlException exception)
             {

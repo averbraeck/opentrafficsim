@@ -34,7 +34,7 @@ import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 import org.opentrafficsim.trafficcontrol.TrafficController;
-import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
+import org.opentrafficsim.trafficcontrol.trafcod.TrafCod;
 import org.opentrafficsim.xml.generated.OTS;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -134,9 +134,9 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCODModel>
         ImmutableMap<String, InvisibleObjectInterface> invisibleObjectMap = getModel().getNetwork().getInvisibleObjectMap();
         for (InvisibleObjectInterface ioi : invisibleObjectMap.values())
         {
-            if (ioi instanceof TrafCOD)
+            if (ioi instanceof TrafCod)
             {
-                TrafCOD trafCOD = (TrafCOD) ioi;
+                TrafCod trafCOD = (TrafCod) ioi;
                 Container controllerDisplayPanel = trafCOD.getDisplayContainer();
                 if (null != controllerDisplayPanel)
                 {
