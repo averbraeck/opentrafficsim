@@ -221,7 +221,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
             else
             {
                 // does the directionality of the link forbid us to go in?
-                if (link.getStartNode().equals(node))
+                if (link.getEndNode().equals(node))
                 {
                     linkIterator.remove();
                 }
@@ -236,8 +236,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
                         if (cse instanceof Lane)
                         {
                             Lane lane = (Lane) cse;
-                            if ((link.getStartNode().equals(node) && lane.getLaneType().isCompatible(gtuType))
-                                    || (link.getEndNode().equals(node) && lane.getLaneType().isCompatible(gtuType)))
+                            if ((link.getStartNode().equals(node) && lane.getLaneType().isCompatible(gtuType)))
                             {
                                 out = true;
                             }
@@ -281,7 +280,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
             Link l = null;
             if (link.getStartNode().equals(nextNode) && link.getEndNode().equals(node))
             {
-                l = link;
+                l = link; // FIXME: Probably this test can be removed since we only go "forward"
             }
             if (link.getEndNode().equals(nextNode) && link.getStartNode().equals(node))
             {
