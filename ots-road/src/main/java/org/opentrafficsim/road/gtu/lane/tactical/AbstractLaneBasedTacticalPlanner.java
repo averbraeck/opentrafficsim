@@ -257,9 +257,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         Lane referenceLane = dlp.getLane();
         double refFrac = dlp.getPosition().si / referenceLane.getLength().si;
         Link lastLink = referenceLane.getParentLink();
-        Length lengthForward;
         Length position = dlp.getPosition();
-        lengthForward = referenceLane.getLength().minus(position);
+        Length lengthForward = referenceLane.getLength().minus(position);
         Node lastNode = referenceLane.getParentLink().getEndNode();
 
         // see if we have a split within maxHeadway distance
@@ -271,7 +270,10 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             while (linkIterator.hasNext())
             {
                 Link link = linkIterator.next();
-                linkIterator.remove();
+                if (!link.getLinkType().isCompatible(gtu.getGtuType()) || link.getEndNode().equals(lastNode))
+                {
+                    linkIterator.remove();
+                }
             }
 
             // calculate the number of incoming and outgoing lanes on the link
