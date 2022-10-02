@@ -116,7 +116,7 @@ public class TransceiverTest
         {
             // Ignore expected exception
         }
-        OtsSimulatorInterface simulator = MockDEVSSimulator.createMock();
+        OtsSimulatorInterface simulator = MockDevsSimulator.createMock();
 
         OtsRoadNetwork network = new OtsRoadNetwork("test network for TransceiverTest", true, simulator);
         GtuIdTransceiver gtuIdTransceiver = new GtuIdTransceiver(network);
