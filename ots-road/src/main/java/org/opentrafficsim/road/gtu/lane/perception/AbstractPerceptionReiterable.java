@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -412,8 +413,19 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
         {
             if (this.value == null)
             {
+                /*-
                 this.value = Try.assign(() -> perceive(AbstractPerceptionReiterable.this.getGtu(), this.object, this.distance),
                         "Exception during perception of object.");
+                */
+                try
+                {
+                    this.value = perceive(AbstractPerceptionReiterable.this.getGtu(), this.object, this.distance);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+
             }
             return this.value;
         }
