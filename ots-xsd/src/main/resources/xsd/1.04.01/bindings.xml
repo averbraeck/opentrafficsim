@@ -48,8 +48,6 @@
       adapter="org.opentrafficsim.xml.bindings.StripeTypeAdapter" />
     <xjc:javaType name="java.awt.Color" xmlType="ots:COLORTYPE"
       adapter="org.opentrafficsim.xml.bindings.ColorAdapter" />
-    <xjc:javaType name="org.opentrafficsim.xml.bindings.types.DrivingDirectionType"
-      xmlType="ots:DRIVINGDIRECTIONTYPE" adapter="org.opentrafficsim.xml.bindings.DrivingDirectionAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.LaneKeepingType"
       xmlType="ots:LANEKEEPINGTYPE" adapter="org.opentrafficsim.xml.bindings.LaneKeepingAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.GTUPositionType"
