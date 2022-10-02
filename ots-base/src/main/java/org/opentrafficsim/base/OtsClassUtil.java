@@ -13,13 +13,13 @@ import java.util.List;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public final class OTSClassUtil
+public final class OtsClassUtil
 {
 
     /**
      * Empty private constructor.
      */
-    private OTSClassUtil()
+    private OtsClassUtil()
     {
         //
     }

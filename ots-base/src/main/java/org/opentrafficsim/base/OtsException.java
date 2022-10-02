@@ -8,7 +8,7 @@ package org.opentrafficsim.base;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  */
-public class OTSException extends Exception
+public class OtsException extends Exception
 {
     /** */
     private static final long serialVersionUID = 20220915L;
@@ -16,7 +16,7 @@ public class OTSException extends Exception
     /**
      * Create an exception without a message.
      */
-    public OTSException()
+    public OtsException()
     {
         super();
     }
@@ -25,7 +25,7 @@ public class OTSException extends Exception
      * Create an exception with a message.
      * @param message String; the message to include in the exception
      */
-    public OTSException(final String message)
+    public OtsException(final String message)
     {
         super(message);
     }
@@ -34,7 +34,7 @@ public class OTSException extends Exception
      * Create an exception with an underlying cause.
      * @param cause Throwable; the underlying cause of the exception
      */
-    public OTSException(final Throwable cause)
+    public OtsException(final Throwable cause)
     {
         super(cause);
     }
@@ -44,7 +44,7 @@ public class OTSException extends Exception
      * @param message String; the message to include in the exception
      * @param cause Throwable; the underlying cause of the exception
      */
-    public OTSException(final String message, final Throwable cause)
+    public OtsException(final String message, final Throwable cause)
     {
         super(message, cause);
     }

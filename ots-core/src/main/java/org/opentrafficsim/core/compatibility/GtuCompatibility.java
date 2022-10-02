@@ -6,7 +6,7 @@ import java.util.Objects;
 
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.HierarchicalType;
-import org.opentrafficsim.base.OTSRuntimeException;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.gtu.GtuType;
 
 /**
@@ -113,7 +113,7 @@ public class GtuCompatibility<I extends HierarchicalType<I> & Compatibility<GtuT
      * @param gtuType GtuType; the GtuType to add to the compatible set of this Compatibility
      * @return GTUCompatibility&lt;I&gt;; this GtuCompatibility for method call chaining
      * @throws NullPointerException when <code>gtuType</code> is null
-     * @throws OTSRuntimeException when changes are made to compatibility after results have been cached
+     * @throws OtsRuntimeException when changes are made to compatibility after results have been cached
      */
     public final GtuCompatibility<I> addCompatibleGtuType(final GtuType gtuType) throws NullPointerException
     {
@@ -128,7 +128,7 @@ public class GtuCompatibility<I extends HierarchicalType<I> & Compatibility<GtuT
      * @param gtuType GtuType; the GtuType to add to the incompatible set of this Compatibility
      * @return GTUCompatibility&lt;I&gt;; this GtuCompatibility for method call chaining
      * @throws NullPointerException when <code>gtuType</code> is null
-     * @throws OTSRuntimeException when changes are made to compatibility after results have been cached
+     * @throws OtsRuntimeException when changes are made to compatibility after results have been cached
      */
     public final GtuCompatibility<I> addIncompatibleGtuType(final GtuType gtuType) throws NullPointerException
     {

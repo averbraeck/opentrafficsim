@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.compatibility;
 
 import org.opentrafficsim.base.HierarchicalType;
-import org.opentrafficsim.base.OTSRuntimeException;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.gtu.GtuType;
 
 /**
@@ -50,7 +50,7 @@ public abstract class GtuCompatibleInfraType<I extends GtuCompatibleInfraType<I>
      * @param gtuType GtuType; the GtuType to add to the compatible set of this Compatibility
      * @return GtuCompatibility&lt;I&gt;; this GtuCompatibility for method call chaining
      * @throws NullPointerException when <code>gtuType</code> is null
-     * @throws OTSRuntimeException when changes are made to compatibility after results have been cached
+     * @throws OtsRuntimeException when changes are made to compatibility after results have been cached
      */
     public final GtuCompatibility<I> addCompatibleGtuType(final GtuType gtuType)
     {
@@ -63,7 +63,7 @@ public abstract class GtuCompatibleInfraType<I extends GtuCompatibleInfraType<I>
      * @param gtuType GtuType; the GtuType to add to the incompatible set of this Compatibility
      * @return GtuCompatibility&lt;I&gt;; this GtuCompatibility for method call chaining
      * @throws NullPointerException when <code>gtuType</code> is null
-     * @throws OTSRuntimeException when changes are made to compatibility after results have been cached
+     * @throws OtsRuntimeException when changes are made to compatibility after results have been cached
      */
     public final GtuCompatibility<I> addIncompatibleGtuType(final GtuType gtuType)
     {

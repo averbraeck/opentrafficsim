@@ -9,7 +9,7 @@ package org.opentrafficsim.base;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  */
-public class OTSRuntimeException extends RuntimeException
+public class OtsRuntimeException extends RuntimeException
 {
     /** */
     private static final long serialVersionUID = 20220915L;
@@ -17,7 +17,7 @@ public class OTSRuntimeException extends RuntimeException
     /**
      * Create an exception without a message.
      */
-    public OTSRuntimeException()
+    public OtsRuntimeException()
     {
         super();
     }
@@ -26,7 +26,7 @@ public class OTSRuntimeException extends RuntimeException
      * Create an exception with a message.
      * @param message String; the message to include in the exception
      */
-    public OTSRuntimeException(final String message)
+    public OtsRuntimeException(final String message)
     {
         super(message);
     }
@@ -35,7 +35,7 @@ public class OTSRuntimeException extends RuntimeException
      * Create an exception with an underlying cause.
      * @param cause Throwable; the underlying cause of the exception
      */
-    public OTSRuntimeException(final Throwable cause)
+    public OtsRuntimeException(final Throwable cause)
     {
         super(cause);
     }
@@ -45,7 +45,7 @@ public class OTSRuntimeException extends RuntimeException
      * @param message String; the message to include in the exception
      * @param cause Throwable; the underlying cause of the exception
      */
-    public OTSRuntimeException(final String message, final Throwable cause)
+    public OtsRuntimeException(final String message, final Throwable cause)
     {
         super(message, cause);
     }
