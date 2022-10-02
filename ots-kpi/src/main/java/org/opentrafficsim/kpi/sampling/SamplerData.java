@@ -332,59 +332,6 @@ public class SamplerData<G extends GtuDataInterface> extends AbstractTable
     }
 
     /**
-     * Loads sampler data from a file. There are a few limitations with respect to live sampled data:
-     * <ol>
-     * <li>The number of decimals in numeric data is equal to the stored format.</li>
-     * <li>All extended data types are stored as {@code String}.</li>
-     * <li>Meta data types are not recognized, and hence stored as extended data types. Values are always stored as
-     * {@code String}.</li>
-     * </ol>
-     * @param file String; file
-     * @return Sampler data from file
-     */
-    public static SamplerData<?> loadFromFile(final String file)
-    {
-        return loadFromFile(file, new LinkedHashSet<ExtendedDataType<?, ?, ?, ?>>(), new LinkedHashSet<FilterDataType<?>>());
-    }
-
-    /**
-     * Loads sampler data from a file. There are a few limitations with respect to live sampled data:
-     * <ol>
-     * <li>The number of decimals in numeric data is equal to the stored format.</li>
-     * <li>All extended data types are stored as {@code String}, unless recognized by id as provided.</li>
-     * <li>Meta data types are not recognized, and hence stored as extended data types, unless recognized by id as provided.
-     * Values are always stored as {@code String}.</li>
-     * </ol>
-     * @param file String; file
-     * @param extendedDataTypes Set&lt;ExtendedDataType&lt;?, ?, ?, ?&gt;&gt;; extended data types
-     * @param metaDataTypes Set&lt;MetaDataType&lt;?&gt;&gt;; meta data types
-     * @return Sampler data from file
-     */
-    @SuppressWarnings("unchecked")
-    public static SamplerData<?> loadFromFile(final String file, final Set<ExtendedDataType<?, ?, ?, ?>> extendedDataTypes,
-            final Set<FilterDataType<?>> metaDataTypes)
-    {
-        /*
-         * @SuppressWarnings("rawtypes") SamplerData samplerData = new SamplerData(); // "traj#,linkId,laneId&dir,gtuId,t,x,v,a"
-         * meta data types, extended data types // we can use the default meta data types: cross section, destination, origin,
-         * route and GTU type Getter<NodeData> nodes = new Getter<NodeData>((id) -> new NodeData(id)); Getter<GtuTypeData>
-         * gtuTypes = new Getter<GtuTypeData>((id) -> new GtuTypeData(id)); Getter<RouteData> routes = new
-         * Getter<RouteData>((id) -> new RouteData(id)); Getter<LinkData> links = new Getter<LinkData>((id) -> new
-         * LinkData(id)); BiGetter<LinkData, LaneData> lanes = new BiGetter<LinkData, LaneData>((id, link) -> new LaneData(id,
-         * link)); BiGetter<LaneData, KpiLaneDirection> laneDirections = new BiGetter<LaneData, KpiLaneDirection>((dir, lane) ->
-         * new KpiLaneDirection(lane, dir.equals("+") ? KpiGtuDirectionality.DIR_PLUS : KpiGtuDirectionality.DIR_MINUS));
-         * @SuppressWarnings("rawtypes") Function<KpiLaneDirection, TrajectoryGroup> groupFunction = (laneDir) -> new
-         * TrajectoryGroup(Time.ZERO, laneDir); String id = null; if (!gtus.containsKey(id)) { // NOTE: USE SEPARATE IDS HERE
-         * gtus.put(id, new GtuData(id, nodeSupplier.apply(id), nodeSupplier.apply(id), gtuTypeSupplier.apply(id),
-         * routeSupplier.apply(id))); } GtuData gtuData = gtus.get(id); Trajectory<?> trajectory = new Trajectory(gtuData,
-         * metaData, extendedDataTypes, kpiLaneDirection); // TODO: set data from outside trajectory.add(position, speed,
-         * acceleration, time, gtu); KpiLaneDirection laneDir = null; ((TrajectoryGroup)
-         * samplerData.trajectories.computeIfAbsent(laneDir, groupFunction)).addTrajectory(trajectory); return samplerData;
-         */
-        return null;
-    }
-
-    /**
      * Returns a value from the map. Creates a value if needed.
      * @param id String; id of object (key in map)
      * @param map Map&lt;String, T&gt;; stored values
