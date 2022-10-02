@@ -49,7 +49,7 @@ import nl.tudelft.simulation.dsol.swing.animation.D2.AnimationPanel;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @param <T> model type
  */
-public class OTSSwingApplication<T extends OtsModelInterface> extends JFrame
+public class OtsSwingApplication<T extends OtsModelInterface> extends JFrame
 {
     /** */
     private static final long serialVersionUID = 20141216L;
@@ -75,7 +75,7 @@ public class OTSSwingApplication<T extends OtsModelInterface> extends JFrame
      * @param model T; the model that will be shown in the JFrame
      * @param panel JPanel; this should be the JPanel of the simulation
      */
-    public OTSSwingApplication(final T model, final JPanel panel)
+    public OtsSwingApplication(final T model, final JPanel panel)
     {
         this.model = model;
         setTitle("OTS | The Open Traffic Simulator | " + model.getDescription());
@@ -90,7 +90,7 @@ public class OTSSwingApplication<T extends OtsModelInterface> extends JFrame
             @Override
             public void windowClosing(final WindowEvent windowEvent)
             {
-                OTSSwingApplication.this.closed = true;
+                OtsSwingApplication.this.closed = true;
                 super.windowClosing(windowEvent);
             }
         });
@@ -113,7 +113,7 @@ public class OTSSwingApplication<T extends OtsModelInterface> extends JFrame
                     File f = new File(propertiesFile);
                     f.getParentFile().mkdirs();
                     FileWriter writer = new FileWriter(f);
-                    OTSSwingApplication.this.frameProperties.store(writer, "OTS user settings");
+                    OtsSwingApplication.this.frameProperties.store(writer, "OTS user settings");
                 }
                 catch (IOException exception)
                 {

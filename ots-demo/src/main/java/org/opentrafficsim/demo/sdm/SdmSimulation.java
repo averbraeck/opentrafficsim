@@ -82,7 +82,7 @@ import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.data.TimeToCollision;
 import org.opentrafficsim.swing.graphs.SwingContourPlot;
 import org.opentrafficsim.swing.graphs.SwingPlot;
-import org.opentrafficsim.swing.gui.OTSSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 import org.opentrafficsim.swing.script.AbstractSimulationScript;
 import org.opentrafficsim.swing.script.IdmOptions;
 
@@ -386,7 +386,7 @@ public class SdmSimulation extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected void addTabs(final OtsSimulatorInterface sim, final OTSSimulationApplication<?> animation)
+    protected void addTabs(final OtsSimulatorInterface sim, final OtsSimulationApplication<?> animation)
     {
         if (!this.output || !this.plots)
         {

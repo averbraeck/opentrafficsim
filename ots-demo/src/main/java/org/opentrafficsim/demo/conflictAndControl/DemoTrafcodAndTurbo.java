@@ -40,8 +40,8 @@ import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
-import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
 
@@ -57,7 +57,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
+public class DemoTrafcodAndTurbo extends OtsSimulationApplication<TrafCODModel>
 {
     /** */
     private static final long serialVersionUID = 20161118L;
@@ -69,7 +69,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
      * @param model TrafCODModel; the model
      * @throws OtsDrawingException on animation error
      */
-    public DemoTrafcodAndTurbo(final String title, final OTSAnimationPanel panel, final TrafCODModel model)
+    public DemoTrafcodAndTurbo(final String title, final OtsAnimationPanel panel, final TrafCODModel model)
             throws OtsDrawingException
     {
         super(model, panel);
@@ -95,8 +95,8 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
             OtsAnimator simulator = new OtsAnimator("DemoTrafcodAndTurbo");
             final TrafCODModel junctionModel = new TrafCODModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), junctionModel);
-            OTSAnimationPanel animationPanel =
-                    new OTSAnimationPanel(junctionModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
+            OtsAnimationPanel animationPanel =
+                    new OtsAnimationPanel(junctionModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
                             junctionModel, new DefaultSwitchableGtuColorer(), junctionModel.getNetwork());
             DemoTrafcodAndTurbo app = new DemoTrafcodAndTurbo("TrafCOD Turbo demo", animationPanel, junctionModel);
             app.setExitOnClose(exitOnClose);

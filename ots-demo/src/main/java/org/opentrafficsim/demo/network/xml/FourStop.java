@@ -26,8 +26,8 @@ import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
-import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.xml.sax.SAXException;
 
@@ -44,7 +44,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author Wouter Schakel
  */
-public class FourStop extends OTSSimulationApplication<OtsModelInterface>
+public class FourStop extends OtsSimulationApplication<OtsModelInterface>
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -54,7 +54,7 @@ public class FourStop extends OTSSimulationApplication<OtsModelInterface>
      * @param animationPanel the animation panel
      * @throws OtsDrawingException on drawing error
      */
-    public FourStop(final OtsModelInterface model, final OTSAnimationPanel animationPanel) throws OtsDrawingException
+    public FourStop(final OtsModelInterface model, final OtsAnimationPanel animationPanel) throws OtsDrawingException
     {
         super(model, animationPanel);
     }
@@ -76,7 +76,7 @@ public class FourStop extends OTSSimulationApplication<OtsModelInterface>
                     OtsAnimator simulator = new OtsAnimator("FourStop");
                     TestXMLModel xmlModel = new TestXMLModel(simulator);
                     simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), xmlModel);
-                    OTSAnimationPanel animationPanel = new OTSAnimationPanel(xmlModel.getNetwork().getExtent(),
+                    OtsAnimationPanel animationPanel = new OtsAnimationPanel(xmlModel.getNetwork().getExtent(),
                             new Dimension(800, 600), simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
                     new FourStop(xmlModel, animationPanel);
                     animationPanel.enableSimulationControlButtons();

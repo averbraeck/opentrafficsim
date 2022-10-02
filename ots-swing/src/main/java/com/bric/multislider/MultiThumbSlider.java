@@ -185,11 +185,11 @@ public class MultiThumbSlider<T> extends JComponent
         String name = UIManager.getString("MultiThumbSliderUI");
         if (name == null)
         {
-            if (JVM.isMac)
+            if (Jvm.isMac)
             {
                 name = "com.bric.multislider.AquaMultiThumbSliderUI";
             }
-            else if (JVM.isWindows)
+            else if (Jvm.isWindows)
             {
                 name = "com.bric.multislider.VistaMultiThumbSliderUI";
             }

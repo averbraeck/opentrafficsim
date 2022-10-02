@@ -54,8 +54,8 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLig
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.graphs.SwingFundamentalDiagram;
-import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
@@ -74,7 +74,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * $LastChangedDate$, @version $Revision$, by $Author$, initial version 17 dec. 2014 <br>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDiagramPlotsModel> implements UNITS
+public class FundamentalDiagrams extends OtsSimulationApplication<FundamentalDiagramPlotsModel> implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -87,7 +87,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
      * @throws OtsDrawingException on animation error
      * @throws OtsSimulationException on graph error
      */
-    public FundamentalDiagrams(final String title, final OTSAnimationPanel panel, final FundamentalDiagramPlotsModel model)
+    public FundamentalDiagrams(final String title, final OtsAnimationPanel panel, final FundamentalDiagramPlotsModel model)
             throws OtsDrawingException, OtsSimulationException
     {
         super(model, panel);
@@ -125,7 +125,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel);
-                OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(),
+                OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(),
                         new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 FundamentalDiagrams app = new FundamentalDiagrams("FundamentalDiagrams", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);

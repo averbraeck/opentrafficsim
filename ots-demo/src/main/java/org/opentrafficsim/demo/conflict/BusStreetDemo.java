@@ -75,8 +75,8 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.object.BusStop;
-import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -92,7 +92,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
+public class BusStreetDemo extends OtsSimulationApplication<BusStreetModel>
 {
     /** */
     private static final long serialVersionUID = 20161211L;
@@ -104,7 +104,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
      * @param model BusStreetModel; the model
      * @throws OtsDrawingException on animation error
      */
-    public BusStreetDemo(final String title, final OTSAnimationPanel panel, final BusStreetModel model)
+    public BusStreetDemo(final String title, final OtsAnimationPanel panel, final BusStreetModel model)
             throws OtsDrawingException
     {
         super(model, panel);
@@ -132,7 +132,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
             OtsAnimator simulator = new OtsAnimator("BusStreetDemo");
             BusStreetModel busModel = new BusStreetModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), busModel);
-            OTSAnimationPanel animationPanel = new OTSAnimationPanel(busModel.getNetwork().getExtent(), new Dimension(800, 600),
+            OtsAnimationPanel animationPanel = new OtsAnimationPanel(busModel.getNetwork().getExtent(), new Dimension(800, 600),
                     simulator, busModel, DEFAULT_COLORER, busModel.getNetwork());
             BusStreetDemo app = new BusStreetDemo("Bus street demo", animationPanel, busModel);
             app.setExitOnClose(exitOnClose);

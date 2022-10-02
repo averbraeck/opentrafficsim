@@ -90,8 +90,8 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.swing.gui.AnimationToggles;
-import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
@@ -109,7 +109,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
+public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
 {
     /** */
     private static final long serialVersionUID = 20170407L;
@@ -148,7 +148,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
      * @param model ShortMergeModel; the model
      * @throws OtsDrawingException on animation error
      */
-    public ShortMerge(final String title, final OTSAnimationPanel panel, final ShortMergeModel model) throws OtsDrawingException
+    public ShortMerge(final String title, final OtsAnimationPanel panel, final ShortMergeModel model) throws OtsDrawingException
     {
         super(model, panel);
     }
@@ -183,7 +183,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
             OtsAnimator simulator = new OtsAnimator("ShortMerge");
             final ShortMergeModel otsModel = new ShortMergeModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel);
-            OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(), new Dimension(800, 600),
+            OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(), new Dimension(800, 600),
                     simulator, otsModel, new LmrsSwitchableColorer(), otsModel.getNetwork());
             ShortMerge app = new ShortMerge("ShortMerge", animationPanel, otsModel);
             app.setExitOnClose(exitOnClose);

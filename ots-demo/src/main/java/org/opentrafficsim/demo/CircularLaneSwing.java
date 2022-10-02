@@ -25,8 +25,8 @@ import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.graphs.SwingContourPlot;
 import org.opentrafficsim.swing.graphs.SwingPlot;
 import org.opentrafficsim.swing.graphs.SwingTrajectoryPlot;
-import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
@@ -41,7 +41,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class CircularLaneSwing extends OTSSimulationApplication<CircularLaneModel>
+public class CircularLaneSwing extends OtsSimulationApplication<CircularLaneModel>
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -53,7 +53,7 @@ public class CircularLaneSwing extends OTSSimulationApplication<CircularLaneMode
      * @param model CircularLaneModel; the model
      * @throws OtsDrawingException on animation error
      */
-    public CircularLaneSwing(final String title, final OTSAnimationPanel panel, final CircularLaneModel model)
+    public CircularLaneSwing(final String title, final OtsAnimationPanel panel, final CircularLaneModel model)
             throws OtsDrawingException
     {
         super(model, panel);
@@ -91,7 +91,7 @@ public class CircularLaneSwing extends OTSSimulationApplication<CircularLaneMode
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel);
-                OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(),
+                OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(),
                         new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 CircularLaneSwing app = new CircularLaneSwing("Circular Lane", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);

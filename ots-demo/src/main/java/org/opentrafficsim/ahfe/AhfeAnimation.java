@@ -41,8 +41,8 @@ import org.opentrafficsim.road.network.sampling.GtuData;
 import org.opentrafficsim.road.network.sampling.LinkData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.data.TimeToCollision;
-import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.language.DSOLException;
@@ -57,7 +57,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class AhfeAnimation extends OTSSimulationApplication<AHFEModel>
+public class AhfeAnimation extends OtsSimulationApplication<AHFEModel>
 {
 
     /** Warm-up time. */
@@ -81,7 +81,7 @@ public class AhfeAnimation extends OTSSimulationApplication<AHFEModel>
      * @param model AHFEModel; the model
      * @throws OtsDrawingException on animation error
      */
-    public AhfeAnimation(final String title, final OTSAnimationPanel panel, final AHFEModel model) throws OtsDrawingException
+    public AhfeAnimation(final String title, final OtsAnimationPanel panel, final AHFEModel model) throws OtsDrawingException
     {
         super(model, panel);
     }
@@ -299,7 +299,7 @@ public class AhfeAnimation extends OTSSimulationApplication<AHFEModel>
                     System.out.println("Setting up replication " + finalReplication);
                     simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(SIMEND.si), ahfeModel,
                             finalReplication);
-                    OTSAnimationPanel animationPanel = new OTSAnimationPanel(ahfeModel.getNetwork().getExtent(),
+                    OtsAnimationPanel animationPanel = new OtsAnimationPanel(ahfeModel.getNetwork().getExtent(),
                             new Dimension(800, 600), simulator, ahfeModel, DEFAULT_COLORER, ahfeModel.getNetwork());
                     new AhfeAnimation("AHFE", animationPanel, ahfeModel);
                     if (finalAutoRun)

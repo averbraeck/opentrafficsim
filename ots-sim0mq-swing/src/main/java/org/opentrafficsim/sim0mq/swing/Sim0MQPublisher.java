@@ -52,9 +52,9 @@ import org.opentrafficsim.sim0mq.publisher.Publisher;
 import org.opentrafficsim.sim0mq.publisher.ReturnWrapper;
 import org.opentrafficsim.sim0mq.publisher.ReturnWrapperImpl;
 import org.opentrafficsim.sim0mq.publisher.SubscriptionHandler;
-import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSimulationApplication;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsSwingApplication;
 import org.opentrafficsim.swing.script.AbstractSimulationScript;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
@@ -95,7 +95,7 @@ public final class Sim0MQPublisher
     private OtsRoadNetwork network = null;
 
     /** The OTS animation panel. */
-    private OTSAnimationPanel animationPanel = null;
+    private OtsAnimationPanel animationPanel = null;
 
     /**
      * Create a new Sim0MQPublisher that is operated through //inproc sockets.
@@ -245,9 +245,9 @@ public final class Sim0MQPublisher
             map.put("generation", new MersenneTwister(seed));
             animator.initialize(Time.ZERO, warmupTime, simulationDuration, this.model, map);
             this.publisher = new Publisher(this.network);
-            this.animationPanel = new OTSAnimationPanel(this.model.getNetwork().getExtent(), new Dimension(1100, 1000),
-                    animator, this.model, OTSSwingApplication.DEFAULT_COLORER, this.model.getNetwork());
-            new OTSSimulationApplication<Sim0MQOTSModel>(this.model, this.animationPanel);
+            this.animationPanel = new OtsAnimationPanel(this.model.getNetwork().getExtent(), new Dimension(1100, 1000),
+                    animator, this.model, OtsSwingApplication.DEFAULT_COLORER, this.model.getNetwork());
+            new OtsSimulationApplication<Sim0MQOTSModel>(this.model, this.animationPanel);
             DefaultAnimationFactory.animateXmlNetwork(this.model.getNetwork(), new DefaultSwitchableGtuColorer());
             JFrame frame = (JFrame) this.animationPanel.getParent().getParent().getParent();
             frame.setExtendedState(Frame.NORMAL);

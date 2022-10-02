@@ -27,7 +27,7 @@ import java.security.AccessControlException;
  * Instead of burying a constant like "isQuartz" in its most relevant class (such as OptimizedGraphics2D), it should be stored
  * here so if other classes need to access it they don't necessary have to
  */
-public class JVM
+public class Jvm
 {
 
     /**
@@ -56,7 +56,7 @@ public class JVM
     /**
      * The major Java version being used (1.4, 1.5, 1.6, etc.), or -1 if this value couldn't be correctly determined.
      */
-    public static final float javaVersion = JVM.getMajorJavaVersion(true);
+    public static final float javaVersion = Jvm.getMajorJavaVersion(true);
 
     private static final String osName = getOSName();
 

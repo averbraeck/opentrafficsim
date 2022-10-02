@@ -60,8 +60,8 @@ import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.graphs.SwingContourPlot;
 import org.opentrafficsim.swing.graphs.SwingPlot;
 import org.opentrafficsim.swing.graphs.SwingTrajectoryPlot;
-import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
@@ -82,7 +82,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class SequentialLanes extends OTSSimulationApplication<SequentialModel> implements UNITS
+public class SequentialLanes extends OtsSimulationApplication<SequentialModel> implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -94,7 +94,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
      * @param model SequentialModel; the model
      * @throws OtsDrawingException on animation error
      */
-    public SequentialLanes(final String title, final OTSAnimationPanel panel, final SequentialModel model)
+    public SequentialLanes(final String title, final OtsAnimationPanel panel, final SequentialModel model)
             throws OtsDrawingException
     {
         super(model, panel);
@@ -131,7 +131,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel);
-                OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(),
+                OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(),
                         new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 SequentialLanes app = new SequentialLanes("SequentialLanes", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);

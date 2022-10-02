@@ -25,8 +25,8 @@ import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.graphs.SwingContourPlot;
 import org.opentrafficsim.swing.graphs.SwingPlot;
 import org.opentrafficsim.swing.graphs.SwingTrajectoryPlot;
-import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
@@ -41,7 +41,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class StraightSwing extends OTSSimulationApplication<StraightModel> implements UNITS
+public class StraightSwing extends OtsSimulationApplication<StraightModel> implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -53,7 +53,7 @@ public class StraightSwing extends OTSSimulationApplication<StraightModel> imple
      * @param model StraightModel; the model
      * @throws OtsDrawingException on animation error
      */
-    public StraightSwing(final String title, final OTSAnimationPanel panel, final StraightModel model)
+    public StraightSwing(final String title, final OtsAnimationPanel panel, final StraightModel model)
             throws OtsDrawingException
     {
         super(model, panel);
@@ -88,7 +88,7 @@ public class StraightSwing extends OTSSimulationApplication<StraightModel> imple
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(1500.0), otsModel);
-                OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(),
+                OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(),
                         new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 StraightSwing app = new StraightSwing("Straight", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);

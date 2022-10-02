@@ -28,9 +28,9 @@ import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.swing.gui.AnimationToggles;
-import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSimulationApplication;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsSwingApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
@@ -71,7 +71,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     private OtsRoadNetwork network;
 
     /** GTU colorer. */
-    private GtuColorer gtuColorer = OTSSwingApplication.DEFAULT_COLORER;
+    private GtuColorer gtuColorer = OtsSwingApplication.DEFAULT_COLORER;
 
     /** Seed. */
     @Option(names = "--seed", description = "Seed", defaultValue = "1")
@@ -225,13 +225,13 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
             this.simulator = new OtsAnimator(this.name);
             final ScriptModel scriptModel = new ScriptModel(this.simulator);
             this.simulator.initialize(this.startTime, this.warmupTime, this.simulationTime, scriptModel);
-            OTSAnimationPanel animationPanel =
-                    new OTSAnimationPanel(scriptModel.getNetwork().getExtent(), new Dimension(800, 600),
+            OtsAnimationPanel animationPanel =
+                    new OtsAnimationPanel(scriptModel.getNetwork().getExtent(), new Dimension(800, 600),
                             (OtsAnimator) this.simulator, scriptModel, getGtuColorer(), scriptModel.getNetwork());
             setAnimationToggles(animationPanel);
             animateNetwork(scriptModel.getNetwork());
             setupDemo(animationPanel, scriptModel.getNetwork());
-            OTSSimulationApplication<ScriptModel> app = new OTSSimulationApplication<ScriptModel>(scriptModel, animationPanel)
+            OtsSimulationApplication<ScriptModel> app = new OtsSimulationApplication<ScriptModel>(scriptModel, animationPanel)
             {
                 /** */
                 private static final long serialVersionUID = 20190130L;
@@ -318,7 +318,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
      * @param sim OTSSimulatorInterface; simulator
      * @param animation OTSSimulationApplication&lt;?&gt;; animation to add tabs to
      */
-    protected void addTabs(final OtsSimulatorInterface sim, final OTSSimulationApplication<?> animation)
+    protected void addTabs(final OtsSimulatorInterface sim, final OtsSimulationApplication<?> animation)
     {
         //
     }
@@ -336,7 +336,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
      * @param animationPanel OTSAnimationPanel; animation panel
      * @param net OTSNetwork; network
      */
-    protected void setupDemo(final OTSAnimationPanel animationPanel, final OtsRoadNetwork net)
+    protected void setupDemo(final OtsAnimationPanel animationPanel, final OtsRoadNetwork net)
     {
         //
     }
@@ -345,7 +345,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
      * Sets the animation toggles. May be overridden.
      * @param animation OTSAnimationPanel; animation to set the toggle on
      */
-    protected void setAnimationToggles(final OTSAnimationPanel animation)
+    protected void setAnimationToggles(final OtsAnimationPanel animation)
     {
         AnimationToggles.setIconAnimationTogglesStandard(animation);
     }

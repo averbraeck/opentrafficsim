@@ -28,8 +28,8 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
-import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.language.DSOLException;
@@ -43,7 +43,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class TJunctionDemo extends OTSSimulationApplication<TJunctionModel>
+public class TJunctionDemo extends OtsSimulationApplication<TJunctionModel>
 {
     /** */
     private static final long serialVersionUID = 20161211L;
@@ -55,7 +55,7 @@ public class TJunctionDemo extends OTSSimulationApplication<TJunctionModel>
      * @param model TJunctionModel; the model
      * @throws OtsDrawingException on animation error
      */
-    public TJunctionDemo(final String title, final OTSAnimationPanel panel, final TJunctionModel model)
+    public TJunctionDemo(final String title, final OtsAnimationPanel panel, final TJunctionModel model)
             throws OtsDrawingException
     {
         super(model, panel);
@@ -81,7 +81,7 @@ public class TJunctionDemo extends OTSSimulationApplication<TJunctionModel>
             OtsAnimator simulator = new OtsAnimator("TJunctionDemo");
             final TJunctionModel junctionModel = new TJunctionModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), junctionModel);
-            OTSAnimationPanel animationPanel = new OTSAnimationPanel(junctionModel.getNetwork().getExtent(),
+            OtsAnimationPanel animationPanel = new OtsAnimationPanel(junctionModel.getNetwork().getExtent(),
                     new Dimension(800, 600), simulator, junctionModel, DEFAULT_COLORER, junctionModel.getNetwork());
             TJunctionDemo app = new TJunctionDemo("T-Junction demo", animationPanel, junctionModel);
             app.setExitOnClose(exitOnClose);

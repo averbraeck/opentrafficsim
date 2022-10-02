@@ -17,8 +17,8 @@ import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.swing.gui.AnimationToggles;
-import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel;
+import org.opentrafficsim.swing.gui.OtsSwingApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
@@ -68,11 +68,11 @@ public class TestGeometry extends DSOLApplication implements UNITS
 
         Rectangle2D extent = new Rectangle2D.Double(-50, -50, 200, 50);
         Dimension size = new Dimension(1024, 768);
-        OTSAnimationPanel animationPanel =
-                new OTSAnimationPanel(extent, size, simulator, model, new DefaultSwitchableGtuColorer(), model.getNetwork());
+        OtsAnimationPanel animationPanel =
+                new OtsAnimationPanel(extent, size, simulator, model, new DefaultSwitchableGtuColorer(), model.getNetwork());
         panel.getTabbedPane().addTab(0, "animation", animationPanel);
 
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), OTSSwingApplication.DEFAULT_COLORER);
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), OtsSwingApplication.DEFAULT_COLORER);
         AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
 
         // tell the animation panel to update its statistics

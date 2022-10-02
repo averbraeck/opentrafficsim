@@ -69,7 +69,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class OTSControlPanel extends JPanel
+public class OtsControlPanel extends JPanel
         implements ActionListener, PropertyChangeListener, WindowListener, EventListenerInterface
 {
     /** */
@@ -97,7 +97,7 @@ public class OTSControlPanel extends JPanel
     private final TimeEdit timeEdit;
 
     /** The OTS search panel. */
-    private final OTSSearchPanel otsSearchPanel;
+    private final OtsSearchPanel otsSearchPanel;
 
     /** The currently registered stop at event. */
     private SimEvent<Duration> stopAtEvent = null;
@@ -119,8 +119,8 @@ public class OTSControlPanel extends JPanel
      * @param otsAnimationPanel OTSAnimationPanel; the OTS animation panel
      * @throws RemoteException when simulator cannot be accessed for listener attachment
      */
-    public OTSControlPanel(final OtsSimulatorInterface simulator, final OtsModelInterface model,
-            final OTSAnimationPanel otsAnimationPanel) throws RemoteException
+    public OtsControlPanel(final OtsSimulatorInterface simulator, final OtsModelInterface model,
+            final OtsAnimationPanel otsAnimationPanel) throws RemoteException
     {
         this.simulator = simulator;
         this.model = model;
@@ -173,7 +173,7 @@ public class OTSControlPanel extends JPanel
         this.timeEdit.addPropertyChangeListener("value", this);
         buttonPanel.add(this.timeEdit);
         this.add(buttonPanel);
-        this.otsSearchPanel = new OTSSearchPanel(otsAnimationPanel);
+        this.otsSearchPanel = new OtsSearchPanel(otsAnimationPanel);
         this.add(this.otsSearchPanel, BorderLayout.SOUTH);
         fixButtons();
         installWindowCloseHandler();
@@ -197,7 +197,7 @@ public class OTSControlPanel extends JPanel
      * Provide access to the search panel.
      * @return OTSSearchPanel; the OTS search panel
      */
-    public OTSSearchPanel getOtsSearchPanel()
+    public OtsSearchPanel getOtsSearchPanel()
     {
         return this.otsSearchPanel;
     }
@@ -329,12 +329,12 @@ public class OTSControlPanel extends JPanel
     protected class DisposeOnCloseThread extends Thread
     {
         /** The current container. */
-        private OTSControlPanel panel;
+        private OtsControlPanel panel;
 
         /**
          * @param panel OTSControlPanel; the OTSControlpanel container.
          */
-        public DisposeOnCloseThread(final OTSControlPanel panel)
+        public DisposeOnCloseThread(final OtsControlPanel panel)
         {
             this.panel = panel;
         }
@@ -435,13 +435,13 @@ public class OTSControlPanel extends JPanel
                     getSimulator().stop();
                 }
 
-                if (null == OTSControlPanel.this.model)
+                if (null == OtsControlPanel.this.model)
                 {
                     throw new RuntimeException("Do not know how to restart this simulation");
                 }
 
                 // find the JFrame position and dimensions
-                Container root = OTSControlPanel.this;
+                Container root = OtsControlPanel.this;
                 while (!(root instanceof JFrame))
                 {
                     root = root.getParent();
@@ -449,7 +449,7 @@ public class OTSControlPanel extends JPanel
                 JFrame frame = (JFrame) root;
                 frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
                 frame.dispose();
-                OTSControlPanel.this.cleanup();
+                OtsControlPanel.this.cleanup();
                 // TODO: maybe rebuild model...
             }
             fixButtons();
@@ -529,7 +529,7 @@ public class OTSControlPanel extends JPanel
                 if (this.simulator.isStartingOrRunning())
                 {
                     button.setToolTipText("Pause the simulation");
-                    button.setIcon(OTSControlPanel.loadIcon("/Pause.png"));
+                    button.setIcon(OtsControlPanel.loadIcon("/Pause.png"));
                 }
                 else
                 {

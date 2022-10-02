@@ -15,21 +15,21 @@ import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <T> model type
  */
-public class OTSSimulationApplication<T extends OtsModelInterface> extends OTSSwingApplication<T>
+public class OtsSimulationApplication<T extends OtsModelInterface> extends OtsSwingApplication<T>
 {
 
     /** */
     private static final long serialVersionUID = 20190118L;
 
     /** Animation panel. */
-    private final OTSAnimationPanel animationPanel;
+    private final OtsAnimationPanel animationPanel;
 
     /**
      * @param model T; model
      * @param panel OTSAnimationPanel; animation panel
      * @throws OtsDrawingException on animation error
      */
-    public OTSSimulationApplication(final T model, final OTSAnimationPanel panel) throws OtsDrawingException
+    public OtsSimulationApplication(final T model, final OtsAnimationPanel panel) throws OtsDrawingException
     {
         super(model, panel);
         this.animationPanel = panel;
@@ -69,7 +69,7 @@ public class OTSSimulationApplication<T extends OtsModelInterface> extends OTSSw
      * Returns the animation panel.
      * @return OTSAnimationPanel; animation panel
      */
-    public OTSAnimationPanel getAnimationPanel()
+    public OtsAnimationPanel getAnimationPanel()
     {
         return this.animationPanel;
     }

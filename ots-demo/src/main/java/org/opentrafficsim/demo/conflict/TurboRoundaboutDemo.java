@@ -27,8 +27,8 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
-import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.language.DSOLException;
@@ -42,7 +42,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class TurboRoundaboutDemo extends OTSSimulationApplication<TurboRoundaboutModel>
+public class TurboRoundaboutDemo extends OtsSimulationApplication<TurboRoundaboutModel>
 {
     /** */
     private static final long serialVersionUID = 20161211L;
@@ -54,7 +54,7 @@ public class TurboRoundaboutDemo extends OTSSimulationApplication<TurboRoundabou
      * @param model TurboRoundaboutModel; the model
      * @throws OtsDrawingException on animation error
      */
-    public TurboRoundaboutDemo(final String title, final OTSAnimationPanel panel, final TurboRoundaboutModel model)
+    public TurboRoundaboutDemo(final String title, final OtsAnimationPanel panel, final TurboRoundaboutModel model)
             throws OtsDrawingException
     {
         super(model, panel);
@@ -80,8 +80,8 @@ public class TurboRoundaboutDemo extends OTSSimulationApplication<TurboRoundabou
             OtsAnimator simulator = new OtsAnimator("TurboRoundaboutDemo");
             final TurboRoundaboutModel junctionModel = new TurboRoundaboutModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), junctionModel);
-            OTSAnimationPanel animationPanel =
-                    new OTSAnimationPanel(junctionModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
+            OtsAnimationPanel animationPanel =
+                    new OtsAnimationPanel(junctionModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
                             junctionModel, new DefaultSwitchableGtuColorer(), junctionModel.getNetwork());
             TurboRoundaboutDemo app = new TurboRoundaboutDemo("Turbo-Roundabout demo", animationPanel, junctionModel);
             app.setExitOnClose(exitOnClose);

@@ -60,9 +60,9 @@ import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
-import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSimulationApplication;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsSwingApplication;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
@@ -281,9 +281,9 @@ public class Sim0MQControlledOts implements EventListenerInterface
                 animator.initialize(Time.ZERO, simulationDuration, warmupTime, this.model, map);
                 this.model.getNetwork().addListener(this, Network.GTU_ADD_EVENT);
                 this.model.getNetwork().addListener(this, Network.GTU_REMOVE_EVENT);
-                OTSAnimationPanel animationPanel =
-                        new OTSAnimationPanel(this.model.getNetwork().getExtent(), new Dimension(1100, 1000), animator,
-                                this.model, OTSSwingApplication.DEFAULT_COLORER, this.model.getNetwork());
+                OtsAnimationPanel animationPanel =
+                        new OtsAnimationPanel(this.model.getNetwork().getExtent(), new Dimension(1100, 1000), animator,
+                                this.model, OtsSwingApplication.DEFAULT_COLORER, this.model.getNetwork());
                 DefaultAnimationFactory.animateXmlNetwork(this.model.getNetwork(), new DefaultSwitchableGtuColorer());
                 new Sim0MQRemoteControlSwingApplication(this.model, animationPanel);
                 JFrame frame = (JFrame) animationPanel.getParent().getParent().getParent();
@@ -645,7 +645,7 @@ public class Sim0MQControlledOts implements EventListenerInterface
     /**
      * The application.
      */
-    class Sim0MQRemoteControlSwingApplication extends OTSSimulationApplication<OtsModelInterface>
+    class Sim0MQRemoteControlSwingApplication extends OtsSimulationApplication<OtsModelInterface>
     {
         /** */
         private static final long serialVersionUID = 1L;
@@ -655,7 +655,7 @@ public class Sim0MQControlledOts implements EventListenerInterface
          * @param panel OTSAnimationPanel; the panel of the main screen
          * @throws OtsDrawingException on animation error
          */
-        Sim0MQRemoteControlSwingApplication(final OtsModelInterface model, final OTSAnimationPanel panel)
+        Sim0MQRemoteControlSwingApplication(final OtsModelInterface model, final OtsAnimationPanel panel)
                 throws OtsDrawingException
         {
             super(model, panel);

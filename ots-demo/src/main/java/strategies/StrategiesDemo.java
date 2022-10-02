@@ -99,8 +99,8 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
-import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSAnimationPanel.DemoPanelPosition;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel.DemoPanelPosition;
 import org.opentrafficsim.swing.script.AbstractSimulationScript;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -198,7 +198,7 @@ public class StrategiesDemo extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected void setupDemo(final OTSAnimationPanel animation, final OtsRoadNetwork network)
+    protected void setupDemo(final OtsAnimationPanel animation, final OtsRoadNetwork network)
     {
         // demo panel
         animation.createDemoPanel(DemoPanelPosition.RIGHT);

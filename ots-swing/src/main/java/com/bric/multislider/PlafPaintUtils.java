@@ -103,7 +103,7 @@ public class PlafPaintUtils
                             80 * focusColor.getAlpha() / 255)};
             if (changeRenderingHints)
             {
-                if (JVM.usingQuartz)
+                if (Jvm.usingQuartz)
                 {
                     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                     g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);

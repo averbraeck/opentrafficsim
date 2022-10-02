@@ -32,13 +32,13 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class OTSSearchPanel extends JPanel implements ActionListener, FocusListener, DocumentListener
+public class OtsSearchPanel extends JPanel implements ActionListener, FocusListener, DocumentListener
 {
     /** ... */
     private static final long serialVersionUID = 20200127L;
 
     /** The animation panel. */
-    private final OTSAnimationPanel otsAnimationPanel;
+    private final OtsAnimationPanel otsAnimationPanel;
 
     /** The type-of-object-to-search-for selector. */
     private final JComboBox<ObjectKind<?>> typeToSearch;
@@ -53,12 +53,12 @@ public class OTSSearchPanel extends JPanel implements ActionListener, FocusListe
      * Construct a new OTSSearchPanel.
      * @param otsAnimationPanel OTSAnimationPanel; the animation panel
      */
-    public OTSSearchPanel(final OTSAnimationPanel otsAnimationPanel)
+    public OtsSearchPanel(final OtsAnimationPanel otsAnimationPanel)
     {
         this.otsAnimationPanel = otsAnimationPanel;
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         this.add(new JLabel("    ")); // insert some white space in the GUI
-        this.add(new JLabel(OTSControlPanel.loadIcon("/View.png")));
+        this.add(new JLabel(OtsControlPanel.loadIcon("/View.png")));
         ObjectKind<?>[] objectKinds = new ObjectKind[] {new ObjectKind<Gtu>("GTU")
         {
             @Override

@@ -69,7 +69,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListener, WindowListener, EventListenerInterface
+public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListener, WindowListener, EventListenerInterface
 {
     /** */
     private static final long serialVersionUID = 20150617L;
@@ -131,7 +131,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     private String autoPanId = null;
 
     /** Type of object to auto pan to. */
-    private OTSSearchPanel.ObjectKind<?> autoPanKind = null;
+    private OtsSearchPanel.ObjectKind<?> autoPanKind = null;
 
     /** Track auto pan object continuously? */
     private boolean autoPanTrack = false;
@@ -156,7 +156,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      * @throws RemoteException when notification of the animation panel fails
      * @throws DSOLException when simulator does not implement AnimatorInterface
      */
-    public OTSAnimationPanel(final Rectangle2D extent, final Dimension size, final OtsAnimator simulator,
+    public OtsAnimationPanel(final Rectangle2D extent, final Dimension size, final OtsAnimator simulator,
             final OtsModelInterface otsModel, final GtuColorer gtuColorer, final OtsNetwork network)
             throws RemoteException, DSOLException
     {
@@ -240,7 +240,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      * @param newAutoPanKind String; kind of object to track
      * @param newAutoPanTrack boolean; if true; tracking is continuously; if false; tracking is once
      */
-    public void setAutoPan(final String newAutoPanId, final OTSSearchPanel.ObjectKind<?> newAutoPanKind,
+    public void setAutoPan(final String newAutoPanId, final OtsSearchPanel.ObjectKind<?> newAutoPanKind,
             final boolean newAutoPanTrack)
     {
         this.autoPanId = newAutoPanId;
@@ -250,7 +250,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         // System.out.println("AutoPan id=" + newAutoPanId + ", kind=" + newAutoPanKind + ", track=" + newAutoPanTrack);
         if (null != this.autoPanId && this.autoPanId.length() > 0 && null != this.autoPanKind)
         {
-            OTSAnimationPanel.this.animationPanel.repaint();
+            OtsAnimationPanel.this.animationPanel.repaint();
         }
     }
 
@@ -267,7 +267,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
             final boolean enabled)
     {
         // JButton result = new JButton(new ImageIcon(this.getClass().getResource(iconPath)));
-        JButton result = new JButton(OTSControlPanel.loadIcon(iconPath));
+        JButton result = new JButton(OtsControlPanel.loadIcon(iconPath));
         result.setPreferredSize(new Dimension(34, 32));
         result.setName(name);
         result.setEnabled(enabled);
@@ -293,8 +293,8 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
             final String iconPath, final String toolTipText, final boolean initiallyVisible, final boolean idButton)
     {
         JToggleButton button;
-        Icon icon = OTSControlPanel.loadIcon(iconPath);
-        Icon unIcon = OTSControlPanel.loadGrayscaleIcon(iconPath);
+        Icon icon = OtsControlPanel.loadIcon(iconPath);
+        Icon unIcon = OtsControlPanel.loadGrayscaleIcon(iconPath);
         button = new JCheckBox();
         button.setSelectedIcon(icon);
         button.setIcon(unIcon);
@@ -694,12 +694,12 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     protected class DisposeOnCloseThread extends Thread
     {
         /** The current container. */
-        private OTSAnimationPanel panel;
+        private OtsAnimationPanel panel;
 
         /**
          * @param panel OTSAnimationPanel; the OTSControlpanel container.
          */
-        public DisposeOnCloseThread(final OTSAnimationPanel panel)
+        public DisposeOnCloseThread(final OtsAnimationPanel panel)
         {
             this.panel = panel;
         }
@@ -822,11 +822,11 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         @Override
         public final void run()
         {
-            while (!OTSAnimationPanel.this.windowExited)
+            while (!OtsAnimationPanel.this.windowExited)
             {
-                if (OTSAnimationPanel.this.isShowing())
+                if (OtsAnimationPanel.this.isShowing())
                 {
-                    OTSAnimationPanel.this.updateWorldCoordinate();
+                    OtsAnimationPanel.this.updateWorldCoordinate();
                 }
                 try
                 {
@@ -1030,10 +1030,10 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         @Override
         public void paintComponent(final Graphics g)
         {
-            final OTSSearchPanel.ObjectKind<?> panKind = OTSAnimationPanel.this.autoPanKind;
-            final String panId = OTSAnimationPanel.this.autoPanId;
-            final boolean doPan = OTSAnimationPanel.this.autoPanOnNextPaintComponent;
-            OTSAnimationPanel.this.autoPanOnNextPaintComponent = OTSAnimationPanel.this.autoPanTrack;
+            final OtsSearchPanel.ObjectKind<?> panKind = OtsAnimationPanel.this.autoPanKind;
+            final String panId = OtsAnimationPanel.this.autoPanId;
+            final boolean doPan = OtsAnimationPanel.this.autoPanOnNextPaintComponent;
+            OtsAnimationPanel.this.autoPanOnNextPaintComponent = OtsAnimationPanel.this.autoPanTrack;
             if (doPan && panKind != null && panId != null)
             {
                 Locatable locatable = panKind.searchNetwork(this.network, panId);

@@ -24,8 +24,8 @@ import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
-import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.language.DSOLException;
@@ -39,7 +39,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
+public class TestNetworkDemo extends OtsSimulationApplication<TestNetworkModel>
 {
     /** */
     private static final long serialVersionUID = 20161211L;
@@ -51,7 +51,7 @@ public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
      * @param model TestNetworkModel; the model
      * @throws OtsDrawingException on animation error
      */
-    public TestNetworkDemo(final String title, final OTSAnimationPanel panel, final TestNetworkModel model)
+    public TestNetworkDemo(final String title, final OtsAnimationPanel panel, final TestNetworkModel model)
             throws OtsDrawingException
     {
         super(model, panel);
@@ -77,8 +77,8 @@ public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
             OtsAnimator simulator = new OtsAnimator("TestNetworkDemo");
             final TestNetworkModel networkModel = new TestNetworkModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), networkModel);
-            OTSAnimationPanel animationPanel =
-                    new OTSAnimationPanel(networkModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
+            OtsAnimationPanel animationPanel =
+                    new OtsAnimationPanel(networkModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
                             networkModel, new DefaultSwitchableGtuColorer(), networkModel.getNetwork());
             TestNetworkDemo app = new TestNetworkDemo("Network test demo", animationPanel, networkModel);
             app.setExitOnClose(exitOnClose);

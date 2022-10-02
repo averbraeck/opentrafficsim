@@ -48,7 +48,7 @@ public final class AnimationToggles
      * Set all animation on, and create the toggles on the left hand side.
      * @param panel OTSAnimationPanel; the WrappableAnimation.
      */
-    public static void setTextAnimationTogglesFull(final OTSAnimationPanel panel)
+    public static void setTextAnimationTogglesFull(final OtsAnimationPanel panel)
     {
         panel.addToggleAnimationButtonText("Node", NodeAnimation.ElevatedNode.class, "Show/hide nodes", true);
         panel.addToggleAnimationButtonText("NodeId", NodeAnimation.Text.class, "Show/hide node Ids", false);
@@ -75,7 +75,7 @@ public final class AnimationToggles
      * Set the most common animation on, and create the toggles on the left hand side.
      * @param panel OTSAnimationPanel; the WrappableAnimation.
      */
-    public static void setTextAnimationTogglesStandard(final OTSAnimationPanel panel)
+    public static void setTextAnimationTogglesStandard(final OtsAnimationPanel panel)
     {
         panel.addToggleAnimationButtonText("Node", NodeAnimation.ElevatedNode.class, "Show/hide nodes", false);
         panel.addToggleAnimationButtonText("NodeId", NodeAnimation.Text.class, "Show/hide node Ids", false);
@@ -100,7 +100,7 @@ public final class AnimationToggles
      * Set all animation on, and create the toggles on the left hand side.
      * @param panel OTSAnimationPanel; the WrappableAnimation.
      */
-    public static void setIconAnimationTogglesFull(final OTSAnimationPanel panel)
+    public static void setIconAnimationTogglesFull(final OtsAnimationPanel panel)
     {
         panel.addToggleAnimationButtonIcon("Node", NodeAnimation.ElevatedNode.class, "/icons/Node24.png", "Show/hide nodes",
                 true, false);
@@ -140,7 +140,7 @@ public final class AnimationToggles
      * Set the most common animation on, and create the toggles on the left hand side.
      * @param panel OTSAnimationPanel; the WrappableAnimation.
      */
-    public static void setIconAnimationTogglesStandard(final OTSAnimationPanel panel)
+    public static void setIconAnimationTogglesStandard(final OtsAnimationPanel panel)
     {
         panel.addToggleAnimationButtonIcon("Node", NodeAnimation.ElevatedNode.class, "/icons/Node24.png", "Show/hide nodes",
                 false, false);
@@ -181,7 +181,7 @@ public final class AnimationToggles
      * @param panel OTSAnimationPanel; the OTSAnimationPanel where the animation of a class has to be switched off
      * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the animation has to be shown.
      */
-    public static void showAnimationClass(final OTSAnimationPanel panel, final Class<? extends Locatable> locatableClass)
+    public static void showAnimationClass(final OtsAnimationPanel panel, final Class<? extends Locatable> locatableClass)
     {
         panel.getAnimationPanel().showClass(locatableClass);
         panel.updateAnimationClassCheckBox(locatableClass);
@@ -192,7 +192,7 @@ public final class AnimationToggles
      * @param panel OTSAnimationPanel; the OTSAnimationPanel where the animation of a class has to be switched off
      * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the animation has to be shown.
      */
-    public static void hideAnimationClass(final OTSAnimationPanel panel, final Class<? extends Locatable> locatableClass)
+    public static void hideAnimationClass(final OtsAnimationPanel panel, final Class<? extends Locatable> locatableClass)
     {
         panel.getAnimationPanel().hideClass(locatableClass);
         panel.updateAnimationClassCheckBox(locatableClass);
@@ -202,7 +202,7 @@ public final class AnimationToggles
      * Set all animation on, and create the toggles on the left hand side.
      * @param panel OTSAnimationPanel; the WrappableAnimation.
      */
-    public static void showAnimationFull(final OTSAnimationPanel panel)
+    public static void showAnimationFull(final OtsAnimationPanel panel)
     {
         showAnimationClass(panel, OtsNode.class);
         hideAnimationClass(panel, NodeAnimation.Text.class);
@@ -228,7 +228,7 @@ public final class AnimationToggles
      * Set the most common animation on, and create the toggles on the left hand side.
      * @param panel OTSAnimationPanel; the WrappableAnimation.
      */
-    public static void showAnimationStandard(final OTSAnimationPanel panel)
+    public static void showAnimationStandard(final OtsAnimationPanel panel)
     {
         hideAnimationClass(panel, OtsNode.class);
         hideAnimationClass(panel, NodeAnimation.Text.class);

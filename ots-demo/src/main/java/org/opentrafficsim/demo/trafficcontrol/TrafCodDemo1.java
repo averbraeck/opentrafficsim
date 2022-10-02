@@ -31,8 +31,8 @@ import org.opentrafficsim.demo.trafficcontrol.TrafCodDemo1.TrafCODModel;
 import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
-import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
 import org.opentrafficsim.xml.generated.CONTROL;
@@ -50,7 +50,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class TrafCodDemo1 extends OTSSimulationApplication<TrafCODModel>
+public class TrafCodDemo1 extends OtsSimulationApplication<TrafCODModel>
 {
     /** */
     private static final long serialVersionUID = 20161118L;
@@ -62,7 +62,7 @@ public class TrafCodDemo1 extends OTSSimulationApplication<TrafCODModel>
      * @param model TrafCODModel; the model
      * @throws OtsDrawingException on animation error
      */
-    public TrafCodDemo1(final String title, final OTSAnimationPanel panel, final TrafCODModel model) throws OtsDrawingException
+    public TrafCodDemo1(final String title, final OtsAnimationPanel panel, final TrafCODModel model) throws OtsDrawingException
     {
         super(model, panel);
     }
@@ -107,7 +107,7 @@ public class TrafCodDemo1 extends OTSSimulationApplication<TrafCODModel>
             String xml = readStringFromURL(url);
             final TrafCODModel trafcodModel = new TrafCODModel(simulator, "TrafCODModel", "TrafCOD demonstration Model", xml);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), trafcodModel);
-            OTSAnimationPanel animationPanel = new OTSAnimationPanel(trafcodModel.getNetwork().getExtent(),
+            OtsAnimationPanel animationPanel = new OtsAnimationPanel(trafcodModel.getNetwork().getExtent(),
                     new Dimension(800, 600), simulator, trafcodModel, DEFAULT_COLORER, trafcodModel.getNetwork());
             TrafCodDemo1 app = new TrafCodDemo1("TrafCOD demo simple crossing", animationPanel, trafcodModel);
             app.setExitOnClose(exitOnClose);

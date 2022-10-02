@@ -38,8 +38,8 @@ import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
-import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.xml.sax.SAXException;
 
@@ -59,7 +59,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LoadXml extends OTSSimulationApplication<OtsModelInterface>
+public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
 {
     /** */
     private static final long serialVersionUID = 20170421L;
@@ -69,7 +69,7 @@ public class LoadXml extends OTSSimulationApplication<OtsModelInterface>
      * @param animationPanel OTSAnimationPanel; the animation panel
      * @throws OtsDrawingException on drawing error
      */
-    public LoadXml(final OtsModelInterface model, final OTSAnimationPanel animationPanel) throws OtsDrawingException
+    public LoadXml(final OtsModelInterface model, final OtsAnimationPanel animationPanel) throws OtsDrawingException
     {
         super(model, animationPanel);
     }
@@ -140,7 +140,7 @@ public class LoadXml extends OTSSimulationApplication<OtsModelInterface>
             // TODO: This seed is Aimsun specific.
             map.put("generation", new MersenneTwister(6L));
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), xmlModel, map);
-            OTSAnimationPanel animationPanel = new OTSAnimationPanel(xmlModel.getNetwork().getExtent(), new Dimension(800, 600),
+            OtsAnimationPanel animationPanel = new OtsAnimationPanel(xmlModel.getNetwork().getExtent(), new Dimension(800, 600),
                     simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
             new LoadXml(xmlModel, animationPanel);
         }

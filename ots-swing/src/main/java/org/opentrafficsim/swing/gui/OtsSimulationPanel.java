@@ -25,7 +25,7 @@ import nl.tudelft.simulation.dsol.swing.gui.TabbedContentPane;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class OTSSimulationPanel extends JPanel
+public class OtsSimulationPanel extends JPanel
 {
     /** */
     private static final long serialVersionUID = 20150617L;
@@ -37,7 +37,7 @@ public class OTSSimulationPanel extends JPanel
     private final ConsoleOutput console = new ConsoleOutput();
 
     /** The control panel to control start/stop, speed of the simulation. */
-    private final OTSControlPanel otsControlPanel;
+    private final OtsControlPanel otsControlPanel;
 
     /** Animation, required to add properties tab. */
     private final OtsModelInterface otsModel;
@@ -57,7 +57,7 @@ public class OTSSimulationPanel extends JPanel
      * @param otsModel OTSModelInterface; the model with its properties.
      * @throws RemoteException when communications to a remote machine fails
      */
-    public OTSSimulationPanel(final OtsSimulatorInterface simulator, final OtsModelInterface otsModel) throws RemoteException
+    public OtsSimulationPanel(final OtsSimulatorInterface simulator, final OtsModelInterface otsModel) throws RemoteException
     {
         this.simulator = simulator;
         this.otsModel = otsModel;
@@ -65,7 +65,7 @@ public class OTSSimulationPanel extends JPanel
         this.setLayout(new BorderLayout());
 
         // Let's add our simulationControl
-        this.otsControlPanel = new OTSControlPanel(simulator, otsModel, (OTSAnimationPanel) this);
+        this.otsControlPanel = new OtsControlPanel(simulator, otsModel, (OtsAnimationPanel) this);
         this.add(this.otsControlPanel, BorderLayout.NORTH);
 
         // Let's display our tabbed contentPane
@@ -116,7 +116,7 @@ public class OTSSimulationPanel extends JPanel
      * Return the OTSControlPanel of this OTSSimulationPanel.
      * @return OTSControlPanel; the OTS control panel
      */
-    public final OTSControlPanel getOtsControlPanel()
+    public final OtsControlPanel getOtsControlPanel()
     {
         return this.otsControlPanel;
     }

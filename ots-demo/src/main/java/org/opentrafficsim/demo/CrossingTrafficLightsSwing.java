@@ -11,8 +11,8 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
-import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialog;
@@ -26,7 +26,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class CrossingTrafficLightsSwing extends OTSSimulationApplication<CrossingTrafficLightsModel> implements UNITS
+public class CrossingTrafficLightsSwing extends OtsSimulationApplication<CrossingTrafficLightsModel> implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -38,7 +38,7 @@ public class CrossingTrafficLightsSwing extends OTSSimulationApplication<Crossin
      * @param model CrossingTrafficLightsModel; the model
      * @throws OtsDrawingException on animation error
      */
-    public CrossingTrafficLightsSwing(final String title, final OTSAnimationPanel panel, final CrossingTrafficLightsModel model)
+    public CrossingTrafficLightsSwing(final String title, final OtsAnimationPanel panel, final CrossingTrafficLightsModel model)
             throws OtsDrawingException
     {
         super(model, panel);
@@ -68,7 +68,7 @@ public class CrossingTrafficLightsSwing extends OTSSimulationApplication<Crossin
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel);
-                OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(),
+                OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(),
                         new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 CrossingTrafficLightsSwing app =
                         new CrossingTrafficLightsSwing("CrossingTrafficLights", animationPanel, otsModel);

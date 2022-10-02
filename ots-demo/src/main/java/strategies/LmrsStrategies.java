@@ -160,8 +160,8 @@ import org.opentrafficsim.road.network.sampling.GtuData;
 import org.opentrafficsim.road.network.sampling.LaneData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.gui.AnimationToggles;
-import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
@@ -437,7 +437,7 @@ public class LmrsStrategies implements EventListenerInterface
                 final LmrsStrategiesModel lmrsModel = lmrsStrategies.new LmrsStrategiesModel(simulator);
                 // + 1e-9 is a hack to allow step() to perform detector aggregation of more than 1 detectors -at- the sim end
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(SIMTIME.si + 1e-9), lmrsModel);
-                OTSAnimationPanel animationPanel = new OTSAnimationPanel(lmrsModel.getNetwork().getExtent(),
+                OtsAnimationPanel animationPanel = new OtsAnimationPanel(lmrsModel.getNetwork().getExtent(),
                         new Dimension(800, 600), simulator, lmrsModel, LmrsStrategies.colorer, lmrsModel.getNetwork());
                 lmrsStrategies.new LmrsStrategiesAnimation(lmrsModel, animationPanel);
             }
@@ -484,7 +484,7 @@ public class LmrsStrategies implements EventListenerInterface
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    class LmrsStrategiesAnimation extends OTSSimulationApplication<OtsModelInterface>
+    class LmrsStrategiesAnimation extends OtsSimulationApplication<OtsModelInterface>
     {
         /** */
         private static final long serialVersionUID = 20180303L;
@@ -494,7 +494,7 @@ public class LmrsStrategies implements EventListenerInterface
          * @param panel OTSAnimationPanel; the animation panel
          * @throws OtsDrawingException on animation error
          */
-        LmrsStrategiesAnimation(final OtsModelInterface model, final OTSAnimationPanel panel) throws OtsDrawingException
+        LmrsStrategiesAnimation(final OtsModelInterface model, final OtsAnimationPanel panel) throws OtsDrawingException
         {
             super(model, panel);
         }

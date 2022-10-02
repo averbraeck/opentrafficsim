@@ -100,8 +100,8 @@ import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.graphs.SwingFundamentalDiagram;
 import org.opentrafficsim.swing.graphs.SwingTrajectoryPlot;
-import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSAnimationPanel.DemoPanelPosition;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel.DemoPanelPosition;
 import org.opentrafficsim.swing.script.AbstractSimulationScript;
 
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
@@ -304,7 +304,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected void setupDemo(final OTSAnimationPanel animationPanel, final OtsRoadNetwork net)
+    protected void setupDemo(final OtsAnimationPanel animationPanel, final OtsRoadNetwork net)
     {
         this.fdLine.update();
 
