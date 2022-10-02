@@ -38,7 +38,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OtsNode;
-import org.opentrafficsim.core.perception.HistoryManagerDEVS;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.draw.graphs.ContourDataSource;
 import org.opentrafficsim.draw.graphs.ContourPlotSpeed;
 import org.opentrafficsim.draw.graphs.GraphPath;
@@ -285,7 +285,7 @@ public class SdmSimulation extends AbstractSimulationScript
     protected OTSRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
     {
         // manager of historic information to allow a reaction time
-        sim.getReplication().setHistoryManager(new HistoryManagerDEVS(sim,
+        sim.getReplication().setHistoryManager(new HistoryManagerDevs(sim,
                 AdaptationSituationalAwareness.TR_MAX.getDefaultValue(), Duration.instantiateSI(10.0)));
 
         // Network

@@ -46,7 +46,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.perception.HistoryManager;
-import org.opentrafficsim.core.perception.HistoryManagerDEVS;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayDistribution;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier.GeneratorObjects;
@@ -155,7 +155,7 @@ public class ODApplierTest
         this.simulator = createSimulatorMock();
         System.out.println(this.simulator);
         System.out.println(this.simulator.getModel());
-        this.historyManager = new HistoryManagerDEVS(this.simulator, Duration.instantiateSI(10.0), Duration.instantiateSI(1.0));
+        this.historyManager = new HistoryManagerDevs(this.simulator, Duration.instantiateSI(10.0), Duration.instantiateSI(1.0));
         this.time = Time.ZERO;
         makeNetwork();
     }

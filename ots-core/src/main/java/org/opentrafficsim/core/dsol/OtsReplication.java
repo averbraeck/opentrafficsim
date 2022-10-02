@@ -5,7 +5,7 @@ import javax.naming.NamingException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.perception.HistoryManager;
-import org.opentrafficsim.core.perception.HistoryManagerDEVS;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 
 import nl.tudelft.simulation.dsol.experiment.SingleReplication;
 
@@ -49,7 +49,7 @@ public class OtsReplication extends SingleReplication<Duration>
     {
         if (this.historyManager == null)
         {
-            this.historyManager = new HistoryManagerDEVS(simulator, Duration.ZERO, Duration.instantiateSI(10.0));
+            this.historyManager = new HistoryManagerDevs(simulator, Duration.ZERO, Duration.instantiateSI(10.0));
         }
         return this.historyManager;
     }

@@ -52,7 +52,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
-import org.opentrafficsim.core.perception.HistoryManagerDEVS;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
@@ -380,7 +380,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
 
         // History
         sim.getReplication()
-                .setHistoryManager(new HistoryManagerDEVS(sim, Duration.instantiateSI(2.0), Duration.instantiateSI(1.0)));
+                .setHistoryManager(new HistoryManagerDevs(sim, Duration.instantiateSI(2.0), Duration.instantiateSI(1.0)));
 
         // Sampler
         if (this.doSampler)

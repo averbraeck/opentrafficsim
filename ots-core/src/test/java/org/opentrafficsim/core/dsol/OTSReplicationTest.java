@@ -15,7 +15,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.core.perception.HistoryManager;
-import org.opentrafficsim.core.perception.HistoryManagerDEVS;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
@@ -50,15 +50,15 @@ public class OTSReplicationTest
         assertEquals("runLength can be retrieved", runLength, replication.getRunLength());
         simulator.initialize(model, replication);
         int listenerCount = simulator.numberOfListeners(ReplicationInterface.END_REPLICATION_EVENT);
-        HistoryManagerDEVS hm = (HistoryManagerDEVS) replication.getHistoryManager(simulator);
+        HistoryManagerDevs hm = (HistoryManagerDevs) replication.getHistoryManager(simulator);
         assertEquals("history manager knows time of simulator", simulator.getSimulatorAbsTime(), hm.now());
         assertEquals("history manager has subscribed to our simulator", listenerCount + 1,
                 simulator.numberOfListeners(ReplicationInterface.END_REPLICATION_EVENT));
         Duration history = new Duration(123, DurationUnit.SECOND);
         Duration cleanupInterval = new Duration(234, DurationUnit.SECOND);
-        HistoryManager ourHM = new HistoryManagerDEVS(simulator, history, cleanupInterval);
+        HistoryManager ourHM = new HistoryManagerDevs(simulator, history, cleanupInterval);
         replication.setHistoryManager(ourHM);
-        hm = (HistoryManagerDEVS) replication.getHistoryManager(simulator);
+        hm = (HistoryManagerDevs) replication.getHistoryManager(simulator);
         assertEquals("Our manually set history manager is returned", ourHM, hm);
         assertTrue("toString method returns something descriptive", replication.toString().startsWith("OTSReplication"));
     }

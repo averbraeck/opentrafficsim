@@ -45,13 +45,13 @@ public class HistoricalTest
     private OtsSimulatorInterface simulator;
 
     /** History manager. */
-    private HistoryManagerDEVS historyManager;
+    private HistoryManagerDevs historyManager;
 
     /** */
     public HistoricalTest()
     {
         this.simulator = createSimulatorMock();
-        this.historyManager = new HistoryManagerDEVS(this.simulator, this.cleanUp, this.cleanUp);
+        this.historyManager = new HistoryManagerDevs(this.simulator, this.cleanUp, this.cleanUp);
     }
 
     /**

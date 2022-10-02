@@ -22,7 +22,7 @@ import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class HistoryManagerDEVS extends HistoryManager implements EventListenerInterface
+public class HistoryManagerDevs extends HistoryManager implements EventListenerInterface
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -45,7 +45,7 @@ public class HistoryManagerDEVS extends HistoryManager implements EventListenerI
      * @param history Duration; time over which history is guaranteed
      * @param cleanUpInterval Duration; clean-up interval
      */
-    public HistoryManagerDEVS(final OtsSimulatorInterface simulator, final Duration history, final Duration cleanUpInterval)
+    public HistoryManagerDevs(final OtsSimulatorInterface simulator, final Duration history, final Duration cleanUpInterval)
     {
         this.simulator = simulator;
         this.history = history;

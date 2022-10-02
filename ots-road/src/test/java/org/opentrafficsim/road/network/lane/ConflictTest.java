@@ -30,7 +30,7 @@ import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.perception.HistoryManagerDEVS;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.mock.MockDEVSSimulator;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -64,7 +64,7 @@ public class ConflictTest implements EventListenerInterface
     {
         OtsSimulatorInterface simulator = MockDEVSSimulator.createMock();
         OtsReplication replication = Mockito.mock(OtsReplication.class);
-        HistoryManagerDEVS hmd = Mockito.mock(HistoryManagerDEVS.class);
+        HistoryManagerDevs hmd = Mockito.mock(HistoryManagerDevs.class);
         Mockito.when(hmd.now()).thenReturn(Time.ZERO);
         Mockito.when(replication.getHistoryManager(simulator)).thenReturn(hmd);
         Mockito.when(simulator.getReplication()).thenReturn(replication);
