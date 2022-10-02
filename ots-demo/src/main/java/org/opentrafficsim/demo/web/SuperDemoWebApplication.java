@@ -24,8 +24,8 @@ import org.opentrafficsim.demo.StraightModel;
 import org.opentrafficsim.demo.conflict.BusStreetDemo;
 import org.opentrafficsim.demo.conflict.TJunctionDemo;
 import org.opentrafficsim.demo.conflict.TurboRoundaboutDemo;
-import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo1;
-import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo2;
+import org.opentrafficsim.demo.trafficcontrol.TrafCodDemo1;
+import org.opentrafficsim.demo.trafficcontrol.TrafCodDemo2;
 import org.sim0mq.Sim0MQException;
 import org.sim0mq.message.MessageUtil;
 import org.sim0mq.message.Sim0MQMessage;
@@ -139,14 +139,14 @@ public class SuperDemoWebApplication implements Checkable
         else if (this.modelId.toLowerCase().contains("trafcoddemosimple"))
         {
             URL url = URLResource.getResource("/resources/TrafCODDemo1/TrafCODDemo1.xml");
-            String xml = TrafCODDemo2.readStringFromURL(url);
-            this.model = new TrafCODDemo1.TrafCODModel(this.simulator, "TrafCODDemo1", "TrafCODDemo1", xml);
+            String xml = TrafCodDemo2.readStringFromURL(url);
+            this.model = new TrafCodDemo1.TrafCODModel(this.simulator, "TrafCODDemo1", "TrafCODDemo1", xml);
         }
         else if (this.modelId.toLowerCase().contains("trafcoddemocomplex"))
         {
             URL url = URLResource.getResource("/resources/TrafCODDemo2/TrafCODDemo2.xml");
-            String xml = TrafCODDemo2.readStringFromURL(url);
-            this.model = new TrafCODDemo2.TrafCODModel(this.simulator, "TrafCODDemo2", "TrafCODDemo2", xml);
+            String xml = TrafCodDemo2.readStringFromURL(url);
+            this.model = new TrafCodDemo2.TrafCODModel(this.simulator, "TrafCODDemo2", "TrafCODDemo2", xml);
         }
         else if (this.modelId.toLowerCase().contains("tjunction"))
         {

@@ -28,8 +28,8 @@ import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.demo.conflict.BusStreetDemo;
 import org.opentrafficsim.demo.conflict.TJunctionDemo;
 import org.opentrafficsim.demo.conflict.TurboRoundaboutDemo;
-import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo1;
-import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo2;
+import org.opentrafficsim.demo.trafficcontrol.TrafCodDemo1;
+import org.opentrafficsim.demo.trafficcontrol.TrafCodDemo2;
 import org.opentrafficsim.swing.gui.OTSSwingApplication;
 
 /**
@@ -90,9 +90,9 @@ public class SuperDemo extends JFrame
                 "A number of different networks with merging and splitting,\n" + "forcing cars to change lanes and to merge."));
         this.demos.add(new Demo("CrossingTrafficLights", CrossingTrafficLightsSwing.class,
                 "Model of a crossing with traffic lights.\n"));
-        this.demos.add(new Demo("TrafCODDemoSimple", TrafCODDemo1.class,
+        this.demos.add(new Demo("TrafCODDemoSimple", TrafCodDemo1.class,
                 "Model of a simple crossing with traffic lights.\n" + "using a TrafCOD controller"));
-        this.demos.add(new Demo("TrafCODDemoComplex", TrafCODDemo2.class,
+        this.demos.add(new Demo("TrafCODDemoComplex", TrafCodDemo2.class,
                 "Model of a complex crossing with traffic lights.\n" + "using a TrafCOD controller"));
     }
 

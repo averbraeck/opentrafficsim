@@ -94,7 +94,7 @@ import picocli.CommandLine.Option;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class Sim0MQControlledOTS implements EventListenerInterface
+public class Sim0MQControlledOts implements EventListenerInterface
 {
     /** ... */
     private static final long serialVersionUID = 20200317L;
@@ -116,7 +116,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
      * @param zContext ZContext; the context of ZMQ
      * @param port int; the port number of the listening socket
      */
-    public Sim0MQControlledOTS(final ZContext zContext, final int port)
+    public Sim0MQControlledOts(final ZContext zContext, final int port)
     {
         this.zContext = zContext;
         this.port = port;
@@ -132,12 +132,12 @@ public class Sim0MQControlledOTS implements EventListenerInterface
         public void run()
         {
             System.err.println("MasterCommunication thread id is " + Thread.currentThread().getId());
-            ZMQ.Socket remoteControllerSocket = Sim0MQControlledOTS.this.zContext.createSocket(SocketType.PAIR);
+            ZMQ.Socket remoteControllerSocket = Sim0MQControlledOts.this.zContext.createSocket(SocketType.PAIR);
             remoteControllerSocket.setHWM(100000);
-            remoteControllerSocket.bind("tcp://*:" + Sim0MQControlledOTS.this.port);
-            ZMQ.Socket resultQueue = Sim0MQControlledOTS.this.zContext.createSocket(SocketType.PULL);
+            remoteControllerSocket.bind("tcp://*:" + Sim0MQControlledOts.this.port);
+            ZMQ.Socket resultQueue = Sim0MQControlledOts.this.zContext.createSocket(SocketType.PULL);
             resultQueue.bind("inproc://results");
-            ZMQ.Socket toCommandLoop = Sim0MQControlledOTS.this.zContext.createSocket(SocketType.PUSH);
+            ZMQ.Socket toCommandLoop = Sim0MQControlledOts.this.zContext.createSocket(SocketType.PUSH);
             toCommandLoop.setHWM(1000);
             toCommandLoop.connect("inproc://commands");
             /*-
@@ -170,7 +170,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
             }
             */
             /// *-
-            ZMQ.Poller poller = Sim0MQControlledOTS.this.zContext.createPoller(2);
+            ZMQ.Poller poller = Sim0MQControlledOts.this.zContext.createPoller(2);
             poller.register(remoteControllerSocket, ZMQ.Poller.POLLIN);
             poller.register(resultQueue, ZMQ.Poller.POLLIN);
             while (!Thread.currentThread().isInterrupted())
@@ -248,7 +248,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
         int port = options.getPort();
         System.out.println("Creating OTS server listening on port " + port);
         ZContext context = new ZContext(10);
-        Sim0MQControlledOTS slave = new Sim0MQControlledOTS(context, port);
+        Sim0MQControlledOts slave = new Sim0MQControlledOts(context, port);
 
         slave.commandLoop();
         // Currently, there is no shutdown command; so the following code is never executed

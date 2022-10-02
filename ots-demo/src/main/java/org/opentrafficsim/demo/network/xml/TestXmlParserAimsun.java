@@ -44,7 +44,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author Wouter Schakel
  */
-public class TestXMLParserAimsun extends OTSSimulationApplication<OtsModelInterface>
+public class TestXmlParserAimsun extends OTSSimulationApplication<OtsModelInterface>
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -54,7 +54,7 @@ public class TestXMLParserAimsun extends OTSSimulationApplication<OtsModelInterf
      * @param animationPanel the animation panel
      * @throws OTSDrawingException on drawing error
      */
-    public TestXMLParserAimsun(final OtsModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
+    public TestXmlParserAimsun(final OtsModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
     {
         super(model, animationPanel);
     }
@@ -78,7 +78,7 @@ public class TestXMLParserAimsun extends OTSSimulationApplication<OtsModelInterf
                     simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), xmlModel);
                     OTSAnimationPanel animationPanel = new OTSAnimationPanel(xmlModel.getNetwork().getExtent(),
                             new Dimension(800, 600), simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
-                    new TestXMLParserAimsun(xmlModel, animationPanel);
+                    new TestXmlParserAimsun(xmlModel, animationPanel);
                     animationPanel.enableSimulationControlButtons();
                 }
                 catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)

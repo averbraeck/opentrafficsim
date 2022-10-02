@@ -23,7 +23,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.ahfe.AHFEAnimation.AHFEModel;
+import org.opentrafficsim.ahfe.AhfeAnimation.AHFEModel;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
@@ -57,7 +57,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class AHFEAnimation extends OTSSimulationApplication<AHFEModel>
+public class AhfeAnimation extends OTSSimulationApplication<AHFEModel>
 {
 
     /** Warm-up time. */
@@ -81,7 +81,7 @@ public class AHFEAnimation extends OTSSimulationApplication<AHFEModel>
      * @param model AHFEModel; the model
      * @throws OTSDrawingException on animation error
      */
-    public AHFEAnimation(final String title, final OTSAnimationPanel panel, final AHFEModel model) throws OTSDrawingException
+    public AhfeAnimation(final String title, final OTSAnimationPanel panel, final AHFEModel model) throws OTSDrawingException
     {
         super(model, panel);
     }
@@ -301,7 +301,7 @@ public class AHFEAnimation extends OTSSimulationApplication<AHFEModel>
                             finalReplication);
                     OTSAnimationPanel animationPanel = new OTSAnimationPanel(ahfeModel.getNetwork().getExtent(),
                             new Dimension(800, 600), simulator, ahfeModel, DEFAULT_COLORER, ahfeModel.getNetwork());
-                    new AHFEAnimation("AHFE", animationPanel, ahfeModel);
+                    new AhfeAnimation("AHFE", animationPanel, ahfeModel);
                     if (finalAutoRun)
                     {
                         int lastReportedTime = -1;
@@ -510,7 +510,7 @@ public class AHFEAnimation extends OTSSimulationApplication<AHFEModel>
                 registerLinkToSampler(linkData, Length.ZERO, linkData.getLength().minus(ignoreEnd));
 
                 // Generator
-                AHFEUtil.createDemand(this.network, new DefaultSwitchableGtuColorer(), this.simulator, getReplication(),
+                AhfeUtil.createDemand(this.network, new DefaultSwitchableGtuColorer(), this.simulator, getReplication(),
                         getAnticipationStrategy(), getReactionTime(), getAnticipationTime(), getTruckFraction(), SIMEND,
                         getLeftDemand(), getRightDemand(), getLeftFraction(), getDistanceError(), getSpeedError(),
                         getAccelerationError());

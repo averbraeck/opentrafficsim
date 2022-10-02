@@ -31,12 +31,12 @@ import picocli.CommandLine.Option;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public final class Sim0MQControlledOTSNew
+public final class Sim0MQControlledOtsNew
 {
     /**
      * Do not instantiate.
      */
-    private Sim0MQControlledOTSNew()
+    private Sim0MQControlledOtsNew()
     {
         // Do not instantiate
     }

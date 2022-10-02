@@ -45,8 +45,8 @@ import org.opentrafficsim.demo.StraightModel;
 import org.opentrafficsim.demo.conflict.BusStreetDemo;
 import org.opentrafficsim.demo.conflict.TJunctionDemo;
 import org.opentrafficsim.demo.conflict.TurboRoundaboutDemo;
-import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo1;
-import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo2;
+import org.opentrafficsim.demo.trafficcontrol.TrafCodDemo1;
+import org.opentrafficsim.demo.trafficcontrol.TrafCodDemo2;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 
 import nl.tudelft.simulation.dsol.jetty.sse.OTSWebModel;
@@ -77,7 +77,7 @@ import picocli.CommandLine.Option;
  */
 @Command(description = "OTSDemoServer is a web server to run the OTS demos in a browser", name = "OTSDemoServer",
         mixinStandardHelpOptions = true, version = "1.02.02")
-public class OTSDemoServer implements Checkable
+public class OtsDemoServer implements Checkable
 {
     /** the map of sessionIds to OTSModelInterface that handles the animation and updates for the started model. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -124,7 +124,7 @@ public class OTSDemoServer implements Checkable
      */
     public static void main(final String[] args) throws Exception
     {
-        OTSDemoServer otsDemoServer = new OTSDemoServer();
+        OtsDemoServer otsDemoServer = new OtsDemoServer();
         CliUtil.execute(otsDemoServer, args);
         otsDemoServer.init();
     }
@@ -150,7 +150,7 @@ public class OTSDemoServer implements Checkable
     /**
      * Constructor to set any variables to default values if needed.
      */
-    public OTSDemoServer()
+    public OtsDemoServer()
     {
     }
 
@@ -167,22 +167,22 @@ public class OTSDemoServer implements Checkable
                     Thread.sleep(10000); // 10 seconds
                     List<String> kills = new ArrayList<>();
                     long timeNow = System.currentTimeMillis();
-                    for (String sessionId : OTSDemoServer.this.sessionKillMap.keySet())
+                    for (String sessionId : OtsDemoServer.this.sessionKillMap.keySet())
                     {
-                        if (timeNow > OTSDemoServer.this.sessionKillMap.get(sessionId))
+                        if (timeNow > OtsDemoServer.this.sessionKillMap.get(sessionId))
                         {
                             kills.add(sessionId);
                         }
                     }
                     for (String sessionId : kills)
                     {
-                        OTSWebModel webModel = OTSDemoServer.this.sessionWebModelMap.get(sessionId);
+                        OTSWebModel webModel = OtsDemoServer.this.sessionWebModelMap.get(sessionId);
                         if (webModel != null)
                         {
                             webModel.setKilled(true);
-                            OTSDemoServer.this.sessionWebModelMap.remove(sessionId);
+                            OtsDemoServer.this.sessionWebModelMap.remove(sessionId);
                         }
-                        OtsModelInterface model = OTSDemoServer.this.sessionModelMap.get(sessionId);
+                        OtsModelInterface model = OtsDemoServer.this.sessionModelMap.get(sessionId);
                         if (model != null)
                         {
                             try
@@ -193,9 +193,9 @@ public class OTSDemoServer implements Checkable
                             {
                                 // ignore
                             }
-                            OTSDemoServer.this.sessionModelMap.remove(sessionId);
+                            OtsDemoServer.this.sessionModelMap.remove(sessionId);
                         }
-                        OTSDemoServer.this.sessionKillMap.remove(sessionId);
+                        OtsDemoServer.this.sessionKillMap.remove(sessionId);
                     }
                 }
                 catch (Exception exception)
@@ -212,16 +212,16 @@ public class OTSDemoServer implements Checkable
         @Override
         public void run()
         {
-            Server server = new Server(OTSDemoServer.this.port);
+            Server server = new Server(OtsDemoServer.this.port);
             ResourceHandler resourceHandler = new MyResourceHandler();
 
             // root folder; to work in Eclipse, as an external jar, and in an embedded jar
-            URL homeFolder = URLResource.getResource(OTSDemoServer.this.rootDirectory);
+            URL homeFolder = URLResource.getResource(OtsDemoServer.this.rootDirectory);
             String webRoot = homeFolder.toExternalForm();
             System.out.println("webRoot is " + webRoot);
 
             resourceHandler.setDirectoriesListed(true);
-            resourceHandler.setWelcomeFiles(new String[] {OTSDemoServer.this.homePage});
+            resourceHandler.setWelcomeFiles(new String[] {OtsDemoServer.this.homePage});
             resourceHandler.setResourceBase(webRoot);
 
             SessionIdManager idManager = new DefaultSessionIdManager(server);
@@ -234,7 +234,7 @@ public class OTSDemoServer implements Checkable
             sessionHandler.setSessionCache(sessionCache);
 
             HandlerList handlers = new HandlerList();
-            handlers.setHandlers(new Handler[] {resourceHandler, sessionHandler, new XHRHandler(OTSDemoServer.this)});
+            handlers.setHandlers(new Handler[] {resourceHandler, sessionHandler, new XHRHandler(OtsDemoServer.this)});
             server.setHandler(handlers);
 
             try
@@ -260,7 +260,7 @@ public class OTSDemoServer implements Checkable
             System.out.println(path);
             if (path.contains("/parameters.html"))
             {
-                if (OTSDemoServer.this.sessionModelMap.size() > OTSDemoServer.this.maxProcesses)
+                if (OtsDemoServer.this.sessionModelMap.size() > OtsDemoServer.this.maxProcesses)
                 {
                     System.out.println("NO MORE PROCESSES -- MAXMODELS returned");
                     return super.getResource("/maxmodels.html");
@@ -285,7 +285,7 @@ public class OTSDemoServer implements Checkable
 
             if (target.startsWith("/parameters.html"))
             {
-                if (OTSDemoServer.this.sessionModelMap.size() > OTSDemoServer.this.maxProcesses)
+                if (OtsDemoServer.this.sessionModelMap.size() > OtsDemoServer.this.maxProcesses)
                 {
                     super.handle(target, baseRequest, request, response);
                     return;
@@ -293,7 +293,7 @@ public class OTSDemoServer implements Checkable
 
                 String modelId = request.getParameterMap().get("model")[0];
                 String sessionId = request.getParameterMap().get("sessionId")[0];
-                if (!OTSDemoServer.this.sessionModelMap.containsKey(sessionId))
+                if (!OtsDemoServer.this.sessionModelMap.containsKey(sessionId))
                 {
                     System.out.println("parameters: " + modelId);
                     OtsAnimator simulator = new OtsAnimator("OTSDemoServer");
@@ -323,14 +323,14 @@ public class OTSDemoServer implements Checkable
                     else if (modelId.toLowerCase().contains("trafcoddemosimple"))
                     {
                         URL url = URLResource.getResource("/resources/TrafCODDemo1/TrafCODDemo1.xml");
-                        String xml = TrafCODDemo2.readStringFromURL(url);
-                        model = new TrafCODDemo1.TrafCODModel(simulator, "TrafCODDemo1", "TrafCODDemo1", xml);
+                        String xml = TrafCodDemo2.readStringFromURL(url);
+                        model = new TrafCodDemo1.TrafCODModel(simulator, "TrafCODDemo1", "TrafCODDemo1", xml);
                     }
                     else if (modelId.toLowerCase().contains("trafcoddemocomplex"))
                     {
                         URL url = URLResource.getResource("/resources/TrafCODDemo2/TrafCODDemo2.xml");
-                        String xml = TrafCODDemo2.readStringFromURL(url);
-                        model = new TrafCODDemo2.TrafCODModel(simulator, "TrafCODDemo2", "TrafCODDemo2", xml);
+                        String xml = TrafCodDemo2.readStringFromURL(url);
+                        model = new TrafCodDemo2.TrafCODModel(simulator, "TrafCODDemo2", "TrafCODDemo2", xml);
                     }
                     else if (modelId.toLowerCase().contains("tjunction"))
                     {
@@ -347,10 +347,10 @@ public class OTSDemoServer implements Checkable
 
                     if (model != null)
                     {
-                        OTSDemoServer.this.sessionModelMap.put(sessionId, model);
+                        OtsDemoServer.this.sessionModelMap.put(sessionId, model);
                         long currentMsec = System.currentTimeMillis();
-                        long killMsec = currentMsec + (long) OTSDemoServer.this.killDuration.si * 1000L;
-                        OTSDemoServer.this.sessionKillMap.put(sessionId, killMsec);
+                        long killMsec = currentMsec + (long) OtsDemoServer.this.killDuration.si * 1000L;
+                        OtsDemoServer.this.sessionKillMap.put(sessionId, killMsec);
                     }
                     else
                     {
@@ -363,17 +363,17 @@ public class OTSDemoServer implements Checkable
             {
                 String modelId = request.getParameterMap().get("model")[0];
                 String sessionId = request.getParameterMap().get("sessionId")[0];
-                if (OTSDemoServer.this.sessionModelMap.containsKey(sessionId)
-                        && !OTSDemoServer.this.sessionWebModelMap.containsKey(sessionId))
+                if (OtsDemoServer.this.sessionModelMap.containsKey(sessionId)
+                        && !OtsDemoServer.this.sessionWebModelMap.containsKey(sessionId))
                 {
                     System.out.println("startModel: " + modelId);
-                    OtsModelInterface model = OTSDemoServer.this.sessionModelMap.get(sessionId);
+                    OtsModelInterface model = OtsDemoServer.this.sessionModelMap.get(sessionId);
                     OtsSimulatorInterface simulator = model.getSimulator();
                     try
                     {
                         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), model);
                         OTSWebModel webModel = new OTSWebModel(model.getShortName(), simulator);
-                        OTSDemoServer.this.sessionWebModelMap.put(sessionId, webModel);
+                        OtsDemoServer.this.sessionWebModelMap.put(sessionId, webModel);
                         DefaultAnimationFactory.animateNetwork(model.getNetwork(), simulator,
                                 new DefaultSwitchableGtuColorer());
                     }
@@ -400,13 +400,13 @@ public class OTSDemoServer implements Checkable
     public static class XHRHandler extends AbstractHandler
     {
         /** web server for callback of actions. */
-        private final OTSDemoServer webServer;
+        private final OtsDemoServer webServer;
 
         /**
          * Create the handler for Servlet requests.
          * @param webServer DSOLWebServer; web server for callback of actions
          */
-        public XHRHandler(final OTSDemoServer webServer)
+        public XHRHandler(final OtsDemoServer webServer)
         {
             this.webServer = webServer;
         }

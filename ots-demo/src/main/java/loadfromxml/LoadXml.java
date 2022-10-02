@@ -59,7 +59,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LoadXML extends OTSSimulationApplication<OtsModelInterface>
+public class LoadXml extends OTSSimulationApplication<OtsModelInterface>
 {
     /** */
     private static final long serialVersionUID = 20170421L;
@@ -69,7 +69,7 @@ public class LoadXML extends OTSSimulationApplication<OtsModelInterface>
      * @param animationPanel OTSAnimationPanel; the animation panel
      * @throws OTSDrawingException on drawing error
      */
-    public LoadXML(final OtsModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
+    public LoadXml(final OtsModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
     {
         super(model, animationPanel);
     }
@@ -142,7 +142,7 @@ public class LoadXML extends OTSSimulationApplication<OtsModelInterface>
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), xmlModel, map);
             OTSAnimationPanel animationPanel = new OTSAnimationPanel(xmlModel.getNetwork().getExtent(), new Dimension(800, 600),
                     simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
-            new LoadXML(xmlModel, animationPanel);
+            new LoadXml(xmlModel, animationPanel);
         }
         catch (SimRuntimeException | OTSDrawingException sre)
         {

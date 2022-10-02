@@ -49,7 +49,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class AHFESimulation extends AbstractOtsSimulationApplication
+public class AhfeSimulation extends AbstractOtsSimulationApplication
 {
     /** Warm-up time. */
     static final Time WARMUP = Time.instantiateSI(360);
@@ -69,7 +69,7 @@ public class AHFESimulation extends AbstractOtsSimulationApplication
     /**
      * @param model OTSModelInterface; the model
      */
-    public AHFESimulation(final OtsModelInterface model)
+    public AhfeSimulation(final OtsModelInterface model)
     {
         super(model);
     }
@@ -287,7 +287,7 @@ public class AHFESimulation extends AbstractOtsSimulationApplication
                     System.out.println("Setting up replication " + finalReplication);
                     simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(SIMEND.si), ahfeModel,
                             finalReplication);
-                    new AHFESimulation(ahfeModel);
+                    new AhfeSimulation(ahfeModel);
                     // 1 hour simulation run for testing
                     if (finalAutoRun)
                     {
@@ -490,7 +490,7 @@ public class AHFESimulation extends AbstractOtsSimulationApplication
                 registerLinkToSampler(linkData, Length.ZERO, linkData.getLength().minus(ignoreEnd));
 
                 // Generator
-                AHFEUtil.createDemand(this.network, null, this.simulator, getReplication(), getAnticipationStrategy(),
+                AhfeUtil.createDemand(this.network, null, this.simulator, getReplication(), getAnticipationStrategy(),
                         getReactionTime(), getAnticipationTime(), getTruckFraction(), SIMEND, getLeftDemand(), getRightDemand(),
                         getLeftFraction(), getDistanceError(), getSpeedError(), getAccelerationError());
 

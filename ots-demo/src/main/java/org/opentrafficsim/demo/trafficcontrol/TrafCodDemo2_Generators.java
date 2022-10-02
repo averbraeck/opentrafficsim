@@ -22,7 +22,7 @@ import org.djutils.io.URLResource;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo2_Generators.TrafCODModel;
+import org.opentrafficsim.demo.trafficcontrol.TrafCodDemo2_Generators.TrafCODModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
@@ -43,7 +43,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class TrafCODDemo2_Generators extends OTSSimulationApplication<TrafCODModel>
+public class TrafCodDemo2_Generators extends OTSSimulationApplication<TrafCODModel>
 {
     /** */
     private static final long serialVersionUID = 20161118L;
@@ -55,7 +55,7 @@ public class TrafCODDemo2_Generators extends OTSSimulationApplication<TrafCODMod
      * @param model TrafCODModel; the model
      * @throws OTSDrawingException on animation error
      */
-    public TrafCODDemo2_Generators(final String title, final OTSAnimationPanel panel, final TrafCODModel model)
+    public TrafCodDemo2_Generators(final String title, final OTSAnimationPanel panel, final TrafCODModel model)
             throws OTSDrawingException
     {
         super(model, panel);
@@ -103,8 +103,8 @@ public class TrafCODDemo2_Generators extends OTSSimulationApplication<TrafCODMod
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), trafcodModel);
             OTSAnimationPanel animationPanel = new OTSAnimationPanel(trafcodModel.getNetwork().getExtent(),
                     new Dimension(800, 600), simulator, trafcodModel, DEFAULT_COLORER, trafcodModel.getNetwork());
-            TrafCODDemo2_Generators app =
-                    new TrafCODDemo2_Generators("TrafCOD demo complex crossing", animationPanel, trafcodModel);
+            TrafCodDemo2_Generators app =
+                    new TrafCodDemo2_Generators("TrafCOD demo complex crossing", animationPanel, trafcodModel);
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();
         }

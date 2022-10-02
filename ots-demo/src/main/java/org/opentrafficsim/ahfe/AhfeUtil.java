@@ -103,13 +103,13 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 
-public final class AHFEUtil
+public final class AhfeUtil
 {
 
     /**
      * 
      */
-    private AHFEUtil()
+    private AhfeUtil()
     {
         //
     }
