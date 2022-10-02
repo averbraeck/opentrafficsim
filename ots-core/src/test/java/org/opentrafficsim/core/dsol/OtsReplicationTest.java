@@ -28,7 +28,7 @@ import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class OTSReplicationTest
+public class OtsReplicationTest
 {
     /**
      * Test the OTSReplication class.

@@ -21,7 +21,7 @@ import org.junit.Test;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class OTS2DSetTest
+public class Ots2DSetTest
 {
     /**
      * Test some simple things.

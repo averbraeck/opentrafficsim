@@ -11,7 +11,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
-import org.opentrafficsim.core.dsol.AbstractOTSModelTest.OTSModel;
+import org.opentrafficsim.core.dsol.AbstractOtsModelTest.OTSModel;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -23,7 +23,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class OTSSimulatorTest
+public class OtsSimulatorTest
 {
     /** Store argument of eventReceiver. */
     private String receivedArgument = null;

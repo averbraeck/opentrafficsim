@@ -19,7 +19,7 @@ import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.mock.MockGTU;
+import org.opentrafficsim.core.mock.MockGtu;
 import org.opentrafficsim.core.mock.MockSimulator;
 
 /**
@@ -32,7 +32,7 @@ import org.opentrafficsim.core.mock.MockSimulator;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class OTSLinkTest implements EventListenerInterface
+public class OtsLinkTest implements EventListenerInterface
 {
     /** ... */
     private static final long serialVersionUID = 1L;
@@ -72,9 +72,9 @@ public class OTSLinkTest implements EventListenerInterface
         assertEquals("add counter is 0", 0, this.gtuAddedCount);
         assertEquals("remove counter is 0", 0, this.gtuRemovedCount);
         assertEquals("other event counter is 0", 0, this.otherEventCount);
-        MockGTU mockGtu1 = new MockGTU("gtu1");
+        MockGtu mockGtu1 = new MockGtu("gtu1");
         Gtu gtu1 = mockGtu1.getMock();
-        MockGTU mockGtu2 = new MockGTU("gtu2");
+        MockGtu mockGtu2 = new MockGtu("gtu2");
         Gtu gtu2 = mockGtu2.getMock();
         link.addGTU(gtu1);
         assertEquals("add counter is now 1", 1, this.gtuAddedCount);

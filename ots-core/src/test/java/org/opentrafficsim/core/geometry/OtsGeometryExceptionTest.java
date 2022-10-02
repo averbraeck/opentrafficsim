@@ -8,7 +8,7 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 
 /** Test the OTSGeometryException class. */
-public class OTSGeometryExceptionTest
+public class OtsGeometryExceptionTest
 {
 
     /** Test the OTSGeometryException class. */

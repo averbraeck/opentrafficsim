@@ -24,7 +24,7 @@ import org.opentrafficsim.core.mock.MockSimulator;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class CapacityOTSLinkTest
+public class CapacityOtsLinkTest
 {
     /**
      * Test the constructor and all getters.

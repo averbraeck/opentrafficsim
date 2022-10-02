@@ -3,7 +3,7 @@ package org.opentrafficsim.core.dsol;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.opentrafficsim.core.dsol.AbstractOTSModelTest.OTSModel;
+import org.opentrafficsim.core.dsol.AbstractOtsModelTest.OTSModel;
 
 /**
  * Test the OTSReplication class.
@@ -13,7 +13,7 @@ import org.opentrafficsim.core.dsol.AbstractOTSModelTest.OTSModel;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class AbstractOTSSimulationApplicationTest
+public class AbstractOtsSimulationApplicationTest
 {
 
     /**

@@ -33,7 +33,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class OTSLine3DTest
+public class OtsLine3DTest
 {
     /**
      * Test the constructors of OTSLine3D.

@@ -30,7 +30,7 @@ import org.locationtech.jts.geom.impl.CoordinateArraySequence;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class OTSShapeTest
+public class OtsShapeTest
 {
     /**
      * Test the OTSShape class.

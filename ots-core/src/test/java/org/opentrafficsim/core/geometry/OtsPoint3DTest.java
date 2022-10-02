@@ -26,7 +26,7 @@ import nl.tudelft.simulation.language.d3.CartesianPoint;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class OTSPoint3DTest
+public class OtsPoint3DTest
 {
     /**
      * Test the various constructors of OTSPoint3D.
