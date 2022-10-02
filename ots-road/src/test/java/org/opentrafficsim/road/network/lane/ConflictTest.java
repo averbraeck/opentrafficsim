@@ -24,9 +24,9 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -57,10 +57,10 @@ public class ConflictTest implements EventListenerInterface
     /**
      * Test the Conflict class.
      * @throws NetworkException on error
-     * @throws OTSGeometryException on error
+     * @throws OtsGeometryException on error
      */
     @Test
-    public void testConstructor() throws NetworkException, OTSGeometryException
+    public void testConstructor() throws NetworkException, OtsGeometryException
     {
         OtsSimulatorInterface simulator = MockDEVSSimulator.createMock();
         OtsReplication replication = Mockito.mock(OtsReplication.class);
@@ -73,24 +73,24 @@ public class ConflictTest implements EventListenerInterface
         OTSRoadNetwork network = new OTSRoadNetwork("Network for conflict test", true, simulator);
         LinkType linkType = network.getLinkType(LinkType.DEFAULTS.ROAD);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.ONE_WAY_LANE);
-        OTSPoint3D pointAFrom = new OTSPoint3D(0, 0, 0);
+        OtsPoint3D pointAFrom = new OtsPoint3D(0, 0, 0);
         OTSRoadNode nodeAFrom = new OTSRoadNode(network, "A from", pointAFrom, Direction.ZERO);
-        OTSPoint3D pointATo = new OTSPoint3D(100, 0, 0);
+        OtsPoint3D pointATo = new OtsPoint3D(100, 0, 0);
         OTSRoadNode nodeATo = new OTSRoadNode(network, "A to", pointATo, Direction.ZERO);
         CrossSectionLink linkA = new CrossSectionLink(network, "Link A", nodeAFrom, nodeATo, linkType,
-                new OTSLine3D(pointAFrom, pointATo), LaneKeepingPolicy.KEEPRIGHT);
+                new OtsLine3D(pointAFrom, pointATo), LaneKeepingPolicy.KEEPRIGHT);
         Lane laneA = new Lane(linkA, "lane A", Length.ZERO, new Length(2, LengthUnit.METER), laneType,
                 new Speed(50, SpeedUnit.KM_PER_HOUR));
         laneA.addListener(this, Lane.OBJECT_ADD_EVENT);
 
-        OTSPoint3D pointBFrom = new OTSPoint3D(30, -15, 0);
-        OTSPoint3D pointBTo = new OTSPoint3D(60, 60, 0);
+        OtsPoint3D pointBFrom = new OtsPoint3D(30, -15, 0);
+        OtsPoint3D pointBTo = new OtsPoint3D(60, 60, 0);
         Direction bDirection =
                 new Direction(Math.atan2(pointBTo.y - pointBFrom.y, pointBTo.x - pointBFrom.x), DirectionUnit.EAST_RADIAN);
         OTSRoadNode nodeBFrom = new OTSRoadNode(network, "B from", pointBFrom, bDirection);
         OTSRoadNode nodeBTo = new OTSRoadNode(network, "B to", pointBTo, bDirection);
         CrossSectionLink linkB = new CrossSectionLink(network, "Link B", nodeBFrom, nodeBTo, linkType,
-                new OTSLine3D(pointBFrom, pointBTo), LaneKeepingPolicy.KEEPRIGHT);
+                new OtsLine3D(pointBFrom, pointBTo), LaneKeepingPolicy.KEEPRIGHT);
         Lane laneB = new Lane(linkB, "lane B", Length.ZERO, new Length(4, LengthUnit.METER), laneType,
                 new Speed(50, SpeedUnit.KM_PER_HOUR));
         laneB.addListener(this, Lane.OBJECT_ADD_EVENT);
@@ -104,11 +104,11 @@ public class ConflictTest implements EventListenerInterface
 
         // Find out where the conflict area starts. With acute angles this is the point closest to pointAFrom among the
         // intersections of the lane contours. Similar for conflict area end.
-        OTSPoint3D conflictStart = null;
+        OtsPoint3D conflictStart = null;
         double closestDistance = Double.MAX_VALUE;
-        OTSPoint3D conflictEnd = null;
+        OtsPoint3D conflictEnd = null;
         double furthestDistance = 0.0;
-        for (OTSPoint3D intersection : intersections(laneA.getContour(), laneB.getContour()))
+        for (OtsPoint3D intersection : intersections(laneA.getContour(), laneB.getContour()))
         {
             double distance = pointAFrom.distanceSI(intersection);
             if (distance < closestDistance)
@@ -126,20 +126,20 @@ public class ConflictTest implements EventListenerInterface
         // System.out.println(conflictEnd);
 
         // Next statements pretend that vehicle width equals lane width.
-        OTSLine3D geometry1 = new OTSLine3D(conflictStart, new OTSPoint3D(conflictEnd.x, conflictStart.y, 0), conflictEnd,
-                new OTSPoint3D(conflictStart.x, conflictEnd.y, 0), conflictStart);
+        OtsLine3D geometry1 = new OtsLine3D(conflictStart, new OtsPoint3D(conflictEnd.x, conflictStart.y, 0), conflictEnd,
+                new OtsPoint3D(conflictStart.x, conflictEnd.y, 0), conflictStart);
         System.out.print(geometry1.toPlot());
-        OTSLine3D geometry2 = new OTSLine3D(conflictStart,
-                new OTSPoint3D(conflictStart.x + laneB.getWidth(0).si * Math.sin(bDirection.si),
+        OtsLine3D geometry2 = new OtsLine3D(conflictStart,
+                new OtsPoint3D(conflictStart.x + laneB.getWidth(0).si * Math.sin(bDirection.si),
                         conflictStart.y - laneB.getWidth(0).si * Math.cos(bDirection.si), 0),
-                conflictEnd, new OTSPoint3D(conflictEnd.x - laneB.getWidth(0).si * Math.sin(bDirection.si),
+                conflictEnd, new OtsPoint3D(conflictEnd.x - laneB.getWidth(0).si * Math.sin(bDirection.si),
                         conflictEnd.y + laneB.getWidth(0).si * Math.cos(bDirection.si), 0),
                 conflictStart);
         System.out.print(geometry2.toPlot());
 
         System.out.println("#angle B:           " + bDirection.toString(DirectionUnit.EAST_DEGREE));
         Length conflictBStart = new Length(
-                pointBFrom.distance(new OTSPoint3D(conflictStart.x + laneB.getWidth(0).si / 2 * Math.sin(bDirection.si),
+                pointBFrom.distance(new OtsPoint3D(conflictStart.x + laneB.getWidth(0).si / 2 * Math.sin(bDirection.si),
                         conflictStart.y - laneB.getWidth(0).si / 2 * Math.cos(bDirection.si), 0)).si,
                 LengthUnit.SI);
         System.out.println("#conflict B start:  " + conflictBStart);
@@ -196,21 +196,21 @@ public class ConflictTest implements EventListenerInterface
      * @param b OTSLine3D; the second polyline
      * @return Set&lt;OTSPoint3D&gt;; the intersections
      */
-    public Set<OTSPoint3D> intersections(final OTSLine3D a, final OTSLine3D b)
+    public Set<OtsPoint3D> intersections(final OtsLine3D a, final OtsLine3D b)
     {
         // TODO discuss if this method should be moved into the OTSLine3D class
-        Set<OTSPoint3D> result = new LinkedHashSet<>();
-        OTSPoint3D prevA = null;
-        for (OTSPoint3D nextA : a.getPoints())
+        Set<OtsPoint3D> result = new LinkedHashSet<>();
+        OtsPoint3D prevA = null;
+        for (OtsPoint3D nextA : a.getPoints())
         {
             if (null != prevA)
             {
-                OTSPoint3D prevB = null;
-                for (OTSPoint3D nextB : b.getPoints())
+                OtsPoint3D prevB = null;
+                for (OtsPoint3D nextB : b.getPoints())
                 {
                     if (null != prevB)
                     {
-                        OTSPoint3D intersection = OTSPoint3D.intersectionOfLineSegments(prevA, nextA, prevB, nextB);
+                        OtsPoint3D intersection = OtsPoint3D.intersectionOfLineSegments(prevA, nextA, prevB, nextB);
                         if (null != intersection)
                         {
                             result.add(intersection);

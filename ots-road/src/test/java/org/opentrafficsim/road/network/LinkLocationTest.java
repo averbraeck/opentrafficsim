@@ -7,9 +7,9 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.network.LinkLocation;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -30,18 +30,18 @@ public class LinkLocationTest implements UNITS
 {
     /**
      * Test constructor and verify all getters.
-     * @throws OTSGeometryException if that happens this test has failed
+     * @throws OtsGeometryException if that happens this test has failed
      * @throws NetworkException if that happens this test has failed
      */
     @Test
-    public final void linkLocationTest() throws OTSGeometryException, NetworkException
+    public final void linkLocationTest() throws OtsGeometryException, NetworkException
     {
         // Preparations
         OtsSimulatorInterface simulator = MockSimulator.createMock();
         OTSRoadNetwork network = new OTSRoadNetwork("link location test network", true, simulator);
-        OTSRoadNode nodeFrom = new OTSRoadNode(network, "From", new OTSPoint3D(0, 0, 0), Direction.ZERO);
-        OTSRoadNode nodeTo = new OTSRoadNode(network, "To", new OTSPoint3D(1000, 0, 0), Direction.ZERO);
-        OTSLine3D line = new OTSLine3D(new OTSPoint3D[] {new OTSPoint3D(0, 0, 0), new OTSPoint3D(1000, 0, 0)});
+        OTSRoadNode nodeFrom = new OTSRoadNode(network, "From", new OtsPoint3D(0, 0, 0), Direction.ZERO);
+        OTSRoadNode nodeTo = new OTSRoadNode(network, "To", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
+        OtsLine3D line = new OtsLine3D(new OtsPoint3D[] {new OtsPoint3D(0, 0, 0), new OtsPoint3D(1000, 0, 0)});
         CrossSectionLink link = new CrossSectionLink(network, "Link", nodeFrom, nodeTo,
                 network.getLinkType(LinkType.DEFAULTS.ROAD), line, LaneKeepingPolicy.KEEPRIGHT);
         Length linkLength = line.getLength();

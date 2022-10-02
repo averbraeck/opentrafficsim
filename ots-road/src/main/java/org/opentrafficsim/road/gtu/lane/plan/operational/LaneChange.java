@@ -16,10 +16,10 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSLine3D.FractionalFallback;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsLine3D.FractionalFallback;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -219,11 +219,11 @@ public class LaneChange implements Serializable
      * @param planDistance Length; absolute distance that will be covered during the time step
      * @param laneChangeDirection LateralDirectionality; lane change direction
      * @return OTSLine3D; path
-     * @throws OTSGeometryException on path or shape error
+     * @throws OtsGeometryException on path or shape error
      */
-    public final OTSLine3D getPath(final Duration timeStep, final LaneBasedGtu gtu, final LanePosition from,
+    public final OtsLine3D getPath(final Duration timeStep, final LaneBasedGtu gtu, final LanePosition from,
             final DirectedPoint startPosition, final Length planDistance, final LateralDirectionality laneChangeDirection)
-            throws OTSGeometryException
+            throws OtsGeometryException
     {
         // initiate lane change
         boolean favoured = false;
@@ -333,7 +333,7 @@ public class LaneChange implements Serializable
             toLanes.remove(0);
             Length beyond = fromAdjusted.getPosition().minus(fromAdjusted.getLane().getLength());
             Length pos = beyond;
-            fromAdjusted = Try.assign(() -> new LanePosition(fromLanes.get(0), pos), OTSGeometryException.class,
+            fromAdjusted = Try.assign(() -> new LanePosition(fromLanes.get(0), pos), OtsGeometryException.class,
                     "Info for lane is null.");
         }
 
@@ -341,7 +341,7 @@ public class LaneChange implements Serializable
 
         // create center lines
         double startFractionalPositionFrom = from.getPosition().si / from.getLane().getLength().si;
-        OTSLine3D fromLine = getLine(fromLanes, startFractionalPositionFrom, endFractionalPositionFrom);
+        OtsLine3D fromLine = getLine(fromLanes, startFractionalPositionFrom, endFractionalPositionFrom);
         // project for toLane
         double startFractionalPositionTo = toLanes.get(0).getCenterLine().projectFractional(null, null, startPosition.x,
                 startPosition.y, FractionalFallback.ENDPOINT);
@@ -363,9 +363,9 @@ public class LaneChange implements Serializable
             toLanes.remove(0);
             startFractionalPositionTo = 0.0;
         }
-        OTSLine3D toLine = getLine(toLanes, startFractionalPositionTo, endFractionalPositionTo);
+        OtsLine3D toLine = getLine(toLanes, startFractionalPositionTo, endFractionalPositionTo);
 
-        OTSLine3D path = this.laneChangePath.getPath(timeStep, planDistance, meanSpeed, fromAdjusted, startPosition,
+        OtsLine3D path = this.laneChangePath.getPath(timeStep, planDistance, meanSpeed, fromAdjusted, startPosition,
                 laneChangeDirection, fromLine, toLine, Duration.instantiateSI(laneChangeDuration), this.fraction);
         // update
         // TODO: this assumes the time step will not be interrupted
@@ -392,8 +392,8 @@ public class LaneChange implements Serializable
                 // ignore remainder of first lane if fraction is at the end of the lane
                 if (0.0 < endFractionalPositionFrom && endFractionalPositionFrom < 1.0)
                 {
-                    OTSLine3D remainder = toLane.getCenterLine().extractFractional(endFractionalPositionTo, 1.0);
-                    path = OTSLine3D.concatenate(0.001, path, remainder);
+                    OtsLine3D remainder = toLane.getCenterLine().extractFractional(endFractionalPositionTo, 1.0);
+                    path = OtsLine3D.concatenate(0.001, path, remainder);
                     requiredLength = planDistance.si - path.getLength().si;
                 }
                 // add further lanes
@@ -402,18 +402,18 @@ public class LaneChange implements Serializable
                     toLane = gtu.getNextLaneForRoute(toLane);
                     if (toLane != null) // let's hope we will move on to a sink
                     {
-                        OTSLine3D remainder = toLane.getCenterLine();
-                        path = OTSLine3D.concatenate(Lane.MARGIN.si, path, remainder);
+                        OtsLine3D remainder = toLane.getCenterLine();
+                        path = OtsLine3D.concatenate(Lane.MARGIN.si, path, remainder);
                         requiredLength = planDistance.si - path.getLength().si + Lane.MARGIN.si;
                     }
                 }
                 // filter near-duplicate point which results in projection exceptions
                 if (this.fraction > 0.999) // this means point 'target' is essentially at the design line
                 {
-                    OTSPoint3D[] points = new OTSPoint3D[path.size() - 1];
+                    OtsPoint3D[] points = new OtsPoint3D[path.size() - 1];
                     System.arraycopy(path.getPoints(), 0, points, 0, n - 1);
                     System.arraycopy(path.getPoints(), n, points, n - 1, path.size() - n);
-                    path = new OTSLine3D(points);
+                    path = new OtsLine3D(points);
                 }
             }
             // reset lane change
@@ -431,12 +431,12 @@ public class LaneChange implements Serializable
      * @param startFractionalPosition double; current fractional GTU position on first lane
      * @param endFractionalPosition double; target fractional GTU position on last lane
      * @return OTSLine3D; line from the lane center lines
-     * @throws OTSGeometryException on fraction outside of range
+     * @throws OtsGeometryException on fraction outside of range
      */
-    private OTSLine3D getLine(final List<Lane> lanes, final double startFractionalPosition, final double endFractionalPosition)
-            throws OTSGeometryException
+    private OtsLine3D getLine(final List<Lane> lanes, final double startFractionalPosition, final double endFractionalPosition)
+            throws OtsGeometryException
     {
-        OTSLine3D line = null;
+        OtsLine3D line = null;
         for (Lane lane : lanes)
         {
             if (line == null && lane.equals(lanes.get(lanes.size() - 1)))
@@ -449,12 +449,12 @@ public class LaneChange implements Serializable
             }
             else if (lane.equals(lanes.get(lanes.size() - 1)))
             {
-                line = OTSLine3D.concatenate(Lane.MARGIN.si, line,
+                line = OtsLine3D.concatenate(Lane.MARGIN.si, line,
                         lane.getCenterLine().extractFractional(0.0, endFractionalPosition));
             }
             else
             {
-                line = OTSLine3D.concatenate(Lane.MARGIN.si, line, lane.getCenterLine());
+                line = OtsLine3D.concatenate(Lane.MARGIN.si, line, lane.getCenterLine());
             }
         }
         return line;
@@ -573,10 +573,10 @@ public class LaneChange implements Serializable
         {
             /** {@inheritDoc} */
             @Override
-            public OTSLine3D getPath(final Duration timeStep, final Length planDistance, final Speed meanSpeed,
+            public OtsLine3D getPath(final Duration timeStep, final Length planDistance, final Speed meanSpeed,
                     final LanePosition from, final DirectedPoint startPosition, final LateralDirectionality laneChangeDirection,
-                    final OTSLine3D fromLine, final OTSLine3D toLine, final Duration laneChangeDuration,
-                    final double lcFraction) throws OTSGeometryException
+                    final OtsLine3D fromLine, final OtsLine3D toLine, final Duration laneChangeDuration,
+                    final double lcFraction) throws OtsGeometryException
             {
                 DirectedPoint target = toLine.getLocationFraction(1.0);
                 return Bezier.cubic(64, startPosition, target, 0.5);
@@ -637,10 +637,10 @@ public class LaneChange implements Serializable
         {
             /** {@inheritDoc} */
             @Override
-            public OTSLine3D getPath(final Duration timeStep, final Length planDistance, final Speed meanSpeed,
+            public OtsLine3D getPath(final Duration timeStep, final Length planDistance, final Speed meanSpeed,
                     final LanePosition from, final DirectedPoint startPosition, final LateralDirectionality laneChangeDirection,
-                    final OTSLine3D fromLine, final OTSLine3D toLine, final Duration laneChangeDuration,
-                    final double lcFraction) throws OTSGeometryException
+                    final OtsLine3D fromLine, final OtsLine3D toLine, final Duration laneChangeDuration,
+                    final double lcFraction) throws OtsGeometryException
             {
                 DirectedPoint toTarget = toLine.getLocationFraction(1.0);
                 DirectedPoint fromTarget = fromLine.getLocationFraction(1.0);
@@ -665,12 +665,12 @@ public class LaneChange implements Serializable
              * @param lcFraction double; lane change fraction at beginning of the plan
              * @param dFraction double; additional lane change fraction to be made during the plan
              * @return OTSLine3D a (partial) path for a lane change
-             * @throws OTSGeometryException on wrong fractional position
+             * @throws OtsGeometryException on wrong fractional position
              */
-            private OTSLine3D getPathRecursive(final Length planDistance, final Speed meanSpeed, final double buffer,
-                    final double width, final LanePosition from, final DirectedPoint startPosition, final OTSLine3D fromLine,
-                    final OTSLine3D toLine, final Duration laneChangeDuration, final double lcFraction, final double dFraction)
-                    throws OTSGeometryException
+            private OtsLine3D getPathRecursive(final Length planDistance, final Speed meanSpeed, final double buffer,
+                    final double width, final LanePosition from, final DirectedPoint startPosition, final OtsLine3D fromLine,
+                    final OtsLine3D toLine, final Duration laneChangeDuration, final double lcFraction, final double dFraction)
+                    throws OtsGeometryException
             {
                 // factor on path length to not overshoot a fraction of 1.0 in lane change progress, i.e. <1 if lane change will
                 // be finished in the coming time step
@@ -726,10 +726,10 @@ public class LaneChange implements Serializable
 
             /** {@inheritDoc} */
             @Override
-            public OTSLine3D getPath(final Duration timeStep, final Length planDistance, final Speed meanSpeed,
+            public OtsLine3D getPath(final Duration timeStep, final Length planDistance, final Speed meanSpeed,
                     final LanePosition from, final DirectedPoint startPosition, final LateralDirectionality laneChangeDirection,
-                    final OTSLine3D fromLine, final OTSLine3D toLine, final Duration laneChangeDuration,
-                    final double lcFraction) throws OTSGeometryException
+                    final OtsLine3D fromLine, final OtsLine3D toLine, final Duration laneChangeDuration,
+                    final double lcFraction) throws OtsGeometryException
             {
 
                 double dx = fromLine.get(0).getLocation().x - startPosition.x;
@@ -748,9 +748,9 @@ public class LaneChange implements Serializable
                 double startLongitudinalFractionTotal = longitudinalFraction(startLateralFraction);
 
                 double nSegments = Math.ceil((64 * (1.0 - lcFraction)));
-                List<OTSPoint3D> pointList = new ArrayList<>();
+                List<OtsPoint3D> pointList = new ArrayList<>();
                 double zStart = (1.0 - startLateralFraction) * fromLine.get(0).z + startLateralFraction * toLine.get(0).z;
-                pointList.add(new OTSPoint3D(startPosition.x, startPosition.y, zStart));
+                pointList.add(new OtsPoint3D(startPosition.x, startPosition.y, zStart));
                 for (int i = 1; i <= nSegments; i++)
                 {
                     double f = i / nSegments;
@@ -759,12 +759,12 @@ public class LaneChange implements Serializable
                     double lateralFractionInv = 1.0 - lateralFraction;
                     DirectedPoint fromPoint = fromLine.getLocationFraction(f);
                     DirectedPoint toPoint = toLine.getLocationFraction(f);
-                    pointList.add(new OTSPoint3D(lateralFractionInv * fromPoint.x + lateralFraction * toPoint.x,
+                    pointList.add(new OtsPoint3D(lateralFractionInv * fromPoint.x + lateralFraction * toPoint.x,
                             lateralFractionInv * fromPoint.y + lateralFraction * toPoint.y,
                             lateralFractionInv * fromPoint.z + lateralFraction * toPoint.z));
                 }
 
-                OTSLine3D line = new OTSLine3D(pointList);
+                OtsLine3D line = new OtsLine3D(pointList);
                 // clean line for projection inconsistencies (position -> center lines -> interpolated new position)
                 double angleChange = Math.abs(line.getLocation(Length.ZERO).getRotZ() - startPosition.getRotZ());
                 int i = 1;
@@ -774,11 +774,11 @@ public class LaneChange implements Serializable
                     if (i >= pointList.size() - 2)
                     {
                         // return original if we can't clean the line, perhaps extreme road curvature or line with 2 points
-                        return new OTSLine3D(pointList);
+                        return new OtsLine3D(pointList);
                     }
-                    List<OTSPoint3D> newPointList = new ArrayList<>(pointList.subList(i, pointList.size()));
+                    List<OtsPoint3D> newPointList = new ArrayList<>(pointList.subList(i, pointList.size()));
                     newPointList.add(0, pointList.get(0));
-                    line = new OTSLine3D(newPointList);
+                    line = new OtsLine3D(newPointList);
                     angleChange = Math.abs(line.getLocation(Length.ZERO).getRotZ() - startPosition.getRotZ());
                 }
                 return line;
@@ -816,10 +816,10 @@ public class LaneChange implements Serializable
          * @param laneChangeDuration Duration; current considered duration of the entire lane change
          * @param lcFraction double; fraction of lane change done so far
          * @return OTSLine3D a (partial) path for a lane change
-         * @throws OTSGeometryException on wrong fractional position
+         * @throws OtsGeometryException on wrong fractional position
          */
-        OTSLine3D getPath(Duration timeStep, Length planDistance, Speed meanSpeed, LanePosition from,
-                DirectedPoint startPosition, LateralDirectionality laneChangeDirection, OTSLine3D fromLine, OTSLine3D toLine,
-                Duration laneChangeDuration, double lcFraction) throws OTSGeometryException;
+        OtsLine3D getPath(Duration timeStep, Length planDistance, Speed meanSpeed, LanePosition from,
+                DirectedPoint startPosition, LateralDirectionality laneChangeDirection, OtsLine3D fromLine, OtsLine3D toLine,
+                Duration laneChangeDuration, double lcFraction) throws OtsGeometryException;
     }
 }

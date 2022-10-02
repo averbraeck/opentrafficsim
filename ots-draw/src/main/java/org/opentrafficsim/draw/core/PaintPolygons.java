@@ -5,8 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 
 /**
  * Paint a (series of) filled polygon(s) defined as a Path2D.Double
@@ -25,7 +25,7 @@ public final class PaintPolygons
     }
 
     /** Dummy coordinate that forces the drawing operation to start a new path. */
-    public static final OTSPoint3D NEWPATH = new OTSPoint3D(Double.NaN, Double.NaN, Double.NaN);
+    public static final OtsPoint3D NEWPATH = new OtsPoint3D(Double.NaN, Double.NaN, Double.NaN);
 
     /**
      * Paint (fill) a polygon or a series of polygons.
@@ -36,12 +36,12 @@ public final class PaintPolygons
      * @param fill boolean; fill or just contour
      */
     public static void paintMultiPolygon(final Graphics2D graphics, final Color color, final DirectedPoint referencePoint,
-            final OTSLine3D line, final boolean fill)
+            final OtsLine3D line, final boolean fill)
     {
         graphics.setColor(color);
         Path2D.Double path = new Path2D.Double();
         boolean withinPath = false;
-        for (OTSPoint3D point : line.getPoints())
+        for (OtsPoint3D point : line.getPoints())
         {
             if (NEWPATH.equals(point))
             {

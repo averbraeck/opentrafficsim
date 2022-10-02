@@ -55,9 +55,9 @@ import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -712,17 +712,17 @@ public class LmrsStrategies implements EventListenerInterface
                 }
 
                 // Network
-                OTSPoint3D pointA = new OTSPoint3D(0, 0, 0);
-                OTSPoint3D pointB = new OTSPoint3D(4000, 0, 0);
-                OTSPoint3D pointC = new OTSPoint3D(7400, 0, 0);
+                OtsPoint3D pointA = new OtsPoint3D(0, 0, 0);
+                OtsPoint3D pointB = new OtsPoint3D(4000, 0, 0);
+                OtsPoint3D pointC = new OtsPoint3D(7400, 0, 0);
                 OTSRoadNode nodeA = new OTSRoadNode(net, "A", pointA, Direction.ZERO);
                 OTSRoadNode nodeB = new OTSRoadNode(net, "B", pointB, Direction.ZERO);
                 OTSRoadNode nodeC = new OTSRoadNode(net, "C", pointC, Direction.ZERO);
                 CrossSectionLink linkAB = new CrossSectionLink(net, "AB", nodeA, nodeB,
-                        LmrsStrategies.this.network.getLinkType(LinkType.DEFAULTS.FREEWAY), new OTSLine3D(pointA, pointB),
+                        LmrsStrategies.this.network.getLinkType(LinkType.DEFAULTS.FREEWAY), new OtsLine3D(pointA, pointB),
                         LaneKeepingPolicy.KEEPRIGHT);
                 CrossSectionLink linkBC = new CrossSectionLink(net, "BC", nodeB, nodeC,
-                        LmrsStrategies.this.network.getLinkType(LinkType.DEFAULTS.FREEWAY), new OTSLine3D(pointB, pointC),
+                        LmrsStrategies.this.network.getLinkType(LinkType.DEFAULTS.FREEWAY), new OtsLine3D(pointB, pointC),
                         LaneKeepingPolicy.KEEPRIGHT);
                 Lane laneAB1 = new Lane(linkAB, "laneAB1", Length.instantiateSI(0.0), Length.instantiateSI(3.5),
                         LmrsStrategies.this.network.getLaneType(LaneType.DEFAULTS.HIGHWAY),
@@ -902,7 +902,7 @@ public class LmrsStrategies implements EventListenerInterface
 
                 }
             }
-            catch (NetworkException | OTSGeometryException | NamingException | ValueRuntimeException | ParameterException
+            catch (NetworkException | OtsGeometryException | NamingException | ValueRuntimeException | ParameterException
                     | RemoteException | SimRuntimeException exception)
             {
                 exception.printStackTrace();

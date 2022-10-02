@@ -6,7 +6,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.point.Point3d;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
 import org.opentrafficsim.road.gtu.lane.perception.RollingLaneStructure;
@@ -54,7 +54,7 @@ public class LaneStructureLocatable implements Locatable
         {
             return rt.getLane().getCenterLine().getLocation(position);
         }
-        catch (OTSGeometryException exception)
+        catch (OtsGeometryException exception)
         {
             throw new RuntimeException("Unable to return location.", exception);
         }

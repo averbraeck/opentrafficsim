@@ -34,8 +34,8 @@ import org.mockito.stubbing.Answer;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -109,15 +109,15 @@ public class ContourPlotTest implements UNITS
             throws Exception
     {
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
-        OTSRoadNode b = new OTSRoadNode(network, "B", new OTSPoint3D(12345, 0, 0), Direction.ZERO);
+        OTSRoadNode b = new OTSRoadNode(network, "B", new OtsPoint3D(12345, 0, 0), Direction.ZERO);
         ArrayList<Lane> result = new ArrayList<Lane>();
         Lane[] lanes = LaneFactory.makeMultiLane(network, "AtoB",
-                new OTSRoadNode(network, "A", new OTSPoint3D(1234, 0, 0), Direction.ZERO), b, null, 1, laneType,
+                new OTSRoadNode(network, "A", new OtsPoint3D(1234, 0, 0), Direction.ZERO), b, null, 1, laneType,
                 new Speed(100, KM_PER_HOUR), simulator);
         result.add(lanes[0]);
         // Make a continuation lane to prevent errors when the operational plan exceeds the available remaining length
         lanes = LaneFactory.makeMultiLane(network, "BtoC", b,
-                new OTSRoadNode(network, "C", new OTSPoint3D(99999, 0, 0), Direction.ZERO), null, 1, laneType,
+                new OTSRoadNode(network, "C", new OtsPoint3D(99999, 0, 0), Direction.ZERO), null, 1, laneType,
                 new Speed(100, KM_PER_HOUR), null);
         return GraphLaneUtil.createPath("AtoB", lanes[0]);
     }
@@ -767,12 +767,12 @@ public class ContourPlotTest implements UNITS
      * @throws NetworkException when the GTU cannot be placed on the given lane.
      * @throws SimRuntimeException when the move method cannot be scheduled.
      * @throws GtuException when construction of the GTU fails (probably due to an invalid parameter)
-     * @throws OTSGeometryException when the initial path is wrong
+     * @throws OtsGeometryException when the initial path is wrong
      */
     private static LaneBasedIndividualGtu makeReferenceCar(final String id, final GtuType gtuType, final Lane lane,
             final Length initialPosition, final Speed initialSpeed, final OtsSimulatorInterface simulator,
             final GtuFollowingModelOld gtuFollowingModel, final LaneChangeModel laneChangeModel, final OTSRoadNetwork network)
-            throws NamingException, NetworkException, SimRuntimeException, GtuException, OTSGeometryException
+            throws NamingException, NetworkException, SimRuntimeException, GtuException, OtsGeometryException
     {
         Length length = new Length(5.0, METER);
         Length width = new Length(2.0, METER);

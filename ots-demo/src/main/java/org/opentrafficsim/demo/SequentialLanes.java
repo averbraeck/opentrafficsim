@@ -24,9 +24,9 @@ import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -281,34 +281,34 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
             this.nodes = new ArrayList<>();
             try
             {
-                OTSPoint3D p2 = new OTSPoint3D(1020, 3);
-                OTSPoint3D p3 = new OTSPoint3D(2000, 197);
+                OtsPoint3D p2 = new OtsPoint3D(1020, 3);
+                OtsPoint3D p3 = new OtsPoint3D(2000, 197);
                 Direction dir23 = p2.horizontalDirection(p3);
-                OTSRoadNode n0 = new OTSRoadNode(this.network, "Node-0-(0,0)", new OTSPoint3D(0, 0), Direction.ZERO);
-                OTSRoadNode n1 = new OTSRoadNode(this.network, "Node-1-(1000,0)", new OTSPoint3D(1000, 0), Direction.ZERO);
+                OTSRoadNode n0 = new OTSRoadNode(this.network, "Node-0-(0,0)", new OtsPoint3D(0, 0), Direction.ZERO);
+                OTSRoadNode n1 = new OTSRoadNode(this.network, "Node-1-(1000,0)", new OtsPoint3D(1000, 0), Direction.ZERO);
                 OTSRoadNode n2 = new OTSRoadNode(this.network, "Node-2-(1020,3)", p2, dir23);
                 OTSRoadNode n3 = new OTSRoadNode(this.network, "Node-3-(2000,197)", p3, dir23);
-                OTSRoadNode n4 = new OTSRoadNode(this.network, "Node-4-(2020,200)", new OTSPoint3D(2020, 200), Direction.ZERO);
-                OTSRoadNode n5 = new OTSRoadNode(this.network, "Node-5-(2200,200)", new OTSPoint3D(2200, 200), Direction.ZERO);
+                OTSRoadNode n4 = new OTSRoadNode(this.network, "Node-4-(2020,200)", new OtsPoint3D(2020, 200), Direction.ZERO);
+                OTSRoadNode n5 = new OTSRoadNode(this.network, "Node-5-(2200,200)", new OtsPoint3D(2200, 200), Direction.ZERO);
                 this.nodes.addAll(Arrays.asList(new OTSRoadNode[] {n0, n1, n2, n3, n4, n5}));
 
                 LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
 
                 // Now we can build a series of Links with one Lane on them
                 ArrayList<CrossSectionLink> links = new ArrayList<>();
-                OTSLine3D l01 = new OTSLine3D(n0.getPoint(), n1.getPoint());
-                OTSLine3D l12 = LaneFactory.makeBezier(n0, n1, n2, n3);
-                OTSLine3D l23 =
-                        minus ? new OTSLine3D(n3.getPoint(), n2.getPoint()) : new OTSLine3D(n2.getPoint(), n3.getPoint());
-                OTSLine3D l34 = LaneFactory.makeBezier(n2, n3, n4, n5);
-                OTSLine3D l45 = new OTSLine3D(n4.getPoint(), n5.getPoint());
-                OTSLine3D[] lines = new OTSLine3D[] {l01, l12, l23, l34, l45};
+                OtsLine3D l01 = new OtsLine3D(n0.getPoint(), n1.getPoint());
+                OtsLine3D l12 = LaneFactory.makeBezier(n0, n1, n2, n3);
+                OtsLine3D l23 =
+                        minus ? new OtsLine3D(n3.getPoint(), n2.getPoint()) : new OtsLine3D(n2.getPoint(), n3.getPoint());
+                OtsLine3D l34 = LaneFactory.makeBezier(n2, n3, n4, n5);
+                OtsLine3D l45 = new OtsLine3D(n4.getPoint(), n5.getPoint());
+                OtsLine3D[] lines = new OtsLine3D[] {l01, l12, l23, l34, l45};
 
                 for (int i = 1; i < this.nodes.size(); i++)
                 {
                     OTSRoadNode fromNode = this.nodes.get(i - 1);
                     OTSRoadNode toNode = this.nodes.get(i);
-                    OTSLine3D line = lines[i - 1];
+                    OtsLine3D line = lines[i - 1];
                     String linkName = fromNode.getId() + "-" + toNode.getId();
                     Lane[] lanes = LaneFactory.makeMultiLane(this.network, linkName, fromNode, toNode, line.getPoints(), 1,
                             laneType, this.speedLimit, this.simulator);
@@ -339,7 +339,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
                 // Schedule creation of the first car (it will re-schedule itself one headway later, etc.).
                 this.simulator.scheduleEventAbsTime(Time.ZERO, this, this, "generateCar", null);
             }
-            catch (NamingException | NetworkException | OTSGeometryException | ParameterException | InputParameterException
+            catch (NamingException | NetworkException | OtsGeometryException | ParameterException | InputParameterException
                     | GtuException exception)
             {
                 exception.printStackTrace();
@@ -398,7 +398,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
                 gtu.init(strategicalPlanner, initialPositions, initialSpeed);
                 this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
             }
-            catch (SimRuntimeException | NetworkException | GtuException | OTSGeometryException exception)
+            catch (SimRuntimeException | NetworkException | GtuException | OtsGeometryException exception)
             {
                 exception.printStackTrace();
             }

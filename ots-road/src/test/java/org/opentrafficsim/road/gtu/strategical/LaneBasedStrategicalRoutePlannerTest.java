@@ -3,9 +3,9 @@ package org.opentrafficsim.road.gtu.strategical;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -34,17 +34,17 @@ public class LaneBasedStrategicalRoutePlannerTest
      * Test the nextLinkDirection method.
      * @throws GtuException if not caught this test has failed
      * @throws NetworkException if not caught this test has failed
-     * @throws OTSGeometryException when construction of design line fails
+     * @throws OtsGeometryException when construction of design line fails
      */
     @Test
-    public final void nextLinkDirectionTest() throws GtuException, NetworkException, OTSGeometryException
+    public final void nextLinkDirectionTest() throws GtuException, NetworkException, OtsGeometryException
     {
         OtsSimulatorInterface simulator = MockSimulator.createMock();
         OTSRoadNetwork network = new OTSRoadNetwork("next link direction test", true, simulator);
         // Build a really simple network
-        OTSNode fromNode = new OTSNode(network, "from", new OTSPoint3D(0, 0, 0));
-        OTSNode toNode = new OTSNode(network, "to", new OTSPoint3D(100, 0, 0));
-        OTSLine3D designLine = new OTSLine3D(fromNode.getPoint(), toNode.getPoint());
+        OTSNode fromNode = new OTSNode(network, "from", new OtsPoint3D(0, 0, 0));
+        OTSNode toNode = new OTSNode(network, "to", new OtsPoint3D(100, 0, 0));
+        OtsLine3D designLine = new OtsLine3D(fromNode.getPoint(), toNode.getPoint());
         OTSLink link = new OTSLink(network, "link", fromNode, toNode, network.getLinkType(LinkType.DEFAULTS.ROAD), designLine);
         CarFollowingModel cfm = new IDMPlus();
         LaneBasedCFLCTacticalPlanner tacticalPlanner = new LaneBasedCFLCTacticalPlanner(null, null, null);

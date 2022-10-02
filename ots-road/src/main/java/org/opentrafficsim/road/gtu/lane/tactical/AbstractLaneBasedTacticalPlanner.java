@@ -13,8 +13,8 @@ import org.opentrafficsim.base.parameters.ParameterTypeClass;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
@@ -130,13 +130,13 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         Lane lastLane = lane;
         laneListForward.add(lastLane);
         Length distanceToEndOfLane;
-        OTSLine3D path;
+        OtsLine3D path;
         try
         {
             distanceToEndOfLane = lane.getLength().minus(position);
             path = lane.getCenterLine().extract(position, lane.getLength());
         }
-        catch (OTSGeometryException exception)
+        catch (OtsGeometryException exception)
         {
             // System.err.println(gtu + ": " + exception.getMessage());
             // System.err.println(lane + ", len=" + lane.getLength());
@@ -210,7 +210,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                 path = concatenateNull(path, lane.getCenterLine());
                 // path = OTSLine3D.concatenate(Lane.MARGIN.si, path, lane.getCenterLine());
             }
-            catch (OTSGeometryException exception)
+            catch (OtsGeometryException exception)
             {
                 throw new GtuException(exception);
             }
@@ -227,15 +227,15 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
      * @param path OTSLine3D; path, may be {@code null}
      * @param centerLine OTSLine3D; center line of lane to add
      * @return concatenated line
-     * @throws OTSGeometryException when lines are degenerate or too distant
+     * @throws OtsGeometryException when lines are degenerate or too distant
      */
-    public static OTSLine3D concatenateNull(final OTSLine3D path, final OTSLine3D centerLine) throws OTSGeometryException
+    public static OtsLine3D concatenateNull(final OtsLine3D path, final OtsLine3D centerLine) throws OtsGeometryException
     {
         if (path == null)
         {
             return centerLine;
         }
-        return OTSLine3D.concatenate(Lane.MARGIN.si, path, centerLine);
+        return OtsLine3D.concatenate(Lane.MARGIN.si, path, centerLine);
     }
 
     /**

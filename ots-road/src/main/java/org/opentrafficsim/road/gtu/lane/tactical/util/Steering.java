@@ -15,9 +15,9 @@ import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
@@ -80,8 +80,8 @@ public final class Steering
         {
             throw new RuntimeException(exception); // could not happen, we loop inside the plan duration
         }
-        List<OTSPoint3D> points = new ArrayList<>();
-        points.add(new OTSPoint3D(pos));
+        List<OtsPoint3D> points = new ArrayList<>();
+        points.add(new OtsPoint3D(pos));
         Angle steeringAngle = steeringState.getSteeringAngle();
         Angle angularError = steeringState.getAngularError();
         double angularErrorDerivative = steeringState.getAngularErrorDerivative();
@@ -106,7 +106,7 @@ public final class Steering
             }
             // TODO: apply math
 
-            points.add(new OTSPoint3D(pos)); // with pos being updated to the end position of the current step
+            points.add(new OtsPoint3D(pos)); // with pos being updated to the end position of the current step
             step = step.plus(params.getParameter(DT));
         }
         steeringState.setSteeringAngle(steeringAngle);
@@ -114,12 +114,12 @@ public final class Steering
         steeringState.setAngularErrorDerivative(angularErrorDerivative);
         steeringState.setPositionError(positionError);
         steeringState.setPositionErrorDerivative(positionErrorDerivative);
-        OTSLine3D path;
+        OtsLine3D path;
         try
         {
-            path = new OTSLine3D(points.toArray(new OTSPoint3D[points.size()]));
+            path = new OtsLine3D(points.toArray(new OtsPoint3D[points.size()]));
         }
-        catch (OTSGeometryException exception)
+        catch (OtsGeometryException exception)
         {
             throw new RuntimeException("The path has too few or too close points.", exception);
         }

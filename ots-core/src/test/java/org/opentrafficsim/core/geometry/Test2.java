@@ -22,25 +22,25 @@ public final class Test2
     /**
      * @param args String[]; args
      * @throws NetworkException on error
-     * @throws OTSGeometryException on error
+     * @throws OtsGeometryException on error
      */
-    public static void main(final String[] args) throws NetworkException, OTSGeometryException
+    public static void main(final String[] args) throws NetworkException, OtsGeometryException
     {
-        OTSLine3D reference = new OTSLine3D(new OTSPoint3D(5, -1, 1), new OTSPoint3D(5, -2, 1), new OTSPoint3D(4.9, -2.01, 1),
-                new OTSPoint3D(5.1, -2.03, 1), new OTSPoint3D(5, -2.04, 1), new OTSPoint3D(5, -6, 1),
-                new OTSPoint3D(4.9, -6.01, 1), new OTSPoint3D(5.1, -6.03, 1), new OTSPoint3D(5, -6.04, 1),
-                new OTSPoint3D(5, -7.04, 1));
+        OtsLine3D reference = new OtsLine3D(new OtsPoint3D(5, -1, 1), new OtsPoint3D(5, -2, 1), new OtsPoint3D(4.9, -2.01, 1),
+                new OtsPoint3D(5.1, -2.03, 1), new OtsPoint3D(5, -2.04, 1), new OtsPoint3D(5, -6, 1),
+                new OtsPoint3D(4.9, -6.01, 1), new OtsPoint3D(5.1, -6.03, 1), new OtsPoint3D(5, -6.04, 1),
+                new OtsPoint3D(5, -7.04, 1));
 
         System.out.println("#reference: " + reference.toString());
-        OTSLine3D right = OTSOffsetLinePK.offsetLine(reference, -2);
+        OtsLine3D right = OtsOffsetLinePK.offsetLine(reference, -2);
         System.out.println("#right: " + right.toString());
-        OTSLine3D left = reference.offsetLine(2);
+        OtsLine3D left = reference.offsetLine(2);
         System.out.println("#left: " + left.toString());
 
-        reference = new OTSLine3D(new OTSPoint3D(10, 0.5, 0), new OTSPoint3D(10, -2, 0), new OTSPoint3D(9.9, -2.01, 0),
-                new OTSPoint3D(10.1, -2.03, 0), new OTSPoint3D(10, -2.04, 0), new OTSPoint3D(10, -6, 0),
-                new OTSPoint3D(9.9, -6.01, 0), new OTSPoint3D(10.1, -6.03, 0), new OTSPoint3D(10, -6.04, 0),
-                new OTSPoint3D(10, -8.54, 0));
+        reference = new OtsLine3D(new OtsPoint3D(10, 0.5, 0), new OtsPoint3D(10, -2, 0), new OtsPoint3D(9.9, -2.01, 0),
+                new OtsPoint3D(10.1, -2.03, 0), new OtsPoint3D(10, -2.04, 0), new OtsPoint3D(10, -6, 0),
+                new OtsPoint3D(9.9, -6.01, 0), new OtsPoint3D(10.1, -6.03, 0), new OtsPoint3D(10, -6.04, 0),
+                new OtsPoint3D(10, -8.54, 0));
 
         System.out.println("#reference: " + reference.toString());
         right = reference.offsetLine(-2);

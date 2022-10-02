@@ -31,7 +31,7 @@ import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Link;
@@ -94,7 +94,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws JAXBException when the parsing fails
      * @throws URISyntaxException when the filename is not valid
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
-     * @throws OTSGeometryException when the design line of a link is invalid
+     * @throws OtsGeometryException when the design line of a link is invalid
      * @throws XmlParserException when the stripe type cannot be recognized
      * @throws ParserConfigurationException on error with parser configuration
      * @throws SAXException on error creating SAX parser
@@ -105,7 +105,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws MalformedURLException when construction of a traffic controller fails
      */
     public static OTSRoadNetwork build(final String filename, final OTSRoadNetwork otsNetwork, final boolean buildConflicts)
-            throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException, SAXException,
+            throws JAXBException, URISyntaxException, NetworkException, OtsGeometryException, XmlParserException, SAXException,
             ParserConfigurationException, SimRuntimeException, GtuException, MalformedURLException, IOException,
             TrafficControlException
     {
@@ -123,7 +123,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws JAXBException when the parsing fails
      * @throws URISyntaxException when the filename is not valid
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
-     * @throws OTSGeometryException when the design line of a link is invalid
+     * @throws OtsGeometryException when the design line of a link is invalid
      * @throws XmlParserException when the stripe type cannot be recognized
      * @throws ParserConfigurationException on error with parser configuration
      * @throws SAXException on error creating SAX parser
@@ -134,7 +134,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws MalformedURLException when construction of a traffic controller fails
      */
     public static ExperimentRunControl<Duration> build(final InputStream xmlStream, final OTSRoadNetwork otsNetwork,
-            final boolean buildConflicts) throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException,
+            final boolean buildConflicts) throws JAXBException, URISyntaxException, NetworkException, OtsGeometryException,
             XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GtuException,
             MalformedURLException, IOException, TrafficControlException
     {
@@ -190,7 +190,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws JAXBException when the parsing fails
      * @throws URISyntaxException when the filename is not valid
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
-     * @throws OTSGeometryException when the design line of a link is invalid
+     * @throws OtsGeometryException when the design line of a link is invalid
      * @throws XmlParserException when the stripe type cannot be recognized
      * @throws ParserConfigurationException on error with parser configuration
      * @throws SAXException on error creating SAX parser
@@ -201,7 +201,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws MalformedURLException when construction of a traffic controller fails
      */
     public static ExperimentRunControl<Duration> build(final URL xmlURL, final OTSRoadNetwork otsNetwork,
-            final boolean buildConflicts) throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException,
+            final boolean buildConflicts) throws JAXBException, URISyntaxException, NetworkException, OtsGeometryException,
             XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GtuException,
             MalformedURLException, IOException, TrafficControlException
     {
@@ -217,7 +217,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws JAXBException when the parsing fails
      * @throws URISyntaxException when the filename is not valid
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
-     * @throws OTSGeometryException when the design line of a link is invalid
+     * @throws OtsGeometryException when the design line of a link is invalid
      * @throws XmlParserException when the stripe type cannot be recognized
      * @throws ParserConfigurationException on error with parser configuration
      * @throws SAXException on error creating SAX parser
@@ -228,7 +228,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws MalformedURLException when construction of a traffic controller fails
      */
     public static ExperimentRunControl<Duration> build(final OTS ots, final OTSRoadNetwork otsNetwork,
-            final boolean buildConflicts) throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException,
+            final boolean buildConflicts) throws JAXBException, URISyntaxException, NetworkException, OtsGeometryException,
             XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GtuException,
             MalformedURLException, IOException, TrafficControlException
     {

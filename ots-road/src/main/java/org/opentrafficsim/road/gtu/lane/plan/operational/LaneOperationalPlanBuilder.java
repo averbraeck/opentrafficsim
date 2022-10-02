@@ -20,9 +20,9 @@ import org.djutils.exceptions.Throw;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
@@ -88,14 +88,14 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      * @throws OperationalPlanException when the plan cannot be generated, e.g. because of a path that is too short
      * @throws OperationalPlanException when the length of the path and the calculated driven distance implied by the
      *             constructed segment list differ more than a given threshold
-     * @throws OTSGeometryException in case the lanes are not connected or firstLanePosition is larger than the length of the
+     * @throws OtsGeometryException in case the lanes are not connected or firstLanePosition is larger than the length of the
      *             first lane
      */
     public static LaneBasedOperationalPlan buildGradualAccelerationPlan(final LaneBasedGtu gtu, final Length distance,
             final Time startTime, final Speed startSpeed, final Speed endSpeed, final Acceleration maxAcceleration,
-            final Acceleration maxDeceleration) throws OperationalPlanException, OTSGeometryException
+            final Acceleration maxDeceleration) throws OperationalPlanException, OtsGeometryException
     {
-        OTSLine3D path = createPathAlongCenterLine(gtu, distance);
+        OtsLine3D path = createPathAlongCenterLine(gtu, distance);
         Segment segment;
         if (startSpeed.eq(endSpeed))
         {
@@ -144,12 +144,12 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      * @return the operational plan to accomplish the given end speed
      * @throws OperationalPlanException when the length of the path and the calculated driven distance implied by the
      *             constructed segment list differ more than a given threshold
-     * @throws OTSGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
+     * @throws OtsGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
      *             first lane
      */
     public static LaneBasedOperationalPlan buildGradualAccelerationPlan(final LaneBasedGtu gtu, final Length distance,
             final Time startTime, final Speed startSpeed, final Speed endSpeed)
-            throws OperationalPlanException, OTSGeometryException
+            throws OperationalPlanException, OtsGeometryException
     {
         return buildGradualAccelerationPlan(gtu, distance, startTime, startSpeed, endSpeed, MAX_ACCELERATION, MAX_DECELERATION);
     }
@@ -168,14 +168,14 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      * @param deceleration Acceleration; the deceleration to use if endSpeed &lt; startSpeed, provided as a NEGATIVE number
      * @return the operational plan to accomplish the given end speed
      * @throws OperationalPlanException when the construction of the operational path fails
-     * @throws OTSGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
+     * @throws OtsGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
      *             first lane
      */
     public static LaneBasedOperationalPlan buildMaximumAccelerationPlan(final LaneBasedGtu gtu, final Length distance,
             final Time startTime, final Speed startSpeed, final Speed endSpeed, final Acceleration acceleration,
-            final Acceleration deceleration) throws OperationalPlanException, OTSGeometryException
+            final Acceleration deceleration) throws OperationalPlanException, OtsGeometryException
     {
-        OTSLine3D path = createPathAlongCenterLine(gtu, distance);
+        OtsLine3D path = createPathAlongCenterLine(gtu, distance);
         ArrayList<Segment> segmentList = new ArrayList<>();
         if (startSpeed.eq(endSpeed))
         {
@@ -222,7 +222,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                         if (endSpeed.si == 0.0)
                         {
                             // if endSpeed == 0, we cannot reach the end of the path. Therefore, build a partial path.
-                            OTSLine3D partialPath = path.truncate(x.si);
+                            OtsLine3D partialPath = path.truncate(x.si);
                             segmentList.add(new OperationalPlan.AccelerationSegment(t, deceleration));
                             return new LaneBasedOperationalPlan(gtu, partialPath, startTime, startSpeed, segmentList, false);
                         }
@@ -255,12 +255,12 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      * @param deviative boolean; whether the plan is deviative
      * @return the operational plan to accomplish the given end speed
      * @throws OperationalPlanException when the construction of the operational path fails
-     * @throws OTSGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
+     * @throws OtsGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
      *             first lane
      */
     public static LaneBasedOperationalPlan buildAccelerationPlan(final LaneBasedGtu gtu, final Time startTime,
             final Speed startSpeed, final Acceleration acceleration, final Duration timeStep, final boolean deviative)
-            throws OperationalPlanException, OTSGeometryException
+            throws OperationalPlanException, OtsGeometryException
     {
         if (startSpeed.si <= OperationalPlan.DRIFTING_SPEED_SI && acceleration.le(Acceleration.ZERO))
         {
@@ -275,7 +275,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
         {
             return new LaneBasedOperationalPlan(gtu, gtu.getLocation(), startTime, timeStep, deviative);
         }
-        OTSLine3D path = createPathAlongCenterLine(gtu, distance);
+        OtsLine3D path = createPathAlongCenterLine(gtu, distance);
         return new LaneBasedOperationalPlan(gtu, path, startTime, startSpeed, segmentList, deviative);
     }
 
@@ -284,9 +284,9 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      * @param gtu LaneBasedGtu; gtu
      * @param distance Length; minimum distance
      * @return OTSLine3D; path along lane center lines
-     * @throws OTSGeometryException when any of the OTSLine3D operations fails
+     * @throws OtsGeometryException when any of the OTSLine3D operations fails
      */
-    public static OTSLine3D createPathAlongCenterLine(final LaneBasedGtu gtu, final Length distance) throws OTSGeometryException
+    public static OtsLine3D createPathAlongCenterLine(final LaneBasedGtu gtu, final Length distance) throws OtsGeometryException
     {
         // if (gtu.getId().equals("1669") && gtu.getSimulator().getSimulatorTime().si >= 2508.9)
         // {
@@ -306,7 +306,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
         // e.printStackTrace();
         // }
         // }
-        OTSLine3D path = null;
+        OtsLine3D path = null;
         try
         {
             LanePosition ref = gtu.getReferencePosition();
@@ -346,9 +346,9 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                         {
                             // just add some length so the GTU is happy to go to the sink
                             DirectedPoint end = path.getLocationExtendedSI(distance.si + n * Lane.MARGIN.si);
-                            List<OTSPoint3D> points = new ArrayList<>(Arrays.asList(path.getPoints()));
-                            points.add(new OTSPoint3D(end));
-                            return new OTSLine3D(points);
+                            List<OtsPoint3D> points = new ArrayList<>(Arrays.asList(path.getPoints()));
+                            points.add(new OtsPoint3D(end));
+                            return new OtsLine3D(points);
                         }
                     }
                     // START CLEVER
@@ -413,7 +413,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                 }
                 else
                 {
-                    path = OTSLine3D.concatenate(Lane.MARGIN.si, path, from.getCenterLine());
+                    path = OtsLine3D.concatenate(Lane.MARGIN.si, path, from.getCenterLine());
                 }
             }
         }
@@ -440,14 +440,14 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      * @param laneChange LaneChange; lane change status
      * @return the operational plan to accomplish the given end speed
      * @throws OperationalPlanException when the construction of the operational path fails
-     * @throws OTSGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
+     * @throws OtsGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
      *             first lane
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static LaneBasedOperationalPlan buildAccelerationLaneChangePlan(final LaneBasedGtu gtu,
             final LateralDirectionality laneChangeDirectionality, final DirectedPoint startPosition, final Time startTime,
             final Speed startSpeed, final Acceleration acceleration, final Duration timeStep, final LaneChange laneChange)
-            throws OperationalPlanException, OTSGeometryException
+            throws OperationalPlanException, OtsGeometryException
     {
 
         // on first call during lane change, use laneChangeDirectionality as laneChange.getDirection() is NONE
@@ -487,7 +487,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
             Throw.when(from == null, RuntimeException.class, "From lane could not be determined during lane change.");
 
             // get path and make plan
-            OTSLine3D path = laneChange.getPath(timeStep, gtu, from, startPosition, planDistance, direction);
+            OtsLine3D path = laneChange.getPath(timeStep, gtu, from, startPosition, planDistance, direction);
             LaneBasedOperationalPlan plan = new LaneBasedOperationalPlan(gtu, path, startTime, startSpeed, segmentList, true);
             return plan;
         }
@@ -574,7 +574,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                 return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, startTime, gtu.getSpeed(), acc,
                         simplePlan.getDuration(), false);
             }
-            catch (OTSGeometryException exception)
+            catch (OtsGeometryException exception)
             {
                 throw new OperationalPlanException(exception);
             }
@@ -596,7 +596,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
             return LaneOperationalPlanBuilder.buildAccelerationLaneChangePlan(gtu, simplePlan.getLaneChangeDirection(),
                     gtu.getLocation(), startTime, gtu.getSpeed(), acc, simplePlan.getDuration(), laneChange);
         }
-        catch (OTSGeometryException exception)
+        catch (OtsGeometryException exception)
         {
             throw new OperationalPlanException(exception);
         }
@@ -637,11 +637,11 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      * @param deceleration Acceleration; the deceleration to use if endSpeed &lt; startSpeed, provided as a NEGATIVE number
      * @return the operational plan to accomplish the given end speed
      * @throws OperationalPlanException when construction of the operational path fails
-     * @throws OTSGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
+     * @throws OtsGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
      *             first lane
      */
     public static LaneBasedOperationalPlan buildStopPlan(final LaneBasedGtu gtu, final Length distance, final Time startTime,
-            final Speed startSpeed, final Acceleration deceleration) throws OperationalPlanException, OTSGeometryException
+            final Speed startSpeed, final Acceleration deceleration) throws OperationalPlanException, OtsGeometryException
     {
         return buildMaximumAccelerationPlan(gtu, distance, startTime, startSpeed, new Speed(0.0, SpeedUnit.SI),
                 new Acceleration(1.0, AccelerationUnit.SI), deceleration);

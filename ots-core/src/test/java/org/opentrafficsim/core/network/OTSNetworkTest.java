@@ -17,9 +17,9 @@ import org.djutils.event.EventTypeInterface;
 import org.junit.Test;
 import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.mock.MockGTU;
@@ -65,10 +65,10 @@ public class OTSNetworkTest implements EventListenerInterface
     /**
      * Test OTSNetwork class.
      * @throws NetworkException if that happens; this test has failed
-     * @throws OTSGeometryException if that happens; this test has failed
+     * @throws OtsGeometryException if that happens; this test has failed
      */
     @Test
-    public final void testOTSNetwork() throws NetworkException, OTSGeometryException
+    public final void testOTSNetwork() throws NetworkException, OtsGeometryException
     {
         String networkId = "testOTSNetwork";
         OtsSimulatorInterface simulator = MockSimulator.createMock();
@@ -88,7 +88,7 @@ public class OTSNetworkTest implements EventListenerInterface
         assertEquals("GTU removed event count is 0", 0, this.gtuRemovedCount);
         assertEquals("other event count is 0", 0, this.otherEventCount);
         assertEquals("Node map is empty", 0, network.getNodeMap().size());
-        Node node1 = new OTSNode(network, "node1", new OTSPoint3D(10, 20, 30));
+        Node node1 = new OTSNode(network, "node1", new OtsPoint3D(10, 20, 30));
         assertEquals("link add event count is 0", 0, this.linkAddedCount);
         assertEquals("link removed event count is 0", 0, this.linkRemovedCount);
         assertEquals("node add event count is 1", 1, this.nodeAddedCount);
@@ -104,7 +104,7 @@ public class OTSNetworkTest implements EventListenerInterface
         assertTrue("network contains a node with id node1", network.containsNode("node1"));
         // Create a node that is NOT in this network; to do that we must create another network
         OTSNetwork otherNetwork = new OTSNetwork("other network", true, simulator);
-        Node node2 = new OTSNode(otherNetwork, "node2", new OTSPoint3D(11, 12, 13));
+        Node node2 = new OTSNode(otherNetwork, "node2", new OtsPoint3D(11, 12, 13));
         assertFalse("node2 is NOT in network", network.containsNode(node2));
         assertEquals("link add event count is 0", 0, this.linkAddedCount);
         assertEquals("link removed event count is 0", 0, this.linkRemovedCount);
@@ -115,7 +115,7 @@ public class OTSNetworkTest implements EventListenerInterface
         assertEquals("other event count is 0", 0, this.otherEventCount);
         try
         {
-            new OTSNode(network, "node1", new OTSPoint3D(110, 20, 30));
+            new OTSNode(network, "node1", new OtsPoint3D(110, 20, 30));
             fail("duplicate node id should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -165,7 +165,7 @@ public class OTSNetworkTest implements EventListenerInterface
         try
         {
             new OTSLink(network, "link1", node1, node2, network.getLinkType(LinkType.DEFAULTS.ROAD),
-                    new OTSLine3D(node1.getPoint(), node2.getPoint()));
+                    new OtsLine3D(node1.getPoint(), node2.getPoint()));
             fail("new OTSLink should have thrown an exception because node2 is not in network");
         }
         catch (NetworkException ne)
@@ -175,14 +175,14 @@ public class OTSNetworkTest implements EventListenerInterface
         try
         {
             new OTSLink(network, "link1", node2, node1, network.getLinkType(LinkType.DEFAULTS.ROAD),
-                    new OTSLine3D(node2.getPoint(), node1.getPoint()));
+                    new OtsLine3D(node2.getPoint(), node1.getPoint()));
             fail("new OTSLink should have thrown an exception because node2 is not in network");
         }
         catch (NetworkException ne)
         {
             // Ignore expected exception
         }
-        Node node3 = new OTSNode(network, "node3", new OTSPoint3D(11, 12, 13));
+        Node node3 = new OTSNode(network, "node3", new OtsPoint3D(11, 12, 13));
         assertEquals("link add event count is 0", 0, this.linkAddedCount);
         assertEquals("link removed event count is 0", 0, this.linkRemovedCount);
         assertEquals("node add event count is 3", 3, this.nodeAddedCount);
@@ -191,7 +191,7 @@ public class OTSNetworkTest implements EventListenerInterface
         assertEquals("GTU removed event count is 0", 0, this.gtuRemovedCount);
         assertEquals("other event count is 0", 0, this.otherEventCount);
         Link link1 = new OTSLink(network, "link1", node1, node3, network.getLinkType(LinkType.DEFAULTS.ROAD),
-                new OTSLine3D(node1.getPoint(), node3.getPoint()));
+                new OtsLine3D(node1.getPoint(), node3.getPoint()));
         assertEquals("LinkMap now contains 1 link", 1, network.getLinkMap().size());
         assertTrue("LinkMap contains link1", network.containsLink(link1));
         assertTrue("LinkMap.contain link with name link1", network.containsLink("link1"));
@@ -214,9 +214,9 @@ public class OTSNetworkTest implements EventListenerInterface
         assertEquals("link1 is the link connecting node1 to node3", link1, network.getLink(node1, node3));
         assertEquals("link1 is the link connecting node named node1 to node named node3", link1,
                 network.getLink("node1", "node3"));
-        Node node4 = new OTSNode(otherNetwork, "node4", new OTSPoint3D(-2, -3, -4));
+        Node node4 = new OTSNode(otherNetwork, "node4", new OtsPoint3D(-2, -3, -4));
         Link otherLink = new OTSLink(otherNetwork, "otherLink", node2, node4, network.getLinkType(LinkType.DEFAULTS.ROAD),
-                new OTSLine3D(node2.getPoint(), node4.getPoint()));
+                new OtsLine3D(node2.getPoint(), node4.getPoint()));
         try
         {
             network.removeLink(otherLink);
@@ -243,7 +243,7 @@ public class OTSNetworkTest implements EventListenerInterface
         assertEquals("GTU removed event count is 0", 0, this.gtuRemovedCount);
         assertEquals("other event count is 0", 0, this.otherEventCount);
         Link secondLink = new OTSLink(network, "reverseLink", node3, node1, network.getLinkType(LinkType.DEFAULTS.ROAD),
-                new OTSLine3D(node3.getPoint(), node1.getPoint()));
+                new OtsLine3D(node3.getPoint(), node1.getPoint()));
         assertEquals("link add event count is 2", 2, this.linkAddedCount);
         assertEquals("link removed event count is 0", 0, this.linkRemovedCount);
         assertEquals("node add event count is 3", 3, this.nodeAddedCount);
@@ -345,7 +345,7 @@ public class OTSNetworkTest implements EventListenerInterface
         assertEquals("extend top", 500, extent.getMaxY(), 0);
 
         // Add one node
-        new OTSNode(network, "node1", new OTSPoint3D(10, 20, 30));
+        new OTSNode(network, "node1", new OtsPoint3D(10, 20, 30));
         extent = network.getExtent();
         double margin = OTSNode.BOUNDINGRADIUS * (1.0 + OTSNetwork.EXTENT_MARGIN);
         assertEquals("extend left", 10 - margin, extent.getMinX(), 0.01);
@@ -353,7 +353,7 @@ public class OTSNetworkTest implements EventListenerInterface
         assertEquals("extend right", 10 + margin, extent.getMaxX(), 0.01);
         assertEquals("extend top", 20 + margin, extent.getMaxY(), 0.01);
         // Add another node
-        new OTSNode(network, "node2", new OTSPoint3D(110, 220, 330));
+        new OTSNode(network, "node2", new OtsPoint3D(110, 220, 330));
         extent = network.getExtent();
         double xMargin = (100 + 2 * OTSNode.BOUNDINGRADIUS) * OTSNetwork.EXTENT_MARGIN / 2;
         double yMargin = (200 + 2 * OTSNode.BOUNDINGRADIUS) * OTSNetwork.EXTENT_MARGIN / 2;
@@ -406,8 +406,8 @@ public class OTSNetworkTest implements EventListenerInterface
     public final void testRouteMap() throws NetworkException
     {
         OTSNetwork network = new OTSNetwork("Route map test network", true, MockSimulator.createMock());
-        Node node1 = new OTSNode(network, "node1", new OTSPoint3D(10, 20, 30));
-        Node node2 = new OTSNode(network, "node2", new OTSPoint3D(110, 20, 30));
+        Node node1 = new OTSNode(network, "node1", new OtsPoint3D(10, 20, 30));
+        Node node2 = new OTSNode(network, "node2", new OtsPoint3D(110, 20, 30));
         List<Node> nodeList = new ArrayList<>();
         nodeList.add(node1);
         nodeList.add(node2);
@@ -442,7 +442,7 @@ public class OTSNetworkTest implements EventListenerInterface
             // Ignore expected exception
         }
         Network otherNetwork = new OTSNetwork("other Route map test network", true, MockSimulator.createMock());
-        Node badNode = new OTSNode(otherNetwork, "nodeInOtherNetwork", new OTSPoint3D(100, 200, 0));
+        Node badNode = new OTSNode(otherNetwork, "nodeInOtherNetwork", new OtsPoint3D(100, 200, 0));
         List<Node> badNodeList = new ArrayList<>();
         badNodeList.add(node1);
         badNodeList.add(node2);
@@ -495,10 +495,10 @@ public class OTSNetworkTest implements EventListenerInterface
     /**
      * Test the shortest path functionality.
      * @throws NetworkException if that happens uncaught; this test has failed
-     * @throws OTSGeometryException if that happens uncaught; this test has failed
+     * @throws OtsGeometryException if that happens uncaught; this test has failed
      */
     @Test
-    public final void testShortestPathBiDirectional() throws NetworkException, OTSGeometryException
+    public final void testShortestPathBiDirectional() throws NetworkException, OtsGeometryException
     {
         OTSNetwork network = new OTSNetwork("shortest path test network", true, MockSimulator.createMock());
         List<Node> nodes = createRingNodesAndLinks(network);
@@ -536,10 +536,10 @@ public class OTSNetworkTest implements EventListenerInterface
     /**
      * Test the shortest path functionality.
      * @throws NetworkException if that happens uncaught; this test has failed
-     * @throws OTSGeometryException if that happens uncaught; this test has failed
+     * @throws OtsGeometryException if that happens uncaught; this test has failed
      */
     @Test
-    public final void testShortestPathClockWise() throws NetworkException, OTSGeometryException
+    public final void testShortestPathClockWise() throws NetworkException, OtsGeometryException
     {
         OTSNetwork network = new OTSNetwork("shortest path test network", true, MockSimulator.createMock());
         List<Node> nodes = createRingNodesAndLinks(network);
@@ -573,11 +573,11 @@ public class OTSNetworkTest implements EventListenerInterface
 
     /**
      * Test the shortest path method that takes a list of intermediate nodes.
-     * @throws OTSGeometryException if that happens uncaught; this test has failed
+     * @throws OtsGeometryException if that happens uncaught; this test has failed
      * @throws NetworkException if that happens uncaught; this test has failed
      */
     @Test
-    public final void testShortestPathWithIntermediateNodes() throws NetworkException, OTSGeometryException
+    public final void testShortestPathWithIntermediateNodes() throws NetworkException, OtsGeometryException
     {
         OTSNetwork network = new OTSNetwork("shortest path test network", true, MockSimulator.createMock());
         List<Node> nodes = createRingNodesAndLinks(network, 5);
@@ -663,9 +663,9 @@ public class OTSNetworkTest implements EventListenerInterface
      * @param network OTSNetwork; the network that will contain the nodes
      * @return List&lt;Node&gt;; the constructed nodes (in clockwise order)
      * @throws NetworkException if that happens uncaught; this test has failed
-     * @throws OTSGeometryException if that happens uncaught; this test has failed
+     * @throws OtsGeometryException if that happens uncaught; this test has failed
      */
-    private List<Node> createRingNodesAndLinks(final OTSNetwork network) throws NetworkException, OTSGeometryException
+    private List<Node> createRingNodesAndLinks(final OTSNetwork network) throws NetworkException, OtsGeometryException
     {
         return createRingNodesAndLinks(network, 10);
     }
@@ -676,10 +676,10 @@ public class OTSNetworkTest implements EventListenerInterface
      * @param maxNode int; number of nodes on the ring
      * @return List&lt;Node&gt;; the constructed nodes (in clockwise order)
      * @throws NetworkException if that happens uncaught; this test has failed
-     * @throws OTSGeometryException if that happens uncaught; this test has failed
+     * @throws OtsGeometryException if that happens uncaught; this test has failed
      */
     private List<Node> createRingNodesAndLinks(final OTSNetwork network, final int maxNode)
-            throws NetworkException, OTSGeometryException
+            throws NetworkException, OtsGeometryException
     {
         GtuCompatibility<LinkType> compatibility =
                 new GtuCompatibility<>((LinkType) null).addCompatibleGtuType(network.getGtuType(GtuType.DEFAULTS.ROAD_USER));
@@ -692,14 +692,14 @@ public class OTSNetworkTest implements EventListenerInterface
         {
             double angle = i * Math.PI * 2 / maxNode;
             nodes.add(new OTSNode(network, "node" + i,
-                    new OTSPoint3D(centerX + radius * Math.cos(angle), centerY + radius * Math.sin(angle), 20)));
+                    new OtsPoint3D(centerX + radius * Math.cos(angle), centerY + radius * Math.sin(angle), 20)));
         }
         // Create bi-directional links between all adjacent nodes
         Node prevNode = nodes.get(maxNode - 1);
         for (Node node : nodes)
         {
             new OTSLink(network, "from " + prevNode.getId() + " to " + node.getId(), prevNode, node, linkType,
-                    new OTSLine3D(prevNode.getPoint(), node.getPoint()));
+                    new OtsLine3D(prevNode.getPoint(), node.getPoint()));
             prevNode = node;
         }
         return nodes;

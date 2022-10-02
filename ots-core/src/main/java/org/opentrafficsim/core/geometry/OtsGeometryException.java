@@ -8,7 +8,7 @@ package org.opentrafficsim.core.geometry;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class OTSGeometryException extends Exception
+public class OtsGeometryException extends Exception
 {
     /** */
     private static final long serialVersionUID = 20150722L;
@@ -16,14 +16,14 @@ public class OTSGeometryException extends Exception
     /**
      * construct empty OTSGeometryException.
      */
-    public OTSGeometryException()
+    public OtsGeometryException()
     {
     }
 
     /**
      * @param message String; message to display for this exception.
      */
-    public OTSGeometryException(final String message)
+    public OtsGeometryException(final String message)
     {
         super(message);
     }
@@ -31,7 +31,7 @@ public class OTSGeometryException extends Exception
     /**
      * @param cause Throwable; the exception that triggered this exception.
      */
-    public OTSGeometryException(final Throwable cause)
+    public OtsGeometryException(final Throwable cause)
     {
         super(cause);
     }
@@ -40,7 +40,7 @@ public class OTSGeometryException extends Exception
      * @param message String; message to display for this exception.
      * @param cause Throwable; the exception that triggered this exception.
      */
-    public OTSGeometryException(final String message, final Throwable cause)
+    public OtsGeometryException(final String message, final Throwable cause)
     {
         super(message, cause);
     }
@@ -51,7 +51,7 @@ public class OTSGeometryException extends Exception
      * @param enableSuppression boolean; whether or not suppression is enabled or disabled
      * @param writableStackTrace boolean; whether or not the stack trace should be writable
      */
-    public OTSGeometryException(final String message, final Throwable cause, final boolean enableSuppression,
+    public OtsGeometryException(final String message, final Throwable cause, final boolean enableSuppression,
             final boolean writableStackTrace)
     {
         super(message, cause, enableSuppression, writableStackTrace);

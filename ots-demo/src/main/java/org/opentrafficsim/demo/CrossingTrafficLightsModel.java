@@ -28,8 +28,8 @@ import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
@@ -154,36 +154,36 @@ public class CrossingTrafficLightsModel extends AbstractOtsModel implements UNIT
         try
         {
             OTSRoadNode[][] nodes = new OTSRoadNode[4][4];
-            nodes[0][0] = new OTSRoadNode(this.network, "sn1", new OTSPoint3D(10, -500),
+            nodes[0][0] = new OTSRoadNode(this.network, "sn1", new OtsPoint3D(10, -500),
                     new Direction(90, DirectionUnit.EAST_DEGREE));
             nodes[0][1] =
-                    new OTSRoadNode(this.network, "sn2", new OTSPoint3D(10, -20), new Direction(90, DirectionUnit.EAST_DEGREE));
+                    new OTSRoadNode(this.network, "sn2", new OtsPoint3D(10, -20), new Direction(90, DirectionUnit.EAST_DEGREE));
             nodes[0][2] =
-                    new OTSRoadNode(this.network, "sn3", new OTSPoint3D(10, +20), new Direction(90, DirectionUnit.EAST_DEGREE));
-            nodes[0][3] = new OTSRoadNode(this.network, "sn4", new OTSPoint3D(10, +600),
+                    new OTSRoadNode(this.network, "sn3", new OtsPoint3D(10, +20), new Direction(90, DirectionUnit.EAST_DEGREE));
+            nodes[0][3] = new OTSRoadNode(this.network, "sn4", new OtsPoint3D(10, +600),
                     new Direction(90, DirectionUnit.EAST_DEGREE));
 
-            nodes[1][0] = new OTSRoadNode(this.network, "we1", new OTSPoint3D(-500, -10), Direction.ZERO);
-            nodes[1][1] = new OTSRoadNode(this.network, "we2", new OTSPoint3D(-20, -10), Direction.ZERO);
-            nodes[1][2] = new OTSRoadNode(this.network, "we3", new OTSPoint3D(+20, -10), Direction.ZERO);
-            nodes[1][3] = new OTSRoadNode(this.network, "we4", new OTSPoint3D(+600, -10), Direction.ZERO);
+            nodes[1][0] = new OTSRoadNode(this.network, "we1", new OtsPoint3D(-500, -10), Direction.ZERO);
+            nodes[1][1] = new OTSRoadNode(this.network, "we2", new OtsPoint3D(-20, -10), Direction.ZERO);
+            nodes[1][2] = new OTSRoadNode(this.network, "we3", new OtsPoint3D(+20, -10), Direction.ZERO);
+            nodes[1][3] = new OTSRoadNode(this.network, "we4", new OtsPoint3D(+600, -10), Direction.ZERO);
 
-            nodes[2][0] = new OTSRoadNode(this.network, "ns1", new OTSPoint3D(-10, +500),
+            nodes[2][0] = new OTSRoadNode(this.network, "ns1", new OtsPoint3D(-10, +500),
                     new Direction(270, DirectionUnit.EAST_DEGREE));
-            nodes[2][1] = new OTSRoadNode(this.network, "ns2", new OTSPoint3D(-10, +20),
+            nodes[2][1] = new OTSRoadNode(this.network, "ns2", new OtsPoint3D(-10, +20),
                     new Direction(270, DirectionUnit.EAST_DEGREE));
-            nodes[2][2] = new OTSRoadNode(this.network, "ns3", new OTSPoint3D(-10, -20),
+            nodes[2][2] = new OTSRoadNode(this.network, "ns3", new OtsPoint3D(-10, -20),
                     new Direction(270, DirectionUnit.EAST_DEGREE));
-            nodes[2][3] = new OTSRoadNode(this.network, "ns4", new OTSPoint3D(-10, -600),
+            nodes[2][3] = new OTSRoadNode(this.network, "ns4", new OtsPoint3D(-10, -600),
                     new Direction(270, DirectionUnit.EAST_DEGREE));
 
-            nodes[3][0] = new OTSRoadNode(this.network, "ew1", new OTSPoint3D(+500, 10),
+            nodes[3][0] = new OTSRoadNode(this.network, "ew1", new OtsPoint3D(+500, 10),
                     new Direction(180, DirectionUnit.EAST_DEGREE));
-            nodes[3][1] = new OTSRoadNode(this.network, "ew2", new OTSPoint3D(+20, 10),
+            nodes[3][1] = new OTSRoadNode(this.network, "ew2", new OtsPoint3D(+20, 10),
                     new Direction(180, DirectionUnit.EAST_DEGREE));
-            nodes[3][2] = new OTSRoadNode(this.network, "ew3", new OTSPoint3D(-20, 10),
+            nodes[3][2] = new OTSRoadNode(this.network, "ew3", new OtsPoint3D(-20, 10),
                     new Direction(180, DirectionUnit.EAST_DEGREE));
-            nodes[3][3] = new OTSRoadNode(this.network, "ew4", new OTSPoint3D(-600, 10),
+            nodes[3][3] = new OTSRoadNode(this.network, "ew4", new OtsPoint3D(-600, 10),
                     new Direction(180, DirectionUnit.EAST_DEGREE));
 
             LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
@@ -253,7 +253,7 @@ public class CrossingTrafficLightsModel extends AbstractOtsModel implements UNIT
                 }
             }
         }
-        catch (SimRuntimeException | NamingException | NetworkException | OTSGeometryException | GtuException
+        catch (SimRuntimeException | NamingException | NetworkException | OtsGeometryException | GtuException
                 | InputParameterException | ProbabilityException | ParameterException exception)
         {
             exception.printStackTrace();

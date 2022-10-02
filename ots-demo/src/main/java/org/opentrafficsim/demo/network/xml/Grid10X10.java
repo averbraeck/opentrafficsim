@@ -18,7 +18,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.demo.network.xml.Grid10X10.TestXMLModelGrid;
@@ -341,7 +341,7 @@ public class Grid10X10 extends OTSSimulationApplication<TestXMLModelGrid>
                 ByteArrayInputStream bos = new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8));
                 XmlNetworkLaneParser.build(bos, this.network, true);
             }
-            catch (NetworkException | ParserConfigurationException | SAXException | OTSGeometryException | JAXBException
+            catch (NetworkException | ParserConfigurationException | SAXException | OtsGeometryException | JAXBException
                     | URISyntaxException | XmlParserException | GtuException | IOException | TrafficControlException exception)
             {
                 exception.printStackTrace();

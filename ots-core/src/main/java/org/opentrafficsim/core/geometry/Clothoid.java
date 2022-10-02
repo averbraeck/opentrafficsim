@@ -278,12 +278,12 @@ public final class Clothoid
      * @param length double; total length of the clothoid
      * @param numSegments int; number of segments used to approximate (the number of points is one higher than this)
      * @return OTSLine3D; the line; the z-component of each point is set to 0
-     * @throws OTSGeometryException if the number of segments is too low
+     * @throws OtsGeometryException if the number of segments is too low
      */
-    private static OTSLine3D clothoid(final double initialCurvature, final double curvatureDerivative, final double length,
-            final int numSegments) throws OTSGeometryException
+    private static OtsLine3D clothoid(final double initialCurvature, final double curvatureDerivative, final double length,
+            final int numSegments) throws OtsGeometryException
     {
-        OTSPoint3D[] points = new OTSPoint3D[numSegments + 1];
+        OtsPoint3D[] points = new OtsPoint3D[numSegments + 1];
         double[] offset = odrSpiral(initialCurvature / curvatureDerivative, curvatureDerivative, initialCurvature);
         double sinRot = Math.sin(offset[2]);
         double cosRot = Math.cos(offset[2]);
@@ -293,9 +293,9 @@ public final class Clothoid
                     initialCurvature);
             double dx = xyd[0] - offset[0];
             double dy = xyd[1] - offset[1];
-            points[i] = new OTSPoint3D(dx * cosRot + dy * sinRot, dy * cosRot - dx * sinRot, 0);
+            points[i] = new OtsPoint3D(dx * cosRot + dy * sinRot, dy * cosRot - dx * sinRot, 0);
         }
-        return new OTSLine3D(points);
+        return new OtsLine3D(points);
     }
 
     /**
@@ -311,33 +311,33 @@ public final class Clothoid
      * @param endElevation double; z-component at end of the curve
      * @param numSegments int; number of segments used to approximate (the number of points is one higher than this)
      * @return OTSLine3D; the clothoid
-     * @throws OTSGeometryException if the number of segments is too low
+     * @throws OtsGeometryException if the number of segments is too low
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    private static OTSLine3D clothoid(final double x1, final double y1, final double startElevation,
+    private static OtsLine3D clothoid(final double x1, final double y1, final double startElevation,
             final double startDirection, final double startCurvature, final double endCurvature, final double length,
-            final double endElevation, final int numSegments) throws OTSGeometryException
+            final double endElevation, final int numSegments) throws OtsGeometryException
     {
-        OTSLine3D result = clothoid(startCurvature, (endCurvature - startCurvature) / length, length, numSegments);
+        OtsLine3D result = clothoid(startCurvature, (endCurvature - startCurvature) / length, length, numSegments);
         double sinRot = Math.sin(startDirection);
         double cosRot = Math.cos(startDirection);
-        OTSPoint3D[] list = new OTSPoint3D[result.size()];
+        OtsPoint3D[] list = new OtsPoint3D[result.size()];
         double elevationPerStep = (endElevation - startElevation) / (result.size() - 1);
         for (int i = 0; i < result.size(); i++)
         {
             try
             {
-                OTSPoint3D p = result.get(i);
-                list[i] = new OTSPoint3D(x1 + cosRot * p.x + sinRot * p.y, y1 + cosRot * p.y - sinRot * p.x,
+                OtsPoint3D p = result.get(i);
+                list[i] = new OtsPoint3D(x1 + cosRot * p.x + sinRot * p.y, y1 + cosRot * p.y - sinRot * p.x,
                         startElevation + i * elevationPerStep);
             }
-            catch (OTSGeometryException ge)
+            catch (OtsGeometryException ge)
             {
                 // cannot happen
                 CategoryLogger.always().error(ge, "CANNOT HAPPEN; if you see this; let us know what you did.");
             }
         }
-        return new OTSLine3D(list);
+        return new OtsLine3D(list);
     }
 
     /**
@@ -349,10 +349,10 @@ public final class Clothoid
      * @param endElevation Length; elevation at end of the clothoid
      * @param numSegments int; number of segments used to approximate (the number of points is one higher than this)
      * @return OTSLine3D; the clothoid
-     * @throws OTSGeometryException if the number of segments is too low
+     * @throws OtsGeometryException if the number of segments is too low
      */
-    public static OTSLine3D clothoid(final OTSPoint3D start, final Direction startDirection, final double endCurvature,
-            final Length length, final Length endElevation, final int numSegments) throws OTSGeometryException
+    public static OtsLine3D clothoid(final OtsPoint3D start, final Direction startDirection, final double endCurvature,
+            final Length length, final Length endElevation, final int numSegments) throws OtsGeometryException
     {
         return clothoid(start.x, start.y, start.z, startDirection.si, 0, endCurvature, length.si, endElevation.si, numSegments);
     }
@@ -367,11 +367,11 @@ public final class Clothoid
      * @param endElevation Length; elevation at end of the clothoid
      * @param numSegments int; number of segments used to approximate (the number of points is one higher than this)
      * @return OTSLine3D; the clothoid
-     * @throws OTSGeometryException if the number of segments is too low
+     * @throws OtsGeometryException if the number of segments is too low
      */
-    public static OTSLine3D clothoid(final OTSPoint3D start, final Direction startDirection, final double startCurvature,
+    public static OtsLine3D clothoid(final OtsPoint3D start, final Direction startDirection, final double startCurvature,
             final double endCurvature, final Length length, final Length endElevation, final int numSegments)
-            throws OTSGeometryException
+            throws OtsGeometryException
     {
         return clothoid(start.x, start.y, start.x, startDirection.si, startCurvature, endCurvature, length.si, endElevation.si,
                 numSegments);
@@ -386,10 +386,10 @@ public final class Clothoid
      * @param endElevation Length; elevation at end of the clothoid
      * @param numSegments int; number of segments used to approximate (the number of points is one higher than this)
      * @return OTSLine3D; the clothoid
-     * @throws OTSGeometryException if the number of segments is too low
+     * @throws OtsGeometryException if the number of segments is too low
      */
-    public static OTSLine3D clothoid(final OTSPoint3D start, final Direction startDirection, final LinearDensity endCurvature,
-            final Length length, final Length endElevation, final int numSegments) throws OTSGeometryException
+    public static OtsLine3D clothoid(final OtsPoint3D start, final Direction startDirection, final LinearDensity endCurvature,
+            final Length length, final Length endElevation, final int numSegments) throws OtsGeometryException
     {
         return clothoid(start, startDirection, 0, endCurvature.si, length, endElevation, numSegments);
     }
@@ -404,11 +404,11 @@ public final class Clothoid
      * @param endElevation Length; elevation at end of the clothoid
      * @param numSegments int; number of segments used to approximate (the number of points is one higher than this)
      * @return OTSLine3D; the clothoid
-     * @throws OTSGeometryException if the number of segments is too low
+     * @throws OtsGeometryException if the number of segments is too low
      */
-    public static OTSLine3D clothoid(final OTSPoint3D start, final Direction startDirection, final LinearDensity startCurvature,
+    public static OtsLine3D clothoid(final OtsPoint3D start, final Direction startDirection, final LinearDensity startCurvature,
             final LinearDensity endCurvature, final Length length, final Length endElevation, final int numSegments)
-            throws OTSGeometryException
+            throws OtsGeometryException
     {
         return clothoid(start, startDirection, startCurvature.si, endCurvature.si, length, endElevation, numSegments);
     }
@@ -416,18 +416,18 @@ public final class Clothoid
     /**
      * Demonstrate / test the clothoid methods.
      * @param args String[]; the command line arguments (not used)
-     * @throws OTSGeometryException if the number of segments is too low
+     * @throws OtsGeometryException if the number of segments is too low
      */
-    public static void main(final String[] args) throws OTSGeometryException
+    public static void main(final String[] args) throws OtsGeometryException
     {
-        OTSLine3D line;
+        OtsLine3D line;
         // line = clothoid(104.1485, 89.037488, 0, 0, 0, -0.04841457, 0, 3.2, 100);
         // System.out.println(line.toPlotterFormat());
         // line = clothoid(10, 10, 5, Math.PI / 8, 0 * -0.03, 0.04, 100, 15, 100);
-        line = clothoid(new OTSPoint3D(10, 10, 5), new Direction(Math.PI / 8, DirectionUnit.EAST_RADIAN),
+        line = clothoid(new OtsPoint3D(10, 10, 5), new Direction(Math.PI / 8, DirectionUnit.EAST_RADIAN),
                 new LinearDensity(0 * -0.03, LinearDensityUnit.PER_METER), new LinearDensity(0.04, LinearDensityUnit.PER_METER),
                 new Length(100, LengthUnit.METER), new Length(15, LengthUnit.METER), 100);
-        System.out.println(OTSGeometryUtil.printCoordinates("#", line, "\n"));
+        System.out.println(OtsGeometryUtil.printCoordinates("#", line, "\n"));
     }
 
 }

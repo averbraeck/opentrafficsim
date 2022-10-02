@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.RoadNetwork;
@@ -46,13 +46,13 @@ public class NoTrafficLane extends Lane
      * @param beginWidth Length; start width, positioned <i>symmetrically around</i> the design line
      * @param endWidth Length; end width, positioned <i>symmetrically around</i> the design line
      * @param fixGradualLateralOffset boolean; true if gradualLateralOffset needs to be fixed
-     * @throws OTSGeometryException when creation of the geometry fails
+     * @throws OtsGeometryException when creation of the geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public NoTrafficLane(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtStart,
             final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth,
-            final boolean fixGradualLateralOffset) throws OTSGeometryException, NetworkException
+            final boolean fixGradualLateralOffset) throws OtsGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth,
                 parentLink.getNetwork().getLaneType(LaneType.DEFAULTS.NONE), speedNull(parentLink.getNetwork()),
@@ -68,13 +68,13 @@ public class NoTrafficLane extends Lane
      *            design line of the parent Link at the end of the parent Link
      * @param beginWidth Length; start width, positioned <i>symmetrically around</i> the design line
      * @param endWidth Length; end width, positioned <i>symmetrically around</i> the design line
-     * @throws OTSGeometryException when creation of the geometry fails
+     * @throws OtsGeometryException when creation of the geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public NoTrafficLane(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtStart,
             final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth)
-            throws OTSGeometryException, NetworkException
+            throws OtsGeometryException, NetworkException
     {
         this(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, false);
     }
@@ -85,12 +85,12 @@ public class NoTrafficLane extends Lane
      * @param lateralOffset Length; the lateral offset of the design line of the new CrossSectionLink with respect to the design
      *            line of the parent Link
      * @param width Length; width, positioned <i>symmetrically around</i> the design line
-     * @throws OTSGeometryException when creation of the geometry fails
+     * @throws OtsGeometryException when creation of the geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public NoTrafficLane(final CrossSectionLink parentLink, final String id, final Length lateralOffset, final Length width)
-            throws OTSGeometryException, NetworkException
+            throws OtsGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffset, width, parentLink.getNetwork().getLaneType(LaneType.DEFAULTS.NONE),
                 speedNull(parentLink.getNetwork()));
@@ -103,12 +103,12 @@ public class NoTrafficLane extends Lane
      *            the design line of the parent link. If there is just one with and offset, there should just be one element in
      *            the list with Length = 0. If there are more slices, the last one should be at the length of the design line.
      *            If not, a NetworkException is thrown.
-     * @throws OTSGeometryException when creation of the geometry fails
+     * @throws OtsGeometryException when creation of the geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public NoTrafficLane(final CrossSectionLink parentLink, final String id, final List<CrossSectionSlice> crossSectionSlices)
-            throws OTSGeometryException, NetworkException
+            throws OtsGeometryException, NetworkException
     {
         super(parentLink, id, crossSectionSlices, parentLink.getNetwork().getLaneType(LaneType.DEFAULTS.NONE),
                 speedNull(parentLink.getNetwork()));

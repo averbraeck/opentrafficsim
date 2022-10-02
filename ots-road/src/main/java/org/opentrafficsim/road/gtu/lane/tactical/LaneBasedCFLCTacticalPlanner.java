@@ -22,8 +22,8 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
@@ -193,14 +193,14 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                     getGtu().getMaximumSpeed(), Speed.ZERO, dist, speedLimit));
 
             // build a list of lanes forward, with a maximum headway.
-            OTSLine3D path = lanePathInfo.getPath();
+            OtsLine3D path = lanePathInfo.getPath();
             if (a.si < 1E-6 && laneBasedGTU.getSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
             {
                 try
                 {
                     return new OperationalPlan(getGtu(), path.getLocationFraction(0.0), startTime, duration);
                 }
-                catch (OTSGeometryException exception)
+                catch (OtsGeometryException exception)
                 {
                     // should not happen as 0.0 should be accepted
                     throw new RuntimeException(exception);

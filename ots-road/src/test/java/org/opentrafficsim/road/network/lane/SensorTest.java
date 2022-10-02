@@ -20,7 +20,7 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -63,9 +63,9 @@ public class SensorTest implements UNITS
         OTSRoadNetwork network = new OTSRoadNetwork("sensor test network", true, simulator);
         // Now we need a set of Lanes
         // To create Lanes we need Nodes and a LaneType
-        OTSRoadNode nodeAFrom = new OTSRoadNode(network, "AFrom", new OTSPoint3D(0, 0, 0), Direction.ZERO);
-        OTSRoadNode nodeATo = new OTSRoadNode(network, "ATo", new OTSPoint3D(1000, 0, 0), Direction.ZERO);
-        OTSRoadNode nodeBTo = new OTSRoadNode(network, "BTo", new OTSPoint3D(20000, 0, 0), Direction.ZERO);
+        OTSRoadNode nodeAFrom = new OTSRoadNode(network, "AFrom", new OtsPoint3D(0, 0, 0), Direction.ZERO);
+        OTSRoadNode nodeATo = new OTSRoadNode(network, "ATo", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
+        OTSRoadNode nodeBTo = new OTSRoadNode(network, "BTo", new OtsPoint3D(20000, 0, 0), Direction.ZERO);
         // so car won't run off lane B in 100 s.
         GtuType gtuType = network.getGtuType(GtuType.DEFAULTS.CAR);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);

@@ -23,8 +23,8 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
@@ -140,11 +140,11 @@ public class SteeringSimulation extends AbstractSimulationScript
         Length stripeWidth = Length.instantiateSI(0.2);
 
         // points
-        OTSPoint3D pointA = new OTSPoint3D(0, 0);
-        OTSPoint3D pointB = new OTSPoint3D(2000, 0);
-        OTSPoint3D pointC = new OTSPoint3D(2250, 0);
-        OTSPoint3D pointD = new OTSPoint3D(3250, 0);
-        OTSPoint3D pointE = new OTSPoint3D(1500, -30);
+        OtsPoint3D pointA = new OtsPoint3D(0, 0);
+        OtsPoint3D pointB = new OtsPoint3D(2000, 0);
+        OtsPoint3D pointC = new OtsPoint3D(2250, 0);
+        OtsPoint3D pointD = new OtsPoint3D(3250, 0);
+        OtsPoint3D pointE = new OtsPoint3D(1500, -30);
 
         // nodes
         OTSRoadNode nodeA = new OTSRoadNode(network, "A", pointA, Direction.ZERO);
@@ -155,11 +155,11 @@ public class SteeringSimulation extends AbstractSimulationScript
 
         // links
         CrossSectionLink linkAB = new CrossSectionLink(network, "AB", nodeA, nodeB,
-                network.getLinkType(LinkType.DEFAULTS.FREEWAY), new OTSLine3D(pointA, pointB), LaneKeepingPolicy.KEEPRIGHT);
+                network.getLinkType(LinkType.DEFAULTS.FREEWAY), new OtsLine3D(pointA, pointB), LaneKeepingPolicy.KEEPRIGHT);
         CrossSectionLink linkBC = new CrossSectionLink(network, "BC", nodeB, nodeC,
-                network.getLinkType(LinkType.DEFAULTS.FREEWAY), new OTSLine3D(pointB, pointC), LaneKeepingPolicy.KEEPRIGHT);
+                network.getLinkType(LinkType.DEFAULTS.FREEWAY), new OtsLine3D(pointB, pointC), LaneKeepingPolicy.KEEPRIGHT);
         CrossSectionLink linkCD = new CrossSectionLink(network, "CD", nodeC, nodeD,
-                network.getLinkType(LinkType.DEFAULTS.FREEWAY), new OTSLine3D(pointC, pointD), LaneKeepingPolicy.KEEPRIGHT);
+                network.getLinkType(LinkType.DEFAULTS.FREEWAY), new OtsLine3D(pointC, pointD), LaneKeepingPolicy.KEEPRIGHT);
         CrossSectionLink linkEB =
                 new CrossSectionLink(network, "EB", nodeE, nodeB, network.getLinkType(LinkType.DEFAULTS.FREEWAY),
                         Bezier.cubic(nodeE.getLocation(), nodeB.getLocation()), LaneKeepingPolicy.KEEPRIGHT);

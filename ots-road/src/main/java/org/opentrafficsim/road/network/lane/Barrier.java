@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.network.lane;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -27,11 +27,11 @@ public abstract class Barrier extends RoadMarkerAlong
      * @param endCenterPosition Length; the lateral end position compared to the linear geometry of the Cross Section Link.
      * @param beginWidth Length; start width, positioned <i>symmetrically around</i> the lateral start position.
      * @param endWidth Length; end width, positioned <i>symmetrically around</i> the lateral end position.
-     * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws OtsGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     public Barrier(final CrossSectionLink parentLink, final Length beginCenterPosition, final Length endCenterPosition,
-            final Length beginWidth, final Length endWidth) throws OTSGeometryException, NetworkException
+            final Length beginWidth, final Length endWidth) throws OtsGeometryException, NetworkException
     {
         super(parentLink, beginCenterPosition, endCenterPosition, beginWidth, endWidth);
     }

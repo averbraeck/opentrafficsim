@@ -21,7 +21,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
@@ -200,7 +200,7 @@ public abstract class AbstractGtu extends EventProducer implements Gtu
         Time now = this.simulator.getSimulatorAbsTime();
 
         DirectedPoint location = getLocation();
-        fireTimedEvent(Gtu.INIT_EVENT, new Object[] {getId(), new OTSPoint3D(location).doubleVector(PositionUnit.METER),
+        fireTimedEvent(Gtu.INIT_EVENT, new Object[] {getId(), new OtsPoint3D(location).doubleVector(PositionUnit.METER),
                 new Direction(location.getZ(), DirectionUnit.EAST_RADIAN), getLength(), getWidth()}, now);
 
         try
@@ -234,7 +234,7 @@ public abstract class AbstractGtu extends EventProducer implements Gtu
     {
         DirectedPoint location = getLocation();
         fireTimedEvent(Gtu.DESTROY_EVENT,
-                new Object[] {getId(), new OTSPoint3D(location).doubleVector(PositionUnit.METER),
+                new Object[] {getId(), new OtsPoint3D(location).doubleVector(PositionUnit.METER),
                         new Direction(location.getZ(), DirectionUnit.EAST_RADIAN), getOdometer()},
                 this.simulator.getSimulatorTime());
 
@@ -329,7 +329,7 @@ public abstract class AbstractGtu extends EventProducer implements Gtu
             }
             this.simulator.scheduleEvent(this.nextMoveEvent);
             fireTimedEvent(Gtu.MOVE_EVENT,
-                    new Object[] {getId(), new OTSPoint3D(fromLocation).doubleVector(PositionUnit.METER),
+                    new Object[] {getId(), new OtsPoint3D(fromLocation).doubleVector(PositionUnit.METER),
                             new Direction(fromLocation.getZ(), DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
                             getOdometer()},
                     this.simulator.getSimulatorTime());

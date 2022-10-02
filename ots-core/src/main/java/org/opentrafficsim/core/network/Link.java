@@ -11,7 +11,7 @@ import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
-import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.core.gtu.Gtu;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -48,7 +48,7 @@ public interface Link extends Locatable, Serializable, Identifiable, Drawable
     LinkType getLinkType();
 
     /** @return the design line. */
-    OTSLine3D getDesignLine();
+    OtsLine3D getDesignLine();
 
     /** @return the simulator. */
     OtsSimulatorInterface getSimulator();

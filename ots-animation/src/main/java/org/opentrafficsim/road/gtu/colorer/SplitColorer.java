@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.Link;
@@ -111,7 +111,7 @@ public class SplitColorer implements GtuColorer
         try
         {
             double preAngle = link.getDesignLine().getLocationFraction(1.0).getRotZ();
-            OTSPoint3D pre = link.getDesignLine().getLast();
+            OtsPoint3D pre = link.getDesignLine().getLast();
             List<Double> angles = new ArrayList<>();
             List<Link> links = new ArrayList<>();
             for (Link nextLink : nextLinks)
@@ -161,7 +161,7 @@ public class SplitColorer implements GtuColorer
             }
             return OTHER;
         }
-        catch (OTSGeometryException exception)
+        catch (OtsGeometryException exception)
         {
             // should not happen as the fractions are 0.0 and 1.0
             throw new RuntimeException("Angle could not be calculated.", exception);
@@ -174,7 +174,7 @@ public class SplitColorer implements GtuColorer
      * @param to OTSPoint3D; to point
      * @return angle between two points
      */
-    private double getAngle(final OTSPoint3D from, final OTSPoint3D to)
+    private double getAngle(final OtsPoint3D from, final OtsPoint3D to)
     {
         return Math.atan2(to.x - from.x, to.y - from.y);
     }

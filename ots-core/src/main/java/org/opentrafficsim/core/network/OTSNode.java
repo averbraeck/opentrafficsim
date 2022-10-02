@@ -11,7 +11,7 @@ import org.djutils.immutablecollections.ImmutableHashSet;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuType;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -39,7 +39,7 @@ public class OTSNode implements Node, Locatable, Serializable
     private final String id;
 
     /** The point. */
-    private final OTSPoint3D point;
+    private final OtsPoint3D point;
 
     /** Heading. */
     private final double heading;
@@ -65,7 +65,7 @@ public class OTSNode implements Node, Locatable, Serializable
      * @param point OTSPoint3D; the point with usually an x and y setting.
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
-    public OTSNode(final Network network, final String id, final OTSPoint3D point) throws NetworkException
+    public OTSNode(final Network network, final String id, final OtsPoint3D point) throws NetworkException
     {
         this(network, id, point, Double.NaN);
     }
@@ -78,7 +78,7 @@ public class OTSNode implements Node, Locatable, Serializable
      * @param heading double; heading
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
-    public OTSNode(final Network network, final String id, final OTSPoint3D point, final double heading) throws NetworkException
+    public OTSNode(final Network network, final String id, final OtsPoint3D point, final double heading) throws NetworkException
     {
         Throw.whenNull(network, "network cannot be null");
         Throw.whenNull(id, "id cannot be null");
@@ -86,7 +86,7 @@ public class OTSNode implements Node, Locatable, Serializable
 
         this.network = network;
         this.id = id;
-        this.point = new OTSPoint3D(point.x, point.y, point.z);
+        this.point = new OtsPoint3D(point.x, point.y, point.z);
         this.heading = heading;
 
         this.network.addNode(this);
@@ -108,7 +108,7 @@ public class OTSNode implements Node, Locatable, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final OTSPoint3D getPoint()
+    public final OtsPoint3D getPoint()
     {
         return this.point;
     }

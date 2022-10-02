@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.core.gtu.GtuException;
 
 /**
@@ -66,7 +66,7 @@ public class LanePosition implements Serializable
     public final DirectedPoint getLocation()
     {
         // double fraction = this.position.si / this.lane.getParentLink().getLength().si;
-        OTSLine3D centerLine = this.lane.getCenterLine();
+        OtsLine3D centerLine = this.lane.getCenterLine();
         double centerLineLength = centerLine.getLengthSI();
         double fraction = this.position.si / centerLineLength;
         return centerLine.getLocationFractionExtended(fraction);

@@ -5,9 +5,9 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -53,7 +53,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractSensor(final String id, final Lane lane, final Length longitudinalPosition,
-            final RelativePosition.TYPE positionType, final OtsSimulatorInterface simulator, final OTSLine3D geometry,
+            final RelativePosition.TYPE positionType, final OtsSimulatorInterface simulator, final OtsLine3D geometry,
             final Length elevation, final Compatible detectedGtuTypes) throws NetworkException
     {
         super(id, lane, longitudinalPosition, geometry, elevation);
@@ -83,7 +83,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public AbstractSensor(final String id, final Lane lane, final Length longitudinalPosition,
-            final RelativePosition.TYPE positionType, final OtsSimulatorInterface simulator, final OTSLine3D geometry,
+            final RelativePosition.TYPE positionType, final OtsSimulatorInterface simulator, final OtsLine3D geometry,
             final Compatible detectedGtuTypes) throws NetworkException
     {
         this(id, lane, longitudinalPosition, positionType, simulator, geometry, DEFAULT_SENSOR_ELEVATION, detectedGtuTypes);
@@ -118,7 +118,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
      * @return an OTSLine3D that describes the line
      * @throws NetworkException in case the sensor point on the center line of the lane cannot be found
      */
-    protected static OTSLine3D makeGeometry(final Lane lane, final Length longitudinalPosition, final double relativeWidth)
+    protected static OtsLine3D makeGeometry(final Lane lane, final Length longitudinalPosition, final double relativeWidth)
             throws NetworkException
     {
         try
@@ -126,11 +126,11 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
             double w50 = lane.getWidth(longitudinalPosition).si * 0.5 * relativeWidth;
             DirectedPoint c = lane.getCenterLine().getLocation(longitudinalPosition);
             double a = c.getRotZ();
-            OTSPoint3D p1 = new OTSPoint3D(c.x + w50 * Math.cos(a + Math.PI / 2), c.y - w50 * Math.sin(a + Math.PI / 2), c.z);
-            OTSPoint3D p2 = new OTSPoint3D(c.x - w50 * Math.cos(a + Math.PI / 2), c.y + w50 * Math.sin(a + Math.PI / 2), c.z);
-            return new OTSLine3D(p1, p2);
+            OtsPoint3D p1 = new OtsPoint3D(c.x + w50 * Math.cos(a + Math.PI / 2), c.y - w50 * Math.sin(a + Math.PI / 2), c.z);
+            OtsPoint3D p2 = new OtsPoint3D(c.x - w50 * Math.cos(a + Math.PI / 2), c.y + w50 * Math.sin(a + Math.PI / 2), c.z);
+            return new OtsLine3D(p1, p2);
         }
-        catch (OTSGeometryException exception)
+        catch (OtsGeometryException exception)
         {
             throw new NetworkException(exception);
         }

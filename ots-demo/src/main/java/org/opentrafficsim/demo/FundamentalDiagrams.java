@@ -25,8 +25,8 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulationException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -255,12 +255,12 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
         {
             try
             {
-                OTSRoadNode from = new OTSRoadNode(this.network, "From", new OTSPoint3D(getMinimumDistance().getSI(), 0, 0),
+                OTSRoadNode from = new OTSRoadNode(this.network, "From", new OtsPoint3D(getMinimumDistance().getSI(), 0, 0),
                         Direction.ZERO);
                 OTSRoadNode to =
-                        new OTSRoadNode(this.network, "To", new OTSPoint3D(getMaximumDistance().getSI(), 0, 0), Direction.ZERO);
+                        new OTSRoadNode(this.network, "To", new OtsPoint3D(getMaximumDistance().getSI(), 0, 0), Direction.ZERO);
                 OTSRoadNode end = new OTSRoadNode(this.network, "End",
-                        new OTSPoint3D(getMaximumDistance().getSI() + 50.0, 0, 0), Direction.ZERO);
+                        new OtsPoint3D(getMaximumDistance().getSI() + 50.0, 0, 0), Direction.ZERO);
                 LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
                 this.lane =
                         LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator);
@@ -295,7 +295,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
                 // Remove the block at t = 7 minutes
                 this.simulator.scheduleEventAbsTime(new Time(420, TimeUnit.BASE_SECOND), this, this, "removeBlock", null);
             }
-            catch (SimRuntimeException | NetworkException | GtuException | OTSGeometryException | ParameterException
+            catch (SimRuntimeException | NetworkException | GtuException | OtsGeometryException | ParameterException
                     | InputParameterException exception)
             {
                 exception.printStackTrace();
@@ -347,7 +347,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
                 gtu.init(strategicalPlanner, initialPositions, initialSpeed);
                 this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
             }
-            catch (SimRuntimeException | NetworkException | GtuException | OTSGeometryException exception)
+            catch (SimRuntimeException | NetworkException | GtuException | OtsGeometryException exception)
             {
                 exception.printStackTrace();
             }

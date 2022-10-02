@@ -26,7 +26,7 @@ import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
@@ -64,11 +64,11 @@ public class GtuTest
      * @throws SimRuntimeException should not happen uncaught; if it does the test has failed
      * @throws NamingException should not happen uncaught; if it does the test has failed
      * @throws RemoteException should not happen uncaught; if it does the test has failed
-     * @throws OTSGeometryException should not happen uncaught; if it does the test has failed
+     * @throws OtsGeometryException should not happen uncaught; if it does the test has failed
      */
     @Test
     public final void testAbstractGTU()
-            throws GtuException, SimRuntimeException, NetworkException, NamingException, RemoteException, OTSGeometryException
+            throws GtuException, SimRuntimeException, NetworkException, NamingException, RemoteException, OtsGeometryException
     {
         TestGTU firstGTU = null;
         TestGTU lastGTU = null;

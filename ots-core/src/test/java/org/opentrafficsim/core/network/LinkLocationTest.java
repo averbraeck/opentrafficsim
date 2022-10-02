@@ -7,9 +7,9 @@ import static org.junit.Assert.assertTrue;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.junit.Test;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.mock.MockSimulator;
 
 /**
@@ -27,25 +27,25 @@ public class LinkLocationTest
     /**
      * Test constructor and getters of the LinkLocation class.
      * @throws NetworkException this test has failed if that happens uncaught
-     * @throws OTSGeometryException this test has failed if that happens uncaught
+     * @throws OtsGeometryException this test has failed if that happens uncaught
      */
     @Test
-    public final void testLinkLocation() throws NetworkException, OTSGeometryException
+    public final void testLinkLocation() throws NetworkException, OtsGeometryException
     {
-        OTSPoint3D fromPoint = new OTSPoint3D(100, 200, 300);
-        OTSPoint3D toPoint = new OTSPoint3D(1000, 2000, 330);
+        OtsPoint3D fromPoint = new OtsPoint3D(100, 200, 300);
+        OtsPoint3D toPoint = new OtsPoint3D(1000, 2000, 330);
         OTSNetwork network = new OTSNetwork("testNetworkForCapacityOTSLink", true, MockSimulator.createMock());
         Node fromNode = new OTSNode(network, "startNode", fromPoint);
         Node toNode = new OTSNode(network, "endNode", toPoint);
         LinkType linkType = network.getLinkType(LinkType.DEFAULTS.ROAD);
-        OTSLine3D designLine = new OTSLine3D(fromPoint, toPoint);
+        OtsLine3D designLine = new OtsLine3D(fromPoint, toPoint);
         Link link = new OTSLink(network, "link", fromNode, toNode, linkType, designLine);
         Length linkLength = link.getLength();
         // Create an unrelated link
-        OTSPoint3D a = new OTSPoint3D(1, 2, 3);
-        OTSPoint3D b = new OTSPoint3D(11, 12, 13);
+        OtsPoint3D a = new OtsPoint3D(1, 2, 3);
+        OtsPoint3D b = new OtsPoint3D(11, 12, 13);
         Link otherLink = new OTSLink(network, "otherLink", new OTSNode(network, "a", a), new OTSNode(network, "b", b), linkType,
-                new OTSLine3D(a, b));
+                new OtsLine3D(a, b));
         for (int percentage = 0; percentage <= 100; percentage += 10)
         {
             double fraction = percentage / 100.0;

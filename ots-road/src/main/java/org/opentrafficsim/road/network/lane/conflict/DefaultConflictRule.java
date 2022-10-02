@@ -6,7 +6,7 @@ import java.util.Map;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -119,7 +119,7 @@ public class DefaultConflictRule implements ConflictRule
                 p1 = lane1.getCenterLine().getLocation(longitudinalPosition1);
                 p2 = lane2.getCenterLine().getLocation(longitudinalPosition2);
             }
-            catch (OTSGeometryException exception)
+            catch (OtsGeometryException exception)
             {
                 throw new RuntimeException("Conflict position is not on its lane.", exception);
             }

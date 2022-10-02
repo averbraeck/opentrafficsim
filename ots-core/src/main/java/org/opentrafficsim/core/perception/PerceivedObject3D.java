@@ -2,7 +2,7 @@ package org.opentrafficsim.core.perception;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.math.Angle3D;
 import org.opentrafficsim.core.math.Direction3D;
 import org.opentrafficsim.core.math.Speed3D;
@@ -31,7 +31,7 @@ public interface PerceivedObject3D extends PerceivedObject
      * combination of perceived distance and relative angle, combined with our own location and RPY direction.
      * @return the perceived XYZ-location of the object
      */
-    OTSPoint3D getPerceivedLocation();
+    OtsPoint3D getPerceivedLocation();
 
     /**
      * Get the perceived 3D moving angle from our reference point to the object.

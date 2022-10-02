@@ -6,9 +6,9 @@ import static org.junit.Assert.assertTrue;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.junit.Test;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.mock.MockSimulator;
 
 /**
@@ -24,16 +24,16 @@ public class LinkPositionTest
     /**
      * Test the LinkPosition class.
      * @throws NetworkException if that happens uncaught; this test has failed
-     * @throws OTSGeometryException if that happens uncaught; this test has failed
+     * @throws OtsGeometryException if that happens uncaught; this test has failed
      */
     @Test
-    public void linkPositionTest() throws NetworkException, OTSGeometryException
+    public void linkPositionTest() throws NetworkException, OtsGeometryException
     {
         OTSNetwork network = new OTSNetwork("test network for LinkPosition test", true, MockSimulator.createMock());
-        Node nodeA = new OTSNode(network, "A", new OTSPoint3D(10, 10, 10));
-        Node nodeB = new OTSNode(network, "B", new OTSPoint3D(110, 10, 10));
+        Node nodeA = new OTSNode(network, "A", new OtsPoint3D(10, 10, 10));
+        Node nodeB = new OTSNode(network, "B", new OtsPoint3D(110, 10, 10));
         Link link = new OTSLink(network, "A to B", nodeA, nodeB, network.getLinkType(LinkType.DEFAULTS.ROAD),
-                new OTSLine3D(nodeA.getPoint(), nodeB.getPoint()));
+                new OtsLine3D(nodeA.getPoint(), nodeB.getPoint()));
         double linkLength = link.getLength().si;
         // Apparently (reading the source), LinkPosition is not restricted to the length-range of the link
         for (double fraction : new double[] {-10, 0, 0.1, 0.5, 0.9, 1.0, 11.0})

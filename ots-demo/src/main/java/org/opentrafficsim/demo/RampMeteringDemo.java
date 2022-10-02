@@ -41,7 +41,7 @@ import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGtuColorer;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -263,12 +263,12 @@ public class RampMeteringDemo extends AbstractSimulationScript
         StreamInterface stream = sim.getModel().getStream("generation");
         this.parameterFactory.addParameter(ParameterTypes.FSPEED, new DistNormal(stream, 123.7 / 120.0, 12.0 / 1200));
 
-        OTSRoadNode nodeA = new OTSRoadNode(network, "A", new OTSPoint3D(0, 0), Direction.ZERO);
-        OTSRoadNode nodeB = new OTSRoadNode(network, "B", new OTSPoint3D(3000, 0), Direction.ZERO);
-        OTSRoadNode nodeC = new OTSRoadNode(network, "C", new OTSPoint3D(3250, 0), Direction.ZERO);
-        OTSRoadNode nodeD = new OTSRoadNode(network, "D", new OTSPoint3D(6000, 0), Direction.ZERO);
-        OTSRoadNode nodeE = new OTSRoadNode(network, "E", new OTSPoint3D(2000, -25), Direction.ZERO);
-        OTSRoadNode nodeF = new OTSRoadNode(network, "F", new OTSPoint3D(2750, 0.0), Direction.ZERO);
+        OTSRoadNode nodeA = new OTSRoadNode(network, "A", new OtsPoint3D(0, 0), Direction.ZERO);
+        OTSRoadNode nodeB = new OTSRoadNode(network, "B", new OtsPoint3D(3000, 0), Direction.ZERO);
+        OTSRoadNode nodeC = new OTSRoadNode(network, "C", new OtsPoint3D(3250, 0), Direction.ZERO);
+        OTSRoadNode nodeD = new OTSRoadNode(network, "D", new OtsPoint3D(6000, 0), Direction.ZERO);
+        OTSRoadNode nodeE = new OTSRoadNode(network, "E", new OtsPoint3D(2000, -25), Direction.ZERO);
+        OTSRoadNode nodeF = new OTSRoadNode(network, "F", new OtsPoint3D(2750, 0.0), Direction.ZERO);
 
         LinkType freeway = network.getLinkType(LinkType.DEFAULTS.FREEWAY);
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;

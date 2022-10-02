@@ -24,7 +24,7 @@ import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
 import org.djutils.multikeymap.MultiKeyMap;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -189,14 +189,14 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
      * @param speedLimitMap Map&lt;GtuType, Speed&gt;; speed limit on this lane, specified per GTU Type
      * @param fixGradualLateralOffset boolean; true if gradualLateralOffset needs to be fixed
-     * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws OtsGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtStart,
             final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth, final LaneType laneType,
             final Map<GtuType, Speed> speedLimitMap, final boolean fixGradualLateralOffset)
-            throws OTSGeometryException, NetworkException
+            throws OtsGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, fixGradualLateralOffset);
         this.laneType = laneType;
@@ -216,13 +216,13 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param endWidth Length; end width, positioned <i>symmetrically around</i> the design line
      * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
      * @param speedLimitMap Map&lt;GtuType, Speed&gt;; speed limit on this lane, specified per GTU Type
-     * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws OtsGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtStart,
             final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth, final LaneType laneType,
-            final Map<GtuType, Speed> speedLimitMap) throws OTSGeometryException, NetworkException
+            final Map<GtuType, Speed> speedLimitMap) throws OtsGeometryException, NetworkException
     {
         this(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, laneType, speedLimitMap, false);
     }
@@ -240,13 +240,13 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
      * @param speedLimit Speed; speed limit on this lane
      * @param fixGradualLateralOffset boolean; true if gradualLateralOffset needs to be fixed
-     * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws OtsGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtStart,
             final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth, final LaneType laneType,
-            final Speed speedLimit, final boolean fixGradualLateralOffset) throws OTSGeometryException, NetworkException
+            final Speed speedLimit, final boolean fixGradualLateralOffset) throws OtsGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, fixGradualLateralOffset);
         this.laneType = laneType;
@@ -267,13 +267,13 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param endWidth Length; end width, positioned <i>symmetrically around</i> the design line
      * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
      * @param speedLimit Speed; speed limit on this lane
-     * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws OtsGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtStart,
             final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth, final LaneType laneType,
-            final Speed speedLimit) throws OTSGeometryException, NetworkException
+            final Speed speedLimit) throws OtsGeometryException, NetworkException
     {
         this(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, laneType, speedLimit, false);
     }
@@ -287,12 +287,12 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param width Length; width, positioned <i>symmetrically around</i> the design line
      * @param laneType LaneType; type of lane to deduce compatibility with GTU types
      * @param speedLimitMap Map&lt;GtuType, Speed&gt;; the speed limit on this lane, specified per GTU Type
-     * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws OtsGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink parentLink, final String id, final Length lateralOffset, final Length width,
-            final LaneType laneType, final Map<GtuType, Speed> speedLimitMap) throws OTSGeometryException, NetworkException
+            final LaneType laneType, final Map<GtuType, Speed> speedLimitMap) throws OtsGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffset, width);
         this.laneType = laneType;
@@ -322,12 +322,12 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param width Length; width, positioned <i>symmetrically around</i> the design line
      * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
      * @param speedLimit Speed; the speed limit on this lane
-     * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws OtsGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink parentLink, final String id, final Length lateralOffset, final Length width,
-            final LaneType laneType, final Speed speedLimit) throws OTSGeometryException, NetworkException
+            final LaneType laneType, final Speed speedLimit) throws OtsGeometryException, NetworkException
     {
         this(parentLink, id, lateralOffset, width, laneType,
                 constructDefaultSpeedLimitMap(speedLimit, parentLink.getNetwork()));
@@ -343,12 +343,12 @@ public class Lane extends CrossSectionElement implements Serializable
      *            If not, a NetworkException is thrown.
      * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
      * @param speedLimitMap Map&lt;GtuType, Speed&gt;; the speed limit on this lane, specified per GTU Type
-     * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws OtsGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink parentLink, final String id, final List<CrossSectionSlice> crossSectionSlices,
-            final LaneType laneType, final Map<GtuType, Speed> speedLimitMap) throws OTSGeometryException, NetworkException
+            final LaneType laneType, final Map<GtuType, Speed> speedLimitMap) throws OtsGeometryException, NetworkException
     {
         super(parentLink, id, crossSectionSlices);
         this.laneType = laneType;
@@ -366,12 +366,12 @@ public class Lane extends CrossSectionElement implements Serializable
      *            If not, a NetworkException is thrown.
      * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
      * @param speedLimit Speed; the speed limit on this lane
-     * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws OtsGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink parentLink, final String id, final List<CrossSectionSlice> crossSectionSlices,
-            final LaneType laneType, final Speed speedLimit) throws OTSGeometryException, NetworkException
+            final LaneType laneType, final Speed speedLimit) throws OtsGeometryException, NetworkException
     {
         this(parentLink, id, crossSectionSlices, laneType, constructDefaultSpeedLimitMap(speedLimit, parentLink.getNetwork()));
     }

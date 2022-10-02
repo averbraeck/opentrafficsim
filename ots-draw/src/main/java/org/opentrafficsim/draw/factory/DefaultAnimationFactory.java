@@ -13,7 +13,7 @@ import org.djutils.event.EventListenerInterface;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuGenerator;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -160,7 +160,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
                 animateStaticObject(object);
             }
         }
-        catch (RemoteException | NamingException | OTSGeometryException exception)
+        catch (RemoteException | NamingException | OtsGeometryException exception)
         {
             throw new OTSDrawingException("Exception while creating network animation.", exception);
         }

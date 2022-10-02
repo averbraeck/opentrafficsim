@@ -3,7 +3,7 @@ package org.opentrafficsim.road.network.lane.object;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.object.StaticObject;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -49,7 +49,7 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
      * @throws NetworkException when the position on the lane is out of bounds
      */
     protected AbstractLaneBasedObject(final String id, final Lane lane, final Length longitudinalPosition,
-            final OTSLine3D geometry, final Length height) throws NetworkException
+            final OtsLine3D geometry, final Length height) throws NetworkException
     {
         super(id, geometry, height);
 
@@ -74,7 +74,7 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
      * @throws NetworkException when the position on the lane is out of bounds
      */
     protected AbstractLaneBasedObject(final String id, final Lane lane, final Length longitudinalPosition,
-            final OTSLine3D geometry) throws NetworkException
+            final OtsLine3D geometry) throws NetworkException
     {
         this(id, lane, longitudinalPosition, geometry, Length.ZERO);
     }

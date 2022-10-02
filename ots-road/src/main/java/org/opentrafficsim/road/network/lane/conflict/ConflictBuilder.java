@@ -16,9 +16,9 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
@@ -66,10 +66,10 @@ public final class ConflictBuilder
      * @param gtuType GtuType; gtu type
      * @param simulator OTSSimulatorInterface; simulator
      * @param widthGenerator WidthGenerator; width generator
-     * @throws OTSGeometryException in case of geometry exception
+     * @throws OtsGeometryException in case of geometry exception
      */
     public static void buildConflicts(final OTSRoadNetwork network, final GtuType gtuType,
-            final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator) throws OTSGeometryException
+            final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator) throws OtsGeometryException
     {
         buildConflicts(network, gtuType, simulator, widthGenerator, new LaneCombinationList(), new LaneCombinationList());
     }
@@ -82,11 +82,11 @@ public final class ConflictBuilder
      * @param widthGenerator WidthGenerator; width generator
      * @param ignoreList LaneCombinationList; lane combinations to ignore
      * @param permittedList LaneCombinationList; lane combinations that are permitted by traffic control
-     * @throws OTSGeometryException in case of geometry exception
+     * @throws OtsGeometryException in case of geometry exception
      */
     public static void buildConflicts(final OTSRoadNetwork network, final GtuType gtuType,
             final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator, final LaneCombinationList ignoreList,
-            final LaneCombinationList permittedList) throws OTSGeometryException
+            final LaneCombinationList permittedList) throws OtsGeometryException
     {
         // Create list of lanes
         ImmutableMap<String, Link> links = network.getLinkMap();
@@ -114,10 +114,10 @@ public final class ConflictBuilder
      * @param gtuType GtuType; gtu type
      * @param simulator OTSSimulatorInterface; simulator
      * @param widthGenerator WidthGenerator; width generator
-     * @throws OTSGeometryException in case of geometry exception
+     * @throws OtsGeometryException in case of geometry exception
      */
     public static void buildConflicts(final List<Lane> lanes, final GtuType gtuType, final OtsSimulatorInterface simulator,
-            final WidthGenerator widthGenerator) throws OTSGeometryException
+            final WidthGenerator widthGenerator) throws OtsGeometryException
     {
         buildConflicts(lanes, gtuType, simulator, widthGenerator, new LaneCombinationList(), new LaneCombinationList(), null);
     }
@@ -131,18 +131,18 @@ public final class ConflictBuilder
      * @param ignoreList LaneCombinationList; lane combinations to ignore
      * @param permittedList LaneCombinationList; lane combinations that are permitted by traffic control
      * @param conflictId String; identification of the conflict (null value permitted)
-     * @throws OTSGeometryException in case of geometry exception
+     * @throws OtsGeometryException in case of geometry exception
      */
     public static void buildConflicts(final List<Lane> lanes, final GtuType gtuType, final OtsSimulatorInterface simulator,
             final WidthGenerator widthGenerator, final LaneCombinationList ignoreList, final LaneCombinationList permittedList,
-            final String conflictId) throws OTSGeometryException
+            final String conflictId) throws OtsGeometryException
     {
         // Loop Lane / GTUDirectionality combinations
         long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
         simulator.getLogger().always().trace("GENERATING CONFLICTS (NON-PARALLEL MODE). {} COMBINATIONS", totalCombinations);
         long lastReported = 0;
-        Map<Lane, OTSLine3D> leftEdges = new LinkedHashMap<>();
-        Map<Lane, OTSLine3D> rightEdges = new LinkedHashMap<>();
+        Map<Lane, OtsLine3D> leftEdges = new LinkedHashMap<>();
+        Map<Lane, OtsLine3D> rightEdges = new LinkedHashMap<>();
 
         for (int i = 0; i < lanes.size(); i++)
         {
@@ -198,11 +198,11 @@ public final class ConflictBuilder
      * @param gtuType GtuType; gtu type
      * @param simulator OTSSimulatorInterface; simulator
      * @param widthGenerator WidthGenerator; width generator
-     * @throws OTSGeometryException in case of geometry exception
+     * @throws OtsGeometryException in case of geometry exception
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static void buildConflicts(final Lane lane1, final Lane lane2, final GtuType gtuType,
-            final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator) throws OTSGeometryException
+            final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator) throws OtsGeometryException
     {
         buildConflicts(lane1, lane2, gtuType, simulator, widthGenerator, false);
     }
@@ -215,12 +215,12 @@ public final class ConflictBuilder
      * @param simulator OTSSimulatorInterface; simulator
      * @param widthGenerator WidthGenerator; width generator
      * @param permitted boolean; conflict permitted by traffic control
-     * @throws OTSGeometryException in case of geometry exception
+     * @throws OtsGeometryException in case of geometry exception
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static void buildConflicts(final Lane lane1, final Lane lane2, final GtuType gtuType,
             final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator, final boolean permitted)
-            throws OTSGeometryException
+            throws OtsGeometryException
     {
         Set<Lane> down1 = lane1.nextLanes(gtuType);
         Set<Lane> up1 = lane1.prevLanes(gtuType);
@@ -253,15 +253,15 @@ public final class ConflictBuilder
      * @param rightEdges Map&lt;Lane, OTSLine3D&gt;; cache of right edge lines
      * @param intersectionCheck indicate whether we have to do a contour intersection check still
      * @param conflictId String; identification of the conflict (may be null)
-     * @throws OTSGeometryException in case of geometry exception
+     * @throws OtsGeometryException in case of geometry exception
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      */
     @SuppressWarnings({"checkstyle:parameternumber", "checkstyle:methodlength"})
     static void buildConflicts(final Lane lane1, final Set<Lane> down1, final Set<Lane> up1, final Lane lane2,
             final Set<Lane> down2, final Set<Lane> up2, final GtuType gtuType, final boolean permitted,
-            final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator, final Map<Lane, OTSLine3D> leftEdges,
-            final Map<Lane, OTSLine3D> rightEdges, final boolean intersectionCheck, final String conflictId)
-            throws OTSGeometryException, NetworkException
+            final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator, final Map<Lane, OtsLine3D> leftEdges,
+            final Map<Lane, OtsLine3D> rightEdges, final boolean intersectionCheck, final String conflictId)
+            throws OtsGeometryException, NetworkException
     {
         // Quick contour check, skip if not overlapping -- Don't repeat if it has taken place
         if (intersectionCheck)
@@ -276,13 +276,13 @@ public final class ConflictBuilder
 
         String paddedConflictId = null == conflictId ? "" : (" in conflict group " + conflictId);
         // Get left and right lines at specified width
-        OTSLine3D left1;
-        OTSLine3D right1;
+        OtsLine3D left1;
+        OtsLine3D right1;
         synchronized (lane1)
         {
             left1 = leftEdges.get(lane1);
             right1 = rightEdges.get(lane1);
-            OTSLine3D line1 = lane1.getCenterLine();
+            OtsLine3D line1 = lane1.getCenterLine();
             if (null == left1)
             {
                 left1 = line1.offsetLine(widthGenerator.getWidth(lane1, 0.0) / 2, widthGenerator.getWidth(lane1, 1.0) / 2);
@@ -295,13 +295,13 @@ public final class ConflictBuilder
             }
         }
 
-        OTSLine3D left2;
-        OTSLine3D right2;
+        OtsLine3D left2;
+        OtsLine3D right2;
         synchronized (lane2)
         {
             left2 = leftEdges.get(lane2);
             right2 = rightEdges.get(lane2);
-            OTSLine3D line2 = lane2.getCenterLine();
+            OtsLine3D line2 = lane2.getCenterLine();
             if (null == left2)
             {
                 left2 = line2.offsetLine(widthGenerator.getWidth(lane2, 0.0) / 2, widthGenerator.getWidth(lane2, 1.0) / 2);
@@ -471,12 +471,12 @@ public final class ConflictBuilder
      * @param widthGenerator WidthGenerator; width generator
      * @param permitted boolean; conflict permitted by traffic control
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
-     * @throws OTSGeometryException in case of geometry exception
+     * @throws OtsGeometryException in case of geometry exception
      */
     @SuppressWarnings("checkstyle:parameternumber")
     private static void buildMergeConflict(final Lane lane1, final double f1start, final Lane lane2, final double f2start,
             final GtuType gtuType, final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator,
-            final boolean permitted) throws NetworkException, OTSGeometryException
+            final boolean permitted) throws NetworkException, OtsGeometryException
     {
 
         // Determine lane end from direction
@@ -490,8 +490,8 @@ public final class ConflictBuilder
         Length length2 = lane2.getLength().times(Math.abs(f2end - f2start));
 
         // Get geometries
-        OTSLine3D geometry1 = getGeometry(lane1, f1start, f1end, widthGenerator);
-        OTSLine3D geometry2 = getGeometry(lane2, f2start, f2end, widthGenerator);
+        OtsLine3D geometry1 = getGeometry(lane1, f1start, f1end, widthGenerator);
+        OtsLine3D geometry2 = getGeometry(lane2, f2start, f2end, widthGenerator);
 
         // Determine conflict rule
         ConflictRule conflictRule;
@@ -523,12 +523,12 @@ public final class ConflictBuilder
      * @param simulator OTSSimulatorInterface; simulator
      * @param widthGenerator WidthGenerator; width generator
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
-     * @throws OTSGeometryException in case of geometry exception
+     * @throws OtsGeometryException in case of geometry exception
      */
     @SuppressWarnings("checkstyle:parameternumber")
     private static void buildSplitConflict(final Lane lane1, final double f1end, final Lane lane2, final double f2end,
             final GtuType gtuType, final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator)
-            throws NetworkException, OTSGeometryException
+            throws NetworkException, OtsGeometryException
     {
 
         // Determine lane start from direction
@@ -542,8 +542,8 @@ public final class ConflictBuilder
         Length length2 = lane2.getLength().times(Math.abs(f2end - f2start));
 
         // Get geometries
-        OTSLine3D geometry1 = getGeometry(lane1, f1start, f1end, widthGenerator);
-        OTSLine3D geometry2 = getGeometry(lane2, f2start, f2end, widthGenerator);
+        OtsLine3D geometry1 = getGeometry(lane1, f1start, f1end, widthGenerator);
+        OtsLine3D geometry2 = getGeometry(lane2, f2start, f2end, widthGenerator);
 
         // Make conflict
         Conflict.generateConflictPair(ConflictType.SPLIT, new SplitConflictRule(), false, lane1, longitudinalPosition1, length1,
@@ -565,12 +565,12 @@ public final class ConflictBuilder
      * @param widthGenerator WidthGenerator; width generator
      * @param permitted boolean; conflict permitted by traffic control
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
-     * @throws OTSGeometryException in case of geometry exception
+     * @throws OtsGeometryException in case of geometry exception
      */
     @SuppressWarnings("checkstyle:parameternumber")
     private static void buildCrossingConflict(final Lane lane1, final double f1start, final double f1end, final Lane lane2,
             final double f2start, final double f2end, final GtuType gtuType, final OtsSimulatorInterface simulator,
-            final WidthGenerator widthGenerator, final boolean permitted) throws NetworkException, OTSGeometryException
+            final WidthGenerator widthGenerator, final boolean permitted) throws NetworkException, OtsGeometryException
     {
 
         // Fractions may be in opposite direction, for the start location this needs to be correct
@@ -601,8 +601,8 @@ public final class ConflictBuilder
         Length length2 = lane2.getLength().times(Math.abs(f2end - f2start));
 
         // Get geometries
-        OTSLine3D geometry1 = getGeometry(lane1, f1start, f1end, widthGenerator);
-        OTSLine3D geometry2 = getGeometry(lane2, f2start, f2end, widthGenerator);
+        OtsLine3D geometry1 = getGeometry(lane1, f1start, f1end, widthGenerator);
+        OtsLine3D geometry2 = getGeometry(lane2, f2start, f2end, widthGenerator);
 
         // Determine conflict rule
         ConflictRule conflictRule;
@@ -631,10 +631,10 @@ public final class ConflictBuilder
      * @param fEnd double; longitudinal fraction of end
      * @param widthGenerator WidthGenerator; width generator
      * @return geometry for conflict
-     * @throws OTSGeometryException in case of geometry exception
+     * @throws OtsGeometryException in case of geometry exception
      */
-    private static OTSLine3D getGeometry(final Lane lane, final double fStart, final double fEnd,
-            final WidthGenerator widthGenerator) throws OTSGeometryException
+    private static OtsLine3D getGeometry(final Lane lane, final double fStart, final double fEnd,
+            final WidthGenerator widthGenerator) throws OtsGeometryException
     {
         // extractFractional needs ordered fractions, irrespective of driving direction
         double f1;
@@ -663,14 +663,14 @@ public final class ConflictBuilder
                 f2 = f2 + f2 / 1000;
             }
         }
-        OTSLine3D centerLine = lane.getCenterLine().extractFractional(f1, f2);
-        OTSLine3D left = centerLine.offsetLine(widthGenerator.getWidth(lane, f1) / 2, widthGenerator.getWidth(lane, f2) / 2);
-        OTSLine3D right =
+        OtsLine3D centerLine = lane.getCenterLine().extractFractional(f1, f2);
+        OtsLine3D left = centerLine.offsetLine(widthGenerator.getWidth(lane, f1) / 2, widthGenerator.getWidth(lane, f2) / 2);
+        OtsLine3D right =
                 centerLine.offsetLine(-widthGenerator.getWidth(lane, f1) / 2, -widthGenerator.getWidth(lane, f2) / 2).reverse();
-        OTSPoint3D[] points = new OTSPoint3D[left.size() + right.size()];
+        OtsPoint3D[] points = new OtsPoint3D[left.size() + right.size()];
         System.arraycopy(left.getPoints(), 0, points, 0, left.size());
         System.arraycopy(right.getPoints(), 0, points, left.size(), right.size());
-        return new OTSLine3D(points);
+        return new OtsLine3D(points);
     }
 
     /**
@@ -803,10 +803,10 @@ public final class ConflictBuilder
          * @param line2 OTSLine3D; line 2
          * @param combo int; edge combination number
          * @return set of intersections, sorted by the fraction on line 1
-         * @throws OTSGeometryException in case of geometry exception
+         * @throws OtsGeometryException in case of geometry exception
          */
-        public static SortedSet<Intersection> getIntersectionList(final OTSLine3D line1, final OTSLine3D line2, final int combo)
-                throws OTSGeometryException
+        public static SortedSet<Intersection> getIntersectionList(final OtsLine3D line1, final OtsLine3D line2, final int combo)
+                throws OtsGeometryException
         {
             SortedSet<Intersection> out = new TreeSet<>();
             // if (!line1.getBounds().intersect(line2.getBounds()))
@@ -814,23 +814,23 @@ public final class ConflictBuilder
             // return out;
             // }
             double cumul1 = 0.0;
-            OTSPoint3D start1 = null;
-            OTSPoint3D end1 = line1.get(0);
+            OtsPoint3D start1 = null;
+            OtsPoint3D end1 = line1.get(0);
             for (int i = 0; i < line1.size() - 1; i++)
             {
                 start1 = end1;
                 end1 = line1.get(i + 1);
 
                 double cumul2 = 0.0;
-                OTSPoint3D start2 = null;
-                OTSPoint3D end2 = line2.get(0);
+                OtsPoint3D start2 = null;
+                OtsPoint3D end2 = line2.get(0);
 
                 for (int j = 0; j < line2.size() - 1; j++)
                 {
                     start2 = end2;
                     end2 = line2.get(j + 1);
 
-                    OTSPoint3D p = OTSPoint3D.intersectionOfLineSegments(start1, end1, start2, end2);
+                    OtsPoint3D p = OtsPoint3D.intersectionOfLineSegments(start1, end1, start2, end2);
                     if (p != null)
                     {
                         // Segments intersect
@@ -988,10 +988,10 @@ public final class ConflictBuilder
      * @param gtuType GtuType; gtu type
      * @param simulator OTSSimulatorInterface; simulator
      * @param widthGenerator WidthGenerator; width generator
-     * @throws OTSGeometryException in case of geometry exception
+     * @throws OtsGeometryException in case of geometry exception
      */
     public static void buildConflictsParallel(final OTSRoadNetwork network, final GtuType gtuType,
-            final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator) throws OTSGeometryException
+            final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator) throws OtsGeometryException
     {
         buildConflictsParallel(network, gtuType, simulator, widthGenerator, new LaneCombinationList(),
                 new LaneCombinationList());
@@ -1005,11 +1005,11 @@ public final class ConflictBuilder
      * @param widthGenerator WidthGenerator; width generator
      * @param ignoreList LaneCombinationList; lane combinations to ignore
      * @param permittedList LaneCombinationList; lane combinations that are permitted by traffic control
-     * @throws OTSGeometryException in case of geometry exception
+     * @throws OtsGeometryException in case of geometry exception
      */
     public static void buildConflictsParallel(final OTSRoadNetwork network, final GtuType gtuType,
             final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator, final LaneCombinationList ignoreList,
-            final LaneCombinationList permittedList) throws OTSGeometryException
+            final LaneCombinationList permittedList) throws OtsGeometryException
     {
         // Create list of lanes
         ImmutableMap<String, Link> links = network.getLinkMap();
@@ -1037,10 +1037,10 @@ public final class ConflictBuilder
      * @param gtuType GtuType; gtu type
      * @param simulator OTSSimulatorInterface; simulator
      * @param widthGenerator WidthGenerator; width generator
-     * @throws OTSGeometryException in case of geometry exception
+     * @throws OtsGeometryException in case of geometry exception
      */
     public static void buildConflictsParallel(final List<Lane> lanes, final GtuType gtuType,
-            final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator) throws OTSGeometryException
+            final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator) throws OtsGeometryException
     {
         buildConflictsParallelBig(lanes, gtuType, simulator, widthGenerator, new LaneCombinationList(),
                 new LaneCombinationList());
@@ -1054,18 +1054,18 @@ public final class ConflictBuilder
      * @param widthGenerator WidthGenerator; the width generator
      * @param ignoreList LaneCombinationList; lane combinations to ignore
      * @param permittedList LaneCombinationList; lane combinations that are permitted by traffic control
-     * @throws OTSGeometryException in case of geometry exception
+     * @throws OtsGeometryException in case of geometry exception
      */
     public static void buildConflictsParallelSmall(final List<Lane> lanes, final GtuType gtuType,
             final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator, final LaneCombinationList ignoreList,
-            final LaneCombinationList permittedList) throws OTSGeometryException
+            final LaneCombinationList permittedList) throws OtsGeometryException
     {
         // Loop Lane / GTUDirectionality combinations
         long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
         System.out.println("PARALLEL GENERATING OF CONFLICTS (SMALL JOBS). " + totalCombinations + " COMBINATIONS");
         long lastReported = 0;
-        Map<Lane, OTSLine3D> leftEdges = new LinkedHashMap<>();
-        Map<Lane, OTSLine3D> rightEdges = new LinkedHashMap<>();
+        Map<Lane, OtsLine3D> leftEdges = new LinkedHashMap<>();
+        Map<Lane, OtsLine3D> rightEdges = new LinkedHashMap<>();
 
         // force the envelopes to be built first
         for (Lane lane : lanes)
@@ -1183,18 +1183,18 @@ public final class ConflictBuilder
      * @param widthGenerator WidthGenerator; the width generator
      * @param ignoreList LaneCombinationList; lane combinations to ignore
      * @param permittedList LaneCombinationList; lane combinations that are permitted by traffic control
-     * @throws OTSGeometryException in case of geometry exception
+     * @throws OtsGeometryException in case of geometry exception
      */
     public static void buildConflictsParallelBig(final List<Lane> lanes, final GtuType gtuType,
             final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator, final LaneCombinationList ignoreList,
-            final LaneCombinationList permittedList) throws OTSGeometryException
+            final LaneCombinationList permittedList) throws OtsGeometryException
     {
         // Loop Lane / GTUDirectionality combinations
         long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
         System.out.println("PARALLEL GENERATING OF CONFLICTS (BIG JOBS). " + totalCombinations + " COMBINATIONS");
         long lastReported = 0;
-        Map<Lane, OTSLine3D> leftEdges = new LinkedHashMap<>();
-        Map<Lane, OTSLine3D> rightEdges = new LinkedHashMap<>();
+        Map<Lane, OtsLine3D> leftEdges = new LinkedHashMap<>();
+        Map<Lane, OtsLine3D> rightEdges = new LinkedHashMap<>();
 
         // force the envelopes to be built first
         for (Lane lane : lanes)
@@ -1287,11 +1287,11 @@ public final class ConflictBuilder
      * @param gtuType GtuType; gtu type
      * @param simulator OTSSimulatorInterface; simulator
      * @param widthGenerator WidthGenerator; width generator
-     * @throws OTSGeometryException in case of geometry exception
+     * @throws OtsGeometryException in case of geometry exception
      */
     public static void buildConflictsParallel(final OTSRoadNetwork network, final Map<String, Set<Link>> conflictCandidateMap,
             final GtuType gtuType, final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator)
-            throws OTSGeometryException
+            throws OtsGeometryException
     {
         for (String conflictId : conflictCandidateMap.keySet())
         {
@@ -1366,7 +1366,7 @@ public final class ConflictBuilder
             buildConflicts(cbr.lane1, cbr.down1, cbr.up1, cbr.lane2, cbr.down2, cbr.up2, cbr.gtuType, cbr.permitted,
                     cbr.simulator, cbr.widthGenerator, cbr.leftEdges, cbr.rightEdges, false, null);
         }
-        catch (NetworkException | OTSGeometryException ne)
+        catch (NetworkException | OtsGeometryException ne)
         {
             throw new RuntimeException("Conflict build with bad combination of types / rules.", ne);
         }
@@ -1407,10 +1407,10 @@ public final class ConflictBuilder
         final WidthGenerator widthGenerator;
 
         /** */
-        final Map<Lane, OTSLine3D> leftEdges;
+        final Map<Lane, OtsLine3D> leftEdges;
 
         /** */
-        final Map<Lane, OTSLine3D> rightEdges;
+        final Map<Lane, OtsLine3D> rightEdges;
 
         /**
          * Stores conflicts about a single lane pair.
@@ -1431,7 +1431,7 @@ public final class ConflictBuilder
         ConflictBuilderRecordSmall(final Lane lane1, final Set<Lane> down1, final Set<Lane> up1, final Lane lane2,
                 final Set<Lane> down2, final Set<Lane> up2, final GtuType gtuType, final boolean permitted,
                 final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator,
-                final Map<Lane, OTSLine3D> leftEdges, final Map<Lane, OTSLine3D> rightEdges)
+                final Map<Lane, OtsLine3D> leftEdges, final Map<Lane, OtsLine3D> rightEdges)
         {
             this.lane1 = lane1;
             this.down1 = down1;
@@ -1506,7 +1506,7 @@ public final class ConflictBuilder
                                 permitted, this.cbr.simulator, this.cbr.widthGenerator, this.cbr.leftEdges, this.cbr.rightEdges,
                                 false, null);
                     }
-                    catch (NetworkException | OTSGeometryException ne)
+                    catch (NetworkException | OtsGeometryException ne)
                     {
                         lane2.getParentLink().getSimulator().getLogger().always().error(ne,
                                 "Conflict build with bad combination of types / rules.");
@@ -1557,10 +1557,10 @@ public final class ConflictBuilder
         final WidthGenerator widthGenerator;
 
         /** */
-        final Map<Lane, OTSLine3D> leftEdges;
+        final Map<Lane, OtsLine3D> leftEdges;
 
         /** */
-        final Map<Lane, OTSLine3D> rightEdges;
+        final Map<Lane, OtsLine3D> rightEdges;
 
         /**
          * Stores conflicts about a single lane pair.
@@ -1581,7 +1581,7 @@ public final class ConflictBuilder
         ConflictBuilderRecordBig(final int starti, final List<Lane> lanes, final LaneCombinationList ignoreList,
                 final LaneCombinationList permittedList, final Lane lane1, final Set<Lane> down1, final Set<Lane> up1,
                 final GtuType gtuType, final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator,
-                final Map<Lane, OTSLine3D> leftEdges, final Map<Lane, OTSLine3D> rightEdges)
+                final Map<Lane, OtsLine3D> leftEdges, final Map<Lane, OtsLine3D> rightEdges)
         {
             this.starti = starti;
             this.lanes = lanes;

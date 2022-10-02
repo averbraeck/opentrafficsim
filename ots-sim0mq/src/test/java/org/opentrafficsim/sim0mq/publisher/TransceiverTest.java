@@ -35,9 +35,9 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
@@ -89,14 +89,14 @@ public class TransceiverTest
      * @throws SerializationException on error
      * @throws Sim0MQException on error
      * @throws NetworkException on error
-     * @throws OTSGeometryException on error
+     * @throws OtsGeometryException on error
      * @throws NamingException on error
      * @throws SimRuntimeException on error
      * @throws GtuException on error
      */
     @Test
     public void testGtuIdTransceiver() throws RemoteException, Sim0MQException, SerializationException, NetworkException,
-            OTSGeometryException, SimRuntimeException, NamingException, GtuException
+            OtsGeometryException, SimRuntimeException, NamingException, GtuException
     {
         ReturnWrapper storeLastResult = new ReturnWrapper()
         {
@@ -314,12 +314,12 @@ public class TransceiverTest
                 lit.toString().startsWith("LinkIdTransceiver"));
 
         // Give the network two nodes and a link with a lane - A lot of code is required to create a lane :-(
-        OTSPoint3D node1Point = new OTSPoint3D(10, 20, 30);
+        OtsPoint3D node1Point = new OtsPoint3D(10, 20, 30);
         OTSRoadNode node1 = new OTSRoadNode(network, "node 1", node1Point, Direction.ZERO);
-        OTSRoadNode node2 = new OTSRoadNode(network, "node 2", new OTSPoint3D(110, 20, 30), Direction.ZERO);
+        OTSRoadNode node2 = new OTSRoadNode(network, "node 2", new OtsPoint3D(110, 20, 30), Direction.ZERO);
         LinkType roadLinkType = network.getLinkType(LinkType.DEFAULTS.ROAD);
         CrossSectionLink link = new CrossSectionLink(network, "1 to 2", node1, node2, roadLinkType,
-                new OTSLine3D(node1.getPoint(), node2.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
+                new OtsLine3D(node1.getPoint(), node2.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.RESIDENTIAL_ROAD_LANE);
         OtsReplication replication = Mockito.mock(OtsReplication.class);
         HistoryManagerDEVS hmd = Mockito.mock(HistoryManagerDEVS.class);

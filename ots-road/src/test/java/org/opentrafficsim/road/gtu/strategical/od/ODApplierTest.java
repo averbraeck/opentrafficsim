@@ -36,9 +36,9 @@ import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
@@ -142,11 +142,11 @@ public class ODApplierTest
 
     /**
      * Constructor.
-     * @throws OTSGeometryException on exception
+     * @throws OtsGeometryException on exception
      * @throws NetworkException on exception
      * @throws NamingException on ...
      */
-    public ODApplierTest() throws NetworkException, OTSGeometryException, NamingException
+    public ODApplierTest() throws NetworkException, OtsGeometryException, NamingException
     {
         this.replication =
                 new OtsReplication("replication for ODApplierTest", Time.ZERO, Duration.ZERO, Duration.instantiateSI(10.0));
@@ -162,17 +162,17 @@ public class ODApplierTest
 
     /**
      * @throws NetworkException on network exception
-     * @throws OTSGeometryException on geometry exception
+     * @throws OtsGeometryException on geometry exception
      */
-    private void makeNetwork() throws NetworkException, OTSGeometryException
+    private void makeNetwork() throws NetworkException, OtsGeometryException
     {
         this.network = new OTSRoadNetwork("ODApplierExample", true, this.simulator);
-        OTSPoint3D pointA = new OTSPoint3D(0, 0, 0);
-        OTSPoint3D pointB = new OTSPoint3D(1000, 0, 0);
+        OtsPoint3D pointA = new OtsPoint3D(0, 0, 0);
+        OtsPoint3D pointB = new OtsPoint3D(1000, 0, 0);
         OTSRoadNode nodeA = new OTSRoadNode(this.network, "A", pointA, Direction.ZERO);
         OTSRoadNode nodeB = new OTSRoadNode(this.network, "B", pointB, Direction.ZERO);
         CrossSectionLink linkAB = new CrossSectionLink(this.network, "AB", nodeA, nodeB,
-                this.network.getLinkType(LinkType.DEFAULTS.ROAD), new OTSLine3D(pointA, pointB), LaneKeepingPolicy.KEEPRIGHT);
+                this.network.getLinkType(LinkType.DEFAULTS.ROAD), new OtsLine3D(pointA, pointB), LaneKeepingPolicy.KEEPRIGHT);
         this.lanes.put("lane1", new Lane(linkAB, "lane1", Length.instantiateSI(1.75), Length.instantiateSI(3.5),
                 this.network.getLaneType(LaneType.DEFAULTS.HIGHWAY), new Speed(120, SpeedUnit.KM_PER_HOUR)));
         this.lanes.put("lane2", new Lane(linkAB, "lane2", Length.instantiateSI(-1.75), Length.instantiateSI(3.5),
@@ -226,11 +226,11 @@ public class ODApplierTest
      * @throws ProbabilityException on exception
      * @throws IllegalAccessException on exception
      * @throws IllegalArgumentException on exception
-     * @throws OTSGeometryException on exception
+     * @throws OtsGeometryException on exception
      */
     @Test
     public void headwayGeneratorTest() throws ValueRuntimeException, NetworkException, ParameterException, SimRuntimeException,
-            ProbabilityException, IllegalArgumentException, IllegalAccessException, OTSGeometryException
+            ProbabilityException, IllegalArgumentException, IllegalAccessException, OtsGeometryException
     {
 
         this.time = Time.ZERO;

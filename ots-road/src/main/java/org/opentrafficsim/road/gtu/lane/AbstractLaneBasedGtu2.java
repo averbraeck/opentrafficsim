@@ -31,10 +31,10 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSLine3D.FractionalFallback;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsLine3D.FractionalFallback;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.AbstractGtu;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -192,11 +192,11 @@ public abstract class AbstractLaneBasedGtu2 extends AbstractGtu implements LaneB
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GtuException when initial values are not correct
-     * @throws OTSGeometryException when the initial path is wrong
+     * @throws OtsGeometryException when the initial path is wrong
      */
     @SuppressWarnings("checkstyle:designforextension")
     public void init(final LaneBasedStrategicalPlanner strategicalPlanner, final Set<LanePosition> initialLongitudinalPositions,
-            final Speed initialSpeed) throws NetworkException, SimRuntimeException, GtuException, OTSGeometryException
+            final Speed initialSpeed) throws NetworkException, SimRuntimeException, GtuException, OtsGeometryException
     {
         Throw.when(null == initialLongitudinalPositions, GtuException.class, "InitialLongitudinalPositions is null");
         Throw.when(0 == initialLongitudinalPositions.size(), GtuException.class, "InitialLongitudinalPositions is empty set");
@@ -240,9 +240,9 @@ public abstract class AbstractLaneBasedGtu2 extends AbstractGtu implements LaneB
             }
             else
             {
-                OTSPoint3D p2 = new OTSPoint3D(initialLocation.x + 1E-6 * Math.cos(initialLocation.getRotZ()),
+                OtsPoint3D p2 = new OtsPoint3D(initialLocation.x + 1E-6 * Math.cos(initialLocation.getRotZ()),
                         initialLocation.y + 1E-6 * Math.sin(initialLocation.getRotZ()), initialLocation.z);
-                OTSLine3D path = new OTSLine3D(new OTSPoint3D(initialLocation), p2);
+                OtsLine3D path = new OtsLine3D(new OtsPoint3D(initialLocation), p2);
                 this.operationalPlan.set(OperationalPlanBuilder.buildConstantSpeedPlan(this, path, now, initialSpeed));
             }
         }
@@ -343,8 +343,8 @@ public abstract class AbstractLaneBasedGtu2 extends AbstractGtu implements LaneB
         // init event
         LanePosition referencePosition = getReferencePosition();
         fireTimedEvent(LaneBasedGtu.LANEBASED_INIT_EVENT,
-                new Object[] {getId(), new OTSPoint3D(initialLocation).doubleVector(PositionUnit.METER),
-                        OTSPoint3D.direction(initialLocation, DirectionUnit.EAST_RADIAN), getLength(), getWidth(),
+                new Object[] {getId(), new OtsPoint3D(initialLocation).doubleVector(PositionUnit.METER),
+                        OtsPoint3D.direction(initialLocation, DirectionUnit.EAST_RADIAN), getLength(), getWidth(),
                         referencePosition.getLane().getParentLink().getId(), referencePosition.getLane().getId(),
                         referencePosition.getPosition(), getGtuType().getId()},
                 getSimulator().getSimulatorTime());
@@ -397,10 +397,10 @@ public abstract class AbstractLaneBasedGtu2 extends AbstractGtu implements LaneB
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GtuException when initial values are not correct
-     * @throws OTSGeometryException when the initial path is wrong
+     * @throws OtsGeometryException when the initial path is wrong
      */
     public void reinit(final Set<LanePosition> initialLongitudinalPositions)
-            throws NetworkException, SimRuntimeException, GtuException, OTSGeometryException
+            throws NetworkException, SimRuntimeException, GtuException, OtsGeometryException
     {
         init(getStrategicalPlanner(), initialLongitudinalPositions, Speed.ZERO);
     }
@@ -668,8 +668,8 @@ public abstract class AbstractLaneBasedGtu2 extends AbstractGtu implements LaneB
             }
 
             fireTimedEvent(LaneBasedGtu.LANEBASED_MOVE_EVENT,
-                    new Object[] {getId(), new OTSPoint3D(fromLocation).doubleVector(PositionUnit.METER),
-                            OTSPoint3D.direction(fromLocation, DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
+                    new Object[] {getId(), new OtsPoint3D(fromLocation).doubleVector(PositionUnit.METER),
+                            OtsPoint3D.direction(fromLocation, DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
                             getTurnIndicatorStatus().name(), getOdometer(), dlp.getLane().getParentLink().getId(),
                             dlp.getLane().getId(), dlp.getPosition()},
                     getSimulator().getSimulatorTime());
@@ -737,7 +737,7 @@ public abstract class AbstractLaneBasedGtu2 extends AbstractGtu implements LaneB
         if (possiblyNearNextSection)
         {
             CrossSectionLink link = lastCrossSection.getLanes().get(0).getParentLink();
-            OTSLine3D enterLine = link.getEndLine();
+            OtsLine3D enterLine = link.getEndLine();
             Time enterTime = timeAtLine(enterLine, getFront());
             if (enterTime != null)
             {
@@ -871,7 +871,7 @@ public abstract class AbstractLaneBasedGtu2 extends AbstractGtu implements LaneB
         if (possiblyNearNextSection)
         {
             CrossSectionLink link = firstCrossSection.getLanes().get(0).getParentLink();
-            OTSLine3D leaveLine = link.getEndLine();
+            OtsLine3D leaveLine = link.getEndLine();
             Time leaveTime = timeAtLine(leaveLine, getRear());
             if (leaveTime == null)
             {
@@ -1034,25 +1034,25 @@ public abstract class AbstractLaneBasedGtu2 extends AbstractGtu implements LaneB
      *         current operational plan
      * @throws GtuException position error
      */
-    private Time timeAtLine(final OTSLine3D line, final RelativePosition relativePosition) throws GtuException
+    private Time timeAtLine(final OtsLine3D line, final RelativePosition relativePosition) throws GtuException
     {
         Throw.when(line.size() != 2, IllegalArgumentException.class, "Line to cross with path should have 2 points.");
-        OTSLine3D path = getOperationalPlan().getPath();
-        OTSPoint3D[] points;
+        OtsLine3D path = getOperationalPlan().getPath();
+        OtsPoint3D[] points;
         double adjust;
         if (relativePosition.getDx().gt0())
         {
             // as the position is downstream of the reference, we need to attach some distance at the end
-            points = new OTSPoint3D[path.size() + 1];
+            points = new OtsPoint3D[path.size() + 1];
             System.arraycopy(path.getPoints(), 0, points, 0, path.size());
-            points[path.size()] = new OTSPoint3D(path.getLocationExtendedSI(path.getLengthSI() + relativePosition.getDx().si));
+            points[path.size()] = new OtsPoint3D(path.getLocationExtendedSI(path.getLengthSI() + relativePosition.getDx().si));
             adjust = -relativePosition.getDx().si;
         }
         else if (relativePosition.getDx().lt0())
         {
-            points = new OTSPoint3D[path.size() + 1];
+            points = new OtsPoint3D[path.size() + 1];
             System.arraycopy(path.getPoints(), 0, points, 1, path.size());
-            points[0] = new OTSPoint3D(path.getLocationExtendedSI(relativePosition.getDx().si));
+            points[0] = new OtsPoint3D(path.getLocationExtendedSI(relativePosition.getDx().si));
             adjust = 0.0;
         }
         else
@@ -1065,12 +1065,12 @@ public abstract class AbstractLaneBasedGtu2 extends AbstractGtu implements LaneB
         double cumul = 0.0;
         for (int i = 0; i < points.length - 1; i++)
         {
-            OTSPoint3D intersect;
+            OtsPoint3D intersect;
             try
             {
-                intersect = OTSPoint3D.intersectionOfLineSegments(points[i], points[i + 1], line.get(0), line.get(1));
+                intersect = OtsPoint3D.intersectionOfLineSegments(points[i], points[i + 1], line.get(0), line.get(1));
             }
-            catch (OTSGeometryException exception)
+            catch (OtsGeometryException exception)
             {
                 // should not occur, we check line.size() == 2
                 throw new RuntimeException("Unexpected exception while obtaining points from line to cross.", exception);
@@ -1434,16 +1434,16 @@ public abstract class AbstractLaneBasedGtu2 extends AbstractGtu implements LaneB
         {
             Lane referenceLane = dlp.getLane();
             fireTimedEvent(LaneBasedGtu.LANEBASED_DESTROY_EVENT,
-                    new Object[] {getId(), new OTSPoint3D(location).doubleVector(PositionUnit.METER),
-                            OTSPoint3D.direction(location, DirectionUnit.EAST_RADIAN), getOdometer(),
+                    new Object[] {getId(), new OtsPoint3D(location).doubleVector(PositionUnit.METER),
+                            OtsPoint3D.direction(location, DirectionUnit.EAST_RADIAN), getOdometer(),
                             referenceLane.getParentLink().getId(), referenceLane.getId(), dlp.getPosition()},
                     getSimulator().getSimulatorTime());
         }
         else
         {
             fireTimedEvent(LaneBasedGtu.LANEBASED_DESTROY_EVENT,
-                    new Object[] {getId(), new OTSPoint3D(location).doubleVector(PositionUnit.METER),
-                            OTSPoint3D.direction(location, DirectionUnit.EAST_RADIAN), getOdometer(), null, null, null},
+                    new Object[] {getId(), new OtsPoint3D(location).doubleVector(PositionUnit.METER),
+                            OtsPoint3D.direction(location, DirectionUnit.EAST_RADIAN), getOdometer(), null, null, null},
                     getSimulator().getSimulatorTime());
         }
         cancelAllEvents();

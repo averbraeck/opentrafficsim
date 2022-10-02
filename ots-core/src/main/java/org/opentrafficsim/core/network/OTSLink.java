@@ -10,7 +10,7 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.core.gtu.Gtu;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -46,7 +46,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
     private final LinkType linkType;
 
     /** Design line of the link. */
-    private final OTSLine3D designLine;
+    private final OtsLine3D designLine;
 
     /** The GTUs on this Link. */
     private final Set<Gtu> gtus = new LinkedHashSet<>();
@@ -64,7 +64,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public OTSLink(final Network network, final String id, final Node startNode, final Node endNode, final LinkType linkType,
-            final OTSLine3D designLine) throws NetworkException
+            final OtsLine3D designLine) throws NetworkException
     {
         Throw.whenNull(network, "network cannot be null");
         Throw.whenNull(id, "id cannot be null");
@@ -161,7 +161,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
 
     /** {@inheritDoc} */
     @Override
-    public final OTSLine3D getDesignLine()
+    public final OtsLine3D getDesignLine()
     {
         return this.designLine;
     }

@@ -17,9 +17,9 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -147,7 +147,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * @throws NetworkException when the position on the lane is out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    private Conflict(final Lane lane, final Length longitudinalPosition, final Length length, final OTSLine3D geometry,
+    private Conflict(final Lane lane, final Length longitudinalPosition, final Length length, final OtsLine3D geometry,
             final ConflictType conflictType, final ConflictRule conflictRule, final GtuType gtuType, final boolean permitted)
             throws NetworkException
     {
@@ -166,7 +166,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             {
                 new ConflictEnd(this, lane, position);
             }
-            catch (OTSGeometryException exception)
+            catch (OtsGeometryException exception)
             {
                 // does not happen
                 throw new RuntimeException("Could not create dummy geometry for ConflictEnd.", exception);
@@ -440,8 +440,8 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     @SuppressWarnings("checkstyle:parameternumber")
     public static void generateConflictPair(final ConflictType conflictType, final ConflictRule conflictRule,
             final boolean permitted, final Lane lane1, final Length longitudinalPosition1, final Length length1,
-            final OTSLine3D geometry1, final GtuType gtuType1, final Lane lane2, final Length longitudinalPosition2,
-            final Length length2, final OTSLine3D geometry2, final GtuType gtuType2, final OtsSimulatorInterface simulator)
+            final OtsLine3D geometry1, final GtuType gtuType1, final Lane lane2, final Length longitudinalPosition2,
+            final Length length2, final OtsLine3D geometry2, final GtuType gtuType2, final OtsSimulatorInterface simulator)
             throws NetworkException
     {
         // lane, longitudinalPosition, length and geometry are checked in AbstractLaneBasedObject
@@ -490,14 +490,14 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
          * @param lane Lane; lane
          * @param longitudinalPosition Length; position along the lane of the end of the conflict
          * @throws NetworkException on network exception
-         * @throws OTSGeometryException does not happen
+         * @throws OtsGeometryException does not happen
          */
         ConflictEnd(final Conflict conflict, final Lane lane, final Length longitudinalPosition)
-                throws NetworkException, OTSGeometryException
+                throws NetworkException, OtsGeometryException
         {
             // FIXME: the OTSLine3D object should be shared by all ConflictEnd objects (removing OTSGeometryException)
             super(conflict.getId() + "End", lane, longitudinalPosition,
-                    new OTSLine3D(new OTSPoint3D(0, 0, 0), new OTSPoint3D(1, 0, 0)));
+                    new OtsLine3D(new OtsPoint3D(0, 0, 0), new OtsPoint3D(1, 0, 0)));
             this.conflict = conflict;
         }
 

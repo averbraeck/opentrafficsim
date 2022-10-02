@@ -45,7 +45,7 @@ import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -228,7 +228,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
     /**
      * Program entry point.
      * @param args String[]; the command line arguments
-     * @throws OTSGeometryException on error
+     * @throws OtsGeometryException on error
      * @throws NetworkException on error
      * @throws NamingException on error
      * @throws ValueRuntimeException on error
@@ -238,7 +238,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
      * @throws Sim0MQException on error
      * @throws IOException on error
      */
-    public static void main(final String[] args) throws NetworkException, OTSGeometryException, NamingException,
+    public static void main(final String[] args) throws NetworkException, OtsGeometryException, NamingException,
             ValueRuntimeException, ParameterException, SimRuntimeException, Sim0MQException, SerializationException, IOException
     {
         CategoryLogger.setAllLogLevel(Level.WARNING);
@@ -712,7 +712,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                         getSimulator(), new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)), ignoreList,
                         permittedList);
             }
-            catch (NetworkException | OTSGeometryException | JAXBException | URISyntaxException | XmlParserException
+            catch (NetworkException | OtsGeometryException | JAXBException | URISyntaxException | XmlParserException
                     | SAXException | ParserConfigurationException | GtuException | IOException
                     | TrafficControlException exception)
             {

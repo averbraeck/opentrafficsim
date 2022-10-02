@@ -16,9 +16,9 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
@@ -81,11 +81,11 @@ public final class LaneFactory
      * @param type LinkType; link type
      * @param simulator OTSSimulatorInterface; simulator
      * @param policy LaneKeepingPolicy; lane keeping policy
-     * @throws OTSGeometryException if no valid line can be created
+     * @throws OtsGeometryException if no valid line can be created
      * @throws NetworkException if the link exists, or a node does not exist, in the network
      */
     public LaneFactory(final OTSRoadNetwork network, final OTSRoadNode from, final OTSRoadNode to, final LinkType type,
-            final OtsSimulatorInterface simulator, final LaneKeepingPolicy policy) throws OTSGeometryException, NetworkException
+            final OtsSimulatorInterface simulator, final LaneKeepingPolicy policy) throws OtsGeometryException, NetworkException
     {
         this(network, from, to, type, simulator, policy, makeLine(from, to));
     }
@@ -101,7 +101,7 @@ public final class LaneFactory
      * @throws NetworkException if the link exists, or a node does not exist, in the network
      */
     public LaneFactory(final OTSRoadNetwork network, final OTSRoadNode from, final OTSRoadNode to, final LinkType type,
-            final OtsSimulatorInterface simulator, final LaneKeepingPolicy policy, final OTSLine3D line) throws NetworkException
+            final OtsSimulatorInterface simulator, final LaneKeepingPolicy policy, final OtsLine3D line) throws NetworkException
     {
         this.link = new CrossSectionLink(network, from.getId() + to.getId(), from, to, type, line, policy);
     }
@@ -112,9 +112,9 @@ public final class LaneFactory
      * @param from OTSNode; from node
      * @param to OTSNode; to node
      * @return OTSLine3D; line
-     * @throws OTSGeometryException if no valid line can be created
+     * @throws OtsGeometryException if no valid line can be created
      */
-    private static OTSLine3D makeLine(final OTSNode from, final OTSNode to) throws OTSGeometryException
+    private static OtsLine3D makeLine(final OTSNode from, final OTSNode to) throws OtsGeometryException
     {
         // Straight or bezier?
         double rotCrow = Math.atan2(to.getLocation().y - from.getLocation().y, to.getLocation().x - from.getLocation().x);
@@ -127,14 +127,14 @@ public final class LaneFactory
         {
             dRot -= 2.0 * Math.PI;
         }
-        OTSLine3D line;
+        OtsLine3D line;
         if (from.getLocation().getRotZ() != to.getLocation().getRotZ() || Math.abs(dRot) > BEZIER_MARGIN)
         {
             line = Bezier.cubic(from.getLocation(), to.getLocation());
         }
         else
         {
-            line = new OTSLine3D(from.getPoint(), to.getPoint());
+            line = new OtsLine3D(from.getPoint(), to.getPoint());
         }
         return line;
     }
@@ -307,15 +307,15 @@ public final class LaneFactory
      *            contain the coordinates of the from node and to node
      * @param simulator OTSSimulatorInterface; the simulator for this network
      * @return Link; the newly constructed Link
-     * @throws OTSGeometryException when the design line is degenerate (only one point or duplicate point)
+     * @throws OtsGeometryException when the design line is degenerate (only one point or duplicate point)
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
     public static CrossSectionLink makeLink(final OTSRoadNetwork network, final String name, final OTSRoadNode from,
-            final OTSRoadNode to, final OTSPoint3D[] intermediatePoints, final OtsSimulatorInterface simulator)
-            throws OTSGeometryException, NetworkException
+            final OTSRoadNode to, final OtsPoint3D[] intermediatePoints, final OtsSimulatorInterface simulator)
+            throws OtsGeometryException, NetworkException
     {
-        List<OTSPoint3D> pointList =
+        List<OtsPoint3D> pointList =
                 intermediatePoints == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(intermediatePoints));
         if (pointList.size() == 0 || !from.getPoint().equals(pointList.get(0)))
         {
@@ -354,7 +354,7 @@ public final class LaneFactory
         }
          */
 
-        OTSLine3D designLine = new OTSLine3D(pointList);
+        OtsLine3D designLine = new OtsLine3D(pointList);
         CrossSectionLink link = new CrossSectionLink(network, name, from, to, network.getLinkType(LinkType.DEFAULTS.ROAD),
                 designLine, LaneKeepingPolicy.KEEPRIGHT);
         return link;
@@ -374,12 +374,12 @@ public final class LaneFactory
      * @param simulator OTSSimulatorInterface; the simulator
      * @return Lane
      * @throws NetworkException on network inconsistency
-     * @throws OTSGeometryException when creation of center line or contour fails
+     * @throws OtsGeometryException when creation of center line or contour fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
     private static Lane makeLane(final CrossSectionLink link, final String id, final LaneType laneType,
             final Length latPosAtStart, final Length latPosAtEnd, final Length width, final Speed speedLimit,
-            final OtsSimulatorInterface simulator) throws NetworkException, OTSGeometryException
+            final OtsSimulatorInterface simulator) throws NetworkException, OtsGeometryException
     {
         Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
         speedMap.put(link.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), speedLimit);
@@ -400,11 +400,11 @@ public final class LaneFactory
      * @param simulator OTSSimulatorInterface; the simulator
      * @return Lane; the new Lane
      * @throws NetworkException on network inconsistency
-     * @throws OTSGeometryException when creation of center line or contour fails
+     * @throws OtsGeometryException when creation of center line or contour fails
      */
     public static Lane makeLane(final OTSRoadNetwork network, final String name, final OTSRoadNode from, final OTSRoadNode to,
-            final OTSPoint3D[] intermediatePoints, final LaneType laneType, final Speed speedLimit,
-            final OtsSimulatorInterface simulator) throws NetworkException, OTSGeometryException
+            final OtsPoint3D[] intermediatePoints, final LaneType laneType, final Speed speedLimit,
+            final OtsSimulatorInterface simulator) throws NetworkException, OtsGeometryException
     {
         Length width = new Length(4.0, LengthUnit.METER);
         final CrossSectionLink link = makeLink(network, name, from, to, intermediatePoints, simulator);
@@ -430,13 +430,13 @@ public final class LaneFactory
      * @param simulator OTSSimulatorInterface; the simulator
      * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws NetworkException on topological problems
-     * @throws OTSGeometryException when creation of center line or contour fails
+     * @throws OtsGeometryException when creation of center line or contour fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane[] makeMultiLane(final OTSRoadNetwork network, final String name, final OTSRoadNode from,
-            final OTSRoadNode to, final OTSPoint3D[] intermediatePoints, final int laneCount, final int laneOffsetAtStart,
+            final OTSRoadNode to, final OtsPoint3D[] intermediatePoints, final int laneCount, final int laneOffsetAtStart,
             final int laneOffsetAtEnd, final LaneType laneType, final Speed speedLimit, final OtsSimulatorInterface simulator)
-            throws NetworkException, OTSGeometryException
+            throws NetworkException, OtsGeometryException
     {
         final CrossSectionLink link = makeLink(network, name, from, to, intermediatePoints, simulator);
         Lane[] result = new Lane[laneCount];
@@ -469,13 +469,13 @@ public final class LaneFactory
      * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws NamingException when names cannot be registered for animation
      * @throws NetworkException on topological problems
-     * @throws OTSGeometryException when creation of center line or contour fails
+     * @throws OtsGeometryException when creation of center line or contour fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane[] makeMultiLane(final OTSRoadNetwork network, final String name, final OTSRoadNode from,
-            final OTSRoadNode to, final OTSPoint3D[] intermediatePoints, final int laneCount, final LaneType laneType,
+            final OTSRoadNode to, final OtsPoint3D[] intermediatePoints, final int laneCount, final LaneType laneType,
             final Speed speedLimit, final OtsSimulatorInterface simulator)
-            throws NamingException, NetworkException, OTSGeometryException
+            throws NamingException, NetworkException, OtsGeometryException
     {
         return makeMultiLane(network, name, from, to, intermediatePoints, laneCount, 0, 0, laneType, speedLimit, simulator);
     }
@@ -499,15 +499,15 @@ public final class LaneFactory
      * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws NamingException when names cannot be registered for animation
      * @throws NetworkException on topological problems
-     * @throws OTSGeometryException when creation of center line or contour fails
+     * @throws OtsGeometryException when creation of center line or contour fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane[] makeMultiLaneBezier(final OTSRoadNetwork network, final String name, final OTSRoadNode n1,
             final OTSRoadNode n2, final OTSRoadNode n3, final OTSRoadNode n4, final int laneCount, final int laneOffsetAtStart,
             final int laneOffsetAtEnd, final LaneType laneType, final Speed speedLimit, final OtsSimulatorInterface simulator)
-            throws NamingException, NetworkException, OTSGeometryException
+            throws NamingException, NetworkException, OtsGeometryException
     {
-        OTSLine3D bezier = makeBezier(n1, n2, n3, n4);
+        OtsLine3D bezier = makeBezier(n1, n2, n3, n4);
         final CrossSectionLink link = makeLink(network, name, n2, n3, bezier.getPoints(), simulator);
         Lane[] result = new Lane[laneCount];
         Length width = new Length(4.0, LengthUnit.METER);
@@ -528,15 +528,15 @@ public final class LaneFactory
      * @param n3 OTSNode; node 3
      * @param n4 OTSNode; node 4
      * @return line between n2 and n3 with start-direction n1--&gt;n2 and end-direction n3--&gt;n4
-     * @throws OTSGeometryException on failure of Bezier curve creation
+     * @throws OtsGeometryException on failure of Bezier curve creation
      */
-    public static OTSLine3D makeBezier(final OTSNode n1, final OTSNode n2, final OTSNode n3, final OTSNode n4)
-            throws OTSGeometryException
+    public static OtsLine3D makeBezier(final OTSNode n1, final OTSNode n2, final OTSNode n3, final OTSNode n4)
+            throws OtsGeometryException
     {
-        OTSPoint3D p1 = n1.getPoint();
-        OTSPoint3D p2 = n2.getPoint();
-        OTSPoint3D p3 = n3.getPoint();
-        OTSPoint3D p4 = n4.getPoint();
+        OtsPoint3D p1 = n1.getPoint();
+        OtsPoint3D p2 = n2.getPoint();
+        OtsPoint3D p3 = n3.getPoint();
+        OtsPoint3D p4 = n4.getPoint();
         DirectedPoint dp1 = new DirectedPoint(p2.x, p2.y, p2.z, 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
         DirectedPoint dp2 = new DirectedPoint(p3.x, p3.y, p3.z, 0.0, 0.0, Math.atan2(p4.y - p3.y, p4.x - p3.x));
         return Bezier.cubic(dp1, dp2);

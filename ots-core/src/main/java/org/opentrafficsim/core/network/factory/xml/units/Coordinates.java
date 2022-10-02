@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.network.factory.xml.units;
 
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 
 /**
  * <p>
@@ -22,12 +22,12 @@ public final class Coordinates
      * @param cs String; the string containing the coordinates
      * @return OTSPoint3D[] containing the x,y or x,y,z values.
      */
-    public static OTSPoint3D[] parseCoordinates(final String cs)
+    public static OtsPoint3D[] parseCoordinates(final String cs)
     {
         String cs1 = cs.replaceAll("\\s+", "");
         String c = cs1.replace(")(", ")split(");
         String[] cc = c.split("split");
-        OTSPoint3D[] coords = new OTSPoint3D[cc.length];
+        OtsPoint3D[] coords = new OtsPoint3D[cc.length];
         int i = 0;
         for (String coord : cc)
         {
@@ -43,7 +43,7 @@ public final class Coordinates
      * @param cs String; the string containing the coordinate
      * @return OTSPoint3D containing the x,y or x,y,z values
      */
-    public static OTSPoint3D parseCoordinate(final String cs)
+    public static OtsPoint3D parseCoordinate(final String cs)
     {
         String c = cs.replace("(", "");
         c = c.replace(")", "");
@@ -51,7 +51,7 @@ public final class Coordinates
         double x = Double.parseDouble(cc[0]);
         double y = Double.parseDouble(cc[1]);
         double z = cc.length > 2 ? Double.parseDouble(cc[2]) : 0.0;
-        return new OTSPoint3D(x, y, z);
+        return new OtsPoint3D(x, y, z);
     }
 
 }

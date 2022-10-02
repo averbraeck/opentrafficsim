@@ -12,9 +12,9 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.junit.Test;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.mock.MockSimulator;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
@@ -38,15 +38,15 @@ public class StaticObjectTest implements EventListenerInterface
 
     /**
      * Test the StaticObject class.
-     * @throws OTSGeometryException if that happens, this test has failed
+     * @throws OtsGeometryException if that happens, this test has failed
      * @throws NetworkException if that happens, this test has failed
      */
     @Test
-    public void staticObjectTest() throws OTSGeometryException, NetworkException
+    public void staticObjectTest() throws OtsGeometryException, NetworkException
     {
         String id = "id of static object";
-        OTSLine3D geometry = new OTSLine3D(new OTSPoint3D[] {new OTSPoint3D(0, 0, 0), new OTSPoint3D(1, 0, 0),
-                new OTSPoint3D(1, 1, 0), new OTSPoint3D(0, 1, 0)});
+        OtsLine3D geometry = new OtsLine3D(new OtsPoint3D[] {new OtsPoint3D(0, 0, 0), new OtsPoint3D(1, 0, 0),
+                new OtsPoint3D(1, 1, 0), new OtsPoint3D(0, 1, 0)});
         Length height = new Length(1, LengthUnit.METER);
         try
         {

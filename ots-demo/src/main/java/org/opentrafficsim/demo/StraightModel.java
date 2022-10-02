@@ -27,8 +27,8 @@ import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
@@ -128,10 +128,10 @@ public class StraightModel extends AbstractOtsModel implements UNITS
     {
         try
         {
-            OTSRoadNode from = new OTSRoadNode(this.network, "From", new OTSPoint3D(0.0, 0, 0), Direction.ZERO);
+            OTSRoadNode from = new OTSRoadNode(this.network, "From", new OtsPoint3D(0.0, 0, 0), Direction.ZERO);
             OTSRoadNode to =
-                    new OTSRoadNode(this.network, "To", new OTSPoint3D(this.maximumDistance.getSI(), 0, 0), Direction.ZERO);
-            OTSRoadNode end = new OTSRoadNode(this.network, "End", new OTSPoint3D(this.maximumDistance.getSI() + 50.0, 0, 0),
+                    new OTSRoadNode(this.network, "To", new OtsPoint3D(this.maximumDistance.getSI(), 0, 0), Direction.ZERO);
+            OTSRoadNode end = new OTSRoadNode(this.network, "End", new OtsPoint3D(this.maximumDistance.getSI() + 50.0, 0, 0),
                     Direction.ZERO);
             LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
             this.lane = LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator);
@@ -192,7 +192,7 @@ public class StraightModel extends AbstractOtsModel implements UNITS
             // Remove the block at t = 7 minutes
             this.simulator.scheduleEventAbsTime(new Time(420, TimeUnit.BASE_SECOND), this, this, "removeBlock", null);
         }
-        catch (SimRuntimeException | NetworkException | OTSGeometryException | InputParameterException | GtuException
+        catch (SimRuntimeException | NetworkException | OtsGeometryException | InputParameterException | GtuException
                 | ParameterException | ProbabilityException exception)
         {
             exception.printStackTrace();

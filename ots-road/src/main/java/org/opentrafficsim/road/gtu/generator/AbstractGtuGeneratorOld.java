@@ -23,7 +23,7 @@ import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -566,7 +566,7 @@ public abstract class AbstractGtuGeneratorOld extends EventProducer implements S
         {
             return this.lane.getCenterLine().getLocation(this.position);
         }
-        catch (OTSGeometryException exception)
+        catch (OtsGeometryException exception)
         {
             return this.lane.getLocation();
         }

@@ -27,7 +27,7 @@ import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulationException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -203,7 +203,7 @@ public class LoadXML extends OTSSimulationApplication<OtsModelInterface>
                 ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GtuType.DEFAULTS.VEHICLE), getSimulator(),
                         new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)), ignoreList, permittedList);
             }
-            catch (NetworkException | OTSGeometryException | JAXBException | URISyntaxException | XmlParserException
+            catch (NetworkException | OtsGeometryException | JAXBException | URISyntaxException | XmlParserException
                     | SAXException | ParserConfigurationException | GtuException | IOException
                     | TrafficControlException exception)
             {

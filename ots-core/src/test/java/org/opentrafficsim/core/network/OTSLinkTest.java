@@ -14,9 +14,9 @@ import org.junit.Test;
 import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.mock.MockGTU;
@@ -49,18 +49,18 @@ public class OTSLinkTest implements EventListenerInterface
     /**
      * Test the OTSLink class.
      * @throws NetworkException should not happen uncaught in this test
-     * @throws OTSGeometryException should not happen uncaught in this test
+     * @throws OtsGeometryException should not happen uncaught in this test
      */
     @Test
-    public final void testOTSLink() throws NetworkException, OTSGeometryException
+    public final void testOTSLink() throws NetworkException, OtsGeometryException
     {
         OTSNetwork network = new OTSNetwork("OTSLinkTestNetwork", true, MockSimulator.createMock());
-        Node startNode = new OTSNode(network, "start", new OTSPoint3D(10, 20, 0));
-        Node endNode = new OTSNode(network, "end", new OTSPoint3D(1000, 2000, 10));
+        Node startNode = new OTSNode(network, "start", new OtsPoint3D(10, 20, 0));
+        Node endNode = new OTSNode(network, "end", new OtsPoint3D(1000, 2000, 10));
         GtuCompatibility<LinkType> compatibility = new GtuCompatibility<LinkType>((LinkType) null)
                 .addIncompatibleGtuType(network.getGtuType(GtuType.DEFAULTS.VEHICLE));
         LinkType linkType = new LinkType("myLinkType", network.getLinkType(LinkType.DEFAULTS.ROAD), network);
-        OTSLine3D designLine = new OTSLine3D(startNode.getPoint(), endNode.getPoint());
+        OtsLine3D designLine = new OtsLine3D(startNode.getPoint(), endNode.getPoint());
         OTSLink link = new OTSLink(network, "link1", startNode, endNode, linkType, designLine);
         assertTrue("network contains the newly constructed link", network.containsLink(link));
         // directionalityMap is currently empty
@@ -130,8 +130,8 @@ public class OTSLinkTest implements EventListenerInterface
         // make a link with the same name in another network
         OTSNetwork otherNetwork = new OTSNetwork("other", true, MockSimulator.createMock());
         linkType = new LinkType("myLinkType4", network.getLinkType(LinkType.DEFAULTS.ROAD), network);
-        otherLink = new OTSLink(otherNetwork, "link4", new OTSNode(otherNetwork, "start", new OTSPoint3D(10, 20, 0)),
-                new OTSNode(otherNetwork, "end", new OTSPoint3D(1000, 2000, 10)), linkType, designLine);
+        otherLink = new OTSLink(otherNetwork, "link4", new OTSNode(otherNetwork, "start", new OtsPoint3D(10, 20, 0)),
+                new OTSNode(otherNetwork, "end", new OtsPoint3D(1000, 2000, 10)), linkType, designLine);
         assertTrue("link is equal to extremely similar link with same id but different network", link.equals(otherLink));
     }
 

@@ -3,7 +3,7 @@ package org.opentrafficsim.road.network.lane;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -28,12 +28,12 @@ public class Shoulder extends CrossSectionElement
      * @param beginWidth Length; start width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral start position.
      * @param endWidth Length; end width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral end position.
      * @param fixGradualLateralOffset boolean; true if gradualLateralOffset needs to be fixed
-     * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws OtsGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     public Shoulder(final CrossSectionLink parentLink, final String id, final Length lateralPositionStart,
             final Length lateralPositionEnd, final Length beginWidth, final Length endWidth,
-            final boolean fixGradualLateralOffset) throws OTSGeometryException, NetworkException
+            final boolean fixGradualLateralOffset) throws OtsGeometryException, NetworkException
     {
         super(parentLink, id, lateralPositionStart, lateralPositionEnd, beginWidth, endWidth, fixGradualLateralOffset);
     }
@@ -45,12 +45,12 @@ public class Shoulder extends CrossSectionElement
      * @param lateralPositionEnd Length; the lateral end position compared to the linear geometry of the Cross Section Link
      * @param beginWidth Length; start width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral start position.
      * @param endWidth Length; end width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral end position.
-     * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws OtsGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     public Shoulder(final CrossSectionLink parentLink, final String id, final Length lateralPositionStart,
             final Length lateralPositionEnd, final Length beginWidth, final Length endWidth)
-            throws OTSGeometryException, NetworkException
+            throws OtsGeometryException, NetworkException
     {
         this(parentLink, id, lateralPositionStart, lateralPositionEnd, beginWidth, endWidth, false);
     }
@@ -60,11 +60,11 @@ public class Shoulder extends CrossSectionElement
      * @param id String; the id of the lane. Should be unique within the parentLink.
      * @param lateralPosition Length; the lateral start position compared to the linear geometry of the Cross Section Link.
      * @param width Length; the shoulder width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral start position.
-     * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws OtsGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     public Shoulder(final CrossSectionLink parentLink, final String id, final Length lateralPosition, final Length width)
-            throws OTSGeometryException, NetworkException
+            throws OtsGeometryException, NetworkException
     {
         super(parentLink, id, lateralPosition, width);
     }
@@ -76,11 +76,11 @@ public class Shoulder extends CrossSectionElement
      *            the design line of the parent link. If there is just one with and offset, there should just be one element in
      *            the list with Length = 0. If there are more slices, the last one should be at the length of the design line.
      *            If not, a NetworkException is thrown.
-     * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws OtsGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     public Shoulder(final CrossSectionLink parentLink, final String id, final List<CrossSectionSlice> crossSectionSlices)
-            throws OTSGeometryException, NetworkException
+            throws OtsGeometryException, NetworkException
     {
         super(parentLink, id, crossSectionSlices);
     }

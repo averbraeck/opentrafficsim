@@ -34,18 +34,18 @@ public final class TestIntersectionPerformance
      * @param cX double; x-coordinate of the center of the constructed OTSShape
      * @param cY double; y-coordinate of the center of the constructed OTSShape
      * @return OTSShape
-     * @throws OTSGeometryException when the number of vertices is less than two, or the radius is 0;
+     * @throws OtsGeometryException when the number of vertices is less than two, or the radius is 0;
      */
-    static OTSShape makeNGon(final int numVertices, final double r, final double cX, final double cY)
-            throws OTSGeometryException
+    static OtsShape makeNGon(final int numVertices, final double r, final double cX, final double cY)
+            throws OtsGeometryException
     {
-        OTSPoint3D[] points = new OTSPoint3D[numVertices];
+        OtsPoint3D[] points = new OtsPoint3D[numVertices];
         for (int i = 0; i < numVertices; i++)
         {
             double angle = 2 * Math.PI * i / numVertices;
-            points[i] = new OTSPoint3D(cX + r * Math.sin(angle), cY + r * Math.cos(angle));
+            points[i] = new OtsPoint3D(cX + r * Math.sin(angle), cY + r * Math.cos(angle));
         }
-        return new OTSShape(points);
+        return new OtsShape(points);
     }
 
     /**
@@ -57,10 +57,10 @@ public final class TestIntersectionPerformance
      * @param verbose boolean; if true; print details of each run
      * @param variant int; variant of the collision tester to use
      * @return Results; collected statistics of this test
-     * @throws OTSGeometryException when the number of vertices iss less than two
+     * @throws OtsGeometryException when the number of vertices iss less than two
      */
     public static Results baseTest(final int numShapes, final int numVertices, final double desiredHitFraction,
-            final int numRuns, final boolean verbose, final int variant) throws OTSGeometryException
+            final int numRuns, final boolean verbose, final int variant) throws OtsGeometryException
     {
         Results results = new Results(numShapes, numVertices);
         if (verbose)
@@ -71,11 +71,11 @@ public final class TestIntersectionPerformance
         {
             double radius = 19;
             double dx = 6 * radius / desiredHitFraction / numShapes;
-            Collection<OTSShape> shapes = new ArrayList<OTSShape>();
-            OTS2DSet ots2Dset = new OTS2DSet(new Rectangle2D.Double(-20, -20, dx * numShapes / 2 + 40, 4 * radius), 1);
+            Collection<OtsShape> shapes = new ArrayList<OtsShape>();
+            Ots2DSet ots2Dset = new Ots2DSet(new Rectangle2D.Double(-20, -20, dx * numShapes / 2 + 40, 4 * radius), 1);
             for (int i = 0; i < numShapes; i++)
             {
-                OTSShape shape = makeNGon(numVertices, radius, i % (numShapes / 2) * dx, i > numShapes / 2 ? radius * 1.5 : 0);
+                OtsShape shape = makeNGon(numVertices, radius, i % (numShapes / 2) * dx, i > numShapes / 2 ? radius * 1.5 : 0);
                 shapes.add(shape);
                 ots2Dset.add(shape);
             }
@@ -85,9 +85,9 @@ public final class TestIntersectionPerformance
             switch (variant)
             {
                 case 0:
-                    for (OTSShape ref : shapes)
+                    for (OtsShape ref : shapes)
                     {
-                        for (OTSShape other : shapes)
+                        for (OtsShape other : shapes)
                         {
                             tests++;
                             if (ref.intersects(other))
@@ -99,7 +99,7 @@ public final class TestIntersectionPerformance
                     break;
 
                 case 1:
-                    for (OTSShape ref : shapes)
+                    for (OtsShape ref : shapes)
                     {
                         tests += shapes.size();
                         hits += ots2Dset.intersectingShapes(ref).size();
@@ -127,10 +127,10 @@ public final class TestIntersectionPerformance
     /**
      * Measure the performance.
      * @param args String[]; command line arguments (not used)
-     * @throws OTSGeometryException ...
+     * @throws OtsGeometryException ...
      * @throws IOException ...
      */
-    public static void main(final String[] args) throws OTSGeometryException, IOException
+    public static void main(final String[] args) throws OtsGeometryException, IOException
     {
         System.out.println("Type return to start ...");
         System.in.read();

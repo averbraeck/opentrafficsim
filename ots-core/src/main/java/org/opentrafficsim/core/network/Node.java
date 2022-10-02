@@ -8,7 +8,7 @@ import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuType;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -37,7 +37,7 @@ public interface Node extends Locatable, Serializable, Identifiable, Drawable
     String getId();
 
     /** @return point. */
-    OTSPoint3D getPoint();
+    OtsPoint3D getPoint();
 
     /** @return heading. */
     double getHeading();

@@ -6,7 +6,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.event.EventProducerInterface;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.geometry.Bounds;
-import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OtsLine3D;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 
@@ -22,7 +22,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
 public interface ObjectInterface extends Locatable, Identifiable, EventProducerInterface, Serializable
 {
     /** @return the outline geometry of the object. */
-    OTSLine3D getGeometry();
+    OtsLine3D getGeometry();
 
     /** @return the height of the object (can be Length.ZERO). */
     Length getHeight();

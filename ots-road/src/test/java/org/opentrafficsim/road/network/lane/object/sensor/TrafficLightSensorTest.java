@@ -29,8 +29,8 @@ import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -75,12 +75,12 @@ public class TrafficLightSensorTest implements EventListenerInterface
      * @param simulator DEVSSimulator.TimeDoubleUnit; the simulator
      * @return Lane[]; an array of linearly connected (single) lanes
      * @throws NetworkException ...
-     * @throws OTSGeometryException ...
+     * @throws OtsGeometryException ...
      * @throws NamingException ...
      * @throws SimRuntimeException ...
      */
     private static Lane[] buildNetwork(final double[] lengths, final OtsSimulatorInterface simulator)
-            throws NetworkException, NamingException, OTSGeometryException, SimRuntimeException
+            throws NetworkException, NamingException, OtsGeometryException, SimRuntimeException
     {
         OTSRoadNetwork network = new OTSRoadNetwork("network", true, simulator);
         OTSRoadNode prevNode = null;
@@ -91,7 +91,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
         for (int nodeNumber = 0; nodeNumber <= lengths.length; nodeNumber++)
         {
             OTSRoadNode node =
-                    new OTSRoadNode(network, "node" + nodeNumber, new OTSPoint3D(cumulativeLength, 0, 0), Direction.ZERO);
+                    new OTSRoadNode(network, "node" + nodeNumber, new OtsPoint3D(cumulativeLength, 0, 0), Direction.ZERO);
             if (null != prevNode)
             {
                 OTSRoadNode fromNode = prevNode;
@@ -144,14 +144,14 @@ public class TrafficLightSensorTest implements EventListenerInterface
     /**
      * Test the TrafficLightSensor.
      * @throws SimRuntimeException if that happens (uncaught) this test has failed
-     * @throws OTSGeometryException if that happens (uncaught) this test has failed
+     * @throws OtsGeometryException if that happens (uncaught) this test has failed
      * @throws NamingException if that happens (uncaught) this test has failed
      * @throws NetworkException if that happens (uncaught) this test has failed
      * @throws GtuException if that happens (uncaught) this test has failed
      */
     // XXX @Test
     public final void trafficLightSensorTest()
-            throws NetworkException, NamingException, OTSGeometryException, SimRuntimeException, GtuException
+            throws NetworkException, NamingException, OtsGeometryException, SimRuntimeException, GtuException
     {
         double[][] lengthLists = {{101.1, -1, 1, -1, 1, -900}, {1000}, {-1000}, {101.1, 900}, {101.1, 1, 1, 1, 1, 900},};
         for (double[] lengthList : lengthLists)

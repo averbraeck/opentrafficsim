@@ -11,7 +11,7 @@ import javax.naming.NamingException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.draw.core.PaintLine;
 import org.opentrafficsim.draw.core.PaintPolygons;
 import org.opentrafficsim.draw.core.TextAlignment;
@@ -100,13 +100,13 @@ public class LaneAnimation extends Renderable2D<Lane> implements Renderable2DInt
     public static class CenterLine implements Locatable
     {
         /** The center line. */
-        private final OTSLine3D centerLine;
+        private final OtsLine3D centerLine;
 
         /**
          * Construct a new CenterLine.
          * @param centerLine OTSLine3D; the center line of a lane
          */
-        CenterLine(final OTSLine3D centerLine)
+        CenterLine(final OtsLine3D centerLine)
         {
             this.centerLine = centerLine;
         }
@@ -128,7 +128,7 @@ public class LaneAnimation extends Renderable2D<Lane> implements Renderable2DInt
          * Retrieve the center line.
          * @return OTSLine3D; the center line
          */
-        public OTSLine3D getCenterLine()
+        public OtsLine3D getCenterLine()
         {
             return this.centerLine;
         }

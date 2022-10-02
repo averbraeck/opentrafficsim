@@ -22,9 +22,9 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
@@ -63,12 +63,12 @@ public class CarTest implements UNITS
      * @throws SimRuntimeException on ???
      * @throws NamingException on ???
      * @throws GtuException on ???
-     * @throws OTSGeometryException when center line or contour of a link or lane cannot be generated
+     * @throws OtsGeometryException when center line or contour of a link or lane cannot be generated
      */
     @SuppressWarnings("static-method")
     @Test
     public final void carTest()
-            throws NetworkException, SimRuntimeException, NamingException, GtuException, OTSGeometryException
+            throws NetworkException, SimRuntimeException, NamingException, GtuException, OtsGeometryException
     {
         Time initialTime = new Time(0, TimeUnit.BASE_SECOND);
         OtsSimulatorInterface simulator = makeSimulator();
@@ -126,12 +126,12 @@ public class CarTest implements UNITS
      * @throws NetworkException when the GTU cannot be placed on the given lane.
      * @throws SimRuntimeException when the move method cannot be scheduled.
      * @throws GtuException when construction of the GTU fails (probably due to an invalid parameter)
-     * @throws OTSGeometryException when the initial path is wrong
+     * @throws OtsGeometryException when the initial path is wrong
      */
     public static LaneBasedIndividualGtu makeReferenceCar(final String id, final GtuType gtuType, final Lane lane,
             final Length initialPosition, final Speed initialSpeed, final OtsSimulatorInterface simulator,
             final GtuFollowingModelOld gtuFollowingModel, final LaneChangeModel laneChangeModel, final OTSRoadNetwork network)
-            throws NamingException, NetworkException, SimRuntimeException, GtuException, OTSGeometryException
+            throws NamingException, NetworkException, SimRuntimeException, GtuException, OtsGeometryException
     {
         Length length = new Length(5.0, METER);
         Length width = new Length(2.0, METER);
@@ -155,16 +155,16 @@ public class CarTest implements UNITS
      * @param simulator OTSSimulatorInterface; simulator
      * @return a lane of 1000 m long.
      * @throws NetworkException on network error
-     * @throws OTSGeometryException when center line or contour of a link or lane cannot be generated
+     * @throws OtsGeometryException when center line or contour of a link or lane cannot be generated
      */
     public static Lane makeLane(final OTSRoadNetwork network, final LaneType laneType, final OtsSimulatorInterface simulator)
-            throws NetworkException, OTSGeometryException
+            throws NetworkException, OtsGeometryException
     {
-        OTSRoadNode n1 = new OTSRoadNode(network, "n1", new OTSPoint3D(0, 0), Direction.ZERO);
-        OTSRoadNode n2 = new OTSRoadNode(network, "n2", new OTSPoint3D(100000.0, 0.0), Direction.ZERO);
-        OTSPoint3D[] coordinates = new OTSPoint3D[] {new OTSPoint3D(0.0, 0.0), new OTSPoint3D(100000.0, 0.0)};
+        OTSRoadNode n1 = new OTSRoadNode(network, "n1", new OtsPoint3D(0, 0), Direction.ZERO);
+        OTSRoadNode n2 = new OTSRoadNode(network, "n2", new OtsPoint3D(100000.0, 0.0), Direction.ZERO);
+        OtsPoint3D[] coordinates = new OtsPoint3D[] {new OtsPoint3D(0.0, 0.0), new OtsPoint3D(100000.0, 0.0)};
         CrossSectionLink link12 = new CrossSectionLink(network, "link12", n1, n2, network.getLinkType(LinkType.DEFAULTS.ROAD),
-                new OTSLine3D(coordinates), LaneKeepingPolicy.KEEPRIGHT);
+                new OtsLine3D(coordinates), LaneKeepingPolicy.KEEPRIGHT);
         Length latPos = new Length(0.0, METER);
         Length width = new Length(4.0, METER);
         return new Lane(link12, "lane.1", latPos, latPos, width, width, laneType, new Speed(100, KM_PER_HOUR));

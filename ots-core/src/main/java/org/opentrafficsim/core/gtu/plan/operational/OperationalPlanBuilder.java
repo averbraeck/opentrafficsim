@@ -10,8 +10,8 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.SpeedSegment;
 import org.opentrafficsim.core.math.Solver;
@@ -53,7 +53,7 @@ public final class OperationalPlanBuilder
      * @throws OperationalPlanException when the length of the path and the calculated driven distance implied by the
      *             constructed segment list differ more than a given threshold
      */
-    public static OperationalPlan buildConstantSpeedPlan(final Gtu gtu, final OTSLine3D path, final Time startTime,
+    public static OperationalPlan buildConstantSpeedPlan(final Gtu gtu, final OtsLine3D path, final Time startTime,
             final Speed speed) throws OperationalPlanException
     {
         Length length = path.getLength();
@@ -81,7 +81,7 @@ public final class OperationalPlanBuilder
      * @throws OperationalPlanException when the length of the path and the calculated driven distance implied by the
      *             constructed segment list differ more than a given threshold
      */
-    public static OperationalPlan buildGradualAccelerationPlan(final Gtu gtu, final OTSLine3D path, final Time startTime,
+    public static OperationalPlan buildGradualAccelerationPlan(final Gtu gtu, final OtsLine3D path, final Time startTime,
             final Speed startSpeed, final Speed endSpeed, final Acceleration maximumAcceleration,
             final Acceleration maximumDeceleration) throws OperationalPlanException
     {
@@ -137,7 +137,7 @@ public final class OperationalPlanBuilder
      * @throws OperationalPlanException when the length of the path and the calculated driven distance implied by the
      *             constructed segment list differ more than a given threshold
      */
-    public static OperationalPlan buildGradualAccelerationPlan(final Gtu gtu, final OTSLine3D path, final Time startTime,
+    public static OperationalPlan buildGradualAccelerationPlan(final Gtu gtu, final OtsLine3D path, final Time startTime,
             final Speed startSpeed, final Speed endSpeed) throws OperationalPlanException
     {
         return buildGradualAccelerationPlan(gtu, path, startTime, startSpeed, endSpeed, MAX_ACCELERATION, MAX_DECELERATION);
@@ -163,7 +163,7 @@ public final class OperationalPlanBuilder
      * @throws OperationalPlanException when the length of the path and the calculated driven distance implied by the
      *             constructed segment list differ more than a given threshold
      */
-    public static OperationalPlan buildMaximumAccelerationPlan(final Gtu gtu, final OTSLine3D path, final Time startTime,
+    public static OperationalPlan buildMaximumAccelerationPlan(final Gtu gtu, final OtsLine3D path, final Time startTime,
             final Speed startSpeed, final Speed endSpeed, final Acceleration maximumAcceleration,
             final Acceleration maximumDeceleration) throws OperationalPlanException
     {
@@ -218,7 +218,7 @@ public final class OperationalPlanBuilder
                         if (endSpeed.si == 0.0)
                         {
                             // if endSpeed == 0, we cannot reach the end of the path. Therefore, build a partial path.
-                            OTSLine3D partialPath = path.truncate(x.si);
+                            OtsLine3D partialPath = path.truncate(x.si);
                             segmentList.add(new OperationalPlan.AccelerationSegment(t, maximumDeceleration));
                             return new OperationalPlan(gtu, partialPath, startTime, startSpeed, segmentList);
                         }
@@ -229,7 +229,7 @@ public final class OperationalPlanBuilder
                     }
                 }
             }
-            catch (ValueRuntimeException | OTSGeometryException exception)
+            catch (ValueRuntimeException | OtsGeometryException exception)
             {
                 throw new OperationalPlanException("Caught unexpected exception: " + exception);
             }
@@ -250,7 +250,7 @@ public final class OperationalPlanBuilder
      * @throws OperationalPlanException when the length of the path and the calculated driven distance implied by the
      *             constructed segment list differ more than a given threshold
      */
-    public static OperationalPlan buildStopPlan(final Gtu gtu, final OTSLine3D path, final Time startTime,
+    public static OperationalPlan buildStopPlan(final Gtu gtu, final OtsLine3D path, final Time startTime,
             final Speed startSpeed, final Acceleration deceleration) throws OperationalPlanException
     {
         return buildMaximumAccelerationPlan(gtu, path, startTime, startSpeed, Speed.ZERO,

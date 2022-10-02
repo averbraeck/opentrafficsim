@@ -11,9 +11,9 @@ import java.util.List;
 import javax.naming.NamingException;
 
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
@@ -37,7 +37,7 @@ public class TrafficLightSensorAnimation extends Renderable2D<TrafficLightSensor
     private final TrafficLightSensor sensor;
 
     /** Path of the detector. */
-    private final OTSLine3D path;
+    private final OtsLine3D path;
 
     /**
      * Construct a SensorAnimation.
@@ -45,23 +45,23 @@ public class TrafficLightSensorAnimation extends Renderable2D<TrafficLightSensor
      * @param simulator OTSSimulatorInterface; the simulator to schedule on
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
-     * @throws OTSGeometryException when the geometry is bad
+     * @throws OtsGeometryException when the geometry is bad
      */
     public TrafficLightSensorAnimation(final TrafficLightSensor sensor, final OtsSimulatorInterface simulator)
-            throws NamingException, RemoteException, OTSGeometryException
+            throws NamingException, RemoteException, OtsGeometryException
     {
         super(sensor, simulator);
         this.sensor = sensor;
-        OTSLine3D coordinates = this.sensor.getPath();
+        OtsLine3D coordinates = this.sensor.getPath();
         double dx = this.sensor.getLocation().x;
         double dy = this.sensor.getLocation().y;
         double dz = this.sensor.getLocation().z;
-        List<OTSPoint3D> points = new ArrayList<>(coordinates.size());
-        for (OTSPoint3D p : coordinates.getPoints())
+        List<OtsPoint3D> points = new ArrayList<>(coordinates.size());
+        for (OtsPoint3D p : coordinates.getPoints())
         {
-            points.add(new OTSPoint3D(p.x - dx, p.y - dy, p.z - dz));
+            points.add(new OtsPoint3D(p.x - dx, p.y - dy, p.z - dz));
         }
-        this.path = new OTSLine3D(points);
+        this.path = new OtsLine3D(points);
     }
 
     /** {@inheritDoc} */
@@ -69,8 +69,8 @@ public class TrafficLightSensorAnimation extends Renderable2D<TrafficLightSensor
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         graphics.setColor(this.sensor.getOccupancy() ? Color.BLUE : Color.BLACK);
-        OTSPoint3D prevPoint = null;
-        for (OTSPoint3D p : this.path.getPoints())
+        OtsPoint3D prevPoint = null;
+        for (OtsPoint3D p : this.path.getPoints())
         {
             if (null != prevPoint)
             {

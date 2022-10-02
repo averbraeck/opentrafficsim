@@ -18,7 +18,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -264,7 +264,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
                 return LaneOperationalPlanBuilder.buildAccelerationPlan(getGtu(), startTime, getGtu().getSpeed(), acceleration,
                         params.getParameter(ToledoLaneChangeParameters.DT), false);
             }
-            catch (OTSGeometryException exception)
+            catch (OtsGeometryException exception)
             {
                 throw new OperationalPlanException(exception);
             }
@@ -277,7 +277,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
                     params.getParameter(ToledoLaneChangeParameters.DT), this.laneChange);
             return plan;
         }
-        catch (OTSGeometryException exception)
+        catch (OtsGeometryException exception)
         {
             throw new OperationalPlanException(exception);
         }

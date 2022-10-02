@@ -8,9 +8,9 @@ import java.util.Map;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.junit.Test;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.mock.MockSimulator;
 
@@ -29,18 +29,18 @@ public class CapacityOTSLinkTest
     /**
      * Test the constructor and all getters.
      * @throws NetworkException this test has failed if this exception occurs uncaught
-     * @throws OTSGeometryException this test has failed if this exception occurs uncaught
+     * @throws OtsGeometryException this test has failed if this exception occurs uncaught
      */
     @Test
-    public final void constructorTest() throws NetworkException, OTSGeometryException
+    public final void constructorTest() throws NetworkException, OtsGeometryException
     {
-        OTSPoint3D fromPoint = new OTSPoint3D(100, 200, 300);
-        OTSPoint3D toPoint = new OTSPoint3D(1000, 2000, 330);
+        OtsPoint3D fromPoint = new OtsPoint3D(100, 200, 300);
+        OtsPoint3D toPoint = new OtsPoint3D(1000, 2000, 330);
         OTSNetwork network = new OTSNetwork("testNetworkForCapacityOTSLink", true, MockSimulator.createMock());
         Node fromNode = new OTSNode(network, "startNode", fromPoint);
         Node toNode = new OTSNode(network, "endNode", toPoint);
         LinkType linkType = network.getLinkType(LinkType.DEFAULTS.ROAD);
-        OTSLine3D designLine = new OTSLine3D(fromPoint, toPoint);
+        OtsLine3D designLine = new OtsLine3D(fromPoint, toPoint);
         Frequency initialCapacity = new Frequency(1234, FrequencyUnit.PER_HOUR);
         Frequency finalCapacity = new Frequency(1234, FrequencyUnit.PER_HOUR);
         CapacityOTSLink link = new CapacityOTSLink(network, "link", fromNode, toNode, linkType, designLine, initialCapacity);

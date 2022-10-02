@@ -43,9 +43,9 @@ import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGtuColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SpeedGtuColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGtuColorer;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -432,7 +432,7 @@ public class StrategiesDemo extends AbstractSimulationScript
                 {
                     createGtu(lane, pos, this.nextGtuType, initialSpeed, getNetwork());
                 }
-                catch (NamingException | GtuException | NetworkException | SimRuntimeException | OTSGeometryException exception)
+                catch (NamingException | GtuException | NetworkException | SimRuntimeException | OtsGeometryException exception)
                 {
                     throw new RuntimeException(exception);
                 }
@@ -511,28 +511,28 @@ public class StrategiesDemo extends AbstractSimulationScript
         double radius = 150;
         Speed speedLimit = new Speed(120.0, SpeedUnit.KM_PER_HOUR);
         OTSRoadNode nodeA =
-                new OTSRoadNode(network, "A", new OTSPoint3D(-radius, 0, 0), new Direction(270, DirectionUnit.EAST_DEGREE));
+                new OTSRoadNode(network, "A", new OtsPoint3D(-radius, 0, 0), new Direction(270, DirectionUnit.EAST_DEGREE));
         OTSRoadNode nodeB =
-                new OTSRoadNode(network, "B", new OTSPoint3D(radius, 0, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
+                new OTSRoadNode(network, "B", new OtsPoint3D(radius, 0, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
 
-        OTSPoint3D[] coordsHalf1 = new OTSPoint3D[127];
+        OtsPoint3D[] coordsHalf1 = new OtsPoint3D[127];
         for (int i = 0; i < coordsHalf1.length; i++)
         {
             double angle = Math.PI * (i) / (coordsHalf1.length - 1);
-            coordsHalf1[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
+            coordsHalf1[i] = new OtsPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
         }
         List<Lane> lanes1 = new LaneFactory(network, nodeB, nodeA, network.getLinkType(LinkType.DEFAULTS.FREEWAY), sim,
-                LaneKeepingPolicy.KEEPLEFT, new OTSLine3D(coordsHalf1))
+                LaneKeepingPolicy.KEEPLEFT, new OtsLine3D(coordsHalf1))
                         .leftToRight(0.0, Length.instantiateSI(3.5), network.getLaneType(LaneType.DEFAULTS.FREEWAY), speedLimit)
                         .addLanes(Permeable.BOTH).getLanes();
-        OTSPoint3D[] coordsHalf2 = new OTSPoint3D[127];
+        OtsPoint3D[] coordsHalf2 = new OtsPoint3D[127];
         for (int i = 0; i < coordsHalf2.length; i++)
         {
             double angle = Math.PI + Math.PI * (i) / (coordsHalf2.length - 1);
-            coordsHalf2[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
+            coordsHalf2[i] = new OtsPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
         }
         List<Lane> lanes2 = new LaneFactory(network, nodeA, nodeB, network.getLinkType(LinkType.DEFAULTS.FREEWAY), sim,
-                LaneKeepingPolicy.KEEPLEFT, new OTSLine3D(coordsHalf2))
+                LaneKeepingPolicy.KEEPLEFT, new OtsLine3D(coordsHalf2))
                         .leftToRight(0.0, Length.instantiateSI(3.5), network.getLaneType(LaneType.DEFAULTS.FREEWAY), speedLimit)
                         .addLanes(Permeable.BOTH).getLanes();
 
@@ -633,11 +633,11 @@ public class StrategiesDemo extends AbstractSimulationScript
      * @throws GtuException on exception
      * @throws NetworkException on exception
      * @throws SimRuntimeException on exception
-     * @throws OTSGeometryException on exception
+     * @throws OtsGeometryException on exception
      */
     public void createGtu(final Lane lane, final Length pos, final GtuType gtuType, final Speed initialSpeed,
             final OTSRoadNetwork net)
-            throws NamingException, GtuException, NetworkException, SimRuntimeException, OTSGeometryException
+            throws NamingException, GtuException, NetworkException, SimRuntimeException, OtsGeometryException
     {
         GtuCharacteristics gtuCharacteristics = Try.assign(() -> GtuType.defaultCharacteristics(gtuType, net, this.stream),
                 "Exception while applying default GTU characteristics.");

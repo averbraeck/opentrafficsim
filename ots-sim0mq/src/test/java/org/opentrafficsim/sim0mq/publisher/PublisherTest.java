@@ -26,7 +26,7 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -63,14 +63,14 @@ public class PublisherTest implements OtsModelInterface
      * Test the Publisher class.
      * @throws RemoteException when that happens this test has failed
      * @throws NetworkException if that happens uncaught; this test has failed
-     * @throws OTSGeometryException if that happens uncaught; this test has failed
+     * @throws OtsGeometryException if that happens uncaught; this test has failed
      * @throws NamingException on context error
      * @throws SimRuntimeException on DSOL error
      * @throws SerializationException - when encoding an error message fails
      * @throws Sim0MQException - when encoding an error message fails
      */
     @Test
-    public void testPublisher() throws RemoteException, NetworkException, OTSGeometryException, SimRuntimeException,
+    public void testPublisher() throws RemoteException, NetworkException, OtsGeometryException, SimRuntimeException,
             NamingException, Sim0MQException, SerializationException
     {
         ReturnWrapper storeLastResult = new ReturnWrapper()

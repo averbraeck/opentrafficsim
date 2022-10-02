@@ -24,7 +24,7 @@ import org.djutils.event.EventTypeInterface;
 import org.djutils.event.ref.ReferenceType;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.sensor.NonDirectionalOccupancySensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -368,7 +368,7 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
 
     /** {@inheritDoc} */
     @Override
-    public OTSLine3D getGeometry()
+    public OtsLine3D getGeometry()
     {
         return null;
     }

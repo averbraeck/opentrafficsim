@@ -18,7 +18,7 @@ import org.djutils.draw.point.Point3d;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Link;
@@ -95,7 +95,7 @@ public final class GeneratorPositions implements Locatable
                     {
                         point = pos.getLane().getCenterLine().getLocation(pos.getPosition());
                     }
-                    catch (OTSGeometryException exception)
+                    catch (OtsGeometryException exception)
                     {
                         point = new DirectedPoint(0, 0, 0);
                     }

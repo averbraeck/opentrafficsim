@@ -8,10 +8,10 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSLine3D.FractionalFallback;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsLine3D.FractionalFallback;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -51,7 +51,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
      * @throws OperationalPlanException when the path is too short for the operation
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public LaneBasedOperationalPlan(final LaneBasedGtu gtu, final OTSLine3D path, final Time startTime, final Speed startSpeed,
+    public LaneBasedOperationalPlan(final LaneBasedGtu gtu, final OtsLine3D path, final Time startTime, final Speed startSpeed,
             final List<Segment> operationalPlanSegmentList, final boolean deviative) throws OperationalPlanException
     {
         super(gtu, path, startTime, startSpeed, operationalPlanSegmentList);
@@ -115,7 +115,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
         {
             return lane.getCenterLine().getLocationFraction(f).getRotZ();
         }
-        catch (OTSGeometryException exception)
+        catch (OtsGeometryException exception)
         {
             // should not occur, we use 0.0 and 1.0
             throw new RuntimeException("Unexpected exception while assessing if a GTU is between lanes.", exception);
@@ -163,11 +163,11 @@ public class LaneBasedOperationalPlan extends OperationalPlan
                     try
                     {
                         // compose gap line
-                        OTSPoint3D last = lane.getCenterLine().getLast();
-                        OTSPoint3D first = nextLane.getCenterLine().get(0);
+                        OtsPoint3D last = lane.getCenterLine().getLast();
+                        OtsPoint3D first = nextLane.getCenterLine().get(0);
                         if (!(last).equals(first))
                         {
-                            OTSLine3D gap = new OTSLine3D(last, first);
+                            OtsLine3D gap = new OtsLine3D(last, first);
                             double fGap = gap.projectFractional(null, null, point.x, point.y, FractionalFallback.NaN);
                             if (!Double.isNaN(fGap))
                             {
@@ -189,7 +189,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
                             prevDir = nextDir;
                         }
                     }
-                    catch (OTSGeometryException exception)
+                    catch (OtsGeometryException exception)
                     {
                         // should not occur, we use get(0) and getLast()
                         throw new RuntimeException("Unexpected exception while assessing if a GTU is between lanes.",

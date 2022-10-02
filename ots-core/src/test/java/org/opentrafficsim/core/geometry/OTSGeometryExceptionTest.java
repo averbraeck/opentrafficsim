@@ -17,9 +17,9 @@ public class OTSGeometryExceptionTest
     {
         try
         {
-            throw new OTSGeometryException();
+            throw new OtsGeometryException();
         }
-        catch (OTSGeometryException e)
+        catch (OtsGeometryException e)
         {
             assertNull(e.getMessage());
         }
@@ -30,9 +30,9 @@ public class OTSGeometryExceptionTest
 
         try
         {
-            throw new OTSGeometryException("abc");
+            throw new OtsGeometryException("abc");
         }
-        catch (OTSGeometryException e)
+        catch (OtsGeometryException e)
         {
             assertEquals("abc", e.getMessage());
         }
@@ -43,9 +43,9 @@ public class OTSGeometryExceptionTest
 
         try
         {
-            throw new OTSGeometryException(new IllegalArgumentException());
+            throw new OtsGeometryException(new IllegalArgumentException());
         }
-        catch (OTSGeometryException e)
+        catch (OtsGeometryException e)
         {
             assertTrue(e.getMessage().contains("IllegalArgumentException"));
             assertTrue(e.getCause() instanceof IllegalArgumentException);
@@ -57,9 +57,9 @@ public class OTSGeometryExceptionTest
 
         try
         {
-            throw new OTSGeometryException("abc", new IllegalArgumentException("def"));
+            throw new OtsGeometryException("abc", new IllegalArgumentException("def"));
         }
-        catch (OTSGeometryException e)
+        catch (OtsGeometryException e)
         {
             assertEquals("abc", e.getMessage());
             assertTrue(e.getCause() instanceof IllegalArgumentException);
@@ -76,9 +76,9 @@ public class OTSGeometryExceptionTest
             {
                 try
                 {
-                    throw new OTSGeometryException("abc", new IllegalArgumentException("def"), suppression, writableStackTrace);
+                    throw new OtsGeometryException("abc", new IllegalArgumentException("def"), suppression, writableStackTrace);
                 }
-                catch (OTSGeometryException e)
+                catch (OtsGeometryException e)
                 {
                     assertEquals("abc", e.getMessage());
                     assertTrue(e.getCause() instanceof IllegalArgumentException);

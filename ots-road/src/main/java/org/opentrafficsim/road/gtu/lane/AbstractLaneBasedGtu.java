@@ -27,10 +27,10 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSLine3D.FractionalFallback;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsLine3D.FractionalFallback;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.AbstractGtu;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -190,11 +190,11 @@ public abstract class AbstractLaneBasedGtu extends AbstractGtu implements LaneBa
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GtuException when initial values are not correct
-     * @throws OTSGeometryException when the initial path is wrong
+     * @throws OtsGeometryException when the initial path is wrong
      */
     @SuppressWarnings("checkstyle:designforextension")
     public void init(final LaneBasedStrategicalPlanner strategicalPlanner, final Set<LanePosition> initialLongitudinalPositions,
-            final Speed initialSpeed) throws NetworkException, SimRuntimeException, GtuException, OTSGeometryException
+            final Speed initialSpeed) throws NetworkException, SimRuntimeException, GtuException, OtsGeometryException
     {
         Throw.when(null == initialLongitudinalPositions, GtuException.class, "InitialLongitudinalPositions is null");
         Throw.when(0 == initialLongitudinalPositions.size(), GtuException.class, "InitialLongitudinalPositions is empty set");
@@ -219,9 +219,9 @@ public abstract class AbstractLaneBasedGtu extends AbstractGtu implements LaneBa
             }
             else
             {
-                OTSPoint3D p2 = new OTSPoint3D(initialLocation.x + 1E-6 * Math.cos(initialLocation.getRotZ()),
+                OtsPoint3D p2 = new OtsPoint3D(initialLocation.x + 1E-6 * Math.cos(initialLocation.getRotZ()),
                         initialLocation.y + 1E-6 * Math.sin(initialLocation.getRotZ()), initialLocation.z);
-                OTSLine3D path = new OTSLine3D(new OTSPoint3D(initialLocation), p2);
+                OtsLine3D path = new OtsLine3D(new OtsPoint3D(initialLocation), p2);
                 this.operationalPlan.set(OperationalPlanBuilder.buildConstantSpeedPlan(this, path, now, initialSpeed));
             }
         }
@@ -277,10 +277,10 @@ public abstract class AbstractLaneBasedGtu extends AbstractGtu implements LaneBa
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GtuException when initial values are not correct
-     * @throws OTSGeometryException when the initial path is wrong
+     * @throws OtsGeometryException when the initial path is wrong
      */
     public void reinit(final Set<LanePosition> initialLongitudinalPositions)
-            throws NetworkException, SimRuntimeException, GtuException, OTSGeometryException
+            throws NetworkException, SimRuntimeException, GtuException, OtsGeometryException
     {
         init(getStrategicalPlanner(), initialLongitudinalPositions, Speed.ZERO);
     }
@@ -756,8 +756,8 @@ public abstract class AbstractLaneBasedGtu extends AbstractGtu implements LaneBa
 
         LanePosition dlp = getReferencePosition();
         fireTimedEvent(LaneBasedGtu.LANEBASED_MOVE_EVENT,
-                new Object[] {getId(), new OTSPoint3D(fromLocation).doubleVector(PositionUnit.METER),
-                        OTSPoint3D.direction(fromLocation, DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
+                new Object[] {getId(), new OtsPoint3D(fromLocation).doubleVector(PositionUnit.METER),
+                        OtsPoint3D.direction(fromLocation, DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
                         getTurnIndicatorStatus(), getOdometer(), dlp.getLane().getParentLink().getId(), dlp.getLane().getId(),
                         dlp.getPosition()},
                 getSimulator().getSimulatorTime());
@@ -1215,7 +1215,7 @@ public abstract class AbstractLaneBasedGtu extends AbstractGtu implements LaneBa
             // && ((LaneBasedOperationalPlan) getOperationalPlan()).isDeviative())
             {
                 double eps = (fraction > 1.0 ? lane.getCenterLine().getLast() : lane.getCenterLine().getFirst())
-                        .distanceSI(new OTSPoint3D(getLocation()));
+                        .distanceSI(new OtsPoint3D(getLocation()));
                 if (eps < minEps)
                 {
                     minEps = eps;

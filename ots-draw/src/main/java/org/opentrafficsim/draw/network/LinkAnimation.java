@@ -13,9 +13,9 @@ import org.djutils.draw.point.Point3d;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.draw.core.PaintLine;
@@ -71,7 +71,7 @@ public class LinkAnimation extends Renderable2D<Link> implements Renderable2DInt
         try
         {
             Color color = getSource().getLinkType().isConnector() ? Color.PINK.darker() : Color.BLUE;
-            OTSLine3D designLine = getSource().getDesignLine();
+            OtsLine3D designLine = getSource().getDesignLine();
             PaintLine.paintLine(graphics, color, this.width, getSource().getLocation(), designLine);
             // Accentuate the end points
             try
@@ -79,7 +79,7 @@ public class LinkAnimation extends Renderable2D<Link> implements Renderable2DInt
                 drawEndPoint(designLine.getFirst(), designLine.get(1), graphics);
                 drawEndPoint(designLine.getLast(), designLine.get(designLine.size() - 2), graphics);
             }
-            catch (OTSGeometryException exception)
+            catch (OtsGeometryException exception)
             {
                 // Cannot happen
                 CategoryLogger.always().error(exception);
@@ -98,7 +98,7 @@ public class LinkAnimation extends Renderable2D<Link> implements Renderable2DInt
      *            line)
      * @param graphics Graphics2D; graphics content
      */
-    private void drawEndPoint(final OTSPoint3D endPoint, final OTSPoint3D nextPoint, final Graphics2D graphics)
+    private void drawEndPoint(final OtsPoint3D endPoint, final OtsPoint3D nextPoint, final Graphics2D graphics)
     {
         // End point marker is 2 times the width of the design line
         double dx = nextPoint.x - endPoint.x;

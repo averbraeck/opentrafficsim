@@ -19,9 +19,9 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.math.Solver;
@@ -45,7 +45,7 @@ public class OperationalPlan implements Serializable
     private static final long serialVersionUID = 20151114L;
 
     /** The path to follow from a certain time till a certain time. */
-    private final OTSLine3D path;
+    private final OtsLine3D path;
 
     /** The absolute start time when we start executing the path. */
     private final Time startTime;
@@ -97,7 +97,7 @@ public class OperationalPlan implements Serializable
      *            speed or deceleration profile
      * @throws OperationalPlanException when the path is too short for the operation
      */
-    public OperationalPlan(final Gtu gtu, final OTSLine3D path, final Time startTime, final Speed startSpeed,
+    public OperationalPlan(final Gtu gtu, final OtsLine3D path, final Time startTime, final Speed startSpeed,
             final List<Segment> operationalPlanSegmentList) throws OperationalPlanException
     {
 
@@ -130,7 +130,7 @@ public class OperationalPlan implements Serializable
         {
             this.path = path.extract(0.0, Math.min(distanceSI, path.getLengthSI()));
         }
-        catch (OTSGeometryException exception)
+        catch (OtsGeometryException exception)
         {
             throw new OperationalPlanException(exception);
         }
@@ -165,13 +165,13 @@ public class OperationalPlan implements Serializable
         this.totalLength = Length.ZERO;
 
         // make a path
-        OTSPoint3D p2 = new OTSPoint3D(waitPoint.x + Math.cos(waitPoint.getRotZ()), waitPoint.y + Math.sin(waitPoint.getRotZ()),
+        OtsPoint3D p2 = new OtsPoint3D(waitPoint.x + Math.cos(waitPoint.getRotZ()), waitPoint.y + Math.sin(waitPoint.getRotZ()),
                 waitPoint.z);
         try
         {
-            this.path = new OTSLine3D(new OTSPoint3D(waitPoint), p2);
+            this.path = new OtsLine3D(new OtsPoint3D(waitPoint), p2);
         }
-        catch (OTSGeometryException exception)
+        catch (OtsGeometryException exception)
         {
             throw new OperationalPlanException(exception);
         }
@@ -190,7 +190,7 @@ public class OperationalPlan implements Serializable
      * the path is bogus (should only be used to determine the orientation of the GTU).
      * @return the path
      */
-    public final OTSLine3D getPath()
+    public final OtsLine3D getPath()
     {
         return this.path;
     }
@@ -275,7 +275,7 @@ public class OperationalPlan implements Serializable
                 return this.path.getLocationFraction(1.0);
             }
         }
-        catch (OTSGeometryException exception)
+        catch (OtsGeometryException exception)
         {
             // should not happen -- only for fractions less than 0.0 or larger than 1.0.
             throw new RuntimeException(exception);
@@ -437,7 +437,7 @@ public class OperationalPlan implements Serializable
         {
             p = this.path.getLocationFraction(fraction, 0.01);
         }
-        catch (OTSGeometryException exception)
+        catch (OtsGeometryException exception)
         {
             this.gtu.getSimulator().getLogger().always().error("OperationalPlan.getLocation(): " + exception.getMessage());
             DirectedPoint q = this.path.getLocationFractionExtended(fraction);
@@ -571,24 +571,24 @@ public class OperationalPlan implements Serializable
      */
     public final Time timeAtPoint(final DirectedPoint point, final boolean upstream)
     {
-        OTSPoint3D p1 = new OTSPoint3D(point);
+        OtsPoint3D p1 = new OtsPoint3D(point);
         // point at 90 degrees
-        OTSPoint3D p2 = new OTSPoint3D(point.x - Math.sin(point.getRotZ()), point.y + Math.cos(point.getRotZ()), point.z);
+        OtsPoint3D p2 = new OtsPoint3D(point.x - Math.sin(point.getRotZ()), point.y + Math.cos(point.getRotZ()), point.z);
         double traveledDistanceAlongPath = 0.0;
         try
         {
             if (upstream)
             {
-                OTSPoint3D p = OTSPoint3D.intersectionOfLines(this.path.get(0), this.path.get(1), p1, p2);
+                OtsPoint3D p = OtsPoint3D.intersectionOfLines(this.path.get(0), this.path.get(1), p1, p2);
                 double dist = traveledDistanceAlongPath - this.path.get(0).distance(p).si;
                 dist = dist >= 0.0 ? dist : 0.0; // negative in case of a gap
                 return timeAtDistance(Length.instantiateSI(dist));
             }
             for (int i = 0; i < this.path.size() - 1; i++)
             {
-                OTSPoint3D prevPoint = this.path.get(i);
-                OTSPoint3D nextPoint = this.path.get(i + 1);
-                OTSPoint3D p = OTSPoint3D.intersectionOfLines(prevPoint, nextPoint, p1, p2);
+                OtsPoint3D prevPoint = this.path.get(i);
+                OtsPoint3D nextPoint = this.path.get(i + 1);
+                OtsPoint3D p = OtsPoint3D.intersectionOfLines(prevPoint, nextPoint, p1, p2);
                 if (p == null)
                 {
                     // point too close, check next section
@@ -621,7 +621,7 @@ public class OperationalPlan implements Serializable
                 }
             }
         }
-        catch (OTSGeometryException exception)
+        catch (OtsGeometryException exception)
         {
             throw new RuntimeException("Index out of bounds on projection of point to path of operational plan", exception);
         }

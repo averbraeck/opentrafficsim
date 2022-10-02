@@ -33,7 +33,7 @@ import org.opentrafficsim.core.animation.gtu.colorer.SpeedGtuColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGtuColorer;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -290,12 +290,12 @@ public class SdmSimulation extends AbstractSimulationScript
 
         // Network
         this.network = new OTSRoadNetwork("SDM", true, getSimulator());
-        OTSPoint3D pointA = new OTSPoint3D(0.0, 0.0);
-        OTSPoint3D pointB = new OTSPoint3D(0.0, -20.0);
-        OTSPoint3D pointC = new OTSPoint3D(1600.0, -20.0);
-        OTSPoint3D pointD = new OTSPoint3D(2000.0, 0.0);
-        OTSPoint3D pointE = new OTSPoint3D(2500.0, 0.0);
-        OTSPoint3D pointF = new OTSPoint3D(3500.0, 0.0);
+        OtsPoint3D pointA = new OtsPoint3D(0.0, 0.0);
+        OtsPoint3D pointB = new OtsPoint3D(0.0, -20.0);
+        OtsPoint3D pointC = new OtsPoint3D(1600.0, -20.0);
+        OtsPoint3D pointD = new OtsPoint3D(2000.0, 0.0);
+        OtsPoint3D pointE = new OtsPoint3D(2500.0, 0.0);
+        OtsPoint3D pointF = new OtsPoint3D(3500.0, 0.0);
         OTSRoadNode nodeA = new OTSRoadNode(this.network, "A", pointA, Direction.ZERO);
         OTSRoadNode nodeB = new OTSRoadNode(this.network, "B", pointB, Direction.ZERO);
         OTSRoadNode nodeC = new OTSRoadNode(this.network, "C", pointC, Direction.ZERO);

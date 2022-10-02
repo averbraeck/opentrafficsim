@@ -10,8 +10,8 @@ import org.djutils.exceptions.Try;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSLink;
@@ -49,10 +49,10 @@ public class CrossSectionLink extends OTSLink implements Serializable
     private Double demandWeight = null;
 
     /** Line over which GTUs enter or leave the link at the start node. */
-    private OTSLine3D startLine;
+    private OtsLine3D startLine;
 
     /** Line over which GTUs enter or leave the link at the end node. */
-    private OTSLine3D endLine;
+    private OtsLine3D endLine;
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the addition of a Lane to a CrossSectionLink. <br>
@@ -92,7 +92,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public CrossSectionLink(final OTSRoadNetwork network, final String id, final OTSRoadNode startNode,
-            final OTSRoadNode endNode, final LinkType linkType, final OTSLine3D designLine,
+            final OTSRoadNode endNode, final LinkType linkType, final OtsLine3D designLine,
             final LaneKeepingPolicy laneKeepingPolicy) throws NetworkException
     {
         super(network, id, startNode, endNode, linkType, designLine);
@@ -215,7 +215,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
      * Returns the line over which GTUs enter and leave the link at the start node.
      * @return OTSLine3D; line over which GTUs enter and leave the link at the start node
      */
-    public OTSLine3D getStartLine()
+    public OtsLine3D getStartLine()
     {
         if (this.startLine == null)
         {
@@ -235,13 +235,13 @@ public class CrossSectionLink extends OTSLink implements Serializable
                     right = lane.getDesignLineOffsetAtBegin().si - half;
                 }
             }
-            OTSPoint3D start = getStartNode().getPoint();
+            OtsPoint3D start = getStartNode().getPoint();
             double heading = getStartNode().getHeading() + .5 * Math.PI;
             double cosHeading = Math.cos(heading);
             double sinHeading = Math.sin(heading);
-            OTSPoint3D leftPoint = new OTSPoint3D(start.x + cosHeading * left, start.y + sinHeading * left);
-            OTSPoint3D rightPoint = new OTSPoint3D(start.x - cosHeading * right, start.y - sinHeading * right);
-            this.startLine = Try.assign(() -> new OTSLine3D(leftPoint, rightPoint), "Invalid startline on CrossSectionLink.");
+            OtsPoint3D leftPoint = new OtsPoint3D(start.x + cosHeading * left, start.y + sinHeading * left);
+            OtsPoint3D rightPoint = new OtsPoint3D(start.x - cosHeading * right, start.y - sinHeading * right);
+            this.startLine = Try.assign(() -> new OtsLine3D(leftPoint, rightPoint), "Invalid startline on CrossSectionLink.");
         }
         return this.startLine;
     }
@@ -250,7 +250,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
      * Returns the line over which GTUs enter and leave the link at the end node.
      * @return OTSLine3D; line over which GTUs enter and leave the link at the end node
      */
-    public OTSLine3D getEndLine()
+    public OtsLine3D getEndLine()
     {
         if (this.endLine == null)
         {
@@ -270,14 +270,14 @@ public class CrossSectionLink extends OTSLink implements Serializable
                     right = lane.getDesignLineOffsetAtEnd().si - half;
                 }
             }
-            OTSPoint3D start = getEndNode().getPoint();
+            OtsPoint3D start = getEndNode().getPoint();
             DirectedPoint p = Try.assign(() -> getEndNode().getLocation(), "Unexpected remote exception.");
             double heading = p.getRotZ() + .5 * Math.PI;
             double cosHeading = Math.cos(heading);
             double sinHeading = Math.sin(heading);
-            OTSPoint3D leftPoint = new OTSPoint3D(start.x + cosHeading * left, start.y + sinHeading * left);
-            OTSPoint3D rightPoint = new OTSPoint3D(start.x + cosHeading * right, start.y + sinHeading * right);
-            this.endLine = Try.assign(() -> new OTSLine3D(leftPoint, rightPoint), "Invalid endline on CrossSectionLink.");
+            OtsPoint3D leftPoint = new OtsPoint3D(start.x + cosHeading * left, start.y + sinHeading * left);
+            OtsPoint3D rightPoint = new OtsPoint3D(start.x + cosHeading * right, start.y + sinHeading * right);
+            this.endLine = Try.assign(() -> new OtsLine3D(leftPoint, rightPoint), "Invalid endline on CrossSectionLink.");
         }
         return this.endLine;
     }

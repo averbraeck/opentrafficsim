@@ -18,9 +18,9 @@ import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.network.NetworkException;
@@ -74,7 +74,7 @@ public class TrafficLightSensor extends EventProducer
     private final OTSNetwork network;
 
     /** Design line of the sensor. */
-    private final OTSLine3D path;
+    private final OtsLine3D path;
 
     /**
      * Construct a new traffic light sensor.<br>
@@ -116,7 +116,7 @@ public class TrafficLightSensor extends EventProducer
             lane.addListener(this, Lane.GTU_ADD_EVENT);
             lane.addListener(this, Lane.GTU_REMOVE_EVENT);
         }
-        List<OTSPoint3D> outLine = new ArrayList<>();
+        List<OtsPoint3D> outLine = new ArrayList<>();
         outLine.add(fixElevation(this.entryA.getGeometry().getCentroid()));
         if (null != intermediateLanes && intermediateLanes.size() > 0)
         {
@@ -153,9 +153,9 @@ public class TrafficLightSensor extends EventProducer
         outLine.add(fixElevation(this.exitB.getGeometry().getCentroid()));
         try
         {
-            this.path = OTSLine3D.createAndCleanOTSLine3D(outLine);
+            this.path = OtsLine3D.createAndCleanOTSLine3D(outLine);
         }
-        catch (OTSGeometryException exception)
+        catch (OtsGeometryException exception)
         {
             // This happens if A and B are the same
             throw new NetworkException(exception);
@@ -167,9 +167,9 @@ public class TrafficLightSensor extends EventProducer
      * @param point OTSPoint3D; the point
      * @return OTSPoint3D
      */
-    private OTSPoint3D fixElevation(final OTSPoint3D point)
+    private OtsPoint3D fixElevation(final OtsPoint3D point)
     {
-        return new OTSPoint3D(point.x, point.y, point.z + SingleSensor.DEFAULT_SENSOR_ELEVATION.si);
+        return new OtsPoint3D(point.x, point.y, point.z + SingleSensor.DEFAULT_SENSOR_ELEVATION.si);
     }
 
     /**
@@ -389,7 +389,7 @@ public class TrafficLightSensor extends EventProducer
      * Return the path of this traffic light sensor.
      * @return OTSLine3D; the path of this traffic light sensor
      */
-    public final OTSLine3D getPath()
+    public final OtsLine3D getPath()
     {
         return this.path;
     }

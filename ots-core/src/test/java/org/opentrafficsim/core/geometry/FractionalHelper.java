@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.opentrafficsim.core.geometry.OTSLine3D.FractionalFallback;
+import org.opentrafficsim.core.geometry.OtsLine3D.FractionalFallback;
 
 /**
  * Test/development code for the fractional helper stuff.
@@ -21,13 +21,13 @@ public final class FractionalHelper
     /**
      * Test/development code for the fractional helper stuff.
      * @param args String[]; the command line arguments (not used)
-     * @throws OTSGeometryException in case of error
+     * @throws OtsGeometryException in case of error
      * @throws SecurityException ...
      * @throws NoSuchFieldException ...
      * @throws IllegalAccessException ...
      * @throws IllegalArgumentException ...
      */
-    public static void main(final String[] args) throws OTSGeometryException, IllegalArgumentException, IllegalAccessException,
+    public static void main(final String[] args) throws OtsGeometryException, IllegalArgumentException, IllegalAccessException,
             NoSuchFieldException, SecurityException
     {
         /*-
@@ -43,7 +43,7 @@ public final class FractionalHelper
         System.out.println(line.offsetLine(relativeFractions, offsets).toExcel());         
         */
 
-        List<OTSPoint3D> list = new ArrayList<>();
+        List<OtsPoint3D> list = new ArrayList<>();
         boolean laneOn933 = true;
         if (!laneOn933)
         {
@@ -54,7 +54,7 @@ public final class FractionalHelper
             double ddx = 1.5;
             for (int i = 0; i < 32; i++)
             {
-                list.add(new OTSPoint3D(x, y));
+                list.add(new OtsPoint3D(x, y));
                 x += dx;
                 dx *= ddx;
                 y += dy;
@@ -142,30 +142,30 @@ public final class FractionalHelper
                 double x = Double.valueOf(subStr.substring(0, comma));
                 double y = Double.valueOf(subStr.substring(comma + 1));
 
-                list.add(new OTSPoint3D(x, y, 0.0));
+                list.add(new OtsPoint3D(x, y, 0.0));
 
             }
         }
-        OTSLine3D line = new OTSLine3D(list);
+        OtsLine3D line = new OtsLine3D(list);
 
         line.projectFractional(null, null, 1.0, 0.5, FractionalFallback.NaN); // creates fractional helper points
 
         // create line of fractional helper points, give NaN points for null values
-        OTSPoint3D[] array = getFractionalHelperCenters(line);
+        OtsPoint3D[] array = getFractionalHelperCenters(line);
         for (int i = 0; i < array.length; i++)
         {
             if (array[i] == null)
             {
-                array[i] = new OTSPoint3D(Double.NaN, Double.NaN);
+                array[i] = new OtsPoint3D(Double.NaN, Double.NaN);
             }
         }
-        OTSLine3D helpers = new OTSLine3D(getFractionalHelperCenters(line));
+        OtsLine3D helpers = new OtsLine3D(getFractionalHelperCenters(line));
 
         // create Matlab compatible strings of lines
         StringBuilder str = new StringBuilder();
         str.append("line = [");
         String sep = "";
-        for (OTSPoint3D p : line.getPoints())
+        for (OtsPoint3D p : line.getPoints())
         {
             str.append(String.format(Locale.US, "%s %.8f, %.8f", sep, p.x, p.y));
             sep = ",";
@@ -174,7 +174,7 @@ public final class FractionalHelper
 
         str.append("helpers = [");
         sep = "";
-        for (OTSPoint3D p : helpers.getPoints())
+        for (OtsPoint3D p : helpers.getPoints())
         {
             str.append(String.format(Locale.US, "%s %.8f, %.8f", sep, p.x, p.y));
             sep = ",";
@@ -193,12 +193,12 @@ public final class FractionalHelper
      * @throws NoSuchFieldException ...
      * @throws SecurityException ...
      */
-    static OTSPoint3D[] getFractionalHelperCenters(final OTSLine3D line)
+    static OtsPoint3D[] getFractionalHelperCenters(final OtsLine3D line)
             throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException
     {
-        Field fhcArray = OTSLine3D.class.getDeclaredField("fractionalHelperCenters");
+        Field fhcArray = OtsLine3D.class.getDeclaredField("fractionalHelperCenters");
         fhcArray.setAccessible(true);
-        return (OTSPoint3D[]) fhcArray.get(line);
+        return (OtsPoint3D[]) fhcArray.get(line);
     }
 
 }

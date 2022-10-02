@@ -17,8 +17,8 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -152,26 +152,26 @@ public class CircularLaneModel extends AbstractOtsModel implements UNITS
                     new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
 
             LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
-            OTSRoadNode start = new OTSRoadNode(this.network, "Start", new OTSPoint3D(radius, 0, 0),
+            OTSRoadNode start = new OTSRoadNode(this.network, "Start", new OtsPoint3D(radius, 0, 0),
                     new Direction(90, DirectionUnit.EAST_DEGREE));
-            OTSRoadNode halfway = new OTSRoadNode(this.network, "Halfway", new OTSPoint3D(-radius, 0, 0),
+            OTSRoadNode halfway = new OTSRoadNode(this.network, "Halfway", new OtsPoint3D(-radius, 0, 0),
                     new Direction(270, DirectionUnit.EAST_DEGREE));
 
-            OTSPoint3D[] coordsHalf1 = new OTSPoint3D[127];
+            OtsPoint3D[] coordsHalf1 = new OtsPoint3D[127];
             for (int i = 0; i < coordsHalf1.length; i++)
             {
                 double angle = Math.PI * (1 + i) / (1 + coordsHalf1.length);
-                coordsHalf1[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
+                coordsHalf1[i] = new OtsPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
             }
             this.lane1 = LaneFactory.makeMultiLane(this.network, "Lane1", start, halfway, coordsHalf1, 1, laneType,
                     this.speedLimit, this.simulator)[0];
             this.path.add(this.lane1);
 
-            OTSPoint3D[] coordsHalf2 = new OTSPoint3D[127];
+            OtsPoint3D[] coordsHalf2 = new OtsPoint3D[127];
             for (int i = 0; i < coordsHalf2.length; i++)
             {
                 double angle = Math.PI + Math.PI * (1 + i) / (1 + coordsHalf2.length);
-                coordsHalf2[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
+                coordsHalf2[i] = new OtsPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
             }
             this.lane2 = LaneFactory.makeMultiLane(this.network, "Lane2", halfway, start, coordsHalf2, 1, laneType,
                     this.speedLimit, this.simulator)[0];
@@ -248,7 +248,7 @@ public class CircularLaneModel extends AbstractOtsModel implements UNITS
         {
             gtu.init(strategicalPlanner, initialPositions, initialSpeed);
         }
-        catch (NetworkException | SimRuntimeException | OTSGeometryException exception)
+        catch (NetworkException | SimRuntimeException | OtsGeometryException exception)
         {
             throw new GtuException(exception);
         }

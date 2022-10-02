@@ -32,7 +32,7 @@ import nl.tudelft.simulation.language.d3.CartesianPoint;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class OTSPoint3D implements Locatable, Serializable
+public class OtsPoint3D implements Locatable, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150722L;
@@ -55,7 +55,7 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param y double; y-coordinate
      * @param z double; z-coordinate
      */
-    public OTSPoint3D(final double x, final double y, final double z)
+    public OtsPoint3D(final double x, final double y, final double z)
     {
         this.x = x;
         this.y = y;
@@ -65,7 +65,7 @@ public class OTSPoint3D implements Locatable, Serializable
     /**
      * @param xyz array with three elements; x, y and z are assumed to be in meters relative to an origin.
      */
-    public OTSPoint3D(final double[] xyz)
+    public OtsPoint3D(final double[] xyz)
     {
         this(xyz[0], xyz[1], (xyz.length > 2) ? xyz[2] : 0.0);
     }
@@ -73,7 +73,7 @@ public class OTSPoint3D implements Locatable, Serializable
     /**
      * @param point OTSPoint3D; a point to "clone".
      */
-    public OTSPoint3D(final OTSPoint3D point)
+    public OtsPoint3D(final OtsPoint3D point)
     {
         this(point.x, point.y, point.z);
     }
@@ -82,7 +82,7 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param point javax.vecmath 3D double point; the x, y and z in the point are assumed to be in meters relative to an
      *            origin.
      */
-    public OTSPoint3D(final Point3d point)
+    public OtsPoint3D(final Point3d point)
     {
         this(point.x, point.y, point.z);
     }
@@ -91,7 +91,7 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param point javax.vecmath 3D double point; the x, y and z in the point are assumed to be in meters relative to an
      *            origin.
      */
-    public OTSPoint3D(final CartesianPoint point)
+    public OtsPoint3D(final CartesianPoint point)
     {
         this(point.x, point.y, point.z);
     }
@@ -100,7 +100,7 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param point javax.vecmath 3D double point; the x, y and z in the point are assumed to be in meters relative to an
      *            origin.
      */
-    public OTSPoint3D(final DirectedPoint point)
+    public OtsPoint3D(final DirectedPoint point)
     {
         this(point.x, point.y, point.z);
     }
@@ -109,7 +109,7 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param point2d java.awt 2D point, z-coordinate will be zero; the x and y in the point are assumed to be in meters
      *            relative to an origin.
      */
-    public OTSPoint3D(final Point2D point2d)
+    public OtsPoint3D(final Point2D point2d)
     {
         this(point2d.getX(), point2d.getY(), 0.0);
     }
@@ -118,7 +118,7 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param coordinate geotools coordinate; the x, y and z in the coordinate are assumed to be in meters relative to an
      *            origin.
      */
-    public OTSPoint3D(final Coordinate coordinate)
+    public OtsPoint3D(final Coordinate coordinate)
     {
         this(coordinate.x, coordinate.y, Double.isNaN(coordinate.getZ()) ? 0.0 : coordinate.getZ());
     }
@@ -127,7 +127,7 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param point geotools point; z-coordinate will be zero; the x and y in the point are assumed to be in meters relative to
      *            an origin.
      */
-    public OTSPoint3D(final Point point)
+    public OtsPoint3D(final Point point)
     {
         this(point.getX(), point.getY(), 0.0);
     }
@@ -137,7 +137,7 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param x double; x-coordinate
      * @param y double; y-coordinate
      */
-    public OTSPoint3D(final double x, final double y)
+    public OtsPoint3D(final double x, final double y)
     {
         this(x, y, 0.0);
     }
@@ -149,10 +149,10 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param oneValue OTSPoint3D; the point that is returned when ratio equals 1
      * @return OTSPoint3D
      */
-    public static OTSPoint3D interpolate(final double ratio, final OTSPoint3D zeroValue, final OTSPoint3D oneValue)
+    public static OtsPoint3D interpolate(final double ratio, final OtsPoint3D zeroValue, final OtsPoint3D oneValue)
     {
         double complement = 1 - ratio;
-        return new OTSPoint3D(complement * zeroValue.x + ratio * oneValue.x, complement * zeroValue.y + ratio * oneValue.y,
+        return new OtsPoint3D(complement * zeroValue.x + ratio * oneValue.x, complement * zeroValue.y + ratio * oneValue.y,
                 complement * zeroValue.z + ratio * oneValue.z);
     }
 
@@ -167,8 +167,8 @@ public class OTSPoint3D implements Locatable, Serializable
      * @return OTSPoint3D; the intersection of the two lines, or null if the lines are (almost) parallel, or do not intersect
      */
     @Deprecated
-    public static OTSPoint3D intersectionOfLineSegmentsDumb(final OTSPoint3D line1P1, final OTSPoint3D line1P2,
-            final OTSPoint3D line2P1, final OTSPoint3D line2P2)
+    public static OtsPoint3D intersectionOfLineSegmentsDumb(final OtsPoint3D line1P1, final OtsPoint3D line1P2,
+            final OtsPoint3D line2P1, final OtsPoint3D line2P2)
     {
         double denominator =
                 (line2P2.y - line2P1.y) * (line1P2.x - line1P1.x) - (line2P2.x - line2P1.x) * (line1P2.y - line1P1.y);
@@ -188,7 +188,7 @@ public class OTSPoint3D implements Locatable, Serializable
         {
             return null; // intersection outside line 2
         }
-        return new OTSPoint3D(line1P1.x + uA * (line1P2.x - line1P1.x), line1P1.y + uA * (line1P2.y - line1P1.y), 0);
+        return new OtsPoint3D(line1P1.x + uA * (line1P2.x - line1P1.x), line1P1.y + uA * (line1P2.y - line1P1.y), 0);
     }
 
     /**
@@ -200,8 +200,8 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param line2P2 OTSPoint3D; second point of line segment 2
      * @return OTSPoint3D; the intersection of the two lines, or null if the lines are (almost) parallel, or do not intersect
      */
-    public static OTSPoint3D intersectionOfLineSegments(final OTSPoint3D line1P1, final OTSPoint3D line1P2,
-            final OTSPoint3D line2P1, final OTSPoint3D line2P2)
+    public static OtsPoint3D intersectionOfLineSegments(final OtsPoint3D line1P1, final OtsPoint3D line1P2,
+            final OtsPoint3D line2P1, final OtsPoint3D line2P2)
     {
         double l1p1x = line1P1.x;
         double l1p1y = line1P1.y;
@@ -228,7 +228,7 @@ public class OTSPoint3D implements Locatable, Serializable
         {
             return null; // intersection outside line 2
         }
-        return new OTSPoint3D(line1P1.x + uA * l1p2x, line1P1.y + uA * l1p2y, 0);
+        return new OtsPoint3D(line1P1.x + uA * l1p2x, line1P1.y + uA * l1p2y, 0);
     }
 
     /**
@@ -241,8 +241,8 @@ public class OTSPoint3D implements Locatable, Serializable
      * @return OTSPoint3D; the intersection of the two lines, or null if the lines are (almost) parallel
      */
     @Deprecated
-    public static OTSPoint3D intersectionOfLinesDumb(final OTSPoint3D line1P1, final OTSPoint3D line1P2,
-            final OTSPoint3D line2P1, final OTSPoint3D line2P2)
+    public static OtsPoint3D intersectionOfLinesDumb(final OtsPoint3D line1P1, final OtsPoint3D line1P2,
+            final OtsPoint3D line2P1, final OtsPoint3D line2P2)
     {
         double determinant =
                 (line1P1.x - line1P2.x) * (line2P1.y - line2P2.y) - (line1P1.y - line1P2.y) * (line2P1.x - line2P2.x);
@@ -250,7 +250,7 @@ public class OTSPoint3D implements Locatable, Serializable
         {
             return null;
         }
-        return new OTSPoint3D(
+        return new OtsPoint3D(
                 ((line1P1.x * line1P2.y - line1P1.y * line1P2.x) * (line2P1.x - line2P2.x)
                         - (line1P1.x - line1P2.x) * (line2P1.x * line2P2.y - line2P1.y * line2P2.x)) / determinant,
                 ((line1P1.x * line1P2.y - line1P1.y * line1P2.x) * (line2P1.y - line2P2.y)
@@ -266,8 +266,8 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param line2P2 OTSPoint3D; second point of line 2
      * @return OTSPoint3D; the intersection of the two lines, or null if the lines are (almost) parallel
      */
-    public static OTSPoint3D intersectionOfLines(final OTSPoint3D line1P1, final OTSPoint3D line1P2, final OTSPoint3D line2P1,
-            final OTSPoint3D line2P2)
+    public static OtsPoint3D intersectionOfLines(final OtsPoint3D line1P1, final OtsPoint3D line1P2, final OtsPoint3D line2P1,
+            final OtsPoint3D line2P2)
     {
         double l1p1x = line1P1.x;
         double l1p1y = line1P1.y;
@@ -282,7 +282,7 @@ public class OTSPoint3D implements Locatable, Serializable
         {
             return null;
         }
-        return new OTSPoint3D(l1p1x + (l1p2x * (l2p1x * l2p2y - l2p1y * l2p2x)) / determinant,
+        return new OtsPoint3D(l1p1x + (l1p2x * (l2p1x * l2p2y - l2p1y * l2p2x)) / determinant,
                 l1p1y + (l1p2y * (l2p1x * l2p2y - l2p1y * l2p2x)) / determinant);
     }
 
@@ -297,7 +297,7 @@ public class OTSPoint3D implements Locatable, Serializable
      * @return Point2D.Double; either <cite>lineP1</cite>, or <cite>lineP2</cite> or a new OTSPoint3D that lies somewhere in
      *         between those two. The Z-component of the result matches the Z-component of the line segment at that point
      */
-    public final OTSPoint3D closestPointOnSegment(final OTSPoint3D segmentPoint1, final OTSPoint3D segmentPoint2)
+    public final OtsPoint3D closestPointOnSegment(final OtsPoint3D segmentPoint1, final OtsPoint3D segmentPoint2)
     {
         double dX = segmentPoint2.x - segmentPoint1.x;
         double dY = segmentPoint2.y - segmentPoint1.y;
@@ -327,16 +327,16 @@ public class OTSPoint3D implements Locatable, Serializable
      *            the 3D distance is used to determine the closest point
      * @return OTSPoint3D; the Z component of the returned point matches the Z-component of the line at that point
      */
-    private OTSPoint3D internalClosestPointOnLine(final OTSLine3D line, final boolean useHorizontalDistance)
+    private OtsPoint3D internalClosestPointOnLine(final OtsLine3D line, final boolean useHorizontalDistance)
     {
-        OTSPoint3D prevPoint = null;
+        OtsPoint3D prevPoint = null;
         double distance = Double.MAX_VALUE;
-        OTSPoint3D result = null;
-        for (OTSPoint3D nextPoint : line.getPoints())
+        OtsPoint3D result = null;
+        for (OtsPoint3D nextPoint : line.getPoints())
         {
             if (null != prevPoint)
             {
-                OTSPoint3D closest = closestPointOnSegment(prevPoint, nextPoint);
+                OtsPoint3D closest = closestPointOnSegment(prevPoint, nextPoint);
                 double thisDistance = useHorizontalDistance ? horizontalDistanceSI(closest) : distanceSI(closest);
                 if (thisDistance < distance)
                 {
@@ -354,7 +354,7 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param line OTSLine3D; the line
      * @return OTSPoint3D; the Z-component of the returned point matches the Z-component of the line at that point
      */
-    public final OTSPoint3D closestPointOnLine(final OTSLine3D line)
+    public final OtsPoint3D closestPointOnLine(final OtsLine3D line)
     {
         return internalClosestPointOnLine(line, false);
     }
@@ -365,7 +365,7 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param line OTSLine3D; the line
      * @return OTSPoint3D; the Z-component of the returned point matches the Z-component of the line at that point
      */
-    public final OTSPoint3D closestPointOnLine2D(final OTSLine3D line)
+    public final OtsPoint3D closestPointOnLine2D(final OtsLine3D line)
     {
         return internalClosestPointOnLine(line, true);
     }
@@ -374,7 +374,7 @@ public class OTSPoint3D implements Locatable, Serializable
      * Return the point with a length of 1 to the origin.
      * @return OTSPoint3D; the normalized point
      */
-    public final OTSPoint3D normalize()
+    public final OtsPoint3D normalize()
     {
         double length = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
         return this.translate(length);
@@ -385,9 +385,9 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param factor double; the translation factor
      * @return OTSPoint3D; the translated point
      */
-    public final OTSPoint3D translate(final double factor)
+    public final OtsPoint3D translate(final double factor)
     {
-        return new OTSPoint3D(this.x / factor, this.y / factor, this.z / factor);
+        return new OtsPoint3D(this.x / factor, this.y / factor, this.z / factor);
     }
 
     /**
@@ -399,10 +399,10 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param radius double; the radius
      * @return List&lt;OTSPoint3D&gt; a list of zero, one or two points
      */
-    public static final List<OTSPoint3D> circleCenter(final OTSPoint3D point1, final OTSPoint3D point2, final double radius)
+    public static final List<OtsPoint3D> circleCenter(final OtsPoint3D point1, final OtsPoint3D point2, final double radius)
     {
-        List<OTSPoint3D> result = new ArrayList<>();
-        OTSPoint3D m = interpolate(0.5, point1, point2);
+        List<OtsPoint3D> result = new ArrayList<>();
+        OtsPoint3D m = interpolate(0.5, point1, point2);
         double h = point1.distanceSI(m);
         if (radius < h) // no intersection
         {
@@ -413,11 +413,11 @@ public class OTSPoint3D implements Locatable, Serializable
             result.add(m);
             return result;
         }
-        OTSPoint3D p = new OTSPoint3D(point2.y - point1.y, point1.x - point2.x).normalize();
+        OtsPoint3D p = new OtsPoint3D(point2.y - point1.y, point1.x - point2.x).normalize();
         double d = Math.sqrt(radius * radius - h * h); // distance of center from m
         d = Math.sqrt(radius * radius - h * h);
-        result.add(new OTSPoint3D(m.x + d * p.x, m.y + d * p.y, m.z));
-        result.add(new OTSPoint3D(m.x - d * p.x, m.y - d * p.y, m.z));
+        result.add(new OtsPoint3D(m.x + d * p.x, m.y + d * p.y, m.z));
+        result.add(new OtsPoint3D(m.x - d * p.x, m.y - d * p.y, m.z));
         return result;
     }
 
@@ -429,11 +429,11 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param radius2 double; the radius of circle 2
      * @return List&lt;OTSPoint3D&gt; a list of zero, one or two points
      */
-    public static final List<OTSPoint3D> circleIntersections(final OTSPoint3D center1, final double radius1,
-            final OTSPoint3D center2, final double radius2)
+    public static final List<OtsPoint3D> circleIntersections(final OtsPoint3D center1, final double radius1,
+            final OtsPoint3D center2, final double radius2)
     {
-        List<OTSPoint3D> center = new ArrayList<>();
-        OTSPoint3D m = interpolate(radius1 / (radius1 + radius2), center1, center2);
+        List<OtsPoint3D> center = new ArrayList<>();
+        OtsPoint3D m = interpolate(radius1 / (radius1 + radius2), center1, center2);
         double h = center1.distanceSI(m);
         if (radius1 < h) // no intersection
         {
@@ -444,10 +444,10 @@ public class OTSPoint3D implements Locatable, Serializable
             center.add(m);
             return center;
         }
-        OTSPoint3D p = new OTSPoint3D(center2.y - center1.y, center1.x - center2.x).normalize();
+        OtsPoint3D p = new OtsPoint3D(center2.y - center1.y, center1.x - center2.x).normalize();
         double d = Math.sqrt(radius1 * radius1 - h * h); // distance of center from m
-        center.add(new OTSPoint3D(m.x + d * p.x, m.y + d * p.y, m.z));
-        center.add(new OTSPoint3D(m.x - d * p.x, m.y - d * p.y, m.z));
+        center.add(new OtsPoint3D(m.x + d * p.x, m.y + d * p.y, m.z));
+        center.add(new OtsPoint3D(m.x - d * p.x, m.y - d * p.y, m.z));
         return center;
     }
 
@@ -455,7 +455,7 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param point OTSPoint3D; the point to which the distance has to be calculated.
      * @return the distance in 3D according to Pythagoras, expressed in the SI unit for length (meter)
      */
-    public final double distanceSI(final OTSPoint3D point)
+    public final double distanceSI(final OtsPoint3D point)
     {
         double dx = point.x - this.x;
         double dy = point.y - this.y;
@@ -468,7 +468,7 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param point OTSPoint3D; the point to which the distance has to be calculated.
      * @return the distance in 3D according to Pythagoras, expressed in the SI unit for length (meter)
      */
-    public final double horizontalDistanceSI(final OTSPoint3D point)
+    public final double horizontalDistanceSI(final OtsPoint3D point)
     {
         double dx = point.x - this.x;
         double dy = point.y - this.y;
@@ -480,7 +480,7 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param point OTSPoint3D; the point to which the distance has to be calculated.
      * @return the distance in 3D according to Pythagoras
      */
-    public final Length horizontalDistance(final OTSPoint3D point)
+    public final Length horizontalDistance(final OtsPoint3D point)
     {
         return new Length(horizontalDistanceSI(point), LengthUnit.SI);
     }
@@ -490,7 +490,7 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param point OTSPoint3D; the point to which the distance has to be calculated.
      * @return the distance in 3D according to Pythagoras
      */
-    public final Length distance(final OTSPoint3D point)
+    public final Length distance(final OtsPoint3D point)
     {
         return new Length(distanceSI(point), LengthUnit.SI);
     }
@@ -500,7 +500,7 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param point OTSPoint3D; the other point
      * @return double; the direction in radians
      */
-    public final double horizontalDirectionSI(final OTSPoint3D point)
+    public final double horizontalDirectionSI(final OtsPoint3D point)
     {
         return Math.atan2(point.y - this.y, point.x - this.x);
     }
@@ -510,7 +510,7 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param point OTSPoint3D; the other point
      * @return double; the direction in radians
      */
-    public final Direction horizontalDirection(final OTSPoint3D point)
+    public final Direction horizontalDirection(final OtsPoint3D point)
     {
         return Direction.instantiateSI(Math.atan2(point.y - this.y, point.x - this.x));
     }
@@ -618,7 +618,7 @@ public class OTSPoint3D implements Locatable, Serializable
             return false;
         if (getClass() != obj.getClass())
             return false;
-        OTSPoint3D other = (OTSPoint3D) obj;
+        OtsPoint3D other = (OtsPoint3D) obj;
         if (Double.doubleToLongBits(this.x) != Double.doubleToLongBits(other.x))
             return false;
         if (Double.doubleToLongBits(this.y) != Double.doubleToLongBits(other.y))

@@ -3,7 +3,7 @@ package org.opentrafficsim.road.network.lane;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
@@ -34,7 +34,7 @@ public class OTSRoadNode extends OTSNode
      * @param direction Direction; driving direction at the node
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
-    public OTSRoadNode(final Network network, final String id, final OTSPoint3D point, final Direction direction)
+    public OTSRoadNode(final Network network, final String id, final OtsPoint3D point, final Direction direction)
             throws NetworkException
     {
         super(network, id, point);
@@ -45,7 +45,7 @@ public class OTSRoadNode extends OTSNode
     @Override
     public final DirectedPoint getLocation()
     {
-        OTSPoint3D p = getPoint();
+        OtsPoint3D p = getPoint();
         return new DirectedPoint(p.x, p.y, p.z, 0, 0, this.direction.si);
     }
 

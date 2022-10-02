@@ -31,8 +31,8 @@ import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -197,20 +197,20 @@ public class NetworksModel extends AbstractOtsModel implements EventListenerInte
             this.strategicalPlannerFactoryTrucks = new LaneBasedStrategicalRoutePlannerFactory(
                     new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()), params);
 
-            OTSPoint3D pFrom2a = new OTSPoint3D(0, -50, 0);
-            OTSPoint3D pFrom2b = new OTSPoint3D(490, -0.5, 0);
+            OtsPoint3D pFrom2a = new OtsPoint3D(0, -50, 0);
+            OtsPoint3D pFrom2b = new OtsPoint3D(490, -0.5, 0);
             Direction onrampDirection = pFrom2a.horizontalDirection(pFrom2b);
-            OTSRoadNode from = new OTSRoadNode(this.network, "From", new OTSPoint3D(0, 0, 0), Direction.ZERO);
-            OTSRoadNode end = new OTSRoadNode(this.network, "End", new OTSPoint3D(2000, 0, 0), Direction.ZERO);
+            OTSRoadNode from = new OTSRoadNode(this.network, "From", new OtsPoint3D(0, 0, 0), Direction.ZERO);
+            OTSRoadNode end = new OTSRoadNode(this.network, "End", new OtsPoint3D(2000, 0, 0), Direction.ZERO);
             OTSRoadNode from2a = new OTSRoadNode(this.network, "From2a", pFrom2a, onrampDirection);
             OTSRoadNode from2b = new OTSRoadNode(this.network, "From2b", pFrom2b, onrampDirection);
-            OTSRoadNode firstVia = new OTSRoadNode(this.network, "Via1", new OTSPoint3D(500, 0, 0), Direction.ZERO);
-            OTSPoint3D pEnd2a = new OTSPoint3D(1020, -0.5, 0);
-            OTSPoint3D pEnd2b = new OTSPoint3D(2000, -50, 0);
+            OTSRoadNode firstVia = new OTSRoadNode(this.network, "Via1", new OtsPoint3D(500, 0, 0), Direction.ZERO);
+            OtsPoint3D pEnd2a = new OtsPoint3D(1020, -0.5, 0);
+            OtsPoint3D pEnd2b = new OtsPoint3D(2000, -50, 0);
             Direction offrampDirection = pEnd2a.horizontalDirection(pEnd2b);
             OTSRoadNode end2a = new OTSRoadNode(this.network, "End2a", pEnd2a, offrampDirection);
             OTSRoadNode end2b = new OTSRoadNode(this.network, "End2b", pEnd2b, offrampDirection);
-            OTSRoadNode secondVia = new OTSRoadNode(this.network, "Via2", new OTSPoint3D(1000, 0, 0), Direction.ZERO);
+            OTSRoadNode secondVia = new OTSRoadNode(this.network, "Via2", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
 
             String networkType = getInputParameter("generic.network").toString();
             boolean merge = networkType.startsWith("M");
@@ -334,7 +334,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListenerInte
                 }
             }
         }
-        catch (SimRuntimeException | NetworkException | OTSGeometryException | InputParameterException | GtuException
+        catch (SimRuntimeException | NetworkException | OtsGeometryException | InputParameterException | GtuException
                 | ParameterException | NamingException | ProbabilityException exception)
         {
             exception.printStackTrace();
@@ -457,9 +457,9 @@ public class NetworksModel extends AbstractOtsModel implements EventListenerInte
      * @param laneType LaneType; the LaneType for cars
      * @return Lane[]; the lanes
      * @throws NetworkException on network inconsistency
-     * @throws OTSGeometryException on problem making the path for a link
+     * @throws OtsGeometryException on problem making the path for a link
      */
-    private Lane[] setupSink(final Lane[] lanes, final LaneType laneType) throws NetworkException, OTSGeometryException
+    private Lane[] setupSink(final Lane[] lanes, final LaneType laneType) throws NetworkException, OtsGeometryException
     {
         CrossSectionLink link = lanes[0].getParentLink();
         OTSRoadNode to = (OTSRoadNode) link.getEndNode();
@@ -467,7 +467,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListenerInte
         double endLinkLength = 50; // [m]
         double endX = to.getPoint().x + (endLinkLength / link.getLength().getSI()) * (to.getPoint().x - from.getPoint().x);
         double endY = to.getPoint().y + (endLinkLength / link.getLength().getSI()) * (to.getPoint().y - from.getPoint().y);
-        OTSRoadNode end = new OTSRoadNode(this.network, link.getId() + "END", new OTSPoint3D(endX, endY, to.getPoint().z),
+        OTSRoadNode end = new OTSRoadNode(this.network, link.getId() + "END", new OtsPoint3D(endX, endY, to.getPoint().z),
                 Direction.instantiateSI(Math.atan2(to.getPoint().y - from.getPoint().y, to.getPoint().x - from.getPoint().x)));
         CrossSectionLink endLink = LaneFactory.makeLink(this.network, link.getId() + "endLink", to, end, null, this.simulator);
         for (Lane lane : lanes)

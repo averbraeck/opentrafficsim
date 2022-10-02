@@ -11,7 +11,7 @@ import org.djutils.logger.CategoryLogger;
 import org.djutils.logger.LogCategory;
 import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.sim0mq.swing.Sim0MQPublisher;
 import org.pmw.tinylog.Level;
@@ -74,7 +74,7 @@ public final class Sim0MQControlledOTSNew
     /**
      * Program entry point.
      * @param args String[]; the command line arguments
-     * @throws OTSGeometryException on error
+     * @throws OtsGeometryException on error
      * @throws NetworkException on error
      * @throws NamingException on error
      * @throws ValueRuntimeException on error
@@ -84,7 +84,7 @@ public final class Sim0MQControlledOTSNew
      * @throws Sim0MQException on error
      * @throws IOException on error
      */
-    public static void main(final String[] args) throws NetworkException, OTSGeometryException, NamingException,
+    public static void main(final String[] args) throws NetworkException, OtsGeometryException, NamingException,
             ValueRuntimeException, ParameterException, SimRuntimeException, Sim0MQException, SerializationException, IOException
     {
         CategoryLogger.setAllLogLevel(Level.WARNING);

@@ -35,7 +35,7 @@ import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -534,7 +534,7 @@ class Sim0MQOTSModel extends AbstractOtsModel
                     getSimulator(), new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)),
                     new LaneCombinationList(), new LaneCombinationList());
         }
-        catch (NetworkException | OTSGeometryException | JAXBException | URISyntaxException | XmlParserException | SAXException
+        catch (NetworkException | OtsGeometryException | JAXBException | URISyntaxException | XmlParserException | SAXException
                 | ParserConfigurationException | GtuException | IOException | TrafficControlException exception)
         {
             exception.printStackTrace();

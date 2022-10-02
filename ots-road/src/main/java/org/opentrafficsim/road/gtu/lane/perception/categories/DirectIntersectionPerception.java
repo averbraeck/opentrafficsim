@@ -10,8 +10,8 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -205,8 +205,8 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                         Length pos2a = otherConflict.getLongitudinalPosition();
                         Length pos1b = Length.min(pos1a.plus(conflict.getLength()), thisLane.getLength());
                         Length pos2b = Length.min(pos2a.plus(otherConflict.getLength()), otherLane.getLength());
-                        OTSLine3D line1 = thisLane.getCenterLine();
-                        OTSLine3D line2 = otherLane.getCenterLine();
+                        OtsLine3D line1 = thisLane.getCenterLine();
+                        OtsLine3D line2 = otherLane.getCenterLine();
                         double dStart = line1.getLocation(pos1a).distance(line2.getLocation(pos2a));
                         double dEnd = line1.getLocation(pos1b).distance(line2.getLocation(pos2b));
                         Length startWidth = Length
@@ -226,7 +226,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                             headwayConflict.setConflictingTrafficLight(trafficLightDistance, conflict.isPermitted());
                         }
                     }
-                    catch (GtuException | OTSGeometryException | ParameterException exception)
+                    catch (GtuException | OtsGeometryException | ParameterException exception)
                     {
                         throw new RuntimeException("Could not create headway objects.", exception);
                     }

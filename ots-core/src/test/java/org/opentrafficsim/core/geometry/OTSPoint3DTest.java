@@ -34,7 +34,7 @@ public class OTSPoint3DTest
     @Test
     public final void constructorsTest()
     {
-        OTSPoint3D previousPoint = null;
+        OtsPoint3D previousPoint = null;
         int previousHashCode = 0;
         double[] values = {Double.NEGATIVE_INFINITY, -99999999, -Math.PI, -1, -0.0000001, 0, 0.0000001, 1, Math.PI, 99999999,
                 Double.MAX_VALUE, Double.POSITIVE_INFINITY};
@@ -44,21 +44,21 @@ public class OTSPoint3DTest
             {
                 for (double z : values)
                 {
-                    OTSPoint3D p = new OTSPoint3D(x, y, z);
+                    OtsPoint3D p = new OtsPoint3D(x, y, z);
                     checkXYZ(p, x, y, z);
-                    checkXYZ(new OTSPoint3D(new double[] {x, y, z}), x, y, z);
-                    checkXYZ(new OTSPoint3D(p), x, y, z);
-                    checkXYZ(new OTSPoint3D(new double[] {x, y}), x, y, 0d);
-                    checkXYZ(new OTSPoint3D(new Point3d(x, y, z)), x, y, z);
-                    checkXYZ(new OTSPoint3D(new CartesianPoint(x, y, z)), x, y, z);
-                    checkXYZ(new OTSPoint3D(new DirectedPoint(x, y, z)), x, y, z);
-                    checkXYZ(new OTSPoint3D(new Point2D.Double(x, y)), x, y, 0d);
-                    checkXYZ(new OTSPoint3D(new Coordinate(x, y)), x, y, 0d);
-                    checkXYZ(new OTSPoint3D(new Coordinate(x, y, Double.NaN)), x, y, 0d);
-                    checkXYZ(new OTSPoint3D(new Coordinate(x, y, z)), x, y, Double.isNaN(z) ? 0d : z);
+                    checkXYZ(new OtsPoint3D(new double[] {x, y, z}), x, y, z);
+                    checkXYZ(new OtsPoint3D(p), x, y, z);
+                    checkXYZ(new OtsPoint3D(new double[] {x, y}), x, y, 0d);
+                    checkXYZ(new OtsPoint3D(new Point3d(x, y, z)), x, y, z);
+                    checkXYZ(new OtsPoint3D(new CartesianPoint(x, y, z)), x, y, z);
+                    checkXYZ(new OtsPoint3D(new DirectedPoint(x, y, z)), x, y, z);
+                    checkXYZ(new OtsPoint3D(new Point2D.Double(x, y)), x, y, 0d);
+                    checkXYZ(new OtsPoint3D(new Coordinate(x, y)), x, y, 0d);
+                    checkXYZ(new OtsPoint3D(new Coordinate(x, y, Double.NaN)), x, y, 0d);
+                    checkXYZ(new OtsPoint3D(new Coordinate(x, y, z)), x, y, Double.isNaN(z) ? 0d : z);
                     GeometryFactory gm = new GeometryFactory();
-                    checkXYZ(new OTSPoint3D(gm.createPoint(new Coordinate(x, y, z))), x, y, 0d);
-                    checkXYZ(new OTSPoint3D(x, y), x, y, 0d);
+                    checkXYZ(new OtsPoint3D(gm.createPoint(new Coordinate(x, y, z))), x, y, 0d);
+                    checkXYZ(new OtsPoint3D(x, y), x, y, 0d);
                     // Also check the getCoordinate method
                     Coordinate c = p.getCoordinate();
                     assertEquals("x value", x, c.x, Math.ulp(x));
@@ -71,7 +71,7 @@ public class OTSPoint3DTest
                     double qX = 100;
                     double qY = 200;
                     double qZ = 300;
-                    OTSPoint3D q = new OTSPoint3D(qX, qY, qZ);
+                    OtsPoint3D q = new OtsPoint3D(qX, qY, qZ);
                     double expectedDistance = Math.sqrt(Math.pow(x - qX, 2) + Math.pow(y - qY, 2) + Math.pow(z - qZ, 2));
                     assertEquals("Distance to q should be " + expectedDistance, expectedDistance, p.distance(q).si,
                             expectedDistance / 99999);
@@ -90,7 +90,7 @@ public class OTSPoint3DTest
                     // Building a set of all seen hash codes and checking against that actually gives a collision!
                     assertFalse("Successively generated points are all different", p.equals(previousPoint));
                     assertTrue("Point is equal to itself", p.equals(p));
-                    assertTrue("Point is equals to duplicate of itself", p.equals(new OTSPoint3D(p)));
+                    assertTrue("Point is equals to duplicate of itself", p.equals(new OtsPoint3D(p)));
                     assertFalse("Point is not equal to some other object", p.equals(s));
                     previousPoint = p;
                 }
@@ -105,7 +105,7 @@ public class OTSPoint3DTest
      * @param expectedY double; the expected y coordinate
      * @param expectedZ double; the expected z coordinate
      */
-    private void checkXYZ(final OTSPoint3D otsPoint3D, final double expectedX, final double expectedY, final double expectedZ)
+    private void checkXYZ(final OtsPoint3D otsPoint3D, final double expectedX, final double expectedY, final double expectedZ)
     {
         assertEquals("x value", expectedX, otsPoint3D.x, Math.ulp(expectedX));
         assertEquals("y value", expectedY, otsPoint3D.y, Math.ulp(expectedY));
@@ -121,11 +121,11 @@ public class OTSPoint3DTest
     @Test
     public final void interpolateTest()
     {
-        OTSPoint3D p0 = new OTSPoint3D(123, 234, 345);
-        OTSPoint3D p1 = new OTSPoint3D(567, 678, 789);
+        OtsPoint3D p0 = new OtsPoint3D(123, 234, 345);
+        OtsPoint3D p1 = new OtsPoint3D(567, 678, 789);
         for (double ratio : new double[] {0, 1, 0.5, 0.1, -10, 10})
         {
-            OTSPoint3D pi = OTSPoint3D.interpolate(ratio, p0, p1);
+            OtsPoint3D pi = OtsPoint3D.interpolate(ratio, p0, p1);
             assertTrue("result of interpolate is not null", null != pi);
             assertEquals("x of interpolate", (1 - ratio) * p0.x + ratio * p1.x, pi.x, 0.00001);
             assertEquals("y of interpolate", (1 - ratio) * p0.y + ratio * p1.y, pi.y, 0.00001);
@@ -135,31 +135,31 @@ public class OTSPoint3DTest
 
     /**
      * Test the closestPointOnLine methods.
-     * @throws OTSGeometryException should not happen; this test has failed if it does
+     * @throws OtsGeometryException should not happen; this test has failed if it does
      */
     @Test
-    public final void closestPointTest() throws OTSGeometryException
+    public final void closestPointTest() throws OtsGeometryException
     {
         // Approximate a spiral centered on 0,0 with increasing Z
         final int numPoints = 100;
         final double growthPerRevolution = 5;
         final double heightGainPerPoint = 10;
         final double pointsPerRevolution = 15;
-        OTSPoint3D[] spiralPoints = new OTSPoint3D[numPoints];
+        OtsPoint3D[] spiralPoints = new OtsPoint3D[numPoints];
         final double rotationPerPoint = 2 * Math.PI / pointsPerRevolution;
         final double maxRevolution = 1.0 * numPoints / pointsPerRevolution;
         for (int i = 0; i < numPoints; i++)
         {
             double radius = i * growthPerRevolution / pointsPerRevolution;
-            spiralPoints[i] = new OTSPoint3D(radius * Math.cos(i * rotationPerPoint), radius * Math.sin(i * rotationPerPoint),
+            spiralPoints[i] = new OtsPoint3D(radius * Math.cos(i * rotationPerPoint), radius * Math.sin(i * rotationPerPoint),
                     i * heightGainPerPoint);
         }
-        OTSLine3D line = new OTSLine3D(spiralPoints);
+        OtsLine3D line = new OtsLine3D(spiralPoints);
         // System.out.println("line is " + line);
         for (double x = 0; x < maxRevolution * growthPerRevolution; x += growthPerRevolution)
         {
-            OTSPoint3D point = new OTSPoint3D(x, 0, 0);
-            OTSPoint3D result = point.closestPointOnLine2D(line);
+            OtsPoint3D point = new OtsPoint3D(x, 0, 0);
+            OtsPoint3D result = point.closestPointOnLine2D(line);
             // System.out.printf("2D x=%.2f, point=%s, result=%s\n", x, point, result);
             assertEquals("distance to spiral is 0", 0, point.horizontalDistanceSI(result), 0.0001);
             result = point.closestPointOnLine(line);
@@ -187,35 +187,35 @@ public class OTSPoint3DTest
             {
                 for (double rotation = 0; rotation < 2 * Math.PI; rotation += 0.5)
                 {
-                    OTSPoint3D p1 = makeRotatedTranslatedPoint(new OTSPoint3D(-2, 0, 100 * (doubleRandom.nextDouble() - 0.5)),
+                    OtsPoint3D p1 = makeRotatedTranslatedPoint(new OtsPoint3D(-2, 0, 100 * (doubleRandom.nextDouble() - 0.5)),
                             rotation, xTranslation, yTranslation);
-                    OTSPoint3D p2 = makeRotatedTranslatedPoint(new OTSPoint3D(2, 0, 100 * (doubleRandom.nextDouble() - 0.5)),
+                    OtsPoint3D p2 = makeRotatedTranslatedPoint(new OtsPoint3D(2, 0, 100 * (doubleRandom.nextDouble() - 0.5)),
                             rotation, xTranslation, yTranslation);
-                    OTSPoint3D q1 = makeRotatedTranslatedPoint(new OTSPoint3D(0, 10, 100 * (doubleRandom.nextDouble() - 0.5)),
+                    OtsPoint3D q1 = makeRotatedTranslatedPoint(new OtsPoint3D(0, 10, 100 * (doubleRandom.nextDouble() - 0.5)),
                             rotation, xTranslation, yTranslation);
 
                     for (int x = -4; x <= 4; x++)
                     {
-                        OTSPoint3D q2 =
-                                makeRotatedTranslatedPoint(new OTSPoint3D(x, -1, 100 * (doubleRandom.nextDouble() - 0.5)),
+                        OtsPoint3D q2 =
+                                makeRotatedTranslatedPoint(new OtsPoint3D(x, -1, 100 * (doubleRandom.nextDouble() - 0.5)),
                                         rotation, xTranslation, yTranslation);
                         boolean shouldBeNull = x < -2 || x > 2;
-                        checkIntersection(shouldBeNull, OTSPoint3D.intersectionOfLineSegments(p1, p2, q1, q2));
+                        checkIntersection(shouldBeNull, OtsPoint3D.intersectionOfLineSegments(p1, p2, q1, q2));
                         // reverse order of q
-                        checkIntersection(shouldBeNull, OTSPoint3D.intersectionOfLineSegments(p1, p2, q2, q1));
+                        checkIntersection(shouldBeNull, OtsPoint3D.intersectionOfLineSegments(p1, p2, q2, q1));
                         // reverse order of p
-                        checkIntersection(shouldBeNull, OTSPoint3D.intersectionOfLineSegments(p2, p1, q1, q2));
+                        checkIntersection(shouldBeNull, OtsPoint3D.intersectionOfLineSegments(p2, p1, q1, q2));
                         // reverse order of both p and q
-                        checkIntersection(shouldBeNull, OTSPoint3D.intersectionOfLineSegments(p2, p1, q2, q1));
-                        q2 = makeRotatedTranslatedPoint(new OTSPoint3D(x, 1, 100 * (doubleRandom.nextDouble() - 0.5)), rotation,
+                        checkIntersection(shouldBeNull, OtsPoint3D.intersectionOfLineSegments(p2, p1, q2, q1));
+                        q2 = makeRotatedTranslatedPoint(new OtsPoint3D(x, 1, 100 * (doubleRandom.nextDouble() - 0.5)), rotation,
                                 xTranslation, yTranslation);
-                        checkIntersection(true, OTSPoint3D.intersectionOfLineSegments(p1, p2, q1, q2));
+                        checkIntersection(true, OtsPoint3D.intersectionOfLineSegments(p1, p2, q1, q2));
                         // reverse order of q
-                        checkIntersection(true, OTSPoint3D.intersectionOfLineSegments(p1, p2, q2, q1));
+                        checkIntersection(true, OtsPoint3D.intersectionOfLineSegments(p1, p2, q2, q1));
                         // reverse order of p
-                        checkIntersection(true, OTSPoint3D.intersectionOfLineSegments(p2, p1, q1, q2));
+                        checkIntersection(true, OtsPoint3D.intersectionOfLineSegments(p2, p1, q1, q2));
                         // reverse order of both p and q
-                        checkIntersection(true, OTSPoint3D.intersectionOfLineSegments(p2, p1, q2, q1));
+                        checkIntersection(true, OtsPoint3D.intersectionOfLineSegments(p2, p1, q2, q1));
                     }
                 }
             }
@@ -230,11 +230,11 @@ public class OTSPoint3DTest
      * @param dY double; translation along Y direction
      * @return OTSPoint3D
      */
-    private OTSPoint3D makeRotatedTranslatedPoint(final OTSPoint3D p, final double rotation, final double dX, final double dY)
+    private OtsPoint3D makeRotatedTranslatedPoint(final OtsPoint3D p, final double rotation, final double dX, final double dY)
     {
         double sin = Math.sin(rotation);
         double cos = Math.cos(rotation);
-        return new OTSPoint3D((p.x * cos + p.y * sin) + dX, (p.y * cos - p.x * cos) + dY, p.z);
+        return new OtsPoint3D((p.x * cos + p.y * sin) + dX, (p.y * cos - p.x * cos) + dY, p.z);
     }
 
     /**
@@ -242,7 +242,7 @@ public class OTSPoint3DTest
      * @param expectNull boolean; if true; the other parameter should be null; if false; the other parameter should be true
      * @param point OTSPoint3D; an OTSPoint3D or null
      */
-    private void checkIntersection(final boolean expectNull, final OTSPoint3D point)
+    private void checkIntersection(final boolean expectNull, final OtsPoint3D point)
     {
         if (expectNull)
         {
@@ -268,8 +268,8 @@ public class OTSPoint3DTest
     @Test
     public void directionTest()
     {
-        for (OTSPoint3D reference : new OTSPoint3D[] {new OTSPoint3D(0, 0, 0), new OTSPoint3D(100, 200, 300),
-                new OTSPoint3D(-50, -80, 20)})
+        for (OtsPoint3D reference : new OtsPoint3D[] {new OtsPoint3D(0, 0, 0), new OtsPoint3D(100, 200, 300),
+                new OtsPoint3D(-50, -80, 20)})
         {
             for (double actualDirectionDegrees : new double[] {0, 0.1, 10, 30, 89, 90, 91, 150, 179, 181, 269, 271, 359})
             {
@@ -278,7 +278,7 @@ public class OTSPoint3DTest
                 {
                     for (double dZ : new double[] {0, 123, 98766, -876})
                     {
-                        OTSPoint3D other = new OTSPoint3D(reference.x + Math.cos(actualDirectionRadians) * actualDistance,
+                        OtsPoint3D other = new OtsPoint3D(reference.x + Math.cos(actualDirectionRadians) * actualDistance,
                                 reference.y + Math.sin(actualDirectionRadians) * actualDistance, reference.z + dZ);
                         double angle = reference.horizontalDirectionSI(other);
                         double angle2 = reference.horizontalDirection(other).si;
@@ -304,14 +304,14 @@ public class OTSPoint3DTest
     @Test
     public void circleCenterTest()
     {
-        OTSPoint3D p1 = new OTSPoint3D(1, 0, 0);
-        OTSPoint3D p2 = new OTSPoint3D(-1, 0, 0);
-        assertEquals("Radius too short returns empty list", 0, OTSPoint3D.circleCenter(p1, p2, 0.999).size());
-        List<OTSPoint3D> list = OTSPoint3D.circleCenter(p1, p2, 1);
+        OtsPoint3D p1 = new OtsPoint3D(1, 0, 0);
+        OtsPoint3D p2 = new OtsPoint3D(-1, 0, 0);
+        assertEquals("Radius too short returns empty list", 0, OtsPoint3D.circleCenter(p1, p2, 0.999).size());
+        List<OtsPoint3D> list = OtsPoint3D.circleCenter(p1, p2, 1);
         assertEquals("Radius exactly right and nice integer coordinates returns list with one point", 1, list.size());
         // Now try it with less neat values (but don't expect to get a list of one point)
-        for (OTSPoint3D reference : new OTSPoint3D[] {new OTSPoint3D(0, 0, 0), new OTSPoint3D(100, 200, 300),
-                new OTSPoint3D(-50, -80, 20)})
+        for (OtsPoint3D reference : new OtsPoint3D[] {new OtsPoint3D(0, 0, 0), new OtsPoint3D(100, 200, 300),
+                new OtsPoint3D(-50, -80, 20)})
         {
             for (double actualDirectionDegrees : new double[] {0, 0.1, 10, 30, 89, 90, 91, 150, 179, 181, 269, 271, 359})
             {
@@ -320,16 +320,16 @@ public class OTSPoint3DTest
                 {
                     for (double dZ : new double[] {0, 123, -876})
                     {
-                        OTSPoint3D other = new OTSPoint3D(reference.x + Math.cos(actualDirectionRadians) * horizontalDistance,
+                        OtsPoint3D other = new OtsPoint3D(reference.x + Math.cos(actualDirectionRadians) * horizontalDistance,
                                 reference.y + Math.sin(actualDirectionRadians) * horizontalDistance, reference.z + dZ);
                         double actualDistance = reference.distanceSI(other);
-                        list = OTSPoint3D.circleCenter(reference, other, actualDistance * 0.499);
+                        list = OtsPoint3D.circleCenter(reference, other, actualDistance * 0.499);
                         assertEquals("Radius too short returns empty list", 0, list.size());
                         System.out.println(String.format("actualDistance=%f", actualDistance));
                         double factor = Math.sqrt(0.5);
-                        list = OTSPoint3D.circleCenter(reference, other, actualDistance * factor);
+                        list = OtsPoint3D.circleCenter(reference, other, actualDistance * factor);
                         assertEquals("Radius slightly larger returns list with 2 elements", 2, list.size());
-                        for (OTSPoint3D p : list)
+                        for (OtsPoint3D p : list)
                         {
                             System.out.println(String.format("ref=%s, oth=%s p=%s, distance should be %f, got %f", reference,
                                     other, p, actualDistance * factor, reference.distanceSI(p)));
@@ -353,14 +353,14 @@ public class OTSPoint3DTest
     @Test
     public void circleIntersectionsTest()
     {
-        OTSPoint3D c1 = new OTSPoint3D(10, 20, 30);
-        OTSPoint3D c2 = new OTSPoint3D(20, 10, 0);
+        OtsPoint3D c1 = new OtsPoint3D(10, 20, 30);
+        OtsPoint3D c2 = new OtsPoint3D(20, 10, 0);
         double centerDistance = c1.distanceSI(c2);
         for (int r1 = 0; r1 < 50; r1++)
         {
             for (int r2 = 0; r2 < 50; r2++)
             {
-                List<OTSPoint3D> intersections = OTSPoint3D.circleIntersections(c1, r1, c2, r2);
+                List<OtsPoint3D> intersections = OtsPoint3D.circleIntersections(c1, r1, c2, r2);
                 if (centerDistance < r1 + r2)
                 {
                     // TODO (this fails) assertEquals("There should be 0 intersections", 0, intersections.size());
@@ -375,7 +375,7 @@ public class OTSPoint3DTest
                         {
                             System.out.println("  result " + index + ": " + intersections.get(index));
                         }
-                        OTSPoint3D.circleIntersections(c1, r1, c2, r2);
+                        OtsPoint3D.circleIntersections(c1, r1, c2, r2);
                     }
                     // TODO (this fails) assertEquals("There should be 2 intersections", 2, intersections.size());
                 }

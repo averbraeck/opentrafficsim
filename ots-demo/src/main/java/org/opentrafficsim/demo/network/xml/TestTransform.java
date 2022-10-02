@@ -4,8 +4,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSShape;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsShape;
 
 /**
  * <p>
@@ -27,9 +27,9 @@ public class TestTransform
 
     /**
      * @param args a
-     * @throws OTSGeometryException on error
+     * @throws OtsGeometryException on error
      */
-    public static void main(String[] args) throws OTSGeometryException
+    public static void main(String[] args) throws OtsGeometryException
     {
         double x = 200;
         double y = 300;
@@ -41,7 +41,7 @@ public class TestTransform
         t.translate(x, y);
         t.rotate(Math.toRadians(45));
         path.transform(t);
-        OTSShape s = new OTSShape(path);
+        OtsShape s = new OtsShape(path);
         System.out.println(s);
     }
 

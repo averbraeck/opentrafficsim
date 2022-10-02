@@ -41,8 +41,8 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -131,12 +131,12 @@ public class LaneChangeGraph extends JFrame implements OtsModelInterface, UNITS
      * @throws SimRuntimeException on ???
      * @throws NetworkException on network inconsistency
      * @throws NamingException on ???
-     * @throws OTSGeometryException x
+     * @throws OtsGeometryException x
      * @throws ParameterException in case of a parameter problem.
      * @throws OperationalPlanException x
      */
     public static void main(final String[] args) throws NamingException, NetworkException, SimRuntimeException, GtuException,
-            OTSGeometryException, ParameterException, OperationalPlanException
+            OtsGeometryException, ParameterException, OperationalPlanException
     {
         try
         {
@@ -261,13 +261,13 @@ public class LaneChangeGraph extends JFrame implements OtsModelInterface, UNITS
      * @throws NetworkException on network inconsistency
      * @throws SimRuntimeException on ???
      * @throws GtuException on error during GTU construction
-     * @throws OTSGeometryException x
+     * @throws OtsGeometryException x
      * @throws ParameterException in case of a parameter problem.
      * @throws OperationalPlanException x
      */
     private Length findDecisionPoint(final Length minHeadway, final Length maxHeadway, final Speed referenceSpeed,
             final Speed speedDifference, final LaneChangeModel laneChangeModel, final boolean mergeRight)
-            throws NamingException, NetworkException, SimRuntimeException, GtuException, OTSGeometryException,
+            throws NamingException, NetworkException, SimRuntimeException, GtuException, OtsGeometryException,
             ParameterException, OperationalPlanException
     {
         Length high = maxHeadway;
@@ -284,8 +284,8 @@ public class LaneChangeGraph extends JFrame implements OtsModelInterface, UNITS
         final Speed speedLimit = new Speed(120, KM_PER_HOUR);
 
         Lane[] lanes = LaneFactory.makeMultiLane(this.network, "Road with two lanes",
-                new OTSRoadNode(this.network, "From", new OTSPoint3D(LOWERBOUND.getSI(), 0, 0), Direction.ZERO),
-                new OTSRoadNode(this.network, "To", new OTSPoint3D(UPPERBOUND.getSI(), 0, 0), Direction.ZERO), null, 2,
+                new OTSRoadNode(this.network, "From", new OtsPoint3D(LOWERBOUND.getSI(), 0, 0), Direction.ZERO),
+                new OTSRoadNode(this.network, "To", new OtsPoint3D(UPPERBOUND.getSI(), 0, 0), Direction.ZERO), null, 2,
                 laneType, speedLimit, simulator);
 
         // Create the reference vehicle
@@ -363,14 +363,14 @@ public class LaneChangeGraph extends JFrame implements OtsModelInterface, UNITS
      * @throws SimRuntimeException on ???
      * @throws NetworkException on network inconsistency
      * @throws GtuException on error during GTU construction
-     * @throws OTSGeometryException when the initial position is outside the lane's center line
+     * @throws OtsGeometryException when the initial position is outside the lane's center line
      * @throws ParameterException in case of a parameter problem.
      * @throws OperationalPlanException x
      */
     private LaneMovementStep computeLaneChange(final LaneBasedIndividualGtu referenceCar,
             final Collection<Headway> sameLaneGTUs, final Speed speedLimit, final LaneChangeModel laneChangeModel,
             final Length otherCarPosition, final Lane otherCarLane, final Speed deltaV, final boolean mergeRight)
-            throws NamingException, NetworkException, SimRuntimeException, GtuException, OTSGeometryException,
+            throws NamingException, NetworkException, SimRuntimeException, GtuException, OtsGeometryException,
             ParameterException, OperationalPlanException
     {
         Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
