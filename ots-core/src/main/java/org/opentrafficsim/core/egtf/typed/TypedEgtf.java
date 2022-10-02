@@ -25,13 +25,13 @@ import org.opentrafficsim.core.egtf.Quantity;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class TypedEGTF extends Egtf
+public class TypedEgtf extends Egtf
 {
 
     /**
      * Constructor using cCong = -18km/h, cFree = 80km/h, deltaV = 10km/h and vc = 80km/h. A default kernel is set.
      */
-    public TypedEGTF()
+    public TypedEgtf()
     {
     }
 
@@ -42,7 +42,7 @@ public class TypedEGTF extends Egtf
      * @param deltaV Speed; speed range between congestion and free flow
      * @param vc Speed; flip-over speed below which we have congestion
      */
-    public TypedEGTF(final Speed cCong, final Speed cFree, final Speed deltaV, final Speed vc)
+    public TypedEgtf(final Speed cCong, final Speed cFree, final Speed deltaV, final Speed vc)
     {
         super(cCong.getInUnit(SpeedUnit.KM_PER_HOUR), cFree.getInUnit(SpeedUnit.KM_PER_HOUR),
                 deltaV.getInUnit(SpeedUnit.KM_PER_HOUR), vc.getInUnit(SpeedUnit.KM_PER_HOUR));
@@ -60,7 +60,7 @@ public class TypedEGTF extends Egtf
      * @param tMax Duration; maximum temporal range
      */
     @SuppressWarnings("parameternumber")
-    public TypedEGTF(final Speed cCong, final Speed cFree, final Speed deltaV, final Speed vc, final Length sigma,
+    public TypedEgtf(final Speed cCong, final Speed cFree, final Speed deltaV, final Speed vc, final Length sigma,
             final Duration tau, final Length xMax, final Duration tMax)
     {
         super(cCong.getInUnit(SpeedUnit.KM_PER_HOUR), cFree.getInUnit(SpeedUnit.KM_PER_HOUR),
