@@ -4,9 +4,9 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.bounds.Bounds2d;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 
 import nl.tudelft.simulation.dsol.jetty.sse.OTSWebServer;
@@ -28,7 +28,7 @@ public class CircularModelWeb extends OTSWebServer
      * @param model the model
      * @throws Exception on jetty error
      */
-    public CircularModelWeb(final String title, final OTSSimulatorInterface simulator, final OTSModelInterface model)
+    public CircularModelWeb(final String title, final OtsSimulatorInterface simulator, final OtsModelInterface model)
             throws Exception
     {
         super(title, simulator, new Bounds2d(-200, 200, -200, 200));
@@ -42,7 +42,7 @@ public class CircularModelWeb extends OTSWebServer
      */
     public static void main(final String[] args) throws Exception
     {
-        OTSAnimator simulator = new OTSAnimator("CircularModelWeb");
+        OtsAnimator simulator = new OtsAnimator("CircularModelWeb");
         simulator.setAnimation(false);
         CircularRoadModel model = new CircularRoadModel(simulator);
         if (TabbedParameterDialog.process(model.getInputParameterMap()))

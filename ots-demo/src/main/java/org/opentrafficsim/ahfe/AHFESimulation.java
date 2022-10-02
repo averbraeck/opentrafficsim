@@ -19,11 +19,11 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.AbstractOTSSimulationApplication;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.AbstractOtsSimulationApplication;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsSimulator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.AbstractGtu;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiLane;
@@ -49,7 +49,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class AHFESimulation extends AbstractOTSSimulationApplication
+public class AHFESimulation extends AbstractOtsSimulationApplication
 {
     /** Warm-up time. */
     static final Time WARMUP = Time.instantiateSI(360);
@@ -69,7 +69,7 @@ public class AHFESimulation extends AbstractOTSSimulationApplication
     /**
      * @param model OTSModelInterface; the model
      */
-    public AHFESimulation(final OTSModelInterface model)
+    public AHFESimulation(final OtsModelInterface model)
     {
         super(model);
     }
@@ -280,7 +280,7 @@ public class AHFESimulation extends AbstractOTSSimulationApplication
             {
                 try
                 {
-                    OTSSimulator simulator = new OTSSimulator("AHFESimulation");
+                    OtsSimulator simulator = new OtsSimulator("AHFESimulation");
                     final AHFEModel ahfeModel = new AHFEModel(simulator, finalReplication, finalAnticipationStrategy,
                             finalReactionTime, finalAnticipationTime, finalTruckFraction, finalDistanceError, finalSpeedError,
                             finalAccelerationError, finalLeftDemand, finalRightDemand, finalLeftFraction);
@@ -387,7 +387,7 @@ public class AHFESimulation extends AbstractOTSSimulationApplication
     /**
      * The AHFE simulation model.
      */
-    static class AHFEModel extends AbstractOTSModel
+    static class AHFEModel extends AbstractOtsModel
     {
         /** */
         private static final long serialVersionUID = 20170228L;
@@ -446,7 +446,7 @@ public class AHFESimulation extends AbstractOTSSimulationApplication
          * @param leftDemand Frequency; left fraction, per road
          */
         @SuppressWarnings("checkstyle:parameternumber")
-        AHFEModel(final OTSSimulatorInterface simulator, final Integer replication, final String anticipationStrategy,
+        AHFEModel(final OtsSimulatorInterface simulator, final Integer replication, final String anticipationStrategy,
                 final Duration reactionTime, final Duration anticipationTime, final double truckFraction,
                 final double distanceError, final double speedError, final double accelerationError, final Frequency leftDemand,
                 final Frequency rightDemand, final double leftFraction)

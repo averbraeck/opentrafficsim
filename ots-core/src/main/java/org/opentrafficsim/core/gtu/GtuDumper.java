@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.network.OTSNetwork;
 
@@ -59,7 +59,7 @@ public class GtuDumper
     private final String fileNamePrefix;
 
     /** The simulator. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /**
      * Construct a new GTUDumper.

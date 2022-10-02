@@ -16,10 +16,10 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsSimulator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -57,8 +57,8 @@ public class SensorTest implements UNITS
     public final void sensorTest() throws Exception
     {
         // We need a simulator, but for that we first need something that implements OTSModelInterface
-        OTSSimulatorInterface simulator = new OTSSimulator("SensorTest");
-        OTSModelInterface model = new DummyModelForSensorTest(simulator);
+        OtsSimulatorInterface simulator = new OtsSimulator("SensorTest");
+        OtsModelInterface model = new DummyModelForSensorTest(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         OTSRoadNetwork network = new OTSRoadNetwork("sensor test network", true, simulator);
         // Now we need a set of Lanes
@@ -164,7 +164,7 @@ class TriggerSensor extends AbstractSensor
      * @throws NetworkException in case position is out of bounds
      */
     TriggerSensor(final Lane lane, final Length longitudinalPosition, final RelativePosition.TYPE positionType,
-            final String name, final OTSSimulatorInterface simulator) throws NetworkException
+            final String name, final OtsSimulatorInterface simulator) throws NetworkException
     {
         super(name, lane, longitudinalPosition, positionType, simulator, Compatible.EVERYTHING);
     }
@@ -186,7 +186,7 @@ class TriggerSensor extends AbstractSensor
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-class DummyModelForSensorTest extends AbstractOTSModel
+class DummyModelForSensorTest extends AbstractOtsModel
 {
     /** */
     private static final long serialVersionUID = 20150114L;
@@ -194,7 +194,7 @@ class DummyModelForSensorTest extends AbstractOTSModel
     /**
      * @param simulator the simulator to use
      */
-    DummyModelForSensorTest(final OTSSimulatorInterface simulator)
+    DummyModelForSensorTest(final OtsSimulatorInterface simulator)
     {
         super(simulator);
     }

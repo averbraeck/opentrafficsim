@@ -4,7 +4,7 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -26,13 +26,13 @@ public class BusStopConflictRule implements ConflictRule
 {
 
     /** Simulator. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /**
      * Constructor.
      * @param simulator OTSSimulatorInterface; simulator
      */
-    public BusStopConflictRule(final OTSSimulatorInterface simulator)
+    public BusStopConflictRule(final OtsSimulatorInterface simulator)
     {
         this.simulator = simulator;
     }

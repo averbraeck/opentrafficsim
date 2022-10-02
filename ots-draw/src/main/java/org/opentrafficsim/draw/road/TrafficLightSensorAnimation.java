@@ -10,7 +10,7 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -47,7 +47,7 @@ public class TrafficLightSensorAnimation extends Renderable2D<TrafficLightSensor
      * @throws RemoteException in case of remote registration failure of the animation
      * @throws OTSGeometryException when the geometry is bad
      */
-    public TrafficLightSensorAnimation(final TrafficLightSensor sensor, final OTSSimulatorInterface simulator)
+    public TrafficLightSensorAnimation(final TrafficLightSensor sensor, final OtsSimulatorInterface simulator)
             throws NamingException, RemoteException, OTSGeometryException
     {
         super(sensor, simulator);

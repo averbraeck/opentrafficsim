@@ -3,7 +3,7 @@ package org.opentrafficsim.road.network.lane.object.sensor;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -32,7 +32,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
     private final RelativePosition.TYPE positionType;
 
     /** The simulator for being able to generate an animation. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /** The GTU types and driving directions that this sensor will trigger on. */
     private final Compatible detectedGtuTypes;
@@ -53,7 +53,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractSensor(final String id, final Lane lane, final Length longitudinalPosition,
-            final RelativePosition.TYPE positionType, final OTSSimulatorInterface simulator, final OTSLine3D geometry,
+            final RelativePosition.TYPE positionType, final OtsSimulatorInterface simulator, final OTSLine3D geometry,
             final Length elevation, final Compatible detectedGtuTypes) throws NetworkException
     {
         super(id, lane, longitudinalPosition, geometry, elevation);
@@ -83,7 +83,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public AbstractSensor(final String id, final Lane lane, final Length longitudinalPosition,
-            final RelativePosition.TYPE positionType, final OTSSimulatorInterface simulator, final OTSLine3D geometry,
+            final RelativePosition.TYPE positionType, final OtsSimulatorInterface simulator, final OTSLine3D geometry,
             final Compatible detectedGtuTypes) throws NetworkException
     {
         this(id, lane, longitudinalPosition, positionType, simulator, geometry, DEFAULT_SENSOR_ELEVATION, detectedGtuTypes);
@@ -103,7 +103,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public AbstractSensor(final String id, final Lane lane, final Length longitudinalPosition,
-            final RelativePosition.TYPE positionType, final OTSSimulatorInterface simulator, final Compatible detectedGtuTypes)
+            final RelativePosition.TYPE positionType, final OtsSimulatorInterface simulator, final Compatible detectedGtuTypes)
             throws NetworkException
     {
         this(id, lane, longitudinalPosition, positionType, simulator, makeGeometry(lane, longitudinalPosition, 0.9),
@@ -160,7 +160,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
 
     /** {@inheritDoc} */
     @Override
-    public final OTSSimulatorInterface getSimulator()
+    public final OtsSimulatorInterface getSimulator()
     {
         return this.simulator;
     }

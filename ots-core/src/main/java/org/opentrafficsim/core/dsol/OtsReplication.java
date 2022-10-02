@@ -16,7 +16,7 @@ import nl.tudelft.simulation.dsol.experiment.SingleReplication;
  * <p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  */
-public class OTSReplication extends SingleReplication<Duration>
+public class OtsReplication extends SingleReplication<Duration>
 {
     /** History manager. */
     private HistoryManager historyManager;
@@ -32,7 +32,7 @@ public class OTSReplication extends SingleReplication<Duration>
      * @param runLength Duration; the run length of the new OTSReplication
      * @throws NamingException when the context for the replication cannot be created
      */
-    public OTSReplication(final String id, final Time startTime, final Duration warmupPeriod, final Duration runLength)
+    public OtsReplication(final String id, final Time startTime, final Duration warmupPeriod, final Duration runLength)
             throws NamingException
     {
         super(id, Duration.ZERO, warmupPeriod, runLength);
@@ -45,7 +45,7 @@ public class OTSReplication extends SingleReplication<Duration>
      * @param simulator OTSSimulatorInterface; simulator
      * @return HistoryManager; history manager
      */
-    public HistoryManager getHistoryManager(final OTSSimulatorInterface simulator)
+    public HistoryManager getHistoryManager(final OtsSimulatorInterface simulator)
     {
         if (this.historyManager == null)
         {

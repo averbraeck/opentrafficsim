@@ -4,7 +4,7 @@ import java.awt.Color;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.value.vdouble.scalar.Frequency;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.draw.core.BoundsPaintScale;
 import org.opentrafficsim.draw.graphs.ContourDataSource.ContourDataType;
 
@@ -27,7 +27,7 @@ public class ContourPlotFlow extends AbstractContourPlot<Frequency>
      * @param simulator OTSSimulatorInterface; simulator
      * @param dataPool ContourDataSource&lt;?&gt;; data pool
      */
-    public ContourPlotFlow(final String caption, final OTSSimulatorInterface simulator, final ContourDataSource<?> dataPool)
+    public ContourPlotFlow(final String caption, final OtsSimulatorInterface simulator, final ContourDataSource<?> dataPool)
     {
         super(caption, simulator, dataPool, createPaintScale(), new Frequency(500.0, FrequencyUnit.PER_HOUR), "%.0f/h",
                 "flow %.1f veh/h");

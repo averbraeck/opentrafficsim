@@ -25,9 +25,9 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsSimulator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.road.DefaultTestParameters;
@@ -71,7 +71,7 @@ public class GtuFollowingModelTest implements UNITS
      */
     private void gtuFollowingModelTests(final GtuFollowingModelOld gtuFollowingModel) throws Exception
     {
-        OTSSimulatorInterface simulator = new OTSSimulator("GtuFollowingModelTest");
+        OtsSimulatorInterface simulator = new OtsSimulator("GtuFollowingModelTest");
         OTSRoadNetwork network = new OTSRoadNetwork("gtu following test network", true, simulator);
         Model model = new Model(simulator, network);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
@@ -343,7 +343,7 @@ public class GtuFollowingModelTest implements UNITS
     }
 
     /** The helper model. */
-    protected static class Model extends AbstractOTSModel
+    protected static class Model extends AbstractOtsModel
     {
         /** */
         private static final long serialVersionUID = 20141027L;
@@ -355,7 +355,7 @@ public class GtuFollowingModelTest implements UNITS
          * @param simulator the simulator to use
          * @param network the network
          */
-        public Model(final OTSSimulatorInterface simulator, final OTSRoadNetwork network)
+        public Model(final OtsSimulatorInterface simulator, final OTSRoadNetwork network)
         {
             super(simulator);
             this.network = network;

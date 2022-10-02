@@ -13,9 +13,9 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.demo.conflict.TestNetworkDemo.TestNetworkModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
@@ -74,7 +74,7 @@ public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator("TestNetworkDemo");
+            OtsAnimator simulator = new OtsAnimator("TestNetworkDemo");
             final TestNetworkModel networkModel = new TestNetworkModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), networkModel);
             OTSAnimationPanel animationPanel =
@@ -93,7 +93,7 @@ public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
     /**
      * The simulation model.
      */
-    static class TestNetworkModel extends AbstractOTSModel
+    static class TestNetworkModel extends AbstractOtsModel
     {
 
         /** */
@@ -105,7 +105,7 @@ public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
         /**
          * @param simulator OTSSimulatorInterface; the simulator for this model
          */
-        TestNetworkModel(final OTSSimulatorInterface simulator)
+        TestNetworkModel(final OtsSimulatorInterface simulator)
         {
             super(simulator);
         }

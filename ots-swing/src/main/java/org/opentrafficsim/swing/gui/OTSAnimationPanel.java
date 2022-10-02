@@ -43,9 +43,9 @@ import org.djutils.event.EventListenerInterface;
 import org.djutils.event.TimedEvent;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -156,8 +156,8 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      * @throws RemoteException when notification of the animation panel fails
      * @throws DSOLException when simulator does not implement AnimatorInterface
      */
-    public OTSAnimationPanel(final Rectangle2D extent, final Dimension size, final OTSAnimator simulator,
-            final OTSModelInterface otsModel, final GtuColorer gtuColorer, final OTSNetwork network)
+    public OTSAnimationPanel(final Rectangle2D extent, final Dimension size, final OtsAnimator simulator,
+            final OtsModelInterface otsModel, final GtuColorer gtuColorer, final OTSNetwork network)
             throws RemoteException, DSOLException
     {
         super(simulator, otsModel);
@@ -880,7 +880,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
          * @throws RemoteException on remote animation error
          * @throws DSOLException when simulator does not implement AnimatorInterface
          */
-        AutoAnimationPanel(final Rectangle2D extent, final Dimension size, final OTSSimulatorInterface simulator,
+        AutoAnimationPanel(final Rectangle2D extent, final Dimension size, final OtsSimulatorInterface simulator,
                 final OTSNetwork network) throws RemoteException, DSOLException
         {
             super(new Bounds2d(extent.getMinX(), extent.getMaxX(), extent.getMinY(), extent.getMaxY()), simulator);

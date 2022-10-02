@@ -32,9 +32,9 @@ import org.djutils.decoderdumper.HexDumper;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -145,8 +145,8 @@ public final class Sim0MQPublisher
         this.network = preloadedSimulation.getNetwork();
         this.model = new Sim0MQOTSModel("Remotely controlled OTS model", this.network, null);
         this.publisher = new Publisher(this.network, additionalSubscriptionHandlers, incomingDataHandlers);
-        ((OTSAnimator) preloadedSimulation.getSimulator()).setSpeedFactor(Double.MAX_VALUE, true);
-        ((OTSAnimator) preloadedSimulation.getSimulator()).setSpeedFactor(1000.0, true);
+        ((OtsAnimator) preloadedSimulation.getSimulator()).setSpeedFactor(Double.MAX_VALUE, true);
+        ((OtsAnimator) preloadedSimulation.getSimulator()).setSpeedFactor(1000.0, true);
         pollingLoop(socket, socket);
         System.exit(0);
     }
@@ -238,7 +238,7 @@ public final class Sim0MQPublisher
     {
         try
         {
-            OTSAnimator animator = new OTSAnimator("OTS Animator");
+            OtsAnimator animator = new OtsAnimator("OTS Animator");
             this.network = new OTSRoadNetwork("OTS model for Sim0MQPublisher", true, animator);
             this.model = new Sim0MQOTSModel("Remotely controlled OTS model", this.network, xml);
             Map<String, StreamInterface> map = new LinkedHashMap<>();
@@ -387,7 +387,7 @@ public final class Sim0MQPublisher
                                     ackNack = false;
                                     break;
                                 }
-                                OTSSimulatorInterface simulator = this.network.getSimulator();
+                                OtsSimulatorInterface simulator = this.network.getSimulator();
                                 if (simulator.getSimulatorTime().ge(simulator.getReplication().getEndTime()))
                                 {
                                     resultMessage = "Simulation is already at end of simulation time";
@@ -499,7 +499,7 @@ public final class Sim0MQPublisher
 /**
  * The Model.
  */
-class Sim0MQOTSModel extends AbstractOTSModel
+class Sim0MQOTSModel extends AbstractOtsModel
 {
     /** */
     private static final long serialVersionUID = 20170419L;

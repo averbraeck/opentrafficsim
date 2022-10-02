@@ -27,7 +27,7 @@ import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -101,7 +101,7 @@ public class LaneBasedGtuGenerator extends EventProducer implements Serializable
     private final OTSRoadNetwork network;
 
     /** Simulator. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /** The way that this generator checks if it is safe to construct and place the next lane based GTU. */
     private final RoomChecker roomChecker;
@@ -139,7 +139,7 @@ public class LaneBasedGtuGenerator extends EventProducer implements Serializable
     @SuppressWarnings("parameternumber")
     public LaneBasedGtuGenerator(final String id, final Generator<Duration> interarrivelTimeGenerator,
             final LaneBasedGtuCharacteristicsGenerator laneBasedGtuCharacteristicsGenerator,
-            final GeneratorPositions generatorPositions, final OTSRoadNetwork network, final OTSSimulatorInterface simulator,
+            final GeneratorPositions generatorPositions, final OTSRoadNetwork network, final OtsSimulatorInterface simulator,
             final RoomChecker roomChecker, final IdGenerator idGenerator)
             throws SimRuntimeException, ProbabilityException, ParameterException
     {

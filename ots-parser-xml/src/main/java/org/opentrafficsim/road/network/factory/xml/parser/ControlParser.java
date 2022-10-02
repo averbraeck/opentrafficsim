@@ -19,7 +19,7 @@ import javax.xml.bind.DatatypeConverter;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
@@ -71,7 +71,7 @@ public final class ControlParser
      * @throws TrafficControlException when a TrafCOD engine cannot be constructed for some other reason
      * @throws SimRuntimeException when a TrafCOD engine fails to initialize
      */
-    public static void parseControl(final OTSRoadNetwork otsNetwork, final OTSSimulatorInterface simulator,
+    public static void parseControl(final OTSRoadNetwork otsNetwork, final OtsSimulatorInterface simulator,
             final List<CONTROL> controls)
             throws NetworkException, MalformedURLException, IOException, SimRuntimeException, TrafficControlException
     {

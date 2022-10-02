@@ -10,19 +10,19 @@ import java.io.Serializable;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public abstract class AbstractOTSSimulationApplication implements Serializable
+public abstract class AbstractOtsSimulationApplication implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20141216L;
 
     /** the model. */
-    private final OTSModelInterface model;
+    private final OtsModelInterface model;
 
     /**
      * The application, which is model aware.
      * @param model OTSModelInterface; the model that will be shown in the JFrame
      */
-    public AbstractOTSSimulationApplication(final OTSModelInterface model)
+    public AbstractOtsSimulationApplication(final OtsModelInterface model)
     {
         this.model = model;
     }
@@ -30,7 +30,7 @@ public abstract class AbstractOTSSimulationApplication implements Serializable
     /**
      * @return model
      */
-    public final OTSModelInterface getModel()
+    public final OtsModelInterface getModel()
     {
         return this.model;
     }

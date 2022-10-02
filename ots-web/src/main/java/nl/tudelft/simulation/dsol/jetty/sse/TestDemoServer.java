@@ -32,9 +32,9 @@ import org.eclipse.jetty.server.session.SessionDataStore;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.resource.Resource;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.web.test.CircularRoadModel;
 import org.opentrafficsim.web.test.TJunctionModel;
@@ -65,7 +65,7 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterString;
 public class TestDemoServer
 {
     /** the map of sessionIds to OTSModelInterface that handles the animation and updates for the started model. */
-    final Map<String, OTSModelInterface> sessionModelMap = new LinkedHashMap<>();
+    final Map<String, OtsModelInterface> sessionModelMap = new LinkedHashMap<>();
 
     /** the map of sessionIds to OTSWebModel that handles the animation and updates for the started model. */
     final Map<String, OTSWebModel> sessionWebModelMap = new LinkedHashMap<>();
@@ -163,9 +163,9 @@ public class TestDemoServer
                 if (!TestDemoServer.this.sessionModelMap.containsKey(sessionId))
                 {
                     System.out.println("parameters: " + modelId);
-                    OTSAnimator simulator = new OTSAnimator("TestDemoServer");
+                    OtsAnimator simulator = new OtsAnimator("TestDemoServer");
                     simulator.setAnimation(false);
-                    OTSModelInterface model = null;
+                    OtsModelInterface model = null;
                     if (modelId.toLowerCase().contains("circularroad"))
                         model = new CircularRoadModel(simulator);
                     else if (modelId.toLowerCase().contains("tjunction"))
@@ -185,8 +185,8 @@ public class TestDemoServer
                         && !TestDemoServer.this.sessionWebModelMap.containsKey(sessionId))
                 {
                     System.out.println("startModel: " + modelId);
-                    OTSModelInterface model = TestDemoServer.this.sessionModelMap.get(sessionId);
-                    OTSSimulatorInterface simulator = model.getSimulator();
+                    OtsModelInterface model = TestDemoServer.this.sessionModelMap.get(sessionId);
+                    OtsSimulatorInterface simulator = model.getSimulator();
                     try
                     {
                         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), model);
@@ -243,7 +243,7 @@ public class TestDemoServer
                 }
                 else if (this.webServer.sessionModelMap.containsKey(sessionId))
                 {
-                    OTSModelInterface model = this.webServer.sessionModelMap.get(sessionId);
+                    OtsModelInterface model = this.webServer.sessionModelMap.get(sessionId);
                     String answer = "<message>ok</message>";
 
                     if (request.getParameter("message") != null)
@@ -297,7 +297,7 @@ public class TestDemoServer
          * @param model the model with parameters
          * @return an XML string with the parameters
          */
-        private String makeParameterMap(OTSModelInterface model)
+        private String makeParameterMap(OtsModelInterface model)
         {
             StringBuffer answer = new StringBuffer();
             answer.append("<parameters>\n");
@@ -473,7 +473,7 @@ public class TestDemoServer
          * @param message the key-value pairs of the set parameters
          * @return the errors if they are detected. If none, errors is set to "OK"
          */
-        private String setParameters(OTSModelInterface model, String message)
+        private String setParameters(OtsModelInterface model, String message)
         {
             String errors = "OK";
             InputParameterMap inputParameters = model.getInputParameterMap();

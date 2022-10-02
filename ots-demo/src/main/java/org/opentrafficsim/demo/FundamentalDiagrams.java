@@ -21,10 +21,10 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSSimulationException;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsSimulationException;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -85,10 +85,10 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
      * @param panel OTSAnimationPanel; the tabbed panel to display
      * @param model FundamentalDiagramPlotsModel; the model
      * @throws OTSDrawingException on animation error
-     * @throws OTSSimulationException on graph error
+     * @throws OtsSimulationException on graph error
      */
     public FundamentalDiagrams(final String title, final OTSAnimationPanel panel, final FundamentalDiagramPlotsModel model)
-            throws OTSDrawingException, OTSSimulationException
+            throws OTSDrawingException, OtsSimulationException
     {
         super(model, panel);
         OTSRoadNetwork network = model.getNetwork();
@@ -120,7 +120,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator("FundamentalDiagrams");
+            OtsAnimator simulator = new OtsAnimator("FundamentalDiagrams");
             final FundamentalDiagramPlotsModel otsModel = new FundamentalDiagramPlotsModel(simulator);
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
@@ -139,7 +139,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
                 }
             }
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | OTSSimulationException
+        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | OtsSimulationException
                 | DSOLException exception)
         {
             exception.printStackTrace();
@@ -149,9 +149,9 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
     /**
      * Add the statistics tabs.
      * @param simulator OTSSimulatorInterface; the simulator on which sampling can be scheduled
-     * @throws OTSSimulationException on error
+     * @throws OtsSimulationException on error
      */
-    protected final void addStatisticsTabs(final OTSSimulatorInterface simulator) throws OTSSimulationException
+    protected final void addStatisticsTabs(final OtsSimulatorInterface simulator) throws OtsSimulationException
     {
         final int panelsPerRow = 3;
         TablePanel charts = new TablePanel(4, panelsPerRow);
@@ -172,7 +172,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
             }
             catch (NetworkException exception)
             {
-                throw new OTSSimulationException(exception);
+                throw new OtsSimulationException(exception);
             }
             charts.setCell(graph.getContentPane(), plotNumber / panelsPerRow, plotNumber % panelsPerRow);
         }
@@ -193,7 +193,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
      * $LastChangedDate$, @version $Revision$, by $Author$, initial version ug 1, 2014 <br>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      */
-    static class FundamentalDiagramPlotsModel extends AbstractOTSModel implements UNITS
+    static class FundamentalDiagramPlotsModel extends AbstractOtsModel implements UNITS
     {
         /** */
         private static final long serialVersionUID = 20140820L;
@@ -243,7 +243,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
         /**
          * @param simulator OTSSimulatorInterface; the simulator for this model
          */
-        FundamentalDiagramPlotsModel(final OTSSimulatorInterface simulator)
+        FundamentalDiagramPlotsModel(final OtsSimulatorInterface simulator)
         {
             super(simulator);
             InputParameterHelper.makeInputParameterMapCarTruck(this.inputParameterMap, 1.0);

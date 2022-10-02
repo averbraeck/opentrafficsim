@@ -39,7 +39,7 @@ import org.opentrafficsim.core.animation.gtu.colorer.IdGtuColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SpeedGtuColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGtuColorer;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.Gtu;
@@ -241,7 +241,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected OTSRoadNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
+    protected OTSRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
     {
         OTSRoadNetwork network = new OTSRoadNetwork("RampMetering", true, sim);
         if (this.output)

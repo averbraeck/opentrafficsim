@@ -4,7 +4,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.event.TimedEventType;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
@@ -32,7 +32,7 @@ public interface SingleSensor extends Sensor, Comparable<SingleSensor>, LaneBase
     void trigger(LaneBasedGtu gtu);
 
     /** @return The simulator. */
-    OTSSimulatorInterface getSimulator();
+    OtsSimulatorInterface getSimulator();
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the triggering of a Sensor on a lane. <br>

@@ -12,7 +12,7 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.network.Link;
@@ -55,7 +55,7 @@ public class NodeAnimation extends Renderable2D<NodeAnimation.ElevatedNode>
      * @throws RemoteException on communication failure
      */
     @SuppressWarnings("unchecked")
-    public NodeAnimation(final Node node, final OTSSimulatorInterface simulator) throws NamingException, RemoteException
+    public NodeAnimation(final Node node, final OtsSimulatorInterface simulator) throws NamingException, RemoteException
     {
         super(new ElevatedNode(node), simulator);
         // Figure out the relevance of this node
@@ -187,7 +187,7 @@ public class NodeAnimation extends Renderable2D<NodeAnimation.ElevatedNode>
          */
         @SuppressWarnings("checkstyle:parameternumber")
         public Text(final Locatable source, final String text, final float dx, final float dy,
-                final TextAlignment textPlacement, final Color color, final OTSSimulatorInterface simulator,
+                final TextAlignment textPlacement, final Color color, final OtsSimulatorInterface simulator,
                 final ScaleDependentRendering scaleDependentRendering) throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textPlacement, color, 2.0f, 12.0f, 50f, simulator, scaleDependentRendering);

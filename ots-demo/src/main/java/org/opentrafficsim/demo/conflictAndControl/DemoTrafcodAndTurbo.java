@@ -22,9 +22,9 @@ import org.djutils.event.EventTypeInterface;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -92,7 +92,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator("DemoTrafcodAndTurbo");
+            OtsAnimator simulator = new OtsAnimator("DemoTrafcodAndTurbo");
             final TrafCODModel junctionModel = new TrafCODModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), junctionModel);
             OTSAnimationPanel animationPanel =
@@ -124,7 +124,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
     /**
      * The simulation model.
      */
-    static class TrafCODModel extends AbstractOTSModel implements EventListenerInterface
+    static class TrafCODModel extends AbstractOtsModel implements EventListenerInterface
     {
         /** */
         private static final long serialVersionUID = 20161020L;
@@ -141,7 +141,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
         /**
          * @param simulator OTSSimulatorInterface; the simulator for this model
          */
-        TrafCODModel(final OTSSimulatorInterface simulator)
+        TrafCODModel(final OtsSimulatorInterface simulator)
         {
             super(simulator);
         }

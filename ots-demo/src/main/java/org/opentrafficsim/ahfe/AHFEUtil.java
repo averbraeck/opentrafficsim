@@ -36,7 +36,7 @@ import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
@@ -138,7 +138,7 @@ public final class AHFEUtil
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static void createDemand(final OTSRoadNetwork network, final GtuColorer gtuColorer,
-            final OTSSimulatorInterface simulator, final int replication, final String anticipationStrategy,
+            final OtsSimulatorInterface simulator, final int replication, final String anticipationStrategy,
             final Duration reactionTime, final Duration anticipationTime, final double truckFraction, final Time simulationTime,
             final Frequency leftDemand, final Frequency rightDemand, final double leftFraction, final double distanceError,
             final double speedError, final double accelerationError)
@@ -351,7 +351,7 @@ public final class AHFEUtil
      * @throws ParameterException in case a parameter for the perception is missing
      */
     private static void makeGenerator(final Lane lane, final Speed generationSpeed, final String id,
-            final IdGenerator idGenerator, final OTSSimulatorInterface simulator, final OTSRoadNetwork network,
+            final IdGenerator idGenerator, final OtsSimulatorInterface simulator, final OTSRoadNetwork network,
             final Distribution<LaneBasedTemplateGtuType> distribution, final HeadwayGeneratorDemand headwayGenerator,
             final GtuColorer gtuColorer, final RoomChecker roomChecker, final ParameterFactory bcFactory,
             final LaneBasedTacticalPlannerFactory<?> tacticalFactory, final Time simulationTime, final StreamInterface stream)
@@ -565,7 +565,7 @@ public final class AHFEUtil
         private final FrequencyVector demandVector;
 
         /** Simulator. */
-        private final OTSSimulatorInterface simulator;
+        private final OtsSimulatorInterface simulator;
 
         /** Stream name of headway generation. */
         private static final String HEADWAY_STREAM = "headwayGeneration";
@@ -576,7 +576,7 @@ public final class AHFEUtil
          * @param simulator OTSSimulatorInterface; the simulator
          */
         HeadwayGeneratorDemand(final TimeVector timeVector, final FrequencyVector demandVector,
-                final OTSSimulatorInterface simulator)
+                final OtsSimulatorInterface simulator)
         {
             this(timeVector, demandVector, simulator, Interpolation.STEPWISE);
         }
@@ -588,7 +588,7 @@ public final class AHFEUtil
          * @param interpolation Interpolation; interpolation type
          */
         HeadwayGeneratorDemand(final TimeVector timeVector, final FrequencyVector demandVector,
-                final OTSSimulatorInterface simulator, final Interpolation interpolation)
+                final OtsSimulatorInterface simulator, final Interpolation interpolation)
         {
             Throw.whenNull(timeVector, "Time vector may not be null.");
             Throw.whenNull(demandVector, "Demand vector may not be null.");

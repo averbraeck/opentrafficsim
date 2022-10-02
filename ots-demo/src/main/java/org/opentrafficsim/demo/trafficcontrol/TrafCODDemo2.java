@@ -23,9 +23,9 @@ import org.djutils.event.EventTypeInterface;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.io.URLResource;
 import org.djutils.logger.CategoryLogger;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo2.TrafCODModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
@@ -102,7 +102,7 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator("TrafCODDemo2");
+            OtsAnimator simulator = new OtsAnimator("TrafCODDemo2");
             URL url = URLResource.getResource("/resources/TrafCODDemo2/TrafCODDemo2.xml");
             System.out.println("url is " + url);
             String xml = readStringFromURL(url);
@@ -159,7 +159,7 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
     /**
      * The simulation model.
      */
-    public static class TrafCODModel extends AbstractOTSModel implements EventListenerInterface
+    public static class TrafCODModel extends AbstractOtsModel implements EventListenerInterface
     {
         /** */
         private static final long serialVersionUID = 20161020L;
@@ -176,7 +176,7 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
          * @param description String; description of the model
          * @param xml String; the XML string
          */
-        public TrafCODModel(final OTSSimulatorInterface simulator, final String shortName, final String description,
+        public TrafCODModel(final OtsSimulatorInterface simulator, final String shortName, final String description,
                 final String xml)
         {
             super(simulator, shortName, description);

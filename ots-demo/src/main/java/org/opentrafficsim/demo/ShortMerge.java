@@ -35,9 +35,9 @@ import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
@@ -180,7 +180,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator("ShortMerge");
+            OtsAnimator simulator = new OtsAnimator("ShortMerge");
             final ShortMergeModel otsModel = new ShortMergeModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel);
             OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(), new Dimension(800, 600),
@@ -206,7 +206,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public static class ShortMergeModel extends AbstractOTSModel
+    public static class ShortMergeModel extends AbstractOtsModel
     {
         /** */
         private static final long serialVersionUID = 20170407L;
@@ -217,7 +217,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
         /**
          * @param simulator OTSSimulatorInterface; the simulator
          */
-        public ShortMergeModel(final OTSSimulatorInterface simulator)
+        public ShortMergeModel(final OtsSimulatorInterface simulator)
         {
             super(simulator);
         }
@@ -475,7 +475,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
     private static class HeadwayGenerator implements Generator<Duration>
     {
         /** the simulator. */
-        private final OTSSimulatorInterface simulator;
+        private final OtsSimulatorInterface simulator;
 
         /** Demand level. */
         private final Frequency demand;
@@ -484,7 +484,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
          * @param simulator OTSSimulatorInterface; the simulator
          * @param demand Frequency; demand
          */
-        HeadwayGenerator(final OTSSimulatorInterface simulator, final Frequency demand)
+        HeadwayGenerator(final OtsSimulatorInterface simulator, final Frequency demand)
         {
             this.simulator = simulator;
             this.demand = demand;

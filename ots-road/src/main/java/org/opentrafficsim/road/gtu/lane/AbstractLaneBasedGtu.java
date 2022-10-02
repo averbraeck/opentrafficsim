@@ -24,7 +24,7 @@ import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableLinkedHashSet;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -175,7 +175,7 @@ public abstract class AbstractLaneBasedGtu extends AbstractGtu implements LaneBa
     public AbstractLaneBasedGtu(final String id, final GtuType gtuType, final OTSRoadNetwork network) throws GtuException
     {
         super(id, gtuType, network.getSimulator(), network);
-        OTSSimulatorInterface simulator = network.getSimulator();
+        OtsSimulatorInterface simulator = network.getSimulator();
         HistoryManager historyManager = simulator.getReplication().getHistoryManager(simulator);
         this.fractionalLinkPositions = new HistoricalLinkedHashMap<>(historyManager);
         this.currentLanes = new HistoricalLinkedHashSet<>(historyManager);

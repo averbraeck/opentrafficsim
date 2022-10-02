@@ -14,9 +14,9 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.demo.conflict.TurboRoundaboutDemo.TurboRoundaboutModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
@@ -77,7 +77,7 @@ public class TurboRoundaboutDemo extends OTSSimulationApplication<TurboRoundabou
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator("TurboRoundaboutDemo");
+            OtsAnimator simulator = new OtsAnimator("TurboRoundaboutDemo");
             final TurboRoundaboutModel junctionModel = new TurboRoundaboutModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), junctionModel);
             OTSAnimationPanel animationPanel =
@@ -96,7 +96,7 @@ public class TurboRoundaboutDemo extends OTSSimulationApplication<TurboRoundabou
     /**
      * The simulation model.
      */
-    public static class TurboRoundaboutModel extends AbstractOTSModel
+    public static class TurboRoundaboutModel extends AbstractOtsModel
     {
         /** */
         private static final long serialVersionUID = 20161211L;
@@ -107,7 +107,7 @@ public class TurboRoundaboutDemo extends OTSSimulationApplication<TurboRoundabou
         /**
          * @param simulator OTSSimulatorInterface; the simulator for this model
          */
-        public TurboRoundaboutModel(final OTSSimulatorInterface simulator)
+        public TurboRoundaboutModel(final OtsSimulatorInterface simulator)
         {
             super(simulator);
         }

@@ -34,8 +34,8 @@ import org.mockito.stubbing.Answer;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.OTSReplication;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsReplication;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -83,10 +83,10 @@ public class ODApplierTest
     private StreamInterface stream = new MersenneTwister(1L);
 
     /** MockUp replication. */
-    private OTSReplication replication;
+    private OtsReplication replication;
 
     /** MockUp simulator. */
-    private OTSSimulatorInterface simulator;
+    private OtsSimulatorInterface simulator;
 
     /** Mockup model. */
     private DSOLModel model;
@@ -103,9 +103,9 @@ public class ODApplierTest
     /**
      * @return a mock of the simulator that uses this.time as the time for getSimulatorTime()
      */
-    private OTSSimulatorInterface createSimulatorMock()
+    private OtsSimulatorInterface createSimulatorMock()
     {
-        OTSSimulatorInterface simulatorMock = Mockito.mock(OTSSimulatorInterface.class);
+        OtsSimulatorInterface simulatorMock = Mockito.mock(OtsSimulatorInterface.class);
         Answer<Time> answerTime = new Answer<Time>()
         {
             @Override
@@ -149,7 +149,7 @@ public class ODApplierTest
     public ODApplierTest() throws NetworkException, OTSGeometryException, NamingException
     {
         this.replication =
-                new OTSReplication("replication for ODApplierTest", Time.ZERO, Duration.ZERO, Duration.instantiateSI(10.0));
+                new OtsReplication("replication for ODApplierTest", Time.ZERO, Duration.ZERO, Duration.instantiateSI(10.0));
         this.model = createModelMock();
         System.out.println(this.model);
         this.simulator = createSimulatorMock();
@@ -212,7 +212,7 @@ public class ODApplierTest
      * Returns the simulator.
      * @return simulator
      */
-    final OTSSimulatorInterface getSimulator()
+    final OtsSimulatorInterface getSimulator()
     {
         return this.simulator;
     }

@@ -49,12 +49,12 @@ import org.opentrafficsim.core.animation.gtu.colorer.IdGtuColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SpeedGtuColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGtuColorer;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.AbstractOTSSimulationApplication;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.AbstractOtsSimulationApplication;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsSimulator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -241,7 +241,7 @@ public class LmrsStrategies implements EventListenerInterface
     private final Map<GtuType, LaneBasedStrategicalPlannerFactory<?>> factories = new LinkedHashMap<>();
 
     /** The simulator. */
-    private OTSSimulatorInterface simulator;
+    private OtsSimulatorInterface simulator;
 
     /** The network. */
     private OTSRoadNetwork network;
@@ -404,7 +404,7 @@ public class LmrsStrategies implements EventListenerInterface
         {
             try
             {
-                OTSSimulator simulator = new OTSSimulator("LmrsStrategies");
+                OtsSimulator simulator = new OtsSimulator("LmrsStrategies");
                 final LmrsStrategiesModel lmrsModel = lmrsStrategies.new LmrsStrategiesModel(simulator);
                 // + 1e-9 is a hack to allow step() to perform detector aggregation of more than 1 detectors -at- the sim end
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(SIMTIME.si + 1e-9), lmrsModel);
@@ -433,7 +433,7 @@ public class LmrsStrategies implements EventListenerInterface
         {
             try
             {
-                OTSAnimator simulator = new OTSAnimator("LmrsStrategies");
+                OtsAnimator simulator = new OtsAnimator("LmrsStrategies");
                 final LmrsStrategiesModel lmrsModel = lmrsStrategies.new LmrsStrategiesModel(simulator);
                 // + 1e-9 is a hack to allow step() to perform detector aggregation of more than 1 detectors -at- the sim end
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(SIMTIME.si + 1e-9), lmrsModel);
@@ -459,7 +459,7 @@ public class LmrsStrategies implements EventListenerInterface
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    class LmrsStrategiesSimulation extends AbstractOTSSimulationApplication
+    class LmrsStrategiesSimulation extends AbstractOtsSimulationApplication
     {
         /** */
         private static final long serialVersionUID = 1L;
@@ -467,7 +467,7 @@ public class LmrsStrategies implements EventListenerInterface
         /**
          * @param model OTSModelInterface; model
          */
-        LmrsStrategiesSimulation(final OTSModelInterface model)
+        LmrsStrategiesSimulation(final OtsModelInterface model)
         {
             super(model);
         }
@@ -484,7 +484,7 @@ public class LmrsStrategies implements EventListenerInterface
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    class LmrsStrategiesAnimation extends OTSSimulationApplication<OTSModelInterface>
+    class LmrsStrategiesAnimation extends OTSSimulationApplication<OtsModelInterface>
     {
         /** */
         private static final long serialVersionUID = 20180303L;
@@ -494,7 +494,7 @@ public class LmrsStrategies implements EventListenerInterface
          * @param panel OTSAnimationPanel; the animation panel
          * @throws OTSDrawingException on animation error
          */
-        LmrsStrategiesAnimation(final OTSModelInterface model, final OTSAnimationPanel panel) throws OTSDrawingException
+        LmrsStrategiesAnimation(final OtsModelInterface model, final OTSAnimationPanel panel) throws OTSDrawingException
         {
             super(model, panel);
         }
@@ -523,12 +523,12 @@ public class LmrsStrategies implements EventListenerInterface
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    class LmrsStrategiesModel extends AbstractOTSModel
+    class LmrsStrategiesModel extends AbstractOtsModel
     {
         /**
          * @param simulator OTSSimulatorInterface; the simulator
          */
-        LmrsStrategiesModel(final OTSSimulatorInterface simulator)
+        LmrsStrategiesModel(final OtsSimulatorInterface simulator)
         {
             super(simulator);
         }

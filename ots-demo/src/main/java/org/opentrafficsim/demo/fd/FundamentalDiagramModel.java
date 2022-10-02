@@ -2,8 +2,8 @@ package org.opentrafficsim.demo.fd;
 
 import java.io.Serializable;
 
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 
@@ -19,7 +19,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="https://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="https://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class FundamentalDiagramModel extends AbstractOTSModel
+public class FundamentalDiagramModel extends AbstractOtsModel
 {
 
     /** */
@@ -31,7 +31,7 @@ public class FundamentalDiagramModel extends AbstractOTSModel
     /**
      * @param simulator OTSSimulatorInterface; the simulator to use
      */
-    public FundamentalDiagramModel(final OTSSimulatorInterface simulator)
+    public FundamentalDiagramModel(final OtsSimulatorInterface simulator)
     {
         super(simulator, "FD Demo", "Fundamental Diagram Demo");
     }

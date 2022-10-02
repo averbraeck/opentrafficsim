@@ -19,10 +19,10 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsSimulator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
@@ -65,7 +65,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     private final String description;
 
     /** The simulator. */
-    private OTSSimulatorInterface simulator;
+    private OtsSimulatorInterface simulator;
 
     /** The network. */
     private OTSRoadNetwork network;
@@ -200,7 +200,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         if (isAutorun())
         {
             // TODO: wait until simulation control buttons are enabled (indicating that the tabs have been added)
-            this.simulator = new OTSSimulator(this.name);
+            this.simulator = new OtsSimulator(this.name);
             final ScriptModel scriptModel = new ScriptModel(this.simulator);
             this.simulator.initialize(this.startTime, this.warmupTime, this.simulationTime, scriptModel);
             this.simulator.addListener(this, ReplicationInterface.END_REPLICATION_EVENT);
@@ -222,12 +222,12 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         }
         else
         {
-            this.simulator = new OTSAnimator(this.name);
+            this.simulator = new OtsAnimator(this.name);
             final ScriptModel scriptModel = new ScriptModel(this.simulator);
             this.simulator.initialize(this.startTime, this.warmupTime, this.simulationTime, scriptModel);
             OTSAnimationPanel animationPanel =
                     new OTSAnimationPanel(scriptModel.getNetwork().getExtent(), new Dimension(800, 600),
-                            (OTSAnimator) this.simulator, scriptModel, getGtuColorer(), scriptModel.getNetwork());
+                            (OtsAnimator) this.simulator, scriptModel, getGtuColorer(), scriptModel.getNetwork());
             setAnimationToggles(animationPanel);
             animateNetwork(scriptModel.getNetwork());
             setupDemo(animationPanel, scriptModel.getNetwork());
@@ -281,7 +281,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
      * Returns the simulator.
      * @return OTSSimulatorInterface; simulator
      */
-    public final OTSSimulatorInterface getSimulator()
+    public final OtsSimulatorInterface getSimulator()
     {
         return AbstractSimulationScript.this.simulator;
     }
@@ -318,7 +318,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
      * @param sim OTSSimulatorInterface; simulator
      * @param animation OTSSimulationApplication&lt;?&gt;; animation to add tabs to
      */
-    protected void addTabs(final OTSSimulatorInterface sim, final OTSSimulationApplication<?> animation)
+    protected void addTabs(final OtsSimulatorInterface sim, final OTSSimulationApplication<?> animation)
     {
         //
     }
@@ -359,7 +359,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
      * @return OTSNetwork; network
      * @throws Exception on any exception
      */
-    protected abstract OTSRoadNetwork setupSimulation(OTSSimulatorInterface sim) throws Exception;
+    protected abstract OTSRoadNetwork setupSimulation(OtsSimulatorInterface sim) throws Exception;
 
     // Nested classes
 
@@ -374,7 +374,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    private class ScriptModel extends AbstractOTSModel
+    private class ScriptModel extends AbstractOtsModel
     {
         /** */
         private static final long serialVersionUID = 20180409L;
@@ -383,7 +383,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
          * @param simulator OTSSimulatorInterface; the simulator
          */
         @SuppressWarnings("synthetic-access")
-        ScriptModel(final OTSSimulatorInterface simulator)
+        ScriptModel(final OtsSimulatorInterface simulator)
         {
             super(simulator);
             AbstractSimulationScript.this.simulator = simulator;

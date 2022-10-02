@@ -26,9 +26,9 @@ import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsSimulator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -79,7 +79,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
      * @throws NamingException ...
      * @throws SimRuntimeException ...
      */
-    private static Lane[] buildNetwork(final double[] lengths, final OTSSimulatorInterface simulator)
+    private static Lane[] buildNetwork(final double[] lengths, final OtsSimulatorInterface simulator)
             throws NetworkException, NamingException, OTSGeometryException, SimRuntimeException
     {
         OTSRoadNetwork network = new OTSRoadNetwork("network", true, simulator);
@@ -159,7 +159,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
             for (int pos = 50; pos < 130; pos++)
             {
                 System.out.println("Number of lanes is " + lengthList.length + " pos is " + pos);
-                OTSSimulatorInterface simulator = new OTSSimulator("TrafficLightSensorTest");
+                OtsSimulatorInterface simulator = new OtsSimulator("TrafficLightSensorTest");
                 Model model = new Model(simulator);
                 simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
                 Lane[] lanes = buildNetwork(lengthList, simulator);
@@ -269,7 +269,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
     }
 
     /** The helper model. */
-    protected static class Model extends AbstractOTSModel
+    protected static class Model extends AbstractOtsModel
     {
         /** */
         private static final long serialVersionUID = 20141027L;
@@ -277,7 +277,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
         /**
          * @param simulator the simulator to use
          */
-        public Model(final OTSSimulatorInterface simulator)
+        public Model(final OtsSimulatorInterface simulator)
         {
             super(simulator);
         }

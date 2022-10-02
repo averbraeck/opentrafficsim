@@ -9,7 +9,7 @@ import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.animation.Drawable;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.Gtu;
@@ -51,7 +51,7 @@ public interface Link extends Locatable, Serializable, Identifiable, Drawable
     OTSLine3D getDesignLine();
 
     /** @return the simulator. */
-    OTSSimulatorInterface getSimulator();
+    OtsSimulatorInterface getSimulator();
 
     /** @return length of the link. */
     Length getLength();

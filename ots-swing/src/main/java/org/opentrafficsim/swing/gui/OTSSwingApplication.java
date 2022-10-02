@@ -34,7 +34,7 @@ import javax.swing.event.ChangeListener;
 
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
 
 import nl.tudelft.simulation.dsol.swing.animation.D2.AnimationPanel;
 
@@ -49,7 +49,7 @@ import nl.tudelft.simulation.dsol.swing.animation.D2.AnimationPanel;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @param <T> model type
  */
-public class OTSSwingApplication<T extends OTSModelInterface> extends JFrame
+public class OTSSwingApplication<T extends OtsModelInterface> extends JFrame
 {
     /** */
     private static final long serialVersionUID = 20141216L;

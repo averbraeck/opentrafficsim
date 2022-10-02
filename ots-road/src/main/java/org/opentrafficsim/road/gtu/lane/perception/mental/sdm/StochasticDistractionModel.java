@@ -13,7 +13,7 @@ import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -44,7 +44,7 @@ public class StochasticDistractionModel implements EventListenerInterface
     private final List<Distraction> distractions;
 
     /** Simulator. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /** Network. */
     private final OTSRoadNetwork network;
@@ -63,7 +63,7 @@ public class StochasticDistractionModel implements EventListenerInterface
      * @param network OTSRoadNetwork; network
      */
     public StochasticDistractionModel(final boolean allowMultiTasking, final List<Distraction> distractions,
-            final OTSSimulatorInterface simulator, final OTSRoadNetwork network)
+            final OtsSimulatorInterface simulator, final OTSRoadNetwork network)
     {
         Throw.whenNull(distractions, "List of tasks may not be null.");
         Throw.whenNull(simulator, "Simulator may not be null.");

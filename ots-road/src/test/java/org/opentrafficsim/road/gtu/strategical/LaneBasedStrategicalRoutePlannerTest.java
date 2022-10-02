@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.strategical;
 
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -39,7 +39,7 @@ public class LaneBasedStrategicalRoutePlannerTest
     @Test
     public final void nextLinkDirectionTest() throws GtuException, NetworkException, OTSGeometryException
     {
-        OTSSimulatorInterface simulator = MockSimulator.createMock();
+        OtsSimulatorInterface simulator = MockSimulator.createMock();
         OTSRoadNetwork network = new OTSRoadNetwork("next link direction test", true, simulator);
         // Build a really simple network
         OTSNode fromNode = new OTSNode(network, "from", new OTSPoint3D(0, 0, 0));

@@ -9,7 +9,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -46,7 +46,7 @@ public class CycleTimeLightController implements RampMeteringLightController
     private Duration cTime;
 
     /** Simulator. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /** Traffic lights. */
     private final List<TrafficLight> trafficLights;
@@ -62,7 +62,7 @@ public class CycleTimeLightController implements RampMeteringLightController
      * @param trafficLights List&lt;TrafficLight&gt;; traffic lights
      * @param compatible Compatible; GTU types that trigger the detector, and hence the light to red
      */
-    public CycleTimeLightController(final OTSSimulatorInterface simulator, final List<TrafficLight> trafficLights,
+    public CycleTimeLightController(final OtsSimulatorInterface simulator, final List<TrafficLight> trafficLights,
             final Compatible compatible)
     {
         this.simulator = simulator;
@@ -158,7 +158,7 @@ public class CycleTimeLightController implements RampMeteringLightController
          * @param detectedGtuTypes Compatible; GTU types
          * @throws NetworkException when the position on the lane is out of bounds
          */
-        RampMeteringSensor(final TrafficLight trafficLight, final OTSSimulatorInterface simulator,
+        RampMeteringSensor(final TrafficLight trafficLight, final OtsSimulatorInterface simulator,
                 final Compatible detectedGtuTypes) throws NetworkException
         {
             super(trafficLight.getId() + "_sensor", trafficLight.getLane(), trafficLight.getLongitudinalPosition(),

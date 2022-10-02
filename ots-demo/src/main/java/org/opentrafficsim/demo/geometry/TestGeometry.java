@@ -11,9 +11,9 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.TimedEvent;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSReplication;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.swing.gui.AnimationToggles;
@@ -60,11 +60,11 @@ public class TestGeometry extends DSOLApplication implements UNITS
     public static void main(final String[] args)
             throws SimRuntimeException, NamingException, RemoteException, OTSDrawingException, DSOLException
     {
-        OTSAnimator simulator = new OTSAnimator("TestGeometry");
-        OTSModelInterface model = new TestModel(simulator);
-        OTSReplication replication = new OTSReplication("rep1", Time.ZERO, Duration.ZERO, new Duration(1800.0, SECOND));
+        OtsAnimator simulator = new OtsAnimator("TestGeometry");
+        OtsModelInterface model = new TestModel(simulator);
+        OtsReplication replication = new OtsReplication("rep1", Time.ZERO, Duration.ZERO, new Duration(1800.0, SECOND));
         simulator.initialize(model, replication);
-        DSOLPanel panel = new DSOLPanel(new RealTimeControlPanel<Duration, OTSAnimator>(model, simulator));
+        DSOLPanel panel = new DSOLPanel(new RealTimeControlPanel<Duration, OtsAnimator>(model, simulator));
 
         Rectangle2D extent = new Rectangle2D.Double(-50, -50, 200, 50);
         Dimension size = new Dimension(1024, 768);

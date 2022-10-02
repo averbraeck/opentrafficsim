@@ -13,9 +13,9 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.demo.conflict.TJunctionDemo.TJunctionModel;
@@ -78,7 +78,7 @@ public class TJunctionDemo extends OTSSimulationApplication<TJunctionModel>
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator("TJunctionDemo");
+            OtsAnimator simulator = new OtsAnimator("TJunctionDemo");
             final TJunctionModel junctionModel = new TJunctionModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), junctionModel);
             OTSAnimationPanel animationPanel = new OTSAnimationPanel(junctionModel.getNetwork().getExtent(),
@@ -96,7 +96,7 @@ public class TJunctionDemo extends OTSSimulationApplication<TJunctionModel>
     /**
      * The simulation model.
      */
-    public static class TJunctionModel extends AbstractOTSModel
+    public static class TJunctionModel extends AbstractOtsModel
     {
         /** */
         private static final long serialVersionUID = 20161211L;
@@ -107,7 +107,7 @@ public class TJunctionDemo extends OTSSimulationApplication<TJunctionModel>
         /**
          * @param simulator OTSSimulatorInterface; the simulator for this model
          */
-        public TJunctionModel(final OTSSimulatorInterface simulator)
+        public TJunctionModel(final OtsSimulatorInterface simulator)
         {
             super(simulator);
         }

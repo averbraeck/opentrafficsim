@@ -13,7 +13,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -37,7 +37,7 @@ public class SequentialFixedAccelerationModel extends AbstractGtuFollowingModelM
     private final List<FixedAccelerationModel> steps = new ArrayList<>();
 
     /** The simulator engine. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /** The maximum safe deceleration. */
     private final Acceleration maximumSafeDeceleration;
@@ -47,7 +47,7 @@ public class SequentialFixedAccelerationModel extends AbstractGtuFollowingModelM
      * @param simulator OTSSimulatorInterface; the simulator (needed to obtain the current simulation time)
      * @param maximumSafeDeceleration Acceleration; specified maximum safe deceleration
      */
-    public SequentialFixedAccelerationModel(final OTSSimulatorInterface simulator, final Acceleration maximumSafeDeceleration)
+    public SequentialFixedAccelerationModel(final OtsSimulatorInterface simulator, final Acceleration maximumSafeDeceleration)
     {
         this.simulator = simulator;
         this.maximumSafeDeceleration = maximumSafeDeceleration;
@@ -59,7 +59,7 @@ public class SequentialFixedAccelerationModel extends AbstractGtuFollowingModelM
      * @param maximumSafeDeceleration Acceleration; specified maximum safe deceleration
      * @param steps Set&lt;FixedAccelerationModel&gt;; the list of FixedAccelerationModel steps.
      */
-    public SequentialFixedAccelerationModel(final OTSSimulatorInterface simulator, final Acceleration maximumSafeDeceleration,
+    public SequentialFixedAccelerationModel(final OtsSimulatorInterface simulator, final Acceleration maximumSafeDeceleration,
             final Set<FixedAccelerationModel> steps)
     {
         this(simulator, maximumSafeDeceleration);

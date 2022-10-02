@@ -44,7 +44,7 @@ import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuErrorHandler;
@@ -199,7 +199,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected OTSRoadNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
+    protected OTSRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
     {
         // Network
         OTSRoadNetwork network = new OTSRoadNetwork("FD demo network", true, sim);

@@ -23,7 +23,7 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
@@ -58,7 +58,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
     public static final Time DEFAULT_INITIAL_UPPER_TIME_BOUND = Time.instantiateSI(300.0);
 
     /** Simulator. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /** Unique ID of the chart. */
     private final String id = UUID.randomUUID().toString();
@@ -94,7 +94,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
      * @param updateInterval Duration; regular update interval (simulation time)
      * @param delay Duration; amount of time that chart runs behind simulation to prevent gaps in the charted data
      */
-    public AbstractPlot(final OTSSimulatorInterface simulator, final String caption, final Duration updateInterval,
+    public AbstractPlot(final OtsSimulatorInterface simulator, final String caption, final Duration updateInterval,
             final Duration delay)
     {
         this.simulator = simulator;
@@ -258,7 +258,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
      * Retrieve the simulator.
      * @return OTSSimulatorInterface; the simulator
      */
-    public OTSSimulatorInterface getSimulator()
+    public OtsSimulatorInterface getSimulator()
     {
         return this.simulator;
     }

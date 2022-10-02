@@ -15,10 +15,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
@@ -44,7 +44,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author Wouter Schakel
  */
-public class Circuit extends OTSSimulationApplication<OTSModelInterface>
+public class Circuit extends OTSSimulationApplication<OtsModelInterface>
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -54,7 +54,7 @@ public class Circuit extends OTSSimulationApplication<OTSModelInterface>
      * @param animationPanel the animation panel
      * @throws OTSDrawingException on drawing error
      */
-    public Circuit(final OTSModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
+    public Circuit(final OtsModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
     {
         super(model, animationPanel);
     }
@@ -73,7 +73,7 @@ public class Circuit extends OTSSimulationApplication<OTSModelInterface>
             {
                 try
                 {
-                    OTSAnimator simulator = new OTSAnimator("Circuit");
+                    OtsAnimator simulator = new OtsAnimator("Circuit");
                     TestXMLModel xmlModel = new TestXMLModel(simulator);
                     simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), xmlModel);
                     OTSAnimationPanel animationPanel = new OTSAnimationPanel(xmlModel.getNetwork().getExtent(),
@@ -106,7 +106,7 @@ public class Circuit extends OTSSimulationApplication<OTSModelInterface>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      */
-    static class TestXMLModel extends AbstractOTSModel
+    static class TestXMLModel extends AbstractOtsModel
     {
         /** */
         private static final long serialVersionUID = 20141121L;
@@ -117,7 +117,7 @@ public class Circuit extends OTSSimulationApplication<OTSModelInterface>
         /**
          * @param simulator the simulator
          */
-        TestXMLModel(final OTSSimulatorInterface simulator)
+        TestXMLModel(final OtsSimulatorInterface simulator)
         {
             super(simulator);
         }

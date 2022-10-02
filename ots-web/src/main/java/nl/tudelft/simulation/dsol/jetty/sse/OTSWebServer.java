@@ -28,7 +28,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.web.animation.WebAnimationToggles;
 
@@ -59,7 +59,7 @@ public abstract class OTSWebServer implements EventListenerInterface
     private final String title;
 
     /** the simulator. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /** dirty flag for the controls: when the model e.g. stops, the status needs to be changed. */
     private boolean dirtyControls = false;
@@ -73,7 +73,7 @@ public abstract class OTSWebServer implements EventListenerInterface
      * @param extent Bounds2d; the extent to use for the graphics (min/max coordinates)
      * @throws Exception in case jetty crashes
      */
-    public OTSWebServer(final String title, final OTSSimulatorInterface simulator, final Bounds2d extent) throws Exception
+    public OTSWebServer(final String title, final OtsSimulatorInterface simulator, final Bounds2d extent) throws Exception
     {
         this.title = title;
 
@@ -145,7 +145,7 @@ public abstract class OTSWebServer implements EventListenerInterface
     /**
      * @return simulator
      */
-    public final OTSSimulatorInterface getSimulator()
+    public final OtsSimulatorInterface getSimulator()
     {
         return this.simulator;
     }

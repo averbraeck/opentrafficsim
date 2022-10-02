@@ -34,9 +34,9 @@ import org.eclipse.jetty.server.session.SessionDataStore;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.resource.Resource;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.demo.CircularRoadModel;
 import org.opentrafficsim.demo.CrossingTrafficLightsModel;
 import org.opentrafficsim.demo.NetworksModel;
@@ -81,7 +81,7 @@ public class OTSDemoServer implements Checkable
 {
     /** the map of sessionIds to OTSModelInterface that handles the animation and updates for the started model. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    final Map<String, OTSModelInterface> sessionModelMap = new LinkedHashMap<>();
+    final Map<String, OtsModelInterface> sessionModelMap = new LinkedHashMap<>();
 
     /** the map of sessionIds to OTSWebModel that handles the animation and updates for the started model. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -182,7 +182,7 @@ public class OTSDemoServer implements Checkable
                             webModel.setKilled(true);
                             OTSDemoServer.this.sessionWebModelMap.remove(sessionId);
                         }
-                        OTSModelInterface model = OTSDemoServer.this.sessionModelMap.get(sessionId);
+                        OtsModelInterface model = OTSDemoServer.this.sessionModelMap.get(sessionId);
                         if (model != null)
                         {
                             try
@@ -296,9 +296,9 @@ public class OTSDemoServer implements Checkable
                 if (!OTSDemoServer.this.sessionModelMap.containsKey(sessionId))
                 {
                     System.out.println("parameters: " + modelId);
-                    OTSAnimator simulator = new OTSAnimator("OTSDemoServer");
+                    OtsAnimator simulator = new OtsAnimator("OTSDemoServer");
                     simulator.setAnimation(false);
-                    OTSModelInterface model = null;
+                    OtsModelInterface model = null;
 
                     if (modelId.toLowerCase().contains("circularroad"))
                     {
@@ -367,8 +367,8 @@ public class OTSDemoServer implements Checkable
                         && !OTSDemoServer.this.sessionWebModelMap.containsKey(sessionId))
                 {
                     System.out.println("startModel: " + modelId);
-                    OTSModelInterface model = OTSDemoServer.this.sessionModelMap.get(sessionId);
-                    OTSSimulatorInterface simulator = model.getSimulator();
+                    OtsModelInterface model = OTSDemoServer.this.sessionModelMap.get(sessionId);
+                    OtsSimulatorInterface simulator = model.getSimulator();
                     try
                     {
                         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), model);
@@ -429,7 +429,7 @@ public class OTSDemoServer implements Checkable
                 }
                 else if (this.webServer.sessionModelMap.containsKey(sessionId))
                 {
-                    OTSModelInterface model = this.webServer.sessionModelMap.get(sessionId);
+                    OtsModelInterface model = this.webServer.sessionModelMap.get(sessionId);
                     String answer = "<message>ok</message>";
 
                     if (request.getParameter("message") != null)
@@ -483,7 +483,7 @@ public class OTSDemoServer implements Checkable
          * @param model the model with parameters
          * @return an XML string with the parameters
          */
-        private String makeParameterMap(final OTSModelInterface model)
+        private String makeParameterMap(final OtsModelInterface model)
         {
             StringBuffer answer = new StringBuffer();
             answer.append("<parameters>\n");
@@ -667,7 +667,7 @@ public class OTSDemoServer implements Checkable
          * @param message the key-value pairs of the set parameters
          * @return the errors if they are detected. If none, errors is set to "OK"
          */
-        private String setParameters(final OTSModelInterface model, final String message)
+        private String setParameters(final OtsModelInterface model, final String message)
         {
             String errors = "OK";
             InputParameterMap inputParameters = model.getInputParameterMap();

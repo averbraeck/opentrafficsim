@@ -20,7 +20,7 @@ import org.djutils.logger.CategoryLogger;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -77,7 +77,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     private Map<String, Gtu> gtuMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** The DSOL simulator engine. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /**
      * Construction of an empty network.
@@ -85,7 +85,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
      * @param addDefaultTypes add the default GtuTypes and LinkTypes, or not
      * @param simulator OTSSimulatorInterface; the DSOL simulator engine
      */
-    public OTSNetwork(final String id, final boolean addDefaultTypes, final OTSSimulatorInterface simulator)
+    public OTSNetwork(final String id, final boolean addDefaultTypes, final OtsSimulatorInterface simulator)
     {
         this.id = id;
         this.simulator = simulator;
@@ -105,7 +105,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public OTSSimulatorInterface getSimulator()
+    public OtsSimulatorInterface getSimulator()
     {
         return this.simulator;
     }

@@ -13,7 +13,7 @@ import nl.tudelft.simulation.dsol.model.DSOLModel;
  * <p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  */
-public interface OTSModelInterface extends DSOLModel<Duration, OTSSimulatorInterface>
+public interface OtsModelInterface extends DSOLModel<Duration, OtsSimulatorInterface>
 {
     /**
      * Return the traffic network for the simulation.

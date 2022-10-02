@@ -14,7 +14,7 @@ import org.djutils.immutablecollections.ImmutableHashSet;
 import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.immutablecollections.ImmutableSet;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -66,7 +66,7 @@ public class LaneBasedIndividualGtu extends AbstractLaneBasedIndividualGtu
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualGtu(final String id, final GtuType gtuType, final Length length, final Length width,
-            final Speed maximumSpeed, final Length front, final OTSSimulatorInterface simulator, final OTSRoadNetwork network)
+            final Speed maximumSpeed, final Length front, final OtsSimulatorInterface simulator, final OTSRoadNetwork network)
             throws GtuException
     {
         this(id, gtuType, length, width, maximumSpeed, front, Length.ZERO, simulator, network);
@@ -87,7 +87,7 @@ public class LaneBasedIndividualGtu extends AbstractLaneBasedIndividualGtu
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualGtu(final String id, final GtuType gtuType, final Length length, final Length width,
-            final Speed maximumSpeed, final Length front, final Length centerOfGravity, final OTSSimulatorInterface simulator,
+            final Speed maximumSpeed, final Length front, final Length centerOfGravity, final OtsSimulatorInterface simulator,
             final OTSRoadNetwork network) throws GtuException
     {
         super(id, gtuType, length, width, maximumSpeed, simulator, network);
@@ -218,7 +218,7 @@ public class LaneBasedIndividualGtu extends AbstractLaneBasedIndividualGtu
         private Length front = null;
 
         /** The simulator. */
-        private OTSSimulatorInterface simulator = null;
+        private OtsSimulatorInterface simulator = null;
 
         /** Network. */
         private OTSRoadNetwork network = null;
@@ -318,7 +318,7 @@ public class LaneBasedIndividualGtu extends AbstractLaneBasedIndividualGtu
          * @param simulator OTSSimulatorInterface; set simulator
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder setSimulator(final OTSSimulatorInterface simulator)
+        public final LaneBasedIndividualCarBuilder setSimulator(final OtsSimulatorInterface simulator)
         {
             this.simulator = simulator;
             return this;
@@ -403,7 +403,7 @@ public class LaneBasedIndividualGtu extends AbstractLaneBasedIndividualGtu
         /**
          * @return simulator.
          */
-        public final OTSSimulatorInterface getSimulator()
+        public final OtsSimulatorInterface getSimulator()
         {
             return this.simulator;
         }

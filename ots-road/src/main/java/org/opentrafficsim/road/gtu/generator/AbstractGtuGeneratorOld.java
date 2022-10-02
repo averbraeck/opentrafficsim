@@ -20,7 +20,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.Point3d;
 import org.djutils.event.EventProducer;
 import org.opentrafficsim.core.distributions.Generator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -138,7 +138,7 @@ public abstract class AbstractGtuGeneratorOld extends EventProducer implements S
      * @throws SimRuntimeException when simulation scheduling fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractGtuGeneratorOld(final String name, final OTSSimulatorInterface simulator, final GtuType gtuType,
+    public AbstractGtuGeneratorOld(final String name, final OtsSimulatorInterface simulator, final GtuType gtuType,
             final Class<?> gtuClass, final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
             final ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> interarrivelTimeDist, final long maxGTUs,
             final Time startTime, final Time endTime, final Lane lane, final Length position,
@@ -475,7 +475,7 @@ public abstract class AbstractGtuGeneratorOld extends EventProducer implements S
     }
 
     /** @return simulator. */
-    public abstract OTSSimulatorInterface getSimulator();
+    public abstract OtsSimulatorInterface getSimulator();
 
     /** @return lengthDist. */
     public abstract ContinuousDistDoubleScalar.Rel<Length, LengthUnit> getLengthDist();

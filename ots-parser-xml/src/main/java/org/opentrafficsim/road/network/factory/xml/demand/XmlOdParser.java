@@ -28,7 +28,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier;
 import org.opentrafficsim.road.gtu.generator.od.ODOptions;
@@ -63,7 +63,7 @@ public class XmlOdParser implements Serializable
     private static final long serialVersionUID = 20180525L;
 
     /** Simulator. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /** Network. */
     final OTSRoadNetwork network;
@@ -93,7 +93,7 @@ public class XmlOdParser implements Serializable
      * @param network OTSRoadNetwork; network
      * @param gtuTypes Set&lt;GtuType&gt;; set of GTU types
      */
-    public XmlOdParser(final OTSSimulatorInterface simulator, final OTSRoadNetwork network, final Set<GtuType> gtuTypes)
+    public XmlOdParser(final OtsSimulatorInterface simulator, final OTSRoadNetwork network, final Set<GtuType> gtuTypes)
     {
         Throw.whenNull(simulator, "Simulator should not be null.");
         Throw.whenNull(network, "Network should not be null.");

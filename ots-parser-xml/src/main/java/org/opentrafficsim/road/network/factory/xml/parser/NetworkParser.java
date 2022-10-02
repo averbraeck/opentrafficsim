@@ -15,7 +15,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.draw.point.Point3d;
 import org.djutils.reflection.ClassUtil;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -153,7 +153,7 @@ public final class NetworkParser
      * @throws OTSGeometryException when the design line is invalid
      */
     static void parseLinks(final OTSRoadNetwork otsNetwork, final NETWORK network, final Map<String, Direction> nodeDirections,
-            final OTSSimulatorInterface simulator) throws NetworkException, OTSGeometryException
+            final OtsSimulatorInterface simulator) throws NetworkException, OTSGeometryException
     {
         for (CONNECTOR xmlConnector : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), CONNECTOR.class))
         {
@@ -333,7 +333,7 @@ public final class NetworkParser
      * @throws SimRuntimeException in case of simulation problems building the car generator
      * @throws GtuException when construction of the Strategical Planner failed
      */
-    static void applyRoadLayout(final OTSRoadNetwork otsNetwork, final NETWORK network, final OTSSimulatorInterface simulator,
+    static void applyRoadLayout(final OTSRoadNetwork otsNetwork, final NETWORK network, final OtsSimulatorInterface simulator,
             final Map<String, ROADLAYOUT> roadLayoutMap, final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap)
             throws NetworkException, OTSGeometryException, XmlParserException, SimRuntimeException, GtuException
     {
@@ -472,7 +472,7 @@ public final class NetworkParser
                 try
                 {
                     Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(trafficLight.getCLASS(),
-                            new Class[] {String.class, Lane.class, Length.class, OTSSimulatorInterface.class});
+                            new Class[] {String.class, Lane.class, Length.class, OtsSimulatorInterface.class});
                     trafficLightConstructor.newInstance(new Object[] {trafficLight.getID(), lane, position, simulator});
                 }
                 catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException

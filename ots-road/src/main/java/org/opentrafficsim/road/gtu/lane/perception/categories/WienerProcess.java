@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.lane.perception.categories;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -34,7 +34,7 @@ public class WienerProcess extends DistNormal
     private static final long serialVersionUID = 20181018L;
 
     /** Simulator. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /** Mean. */
     private final double muW;
@@ -59,7 +59,7 @@ public class WienerProcess extends DistNormal
      * @param simulator OTSSimulatorInterface; simulator
      */
     public WienerProcess(final StreamInterface stream, final double mu, final double sigma, final Duration tau,
-            final OTSSimulatorInterface simulator)
+            final OtsSimulatorInterface simulator)
     {
         super(stream);
         this.muW = mu;

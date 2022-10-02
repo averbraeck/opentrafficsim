@@ -4,7 +4,7 @@ import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -53,7 +53,7 @@ public class SpeedSign extends AbstractLaneBasedObject
      * @throws NetworkException when the position on the lane is out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public SpeedSign(final String id, final Lane lane, final Length longitudinalPosition, final OTSSimulatorInterface simulator,
+    public SpeedSign(final String id, final Lane lane, final Length longitudinalPosition, final OtsSimulatorInterface simulator,
             final Speed speed, final GtuType gtuType, final Duration startTimeOfDay, final Duration endTimeOfDay)
             throws NetworkException
     {
@@ -76,7 +76,7 @@ public class SpeedSign extends AbstractLaneBasedObject
      * @param gtuType GtuType; GTU type
      * @throws NetworkException when the position on the lane is out of bounds
      */
-    public SpeedSign(final String id, final Lane lane, final Length longitudinalPosition, final OTSSimulatorInterface simulator,
+    public SpeedSign(final String id, final Lane lane, final Length longitudinalPosition, final OtsSimulatorInterface simulator,
             final Speed speed, final GtuType gtuType) throws NetworkException
     {
         this(id, lane, longitudinalPosition, simulator, speed, gtuType, Duration.ZERO, ENDOFDAY);
@@ -94,7 +94,7 @@ public class SpeedSign extends AbstractLaneBasedObject
      * @throws NetworkException when the position on the lane is out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public SpeedSign(final String id, final Lane lane, final Length longitudinalPosition, final OTSSimulatorInterface simulator,
+    public SpeedSign(final String id, final Lane lane, final Length longitudinalPosition, final OtsSimulatorInterface simulator,
             final Speed speed, final Duration startTimeOfDay, final Duration endTimeOfDay) throws NetworkException
     {
         this(id, lane, longitudinalPosition, simulator, speed, lane.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE),
@@ -110,7 +110,7 @@ public class SpeedSign extends AbstractLaneBasedObject
      * @param speed Speed; speed
      * @throws NetworkException when the position on the lane is out of bounds
      */
-    public SpeedSign(final String id, final Lane lane, final Length longitudinalPosition, final OTSSimulatorInterface simulator,
+    public SpeedSign(final String id, final Lane lane, final Length longitudinalPosition, final OtsSimulatorInterface simulator,
             final Speed speed) throws NetworkException
     {
         this(id, lane, longitudinalPosition, simulator, speed, lane.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE),

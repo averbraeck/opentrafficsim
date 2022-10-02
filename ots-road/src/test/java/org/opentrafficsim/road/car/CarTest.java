@@ -19,9 +19,9 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsSimulator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -71,7 +71,7 @@ public class CarTest implements UNITS
             throws NetworkException, SimRuntimeException, NamingException, GtuException, OTSGeometryException
     {
         Time initialTime = new Time(0, TimeUnit.BASE_SECOND);
-        OTSSimulatorInterface simulator = makeSimulator();
+        OtsSimulatorInterface simulator = makeSimulator();
         OTSRoadNetwork network = new OTSRoadNetwork("network", true, simulator);
         GtuType gtuType = network.getGtuType(GtuType.DEFAULTS.CAR);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
@@ -101,9 +101,9 @@ public class CarTest implements UNITS
      * @throws SimRuntimeException on ???
      * @throws NamingException on ???
      */
-    public static OTSSimulatorInterface makeSimulator() throws SimRuntimeException, NamingException
+    public static OtsSimulatorInterface makeSimulator() throws SimRuntimeException, NamingException
     {
-        OTSSimulatorInterface simulator = new OTSSimulator("CarTest");
+        OtsSimulatorInterface simulator = new OtsSimulator("CarTest");
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         return simulator;
@@ -129,7 +129,7 @@ public class CarTest implements UNITS
      * @throws OTSGeometryException when the initial path is wrong
      */
     public static LaneBasedIndividualGtu makeReferenceCar(final String id, final GtuType gtuType, final Lane lane,
-            final Length initialPosition, final Speed initialSpeed, final OTSSimulatorInterface simulator,
+            final Length initialPosition, final Speed initialSpeed, final OtsSimulatorInterface simulator,
             final GtuFollowingModelOld gtuFollowingModel, final LaneChangeModel laneChangeModel, final OTSRoadNetwork network)
             throws NamingException, NetworkException, SimRuntimeException, GtuException, OTSGeometryException
     {
@@ -157,7 +157,7 @@ public class CarTest implements UNITS
      * @throws NetworkException on network error
      * @throws OTSGeometryException when center line or contour of a link or lane cannot be generated
      */
-    public static Lane makeLane(final OTSRoadNetwork network, final LaneType laneType, final OTSSimulatorInterface simulator)
+    public static Lane makeLane(final OTSRoadNetwork network, final LaneType laneType, final OtsSimulatorInterface simulator)
             throws NetworkException, OTSGeometryException
     {
         OTSRoadNode n1 = new OTSRoadNode(network, "n1", new OTSPoint3D(0, 0), Direction.ZERO);
@@ -171,7 +171,7 @@ public class CarTest implements UNITS
     }
 
     /** The helper model. */
-    protected static class Model extends AbstractOTSModel
+    protected static class Model extends AbstractOtsModel
     {
         /** */
         private static final long serialVersionUID = 20141027L;
@@ -179,7 +179,7 @@ public class CarTest implements UNITS
         /**
          * @param simulator the simulator to use
          */
-        public Model(final OTSSimulatorInterface simulator)
+        public Model(final OtsSimulatorInterface simulator)
         {
             super(simulator);
         }

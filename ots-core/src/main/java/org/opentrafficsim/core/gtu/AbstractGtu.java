@@ -19,7 +19,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
@@ -63,7 +63,7 @@ public abstract class AbstractGtu extends EventProducer implements Gtu
     private final GtuType gtuType;
 
     /** The simulator to schedule activities on. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /** Model parameters. */
     private Parameters parameters;
@@ -136,7 +136,7 @@ public abstract class AbstractGtu extends EventProducer implements Gtu
      * @throws GtuException when the preconditions of the constructor are not met
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractGtu(final String id, final GtuType gtuType, final OTSSimulatorInterface simulator,
+    public AbstractGtu(final String id, final GtuType gtuType, final OtsSimulatorInterface simulator,
             final PerceivableContext perceivableContext) throws GtuException
     {
         Throw.when(id == null, GtuException.class, "id is null");
@@ -167,7 +167,7 @@ public abstract class AbstractGtu extends EventProducer implements Gtu
      * @throws GtuException when the preconditions of the constructor are not met
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractGtu(final IdGenerator idGenerator, final GtuType gtuType, final OTSSimulatorInterface simulator,
+    public AbstractGtu(final IdGenerator idGenerator, final GtuType gtuType, final OtsSimulatorInterface simulator,
             final PerceivableContext perceivableContext) throws GtuException
     {
         this(generateId(idGenerator), gtuType, simulator, perceivableContext);
@@ -392,7 +392,7 @@ public abstract class AbstractGtu extends EventProducer implements Gtu
 
     /** {@inheritDoc} */
     @Override
-    public final OTSSimulatorInterface getSimulator()
+    public final OtsSimulatorInterface getSimulator()
     {
         return this.simulator;
     }

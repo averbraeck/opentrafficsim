@@ -16,8 +16,8 @@ import org.junit.Test;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.OTSNetwork;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -32,7 +32,7 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class TemplateGtuTypeTest implements OTSModelInterface
+public class TemplateGtuTypeTest implements OtsModelInterface
 {
     /** */
     private static final long serialVersionUID = 20160311L;
@@ -162,7 +162,7 @@ public class TemplateGtuTypeTest implements OTSModelInterface
     }
 
     /** */
-    private OTSSimulatorInterface simulator;
+    private OtsSimulatorInterface simulator;
 
     /** {@inheritDoc} */
     @Override
@@ -194,7 +194,7 @@ public class TemplateGtuTypeTest implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public OTSSimulatorInterface getSimulator()
+    public OtsSimulatorInterface getSimulator()
     {
         return this.simulator;
     }

@@ -32,9 +32,9 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.mockito.Mockito;
 import org.opentrafficsim.core.compatibility.GtuCompatibility;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsSimulator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -70,7 +70,7 @@ public class LaneTest implements UNITS
     @Test
     public void laneConstructorTest() throws Exception
     {
-        OTSSimulatorInterface simulator = new OTSSimulator("LaneTest");
+        OtsSimulatorInterface simulator = new OtsSimulator("LaneTest");
         OTSRoadNetwork network = new OTSRoadNetwork("lane test network", true, simulator);
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
@@ -443,7 +443,7 @@ public class LaneTest implements UNITS
         private final Length position;
 
         /** Faked simulator. */
-        private final OTSSimulatorInterface simulator = MockDEVSSimulator.createMock();
+        private final OtsSimulatorInterface simulator = MockDEVSSimulator.createMock();
 
         /**
          * Construct a new Mocked SingleSensor.
@@ -557,7 +557,7 @@ public class LaneTest implements UNITS
     {
         OTSPoint3D from = new OTSPoint3D(10, 10, 0);
         OTSPoint3D to = new OTSPoint3D(1010, 10, 0);
-        OTSSimulatorInterface simulator = new OTSSimulator("LaneTest");
+        OtsSimulatorInterface simulator = new OtsSimulator("LaneTest");
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         OTSRoadNetwork network = new OTSRoadNetwork("contour test network", true, simulator);
@@ -638,7 +638,7 @@ public class LaneTest implements UNITS
             {
                 for (double angle : angles)
                 {
-                    OTSSimulatorInterface simulator = new OTSSimulator("LaneTest");
+                    OtsSimulatorInterface simulator = new OtsSimulator("LaneTest");
                     Model model = new Model(simulator);
                     simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
                     OTSRoadNetwork network = new OTSRoadNetwork("contour test network", true, simulator);
@@ -815,7 +815,7 @@ public class LaneTest implements UNITS
     }
 
     /** The helper model. */
-    protected static class Model extends AbstractOTSModel
+    protected static class Model extends AbstractOtsModel
     {
         /** */
         private static final long serialVersionUID = 20141027L;
@@ -823,7 +823,7 @@ public class LaneTest implements UNITS
         /**
          * @param simulator the simulator to use
          */
-        public Model(final OTSSimulatorInterface simulator)
+        public Model(final OtsSimulatorInterface simulator)
         {
             super(simulator);
         }

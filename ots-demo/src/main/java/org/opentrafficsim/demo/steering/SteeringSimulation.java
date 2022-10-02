@@ -21,7 +21,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -133,7 +133,7 @@ public class SteeringSimulation extends AbstractSimulationScript
      * @throws Exception on any exception
      */
     @Override
-    protected OTSRoadNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
+    protected OTSRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
     {
         OTSRoadNetwork network = new OTSRoadNetwork("Steering network", true, getSimulator());
         Length laneWidth = Length.instantiateSI(3.5);

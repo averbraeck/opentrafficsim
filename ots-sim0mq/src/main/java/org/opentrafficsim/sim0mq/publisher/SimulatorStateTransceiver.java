@@ -12,7 +12,7 @@ import org.djutils.event.TimedEventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.sim0mq.Sim0MQException;
 
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
@@ -28,7 +28,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 public class SimulatorStateTransceiver extends AbstractTransceiver
 {
     /** The simulator. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /** Multiplexes SimulatorInterface.START_EVENT and SimulatorInterface.STOP_EVENT. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -45,7 +45,7 @@ public class SimulatorStateTransceiver extends AbstractTransceiver
      * @param simulator OTSSimulatorInterface; the simulator
      * @throws RemoteException on network error
      */
-    public SimulatorStateTransceiver(final OTSSimulatorInterface simulator) throws RemoteException
+    public SimulatorStateTransceiver(final OtsSimulatorInterface simulator) throws RemoteException
     {
         super("Simulator state transceiver", MetaData.EMPTY,
                 new MetaData("SIMULATOR_STATE_CHANGED_EVENT", "simulator state changed"));
@@ -125,7 +125,7 @@ class EventMultiplexer extends EventProducer implements EventListenerInterface
      * @param simulator OTSSimulatorInterface; the simulator
      * @throws RemoteException on network error
      */
-    EventMultiplexer(final OTSSimulatorInterface simulator) throws RemoteException
+    EventMultiplexer(final OtsSimulatorInterface simulator) throws RemoteException
     {
         simulator.addListener(this, SimulatorInterface.START_EVENT);
         simulator.addListener(this, SimulatorInterface.STOP_EVENT);

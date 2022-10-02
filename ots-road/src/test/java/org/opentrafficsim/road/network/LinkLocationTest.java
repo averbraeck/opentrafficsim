@@ -6,7 +6,7 @@ import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.junit.Test;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -37,7 +37,7 @@ public class LinkLocationTest implements UNITS
     public final void linkLocationTest() throws OTSGeometryException, NetworkException
     {
         // Preparations
-        OTSSimulatorInterface simulator = MockSimulator.createMock();
+        OtsSimulatorInterface simulator = MockSimulator.createMock();
         OTSRoadNetwork network = new OTSRoadNetwork("link location test network", true, simulator);
         OTSRoadNode nodeFrom = new OTSRoadNode(network, "From", new OTSPoint3D(0, 0, 0), Direction.ZERO);
         OTSRoadNode nodeTo = new OTSRoadNode(network, "To", new OTSPoint3D(1000, 0, 0), Direction.ZERO);

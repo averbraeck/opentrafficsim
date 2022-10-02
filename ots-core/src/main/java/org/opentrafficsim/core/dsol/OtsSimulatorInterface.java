@@ -21,7 +21,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public interface OTSSimulatorInterface extends DEVSSimulatorInterface<Duration>, Contextualized
+public interface OtsSimulatorInterface extends DEVSSimulatorInterface<Duration>, Contextualized
 {
     /**
      * Initialize a simulation engine without animation; the easy way. PauseOnError is set to true;
@@ -29,7 +29,7 @@ public interface OTSSimulatorInterface extends DEVSSimulatorInterface<Duration>,
      * @param replication OTSReplication; the replication with the run control parameters
      * @throws SimRuntimeException when e.g., warmupPeriod is larger than runLength
      */
-    void initialize(OTSModelInterface model, OTSReplication replication) throws SimRuntimeException;
+    void initialize(OtsModelInterface model, OtsReplication replication) throws SimRuntimeException;
 
     /**
      * Initialize a simulation engine without animation; the easy way. PauseOnError is set to true;
@@ -41,7 +41,7 @@ public interface OTSSimulatorInterface extends DEVSSimulatorInterface<Duration>,
      * @throws SimRuntimeException when e.g., warmupPeriod is larger than runLength
      * @throws NamingException when the context for the replication cannot be created
      */
-    void initialize(Time startTime, Duration warmupPeriod, Duration runLength, OTSModelInterface model)
+    void initialize(Time startTime, Duration warmupPeriod, Duration runLength, OtsModelInterface model)
             throws SimRuntimeException, NamingException;
 
     /**
@@ -56,7 +56,7 @@ public interface OTSSimulatorInterface extends DEVSSimulatorInterface<Duration>,
      * @throws SimRuntimeException when e.g., warmupPeriod is larger than runLength
      * @throws NamingException when context for the animation cannot be created
      */
-    void initialize(Time startTime, Duration warmupPeriod, Duration runLength, OTSModelInterface model, int replicationNr)
+    void initialize(Time startTime, Duration warmupPeriod, Duration runLength, OtsModelInterface model, int replicationNr)
             throws SimRuntimeException, NamingException;
 
     /**
@@ -145,7 +145,7 @@ public interface OTSSimulatorInterface extends DEVSSimulatorInterface<Duration>,
 
     /** {@inheritDoc} */
     @Override
-    OTSReplication getReplication();
+    OtsReplication getReplication();
 
     /** {@inheritDoc} */
     @Override

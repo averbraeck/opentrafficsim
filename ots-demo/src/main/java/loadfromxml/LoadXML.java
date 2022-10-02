@@ -22,11 +22,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulationException;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsSimulationException;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -59,7 +59,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
+public class LoadXML extends OTSSimulationApplication<OtsModelInterface>
 {
     /** */
     private static final long serialVersionUID = 20170421L;
@@ -69,7 +69,7 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
      * @param animationPanel OTSAnimationPanel; the animation panel
      * @throws OTSDrawingException on drawing error
      */
-    public LoadXML(final OTSModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
+    public LoadXML(final OtsModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
     {
         super(model, animationPanel);
     }
@@ -79,13 +79,13 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
      * @param args String[]; the command line arguments; optional name of file to load
      * @throws IOException when the file could not be read
      * @throws InputParameterException should never happen
-     * @throws OTSSimulationException when an error occurs during simulation
+     * @throws OtsSimulationException when an error occurs during simulation
      * @throws NamingException when a name collision is detected
      * @throws SimRuntimeException should never happen
      * @throws DSOLException when simulator does not implement AnimatorInterface
      */
     public static void main(final String[] args) throws IOException, SimRuntimeException, NamingException,
-            OTSSimulationException, InputParameterException, DSOLException
+            OtsSimulationException, InputParameterException, DSOLException
     {
         String fileName;
         String xml;
@@ -134,7 +134,7 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
         xml = new String(Files.readAllBytes(Paths.get(fileName)));
         try
         {
-            OTSAnimator simulator = new OTSAnimator("LoadXML");
+            OtsAnimator simulator = new OtsAnimator("LoadXML");
             XMLModel xmlModel = new XMLModel(simulator, "XML model", "Model built from XML file " + fileName, xml);
             Map<String, StreamInterface> map = new LinkedHashMap<>();
             // TODO: This seed is Aimsun specific.
@@ -154,7 +154,7 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
     /**
      * The Model.
      */
-    static class XMLModel extends AbstractOTSModel
+    static class XMLModel extends AbstractOtsModel
     {
         /** */
         private static final long serialVersionUID = 20170421L;
@@ -171,7 +171,7 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
          * @param description String; description of the model
          * @param xml String; the XML string
          */
-        XMLModel(final OTSSimulatorInterface simulator, final String shortName, final String description, final String xml)
+        XMLModel(final OtsSimulatorInterface simulator, final String shortName, final String description, final String xml)
         {
             super(simulator, shortName, description);
             this.xml = xml;

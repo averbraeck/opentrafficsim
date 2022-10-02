@@ -23,10 +23,10 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsSimulator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -74,9 +74,9 @@ public class AbstractLaneBasedGtuTest implements UNITS
         // First we need a set of Lanes
         // To create Lanes we need Nodes and a LaneType
         // And a simulator, but for that we first need something that implements OTSModelInterface
-        OTSSimulatorInterface simulator = new OTSSimulator("abstractLaneBasedGtuTest");
+        OtsSimulatorInterface simulator = new OtsSimulator("abstractLaneBasedGtuTest");
         OTSRoadNetwork network = new OTSRoadNetwork("lane base gtu test network", true, simulator);
-        OTSModelInterface model = new DummyModel(simulator);
+        OtsModelInterface model = new DummyModel(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), model);
         OTSRoadNode nodeAFrom = new OTSRoadNode(network, "AFrom", new OTSPoint3D(0, 0, 0), Direction.ZERO);
         OTSRoadNode nodeATo = new OTSRoadNode(network, "ATo", new OTSPoint3D(1000, 0, 0), Direction.ZERO);
@@ -401,7 +401,7 @@ public class AbstractLaneBasedGtuTest implements UNITS
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-class DummyModel extends AbstractOTSModel
+class DummyModel extends AbstractOtsModel
 {
     /** */
     private static final long serialVersionUID = 20150114L;
@@ -409,7 +409,7 @@ class DummyModel extends AbstractOTSModel
     /**
      * @param simulator the simulator to use
      */
-    DummyModel(final OTSSimulatorInterface simulator)
+    DummyModel(final OtsSimulatorInterface simulator)
     {
         super(simulator);
     }

@@ -38,9 +38,9 @@ import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsSimulator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -83,7 +83,7 @@ import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
  * $LastChangedDate$, @version $Revision$, by $Author$, initial version 18 nov. 2014 <br>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
+public class LaneChangeGraph extends JFrame implements OtsModelInterface, UNITS
 {
     /** */
     private static final long serialVersionUID = 20141118L;
@@ -275,7 +275,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
 
         // The reference car only needs a simulator
         // But that needs a model (which this class implements)
-        OTSSimulator simulator = new OTSSimulator("LaneChangeGraph");
+        OtsSimulator simulator = new OtsSimulator("LaneChangeGraph");
         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), this);
 
         // Set up the network
@@ -454,7 +454,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public OTSSimulatorInterface getSimulator()
+    public OtsSimulatorInterface getSimulator()
     {
         return null;
     }

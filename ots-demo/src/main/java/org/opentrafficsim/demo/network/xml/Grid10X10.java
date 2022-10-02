@@ -15,9 +15,9 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
@@ -276,7 +276,7 @@ public class Grid10X10 extends OTSSimulationApplication<TestXMLModelGrid>
             {
                 try
                 {
-                    OTSAnimator simulator = new OTSAnimator("Grid10X10");
+                    OtsAnimator simulator = new OtsAnimator("Grid10X10");
                     TestXMLModelGrid xmlModel = new TestXMLModelGrid(simulator, xml.toString());
                     simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), xmlModel);
                     OTSAnimationPanel animationPanel = new OTSAnimationPanel(xmlModel.getNetwork().getExtent(),
@@ -309,7 +309,7 @@ public class Grid10X10 extends OTSSimulationApplication<TestXMLModelGrid>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      */
-    static class TestXMLModelGrid extends AbstractOTSModel
+    static class TestXMLModelGrid extends AbstractOtsModel
     {
         /** */
         private static final long serialVersionUID = 20141121L;
@@ -324,7 +324,7 @@ public class Grid10X10 extends OTSSimulationApplication<TestXMLModelGrid>
          * @param simulator the simulator
          * @param xml xml string
          */
-        TestXMLModelGrid(final OTSSimulatorInterface simulator, final String xml)
+        TestXMLModelGrid(final OtsSimulatorInterface simulator, final String xml)
         {
             super(simulator);
             this.xml = xml;

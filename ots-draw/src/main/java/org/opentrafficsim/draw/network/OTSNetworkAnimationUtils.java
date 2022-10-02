@@ -6,7 +6,7 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNetworkUtils;
 
@@ -38,7 +38,7 @@ public final class OTSNetworkAnimationUtils
      * @param simulator OTSSimulatorInterface; the simulator of the old network
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public static void destroy(final OTSNetwork network, final OTSSimulatorInterface simulator)
+    public static void destroy(final OTSNetwork network, final OtsSimulatorInterface simulator)
     {
         Set<Renderable2DInterface<?>> animationObjects = new LinkedHashSet<>();
         try
@@ -78,7 +78,7 @@ public final class OTSNetworkAnimationUtils
      * @param oldSimulator OTSSimulatorInterface; the old simulator
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public static void removeAnimation(final Class<?> clazz, final OTSSimulatorInterface oldSimulator)
+    public static void removeAnimation(final Class<?> clazz, final OtsSimulatorInterface oldSimulator)
     {
         if (!(oldSimulator instanceof AnimatorInterface))
         {

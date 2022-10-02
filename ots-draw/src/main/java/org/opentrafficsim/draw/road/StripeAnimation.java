@@ -15,7 +15,7 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.linearref.LengthIndexedLine;
 import org.locationtech.jts.operation.buffer.BufferParameters;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -191,7 +191,7 @@ public class StripeAnimation extends Renderable2D<Stripe> implements Renderable2
      * @throws RemoteException on communication failure
      * @throws OTSGeometryException when something is very wrong with the geometry of the line
      */
-    public StripeAnimation(final Stripe source, final OTSSimulatorInterface simulator, final TYPE type)
+    public StripeAnimation(final Stripe source, final OtsSimulatorInterface simulator, final TYPE type)
             throws NamingException, RemoteException, OTSGeometryException
     {
         super(source, simulator);

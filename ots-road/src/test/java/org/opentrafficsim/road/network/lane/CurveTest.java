@@ -13,7 +13,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.junit.Test;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -56,7 +56,7 @@ public class CurveTest
             throws OTSGeometryException, SimRuntimeException, NamingException, NetworkException, GtuException
     {
         final int laneCount = 1;
-        OTSSimulatorInterface simulator = CarTest.makeSimulator();
+        OtsSimulatorInterface simulator = CarTest.makeSimulator();
         OTSRoadNetwork network = new OTSRoadNetwork("curve test network", true, simulator);
         GtuType gtuType = network.getGtuType(GtuType.DEFAULTS.CAR);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
@@ -108,7 +108,7 @@ public class CurveTest
      * Print all scheduled events of an OTSSimulatorInterface.
      * @param simulator OTSSimulatorInterface; the OTSSimulatorInterface
      */
-    public final void printEventList(final OTSSimulatorInterface simulator)
+    public final void printEventList(final OtsSimulatorInterface simulator)
     {
         for (SimEventInterface<Duration> se : simulator.getEventList())
         {

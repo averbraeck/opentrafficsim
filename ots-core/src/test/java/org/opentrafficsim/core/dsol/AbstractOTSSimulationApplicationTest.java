@@ -22,7 +22,7 @@ public class AbstractOTSSimulationApplicationTest
     @Test
     public void abstractOTSSimulationApplicationTest()
     {
-        OTSSimulatorInterface simulator = new OTSSimulator("Simulator for AbstractOTSSimulationApplicationlTest");
+        OtsSimulatorInterface simulator = new OtsSimulator("Simulator for AbstractOTSSimulationApplicationlTest");
         OTSModel model = new OTSModel(simulator);
         OTSSimulationApplication otsSimulationApplication = new OTSSimulationApplication(model);
         assertEquals("model can be retrieved", model, otsSimulationApplication.getModel());
@@ -31,7 +31,7 @@ public class AbstractOTSSimulationApplicationTest
     /**
      * Instrumented class for testing.
      */
-    static class OTSSimulationApplication extends AbstractOTSSimulationApplication
+    static class OTSSimulationApplication extends AbstractOtsSimulationApplication
     {
 
         /** ... */
@@ -41,7 +41,7 @@ public class AbstractOTSSimulationApplicationTest
          * Construct a OTSSimulationApplication object.
          * @param model OTSModelInterface; the model
          */
-        OTSSimulationApplication(final OTSModelInterface model)
+        OTSSimulationApplication(final OtsModelInterface model)
         {
             super(model);
         }

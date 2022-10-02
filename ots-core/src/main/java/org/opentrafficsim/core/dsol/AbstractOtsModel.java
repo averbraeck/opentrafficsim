@@ -15,7 +15,7 @@ import nl.tudelft.simulation.jstats.streams.MersenneTwister;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public abstract class AbstractOTSModel extends AbstractDSOLModel<Duration, OTSSimulatorInterface> implements OTSModelInterface
+public abstract class AbstractOtsModel extends AbstractDSOLModel<Duration, OtsSimulatorInterface> implements OtsModelInterface
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -30,7 +30,7 @@ public abstract class AbstractOTSModel extends AbstractDSOLModel<Duration, OTSSi
      * Instantiate an abstract OTSModel. The name and description will be set as the class name.
      * @param simulator OTSSimulatorInterface; the simulator to use
      */
-    public AbstractOTSModel(final OTSSimulatorInterface simulator)
+    public AbstractOtsModel(final OtsSimulatorInterface simulator)
     {
         this(simulator, "", "");
         this.shortName = getClass().getSimpleName();
@@ -43,7 +43,7 @@ public abstract class AbstractOTSModel extends AbstractDSOLModel<Duration, OTSSi
      * @param shortName String; a very short description of the simulation
      * @param description String; a description of the simulation (HTML formatted)
      */
-    public AbstractOTSModel(final OTSSimulatorInterface simulator, final String shortName, final String description)
+    public AbstractOtsModel(final OtsSimulatorInterface simulator, final String shortName, final String description)
     {
         this(simulator, shortName, description, setInitialStreams());
     }
@@ -55,7 +55,7 @@ public abstract class AbstractOTSModel extends AbstractDSOLModel<Duration, OTSSi
      * @param description String; a description of the simulation (HTML formatted)
      * @param streamInformation StreamInformation; the initial set of streams (e.g., with seed management)
      */
-    public AbstractOTSModel(final OTSSimulatorInterface simulator, final String shortName, final String description,
+    public AbstractOtsModel(final OtsSimulatorInterface simulator, final String shortName, final String description,
             final StreamInformation streamInformation)
     {
         super(simulator, streamInformation);

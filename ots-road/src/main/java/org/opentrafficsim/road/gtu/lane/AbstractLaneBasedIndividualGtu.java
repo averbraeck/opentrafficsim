@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.lane;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
@@ -47,7 +47,7 @@ public abstract class AbstractLaneBasedIndividualGtu extends AbstractLaneBasedGt
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractLaneBasedIndividualGtu(final String id, final GtuType gtuType, final Length length, final Length width,
-            final Speed maximumSpeed, final OTSSimulatorInterface simulator, final OTSRoadNetwork network) throws GtuException
+            final Speed maximumSpeed, final OtsSimulatorInterface simulator, final OTSRoadNetwork network) throws GtuException
     {
         super(id, gtuType, network);
         this.length = length;

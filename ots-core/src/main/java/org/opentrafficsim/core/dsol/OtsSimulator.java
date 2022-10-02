@@ -19,7 +19,7 @@ import nl.tudelft.simulation.dsol.simulators.ErrorStrategy;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class OTSSimulator extends DEVSSimulator<Duration> implements OTSSimulatorInterface, Serializable
+public class OtsSimulator extends DEVSSimulator<Duration> implements OtsSimulatorInterface, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150510L;
@@ -31,7 +31,7 @@ public class OTSSimulator extends DEVSSimulator<Duration> implements OTSSimulato
      * Construct an OTSSimulator.
      * @param simulatorId the id of the simulator to use in remote communication
      */
-    public OTSSimulator(final Serializable simulatorId)
+    public OtsSimulator(final Serializable simulatorId)
     {
         super(simulatorId);
     }
@@ -39,7 +39,7 @@ public class OTSSimulator extends DEVSSimulator<Duration> implements OTSSimulato
     /** {@inheritDoc} */
     @Override
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-            final OTSModelInterface model) throws SimRuntimeException, NamingException
+            final OtsModelInterface model) throws SimRuntimeException, NamingException
     {
         initialize(startTime, warmupPeriod, runLength, model, ++this.lastReplication);
     }
@@ -47,25 +47,25 @@ public class OTSSimulator extends DEVSSimulator<Duration> implements OTSSimulato
     /** {@inheritDoc} */
     @Override
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-            final OTSModelInterface model, final int replicationNr) throws SimRuntimeException, NamingException
+            final OtsModelInterface model, final int replicationNr) throws SimRuntimeException, NamingException
     {
         setErrorStrategy(ErrorStrategy.WARN_AND_PAUSE);
-        OTSReplication newReplication = new OTSReplication("rep" + replicationNr, startTime, warmupPeriod, runLength);
+        OtsReplication newReplication = new OtsReplication("rep" + replicationNr, startTime, warmupPeriod, runLength);
         super.initialize(model, newReplication);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void initialize(final OTSModelInterface model, final OTSReplication replication) throws SimRuntimeException
+    public void initialize(final OtsModelInterface model, final OtsReplication replication) throws SimRuntimeException
     {
         super.initialize(model, replication);
     }
 
     /** {@inheritDoc} */
     @Override
-    public OTSReplication getReplication()
+    public OtsReplication getReplication()
     {
-        return (OTSReplication) super.getReplication();
+        return (OtsReplication) super.getReplication();
     }
 
     /** {@inheritDoc} */

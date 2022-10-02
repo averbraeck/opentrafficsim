@@ -20,9 +20,9 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsSimulator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.car.CarTest;
@@ -62,7 +62,7 @@ public class IDMPlusTest implements UNITS
     {
         // Test 1. Check a car standing still with no leaders accelerates with maximum acceleration
         // cars have #10 and up
-        OTSSimulatorInterface simulator = new OTSSimulator("IDMPlusTest");
+        OtsSimulatorInterface simulator = new OtsSimulator("IDMPlusTest");
         OTSRoadNetwork network = new OTSRoadNetwork("IDMPlus test network", true, simulator);
         IDMPlusTestModel model = new IDMPlusTestModel(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
@@ -358,7 +358,7 @@ public class IDMPlusTest implements UNITS
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-class IDMPlusTestModel extends AbstractOTSModel
+class IDMPlusTestModel extends AbstractOtsModel
 {
 
     /** */
@@ -367,7 +367,7 @@ class IDMPlusTestModel extends AbstractOTSModel
     /**
      * @param simulator the simulator to use
      */
-    IDMPlusTestModel(final OTSSimulatorInterface simulator)
+    IDMPlusTestModel(final OtsSimulatorInterface simulator)
     {
         super(simulator);
     }

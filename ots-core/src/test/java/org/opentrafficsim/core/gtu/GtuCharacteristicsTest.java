@@ -12,8 +12,8 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.junit.Test;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.OTSNetwork;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -28,7 +28,7 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class GtuCharacteristicsTest implements OTSModelInterface
+public class GtuCharacteristicsTest implements OtsModelInterface
 {
     /** */
     private static final long serialVersionUID = 20160311L;
@@ -66,7 +66,7 @@ public class GtuCharacteristicsTest implements OTSModelInterface
     }
 
     /** ... */
-    private OTSSimulatorInterface simulator;
+    private OtsSimulatorInterface simulator;
 
     /** {@inheritDoc} */
     @Override
@@ -98,7 +98,7 @@ public class GtuCharacteristicsTest implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public OTSSimulatorInterface getSimulator()
+    public OtsSimulatorInterface getSimulator()
     {
         return this.simulator;
     }

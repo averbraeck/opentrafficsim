@@ -10,7 +10,7 @@ import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public interface OTSAnimatorInterface extends OTSSimulatorInterface, AnimatorInterface
+public interface OtsAnimatorInterface extends OtsSimulatorInterface, AnimatorInterface
 {
     // no extra methods
 }

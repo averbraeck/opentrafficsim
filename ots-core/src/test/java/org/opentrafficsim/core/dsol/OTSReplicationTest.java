@@ -42,9 +42,9 @@ public class OTSReplicationTest
         Time startTime = new Time(100, TimeUnit.BASE_SECOND);
         Duration warmupPeriod = new Duration(200, DurationUnit.SECOND);
         Duration runLength = new Duration(500, DurationUnit.SECOND);
-        OTSSimulatorInterface simulator = new OTSSimulator("Simulator for OTSReplicationTest");
+        OtsSimulatorInterface simulator = new OtsSimulator("Simulator for OTSReplicationTest");
         OTSModel model = new OTSModel(simulator);
-        OTSReplication replication = new OTSReplication(id, startTime, warmupPeriod, runLength);
+        OtsReplication replication = new OtsReplication(id, startTime, warmupPeriod, runLength);
         assertEquals("startTime can be retrieved", startTime, replication.getStartTimeAbs());
         assertEquals("warmupPeriod can be retrieved", warmupPeriod, replication.getWarmupPeriod());
         assertEquals("runLength can be retrieved", runLength, replication.getRunLength());
@@ -66,7 +66,7 @@ public class OTSReplicationTest
     /**
      * OTS model for testing.
      */
-    static class OTSModel extends AbstractOTSModel
+    static class OTSModel extends AbstractOtsModel
     {
         /** ... */
         private static final long serialVersionUID = 1L;
@@ -77,7 +77,7 @@ public class OTSReplicationTest
          * @param shortName the short name of the model
          * @param description the description of the model
          */
-        OTSModel(final OTSSimulatorInterface simulator, final String shortName, final String description)
+        OTSModel(final OtsSimulatorInterface simulator, final String shortName, final String description)
         {
             super(simulator, shortName, description);
         }
@@ -86,7 +86,7 @@ public class OTSReplicationTest
          * Construct the instrumented OTSModel.
          * @param simulator the simulator
          */
-        OTSModel(final OTSSimulatorInterface simulator)
+        OTSModel(final OtsSimulatorInterface simulator)
         {
             super(simulator);
         }

@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.network;
 
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
 /**
  * OTSRoadNetworkCloner makes a deep clone of a network.
@@ -23,7 +23,7 @@ public final class OTSRoadNetworkUtils
      * @param network OTSRoadNetwork; the network to destroy
      * @param simulator OTSSimulatorInterface; the simulator of the old network
      */
-    public static void destroy(final OTSRoadNetwork network, final OTSSimulatorInterface simulator)
+    public static void destroy(final OTSRoadNetwork network, final OtsSimulatorInterface simulator)
     {
         OTSRoadNetworkUtils.destroy(network, simulator);
     }

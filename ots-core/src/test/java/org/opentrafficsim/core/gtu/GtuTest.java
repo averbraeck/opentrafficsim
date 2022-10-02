@@ -21,9 +21,9 @@ import org.djutils.immutablecollections.ImmutableSet;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsSimulator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -72,7 +72,7 @@ public class GtuTest
     {
         TestGTU firstGTU = null;
         TestGTU lastGTU = null;
-        OTSSimulatorInterface simulator = new OTSSimulator("testAbstractGTU");
+        OtsSimulatorInterface simulator = new OtsSimulator("testAbstractGTU");
         OTSNetwork perceivableContext = new OTSNetwork("network", true, simulator);
         GTUModel model = new GTUModel(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(9999, DurationUnit.SI), model);
@@ -326,7 +326,7 @@ public class GtuTest
     }
 
     /** */
-    class GTUModel extends AbstractOTSModel
+    class GTUModel extends AbstractOtsModel
     {
         /** */
         private static final long serialVersionUID = 1L;
@@ -334,7 +334,7 @@ public class GtuTest
         /**
          * @param simulator the simulator
          */
-        GTUModel(final OTSSimulatorInterface simulator)
+        GTUModel(final OtsSimulatorInterface simulator)
         {
             super(simulator);
         }
@@ -375,7 +375,7 @@ public class GtuTest
          * @throws SimRuntimeException when something goes wrong in the scheduling of the first move event
          * @throws GtuException when something goes wrong during GTU instantiation
          */
-        TestGTU(final String id, final GtuType gtuType, final OTSSimulatorInterface simulator,
+        TestGTU(final String id, final GtuType gtuType, final OtsSimulatorInterface simulator,
                 final PerceivableContext perceivableContext) throws SimRuntimeException, GtuException
         {
             super(id, gtuType, simulator, perceivableContext);
@@ -389,7 +389,7 @@ public class GtuTest
          * @throws SimRuntimeException when something goes wrong in the scheduling of the first move event
          * @throws GtuException when something goes wrong during GTU instantiation
          */
-        TestGTU(final IdGenerator idGenerator, final GtuType gtuType, final OTSSimulatorInterface simulator,
+        TestGTU(final IdGenerator idGenerator, final GtuType gtuType, final OtsSimulatorInterface simulator,
 
                 final PerceivableContext perceivableContext) throws SimRuntimeException, GtuException
         {

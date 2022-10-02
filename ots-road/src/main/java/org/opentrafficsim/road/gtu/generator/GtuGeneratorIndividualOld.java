@@ -10,7 +10,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.distributions.Generator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
@@ -36,7 +36,7 @@ public class GtuGeneratorIndividualOld extends AbstractGtuGeneratorOld implement
     private static final long serialVersionUID = 20160000L;
 
     /** Simulator to schedule next arrival events. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /** Distribution of the length of the GTU. */
     private final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist;
@@ -72,7 +72,7 @@ public class GtuGeneratorIndividualOld extends AbstractGtuGeneratorOld implement
      * @throws SimRuntimeException when simulation scheduling fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public GtuGeneratorIndividualOld(final String name, final OTSSimulatorInterface simulator, final GtuType gtuType,
+    public GtuGeneratorIndividualOld(final String name, final OtsSimulatorInterface simulator, final GtuType gtuType,
             final Class<?> gtuClass, final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
             final ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> interarrivelTimeDist,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist,
@@ -92,7 +92,7 @@ public class GtuGeneratorIndividualOld extends AbstractGtuGeneratorOld implement
 
     /** {@inheritDoc} */
     @Override
-    public final OTSSimulatorInterface getSimulator()
+    public final OtsSimulatorInterface getSimulator()
     {
         return this.simulator;
     }

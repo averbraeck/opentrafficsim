@@ -4,9 +4,9 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.bounds.Bounds2d;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 
 import nl.tudelft.simulation.dsol.jetty.sse.OTSWebServer;
@@ -29,7 +29,7 @@ public class TJunctionDemo extends OTSWebServer
      * @param model the model
      * @throws Exception on jetty error
      */
-    public TJunctionDemo(final String title, final OTSSimulatorInterface simulator, final OTSModelInterface model)
+    public TJunctionDemo(final String title, final OtsSimulatorInterface simulator, final OtsModelInterface model)
             throws Exception
     {
         super(title, simulator, new Bounds2d(-200, 200, -200, 200));
@@ -44,7 +44,7 @@ public class TJunctionDemo extends OTSWebServer
      */
     public static void main(final String[] args) throws Exception
     {
-        OTSAnimator simulator = new OTSAnimator("TJunctionDemo");
+        OtsAnimator simulator = new OtsAnimator("TJunctionDemo");
         simulator.setAnimation(false);
         TJunctionModel junctionModel = new TJunctionModel(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), junctionModel);

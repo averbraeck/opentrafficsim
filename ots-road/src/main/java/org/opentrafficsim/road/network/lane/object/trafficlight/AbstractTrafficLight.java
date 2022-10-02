@@ -3,7 +3,7 @@ package org.opentrafficsim.road.network.lane.object.trafficlight;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
@@ -27,7 +27,7 @@ public abstract class AbstractTrafficLight extends AbstractLaneBasedObject imple
     private TrafficLightColor trafficLightColor;
 
     /** The simulator to schedule events on. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /** Default elevation of a traffic light (above zero; don't use this for lanes at non-zero elevation). */
     public static final Length DEFAULT_TRAFFICLIGHT_ELEVATION = new Length(1, LengthUnit.METER);
@@ -42,7 +42,7 @@ public abstract class AbstractTrafficLight extends AbstractLaneBasedObject imple
      * @throws NetworkException on failure to place the object
      */
     public AbstractTrafficLight(final String id, final Lane lane, final Length longitudinalPosition,
-            final OTSSimulatorInterface simulator, final Length height) throws NetworkException
+            final OtsSimulatorInterface simulator, final Length height) throws NetworkException
     {
         super(id, lane, longitudinalPosition, LaneBasedObject.makeGeometry(lane, longitudinalPosition), height);
 
@@ -62,7 +62,7 @@ public abstract class AbstractTrafficLight extends AbstractLaneBasedObject imple
      * @throws NetworkException on failure to place the object
      */
     public AbstractTrafficLight(final String id, final Lane lane, final Length longitudinalPosition,
-            final OTSSimulatorInterface simulator) throws NetworkException
+            final OtsSimulatorInterface simulator) throws NetworkException
     {
         this(id, lane, longitudinalPosition, simulator, DEFAULT_TRAFFICLIGHT_ELEVATION);
     }

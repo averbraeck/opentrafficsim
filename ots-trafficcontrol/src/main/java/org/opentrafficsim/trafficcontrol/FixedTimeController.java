@@ -21,7 +21,7 @@ import org.djutils.immutablecollections.ImmutableList;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
@@ -63,7 +63,7 @@ public class FixedTimeController extends AbstractTrafficController
      * @param signalGroups Set&lt;SignalGroup&gt;; signal groups
      * @throws SimRuntimeException simulator is past zero time
      */
-    public FixedTimeController(final String id, final OTSSimulatorInterface simulator, final Network network,
+    public FixedTimeController(final String id, final OtsSimulatorInterface simulator, final Network network,
             final Duration cycleTime, final Duration offset, final Set<SignalGroup> signalGroups) throws SimRuntimeException
     {
         super(id, simulator);
@@ -267,7 +267,7 @@ public class FixedTimeController extends AbstractTrafficController
      * @throws SimRuntimeException when traffic light does not exist in the network
      */
     @SuppressWarnings("unused")
-    private void setup(final OTSSimulatorInterface simulator, final Network network) throws SimRuntimeException
+    private void setup(final OtsSimulatorInterface simulator, final Network network) throws SimRuntimeException
     {
         for (SignalGroup signalGroup : this.signalGroups)
         {
@@ -362,7 +362,7 @@ public class FixedTimeController extends AbstractTrafficController
         private List<TrafficLight> trafficLights;
 
         /** Simulator. */
-        private OTSSimulatorInterface simulator;
+        private OtsSimulatorInterface simulator;
 
         /** Red time. */
         private Duration red;
@@ -430,7 +430,7 @@ public class FixedTimeController extends AbstractTrafficController
          * @param network Network;
          * @throws SimRuntimeException when traffic light does not exist in the network
          */
-        public void startup(final Duration controllerOffset, final Duration cycleTime, final OTSSimulatorInterface theSimulator,
+        public void startup(final Duration controllerOffset, final Duration cycleTime, final OtsSimulatorInterface theSimulator,
                 final Network network) throws SimRuntimeException
         {
             this.simulator = theSimulator;

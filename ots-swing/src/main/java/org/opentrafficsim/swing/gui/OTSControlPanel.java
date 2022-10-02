@@ -50,8 +50,8 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
@@ -76,10 +76,10 @@ public class OTSControlPanel extends JPanel
     private static final long serialVersionUID = 20150617L;
 
     /** The simulator. */
-    private OTSSimulatorInterface simulator;
+    private OtsSimulatorInterface simulator;
 
     /** The model, needed for its properties. */
-    private final OTSModelInterface model;
+    private final OtsModelInterface model;
 
     /** The clock. */
     private final ClockLabel clockPanel;
@@ -119,7 +119,7 @@ public class OTSControlPanel extends JPanel
      * @param otsAnimationPanel OTSAnimationPanel; the OTS animation panel
      * @throws RemoteException when simulator cannot be accessed for listener attachment
      */
-    public OTSControlPanel(final OTSSimulatorInterface simulator, final OTSModelInterface model,
+    public OTSControlPanel(final OtsSimulatorInterface simulator, final OtsModelInterface model,
             final OTSAnimationPanel otsAnimationPanel) throws RemoteException
     {
         this.simulator = simulator;
@@ -676,7 +676,7 @@ public class OTSControlPanel extends JPanel
      * @return simulator.
      */
     @SuppressWarnings("unchecked")
-    public final OTSSimulatorInterface getSimulator()
+    public final OtsSimulatorInterface getSimulator()
     {
         return this.simulator;
     }
@@ -777,7 +777,7 @@ public class OTSControlPanel extends JPanel
          * @param simulator DEVSSimulatorInterface&lt;?, ?, ?&gt;; the simulator to change the speed of
          */
         TimeWarpPanel(final double minimum, final double maximum, final double initialValue, final int ticksPerDecade,
-                final OTSSimulatorInterface simulator)
+                final OtsSimulatorInterface simulator)
         {
             if (minimum <= 0 || minimum > initialValue || initialValue > maximum)
             {

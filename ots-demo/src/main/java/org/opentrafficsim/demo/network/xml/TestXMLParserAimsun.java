@@ -15,10 +15,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
@@ -44,7 +44,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author Wouter Schakel
  */
-public class TestXMLParserAimsun extends OTSSimulationApplication<OTSModelInterface>
+public class TestXMLParserAimsun extends OTSSimulationApplication<OtsModelInterface>
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -54,7 +54,7 @@ public class TestXMLParserAimsun extends OTSSimulationApplication<OTSModelInterf
      * @param animationPanel the animation panel
      * @throws OTSDrawingException on drawing error
      */
-    public TestXMLParserAimsun(final OTSModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
+    public TestXMLParserAimsun(final OtsModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
     {
         super(model, animationPanel);
     }
@@ -73,7 +73,7 @@ public class TestXMLParserAimsun extends OTSSimulationApplication<OTSModelInterf
             {
                 try
                 {
-                    OTSAnimator simulator = new OTSAnimator("TestXMLParserAimsun");
+                    OtsAnimator simulator = new OtsAnimator("TestXMLParserAimsun");
                     TestAimsunModel xmlModel = new TestAimsunModel(simulator);
                     simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), xmlModel);
                     OTSAnimationPanel animationPanel = new OTSAnimationPanel(xmlModel.getNetwork().getExtent(),
@@ -106,7 +106,7 @@ public class TestXMLParserAimsun extends OTSSimulationApplication<OTSModelInterf
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      */
-    static class TestAimsunModel extends AbstractOTSModel
+    static class TestAimsunModel extends AbstractOtsModel
     {
         /** */
         private static final long serialVersionUID = 20141121L;
@@ -117,7 +117,7 @@ public class TestXMLParserAimsun extends OTSSimulationApplication<OTSModelInterf
         /**
          * @param simulator the simulator
          */
-        TestAimsunModel(final OTSSimulatorInterface simulator)
+        TestAimsunModel(final OtsSimulatorInterface simulator)
         {
             super(simulator);
         }

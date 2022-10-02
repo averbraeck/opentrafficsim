@@ -8,7 +8,7 @@ import javax.naming.NamingException;
 import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSAnimator;
+import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
@@ -63,7 +63,7 @@ public class CrossingTrafficLightsSwing extends OTSSimulationApplication<Crossin
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator("CrossingTrafficLightsSwing");
+            OtsAnimator simulator = new OtsAnimator("CrossingTrafficLightsSwing");
             final CrossingTrafficLightsModel otsModel = new CrossingTrafficLightsModel(simulator);
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {

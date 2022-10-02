@@ -18,7 +18,7 @@ import org.djutils.event.EventListenerInterface;
 import org.djutils.event.TimedEvent;
 import org.djutils.event.ref.ReferenceType;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.kpi.sampling.KpiLane;
@@ -50,7 +50,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
     private static final long serialVersionUID = 20200228L;
 
     /** Simulator. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /** Network. */
     private final OTSRoadNetwork network;

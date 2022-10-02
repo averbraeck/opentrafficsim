@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.xml.generated.RANDOMSTREAM;
 import org.opentrafficsim.xml.generated.RANDOMSTREAM.REPLICATION;
@@ -42,7 +42,7 @@ public final class RunParser
      * @throws XmlParserException on parsing error
      */
     public static ExperimentRunControl<Duration> parseRun(final String networkId, final RUN run,
-            final StreamSeedInformation streamInformation, final OTSSimulatorInterface simulator) throws XmlParserException
+            final StreamSeedInformation streamInformation, final OtsSimulatorInterface simulator) throws XmlParserException
     {
         int numberReplications = run.getNUMBERREPLICATIONS() == null ? 1 : run.getNUMBERREPLICATIONS().intValue();
         Time startTime = run.getSTARTTIME() == null ? Time.ZERO : run.getSTARTTIME();

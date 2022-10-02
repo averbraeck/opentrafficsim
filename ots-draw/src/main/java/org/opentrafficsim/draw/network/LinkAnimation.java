@@ -11,7 +11,7 @@ import javax.naming.NamingException;
 import org.djutils.draw.line.PolyLine3d;
 import org.djutils.draw.point.Point3d;
 import org.djutils.logger.CategoryLogger;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -54,7 +54,7 @@ public class LinkAnimation extends Renderable2D<Link> implements Renderable2DInt
      * @throws NamingException for problems with registering in context
      * @throws RemoteException on communication failure
      */
-    public LinkAnimation(final Link link, final OTSSimulatorInterface simulator, final float width)
+    public LinkAnimation(final Link link, final OtsSimulatorInterface simulator, final float width)
             throws NamingException, RemoteException
     {
         super(link, simulator);
@@ -164,7 +164,7 @@ public class LinkAnimation extends Renderable2D<Link> implements Renderable2DInt
          * @throws RemoteException - when remote context cannot be found
          */
         public Text(final Locatable source, final String text, final float dx, final float dy,
-                final TextAlignment textPlacement, final Color color, final OTSSimulatorInterface simulator,
+                final TextAlignment textPlacement, final Color color, final OtsSimulatorInterface simulator,
                 final ScaleDependentRendering scaleDependentRendering) throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textPlacement, color, 2.0f, 12.0f, 50f, simulator, null, scaleDependentRendering);

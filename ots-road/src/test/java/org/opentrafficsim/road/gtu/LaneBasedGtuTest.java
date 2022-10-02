@@ -24,9 +24,9 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsSimulator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
@@ -88,7 +88,7 @@ public class LaneBasedGtuTest implements UNITS
         {
             fail("truckUpToLane must be >= truckFromLane");
         }
-        OTSSimulatorInterface simulator = new OTSSimulator("leaderFollowerParallel");
+        OtsSimulatorInterface simulator = new OtsSimulator("leaderFollowerParallel");
         OTSRoadNetwork network = new OTSRoadNetwork("leader follower parallel gtu test network", true, simulator);
 
         Model model = new Model(simulator);
@@ -364,7 +364,7 @@ public class LaneBasedGtuTest implements UNITS
     {
         for (int a = 1; a >= -1; a--)
         {
-            OTSSimulatorInterface simulator = new OTSSimulator("timeAtDistanceTest");
+            OtsSimulatorInterface simulator = new OtsSimulator("timeAtDistanceTest");
             OTSRoadNetwork network = new OTSRoadNetwork("test", true, simulator);
             // Create a car with constant acceleration
             Model model = new Model(simulator);
@@ -508,12 +508,12 @@ public class LaneBasedGtuTest implements UNITS
     }
 
     /** The helper model. */
-    public static class Model extends AbstractOTSModel
+    public static class Model extends AbstractOtsModel
     {
         /**
          * @param simulator the simulator to use
          */
-        public Model(final OTSSimulatorInterface simulator)
+        public Model(final OtsSimulatorInterface simulator)
         {
             super(simulator);
         }

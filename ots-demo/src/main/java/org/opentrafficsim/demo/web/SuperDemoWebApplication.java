@@ -12,10 +12,10 @@ import org.djutils.cli.Checkable;
 import org.djutils.cli.CliUtil;
 import org.djutils.io.URLResource;
 import org.djutils.serialization.SerializationException;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSReplication;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsReplication;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.demo.CircularRoadModel;
 import org.opentrafficsim.demo.CrossingTrafficLightsModel;
 import org.opentrafficsim.demo.NetworksModel;
@@ -58,10 +58,10 @@ import picocli.CommandLine.Option;
 public class SuperDemoWebApplication implements Checkable
 {
     /** */
-    private OTSSimulatorInterface simulator;
+    private OtsSimulatorInterface simulator;
 
     /** */
-    private OTSModelInterface model;
+    private OtsModelInterface model;
 
     /** the socket. */
     private ZMQ.Socket fsSocket;
@@ -114,7 +114,7 @@ public class SuperDemoWebApplication implements Checkable
      */
     protected void init() throws SimRuntimeException, NamingException, Sim0MQException, SerializationException, IOException
     {
-        this.simulator = new OTSAnimator("SuperDemoWebApplication");
+        this.simulator = new OtsAnimator("SuperDemoWebApplication");
         this.modelId = this.modelId.trim();
         if (this.modelId.toLowerCase().contains("circularroad"))
         {
@@ -415,7 +415,7 @@ public class SuperDemoWebApplication implements Checkable
         String error = "";
         try
         {
-            OTSReplication replication = new OTSReplication("rep1", Time.ZERO, this.warmupDuration, this.runDuration);
+            OtsReplication replication = new OtsReplication("rep1", Time.ZERO, this.warmupDuration, this.runDuration);
             this.simulator.initialize(this.model, replication);
             // TODO: different... this.simulator.scheduleEventAbs(100.0, this, this, "terminate", null);
 

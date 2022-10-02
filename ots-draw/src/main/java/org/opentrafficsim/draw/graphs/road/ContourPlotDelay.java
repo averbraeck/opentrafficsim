@@ -13,7 +13,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vfloat.vector.FloatSpeedVector;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.egtf.Converter;
 import org.opentrafficsim.core.egtf.Quantity;
 import org.opentrafficsim.draw.core.BoundsPaintScale;
@@ -139,7 +139,7 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
      * @param simulator OTSSimulatorInterface; simulator
      * @param dataPool ContourDataSource&lt;GtuData&gt;; data pool
      */
-    public ContourPlotDelay(final String caption, final OTSSimulatorInterface simulator,
+    public ContourPlotDelay(final String caption, final OtsSimulatorInterface simulator,
             final ContourDataSource<GtuData> dataPool)
     {
         super(caption, simulator, dataPool, createPaintScale(), new Duration(0.05, DurationUnit.SI), "%.1f/km",

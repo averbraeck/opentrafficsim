@@ -17,7 +17,7 @@ import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
@@ -225,7 +225,7 @@ public final class GeneratorSinkParser
             final Map<String, List<FrequencyAndObject<Route>>> shortestRouteMixMap, final StreamInformation streamInformation)
             throws XmlParserException
     {
-        OTSSimulatorInterface simulator = otsNetwork.getSimulator();
+        OtsSimulatorInterface simulator = otsNetwork.getSimulator();
         List<LaneBasedGtuGenerator> generators = new ArrayList<>();
         try
         {
@@ -376,7 +376,7 @@ public final class GeneratorSinkParser
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
     public static void parseSinks(final OTSRoadNetwork otsNetwork, final NETWORKDEMAND demand,
-            final OTSSimulatorInterface simulator) throws NetworkException
+            final OtsSimulatorInterface simulator) throws NetworkException
     {
         for (SINK sinkTag : demand.getSINK())
         {

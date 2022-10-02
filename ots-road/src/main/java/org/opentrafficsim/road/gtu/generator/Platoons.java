@@ -21,7 +21,7 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.WeightedMeanAndSum;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -59,7 +59,7 @@ public abstract class Platoons<T>
     private LaneBasedGtuGenerator gen;
 
     /** Simulator. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /** Position to generate the GTU's at. */
     private final Set<Lane> position;
@@ -96,7 +96,7 @@ public abstract class Platoons<T>
      * @param simulator OTSSimulatorInterface; simulator
      * @param position Set&lt;Lane&gt;; position
      */
-    private Platoons(final OTSSimulatorInterface simulator, final Set<Lane> position)
+    private Platoons(final OtsSimulatorInterface simulator, final Set<Lane> position)
     {
         this.simulator = simulator;
         this.position = position;
@@ -111,7 +111,7 @@ public abstract class Platoons<T>
      * @return Platoons&lt;Category&gt;; platoons based on OD
      */
     public static Platoons<Category> ofCategory(final GtuCharacteristicsGeneratorOD characteristics,
-            final OTSSimulatorInterface simulator, final StreamInterface stream, final Set<Lane> position)
+            final OtsSimulatorInterface simulator, final StreamInterface stream, final Set<Lane> position)
     {
         return new Platoons<Category>(simulator, position)
         {
@@ -143,7 +143,7 @@ public abstract class Platoons<T>
      */
     @SuppressWarnings("synthetic-access")
     public static Platoons<GtuType> ofGtuType(final LaneBasedGtuCharacteristicsGenerator characteristics,
-            final OTSSimulatorInterface simulator, final StreamInterface stream, final Set<Lane> position)
+            final OtsSimulatorInterface simulator, final StreamInterface stream, final Set<Lane> position)
     {
         return new Platoons<GtuType>(simulator, position)
         {

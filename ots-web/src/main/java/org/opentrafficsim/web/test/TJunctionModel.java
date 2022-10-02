@@ -11,8 +11,8 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
@@ -34,7 +34,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class TJunctionModel extends AbstractOTSModel
+public class TJunctionModel extends AbstractOtsModel
 {
     /** */
     private static final long serialVersionUID = 20161211L;
@@ -45,7 +45,7 @@ public class TJunctionModel extends AbstractOTSModel
     /**
      * @param simulator OTSSimulatorInterface; the simulator for this model
      */
-    public TJunctionModel(final OTSSimulatorInterface simulator)
+    public TJunctionModel(final OtsSimulatorInterface simulator)
     {
         super(simulator);
     }

@@ -15,8 +15,8 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -53,7 +53,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class CircularLaneModel extends AbstractOTSModel implements UNITS
+public class CircularLaneModel extends AbstractOtsModel implements UNITS
 {
     /** */
     private static final long serialVersionUID = 20141121L;
@@ -100,7 +100,7 @@ public class CircularLaneModel extends AbstractOTSModel implements UNITS
     /**
      * @param simulator OTSSimulatorInterface; the simulator for this model
      */
-    public CircularLaneModel(final OTSSimulatorInterface simulator)
+    public CircularLaneModel(final OtsSimulatorInterface simulator)
     {
         super(simulator);
         this.network = new OTSRoadNetwork("network", true, simulator);
@@ -282,7 +282,7 @@ public class CircularLaneModel extends AbstractOTSModel implements UNITS
      * @param theSimulator OTSSimulatorInterface; the simulator
      * @param errorMessage String; the error message
      */
-    public void stopSimulator(final OTSSimulatorInterface theSimulator, final String errorMessage)
+    public void stopSimulator(final OtsSimulatorInterface theSimulator, final String errorMessage)
     {
         System.out.println("Error: " + errorMessage);
         try

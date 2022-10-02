@@ -22,10 +22,10 @@ import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.serialization.SerializationException;
 import org.junit.Test;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsSimulator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -49,7 +49,7 @@ import nl.tudelft.simulation.dsol.statistics.StatisticsInterface;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class PublisherTest implements OTSModelInterface
+public class PublisherTest implements OtsModelInterface
 {
 
     /** ... */
@@ -81,7 +81,7 @@ public class PublisherTest implements OTSModelInterface
                 PublisherTest.this.lastResult = payload;
             }
         };
-        OTSSimulatorInterface simulator = new OTSSimulator("test simulator for PublisherTest");
+        OtsSimulatorInterface simulator = new OtsSimulator("test simulator for PublisherTest");
         OTSRoadNetwork network = new OTSRoadNetwork("test network for PublisherTest", true, simulator);
         Publisher publisher = new Publisher(network);
         assertTrue("id of publisher contains id of network", publisher.getId().contains(network.getId()));
@@ -130,7 +130,7 @@ public class PublisherTest implements OTSModelInterface
     }
 
     @Override
-    public final OTSSimulatorInterface getSimulator()
+    public final OtsSimulatorInterface getSimulator()
     {
         return null;
     }
@@ -197,7 +197,7 @@ public class PublisherTest implements OTSModelInterface
     /**
      * The Model.
      */
-    class TestModel extends AbstractOTSModel implements EventListenerInterface
+    class TestModel extends AbstractOtsModel implements EventListenerInterface
     {
         /** */
         private static final long serialVersionUID = 20170419L;
@@ -214,7 +214,7 @@ public class PublisherTest implements OTSModelInterface
          * @param description String; the model description
          * @param xml String; the XML description of the simulation model
          */
-        TestModel(final OTSSimulatorInterface simulator, final String shortName, final String description, final String xml)
+        TestModel(final OtsSimulatorInterface simulator, final String shortName, final String description, final String xml)
         {
             super(simulator, shortName, description);
             this.xml = xml;

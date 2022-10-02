@@ -40,10 +40,10 @@ import org.djutils.logger.LogCategory;
 import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.Gtu;
@@ -274,7 +274,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
         {
             try
             {
-                OTSAnimator animator = new OTSAnimator("OTS Animator");
+                OtsAnimator animator = new OtsAnimator("OTS Animator");
                 this.model = new Sim0MQOTSModel(animator, "OTS model", "Remotely controlled OTS model", xml);
                 Map<String, StreamInterface> map = new LinkedHashMap<>();
                 map.put("generation", new MersenneTwister(seed));
@@ -393,7 +393,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                             }
                             else if (message.length == 9 && message[8] instanceof Time)
                             {
-                                OTSSimulatorInterface simulator = this.model.getSimulator();
+                                OtsSimulatorInterface simulator = this.model.getSimulator();
                                 System.out.println("Simulating up to " + message[8]);
                                 simulator.runUpTo((Time) message[8]);
                                 int count = 0;
@@ -645,7 +645,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
     /**
      * The application.
      */
-    class Sim0MQRemoteControlSwingApplication extends OTSSimulationApplication<OTSModelInterface>
+    class Sim0MQRemoteControlSwingApplication extends OTSSimulationApplication<OtsModelInterface>
     {
         /** */
         private static final long serialVersionUID = 1L;
@@ -655,7 +655,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
          * @param panel OTSAnimationPanel; the panel of the main screen
          * @throws OTSDrawingException on animation error
          */
-        Sim0MQRemoteControlSwingApplication(final OTSModelInterface model, final OTSAnimationPanel panel)
+        Sim0MQRemoteControlSwingApplication(final OtsModelInterface model, final OTSAnimationPanel panel)
                 throws OTSDrawingException
         {
             super(model, panel);
@@ -665,7 +665,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
     /**
      * The Model.
      */
-    class Sim0MQOTSModel extends AbstractOTSModel implements EventListenerInterface
+    class Sim0MQOTSModel extends AbstractOtsModel implements EventListenerInterface
     {
         /** */
         private static final long serialVersionUID = 20170419L;
@@ -683,7 +683,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
          * @param description String; the model description
          * @param xml String; the XML description of the simulation model
          */
-        Sim0MQOTSModel(final OTSSimulatorInterface simulator, final String shortName, final String description,
+        Sim0MQOTSModel(final OtsSimulatorInterface simulator, final String shortName, final String description,
                 final String xml)
         {
             super(simulator, shortName, description);

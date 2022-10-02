@@ -18,7 +18,7 @@ import org.djutils.draw.point.Point;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2DComparator;
@@ -59,7 +59,7 @@ public class HTMLAnimationPanel extends HTMLGridPanel implements EventListenerIn
     private Set<Class<? extends Locatable>> shownClasses = new LinkedHashSet<>();
 
     /** the simulator. */
-    private OTSSimulatorInterface simulator;
+    private OtsSimulatorInterface simulator;
 
     /** the eventContext. */
     private ContextInterface context = null;
@@ -103,7 +103,7 @@ public class HTMLAnimationPanel extends HTMLGridPanel implements EventListenerIn
      * @param simulator SimulatorInterface&lt;?,?,?&gt;; the simulator of which we want to know the events for animation
      * @throws RemoteException on network error for one of the listeners
      */
-    public HTMLAnimationPanel(final Bounds2d homeExtent, final OTSSimulatorInterface simulator) throws RemoteException
+    public HTMLAnimationPanel(final Bounds2d homeExtent, final OtsSimulatorInterface simulator) throws RemoteException
     {
         super(homeExtent);
         super.showGrid = true;

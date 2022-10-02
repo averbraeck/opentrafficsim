@@ -29,8 +29,8 @@ import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.Gtu;
@@ -95,7 +95,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class NetworksModel extends AbstractOTSModel implements EventListenerInterface, UNITS
+public class NetworksModel extends AbstractOtsModel implements EventListenerInterface, UNITS
 {
     /** */
     private static final long serialVersionUID = 20140815L;
@@ -142,7 +142,7 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
     /**
      * @param simulator OTSSimulatorInterface; the simulator for this model
      */
-    public NetworksModel(final OTSSimulatorInterface simulator)
+    public NetworksModel(final OtsSimulatorInterface simulator)
     {
         super(simulator);
         createInputParameters();

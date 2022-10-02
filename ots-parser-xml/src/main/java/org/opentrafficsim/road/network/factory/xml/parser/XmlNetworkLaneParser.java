@@ -29,8 +29,8 @@ import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.logger.Cat;
 import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
-import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -388,7 +388,7 @@ public final class XmlNetworkLaneParser implements Serializable
      */
     public static void main(final String[] args) throws Exception
     {
-        OTSSimulatorInterface simulator = new OTSSimulator("XmlNetworkLaneParser");
+        OtsSimulatorInterface simulator = new OtsSimulator("XmlNetworkLaneParser");
         build("/example.xml", new OTSRoadNetwork("", true, simulator), false);
         System.exit(0);
     }

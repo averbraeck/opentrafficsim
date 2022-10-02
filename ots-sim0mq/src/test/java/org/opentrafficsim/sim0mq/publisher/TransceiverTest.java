@@ -33,8 +33,8 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.opentrafficsim.core.dsol.OTSReplication;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsReplication;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -116,7 +116,7 @@ public class TransceiverTest
         {
             // Ignore expected exception
         }
-        OTSSimulatorInterface simulator = MockDEVSSimulator.createMock();
+        OtsSimulatorInterface simulator = MockDEVSSimulator.createMock();
 
         OTSRoadNetwork network = new OTSRoadNetwork("test network for TransceiverTest", true, simulator);
         GtuIdTransceiver gtuIdTransceiver = new GtuIdTransceiver(network);
@@ -321,7 +321,7 @@ public class TransceiverTest
         CrossSectionLink link = new CrossSectionLink(network, "1 to 2", node1, node2, roadLinkType,
                 new OTSLine3D(node1.getPoint(), node2.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.RESIDENTIAL_ROAD_LANE);
-        OTSReplication replication = Mockito.mock(OTSReplication.class);
+        OtsReplication replication = Mockito.mock(OtsReplication.class);
         HistoryManagerDEVS hmd = Mockito.mock(HistoryManagerDEVS.class);
         Mockito.when(hmd.now()).thenReturn(Time.ZERO);
         Mockito.when(replication.getHistoryManager(simulator)).thenReturn(hmd);
@@ -612,7 +612,7 @@ class MyMockGTU
     private final Acceleration acceleration;
 
     /** mocked simulator. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /**
      * @param name String; the name of the mocked GTU
@@ -624,7 +624,7 @@ class MyMockGTU
      * @throws RemoteException cannot happen ...
      */
     MyMockGTU(final String name, final GtuType gtuType, final DirectedPoint location, final Speed speed,
-            final Acceleration acceleration, final OTSSimulatorInterface simulator) throws RemoteException
+            final Acceleration acceleration, final OtsSimulatorInterface simulator) throws RemoteException
     {
         this.name = name;
         this.gtuType = gtuType;

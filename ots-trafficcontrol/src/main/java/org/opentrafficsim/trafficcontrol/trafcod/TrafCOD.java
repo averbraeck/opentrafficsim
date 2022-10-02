@@ -27,8 +27,8 @@ import org.djutils.event.EventListenerInterface;
 import org.djutils.event.TimedEventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableCollection;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.object.ObjectInterface;
@@ -140,7 +140,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
     private TrafCODDisplay stateDisplay = null;
 
     /** The simulation engine. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /** Space-separated list of the traffic streams in the currently active conflict group. */
     private String currentConflictGroup = "";
@@ -158,7 +158,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
      * @throws SimRuntimeException when scheduling the first evaluation event fails
      * @throws IOException when loading the TrafCOD rules from the URL fails
      */
-    public TrafCOD(final String controllerName, final URL trafCodURL, final OTSSimulatorInterface simulator,
+    public TrafCOD(final String controllerName, final URL trafCodURL, final OtsSimulatorInterface simulator,
             final Container display, final BufferedImage displayBackground, final List<String> displayObjectLocations)
             throws TrafficControlException, SimRuntimeException, IOException
     {
@@ -176,7 +176,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
      * @throws TrafficControlException when a rule cannot be parsed
      * @throws SimRuntimeException when scheduling the first evaluation event fails
      */
-    public TrafCOD(final String controllerName, final List<String> trafCODRules, final OTSSimulatorInterface simulator,
+    public TrafCOD(final String controllerName, final List<String> trafCODRules, final OtsSimulatorInterface simulator,
             final BufferedImage displayBackground, final List<String> displayObjectLocations)
             throws TrafficControlException, SimRuntimeException
     {
@@ -434,7 +434,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
         Network network = null;
         try
         {
-            network = ((OTSModelInterface) this.simulator.getModel()).getNetwork();
+            network = ((OtsModelInterface) this.simulator.getModel()).getNetwork();
         }
         catch (ClassCastException e)
         {
@@ -1729,7 +1729,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
      * Retrieve the simulator.
      * @return SimulatorInterface&lt;Time, Duration, SimTimeDoubleUnit&gt;
      */
-    public OTSSimulatorInterface getSimulator()
+    public OtsSimulatorInterface getSimulator()
     {
         return this.simulator;
     }

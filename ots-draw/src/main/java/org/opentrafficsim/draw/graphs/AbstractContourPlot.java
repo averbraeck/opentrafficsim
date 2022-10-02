@@ -12,7 +12,7 @@ import org.jfree.chart.LegendItemCollection;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.DomainOrder;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.draw.core.BoundsPaintScale;
 import org.opentrafficsim.draw.graphs.ContourDataSource.ContourDataType;
 import org.opentrafficsim.draw.graphs.ContourDataSource.Dimension;
@@ -62,7 +62,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      * @param legendFormat String; format string for the captions in the color legend
      * @param valueFormat String; format string used to create status label (under the mouse)
      */
-    public AbstractContourPlot(final String caption, final OTSSimulatorInterface simulator, final ContourDataSource<?> dataPool,
+    public AbstractContourPlot(final String caption, final OtsSimulatorInterface simulator, final ContourDataSource<?> dataPool,
             final BoundsPaintScale paintScale, final Z legendStep, final String legendFormat, final String valueFormat)
     {
         super(caption, dataPool.getUpdateInterval(), simulator, dataPool.getSamplerData(), dataPool.getPath(),
@@ -92,7 +92,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      * @param valueFormat String; format string used to create status label (under the mouse)
      */
     @SuppressWarnings("parameternumber")
-    public AbstractContourPlot(final String caption, final OTSSimulatorInterface simulator, final ContourDataSource<?> dataPool,
+    public AbstractContourPlot(final String caption, final OtsSimulatorInterface simulator, final ContourDataSource<?> dataPool,
             final Z legendStep, final String legendFormat, final Z minValue, final Z maxValue, final String valueFormat)
     {
         this(caption, simulator, dataPool, createPaintScale(minValue, maxValue), legendStep, legendFormat, valueFormat);

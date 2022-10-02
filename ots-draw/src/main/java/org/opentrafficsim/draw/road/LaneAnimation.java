@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -50,7 +50,7 @@ public class LaneAnimation extends Renderable2D<Lane> implements Renderable2DInt
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public LaneAnimation(final Lane lane, final OTSSimulatorInterface simulator, final Color color)
+    public LaneAnimation(final Lane lane, final OtsSimulatorInterface simulator, final Color color)
             throws NamingException, RemoteException
     {
         super(lane, simulator);
@@ -154,7 +154,7 @@ public class LaneAnimation extends Renderable2D<Lane> implements Renderable2DInt
          * @throws NamingException when the name of this object is not unique
          * @throws RemoteException when communication with a remote process fails
          */
-        public CenterLineAnimation(final CenterLine centerLine, final OTSSimulatorInterface simulator)
+        public CenterLineAnimation(final CenterLine centerLine, final OtsSimulatorInterface simulator)
                 throws NamingException, RemoteException
         {
             super(centerLine, simulator);
@@ -196,7 +196,7 @@ public class LaneAnimation extends Renderable2D<Lane> implements Renderable2DInt
          * @throws RemoteException - when remote context cannot be found
          */
         public Text(final Locatable source, final String text, final float dx, final float dy,
-                final TextAlignment textPlacement, final Color color, final OTSSimulatorInterface simulator)
+                final TextAlignment textPlacement, final Color color, final OtsSimulatorInterface simulator)
                 throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textPlacement, color, simulator, TextAnimation.RENDERALWAYS);

@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
 import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
@@ -42,7 +42,7 @@ public abstract class AbstractLineAnimation<T extends LaneBasedObject> extends R
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
-    public AbstractLineAnimation(final T source, final OTSSimulatorInterface simulator, final double length, final Length width)
+    public AbstractLineAnimation(final T source, final OtsSimulatorInterface simulator, final double length, final Length width)
             throws NamingException, RemoteException
     {
         super(source, simulator);

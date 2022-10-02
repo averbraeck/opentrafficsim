@@ -16,7 +16,7 @@ import org.djutils.event.EventListenerInterface;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -441,7 +441,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     public static void generateConflictPair(final ConflictType conflictType, final ConflictRule conflictRule,
             final boolean permitted, final Lane lane1, final Length longitudinalPosition1, final Length length1,
             final OTSLine3D geometry1, final GtuType gtuType1, final Lane lane2, final Length longitudinalPosition2,
-            final Length length2, final OTSLine3D geometry2, final GtuType gtuType2, final OTSSimulatorInterface simulator)
+            final Length length2, final OTSLine3D geometry2, final GtuType gtuType2, final OtsSimulatorInterface simulator)
             throws NetworkException
     {
         // lane, longitudinalPosition, length and geometry are checked in AbstractLaneBasedObject

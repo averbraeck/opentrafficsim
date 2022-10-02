@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.network.lane.object.trafficlight;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -27,7 +27,7 @@ public class SimpleTrafficLight extends AbstractTrafficLight
      * @throws NetworkException on failure to place the object
      */
     public SimpleTrafficLight(final String id, final Lane lane, final Length longitudinalPosition,
-            final OTSSimulatorInterface simulator) throws NetworkException
+            final OtsSimulatorInterface simulator) throws NetworkException
     {
         super(id, lane, longitudinalPosition, simulator);
     }

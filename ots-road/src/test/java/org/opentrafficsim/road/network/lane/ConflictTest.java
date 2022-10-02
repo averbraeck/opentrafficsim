@@ -22,8 +22,8 @@ import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.opentrafficsim.core.dsol.OTSReplication;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsReplication;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -62,8 +62,8 @@ public class ConflictTest implements EventListenerInterface
     @Test
     public void testConstructor() throws NetworkException, OTSGeometryException
     {
-        OTSSimulatorInterface simulator = MockDEVSSimulator.createMock();
-        OTSReplication replication = Mockito.mock(OTSReplication.class);
+        OtsSimulatorInterface simulator = MockDEVSSimulator.createMock();
+        OtsReplication replication = Mockito.mock(OtsReplication.class);
         HistoryManagerDEVS hmd = Mockito.mock(HistoryManagerDEVS.class);
         Mockito.when(hmd.now()).thenReturn(Time.ZERO);
         Mockito.when(replication.getHistoryManager(simulator)).thenReturn(hmd);

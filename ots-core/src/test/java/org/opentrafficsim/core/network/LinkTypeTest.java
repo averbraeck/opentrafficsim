@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 import org.djutils.exceptions.Try;
 import org.junit.Test;
 import org.opentrafficsim.core.compatibility.GtuCompatibility;
-import org.opentrafficsim.core.dsol.OTSSimulator;
+import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.gtu.GtuType;
 
 /**
@@ -31,7 +31,7 @@ public class LinkTypeTest
     @SuppressWarnings({"unlikely-arg-type"})
     public final void testLinkType()
     {
-        OTSNetwork network = new OTSNetwork("test", true, new OTSSimulator("Simulator for LinkTypeTest"));
+        OTSNetwork network = new OTSNetwork("test", true, new OtsSimulator("Simulator for LinkTypeTest"));
         Try.testFail(() -> new LinkType(null, null, network), NullPointerException.class);
         Try.testFail(() -> new LinkType("name", null, null), NullPointerException.class);
 

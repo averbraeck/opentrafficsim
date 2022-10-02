@@ -42,7 +42,7 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGtuColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SpeedGtuColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGtuColorer;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -496,7 +496,7 @@ public class StrategiesDemo extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected OTSRoadNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
+    protected OTSRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
     {
         OTSRoadNetwork network = new OTSRoadNetwork("Strategies demo", true, getSimulator());
 

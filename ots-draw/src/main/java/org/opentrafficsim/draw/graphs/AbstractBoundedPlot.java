@@ -7,7 +7,7 @@ import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.event.AxisChangeEvent;
 import org.jfree.chart.event.AxisChangeListener;
 import org.jfree.chart.plot.XYPlot;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
 /**
  * Plot that allows hard bounds to be set, with upper and lower bound independent. Manual zooming and auto ranges are bounded
@@ -42,7 +42,7 @@ public abstract class AbstractBoundedPlot extends AbstractPlot
      * @param updateInterval Duration; regular update interval (simulation time)
      * @param delay Duration; amount of time that chart runs behind simulation to prevent gaps in the charted data
      */
-    public AbstractBoundedPlot(final OTSSimulatorInterface simulator, final String caption, final Duration updateInterval,
+    public AbstractBoundedPlot(final OtsSimulatorInterface simulator, final String caption, final Duration updateInterval,
             final Duration delay)
     {
         super(simulator, caption, updateInterval, delay);

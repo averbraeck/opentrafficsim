@@ -32,9 +32,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsSimulator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
@@ -57,7 +57,7 @@ import nl.tudelft.simulation.dsol.statistics.StatisticsInterface;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class GtuDumperTest implements OTSModelInterface
+public class GtuDumperTest implements OtsModelInterface
 {
     /** ... */
     private static final long serialVersionUID = 1L;
@@ -70,7 +70,7 @@ public class GtuDumperTest implements OTSModelInterface
     private File containerDir;
 
     /** The simulator. */
-    private OTSSimulatorInterface simulator;
+    private OtsSimulatorInterface simulator;
 
     /** The GTUDumper. */
     private GtuDumper gtuDumper;
@@ -91,7 +91,7 @@ public class GtuDumperTest implements OTSModelInterface
         // System.out.println("testdir is " + this.testDir.getRoot());
         this.containerDir = this.testDir.newFolder("subfolder");
         // System.out.println("containerDir is " + this.containerDir);
-        this.simulator = new OTSSimulator("Simulator for testing GTUDumper class");
+        this.simulator = new OtsSimulator("Simulator for testing GTUDumper class");
         this.network = new OTSNetwork("Network for testing GTUDumper class", true, this.simulator);
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this);
         this.simulator.scheduleEventAbsTime(new Time(40, TimeUnit.BASE_SECOND), this, this, "createGTU", new Object[] {});
@@ -253,7 +253,7 @@ public class GtuDumperTest implements OTSModelInterface
             }
 
             @Override
-            public OTSSimulatorInterface getSimulator()
+            public OtsSimulatorInterface getSimulator()
             {
                 return GtuDumperTest.this.simulator;
             }
@@ -454,7 +454,7 @@ public class GtuDumperTest implements OTSModelInterface
     }
 
     @Override
-    public final OTSSimulatorInterface getSimulator()
+    public final OtsSimulatorInterface getSimulator()
     {
         return this.simulator;
     }
@@ -513,7 +513,7 @@ public class GtuDumperTest implements OTSModelInterface
     public void testArgumentChecks() throws SimRuntimeException, IOException, NamingException
     {
         this.containerDir = this.testDir.newFolder("subfolder");
-        this.simulator = new OTSSimulator("Simulator for testing GTUDumper class");
+        this.simulator = new OtsSimulator("Simulator for testing GTUDumper class");
         this.network = new OTSNetwork("Network for testing GTUDumper class", true, this.simulator);
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this);
         try

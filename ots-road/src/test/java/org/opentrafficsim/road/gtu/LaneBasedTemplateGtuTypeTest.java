@@ -20,10 +20,10 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsSimulator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.TemplateGtuType;
@@ -64,7 +64,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
     @Test
     public final void constructorTest() throws Exception
     {
-        OTSSimulatorInterface simulator = new OTSSimulator("LaneBasedTemplateGTUTypeTest");
+        OtsSimulatorInterface simulator = new OtsSimulator("LaneBasedTemplateGTUTypeTest");
         OTSRoadNetwork network = new OTSRoadNetwork("TemplateGTU network", true, simulator);
         GtuType pcType = network.getGtuType(GtuType.DEFAULTS.CAR);
         final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcLength =
@@ -73,7 +73,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 1.6), METER);
         final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> pcMaximumSpeed =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 180), KM_PER_HOUR);
-        OTSModelInterface model = new DummyModelForTemplateGTUTest(simulator);
+        OtsModelInterface model = new DummyModelForTemplateGTUTest(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         LaneBasedTemplateGtuType passengerCar = new LaneBasedTemplateGtuType(pcType, new Generator<Length>()
         {
@@ -168,7 +168,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
     @Test
     public final void compatibleLaneTypeTest() throws Exception
     {
-        OTSSimulatorInterface simulator = new OTSSimulator("LaneBasedTemplateGTUTypeTest");
+        OtsSimulatorInterface simulator = new OtsSimulator("LaneBasedTemplateGTUTypeTest");
         OTSRoadNetwork network = new OTSRoadNetwork("TemplateGTU network", true, simulator);
         // Create some TemplateGTUTypes
         GtuType pc = network.getGtuType(GtuType.DEFAULTS.CAR);
@@ -295,12 +295,12 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
      * <p>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      */
-    static class DummyModelForTemplateGTUTest extends AbstractOTSModel
+    static class DummyModelForTemplateGTUTest extends AbstractOtsModel
     {
         /**
          * @param simulator the simulator to use
          */
-        DummyModelForTemplateGTUTest(final OTSSimulatorInterface simulator)
+        DummyModelForTemplateGTUTest(final OtsSimulatorInterface simulator)
         {
             super(simulator);
         }

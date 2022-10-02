@@ -38,7 +38,7 @@ public class OTSSimulatorTest
     public void otsSimulatorTest() throws SimRuntimeException, NamingException, InterruptedException
     {
         String id = "Simulator for OTSSimulator test";
-        OTSSimulator simulator = new OTSSimulator(id);
+        OtsSimulator simulator = new OtsSimulator(id);
         assertEquals("id can be retrieved", id, simulator.getSourceId());
         Time startTime = new Time(10, TimeUnit.BASE_SECOND);
         Duration warmupDuration = new Duration(20, DurationUnit.SECOND);

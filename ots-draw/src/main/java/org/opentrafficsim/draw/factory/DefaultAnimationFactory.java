@@ -12,7 +12,7 @@ import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuGenerator;
@@ -64,7 +64,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 public class DefaultAnimationFactory implements EventListenerInterface
 {
     /** the simulator. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /** GTU colorer. */
     private final GtuColorer gtuColorer;
@@ -176,7 +176,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
      * @return the DefaultAnimationFactory
      * @throws OTSDrawingException on drawing error
      */
-    public static DefaultAnimationFactory animateNetwork(final OTSNetwork network, final OTSSimulatorInterface simulator,
+    public static DefaultAnimationFactory animateNetwork(final OTSNetwork network, final OtsSimulatorInterface simulator,
             final GtuColorer gtuColorer) throws OTSDrawingException
     {
         return new DefaultAnimationFactory(network, gtuColorer, true);

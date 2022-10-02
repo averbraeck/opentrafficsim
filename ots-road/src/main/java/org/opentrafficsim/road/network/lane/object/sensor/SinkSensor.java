@@ -2,7 +2,7 @@ package org.opentrafficsim.road.network.lane.object.sensor;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -29,7 +29,7 @@ public class SinkSensor extends AbstractSensor
      * @param simulator OTSSimulatorInterface; the simulator to enable animation.
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
-    public SinkSensor(final Lane lane, final Length position, final OTSSimulatorInterface simulator) throws NetworkException
+    public SinkSensor(final Lane lane, final Length position, final OtsSimulatorInterface simulator) throws NetworkException
     {
         this(lane, position, Compatible.EVERYTHING, simulator);
     }
@@ -42,7 +42,7 @@ public class SinkSensor extends AbstractSensor
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
     public SinkSensor(final Lane lane, final Length position, final Compatible compatible,
-            final OTSSimulatorInterface simulator) throws NetworkException
+            final OtsSimulatorInterface simulator) throws NetworkException
     {
         super("SINK@" + lane.getFullId() + "." + position, lane, position, RelativePosition.FRONT, simulator,
                 makeGeometry(lane, position, 1.0), compatible);

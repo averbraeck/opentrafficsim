@@ -43,7 +43,7 @@ import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.AbstractGtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -337,7 +337,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected OTSRoadNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
+    protected OTSRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
     {
         AbstractGtu.ALIGNED = true;
 

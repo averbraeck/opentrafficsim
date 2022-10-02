@@ -9,7 +9,7 @@ package org.opentrafficsim.core.dsol;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class OTSSimulationException extends Exception
+public class OtsSimulationException extends Exception
 {
     /** */
     private static final long serialVersionUID = 20151223L;
@@ -17,14 +17,14 @@ public class OTSSimulationException extends Exception
     /**
      * Construct an operational plan exception.
      */
-    public OTSSimulationException()
+    public OtsSimulationException()
     {
     }
 
     /**
      * @param message String; exception message
      */
-    public OTSSimulationException(final String message)
+    public OtsSimulationException(final String message)
     {
         super(message);
     }
@@ -32,7 +32,7 @@ public class OTSSimulationException extends Exception
     /**
      * @param cause Throwable; exception that triggered this exception
      */
-    public OTSSimulationException(final Throwable cause)
+    public OtsSimulationException(final Throwable cause)
     {
         super(cause);
     }
@@ -41,7 +41,7 @@ public class OTSSimulationException extends Exception
      * @param message String; exception message
      * @param cause Throwable; exception that triggered this exception
      */
-    public OTSSimulationException(final String message, final Throwable cause)
+    public OtsSimulationException(final String message, final Throwable cause)
     {
         super(message, cause);
     }
@@ -52,7 +52,7 @@ public class OTSSimulationException extends Exception
      * @param enableSuppression boolean; whether or not suppression is enabled or disabled
      * @param writableStackTrace boolean; whether or not the stack trace should be writable
      */
-    public OTSSimulationException(final String message, final Throwable cause, final boolean enableSuppression,
+    public OtsSimulationException(final String message, final Throwable cause, final boolean enableSuppression,
             final boolean writableStackTrace)
     {
         super(message, cause, enableSuppression, writableStackTrace);

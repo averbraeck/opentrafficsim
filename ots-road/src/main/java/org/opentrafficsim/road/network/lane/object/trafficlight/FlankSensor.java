@@ -2,7 +2,7 @@ package org.opentrafficsim.road.network.lane.object.trafficlight;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -40,7 +40,7 @@ public class FlankSensor extends AbstractSensor
      * @throws NetworkException when the network is inconsistent
      */
     public FlankSensor(final String id, final Lane lane, final Length longitudinalPosition, final TYPE positionType,
-            final OTSSimulatorInterface simulator, final TrafficLightSensor parent, final Compatible compatible)
+            final OtsSimulatorInterface simulator, final TrafficLightSensor parent, final Compatible compatible)
             throws NetworkException
     {
         super(id, lane, longitudinalPosition, positionType, simulator, compatible);

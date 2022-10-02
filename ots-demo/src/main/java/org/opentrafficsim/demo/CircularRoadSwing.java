@@ -13,9 +13,9 @@ import javax.swing.JButton;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsSimulator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.LinkPosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -102,7 +102,7 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
     {
         try
         {
-            OTSSimulator simulator = new OTSSimulator("CircularRoadSwing");
+            OtsSimulator simulator = new OtsSimulator("CircularRoadSwing");
             final CircularRoadModel otsModel = new CircularRoadModel(simulator);
             System.out.println(otsModel.getInputParameterMap());
             TabbedParameterDialog.process(otsModel.getInputParameterMap());
@@ -221,7 +221,7 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator("CircularRoadSwing");
+            OtsAnimator simulator = new OtsAnimator("CircularRoadSwing");
             final CircularRoadModel otsModel = new CircularRoadModel(simulator);
             // Thread buttonClick = new Thread()
             // {
@@ -291,7 +291,7 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
      * Add the statistics tabs.
      * @param simulator OTSSimulatorInterface; the simulator on which sampling can be scheduled
      */
-    protected final void addStatisticsTabs(final OTSSimulatorInterface simulator)
+    protected final void addStatisticsTabs(final OtsSimulatorInterface simulator)
     {
         GraphPath<KpiLane> path01;
         GraphPath<KpiLane> path0;

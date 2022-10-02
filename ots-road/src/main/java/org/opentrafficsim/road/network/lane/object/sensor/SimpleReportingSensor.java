@@ -2,7 +2,7 @@ package org.opentrafficsim.road.network.lane.object.sensor;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -36,7 +36,7 @@ public class SimpleReportingSensor extends AbstractSensor
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
     public SimpleReportingSensor(final String id, final Lane lane, final Length position,
-            final RelativePosition.TYPE triggerPosition, final OTSSimulatorInterface simulator, final Compatible compatible)
+            final RelativePosition.TYPE triggerPosition, final OtsSimulatorInterface simulator, final Compatible compatible)
             throws NetworkException
     {
         super(id, lane, position, triggerPosition, simulator, compatible);

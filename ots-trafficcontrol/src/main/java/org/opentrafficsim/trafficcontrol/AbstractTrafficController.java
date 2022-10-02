@@ -2,7 +2,7 @@ package org.opentrafficsim.trafficcontrol;
 
 import org.djutils.event.EventProducer;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
 /**
  * <p>
@@ -27,7 +27,7 @@ public abstract class AbstractTrafficController extends EventProducer implements
      * @param id String; id
      * @param simulator OTSSimulatorInterface; simulator
      */
-    public AbstractTrafficController(final String id, final OTSSimulatorInterface simulator)
+    public AbstractTrafficController(final String id, final OtsSimulatorInterface simulator)
     {
         Throw.whenNull(id, "Id may not be null.");
         this.id = id;

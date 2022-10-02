@@ -18,7 +18,7 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.animation.Drawable;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
@@ -77,7 +77,7 @@ public interface Gtu extends Locatable, Serializable, EventProducerInterface, Id
     GtuType getGtuType();
 
     /** @return the simulator of the GTU. */
-    OTSSimulatorInterface getSimulator();
+    OtsSimulatorInterface getSimulator();
 
     /** @return the reference position of the GTU, by definition (0, 0, 0). */
     RelativePosition getReference();

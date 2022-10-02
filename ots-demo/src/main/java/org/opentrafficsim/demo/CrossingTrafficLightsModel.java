@@ -26,8 +26,8 @@ import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -80,7 +80,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * </p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class CrossingTrafficLightsModel extends AbstractOTSModel implements UNITS
+public class CrossingTrafficLightsModel extends AbstractOtsModel implements UNITS
 {
     /** */
     private static final long serialVersionUID = 20140815L;
@@ -122,7 +122,7 @@ public class CrossingTrafficLightsModel extends AbstractOTSModel implements UNIT
     /**
      * @param simulator OTSSimulatorInterface; the simulator for this model
      */
-    public CrossingTrafficLightsModel(final OTSSimulatorInterface simulator)
+    public CrossingTrafficLightsModel(final OtsSimulatorInterface simulator)
     {
         super(simulator);
         this.network = new OTSRoadNetwork("network", true, simulator);

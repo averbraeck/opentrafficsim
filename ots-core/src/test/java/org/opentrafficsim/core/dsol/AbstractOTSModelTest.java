@@ -26,10 +26,10 @@ public class AbstractOTSModelTest
     @Test
     public void abstractOTSModelTest()
     {
-        OTSSimulatorInterface simulator = new OTSSimulator("Simulator for AbstractOTSModelTest");
+        OtsSimulatorInterface simulator = new OtsSimulator("Simulator for AbstractOTSModelTest");
         String shortName = "shortName";
         String description = "description";
-        AbstractOTSModel model = new OTSModel(simulator, shortName, description);
+        AbstractOtsModel model = new OTSModel(simulator, shortName, description);
         assertEquals("simulator is returned", simulator, model.getSimulator());
         assertEquals("short name is returned", shortName, model.getShortName());
         assertEquals("description is returned", description, model.getDescription());
@@ -53,7 +53,7 @@ public class AbstractOTSModelTest
     /**
      * OTS model for testing.
      */
-    static class OTSModel extends AbstractOTSModel
+    static class OTSModel extends AbstractOtsModel
     {
         /** ... */
         private static final long serialVersionUID = 1L;
@@ -64,7 +64,7 @@ public class AbstractOTSModelTest
          * @param shortName the name of the model
          * @param description the description of the model
          */
-        OTSModel(final OTSSimulatorInterface simulator, final String shortName, final String description)
+        OTSModel(final OtsSimulatorInterface simulator, final String shortName, final String description)
         {
             super(simulator, shortName, description);
         }
@@ -73,7 +73,7 @@ public class AbstractOTSModelTest
          * Construct the instrumented OTSModel.
          * @param simulator the simulator
          */
-        OTSModel(final OTSSimulatorInterface simulator)
+        OTSModel(final OtsSimulatorInterface simulator)
         {
             super(simulator);
         }

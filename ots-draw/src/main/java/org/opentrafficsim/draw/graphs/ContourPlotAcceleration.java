@@ -12,7 +12,7 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.WeightedMeanAndSum;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.egtf.Converter;
 import org.opentrafficsim.core.egtf.Quantity;
 import org.opentrafficsim.draw.core.BoundsPaintScale;
@@ -114,7 +114,7 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
      * @param simulator OTSSimulatorInterface; simulator
      * @param dataPool ContourDataSource&lt;?&gt;; data pool
      */
-    public ContourPlotAcceleration(final String caption, final OTSSimulatorInterface simulator,
+    public ContourPlotAcceleration(final String caption, final OtsSimulatorInterface simulator,
             final ContourDataSource<?> dataPool)
     {
         super(caption, simulator, dataPool, createPaintScale(), new Acceleration(1.0, AccelerationUnit.SI), "%.0fm/s\u00B2",

@@ -3,7 +3,7 @@ package org.opentrafficsim.road.gtu.lane.perception.mental;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -34,7 +34,7 @@ public class ExponentialTask extends AbstractTask
      * @param simulator OTSSimulatorInterface; simulator
      */
     public ExponentialTask(final String id, final double initialTaskDemand, final double finalTaskDemand, final Duration tau,
-            final OTSSimulatorInterface simulator)
+            final OtsSimulatorInterface simulator)
     {
         super(id);
         this.initialTaskDemand = initialTaskDemand;

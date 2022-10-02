@@ -13,7 +13,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -85,7 +85,7 @@ public final class LaneFactory
      * @throws NetworkException if the link exists, or a node does not exist, in the network
      */
     public LaneFactory(final OTSRoadNetwork network, final OTSRoadNode from, final OTSRoadNode to, final LinkType type,
-            final OTSSimulatorInterface simulator, final LaneKeepingPolicy policy) throws OTSGeometryException, NetworkException
+            final OtsSimulatorInterface simulator, final LaneKeepingPolicy policy) throws OTSGeometryException, NetworkException
     {
         this(network, from, to, type, simulator, policy, makeLine(from, to));
     }
@@ -101,7 +101,7 @@ public final class LaneFactory
      * @throws NetworkException if the link exists, or a node does not exist, in the network
      */
     public LaneFactory(final OTSRoadNetwork network, final OTSRoadNode from, final OTSRoadNode to, final LinkType type,
-            final OTSSimulatorInterface simulator, final LaneKeepingPolicy policy, final OTSLine3D line) throws NetworkException
+            final OtsSimulatorInterface simulator, final LaneKeepingPolicy policy, final OTSLine3D line) throws NetworkException
     {
         this.link = new CrossSectionLink(network, from.getId() + to.getId(), from, to, type, line, policy);
     }
@@ -312,7 +312,7 @@ public final class LaneFactory
      *             or the end node of the link are not registered in the network.
      */
     public static CrossSectionLink makeLink(final OTSRoadNetwork network, final String name, final OTSRoadNode from,
-            final OTSRoadNode to, final OTSPoint3D[] intermediatePoints, final OTSSimulatorInterface simulator)
+            final OTSRoadNode to, final OTSPoint3D[] intermediatePoints, final OtsSimulatorInterface simulator)
             throws OTSGeometryException, NetworkException
     {
         List<OTSPoint3D> pointList =
@@ -379,7 +379,7 @@ public final class LaneFactory
     @SuppressWarnings("checkstyle:parameternumber")
     private static Lane makeLane(final CrossSectionLink link, final String id, final LaneType laneType,
             final Length latPosAtStart, final Length latPosAtEnd, final Length width, final Speed speedLimit,
-            final OTSSimulatorInterface simulator) throws NetworkException, OTSGeometryException
+            final OtsSimulatorInterface simulator) throws NetworkException, OTSGeometryException
     {
         Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
         speedMap.put(link.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), speedLimit);
@@ -404,7 +404,7 @@ public final class LaneFactory
      */
     public static Lane makeLane(final OTSRoadNetwork network, final String name, final OTSRoadNode from, final OTSRoadNode to,
             final OTSPoint3D[] intermediatePoints, final LaneType laneType, final Speed speedLimit,
-            final OTSSimulatorInterface simulator) throws NetworkException, OTSGeometryException
+            final OtsSimulatorInterface simulator) throws NetworkException, OTSGeometryException
     {
         Length width = new Length(4.0, LengthUnit.METER);
         final CrossSectionLink link = makeLink(network, name, from, to, intermediatePoints, simulator);
@@ -435,7 +435,7 @@ public final class LaneFactory
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane[] makeMultiLane(final OTSRoadNetwork network, final String name, final OTSRoadNode from,
             final OTSRoadNode to, final OTSPoint3D[] intermediatePoints, final int laneCount, final int laneOffsetAtStart,
-            final int laneOffsetAtEnd, final LaneType laneType, final Speed speedLimit, final OTSSimulatorInterface simulator)
+            final int laneOffsetAtEnd, final LaneType laneType, final Speed speedLimit, final OtsSimulatorInterface simulator)
             throws NetworkException, OTSGeometryException
     {
         final CrossSectionLink link = makeLink(network, name, from, to, intermediatePoints, simulator);
@@ -474,7 +474,7 @@ public final class LaneFactory
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane[] makeMultiLane(final OTSRoadNetwork network, final String name, final OTSRoadNode from,
             final OTSRoadNode to, final OTSPoint3D[] intermediatePoints, final int laneCount, final LaneType laneType,
-            final Speed speedLimit, final OTSSimulatorInterface simulator)
+            final Speed speedLimit, final OtsSimulatorInterface simulator)
             throws NamingException, NetworkException, OTSGeometryException
     {
         return makeMultiLane(network, name, from, to, intermediatePoints, laneCount, 0, 0, laneType, speedLimit, simulator);
@@ -504,7 +504,7 @@ public final class LaneFactory
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane[] makeMultiLaneBezier(final OTSRoadNetwork network, final String name, final OTSRoadNode n1,
             final OTSRoadNode n2, final OTSRoadNode n3, final OTSRoadNode n4, final int laneCount, final int laneOffsetAtStart,
-            final int laneOffsetAtEnd, final LaneType laneType, final Speed speedLimit, final OTSSimulatorInterface simulator)
+            final int laneOffsetAtEnd, final LaneType laneType, final Speed speedLimit, final OtsSimulatorInterface simulator)
             throws NamingException, NetworkException, OTSGeometryException
     {
         OTSLine3D bezier = makeBezier(n1, n2, n3, n4);

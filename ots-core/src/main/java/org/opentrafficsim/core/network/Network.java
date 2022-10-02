@@ -11,7 +11,7 @@ import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.definitions.Definitions;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
@@ -40,7 +40,7 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      * Return the simulator.
      * @return OTSSimulatorInterface; the simulator
      */
-    OTSSimulatorInterface getSimulator();
+    OtsSimulatorInterface getSimulator();
 
     /***************************************************************************************/
     /**************************************** NODES ****************************************/

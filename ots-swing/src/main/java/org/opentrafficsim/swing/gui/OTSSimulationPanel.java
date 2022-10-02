@@ -9,8 +9,8 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.dsol.swing.gui.ConsoleOutput;
@@ -31,7 +31,7 @@ public class OTSSimulationPanel extends JPanel
     private static final long serialVersionUID = 20150617L;
 
     /** The simulator. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /** The console to log messages. */
     private final ConsoleOutput console = new ConsoleOutput();
@@ -40,7 +40,7 @@ public class OTSSimulationPanel extends JPanel
     private final OTSControlPanel otsControlPanel;
 
     /** Animation, required to add properties tab. */
-    private final OTSModelInterface otsModel;
+    private final OtsModelInterface otsModel;
 
     static
     {
@@ -57,7 +57,7 @@ public class OTSSimulationPanel extends JPanel
      * @param otsModel OTSModelInterface; the model with its properties.
      * @throws RemoteException when communications to a remote machine fails
      */
-    public OTSSimulationPanel(final OTSSimulatorInterface simulator, final OTSModelInterface otsModel) throws RemoteException
+    public OTSSimulationPanel(final OtsSimulatorInterface simulator, final OtsModelInterface otsModel) throws RemoteException
     {
         this.simulator = simulator;
         this.otsModel = otsModel;
@@ -107,7 +107,7 @@ public class OTSSimulationPanel extends JPanel
     /**
      * @return simulator.
      */
-    public final OTSSimulatorInterface getSimulator()
+    public final OtsSimulatorInterface getSimulator()
     {
         return this.simulator;
     }
@@ -132,7 +132,7 @@ public class OTSSimulationPanel extends JPanel
     /**
      * @return otsModel
      */
-    public final OTSModelInterface getOtsModel()
+    public final OtsModelInterface getOtsModel()
     {
         return this.otsModel;
     }

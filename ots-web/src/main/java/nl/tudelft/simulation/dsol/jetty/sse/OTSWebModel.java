@@ -21,7 +21,7 @@ import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.event.TimedEvent;
 import org.eclipse.jetty.server.Request;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.web.animation.WebAnimationToggles;
 
@@ -52,7 +52,7 @@ public class OTSWebModel implements EventListenerInterface
     private final String title;
 
     /** the simulator. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /** dirty flag for the controls: when the model e.g. stops, the status needs to be changed. */
     private boolean dirtyControls = false;
@@ -74,7 +74,7 @@ public class OTSWebModel implements EventListenerInterface
      * @param simulator OTSSimulatorInterface; the simulator
      * @throws Exception in case jetty crashes
      */
-    public OTSWebModel(final String title, final OTSSimulatorInterface simulator) throws Exception
+    public OTSWebModel(final String title, final OtsSimulatorInterface simulator) throws Exception
     {
         this.title = title;
         this.simulator = simulator;
@@ -110,7 +110,7 @@ public class OTSWebModel implements EventListenerInterface
     /**
      * @return simulator
      */
-    public final OTSSimulatorInterface getSimulator()
+    public final OtsSimulatorInterface getSimulator()
     {
         return this.simulator;
     }

@@ -25,9 +25,9 @@ import org.djutils.exceptions.Throw;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.ahfe.AHFEAnimation.AHFEModel;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.AbstractGtu;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
@@ -292,7 +292,7 @@ public class AHFEAnimation extends OTSSimulationApplication<AHFEModel>
             {
                 try
                 {
-                    OTSAnimator simulator = new OTSAnimator("AHFEAnimation");
+                    OtsAnimator simulator = new OtsAnimator("AHFEAnimation");
                     final AHFEModel ahfeModel = new AHFEModel(simulator, finalReplication, finalAnticipationStrategy,
                             finalReactionTime, finalAnticipationTime, finalTruckFraction, finalDistanceError, finalSpeedError,
                             finalAccelerationError, finalLeftDemand, finalRightDemand, finalLeftFraction);
@@ -407,7 +407,7 @@ public class AHFEAnimation extends OTSSimulationApplication<AHFEModel>
     /**
      * The AHFE simulation model.
      */
-    static class AHFEModel extends AbstractOTSModel
+    static class AHFEModel extends AbstractOtsModel
     {
         /** */
         private static final long serialVersionUID = 20170228L;
@@ -466,7 +466,7 @@ public class AHFEAnimation extends OTSSimulationApplication<AHFEModel>
          * @param leftDemand Frequency; left fraction, per road
          */
         @SuppressWarnings("checkstyle:parameternumber")
-        AHFEModel(final OTSSimulatorInterface simulator, final Integer replication, final String anticipationStrategy,
+        AHFEModel(final OtsSimulatorInterface simulator, final Integer replication, final String anticipationStrategy,
                 final Duration reactionTime, final Duration anticipationTime, final double truckFraction,
                 final double distanceError, final double speedError, final double accelerationError, final Frequency leftDemand,
                 final Frequency rightDemand, final double leftFraction)

@@ -23,7 +23,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class OTSAnimator extends DEVSRealTimeAnimator<Duration> implements OTSAnimatorInterface, Serializable
+public class OtsAnimator extends DEVSRealTimeAnimator<Duration> implements OtsAnimatorInterface, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150511L;
@@ -35,14 +35,14 @@ public class OTSAnimator extends DEVSRealTimeAnimator<Duration> implements OTSAn
      * Construct an OTSAnimator.
      * @param simulatorId the id of the simulator to use in remote communication
      */
-    public OTSAnimator(final Serializable simulatorId)
+    public OtsAnimator(final Serializable simulatorId)
     {
         super(simulatorId);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void initialize(final OTSModelInterface model, final OTSReplication replication) throws SimRuntimeException
+    public void initialize(final OtsModelInterface model, final OtsReplication replication) throws SimRuntimeException
     {
         setErrorStrategy(ErrorStrategy.WARN_AND_PAUSE);
         setAnimationDelay(20); // 50 Hz animation update
@@ -52,11 +52,11 @@ public class OTSAnimator extends DEVSRealTimeAnimator<Duration> implements OTSAn
     /** {@inheritDoc} */
     @Override
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-            final OTSModelInterface model) throws SimRuntimeException, NamingException
+            final OtsModelInterface model) throws SimRuntimeException, NamingException
     {
         setErrorStrategy(ErrorStrategy.WARN_AND_PAUSE);
         setAnimationDelay(20); // 50 Hz animation update
-        OTSReplication newReplication = new OTSReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength);
+        OtsReplication newReplication = new OtsReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength);
         super.initialize(model, newReplication);
     }
 
@@ -72,12 +72,12 @@ public class OTSAnimator extends DEVSRealTimeAnimator<Duration> implements OTSAn
      * @throws NamingException when the context for the replication cannot be created
      */
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-            final OTSModelInterface model, final Map<String, StreamInterface> streams)
+            final OtsModelInterface model, final Map<String, StreamInterface> streams)
             throws SimRuntimeException, NamingException
     {
         setErrorStrategy(ErrorStrategy.WARN_AND_PAUSE);
         setAnimationDelay(20); // 50 Hz animation update
-        OTSReplication newReplication = new OTSReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength);
+        OtsReplication newReplication = new OtsReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength);
         model.getStreams().putAll(streams);
         super.initialize(model, newReplication);
     }
@@ -85,11 +85,11 @@ public class OTSAnimator extends DEVSRealTimeAnimator<Duration> implements OTSAn
     /** {@inheritDoc} */
     @Override
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-            final OTSModelInterface model, final int replicationnr) throws SimRuntimeException, NamingException
+            final OtsModelInterface model, final int replicationnr) throws SimRuntimeException, NamingException
     {
         setErrorStrategy(ErrorStrategy.WARN_AND_PAUSE);
         setAnimationDelay(20); // 50 Hz animation update
-        OTSReplication newReplication = new OTSReplication("rep" + replicationnr, startTime, warmupPeriod, runLength);
+        OtsReplication newReplication = new OtsReplication("rep" + replicationnr, startTime, warmupPeriod, runLength);
         super.initialize(model, newReplication);
     }
 
@@ -102,9 +102,9 @@ public class OTSAnimator extends DEVSRealTimeAnimator<Duration> implements OTSAn
 
     /** {@inheritDoc} */
     @Override
-    public final OTSReplication getReplication()
+    public final OtsReplication getReplication()
     {
-        return (OTSReplication) super.getReplication();
+        return (OtsReplication) super.getReplication();
     }
 
     /** {@inheritDoc} */

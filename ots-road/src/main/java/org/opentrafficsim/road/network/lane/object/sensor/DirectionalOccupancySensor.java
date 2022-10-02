@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import org.djutils.event.EventType;
 import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
@@ -43,7 +43,7 @@ public interface DirectionalOccupancySensor extends Serializable, Identifiable
     String getId();
 
     /** @return The simulator. */
-    OTSSimulatorInterface getSimulator();
+    OtsSimulatorInterface getSimulator();
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the triggering of the entry of an OccupancySensor. <br>

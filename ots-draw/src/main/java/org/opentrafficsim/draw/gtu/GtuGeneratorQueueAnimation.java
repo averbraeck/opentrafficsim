@@ -11,7 +11,7 @@ import javax.naming.NamingException;
 
 import org.djutils.draw.point.OrientedPoint3d;
 import org.djutils.logger.CategoryLogger;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
@@ -43,7 +43,7 @@ public class GtuGeneratorQueueAnimation extends TextAnimation
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException when remote context cannot be found
      */
-    public GtuGeneratorQueueAnimation(final GtuGeneratorQueue source, final OTSSimulatorInterface simulator)
+    public GtuGeneratorQueueAnimation(final GtuGeneratorQueue source, final OtsSimulatorInterface simulator)
             throws NamingException, RemoteException
     {
         super(source, "", 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, simulator, TextAnimation.RENDERWHEN1);

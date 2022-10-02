@@ -10,7 +10,7 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -44,7 +44,7 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLight>
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public TrafficLightAnimation(final TrafficLight trafficLight, final OTSSimulatorInterface simulator)
+    public TrafficLightAnimation(final TrafficLight trafficLight, final OtsSimulatorInterface simulator)
             throws NamingException, RemoteException
     {
         super(trafficLight, simulator, 0.9, new Length(0.5, LengthUnit.SI));
@@ -137,7 +137,7 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLight>
          * @throws RemoteException - when remote context cannot be found
          */
         public Text(final Locatable source, final String text, final float dx, final float dy,
-                final TextAlignment textPlacement, final Color color, final OTSSimulatorInterface simulator)
+                final TextAlignment textPlacement, final Color color, final OtsSimulatorInterface simulator)
                 throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textPlacement, color, simulator, TextAnimation.RENDERALWAYS);

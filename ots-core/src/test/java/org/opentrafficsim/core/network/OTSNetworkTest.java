@@ -16,7 +16,7 @@ import org.djutils.event.EventListenerInterface;
 import org.djutils.event.EventTypeInterface;
 import org.junit.Test;
 import org.opentrafficsim.core.compatibility.GtuCompatibility;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -71,7 +71,7 @@ public class OTSNetworkTest implements EventListenerInterface
     public final void testOTSNetwork() throws NetworkException, OTSGeometryException
     {
         String networkId = "testOTSNetwork";
-        OTSSimulatorInterface simulator = MockSimulator.createMock();
+        OtsSimulatorInterface simulator = MockSimulator.createMock();
         OTSNetwork network = new OTSNetwork(networkId, true, simulator);
         assertTrue("Id must match", networkId.equals(network.getId()));
         network.addListener(this, Network.LINK_ADD_EVENT);

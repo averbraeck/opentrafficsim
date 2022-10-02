@@ -10,7 +10,7 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.object.StaticObject;
 import org.opentrafficsim.draw.core.PaintPolygons;
 
@@ -46,7 +46,7 @@ public class StaticObjectAnimation extends Renderable2D<StaticObject> implements
      * @throws NamingException for problems with registering in context
      * @throws RemoteException on communication failure
      */
-    public StaticObjectAnimation(final StaticObject source, final OTSSimulatorInterface simulator, final float width,
+    public StaticObjectAnimation(final StaticObject source, final OtsSimulatorInterface simulator, final float width,
             final Color color, final boolean fill) throws NamingException, RemoteException
     {
         super(source, simulator);

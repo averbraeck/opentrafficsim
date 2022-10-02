@@ -21,9 +21,9 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -126,7 +126,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator("SequentialLanes");
+            OtsAnimator simulator = new OtsAnimator("SequentialLanes");
             final SequentialModel otsModel = new SequentialModel(simulator);
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
@@ -155,7 +155,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
      * Add the statistics tabs.
      * @param simulator OTSSimulatorInterface; the simulator on which sampling can be scheduled
      */
-    protected final void addStatisticsTabs(final OTSSimulatorInterface simulator)
+    protected final void addStatisticsTabs(final OtsSimulatorInterface simulator)
     {
         GraphPath<KpiLane> path;
         try
@@ -202,7 +202,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
      * $LastChangedDate$, @version $Revision$, by $Author$, initial version 0 jan. 2015 <br>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      */
-    static class SequentialModel extends AbstractOTSModel implements UNITS
+    static class SequentialModel extends AbstractOtsModel implements UNITS
     {
         /** */
         private static final long serialVersionUID = 20150130L;
@@ -255,7 +255,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
         /**
          * @param simulator OTSSimulatorInterface; the simulator for this model
          */
-        SequentialModel(final OTSSimulatorInterface simulator)
+        SequentialModel(final OtsSimulatorInterface simulator)
         {
             super(simulator);
             InputParameterHelper.makeInputParameterMapCarTruck(this.inputParameterMap, 1.0);

@@ -5,7 +5,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -27,7 +27,7 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
     private final Arrivals arrivals;
 
     /** Simulator. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /** Random stream to draw headway. */
     private final StreamInterface stream;
@@ -44,7 +44,7 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
      * @param stream StreamInterface; random stream to draw headway
      * @param distribution HeadwayDistribution; random headway distribution
      */
-    public ArrivalsHeadwayGenerator(final Arrivals arrivals, final OTSSimulatorInterface simulator,
+    public ArrivalsHeadwayGenerator(final Arrivals arrivals, final OtsSimulatorInterface simulator,
             final StreamInterface stream, final HeadwayDistribution distribution)
     {
         this.arrivals = arrivals;

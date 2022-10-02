@@ -32,7 +32,7 @@ import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGtuColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SpeedGtuColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGtuColorer;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
@@ -282,7 +282,7 @@ public class SdmSimulation extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected OTSRoadNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
+    protected OTSRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
     {
         // manager of historic information to allow a reaction time
         sim.getReplication().setHistoryManager(new HistoryManagerDEVS(sim,
@@ -386,7 +386,7 @@ public class SdmSimulation extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected void addTabs(final OTSSimulatorInterface sim, final OTSSimulationApplication<?> animation)
+    protected void addTabs(final OtsSimulatorInterface sim, final OTSSimulationApplication<?> animation)
     {
         if (!this.output || !this.plots)
         {

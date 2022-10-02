@@ -24,7 +24,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
  * <p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  */
-public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Duration>
+public class OtsDevsRealTimeParallelMove extends DEVSRealTimeAnimator<Duration>
 {
     /** */
     private static final long serialVersionUID = 20140909L;
@@ -40,7 +40,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Duration>
      * @param moveThreads int; The number of move threads to use
      * @param simulatorId the id of the simulator to use in remote communication
      */
-    public OTSDEVSRTParallelMove(final int moveThreads, final Serializable simulatorId)
+    public OtsDevsRealTimeParallelMove(final int moveThreads, final Serializable simulatorId)
     {
         super(simulatorId);
         setMoveThreads(moveThreads);
@@ -51,7 +51,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Duration>
      * Create a new OTSRealTimeClock.
      * @param simulatorId the id of the simulator to use in remote communication
      */
-    public OTSDEVSRTParallelMove(final Serializable simulatorId)
+    public OtsDevsRealTimeParallelMove(final Serializable simulatorId)
     {
         this(1, simulatorId);
     }
@@ -309,11 +309,11 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Duration>
                             catch (Exception exception)
                             {
                                 getLogger().always().error(exception);
-                                if (OTSDEVSRTParallelMove.this.getErrorStrategy().equals(ErrorStrategy.WARN_AND_PAUSE))
+                                if (OtsDevsRealTimeParallelMove.this.getErrorStrategy().equals(ErrorStrategy.WARN_AND_PAUSE))
                                 {
                                     try
                                     {
-                                        OTSDEVSRTParallelMove.this.stop();
+                                        OtsDevsRealTimeParallelMove.this.stop();
                                     }
                                     catch (SimRuntimeException exception1)
                                     {
@@ -352,11 +352,11 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Duration>
                             catch (Exception exception)
                             {
                                 getLogger().always().error(exception);
-                                if (OTSDEVSRTParallelMove.this.getErrorStrategy().equals(ErrorStrategy.WARN_AND_PAUSE))
+                                if (OtsDevsRealTimeParallelMove.this.getErrorStrategy().equals(ErrorStrategy.WARN_AND_PAUSE))
                                 {
                                     try
                                     {
-                                        OTSDEVSRTParallelMove.this.stop();
+                                        OtsDevsRealTimeParallelMove.this.stop();
                                     }
                                     catch (SimRuntimeException exception1)
                                     {
@@ -395,11 +395,11 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Duration>
                             catch (Exception exception)
                             {
                                 getLogger().always().error(exception);
-                                if (OTSDEVSRTParallelMove.this.getErrorStrategy().equals(ErrorStrategy.WARN_AND_PAUSE))
+                                if (OtsDevsRealTimeParallelMove.this.getErrorStrategy().equals(ErrorStrategy.WARN_AND_PAUSE))
                                 {
                                     try
                                     {
-                                        OTSDEVSRTParallelMove.this.stop();
+                                        OtsDevsRealTimeParallelMove.this.stop();
                                     }
                                     catch (SimRuntimeException exception1)
                                     {

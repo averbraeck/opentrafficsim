@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.network.control.rampmetering;
 
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -18,7 +18,7 @@ public class RampMetering
 {
 
     /** Simulator. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /** Ramp metering switch. */
     private final RampMeteringSwitch rampSwitch;
@@ -31,7 +31,7 @@ public class RampMetering
      * @param rampSwitch RampMeteringSwitch; ramp metering switch
      * @param rampLightController RampMeteringLightController; ramp metering light controller
      */
-    public RampMetering(final OTSSimulatorInterface simulator, final RampMeteringSwitch rampSwitch,
+    public RampMetering(final OtsSimulatorInterface simulator, final RampMeteringSwitch rampSwitch,
             final RampMeteringLightController rampLightController)
     {
         this.simulator = simulator;

@@ -7,7 +7,7 @@ import java.util.Set;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.event.EventProducer;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -168,7 +168,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
 
     /** {@inheritDoc} */
     @Override
-    public final OTSSimulatorInterface getSimulator()
+    public final OtsSimulatorInterface getSimulator()
     {
         return getNetwork().getSimulator();
     }

@@ -20,7 +20,7 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
@@ -123,7 +123,7 @@ public final class ODApplier
         Throw.whenNull(network, "Network may not be null.");
         Throw.whenNull(od, "OD matrix may not be null.");
         Throw.whenNull(odOptions, "OD options may not be null.");
-        OTSSimulatorInterface simulator = network.getSimulator();
+        OtsSimulatorInterface simulator = network.getSimulator();
         Throw.when(!simulator.getSimulatorTime().eq0(), SimRuntimeException.class,
                 "Method ODApplier.applyOD() should be invoked at simulation time 0.");
 
@@ -379,7 +379,7 @@ public final class ODApplier
      * @param destination Node; destination node
      * @param simulator OTSSimulatorInterface; simulator
      */
-    private static void createSensorsAtDestination(final Node destination, final OTSSimulatorInterface simulator)
+    private static void createSensorsAtDestination(final Node destination, final OtsSimulatorInterface simulator)
     {
         for (Link link : destination.getLinks())
         {
@@ -399,7 +399,7 @@ public final class ODApplier
      * @param destination Node; the destination node
      * @param simulator OTSSimulatorInterface; simulator
      */
-    private static void createSensorsAtDestinationNode(final Node destination, final OTSSimulatorInterface simulator)
+    private static void createSensorsAtDestinationNode(final Node destination, final OtsSimulatorInterface simulator)
     {
         for (Link link : destination.getLinks())
         {
@@ -820,7 +820,7 @@ public final class ODApplier
         private final DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root;
 
         /** Simulator. */
-        private final OTSSimulatorInterface simulator;
+        private final OtsSimulatorInterface simulator;
 
         /** Characteristics generator based on OD information. */
         private final GtuCharacteristicsGeneratorOD characteristicsGenerator;
@@ -835,7 +835,7 @@ public final class ODApplier
          * @param randomStream StreamInterface; stream for random numbers
          */
         GtuCharacteristicsGeneratorODWrapper(final DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root,
-                final OTSSimulatorInterface simulator, final GtuCharacteristicsGeneratorOD characteristicsGenerator,
+                final OtsSimulatorInterface simulator, final GtuCharacteristicsGeneratorOD characteristicsGenerator,
                 final StreamInterface randomStream)
         {
             this.root = root;

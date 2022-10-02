@@ -8,10 +8,10 @@ import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsSimulator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -24,7 +24,7 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 public class DSOLProblem
 {
     /** The simulation engine. */
-    private OTSSimulatorInterface simulator;
+    private OtsSimulatorInterface simulator;
 
     /**
      * Program entry point.
@@ -45,8 +45,8 @@ public class DSOLProblem
      */
     public void execute() throws SimRuntimeException, NamingException
     {
-        this.simulator = new OTSSimulator("DSOL problem");
-        OTSModelInterface model = new DummyModel(this.simulator);
+        this.simulator = new OtsSimulator("DSOL problem");
+        OtsModelInterface model = new DummyModel(this.simulator);
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), model);
         Time eventTime = this.simulator.getSimulatorAbsTime().plus(new Duration(10, DurationUnit.SECOND));
         SimEvent<Duration> se = new SimEvent<>(new Duration(eventTime.minus(this.simulator.getStartTimeAbs())), this, this,
@@ -109,7 +109,7 @@ public class DSOLProblem
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-class DummyModel extends AbstractOTSModel
+class DummyModel extends AbstractOtsModel
 {
     /** */
     private static final long serialVersionUID = 20150114L;
@@ -117,7 +117,7 @@ class DummyModel extends AbstractOTSModel
     /**
      * @param simulator the simulator to use
      */
-    DummyModel(final OTSSimulatorInterface simulator)
+    DummyModel(final OtsSimulatorInterface simulator)
     {
         super(simulator);
     }

@@ -25,7 +25,7 @@ import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.CompressedFileWriter;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -313,7 +313,7 @@ public class Detector extends AbstractSensor
      * @param simulator OTSSimulatorInterface; simulator
      * @throws NetworkException on network exception
      */
-    public Detector(final String id, final Lane lane, final Length longitudinalPosition, final OTSSimulatorInterface simulator)
+    public Detector(final String id, final Lane lane, final Length longitudinalPosition, final OtsSimulatorInterface simulator)
             throws NetworkException
     {
         // Note: length not important for flow and mean speed
@@ -332,7 +332,7 @@ public class Detector extends AbstractSensor
      * @throws NetworkException on network exception
      */
     public Detector(final String id, final Lane lane, final Length longitudinalPosition, final Length length,
-            final OTSSimulatorInterface simulator, final Duration aggregation, final DetectorMeasurement<?, ?>... measurements)
+            final OtsSimulatorInterface simulator, final Duration aggregation, final DetectorMeasurement<?, ?>... measurements)
             throws NetworkException
     {
         super(id, lane, longitudinalPosition, RelativePosition.FRONT, simulator, compatible);
@@ -367,7 +367,7 @@ public class Detector extends AbstractSensor
              */
             @SuppressWarnings("synthetic-access")
             RearDetector(final String idRear, final Lane laneRear, final Length longitudinalPositionRear,
-                    final OTSSimulatorInterface simulatorRear) throws NetworkException
+                    final OtsSimulatorInterface simulatorRear) throws NetworkException
             {
                 super(idRear, laneRear, longitudinalPositionRear, RelativePosition.REAR, simulatorRear, compatible);
             }

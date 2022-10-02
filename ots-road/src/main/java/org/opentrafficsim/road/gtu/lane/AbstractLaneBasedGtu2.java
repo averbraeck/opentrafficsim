@@ -28,7 +28,7 @@ import org.djutils.immutablecollections.ImmutableSet;
 import org.djutils.logger.CategoryLogger;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -178,7 +178,7 @@ public abstract class AbstractLaneBasedGtu2 extends AbstractGtu implements LaneB
     public AbstractLaneBasedGtu2(final String id, final GtuType gtuType, final OTSRoadNetwork network) throws GtuException
     {
         super(id, gtuType, network.getSimulator(), network);
-        OTSSimulatorInterface simulator = network.getSimulator();
+        OtsSimulatorInterface simulator = network.getSimulator();
         HistoryManager historyManager = simulator.getReplication().getHistoryManager(simulator);
         this.crossSections = new HistoricalArrayList<>(historyManager);
         this.turnIndicatorStatus = new HistoricalValue<>(historyManager, TurnIndicatorStatus.NOTPRESENT);

@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.mock;
 
 import org.mockito.Mockito;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 
 /**
@@ -21,7 +21,7 @@ public class MockGtu
     private String name;
 
     /** mocked simulator. */
-    private OTSSimulatorInterface simulator = MockDEVSSimulator.createMock();
+    private OtsSimulatorInterface simulator = MockDEVSSimulator.createMock();
 
     /**
      * @param name the name

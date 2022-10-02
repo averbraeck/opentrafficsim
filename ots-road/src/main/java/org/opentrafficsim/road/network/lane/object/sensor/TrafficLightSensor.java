@@ -15,7 +15,7 @@ import org.djutils.event.EventProducer;
 import org.djutils.event.EventProducerInterface;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -94,7 +94,7 @@ public class TrafficLightSensor extends EventProducer
     @SuppressWarnings("checkstyle:parameternumber")
     public TrafficLightSensor(final String id, final Lane laneA, final Length positionA, final Lane laneB,
             final Length positionB, final List<Lane> intermediateLanes, final TYPE entryPosition, final TYPE exitPosition,
-            final OTSSimulatorInterface simulator, final Compatible compatible) throws NetworkException
+            final OtsSimulatorInterface simulator, final Compatible compatible) throws NetworkException
     {
         Throw.whenNull(id, "id may not be null");
         this.id = id;
@@ -366,7 +366,7 @@ public class TrafficLightSensor extends EventProducer
 
     /** {@inheritDoc} */
     @Override
-    public final OTSSimulatorInterface getSimulator()
+    public final OtsSimulatorInterface getSimulator()
     {
         return this.entryA.getSimulator();
     }

@@ -20,9 +20,9 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsSimulator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -136,7 +136,7 @@ public class TestFixedTimeController
         assertTrue("toString returns something descriptive", sg.toString().startsWith("SignalGroup ["));
 
         String ftcId = "FTCid";
-        OTSSimulatorInterface simulator = new OTSSimulator("TestFixedTimeController");
+        OtsSimulatorInterface simulator = new OtsSimulator("TestFixedTimeController");
         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600), createModelMock());
         Map<String, TrafficLight> trafficLightMap = new LinkedHashMap<String, TrafficLight>();
         String networkId = "networkID";
@@ -288,7 +288,7 @@ public class TestFixedTimeController
         SignalGroup sg2 = new SignalGroup(signalGroupId2, trafficLightIds2, signalGroupOffset, preGreen, green, yellow);
 
         String ftcId = "FTCid";
-        OTSSimulatorInterface simulator = new OTSSimulator("TestFixedTimeController");
+        OtsSimulatorInterface simulator = new OtsSimulator("TestFixedTimeController");
         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600), createModelMock());
         Map<String, TrafficLight> trafficLightMap = new LinkedHashMap<String, TrafficLight>();
         String networkId = "networkID";
@@ -350,7 +350,7 @@ public class TestFixedTimeController
                                 signalGroups.clear();
                                 signalGroups.add(sg);
                                 String ftcId = "FTCid";
-                                OTSSimulatorInterface simulator = new OTSSimulator("TestFixedTimeController");
+                                OtsSimulatorInterface simulator = new OtsSimulator("TestFixedTimeController");
                                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600), createModelMock());
                                 Map<String, TrafficLight> trafficLightMap = new LinkedHashMap<String, TrafficLight>();
                                 String networkId = "networkID";
@@ -436,7 +436,7 @@ public class TestFixedTimeController
      * @param ftc FixedTimeController; the fixed time traffic light controller
      * @param stopSimulatorOnError boolean; if true; stop the simulator on error; if false; execute the failing assert on error
      */
-    public void checkState(final OTSSimulatorInterface simulator, final FixedTimeController ftc,
+    public void checkState(final OtsSimulatorInterface simulator, final FixedTimeController ftc,
             final boolean stopSimulatorOnError)
     {
         double cycleTime = ftc.getCycleTime().si;
@@ -501,9 +501,9 @@ public class TestFixedTimeController
      * Create a mocked OTSModelInterface.
      * @return OTSModelInterface
      */
-    public OTSModelInterface createModelMock()
+    public OtsModelInterface createModelMock()
     {
-        return Mockito.mock(OTSModelInterface.class);
+        return Mockito.mock(OtsModelInterface.class);
     }
 
     /** Remember current state of all mocked traffic lights. */
@@ -516,7 +516,7 @@ public class TestFixedTimeController
      * @param simulator TODO
      * @return TrafficLight
      */
-    public TrafficLight createTrafficLightMock(final String id, final String networkId, final OTSSimulatorInterface simulator)
+    public TrafficLight createTrafficLightMock(final String id, final String networkId, final OtsSimulatorInterface simulator)
     {
         TrafficLight result = Mockito.mock(TrafficLight.class);
         Mockito.when(result.getId()).thenReturn(id);

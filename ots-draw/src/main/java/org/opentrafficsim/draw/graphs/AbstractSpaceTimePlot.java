@@ -7,7 +7,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.event.AxisChangeEvent;
 import org.jfree.chart.event.AxisChangeListener;
 import org.jfree.chart.plot.XYPlot;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
 /**
  * Plots with space-time. This class adds some zoom control, where a user can manually select a zoom range, or the plot
@@ -43,7 +43,7 @@ public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
      * @param delay Duration; amount of time that chart runs behind simulation to prevent gaps in the charted data
      * @param initialEnd Time; initial end time of plots, will be expanded if simulation time exceeds it
      */
-    public AbstractSpaceTimePlot(final String caption, final Duration updateInterval, final OTSSimulatorInterface simulator,
+    public AbstractSpaceTimePlot(final String caption, final Duration updateInterval, final OtsSimulatorInterface simulator,
             final Duration delay, final Time initialEnd)
     {
         super(simulator, caption, updateInterval, delay);

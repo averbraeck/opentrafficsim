@@ -9,7 +9,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -30,7 +30,7 @@ public class TrafficLightControllerFixedDuration implements TrafficLightControll
     private final String id;
 
     /** the simulator. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /** the phases with a number identifying them to create a sorted map. */
     private final SortedMap<Integer, Set<TrafficLight>> phases = new TreeMap<>();
@@ -56,7 +56,7 @@ public class TrafficLightControllerFixedDuration implements TrafficLightControll
      * @param simulator OTSSimulatorInterface; the simulator
      * @throws TrafficLightException when scheduling of thhe start event fails
      */
-    public TrafficLightControllerFixedDuration(final String id, final OTSSimulatorInterface simulator)
+    public TrafficLightControllerFixedDuration(final String id, final OtsSimulatorInterface simulator)
             throws TrafficLightException
     {
         this.id = id;

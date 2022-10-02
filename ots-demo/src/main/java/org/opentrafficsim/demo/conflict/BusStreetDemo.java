@@ -31,9 +31,9 @@ import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -129,7 +129,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator("BusStreetDemo");
+            OtsAnimator simulator = new OtsAnimator("BusStreetDemo");
             BusStreetModel busModel = new BusStreetModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), busModel);
             OTSAnimationPanel animationPanel = new OTSAnimationPanel(busModel.getNetwork().getExtent(), new Dimension(800, 600),
@@ -147,7 +147,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
     /**
      * The simulation model.
      */
-    public static class BusStreetModel extends AbstractOTSModel
+    public static class BusStreetModel extends AbstractOtsModel
     {
         /** */
         private static final long serialVersionUID = 20161211L;
@@ -158,7 +158,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
         /**
          * @param simulator OTSSimulatorInterface; the simulator for this model
          */
-        public BusStreetModel(final OTSSimulatorInterface simulator)
+        public BusStreetModel(final OtsSimulatorInterface simulator)
         {
             super(simulator);
         }
@@ -283,13 +283,13 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
         private final Frequency demand;
 
         /** Simulator. */
-        private final OTSSimulatorInterface simulator;
+        private final OtsSimulatorInterface simulator;
 
         /**
          * @param demand Frequency; demand
          * @param simulator OTSSimulatorInterface; simulator
          */
-        HeadwayGenerator(final Frequency demand, final OTSSimulatorInterface simulator)
+        HeadwayGenerator(final Frequency demand, final OtsSimulatorInterface simulator)
         {
             this.demand = demand;
             this.simulator = simulator;
@@ -319,7 +319,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
     {
 
         /** Simulator. */
-        private final OTSSimulatorInterface simulator;
+        private final OtsSimulatorInterface simulator;
 
         /** Probabilities. */
         private final double[] probabilities;
@@ -353,7 +353,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
          * @param probabilities double[]; probabilities
          * @param network OTSRoadNetwork; network
          */
-        public CharacteristicsGenerator(final OTSSimulatorInterface simulator, final double[] probabilities,
+        public CharacteristicsGenerator(final OtsSimulatorInterface simulator, final double[] probabilities,
                 final OTSRoadNetwork network)
         {
             this.simulator = simulator;

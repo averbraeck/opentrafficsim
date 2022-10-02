@@ -31,9 +31,9 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSReplication;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsReplication;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -94,7 +94,7 @@ public class ContourPlotTest implements UNITS
 
     SamplerData mockedSamplerData = Mockito.mock(SamplerData.class);
 
-    OTSSimulatorInterface mockedSimulator = Mockito.mock(OTSSimulatorInterface.class);
+    OtsSimulatorInterface mockedSimulator = Mockito.mock(OtsSimulatorInterface.class);
 
     SimEventInterface<Duration> lastScheduledEvent = null;
 
@@ -105,7 +105,7 @@ public class ContourPlotTest implements UNITS
      * @return GraphPath&lt;KpiLaneDirection&gt;; the dummy path
      * @throws Exception when something goes wrong (should not happen)
      */
-    private GraphPath<KpiLane> dummyPath(final OTSSimulatorInterface simulator, final OTSRoadNetwork network)
+    private GraphPath<KpiLane> dummyPath(final OtsSimulatorInterface simulator, final OTSRoadNetwork network)
             throws Exception
     {
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
@@ -168,8 +168,8 @@ public class ContourPlotTest implements UNITS
                 });
         Mockito.when(this.mockedSimulator.getSimulatorAbsTime()).thenReturn(Time.ZERO);
         Mockito.when(this.mockedSimulator.getSimulatorTime()).thenReturn(Duration.ZERO);
-        OTSModelInterface model = Mockito.mock(OTSModelInterface.class);
-        OTSReplication replication = new OTSReplication("test", Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0));
+        OtsModelInterface model = Mockito.mock(OtsModelInterface.class);
+        OtsReplication replication = new OtsReplication("test", Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0));
         Mockito.when(this.mockedSimulator.getReplication()).thenReturn(replication);
     }
 
@@ -195,7 +195,7 @@ public class ContourPlotTest implements UNITS
     public final void densityContourTest() throws Exception
     {
         setUp();
-        OTSSimulatorInterface simulator = this.mockedSimulator;
+        OtsSimulatorInterface simulator = this.mockedSimulator;
         OTSRoadNetwork network = new OTSRoadNetwork("density contour test network", true, simulator);
         GraphPath<KpiLane> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(network);
@@ -215,7 +215,7 @@ public class ContourPlotTest implements UNITS
     public final void flowContourTest() throws Exception
     {
         setUp();
-        OTSSimulatorInterface simulator = this.mockedSimulator;
+        OtsSimulatorInterface simulator = this.mockedSimulator;
         OTSRoadNetwork network = new OTSRoadNetwork("flow contour test network", true, simulator);
         GraphPath<KpiLane> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(network);
@@ -235,7 +235,7 @@ public class ContourPlotTest implements UNITS
     public final void speedContourTest() throws Exception
     {
         setUp();
-        OTSSimulatorInterface simulator = this.mockedSimulator;
+        OtsSimulatorInterface simulator = this.mockedSimulator;
         OTSRoadNetwork network = new OTSRoadNetwork("flow contour test network", true, simulator);
         GraphPath<KpiLane> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(network);
@@ -298,7 +298,7 @@ public class ContourPlotTest implements UNITS
      *            expected when no car has passed
      * @throws Exception when something goes wrong (should not happen)
      */
-    public static void standardContourTests(final OTSSimulatorInterface simulator, final AbstractContourPlot<?> cp,
+    public static void standardContourTests(final OtsSimulatorInterface simulator, final AbstractContourPlot<?> cp,
             final GraphPath<?> path, final double expectedZValue, final double expectedZValueWithTraffic) throws Exception
     {
         assertEquals("seriesCount should be 1", 1, cp.getSeriesCount());
@@ -770,7 +770,7 @@ public class ContourPlotTest implements UNITS
      * @throws OTSGeometryException when the initial path is wrong
      */
     private static LaneBasedIndividualGtu makeReferenceCar(final String id, final GtuType gtuType, final Lane lane,
-            final Length initialPosition, final Speed initialSpeed, final OTSSimulatorInterface simulator,
+            final Length initialPosition, final Speed initialSpeed, final OtsSimulatorInterface simulator,
             final GtuFollowingModelOld gtuFollowingModel, final LaneChangeModel laneChangeModel, final OTSRoadNetwork network)
             throws NamingException, NetworkException, SimRuntimeException, GtuException, OTSGeometryException
     {

@@ -19,9 +19,9 @@ import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.event.EventTypeInterface;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsAnimator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo2_Generators.TrafCODModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
@@ -96,7 +96,7 @@ public class TrafCODDemo2_Generators extends OTSSimulationApplication<TrafCODMod
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator("TrafCODDemo2_Generators");
+            OtsAnimator simulator = new OtsAnimator("TrafCODDemo2_Generators");
             URL url = URLResource.getResource("/resources/TrafCODDemo2/TrafCODDemo2_Generators.xml");
             String xml = readStringFromURL(url);
             final TrafCODModel trafcodModel = new TrafCODModel(simulator, "TrafCODModel", "TrafCOD demonstration Model", xml);
@@ -131,7 +131,7 @@ public class TrafCODDemo2_Generators extends OTSSimulationApplication<TrafCODMod
     /**
      * The simulation model.
      */
-    static class TrafCODModel extends AbstractOTSModel implements EventListenerInterface
+    static class TrafCODModel extends AbstractOtsModel implements EventListenerInterface
     {
         /** */
         private static final long serialVersionUID = 20161020L;
@@ -154,7 +154,7 @@ public class TrafCODDemo2_Generators extends OTSSimulationApplication<TrafCODMod
          * @param description String; description of the model
          * @param xml String; the XML string
          */
-        TrafCODModel(final OTSSimulatorInterface simulator, final String shortName, final String description, final String xml)
+        TrafCODModel(final OtsSimulatorInterface simulator, final String shortName, final String description, final String xml)
         {
             super(simulator, shortName, description);
             this.xml = xml;

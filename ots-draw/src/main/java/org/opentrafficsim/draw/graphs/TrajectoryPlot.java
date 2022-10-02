@@ -28,7 +28,7 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.DomainOrder;
 import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.core.animation.gtu.colorer.IdGtuColorer;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.draw.core.BoundsPaintScale;
 import org.opentrafficsim.draw.graphs.GraphPath.Section;
 import org.opentrafficsim.kpi.sampling.KpiLane;
@@ -100,7 +100,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
      * @param samplerData SamplerData&lt;?&gt;; sampler data
      * @param path GraphPath&lt;KpiLaneDirection&gt;; path
      */
-    public TrajectoryPlot(final String caption, final Duration updateInterval, final OTSSimulatorInterface simulator,
+    public TrajectoryPlot(final String caption, final Duration updateInterval, final OtsSimulatorInterface simulator,
             final SamplerData<?> samplerData, final GraphPath<KpiLane> path)
     {
         super(caption, updateInterval, simulator, samplerData, path, Duration.ZERO);

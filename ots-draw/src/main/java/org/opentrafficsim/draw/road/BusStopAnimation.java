@@ -10,7 +10,7 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
 import org.opentrafficsim.road.network.lane.object.BusStop;
@@ -42,7 +42,7 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStop> implements 
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException when remote context cannot be found
      */
-    public BusStopAnimation(final BusStop source, final OTSSimulatorInterface simulator) throws NamingException, RemoteException
+    public BusStopAnimation(final BusStop source, final OtsSimulatorInterface simulator) throws NamingException, RemoteException
     {
         super(source, simulator, .8, new Length(0.5, LengthUnit.SI));
 
@@ -101,7 +101,7 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStop> implements 
          * @throws RemoteException - when remote context cannot be found
          */
         public Text(final Locatable source, final String text, final float dx, final float dy,
-                final TextAlignment textPlacement, final Color color, final OTSSimulatorInterface simulator)
+                final TextAlignment textPlacement, final Color color, final OtsSimulatorInterface simulator)
                 throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textPlacement, color, simulator, TextAnimation.RENDERALWAYS);

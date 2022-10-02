@@ -23,9 +23,9 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsSimulator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -65,7 +65,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
+public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
 {
     /** */
     private static final long serialVersionUID = 20150313;
@@ -77,7 +77,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
      */
     public LaneChangeModelTest()
     {
-        super(new OTSSimulator("LaneChangeModelTest"));
+        super(new OtsSimulator("LaneChangeModelTest"));
         this.network = new OTSRoadNetwork("lane change model test network", true, getSimulator());
     }
 
@@ -95,7 +95,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
      *             or the end node of the link are not registered in the network
      */
     private static CrossSectionLink makeLink(final OTSRoadNetwork network, final String name, final OTSRoadNode from,
-            final OTSRoadNode to, final Length width, final OTSSimulatorInterface simulator)
+            final OTSRoadNode to, final Length width, final OtsSimulatorInterface simulator)
             throws OTSGeometryException, NetworkException
     {
         // TODO create a LinkAnimation if the simulator is compatible with that.
@@ -143,7 +143,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
      * @throws Exception when something goes wrong (should not happen)
      */
     public static Lane[] makeMultiLane(final OTSRoadNetwork network, final String name, final OTSRoadNode from,
-            final OTSRoadNode to, final LaneType laneType, final int laneCount, final OTSSimulatorInterface simulator)
+            final OTSRoadNode to, final LaneType laneType, final int laneCount, final OtsSimulatorInterface simulator)
             throws Exception
     {
         Length width = new Length(laneCount * 4.0, METER);

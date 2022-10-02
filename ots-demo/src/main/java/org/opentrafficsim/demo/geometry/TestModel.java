@@ -10,8 +10,8 @@ import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -38,12 +38,12 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  */
 /** */
-public class TestModel extends AbstractOTSModel implements UNITS
+public class TestModel extends AbstractOtsModel implements UNITS
 {
     /**
      * @param simulator OTSSimulatorInterface; the simulator
      */
-    public TestModel(final OTSSimulatorInterface simulator)
+    public TestModel(final OtsSimulatorInterface simulator)
     {
         super(simulator);
     }

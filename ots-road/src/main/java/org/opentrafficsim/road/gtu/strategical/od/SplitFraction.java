@@ -12,7 +12,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Link;
@@ -44,7 +44,7 @@ public class SplitFraction
     private final StreamInterface random;
 
     /** Simulator. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /** Map of fractions by GtuType and Link. */
     private final Map<GtuType, Map<Link, Map<Duration, Double>>> fractions = new LinkedHashMap<>();
@@ -57,7 +57,7 @@ public class SplitFraction
      * @param simulator OTSSimulatorInterface; simulator
      */
     public SplitFraction(final Node node, final Interpolation interpolation, final StreamInterface random,
-            final OTSSimulatorInterface simulator)
+            final OtsSimulatorInterface simulator)
     {
         this.node = node;
         this.interpolation = interpolation;

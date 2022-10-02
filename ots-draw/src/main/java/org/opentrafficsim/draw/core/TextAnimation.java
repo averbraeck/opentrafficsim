@@ -16,7 +16,7 @@ import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.Point;
 import org.djutils.draw.point.Point2d;
 import org.djutils.logger.CategoryLogger;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 
@@ -102,7 +102,7 @@ public abstract class TextAnimation implements Locatable, Serializable
     @SuppressWarnings("checkstyle:parameternumber")
     public TextAnimation(final Locatable source, final String text, final float dx, final float dy,
             final TextAlignment textAlignment, final Color color, final float fontSize, final float minFontSize,
-            final float maxFontSize, final OTSSimulatorInterface simulator, final ContrastToBackground background,
+            final float maxFontSize, final OtsSimulatorInterface simulator, final ContrastToBackground background,
             final ScaleDependentRendering scaleDependentRendering) throws RemoteException, NamingException
     {
         this.source = source;
@@ -145,7 +145,7 @@ public abstract class TextAnimation implements Locatable, Serializable
     @SuppressWarnings("checkstyle:parameternumber")
     public TextAnimation(final Locatable source, final String text, final float dx, final float dy,
             final TextAlignment textAlignment, final Color color, final float fontSize, final float minFontSize,
-            final float maxFontSize, final OTSSimulatorInterface simulator,
+            final float maxFontSize, final OtsSimulatorInterface simulator,
             final ScaleDependentRendering scaleDependentRendering) throws RemoteException, NamingException
     {
         this(source, text, dx, dy, textAlignment, color, fontSize, minFontSize, maxFontSize, simulator, null,
@@ -165,7 +165,7 @@ public abstract class TextAnimation implements Locatable, Serializable
      * @throws RemoteException when remote context cannot be found
      */
     public TextAnimation(final Locatable source, final String text, final float dx, final float dy,
-            final TextAlignment textAlignment, final Color color, final OTSSimulatorInterface simulator,
+            final TextAlignment textAlignment, final Color color, final OtsSimulatorInterface simulator,
             final ScaleDependentRendering scaleDependentRendering) throws RemoteException, NamingException
     {
         this(source, text, dx, dy, textAlignment, color, 2.0f, 12.0f, 50f, simulator, scaleDependentRendering);
@@ -465,7 +465,7 @@ public abstract class TextAnimation implements Locatable, Serializable
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException when remote context cannot be found
          */
-        AnimationImpl(final Locatable source, final OTSSimulatorInterface simulator) throws NamingException, RemoteException
+        AnimationImpl(final Locatable source, final OtsSimulatorInterface simulator) throws NamingException, RemoteException
         {
             super(source, simulator);
         }

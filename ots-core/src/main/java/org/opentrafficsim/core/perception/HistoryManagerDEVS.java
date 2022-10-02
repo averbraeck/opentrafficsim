@@ -7,7 +7,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
@@ -28,7 +28,7 @@ public class HistoryManagerDEVS extends HistoryManager implements EventListenerI
     private static final long serialVersionUID = 1L;
 
     /** Simulator. */
-    private final OTSSimulatorInterface simulator;
+    private final OtsSimulatorInterface simulator;
 
     /** Time over which history is guaranteed. */
     private final Duration history;
@@ -45,7 +45,7 @@ public class HistoryManagerDEVS extends HistoryManager implements EventListenerI
      * @param history Duration; time over which history is guaranteed
      * @param cleanUpInterval Duration; clean-up interval
      */
-    public HistoryManagerDEVS(final OTSSimulatorInterface simulator, final Duration history, final Duration cleanUpInterval)
+    public HistoryManagerDEVS(final OtsSimulatorInterface simulator, final Duration history, final Duration cleanUpInterval)
     {
         this.simulator = simulator;
         this.history = history;

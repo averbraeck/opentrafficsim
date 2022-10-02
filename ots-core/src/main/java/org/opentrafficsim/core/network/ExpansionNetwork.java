@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.network;
 
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
 /**
  * A Network consists of a set of links. Each link has, in its turn, a start node and an end node. An expandable network can be
@@ -75,7 +75,7 @@ public abstract class ExpansionNetwork extends OTSNetwork
      * @param addDefaultTypes add the default GtuTypes and LinkTypes, or not
      * @param simulator OTSSimulatorInterface; the DSOL simulator engine
      */
-    public ExpansionNetwork(final String id, final boolean addDefaultTypes, final OTSSimulatorInterface simulator)
+    public ExpansionNetwork(final String id, final boolean addDefaultTypes, final OtsSimulatorInterface simulator)
     {
         super(id, addDefaultTypes, simulator);
     }

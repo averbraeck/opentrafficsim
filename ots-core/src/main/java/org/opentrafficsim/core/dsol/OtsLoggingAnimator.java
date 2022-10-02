@@ -23,7 +23,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class OTSLoggingAnimator extends OTSAnimator
+public class OtsLoggingAnimator extends OtsAnimator
 {
     /** */
     private static final long serialVersionUID = 20150511L;
@@ -36,7 +36,7 @@ public class OTSLoggingAnimator extends OTSAnimator
      * @param path path for logging
      * @param simulatorId the id of the simulator to use in remote communication
      */
-    public OTSLoggingAnimator(final String path, final Serializable simulatorId)
+    public OtsLoggingAnimator(final String path, final Serializable simulatorId)
     {
         super(simulatorId);
     }
@@ -44,11 +44,11 @@ public class OTSLoggingAnimator extends OTSAnimator
     /** {@inheritDoc} */
     @Override
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-            final OTSModelInterface model) throws SimRuntimeException, NamingException
+            final OtsModelInterface model) throws SimRuntimeException, NamingException
     {
         setErrorStrategy(ErrorStrategy.WARN_AND_PAUSE);
         setAnimationDelay(20); // 50 Hz animation update
-        OTSReplication newReplication = new OTSReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength);
+        OtsReplication newReplication = new OtsReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength);
         super.initialize(model, newReplication);
     }
 
@@ -65,12 +65,12 @@ public class OTSLoggingAnimator extends OTSAnimator
      */
     @Override
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-            final OTSModelInterface model, final Map<String, StreamInterface> streams)
+            final OtsModelInterface model, final Map<String, StreamInterface> streams)
             throws SimRuntimeException, NamingException
     {
         setErrorStrategy(ErrorStrategy.WARN_AND_PAUSE);
         setAnimationDelay(20); // 50 Hz animation update
-        OTSReplication newReplication = new OTSReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength);
+        OtsReplication newReplication = new OtsReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength);
         model.getStreams().putAll(streams);
         super.initialize(model, newReplication);
     }
@@ -78,11 +78,11 @@ public class OTSLoggingAnimator extends OTSAnimator
     /** {@inheritDoc} */
     @Override
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-            final OTSModelInterface model, final int replicationnr) throws SimRuntimeException, NamingException
+            final OtsModelInterface model, final int replicationnr) throws SimRuntimeException, NamingException
     {
         setErrorStrategy(ErrorStrategy.WARN_AND_PAUSE);
         setAnimationDelay(20); // 50 Hz animation update
-        OTSReplication newReplication = new OTSReplication("rep" + replicationnr, startTime, warmupPeriod, runLength);
+        OtsReplication newReplication = new OtsReplication("rep" + replicationnr, startTime, warmupPeriod, runLength);
         super.initialize(model, newReplication);
     }
 

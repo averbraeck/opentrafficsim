@@ -1,6 +1,6 @@
 package org.opentrafficsim.swing.gui;
 
-import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 
@@ -15,7 +15,7 @@ import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <T> model type
  */
-public class OTSSimulationApplication<T extends OTSModelInterface> extends OTSSwingApplication<T>
+public class OTSSimulationApplication<T extends OtsModelInterface> extends OTSSwingApplication<T>
 {
 
     /** */

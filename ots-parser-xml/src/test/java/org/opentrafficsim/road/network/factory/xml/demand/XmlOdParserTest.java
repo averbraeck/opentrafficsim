@@ -16,10 +16,10 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.AbstractOtsModel;
+import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.dsol.OtsSimulator;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -56,7 +56,7 @@ public class XmlOdParserTest
     private Set<GtuType> gtuTypes = new LinkedHashSet<>();
 
     /** Simulator. */
-    OTSSimulatorInterface simulator = new OTSSimulator("XmlOdParserTest");
+    OtsSimulatorInterface simulator = new OtsSimulator("XmlOdParserTest");
 
     /** Network. */
     OTSRoadNetwork network = new OTSRoadNetwork("OD test", true, simulator);
@@ -73,7 +73,7 @@ public class XmlOdParserTest
      */
     public XmlOdParserTest() throws NetworkException, OTSGeometryException, SimRuntimeException, NamingException
     {
-        OTSModelInterface model = new AbstractOTSModel(this.simulator)
+        OtsModelInterface model = new AbstractOtsModel(this.simulator)
         {
             /** */
             private static final long serialVersionUID = 1L;
