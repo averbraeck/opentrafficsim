@@ -251,11 +251,9 @@ public abstract class AbstractGtuGeneratorOld extends EventProducer implements S
      */
     protected final boolean enoughSpace(final LaneBasedIndividualCarBuilder carBuilder) throws NetworkException, GtuException
     {
-        LanePosition directedLanePosition = carBuilder.getInitialLongitudinalPositions().iterator().next();
-        Lane generatorLane = directedLanePosition.getLane();
-        double genPosSI = directedLanePosition.getPosition().getSI();
-        // GTUDirectionality direction = directedLanePosition.getGtuDirection();
-        // XXX different from this.direction?
+        LanePosition lanePosition = carBuilder.getInitialLongitudinalPositions().iterator().next();
+        Lane generatorLane = lanePosition.getLane();
+        double genPosSI = lanePosition.getPosition().getSI();
         double lengthSI = generatorLane.getLength().getSI();
         double frontNew = (genPosSI + carBuilder.getLength().getSI()) / lengthSI;
         double rearNew = genPosSI / lengthSI;
