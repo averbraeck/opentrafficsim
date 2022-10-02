@@ -67,7 +67,7 @@ import java.util.stream.IntStream;
  * <p>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class EGTF
+public class Egtf
 {
 
     /** Default sigma value. */
@@ -115,7 +115,7 @@ public class EGTF
     /**
      * Constructor using cCong = -18km/h, cFree = 80km/h, deltaV = 10km/h and vc = 80km/h. A default kernel is set.
      */
-    public EGTF()
+    public Egtf()
     {
         this(-18.0, 80.0, 10.0, 80.0);
     }
@@ -127,7 +127,7 @@ public class EGTF
      * @param deltaV double; speed range between congestion and free flow [km/h]
      * @param vc double; flip-over speed below which we have congestion [km/h]
      */
-    public EGTF(final double cCong, final double cFree, final double deltaV, final double vc)
+    public Egtf(final double cCong, final double cFree, final double deltaV, final double vc)
     {
         this.cCong = cCong / 3.6;
         this.cFree = cFree / 3.6;
@@ -148,7 +148,7 @@ public class EGTF
      * @param tMax double; maximum temporal range in [s]
      */
     @SuppressWarnings("parameternumber")
-    public EGTF(final double cCong, final double cFree, final double deltaV, final double vc, final double sigma,
+    public Egtf(final double cCong, final double cFree, final double deltaV, final double vc, final double sigma,
             final double tau, final double xMax, final double tMax)
     {
         this(cCong, cFree, deltaV, vc);
@@ -623,7 +623,7 @@ public class EGTF
                         DualWeightedMean zCongFreeOfStream = streamEntry.getValue();
                         double u = Math.min(zCongFreeOfStream.getCong(), zCongFreeOfStream.getFree());
                         w.put(dataStream.getDataSource(), // 1 speed quantity per source allowed
-                                .5 * (1.0 + Math.tanh((EGTF.this.vc - u) / EGTF.this.deltaV)));
+                                .5 * (1.0 + Math.tanh((Egtf.this.vc - u) / Egtf.this.deltaV)));
                         continue;
                     }
                 }
@@ -662,7 +662,7 @@ public class EGTF
                                         else if (prevQuant.isSpeed())
                                         {
                                             wMean = .5 * (1.0
-                                                    + Math.tanh((EGTF.this.vc - map.get(prevQuant)[i][j]) / EGTF.this.deltaV));
+                                                    + Math.tanh((Egtf.this.vc - map.get(prevQuant)[i][j]) / Egtf.this.deltaV));
                                             break;
                                         }
                                     }
@@ -844,7 +844,7 @@ public class EGTF
                     for (int j = 0; j < vCong[0].length; j++)
                     {
                         double u = Math.min(vCong[i][j] / nCong[i][j], vFree[i][j] / nFree[i][j]);
-                        wSource[i][j] = .5 * (1.0 + Math.tanh((EGTF.this.vc - u) / EGTF.this.deltaV));
+                        wSource[i][j] = .5 * (1.0 + Math.tanh((Egtf.this.vc - u) / Egtf.this.deltaV));
                     }
                 }
                 w.put(dataStream.getDataSource(), wSource);
@@ -915,7 +915,7 @@ public class EGTF
                                 {
                                     for (int j = 0; j < time.length; j++)
                                     {
-                                        wMean[i][j] = .5 * (1.0 + Math.tanh((EGTF.this.vc - v[i][j]) / EGTF.this.deltaV));
+                                        wMean[i][j] = .5 * (1.0 + Math.tanh((Egtf.this.vc - v[i][j]) / Egtf.this.deltaV));
                                     }
                                 }
                                 break;
