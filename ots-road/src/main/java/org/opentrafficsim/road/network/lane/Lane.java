@@ -217,7 +217,6 @@ public class Lane extends CrossSectionElement implements Serializable
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, fixGradualLateralOffset);
         this.laneType = laneType;
-        checkDirectionality();
         this.speedLimitMap = speedLimitMap;
         this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
     }
@@ -268,7 +267,6 @@ public class Lane extends CrossSectionElement implements Serializable
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, fixGradualLateralOffset);
         this.laneType = laneType;
-        checkDirectionality();
         this.speedLimitMap = new LinkedHashMap<>();
         this.speedLimitMap.put(parentLink.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), speedLimit);
         this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
@@ -315,7 +313,6 @@ public class Lane extends CrossSectionElement implements Serializable
     {
         super(parentLink, id, lateralOffset, width);
         this.laneType = laneType;
-        checkDirectionality();
         this.speedLimitMap = speedLimitMap;
         this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
     }
@@ -372,7 +369,6 @@ public class Lane extends CrossSectionElement implements Serializable
     {
         super(parentLink, id, crossSectionSlices);
         this.laneType = laneType;
-        checkDirectionality();
         this.speedLimitMap = speedLimitMap;
         this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
     }
@@ -1482,63 +1478,6 @@ public class Lane extends CrossSectionElement implements Serializable
     public final LaneType getLaneType()
     {
         return this.laneType;
-    }
-
-    /**
-     * This method sets the directionality of the lane for a GTU type. It might be that the driving direction in the lane is
-     * FORWARD (from start node of the link to end node of the link) for the GTU type CAR, but BOTH for the GTU type BICYCLE
-     * (i.e., bicycles can also go in the other direction; we see this on some city streets). If the directionality for a
-     * GtuType is set to NONE, this means that the given GtuType cannot use the Lane. If a Directionality is set for
-     * GtuType.ALL, the getDirectionality will default to these settings when there is no specific entry for a given
-     * directionality. This means that the settings can be used additive, or restrictive. <br>
-     * In <b>additive use</b>, set the directionality for GtuType.ALL to NONE, or do not set the directionality for GtuType.ALL.
-     * Now, one by one, the allowed directionalities can be added. An example is a lane on a highway, which we only open for
-     * CAR, TRUCK and BUS. <br>
-     * In <b>restrictive use</b>, set the directionality for GtuType.ALL to BOTH, FORWARD, or BACKWARD. Override the
-     * directionality for certain GtuTypes to a more restrictive access, e.g. to NONE. An example is a lane that is open for all
-     * road users, except TRUCK.
-     * @param gtuType the GTU type to set the directionality for.
-     * @param directionality the longitudinal directionality of the link (FORWARD, BACKWARD, BOTH or NONE) for the given GTU
-     *            type.
-     * @throws NetworkException when the lane directionality for the given GtuType is inconsistent with the Link directionality
-     *             to which the lane belongs.
-     */
-    // public final void addDirectionality(final GtuType gtuType, final LongitudinalDirectionality directionality)
-    // throws NetworkException
-    // {
-    // this.directionalityMap.put(gtuType, directionality);
-    // checkDirectionality();
-    // }
-
-    /**
-     * This method removes an earlier provided directionality of the lane for a given GTU type, e.g. for maintenance of the
-     * lane. After removing, the directionality for the GTU will fall back to the provided directionality for GtuType.ALL (if
-     * present). Thereby removing a directionality is different from setting the directionality to NONE.
-     * @param gtuType the GTU type to remove the directionality for on this lane.
-     */
-    // public final void removeDirectionality(final GtuType gtuType)
-    // {
-    // this.directionalityMap.remove(gtuType);
-    // }
-
-    /**
-     * Check whether the directionalities for the GTU types for this lane are consistent with the directionalities of the
-     * overarching Link.
-     * @throws NetworkException when the lane directionality for a given GtuType is inconsistent with the Link directionality to
-     *             which the lane belongs.
-     */
-    private void checkDirectionality() throws NetworkException
-    {
-        // TODO check that the directionality of this Lane does not conflict with that of the parent the OTSLink
-        // for (GtuType gtuType : this.directionalityMap.keySet())
-        // {
-        // LongitudinalDirectionality directionality = this.directionalityMap.get(gtuType);
-        // if (!getParentLink().getDirectionality(gtuType).contains(directionality))
-        // {
-        // throw new NetworkException("Lane " + toString() + " allows " + gtuType + " a directionality of "
-        // + directionality + " which is not present in the overarching link " + getParentLink().toString());
-        // }
-        // }
     }
 
     /**
