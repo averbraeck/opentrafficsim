@@ -690,40 +690,6 @@ public class LaneChange implements Serializable
                 // TODO: sequential is disabled as LaneChangePath now uses 2 OTSLine3D's instead of 2 List<Lane>'s. This was
                 // done as the code using LaneChangePath (i.e. LaneChange) required more details on fractional positions itself.
                 return null;
-                /*-
-                // find lane we will end up on at the end of the plan
-                double positionAtEnd = (from.getGtuDirection().isPlus() ? from.getPosition().si
-                        : from.getLane().getLength().si - from.getPosition().si) + planDistance.si * buffer * cutoff;
-                for (int i = 0; i < fromLanes.size(); i++)
-                {
-                    Lane fromLane = fromLanes.get(i);
-                    if (fromLane.getLength().si >= positionAtEnd)
-                    {
-                        // get target point by interpolation between from and to lane
-                        double endFraction = fromLane.fractionAtCoveredDistance(Length.instantiateSI(positionAtEnd));
-                        DirectedPoint pFrom = fromLane.getLocationFraction(endFraction);
-                        DirectedPoint pTo = toLanes.get(i).getLocationFraction(endFraction);
-                        DirectedPoint target = new DirectedPoint((1 - f) * pFrom.x + f * pTo.x, (1 - f) * pFrom.y + f * pTo.y,
-                                (1 - f) * pFrom.z + f * pTo.z);
-                        // set rotation according to shape, relative to lane center line
-                        target.setRotZ(
-                                (1 - f) * pFrom.getRotZ() + f * pTo.getRotZ() - angle(width, cumulLcLength, totalLcLength));
-                        // Bezier path towards that point
-                        OTSLine3D path = Bezier.cubic(64, startPosition, target, 0.5);
-                        // check if long enough, otherwise look further (e.g. changing to inside of curve gives a shorter path)
-                        if (path.getLength().si < planDistance.si && cutoff == 1.0)
-                        {
-                            return getPathRecursive(planDistance, meanSpeed, buffer * 1.25, width, from, startPosition,
-                                    fromLine, toLine, laneChangeDuration, lcFraction, dFraction);
-                        }
-                        return path;
-                    }
-                    positionAtEnd -= fromLane.getLength().si;
-                }
-                Throw.when(lcFraction + dFraction < 0.999, RuntimeException.class,
-                        "No partial path for lane change could be determined; fromLanes are too short.");
-                return null;
-                */
             }
 
             /**
