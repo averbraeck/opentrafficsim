@@ -24,7 +24,7 @@ public class EgtfEvent extends EventObject
      * @param egtf EGTF; egtf
      * @param progress double; progress, a value in the range [0 ... 1]
      */
-    EgtfEvent(final EGTF egtf, final double progress)
+    EgtfEvent(final Egtf egtf, final double progress)
     {
         super(egtf);
         this.progress = progress;
@@ -44,7 +44,7 @@ public class EgtfEvent extends EventObject
      */
     public final void interrupt()
     {
-        ((EGTF) getSource()).interrupt();
+        ((Egtf) getSource()).interrupt();
     }
 
     /** {@inheritDoc} */

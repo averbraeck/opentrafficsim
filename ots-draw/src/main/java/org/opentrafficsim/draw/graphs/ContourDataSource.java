@@ -18,7 +18,7 @@ import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.egtf.Converter;
 import org.opentrafficsim.core.egtf.DataSource;
 import org.opentrafficsim.core.egtf.DataStream;
-import org.opentrafficsim.core.egtf.EGTF;
+import org.opentrafficsim.core.egtf.Egtf;
 import org.opentrafficsim.core.egtf.EgtfEvent;
 import org.opentrafficsim.core.egtf.EgtfListener;
 import org.opentrafficsim.core.egtf.Filter;
@@ -142,7 +142,7 @@ public class ContourDataSource<G extends GtuDataInterface>
     private Speed vc;
 
     /** Smoothing filter. */
-    private EGTF egtf;
+    private Egtf egtf;
 
     /** Data stream for speed. */
     private DataStream<Speed> speedStream;
@@ -591,7 +591,7 @@ public class ContourDataSource<G extends GtuDataInterface>
             if (smooth0)
             {
                 // create the filter
-                this.egtf = new EGTF(C_CONG.si, this.cFree.si, DELTA_V.si, this.vc.si);
+                this.egtf = new Egtf(C_CONG.si, this.cFree.si, DELTA_V.si, this.vc.si);
 
                 // create data source and its data streams for speed, distance traveled, time traveled, and additional
                 DataSource generic = this.egtf.getDataSource("generic");

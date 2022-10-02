@@ -11,7 +11,7 @@ import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.LengthVector;
 import org.djunits.value.vdouble.vector.base.DoubleVectorInterface;
 import org.opentrafficsim.core.egtf.DataStream;
-import org.opentrafficsim.core.egtf.EGTF;
+import org.opentrafficsim.core.egtf.Egtf;
 import org.opentrafficsim.core.egtf.KernelShape;
 import org.opentrafficsim.core.egtf.Quantity;
 
@@ -25,7 +25,7 @@ import org.opentrafficsim.core.egtf.Quantity;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class TypedEGTF extends EGTF
+public class TypedEGTF extends Egtf
 {
 
     /**

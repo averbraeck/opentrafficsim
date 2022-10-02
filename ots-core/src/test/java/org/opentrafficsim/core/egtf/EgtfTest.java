@@ -27,14 +27,14 @@ public class EgtfTest
     @Test
     public void combineSourcesTest()
     {
-        EGTF egtf = new EGTF();
+        Egtf egtf = new Egtf();
         DataSource det = egtf.getDataSource("detectors");
         DataSource fcd = egtf.getDataSource("fcd");
         DataStream<?> detSpeed = det.addStreamSI(TypedQuantity.SPEED, 10.0, 5.0);
         DataStream<?> detFlow = det.addStreamSI(TypedQuantity.FLOW, 1.0, 1.0);
         DataStream<?> fcdSpeed = fcd.addStreamSI(TypedQuantity.SPEED, 2.0, 1.0);
         // second EGTF with less reliable FCD data
-        EGTF egtf2 = new EGTF();
+        Egtf egtf2 = new Egtf();
         DataSource det2 = egtf2.getDataSource("detectors");
         DataSource fcd2 = egtf2.getDataSource("fcd");
         DataStream<?> detSpeed2 = det2.addStreamSI(TypedQuantity.SPEED, 10.0, 5.0);
@@ -171,7 +171,7 @@ public class EgtfTest
     @Test
     public void exceptionsTest()
     {
-        EGTF egtf = new EGTF();
+        Egtf egtf = new Egtf();
         DataSource det = egtf.getDataSource("detectors");
         DataStream<?> detSpeed = det.addStreamSI(TypedQuantity.SPEED, 10.0, 5.0);
         Try.testFail(() -> det.addStreamSI(TypedQuantity.SPEED, 5.0, 2.5), "Double speed quantity for detectors should fail.");
