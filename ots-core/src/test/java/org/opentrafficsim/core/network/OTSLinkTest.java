@@ -61,7 +61,6 @@ public class OTSLinkTest implements EventListenerInterface
                 .addIncompatibleGtuType(network.getGtuType(GtuType.DEFAULTS.VEHICLE));
         LinkType linkType = new LinkType("myLinkType", network.getLinkType(LinkType.DEFAULTS.ROAD), network);
         OTSLine3D designLine = new OTSLine3D(startNode.getPoint(), endNode.getPoint());
-        // Map<GtuType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
         OTSLink link = new OTSLink(network, "link1", startNode, endNode, linkType, designLine);
         assertTrue("network contains the newly constructed link", network.containsLink(link));
         // directionalityMap is currently empty

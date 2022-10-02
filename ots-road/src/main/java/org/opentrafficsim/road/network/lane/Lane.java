@@ -70,23 +70,6 @@ public class Lane extends CrossSectionElement implements Serializable
     private final LaneType laneType;
 
     /**
-     * SHOULD NOT BE IN Lane (but in LaneType). The directions in which vehicles can drive, i.e., in direction of geometry,
-     * reverse, or both. This can differ per GTU type. In an overtake lane, cars might overtake and trucks not. It might be that
-     * the lane (e.g., a street in a city) is FORWARD (from start node of the link to end node of the link) for the GTU type
-     * CAR, but BOTH for the GTU type BICYCLE (i.e., bicycles can also go in the other direction, opposite to the drawing
-     * direction of the Link). If the directionality for a GtuType is set to NONE, this means that the given GtuType cannot use
-     * the Lane. If a Directionality is set for GtuType.ALL, the getDirectionality will default to these settings when there is
-     * no specific entry for a given directionality. This means that the settings can be used additive, or restrictive. <br>
-     * In <b>additive use</b>, set the directionality for GtuType.ALL to NONE, or do not set the directionality for GtuType.ALL.
-     * Now, one by one, the allowed directionalities can be added. An example is a lane on a highway, which we only open for
-     * CAR, TRUCK and BUS. <br>
-     * In <b>restrictive use</b>, set the directionality for GtuType.ALL to BOTH, FORWARD, or BACKWARD. Override the
-     * directionality for certain GtuTypes to a more restrictive access, e.g. to NONE. An example is a lane that is open for all
-     * road users, except TRUCK.
-     */
-    // private final Map<GtuType, LongitudinalDirectionality> directionalityMap;
-
-    /**
      * The speed limit of this lane, which can differ per GTU type. Cars might be allowed to drive 120 km/h and trucks 90 km/h.
      * If the speed limit is the same for all GTU types, GtuType.ALL will be used. This means that the settings can be used
      * additive, or subtractive. <br>

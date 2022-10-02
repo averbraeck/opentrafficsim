@@ -310,8 +310,6 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
                     OTSRoadNode toNode = this.nodes.get(i);
                     OTSLine3D line = lines[i - 1];
                     String linkName = fromNode.getId() + "-" + toNode.getId();
-                    // LongitudinalDirectionality direction = line.equals(l23) && minus ? LongitudinalDirectionality.DIR_MINUS
-                    // : LongitudinalDirectionality.DIR_PLUS;
                     Lane[] lanes = LaneFactory.makeMultiLane(this.network, linkName, fromNode, toNode, line.getPoints(), 1,
                             laneType, this.speedLimit, this.simulator);
                     if (i == this.nodes.size() - 1)

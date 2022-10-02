@@ -61,7 +61,6 @@ public class BusStopConflictRule implements ConflictRule
         }
 
         // find bus and determine if it has priority
-        // conflict forces that LongitudinalDirection is DIR_PLUS or DIR_MINUS
         Lane lane = busConflict.getLane();
         Length pos = busConflict.getLongitudinalPosition();
         LaneBasedGtu gtu = null;
