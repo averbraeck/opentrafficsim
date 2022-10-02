@@ -86,10 +86,10 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public final class ODParser
+public final class OdParser
 {
     /** */
-    private ODParser()
+    private OdParser()
     {
         // static class
     }
@@ -436,7 +436,7 @@ public final class ODParser
                             if (options.getDEFAULTMODEL() != null)
                             {
                                 // TODO: model id referral
-                                String modelId = ODParser.getModelId(options.getDEFAULTMODEL(), modelIdReferrals);
+                                String modelId = OdParser.getModelId(options.getDEFAULTMODEL(), modelIdReferrals);
                                 Throw.when(!factories.containsKey(modelId), XmlParserException.class,
                                         "OD option DEFAULTMODEL refers to a non-existent model with ID %s.", modelId);
                                 defaultFactory = factories.get(modelId);

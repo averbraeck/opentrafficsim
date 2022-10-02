@@ -17,10 +17,10 @@ import org.w3c.dom.NodeList;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  */
-public final class XMLParser
+public final class XmlParser
 {
     /** Utility class. */
-    private XMLParser()
+    private XmlParser()
     {
         // do not instantiate
     }

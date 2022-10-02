@@ -57,7 +57,7 @@ public class CategoryTag implements Serializable
     static void parse(final NodeList nodeList, final XmlOdParser parser) throws XmlParserException
     {
         List<Class<?>> categorizationClasses = new ArrayList<>();
-        for (Node node : XMLParser.getNodesSorted(nodeList, "CATEGORY", "GTUTYPE", "ROUTE", "LANE"))
+        for (Node node : XmlParser.getNodesSorted(nodeList, "CATEGORY", "GTUTYPE", "ROUTE", "LANE"))
         {
             NamedNodeMap attributes = node.getAttributes();
             CategoryTag tag = new CategoryTag();

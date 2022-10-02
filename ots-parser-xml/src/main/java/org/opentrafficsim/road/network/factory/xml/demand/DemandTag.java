@@ -80,7 +80,7 @@ public class DemandTag implements Serializable
      */
     static void parse(final NodeList nodeList, final XmlOdParser parser) throws XmlParserException
     {
-        for (Node node : XMLParser.getNodesSorted(nodeList, "DEMAND", "ORIGIN", "DESTINATION", "CATEGORY"))
+        for (Node node : XmlParser.getNodesSorted(nodeList, "DEMAND", "ORIGIN", "DESTINATION", "CATEGORY"))
         {
             NamedNodeMap attributes = node.getAttributes();
             DemandTag tag = new DemandTag();
@@ -130,7 +130,7 @@ public class DemandTag implements Serializable
             NodeList childList = node.getChildNodes();
             List<Double> timeList = new ArrayList<>();
             List<Double> valueList = new ArrayList<>();
-            List<Node> demandNodes = XMLParser.getNodes(childList, "LEVEL");
+            List<Node> demandNodes = XmlParser.getNodes(childList, "LEVEL");
             Throw.when(categoryNode == null && demandNodes.isEmpty(), XmlParserException.class,
                     "DEMAND without CATEGORY attribute should contain demand data.");
             if (demandNodes.size() == 0)

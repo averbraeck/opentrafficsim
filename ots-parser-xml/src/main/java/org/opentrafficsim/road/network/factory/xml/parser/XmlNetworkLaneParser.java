@@ -301,7 +301,7 @@ public final class XmlNetworkLaneParser implements Serializable
         try
         {
             List<LaneBasedGtuGenerator> generators =
-                    ODParser.parseDemand(otsNetwork, demands, gtuTemplates, factories, modelIdReferrals, streamInformation);
+                    OdParser.parseDemand(otsNetwork, demands, gtuTemplates, factories, modelIdReferrals, streamInformation);
             System.out.println("Created " + generators.size() + " generators based on origin destination matrices");
         }
         catch (Exception e)

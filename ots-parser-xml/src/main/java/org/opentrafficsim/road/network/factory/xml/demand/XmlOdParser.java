@@ -292,12 +292,12 @@ public class XmlOdParser implements Serializable
         // TODO global time as optional
         // TODO order of time values, and demand values later, is not guaranteed in xml, need a way to order them
         NodeList odNodeList = xmlNode.getChildNodes();
-        List<Node> nodes = XMLParser.getNodes(odNodeList, "GLOBALTIME");
+        List<Node> nodes = XmlParser.getNodes(odNodeList, "GLOBALTIME");
         Throw.when(nodes.size() > 1, XmlParserException.class, "Multiple GLOBALTIME tags, only 1 is allowed.");
         SortedSet<Time> timeSet = new TreeSet<>();
         if (!nodes.isEmpty())
         {
-            for (Node timeNode : XMLParser.getNodes(nodes.get(0).getChildNodes(), "TIME"))
+            for (Node timeNode : XmlParser.getNodes(nodes.get(0).getChildNodes(), "TIME"))
             {
                 NamedNodeMap timeAttributes = timeNode.getAttributes();
                 Node valueNode = timeAttributes.getNamedItem("VALUE");
