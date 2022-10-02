@@ -31,7 +31,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGtuFollowingTacticalPl
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
 
@@ -60,12 +60,12 @@ public class SensorTest implements UNITS
         OtsSimulatorInterface simulator = new OtsSimulator("SensorTest");
         OtsModelInterface model = new DummyModelForSensorTest(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
-        OTSRoadNetwork network = new OTSRoadNetwork("sensor test network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("sensor test network", true, simulator);
         // Now we need a set of Lanes
         // To create Lanes we need Nodes and a LaneType
-        OTSRoadNode nodeAFrom = new OTSRoadNode(network, "AFrom", new OtsPoint3D(0, 0, 0), Direction.ZERO);
-        OTSRoadNode nodeATo = new OTSRoadNode(network, "ATo", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
-        OTSRoadNode nodeBTo = new OTSRoadNode(network, "BTo", new OtsPoint3D(20000, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeAFrom = new OtsRoadNode(network, "AFrom", new OtsPoint3D(0, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeATo = new OtsRoadNode(network, "ATo", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeBTo = new OtsRoadNode(network, "BTo", new OtsPoint3D(20000, 0, 0), Direction.ZERO);
         // so car won't run off lane B in 100 s.
         GtuType gtuType = network.getGtuType(GtuType.DEFAULTS.CAR);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
@@ -105,7 +105,7 @@ public class SensorTest implements UNITS
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =
         // new LaneBasedBehavioralCharacteristics(fas, null);
         LaneBasedIndividualGtu car = new LaneBasedIndividualGtu(carID, gtuType, carLength, carWidth, maximumSpeed,
-                carLength.times(0.5), simulator, (OTSRoadNetwork) network);
+                carLength.times(0.5), simulator, (OtsRoadNetwork) network);
         LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(new LaneBasedGtuFollowingTacticalPlanner(fas, car), car);
         car.setParameters(parameters);
@@ -208,7 +208,7 @@ class DummyModelForSensorTest extends AbstractOtsModel
 
     /** {@inheritDoc} */
     @Override
-    public final OTSRoadNetwork getNetwork()
+    public final OtsRoadNetwork getNetwork()
     {
         return null;
     }

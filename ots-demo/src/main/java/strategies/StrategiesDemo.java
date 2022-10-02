@@ -68,17 +68,17 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationTraffi
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
-import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
+import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSocioSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveStayRight;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.SocioDesiredSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
@@ -90,13 +90,13 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OTSRoadNode;
+import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
@@ -198,7 +198,7 @@ public class StrategiesDemo extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected void setupDemo(final OTSAnimationPanel animation, final OTSRoadNetwork network)
+    protected void setupDemo(final OTSAnimationPanel animation, final OtsRoadNetwork network)
     {
         // demo panel
         animation.createDemoPanel(DemoPanelPosition.RIGHT);
@@ -452,7 +452,7 @@ public class StrategiesDemo extends AbstractSimulationScript
         private final JLabel label;
 
         /** Network. */
-        private final OTSRoadNetwork network;
+        private final OtsRoadNetwork network;
 
         /**
          * Constructor.
@@ -460,7 +460,7 @@ public class StrategiesDemo extends AbstractSimulationScript
          * @param network OTSRoadNetwork; network
          */
         @SuppressWarnings("synthetic-access")
-        KmplcListener(final JLabel label, final OTSRoadNetwork network)
+        KmplcListener(final JLabel label, final OtsRoadNetwork network)
         {
             this.label = label;
             this.network = network;
@@ -496,9 +496,9 @@ public class StrategiesDemo extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected OTSRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
+    protected OtsRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
     {
-        OTSRoadNetwork network = new OTSRoadNetwork("Strategies demo", true, getSimulator());
+        OtsRoadNetwork network = new OtsRoadNetwork("Strategies demo", true, getSimulator());
 
         GtuCharacteristics truck =
                 GtuType.defaultCharacteristics(network.getGtuType(GtuType.DEFAULTS.TRUCK), network, this.stream);
@@ -510,10 +510,10 @@ public class StrategiesDemo extends AbstractSimulationScript
 
         double radius = 150;
         Speed speedLimit = new Speed(120.0, SpeedUnit.KM_PER_HOUR);
-        OTSRoadNode nodeA =
-                new OTSRoadNode(network, "A", new OtsPoint3D(-radius, 0, 0), new Direction(270, DirectionUnit.EAST_DEGREE));
-        OTSRoadNode nodeB =
-                new OTSRoadNode(network, "B", new OtsPoint3D(radius, 0, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
+        OtsRoadNode nodeA =
+                new OtsRoadNode(network, "A", new OtsPoint3D(-radius, 0, 0), new Direction(270, DirectionUnit.EAST_DEGREE));
+        OtsRoadNode nodeB =
+                new OtsRoadNode(network, "B", new OtsPoint3D(radius, 0, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
 
         OtsPoint3D[] coordsHalf1 = new OtsPoint3D[127];
         for (int i = 0; i < coordsHalf1.length; i++)
@@ -571,12 +571,12 @@ public class StrategiesDemo extends AbstractSimulationScript
             // car-following factory
             CarFollowingModelFactory<?> cfFactory = // trucks don't change their desired speed
                     gtuType.equals(network.getGtuType(GtuType.DEFAULTS.CAR)) ? new SocioIDMFactory()
-                            : new IDMPlusFactory(this.stream);
+                            : new IdmPlusFactory(this.stream);
             // tailgating
             Tailgating tlgt = Tailgating.PRESSURE;
             // strategical and tactical factory
             LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory =
-                    new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(cfFactory, perceptionFactory,
+                    new LaneBasedStrategicalRoutePlannerFactory(new LmrsFactory(cfFactory, perceptionFactory,
                             Synchronization.PASSIVE, Cooperation.PASSIVE, GapAcceptance.INFORMED, tlgt, mandatoryIncentives,
                             voluntaryIncentives, accelerationIncentives), parameterFactory);
             this.factories.put(gtuType, laneBasedStrategicalPlannerFactory);
@@ -636,7 +636,7 @@ public class StrategiesDemo extends AbstractSimulationScript
      * @throws OtsGeometryException on exception
      */
     public void createGtu(final Lane lane, final Length pos, final GtuType gtuType, final Speed initialSpeed,
-            final OTSRoadNetwork net)
+            final OtsRoadNetwork net)
             throws NamingException, GtuException, NetworkException, SimRuntimeException, OtsGeometryException
     {
         GtuCharacteristics gtuCharacteristics = Try.assign(() -> GtuType.defaultCharacteristics(gtuType, net, this.stream),
@@ -678,22 +678,22 @@ public class StrategiesDemo extends AbstractSimulationScript
     }
 
     /** IDM factory with socio speed. */
-    class SocioIDMFactory implements CarFollowingModelFactory<IDMPlus>
+    class SocioIDMFactory implements CarFollowingModelFactory<IdmPlus>
     {
         /** {@inheritDoc} */
         @Override
         public Parameters getParameters() throws ParameterException
         {
             ParameterSet parameters = new ParameterSet();
-            parameters.setDefaultParameters(AbstractIDM.class);
+            parameters.setDefaultParameters(AbstractIdm.class);
             return parameters;
         }
 
         /** {@inheritDoc} */
         @Override
-        public IDMPlus generateCarFollowingModel()
+        public IdmPlus generateCarFollowingModel()
         {
-            return new IDMPlus(AbstractIDM.HEADWAY, new SocioDesiredSpeed(AbstractIDM.DESIRED_SPEED));
+            return new IdmPlus(AbstractIdm.HEADWAY, new SocioDesiredSpeed(AbstractIdm.DESIRED_SPEED));
         }
     }
 

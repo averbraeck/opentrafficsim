@@ -8,13 +8,13 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.gtu.strategical.route.RouteGeneratorOD;
+import org.opentrafficsim.road.gtu.strategical.route.RouteGeneratorOd;
 
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
@@ -28,7 +28,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public interface StrategicalPlannerFactorySupplierOD
+public interface StrategicalPlannerFactorySupplierOd
 {
 
     /**
@@ -47,9 +47,9 @@ public interface StrategicalPlannerFactorySupplierOD
      * Returns a standard implementation for LMRS.
      * @return standard implementation for LMRS
      */
-    static StrategicalPlannerFactorySupplierOD lmrs()
+    static StrategicalPlannerFactorySupplierOd lmrs()
     {
-        return new StrategicalPlannerFactorySupplierOD()
+        return new StrategicalPlannerFactorySupplierOd()
         {
             /** {@inheritDoc} */
             @Override
@@ -60,8 +60,8 @@ public interface StrategicalPlannerFactorySupplierOD
                 params.addParameter(origin.getNetwork().getGtuType(DEFAULTS.TRUCK), ParameterTypes.A,
                         Acceleration.instantiateSI(0.4));
                 return new LaneBasedStrategicalRoutePlannerFactory(
-                        new LMRSFactory(new IDMPlusFactory(randomStream), new DefaultLMRSPerceptionFactory()), params,
-                        RouteGeneratorOD.getDefaultRouteSupplier(randomStream));
+                        new LmrsFactory(new IdmPlusFactory(randomStream), new DefaultLmrsPerceptionFactory()), params,
+                        RouteGeneratorOd.getDefaultRouteSupplier(randomStream));
             }
         };
     }
@@ -74,9 +74,9 @@ public interface StrategicalPlannerFactorySupplierOD
      *            information
      * @return strategical factory with default strategical layer and specified tactical layer
      */
-    static StrategicalPlannerFactorySupplierOD route(final TacticalPlannerFactorySupplierOD tacticalPlannerFactorySupplierOD)
+    static StrategicalPlannerFactorySupplierOd route(final TacticalPlannerFactorySupplierOD tacticalPlannerFactorySupplierOD)
     {
-        return new StrategicalPlannerFactorySupplierOD()
+        return new StrategicalPlannerFactorySupplierOd()
         {
             /** {@inheritDoc} */
             @Override

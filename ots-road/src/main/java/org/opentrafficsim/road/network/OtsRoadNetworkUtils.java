@@ -10,10 +10,10 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public final class OTSRoadNetworkUtils
+public final class OtsRoadNetworkUtils
 {
     /** */
-    private OTSRoadNetworkUtils()
+    private OtsRoadNetworkUtils()
     {
         // utility class
     }
@@ -23,9 +23,9 @@ public final class OTSRoadNetworkUtils
      * @param network OTSRoadNetwork; the network to destroy
      * @param simulator OTSSimulatorInterface; the simulator of the old network
      */
-    public static void destroy(final OTSRoadNetwork network, final OtsSimulatorInterface simulator)
+    public static void destroy(final OtsRoadNetwork network, final OtsSimulatorInterface simulator)
     {
-        OTSRoadNetworkUtils.destroy(network, simulator);
+        OtsRoadNetworkUtils.destroy(network, simulator);
     }
 
 }

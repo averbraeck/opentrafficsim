@@ -36,7 +36,7 @@ import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGt
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.LaneType;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -65,7 +65,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
     public final void constructorTest() throws Exception
     {
         OtsSimulatorInterface simulator = new OtsSimulator("LaneBasedTemplateGTUTypeTest");
-        OTSRoadNetwork network = new OTSRoadNetwork("TemplateGTU network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("TemplateGTU network", true, simulator);
         GtuType pcType = network.getGtuType(GtuType.DEFAULTS.CAR);
         final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcLength =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 4), METER);
@@ -169,7 +169,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
     public final void compatibleLaneTypeTest() throws Exception
     {
         OtsSimulatorInterface simulator = new OtsSimulator("LaneBasedTemplateGTUTypeTest");
-        OTSRoadNetwork network = new OTSRoadNetwork("TemplateGTU network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("TemplateGTU network", true, simulator);
         // Create some TemplateGTUTypes
         GtuType pc = network.getGtuType(GtuType.DEFAULTS.CAR);
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcLength =
@@ -317,7 +317,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public final OTSRoadNetwork getNetwork()
+        public final OtsRoadNetwork getNetwork()
         {
             return null;
         }

@@ -61,7 +61,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Neighbor
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneBasedOperationalPlan;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -175,7 +175,7 @@ public abstract class AbstractLaneBasedGtu2 extends AbstractGtu implements LaneB
      * @param network OTSRoadNetwork; the network that the GTU is initially registered in
      * @throws GtuException when initial values are not correct
      */
-    public AbstractLaneBasedGtu2(final String id, final GtuType gtuType, final OTSRoadNetwork network) throws GtuException
+    public AbstractLaneBasedGtu2(final String id, final GtuType gtuType, final OtsRoadNetwork network) throws GtuException
     {
         super(id, gtuType, network.getSimulator(), network);
         OtsSimulatorInterface simulator = network.getSimulator();

@@ -60,21 +60,21 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
 import org.opentrafficsim.road.gtu.lane.perception.mental.TaskManager;
 import org.opentrafficsim.road.gtu.lane.perception.mental.TaskManager.SummativeTaskManager;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
+import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DesiredHeadwayModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DesiredSpeedModel;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDM;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.following.Idm;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationBusStop;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationConflicts;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationNoRightOvertake;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationSpeedLimitTransition;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationTrafficLights;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveBusStop;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveDummy;
@@ -84,7 +84,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSocioSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveStayRight;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.SocioDesiredSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
@@ -94,7 +94,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseDistribution;
 import org.opentrafficsim.xml.generated.CARFOLLOWINGMODELHEADWAYSPEEDTYPE;
@@ -168,7 +168,7 @@ public class ModelParser
      */
     @SuppressWarnings("unchecked")
     public static <U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>, K> Map<String, ParameterFactory> parseParameters(
-            final OTSRoadNetwork otsNetwork, final List<MODELTYPE> models, final InputParameters inputParameters,
+            final OtsRoadNetwork otsNetwork, final List<MODELTYPE> models, final InputParameters inputParameters,
             final Map<String, ParameterType<?>> parameterTypes, final StreamInformation streamMap) throws XmlParserException
     {
         Map<String, ParameterFactory> map = new LinkedHashMap<>();
@@ -352,7 +352,7 @@ public class ModelParser
      * @throws XmlParserException unknown value, missing constructor, etc.
      */
     public static <U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>,
-            K> Map<String, LaneBasedStrategicalPlannerFactory<?>> parseModel(final OTSRoadNetwork otsNetwork,
+            K> Map<String, LaneBasedStrategicalPlannerFactory<?>> parseModel(final OtsRoadNetwork otsNetwork,
                     final List<MODELTYPE> models, final InputParameters inputParameters,
                     final Map<String, ParameterType<?>> parameterTypes, final StreamInformation streamInformation,
                     final Map<String, ParameterFactory> parameterFactories) throws XmlParserException
@@ -381,8 +381,8 @@ public class ModelParser
                 // default
                 try
                 {
-                    tacticalPlannerFactory = new LMRSFactory(new IDMPlusFactory(streamInformation.getStream("generation")),
-                            new DefaultLMRSPerceptionFactory());
+                    tacticalPlannerFactory = new LmrsFactory(new IdmPlusFactory(streamInformation.getStream("generation")),
+                            new DefaultLmrsPerceptionFactory());
                 }
                 catch (GtuException exception)
                 {
@@ -455,7 +455,7 @@ public class ModelParser
      * @param network the network
      * @return the GtuType belonging to the id
      */
-    private static GtuType getGtuType(final String gtuTypeId, final OTSRoadNetwork network)
+    private static GtuType getGtuType(final String gtuTypeId, final OtsRoadNetwork network)
     {
         if (gtuTypeId == null)
         {
@@ -471,7 +471,7 @@ public class ModelParser
      * @throws XmlParserException unknown value, missing constructor, etc.
      */
     @SuppressWarnings("unchecked")
-    private static LaneBasedTacticalPlannerFactory<org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRS> parseLmrs(
+    private static LaneBasedTacticalPlannerFactory<org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs> parseLmrs(
             final LMRS lmrs) throws XmlParserException
     {
         // Synchronization
@@ -669,7 +669,7 @@ public class ModelParser
                 parseCarFollowingModel(lmrs.getCARFOLLOWINGMODEL());
 
         // LMRS factory
-        return new LMRSFactory(carFollowingModelFactory, perceptionFactory, synchronization, cooperation, gapAcceptance,
+        return new LmrsFactory(carFollowingModelFactory, perceptionFactory, synchronization, cooperation, gapAcceptance,
                 tailgating, mandatoryIncentives, voluntaryIncentives, accelerationIncentives);
     }
 
@@ -687,13 +687,13 @@ public class ModelParser
         {
             carFollowingModelFactory = parseCarFollowingModelHeadwaySpeed(carFollowingModel.getIDM(), (
                     headway, speed
-            ) -> new IDM(headway, speed));
+            ) -> new Idm(headway, speed));
         }
         else if (carFollowingModel.getIDMPLUS() != null)
         {
             carFollowingModelFactory = parseCarFollowingModelHeadwaySpeed(carFollowingModel.getIDMPLUS(), (
                     headway, speed
-            ) -> new IDMPlus(headway, speed));
+            ) -> new IdmPlus(headway, speed));
         }
         else
         {
@@ -771,7 +771,7 @@ public class ModelParser
                 @Override
                 public DesiredHeadwayModel draw() throws ProbabilityException, ParameterException
                 {
-                    return AbstractIDM.HEADWAY;
+                    return AbstractIdm.HEADWAY;
                 }
             };
         }
@@ -832,7 +832,7 @@ public class ModelParser
                 @Override
                 public DesiredSpeedModel draw() throws ProbabilityException, ParameterException
                 {
-                    return AbstractIDM.DESIRED_SPEED;
+                    return AbstractIdm.DESIRED_SPEED;
                 }
             };
         }

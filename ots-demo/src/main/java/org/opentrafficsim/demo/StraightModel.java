@@ -38,23 +38,23 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
-import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
+import org.opentrafficsim.road.gtu.generator.TtcRoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuType;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuTypeDistribution;
-import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OTSRoadNode;
+import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
@@ -90,7 +90,7 @@ public class StraightModel extends AbstractOtsModel implements UNITS
     private static final long serialVersionUID = 20140815L;
 
     /** The network. */
-    private final OTSRoadNetwork network = new OTSRoadNetwork("network", true, getSimulator());
+    private final OtsRoadNetwork network = new OtsRoadNetwork("network", true, getSimulator());
 
     /** The probability that the next generated GTU is a passenger car. */
     private double carProbability;
@@ -128,10 +128,10 @@ public class StraightModel extends AbstractOtsModel implements UNITS
     {
         try
         {
-            OTSRoadNode from = new OTSRoadNode(this.network, "From", new OtsPoint3D(0.0, 0, 0), Direction.ZERO);
-            OTSRoadNode to =
-                    new OTSRoadNode(this.network, "To", new OtsPoint3D(this.maximumDistance.getSI(), 0, 0), Direction.ZERO);
-            OTSRoadNode end = new OTSRoadNode(this.network, "End", new OtsPoint3D(this.maximumDistance.getSI() + 50.0, 0, 0),
+            OtsRoadNode from = new OtsRoadNode(this.network, "From", new OtsPoint3D(0.0, 0, 0), Direction.ZERO);
+            OtsRoadNode to =
+                    new OtsRoadNode(this.network, "To", new OtsPoint3D(this.maximumDistance.getSI(), 0, 0), Direction.ZERO);
+            OtsRoadNode end = new OtsRoadNode(this.network, "End", new OtsPoint3D(this.maximumDistance.getSI() + 50.0, 0, 0),
                     Direction.ZERO);
             LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
             this.lane = LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator);
@@ -147,10 +147,10 @@ public class StraightModel extends AbstractOtsModel implements UNITS
             this.carProbability = (double) getInputParameter("generic.carProbability");
 
             // Generation of a new car / truck
-            TTCRoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, DurationUnit.SI));
+            TtcRoomChecker roomChecker = new TtcRoomChecker(new Duration(10.0, DurationUnit.SI));
             IdGenerator idGenerator = new IdGenerator("");
             ParameterSet params = new ParameterSet();
-            params.setDefaultParameter(AbstractIDM.DELTA);
+            params.setDefaultParameter(AbstractIdm.DELTA);
             GtuType car = new GtuType("car", this.network.getGtuType(GtuType.DEFAULTS.CAR));
             GtuType truck = new GtuType("truck", this.network.getGtuType(GtuType.DEFAULTS.TRUCK));
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedCar =
@@ -160,10 +160,10 @@ public class StraightModel extends AbstractOtsModel implements UNITS
             Generator<Route> routeGenerator = new FixedRouteGenerator(null);
             LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactoryCars =
                     new LaneBasedStrategicalRoutePlannerFactory(
-                            new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
+                            new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()));
             LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFctoryTrucks =
                     new LaneBasedStrategicalRoutePlannerFactory(
-                            new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
+                            new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()));
             LaneBasedTemplateGtuType carTemplate = new LaneBasedTemplateGtuType(car,
                     new ConstantGenerator<>(Length.instantiateSI(4.0)), new ConstantGenerator<>(Length.instantiateSI(2.0)),
                     speedCar, strategicalPlannerFactoryCars, routeGenerator);
@@ -217,7 +217,7 @@ public class StraightModel extends AbstractOtsModel implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    public OTSRoadNetwork getNetwork()
+    public OtsRoadNetwork getNetwork()
     {
         return this.network;
     }

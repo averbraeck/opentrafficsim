@@ -43,7 +43,7 @@ import org.opentrafficsim.road.gtu.generator.headway.DemandPattern;
 import org.opentrafficsim.road.gtu.strategical.od.Categorization;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
@@ -64,13 +64,13 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public final class ODApplier
+public final class OdApplier
 {
 
     /**
      * Utility class.
      */
-    private ODApplier()
+    private OdApplier()
     {
         //
     }
@@ -117,8 +117,8 @@ public final class ODApplier
      * @throws SimRuntimeException if this method is called after simulation time 0
      */
     @SuppressWarnings("checkstyle:methodlength")
-    public static Map<String, GeneratorObjects> applyOD(final OTSRoadNetwork network, final ODMatrix od,
-            final ODOptions odOptions) throws ParameterException, SimRuntimeException
+    public static Map<String, GeneratorObjects> applyOD(final OtsRoadNetwork network, final ODMatrix od,
+            final OdOptions odOptions) throws ParameterException, SimRuntimeException
     {
         Throw.whenNull(network, "Network may not be null.");
         Throw.whenNull(od, "OD matrix may not be null.");
@@ -175,7 +175,7 @@ public final class ODApplier
                 LinkType linkType = getLinkTypeFromNode(origin);
                 if (markovian)
                 {
-                    MarkovCorrelation<GtuType, Frequency> correlation = odOptions.get(ODOptions.MARKOV, null, origin, linkType);
+                    MarkovCorrelation<GtuType, Frequency> correlation = odOptions.get(OdOptions.MARKOV, null, origin, linkType);
                     if (correlation != null)
                     {
                         Throw.when(!od.getCategorization().entails(GtuType.class), IllegalArgumentException.class,
@@ -214,7 +214,7 @@ public final class ODApplier
                                 if (markovian)
                                 {
                                     MarkovCorrelation<GtuType, Frequency> correlation =
-                                            odOptions.get(ODOptions.MARKOV, lane, origin, lane.getParentLink().getLinkType());
+                                            odOptions.get(OdOptions.MARKOV, lane, origin, lane.getParentLink().getLinkType());
                                     if (correlation != null)
                                     {
                                         Throw.when(!od.getCategorization().entails(GtuType.class),
@@ -338,23 +338,23 @@ public final class ODApplier
                     lane = null;
                     linkType = getLinkTypeFromNode(o);
                 }
-                HeadwayDistribution randomization = odOptions.get(ODOptions.HEADWAY_DIST, lane, o, linkType);
+                HeadwayDistribution randomization = odOptions.get(OdOptions.HEADWAY_DIST, lane, o, linkType);
                 ArrivalsHeadwayGenerator headwayGenerator =
                         new ArrivalsHeadwayGenerator(root, simulator, stream, randomization);
                 GtuCharacteristicsGeneratorODWrapper characteristicsGenerator = new GtuCharacteristicsGeneratorODWrapper(root,
-                        simulator, odOptions.get(ODOptions.GTU_TYPE, lane, o, linkType), stream);
-                RoomChecker roomChecker = odOptions.get(ODOptions.ROOM_CHECKER, lane, o, linkType);
-                IdGenerator idGenerator = odOptions.get(ODOptions.GTU_ID, lane, o, linkType);
-                LaneBiases biases = odOptions.get(ODOptions.getLaneBiasOption(network), lane, o, linkType);
+                        simulator, odOptions.get(OdOptions.GTU_TYPE, lane, o, linkType), stream);
+                RoomChecker roomChecker = odOptions.get(OdOptions.ROOM_CHECKER, lane, o, linkType);
+                IdGenerator idGenerator = odOptions.get(OdOptions.GTU_ID, lane, o, linkType);
+                LaneBiases biases = odOptions.get(OdOptions.getLaneBiasOption(network), lane, o, linkType);
                 // and finally, the generator
                 try
                 {
                     LaneBasedGtuGenerator generator = new LaneBasedGtuGenerator(id, headwayGenerator, characteristicsGenerator,
                             GeneratorPositions.create(initialPosition, stream, biases, linkWeights, viaNodes), network,
                             simulator, roomChecker, idGenerator);
-                    generator.setNoLaneChangeDistance(odOptions.get(ODOptions.NO_LC_DIST, lane, o, linkType));
-                    generator.setInstantaneousLaneChange(odOptions.get(ODOptions.INSTANT_LC, lane, o, linkType));
-                    generator.setErrorHandler(odOptions.get(ODOptions.ERROR_HANDLER, lane, o, linkType));
+                    generator.setNoLaneChangeDistance(odOptions.get(OdOptions.NO_LC_DIST, lane, o, linkType));
+                    generator.setInstantaneousLaneChange(odOptions.get(OdOptions.INSTANT_LC, lane, o, linkType));
+                    generator.setErrorHandler(odOptions.get(OdOptions.ERROR_HANDLER, lane, o, linkType));
                     output.put(id, new GeneratorObjects(generator, headwayGenerator, characteristicsGenerator));
                 }
                 catch (SimRuntimeException exception)
@@ -823,7 +823,7 @@ public final class ODApplier
         private final OtsSimulatorInterface simulator;
 
         /** Characteristics generator based on OD information. */
-        private final GtuCharacteristicsGeneratorOD characteristicsGenerator;
+        private final GtuCharacteristicsGeneratorOd characteristicsGenerator;
 
         /** Stream for random numbers. */
         private final StreamInterface randomStream;
@@ -835,7 +835,7 @@ public final class ODApplier
          * @param randomStream StreamInterface; stream for random numbers
          */
         GtuCharacteristicsGeneratorODWrapper(final DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root,
-                final OtsSimulatorInterface simulator, final GtuCharacteristicsGeneratorOD characteristicsGenerator,
+                final OtsSimulatorInterface simulator, final GtuCharacteristicsGeneratorOd characteristicsGenerator,
                 final StreamInterface randomStream)
         {
             this.root = root;

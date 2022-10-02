@@ -24,8 +24,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 
-public class LaneBasedCFLCTacticalPlannerFactory
-        implements LaneBasedTacticalPlannerFactory<LaneBasedCFLCTacticalPlanner>, Serializable
+public class LaneBasedCfLcTacticalPlannerFactory
+        implements LaneBasedTacticalPlannerFactory<LaneBasedCfLcTacticalPlanner>, Serializable
 {
 
     /** */
@@ -42,7 +42,7 @@ public class LaneBasedCFLCTacticalPlannerFactory
      * @param carFollowingModel GtuFollowingModelOld; car following model
      * @param laneChangeModel LaneChangeModel; lane change model
      */
-    public LaneBasedCFLCTacticalPlannerFactory(final GtuFollowingModelOld carFollowingModel,
+    public LaneBasedCfLcTacticalPlannerFactory(final GtuFollowingModelOld carFollowingModel,
             final LaneChangeModel laneChangeModel)
     {
         this.carFollowingModel = carFollowingModel;
@@ -51,9 +51,9 @@ public class LaneBasedCFLCTacticalPlannerFactory
 
     /** {@inheritDoc} */
     @Override
-    public final LaneBasedCFLCTacticalPlanner create(final LaneBasedGtu gtu) throws GtuException
+    public final LaneBasedCfLcTacticalPlanner create(final LaneBasedGtu gtu) throws GtuException
     {
-        return new LaneBasedCFLCTacticalPlanner(this.carFollowingModel, this.laneChangeModel, gtu);
+        return new LaneBasedCfLcTacticalPlanner(this.carFollowingModel, this.laneChangeModel, gtu);
     }
 
     /** {@inheritDoc} */

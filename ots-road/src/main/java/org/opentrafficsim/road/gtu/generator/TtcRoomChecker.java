@@ -31,7 +31,7 @@ import org.opentrafficsim.road.network.lane.LanePosition;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class TTCRoomChecker implements RoomChecker
+public class TtcRoomChecker implements RoomChecker
 {
 
     /** Time to collision. */
@@ -41,7 +41,7 @@ public class TTCRoomChecker implements RoomChecker
      * Constructor.
      * @param ttc Duration; time to collision
      */
-    public TTCRoomChecker(final Duration ttc)
+    public TtcRoomChecker(final Duration ttc)
     {
         this.ttc = ttc;
     }

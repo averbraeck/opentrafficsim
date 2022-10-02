@@ -24,7 +24,7 @@ import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.FixedLaneChangeModel;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -57,15 +57,15 @@ public class CurveTest
     {
         final int laneCount = 1;
         OtsSimulatorInterface simulator = CarTest.makeSimulator();
-        OTSRoadNetwork network = new OTSRoadNetwork("curve test network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("curve test network", true, simulator);
         GtuType gtuType = network.getGtuType(GtuType.DEFAULTS.CAR);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
-        OTSRoadNode origin = new OTSRoadNode(network, "origin", new OtsPoint3D(10, 10, 0), Direction.ZERO);
-        OTSRoadNode curveStart = new OTSRoadNode(network, "curveStart", new OtsPoint3D(100, 10, 0), Direction.ZERO);
-        OTSRoadNode curveEnd =
-                new OTSRoadNode(network, "curveEnd", new OtsPoint3D(150, 60, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
-        OTSRoadNode destination = new OTSRoadNode(network, "destination", new OtsPoint3D(150, 150, 0),
+        OtsRoadNode origin = new OtsRoadNode(network, "origin", new OtsPoint3D(10, 10, 0), Direction.ZERO);
+        OtsRoadNode curveStart = new OtsRoadNode(network, "curveStart", new OtsPoint3D(100, 10, 0), Direction.ZERO);
+        OtsRoadNode curveEnd =
+                new OtsRoadNode(network, "curveEnd", new OtsPoint3D(150, 60, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
+        OtsRoadNode destination = new OtsRoadNode(network, "destination", new OtsPoint3D(150, 150, 0),
                 new Direction(90, DirectionUnit.EAST_DEGREE));
         Lane[] straight1 = LaneFactory.makeMultiLane(network, "straight1", origin, curveStart, null, laneCount, laneType,
                 speedLimit, simulator);
@@ -92,7 +92,7 @@ public class CurveTest
                     CarTest.makeReferenceCar("car", gtuType, straight1[lane], initialPosition, speed, simulator,
                             new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI),
                                     new Duration(25, DurationUnit.SI)),
-                            new FixedLaneChangeModel(null), (OTSRoadNetwork) network);
+                            new FixedLaneChangeModel(null), (OtsRoadNetwork) network);
             printEventList(simulator);
             System.out.println("STEP");
             simulator.step();

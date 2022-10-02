@@ -12,11 +12,11 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OtsLink;
 import org.opentrafficsim.core.network.OtsNode;
 import org.opentrafficsim.road.DefaultTestParameters;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCfLcTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
 import org.opentrafficsim.road.mock.MockSimulator;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 
 /**
  * Test the LaneBasedStrategicalRoutePlanner class.
@@ -40,14 +40,14 @@ public class LaneBasedStrategicalRoutePlannerTest
     public final void nextLinkDirectionTest() throws GtuException, NetworkException, OtsGeometryException
     {
         OtsSimulatorInterface simulator = MockSimulator.createMock();
-        OTSRoadNetwork network = new OTSRoadNetwork("next link direction test", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("next link direction test", true, simulator);
         // Build a really simple network
         OtsNode fromNode = new OtsNode(network, "from", new OtsPoint3D(0, 0, 0));
         OtsNode toNode = new OtsNode(network, "to", new OtsPoint3D(100, 0, 0));
         OtsLine3D designLine = new OtsLine3D(fromNode.getPoint(), toNode.getPoint());
         OtsLink link = new OtsLink(network, "link", fromNode, toNode, network.getLinkType(LinkType.DEFAULTS.ROAD), designLine);
-        CarFollowingModel cfm = new IDMPlus();
-        LaneBasedCFLCTacticalPlanner tacticalPlanner = new LaneBasedCFLCTacticalPlanner(null, null, null);
+        CarFollowingModel cfm = new IdmPlus();
+        LaneBasedCfLcTacticalPlanner tacticalPlanner = new LaneBasedCfLcTacticalPlanner(null, null, null);
         Parameters params = DefaultTestParameters.create();
         // TODO Gtu cannot be null anymore...
         // LaneBasedStrategicalRoutePlanner lbsrp = new LaneBasedStrategicalRoutePlanner(params, tacticalPlanner, null);

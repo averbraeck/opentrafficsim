@@ -70,10 +70,10 @@ import org.opentrafficsim.road.gtu.colorer.SynchronizationColorer;
 import org.opentrafficsim.road.gtu.colorer.TaskColorer;
 import org.opentrafficsim.road.gtu.colorer.TaskSaturationColorer;
 import org.opentrafficsim.road.gtu.colorer.TotalDesireColorer;
-import org.opentrafficsim.road.gtu.generator.od.DefaultGtuCharacteristicsGeneratorOD;
-import org.opentrafficsim.road.gtu.generator.od.ODApplier;
-import org.opentrafficsim.road.gtu.generator.od.ODOptions;
-import org.opentrafficsim.road.gtu.generator.od.StrategicalPlannerFactorySupplierOD;
+import org.opentrafficsim.road.gtu.generator.od.DefaultGtuCharacteristicsGeneratorOd;
+import org.opentrafficsim.road.gtu.generator.od.OdApplier;
+import org.opentrafficsim.road.gtu.generator.od.OdOptions;
+import org.opentrafficsim.road.gtu.generator.od.StrategicalPlannerFactorySupplierOd;
 import org.opentrafficsim.road.gtu.lane.CollisionDetector;
 import org.opentrafficsim.road.gtu.lane.CollisionException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -98,12 +98,12 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.BehavioralAdaptation;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
 import org.opentrafficsim.road.gtu.lane.perception.mental.TaskManager;
-import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
+import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DesiredSpeedModel;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveGetInLane;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
@@ -112,7 +112,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSocioSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveStayRight;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.SocioDesiredSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
@@ -127,7 +127,7 @@ import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.sampling.GtuData;
@@ -337,13 +337,13 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected OTSRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
+    protected OtsRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
     {
         AbstractGtu.ALIGNED = true;
 
         // Network
         URL xmlURL = URLResource.getResource("/resources/AHFE/Network.xml");
-        OTSRoadNetwork network = new OTSRoadNetwork("Distraction", true, sim);
+        OtsRoadNetwork network = new OtsRoadNetwork("Distraction", true, sim);
         new CollisionDetector(network); // XXX: is this needed here? was in old version...
         XmlNetworkLaneParser.build(xmlURL, network, false);
 
@@ -373,10 +373,10 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         od.putDemandVector(network.getNode("LEFTINPRE"), network.getNode("EXIT"), truckCategory, leftDemandPatternTruck);
         od.putDemandVector(network.getNode("RIGHTINPRE"), network.getNode("EXIT"), carCategory, rightDemandPatternCar);
         od.putDemandVector(network.getNode("RIGHTINPRE"), network.getNode("EXIT"), truckCategory, rightDemandPatternTruck);
-        ODOptions odOptions = new ODOptions()
-                .set(ODOptions.GTU_TYPE, new DefaultGtuCharacteristicsGeneratorOD(new DistractionFactorySupplier()))
-                .set(ODOptions.INSTANT_LC, true);
-        ODApplier.applyOD(network, od, odOptions);
+        OdOptions odOptions = new OdOptions()
+                .set(OdOptions.GTU_TYPE, new DefaultGtuCharacteristicsGeneratorOd(new DistractionFactorySupplier()))
+                .set(OdOptions.INSTANT_LC, true);
+        OdApplier.applyOD(network, od, odOptions);
 
         // History
         sim.getReplication()
@@ -475,7 +475,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    private class DistractionFactorySupplier implements StrategicalPlannerFactorySupplierOD
+    private class DistractionFactorySupplier implements StrategicalPlannerFactorySupplierOd
     {
 
         /** Factory cars. */
@@ -495,14 +495,14 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         public LaneBasedStrategicalPlannerFactory<?> getFactory(final Node origin, final Node destination,
                 final Category category, final StreamInterface randomStream) throws GtuException
         {
-            OTSRoadNetwork network = (OTSRoadNetwork) origin.getNetwork();
+            OtsRoadNetwork network = (OtsRoadNetwork) origin.getNetwork();
             if (this.factoryCar == null)
             {
                 // car-following model, with different desired speed models
-                CarFollowingModelFactory<IDMPlus> cfFactoryCar =
+                CarFollowingModelFactory<IdmPlus> cfFactoryCar =
                         new IdmPlusFactoryAR(() -> AnticipationRelianceScript.this.strategies
-                                ? new SocioDesiredSpeed(AbstractIDM.DESIRED_SPEED) : AbstractIDM.DESIRED_SPEED);
-                CarFollowingModelFactory<IDMPlus> cfFactoryTruck = new IdmPlusFactoryAR(() -> AbstractIDM.DESIRED_SPEED);
+                                ? new SocioDesiredSpeed(AbstractIdm.DESIRED_SPEED) : AbstractIdm.DESIRED_SPEED);
+                CarFollowingModelFactory<IdmPlus> cfFactoryTruck = new IdmPlusFactoryAR(() -> AbstractIdm.DESIRED_SPEED);
 
                 // perception factory with estimation distribution (i.e. over- vs. underestimation)
                 Distribution<Estimation> estimation;
@@ -564,10 +564,10 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
                 }
 
                 // factories
-                this.factoryCar = new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(cfFactoryCar, perceptionFactory,
+                this.factoryCar = new LaneBasedStrategicalRoutePlannerFactory(new LmrsFactory(cfFactoryCar, perceptionFactory,
                         Synchronization.PASSIVE, Cooperation.PASSIVE, GapAcceptance.INFORMED, tailgating, mandatoryIncentives,
                         voluntaryIncentivesCar, accelerationIncentives), params);
-                this.factoryTruck = new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(cfFactoryTruck,
+                this.factoryTruck = new LaneBasedStrategicalRoutePlannerFactory(new LmrsFactory(cfFactoryTruck,
                         perceptionFactory, Synchronization.PASSIVE, Cooperation.PASSIVE, GapAcceptance.INFORMED, tailgating,
                         mandatoryIncentives, voluntaryIncentivesTruck, accelerationIncentives), params);
             }
@@ -628,7 +628,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
     }
 
     /** LMRS perception factory with AR. */
-    private class LmrsPerceptionFactoryAR extends DefaultLMRSPerceptionFactory
+    private class LmrsPerceptionFactoryAR extends DefaultLmrsPerceptionFactory
     {
         /** Estimation distribution. */
         private final Distribution<Estimation> estimation;
@@ -740,7 +740,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
     }
 
     /** Car-following model factory. */
-    private class IdmPlusFactoryAR implements CarFollowingModelFactory<IDMPlus>
+    private class IdmPlusFactoryAR implements CarFollowingModelFactory<IdmPlus>
     {
         /** Generator for desired speed model. */
         private final Generator<DesiredSpeedModel> desiredSpeedModelGenerator;
@@ -759,15 +759,15 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         public Parameters getParameters() throws ParameterException
         {
             ParameterSet parameters = new ParameterSet();
-            parameters.setDefaultParameters(AbstractIDM.class);
+            parameters.setDefaultParameters(AbstractIdm.class);
             return parameters;
         }
 
         /** {@inheritDoc} */
         @Override
-        public IDMPlus generateCarFollowingModel()
+        public IdmPlus generateCarFollowingModel()
         {
-            return new IDMPlus(AbstractIDM.HEADWAY,
+            return new IdmPlus(AbstractIdm.HEADWAY,
                     Try.assign(() -> this.desiredSpeedModelGenerator.draw(), "Unexpected exception."));
         }
     }

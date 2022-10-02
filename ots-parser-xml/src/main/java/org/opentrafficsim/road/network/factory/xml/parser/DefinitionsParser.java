@@ -10,7 +10,7 @@ import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -58,7 +58,7 @@ public final class DefinitionsParser
      * @param linkTypeSpeedLimitMap map with speed limit information per link type
      * @throws XmlParserException on parsing error
      */
-    public static void parseDefinitions(final OTSRoadNetwork otsNetwork, final DEFINITIONS definitions,
+    public static void parseDefinitions(final OtsRoadNetwork otsNetwork, final DEFINITIONS definitions,
             final boolean overwriteDefaults, final Map<String, ROADLAYOUT> roadLayoutMap,
             final Map<String, GTUTEMPLATE> gtuTemplates, final StreamInformation streamInformation,
             final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap) throws XmlParserException
@@ -77,7 +77,7 @@ public final class DefinitionsParser
      * @param overwriteDefaults overwrite default definitions in otsNetwork or not
      * @throws XmlParserException on parsing error
      */
-    public static void parseGtuTypes(final DEFINITIONS definitions, final OTSRoadNetwork otsNetwork,
+    public static void parseGtuTypes(final DEFINITIONS definitions, final OtsRoadNetwork otsNetwork,
             final boolean overwriteDefaults) throws XmlParserException
     {
         for (GTUTYPES gtuTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(), GTUTYPES.class))
@@ -121,7 +121,7 @@ public final class DefinitionsParser
      * @param linkTypeSpeedLimitMap map with speed limit information per link type
      * @throws XmlParserException on parsing error
      */
-    public static void parseLinkTypes(final DEFINITIONS definitions, final OTSRoadNetwork otsNetwork,
+    public static void parseLinkTypes(final DEFINITIONS definitions, final OtsRoadNetwork otsNetwork,
             final boolean overwriteDefaults, final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap)
             throws XmlParserException
     {
@@ -171,7 +171,7 @@ public final class DefinitionsParser
      * @param overwriteDefaults overwrite default definitions in otsNetwork or not
      * @throws XmlParserException on parsing error
      */
-    public static void parseLaneTypes(final DEFINITIONS definitions, final OTSRoadNetwork otsNetwork,
+    public static void parseLaneTypes(final DEFINITIONS definitions, final OtsRoadNetwork otsNetwork,
             final boolean overwriteDefaults) throws XmlParserException
     {
         for (LANETYPES laneTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(),
@@ -228,7 +228,7 @@ public final class DefinitionsParser
      * @param streamInformation map with stream information
      * @throws XmlParserException on parsing error
      */
-    public static void parseGtuTemplates(final DEFINITIONS definitions, final OTSRoadNetwork otsNetwork,
+    public static void parseGtuTemplates(final DEFINITIONS definitions, final OtsRoadNetwork otsNetwork,
             final boolean overwriteDefaults, final Map<String, GTUTEMPLATE> gtuTemplates,
             final StreamInformation streamInformation) throws XmlParserException
     {
@@ -255,7 +255,7 @@ public final class DefinitionsParser
      * @param roadLayoutMap temporary storage for the road layouts
      * @throws XmlParserException on parsing error
      */
-    public static void parseRoadLayouts(final DEFINITIONS definitions, final OTSRoadNetwork otsNetwork,
+    public static void parseRoadLayouts(final DEFINITIONS definitions, final OtsRoadNetwork otsNetwork,
             final Map<String, ROADLAYOUT> roadLayoutMap) throws XmlParserException
     {
         for (ROADLAYOUTS roadLayoutTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(),
@@ -275,7 +275,7 @@ public final class DefinitionsParser
      * @param parameterMap map to store parameter type by id
      * @throws XmlParserException if the field in a PARAMETERTYPE does not refer to a ParameterType&lt;?&gt;
      */
-    public static void parseParameterTypes(final DEFINITIONS definitions, final OTSRoadNetwork otsNetwork,
+    public static void parseParameterTypes(final DEFINITIONS definitions, final OtsRoadNetwork otsNetwork,
             final Map<String, ParameterType<?>> parameterMap) throws XmlParserException
     {
         for (PARAMETERTYPE parameterType : ParseUtil.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(),

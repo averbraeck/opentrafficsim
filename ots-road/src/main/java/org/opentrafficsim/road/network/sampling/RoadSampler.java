@@ -26,7 +26,7 @@ import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
 import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -53,7 +53,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
     private final OtsSimulatorInterface simulator;
 
     /** Network. */
-    private final OTSRoadNetwork network;
+    private final OtsRoadNetwork network;
 
     /** Sampling interval. */
     private final Duration samplingInterval;
@@ -69,7 +69,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
      * @param network OTSRoadNetwork; the network
      * @throws NullPointerException if the simulator is {@code null}
      */
-    public RoadSampler(final OTSRoadNetwork network)
+    public RoadSampler(final OtsRoadNetwork network)
     {
         this(new LinkedHashSet<>(), new LinkedHashSet<>(), network);
     }
@@ -82,7 +82,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
      * @throws NullPointerException if the simulator is {@code null}
      */
     public RoadSampler(final Set<ExtendedDataType<?, ?, ?, GtuData>> extendedDataTypes,
-            final Set<FilterDataType<?>> filterDataTypes, final OTSRoadNetwork network)
+            final Set<FilterDataType<?>> filterDataTypes, final OtsRoadNetwork network)
     {
         super(extendedDataTypes, filterDataTypes);
         Throw.whenNull(network, "Network may not be null.");
@@ -98,7 +98,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
      * @throws NullPointerException if an input is {@code null}
      * @throws IllegalArgumentException if frequency is negative or zero
      */
-    public RoadSampler(final OTSRoadNetwork network, final Frequency frequency)
+    public RoadSampler(final OtsRoadNetwork network, final Frequency frequency)
     {
         this(new LinkedHashSet<>(), new LinkedHashSet<>(), network, frequency);
     }
@@ -113,7 +113,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
      * @throws IllegalArgumentException if frequency is negative or zero
      */
     public RoadSampler(final Set<ExtendedDataType<?, ?, ?, GtuData>> extendedDataTypes,
-            final Set<FilterDataType<?>> filterDataTypes, final OTSRoadNetwork network, final Frequency frequency)
+            final Set<FilterDataType<?>> filterDataTypes, final OtsRoadNetwork network, final Frequency frequency)
     {
         super(extendedDataTypes, filterDataTypes);
         Throw.whenNull(network, "Network may not be null.");
@@ -430,7 +430,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
      * @param network OTSRoadNetwork; network
      * @return Factory; factory to create a sampler
      */
-    public static Factory build(final OTSRoadNetwork network)
+    public static Factory build(final OtsRoadNetwork network)
     {
         return new Factory(network);
     }
@@ -440,7 +440,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
     {
 
         /** Simulator. */
-        private final OTSRoadNetwork network;
+        private final OtsRoadNetwork network;
 
         /** Registration of included extended data types. */
         private final Set<ExtendedDataType<?, ?, ?, GtuData>> extendedDataTypes = new LinkedHashSet<>();
@@ -455,7 +455,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
          * Constructor.
          * @param network OTSRoadNetwork; network
          */
-        Factory(final OTSRoadNetwork network)
+        Factory(final OtsRoadNetwork network)
         {
             this.network = network;
         }

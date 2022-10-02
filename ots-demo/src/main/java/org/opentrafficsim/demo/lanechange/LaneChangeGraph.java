@@ -51,22 +51,22 @@ import org.opentrafficsim.demo.DefaultsFactory;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuSimple;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCfLcTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Altruistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneMovementStep;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OTSRoadNode;
+import org.opentrafficsim.road.network.lane.OtsRoadNode;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.StreamInformation;
@@ -110,7 +110,7 @@ public class LaneChangeGraph extends JFrame implements OtsModelInterface, UNITS
     private static LaneChangeGraph lcs;
 
     /** The network. */
-    private OTSRoadNetwork network = new OTSRoadNetwork("network", true, getSimulator());
+    private OtsRoadNetwork network = new OtsRoadNetwork("network", true, getSimulator());
 
     /**
      * Create a Lane Change Graph.
@@ -284,8 +284,8 @@ public class LaneChangeGraph extends JFrame implements OtsModelInterface, UNITS
         final Speed speedLimit = new Speed(120, KM_PER_HOUR);
 
         Lane[] lanes = LaneFactory.makeMultiLane(this.network, "Road with two lanes",
-                new OTSRoadNode(this.network, "From", new OtsPoint3D(LOWERBOUND.getSI(), 0, 0), Direction.ZERO),
-                new OTSRoadNode(this.network, "To", new OtsPoint3D(UPPERBOUND.getSI(), 0, 0), Direction.ZERO), null, 2,
+                new OtsRoadNode(this.network, "From", new OtsPoint3D(LOWERBOUND.getSI(), 0, 0), Direction.ZERO),
+                new OtsRoadNode(this.network, "To", new OtsPoint3D(UPPERBOUND.getSI(), 0, 0), Direction.ZERO), null, 2,
                 laneType, speedLimit, simulator);
 
         // Create the reference vehicle
@@ -293,16 +293,16 @@ public class LaneChangeGraph extends JFrame implements OtsModelInterface, UNITS
         initialLongitudinalPositions
                 .add(new LanePosition(lanes[mergeRight ? 0 : 1], new Length(0, METER)));
 
-        this.carFollowingModel = new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2),
+        this.carFollowingModel = new IdmPlusOld(new Acceleration(1, METER_PER_SECOND_2),
                 new Acceleration(1.5, METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND), 1d);
-        this.carFollowingModel = new IDMOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2),
+        this.carFollowingModel = new IdmOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2),
                 new Length(2, METER), new Duration(1, SECOND), 1d);
 
         LaneBasedIndividualGtu referenceCar = new LaneBasedIndividualGtu("ReferenceCar", gtuType, new Length(4, METER),
                 new Length(2, METER), new Speed(150, KM_PER_HOUR), Length.instantiateSI(2.0), simulator, this.network);
         referenceCar.setParameters(DefaultsFactory.getDefaultParameters());
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
-                new LaneBasedCFLCTacticalPlanner(this.carFollowingModel, laneChangeModel, referenceCar), referenceCar);
+                new LaneBasedCfLcTacticalPlanner(this.carFollowingModel, laneChangeModel, referenceCar), referenceCar);
         referenceCar.init(strategicalPlanner, initialLongitudinalPositions, referenceSpeed);
         Collection<Headway> sameLaneGTUs = new LinkedHashSet<>();
         sameLaneGTUs.add(
@@ -380,7 +380,7 @@ public class LaneChangeGraph extends JFrame implements OtsModelInterface, UNITS
                         new Speed(150, KM_PER_HOUR), Length.instantiateSI(2.0), referenceCar.getSimulator(), this.network);
         otherCar.setParameters(DefaultsFactory.getDefaultParameters());
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
-                new LaneBasedCFLCTacticalPlanner(this.carFollowingModel, laneChangeModel, otherCar), otherCar);
+                new LaneBasedCfLcTacticalPlanner(this.carFollowingModel, laneChangeModel, otherCar), otherCar);
         otherCar.init(strategicalPlanner, initialLongitudinalPositions, referenceCar.getSpeed().plus(deltaV));
         Collection<Headway> preferredLaneGTUs = new LinkedHashSet<>();
         Collection<Headway> nonPreferredLaneGTUs = new LinkedHashSet<>();
@@ -447,7 +447,7 @@ public class LaneChangeGraph extends JFrame implements OtsModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public final OTSRoadNetwork getNetwork()
+    public final OtsRoadNetwork getNetwork()
     {
         return this.network;
     }

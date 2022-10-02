@@ -55,7 +55,7 @@ import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
@@ -672,7 +672,7 @@ public class Sim0MQControlledOts implements EventListenerInterface
 
         /** The network. */
         @SuppressWarnings("checkstyle:visibilitymodifier")
-        OTSRoadNetwork network;
+        OtsRoadNetwork network;
 
         /** The XML. */
         private final String xml;
@@ -701,7 +701,7 @@ public class Sim0MQControlledOts implements EventListenerInterface
         @Override
         public void constructModel() throws SimRuntimeException
         {
-            this.network = new OTSRoadNetwork(getShortName(), true, getSimulator());
+            this.network = new OtsRoadNetwork(getShortName(), true, getSimulator());
             try
             {
                 XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,

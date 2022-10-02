@@ -67,7 +67,7 @@ import org.opentrafficsim.draw.graphs.GraphPath;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.kpi.sampling.KpiLane;
-import org.opentrafficsim.road.gtu.generator.CFBARoomChecker;
+import org.opentrafficsim.road.gtu.generator.CfBaRoomChecker;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
@@ -81,19 +81,19 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructu
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRS;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OTSRoadNode;
+import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
@@ -199,16 +199,16 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected OTSRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
+    protected OtsRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
     {
         // Network
-        OTSRoadNetwork network = new OTSRoadNetwork("FD demo network", true, sim);
+        OtsRoadNetwork network = new OtsRoadNetwork("FD demo network", true, sim);
         GtuType car = network.getGtuType(DEFAULTS.CAR);
         GtuType truck = network.getGtuType(DEFAULTS.TRUCK);
 
-        OTSRoadNode nodeA = new OTSRoadNode(network, "Origin", new OtsPoint3D(0.0, 0.0), Direction.ZERO);
-        OTSRoadNode nodeB = new OTSRoadNode(network, "Lane-drop", new OtsPoint3D(1500.0, 0.0), Direction.ZERO);
-        OTSRoadNode nodeC = new OTSRoadNode(network, "Destination", new OtsPoint3D(2500.0, 0.0), Direction.ZERO);
+        OtsRoadNode nodeA = new OtsRoadNode(network, "Origin", new OtsPoint3D(0.0, 0.0), Direction.ZERO);
+        OtsRoadNode nodeB = new OtsRoadNode(network, "Lane-drop", new OtsPoint3D(1500.0, 0.0), Direction.ZERO);
+        OtsRoadNode nodeC = new OtsRoadNode(network, "Destination", new OtsPoint3D(2500.0, 0.0), Direction.ZERO);
 
         LinkType linkType = network.getLinkType(LinkType.DEFAULTS.FREEWAY);
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;
@@ -235,10 +235,10 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             }
         };
         // GTU characteristics generator
-        CarFollowingModelFactory<IDMPlus> carFollowingModelFactory = new IDMPlusFactory(stream);
-        PerceptionFactory perceptionFactory = new DefaultLMRSPerceptionFactory();
-        LaneBasedTacticalPlannerFactory<LMRS> tacticalPlannerFactory =
-                new LMRSFactory(carFollowingModelFactory, perceptionFactory);
+        CarFollowingModelFactory<IdmPlus> carFollowingModelFactory = new IdmPlusFactory(stream);
+        PerceptionFactory perceptionFactory = new DefaultLmrsPerceptionFactory();
+        LaneBasedTacticalPlannerFactory<Lmrs> tacticalPlannerFactory =
+                new LmrsFactory(carFollowingModelFactory, perceptionFactory);
         DistNormal fSpeed = new DistNormal(stream, 123.7 / 120.0, 12.0 / 120.0);
         ParameterFactory parametersFactory = new ParameterFactory()
         {
@@ -283,7 +283,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         biases.addBias(truck, LaneBias.TRUCK_RIGHT);
         GeneratorPositions generatorPositions = GeneratorPositions.create(initialPosition, stream, biases);
         // room checker
-        RoomChecker roomChecker = new CFBARoomChecker();
+        RoomChecker roomChecker = new CfBaRoomChecker();
         // id generator
         IdGenerator idGenerator = new IdGenerator("");
         // generator
@@ -304,7 +304,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected void setupDemo(final OTSAnimationPanel animationPanel, final OTSRoadNetwork net)
+    protected void setupDemo(final OTSAnimationPanel animationPanel, final OtsRoadNetwork net)
     {
         this.fdLine.update();
 

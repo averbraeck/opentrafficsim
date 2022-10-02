@@ -33,10 +33,10 @@ import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGtuFollowingTacticalPl
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusOld;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -50,7 +50,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class IDMPlusTest implements UNITS
+public class IdmPlusTest implements UNITS
 {
     /**
      * Test IDMPlus.
@@ -63,11 +63,11 @@ public class IDMPlusTest implements UNITS
         // Test 1. Check a car standing still with no leaders accelerates with maximum acceleration
         // cars have #10 and up
         OtsSimulatorInterface simulator = new OtsSimulator("IDMPlusTest");
-        OTSRoadNetwork network = new OTSRoadNetwork("IDMPlus test network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("IDMPlus test network", true, simulator);
         IDMPlusTestModel model = new IDMPlusTestModel(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         Length s0 = new Length(2, METER);
-        GtuFollowingModelOld carFollowingModel = new IDMPlusOld(new Acceleration(1.25, METER_PER_SECOND_2),
+        GtuFollowingModelOld carFollowingModel = new IdmPlusOld(new Acceleration(1.25, METER_PER_SECOND_2),
                 new Acceleration(1.5, METER_PER_SECOND_2), s0, new Duration(1, SECOND), 1d);
         GtuType gtuType = network.getGtuType(GtuType.DEFAULTS.CAR);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
@@ -381,7 +381,7 @@ class IDMPlusTestModel extends AbstractOtsModel
 
     /** {@inheritDoc} */
     @Override
-    public OTSRoadNetwork getNetwork()
+    public OtsRoadNetwork getNetwork()
     {
         return null;
     }

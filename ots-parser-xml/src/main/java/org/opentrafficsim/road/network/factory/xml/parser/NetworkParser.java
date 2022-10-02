@@ -25,7 +25,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.Cloner;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
@@ -36,7 +36,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.NoTrafficLane;
-import org.opentrafficsim.road.network.lane.OTSRoadNode;
+import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
@@ -83,12 +83,12 @@ public final class NetworkParser
      * @param nodeDirections Map&lt;String,Direction&gt;; a map of the node ids and their default directions
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
-    public static void parseNodes(final OTSRoadNetwork otsNetwork, final NETWORK network,
+    public static void parseNodes(final OtsRoadNetwork otsNetwork, final NETWORK network,
             final Map<String, Direction> nodeDirections) throws NetworkException
     {
         for (NODE xmlNode : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), NODE.class))
         {
-            new OTSRoadNode(otsNetwork, xmlNode.getID(),
+            new OtsRoadNode(otsNetwork, xmlNode.getID(),
                     new OtsPoint3D(xmlNode.getCOORDINATE().x, xmlNode.getCOORDINATE().y, xmlNode.getCOORDINATE().z),
                     nodeDirections.get(xmlNode.getID()));
         }
@@ -101,7 +101,7 @@ public final class NetworkParser
      * @param network NETWORK; the NETWORK tag
      * @return a map of nodes and their default direction
      */
-    public static Map<String, Direction> calculateNodeAngles(final OTSRoadNetwork otsNetwork, final NETWORK network)
+    public static Map<String, Direction> calculateNodeAngles(final OtsRoadNetwork otsNetwork, final NETWORK network)
     {
         Map<String, Direction> nodeDirections = new LinkedHashMap<>();
         Map<String, Point3d> points = new LinkedHashMap<>();
@@ -152,18 +152,18 @@ public final class NetworkParser
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      * @throws OtsGeometryException when the design line is invalid
      */
-    static void parseLinks(final OTSRoadNetwork otsNetwork, final NETWORK network, final Map<String, Direction> nodeDirections,
+    static void parseLinks(final OtsRoadNetwork otsNetwork, final NETWORK network, final Map<String, Direction> nodeDirections,
             final OtsSimulatorInterface simulator) throws NetworkException, OtsGeometryException
     {
         for (CONNECTOR xmlConnector : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), CONNECTOR.class))
         {
-            OTSRoadNode startNode = (OTSRoadNode) otsNetwork.getNode(xmlConnector.getNODESTART());
+            OtsRoadNode startNode = (OtsRoadNode) otsNetwork.getNode(xmlConnector.getNODESTART());
             if (null == startNode)
             {
                 simulator.getLogger().always()
                         .debug("No start node (" + xmlConnector.getNODESTART() + ") for CONNECTOR " + xmlConnector.getID());
             }
-            OTSRoadNode endNode = (OTSRoadNode) otsNetwork.getNode(xmlConnector.getNODEEND());
+            OtsRoadNode endNode = (OtsRoadNode) otsNetwork.getNode(xmlConnector.getNODEEND());
             if (null == endNode)
             {
                 simulator.getLogger().always()
@@ -179,8 +179,8 @@ public final class NetworkParser
 
         for (LINK xmlLink : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), LINK.class))
         {
-            OTSRoadNode startNode = (OTSRoadNode) otsNetwork.getNode(xmlLink.getNODESTART());
-            OTSRoadNode endNode = (OTSRoadNode) otsNetwork.getNode(xmlLink.getNODEEND());
+            OtsRoadNode startNode = (OtsRoadNode) otsNetwork.getNode(xmlLink.getNODESTART());
+            OtsRoadNode endNode = (OtsRoadNode) otsNetwork.getNode(xmlLink.getNODEEND());
             double startDirection =
                     nodeDirections.containsKey(startNode.getId()) ? nodeDirections.get(startNode.getId()).getSI() : 0.0;
             double endDirection =
@@ -333,7 +333,7 @@ public final class NetworkParser
      * @throws SimRuntimeException in case of simulation problems building the car generator
      * @throws GtuException when construction of the Strategical Planner failed
      */
-    static void applyRoadLayout(final OTSRoadNetwork otsNetwork, final NETWORK network, final OtsSimulatorInterface simulator,
+    static void applyRoadLayout(final OtsRoadNetwork otsNetwork, final NETWORK network, final OtsSimulatorInterface simulator,
             final Map<String, ROADLAYOUT> roadLayoutMap, final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap)
             throws NetworkException, OtsGeometryException, XmlParserException, SimRuntimeException, GtuException
     {

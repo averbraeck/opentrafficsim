@@ -48,14 +48,14 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayDistribution;
-import org.opentrafficsim.road.gtu.generator.od.ODApplier;
-import org.opentrafficsim.road.gtu.generator.od.ODApplier.GeneratorObjects;
-import org.opentrafficsim.road.gtu.generator.od.ODOptions;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.gtu.generator.od.OdApplier;
+import org.opentrafficsim.road.gtu.generator.od.OdApplier.GeneratorObjects;
+import org.opentrafficsim.road.gtu.generator.od.OdOptions;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OTSRoadNode;
+import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -73,7 +73,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class ODApplierTest
+public class OdApplierTest
 {
 
     /** Local time object used in simulator MockUp. Can be set for testing at different simulation times. */
@@ -92,7 +92,7 @@ public class ODApplierTest
     private DSOLModel model;
 
     /** Network. */
-    private OTSRoadNetwork network;
+    private OtsRoadNetwork network;
 
     /** History manager. */
     private HistoryManager historyManager;
@@ -111,7 +111,7 @@ public class ODApplierTest
             @Override
             public Time answer(final InvocationOnMock invocation) throws Throwable
             {
-                return ODApplierTest.this.time;
+                return OdApplierTest.this.time;
             }
         };
         Mockito.when(simulatorMock.getSimulatorAbsTime()).then(answerTime);
@@ -120,7 +120,7 @@ public class ODApplierTest
             @Override
             public Duration answer(final InvocationOnMock invocation) throws Throwable
             {
-                return ODApplierTest.this.time.minus(Time.ZERO);
+                return OdApplierTest.this.time.minus(Time.ZERO);
             }
         };
         Mockito.when(simulatorMock.getSimulatorTime()).then(answerDuration);
@@ -146,7 +146,7 @@ public class ODApplierTest
      * @throws NetworkException on exception
      * @throws NamingException on ...
      */
-    public ODApplierTest() throws NetworkException, OtsGeometryException, NamingException
+    public OdApplierTest() throws NetworkException, OtsGeometryException, NamingException
     {
         this.replication =
                 new OtsReplication("replication for ODApplierTest", Time.ZERO, Duration.ZERO, Duration.instantiateSI(10.0));
@@ -166,11 +166,11 @@ public class ODApplierTest
      */
     private void makeNetwork() throws NetworkException, OtsGeometryException
     {
-        this.network = new OTSRoadNetwork("ODApplierExample", true, this.simulator);
+        this.network = new OtsRoadNetwork("ODApplierExample", true, this.simulator);
         OtsPoint3D pointA = new OtsPoint3D(0, 0, 0);
         OtsPoint3D pointB = new OtsPoint3D(1000, 0, 0);
-        OTSRoadNode nodeA = new OTSRoadNode(this.network, "A", pointA, Direction.ZERO);
-        OTSRoadNode nodeB = new OTSRoadNode(this.network, "B", pointB, Direction.ZERO);
+        OtsRoadNode nodeA = new OtsRoadNode(this.network, "A", pointA, Direction.ZERO);
+        OtsRoadNode nodeB = new OtsRoadNode(this.network, "B", pointB, Direction.ZERO);
         CrossSectionLink linkAB = new CrossSectionLink(this.network, "AB", nodeA, nodeB,
                 this.network.getLinkType(LinkType.DEFAULTS.ROAD), new OtsLine3D(pointA, pointB), LaneKeepingPolicy.KEEPRIGHT);
         this.lanes.put("lane1", new Lane(linkAB, "lane1", Length.instantiateSI(1.75), Length.instantiateSI(3.5),
@@ -240,12 +240,12 @@ public class ODApplierTest
         Lane lane2 = this.lanes.get("lane2");
 
         // options
-        ODOptions odOptions = new ODOptions().set(ODOptions.HEADWAY_DIST, HeadwayDistribution.CONSTANT);
+        OdOptions odOptions = new OdOptions().set(OdOptions.HEADWAY_DIST, HeadwayDistribution.CONSTANT);
 
         // Stepwise interpolation with constant headways tests
         ODMatrix od = getOD(new double[] {100, 200, 300, 400, 500, 600}, new double[] {1000, 2000, 0, 0, 2000, 0},
                 Interpolation.STEPWISE, nodeA, nodeB, lane1, lane2);
-        Map<String, GeneratorObjects> generatorObjects = ODApplier.applyOD(this.network, od, odOptions);
+        Map<String, GeneratorObjects> generatorObjects = OdApplier.applyOD(this.network, od, odOptions);
         assertEquals("Incorrect number of generator created or returned.", generatorObjects.size(), 2);
         for (String id : generatorObjects.keySet())
         {
@@ -281,7 +281,7 @@ public class ODApplierTest
         this.time = Time.ZERO;
         od = getOD(new double[] {100, 200, 300, 400, 500, 600}, new double[] {1000, 2000, 0, 0, 2000, 0}, Interpolation.LINEAR,
                 nodeA, nodeB, lane1, lane2);
-        generatorObjects = ODApplier.applyOD(this.network, od, odOptions);
+        generatorObjects = OdApplier.applyOD(this.network, od, odOptions);
         assertEquals("Incorrect number of generator created or returned.", generatorObjects.size(), 2);
         for (String id : generatorObjects.keySet())
         {
@@ -321,10 +321,10 @@ public class ODApplierTest
                 for (Interpolation interpolation : Interpolation.values())
                 {
                     this.time = Time.ZERO;
-                    odOptions = new ODOptions().set(ODOptions.HEADWAY_DIST, headwayRandomization);
+                    odOptions = new OdOptions().set(OdOptions.HEADWAY_DIST, headwayRandomization);
                     od = getOD(new double[] {1200, 2400, 3600, 4800, 6000, 7200}, new double[] {1000, 2000, 0, 0, 2000, 0},
                             interpolation, nodeA, nodeB, lane1, lane2);
-                    generatorObjects = ODApplier.applyOD(this.network, od, odOptions);
+                    generatorObjects = OdApplier.applyOD(this.network, od, odOptions);
                     assertEquals("Incorrect number of generators created or returned.", generatorObjects.size(), 2);
                     for (String id : generatorObjects.keySet())
                     {
@@ -497,10 +497,10 @@ public class ODApplierTest
         Node nodeB = this.network.getNode("B");
         Lane lane1 = this.lanes.get("lane1");
         Lane lane2 = this.lanes.get("lane2");
-        ODOptions odOptions = new ODOptions().set(ODOptions.HEADWAY_DIST, HeadwayDistribution.CONSTANT);
+        OdOptions odOptions = new OdOptions().set(OdOptions.HEADWAY_DIST, HeadwayDistribution.CONSTANT);
         ODMatrix od = getOD(new double[] {0, 100, 200}, new double[] {1000, 1500, 0}, Interpolation.LINEAR, nodeA, nodeB, lane1,
                 lane2);
-        Map<String, GeneratorObjects> generatorObjects = ODApplier.applyOD(this.network, od, odOptions);
+        Map<String, GeneratorObjects> generatorObjects = OdApplier.applyOD(this.network, od, odOptions);
         int nTot = 1000;
         int nCar = nTot / 2;
         int nTruck = nTot / 2;

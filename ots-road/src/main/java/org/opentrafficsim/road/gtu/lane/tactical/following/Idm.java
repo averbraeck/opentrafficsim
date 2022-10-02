@@ -17,13 +17,13 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
  * </p>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class IDM extends AbstractIDM
+public class Idm extends AbstractIdm
 {
 
     /**
      * Default constructor using default models for desired headway and desired speed.
      */
-    public IDM()
+    public Idm()
     {
         super(HEADWAY, DESIRED_SPEED);
     }
@@ -33,7 +33,7 @@ public class IDM extends AbstractIDM
      * @param desiredHeadwayModel DesiredHeadwayModel; desired headway model
      * @param desiredSpeedModel DesiredSpeedModel; desired speed model
      */
-    public IDM(final DesiredHeadwayModel desiredHeadwayModel, final DesiredSpeedModel desiredSpeedModel)
+    public Idm(final DesiredHeadwayModel desiredHeadwayModel, final DesiredSpeedModel desiredSpeedModel)
     {
         super(desiredHeadwayModel, desiredSpeedModel);
     }

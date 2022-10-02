@@ -34,7 +34,7 @@ import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiLane;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.sampling.GtuData;
@@ -413,7 +413,7 @@ public class AhfeAnimation extends OTSSimulationApplication<AHFEModel>
         private static final long serialVersionUID = 20170228L;
 
         /** The network. */
-        private OTSRoadNetwork network;
+        private OtsRoadNetwork network;
 
         /** Replication. */
         private final Integer replication;
@@ -494,7 +494,7 @@ public class AhfeAnimation extends OTSSimulationApplication<AHFEModel>
             try
             {
                 URL xmlURL = URLResource.getResource("/resources/AHFE/Network.xml");
-                this.network = new OTSRoadNetwork("AHFE", true, getSimulator());
+                this.network = new OtsRoadNetwork("AHFE", true, getSimulator());
                 XmlNetworkLaneParser.build(xmlURL, this.network, false);
 
                 // Space-time regions for sampler
@@ -541,7 +541,7 @@ public class AhfeAnimation extends OTSSimulationApplication<AHFEModel>
 
         /** {@inheritDoc} */
         @Override
-        public OTSRoadNetwork getNetwork()
+        public OtsRoadNetwork getNetwork()
         {
             return this.network;
         }

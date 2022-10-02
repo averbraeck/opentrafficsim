@@ -31,7 +31,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.demo.conflictAndControl.DemoTrafcodAndTurbo.TrafCODModel;
 import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
@@ -130,7 +130,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
         private static final long serialVersionUID = 20161020L;
 
         /** The network. */
-        private OTSRoadNetwork network;
+        private OtsRoadNetwork network;
 
         /** The TrafCOD controller. */
         private TrafCOD trafCOD;
@@ -153,7 +153,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
             try
             {
                 URL xmlURL = URLResource.getResource("/resources/conflictAndControl/TurboRoundaboutAndSignal.xml");
-                this.network = new OTSRoadNetwork("TurboRoundaboutAndSignal", true, getSimulator());
+                this.network = new OtsRoadNetwork("TurboRoundaboutAndSignal", true, getSimulator());
                 XmlNetworkLaneParser.build(xmlURL, this.network, false);
 
                 // add conflicts
@@ -286,7 +286,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
 
         /** {@inheritDoc} */
         @Override
-        public final OTSRoadNetwork getNetwork()
+        public final OtsRoadNetwork getNetwork()
         {
             return this.network;
         }

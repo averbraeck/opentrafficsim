@@ -21,7 +21,7 @@ import org.opentrafficsim.road.network.lane.LaneType;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class OTSRoadNetwork extends OtsNetwork implements RoadNetwork
+public class OtsRoadNetwork extends OtsNetwork implements RoadNetwork
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -38,7 +38,7 @@ public class OTSRoadNetwork extends OtsNetwork implements RoadNetwork
      * @param addDefaultTypes add the default GtuTypes, LinkTypesand LaneTypes, or not
      * @param simulator OTSSimulatorInterface; the DSOL simulator engine
      */
-    public OTSRoadNetwork(final String id, final boolean addDefaultTypes, final OtsSimulatorInterface simulator)
+    public OtsRoadNetwork(final String id, final boolean addDefaultTypes, final OtsSimulatorInterface simulator)
     {
         super(id, addDefaultTypes, simulator);
         if (addDefaultTypes)

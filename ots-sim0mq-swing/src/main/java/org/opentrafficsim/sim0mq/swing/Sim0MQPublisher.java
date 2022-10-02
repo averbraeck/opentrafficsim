@@ -42,7 +42,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
@@ -92,7 +92,7 @@ public final class Sim0MQPublisher
     private Sim0MQOTSModel model = null;
 
     /** The OTS road network. */
-    private OTSRoadNetwork network = null;
+    private OtsRoadNetwork network = null;
 
     /** The OTS animation panel. */
     private OTSAnimationPanel animationPanel = null;
@@ -239,7 +239,7 @@ public final class Sim0MQPublisher
         try
         {
             OtsAnimator animator = new OtsAnimator("OTS Animator");
-            this.network = new OTSRoadNetwork("OTS model for Sim0MQPublisher", true, animator);
+            this.network = new OtsRoadNetwork("OTS model for Sim0MQPublisher", true, animator);
             this.model = new Sim0MQOTSModel("Remotely controlled OTS model", this.network, xml);
             Map<String, StreamInterface> map = new LinkedHashMap<>();
             map.put("generation", new MersenneTwister(seed));
@@ -505,7 +505,7 @@ class Sim0MQOTSModel extends AbstractOtsModel
     private static final long serialVersionUID = 20170419L;
 
     /** The network. */
-    private final OTSRoadNetwork network;
+    private final OtsRoadNetwork network;
 
     /** The XML. */
     private final String xml;
@@ -515,7 +515,7 @@ class Sim0MQOTSModel extends AbstractOtsModel
      * @param network OTSRoadNetwork; the network
      * @param xml String; the XML description of the simulation model
      */
-    Sim0MQOTSModel(final String description, final OTSRoadNetwork network, final String xml)
+    Sim0MQOTSModel(final String description, final OtsRoadNetwork network, final String xml)
     {
         super(network.getSimulator(), network.getId(), description);
         this.network = network;

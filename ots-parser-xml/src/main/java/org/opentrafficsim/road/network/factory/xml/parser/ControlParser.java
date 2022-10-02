@@ -22,7 +22,7 @@ import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.utils.Transformer;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -71,7 +71,7 @@ public final class ControlParser
      * @throws TrafficControlException when a TrafCOD engine cannot be constructed for some other reason
      * @throws SimRuntimeException when a TrafCOD engine fails to initialize
      */
-    public static void parseControl(final OTSRoadNetwork otsNetwork, final OtsSimulatorInterface simulator,
+    public static void parseControl(final OtsRoadNetwork otsNetwork, final OtsSimulatorInterface simulator,
             final List<CONTROL> controls)
             throws NetworkException, MalformedURLException, IOException, SimRuntimeException, TrafficControlException
     {

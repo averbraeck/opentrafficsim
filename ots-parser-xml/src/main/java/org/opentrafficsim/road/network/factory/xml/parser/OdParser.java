@@ -38,23 +38,23 @@ import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.RoadPosition;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
-import org.opentrafficsim.road.gtu.generator.od.DefaultGtuCharacteristicsGeneratorOD.Factory;
-import org.opentrafficsim.road.gtu.generator.od.ODApplier;
-import org.opentrafficsim.road.gtu.generator.od.ODApplier.GeneratorObjects;
-import org.opentrafficsim.road.gtu.generator.od.ODOptions;
-import org.opentrafficsim.road.gtu.generator.od.ODOptions.Option;
-import org.opentrafficsim.road.gtu.generator.od.StrategicalPlannerFactorySupplierOD;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
+import org.opentrafficsim.road.gtu.generator.od.DefaultGtuCharacteristicsGeneratorOd.Factory;
+import org.opentrafficsim.road.gtu.generator.od.OdApplier;
+import org.opentrafficsim.road.gtu.generator.od.OdApplier.GeneratorObjects;
+import org.opentrafficsim.road.gtu.generator.od.OdOptions;
+import org.opentrafficsim.road.gtu.generator.od.OdOptions.Option;
+import org.opentrafficsim.road.gtu.generator.od.StrategicalPlannerFactorySupplierOd;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.od.Categorization;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.gtu.strategical.route.RouteGeneratorOD;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.gtu.strategical.route.RouteGeneratorOd;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseDistribution;
 import org.opentrafficsim.road.network.factory.xml.utils.Transformer;
@@ -106,7 +106,7 @@ public final class OdParser
      * @throws XmlParserException if the OD contains an inconsistency or error
      */
     @SuppressWarnings("checkstyle:methodlength")
-    public static List<LaneBasedGtuGenerator> parseDemand(final OTSRoadNetwork otsNetwork, final List<NETWORKDEMAND> demands,
+    public static List<LaneBasedGtuGenerator> parseDemand(final OtsRoadNetwork otsNetwork, final List<NETWORKDEMAND> demands,
             final Map<String, GTUTEMPLATE> gtuTemplates, final Map<String, LaneBasedStrategicalPlannerFactory<?>> factories,
             final Map<String, String> modelIdReferrals, final StreamInformation streamMap) throws XmlParserException
     {
@@ -384,8 +384,8 @@ public final class OdParser
                 }
 
                 // OD Options
-                ODOptions odOptions =
-                        new ODOptions().set(ODOptions.GTU_ID, idGenerator).set(ODOptions.NO_LC_DIST, Length.instantiateSI(1.0));
+                OdOptions odOptions =
+                        new OdOptions().set(OdOptions.GTU_ID, idGenerator).set(OdOptions.NO_LC_DIST, Length.instantiateSI(1.0));
                 // templates
                 Set<TemplateGtuType> templates = new LinkedHashSet<>();
                 for (GTUTEMPLATE template : gtuTemplates.values())
@@ -412,7 +412,7 @@ public final class OdParser
                 // default global option to integrate defined templates
                 Factory factory = new Factory(); // DefaultGtuCharacteristicsGeneratorOD factory
                 factory.setTemplates(templates);
-                odOptions.set(ODOptions.GTU_TYPE, factory.create());
+                odOptions.set(OdOptions.GTU_TYPE, factory.create());
                 // other options
                 if (od.getOPTIONS() != null)
                 {
@@ -459,7 +459,7 @@ public final class OdParser
                             }
                             factory = new Factory(); // DefaultGtuCharacteristicsGeneratorOD factory
                             factory.setTemplates(templates);
-                            factory.setFactorySupplier(new StrategicalPlannerFactorySupplierOD()
+                            factory.setFactorySupplier(new StrategicalPlannerFactorySupplierOd()
                             {
                                 /** {@inheritDoc} */
                                 @Override
@@ -486,22 +486,22 @@ public final class OdParser
                                     // TODO: LMRSFactory can receive a parameter factory, but how to define those parameters in
                                     // XML?
                                     return new LaneBasedStrategicalRoutePlannerFactory(
-                                            new LMRSFactory(new IDMPlusFactory(randomStream),
-                                                    new DefaultLMRSPerceptionFactory()),
-                                            RouteGeneratorOD.getDefaultRouteSupplier(randomStream));
+                                            new LmrsFactory(new IdmPlusFactory(randomStream),
+                                                    new DefaultLmrsPerceptionFactory()),
+                                            RouteGeneratorOd.getDefaultRouteSupplier(randomStream));
                                 }
                             });
-                            setOption(odOptions, ODOptions.GTU_TYPE, factory.create(), options, otsNetwork);
+                            setOption(odOptions, OdOptions.GTU_TYPE, factory.create(), options, otsNetwork);
                         }
                         // no lc
-                        setOption(odOptions, ODOptions.NO_LC_DIST, options.getNOLANECHANGE(), options, otsNetwork);
+                        setOption(odOptions, OdOptions.NO_LC_DIST, options.getNOLANECHANGE(), options, otsNetwork);
                         // room checker
-                        setOption(odOptions, ODOptions.ROOM_CHECKER, Transformer.parseRoomChecker(options.getROOMCHECKER()),
+                        setOption(odOptions, OdOptions.ROOM_CHECKER, Transformer.parseRoomChecker(options.getROOMCHECKER()),
                                 options, otsNetwork);
                         // headway distribution
                         try
                         {
-                            setOption(odOptions, ODOptions.HEADWAY_DIST,
+                            setOption(odOptions, OdOptions.HEADWAY_DIST,
                                     Transformer.parseHeadwayDistribution(options.getHEADWAYDIST()), options, otsNetwork);
                         }
                         catch (NoSuchFieldException | IllegalAccessException exception)
@@ -531,7 +531,7 @@ public final class OdParser
                                     markov.addState(parentType, gtuType, correlation);
                                 }
                             }
-                            setOption(odOptions, ODOptions.MARKOV, markov, options, otsNetwork);
+                            setOption(odOptions, OdOptions.MARKOV, markov, options, otsNetwork);
                         }
                         // lane biases
                         if (options.getLANEBIASES() != null)
@@ -572,13 +572,13 @@ public final class OdParser
                                 }
                                 laneBiases.addBias(gtuType, new LaneBias(roadPosition, bias, stickyLanes));
                             }
-                            setOption(odOptions, ODOptions.getLaneBiasOption(otsNetwork), laneBiases, options, otsNetwork);
+                            setOption(odOptions, OdOptions.getLaneBiasOption(otsNetwork), laneBiases, options, otsNetwork);
                         }
                     }
                 }
 
                 // Invoke ODApplier
-                Map<String, GeneratorObjects> output = Try.assign(() -> ODApplier.applyOD(otsNetwork, odMatrix, odOptions),
+                Map<String, GeneratorObjects> output = Try.assign(() -> OdApplier.applyOD(otsNetwork, odMatrix, odOptions),
                         XmlParserException.class, "Simulator time should be zero when parsing an OD.");
 
                 // Collect generators in output
@@ -677,8 +677,8 @@ public final class OdParser
      * @param otsNetwork OTSRoadNetwork; to get the link type, origin node or lane from
      * @param <T> option value type
      */
-    private static <T> void setOption(final ODOptions odOptions, final Option<T> option, final T value,
-            final ODOPTIONSITEM options, final OTSRoadNetwork otsNetwork)
+    private static <T> void setOption(final OdOptions odOptions, final Option<T> option, final T value,
+            final ODOPTIONSITEM options, final OtsRoadNetwork otsNetwork)
     {
         if (value != null)
         {

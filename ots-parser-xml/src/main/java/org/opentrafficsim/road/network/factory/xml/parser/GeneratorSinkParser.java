@@ -32,13 +32,13 @@ import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGt
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuTypeDistribution;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRS;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.Generators;
 import org.opentrafficsim.road.network.factory.xml.utils.Transformer;
@@ -82,7 +82,7 @@ public final class GeneratorSinkParser
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseRoutes(final OTSRoadNetwork otsNetwork, final NETWORKDEMAND demand) throws NetworkException
+    static void parseRoutes(final OtsRoadNetwork otsNetwork, final NETWORKDEMAND demand) throws NetworkException
     {
         for (ROUTE routeTag : demand.getROUTE())
         {
@@ -108,7 +108,7 @@ public final class GeneratorSinkParser
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseShortestRoutes(final OTSRoadNetwork otsNetwork, final NETWORKDEMAND demand) throws NetworkException
+    static void parseShortestRoutes(final OtsRoadNetwork otsNetwork, final NETWORKDEMAND demand) throws NetworkException
     {
         for (SHORTESTROUTE shortestRouteTag : demand.getSHORTESTROUTE())
         {
@@ -156,7 +156,7 @@ public final class GeneratorSinkParser
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static Map<String, List<FrequencyAndObject<Route>>> parseRouteMix(final OTSRoadNetwork otsNetwork,
+    static Map<String, List<FrequencyAndObject<Route>>> parseRouteMix(final OtsRoadNetwork otsNetwork,
             final NETWORKDEMAND demand) throws NetworkException
     {
         Map<String, List<FrequencyAndObject<Route>>> routeMixMap = new LinkedHashMap<>();
@@ -186,7 +186,7 @@ public final class GeneratorSinkParser
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static Map<String, List<FrequencyAndObject<Route>>> parseShortestRouteMix(final OTSRoadNetwork otsNetwork,
+    static Map<String, List<FrequencyAndObject<Route>>> parseShortestRouteMix(final OtsRoadNetwork otsNetwork,
             final NETWORKDEMAND demand) throws NetworkException
     {
         Map<String, List<FrequencyAndObject<Route>>> shortestRouteMixMap = new LinkedHashMap<>();
@@ -220,7 +220,7 @@ public final class GeneratorSinkParser
      * @throws XmlParserException when the objects cannot be inserted into the network due to inconsistencies
      */
     @SuppressWarnings("checkstyle:needbraces")
-    public static List<LaneBasedGtuGenerator> parseGenerators(final OTSRoadNetwork otsNetwork, final NETWORKDEMAND demand,
+    public static List<LaneBasedGtuGenerator> parseGenerators(final OtsRoadNetwork otsNetwork, final NETWORKDEMAND demand,
             final Map<String, GTUTEMPLATE> gtuTemplates, final Map<String, List<FrequencyAndObject<Route>>> routeMixMap,
             final Map<String, List<FrequencyAndObject<Route>>> shortestRouteMixMap, final StreamInformation streamInformation)
             throws XmlParserException
@@ -299,10 +299,10 @@ public final class GeneratorSinkParser
                             + ": No route information");
                 }
 
-                CarFollowingModelFactory<IDMPlus> idmPlusFactory =
-                        new IDMPlusFactory(streamInformation.getStream("generation"));
-                LaneBasedTacticalPlannerFactory<LMRS> tacticalFactory =
-                        new LMRSFactory(idmPlusFactory, new DefaultLMRSPerceptionFactory());
+                CarFollowingModelFactory<IdmPlus> idmPlusFactory =
+                        new IdmPlusFactory(streamInformation.getStream("generation"));
+                LaneBasedTacticalPlannerFactory<Lmrs> tacticalFactory =
+                        new LmrsFactory(idmPlusFactory, new DefaultLmrsPerceptionFactory());
                 LaneBasedStrategicalRoutePlannerFactory strategicalFactory =
                         new LaneBasedStrategicalRoutePlannerFactory(tacticalFactory);
 
@@ -375,7 +375,7 @@ public final class GeneratorSinkParser
      * @param simulator OTSSimulatorInterface; the simulator
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
-    public static void parseSinks(final OTSRoadNetwork otsNetwork, final NETWORKDEMAND demand,
+    public static void parseSinks(final OtsRoadNetwork otsNetwork, final NETWORKDEMAND demand,
             final OtsSimulatorInterface simulator) throws NetworkException
     {
         for (SINK sinkTag : demand.getSINK())

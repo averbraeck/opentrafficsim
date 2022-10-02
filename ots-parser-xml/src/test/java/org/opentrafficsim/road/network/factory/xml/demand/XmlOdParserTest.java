@@ -30,12 +30,12 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OTSRoadNode;
+import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -59,7 +59,7 @@ public class XmlOdParserTest
     OtsSimulatorInterface simulator = new OtsSimulator("XmlOdParserTest");
 
     /** Network. */
-    OTSRoadNetwork network = new OTSRoadNetwork("OD test", true, simulator);
+    OtsRoadNetwork network = new OtsRoadNetwork("OD test", true, simulator);
 
     /** Parser. */
     private XmlOdParser parser;
@@ -85,7 +85,7 @@ public class XmlOdParserTest
             }
 
             @Override
-            public OTSRoadNetwork getNetwork()
+            public OtsRoadNetwork getNetwork()
             {
                 return XmlOdParserTest.this.network;
             }
@@ -100,9 +100,9 @@ public class XmlOdParserTest
         this.gtuTypes.add(this.network.getGtuType(GtuType.DEFAULTS.CAR));
         this.gtuTypes.add(this.network.getGtuType(GtuType.DEFAULTS.TRUCK));
         // TODO verify that Direction.ZERO will not cause problems...
-        OTSRoadNode A = new OTSRoadNode(this.network, "A", new OtsPoint3D(0, 0, 0), Direction.ZERO);
-        OTSRoadNode B = new OTSRoadNode(this.network, "B", new OtsPoint3D(1, 0, 0), Direction.ZERO);
-        OTSRoadNode C = new OTSRoadNode(this.network, "C", new OtsPoint3D(0, 1, 0), Direction.ZERO);
+        OtsRoadNode A = new OtsRoadNode(this.network, "A", new OtsPoint3D(0, 0, 0), Direction.ZERO);
+        OtsRoadNode B = new OtsRoadNode(this.network, "B", new OtsPoint3D(1, 0, 0), Direction.ZERO);
+        OtsRoadNode C = new OtsRoadNode(this.network, "C", new OtsPoint3D(0, 1, 0), Direction.ZERO);
         this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE), new Route("AB").addNode(A).addNode(B));
         this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE),
                 new Route("AB2").addNode(A).addNode(C).addNode(B));

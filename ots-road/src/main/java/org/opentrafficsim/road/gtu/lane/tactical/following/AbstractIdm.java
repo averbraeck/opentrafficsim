@@ -27,7 +27,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class AbstractIDM extends AbstractCarFollowingModel
+public abstract class AbstractIdm extends AbstractCarFollowingModel
 {
 
     /** Acceleration parameter type. */
@@ -79,7 +79,7 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
      * @param desiredHeadwayModel DesiredHeadwayModel; desired headway model
      * @param desiredSpeedModel DesiredSpeedModel; desired speed model
      */
-    public AbstractIDM(final DesiredHeadwayModel desiredHeadwayModel, final DesiredSpeedModel desiredSpeedModel)
+    public AbstractIdm(final DesiredHeadwayModel desiredHeadwayModel, final DesiredSpeedModel desiredSpeedModel)
     {
         super(desiredHeadwayModel, desiredSpeedModel);
     }

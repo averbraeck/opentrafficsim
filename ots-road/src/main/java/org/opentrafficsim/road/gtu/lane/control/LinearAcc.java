@@ -18,7 +18,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LinearACC extends AbstractLinearFreeControl
+public class LinearAcc extends AbstractLinearFreeControl
 {
 
     /** Gap error gain parameter. */
@@ -33,7 +33,7 @@ public class LinearACC extends AbstractLinearFreeControl
      * Constructor using default sensors with no delay.
      * @param delayedActuation DelayedActuation; delayed actuation
      */
-    public LinearACC(final DelayedActuation delayedActuation)
+    public LinearAcc(final DelayedActuation delayedActuation)
     {
         super(delayedActuation);
     }

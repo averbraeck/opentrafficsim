@@ -52,7 +52,7 @@ import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
-import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
+import org.opentrafficsim.road.gtu.generator.TtcRoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuType;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuTypeDistribution;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -64,15 +64,15 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationTraffi
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Anticipation;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
+import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRS;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
@@ -82,7 +82,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
@@ -137,7 +137,7 @@ public final class AhfeUtil
      * @throws SimRuntimeException on sim runtime error
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public static void createDemand(final OTSRoadNetwork network, final GtuColorer gtuColorer,
+    public static void createDemand(final OtsRoadNetwork network, final GtuColorer gtuColorer,
             final OtsSimulatorInterface simulator, final int replication, final String anticipationStrategy,
             final Duration reactionTime, final Duration anticipationTime, final double truckFraction, final Time simulationTime,
             final Frequency leftDemand, final Frequency rightDemand, final double leftFraction, final double distanceError,
@@ -154,23 +154,23 @@ public final class AhfeUtil
         simulator.getModel().getStreamInformation().addStream("gtuClass", streams.get("gtuClass"));
         simulator.getModel().getStreamInformation().addStream("perception", streams.get("perception"));
 
-        TTCRoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, DurationUnit.SI));
+        TtcRoomChecker roomChecker = new TtcRoomChecker(new Duration(10.0, DurationUnit.SI));
         IdGenerator idGenerator = new IdGenerator("");
 
-        CarFollowingModelFactory<IDMPlus> idmPlusFactory = new IDMPlusFactory(streams.get("gtuClass"));
+        CarFollowingModelFactory<IdmPlus> idmPlusFactory = new IdmPlusFactory(streams.get("gtuClass"));
         PerceptionFactory delayedPerceptionFactory = Try.assign(
                 () -> new DelayedPerceptionFactory(
                         (Anticipation) Anticipation.class.getDeclaredField(anticipationStrategy.toUpperCase()).get(null)),
                 "Exception while obtaining anticipation value %s", anticipationStrategy);
         ParameterSet params = new ParameterSet();
-        params.setDefaultParameter(AbstractIDM.DELTA);
+        params.setDefaultParameter(AbstractIdm.DELTA);
         params.setParameter(ParameterTypes.TR, reactionTime);
         params.setParameter(DelayedNeighborsPerception.TA, anticipationTime);
         params.setDefaultParameter(DelayedNeighborsPerception.TAUE);
         params.setParameter(DelayedNeighborsPerception.SERROR, distanceError);
         params.setParameter(DelayedNeighborsPerception.VERROR, speedError);
         params.setParameter(DelayedNeighborsPerception.AERROR, accelerationError);
-        LaneBasedTacticalPlannerFactory<LMRS> tacticalFactory =
+        LaneBasedTacticalPlannerFactory<Lmrs> tacticalFactory =
                 new LMRSFactoryAHFE(idmPlusFactory, params, delayedPerceptionFactory);
 
         ParameterFactoryByType bcFactory = new ParameterFactoryByType();
@@ -351,7 +351,7 @@ public final class AhfeUtil
      * @throws ParameterException in case a parameter for the perception is missing
      */
     private static void makeGenerator(final Lane lane, final Speed generationSpeed, final String id,
-            final IdGenerator idGenerator, final OtsSimulatorInterface simulator, final OTSRoadNetwork network,
+            final IdGenerator idGenerator, final OtsSimulatorInterface simulator, final OtsRoadNetwork network,
             final Distribution<LaneBasedTemplateGtuType> distribution, final HeadwayGeneratorDemand headwayGenerator,
             final GtuColorer gtuColorer, final RoomChecker roomChecker, final ParameterFactory bcFactory,
             final LaneBasedTacticalPlannerFactory<?> tacticalFactory, final Time simulationTime, final StreamInterface stream)
@@ -376,7 +376,7 @@ public final class AhfeUtil
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    private static class LMRSFactoryAHFE implements LaneBasedTacticalPlannerFactory<LMRS>
+    private static class LMRSFactoryAHFE implements LaneBasedTacticalPlannerFactory<Lmrs>
     {
 
         /** Constructor for the car-following model. */
@@ -417,9 +417,9 @@ public final class AhfeUtil
 
         /** {@inheritDoc} */
         @Override
-        public final LMRS create(final LaneBasedGtu gtu) throws GtuException
+        public final Lmrs create(final LaneBasedGtu gtu) throws GtuException
         {
-            LMRS lmrs = new LMRS(this.carFollowingModelFactory.generateCarFollowingModel(), gtu,
+            Lmrs lmrs = new Lmrs(this.carFollowingModelFactory.generateCarFollowingModel(), gtu,
                     this.perceptionFactory.generatePerception(gtu), Synchronization.PASSIVE, Cooperation.PASSIVE,
                     GapAcceptance.INFORMED, Tailgating.NONE);
             lmrs.addMandatoryIncentive(new IncentiveRoute());

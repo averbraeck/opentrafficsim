@@ -24,7 +24,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.demo.network.xml.Grid10X10.TestXMLModelGrid;
 import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -315,7 +315,7 @@ public class Grid10X10 extends OTSSimulationApplication<TestXMLModelGrid>
         private static final long serialVersionUID = 20141121L;
 
         /** the network. */
-        private OTSRoadNetwork network;
+        private OtsRoadNetwork network;
 
         /** the xml string. */
         private final String xml;
@@ -335,7 +335,7 @@ public class Grid10X10 extends OTSSimulationApplication<TestXMLModelGrid>
         public final void constructModel() throws SimRuntimeException
         {
 
-            this.network = new OTSRoadNetwork("Grid network", true, getSimulator());
+            this.network = new OtsRoadNetwork("Grid network", true, getSimulator());
             try
             {
                 ByteArrayInputStream bos = new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8));
@@ -355,7 +355,7 @@ public class Grid10X10 extends OTSSimulationApplication<TestXMLModelGrid>
 
         /** {@inheritDoc} */
         @Override
-        public OTSRoadNetwork getNetwork()
+        public OtsRoadNetwork getNetwork()
         {
             return this.network;
         }

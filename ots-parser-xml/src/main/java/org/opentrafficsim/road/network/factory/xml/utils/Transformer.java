@@ -7,10 +7,10 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.generator.CFBARoomChecker;
-import org.opentrafficsim.road.gtu.generator.CFRoomChecker;
+import org.opentrafficsim.road.gtu.generator.CfBaRoomChecker;
+import org.opentrafficsim.road.gtu.generator.CfRoomChecker;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
-import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
+import org.opentrafficsim.road.gtu.generator.TtcRoomChecker;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayDistribution;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.xml.bindings.types.GtuPositionType;
@@ -109,17 +109,17 @@ public final class Transformer
         }
         if (v.equals("CF"))
         {
-            return new CFRoomChecker();
+            return new CfRoomChecker();
         }
         else if (v.equals("CFBA"))
         {
-            return new CFBARoomChecker();
+            return new CfBaRoomChecker();
         }
         else if (v.equals("TTC"))
         {
-            return new TTCRoomChecker(Duration.instantiateSI(10));
+            return new TtcRoomChecker(Duration.instantiateSI(10));
         }
-        return new TTCRoomChecker(Duration.valueOf(v.substring(4, v.length() - 1)));
+        return new TtcRoomChecker(Duration.valueOf(v.substring(4, v.length() - 1)));
     }
 
     /**

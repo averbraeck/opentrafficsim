@@ -42,19 +42,19 @@ import org.opentrafficsim.draw.graphs.TrajectoryPlot;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.kpi.sampling.KpiLane;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OTSRoadNode;
+import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.graphs.SwingContourPlot;
@@ -98,7 +98,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
             throws OtsDrawingException
     {
         super(model, panel);
-        OTSRoadNetwork network = model.getNetwork();
+        OtsRoadNetwork network = model.getNetwork();
         System.out.println(network.getLinkMap());
     }
 
@@ -208,10 +208,10 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
         private static final long serialVersionUID = 20150130L;
 
         /** The network. */
-        private final OTSRoadNetwork network = new OTSRoadNetwork("network", true, getSimulator());
+        private final OtsRoadNetwork network = new OtsRoadNetwork("network", true, getSimulator());
 
         /** The nodes of our network in the order that all GTUs will visit them. */
-        private List<OTSRoadNode> nodes = new ArrayList<>();
+        private List<OtsRoadNode> nodes = new ArrayList<>();
 
         /** Strategical planner generator for cars. */
         private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerGeneratorCars = null;
@@ -284,13 +284,13 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
                 OtsPoint3D p2 = new OtsPoint3D(1020, 3);
                 OtsPoint3D p3 = new OtsPoint3D(2000, 197);
                 Direction dir23 = p2.horizontalDirection(p3);
-                OTSRoadNode n0 = new OTSRoadNode(this.network, "Node-0-(0,0)", new OtsPoint3D(0, 0), Direction.ZERO);
-                OTSRoadNode n1 = new OTSRoadNode(this.network, "Node-1-(1000,0)", new OtsPoint3D(1000, 0), Direction.ZERO);
-                OTSRoadNode n2 = new OTSRoadNode(this.network, "Node-2-(1020,3)", p2, dir23);
-                OTSRoadNode n3 = new OTSRoadNode(this.network, "Node-3-(2000,197)", p3, dir23);
-                OTSRoadNode n4 = new OTSRoadNode(this.network, "Node-4-(2020,200)", new OtsPoint3D(2020, 200), Direction.ZERO);
-                OTSRoadNode n5 = new OTSRoadNode(this.network, "Node-5-(2200,200)", new OtsPoint3D(2200, 200), Direction.ZERO);
-                this.nodes.addAll(Arrays.asList(new OTSRoadNode[] {n0, n1, n2, n3, n4, n5}));
+                OtsRoadNode n0 = new OtsRoadNode(this.network, "Node-0-(0,0)", new OtsPoint3D(0, 0), Direction.ZERO);
+                OtsRoadNode n1 = new OtsRoadNode(this.network, "Node-1-(1000,0)", new OtsPoint3D(1000, 0), Direction.ZERO);
+                OtsRoadNode n2 = new OtsRoadNode(this.network, "Node-2-(1020,3)", p2, dir23);
+                OtsRoadNode n3 = new OtsRoadNode(this.network, "Node-3-(2000,197)", p3, dir23);
+                OtsRoadNode n4 = new OtsRoadNode(this.network, "Node-4-(2020,200)", new OtsPoint3D(2020, 200), Direction.ZERO);
+                OtsRoadNode n5 = new OtsRoadNode(this.network, "Node-5-(2200,200)", new OtsPoint3D(2200, 200), Direction.ZERO);
+                this.nodes.addAll(Arrays.asList(new OtsRoadNode[] {n0, n1, n2, n3, n4, n5}));
 
                 LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
 
@@ -306,8 +306,8 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
 
                 for (int i = 1; i < this.nodes.size(); i++)
                 {
-                    OTSRoadNode fromNode = this.nodes.get(i - 1);
-                    OTSRoadNode toNode = this.nodes.get(i);
+                    OtsRoadNode fromNode = this.nodes.get(i - 1);
+                    OtsRoadNode toNode = this.nodes.get(i);
                     OtsLine3D line = lines[i - 1];
                     String linkName = fromNode.getId() + "-" + toNode.getId();
                     Lane[] lanes = LaneFactory.makeMultiLane(this.network, linkName, fromNode, toNode, line.getPoints(), 1,
@@ -329,9 +329,9 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
                 this.parametersTruck = InputParameterHelper.getParametersTruck(getInputParameterMap());
 
                 this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
-                        new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
+                        new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()));
                 this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                        new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
+                        new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()));
 
                 // 1500 [veh / hour] == 2.4s headway
                 this.headway = new Duration(3600.0 / 1500.0, SECOND);
@@ -348,7 +348,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
 
         /** {@inheritDoc} */
         @Override
-        public OTSRoadNetwork getNetwork()
+        public OtsRoadNetwork getNetwork()
         {
             return this.network;
         }

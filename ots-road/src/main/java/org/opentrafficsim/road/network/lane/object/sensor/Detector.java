@@ -30,7 +30,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -547,7 +547,7 @@ public class Detector extends AbstractSensor
      * @param file String; file
      * @param periodic boolean; periodic data
      */
-    public static final void writeToFile(final OTSRoadNetwork network, final String file, final boolean periodic)
+    public static final void writeToFile(final OtsRoadNetwork network, final String file, final boolean periodic)
     {
         writeToFile(network, file, periodic, "%.3f", CompressionMethod.ZIP);
     }
@@ -562,7 +562,7 @@ public class Detector extends AbstractSensor
      * @param <C> accumulated type
      */
     @SuppressWarnings("unchecked")
-    public static final <C> void writeToFile(final OTSRoadNetwork network, final String file, final boolean periodic,
+    public static final <C> void writeToFile(final OtsRoadNetwork network, final String file, final boolean periodic,
             final String format, final CompressionMethod compression)
     {
         BufferedWriter bw = CompressedFileWriter.create(file, compression.equals(CompressionMethod.ZIP));

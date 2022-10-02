@@ -29,10 +29,10 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public interface RouteGeneratorOD
+public interface RouteGeneratorOd
 {
     /** No route route generator. */
-    RouteGeneratorOD NULL = new RouteGeneratorOD()
+    RouteGeneratorOd NULL = new RouteGeneratorOd()
     {
         @Override
         public Route getRoute(final Node origin, final Node destination, final GtuType gtuType)
@@ -42,16 +42,16 @@ public interface RouteGeneratorOD
     };
 
     /** Cache of default route generators per stream. */
-    Map<StreamInterface, RouteGeneratorOD> DEFAULT_MAP = new LinkedHashMap<>();
+    Map<StreamInterface, RouteGeneratorOd> DEFAULT_MAP = new LinkedHashMap<>();
 
     /**
      * Returns a default route generator for shortest routes based on the given stream.
      * @param stream StreamInterface; random number stream
      * @return RouteSupplier; default route generator for shortest routes based on the given stream
      */
-    static RouteGeneratorOD getDefaultRouteSupplier(final StreamInterface stream)
+    static RouteGeneratorOd getDefaultRouteSupplier(final StreamInterface stream)
     {
-        RouteGeneratorOD def = DEFAULT_MAP.get(stream);
+        RouteGeneratorOd def = DEFAULT_MAP.get(stream);
         if (def == null)
         {
             def = new DefaultRouteGenerator(stream);
@@ -61,7 +61,7 @@ public interface RouteGeneratorOD
     }
 
     /** Shortest route route generator. */
-    class DefaultRouteGenerator implements RouteGeneratorOD
+    class DefaultRouteGenerator implements RouteGeneratorOd
     {
         /** Shortest route cache. */
         private MultiKeyMap<Route> shortestRouteCache = new MultiKeyMap<>(GtuType.class, Node.class, Node.class, List.class);

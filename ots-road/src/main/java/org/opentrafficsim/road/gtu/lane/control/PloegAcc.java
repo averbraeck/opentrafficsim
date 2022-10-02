@@ -18,7 +18,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class PloegACC extends LinearACC
+public class PloegAcc extends LinearAcc
 {
 
     /** Gap error derivative gain parameter. */
@@ -29,7 +29,7 @@ public class PloegACC extends LinearACC
      * Constructor using default sensors with no delay.
      * @param delayedActuation DelayedActuation; delayed actuation
      */
-    public PloegACC(final DelayedActuation delayedActuation)
+    public PloegAcc(final DelayedActuation delayedActuation)
     {
         super(delayedActuation);
     }

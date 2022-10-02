@@ -22,7 +22,7 @@ import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -68,7 +68,7 @@ public final class ConflictBuilder
      * @param widthGenerator WidthGenerator; width generator
      * @throws OtsGeometryException in case of geometry exception
      */
-    public static void buildConflicts(final OTSRoadNetwork network, final GtuType gtuType,
+    public static void buildConflicts(final OtsRoadNetwork network, final GtuType gtuType,
             final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator) throws OtsGeometryException
     {
         buildConflicts(network, gtuType, simulator, widthGenerator, new LaneCombinationList(), new LaneCombinationList());
@@ -84,7 +84,7 @@ public final class ConflictBuilder
      * @param permittedList LaneCombinationList; lane combinations that are permitted by traffic control
      * @throws OtsGeometryException in case of geometry exception
      */
-    public static void buildConflicts(final OTSRoadNetwork network, final GtuType gtuType,
+    public static void buildConflicts(final OtsRoadNetwork network, final GtuType gtuType,
             final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator, final LaneCombinationList ignoreList,
             final LaneCombinationList permittedList) throws OtsGeometryException
     {
@@ -990,7 +990,7 @@ public final class ConflictBuilder
      * @param widthGenerator WidthGenerator; width generator
      * @throws OtsGeometryException in case of geometry exception
      */
-    public static void buildConflictsParallel(final OTSRoadNetwork network, final GtuType gtuType,
+    public static void buildConflictsParallel(final OtsRoadNetwork network, final GtuType gtuType,
             final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator) throws OtsGeometryException
     {
         buildConflictsParallel(network, gtuType, simulator, widthGenerator, new LaneCombinationList(),
@@ -1007,7 +1007,7 @@ public final class ConflictBuilder
      * @param permittedList LaneCombinationList; lane combinations that are permitted by traffic control
      * @throws OtsGeometryException in case of geometry exception
      */
-    public static void buildConflictsParallel(final OTSRoadNetwork network, final GtuType gtuType,
+    public static void buildConflictsParallel(final OtsRoadNetwork network, final GtuType gtuType,
             final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator, final LaneCombinationList ignoreList,
             final LaneCombinationList permittedList) throws OtsGeometryException
     {
@@ -1289,7 +1289,7 @@ public final class ConflictBuilder
      * @param widthGenerator WidthGenerator; width generator
      * @throws OtsGeometryException in case of geometry exception
      */
-    public static void buildConflictsParallel(final OTSRoadNetwork network, final Map<String, Set<Link>> conflictCandidateMap,
+    public static void buildConflictsParallel(final OtsRoadNetwork network, final Map<String, Set<Link>> conflictCandidateMap,
             final GtuType gtuType, final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator)
             throws OtsGeometryException
     {

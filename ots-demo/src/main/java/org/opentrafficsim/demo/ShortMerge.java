@@ -55,26 +55,26 @@ import org.opentrafficsim.road.gtu.colorer.LmrsSwitchableColorer;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
-import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
+import org.opentrafficsim.road.gtu.generator.TtcRoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuType;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuTypeDistribution;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
+import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationConflicts;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationSpeedLimitTransition;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationTrafficLights;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSocioSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRS;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
@@ -83,7 +83,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -212,7 +212,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
         private static final long serialVersionUID = 20170407L;
 
         /** The network. */
-        private OTSRoadNetwork network;
+        private OtsRoadNetwork network;
 
         /**
          * @param simulator OTSSimulatorInterface; the simulator
@@ -225,7 +225,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
         /**
          * @param network OTSRoadNetwork; set network.
          */
-        public void setNetwork(final OTSRoadNetwork network)
+        public void setNetwork(final OtsRoadNetwork network)
         {
             this.network = network;
         }
@@ -237,7 +237,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
             try
             {
                 URL xmlURL = URLResource.getResource("/resources/lmrs/" + NETWORK + ".xml");
-                this.network = new OTSRoadNetwork("ShortMerge", true, getSimulator());
+                this.network = new OtsRoadNetwork("ShortMerge", true, getSimulator());
                 XmlNetworkLaneParser.build(xmlURL, this.network, false);
                 addGenerator();
 
@@ -250,7 +250,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
 
         /** {@inheritDoc} */
         @Override
-        public OTSRoadNetwork getNetwork()
+        public OtsRoadNetwork getNetwork()
         {
             return this.network;
         }
@@ -276,12 +276,12 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
             getStreamInformation().addStream("headwayGeneration", stream);
             getStreamInformation().addStream("gtuClass", streams.get("gtuClass"));
 
-            TTCRoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, DurationUnit.SI));
+            TtcRoomChecker roomChecker = new TtcRoomChecker(new Duration(10.0, DurationUnit.SI));
             IdGenerator idGenerator = new IdGenerator("");
 
-            CarFollowingModelFactory<IDMPlus> idmPlusFactory = new IDMPlusFactory(streams.get("gtuClass"));
+            CarFollowingModelFactory<IdmPlus> idmPlusFactory = new IdmPlusFactory(streams.get("gtuClass"));
             ParameterSet params = new ParameterSet();
-            params.setDefaultParameter(AbstractIDM.DELTA);
+            params.setDefaultParameter(AbstractIdm.DELTA);
 
             Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
             Set<VoluntaryIncentive> voluntaryIncentives = new LinkedHashSet<>();
@@ -301,8 +301,8 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
             accelerationIncentives.add(new AccelerationSpeedLimitTransition());
             accelerationIncentives.add(new AccelerationTrafficLights());
             accelerationIncentives.add(new AccelerationConflicts());
-            LaneBasedTacticalPlannerFactory<LMRS> tacticalFactory = new LMRSFactory(idmPlusFactory,
-                    new DefaultLMRSPerceptionFactory(), SYNCHRONIZATION, COOPERATION, GapAcceptance.INFORMED, Tailgating.NONE,
+            LaneBasedTacticalPlannerFactory<Lmrs> tacticalFactory = new LmrsFactory(idmPlusFactory,
+                    new DefaultLmrsPerceptionFactory(), SYNCHRONIZATION, COOPERATION, GapAcceptance.INFORMED, Tailgating.NONE,
                     mandatoryIncentives, voluntaryIncentives, accelerationIncentives);
 
             GtuType car = new GtuType("car", this.network.getGtuType(GtuType.DEFAULTS.CAR));

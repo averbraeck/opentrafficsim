@@ -31,18 +31,18 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OtsNode;
 import org.opentrafficsim.core.units.distributions.ContinuousDistMass;
-import org.opentrafficsim.road.gtu.generator.od.DefaultGtuCharacteristicsGeneratorOD;
-import org.opentrafficsim.road.gtu.generator.od.ODApplier;
-import org.opentrafficsim.road.gtu.generator.od.ODOptions;
-import org.opentrafficsim.road.gtu.generator.od.StrategicalPlannerFactorySupplierOD;
-import org.opentrafficsim.road.gtu.generator.od.StrategicalPlannerFactorySupplierOD.TacticalPlannerFactorySupplierOD;
+import org.opentrafficsim.road.gtu.generator.od.DefaultGtuCharacteristicsGeneratorOd;
+import org.opentrafficsim.road.gtu.generator.od.OdApplier;
+import org.opentrafficsim.road.gtu.generator.od.OdOptions;
+import org.opentrafficsim.road.gtu.generator.od.StrategicalPlannerFactorySupplierOd;
+import org.opentrafficsim.road.gtu.generator.od.StrategicalPlannerFactorySupplierOd.TacticalPlannerFactorySupplierOD;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.lane.VehicleModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.steering.SteeringLmrs;
 import org.opentrafficsim.road.gtu.lane.tactical.util.Steering;
 import org.opentrafficsim.road.gtu.lane.tactical.util.Steering.FeedbackTable;
@@ -54,11 +54,11 @@ import org.opentrafficsim.road.gtu.strategical.od.Categorization;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OTSRoadNode;
+import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -133,9 +133,9 @@ public class SteeringSimulation extends AbstractSimulationScript
      * @throws Exception on any exception
      */
     @Override
-    protected OTSRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
+    protected OtsRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
     {
-        OTSRoadNetwork network = new OTSRoadNetwork("Steering network", true, getSimulator());
+        OtsRoadNetwork network = new OtsRoadNetwork("Steering network", true, getSimulator());
         Length laneWidth = Length.instantiateSI(3.5);
         Length stripeWidth = Length.instantiateSI(0.2);
 
@@ -147,11 +147,11 @@ public class SteeringSimulation extends AbstractSimulationScript
         OtsPoint3D pointE = new OtsPoint3D(1500, -30);
 
         // nodes
-        OTSRoadNode nodeA = new OTSRoadNode(network, "A", pointA, Direction.ZERO);
-        OTSRoadNode nodeB = new OTSRoadNode(network, "B", pointB, Direction.ZERO);
-        OTSRoadNode nodeC = new OTSRoadNode(network, "C", pointC, Direction.ZERO);
-        OTSRoadNode nodeD = new OTSRoadNode(network, "D", pointD, Direction.ZERO);
-        OTSRoadNode nodeE = new OTSRoadNode(network, "E", pointE, Direction.ZERO);
+        OtsRoadNode nodeA = new OtsRoadNode(network, "A", pointA, Direction.ZERO);
+        OtsRoadNode nodeB = new OtsRoadNode(network, "B", pointB, Direction.ZERO);
+        OtsRoadNode nodeC = new OtsRoadNode(network, "C", pointC, Direction.ZERO);
+        OtsRoadNode nodeD = new OtsRoadNode(network, "D", pointD, Direction.ZERO);
+        OtsRoadNode nodeE = new OtsRoadNode(network, "E", pointE, Direction.ZERO);
 
         // links
         CrossSectionLink linkAB = new CrossSectionLink(network, "AB", nodeA, nodeB,
@@ -223,7 +223,7 @@ public class SteeringSimulation extends AbstractSimulationScript
 
         // anonymous tactical-planner-factory supplier
         AbstractLaneBasedTacticalPlannerFactory<SteeringLmrs> car = new AbstractLaneBasedTacticalPlannerFactory<SteeringLmrs>(
-                new IDMPlusFactory(sim.getModel().getStream("generation")), new DefaultLMRSPerceptionFactory())
+                new IdmPlusFactory(sim.getModel().getStream("generation")), new DefaultLmrsPerceptionFactory())
         {
             @Override
             public SteeringLmrs create(final LaneBasedGtu gtu) throws GtuException
@@ -278,14 +278,14 @@ public class SteeringSimulation extends AbstractSimulationScript
             }
         };
         // characteristics generator using OD info and default route based strategical level
-        DefaultGtuCharacteristicsGeneratorOD characteristicsGenerator = new DefaultGtuCharacteristicsGeneratorOD.Factory()
-                .setFactorySupplier(StrategicalPlannerFactorySupplierOD.route(tacticalPlannerFactorySupplierOD))
+        DefaultGtuCharacteristicsGeneratorOd characteristicsGenerator = new DefaultGtuCharacteristicsGeneratorOd.Factory()
+                .setFactorySupplier(StrategicalPlannerFactorySupplierOd.route(tacticalPlannerFactorySupplierOD))
                 .setVehicleModelGenerator(vehicleModelGenerator).create();
 
         // od options
-        ODOptions odOptions = new ODOptions().set(ODOptions.NO_LC_DIST, Length.instantiateSI(300.0)).set(ODOptions.GTU_TYPE,
+        OdOptions odOptions = new OdOptions().set(OdOptions.NO_LC_DIST, Length.instantiateSI(300.0)).set(OdOptions.GTU_TYPE,
                 characteristicsGenerator);
-        ODApplier.applyOD(network, odMatrix, odOptions);
+        OdApplier.applyOD(network, odMatrix, odOptions);
 
         return network;
     }

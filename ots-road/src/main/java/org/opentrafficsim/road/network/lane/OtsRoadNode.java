@@ -18,7 +18,7 @@ import org.opentrafficsim.core.network.OtsNode;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class OTSRoadNode extends OtsNode
+public class OtsRoadNode extends OtsNode
 {
     /** ... */
     private static final long serialVersionUID = 20190528L;
@@ -34,7 +34,7 @@ public class OTSRoadNode extends OtsNode
      * @param direction Direction; driving direction at the node
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
-    public OTSRoadNode(final Network network, final String id, final OtsPoint3D point, final Direction direction)
+    public OtsRoadNode(final Network network, final String id, final OtsPoint3D point, final Direction direction)
             throws NetworkException
     {
         super(network, id, point);

@@ -30,13 +30,13 @@ import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.road.gtu.generator.od.ODApplier;
-import org.opentrafficsim.road.gtu.generator.od.ODOptions;
+import org.opentrafficsim.road.gtu.generator.od.OdApplier;
+import org.opentrafficsim.road.gtu.generator.od.OdOptions;
 import org.opentrafficsim.road.gtu.strategical.od.Categorization;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -66,7 +66,7 @@ public class XmlOdParser implements Serializable
     private final OtsSimulatorInterface simulator;
 
     /** Network. */
-    final OTSRoadNetwork network;
+    final OtsRoadNetwork network;
 
     /** GTU types. */
     private final Map<String, GtuType> gtuTypes = new LinkedHashMap<>();
@@ -93,7 +93,7 @@ public class XmlOdParser implements Serializable
      * @param network OTSRoadNetwork; network
      * @param gtuTypes Set&lt;GtuType&gt;; set of GTU types
      */
-    public XmlOdParser(final OtsSimulatorInterface simulator, final OTSRoadNetwork network, final Set<GtuType> gtuTypes)
+    public XmlOdParser(final OtsSimulatorInterface simulator, final OtsRoadNetwork network, final Set<GtuType> gtuTypes)
     {
         Throw.whenNull(simulator, "Simulator should not be null.");
         Throw.whenNull(network, "Network should not be null.");
@@ -124,7 +124,7 @@ public class XmlOdParser implements Serializable
      */
     public final void apply(final URL url) throws XmlParserException
     {
-        apply(url, new ODOptions());
+        apply(url, new OdOptions());
     }
 
     /**
@@ -133,7 +133,7 @@ public class XmlOdParser implements Serializable
      * @param odOptions ODOptions; OD options
      * @throws XmlParserException if URL cannot be parsed
      */
-    public void apply(final URL url, final ODOptions odOptions) throws XmlParserException
+    public void apply(final URL url, final OdOptions odOptions) throws XmlParserException
     {
         try
         {
@@ -152,7 +152,7 @@ public class XmlOdParser implements Serializable
      */
     public final void apply(final InputStream stream) throws XmlParserException
     {
-        apply(stream, new ODOptions());
+        apply(stream, new OdOptions());
     }
 
     /**
@@ -161,7 +161,7 @@ public class XmlOdParser implements Serializable
      * @param odOptions ODOptions; OD options
      * @throws XmlParserException if URL cannot be parsed
      */
-    public final void apply(final InputStream stream, final ODOptions odOptions) throws XmlParserException
+    public final void apply(final InputStream stream, final OdOptions odOptions) throws XmlParserException
     {
         applyOD(build(stream), odOptions);
     }
@@ -173,7 +173,7 @@ public class XmlOdParser implements Serializable
      */
     public final void apply(final Node xmlNode) throws XmlParserException
     {
-        apply(xmlNode, new ODOptions());
+        apply(xmlNode, new OdOptions());
     }
 
     /**
@@ -182,7 +182,7 @@ public class XmlOdParser implements Serializable
      * @param odOptions ODOptions; OD options
      * @throws XmlParserException if URL cannot be parsed
      */
-    public void apply(final Node xmlNode, final ODOptions odOptions) throws XmlParserException
+    public void apply(final Node xmlNode, final OdOptions odOptions) throws XmlParserException
     {
         applyOD(build(xmlNode), odOptions);
     }
@@ -193,11 +193,11 @@ public class XmlOdParser implements Serializable
      * @param odOptions ODOptions; options
      * @throws XmlParserException if the ODApplier fails
      */
-    private void applyOD(final ODMatrix od, final ODOptions odOptions) throws XmlParserException
+    private void applyOD(final ODMatrix od, final OdOptions odOptions) throws XmlParserException
     {
         try
         {
-            ODApplier.applyOD(this.network, od, odOptions);
+            OdApplier.applyOD(this.network, od, odOptions);
         }
         catch (ParameterException | SimRuntimeException exception)
         {

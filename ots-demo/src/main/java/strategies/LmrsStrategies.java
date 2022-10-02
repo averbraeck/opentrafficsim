@@ -101,10 +101,10 @@ import org.opentrafficsim.road.gtu.generator.GtuGeneratorQueue;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayDistribution;
-import org.opentrafficsim.road.gtu.generator.od.GtuCharacteristicsGeneratorOD;
-import org.opentrafficsim.road.gtu.generator.od.ODApplier;
-import org.opentrafficsim.road.gtu.generator.od.ODApplier.GeneratorObjects;
-import org.opentrafficsim.road.gtu.generator.od.ODOptions;
+import org.opentrafficsim.road.gtu.generator.od.GtuCharacteristicsGeneratorOd;
+import org.opentrafficsim.road.gtu.generator.od.OdApplier;
+import org.opentrafficsim.road.gtu.generator.od.OdApplier.GeneratorObjects;
+import org.opentrafficsim.road.gtu.generator.od.OdOptions;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
@@ -116,17 +116,17 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNe
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
 import org.opentrafficsim.road.gtu.lane.tactical.DesireBased;
-import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
+import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSocioSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveStayRight;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.SocioDesiredSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
@@ -142,12 +142,12 @@ import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OTSRoadNode;
+import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -244,7 +244,7 @@ public class LmrsStrategies implements EventListenerInterface
     private OtsSimulatorInterface simulator;
 
     /** The network. */
-    private OTSRoadNetwork network;
+    private OtsRoadNetwork network;
 
     /** Autorun. */
     private boolean autorun;
@@ -542,7 +542,7 @@ public class LmrsStrategies implements EventListenerInterface
         public void constructModel()
         {
             LmrsStrategies.this.simulator = getSimulator();
-            OTSRoadNetwork net = new OTSRoadNetwork("LMRS strategies", true, getSimulator());
+            OtsRoadNetwork net = new OtsRoadNetwork("LMRS strategies", true, getSimulator());
             try
             {
                 LmrsStrategies.this.simulator.addListener(LmrsStrategies.this, ReplicationInterface.END_REPLICATION_EVENT);
@@ -562,7 +562,7 @@ public class LmrsStrategies implements EventListenerInterface
             // Vehicle-driver classes
             // characteristics generator using the input available in this context
             /** Characteristics generator. */
-            class LmrsStrategyCharacteristicsGenerator implements GtuCharacteristicsGeneratorOD
+            class LmrsStrategyCharacteristicsGenerator implements GtuCharacteristicsGeneratorOd
             {
 
                 /** Distributed maximum speed for trucks. */
@@ -623,22 +623,22 @@ public class LmrsStrategies implements EventListenerInterface
             }
             PerceptionFactory perceptionFactory = new LmrsStrategiesPerceptionFactory();
             /** IDM factory with socio speed. */
-            class SocioIDMFactory implements CarFollowingModelFactory<IDMPlus>
+            class SocioIDMFactory implements CarFollowingModelFactory<IdmPlus>
             {
                 /** {@inheritDoc} */
                 @Override
                 public Parameters getParameters() throws ParameterException
                 {
                     ParameterSet parameters = new ParameterSet();
-                    parameters.setDefaultParameters(AbstractIDM.class);
+                    parameters.setDefaultParameters(AbstractIdm.class);
                     return parameters;
                 }
 
                 /** {@inheritDoc} */
                 @Override
-                public IDMPlus generateCarFollowingModel()
+                public IdmPlus generateCarFollowingModel()
                 {
-                    return new IDMPlus(AbstractIDM.HEADWAY, new SocioDesiredSpeed(AbstractIDM.DESIRED_SPEED));
+                    return new IdmPlus(AbstractIdm.HEADWAY, new SocioDesiredSpeed(AbstractIdm.DESIRED_SPEED));
                 }
             }
             // random parameters
@@ -699,13 +699,13 @@ public class LmrsStrategies implements EventListenerInterface
                     // car-following factory
                     CarFollowingModelFactory<?> cfFactory = // trucks don't change their desired speed
                             gtuType.equals(LmrsStrategies.this.network.getGtuType(GtuType.DEFAULTS.CAR))
-                                    && !LmrsStrategies.this.baseLMRS ? new SocioIDMFactory() : new IDMPlusFactory(stream);
+                                    && !LmrsStrategies.this.baseLMRS ? new SocioIDMFactory() : new IdmPlusFactory(stream);
                     // tailgating
                     Tailgating tlgt = LmrsStrategies.this.baseLMRS ? Tailgating.NONE : LmrsStrategies.this.tailgating;
                     // strategical and tactical factory
                     LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory =
                             new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LMRSFactory(cfFactory, perceptionFactory, SYNCHRONIZATION, COOPERATION, GAPACCEPTANCE,
+                                    new LmrsFactory(cfFactory, perceptionFactory, SYNCHRONIZATION, COOPERATION, GAPACCEPTANCE,
                                             tlgt, mandatoryIncentives, voluntaryIncentives, accelerationIncentives),
                                     parameterFactory);
                     LmrsStrategies.this.factories.put(gtuType, laneBasedStrategicalPlannerFactory);
@@ -715,9 +715,9 @@ public class LmrsStrategies implements EventListenerInterface
                 OtsPoint3D pointA = new OtsPoint3D(0, 0, 0);
                 OtsPoint3D pointB = new OtsPoint3D(4000, 0, 0);
                 OtsPoint3D pointC = new OtsPoint3D(7400, 0, 0);
-                OTSRoadNode nodeA = new OTSRoadNode(net, "A", pointA, Direction.ZERO);
-                OTSRoadNode nodeB = new OTSRoadNode(net, "B", pointB, Direction.ZERO);
-                OTSRoadNode nodeC = new OTSRoadNode(net, "C", pointC, Direction.ZERO);
+                OtsRoadNode nodeA = new OtsRoadNode(net, "A", pointA, Direction.ZERO);
+                OtsRoadNode nodeB = new OtsRoadNode(net, "B", pointB, Direction.ZERO);
+                OtsRoadNode nodeC = new OtsRoadNode(net, "C", pointC, Direction.ZERO);
                 CrossSectionLink linkAB = new CrossSectionLink(net, "AB", nodeA, nodeB,
                         LmrsStrategies.this.network.getLinkType(LinkType.DEFAULTS.FREEWAY), new OtsLine3D(pointA, pointB),
                         LaneKeepingPolicy.KEEPRIGHT);
@@ -827,12 +827,12 @@ public class LmrsStrategies implements EventListenerInterface
                 LaneBiases biases = new LaneBiases()
                         .addBias(LmrsStrategies.this.network.getGtuType(GtuType.DEFAULTS.VEHICLE), LaneBias.bySpeed(140, 100))
                         .addBias(LmrsStrategies.this.network.getGtuType(GtuType.DEFAULTS.TRUCK), LaneBias.TRUCK_RIGHT);
-                ODOptions odOptions = new ODOptions().set(ODOptions.MARKOV, markov)
-                        .set(ODOptions.getLaneBiasOption(LmrsStrategies.this.network), biases)
-                        .set(ODOptions.NO_LC_DIST, Length.instantiateSI(100.0)).set(ODOptions.INSTANT_LC, true)
-                        .set(ODOptions.GTU_TYPE, new LmrsStrategyCharacteristicsGenerator(stream))
-                        .set(ODOptions.HEADWAY_DIST, HeadwayDistribution.CONSTANT);
-                Map<String, GeneratorObjects> generatedObjects = ODApplier.applyOD(net, od, odOptions);
+                OdOptions odOptions = new OdOptions().set(OdOptions.MARKOV, markov)
+                        .set(OdOptions.getLaneBiasOption(LmrsStrategies.this.network), biases)
+                        .set(OdOptions.NO_LC_DIST, Length.instantiateSI(100.0)).set(OdOptions.INSTANT_LC, true)
+                        .set(OdOptions.GTU_TYPE, new LmrsStrategyCharacteristicsGenerator(stream))
+                        .set(OdOptions.HEADWAY_DIST, HeadwayDistribution.CONSTANT);
+                Map<String, GeneratorObjects> generatedObjects = OdApplier.applyOD(net, od, odOptions);
                 for (String str : generatedObjects.keySet())
                 {
                     new GtuGeneratorQueueAnimation(generatedObjects.get(str).getGenerator(), getSimulator());
@@ -924,7 +924,7 @@ public class LmrsStrategies implements EventListenerInterface
         /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
-        public OTSRoadNetwork getNetwork()
+        public OtsRoadNetwork getNetwork()
         {
             return LmrsStrategies.this.network;
         }

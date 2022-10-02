@@ -31,7 +31,7 @@ public class LaneBasedStrategicalRoutePlannerFactory
     private static final long serialVersionUID = 20160811L;
 
     /** Route supplier. */
-    private final RouteGeneratorOD routeGenerator;
+    private final RouteGeneratorOd routeGenerator;
 
     /**
      * Constructor with factory for tactical planners.
@@ -53,7 +53,7 @@ public class LaneBasedStrategicalRoutePlannerFactory
      */
     public LaneBasedStrategicalRoutePlannerFactory(
             final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory,
-            final RouteGeneratorOD routeGenerator)
+            final RouteGeneratorOd routeGenerator)
     {
         super(tacticalPlannerFactory);
         this.routeGenerator = routeGenerator;
@@ -82,7 +82,7 @@ public class LaneBasedStrategicalRoutePlannerFactory
      */
     public LaneBasedStrategicalRoutePlannerFactory(
             final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory,
-            final ParameterFactory parametersFactory, final RouteGeneratorOD routeGenerator)
+            final ParameterFactory parametersFactory, final RouteGeneratorOd routeGenerator)
     {
         super(tacticalPlannerFactory, parametersFactory);
         this.routeGenerator = routeGenerator;

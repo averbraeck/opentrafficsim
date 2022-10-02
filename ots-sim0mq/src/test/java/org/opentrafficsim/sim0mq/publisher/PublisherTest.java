@@ -30,7 +30,7 @@ import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OtsNetwork;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
@@ -82,7 +82,7 @@ public class PublisherTest implements OtsModelInterface
             }
         };
         OtsSimulatorInterface simulator = new OtsSimulator("test simulator for PublisherTest");
-        OTSRoadNetwork network = new OTSRoadNetwork("test network for PublisherTest", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("test network for PublisherTest", true, simulator);
         Publisher publisher = new Publisher(network);
         assertTrue("id of publisher contains id of network", publisher.getId().contains(network.getId()));
         TransceiverInterface transceiverInterface = publisher.getIdSource(0, storeLastResult);
@@ -203,7 +203,7 @@ public class PublisherTest implements OtsModelInterface
         private static final long serialVersionUID = 20170419L;
 
         /** The network. */
-        private OTSRoadNetwork network;
+        private OtsRoadNetwork network;
 
         /** The XML. */
         private final String xml;
@@ -231,7 +231,7 @@ public class PublisherTest implements OtsModelInterface
         @Override
         public void constructModel() throws SimRuntimeException
         {
-            this.network = new OTSRoadNetwork(getShortName(), true, getSimulator());
+            this.network = new OtsRoadNetwork(getShortName(), true, getSimulator());
             try
             {
                 XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,

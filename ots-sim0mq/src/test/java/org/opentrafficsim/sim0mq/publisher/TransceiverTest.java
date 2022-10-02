@@ -44,11 +44,11 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OTSRoadNode;
+import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.sim0mq.Sim0MQException;
@@ -118,7 +118,7 @@ public class TransceiverTest
         }
         OtsSimulatorInterface simulator = MockDEVSSimulator.createMock();
 
-        OTSRoadNetwork network = new OTSRoadNetwork("test network for TransceiverTest", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("test network for TransceiverTest", true, simulator);
         GtuIdTransceiver gtuIdTransceiver = new GtuIdTransceiver(network);
         assertEquals("getId returns correct id", "GTU id transceiver", gtuIdTransceiver.getId());
         assertEquals("address has 0 entries", 0, gtuIdTransceiver.getAddressFields().size());
@@ -315,8 +315,8 @@ public class TransceiverTest
 
         // Give the network two nodes and a link with a lane - A lot of code is required to create a lane :-(
         OtsPoint3D node1Point = new OtsPoint3D(10, 20, 30);
-        OTSRoadNode node1 = new OTSRoadNode(network, "node 1", node1Point, Direction.ZERO);
-        OTSRoadNode node2 = new OTSRoadNode(network, "node 2", new OtsPoint3D(110, 20, 30), Direction.ZERO);
+        OtsRoadNode node1 = new OtsRoadNode(network, "node 1", node1Point, Direction.ZERO);
+        OtsRoadNode node2 = new OtsRoadNode(network, "node 2", new OtsPoint3D(110, 20, 30), Direction.ZERO);
         LinkType roadLinkType = network.getLinkType(LinkType.DEFAULTS.ROAD);
         CrossSectionLink link = new CrossSectionLink(network, "1 to 2", node1, node2, roadLinkType,
                 new OtsLine3D(node1.getPoint(), node2.getPoint()), LaneKeepingPolicy.KEEPRIGHT);

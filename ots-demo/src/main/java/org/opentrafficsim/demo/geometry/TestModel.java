@@ -19,11 +19,11 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.draw.road.LaneAnimation;
 import org.opentrafficsim.draw.road.ShoulderAnimation;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.NoTrafficLane;
-import org.opentrafficsim.road.network.lane.OTSRoadNode;
+import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
@@ -52,7 +52,7 @@ public class TestModel extends AbstractOtsModel implements UNITS
     private static final long serialVersionUID = 1L;
 
     /** the network. */
-    private OTSRoadNetwork network = new OTSRoadNetwork("geometry test network", true, getSimulator());
+    private OtsRoadNetwork network = new OtsRoadNetwork("geometry test network", true, getSimulator());
 
     /** {@inheritDoc} */
     @Override
@@ -62,44 +62,44 @@ public class TestModel extends AbstractOtsModel implements UNITS
 
         try
         {
-            OTSRoadNode n0 = new OTSRoadNode(this.network, "N0", new OtsPoint3D(-25.0, 0.0), Direction.ZERO);
-            OTSRoadNode n1 = new OTSRoadNode(this.network, "N1", new OtsPoint3D(0.0, 0.0), Direction.ZERO);
+            OtsRoadNode n0 = new OtsRoadNode(this.network, "N0", new OtsPoint3D(-25.0, 0.0), Direction.ZERO);
+            OtsRoadNode n1 = new OtsRoadNode(this.network, "N1", new OtsPoint3D(0.0, 0.0), Direction.ZERO);
             CrossSectionLink l01 =
                     new CrossSectionLink(this.network, "L01", n0, n1, network.getLinkType(LinkType.DEFAULTS.ROAD),
                             new OtsLine3D(new OtsPoint3D[] {new OtsPoint3D(-25.0, 0.0), new OtsPoint3D(0.0, 0.0)}),
                             LaneKeepingPolicy.KEEPRIGHT);
 
-            OTSRoadNode n2 = new OTSRoadNode(this.network, "N2", new OtsPoint3D(25.0, 20.0), Direction.ZERO);
+            OtsRoadNode n2 = new OtsRoadNode(this.network, "N2", new OtsPoint3D(25.0, 20.0), Direction.ZERO);
             CrossSectionLink l12 =
                     new CrossSectionLink(this.network, "L12", n1, n2, network.getLinkType(LinkType.DEFAULTS.ROAD),
                             new OtsLine3D(new OtsPoint3D[] {new OtsPoint3D(0.0, 0.0), new OtsPoint3D(25.0, 20.0)}),
                             LaneKeepingPolicy.KEEPRIGHT);
 
-            OTSRoadNode n3 = new OTSRoadNode(this.network, "N3", new OtsPoint3D(50.0, 0.0), Direction.ZERO);
+            OtsRoadNode n3 = new OtsRoadNode(this.network, "N3", new OtsPoint3D(50.0, 0.0), Direction.ZERO);
             CrossSectionLink l23 =
                     new CrossSectionLink(this.network, "L23", n2, n3, network.getLinkType(LinkType.DEFAULTS.ROAD),
                             new OtsLine3D(new OtsPoint3D[] {new OtsPoint3D(25.0, 20.0), new OtsPoint3D(50.0, 0.0)}),
                             LaneKeepingPolicy.KEEPRIGHT);
 
-            OTSRoadNode n4 = new OTSRoadNode(this.network, "N4", new OtsPoint3D(75.0, -20.0), Direction.ZERO);
+            OtsRoadNode n4 = new OtsRoadNode(this.network, "N4", new OtsPoint3D(75.0, -20.0), Direction.ZERO);
             CrossSectionLink l34 =
                     new CrossSectionLink(this.network, "L34", n3, n4, network.getLinkType(LinkType.DEFAULTS.ROAD),
                             new OtsLine3D(new OtsPoint3D[] {new OtsPoint3D(50.0, 0.0), new OtsPoint3D(75.0, -20.0)}),
                             LaneKeepingPolicy.KEEPRIGHT);
 
-            OTSRoadNode n5 = new OTSRoadNode(this.network, "N5", new OtsPoint3D(100.0, 0.0), Direction.ZERO);
+            OtsRoadNode n5 = new OtsRoadNode(this.network, "N5", new OtsPoint3D(100.0, 0.0), Direction.ZERO);
             CrossSectionLink l45 =
                     new CrossSectionLink(this.network, "L45", n4, n5, network.getLinkType(LinkType.DEFAULTS.ROAD),
                             new OtsLine3D(new OtsPoint3D[] {new OtsPoint3D(75.0, -20.0), new OtsPoint3D(100.0, 0.0)}),
                             LaneKeepingPolicy.KEEPRIGHT);
 
-            OTSRoadNode n6 = new OTSRoadNode(this.network, "N6", new OtsPoint3D(125.0, 0.0), Direction.ZERO);
+            OtsRoadNode n6 = new OtsRoadNode(this.network, "N6", new OtsPoint3D(125.0, 0.0), Direction.ZERO);
             CrossSectionLink l56 =
                     new CrossSectionLink(this.network, "L56", n5, n6, network.getLinkType(LinkType.DEFAULTS.ROAD),
                             new OtsLine3D(new OtsPoint3D[] {new OtsPoint3D(100.0, 0.0), new OtsPoint3D(125.0, 0.0)}),
                             LaneKeepingPolicy.KEEPRIGHT);
 
-            OTSRoadNode n7 = new OTSRoadNode(this.network, "N7", new OtsPoint3D(300.0, 0.0), Direction.ZERO);
+            OtsRoadNode n7 = new OtsRoadNode(this.network, "N7", new OtsPoint3D(300.0, 0.0), Direction.ZERO);
             CrossSectionLink l67 =
                     new CrossSectionLink(this.network, "L67", n6, n7, network.getLinkType(LinkType.DEFAULTS.ROAD),
                             new OtsLine3D(new OtsPoint3D[] {new OtsPoint3D(125.0, 0.0), new OtsPoint3D(150.0, 0.0),
@@ -203,7 +203,7 @@ public class TestModel extends AbstractOtsModel implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    public final OTSRoadNetwork getNetwork()
+    public final OtsRoadNetwork getNetwork()
     {
         return this.network;
     }

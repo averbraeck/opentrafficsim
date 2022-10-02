@@ -45,7 +45,7 @@ import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiLane;
 import org.opentrafficsim.kpi.sampling.SamplerData;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCfLcTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.SequentialFixedAccelerationModel;
@@ -53,12 +53,12 @@ import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OTSRoadNode;
+import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -105,19 +105,19 @@ public class ContourPlotTest implements UNITS
      * @return GraphPath&lt;KpiLaneDirection&gt;; the dummy path
      * @throws Exception when something goes wrong (should not happen)
      */
-    private GraphPath<KpiLane> dummyPath(final OtsSimulatorInterface simulator, final OTSRoadNetwork network)
+    private GraphPath<KpiLane> dummyPath(final OtsSimulatorInterface simulator, final OtsRoadNetwork network)
             throws Exception
     {
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
-        OTSRoadNode b = new OTSRoadNode(network, "B", new OtsPoint3D(12345, 0, 0), Direction.ZERO);
+        OtsRoadNode b = new OtsRoadNode(network, "B", new OtsPoint3D(12345, 0, 0), Direction.ZERO);
         ArrayList<Lane> result = new ArrayList<Lane>();
         Lane[] lanes = LaneFactory.makeMultiLane(network, "AtoB",
-                new OTSRoadNode(network, "A", new OtsPoint3D(1234, 0, 0), Direction.ZERO), b, null, 1, laneType,
+                new OtsRoadNode(network, "A", new OtsPoint3D(1234, 0, 0), Direction.ZERO), b, null, 1, laneType,
                 new Speed(100, KM_PER_HOUR), simulator);
         result.add(lanes[0]);
         // Make a continuation lane to prevent errors when the operational plan exceeds the available remaining length
         lanes = LaneFactory.makeMultiLane(network, "BtoC", b,
-                new OTSRoadNode(network, "C", new OtsPoint3D(99999, 0, 0), Direction.ZERO), null, 1, laneType,
+                new OtsRoadNode(network, "C", new OtsPoint3D(99999, 0, 0), Direction.ZERO), null, 1, laneType,
                 new Speed(100, KM_PER_HOUR), null);
         return GraphLaneUtil.createPath("AtoB", lanes[0]);
     }
@@ -196,7 +196,7 @@ public class ContourPlotTest implements UNITS
     {
         setUp();
         OtsSimulatorInterface simulator = this.mockedSimulator;
-        OTSRoadNetwork network = new OTSRoadNetwork("density contour test network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("density contour test network", true, simulator);
         GraphPath<KpiLane> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(network);
         ContourDataSource<?> dataPool = new ContourDataSource<>(sampler.getSamplerData(), path);
@@ -216,7 +216,7 @@ public class ContourPlotTest implements UNITS
     {
         setUp();
         OtsSimulatorInterface simulator = this.mockedSimulator;
-        OTSRoadNetwork network = new OTSRoadNetwork("flow contour test network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("flow contour test network", true, simulator);
         GraphPath<KpiLane> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(network);
         ContourDataSource<?> dataPool = new ContourDataSource<>(sampler.getSamplerData(), path);
@@ -236,7 +236,7 @@ public class ContourPlotTest implements UNITS
     {
         setUp();
         OtsSimulatorInterface simulator = this.mockedSimulator;
-        OTSRoadNetwork network = new OTSRoadNetwork("flow contour test network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("flow contour test network", true, simulator);
         GraphPath<KpiLane> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(network);
         ContourDataSource<?> dataPool = new ContourDataSource<>(sampler.getSamplerData(), path);
@@ -771,7 +771,7 @@ public class ContourPlotTest implements UNITS
      */
     private static LaneBasedIndividualGtu makeReferenceCar(final String id, final GtuType gtuType, final Lane lane,
             final Length initialPosition, final Speed initialSpeed, final OtsSimulatorInterface simulator,
-            final GtuFollowingModelOld gtuFollowingModel, final LaneChangeModel laneChangeModel, final OTSRoadNetwork network)
+            final GtuFollowingModelOld gtuFollowingModel, final LaneChangeModel laneChangeModel, final OtsRoadNetwork network)
             throws NamingException, NetworkException, SimRuntimeException, GtuException, OtsGeometryException
     {
         Length length = new Length(5.0, METER);
@@ -782,7 +782,7 @@ public class ContourPlotTest implements UNITS
         LaneBasedIndividualGtu gtu =
                 new LaneBasedIndividualGtu(id, gtuType, length, width, maxSpeed, length.times(0.5), simulator, network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
-                new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
+                new LaneBasedCfLcTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
         gtu.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
 
         return gtu;

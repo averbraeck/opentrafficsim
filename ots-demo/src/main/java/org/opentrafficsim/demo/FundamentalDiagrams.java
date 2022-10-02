@@ -36,19 +36,19 @@ import org.opentrafficsim.draw.graphs.FundamentalDiagram;
 import org.opentrafficsim.draw.graphs.FundamentalDiagram.Quantity;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OTSRoadNode;
+import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
@@ -91,7 +91,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
             throws OtsDrawingException, OtsSimulationException
     {
         super(model, panel);
-        OTSRoadNetwork network = model.getNetwork();
+        OtsRoadNetwork network = model.getNetwork();
         System.out.println(network.getLinkMap());
     }
 
@@ -199,7 +199,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
         private static final long serialVersionUID = 20140820L;
 
         /** The network. */
-        private OTSRoadNetwork network = new OTSRoadNetwork("network", true, getSimulator());
+        private OtsRoadNetwork network = new OtsRoadNetwork("network", true, getSimulator());
 
         /** The headway (inter-vehicle time). */
         private Duration headway;
@@ -255,11 +255,11 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
         {
             try
             {
-                OTSRoadNode from = new OTSRoadNode(this.network, "From", new OtsPoint3D(getMinimumDistance().getSI(), 0, 0),
+                OtsRoadNode from = new OtsRoadNode(this.network, "From", new OtsPoint3D(getMinimumDistance().getSI(), 0, 0),
                         Direction.ZERO);
-                OTSRoadNode to =
-                        new OTSRoadNode(this.network, "To", new OtsPoint3D(getMaximumDistance().getSI(), 0, 0), Direction.ZERO);
-                OTSRoadNode end = new OTSRoadNode(this.network, "End",
+                OtsRoadNode to =
+                        new OtsRoadNode(this.network, "To", new OtsPoint3D(getMaximumDistance().getSI(), 0, 0), Direction.ZERO);
+                OtsRoadNode end = new OtsRoadNode(this.network, "End",
                         new OtsPoint3D(getMaximumDistance().getSI() + 50.0, 0, 0), Direction.ZERO);
                 LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
                 this.lane =
@@ -276,9 +276,9 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
                 this.parametersTruck = InputParameterHelper.getParametersTruck(getInputParameterMap());
 
                 this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
-                        new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
+                        new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()));
                 this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                        new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
+                        new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()));
 
                 // 1500 [veh / hour] == 2.4s headway
                 this.headway = new Duration(3600.0 / 1500.0, SECOND);
@@ -355,7 +355,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
 
         /** {@inheritDoc} */
         @Override
-        public OTSRoadNetwork getNetwork()
+        public OtsRoadNetwork getNetwork()
         {
             return this.network;
         }

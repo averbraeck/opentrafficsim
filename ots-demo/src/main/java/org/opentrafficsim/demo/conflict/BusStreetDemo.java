@@ -46,19 +46,19 @@ import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
-import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
+import org.opentrafficsim.road.gtu.generator.TtcRoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectBusStopPerception;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationBusStop;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveBusStop;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRS;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
 import org.opentrafficsim.road.gtu.lane.tactical.pt.BusSchedule;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
@@ -69,7 +69,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -108,7 +108,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
             throws OtsDrawingException
     {
         super(model, panel);
-        OTSRoadNetwork network = model.getNetwork();
+        OtsRoadNetwork network = model.getNetwork();
         System.out.println(network.getLinkMap());
     }
 
@@ -153,7 +153,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
         private static final long serialVersionUID = 20161211L;
 
         /** The network. */
-        private OTSRoadNetwork network;
+        private OtsRoadNetwork network;
 
         /**
          * @param simulator OTSSimulatorInterface; the simulator for this model
@@ -174,7 +174,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
             try
             {
                 URL xmlURL = URLResource.getResource("/resources/conflict/BusStreet.xml");
-                this.network = new OTSRoadNetwork("BusStreet", true, getSimulator());
+                this.network = new OtsRoadNetwork("BusStreet", true, getSimulator());
                 XmlNetworkLaneParser.build(xmlURL, this.network, true);
 
                 // Add bus stops
@@ -226,7 +226,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
 
         /** {@inheritDoc} */
         @Override
-        public OTSRoadNetwork getNetwork()
+        public OtsRoadNetwork getNetwork()
         {
             return this.network;
         }
@@ -251,7 +251,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
                     new HeadwayGenerator(new Frequency(800, FrequencyUnit.PER_HOUR), this.simulator);
             LaneBasedGtuCharacteristicsGenerator characteristicsGenerator =
                     new CharacteristicsGenerator(this.simulator, new double[] {0.9, 0.06, 0.04}, this.network);
-            RoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, DurationUnit.SI));
+            RoomChecker roomChecker = new TtcRoomChecker(new Duration(10.0, DurationUnit.SI));
             LaneBasedGtuGenerator gen = new LaneBasedGtuGenerator(id, headwayGenerator, characteristicsGenerator,
                     GeneratorPositions.create(initialLongitudinalPositions, stream), this.network, this.simulator, roomChecker,
                     new IdGenerator(""));
@@ -346,7 +346,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
         private final Duration longDwellTime = new Duration(60.0, DurationUnit.SI);
 
         /** The network. */
-        private OTSRoadNetwork network;
+        private OtsRoadNetwork network;
 
         /**
          * @param simulator OTSSimulatorInterface; simulator
@@ -354,7 +354,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
          * @param network OTSRoadNetwork; network
          */
         public CharacteristicsGenerator(final OtsSimulatorInterface simulator, final double[] probabilities,
-                final OTSRoadNetwork network)
+                final OtsRoadNetwork network)
         {
             this.simulator = simulator;
             this.probabilities = probabilities;
@@ -508,7 +508,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    private static class LMRSFactoryCarBus implements LaneBasedTacticalPlannerFactory<LMRS>
+    private static class LMRSFactoryCarBus implements LaneBasedTacticalPlannerFactory<Lmrs>
     {
 
         /** */
@@ -524,16 +524,16 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
             parameters.setDefaultParameters(ParameterTypes.class);
             parameters.setDefaultParameters(LmrsParameters.class);
             parameters.setDefaultParameters(ConflictUtil.class);
-            parameters.setDefaultParameters(AbstractIDM.class);
+            parameters.setDefaultParameters(AbstractIdm.class);
             return parameters;
         }
 
         /** {@inheritDoc} */
         @Override
-        public final LMRS create(final LaneBasedGtu gtu) throws GtuException
+        public final Lmrs create(final LaneBasedGtu gtu) throws GtuException
         {
-            DefaultLMRSPerceptionFactory pFac = new DefaultLMRSPerceptionFactory();
-            LMRS lmrs = new LMRS(new IDMPlus(), gtu, pFac.generatePerception(gtu), Synchronization.PASSIVE, Cooperation.PASSIVE,
+            DefaultLmrsPerceptionFactory pFac = new DefaultLmrsPerceptionFactory();
+            Lmrs lmrs = new Lmrs(new IdmPlus(), gtu, pFac.generatePerception(gtu), Synchronization.PASSIVE, Cooperation.PASSIVE,
                     GapAcceptance.INFORMED, Tailgating.NONE);
             lmrs.setDefaultIncentives();
             if (gtu.getGtuType().isOfType(GtuType.DEFAULTS.SCHEDULED_BUS))

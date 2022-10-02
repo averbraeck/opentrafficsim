@@ -40,19 +40,19 @@ import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCfLcTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OTSRoadNode;
+import org.opentrafficsim.road.network.lane.OtsRoadNode;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -82,20 +82,20 @@ public class TrafficLightSensorTest implements EventListenerInterface
     private static Lane[] buildNetwork(final double[] lengths, final OtsSimulatorInterface simulator)
             throws NetworkException, NamingException, OtsGeometryException, SimRuntimeException
     {
-        OTSRoadNetwork network = new OTSRoadNetwork("network", true, simulator);
-        OTSRoadNode prevNode = null;
+        OtsRoadNetwork network = new OtsRoadNetwork("network", true, simulator);
+        OtsRoadNode prevNode = null;
         Lane[] result = new Lane[lengths.length];
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.FREEWAY);
         Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
         double cumulativeLength = 0;
         for (int nodeNumber = 0; nodeNumber <= lengths.length; nodeNumber++)
         {
-            OTSRoadNode node =
-                    new OTSRoadNode(network, "node" + nodeNumber, new OtsPoint3D(cumulativeLength, 0, 0), Direction.ZERO);
+            OtsRoadNode node =
+                    new OtsRoadNode(network, "node" + nodeNumber, new OtsPoint3D(cumulativeLength, 0, 0), Direction.ZERO);
             if (null != prevNode)
             {
-                OTSRoadNode fromNode = prevNode;
-                OTSRoadNode toNode = node;
+                OtsRoadNode fromNode = prevNode;
+                OtsRoadNode toNode = node;
                 int laneOffset = 0;
                 result[nodeNumber - 1] = LaneFactory.makeMultiLane(network, "Link" + nodeNumber, fromNode, toNode, null, 1,
                         laneOffset, laneOffset, laneType, speedLimit, simulator)[0];
@@ -163,7 +163,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
                 Model model = new Model(simulator);
                 simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
                 Lane[] lanes = buildNetwork(lengthList, simulator);
-                OTSRoadNetwork network = (OTSRoadNetwork) lanes[0].getParentLink().getNetwork();
+                OtsRoadNetwork network = (OtsRoadNetwork) lanes[0].getParentLink().getNetwork();
                 Length a = new Length(100, LengthUnit.METER);
                 Length b = new Length(120, LengthUnit.METER);
                 LanePosition pA = findLaneAndPosition(lanes, a);
@@ -217,7 +217,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
                 GtuFollowingModelOld gtuFollowingModel = new FixedAccelerationModel(
                         new Acceleration(0, AccelerationUnit.METER_PER_SECOND_2), new Duration(10, DurationUnit.SECOND));
                 LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
-                        new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
+                        new LaneBasedCfLcTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
                 gtu.setParameters(parameters);
                 Speed initialSpeed = new Speed(10, SpeedUnit.METER_PER_SECOND);
                 if (lanes.length == 6 && pos >= 103)
@@ -291,7 +291,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
 
         /** {@inheritDoc} */
         @Override
-        public final OTSRoadNetwork getNetwork()
+        public final OtsRoadNetwork getNetwork()
         {
             return null;
         }

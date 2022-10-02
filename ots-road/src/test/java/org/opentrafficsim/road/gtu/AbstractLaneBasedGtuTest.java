@@ -35,19 +35,19 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCfLcTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.FixedLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OTSRoadNode;
+import org.opentrafficsim.road.network.lane.OtsRoadNode;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -75,19 +75,19 @@ public class AbstractLaneBasedGtuTest implements UNITS
         // To create Lanes we need Nodes and a LaneType
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OtsSimulatorInterface simulator = new OtsSimulator("abstractLaneBasedGtuTest");
-        OTSRoadNetwork network = new OTSRoadNetwork("lane base gtu test network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("lane base gtu test network", true, simulator);
         OtsModelInterface model = new DummyModel(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), model);
-        OTSRoadNode nodeAFrom = new OTSRoadNode(network, "AFrom", new OtsPoint3D(0, 0, 0), Direction.ZERO);
-        OTSRoadNode nodeATo = new OTSRoadNode(network, "ATo", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeAFrom = new OtsRoadNode(network, "AFrom", new OtsPoint3D(0, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeATo = new OtsRoadNode(network, "ATo", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
         GtuType gtuType = network.getGtuType(GtuType.DEFAULTS.CAR);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
 
         Lane[] lanesGroupA = LaneFactory.makeMultiLane(network, "A", nodeAFrom, nodeATo, null, 3, laneType,
                 new Speed(100, KM_PER_HOUR), simulator);
         // A GTU can exist on several lanes at once; create another lane group to test that
-        OTSRoadNode nodeBFrom = new OTSRoadNode(network, "BFrom", new OtsPoint3D(10, 0, 0), Direction.ZERO);
-        OTSRoadNode nodeBTo = new OTSRoadNode(network, "BTo", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeBFrom = new OtsRoadNode(network, "BFrom", new OtsPoint3D(10, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeBTo = new OtsRoadNode(network, "BTo", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
         Lane[] lanesGroupB = LaneFactory.makeMultiLane(network, "B", nodeBFrom, nodeBTo, null, 3, laneType,
                 new Speed(100, KM_PER_HOUR), simulator);
         Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(2);
@@ -127,7 +127,7 @@ public class AbstractLaneBasedGtuTest implements UNITS
         LaneBasedIndividualGtu car = new LaneBasedIndividualGtu(carID, gtuType, carLength, carWidth, maximumSpeed,
                 carLength.times(0.5), simulator, network);
         LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(new LaneBasedCFLCTacticalPlanner(gfm, laneChangeModel, car), car);
+                new LaneBasedStrategicalRoutePlanner(new LaneBasedCfLcTacticalPlanner(gfm, laneChangeModel, car), car);
         car.setParameters(parameters);
         car.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
         // Now we can verify the various fields in the newly created Car
@@ -344,8 +344,8 @@ public class AbstractLaneBasedGtuTest implements UNITS
             }
         }
         // A GTU can exist on several lanes at once; create another lane group to test that
-        OTSRoadNode nodeCFrom = new OTSRoadNode(network, "CFrom", new OtsPoint3D(10, 100, 0), Direction.ZERO);
-        OTSRoadNode nodeCTo = new OTSRoadNode(network, "CTo", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeCFrom = new OtsRoadNode(network, "CFrom", new OtsPoint3D(10, 100, 0), Direction.ZERO);
+        OtsRoadNode nodeCTo = new OtsRoadNode(network, "CTo", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
         Lane[] lanesGroupC = LaneFactory.makeMultiLane(network, "C", nodeCFrom, nodeCTo, null, 3, laneType,
                 new Speed(100, KM_PER_HOUR), simulator);
         // wouter schakel car.enterLane(lanesGroupC[0], new Length(0.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS);
@@ -423,7 +423,7 @@ class DummyModel extends AbstractOtsModel
 
     /** {@inheritDoc} */
     @Override
-    public final OTSRoadNetwork getNetwork()
+    public final OtsRoadNetwork getNetwork()
     {
         return null;
     }

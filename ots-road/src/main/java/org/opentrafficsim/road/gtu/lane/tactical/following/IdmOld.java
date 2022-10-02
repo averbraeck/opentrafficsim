@@ -25,7 +25,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class IDMOld extends AbstractGtuFollowingModelMobil implements Serializable
+public class IdmOld extends AbstractGtuFollowingModelMobil implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20141119L;
@@ -57,7 +57,7 @@ public class IDMOld extends AbstractGtuFollowingModelMobil implements Serializab
     /**
      * Construct a new IDM car following model with reasonable values (reasonable for passenger cars).
      */
-    public IDMOld()
+    public IdmOld()
     {
         this.a = new Acceleration(1.56, AccelerationUnit.METER_PER_SECOND_2);
         this.b = new Acceleration(2.09, AccelerationUnit.METER_PER_SECOND_2);
@@ -75,7 +75,7 @@ public class IDMOld extends AbstractGtuFollowingModelMobil implements Serializab
      * @param delta double; the speed limit adherence (1.0; mean free speed equals the speed limit; 1.1: mean free speed equals
      *            110% of the speed limit; etc.)
      */
-    public IDMOld(final Acceleration a, final Acceleration b, final Length s0, final Duration tSafe, final double delta)
+    public IdmOld(final Acceleration a, final Acceleration b, final Length s0, final Duration tSafe, final double delta)
     {
         this.a = a;
         this.b = b;

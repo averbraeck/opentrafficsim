@@ -49,7 +49,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
  * <p>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LMRS extends AbstractIncentivesTacticalPlanner implements DesireBased, Synchronizable, Blockable
+public class Lmrs extends AbstractIncentivesTacticalPlanner implements DesireBased, Synchronizable, Blockable
 {
 
     /** Serialization id. */
@@ -71,7 +71,7 @@ public class LMRS extends AbstractIncentivesTacticalPlanner implements DesireBas
      * @param gapAcceptance GapAcceptance; gap-acceptance
      * @param tailgating Tailgating; tail gating
      */
-    public LMRS(final CarFollowingModel carFollowingModel, final LaneBasedGtu gtu, final LanePerception lanePerception,
+    public Lmrs(final CarFollowingModel carFollowingModel, final LaneBasedGtu gtu, final LanePerception lanePerception,
             final Synchronization synchronization, final Cooperation cooperation, final GapAcceptance gapAcceptance,
             final Tailgating tailgating)
     {

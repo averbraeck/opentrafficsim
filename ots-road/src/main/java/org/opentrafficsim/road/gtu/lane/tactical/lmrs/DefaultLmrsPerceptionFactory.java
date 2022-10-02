@@ -25,7 +25,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayG
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class DefaultLMRSPerceptionFactory implements PerceptionFactory
+public class DefaultLmrsPerceptionFactory implements PerceptionFactory
 {
 
     /** {@inheritDoc} */

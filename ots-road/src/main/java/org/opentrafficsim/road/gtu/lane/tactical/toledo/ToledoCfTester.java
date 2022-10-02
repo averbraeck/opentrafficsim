@@ -26,7 +26,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil.CarFollow
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 
-public class ToledoCFTester
+public class ToledoCfTester
 {
 
     /**

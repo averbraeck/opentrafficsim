@@ -19,7 +19,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <T> IDM class
  */
-public class AbstractIDMFactory<T extends AbstractIDM> implements CarFollowingModelFactory<T>
+public class AbstractIdmFactory<T extends AbstractIdm> implements CarFollowingModelFactory<T>
 {
 
     /** Single instance as it is state-less. */
@@ -33,7 +33,7 @@ public class AbstractIDMFactory<T extends AbstractIDM> implements CarFollowingMo
      * @param idm T; idm model, which should be state-less
      * @param randomStream StreamInterface; random number stream
      */
-    public AbstractIDMFactory(final T idm, final StreamInterface randomStream)
+    public AbstractIdmFactory(final T idm, final StreamInterface randomStream)
     {
         this.idm = idm;
         this.fSpeed = new DistNormal(randomStream, 123.7 / 120.0, 0.1);
@@ -51,8 +51,8 @@ public class AbstractIDMFactory<T extends AbstractIDM> implements CarFollowingMo
     public Parameters getParameters() throws ParameterException
     {
         ParameterSet parameters = new ParameterSet();
-        parameters.setDefaultParameters(AbstractIDM.class);
-        parameters.setParameter(AbstractIDM.FSPEED, this.fSpeed.draw());
+        parameters.setDefaultParameters(AbstractIdm.class);
+        parameters.setParameter(AbstractIdm.FSPEED, this.fSpeed.draw());
         return parameters;
     }
 

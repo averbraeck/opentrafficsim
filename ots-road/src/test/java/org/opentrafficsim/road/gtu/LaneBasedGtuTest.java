@@ -34,22 +34,22 @@ import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCfLcTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.FixedLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OTSRoadNode;
+import org.opentrafficsim.road.network.lane.OtsRoadNode;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -89,7 +89,7 @@ public class LaneBasedGtuTest implements UNITS
             fail("truckUpToLane must be >= truckFromLane");
         }
         OtsSimulatorInterface simulator = new OtsSimulator("leaderFollowerParallel");
-        OTSRoadNetwork network = new OTSRoadNetwork("leader follower parallel gtu test network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("leader follower parallel gtu test network", true, simulator);
 
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
@@ -97,19 +97,19 @@ public class LaneBasedGtuTest implements UNITS
         GtuType truckType = network.getGtuType(GtuType.DEFAULTS.TRUCK);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         // Create a series of Nodes (some closely bunched together)
-        List<OTSRoadNode> nodes = new ArrayList<>();
+        List<OtsRoadNode> nodes = new ArrayList<>();
         int[] linkBoundaries = {0, 25, 50, 100, 101, 102, 103, 104, 105, 150, 175, 200};
         for (int xPos : linkBoundaries)
         {
-            nodes.add(new OTSRoadNode(network, "Node at " + xPos, new OtsPoint3D(xPos, 20, 0), Direction.ZERO));
+            nodes.add(new OtsRoadNode(network, "Node at " + xPos, new OtsPoint3D(xPos, 20, 0), Direction.ZERO));
         }
         // Now we can build a series of Links with Lanes on them
         ArrayList<CrossSectionLink> links = new ArrayList<CrossSectionLink>();
         final int laneCount = 5;
         for (int i = 1; i < nodes.size(); i++)
         {
-            OTSRoadNode fromNode = nodes.get(i - 1);
-            OTSRoadNode toNode = nodes.get(i);
+            OtsRoadNode fromNode = nodes.get(i - 1);
+            OtsRoadNode toNode = nodes.get(i);
             String linkName = fromNode.getId() + "-" + toNode.getId();
             Lane[] lanes = LaneFactory.makeMultiLane(network, linkName, fromNode, toNode, null, laneCount, laneType,
                     new Speed(100, KM_PER_HOUR), simulator);
@@ -125,13 +125,13 @@ public class LaneBasedGtuTest implements UNITS
         Length truckWidth = new Length(2.5, METER);
         LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
         Speed maximumSpeed = new Speed(120, KM_PER_HOUR);
-        GtuFollowingModelOld gtuFollowingModel = new IDMPlusOld();
+        GtuFollowingModelOld gtuFollowingModel = new IdmPlusOld();
         Parameters parameters = DefaultTestParameters.create();
 
         LaneBasedIndividualGtu truck = new LaneBasedIndividualGtu("Truck", truckType, truckLength, truckWidth, maximumSpeed,
                 truckLength.times(0.5), simulator, network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
-                new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, truck), truck);
+                new LaneBasedCfLcTacticalPlanner(gtuFollowingModel, laneChangeModel, truck), truck);
         truck.setParameters(parameters);
         truck.init(strategicalPlanner, truckPositions, truckSpeed);
         // Verify that the truck is registered on the correct Lanes
@@ -208,7 +208,7 @@ public class LaneBasedGtuTest implements UNITS
                 LaneBasedIndividualGtu car = new LaneBasedIndividualGtu("Car", carType, carLength, carWidth, maximumSpeed,
                         carLength.times(0.5), simulator, network);
                 strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
-                        new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, car), car);
+                        new LaneBasedCfLcTacticalPlanner(gtuFollowingModel, laneChangeModel, car), car);
                 car.setParameters(parameters);
                 car.init(strategicalPlanner, carPositions, carSpeed);
                 // leader = truck.headway(forwardMaxDistance);
@@ -365,7 +365,7 @@ public class LaneBasedGtuTest implements UNITS
         for (int a = 1; a >= -1; a--)
         {
             OtsSimulatorInterface simulator = new OtsSimulator("timeAtDistanceTest");
-            OTSRoadNetwork network = new OTSRoadNetwork("test", true, simulator);
+            OtsRoadNetwork network = new OtsRoadNetwork("test", true, simulator);
             // Create a car with constant acceleration
             Model model = new Model(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
@@ -384,8 +384,8 @@ public class LaneBasedGtuTest implements UNITS
             }
             GtuType carType = network.getGtuType(GtuType.DEFAULTS.CAR);
             LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
-            OTSRoadNode fromNode = new OTSRoadNode(network, "Node A", new OtsPoint3D(0, 0, 0), Direction.ZERO);
-            OTSRoadNode toNode = new OTSRoadNode(network, "Node B", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
+            OtsRoadNode fromNode = new OtsRoadNode(network, "Node A", new OtsPoint3D(0, 0, 0), Direction.ZERO);
+            OtsRoadNode toNode = new OtsRoadNode(network, "Node B", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
             String linkName = "AB";
             Lane lane = LaneFactory.makeMultiLane(network, linkName, fromNode, toNode, null, 1, laneType,
                     new Speed(200, KM_PER_HOUR), simulator)[0];
@@ -402,7 +402,7 @@ public class LaneBasedGtuTest implements UNITS
             LaneBasedIndividualGtu car = new LaneBasedIndividualGtu("Car" + this.idGenerator.nextId(), carType,
                     new Length(4, METER), new Length(1.8, METER), maximumSpeed, Length.instantiateSI(2.0), simulator, network);
             LaneBasedStrategicalPlanner strategicalPlanner =
-                    new LaneBasedStrategicalRoutePlanner(new LaneBasedCFLCTacticalPlanner(fam, laneChangeModel, car), car);
+                    new LaneBasedStrategicalRoutePlanner(new LaneBasedCfLcTacticalPlanner(fam, laneChangeModel, car), car);
             car.setParameters(parameters);
             car.init(strategicalPlanner, carPositions, carSpeed);
             // Let the simulator execute the move method of the car
@@ -530,7 +530,7 @@ public class LaneBasedGtuTest implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public final OTSRoadNetwork getNetwork()
+        public final OtsRoadNetwork getNetwork()
         {
             return null;
         }

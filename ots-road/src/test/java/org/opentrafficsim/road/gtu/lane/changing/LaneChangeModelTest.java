@@ -38,21 +38,21 @@ import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuSimple;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
-import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCfLcTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Altruistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneMovementStep;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OTSRoadNode;
+import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -71,14 +71,14 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
     private static final long serialVersionUID = 20150313;
 
     /** The network. */
-    private OTSRoadNetwork network;
+    private OtsRoadNetwork network;
 
     /**
      */
     public LaneChangeModelTest()
     {
         super(new OtsSimulator("LaneChangeModelTest"));
-        this.network = new OTSRoadNetwork("lane change model test network", true, getSimulator());
+        this.network = new OtsRoadNetwork("lane change model test network", true, getSimulator());
     }
 
     /**
@@ -94,8 +94,8 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network
      */
-    private static CrossSectionLink makeLink(final OTSRoadNetwork network, final String name, final OTSRoadNode from,
-            final OTSRoadNode to, final Length width, final OtsSimulatorInterface simulator)
+    private static CrossSectionLink makeLink(final OtsRoadNetwork network, final String name, final OtsRoadNode from,
+            final OtsRoadNode to, final Length width, final OtsSimulatorInterface simulator)
             throws OtsGeometryException, NetworkException
     {
         // TODO create a LinkAnimation if the simulator is compatible with that.
@@ -142,8 +142,8 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
      * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws Exception when something goes wrong (should not happen)
      */
-    public static Lane[] makeMultiLane(final OTSRoadNetwork network, final String name, final OTSRoadNode from,
-            final OTSRoadNode to, final LaneType laneType, final int laneCount, final OtsSimulatorInterface simulator)
+    public static Lane[] makeMultiLane(final OtsRoadNetwork network, final String name, final OtsRoadNode from,
+            final OtsRoadNode to, final LaneType laneType, final int laneCount, final OtsSimulatorInterface simulator)
             throws Exception
     {
         Length width = new Length(laneCount * 4.0, METER);
@@ -171,8 +171,8 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
         int laneCount = 2;
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), this);
         Lane[] lanes = makeMultiLane(this.network, "Road with two lanes",
-                new OTSRoadNode(this.network, "From", new OtsPoint3D(0, 0, 0), Direction.ZERO),
-                new OTSRoadNode(this.network, "To", new OtsPoint3D(200, 0, 0), Direction.ZERO), laneType, laneCount,
+                new OtsRoadNode(this.network, "From", new OtsPoint3D(0, 0, 0), Direction.ZERO),
+                new OtsRoadNode(this.network, "To", new OtsPoint3D(200, 0, 0), Direction.ZERO), laneType, laneCount,
                 this.simulator);
 
         // Let's see if adjacent lanes are accessible
@@ -197,7 +197,7 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
         LaneBasedIndividualGtu car = new LaneBasedIndividualGtu("ReferenceCar", gtuType, new Length(4, METER),
                 new Length(2, METER), new Speed(150, KM_PER_HOUR), Length.instantiateSI(2.0), this.simulator, this.network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
-                new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), laneChangeModel, car), car);
+                new LaneBasedCfLcTacticalPlanner(new IdmPlusOld(), laneChangeModel, car), car);
         car.setParameters(parameters);
         car.init(strategicalPlanner, initialLongitudinalPositions, new Speed(100, KM_PER_HOUR));
         car.getTacticalPlanner().getPerception().perceive();
@@ -243,7 +243,7 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
                     new LaneBasedIndividualGtu("LaneChangeBlockingCarAt" + pos, gtuType, vehicleLength, new Length(2, METER),
                             new Speed(150, KM_PER_HOUR), vehicleLength.times(0.5), this.simulator, this.network);
             strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
-                    new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), laneChangeModel, collisionCar), collisionCar);
+                    new LaneBasedCfLcTacticalPlanner(new IdmPlusOld(), laneChangeModel, collisionCar), collisionCar);
             collisionCar.setParameters(parameters);
             collisionCar.init(strategicalPlanner, otherLongitudinalPositions, new Speed(100, KM_PER_HOUR));
             preferredLaneGTUs.clear();
@@ -272,7 +272,7 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
             parameters.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
             parameters.setDefaultParameter(ParameterTypes.LOOKAHEAD);
             parameters.setDefaultParameter(ParameterTypes.LOOKBACKOLD);
-            parameters.setParameter(AbstractIDM.DELTA, 1d);
+            parameters.setParameter(AbstractIdm.DELTA, 1d);
             // drivingCharacteristics =
             // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2),
             // new Acceleration(1.5, METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND), 1d),
@@ -280,7 +280,7 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
             LaneBasedIndividualGtu otherCar = new LaneBasedIndividualGtu("OtherCarAt" + pos, gtuType, vehicleLength,
                     new Length(2, METER), new Speed(150, KM_PER_HOUR), vehicleLength.times(0.5), this.simulator, this.network);
             strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
-                    new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), laneChangeModel, otherCar), otherCar);
+                    new LaneBasedCfLcTacticalPlanner(new IdmPlusOld(), laneChangeModel, otherCar), otherCar);
             otherCar.setParameters(parameters);
             otherCar.init(strategicalPlanner, otherLongitudinalPositions, new Speed(100, KM_PER_HOUR));
             preferredLaneGTUs.clear();
@@ -315,7 +315,7 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    public final OTSRoadNetwork getNetwork()
+    public final OtsRoadNetwork getNetwork()
     {
         return this.network;
     }

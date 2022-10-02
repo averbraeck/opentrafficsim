@@ -20,7 +20,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Mental;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -47,7 +47,7 @@ public class StochasticDistractionModel implements EventListenerInterface
     private final OtsSimulatorInterface simulator;
 
     /** Network. */
-    private final OTSRoadNetwork network;
+    private final OtsRoadNetwork network;
 
     /** Set of distracted GTUs. */
     private final Set<String> distractedGTUs = new LinkedHashSet<>();
@@ -63,7 +63,7 @@ public class StochasticDistractionModel implements EventListenerInterface
      * @param network OTSRoadNetwork; network
      */
     public StochasticDistractionModel(final boolean allowMultiTasking, final List<Distraction> distractions,
-            final OtsSimulatorInterface simulator, final OTSRoadNetwork network)
+            final OtsSimulatorInterface simulator, final OtsRoadNetwork network)
     {
         Throw.whenNull(distractions, "List of tasks may not be null.");
         Throw.whenNull(simulator, "Simulator may not be null.");

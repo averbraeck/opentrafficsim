@@ -45,8 +45,8 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.road.mock.MockDEVSSimulator;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.mock.MockDevsSimulator;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
@@ -71,12 +71,12 @@ public class LaneTest implements UNITS
     public void laneConstructorTest() throws Exception
     {
         OtsSimulatorInterface simulator = new OtsSimulator("LaneTest");
-        OTSRoadNetwork network = new OTSRoadNetwork("lane test network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("lane test network", true, simulator);
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         // First we need two Nodes
-        OTSRoadNode nodeFrom = new OTSRoadNode(network, "A", new OtsPoint3D(0, 0, 0), Direction.ZERO);
-        OTSRoadNode nodeTo = new OTSRoadNode(network, "B", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeFrom = new OtsRoadNode(network, "A", new OtsPoint3D(0, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeTo = new OtsRoadNode(network, "B", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
         // Now we can make a Link
         OtsPoint3D[] coordinates = new OtsPoint3D[2];
         coordinates[0] = new OtsPoint3D(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
@@ -443,7 +443,7 @@ public class LaneTest implements UNITS
         private final Length position;
 
         /** Faked simulator. */
-        private final OtsSimulatorInterface simulator = MockDEVSSimulator.createMock();
+        private final OtsSimulatorInterface simulator = MockDevsSimulator.createMock();
 
         /**
          * Construct a new Mocked SingleSensor.
@@ -560,13 +560,13 @@ public class LaneTest implements UNITS
         OtsSimulatorInterface simulator = new OtsSimulator("LaneTest");
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
-        OTSRoadNetwork network = new OTSRoadNetwork("contour test network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("contour test network", true, simulator);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         laneType.addCompatibleGtuType(network.getGtuType(GtuType.DEFAULTS.VEHICLE));
         Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
         speedMap.put(network.getGtuType(GtuType.DEFAULTS.VEHICLE), new Speed(50, KM_PER_HOUR));
-        OTSRoadNode start = new OTSRoadNode(network, "start", from, Direction.ZERO);
-        OTSRoadNode end = new OTSRoadNode(network, "end", to, Direction.ZERO);
+        OtsRoadNode start = new OtsRoadNode(network, "start", from, Direction.ZERO);
+        OtsRoadNode end = new OtsRoadNode(network, "end", to, Direction.ZERO);
         OtsPoint3D[] coordinates = new OtsPoint3D[2];
         coordinates[0] = start.getPoint();
         coordinates[1] = end.getPoint();
@@ -641,18 +641,18 @@ public class LaneTest implements UNITS
                     OtsSimulatorInterface simulator = new OtsSimulator("LaneTest");
                     Model model = new Model(simulator);
                     simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
-                    OTSRoadNetwork network = new OTSRoadNetwork("contour test network", true, simulator);
+                    OtsRoadNetwork network = new OtsRoadNetwork("contour test network", true, simulator);
                     LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
                     laneType.addCompatibleGtuType(network.getGtuType(GtuType.DEFAULTS.VEHICLE));
                     Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
                     speedMap.put(network.getGtuType(GtuType.DEFAULTS.VEHICLE), new Speed(50, KM_PER_HOUR));
-                    OTSRoadNode start =
-                            new OTSRoadNode(network, "start", new OtsPoint3D(xStart, yStart), Direction.instantiateSI(angle));
+                    OtsRoadNode start =
+                            new OtsRoadNode(network, "start", new OtsPoint3D(xStart, yStart), Direction.instantiateSI(angle));
                     double linkLength = 1000;
                     double xEnd = xStart + linkLength * Math.cos(angle);
                     double yEnd = yStart + linkLength * Math.sin(angle);
-                    OTSRoadNode end =
-                            new OTSRoadNode(network, "end", new OtsPoint3D(xEnd, yEnd), Direction.instantiateSI(angle));
+                    OtsRoadNode end =
+                            new OtsRoadNode(network, "end", new OtsPoint3D(xEnd, yEnd), Direction.instantiateSI(angle));
                     OtsPoint3D[] coordinates = new OtsPoint3D[2];
                     coordinates[0] = start.getPoint();
                     coordinates[1] = end.getPoint();
@@ -837,7 +837,7 @@ public class LaneTest implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public final OTSRoadNetwork getNetwork()
+        public final OtsRoadNetwork getNetwork()
         {
             return null;
         }

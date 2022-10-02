@@ -60,10 +60,10 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.road.gtu.colorer.GtuTypeColorer;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
-import org.opentrafficsim.road.gtu.generator.od.DefaultGtuCharacteristicsGeneratorOD;
-import org.opentrafficsim.road.gtu.generator.od.GtuCharacteristicsGeneratorOD;
-import org.opentrafficsim.road.gtu.generator.od.ODApplier;
-import org.opentrafficsim.road.gtu.generator.od.ODOptions;
+import org.opentrafficsim.road.gtu.generator.od.DefaultGtuCharacteristicsGeneratorOd;
+import org.opentrafficsim.road.gtu.generator.od.GtuCharacteristicsGeneratorOd;
+import org.opentrafficsim.road.gtu.generator.od.OdApplier;
+import org.opentrafficsim.road.gtu.generator.od.OdOptions;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
@@ -83,9 +83,9 @@ import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuil
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
+import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AbstractIncentivesTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
@@ -102,7 +102,7 @@ import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.control.rampmetering.CycleTimeLightController;
 import org.opentrafficsim.road.network.control.rampmetering.RampMetering;
 import org.opentrafficsim.road.network.control.rampmetering.RampMeteringLightController;
@@ -111,7 +111,7 @@ import org.opentrafficsim.road.network.control.rampmetering.RwsSwitch;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OTSRoadNode;
+import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.object.sensor.Detector;
@@ -241,9 +241,9 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected OTSRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
+    protected OtsRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
     {
-        OTSRoadNetwork network = new OTSRoadNetwork("RampMetering", true, sim);
+        OtsRoadNetwork network = new OtsRoadNetwork("RampMetering", true, sim);
         if (this.output)
         {
             network.addListener(this, Network.GTU_ADD_EVENT);
@@ -263,12 +263,12 @@ public class RampMeteringDemo extends AbstractSimulationScript
         StreamInterface stream = sim.getModel().getStream("generation");
         this.parameterFactory.addParameter(ParameterTypes.FSPEED, new DistNormal(stream, 123.7 / 120.0, 12.0 / 1200));
 
-        OTSRoadNode nodeA = new OTSRoadNode(network, "A", new OtsPoint3D(0, 0), Direction.ZERO);
-        OTSRoadNode nodeB = new OTSRoadNode(network, "B", new OtsPoint3D(3000, 0), Direction.ZERO);
-        OTSRoadNode nodeC = new OTSRoadNode(network, "C", new OtsPoint3D(3250, 0), Direction.ZERO);
-        OTSRoadNode nodeD = new OTSRoadNode(network, "D", new OtsPoint3D(6000, 0), Direction.ZERO);
-        OTSRoadNode nodeE = new OTSRoadNode(network, "E", new OtsPoint3D(2000, -25), Direction.ZERO);
-        OTSRoadNode nodeF = new OTSRoadNode(network, "F", new OtsPoint3D(2750, 0.0), Direction.ZERO);
+        OtsRoadNode nodeA = new OtsRoadNode(network, "A", new OtsPoint3D(0, 0), Direction.ZERO);
+        OtsRoadNode nodeB = new OtsRoadNode(network, "B", new OtsPoint3D(3000, 0), Direction.ZERO);
+        OtsRoadNode nodeC = new OtsRoadNode(network, "C", new OtsPoint3D(3250, 0), Direction.ZERO);
+        OtsRoadNode nodeD = new OtsRoadNode(network, "D", new OtsPoint3D(6000, 0), Direction.ZERO);
+        OtsRoadNode nodeE = new OtsRoadNode(network, "E", new OtsPoint3D(2000, -25), Direction.ZERO);
+        OtsRoadNode nodeF = new OtsRoadNode(network, "F", new OtsPoint3D(2750, 0.0), Direction.ZERO);
 
         LinkType freeway = network.getLinkType(LinkType.DEFAULTS.FREEWAY);
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;
@@ -324,10 +324,10 @@ public class RampMeteringDemo extends AbstractSimulationScript
         }
 
         // OD
-        List<OTSRoadNode> origins = new ArrayList<>();
+        List<OtsRoadNode> origins = new ArrayList<>();
         origins.add(nodeA);
         origins.add(nodeE);
-        List<OTSRoadNode> destinations = new ArrayList<>();
+        List<OtsRoadNode> destinations = new ArrayList<>();
         destinations.add(nodeD);
         Categorization categorization = new Categorization("cat", GtuType.class);// , Lane.class);
         Interpolation globalInterpolation = Interpolation.LINEAR;
@@ -343,9 +343,9 @@ public class RampMeteringDemo extends AbstractSimulationScript
         // od.putDemandVector(nodeA, nodeD, carCatMainRight, mainDemand, 1.0 - fLeft);
         od.putDemandVector(nodeE, nodeD, carCatRamp, this.rampDemand, 0.6);
         od.putDemandVector(nodeE, nodeD, controlledCarCat, this.rampDemand, 0.4);
-        ODOptions odOptions = new ODOptions();
-        odOptions.set(ODOptions.GTU_TYPE, new ControlledStrategicalPlannerGenerator()).set(ODOptions.INSTANT_LC, true);
-        ODApplier.applyOD(network, od, odOptions);
+        OdOptions odOptions = new OdOptions();
+        odOptions.set(OdOptions.GTU_TYPE, new ControlledStrategicalPlannerGenerator()).set(OdOptions.INSTANT_LC, true);
+        OdApplier.applyOD(network, od, odOptions);
 
         return network;
     }
@@ -443,11 +443,11 @@ public class RampMeteringDemo extends AbstractSimulationScript
      * Strategical planner generator. This class can be used as input in {@code ODOptions} to generate the right models with
      * different GTU types.
      */
-    private class ControlledStrategicalPlannerGenerator implements GtuCharacteristicsGeneratorOD
+    private class ControlledStrategicalPlannerGenerator implements GtuCharacteristicsGeneratorOd
     {
 
         /** Default generator. */
-        private DefaultGtuCharacteristicsGeneratorOD defaultGenerator = new DefaultGtuCharacteristicsGeneratorOD();
+        private DefaultGtuCharacteristicsGeneratorOd defaultGenerator = new DefaultGtuCharacteristicsGeneratorOd();
 
         /** Controlled planner factory. */
         private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> controlledPlannerFactory;
@@ -474,7 +474,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
                             set.setDefaultParameter(ParameterTypes.T0);
                             set.setDefaultParameter(TrafficLightUtil.B_YELLOW);
                             set.setDefaultParameters(LmrsParameters.class);
-                            set.setDefaultParameters(AbstractIDM.class);
+                            set.setDefaultParameters(AbstractIdm.class);
                             return set;
                         }
 
@@ -490,7 +490,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
                                 settings.setParameter(SyncAndAccept.SYNCTIME, Duration.instantiateSI(1.0));
                                 settings.setParameter(SyncAndAccept.COOPTIME, Duration.instantiateSI(2.0));
                                 // parameters used in car-following model for gap-acceptance
-                                settings.setParameter(AbstractIDM.DELTA, 1.0);
+                                settings.setParameter(AbstractIdm.DELTA, 1.0);
                                 settings.setParameter(ParameterTypes.S0, Length.instantiateSI(3.0));
                                 settings.setParameter(ParameterTypes.A, Acceleration.instantiateSI(2.0));
                                 settings.setParameter(ParameterTypes.B, Acceleration.instantiateSI(2.0));
@@ -503,7 +503,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
                             {
                                 throw new GtuException(exception);
                             }
-                            return new ControlledTacticalPlanner(gtu, new SyncAndAccept(gtu, new IDMPlus(), settings));
+                            return new ControlledTacticalPlanner(gtu, new SyncAndAccept(gtu, new IdmPlus(), settings));
                         }
                     };
             // standard strategical planner factory using the tactical factory and the simulation-wide parameter factory
@@ -555,7 +555,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
          */
         ControlledTacticalPlanner(final LaneBasedGtu gtu, final AutomaticLaneChangeSystem laneChangeSystem)
         {
-            super(new IDMPlus(), gtu, generatePerception(gtu));
+            super(new IdmPlus(), gtu, generatePerception(gtu));
             setDefaultIncentives();
             this.laneChangeSystem = laneChangeSystem;
             this.laneChange = Try.assign(() -> new LaneChange(gtu), "Parameter LCDUR is required.", GtuException.class);

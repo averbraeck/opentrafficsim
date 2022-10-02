@@ -61,7 +61,7 @@ import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlanner
+public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlanner
 {
     /** */
     private static final long serialVersionUID = 20151125L;
@@ -96,7 +96,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
      * @param laneChangeModel LaneChangeModel; Lane change model.
      * @param gtu LaneBasedGtu; GTU
      */
-    public LaneBasedCFLCTacticalPlanner(final GtuFollowingModelOld carFollowingModel, final LaneChangeModel laneChangeModel,
+    public LaneBasedCfLcTacticalPlanner(final GtuFollowingModelOld carFollowingModel, final LaneChangeModel laneChangeModel,
             final LaneBasedGtu gtu)
     {
         super(carFollowingModel, gtu, new CategoricalLanePerception(gtu));

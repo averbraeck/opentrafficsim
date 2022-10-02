@@ -13,10 +13,10 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public final class MockDEVSSimulator
+public final class MockDevsSimulator
 {
     /** */
-    private MockDEVSSimulator()
+    private MockDevsSimulator()
     {
         // Utility class
     }

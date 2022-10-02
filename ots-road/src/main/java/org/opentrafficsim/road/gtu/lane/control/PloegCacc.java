@@ -18,17 +18,17 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class PloegCACC extends PloegACC
+public class PloegCacc extends PloegAcc
 {
 
     /** Acceleration error gain parameter. */
-    public static final ParameterTypeDouble KA = LinearCACC.KA;
+    public static final ParameterTypeDouble KA = LinearCacc.KA;
 
     /**
      * Constructor using default sensors with no delay.
      * @param delayedActuation DelayedActuation; delayed actuation
      */
-    public PloegCACC(final DelayedActuation delayedActuation)
+    public PloegCacc(final DelayedActuation delayedActuation)
     {
         super(delayedActuation);
     }

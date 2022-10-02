@@ -23,7 +23,7 @@ import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.draw.core.OtsDrawingException;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
@@ -112,7 +112,7 @@ public class TestXmlParserAimsun extends OTSSimulationApplication<OtsModelInterf
         private static final long serialVersionUID = 20141121L;
 
         /** the network. */
-        private OTSRoadNetwork network = null;
+        private OtsRoadNetwork network = null;
 
         /**
          * @param simulator the simulator
@@ -127,7 +127,7 @@ public class TestXmlParserAimsun extends OTSSimulationApplication<OtsModelInterf
         public final void constructModel() throws SimRuntimeException
         {
             URL url = URLResource.getResource("/resources/xml/AimsunOtsNetwork.xml");
-            this.network = new OTSRoadNetwork("Aimsun network", true, getSimulator());
+            this.network = new OtsRoadNetwork("Aimsun network", true, getSimulator());
             try
             {
                 XmlNetworkLaneParser.build(url.getPath(), this.network, true);
@@ -141,7 +141,7 @@ public class TestXmlParserAimsun extends OTSSimulationApplication<OtsModelInterf
 
         /** {@inheritDoc} */
         @Override
-        public OTSRoadNetwork getNetwork()
+        public OtsRoadNetwork getNetwork()
         {
             return this.network;
         }

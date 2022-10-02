@@ -11,7 +11,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.road.gtu.generator.CFBARoomChecker;
+import org.opentrafficsim.road.gtu.generator.CfBaRoomChecker;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
@@ -30,7 +30,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class ODOptions
+public class OdOptions
 {
     /** Headway randomization option. */
     public static final Option<HeadwayDistribution> HEADWAY_DIST =
@@ -40,11 +40,11 @@ public class ODOptions
     public static final Option<IdGenerator> GTU_ID = new Option<>("gtu id", new IdGenerator(""));
 
     /** GTU characteristics generator option. */
-    public static final Option<GtuCharacteristicsGeneratorOD> GTU_TYPE =
-            new Option<>("gtu type", new DefaultGtuCharacteristicsGeneratorOD());
+    public static final Option<GtuCharacteristicsGeneratorOd> GTU_TYPE =
+            new Option<>("gtu type", new DefaultGtuCharacteristicsGeneratorOd());
 
     /** Room checker option. */
-    public static final Option<RoomChecker> ROOM_CHECKER = new Option<>("room checker", new CFBARoomChecker());
+    public static final Option<RoomChecker> ROOM_CHECKER = new Option<>("room checker", new CfBaRoomChecker());
 
     /** Markov chain for GTU type option. */
     public static final Option<MarkovCorrelation<GtuType, Frequency>> MARKOV = new Option<>("markov", null);
@@ -98,7 +98,7 @@ public class ODOptions
      * @param <K> value type
      * @return this option set
      */
-    public final <K> ODOptions set(final Option<K> option, final K value)
+    public final <K> OdOptions set(final Option<K> option, final K value)
     {
         this.options.set(null, option, value);
         return this;
@@ -112,7 +112,7 @@ public class ODOptions
      * @param <K> value type
      * @return this option set
      */
-    public final <K> ODOptions set(final Lane lane, final Option<K> option, final K value)
+    public final <K> OdOptions set(final Lane lane, final Option<K> option, final K value)
     {
         this.laneOptions.set(lane, option, value);
         return this;
@@ -126,7 +126,7 @@ public class ODOptions
      * @param <K> value type
      * @return this option set
      */
-    public final <K> ODOptions set(final Node node, final Option<K> option, final K value)
+    public final <K> OdOptions set(final Node node, final Option<K> option, final K value)
     {
         this.nodeOptions.set(node, option, value);
         return this;
@@ -140,7 +140,7 @@ public class ODOptions
      * @param <K> value type
      * @return this option set
      */
-    public final <K> ODOptions set(final LinkType linkType, final Option<K> option, final K value)
+    public final <K> OdOptions set(final LinkType linkType, final Option<K> option, final K value)
     {
         this.linkTypeOptions.set(linkType, option, value);
         return this;

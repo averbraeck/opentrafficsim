@@ -31,8 +31,8 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
-import org.opentrafficsim.road.mock.MockDEVSSimulator;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.mock.MockDevsSimulator;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.conflict.ConflictType;
@@ -62,7 +62,7 @@ public class ConflictTest implements EventListenerInterface
     @Test
     public void testConstructor() throws NetworkException, OtsGeometryException
     {
-        OtsSimulatorInterface simulator = MockDEVSSimulator.createMock();
+        OtsSimulatorInterface simulator = MockDevsSimulator.createMock();
         OtsReplication replication = Mockito.mock(OtsReplication.class);
         HistoryManagerDevs hmd = Mockito.mock(HistoryManagerDevs.class);
         Mockito.when(hmd.now()).thenReturn(Time.ZERO);
@@ -70,13 +70,13 @@ public class ConflictTest implements EventListenerInterface
         Mockito.when(simulator.getReplication()).thenReturn(replication);
         Mockito.when(simulator.getSimulatorAbsTime()).thenReturn(Time.ZERO);
         Mockito.when(simulator.getSimulatorTime()).thenReturn(Duration.ZERO);
-        OTSRoadNetwork network = new OTSRoadNetwork("Network for conflict test", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("Network for conflict test", true, simulator);
         LinkType linkType = network.getLinkType(LinkType.DEFAULTS.ROAD);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.ONE_WAY_LANE);
         OtsPoint3D pointAFrom = new OtsPoint3D(0, 0, 0);
-        OTSRoadNode nodeAFrom = new OTSRoadNode(network, "A from", pointAFrom, Direction.ZERO);
+        OtsRoadNode nodeAFrom = new OtsRoadNode(network, "A from", pointAFrom, Direction.ZERO);
         OtsPoint3D pointATo = new OtsPoint3D(100, 0, 0);
-        OTSRoadNode nodeATo = new OTSRoadNode(network, "A to", pointATo, Direction.ZERO);
+        OtsRoadNode nodeATo = new OtsRoadNode(network, "A to", pointATo, Direction.ZERO);
         CrossSectionLink linkA = new CrossSectionLink(network, "Link A", nodeAFrom, nodeATo, linkType,
                 new OtsLine3D(pointAFrom, pointATo), LaneKeepingPolicy.KEEPRIGHT);
         Lane laneA = new Lane(linkA, "lane A", Length.ZERO, new Length(2, LengthUnit.METER), laneType,
@@ -87,8 +87,8 @@ public class ConflictTest implements EventListenerInterface
         OtsPoint3D pointBTo = new OtsPoint3D(60, 60, 0);
         Direction bDirection =
                 new Direction(Math.atan2(pointBTo.y - pointBFrom.y, pointBTo.x - pointBFrom.x), DirectionUnit.EAST_RADIAN);
-        OTSRoadNode nodeBFrom = new OTSRoadNode(network, "B from", pointBFrom, bDirection);
-        OTSRoadNode nodeBTo = new OTSRoadNode(network, "B to", pointBTo, bDirection);
+        OtsRoadNode nodeBFrom = new OtsRoadNode(network, "B from", pointBFrom, bDirection);
+        OtsRoadNode nodeBTo = new OtsRoadNode(network, "B to", pointBTo, bDirection);
         CrossSectionLink linkB = new CrossSectionLink(network, "Link B", nodeBFrom, nodeBTo, linkType,
                 new OtsLine3D(pointBFrom, pointBTo), LaneKeepingPolicy.KEEPRIGHT);
         Lane laneB = new Lane(linkB, "lane B", Length.ZERO, new Length(4, LengthUnit.METER), laneType,

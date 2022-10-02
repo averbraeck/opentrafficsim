@@ -15,7 +15,7 @@ import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OtsLink;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 /**
@@ -91,8 +91,8 @@ public class CrossSectionLink extends OtsLink implements Serializable
      *             or the end node of the link are not registered in the network.
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public CrossSectionLink(final OTSRoadNetwork network, final String id, final OTSRoadNode startNode,
-            final OTSRoadNode endNode, final LinkType linkType, final OtsLine3D designLine,
+    public CrossSectionLink(final OtsRoadNetwork network, final String id, final OtsRoadNode startNode,
+            final OtsRoadNode endNode, final LinkType linkType, final OtsLine3D designLine,
             final LaneKeepingPolicy laneKeepingPolicy) throws NetworkException
     {
         super(network, id, startNode, endNode, linkType, designLine);
@@ -101,9 +101,9 @@ public class CrossSectionLink extends OtsLink implements Serializable
 
     /** {@inheritDoc} */
     @Override
-    public OTSRoadNetwork getNetwork()
+    public OtsRoadNetwork getNetwork()
     {
-        return (OTSRoadNetwork) super.getNetwork();
+        return (OtsRoadNetwork) super.getNetwork();
     }
 
     /**

@@ -33,7 +33,7 @@ import org.opentrafficsim.road.gtu.lane.perception.SortedSetPerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Anticipation;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborTriplet;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 
@@ -254,11 +254,11 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
 
                 // initiate sets
                 SortedSetPerceptionIterable<HeadwayGtu> followersSet =
-                        new SortedSetPerceptionIterable<>((OTSRoadNetwork) getPerception().getGtu().getReferencePosition()
+                        new SortedSetPerceptionIterable<>((OtsRoadNetwork) getPerception().getGtu().getReferencePosition()
                                 .getLane().getParentLink().getNetwork());
                 this.followers.put(lane, followersSet);
                 SortedSetPerceptionIterable<HeadwayGtu> leadersSet =
-                        new SortedSetPerceptionIterable<>((OTSRoadNetwork) getPerception().getGtu().getReferencePosition()
+                        new SortedSetPerceptionIterable<>((OtsRoadNetwork) getPerception().getGtu().getReferencePosition()
                                 .getLane().getParentLink().getNetwork());
                 this.leaders.put(lane, leadersSet);
 
@@ -322,12 +322,12 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
             {
                 if (!this.followers.containsKey(lane))
                 {
-                    this.followers.put(lane, new SortedSetPerceptionIterable<>((OTSRoadNetwork) getPerception().getGtu()
+                    this.followers.put(lane, new SortedSetPerceptionIterable<>((OtsRoadNetwork) getPerception().getGtu()
                             .getReferencePosition().getLane().getParentLink().getNetwork()));
                 }
                 if (!this.leaders.containsKey(lane))
                 {
-                    this.leaders.put(lane, new SortedSetPerceptionIterable<>((OTSRoadNetwork) getPerception().getGtu()
+                    this.leaders.put(lane, new SortedSetPerceptionIterable<>((OtsRoadNetwork) getPerception().getGtu()
                             .getReferencePosition().getLane().getParentLink().getNetwork()));
                 }
                 if (lane.isLeft() || lane.isRight())

@@ -23,7 +23,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRS;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -50,7 +50,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
     {
         Class<LaneBasedTacticalPlanner> type = LaneBasedTacticalPlanner.class;
         TACTICAL_PLANNER = new ParameterTypeClass<>("tactical planner", "Tactical planner class.",
-                OtsClassUtil.getTypedClass(type), LMRS.class);
+                OtsClassUtil.getTypedClass(type), Lmrs.class);
     }
 
     /** */

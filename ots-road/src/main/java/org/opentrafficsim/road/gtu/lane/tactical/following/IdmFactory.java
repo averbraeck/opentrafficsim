@@ -12,16 +12,16 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class IDMFactory extends AbstractIDMFactory<IDM>
+public class IdmFactory extends AbstractIdmFactory<Idm>
 {
 
     /**
      * Constructor.
      * @param randomStream StreamInterface; random number stream
      */
-    public IDMFactory(final StreamInterface randomStream)
+    public IdmFactory(final StreamInterface randomStream)
     {
-        super(new IDM(), randomStream);
+        super(new Idm(), randomStream);
     }
 
     /** {@inheritDoc} */

@@ -6,7 +6,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.control.CACC;
+import org.opentrafficsim.road.gtu.lane.control.Cacc;
 import org.opentrafficsim.road.gtu.lane.control.ControlTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.perception.DownstreamNeighborsIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -137,7 +137,7 @@ public class CaccPerception extends LaneBasedAbstractPerceptionCategory implemen
                 next = super.getNext(record, position, counter);
             }
             // skip leaders that are not the direct leader and that are not CACC
-            while (next != null && first() != null && !(next.getObject().getTacticalPlanner() instanceof CACC));
+            while (next != null && first() != null && !(next.getObject().getTacticalPlanner() instanceof Cacc));
             return next;
         }
 

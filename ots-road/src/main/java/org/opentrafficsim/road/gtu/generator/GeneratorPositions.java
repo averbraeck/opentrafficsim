@@ -27,7 +27,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.RoadPosition.BySpeed;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.RoadPosition.ByValue;
-import org.opentrafficsim.road.gtu.strategical.route.RouteGeneratorOD;
+import org.opentrafficsim.road.gtu.strategical.route.RouteGeneratorOd;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
@@ -645,7 +645,7 @@ public final class GeneratorPositions implements Locatable
                     if (glp.getViaNode() != null)
                     {
                         // this uses a shortest-path algorithm with caching
-                        Route r = RouteGeneratorOD.getDefaultRouteSupplier(stream).getRoute(glp.getViaNode(), destination,
+                        Route r = RouteGeneratorOd.getDefaultRouteSupplier(stream).getRoute(glp.getViaNode(), destination,
                                 gtuType);
                         if (r != null)
                         {

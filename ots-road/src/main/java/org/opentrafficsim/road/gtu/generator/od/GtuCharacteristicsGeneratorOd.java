@@ -18,7 +18,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public interface GtuCharacteristicsGeneratorOD
+public interface GtuCharacteristicsGeneratorOd
 {
 
     /**

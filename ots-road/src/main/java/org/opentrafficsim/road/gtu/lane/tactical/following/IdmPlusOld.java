@@ -28,7 +28,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class IDMPlusOld extends AbstractGtuFollowingModelMobil implements Serializable
+public class IdmPlusOld extends AbstractGtuFollowingModelMobil implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20140704L;
@@ -63,7 +63,7 @@ public class IDMPlusOld extends AbstractGtuFollowingModelMobil implements Serial
      * Victor L. Knoop, and Bart van Arem, published in Transportation Research Record: Journal of the Transportation Research
      * Board, No. 2316, Transportation Research Board of the National Academies, Washington, D.C., 2012, pp. 47–57.
      */
-    public IDMPlusOld()
+    public IdmPlusOld()
     {
         this.a = new Acceleration(1.56, AccelerationUnit.METER_PER_SECOND_2);
         this.b = new Acceleration(2.09, AccelerationUnit.METER_PER_SECOND_2);
@@ -81,7 +81,7 @@ public class IDMPlusOld extends AbstractGtuFollowingModelMobil implements Serial
      * @param delta double; the speed limit adherence (1.0; mean free speed equals the speed limit; 1.1: mean free speed equals
      *            110% of the speed limit; etc.)
      */
-    public IDMPlusOld(final Acceleration a, final Acceleration b, final Length s0, final Duration tSafe, final double delta)
+    public IdmPlusOld(final Acceleration a, final Acceleration b, final Length s0, final Duration tSafe, final double delta)
     {
         this.a = a;
         this.b = b;

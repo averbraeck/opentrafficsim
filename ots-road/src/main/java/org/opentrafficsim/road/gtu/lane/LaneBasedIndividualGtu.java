@@ -23,7 +23,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.LanePosition;
 
 /**
@@ -66,7 +66,7 @@ public class LaneBasedIndividualGtu extends AbstractLaneBasedIndividualGtu
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualGtu(final String id, final GtuType gtuType, final Length length, final Length width,
-            final Speed maximumSpeed, final Length front, final OtsSimulatorInterface simulator, final OTSRoadNetwork network)
+            final Speed maximumSpeed, final Length front, final OtsSimulatorInterface simulator, final OtsRoadNetwork network)
             throws GtuException
     {
         this(id, gtuType, length, width, maximumSpeed, front, Length.ZERO, simulator, network);
@@ -88,7 +88,7 @@ public class LaneBasedIndividualGtu extends AbstractLaneBasedIndividualGtu
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualGtu(final String id, final GtuType gtuType, final Length length, final Length width,
             final Speed maximumSpeed, final Length front, final Length centerOfGravity, final OtsSimulatorInterface simulator,
-            final OTSRoadNetwork network) throws GtuException
+            final OtsRoadNetwork network) throws GtuException
     {
         super(id, gtuType, length, width, maximumSpeed, simulator, network);
 
@@ -221,7 +221,7 @@ public class LaneBasedIndividualGtu extends AbstractLaneBasedIndividualGtu
         private OtsSimulatorInterface simulator = null;
 
         /** Network. */
-        private OTSRoadNetwork network = null;
+        private OtsRoadNetwork network = null;
 
         /**
          * @param id String; set id
@@ -338,7 +338,7 @@ public class LaneBasedIndividualGtu extends AbstractLaneBasedIndividualGtu
          * @param network OTSRoadNetwork; set network
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder setNetwork(final OTSRoadNetwork network)
+        public final LaneBasedIndividualCarBuilder setNetwork(final OtsRoadNetwork network)
         {
             this.network = network;
             return this;
@@ -411,7 +411,7 @@ public class LaneBasedIndividualGtu extends AbstractLaneBasedIndividualGtu
         /**
          * @return network
          */
-        public final OTSRoadNetwork getNetwork()
+        public final OtsRoadNetwork getNetwork()
         {
             return this.network;
         }

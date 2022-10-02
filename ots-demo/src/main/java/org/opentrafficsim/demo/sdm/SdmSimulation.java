@@ -53,9 +53,9 @@ import org.opentrafficsim.road.gtu.colorer.DistractionColorer;
 import org.opentrafficsim.road.gtu.colorer.FixedColor;
 import org.opentrafficsim.road.gtu.colorer.SynchronizationColorer;
 import org.opentrafficsim.road.gtu.colorer.TaskSaturationColorer;
-import org.opentrafficsim.road.gtu.generator.od.DefaultGtuCharacteristicsGeneratorOD;
-import org.opentrafficsim.road.gtu.generator.od.ODApplier;
-import org.opentrafficsim.road.gtu.generator.od.ODOptions;
+import org.opentrafficsim.road.gtu.generator.od.DefaultGtuCharacteristicsGeneratorOd;
+import org.opentrafficsim.road.gtu.generator.od.OdApplier;
+import org.opentrafficsim.road.gtu.generator.od.OdOptions;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness;
 import org.opentrafficsim.road.gtu.lane.perception.mental.ExponentialTask;
@@ -68,12 +68,12 @@ import org.opentrafficsim.road.gtu.strategical.od.Categorization;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OTSRoadNode;
+import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
@@ -107,7 +107,7 @@ public class SdmSimulation extends AbstractSimulationScript
     private static final long serialVersionUID = 20200516L;
 
     /** Network. */
-    private OTSRoadNetwork network;
+    private OtsRoadNetwork network;
 
     /** Sampler for statistics. */
     private RoadSampler sampler;
@@ -282,26 +282,26 @@ public class SdmSimulation extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected OTSRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
+    protected OtsRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
     {
         // manager of historic information to allow a reaction time
         sim.getReplication().setHistoryManager(new HistoryManagerDevs(sim,
                 AdaptationSituationalAwareness.TR_MAX.getDefaultValue(), Duration.instantiateSI(10.0)));
 
         // Network
-        this.network = new OTSRoadNetwork("SDM", true, getSimulator());
+        this.network = new OtsRoadNetwork("SDM", true, getSimulator());
         OtsPoint3D pointA = new OtsPoint3D(0.0, 0.0);
         OtsPoint3D pointB = new OtsPoint3D(0.0, -20.0);
         OtsPoint3D pointC = new OtsPoint3D(1600.0, -20.0);
         OtsPoint3D pointD = new OtsPoint3D(2000.0, 0.0);
         OtsPoint3D pointE = new OtsPoint3D(2500.0, 0.0);
         OtsPoint3D pointF = new OtsPoint3D(3500.0, 0.0);
-        OTSRoadNode nodeA = new OTSRoadNode(this.network, "A", pointA, Direction.ZERO);
-        OTSRoadNode nodeB = new OTSRoadNode(this.network, "B", pointB, Direction.ZERO);
-        OTSRoadNode nodeC = new OTSRoadNode(this.network, "C", pointC, Direction.ZERO);
-        OTSRoadNode nodeD = new OTSRoadNode(this.network, "D", pointD, Direction.ZERO);
-        OTSRoadNode nodeE = new OTSRoadNode(this.network, "E", pointE, Direction.ZERO);
-        OTSRoadNode nodeF = new OTSRoadNode(this.network, "F", pointF, Direction.ZERO);
+        OtsRoadNode nodeA = new OtsRoadNode(this.network, "A", pointA, Direction.ZERO);
+        OtsRoadNode nodeB = new OtsRoadNode(this.network, "B", pointB, Direction.ZERO);
+        OtsRoadNode nodeC = new OtsRoadNode(this.network, "C", pointC, Direction.ZERO);
+        OtsRoadNode nodeD = new OtsRoadNode(this.network, "D", pointD, Direction.ZERO);
+        OtsRoadNode nodeE = new OtsRoadNode(this.network, "E", pointE, Direction.ZERO);
+        OtsRoadNode nodeF = new OtsRoadNode(this.network, "F", pointF, Direction.ZERO);
         LinkType type = this.network.getLinkType(LinkType.DEFAULTS.FREEWAY);
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;
         Length laneWidth = Length.instantiateSI(3.5);
@@ -351,10 +351,10 @@ public class SdmSimulation extends AbstractSimulationScript
         odMatrix.putDemandVector(nodeA, nodeF, truCategory, freq(new double[] {f1 * left1, f1 * left1, f1 * left2, 0.0}));
         odMatrix.putDemandVector(nodeB, nodeF, carCategory, freq(new double[] {f2 * right1, f2 * right1, f2 * right2, 0.0}));
         odMatrix.putDemandVector(nodeB, nodeF, truCategory, freq(new double[] {f1 * right1, f1 * right1, f1 * right2, 0.0}));
-        ODOptions odOptions = new ODOptions().set(ODOptions.NO_LC_DIST, Length.instantiateSI(200)).set(ODOptions.GTU_TYPE,
-                new DefaultGtuCharacteristicsGeneratorOD(
+        OdOptions odOptions = new OdOptions().set(OdOptions.NO_LC_DIST, Length.instantiateSI(200)).set(OdOptions.GTU_TYPE,
+                new DefaultGtuCharacteristicsGeneratorOd(
                         new SdmStrategicalPlannerFactory(this.network, sim.getModel().getStream("generation"), this)));
-        ODApplier.applyOD(this.network, odMatrix, odOptions);
+        OdApplier.applyOD(this.network, odMatrix, odOptions);
 
         // setup the SDM
         DistractionFactory distFactory = new DistractionFactory(sim.getModel().getStream("default"));

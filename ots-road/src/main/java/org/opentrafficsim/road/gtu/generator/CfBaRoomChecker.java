@@ -15,7 +15,7 @@ import org.djunits.value.vdouble.scalar.Speed;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class CFBARoomChecker extends CFRoomChecker
+public class CfBaRoomChecker extends CfRoomChecker
 {
 
     /** {@inheritDoc} */

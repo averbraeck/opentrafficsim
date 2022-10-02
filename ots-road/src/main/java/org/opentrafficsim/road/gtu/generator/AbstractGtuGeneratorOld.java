@@ -38,10 +38,10 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayDistance;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuSimple;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusOld;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 
@@ -105,7 +105,7 @@ public abstract class AbstractGtuGeneratorOld extends EventProducer implements S
     private final Generator<Route> routeGenerator;
 
     /** The network. */
-    private final OTSRoadNetwork network;
+    private final OtsRoadNetwork network;
 
     /** Car builder list. */
     private List<LaneBasedIndividualCarBuilder> carBuilderList = new ArrayList<>();
@@ -143,7 +143,7 @@ public abstract class AbstractGtuGeneratorOld extends EventProducer implements S
             final ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> interarrivelTimeDist, final long maxGTUs,
             final Time startTime, final Time endTime, final Lane lane, final Length position,
             final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> strategicalPlannerFactory,
-            final Generator<Route> routeGenerator, final OTSRoadNetwork network) throws SimRuntimeException
+            final Generator<Route> routeGenerator, final OtsRoadNetwork network) throws SimRuntimeException
     {
         this.name = name;
         this.gtuType = gtuType;
@@ -272,7 +272,7 @@ public abstract class AbstractGtuGeneratorOld extends EventProducer implements S
         }
 
         // test for sufficient headway
-        GtuFollowingModelOld followingModel = new IDMPlusOld();
+        GtuFollowingModelOld followingModel = new IdmPlusOld();
         // carBuilder.getStrategicalPlanner().getBehavioralCharacteristics().getGtuFollowingModel();
 
         Headway headway = headway(new Length(250.0, LengthUnit.METER), generatorLane);

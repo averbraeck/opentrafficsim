@@ -21,7 +21,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.demo.conflict.TurboRoundaboutDemo.TurboRoundaboutModel;
 import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -102,7 +102,7 @@ public class TurboRoundaboutDemo extends OTSSimulationApplication<TurboRoundabou
         private static final long serialVersionUID = 20161211L;
 
         /** The network. */
-        private OTSRoadNetwork network;
+        private OtsRoadNetwork network;
 
         /**
          * @param simulator OTSSimulatorInterface; the simulator for this model
@@ -119,7 +119,7 @@ public class TurboRoundaboutDemo extends OTSSimulationApplication<TurboRoundabou
             try
             {
                 URL xmlURL = URLResource.getResource("/resources/conflict/TurboRoundabout.xml");
-                this.network = new OTSRoadNetwork("TurboRoundabout", true, getSimulator());
+                this.network = new OtsRoadNetwork("TurboRoundabout", true, getSimulator());
                 XmlNetworkLaneParser.build(xmlURL, this.network, true);
 
                 // add trafficlights
@@ -205,7 +205,7 @@ public class TurboRoundaboutDemo extends OTSSimulationApplication<TurboRoundabou
 
         /** {@inheritDoc} */
         @Override
-        public OTSRoadNetwork getNetwork()
+        public OtsRoadNetwork getNetwork()
         {
             return this.network;
         }

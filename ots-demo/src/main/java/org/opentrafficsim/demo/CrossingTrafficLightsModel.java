@@ -40,23 +40,23 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactory;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
-import org.opentrafficsim.road.gtu.generator.CFRoomChecker;
+import org.opentrafficsim.road.gtu.generator.CfRoomChecker;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuType;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuTypeDistribution;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OTSRoadNode;
+import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -86,7 +86,7 @@ public class CrossingTrafficLightsModel extends AbstractOtsModel implements UNIT
     private static final long serialVersionUID = 20140815L;
 
     /** The network. */
-    private final OTSRoadNetwork network;
+    private final OtsRoadNetwork network;
 
     /** the random stream for this demo. */
     private StreamInterface stream = new MersenneTwister(555);
@@ -125,7 +125,7 @@ public class CrossingTrafficLightsModel extends AbstractOtsModel implements UNIT
     public CrossingTrafficLightsModel(final OtsSimulatorInterface simulator)
     {
         super(simulator);
-        this.network = new OTSRoadNetwork("network", true, simulator);
+        this.network = new OtsRoadNetwork("network", true, simulator);
         createInputParameters();
     }
 
@@ -153,37 +153,37 @@ public class CrossingTrafficLightsModel extends AbstractOtsModel implements UNIT
     {
         try
         {
-            OTSRoadNode[][] nodes = new OTSRoadNode[4][4];
-            nodes[0][0] = new OTSRoadNode(this.network, "sn1", new OtsPoint3D(10, -500),
+            OtsRoadNode[][] nodes = new OtsRoadNode[4][4];
+            nodes[0][0] = new OtsRoadNode(this.network, "sn1", new OtsPoint3D(10, -500),
                     new Direction(90, DirectionUnit.EAST_DEGREE));
             nodes[0][1] =
-                    new OTSRoadNode(this.network, "sn2", new OtsPoint3D(10, -20), new Direction(90, DirectionUnit.EAST_DEGREE));
+                    new OtsRoadNode(this.network, "sn2", new OtsPoint3D(10, -20), new Direction(90, DirectionUnit.EAST_DEGREE));
             nodes[0][2] =
-                    new OTSRoadNode(this.network, "sn3", new OtsPoint3D(10, +20), new Direction(90, DirectionUnit.EAST_DEGREE));
-            nodes[0][3] = new OTSRoadNode(this.network, "sn4", new OtsPoint3D(10, +600),
+                    new OtsRoadNode(this.network, "sn3", new OtsPoint3D(10, +20), new Direction(90, DirectionUnit.EAST_DEGREE));
+            nodes[0][3] = new OtsRoadNode(this.network, "sn4", new OtsPoint3D(10, +600),
                     new Direction(90, DirectionUnit.EAST_DEGREE));
 
-            nodes[1][0] = new OTSRoadNode(this.network, "we1", new OtsPoint3D(-500, -10), Direction.ZERO);
-            nodes[1][1] = new OTSRoadNode(this.network, "we2", new OtsPoint3D(-20, -10), Direction.ZERO);
-            nodes[1][2] = new OTSRoadNode(this.network, "we3", new OtsPoint3D(+20, -10), Direction.ZERO);
-            nodes[1][3] = new OTSRoadNode(this.network, "we4", new OtsPoint3D(+600, -10), Direction.ZERO);
+            nodes[1][0] = new OtsRoadNode(this.network, "we1", new OtsPoint3D(-500, -10), Direction.ZERO);
+            nodes[1][1] = new OtsRoadNode(this.network, "we2", new OtsPoint3D(-20, -10), Direction.ZERO);
+            nodes[1][2] = new OtsRoadNode(this.network, "we3", new OtsPoint3D(+20, -10), Direction.ZERO);
+            nodes[1][3] = new OtsRoadNode(this.network, "we4", new OtsPoint3D(+600, -10), Direction.ZERO);
 
-            nodes[2][0] = new OTSRoadNode(this.network, "ns1", new OtsPoint3D(-10, +500),
+            nodes[2][0] = new OtsRoadNode(this.network, "ns1", new OtsPoint3D(-10, +500),
                     new Direction(270, DirectionUnit.EAST_DEGREE));
-            nodes[2][1] = new OTSRoadNode(this.network, "ns2", new OtsPoint3D(-10, +20),
+            nodes[2][1] = new OtsRoadNode(this.network, "ns2", new OtsPoint3D(-10, +20),
                     new Direction(270, DirectionUnit.EAST_DEGREE));
-            nodes[2][2] = new OTSRoadNode(this.network, "ns3", new OtsPoint3D(-10, -20),
+            nodes[2][2] = new OtsRoadNode(this.network, "ns3", new OtsPoint3D(-10, -20),
                     new Direction(270, DirectionUnit.EAST_DEGREE));
-            nodes[2][3] = new OTSRoadNode(this.network, "ns4", new OtsPoint3D(-10, -600),
+            nodes[2][3] = new OtsRoadNode(this.network, "ns4", new OtsPoint3D(-10, -600),
                     new Direction(270, DirectionUnit.EAST_DEGREE));
 
-            nodes[3][0] = new OTSRoadNode(this.network, "ew1", new OtsPoint3D(+500, 10),
+            nodes[3][0] = new OtsRoadNode(this.network, "ew1", new OtsPoint3D(+500, 10),
                     new Direction(180, DirectionUnit.EAST_DEGREE));
-            nodes[3][1] = new OTSRoadNode(this.network, "ew2", new OtsPoint3D(+20, 10),
+            nodes[3][1] = new OtsRoadNode(this.network, "ew2", new OtsPoint3D(+20, 10),
                     new Direction(180, DirectionUnit.EAST_DEGREE));
-            nodes[3][2] = new OTSRoadNode(this.network, "ew3", new OtsPoint3D(-20, 10),
+            nodes[3][2] = new OtsRoadNode(this.network, "ew3", new OtsPoint3D(-20, 10),
                     new Direction(180, DirectionUnit.EAST_DEGREE));
-            nodes[3][3] = new OTSRoadNode(this.network, "ew4", new OtsPoint3D(-600, 10),
+            nodes[3][3] = new OtsRoadNode(this.network, "ew4", new OtsPoint3D(-600, 10),
                     new Direction(180, DirectionUnit.EAST_DEGREE));
 
             LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
@@ -193,9 +193,9 @@ public class CrossingTrafficLightsModel extends AbstractOtsModel implements UNIT
             this.carProbability = (double) getInputParameter("generic.carProbability");
             ParameterFactory params = new InputParameterHelper(getInputParameterMap());
             this.strategicalPlannerFactoryCar = new LaneBasedStrategicalRoutePlannerFactory(
-                    new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()), params);
+                    new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()), params);
             this.strategicalPlannerFactoryTruck = new LaneBasedStrategicalRoutePlannerFactory(
-                    new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()), params);
+                    new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()), params);
             this.idGenerator = new IdGenerator("");
             double contP = (double) getInputParameter("generic.flow");
             Duration averageHeadway = new Duration(3600.0 / contP, SECOND);
@@ -294,7 +294,7 @@ public class CrossingTrafficLightsModel extends AbstractOtsModel implements UNIT
         // System.out.println("Constructed template " + template);
         distribution.add(new FrequencyAndObject<>(1.0 - this.carProbability, template));
         LaneBasedTemplateGtuTypeDistribution templateDistribution = new LaneBasedTemplateGtuTypeDistribution(distribution);
-        LaneBasedGtuGenerator.RoomChecker roomChecker = new CFRoomChecker();
+        LaneBasedGtuGenerator.RoomChecker roomChecker = new CfRoomChecker();
         return new LaneBasedGtuGenerator(lane.getId(), new Generator<Duration>()
         {
             @Override
@@ -380,7 +380,7 @@ public class CrossingTrafficLightsModel extends AbstractOtsModel implements UNIT
 
     /** {@inheritDoc} */
     @Override
-    public OTSRoadNetwork getNetwork()
+    public OtsRoadNetwork getNetwork()
     {
         return this.network;
     }

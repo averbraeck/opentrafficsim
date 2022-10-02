@@ -45,7 +45,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuReal;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
@@ -98,7 +98,7 @@ public class LaneBasedGtuGenerator extends EventProducer implements Serializable
     private final GeneratorPositions generatorPositions;
 
     /** Network. */
-    private final OTSRoadNetwork network;
+    private final OtsRoadNetwork network;
 
     /** Simulator. */
     private final OtsSimulatorInterface simulator;
@@ -139,7 +139,7 @@ public class LaneBasedGtuGenerator extends EventProducer implements Serializable
     @SuppressWarnings("parameternumber")
     public LaneBasedGtuGenerator(final String id, final Generator<Duration> interarrivelTimeGenerator,
             final LaneBasedGtuCharacteristicsGenerator laneBasedGtuCharacteristicsGenerator,
-            final GeneratorPositions generatorPositions, final OTSRoadNetwork network, final OtsSimulatorInterface simulator,
+            final GeneratorPositions generatorPositions, final OtsRoadNetwork network, final OtsSimulatorInterface simulator,
             final RoomChecker roomChecker, final IdGenerator idGenerator)
             throws SimRuntimeException, ProbabilityException, ParameterException
     {

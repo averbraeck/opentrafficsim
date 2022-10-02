@@ -19,7 +19,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LinearCACC extends LinearACC
+public class LinearCacc extends LinearAcc
 {
 
     /** Acceleration error gain parameter. */
@@ -30,7 +30,7 @@ public class LinearCACC extends LinearACC
      * Constructor using default sensors with no delay.
      * @param delayedActuation DelayedActuation; delayed actuation
      */
-    public LinearCACC(final DelayedActuation delayedActuation)
+    public LinearCacc(final DelayedActuation delayedActuation)
     {
         super(delayedActuation);
     }

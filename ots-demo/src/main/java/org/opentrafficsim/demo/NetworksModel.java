@@ -45,24 +45,24 @@ import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactory;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
-import org.opentrafficsim.road.gtu.generator.CFRoomChecker;
+import org.opentrafficsim.road.gtu.generator.CfRoomChecker;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuType;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuTypeDistribution;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OTSRoadNode;
+import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -101,7 +101,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListenerInte
     private static final long serialVersionUID = 20140815L;
 
     /** The network. */
-    private final OTSRoadNetwork network = new OTSRoadNetwork("network", true, getSimulator());
+    private final OtsRoadNetwork network = new OtsRoadNetwork("network", true, getSimulator());
 
     /** Strategical planner generator for cars. */
     private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactoryCars = null;
@@ -193,24 +193,24 @@ public class NetworksModel extends AbstractOtsModel implements EventListenerInte
 
             ParameterFactory params = new InputParameterHelper(getInputParameterMap());
             this.strategicalPlannerFactoryCars = new LaneBasedStrategicalRoutePlannerFactory(
-                    new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()), params);
+                    new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()), params);
             this.strategicalPlannerFactoryTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                    new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()), params);
+                    new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()), params);
 
             OtsPoint3D pFrom2a = new OtsPoint3D(0, -50, 0);
             OtsPoint3D pFrom2b = new OtsPoint3D(490, -0.5, 0);
             Direction onrampDirection = pFrom2a.horizontalDirection(pFrom2b);
-            OTSRoadNode from = new OTSRoadNode(this.network, "From", new OtsPoint3D(0, 0, 0), Direction.ZERO);
-            OTSRoadNode end = new OTSRoadNode(this.network, "End", new OtsPoint3D(2000, 0, 0), Direction.ZERO);
-            OTSRoadNode from2a = new OTSRoadNode(this.network, "From2a", pFrom2a, onrampDirection);
-            OTSRoadNode from2b = new OTSRoadNode(this.network, "From2b", pFrom2b, onrampDirection);
-            OTSRoadNode firstVia = new OTSRoadNode(this.network, "Via1", new OtsPoint3D(500, 0, 0), Direction.ZERO);
+            OtsRoadNode from = new OtsRoadNode(this.network, "From", new OtsPoint3D(0, 0, 0), Direction.ZERO);
+            OtsRoadNode end = new OtsRoadNode(this.network, "End", new OtsPoint3D(2000, 0, 0), Direction.ZERO);
+            OtsRoadNode from2a = new OtsRoadNode(this.network, "From2a", pFrom2a, onrampDirection);
+            OtsRoadNode from2b = new OtsRoadNode(this.network, "From2b", pFrom2b, onrampDirection);
+            OtsRoadNode firstVia = new OtsRoadNode(this.network, "Via1", new OtsPoint3D(500, 0, 0), Direction.ZERO);
             OtsPoint3D pEnd2a = new OtsPoint3D(1020, -0.5, 0);
             OtsPoint3D pEnd2b = new OtsPoint3D(2000, -50, 0);
             Direction offrampDirection = pEnd2a.horizontalDirection(pEnd2b);
-            OTSRoadNode end2a = new OTSRoadNode(this.network, "End2a", pEnd2a, offrampDirection);
-            OTSRoadNode end2b = new OTSRoadNode(this.network, "End2b", pEnd2b, offrampDirection);
-            OTSRoadNode secondVia = new OTSRoadNode(this.network, "Via2", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
+            OtsRoadNode end2a = new OtsRoadNode(this.network, "End2a", pEnd2a, offrampDirection);
+            OtsRoadNode end2b = new OtsRoadNode(this.network, "End2b", pEnd2b, offrampDirection);
+            OtsRoadNode secondVia = new OtsRoadNode(this.network, "Via2", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
 
             String networkType = getInputParameter("generic.network").toString();
             boolean merge = networkType.startsWith("M");
@@ -392,7 +392,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListenerInte
         // System.out.println("Constructed template " + template);
         distribution.add(new FrequencyAndObject<>(1.0 - this.carProbability, template));
         LaneBasedTemplateGtuTypeDistribution templateDistribution = new LaneBasedTemplateGtuTypeDistribution(distribution);
-        LaneBasedGtuGenerator.RoomChecker roomChecker = new CFRoomChecker();
+        LaneBasedGtuGenerator.RoomChecker roomChecker = new CfRoomChecker();
         return new LaneBasedGtuGenerator(lane.getId(), new Generator<Duration>()
         {
             @SuppressWarnings("synthetic-access")
@@ -462,12 +462,12 @@ public class NetworksModel extends AbstractOtsModel implements EventListenerInte
     private Lane[] setupSink(final Lane[] lanes, final LaneType laneType) throws NetworkException, OtsGeometryException
     {
         CrossSectionLink link = lanes[0].getParentLink();
-        OTSRoadNode to = (OTSRoadNode) link.getEndNode();
-        OTSRoadNode from = (OTSRoadNode) link.getStartNode();
+        OtsRoadNode to = (OtsRoadNode) link.getEndNode();
+        OtsRoadNode from = (OtsRoadNode) link.getStartNode();
         double endLinkLength = 50; // [m]
         double endX = to.getPoint().x + (endLinkLength / link.getLength().getSI()) * (to.getPoint().x - from.getPoint().x);
         double endY = to.getPoint().y + (endLinkLength / link.getLength().getSI()) * (to.getPoint().y - from.getPoint().y);
-        OTSRoadNode end = new OTSRoadNode(this.network, link.getId() + "END", new OtsPoint3D(endX, endY, to.getPoint().z),
+        OtsRoadNode end = new OtsRoadNode(this.network, link.getId() + "END", new OtsPoint3D(endX, endY, to.getPoint().z),
                 Direction.instantiateSI(Math.atan2(to.getPoint().y - from.getPoint().y, to.getPoint().x - from.getPoint().x)));
         CrossSectionLink endLink = LaneFactory.makeLink(this.network, link.getId() + "endLink", to, end, null, this.simulator);
         for (Lane lane : lanes)
@@ -502,7 +502,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListenerInte
 
     /** {@inheritDoc} */
     @Override
-    public OTSRoadNetwork getNetwork()
+    public OtsRoadNetwork getNetwork()
     {
         return this.network;
     }

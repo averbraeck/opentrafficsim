@@ -13,7 +13,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
-import org.opentrafficsim.road.gtu.generator.od.StrategicalPlannerFactorySupplierOD;
+import org.opentrafficsim.road.gtu.generator.od.StrategicalPlannerFactorySupplierOd;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -30,13 +30,13 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.BehavioralAdaptation;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
 import org.opentrafficsim.road.gtu.lane.perception.mental.TaskCarFollowing;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveStayRight;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
@@ -46,7 +46,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
@@ -61,7 +61,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 
-public class SdmStrategicalPlannerFactory implements StrategicalPlannerFactorySupplierOD
+public class SdmStrategicalPlannerFactory implements StrategicalPlannerFactorySupplierOd
 {
 
     /** Car factory. */
@@ -77,7 +77,7 @@ public class SdmStrategicalPlannerFactory implements StrategicalPlannerFactorySu
      * @param simulation SdmSimulation; simulation to obtain properties from
      */
     @SuppressWarnings("synthetic-access")
-    SdmStrategicalPlannerFactory(final OTSRoadNetwork network, final StreamInterface stream, final SdmSimulation simulation)
+    SdmStrategicalPlannerFactory(final OtsRoadNetwork network, final StreamInterface stream, final SdmSimulation simulation)
     {
         ParameterFactoryByType paramFactory = new ParameterFactoryByType();
 
@@ -109,13 +109,13 @@ public class SdmStrategicalPlannerFactory implements StrategicalPlannerFactorySu
         Set<AccelerationIncentive> accelerationIncentives = new LinkedHashSet<>();
         // accelerationIncentives.add(new AccelerationNoRightOvertake());
         PerceptionFactory perceptionFactory = new SdmPerception();
-        this.carFactory = new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(new IDMPlusFactory(stream),
+        this.carFactory = new LaneBasedStrategicalRoutePlannerFactory(new LmrsFactory(new IdmPlusFactory(stream),
                 perceptionFactory, Synchronization.ALIGN_GAP, Cooperation.PASSIVE, GapAcceptance.INFORMED, Tailgating.NONE,
                 mandatoryIncentives, voluntaryIncentives, accelerationIncentives), paramFactory);
 
         voluntaryIncentives = new LinkedHashSet<>(voluntaryIncentives);
         voluntaryIncentives.add(new IncentiveStayRight());
-        this.truckFactory = new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(new IDMPlusFactory(stream),
+        this.truckFactory = new LaneBasedStrategicalRoutePlannerFactory(new LmrsFactory(new IdmPlusFactory(stream),
                 perceptionFactory, Synchronization.ALIGN_GAP, Cooperation.PASSIVE, GapAcceptance.INFORMED, Tailgating.NONE,
                 mandatoryIncentives, voluntaryIncentives, accelerationIncentives), paramFactory);
     }

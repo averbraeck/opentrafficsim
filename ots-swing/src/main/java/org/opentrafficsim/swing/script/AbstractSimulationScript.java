@@ -26,7 +26,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
@@ -68,7 +68,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     private OtsSimulatorInterface simulator;
 
     /** The network. */
-    private OTSRoadNetwork network;
+    private OtsRoadNetwork network;
 
     /** GTU colorer. */
     private GtuColorer gtuColorer = OTSSwingApplication.DEFAULT_COLORER;
@@ -290,7 +290,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
      * Returns the network.
      * @return OTSNetwork; network
      */
-    public final OTSRoadNetwork getNetwork()
+    public final OtsRoadNetwork getNetwork()
     {
         return AbstractSimulationScript.this.network;
     }
@@ -336,7 +336,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
      * @param animationPanel OTSAnimationPanel; animation panel
      * @param net OTSNetwork; network
      */
-    protected void setupDemo(final OTSAnimationPanel animationPanel, final OTSRoadNetwork net)
+    protected void setupDemo(final OTSAnimationPanel animationPanel, final OtsRoadNetwork net)
     {
         //
     }
@@ -359,7 +359,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
      * @return OTSNetwork; network
      * @throws Exception on any exception
      */
-    protected abstract OTSRoadNetwork setupSimulation(OtsSimulatorInterface sim) throws Exception;
+    protected abstract OtsRoadNetwork setupSimulation(OtsSimulatorInterface sim) throws Exception;
 
     // Nested classes
 
@@ -417,7 +417,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
-        public OTSRoadNetwork getNetwork()
+        public OtsRoadNetwork getNetwork()
         {
             return AbstractSimulationScript.this.network;
         }

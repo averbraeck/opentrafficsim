@@ -42,7 +42,7 @@ import org.opentrafficsim.core.parameters.InputParameters;
 import org.opentrafficsim.core.parameters.ParameterFactory;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
@@ -104,7 +104,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws IOException when construction of a traffic controller fails
      * @throws MalformedURLException when construction of a traffic controller fails
      */
-    public static OTSRoadNetwork build(final String filename, final OTSRoadNetwork otsNetwork, final boolean buildConflicts)
+    public static OtsRoadNetwork build(final String filename, final OtsRoadNetwork otsNetwork, final boolean buildConflicts)
             throws JAXBException, URISyntaxException, NetworkException, OtsGeometryException, XmlParserException, SAXException,
             ParserConfigurationException, SimRuntimeException, GtuException, MalformedURLException, IOException,
             TrafficControlException
@@ -133,7 +133,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws IOException when construction of a traffic controller fails
      * @throws MalformedURLException when construction of a traffic controller fails
      */
-    public static ExperimentRunControl<Duration> build(final InputStream xmlStream, final OTSRoadNetwork otsNetwork,
+    public static ExperimentRunControl<Duration> build(final InputStream xmlStream, final OtsRoadNetwork otsNetwork,
             final boolean buildConflicts) throws JAXBException, URISyntaxException, NetworkException, OtsGeometryException,
             XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GtuException,
             MalformedURLException, IOException, TrafficControlException
@@ -200,7 +200,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws IOException when construction of a traffic controller fails
      * @throws MalformedURLException when construction of a traffic controller fails
      */
-    public static ExperimentRunControl<Duration> build(final URL xmlURL, final OTSRoadNetwork otsNetwork,
+    public static ExperimentRunControl<Duration> build(final URL xmlURL, final OtsRoadNetwork otsNetwork,
             final boolean buildConflicts) throws JAXBException, URISyntaxException, NetworkException, OtsGeometryException,
             XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GtuException,
             MalformedURLException, IOException, TrafficControlException
@@ -227,7 +227,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws IOException when construction of a traffic controller fails
      * @throws MalformedURLException when construction of a traffic controller fails
      */
-    public static ExperimentRunControl<Duration> build(final OTS ots, final OTSRoadNetwork otsNetwork,
+    public static ExperimentRunControl<Duration> build(final OTS ots, final OtsRoadNetwork otsNetwork,
             final boolean buildConflicts) throws JAXBException, URISyntaxException, NetworkException, OtsGeometryException,
             XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GtuException,
             MalformedURLException, IOException, TrafficControlException
@@ -389,7 +389,7 @@ public final class XmlNetworkLaneParser implements Serializable
     public static void main(final String[] args) throws Exception
     {
         OtsSimulatorInterface simulator = new OtsSimulator("XmlNetworkLaneParser");
-        build("/example.xml", new OTSRoadNetwork("", true, simulator), false);
+        build("/example.xml", new OtsRoadNetwork("", true, simulator), false);
         System.exit(0);
     }
 }

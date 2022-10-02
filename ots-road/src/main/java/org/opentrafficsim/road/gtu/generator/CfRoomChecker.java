@@ -29,7 +29,7 @@ import org.opentrafficsim.road.network.lane.LanePosition;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class CFRoomChecker implements RoomChecker
+public class CfRoomChecker implements RoomChecker
 {
 
     /** {@inheritDoc} */

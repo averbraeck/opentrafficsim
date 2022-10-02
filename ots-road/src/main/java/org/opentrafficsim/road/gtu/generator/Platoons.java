@@ -28,7 +28,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGenerator;
-import org.opentrafficsim.road.gtu.generator.od.GtuCharacteristicsGeneratorOD;
+import org.opentrafficsim.road.gtu.generator.od.GtuCharacteristicsGeneratorOd;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -110,13 +110,13 @@ public abstract class Platoons<T>
      * @param position Set&lt;Lane&gt;; position
      * @return Platoons&lt;Category&gt;; platoons based on OD
      */
-    public static Platoons<Category> ofCategory(final GtuCharacteristicsGeneratorOD characteristics,
+    public static Platoons<Category> ofCategory(final GtuCharacteristicsGeneratorOd characteristics,
             final OtsSimulatorInterface simulator, final StreamInterface stream, final Set<Lane> position)
     {
         return new Platoons<Category>(simulator, position)
         {
             /** Characteristics generator OD based. */
-            private final GtuCharacteristicsGeneratorOD characteristicsOD = characteristics;
+            private final GtuCharacteristicsGeneratorOd characteristicsOD = characteristics;
 
             /** Random number stream. */
             private final StreamInterface strm = stream;

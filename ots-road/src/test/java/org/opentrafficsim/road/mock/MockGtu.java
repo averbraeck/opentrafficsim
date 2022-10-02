@@ -21,7 +21,7 @@ public class MockGtu
     private String name;
 
     /** mocked simulator. */
-    private OtsSimulatorInterface simulator = MockDEVSSimulator.createMock();
+    private OtsSimulatorInterface simulator = MockDevsSimulator.createMock();
 
     /**
      * @param name the name

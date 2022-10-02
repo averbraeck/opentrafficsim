@@ -35,7 +35,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LMRSFactory extends AbstractLaneBasedTacticalPlannerFactory<LMRS> implements Serializable
+public class LmrsFactory extends AbstractLaneBasedTacticalPlannerFactory<Lmrs> implements Serializable
 {
 
     /** */
@@ -69,7 +69,7 @@ public class LMRSFactory extends AbstractLaneBasedTacticalPlannerFactory<LMRS> i
      * @param perceptionFactory PerceptionFactory; perception factory
      * @throws GtuException if the supplied car-following model does not have an accessible empty constructor
      */
-    public LMRSFactory(final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory,
+    public LmrsFactory(final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory,
             final PerceptionFactory perceptionFactory) throws GtuException
     {
         super(carFollowingModelFactory, perceptionFactory);
@@ -92,7 +92,7 @@ public class LMRSFactory extends AbstractLaneBasedTacticalPlannerFactory<LMRS> i
      * @param voluntaryIncentives voluntary incentives; note that order may matter
      * @param accelerationIncentives Set&lt;AccelerationIncentive&gt;; acceleration incentives
      */
-    public LMRSFactory(final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory,
+    public LmrsFactory(final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory,
             final PerceptionFactory perceptionFactory, final Synchronization synchronization, final Cooperation cooperation,
             final GapAcceptance gapAcceptance, final Tailgating tailgating, final Set<MandatoryIncentive> mandatoryIncentives,
             final Set<VoluntaryIncentive> voluntaryIncentives, final Set<AccelerationIncentive> accelerationIncentives)
@@ -128,9 +128,9 @@ public class LMRSFactory extends AbstractLaneBasedTacticalPlannerFactory<LMRS> i
 
     /** {@inheritDoc} */
     @Override
-    public final LMRS create(final LaneBasedGtu gtu) throws GtuException
+    public final Lmrs create(final LaneBasedGtu gtu) throws GtuException
     {
-        LMRS lmrs = new LMRS(nextCarFollowingModel(gtu), gtu, getPerceptionFactory().generatePerception(gtu),
+        Lmrs lmrs = new Lmrs(nextCarFollowingModel(gtu), gtu, getPerceptionFactory().generatePerception(gtu),
                 this.synchronization, this.cooperation, this.gapAcceptance, this.tailgating);
         if (this.mandatoryIncentives.isEmpty())
         {

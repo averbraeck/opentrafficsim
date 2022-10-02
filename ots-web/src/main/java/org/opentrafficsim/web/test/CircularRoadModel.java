@@ -24,18 +24,18 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OTSRoadNode;
+import org.opentrafficsim.road.network.lane.OtsRoadNode;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDouble;
@@ -89,7 +89,7 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
     private Parameters parametersTruck;
 
     /** The OTSRoadNetwork. */
-    private final OTSRoadNetwork network;
+    private final OtsRoadNetwork network;
 
     /**
      * @param simulator OTSSimulatorInterface; the simulator for this model
@@ -97,7 +97,7 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
     public CircularRoadModel(final OtsSimulatorInterface simulator)
     {
         super(simulator);
-        this.network = new OTSRoadNetwork("network", true, simulator);
+        this.network = new OtsRoadNetwork("network", true, simulator);
         makeInputParameterMap();
     }
 
@@ -167,15 +167,15 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
             this.parametersTruck = InputParameterHelper.getParametersTruck(getInputParameterMap());
 
             this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
-                    new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
+                    new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()));
             this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                    new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
+                    new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()));
 
             GtuType gtuType = this.network.getGtuType(GtuType.DEFAULTS.CAR);
             LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
-            OTSRoadNode start = new OTSRoadNode(this.network, "Start", new OtsPoint3D(radius, 0, 0),
+            OtsRoadNode start = new OtsRoadNode(this.network, "Start", new OtsPoint3D(radius, 0, 0),
                     new Direction(90, DirectionUnit.EAST_DEGREE));
-            OTSRoadNode halfway = new OTSRoadNode(this.network, "Halfway", new OtsPoint3D(-radius, 0, 0),
+            OtsRoadNode halfway = new OtsRoadNode(this.network, "Halfway", new OtsPoint3D(-radius, 0, 0),
                     new Direction(-90, DirectionUnit.EAST_DEGREE));
 
             OtsPoint3D[] coordsHalf1 = new OtsPoint3D[127];
@@ -269,7 +269,7 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    public OTSRoadNetwork getNetwork()
+    public OtsRoadNetwork getNetwork()
     {
         return this.network;
     }

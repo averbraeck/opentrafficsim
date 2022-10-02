@@ -19,7 +19,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.demo.conflict.TestNetworkDemo.TestNetworkModel;
 import org.opentrafficsim.draw.core.OtsDrawingException;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
@@ -100,7 +100,7 @@ public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
         private static final long serialVersionUID = 20161211L;
 
         /** The network. */
-        private OTSRoadNetwork network;
+        private OtsRoadNetwork network;
 
         /**
          * @param simulator OTSSimulatorInterface; the simulator for this model
@@ -117,7 +117,7 @@ public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
             try
             {
                 URL xmlURL = URLResource.getResource("/resources/conflict/Test-Network-14.xml");
-                this.network = new OTSRoadNetwork("Test-Network-14", true, getSimulator());
+                this.network = new OtsRoadNetwork("Test-Network-14", true, getSimulator());
                 XmlNetworkLaneParser.build(xmlURL, this.network, false);
 
                 LaneCombinationList ignoreList = new LaneCombinationList();
@@ -152,7 +152,7 @@ public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
 
         /** {@inheritDoc} */
         @Override
-        public OTSRoadNetwork getNetwork()
+        public OtsRoadNetwork getNetwork()
         {
             return this.network;
         }

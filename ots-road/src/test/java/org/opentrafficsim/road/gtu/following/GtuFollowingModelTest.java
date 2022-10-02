@@ -40,11 +40,11 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractGtuFollowingM
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusOld;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -72,7 +72,7 @@ public class GtuFollowingModelTest implements UNITS
     private void gtuFollowingModelTests(final GtuFollowingModelOld gtuFollowingModel) throws Exception
     {
         OtsSimulatorInterface simulator = new OtsSimulator("GtuFollowingModelTest");
-        OTSRoadNetwork network = new OTSRoadNetwork("gtu following test network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("gtu following test network", true, simulator);
         Model model = new Model(simulator, network);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
 
@@ -329,7 +329,7 @@ public class GtuFollowingModelTest implements UNITS
     @Test
     public final void testIDM() throws Exception
     {
-        gtuFollowingModelTests(new IDMOld());
+        gtuFollowingModelTests(new IdmOld());
     }
 
     /**
@@ -339,7 +339,7 @@ public class GtuFollowingModelTest implements UNITS
     @Test
     public final void testIDMPlus() throws Exception
     {
-        gtuFollowingModelTests(new IDMPlusOld());
+        gtuFollowingModelTests(new IdmPlusOld());
     }
 
     /** The helper model. */
@@ -349,13 +349,13 @@ public class GtuFollowingModelTest implements UNITS
         private static final long serialVersionUID = 20141027L;
 
         /** */
-        private final OTSRoadNetwork network;
+        private final OtsRoadNetwork network;
 
         /**
          * @param simulator the simulator to use
          * @param network the network
          */
-        public Model(final OtsSimulatorInterface simulator, final OTSRoadNetwork network)
+        public Model(final OtsSimulatorInterface simulator, final OtsRoadNetwork network)
         {
             super(simulator);
             this.network = network;
@@ -370,7 +370,7 @@ public class GtuFollowingModelTest implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public final OTSRoadNetwork getNetwork()
+        public final OtsRoadNetwork getNetwork()
         {
             return this.network;
         }
