@@ -49,7 +49,7 @@ import org.opentrafficsim.demo.trafficcontrol.TrafCodDemo1;
 import org.opentrafficsim.demo.trafficcontrol.TrafCodDemo2;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 
-import nl.tudelft.simulation.dsol.jetty.sse.OTSWebModel;
+import nl.tudelft.simulation.dsol.jetty.sse.OtsWebModel;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterBoolean;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDistContinuousSelection;
@@ -85,7 +85,7 @@ public class OtsDemoServer implements Checkable
 
     /** the map of sessionIds to OTSWebModel that handles the animation and updates for the started model. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    final Map<String, OTSWebModel> sessionWebModelMap = new LinkedHashMap<>();
+    final Map<String, OtsWebModel> sessionWebModelMap = new LinkedHashMap<>();
 
     /** the map of sessionIds to the time in msec when the model has to be killed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -176,7 +176,7 @@ public class OtsDemoServer implements Checkable
                     }
                     for (String sessionId : kills)
                     {
-                        OTSWebModel webModel = OtsDemoServer.this.sessionWebModelMap.get(sessionId);
+                        OtsWebModel webModel = OtsDemoServer.this.sessionWebModelMap.get(sessionId);
                         if (webModel != null)
                         {
                             webModel.setKilled(true);
@@ -372,7 +372,7 @@ public class OtsDemoServer implements Checkable
                     try
                     {
                         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), model);
-                        OTSWebModel webModel = new OTSWebModel(model.getShortName(), simulator);
+                        OtsWebModel webModel = new OtsWebModel(model.getShortName(), simulator);
                         OtsDemoServer.this.sessionWebModelMap.put(sessionId, webModel);
                         DefaultAnimationFactory.animateNetwork(model.getNetwork(), simulator,
                                 new DefaultSwitchableGtuColorer());

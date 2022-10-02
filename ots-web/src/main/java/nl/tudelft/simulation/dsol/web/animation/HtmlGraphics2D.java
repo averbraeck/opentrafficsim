@@ -47,7 +47,7 @@ import nl.tudelft.simulation.dsol.logger.Cat;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class HTMLGraphics2D extends Graphics2D
+public class HtmlGraphics2D extends Graphics2D
 {
     /** the current color of the background for drawing. */
     Color background = Color.WHITE;
@@ -789,7 +789,7 @@ public class HTMLGraphics2D extends Graphics2D
     public Graphics create()
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLGraphics2D.create()");
-        return new HTMLGraphics2D(); // TODO: clone
+        return new HtmlGraphics2D(); // TODO: clone
     }
 
     /** {@inheritDoc} */

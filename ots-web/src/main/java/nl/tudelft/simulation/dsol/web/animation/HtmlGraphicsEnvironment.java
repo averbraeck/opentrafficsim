@@ -20,26 +20,26 @@ import nl.tudelft.simulation.dsol.logger.Cat;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class HTMLGraphicsEnvironment extends GraphicsEnvironment
+public class HtmlGraphicsEnvironment extends GraphicsEnvironment
 {
     /** the (dummy) device to use in the graphics environment. */
-    HTMLDevice htmlDevice;
+    HtmlDevice htmlDevice;
 
     /** the canvas to draw on. */
-    HTMLGraphics2D graphics2D;
+    HtmlGraphics2D graphics2D;
 
     /** the (dummy) configuration to use. */
-    HTMLGraphicsConfiguration graphicsConfiguration;
+    HtmlGraphicsConfiguration graphicsConfiguration;
 
     /**
      * 
      */
-    public HTMLGraphicsEnvironment()
+    public HtmlGraphicsEnvironment()
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLGraphicsEnvironment.<init>");
-        this.graphics2D = new HTMLGraphics2D();
-        this.graphicsConfiguration = new HTMLGraphicsConfiguration();
-        this.htmlDevice = new HTMLDevice(this.graphicsConfiguration);
+        this.graphics2D = new HtmlGraphics2D();
+        this.graphicsConfiguration = new HtmlGraphicsConfiguration();
+        this.htmlDevice = new HtmlDevice(this.graphicsConfiguration);
         this.graphicsConfiguration.setDevice(this.htmlDevice);
     }
 

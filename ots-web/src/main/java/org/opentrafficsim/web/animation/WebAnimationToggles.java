@@ -21,7 +21,7 @@ import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.web.animation.D2.HTMLAnimationPanel;
+import nl.tudelft.simulation.dsol.web.animation.D2.HtmlAnimationPanel;
 
 /**
  * Set the default animation toggles for the HTML animation panel.
@@ -47,7 +47,7 @@ public final class WebAnimationToggles
      * Set all commonly used animation on, and create the toggles on the left hand side.
      * @param panel HTMLAnimationPanel; the Animation panel to add the toggle to.
      */
-    public static void setTextAnimationTogglesFull(final HTMLAnimationPanel panel)
+    public static void setTextAnimationTogglesFull(final HtmlAnimationPanel panel)
     {
         panel.addToggleAnimationButtonText("Node", NodeAnimation.ElevatedNode.class, "Show/hide nodes", true);
         panel.addToggleAnimationButtonText("NodeId", NodeAnimation.Text.class, "Show/hide node Ids", false);
@@ -74,7 +74,7 @@ public final class WebAnimationToggles
      * Set the most common animation on, and create the toggles on the left hand side.
      * @param panel HTMLAnimationPanel; the Animation panel to add the toggle to.
      */
-    public static void setTextAnimationTogglesStandard(final HTMLAnimationPanel panel)
+    public static void setTextAnimationTogglesStandard(final HtmlAnimationPanel panel)
     {
         panel.addToggleAnimationButtonText("Node", NodeAnimation.ElevatedNode.class, "Show/hide nodes", false);
         panel.addToggleAnimationButtonText("NodeId", NodeAnimation.Text.class, "Show/hide node Ids", false);
@@ -100,7 +100,7 @@ public final class WebAnimationToggles
      * @param panel OTSAnimationPanel; the HTMLAnimationPanel where the animation of a class has to be switched off
      * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the animation has to be shown.
      */
-    public final static void showAnimationClass(final HTMLAnimationPanel panel, final Class<? extends Locatable> locatableClass)
+    public final static void showAnimationClass(final HtmlAnimationPanel panel, final Class<? extends Locatable> locatableClass)
     {
         panel.showClass(locatableClass);
     }
@@ -110,7 +110,7 @@ public final class WebAnimationToggles
      * @param panel HTMLAnimationPanel; the HTMLAnimationPanel where the animation of a class has to be switched off
      * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the animation has to be shown.
      */
-    public final static void hideAnimationClass(final HTMLAnimationPanel panel, final Class<? extends Locatable> locatableClass)
+    public final static void hideAnimationClass(final HtmlAnimationPanel panel, final Class<? extends Locatable> locatableClass)
     {
         panel.hideClass(locatableClass);
     }
@@ -119,7 +119,7 @@ public final class WebAnimationToggles
      * Set all commonly used animation on, and create the toggles on the left hand side.
      * @param panel HTMLAnimationPanel; the HTMLAnimationPanel where classes are shown or not.
      */
-    public static void showAnimationFull(final HTMLAnimationPanel panel)
+    public static void showAnimationFull(final HtmlAnimationPanel panel)
     {
         showAnimationClass(panel, OtsNode.class);
         hideAnimationClass(panel, NodeAnimation.Text.class);
@@ -146,7 +146,7 @@ public final class WebAnimationToggles
      * Set the most common animation on, and create the toggles on the left hand side.
      * @param panel OTSAnimationPanel; the WrappableAnimation.
      */
-    public static void showAnimationStandard(final HTMLAnimationPanel panel)
+    public static void showAnimationStandard(final HtmlAnimationPanel panel)
     {
         hideAnimationClass(panel, OtsNode.class);
         hideAnimationClass(panel, NodeAnimation.Text.class);

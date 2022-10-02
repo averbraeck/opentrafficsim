@@ -20,10 +20,10 @@ import nl.tudelft.simulation.dsol.logger.Cat;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class HTMLGraphicsConfiguration extends GraphicsConfiguration
+public class HtmlGraphicsConfiguration extends GraphicsConfiguration
 {
-    /** the {@link HTMLDevice} associated with this <code>HTMLGraphicsConfiguration</code>. */
-    HTMLDevice htmlDevice;
+    /** the {@link HtmlDevice} associated with this <code>HTMLGraphicsConfiguration</code>. */
+    HtmlDevice htmlDevice;
 
     /** the identity AffineTransform. */
     AffineTransform identityTransform = new AffineTransform();
@@ -34,7 +34,7 @@ public class HTMLGraphicsConfiguration extends GraphicsConfiguration
     /**
      * Create a graphics configuration for the HTML device.
      */
-    public HTMLGraphicsConfiguration()
+    public HtmlGraphicsConfiguration()
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLGraphicsConfiguration.<init>");
     }
@@ -48,11 +48,11 @@ public class HTMLGraphicsConfiguration extends GraphicsConfiguration
     }
 
     /**
-     * Set the {@link HTMLDevice} associated with this <code>HTMLGraphicsConfiguration</code>.
+     * Set the {@link HtmlDevice} associated with this <code>HTMLGraphicsConfiguration</code>.
      * @param htmlDevice HTMLDevice; a &lt;code&gt;GraphicsDevice&lt;/code&gt; object that is associated with this
      *            <code>HTMLGraphicsConfiguration</code>.
      */
-    public void setDevice(final HTMLDevice htmlDevice)
+    public void setDevice(final HtmlDevice htmlDevice)
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLGraphicsConfiguration.setDevice()");
         this.htmlDevice = htmlDevice;

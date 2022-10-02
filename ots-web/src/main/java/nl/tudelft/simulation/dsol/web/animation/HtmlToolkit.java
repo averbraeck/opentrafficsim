@@ -34,7 +34,7 @@ import nl.tudelft.simulation.dsol.logger.Cat;
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
 @SuppressWarnings("restriction")
-public class HTMLToolkit extends Toolkit
+public class HtmlToolkit extends Toolkit
 {
     /** the queue of AWT events to process. */
     EventQueue eventQueue = new EventQueue();
@@ -42,7 +42,7 @@ public class HTMLToolkit extends Toolkit
     /**
      * 
      */
-    public HTMLToolkit()
+    public HtmlToolkit()
     {
     }
 

@@ -15,7 +15,7 @@ import nl.tudelft.simulation.dsol.logger.Cat;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class HTMLDevice extends GraphicsDevice
+public class HtmlDevice extends GraphicsDevice
 {
     /** the GraphicsConfigurations for this HTMLDevice. */
     private GraphicsConfiguration[] htmlGraphicsConfigurations;
@@ -23,7 +23,7 @@ public class HTMLDevice extends GraphicsDevice
     /**
      * @param htmlGraphicsConfiguration GraphicsConfiguration; the GraphicsConfiguration to add to the HTMLDevice
      */
-    public HTMLDevice(GraphicsConfiguration htmlGraphicsConfiguration)
+    public HtmlDevice(GraphicsConfiguration htmlGraphicsConfiguration)
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLDevice.<init>");
         this.htmlGraphicsConfigurations = new GraphicsConfiguration[] {htmlGraphicsConfiguration};

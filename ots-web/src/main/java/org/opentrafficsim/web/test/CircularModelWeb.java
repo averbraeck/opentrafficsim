@@ -9,7 +9,7 @@ import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 
-import nl.tudelft.simulation.dsol.jetty.sse.OTSWebServer;
+import nl.tudelft.simulation.dsol.jetty.sse.OtsWebServer;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialog;
 
 /**
@@ -20,7 +20,7 @@ import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialo
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class CircularModelWeb extends OTSWebServer
+public class CircularModelWeb extends OtsWebServer
 {
     /**
      * @param title String; the tile for the model

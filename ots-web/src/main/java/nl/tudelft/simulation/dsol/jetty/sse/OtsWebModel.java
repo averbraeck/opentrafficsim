@@ -32,8 +32,8 @@ import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
 import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeAnimator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.dsol.web.animation.D2.HTMLAnimationPanel;
-import nl.tudelft.simulation.dsol.web.animation.D2.HTMLGridPanel;
+import nl.tudelft.simulation.dsol.web.animation.D2.HtmlAnimationPanel;
+import nl.tudelft.simulation.dsol.web.animation.D2.HtmlGridPanel;
 import nl.tudelft.simulation.dsol.web.animation.D2.ToggleButtonInfo;
 import nl.tudelft.simulation.introspection.Property;
 import nl.tudelft.simulation.introspection.beans.BeanIntrospector;
@@ -46,7 +46,7 @@ import nl.tudelft.simulation.introspection.beans.BeanIntrospector;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class OTSWebModel implements EventListenerInterface
+public class OtsWebModel implements EventListenerInterface
 {
     /** the title for the model window. */
     private final String title;
@@ -58,7 +58,7 @@ public class OTSWebModel implements EventListenerInterface
     private boolean dirtyControls = false;
 
     /** the animation panel. */
-    private HTMLAnimationPanel animationPanel;
+    private HtmlAnimationPanel animationPanel;
 
     /** Timer update interval in msec. */
     private long lastWallTIme = -1;
@@ -74,7 +74,7 @@ public class OTSWebModel implements EventListenerInterface
      * @param simulator OTSSimulatorInterface; the simulator
      * @throws Exception in case jetty crashes
      */
-    public OTSWebModel(final String title, final OtsSimulatorInterface simulator) throws Exception
+    public OtsWebModel(final String title, final OtsSimulatorInterface simulator) throws Exception
     {
         this.title = title;
         this.simulator = simulator;
@@ -91,7 +91,7 @@ public class OTSWebModel implements EventListenerInterface
 
         if (this.simulator instanceof AnimatorInterface)
         {
-            this.animationPanel = new HTMLAnimationPanel(extent, this.simulator);
+            this.animationPanel = new HtmlAnimationPanel(extent, this.simulator);
             WebAnimationToggles.setTextAnimationTogglesStandard(this.animationPanel);
             // get the already created elements in context(/animation/D2)
             this.animationPanel.notify(new TimedEvent(ReplicationInterface.START_REPLICATION_EVENT,
@@ -118,7 +118,7 @@ public class OTSWebModel implements EventListenerInterface
     /**
      * @return animationPanel
      */
-    public final HTMLAnimationPanel getAnimationPanel()
+    public final HtmlAnimationPanel getAnimationPanel()
     {
         return this.animationPanel;
     }
@@ -251,7 +251,7 @@ public class OTSWebModel implements EventListenerInterface
             String message = request.getParameter("message");
             String[] parts = message.split("\\|");
             String command = parts[0];
-            HTMLAnimationPanel animationPanel = getAnimationPanel();
+            HtmlAnimationPanel animationPanel = getAnimationPanel();
 
             switch (command)
             {
@@ -326,25 +326,25 @@ public class OTSWebModel implements EventListenerInterface
 
                 case "arrowDown":
                 {
-                    animationPanel.pan(HTMLGridPanel.DOWN, 0.1);
+                    animationPanel.pan(HtmlGridPanel.DOWN, 0.1);
                     break;
                 }
 
                 case "arrowUp":
                 {
-                    animationPanel.pan(HTMLGridPanel.UP, 0.1);
+                    animationPanel.pan(HtmlGridPanel.UP, 0.1);
                     break;
                 }
 
                 case "arrowLeft":
                 {
-                    animationPanel.pan(HTMLGridPanel.LEFT, 0.1);
+                    animationPanel.pan(HtmlGridPanel.LEFT, 0.1);
                     break;
                 }
 
                 case "arrowRight":
                 {
-                    animationPanel.pan(HTMLGridPanel.RIGHT, 0.1);
+                    animationPanel.pan(HtmlGridPanel.RIGHT, 0.1);
                     break;
                 }
 
@@ -591,7 +591,7 @@ public class OTSWebModel implements EventListenerInterface
      * @param panel HTMLAnimationPanel; the HTMLAnimationPanel
      * @return the String that can be parsed by the select.html iframe
      */
-    private String getToggles(final HTMLAnimationPanel panel)
+    private String getToggles(final HtmlAnimationPanel panel)
     {
         String ret = "<toggles>\n";
         for (ToggleButtonInfo toggle : panel.getToggleButtons())

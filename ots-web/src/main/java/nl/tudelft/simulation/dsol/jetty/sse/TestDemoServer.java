@@ -68,7 +68,7 @@ public class TestDemoServer
     final Map<String, OtsModelInterface> sessionModelMap = new LinkedHashMap<>();
 
     /** the map of sessionIds to OTSWebModel that handles the animation and updates for the started model. */
-    final Map<String, OTSWebModel> sessionWebModelMap = new LinkedHashMap<>();
+    final Map<String, OtsWebModel> sessionWebModelMap = new LinkedHashMap<>();
 
     /**
      * Run a SuperDemo OTS Web server.
@@ -190,7 +190,7 @@ public class TestDemoServer
                     try
                     {
                         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), model);
-                        OTSWebModel webModel = new OTSWebModel(model.getShortName(), simulator);
+                        OtsWebModel webModel = new OtsWebModel(model.getShortName(), simulator);
                         TestDemoServer.this.sessionWebModelMap.put(sessionId, webModel);
                         DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getNetwork().getSimulator(),
                                 new DefaultSwitchableGtuColorer());

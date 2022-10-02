@@ -39,8 +39,8 @@ import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
 import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeAnimator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.dsol.web.animation.D2.HTMLAnimationPanel;
-import nl.tudelft.simulation.dsol.web.animation.D2.HTMLGridPanel;
+import nl.tudelft.simulation.dsol.web.animation.D2.HtmlAnimationPanel;
+import nl.tudelft.simulation.dsol.web.animation.D2.HtmlGridPanel;
 import nl.tudelft.simulation.dsol.web.animation.D2.ToggleButtonInfo;
 import nl.tudelft.simulation.introspection.Property;
 import nl.tudelft.simulation.introspection.beans.BeanIntrospector;
@@ -53,7 +53,7 @@ import nl.tudelft.simulation.introspection.beans.BeanIntrospector;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public abstract class OTSWebServer implements EventListenerInterface
+public abstract class OtsWebServer implements EventListenerInterface
 {
     /** the title for the model window. */
     private final String title;
@@ -65,7 +65,7 @@ public abstract class OTSWebServer implements EventListenerInterface
     private boolean dirtyControls = false;
 
     /** the animation panel. */
-    private HTMLAnimationPanel animationPanel;
+    private HtmlAnimationPanel animationPanel;
 
     /**
      * @param title String; the title for the model window
@@ -73,7 +73,7 @@ public abstract class OTSWebServer implements EventListenerInterface
      * @param extent Bounds2d; the extent to use for the graphics (min/max coordinates)
      * @throws Exception in case jetty crashes
      */
-    public OTSWebServer(final String title, final OtsSimulatorInterface simulator, final Bounds2d extent) throws Exception
+    public OtsWebServer(final String title, final OtsSimulatorInterface simulator, final Bounds2d extent) throws Exception
     {
         this.title = title;
 
@@ -90,7 +90,7 @@ public abstract class OTSWebServer implements EventListenerInterface
 
         if (this.simulator instanceof AnimatorInterface)
         {
-            this.animationPanel = new HTMLAnimationPanel(extent, this.simulator);
+            this.animationPanel = new HtmlAnimationPanel(extent, this.simulator);
             WebAnimationToggles.setTextAnimationTogglesStandard(this.animationPanel);
             // get the already created elements in context(/animation/D2)
             this.animationPanel.notify(new TimedEvent(ReplicationInterface.START_REPLICATION_EVENT,
@@ -119,7 +119,7 @@ public abstract class OTSWebServer implements EventListenerInterface
             resourceHandler.setResourceBase(webRoot);
 
             HandlerList handlers = new HandlerList();
-            handlers.setHandlers(new Handler[] {resourceHandler, new XHRHandler(OTSWebServer.this)});
+            handlers.setHandlers(new Handler[] {resourceHandler, new XHRHandler(OtsWebServer.this)});
             server.setHandler(handlers);
 
             try
@@ -153,7 +153,7 @@ public abstract class OTSWebServer implements EventListenerInterface
     /**
      * @return animationPanel
      */
-    public final HTMLAnimationPanel getAnimationPanel()
+    public final HtmlAnimationPanel getAnimationPanel()
     {
         return this.animationPanel;
     }
@@ -249,7 +249,7 @@ public abstract class OTSWebServer implements EventListenerInterface
     public static class XHRHandler extends AbstractHandler
     {
         /** web server for callback of actions. */
-        final OTSWebServer webServer;
+        final OtsWebServer webServer;
 
         /** Timer update interval in msec. */
         private long lastWallTIme = -1;
@@ -261,7 +261,7 @@ public abstract class OTSWebServer implements EventListenerInterface
          * Create the handler for Servlet requests.
          * @param webServer OTSWebServer; web server for callback of actions
          */
-        public XHRHandler(final OTSWebServer webServer)
+        public XHRHandler(final OtsWebServer webServer)
         {
             this.webServer = webServer;
         }
@@ -284,7 +284,7 @@ public abstract class OTSWebServer implements EventListenerInterface
                 String message = request.getParameter("message");
                 String[] parts = message.split("\\|");
                 String command = parts[0];
-                HTMLAnimationPanel animationPanel = this.webServer.getAnimationPanel();
+                HtmlAnimationPanel animationPanel = this.webServer.getAnimationPanel();
 
                 switch (command)
                 {
@@ -359,25 +359,25 @@ public abstract class OTSWebServer implements EventListenerInterface
 
                     case "arrowDown":
                     {
-                        animationPanel.pan(HTMLGridPanel.DOWN, 0.1);
+                        animationPanel.pan(HtmlGridPanel.DOWN, 0.1);
                         break;
                     }
 
                     case "arrowUp":
                     {
-                        animationPanel.pan(HTMLGridPanel.UP, 0.1);
+                        animationPanel.pan(HtmlGridPanel.UP, 0.1);
                         break;
                     }
 
                     case "arrowLeft":
                     {
-                        animationPanel.pan(HTMLGridPanel.LEFT, 0.1);
+                        animationPanel.pan(HtmlGridPanel.LEFT, 0.1);
                         break;
                     }
 
                     case "arrowRight":
                     {
-                        animationPanel.pan(HTMLGridPanel.RIGHT, 0.1);
+                        animationPanel.pan(HtmlGridPanel.RIGHT, 0.1);
                         break;
                     }
 
@@ -624,7 +624,7 @@ public abstract class OTSWebServer implements EventListenerInterface
          * @param panel HTMLAnimationPanel; the HTMLAnimationPanel
          * @return the String that can be parsed by the select.html iframe
          */
-        private String getToggles(final HTMLAnimationPanel panel)
+        private String getToggles(final HtmlAnimationPanel panel)
         {
             String ret = "<toggles>\n";
             for (ToggleButtonInfo toggle : panel.getToggleButtons())

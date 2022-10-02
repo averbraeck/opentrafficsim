@@ -9,7 +9,7 @@ import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 
-import nl.tudelft.simulation.dsol.jetty.sse.OTSWebServer;
+import nl.tudelft.simulation.dsol.jetty.sse.OtsWebServer;
 
 /**
  * <p>
@@ -20,7 +20,7 @@ import nl.tudelft.simulation.dsol.jetty.sse.OTSWebServer;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class TJunctionDemo extends OTSWebServer
+public class TJunctionDemo extends OtsWebServer
 {
     /**
      * Create a T-Junction demo.

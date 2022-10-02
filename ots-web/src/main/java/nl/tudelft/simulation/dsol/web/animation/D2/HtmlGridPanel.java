@@ -16,7 +16,7 @@ import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.Point2d;
 
 import nl.tudelft.simulation.dsol.animation.D2.RenderableScale;
-import nl.tudelft.simulation.dsol.web.animation.HTMLGraphics2D;
+import nl.tudelft.simulation.dsol.web.animation.HtmlGraphics2D;
 
 /**
  * The GridPanel introduces the gridPanel.
@@ -26,7 +26,7 @@ import nl.tudelft.simulation.dsol.web.animation.HTMLGraphics2D;
  * </p>
  * @author <a href="mailto:nlang@fbk.eur.nl">Niels Lang </a>, <a href="https://www.peter-jacobs.com">Peter Jacobs </a>
  */
-public class HTMLGridPanel implements ImageObserver
+public class HtmlGridPanel implements ImageObserver
 {
     /** the UP directions for moving/zooming. */
     public static final int UP = 1;
@@ -107,7 +107,7 @@ public class HTMLGridPanel implements ImageObserver
 
     /** the HTMLGraphics2D 'shadow' canvas. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected HTMLGraphics2D htmlGraphics2D;
+    protected HtmlGraphics2D htmlGraphics2D;
 
     /** the renderable scale (X/Y ratio) to use. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -120,7 +120,7 @@ public class HTMLGridPanel implements ImageObserver
      * constructs a new GridPanel.
      * @param extent Bounds2d; the extent to show.
      */
-    public HTMLGridPanel(final Bounds2d extent)
+    public HtmlGridPanel(final Bounds2d extent)
     {
         this(extent, new Dimension(600, 600));
     }
@@ -130,9 +130,9 @@ public class HTMLGridPanel implements ImageObserver
      * @param extent Bounds2d; the initial extent.
      * @param size Dimension; the size of the panel in pixels.
      */
-    public HTMLGridPanel(final Bounds2d extent, final Dimension size)
+    public HtmlGridPanel(final Bounds2d extent, final Dimension size)
     {
-        this.htmlGraphics2D = new HTMLGraphics2D();
+        this.htmlGraphics2D = new HtmlGraphics2D();
         this.homeExtent = extent;
         this.renderableScale = new RenderableScale();
         this.setBackground(Color.WHITE);
@@ -157,7 +157,7 @@ public class HTMLGridPanel implements ImageObserver
      * Draw the grid.
      * @param g HTMLGraphics2D; the virtual Graphics2D canvas to enable writing to the browser
      */
-    public void paintComponent(final HTMLGraphics2D g)
+    public void paintComponent(final HtmlGraphics2D g)
     {
         if (!this.getSize().equals(this.lastDimension))
         {
