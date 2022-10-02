@@ -170,7 +170,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
                                 false, Duration.instantiateSI(60.0), false),
                         null));
             }
-            catch (NetworkException | GtuException exception)
+            catch (NetworkException exception)
             {
                 throw new OTSSimulationException(exception);
             }

@@ -252,15 +252,8 @@ public final class ODApplier
                 {
                     DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> demandNode = originNodePerLane.get(lane);
                     Set<LanePosition> initialPosition = new LinkedHashSet<>();
-                    try
-                    {
-                        initialPosition.add(lane.getParentLink().getStartNode().equals(demandNode.getObject())
-                                ? new LanePosition(lane, Length.ZERO) : new LanePosition(lane, lane.getLength()));
-                    }
-                    catch (GtuException ge)
-                    {
-                        throw new RuntimeException(ge);
-                    }
+                    initialPosition.add(lane.getParentLink().getStartNode().equals(demandNode.getObject())
+                            ? new LanePosition(lane, Length.ZERO) : new LanePosition(lane, lane.getLength()));
                     initialPositions.put(demandNode, initialPosition);
                 }
             }
@@ -542,20 +535,9 @@ public final class ODApplier
         for (Lane lane : link.getLanes())
         {
             // TODO should be GTU type dependent.
-            if (!lane.getParentLink().getStartNode().equals(node))
+            if (lane.getParentLink().getStartNode().equals(node))
             {
-                return;
-                // TODO handle lanes that ARE drivable contrary to the design direction of the link
-            }
-            try
-            {
-                positionSet.add(lane.getParentLink().getStartNode().equals(node) ? new LanePosition(lane, Length.ZERO)
-                        : new LanePosition(lane, lane.getLength()));
-            }
-            catch (GtuException ge)
-            {
-                link.getSimulator().getLogger().always().error(ge);
-                throw new RuntimeException(ge);
+                positionSet.add(new LanePosition(lane, Length.ZERO));
             }
         }
     }

@@ -32,12 +32,11 @@ public class LanePosition implements Serializable
      * Construct a new DirectedLanePosition.
      * @param lane Lane; the lane for the position
      * @param position Length; the position on the lane, relative to the cross section link (design line) line, or against it
-     * @throws GtuException when preconditions fail
      */
-    public LanePosition(final Lane lane, final Length position) throws GtuException
+    public LanePosition(final Lane lane, final Length position)
     {
-        Throw.when(lane == null, GtuException.class, "lane is null");
-        Throw.when(position == null, GtuException.class, "position is null");
+        Throw.whenNull(lane, "lane is null");
+        Throw.whenNull(position, "position is null");
         this.lane = lane;
         this.position = position;
     }

@@ -677,15 +677,7 @@ public abstract class AbstractLaneBasedGtu extends AbstractGtu implements LaneBa
             throw new RuntimeException("position on lane not possible", exception);
         }
         Throw.when(fromLane == null, RuntimeException.class, "No from lane for lane change event.");
-        LanePosition from;
-        try
-        {
-            from = new LanePosition(fromLane, fromPosition);
-        }
-        catch (GtuException exception)
-        {
-            throw new RuntimeException(exception);
-        }
+        LanePosition from = new LanePosition(fromLane, fromPosition);
         this.fireTimedEvent(LaneBasedGtu.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection, from},
                 getSimulator().getSimulatorTime());
     }

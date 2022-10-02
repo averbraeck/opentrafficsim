@@ -28,7 +28,6 @@ import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.road.DefaultTestParameters;
@@ -479,14 +478,7 @@ public class LaneBasedGtuTest implements UNITS
                     {
                         fail("Error in test; canot find lane with rank " + laneRank);
                     }
-                    try
-                    {
-                        result.add(new LanePosition(lane, new Length(rearPositionInLink, METER)));
-                    }
-                    catch (GtuException exception)
-                    {
-                        fail("Error in test; DirectedLanePosition for lane " + lane);
-                    }
+                    result.add(new LanePosition(lane, new Length(rearPositionInLink, METER)));
                 }
             }
             cumulativeLength += linkLength;

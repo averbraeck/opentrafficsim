@@ -592,15 +592,7 @@ public abstract class AbstractLaneBasedGtu2 extends AbstractGtu implements LaneB
         this.referenceLaneIndex = 0;
 
         Throw.when(fromLane == null, RuntimeException.class, "No from lane for lane change event.");
-        LanePosition from;
-        try
-        {
-            from = new LanePosition(fromLane, fromPosition);
-        }
-        catch (GtuException exception)
-        {
-            throw new RuntimeException(exception);
-        }
+        LanePosition from = new LanePosition(fromLane, fromPosition);
 
         // XXX: WRONG: this.fireTimedEvent(LaneBasedGtu.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection, from},
         // XXX: WRONG: getSimulator().getSimulatorTime());
