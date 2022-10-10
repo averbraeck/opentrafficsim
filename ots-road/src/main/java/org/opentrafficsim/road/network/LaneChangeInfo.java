@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.lane.tactical.routesystem;
+package org.opentrafficsim.road.network;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
