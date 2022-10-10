@@ -176,6 +176,9 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
         this.length = this.centerLine.getLength();
         this.contour = constructContour(this);
         this.parentLink.addCrossSectionElement(this);
+        
+        // clear lane change info cache for each cross section element created
+        parentLink.getNetwork().clearLaneChangeInfoCache();
     }
 
     /**
