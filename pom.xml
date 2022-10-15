@@ -518,7 +518,6 @@
             <link>https://sim0mq.org/docs/latest/apidocs/</link>
             <link>https://jar-download.com/artifacts/org.locationtech.jts/jts-core/1.19.0/documentation/</link>
             <link>http://poi.apache.org/apidocs/4.0/</link>
-            <!-- BUG JDK 11 link>https://jgrapht.org/javadoc/</link -->
           </links>
           <minmemory>256m</minmemory>
           <maxmemory>1g</maxmemory>
@@ -778,7 +777,6 @@
             <link>https://sim0mq.org/docs/latest/apidocs/</link>
             <link>https://jar-download.com/artifacts/org.locationtech.jts/jts-core/1.19.0/documentation/</link>
             <link>http://poi.apache.org/apidocs/4.0/</link>
-            <!-- BUG JDK 11 link>https://jgrapht.org/javadoc/</link -->
           </links>
           <minmemory>256m</minmemory>
           <maxmemory>1g</maxmemory>
