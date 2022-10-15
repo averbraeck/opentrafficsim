@@ -53,7 +53,8 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
  * sensors at exactly calculated and scheduled times, given the movement of the GTUs. <br>
  * Finally, the Lane stores the GTUs on the lane, and contains several access methods to determine successor and predecessor
  * GTUs, as well as methods to add a GTU to a lane (either at the start or in the middle when changing lanes), and remove a GTU
- * from the lane (either at the end, or in the middle when changing onto another lane).
+ * from the lane (either at the end, or in the middle when changing onto another lane). The GTU is only booked with its
+ * reference point on the lane, and is -- unless during a lane change -- only booked on one lane at a time.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -71,18 +72,9 @@ public class Lane extends CrossSectionElement implements Serializable
 
     /**
      * The speed limit of this lane, which can differ per GTU type. Cars might be allowed to drive 120 km/h and trucks 90 km/h.
-     * If the speed limit is the same for all GTU types, GtuType.ALL will be used. This means that the settings can be used
-     * additive, or subtractive. <br>
-     * In <b>additive use</b>, do not set the speed limit for GtuType.ALL. Now, one by one, the allowed maximum speeds for each
-     * of the GTU Types have be added. Do this when there are few GTU types or the speed limits per TU type are very different.
-     * <br>
-     * In <b>subtractive use</b>, set the speed limit for GtuType.ALL to the most common one. Override the speed limit for
-     * certain GtuTypes to a different value. An example is a lane on a highway where all vehicles, except truck (CAR, BUS,
-     * MOTORCYCLE, etc.), can drive 120 km/h, but trucks are allowed only 90 km/h. In that case, set the speed limit for
-     * GtuType.ALL to 120 km/h, and for TRUCK to 90 km/h.
+     * If the speed limit is the same for a family of GTU types, that family name (e.g., GtuType.VEHICLE) can be used. <br>
      */
-    // TODO allow for direction-dependent speed limit
-    private Map<GtuType, Speed> speedLimitMap;
+    private final Map<GtuType, Speed> speedLimitMap = new LinkedHashMap<>();
 
     /** Cached speed limits; these are cleared when a speed limit is changed. */
     private final Map<GtuType, Speed> cachedSpeedLimits = new LinkedHashMap<>();
@@ -91,14 +83,12 @@ public class Lane extends CrossSectionElement implements Serializable
      * Sensors on the lane to trigger behavior of the GTU, sorted by longitudinal position. The triggering of sensors is done
      * per GTU type, so different GTUs can trigger different sensors.
      */
-    // TODO allow for direction-dependent sensors
     private final SortedMap<Double, List<SingleSensor>> sensors = new TreeMap<>();
 
     /**
      * Objects on the lane can be observed by the GTU. Examples are signs, speed signs, blocks, and traffic lights. They are
      * sorted by longitudinal position.
      */
-    // FIXME this will fail if two objects share the same longitudinal position...
     private final SortedMap<Double, List<LaneBasedObject>> laneBasedObjects = new TreeMap<>();
 
     /** GTUs ordered by increasing longitudinal position; increasing in the direction of the center line. */
@@ -200,7 +190,7 @@ public class Lane extends CrossSectionElement implements Serializable
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, fixGradualLateralOffset);
         this.laneType = laneType;
-        this.speedLimitMap = speedLimitMap;
+        this.speedLimitMap.putAll(speedLimitMap);
         this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
     }
 
@@ -250,7 +240,6 @@ public class Lane extends CrossSectionElement implements Serializable
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, fixGradualLateralOffset);
         this.laneType = laneType;
-        this.speedLimitMap = new LinkedHashMap<>();
         this.speedLimitMap.put(parentLink.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), speedLimit);
         this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
     }
@@ -296,7 +285,7 @@ public class Lane extends CrossSectionElement implements Serializable
     {
         super(parentLink, id, lateralOffset, width);
         this.laneType = laneType;
-        this.speedLimitMap = speedLimitMap;
+        this.speedLimitMap.putAll(speedLimitMap);
         this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
     }
 
@@ -352,7 +341,7 @@ public class Lane extends CrossSectionElement implements Serializable
     {
         super(parentLink, id, crossSectionSlices);
         this.laneType = laneType;
-        this.speedLimitMap = speedLimitMap;
+        this.speedLimitMap.putAll(speedLimitMap);
         this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
     }
 
@@ -605,7 +594,6 @@ public class Lane extends CrossSectionElement implements Serializable
      * Retrieve the list of Sensors of this Lane that are triggered by the given GtuType. The resulting list is a defensive
      * copy.
      * @param gtuType GtuType; the GTU type to provide the sensors for
-     * @param direction GTUDirectionality; direction of movement of the GTU
      * @return List&lt;Sensor&gt;; list of the sensors, in ascending order for the location on the Lane
      */
     public final List<SingleSensor> getSensors(final GtuType gtuType)
@@ -671,15 +659,6 @@ public class Lane extends CrossSectionElement implements Serializable
                 sensorMap.put(d, sensorList);
             }
         }
-        // System.out.println("getSensorMap returns");
-        // for (Double key : sensorMap.keySet())
-        // {
-        // System.out.println("\t" + key + " -> " + (sensorMap.get(key).size()) + " sensors");
-        // for (Sensor s : sensorMap.get(key))
-        // {
-        // System.out.println("\t\t" + s);
-        // }
-        // }
         return sensorMap;
     }
 
@@ -687,7 +666,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * Schedule triggering of the sensors for a certain time step; from now until the nextEvaluationTime of the GTU.
      * @param gtu LaneBasedGtu; the lane based GTU for which to schedule triggering of the sensors.
      * @param referenceStartSI double; the SI distance of the GTU reference point on the lane at the current time
-     * @param referenceMoveSI double; the SI distance traveled in the next time step.
+     * @param referenceMoveSI double; the SI distance travelled in the next time step.
      * @throws NetworkException when GTU not on this lane.
      * @throws SimRuntimeException when method cannot be scheduled.
      */
