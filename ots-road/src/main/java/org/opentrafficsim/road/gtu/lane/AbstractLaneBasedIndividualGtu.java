@@ -17,7 +17,7 @@ import org.opentrafficsim.road.network.OtsRoadNetwork;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public abstract class AbstractLaneBasedIndividualGtu extends AbstractLaneBasedGtu2
+public abstract class AbstractLaneBasedIndividualGtu extends AbstractLaneBasedGtu
 {
     /** */
     private static final long serialVersionUID = 20140822L;

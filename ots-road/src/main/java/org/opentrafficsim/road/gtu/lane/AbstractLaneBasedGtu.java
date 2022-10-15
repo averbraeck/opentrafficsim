@@ -96,7 +96,7 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public abstract class AbstractLaneBasedGtu2 extends AbstractGtu implements LaneBasedGtu
+public abstract class AbstractLaneBasedGtu extends AbstractGtu implements LaneBasedGtu
 {
     /** */
     private static final long serialVersionUID = 20140822L;
@@ -175,7 +175,7 @@ public abstract class AbstractLaneBasedGtu2 extends AbstractGtu implements LaneB
      * @param network OTSRoadNetwork; the network that the GTU is initially registered in
      * @throws GtuException when initial values are not correct
      */
-    public AbstractLaneBasedGtu2(final String id, final GtuType gtuType, final OtsRoadNetwork network) throws GtuException
+    public AbstractLaneBasedGtu(final String id, final GtuType gtuType, final OtsRoadNetwork network) throws GtuException
     {
         super(id, gtuType, network.getSimulator(), network);
         OtsSimulatorInterface simulator = network.getSimulator();

@@ -37,7 +37,7 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.DefaultTestParameters;
-import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGtu2;
+import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCfLcTacticalPlanner;
@@ -224,7 +224,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
                 {
                     System.out.println("let op. InitialLongitudinalPositions: " + initialLongitudinalPositions);
                 }
-                ((AbstractLaneBasedGtu2) gtu).init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
+                ((AbstractLaneBasedGtu) gtu).init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
                 if (initialPosition.plus(gtuLength.divide(2)).lt(a) || initialPosition.minus(gtuLength.divide(2)).gt(b))
                 {
                     assertEquals("event list is empty", 0, this.loggedEvents.size());
