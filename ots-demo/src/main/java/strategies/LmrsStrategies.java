@@ -1276,7 +1276,7 @@ public class LmrsStrategies implements EventListenerInterface
             try
             {
                 vDes0 = Math.min(gtu.getMaximumSpeed().si, gtu.getParameters().getParameter(ParameterTypes.FSPEED)
-                        * loopDetector.getLane().getSpeedLimit(gtu.getGtuType()).si);
+                        * loopDetector.getLane().getSpeedLimit(gtu.getType()).si);
             }
             catch (ParameterException | NetworkException exception)
             {

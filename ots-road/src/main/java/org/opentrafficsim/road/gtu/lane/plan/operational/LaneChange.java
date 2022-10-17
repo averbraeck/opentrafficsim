@@ -202,7 +202,7 @@ public class LaneChange implements Serializable
             throw new OperationalPlanException("Second lane of lane change could not be determined.", exception);
         }
         Set<Lane> accessibleLanes =
-                dlp.getLane().accessibleAdjacentLanesPhysical(this.laneChangeDirectionality, gtu.getGtuType());
+                dlp.getLane().accessibleAdjacentLanesPhysical(this.laneChangeDirectionality, gtu.getType());
         if (!accessibleLanes.isEmpty() && map.containsKey(accessibleLanes.iterator().next()))
         {
             return isChangingLeft() ? RelativeLane.LEFT : RelativeLane.RIGHT;

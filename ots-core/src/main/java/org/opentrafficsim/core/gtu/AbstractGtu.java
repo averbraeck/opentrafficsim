@@ -378,7 +378,7 @@ public abstract class AbstractGtu extends EventProducer implements Gtu
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override
-    public GtuType getGtuType()
+    public GtuType getType()
     {
         return this.gtuType;
     }

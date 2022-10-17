@@ -87,10 +87,10 @@ public class SplitColorer implements GtuColorer
             try
             {
                 preLink = link;
-                nextLinks = link.getEndNode().nextLinks(gtu.getGtuType(), link);
+                nextLinks = link.getEndNode().nextLinks(gtu.getType(), link);
                 if (!nextLinks.isEmpty())
                 {
-                    link = laneGtu.getStrategicalPlanner().nextLink(preLink, gtu.getGtuType());
+                    link = laneGtu.getStrategicalPlanner().nextLink(preLink, gtu.getType());
                 }
             }
             catch (NetworkException exception)

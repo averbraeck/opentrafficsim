@@ -104,7 +104,7 @@ public class LaneBasedStrategicalRoutePlannerFactory
             strategicalPlanner = new LaneBasedStrategicalRoutePlanner(nextTacticalPlanner(gtu), route, gtu, origin, destination,
                     this.routeGenerator);
         }
-        gtu.setParameters(nextParameters(gtu.getGtuType()));
+        gtu.setParameters(nextParameters(gtu.getType()));
         return strategicalPlanner;
     }
 

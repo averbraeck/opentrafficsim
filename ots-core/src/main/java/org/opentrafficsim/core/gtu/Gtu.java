@@ -75,9 +75,6 @@ public interface Gtu
     /** @return the maximum deceleration of the GTU, in the linear direction, stored as a negative number. */
     Acceleration getMaximumDeceleration();
 
-    /** @return the type of GTU, e.g. TruckType, CarType, BusType. */
-    GtuType getGtuType();
-
     /** @return the simulator of the GTU. */
     OtsSimulatorInterface getSimulator();
 

@@ -152,7 +152,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGtu> implements R
             this.rightIndicator = new Rectangle2D.Double(lFront - w4, w2 - w4, w4, w4);
             this.leftBrake = new Rectangle2D.Double(lRear, w2 - w4, w4, w4);
             this.rightBrake = new Rectangle2D.Double(lRear, -w2, w4, w4);
-            this.dot = gtu.getGtuType().isOfType(gtu.getPerceivableContext().getGtuType(GtuType.DEFAULTS.TRUCK))
+            this.dot = gtu.getType().isOfType(gtu.getPerceivableContext().getGtuType(GtuType.DEFAULTS.TRUCK))
                     ? new Rectangle2D.Double(0, 0, 0, 0) : new Ellipse2D.Double(0, 0, 0, 0);
         }
 

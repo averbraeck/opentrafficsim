@@ -152,7 +152,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
 
         while (distanceToEndOfLane.lt(maxHeadway))
         {
-            Set<Lane> lanes = lane.nextLanes(gtu.getGtuType());
+            Set<Lane> lanes = lane.nextLanes(gtu.getType());
             if (lanes.size() == 0)
             {
                 // Dead end. Return with the list as is.
@@ -162,7 +162,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             {
                 // Ask the strategical planner what the next link should be (if known), because the strategical planner knows
                 // best!
-                Link link = gtu.getStrategicalPlanner().nextLink(lane.getParentLink(), gtu.getGtuType());
+                Link link = gtu.getStrategicalPlanner().nextLink(lane.getParentLink(), gtu.getType());
                 lane = lanes.iterator().next();
                 if (link != null && !lane.getParentLink().equals(link))
                 {
@@ -177,7 +177,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                 Link link;
                 try
                 {
-                    link = gtu.getStrategicalPlanner().nextLink(lane.getParentLink(), gtu.getGtuType());
+                    link = gtu.getStrategicalPlanner().nextLink(lane.getParentLink(), gtu.getType());
                 }
                 catch (NetworkException ne)
                 {
@@ -270,7 +270,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             while (linkIterator.hasNext())
             {
                 Link link = linkIterator.next();
-                if (!link.getType().isCompatible(gtu.getGtuType()) || link.getEndNode().equals(lastNode))
+                if (!link.getType().isCompatible(gtu.getType()) || link.getEndNode().equals(lastNode))
                 {
                     linkIterator.remove();
                 }
@@ -285,7 +285,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                     if (cse instanceof Lane)
                     {
                         Lane lane = (Lane) cse;
-                        if (lane.nextLanes(gtu.getGtuType()).size() == 0)
+                        if (lane.nextLanes(gtu.getType()).size() == 0)
                         {
                             laneChange = true;
                         }
@@ -318,7 +318,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             if (links.size() > 1)
             {
                 nextSplitNode = lastNode;
-                Link nextLink = gtu.getStrategicalPlanner().nextLink(nextSplitNode, lastLink, gtu.getGtuType());
+                Link nextLink = gtu.getStrategicalPlanner().nextLink(nextSplitNode, lastLink, gtu.getType());
                 // which lane(s) we are registered on and adjacent lanes link to a lane
                 // that is on the route at the next split?
                 for (CrossSectionElement cse : referenceLane.getParentLink().getCrossSectionElementList())
@@ -357,14 +357,14 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                 }
                 for (Lane wrongLane : wrongLanes)
                 {
-                    for (Lane adjLane : wrongLane.accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtu.getGtuType()))
+                    for (Lane adjLane : wrongLane.accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtu.getType()))
                     {
                         if (correctLanes.contains(adjLane))
                         {
                             return new NextSplitInfo(nextSplitNode, correctCurrentLanes, LateralDirectionality.LEFT);
                         }
                     }
-                    for (Lane adjLane : wrongLane.accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtu.getGtuType()))
+                    for (Lane adjLane : wrongLane.accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtu.getType()))
                     {
                         if (correctLanes.contains(adjLane))
                         {
@@ -469,7 +469,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             while (linkIterator.hasNext())
             {
                 Link link = linkIterator.next();
-                if (link.equals(lastLink) || !link.getType().isCompatible(gtu.getGtuType()))
+                if (link.equals(lastLink) || !link.getType().isCompatible(gtu.getType()))
                 {
                     linkIterator.remove();
                 }
@@ -482,7 +482,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             Link link;
             if (links.size() > 1)
             {
-                link = gtu.getStrategicalPlanner().nextLink(lastLink, gtu.getGtuType());
+                link = gtu.getStrategicalPlanner().nextLink(lastLink, gtu.getType());
             }
             else
             {

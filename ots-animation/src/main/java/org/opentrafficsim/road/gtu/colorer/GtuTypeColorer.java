@@ -113,7 +113,7 @@ public class GtuTypeColorer implements GtuColorer, Serializable
     @Override
     public Color getColor(final Gtu gtu)
     {
-        GtuType gtuType = gtu.getGtuType();
+        GtuType gtuType = gtu.getType();
         Color color = this.map.get(gtuType.getId());
         while (gtuType != null && color == null)
         {

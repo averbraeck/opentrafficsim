@@ -350,7 +350,7 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
             return GETOFFTHISLANENOW;
         }
         double remainingLength = lane.getLength().getSI() - longitudinalPosition.getSI();
-        double remainingTimeSI = TIMEHORIZON.getSI() - remainingLength / lane.getSpeedLimit(gtu.getGtuType()).getSI();
+        double remainingTimeSI = TIMEHORIZON.getSI() - remainingLength / lane.getSpeedLimit(gtu.getType()).getSI();
         while (remainingTimeSI >= 0)
         {
             for (SingleSensor s : lane.getSensors())
@@ -360,7 +360,7 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
                     return NOLANECHANGENEEDED;
                 }
             }
-            int branching = lane.nextLanes(gtu.getGtuType()).size();
+            int branching = lane.nextLanes(gtu.getType()).size();
             if (branching == 0)
             {
                 return new Length(remainingLength, LengthUnit.SI);
@@ -369,8 +369,8 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
             {
                 return NOLANECHANGENEEDED;
             }
-            lane = lane.nextLanes(gtu.getGtuType()).iterator().next();
-            remainingTimeSI -= lane.getLength().getSI() / lane.getSpeedLimit(gtu.getGtuType()).getSI();
+            lane = lane.nextLanes(gtu.getType()).iterator().next();
+            remainingTimeSI -= lane.getLength().getSI() / lane.getSpeedLimit(gtu.getType()).getSI();
             remainingLength += lane.getLength().getSI();
         }
         return NOLANECHANGENEEDED;
@@ -445,7 +445,7 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
             final Duration timeHorizon) throws NetworkException
     {
         double remainingDistance = lane.getLength().getSI() - longitudinalPosition.getSI();
-        double spareTime = timeHorizon.getSI() - remainingDistance / lane.getSpeedLimit(gtu.getGtuType()).getSI();
+        double spareTime = timeHorizon.getSI() - remainingDistance / lane.getSpeedLimit(gtu.getType()).getSI();
         // Find the first upcoming Node where there is a branch
         Node nextNode = lane.getParentLink().getEndNode();
         Link lastLink = lane.getParentLink();
@@ -458,7 +458,7 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
             {
                 return NOLANECHANGENEEDED; // It is not yet time to worry; this lane will do as well as any other
             }
-            int laneCount = countCompatibleLanes(linkBeforeBranch, gtu.getGtuType());
+            int laneCount = countCompatibleLanes(linkBeforeBranch, gtu.getType());
             if (0 == laneCount)
             {
                 throw new NetworkException("No compatible Lanes on Link " + linkBeforeBranch);
@@ -480,7 +480,7 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
             }
             else
             { // Look beyond this nextNode
-                Link nextLink = gtu.getStrategicalPlanner().nextLink(nextNode, lastLink, gtu.getGtuType());
+                Link nextLink = gtu.getStrategicalPlanner().nextLink(nextNode, lastLink, gtu.getType());
                 if (nextLink instanceof CrossSectionLink)
                 {
                     nextNode = nextLink.getEndNode();
@@ -488,16 +488,16 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
                     remainingDistance += nextLink.getLength().getSI();
                     linkBeforeBranch = (CrossSectionLink) nextLink;
                     // Figure out the new currentLane
-                    if (currentLane.nextLanes(gtu.getGtuType()).size() == 0)
+                    if (currentLane.nextLanes(gtu.getType()).size() == 0)
                     {
                         // Lane drop; our lane disappears. This is a compulsory lane change; which is not controlled
                         // by the Route. Perform the forced lane change.
-                        if (currentLane.accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtu.getGtuType()).size() > 0)
+                        if (currentLane.accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtu.getType()).size() > 0)
                         {
                             for (Lane adjacentLane : currentLane.accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT,
-                                    gtu.getGtuType()))
+                                    gtu.getType()))
                             {
-                                if (adjacentLane.nextLanes(gtu.getGtuType()).size() > 0)
+                                if (adjacentLane.nextLanes(gtu.getType()).size() > 0)
                                 {
                                     currentLane = adjacentLane;
                                     break;
@@ -507,9 +507,9 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
                             }
                         }
                         for (Lane adjacentLane : currentLane.accessibleAdjacentLanesLegal(LateralDirectionality.LEFT,
-                                gtu.getGtuType()))
+                                gtu.getType()))
                         {
-                            if (adjacentLane.nextLanes(gtu.getGtuType()).size() > 0)
+                            if (adjacentLane.nextLanes(gtu.getType()).size() > 0)
                             {
                                 currentLane = adjacentLane;
                                 break;
@@ -517,19 +517,19 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
                             // If there are several adjacent lanes that have non empty nextLanes, we simple take the
                             // first in the set
                         }
-                        if (currentLane.nextLanes(gtu.getGtuType()).size() == 0)
+                        if (currentLane.nextLanes(gtu.getType()).size() == 0)
                         {
                             throw new NetworkException(
                                     "Lane ends and there is not a compatible adjacent lane that does " + "not end");
                         }
                     }
                     // Any compulsory lane change(s) have been performed and there is guaranteed a compatible next lane.
-                    for (Lane nextLane : currentLane.nextLanes(gtu.getGtuType()))
+                    for (Lane nextLane : currentLane.nextLanes(gtu.getType()))
                     {
-                        currentLane = currentLane.nextLanes(gtu.getGtuType()).iterator().next();
+                        currentLane = currentLane.nextLanes(gtu.getType()).iterator().next();
                         break;
                     }
-                    spareTime -= currentLane.getLength().getSI() / currentLane.getSpeedLimit(gtu.getGtuType()).getSI();
+                    spareTime -= currentLane.getLength().getSI() / currentLane.getSpeedLimit(gtu.getType()).getSI();
                 }
                 else
                 {
@@ -547,18 +547,18 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
         // We have now found the first upcoming branching Node
         // Which continuing link is the one we need?
         Map<Lane, Length> suitabilityOfLanesBeforeBranch = new LinkedHashMap<>();
-        Link linkAfterBranch = gtu.getStrategicalPlanner().nextLink(nextSplitNode, lastLink, gtu.getGtuType());
+        Link linkAfterBranch = gtu.getStrategicalPlanner().nextLink(nextSplitNode, lastLink, gtu.getType());
         for (CrossSectionElement cse : linkBeforeBranch.getCrossSectionElementList())
         {
             if (cse instanceof Lane)
             {
                 Lane l = (Lane) cse;
-                if (l.getLaneType().isCompatible(gtu.getGtuType()))
+                if (l.getLaneType().isCompatible(gtu.getType()))
                 {
-                    for (Lane connectingLane : l.nextLanes(gtu.getGtuType()))
+                    for (Lane connectingLane : l.nextLanes(gtu.getType()))
                     {
                         if (connectingLane.getParentLink() == linkAfterBranch
-                                && connectingLane.getLaneType().isCompatible(gtu.getGtuType()))
+                                && connectingLane.getLaneType().isCompatible(gtu.getType()))
                         {
                             Length currentValue = suitabilityOfLanesBeforeBranch.get(l);
                             // Use recursion to find out HOW suitable this continuation lane is, but don't revert back
@@ -587,11 +587,11 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
             return currentLaneSuitability; // Following the current lane will keep us on the Route
         }
         // Performing one or more lane changes (left or right) is required.
-        int totalLanes = countCompatibleLanes(currentLane.getParentLink(), gtu.getGtuType());
+        int totalLanes = countCompatibleLanes(currentLane.getParentLink(), gtu.getType());
         Length leftSuitability = computeSuitabilityWithLaneChanges(currentLane, remainingDistance,
-                suitabilityOfLanesBeforeBranch, totalLanes, LateralDirectionality.LEFT, gtu.getGtuType());
+                suitabilityOfLanesBeforeBranch, totalLanes, LateralDirectionality.LEFT, gtu.getType());
         Length rightSuitability = computeSuitabilityWithLaneChanges(currentLane, remainingDistance,
-                suitabilityOfLanesBeforeBranch, totalLanes, LateralDirectionality.RIGHT, gtu.getGtuType());
+                suitabilityOfLanesBeforeBranch, totalLanes, LateralDirectionality.RIGHT, gtu.getType());
         if (leftSuitability.ge(rightSuitability))
         {
             return leftSuitability;

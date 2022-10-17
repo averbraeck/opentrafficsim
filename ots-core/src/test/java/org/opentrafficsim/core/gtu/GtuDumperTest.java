@@ -247,7 +247,7 @@ public class GtuDumperTest implements OtsModelInterface
             }
 
             @Override
-            public GtuType getGtuType()
+            public GtuType getType()
             {
                 return null;
             }

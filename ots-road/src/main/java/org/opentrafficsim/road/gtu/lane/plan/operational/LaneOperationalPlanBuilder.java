@@ -339,7 +339,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                 {
                     // check sink sensor
                     Length pos = prevFrom.getLength();
-                    for (SingleSensor sensor : prevFrom.getSensors(pos, pos, gtu.getGtuType()))
+                    for (SingleSensor sensor : prevFrom.getSensors(pos, pos, gtu.getType()))
                     {
                         // XXX for now, the same is not done for the DestinationSensor (e.g., decrease speed for parking)
                         if (sensor instanceof SinkSensor)
@@ -464,7 +464,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
             // get position on from lane
             Map<Lane, Length> positions = gtu.positions(gtu.getReference());
             LanePosition ref = gtu.getReferencePosition();
-            Iterator<Lane> iterator = ref.getLane().accessibleAdjacentLanesPhysical(direction, gtu.getGtuType()).iterator();
+            Iterator<Lane> iterator = ref.getLane().accessibleAdjacentLanesPhysical(direction, gtu.getType()).iterator();
             Lane adjLane = iterator.hasNext() ? iterator.next() : null;
             LanePosition from = null;
             if (laneChange.getDirection() == null || (adjLane != null && positions.containsKey(adjLane)))
@@ -477,7 +477,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                 // reference lane is to lane, this should be accounted for
                 for (Lane lane : positions.keySet())
                 {
-                    if (lane.accessibleAdjacentLanesPhysical(direction, gtu.getGtuType()).contains(ref.getLane()))
+                    if (lane.accessibleAdjacentLanesPhysical(direction, gtu.getType()).contains(ref.getLane()))
                     {
                         from = new LanePosition(lane, positions.get(lane));
                         break;

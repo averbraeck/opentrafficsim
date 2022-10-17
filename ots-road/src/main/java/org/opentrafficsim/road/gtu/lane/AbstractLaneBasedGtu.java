@@ -346,7 +346,7 @@ public abstract class AbstractLaneBasedGtu extends AbstractGtu implements LaneBa
                 new Object[] {getId(), new OtsPoint3D(initialLocation).doubleVector(PositionUnit.METER),
                         OtsPoint3D.direction(initialLocation, DirectionUnit.EAST_RADIAN), getLength(), getWidth(),
                         referencePosition.getLane().getParentLink().getId(), referencePosition.getLane().getId(),
-                        referencePosition.getPosition(), getGtuType().getId()},
+                        referencePosition.getPosition(), getType().getId()},
                 getSimulator().getSimulatorTime());
 
         // register the GTU on the lanes
@@ -414,7 +414,7 @@ public abstract class AbstractLaneBasedGtu extends AbstractGtu implements LaneBa
         LanePosition from = getReferencePosition();
 
         // obtain position on lane adjacent to reference lane and enter lanes upstream/downstream from there
-        Set<Lane> adjLanes = from.getLane().accessibleAdjacentLanesPhysical(laneChangeDirection, getGtuType());
+        Set<Lane> adjLanes = from.getLane().accessibleAdjacentLanesPhysical(laneChangeDirection, getType());
         Lane adjLane = adjLanes.iterator().next();
         Length position = adjLane.position(from.getLane().fraction(from.getPosition()));
         leaveAllLanes();
@@ -459,7 +459,7 @@ public abstract class AbstractLaneBasedGtu extends AbstractGtu implements LaneBa
             }
             if (before != null)
             {
-                ImmutableSet<Lane> upstream = new ImmutableLinkedHashSet<>(lane.prevLanes(getGtuType()));
+                ImmutableSet<Lane> upstream = new ImmutableLinkedHashSet<>(lane.prevLanes(getType()));
                 if (!upstream.isEmpty())
                 {
                     Lane upLane = null;
@@ -526,7 +526,7 @@ public abstract class AbstractLaneBasedGtu extends AbstractGtu implements LaneBa
             List<Lane> resultingLanes = new ArrayList<>();
             Lane lane = crossSection.getLanes().get(0);
             resultingLanes.add(lane);
-            Set<Lane> laneSet = lane.accessibleAdjacentLanesLegal(laneChangeDirection, getGtuType());
+            Set<Lane> laneSet = lane.accessibleAdjacentLanesLegal(laneChangeDirection, getType());
             if (laneSet.size() > 0)
             {
                 numRegistered++;
@@ -779,7 +779,7 @@ public abstract class AbstractLaneBasedGtu extends AbstractGtu implements LaneBa
             else
             {
                 Lane lane = lastCrossSection.getLanes().get(i);
-                Set<Lane> lanes = lane.nextLanes(getGtuType());
+                Set<Lane> lanes = lane.nextLanes(getType());
                 if (lanes.size() == 1)
                 {
                     Lane nextLane = lanes.iterator().next();
@@ -793,7 +793,7 @@ public abstract class AbstractLaneBasedGtu extends AbstractGtu implements LaneBa
                         if (nextLane.getParentLink().equals(nextLcsLane.getParentLink())
                                 && nextLane
                                         .accessibleAdjacentLanesPhysical(this.referenceLaneIndex == 0
-                                                ? LateralDirectionality.LEFT : LateralDirectionality.RIGHT, getGtuType())
+                                                ? LateralDirectionality.LEFT : LateralDirectionality.RIGHT, getType())
                                         .contains(nextLcsLane))
                         {
                             nextLanes.add(nextLane);
@@ -935,7 +935,7 @@ public abstract class AbstractLaneBasedGtu extends AbstractGtu implements LaneBa
         Length remain = remainingEventDistance();
         double min = position(lane, getRear()).si;
         double max = min + remain.si + getLength().si;
-        SortedMap<Double, List<SingleSensor>> sensors = lane.getSensorMap(getGtuType()).subMap(min, max);
+        SortedMap<Double, List<SingleSensor>> sensors = lane.getSensorMap(getType()).subMap(min, max);
         for (List<SingleSensor> list : sensors.values())
         {
             for (SingleSensor sensor : list)
@@ -971,7 +971,7 @@ public abstract class AbstractLaneBasedGtu extends AbstractGtu implements LaneBa
     @Override
     public final Lane getNextLaneForRoute(final Lane lane)
     {
-        Set<Lane> next = lane.nextLanes(getGtuType());
+        Set<Lane> next = lane.nextLanes(getType());
         if (next.isEmpty())
         {
             return null;
@@ -1000,7 +1000,7 @@ public abstract class AbstractLaneBasedGtu extends AbstractGtu implements LaneBa
     @Override
     public Set<Lane> getNextLanesForRoute(final Lane lane)
     {
-        Set<Lane> next = lane.nextLanes(getGtuType());
+        Set<Lane> next = lane.nextLanes(getType());
         if (next.isEmpty())
         {
             return null;
@@ -1008,7 +1008,7 @@ public abstract class AbstractLaneBasedGtu extends AbstractGtu implements LaneBa
         Link link;
         try
         {
-            link = getStrategicalPlanner().nextLink(lane.getParentLink(), getGtuType());
+            link = getStrategicalPlanner().nextLink(lane.getParentLink(), getType());
         }
         catch (NetworkException exception)
         {

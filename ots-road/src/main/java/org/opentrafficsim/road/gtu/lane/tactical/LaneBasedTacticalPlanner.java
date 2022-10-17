@@ -52,7 +52,7 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGtu, 
             LateralDirectionality forceSide = LateralDirectionality.NONE;
             try
             {
-                Set<Lane> leftLanes = from.accessibleAdjacentLanesPhysical(LateralDirectionality.LEFT, getGtu().getGtuType());
+                Set<Lane> leftLanes = from.accessibleAdjacentLanesPhysical(LateralDirectionality.LEFT, getGtu().getType());
                 if (!Collections.disjoint(getGtu().positions(getGtu().getReference()).keySet(), leftLanes))
                 {
                     forceSide = LateralDirectionality.LEFT;
@@ -60,7 +60,7 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGtu, 
                 else
                 {
                     Set<Lane> rightLanes =
-                            from.accessibleAdjacentLanesPhysical(LateralDirectionality.RIGHT, getGtu().getGtuType());
+                            from.accessibleAdjacentLanesPhysical(LateralDirectionality.RIGHT, getGtu().getType());
                     if (!Collections.disjoint(getGtu().positions(getGtu().getReference()).keySet(), rightLanes))
                     {
                         forceSide = LateralDirectionality.RIGHT;

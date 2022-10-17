@@ -137,7 +137,7 @@ public class AbstractLaneBasedGtuTest implements UNITS
         // .getBehavioralCharacteristics().getGtuFollowingModel());
         assertEquals("Width should be identical to the provided width", carWidth, car.getWidth());
         assertEquals("Length should be identical to the provided length", carLength, car.getLength());
-        assertEquals("GTU type should be identical to the provided one", gtuType, car.getGtuType());
+        assertEquals("GTU type should be identical to the provided one", gtuType, car.getType());
         assertEquals("front in lanesGroupA[1] is positionA", positionA.getSI(),
                 car.position(lanesGroupA[1], car.getReference()).getSI(), 0.0001);
         assertEquals("front in lanesGroupB[1] is positionB", positionB.getSI(),

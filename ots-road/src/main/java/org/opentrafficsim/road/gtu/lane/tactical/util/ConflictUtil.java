@@ -185,7 +185,7 @@ public final class ConflictUtil
             if (lane.isCurrent())
             {
                 if (gtu.getStrategicalPlanner().getRoute() instanceof BusSchedule
-                        && gtu.getGtuType().isOfType(GtuType.DEFAULTS.BUS)
+                        && gtu.getType().isOfType(GtuType.DEFAULTS.BUS)
                         && conflict.getConflictRuleType().equals(BusStopConflictRule.class))
                 {
                     BusSchedule busSchedule = (BusSchedule) gtu.getStrategicalPlanner().getRoute();

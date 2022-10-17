@@ -45,7 +45,7 @@ public class IncentiveStayRight implements VoluntaryIncentive
         LaneStructureRecord record = root;
         RelativeLane lane = RelativeLane.CURRENT;
         Route route = Try.assign(() -> perception.getGtu().getStrategicalPlanner().getRoute(), "");
-        GtuType gtuType = Try.assign(() -> perception.getGtu().getGtuType(), "");
+        GtuType gtuType = Try.assign(() -> perception.getGtu().getType(), "");
         Speed speed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
         // move all the way left
         while (record.physicalLeft())

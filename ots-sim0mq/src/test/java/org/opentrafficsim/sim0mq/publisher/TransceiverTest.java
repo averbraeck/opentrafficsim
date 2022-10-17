@@ -634,7 +634,7 @@ class MyMockGTU
         this.simulator = simulator;
         this.mockGTU = Mockito.mock(LaneBasedGtu.class);
         Mockito.when(this.mockGTU.getSimulator()).thenReturn(this.simulator);
-        Mockito.when(this.mockGTU.getGtuType()).thenReturn(this.gtuType);
+        Mockito.when(this.mockGTU.getType()).thenReturn(this.gtuType);
         Mockito.when(this.mockGTU.getLocation()).thenReturn(this.location);
         Mockito.when(this.mockGTU.getSpeed()).thenReturn(this.speed);
         Mockito.when(this.mockGTU.getAcceleration()).thenReturn(this.acceleration);

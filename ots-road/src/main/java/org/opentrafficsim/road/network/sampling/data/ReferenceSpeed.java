@@ -39,7 +39,7 @@ public class ReferenceSpeed extends ExtendedDataTypeSpeed<GtuData>
         LaneBasedGtu gtuObj = gtu.getGtu();
         try
         {
-            double v1 = gtuObj.getReferencePosition().getLane().getSpeedLimit(gtuObj.getGtuType()).si;
+            double v1 = gtuObj.getReferencePosition().getLane().getSpeedLimit(gtuObj.getType()).si;
             double v2 = gtuObj.getMaximumSpeed().si;
             return new FloatSpeed(v1 < v2 ? v1 : v2, SpeedUnit.SI);
         }

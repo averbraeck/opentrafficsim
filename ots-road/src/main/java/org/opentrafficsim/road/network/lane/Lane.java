@@ -680,7 +680,7 @@ public class Lane extends CrossSectionElement implements Serializable
         {
             for (SingleSensor sensor : map.get(pos))
             {
-                if (sensor.isCompatible(gtu.getGtuType()))
+                if (sensor.isCompatible(gtu.getType()))
                 {
                     double dx = gtu.getRelativePositions().get(sensor.getPositionType()).getDx().si;
                     minPos = referenceStartSI + dx;
@@ -1331,7 +1331,7 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final Lane getAdjacentLane(final LateralDirectionality laneChangeDirection, final LaneBasedGtu gtu)
     {
-        Set<Lane> adjLanes = accessibleAdjacentLanesLegal(laneChangeDirection, gtu.getGtuType());
+        Set<Lane> adjLanes = accessibleAdjacentLanesLegal(laneChangeDirection, gtu.getType());
         if (!adjLanes.isEmpty())
         {
             return adjLanes.iterator().next();

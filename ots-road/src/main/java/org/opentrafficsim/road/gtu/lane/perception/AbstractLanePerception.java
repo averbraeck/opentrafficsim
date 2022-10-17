@@ -104,7 +104,7 @@ public abstract class AbstractLanePerception extends AbstractPerception<LaneBase
             try
             {
                 dlp = getGtu().getReferencePosition();
-                this.laneStructure.update(dlp, getGtu().getStrategicalPlanner().getRoute(), getGtu().getGtuType());
+                this.laneStructure.update(dlp, getGtu().getStrategicalPlanner().getRoute(), getGtu().getType());
             }
             catch (GtuException exception)
             {

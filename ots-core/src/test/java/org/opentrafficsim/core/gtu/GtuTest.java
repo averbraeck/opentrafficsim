@@ -152,7 +152,7 @@ public class GtuTest
                 String gtuId = id + " " + gtuType.getId();
                 TestGtu gtu = new TestGtu(gtuId, gtuType, simulator, perceivableContext);
                 assertEquals("new GTU has correct id", gtuId, gtu.getId());
-                assertEquals("new GTU has correct GtuType", gtuType, gtu.getGtuType());
+                assertEquals("new GTU has correct GtuType", gtuType, gtu.getType());
                 assertEquals("new GTU has correct reference position", RelativePosition.REFERENCE_POSITION, gtu.getReference());
                 assertEquals("new GTU has correct simulator", simulator, gtu.getSimulator());
                 assertEquals("new GTU has odometer value 0", 0, gtu.getOdometer().si, 0);
@@ -165,7 +165,7 @@ public class GtuTest
             }
         }
         assertFalse("first GTU and last GTU have different id", firstGTU.getId().equals(lastGTU.getId()));
-        assertFalse("first GTU and last GTU have different GtuType", firstGTU.getGtuType().equals(lastGTU.getGtuType()));
+        assertFalse("first GTU and last GTU have different GtuType", firstGTU.getType().equals(lastGTU.getType()));
         TestGtu gtu = new TestGtu("id3", gtuType1, simulator, perceivableContext);
         assertEquals("perceivable context now contains 5 GTUs", 5, perceivableContext.getGTUs().size());
         gtu.destroy();

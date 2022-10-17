@@ -424,7 +424,7 @@ public final class AhfeUtil
                     GapAcceptance.INFORMED, Tailgating.NONE);
             lmrs.addMandatoryIncentive(new IncentiveRoute());
             lmrs.addVoluntaryIncentive(new IncentiveSpeedWithCourtesy());
-            if (gtu.getGtuType().getId().equals("car"))
+            if (gtu.getType().getId().equals("car"))
             {
                 lmrs.addVoluntaryIncentive(new IncentiveKeep());
             }

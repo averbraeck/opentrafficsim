@@ -32,7 +32,7 @@ public class HeadwayGtuPerceived extends HeadwayGtuRealCopy
     public HeadwayGtuPerceived(final LaneBasedGtu gtu, final Length distance, final Speed speed,
             final Acceleration acceleration) throws GtuException
     {
-        super(gtu.getId(), gtu.getGtuType(), distance, gtu.getLength(), gtu.getWidth(), speed, acceleration,
+        super(gtu.getId(), gtu.getType(), distance, gtu.getLength(), gtu.getWidth(), speed, acceleration,
                 gtu.getTacticalPlanner().getCarFollowingModel(), new ParameterSet(gtu.getParameters()), getSpeedLimitInfo(gtu),
                 gtu.getStrategicalPlanner().getRoute(), gtu.getDesiredSpeed(),
                 getGtuStatuses(gtu, gtu.getSimulator().getSimulatorAbsTime()));
@@ -50,7 +50,7 @@ public class HeadwayGtuPerceived extends HeadwayGtuRealCopy
     public HeadwayGtuPerceived(final LaneBasedGtu gtu, final Length overlapFront, final Length overlap,
             final Length overlapRear, final Speed speed, final Acceleration acceleration) throws GtuException
     {
-        super(gtu.getId(), gtu.getGtuType(), overlapFront, overlap, overlapRear, gtu.getLength(), gtu.getWidth(), speed,
+        super(gtu.getId(), gtu.getType(), overlapFront, overlap, overlapRear, gtu.getLength(), gtu.getWidth(), speed,
                 acceleration, gtu.getTacticalPlanner().getCarFollowingModel(), new ParameterSet(gtu.getParameters()),
                 getSpeedLimitInfo(gtu), gtu.getStrategicalPlanner().getRoute(), gtu.getDesiredSpeed(),
                 getGtuStatuses(gtu, gtu.getSimulator().getSimulatorAbsTime()));

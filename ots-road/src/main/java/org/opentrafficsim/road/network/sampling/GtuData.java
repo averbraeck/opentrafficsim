@@ -75,7 +75,7 @@ public class GtuData implements GtuDataInterface
     @Override
     public final GtuTypeData getGtuTypeData()
     {
-        return new GtuTypeData(this.gtu.getGtuType());
+        return new GtuTypeData(this.gtu.getType());
     }
 
     /** {@inheritDoc} */

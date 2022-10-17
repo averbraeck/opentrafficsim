@@ -288,7 +288,7 @@ public abstract class AbstractHeadwayGtu extends AbstractHeadwayCopy implements 
         sli.addSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED, gtu.getMaximumSpeed());
         try
         {
-            sli.addSpeedInfo(SpeedLimitTypes.FIXED_SIGN, gtu.getReferencePosition().getLane().getSpeedLimit(gtu.getGtuType()));
+            sli.addSpeedInfo(SpeedLimitTypes.FIXED_SIGN, gtu.getReferencePosition().getLane().getSpeedLimit(gtu.getType()));
         }
         catch (NetworkException | GtuException exception)
         {

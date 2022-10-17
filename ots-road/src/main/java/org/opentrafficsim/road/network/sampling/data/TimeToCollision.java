@@ -68,7 +68,7 @@ public class TimeToCollision extends ExtendedDataTypeDuration<GtuData>
                     }
                     visited.add(lane);
                     cumulDist = cumulDist.plus(lane.getLength());
-                    set = new LinkedHashSet<>(lane.nextLanes(gtuObj.getGtuType()));
+                    set = new LinkedHashSet<>(lane.nextLanes(gtuObj.getType()));
                 }
                 else
                 {

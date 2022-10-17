@@ -536,7 +536,7 @@ public class BusStreetDemo extends OtsSimulationApplication<BusStreetModel>
             Lmrs lmrs = new Lmrs(new IdmPlus(), gtu, pFac.generatePerception(gtu), Synchronization.PASSIVE, Cooperation.PASSIVE,
                     GapAcceptance.INFORMED, Tailgating.NONE);
             lmrs.setDefaultIncentives();
-            if (gtu.getGtuType().isOfType(GtuType.DEFAULTS.SCHEDULED_BUS))
+            if (gtu.getType().isOfType(GtuType.DEFAULTS.SCHEDULED_BUS))
             {
                 lmrs.addMandatoryIncentive(new IncentiveBusStop());
                 lmrs.addAccelerationIncentive(new AccelerationBusStop());

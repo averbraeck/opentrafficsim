@@ -306,7 +306,7 @@ public class LaneChangeGraph extends JFrame implements OtsModelInterface, UNITS
         referenceCar.init(strategicalPlanner, initialLongitudinalPositions, referenceSpeed);
         Collection<Headway> sameLaneGTUs = new LinkedHashSet<>();
         sameLaneGTUs.add(
-                new HeadwayGtuSimple(referenceCar.getId(), referenceCar.getGtuType(), Length.ZERO, referenceCar.getLength(),
+                new HeadwayGtuSimple(referenceCar.getId(), referenceCar.getType(), Length.ZERO, referenceCar.getLength(),
                         referenceCar.getWidth(), referenceCar.getSpeed(), referenceCar.getAcceleration(), null));
         // TODO play with the speed limit
         // TODO play with the preferredLaneRouteIncentive
@@ -376,7 +376,7 @@ public class LaneChangeGraph extends JFrame implements OtsModelInterface, UNITS
         Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions.add(new LanePosition(otherCarLane, otherCarPosition));
         LaneBasedIndividualGtu otherCar =
-                new LaneBasedIndividualGtu("otherCar", referenceCar.getGtuType(), new Length(4, METER), new Length(2, METER),
+                new LaneBasedIndividualGtu("otherCar", referenceCar.getType(), new Length(4, METER), new Length(2, METER),
                         new Speed(150, KM_PER_HOUR), Length.instantiateSI(2.0), referenceCar.getSimulator(), this.network);
         otherCar.setParameters(DefaultsFactory.getDefaultParameters());
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
@@ -387,7 +387,7 @@ public class LaneChangeGraph extends JFrame implements OtsModelInterface, UNITS
         Length referenceCarPosition = referenceCar.position(
                 referenceCar.positions(referenceCar.getReference()).keySet().iterator().next(), referenceCar.getReference());
         Headway otherHeadwayGtu =
-                new HeadwayGtuSimple(otherCar.getId(), otherCar.getGtuType(), otherCarPosition.minus(referenceCarPosition),
+                new HeadwayGtuSimple(otherCar.getId(), otherCar.getType(), otherCarPosition.minus(referenceCarPosition),
                         otherCar.getLength(), otherCar.getWidth(), otherCar.getSpeed(), otherCar.getAcceleration(), null);
         if (mergeRight)
         {

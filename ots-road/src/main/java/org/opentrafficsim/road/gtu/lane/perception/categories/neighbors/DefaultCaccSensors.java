@@ -52,7 +52,7 @@ public class DefaultCaccSensors implements HeadwayGtuType
             throw new GtuException(exception);
         }
         String id = perceivedGtu.getId();
-        GtuType gtuType = perceivedGtu.getGtuType();
+        GtuType gtuType = perceivedGtu.getType();
         Length length = perceivedGtu.getLength();
         Length width = perceivedGtu.getWidth();
         Speed v = perceivedGtu.getSpeed(t);

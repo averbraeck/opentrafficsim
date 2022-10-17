@@ -275,7 +275,7 @@ public class StrategiesDemo extends AbstractSimulationScript
                 Speed vGain = new Speed(v, SpeedUnit.KM_PER_HOUR);
                 for (Gtu gtu : getNetwork().getGTUs())
                 {
-                    if (gtu.getGtuType().isOfType(GtuType.DEFAULTS.CAR))
+                    if (gtu.getType().isOfType(GtuType.DEFAULTS.CAR))
                     {
                         Try.execute(() -> gtu.getParameters().setParameter(LmrsParameters.VGAIN, vGain),
                                 "Exception while setting vGain");
@@ -315,7 +315,7 @@ public class StrategiesDemo extends AbstractSimulationScript
                 double sigma = ((double) slider.getValue()) / slider.getMaximum();
                 for (Gtu gtu : getNetwork().getGTUs())
                 {
-                    if (gtu.getGtuType().isOfType(GtuType.DEFAULTS.CAR))
+                    if (gtu.getType().isOfType(GtuType.DEFAULTS.CAR))
                     {
                         Try.execute(() -> gtu.getParameters().setParameter(LmrsParameters.SOCIO, sigma),
                                 "Exception while setting vGain");

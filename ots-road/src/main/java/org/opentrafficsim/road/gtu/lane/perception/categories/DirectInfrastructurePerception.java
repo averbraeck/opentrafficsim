@@ -164,7 +164,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         try
         {
             record = getPerception().getLaneStructure().getFirstRecord(lane);
-            if (!record.allowsRoute(getGtu().getStrategicalPlanner().getRoute(), getGtu().getGtuType()))
+            if (!record.allowsRoute(getGtu().getStrategicalPlanner().getRoute(), getGtu().getType()))
             {
                 resultSet.add(InfrastructureLaneChangeInfo.fromInaccessibleLane(record.isDeadEnd()));
                 this.infrastructureLaneChangeInfo.put(lane, new TimeStampedObject<>(resultSet, getTimestamp()));
@@ -220,7 +220,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
                     {
                         try
                         {
-                            if (next.allowsRoute(getGtu().getStrategicalPlanner().getRoute(), getGtu().getGtuType()))
+                            if (next.allowsRoute(getGtu().getStrategicalPlanner().getRoute(), getGtu().getType()))
                             {
                                 InfrastructureLaneChangeInfo prev = currentSet.get(laneRecord);
                                 InfrastructureLaneChangeInfo info =
@@ -330,7 +330,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
             return true; // if no route assume ok, i.e. simple networks without routes
         }
         // finally check route
-        ok = record.allowsRouteAtEnd(currentRoute, getGtu().getGtuType());
+        ok = record.allowsRouteAtEnd(currentRoute, getGtu().getType());
         this.anyNextOkCache.put(record, ok);
         return ok;
     }
@@ -358,7 +358,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
             Lane laneObj = getGtu().getReferencePosition().getLane();
             if (!slp.containsAddSource(laneObj))
             {
-                slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.FIXED_SIGN, laneObj.getSpeedLimit(getGtu().getGtuType()),
+                slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.FIXED_SIGN, laneObj.getSpeedLimit(getGtu().getType()),
                         laneObj);
             }
         }

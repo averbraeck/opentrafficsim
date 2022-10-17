@@ -97,7 +97,7 @@ public class BusStopConflictRule implements ConflictRule
             throw new RuntimeException("Error while looking for GTU upstream of merge at bus stop.", exception);
         }
         boolean busHasPriority =
-                gtu != null && gtu.getGtuType().isOfType(GtuType.DEFAULTS.BUS) && gtu.getTurnIndicatorStatus().isLeft();
+                gtu != null && gtu.getType().isOfType(GtuType.DEFAULTS.BUS) && gtu.getTurnIndicatorStatus().isLeft();
 
         // if bus has priority and bus is asking, PRIORITY
         // if bus has no priority and bus is not asking (i.e. car is asking), PRIORITY

@@ -104,7 +104,7 @@ public class DirectEgoPerception<G extends Gtu, P extends Perception<G>> extends
             {
                 System.out.println("GetSpeed: GTU is " + getGtu() + " this.speed is " + this.speed + " cached speed is null");
                 System.out.println(getGtu().getOperationalPlan());
-                System.out.println(((OtsNetwork) getGtu().getGtuType().getNetwork()).getGTUs());
+                System.out.println(((OtsNetwork) getGtu().getType().getNetwork()).getGTUs());
             }
         }
         catch (GtuException e1)

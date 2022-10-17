@@ -308,7 +308,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     @Override
     public final Route getRoute()
     {
-        assureRoute(getGtu().getGtuType());
+        assureRoute(getGtu().getType());
         if (this.route == null && this.destination != null)
         {
             try
@@ -318,11 +318,11 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
                 Node from = link.getStartNode();
                 if (this.routeGenerator != null)
                 {
-                    this.route = this.routeGenerator.getRoute(from, this.destination, getGtu().getGtuType());
+                    this.route = this.routeGenerator.getRoute(from, this.destination, getGtu().getType());
                 }
                 if (this.route == null)
                 {
-                    this.route = link.getNetwork().getShortestRouteBetween(getGtu().getGtuType(), from, this.destination);
+                    this.route = link.getNetwork().getShortestRouteBetween(getGtu().getType(), from, this.destination);
                 }
             }
             catch (GtuException | NetworkException exception)
