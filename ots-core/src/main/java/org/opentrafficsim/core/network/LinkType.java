@@ -63,7 +63,7 @@ public class LinkType extends GtuCompatibleInfraType<LinkType, Link>
 
     /**
      * Create a new Link type with compatibility set.
-     * @param id String; the id of the lane type (may not be null)
+     * @param id String; the id of the link type (may not be null)
      * @param parent LinkType; the parent type (may be null)
      * @param network Network; The network to which the LinkType belongs
      */
