@@ -16,8 +16,9 @@ import org.djutils.exceptions.Throw;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <T> Self-reference to type.
+ * @param <I> Infrastructure type belonging to hierarchical type
  */
-public abstract class HierarchicalType<T extends HierarchicalType<T>> extends Type<T> implements Identifiable
+public abstract class HierarchicalType<T extends HierarchicalType<T, I>, I> extends Type<T> implements Identifiable
 {
     /** */
     private static final long serialVersionUID = 20220928L;
@@ -150,7 +151,7 @@ public abstract class HierarchicalType<T extends HierarchicalType<T>> extends Ty
         {
             return false;
         }
-        HierarchicalType<?> other = (HierarchicalType<?>) obj;
+        HierarchicalType<?, ?> other = (HierarchicalType<?, ?>) obj;
         if (!this.id.equals(other.id))
         {
             return false;
