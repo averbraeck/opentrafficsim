@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.compatibility;
 
 import org.junit.Test;
+import org.opentrafficsim.base.HierarchicallyTyped;
 
 /**
  * Test the classes and interfaces in the compatibility package.
@@ -25,8 +26,19 @@ public class CompatibilityTest
         GtuCompatibility<InfraType> gc = new GtuCompatibility<>(root);
     }
 
+    /** Infra belonging to InfraType. */
+    static class Infra implements HierarchicallyTyped<InfraType, Infra>
+    {
+        @Override
+        public InfraType getType()
+        {
+            return null;
+        }
+        
+    }
+    
     /** InfraType as a hierarchical type. */
-    static class InfraType extends GtuCompatibleInfraType<InfraType>
+    static class InfraType extends GtuCompatibleInfraType<InfraType, Infra>
     {
         /**
          * Instantiate an infrastructure type.
