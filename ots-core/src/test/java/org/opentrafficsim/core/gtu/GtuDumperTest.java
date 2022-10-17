@@ -122,7 +122,7 @@ public class GtuDumperTest implements OtsModelInterface
     /**
      * Create one GTU with a really simple path of movement.
      */
-    public void createGTU()
+    public void createGtu()
     {
         Gtu gtu = new Gtu()
         {
