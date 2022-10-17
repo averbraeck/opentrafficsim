@@ -346,7 +346,7 @@ public final class GeneratorPositions implements Locatable
         {
             for (LanePosition pos : this.position)
             {
-                if (pos.getLane().getLaneType().isCompatible(gtuType))
+                if (pos.getLane().getType().isCompatible(gtuType))
                 {
                     return true;
                 }

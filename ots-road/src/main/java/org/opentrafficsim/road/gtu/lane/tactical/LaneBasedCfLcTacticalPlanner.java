@@ -553,12 +553,12 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
             if (cse instanceof Lane)
             {
                 Lane l = (Lane) cse;
-                if (l.getLaneType().isCompatible(gtu.getType()))
+                if (l.getType().isCompatible(gtu.getType()))
                 {
                     for (Lane connectingLane : l.nextLanes(gtu.getType()))
                     {
                         if (connectingLane.getParentLink() == linkAfterBranch
-                                && connectingLane.getLaneType().isCompatible(gtu.getType()))
+                                && connectingLane.getType().isCompatible(gtu.getType()))
                         {
                             Length currentValue = suitabilityOfLanesBeforeBranch.get(l);
                             // Use recursion to find out HOW suitable this continuation lane is, but don't revert back
@@ -668,7 +668,7 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
             if (cse instanceof Lane)
             {
                 Lane l = (Lane) cse;
-                if (l.getLaneType().isCompatible(gtuType))
+                if (l.getType().isCompatible(gtuType))
                 {
                     result++;
                 }

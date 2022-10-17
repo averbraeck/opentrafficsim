@@ -109,7 +109,7 @@ public class LaneTest implements UNITS
         assertEquals("SpeedLimit should be " + (new Speed(100, KM_PER_HOUR)), new Speed(100, KM_PER_HOUR),
                 lane.getSpeedLimit(network.getGtuType(GtuType.DEFAULTS.VEHICLE)));
         assertEquals("There should be no GTUs on the lane", 0, lane.getGtuList().size());
-        assertEquals("LaneType should be " + laneType, laneType, lane.getLaneType());
+        assertEquals("LaneType should be " + laneType, laneType, lane.getType());
         // TODO: This test for expectedLateralCenterOffset fails
         for (int i = 0; i < 10; i++)
         {
@@ -158,7 +158,7 @@ public class LaneTest implements UNITS
         assertEquals("Length of contour is approximately " + approximateLengthOfContour, approximateLengthOfContour,
                 lane.getContour().getLengthSI(), 4); // This lane takes a path that is about 3m longer than the design line
         assertEquals("There should be no GTUs on the lane", 0, lane.getGtuList().size());
-        assertEquals("LaneType should be " + laneType, laneType, lane.getLaneType());
+        assertEquals("LaneType should be " + laneType, laneType, lane.getType());
         // System.out.println("Add another Lane at the inside of the corner in the design line");
         Length startLateralPos2 = new Length(-8, METER);
         Length endLateralPos2 = new Length(-5, METER);
@@ -172,7 +172,7 @@ public class LaneTest implements UNITS
         assertEquals("Length of contour is approximately " + approximateLengthOfContour, approximateLengthOfContour,
                 lane2.getContour().getLengthSI(), 12); // This lane takes a path that is about 11 meters shorter
         assertEquals("There should be no GTUs on the lane", 0, lane2.getGtuList().size());
-        assertEquals("LaneType should be " + laneType, laneType, lane2.getLaneType());
+        assertEquals("LaneType should be " + laneType, laneType, lane2.getType());
 
         // Construct a lane using CrossSectionSlices
         try

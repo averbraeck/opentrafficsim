@@ -236,7 +236,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
                         if (cse instanceof Lane)
                         {
                             Lane lane = (Lane) cse;
-                            if ((link.getStartNode().equals(node) && lane.getLaneType().isCompatible(gtuType)))
+                            if ((link.getStartNode().equals(node) && lane.getType().isCompatible(gtuType)))
                             {
                                 out = true;
                             }

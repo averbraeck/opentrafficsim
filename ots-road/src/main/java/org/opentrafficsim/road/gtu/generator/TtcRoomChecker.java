@@ -61,7 +61,7 @@ public class TtcRoomChecker implements RoomChecker
         Speed speed = Speed.min(leader.getSpeed(), desiredSpeedProxy);
         for (LanePosition dlp : initialPosition)
         {
-            if (dlp.getLane().getLaneType().isCompatible(characteristics.getGtuType()))
+            if (dlp.getLane().getType().isCompatible(characteristics.getGtuType()))
             {
                 speed = Speed.min(speed, dlp.getLane().getSpeedLimit(characteristics.getGtuType()));
             }

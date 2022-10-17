@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.lane;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -426,7 +427,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     private boolean laterallyAdjacentAndAccessible(final Lane lane, final LateralDirectionality direction,
             final GtuType gtuType, final boolean legal)
     {
-        if (!lane.getLaneType().isCompatible(gtuType))
+        if (!lane.getType().isCompatible(gtuType))
         {
             // not accessible for the given GTU type
             return false;
@@ -1211,7 +1212,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                                     && link.getStartNode().equals(getParentLink().getEndNode()))
                             {
                                 // TODO And is it aligned with its next lane?
-                                if (gtuType == null || lane.getLaneType().isCompatible(gtuType))
+                                if (gtuType == null || lane.getType().isCompatible(gtuType))
                                 {
                                     laneSet.add(lane);
                                 }
@@ -1267,7 +1268,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                                     && link.getEndNode().equals(getParentLink().getStartNode()))
                             {
                                 // TODO And is it aligned with its next lane?
-                                if (gtuType == null || lane.getLaneType().isCompatible(gtuType))
+                                if (gtuType == null || lane.getType().isCompatible(gtuType))
                                 {
                                     laneSet.add(lane);
                                 }
@@ -1315,7 +1316,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         Set<Lane> candidates = new LinkedHashSet<>(1);
         for (Lane lane : neighbors(lateralDirection, gtuType, true))
         {
-            if (lane.getLaneType().isCompatible(gtuType))
+            if (lane.getType().isCompatible(gtuType))
             {
                 candidates.add(lane);
             }
@@ -1434,10 +1435,9 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         this.cachedSpeedLimits.clear();
     }
 
-    /**
-     * @return laneType.
-     */
-    public final LaneType getLaneType()
+    /** {@inheritDoc} */
+    @Override
+    public final LaneType getType()
     {
         return this.laneType;
     }
