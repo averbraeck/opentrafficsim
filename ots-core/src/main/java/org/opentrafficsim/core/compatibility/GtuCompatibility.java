@@ -19,9 +19,9 @@ import org.opentrafficsim.core.gtu.GtuType;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
- * @param <I> infrastructure type, e.g. LinkType or LaneType, or water way type
+ * @param <T> infrastructure type, e.g. LinkType or LaneType, or water way type
  */
-public class GtuCompatibility<I extends HierarchicalType<I> & Compatibility<GtuType, I>> implements Compatibility<GtuType, I>
+public class GtuCompatibility<T extends HierarchicalType<T, ?> & Compatibility<GtuType, T>> implements Compatibility<GtuType, T>
 {
     /** The map of GtuTypes that define on this infrastructure level what GtuTypes are compatible or not. */
     private final Map<GtuType, Boolean> levelCompatibilityMap = new LinkedHashMap<>();
@@ -30,13 +30,13 @@ public class GtuCompatibility<I extends HierarchicalType<I> & Compatibility<GtuT
     private final Map<GtuType, Boolean> cachedCompatibilityMap = new LinkedHashMap<>();
 
     /** Infrastructure for which this compatibility definition holds, e.g. a LinkType, a LaneType, or a SensorType. */
-    private final I infrastructure;
+    private final T infrastructure;
 
     /**
      * Construct a new Compatibility object with empty compatible and forbidden sets.
      * @param infrastructure I; the infrastructure type, e.g. LinkType, LaneType, SensorType.
      */
-    public GtuCompatibility(final I infrastructure)
+    public GtuCompatibility(final T infrastructure)
     {
         Throw.whenNull(infrastructure, "infrastructure cannot be null");
         this.infrastructure = infrastructure;
@@ -46,7 +46,7 @@ public class GtuCompatibility<I extends HierarchicalType<I> & Compatibility<GtuT
      * Construct a new Compatibility and deep copy the compatible and forbidden sets from an existing Compatibility.
      * @param original GtuCompatibility&lt;I&gt;; the Compatibility from which the compatible and forbidden sets will be copied
      */
-    public GtuCompatibility(final GtuCompatibility<I> original)
+    public GtuCompatibility(final GtuCompatibility<T> original)
     {
         this.infrastructure = original.infrastructure;
         this.levelCompatibilityMap.putAll(original.levelCompatibilityMap);
@@ -64,7 +64,7 @@ public class GtuCompatibility<I extends HierarchicalType<I> & Compatibility<GtuT
         {
             boolean foundTrue = false;
             boolean foundFalse = false;
-            I infra = this.infrastructure;
+            T infra = this.infrastructure;
             while (infra != null)
             {
                 GtuType gType = gtuType;
@@ -115,7 +115,7 @@ public class GtuCompatibility<I extends HierarchicalType<I> & Compatibility<GtuT
      * @throws NullPointerException when <code>gtuType</code> is null
      * @throws OtsRuntimeException when changes are made to compatibility after results have been cached
      */
-    public final GtuCompatibility<I> addCompatibleGtuType(final GtuType gtuType) throws NullPointerException
+    public final GtuCompatibility<T> addCompatibleGtuType(final GtuType gtuType) throws NullPointerException
     {
         Throw.whenNull(gtuType, "gtuType may not be null");
         clearCompatibilityCache();
@@ -130,7 +130,7 @@ public class GtuCompatibility<I extends HierarchicalType<I> & Compatibility<GtuT
      * @throws NullPointerException when <code>gtuType</code> is null
      * @throws OtsRuntimeException when changes are made to compatibility after results have been cached
      */
-    public final GtuCompatibility<I> addIncompatibleGtuType(final GtuType gtuType) throws NullPointerException
+    public final GtuCompatibility<T> addIncompatibleGtuType(final GtuType gtuType) throws NullPointerException
     {
         Throw.whenNull(gtuType, "gtuType may not be null");
         clearCompatibilityCache();
@@ -140,7 +140,7 @@ public class GtuCompatibility<I extends HierarchicalType<I> & Compatibility<GtuT
 
     /** {@inheritDoc} */
     @Override
-    public I getInfrastructure()
+    public T getInfrastructure()
     {
         return this.infrastructure;
     }
@@ -150,7 +150,7 @@ public class GtuCompatibility<I extends HierarchicalType<I> & Compatibility<GtuT
     public void clearCompatibilityCache()
     {
         this.cachedCompatibilityMap.clear();
-        for (I infra: getInfrastructure().getChildren())
+        for (T infra: getInfrastructure().getChildren())
         {
             infra.clearCompatibilityCache();
         }
