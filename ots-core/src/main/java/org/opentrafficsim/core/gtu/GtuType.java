@@ -29,7 +29,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public final class GtuType extends HierarchicalType<GtuType> implements Serializable
+public final class GtuType extends HierarchicalType<GtuType, Gtu> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20141231L;
