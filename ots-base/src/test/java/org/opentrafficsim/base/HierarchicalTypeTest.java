@@ -75,11 +75,35 @@ public class HierarchicalTypeTest
         }
     }
 
+    /** S. */
+    static class S implements HierarchicallyTyped<SubType, S>
+    {
+        /** type. */
+        private final SubType xType;
+
+        /**
+         * @param xType type
+         */
+        S(final SubType xType)
+        {
+            this.xType = xType;
+        }
+
+        @Override
+        public SubType getType()
+        {
+            return this.xType;
+        }
+    }
+
     /**
      * Extend the HierarchicalType class so we instantiate (and then test) things.
      */
-    static class SubType extends HierarchicalType<SubType>
+    static class SubType extends HierarchicalType<SubType, S>
     {
+        /** */
+        private static final long serialVersionUID = 1L;
+
         /**
          * Construct a new SubType instance.
          * @param id String; id of the new SubType
@@ -102,18 +126,42 @@ public class HierarchicalTypeTest
         }
 
         /** {@inheritDoc} */
-            @Override
+        @Override
         public String toString()
         {
             return "SubType [id=" + getId() + ", parent=" + getParent() + "]";
         }
     }
-    
-    /** XType. */
-    static class XType extends HierarchicalType<XType>
+
+    /** X. */
+    static class X implements HierarchicallyTyped<XType, X>
     {
+        /** type. */
+        private final XType xType;
+
         /**
-         * Instantiate hierarchical type. 
+         * @param xType type
+         */
+        X(final XType xType)
+        {
+            this.xType = xType;
+        }
+
+        @Override
+        public XType getType()
+        {
+            return this.xType;
+        }
+    }
+
+    /** XType. */
+    static class XType extends HierarchicalType<XType, X>
+    {
+        /** */
+        private static final long serialVersionUID = 1L;
+
+        /**
+         * Instantiate hierarchical type.
          * @param id String; the id
          * @param parent the parent or null
          * @throws NullPointerException when id is null
@@ -124,11 +172,35 @@ public class HierarchicalTypeTest
         }
     }
 
-    /** YType. */
-    static class YType extends HierarchicalType<YType>
+    /** Y. */
+    static class Y implements HierarchicallyTyped<YType, Y>
     {
+        /** type. */
+        private final YType yType;
+
         /**
-         * Instantiate hierarchical type. 
+         * @param yType type
+         */
+        Y(final YType yType)
+        {
+            this.yType = yType;
+        }
+
+        @Override
+        public YType getType()
+        {
+            return this.yType;
+        }
+    }
+
+    /** YType. */
+    static class YType extends HierarchicalType<YType, Y>
+    {
+        /** */
+        private static final long serialVersionUID = 1L;
+
+        /**
+         * Instantiate hierarchical type.
          * @param id String; the id
          * @param parent the parent or null
          * @throws NullPointerException when id is null
@@ -140,10 +212,13 @@ public class HierarchicalTypeTest
     }
 
     /** ZType. */
-    static class ZType extends HierarchicalType<XType>
+    static class ZType extends HierarchicalType<XType, X>
     {
+        /** */
+        private static final long serialVersionUID = 1L;
+
         /**
-         * Instantiate hierarchical type. 
+         * Instantiate hierarchical type.
          * @param id String; the id
          * @param parent the parent or null
          * @throws NullPointerException when id is null
@@ -179,6 +254,6 @@ public class HierarchicalTypeTest
         assertEquals(car, zt1.getParent());
         assertTrue(zt1.isOfType(car));
         assertTrue(zt1.isOfType(vehicle));
-        // Ztype is of course strange. So this does not compile: ZType zt2 = new ZType("zt2", zt1); 
+        // Ztype is of course strange. So this does not compile: ZType zt2 = new ZType("zt2", zt1);
     }
 }
