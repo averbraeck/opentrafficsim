@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.compatibility;
 
 import org.opentrafficsim.base.HierarchicalType;
+import org.opentrafficsim.base.HierarchicallyTyped;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.gtu.GtuType;
 
@@ -13,16 +14,17 @@ import org.opentrafficsim.core.gtu.GtuType;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
- * @param <I> The infrastructure type
+ * @param <T> The infrastructure type
+ * @param <I> Infrastructure type belonging to hierarchical type
  */
-public abstract class GtuCompatibleInfraType<I extends GtuCompatibleInfraType<I>> extends HierarchicalType<I>
-        implements Compatibility<GtuType, I>
+public abstract class GtuCompatibleInfraType<T extends GtuCompatibleInfraType<T, I>, I extends HierarchicallyTyped<T, I>>
+        extends HierarchicalType<T, I> implements Compatibility<GtuType, T>
 {
     /** */
     private static final long serialVersionUID = 20220928L;
 
     /** Local cache to delegate compatibility to. */
-    private GtuCompatibility<I> gtuCompatibility;
+    private GtuCompatibility<T> gtuCompatibility;
 
     /**
      * Instantiate an infrastructure type.
@@ -30,10 +32,10 @@ public abstract class GtuCompatibleInfraType<I extends GtuCompatibleInfraType<I>
      * @param parent InfraType; the parent
      */
     @SuppressWarnings("unchecked")
-    public GtuCompatibleInfraType(final String id, final I parent)
+    public GtuCompatibleInfraType(final String id, final T parent)
     {
         super(id, parent);
-        this.gtuCompatibility = new GtuCompatibility<>((I) this);
+        this.gtuCompatibility = new GtuCompatibility<>((T) this);
     }
 
     /**
@@ -52,7 +54,7 @@ public abstract class GtuCompatibleInfraType<I extends GtuCompatibleInfraType<I>
      * @throws NullPointerException when <code>gtuType</code> is null
      * @throws OtsRuntimeException when changes are made to compatibility after results have been cached
      */
-    public final GtuCompatibility<I> addCompatibleGtuType(final GtuType gtuType)
+    public final GtuCompatibility<T> addCompatibleGtuType(final GtuType gtuType)
     {
         // delegate to GtuCompatibility
         return this.gtuCompatibility.addCompatibleGtuType(gtuType);
@@ -65,7 +67,7 @@ public abstract class GtuCompatibleInfraType<I extends GtuCompatibleInfraType<I>
      * @throws NullPointerException when <code>gtuType</code> is null
      * @throws OtsRuntimeException when changes are made to compatibility after results have been cached
      */
-    public final GtuCompatibility<I> addIncompatibleGtuType(final GtuType gtuType)
+    public final GtuCompatibility<T> addIncompatibleGtuType(final GtuType gtuType)
     {
         // delegate to GtuCompatibility
         return this.gtuCompatibility.addIncompatibleGtuType(gtuType);
@@ -90,9 +92,9 @@ public abstract class GtuCompatibleInfraType<I extends GtuCompatibleInfraType<I>
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
-    public I getInfrastructure()
+    public T getInfrastructure()
     {
-        return (I) this;
+        return (T) this;
     }
 
     /** {@inheritDoc} */
@@ -107,7 +109,7 @@ public abstract class GtuCompatibleInfraType<I extends GtuCompatibleInfraType<I>
      * Return the GTU compatibility of this infra type.
      * @return gtuCompatibility GtuCompatibility&lt;I&gt;; the GTU compatibility of this infra type
      */
-    public GtuCompatibility<I> getGtuCompatibility()
+    public GtuCompatibility<T> getGtuCompatibility()
     {
         return this.gtuCompatibility;
     }
