@@ -67,14 +67,14 @@ public class GtuTest
      * @throws OtsGeometryException should not happen uncaught; if it does the test has failed
      */
     @Test
-    public final void testAbstractGTU()
+    public final void testAbstractGtu()
             throws GtuException, SimRuntimeException, NetworkException, NamingException, RemoteException, OtsGeometryException
     {
-        TestGTU firstGTU = null;
-        TestGTU lastGTU = null;
+        TestGtu firstGTU = null;
+        TestGtu lastGTU = null;
         OtsSimulatorInterface simulator = new OtsSimulator("testAbstractGTU");
         OtsNetwork perceivableContext = new OtsNetwork("network", true, simulator);
-        GTUModel model = new GTUModel(simulator);
+        GtuModel model = new GtuModel(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(9999, DurationUnit.SI), model);
         StrategicalPlanner strategicalPlanner = new StrategicalPlanner()
         {
@@ -150,7 +150,7 @@ public class GtuTest
             for (GtuType gtuType : new GtuType[] {gtuType1, gtuType2})
             {
                 String gtuId = id + " " + gtuType.getId();
-                TestGTU gtu = new TestGTU(gtuId, gtuType, simulator, perceivableContext);
+                TestGtu gtu = new TestGtu(gtuId, gtuType, simulator, perceivableContext);
                 assertEquals("new GTU has correct id", gtuId, gtu.getId());
                 assertEquals("new GTU has correct GtuType", gtuType, gtu.getGtuType());
                 assertEquals("new GTU has correct reference position", RelativePosition.REFERENCE_POSITION, gtu.getReference());
@@ -166,13 +166,13 @@ public class GtuTest
         }
         assertFalse("first GTU and last GTU have different id", firstGTU.getId().equals(lastGTU.getId()));
         assertFalse("first GTU and last GTU have different GtuType", firstGTU.getGtuType().equals(lastGTU.getGtuType()));
-        TestGTU gtu = new TestGTU("id3", gtuType1, simulator, perceivableContext);
+        TestGtu gtu = new TestGtu("id3", gtuType1, simulator, perceivableContext);
         assertEquals("perceivable context now contains 5 GTUs", 5, perceivableContext.getGTUs().size());
         gtu.destroy();
         assertFalse("perceivable context no longer contains the destroyed GTU", perceivableContext.containsGTU(gtu));
         try
         {
-            new TestGTU((String) null, gtuType1, simulator, perceivableContext);
+            new TestGtu((String) null, gtuType1, simulator, perceivableContext);
             fail("null id should have thrown a GTUException");
         }
         catch (GtuException ge)
@@ -182,7 +182,7 @@ public class GtuTest
 
         try
         {
-            new TestGTU("IdOfGTU", null, simulator, perceivableContext);
+            new TestGtu("IdOfGTU", null, simulator, perceivableContext);
             fail("null gtuType should have thrown a GTUException");
         }
         catch (GtuException ge)
@@ -192,7 +192,7 @@ public class GtuTest
 
         try
         {
-            new TestGTU("IdOfGTU", gtuType1, null, perceivableContext);
+            new TestGtu("IdOfGTU", gtuType1, null, perceivableContext);
             fail("null simulator should have thrown a GTUException");
         }
         catch (GtuException ge)
@@ -202,7 +202,7 @@ public class GtuTest
 
         try
         {
-            new TestGTU("IdOfGTU", gtuType1, simulator, null);
+            new TestGtu("IdOfGTU", gtuType1, simulator, null);
             fail("null perceivableContext should have thrown a GTUException");
         }
         catch (GtuException ge)
@@ -213,12 +213,12 @@ public class GtuTest
         IdGenerator idGenerator = new IdGenerator("baseName");
         assertTrue("The toString method returns something descriptive", idGenerator.toString().startsWith("IdGenerator"));
         int lastBeforeId = Integer.parseInt(idGenerator.nextId().substring(8));
-        gtu = new TestGTU(idGenerator, gtuType1, simulator, perceivableContext);
+        gtu = new TestGtu(idGenerator, gtuType1, simulator, perceivableContext);
         int firstAfterId = Integer.parseInt(idGenerator.nextId().substring(8));
         assertEquals("Id generator was called once in the constructor", 1 + 1, firstAfterId - lastBeforeId);
         try
         {
-            new TestGTU((IdGenerator) null, gtuType1, simulator, perceivableContext);
+            new TestGtu((IdGenerator) null, gtuType1, simulator, perceivableContext);
             fail("null idGenerator should have thrown a GTUException");
         }
         catch (GtuException ge)
@@ -326,7 +326,7 @@ public class GtuTest
     }
 
     /** */
-    class GTUModel extends AbstractOtsModel
+    class GtuModel extends AbstractOtsModel
     {
         /** */
         private static final long serialVersionUID = 1L;
@@ -334,7 +334,7 @@ public class GtuTest
         /**
          * @param simulator the simulator
          */
-        GTUModel(final OtsSimulatorInterface simulator)
+        GtuModel(final OtsSimulatorInterface simulator)
         {
             super(simulator);
         }
@@ -362,7 +362,7 @@ public class GtuTest
     }
 
     /** */
-    class TestGTU extends AbstractGtu
+    class TestGtu extends AbstractGtu
     {
         /** */
         private static final long serialVersionUID = 20151111L;
@@ -375,7 +375,7 @@ public class GtuTest
          * @throws SimRuntimeException when something goes wrong in the scheduling of the first move event
          * @throws GtuException when something goes wrong during GTU instantiation
          */
-        TestGTU(final String id, final GtuType gtuType, final OtsSimulatorInterface simulator,
+        TestGtu(final String id, final GtuType gtuType, final OtsSimulatorInterface simulator,
                 final PerceivableContext perceivableContext) throws SimRuntimeException, GtuException
         {
             super(id, gtuType, simulator, perceivableContext);
@@ -389,7 +389,7 @@ public class GtuTest
          * @throws SimRuntimeException when something goes wrong in the scheduling of the first move event
          * @throws GtuException when something goes wrong during GTU instantiation
          */
-        TestGTU(final IdGenerator idGenerator, final GtuType gtuType, final OtsSimulatorInterface simulator,
+        TestGtu(final IdGenerator idGenerator, final GtuType gtuType, final OtsSimulatorInterface simulator,
 
                 final PerceivableContext perceivableContext) throws SimRuntimeException, GtuException
         {
@@ -458,6 +458,7 @@ public class GtuTest
         {
             return null;
         }
+        
     }
 
 }
