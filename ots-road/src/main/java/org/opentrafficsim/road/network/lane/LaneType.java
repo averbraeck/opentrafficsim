@@ -16,7 +16,7 @@ import org.opentrafficsim.road.network.RoadNetwork;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class LaneType extends GtuCompatibleInfraType<LaneType>
+public class LaneType extends GtuCompatibleInfraType<LaneType, Lane>
 {
     /** */
     private static final long serialVersionUID = 20140821L;

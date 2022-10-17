@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.network.lane;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -24,6 +23,7 @@ import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
 import org.djutils.multikeymap.MultiKeyMap;
+import org.opentrafficsim.base.HierarchicallyTyped;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -62,7 +62,7 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class Lane extends CrossSectionElement implements Serializable
+public class Lane extends CrossSectionElement implements HierarchicallyTyped<LaneType, Lane> Serializable
 {
     /** */
     private static final long serialVersionUID = 20150826L;
