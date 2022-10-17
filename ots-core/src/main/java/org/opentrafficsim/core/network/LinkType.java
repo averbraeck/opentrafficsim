@@ -13,7 +13,7 @@ import org.opentrafficsim.core.compatibility.GtuCompatibleInfraType;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class LinkType extends GtuCompatibleInfraType<LinkType>
+public class LinkType extends GtuCompatibleInfraType<LinkType, Link>
 {
     /** */
     private static final long serialVersionUID = 20140821L;

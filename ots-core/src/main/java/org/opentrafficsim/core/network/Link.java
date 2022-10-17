@@ -7,6 +7,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.event.TimedEventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.opentrafficsim.base.HierarchicallyTyped;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -26,7 +27,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public interface Link extends Locatable, Serializable, Identifiable, Drawable
+public interface Link extends HierarchicallyTyped<LinkType, Link>, Locatable, Serializable, Identifiable, Drawable
 {
     /**
      * Return the network in which this link is registered. Cannot be null.
