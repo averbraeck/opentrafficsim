@@ -18,7 +18,8 @@ import org.djutils.exceptions.Throw;
  * @param <T> Self-reference to type.
  * @param <I> Infrastructure type belonging to hierarchical type
  */
-public abstract class HierarchicalType<T extends HierarchicalType<T, I>, I> extends Type<T> implements Identifiable
+public abstract class HierarchicalType<T extends HierarchicalType<T, I>, I extends HierarchicallyTyped<T, I>> extends Type<T>
+        implements Identifiable
 {
     /** */
     private static final long serialVersionUID = 20220928L;
