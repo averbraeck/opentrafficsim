@@ -47,7 +47,7 @@ public interface LinkWeight
             if (link instanceof OtsLink)
             {
                 OtsLink otsLink = (OtsLink) link;
-                if (otsLink.getLinkType().isConnector())
+                if (otsLink.getType().isConnector())
                 {
                     return PROHIBITIVE_CONNECTOR_LENGTH;
                 }

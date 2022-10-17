@@ -45,9 +45,6 @@ public interface Link extends HierarchicallyTyped<LinkType, Link>, Locatable, Se
     /** @return end node. */
     Node getEndNode();
 
-    /** @return the link type. */
-    LinkType getLinkType();
-
     /** @return the design line. */
     OtsLine3D getDesignLine();
 

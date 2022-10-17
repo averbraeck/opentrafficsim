@@ -326,7 +326,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
                         // check connector
                         for (Link link : laneRecord.getToNode().nextLinks(gtuType, laneRecord.getLane().getParentLink()))
                         {
-                            if (link.getLinkType().isConnector())
+                            if (link.getType().isConnector())
                             {
                                 if ((link.getStartNode().equals(laneRecord.getToNode())
                                         && link.getEndNode().equals(route.destinationNode()))

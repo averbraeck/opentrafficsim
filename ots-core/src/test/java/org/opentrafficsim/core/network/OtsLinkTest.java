@@ -114,7 +114,7 @@ public class OtsLinkTest implements EventListenerInterface
         assertFalse("The link no longer contains gtu1", link.getGTUs().contains(gtu1));
         assertFalse("The link no longer contains gtu2", link.getGTUs().contains(gtu2));
         assertEquals("Network is correctly returned", network, link.getNetwork());
-        assertEquals("LinkType is correctly returned", linkType, link.getLinkType());
+        assertEquals("LinkType is correctly returned", linkType, link.getType());
         DirectedPoint location = link.getLocation();
         DirectedPoint expectedLocation = designLine.getLocationFraction(0.5);
         assertEquals("location is at halfway point of design line (because design line contains only two points)", 0,

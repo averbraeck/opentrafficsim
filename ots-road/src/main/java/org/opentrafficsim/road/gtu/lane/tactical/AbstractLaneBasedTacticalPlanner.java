@@ -270,7 +270,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             while (linkIterator.hasNext())
             {
                 Link link = linkIterator.next();
-                if (!link.getLinkType().isCompatible(gtu.getGtuType()) || link.getEndNode().equals(lastNode))
+                if (!link.getType().isCompatible(gtu.getGtuType()) || link.getEndNode().equals(lastNode))
                 {
                     linkIterator.remove();
                 }
@@ -469,7 +469,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             while (linkIterator.hasNext())
             {
                 Link link = linkIterator.next();
-                if (link.equals(lastLink) || !link.getLinkType().isCompatible(gtu.getGtuType()))
+                if (link.equals(lastLink) || !link.getType().isCompatible(gtu.getGtuType()))
                 {
                     linkIterator.remove();
                 }

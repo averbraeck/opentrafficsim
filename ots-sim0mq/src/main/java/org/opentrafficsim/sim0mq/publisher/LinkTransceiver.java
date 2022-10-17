@@ -72,7 +72,7 @@ public class LinkTransceiver extends AbstractTransceiver
             returnWrapper.nack("Network does not contain a link with id " + address[0]);
             return null;
         }
-        return new Object[] {link.getId(), link.getLinkType().getId(), link.getStartNode().getId(), link.getEndNode().getId(),
+        return new Object[] {link.getId(), link.getType().getId(), link.getStartNode().getId(), link.getEndNode().getId(),
                 link instanceof OtsLink ? ((OtsLink) link).getDesignLine().size() : 0, link.getGTUCount(),
                 link instanceof CrossSectionLink ? ((CrossSectionLink) link).getCrossSectionElementList().size() : 0};
     }

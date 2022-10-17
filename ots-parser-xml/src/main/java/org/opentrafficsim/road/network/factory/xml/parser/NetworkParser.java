@@ -416,7 +416,7 @@ public final class NetworkParser
                     LaneType laneType = otsNetwork.getLaneType(laneTag.getLANETYPE());
                     // TODO: Use the DESIGNDIRECTION
                     Map<GtuType, Speed> speedLimitMap = new LinkedHashMap<>();
-                    LinkType linkType = csl.getLinkType();
+                    LinkType linkType = csl.getType();
                     if (!linkTypeSpeedLimitMap.containsKey(linkType))
                     {
                         linkTypeSpeedLimitMap.put(linkType, new LinkedHashMap<>());

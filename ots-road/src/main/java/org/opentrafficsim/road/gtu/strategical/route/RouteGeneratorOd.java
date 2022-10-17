@@ -90,7 +90,7 @@ public interface RouteGeneratorOd
             boolean directLinkExists = false;
             for (Link link : destination.getLinks())
             {
-                if (link.getLinkType().isConnector() 
+                if (link.getType().isConnector() 
                         && link instanceof CrossSectionLink && ((CrossSectionLink) link).getDemandWeight() != null)
                 {
                     // Verify there is a route from origin to this link

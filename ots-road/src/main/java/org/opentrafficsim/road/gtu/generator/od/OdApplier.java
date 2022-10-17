@@ -214,7 +214,7 @@ public final class OdApplier
                                 if (markovian)
                                 {
                                     MarkovCorrelation<GtuType, Frequency> correlation =
-                                            odOptions.get(OdOptions.MARKOV, lane, origin, lane.getParentLink().getLinkType());
+                                            odOptions.get(OdOptions.MARKOV, lane, origin, lane.getParentLink().getType());
                                     if (correlation != null)
                                     {
                                         Throw.when(!od.getCategorization().entails(GtuType.class),
@@ -262,7 +262,7 @@ public final class OdApplier
                 Set<LanePosition> positionSet = new LinkedHashSet<>();
                 for (Link link : origin.getLinks())
                 {
-                    if (link.getLinkType().isConnector())
+                    if (link.getType().isConnector())
                     {
                         if (link.getStartNode().equals(origin))
                         {
@@ -271,7 +271,7 @@ public final class OdApplier
                             int served = 0;
                             for (Link connectedLink : connectedNode.getLinks())
                             {
-                                if (connectedLink instanceof CrossSectionLink && !connectedLink.getLinkType().isConnector())
+                                if (connectedLink instanceof CrossSectionLink && !connectedLink.getType().isConnector())
                                 {
                                     served++;
                                 }
@@ -331,7 +331,7 @@ public final class OdApplier
                 if (laneBased)
                 {
                     lane = initialPosition.iterator().next().getLane();
-                    linkType = lane.getParentLink().getLinkType();
+                    linkType = lane.getParentLink().getType();
                 }
                 else
                 {
@@ -383,7 +383,7 @@ public final class OdApplier
     {
         for (Link link : destination.getLinks())
         {
-            if (link.getLinkType().isConnector() && !link.getStartNode().equals(destination))
+            if (link.getType().isConnector() && !link.getStartNode().equals(destination))
             {
                 createSensorsAtDestinationNode(link.getStartNode(), simulator);
             }
@@ -462,7 +462,7 @@ public final class OdApplier
         LinkType linkType = null;
         for (Link link : node.getLinks())
         {
-            LinkType next = link.getLinkType();
+            LinkType next = link.getType();
             if (!ignoreConnectors && next.isConnector())
             {
                 Node otherNode = link.getStartNode().equals(node) ? link.getEndNode() : link.getStartNode();

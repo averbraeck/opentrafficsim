@@ -62,7 +62,7 @@ public class NodeAnimation extends Renderable2D<NodeAnimation.ElevatedNode>
         ScaleDependentRendering sizeLimiter = TextAnimation.RENDERWHEN1;
         for (Link link : node.getLinks())
         {
-            if (link.getLinkType().getId().equals(LinkType.DEFAULTS.FREEWAY.getId()))
+            if (link.getType().getId().equals(LinkType.DEFAULTS.FREEWAY.getId()))
             {
                 sizeLimiter = TextAnimation.RENDERWHEN10;
             }

@@ -160,13 +160,13 @@ public class OtsNode implements Node, Locatable, Serializable
                     "addConnection: outgoing link " + outgoingLink + " for node " + this + " not in links set");
         }
 
-        if (!(incomingLink.getEndNode().equals(this) && incomingLink.getLinkType().isCompatible(gtuType)))
+        if (!(incomingLink.getEndNode().equals(this) && incomingLink.getType().isCompatible(gtuType)))
         {
             throw new NetworkException("addConnection: incoming link " + incomingLink + " not connected to node " + this
                     + " for GTU type " + gtuType);
         }
 
-        if (!(outgoingLink.getStartNode().equals(this) && outgoingLink.getLinkType().isCompatible(gtuType)))
+        if (!(outgoingLink.getStartNode().equals(this) && outgoingLink.getType().isCompatible(gtuType)))
         {
             throw new NetworkException("addConnection: outgoing link " + outgoingLink + " not connected to node " + this
                     + " for GTU type " + gtuType);
@@ -218,7 +218,7 @@ public class OtsNode implements Node, Locatable, Serializable
                     "addConnections: outgoing links " + outgoingLinks + " for node " + this + " not all in links set");
         }
 
-        if (!(incomingLink.getEndNode().equals(this) && incomingLink.getLinkType().isCompatible(gtuType)))
+        if (!(incomingLink.getEndNode().equals(this) && incomingLink.getType().isCompatible(gtuType)))
         {
             throw new NetworkException("addConnections: incoming link " + incomingLink + " not connected to node " + this
                     + " for GTU type " + gtuType);
@@ -226,7 +226,7 @@ public class OtsNode implements Node, Locatable, Serializable
 
         for (Link outgoingLink : outgoingLinks)
         {
-            if (!(outgoingLink.getStartNode().equals(this) && outgoingLink.getLinkType().isCompatible(gtuType)))
+            if (!(outgoingLink.getStartNode().equals(this) && outgoingLink.getType().isCompatible(gtuType)))
             {
                 throw new NetworkException("addConnections: outgoing link " + outgoingLink + " not connected to node " + this
                         + " for GTU type " + gtuType);
@@ -275,7 +275,7 @@ public class OtsNode implements Node, Locatable, Serializable
             throw new NetworkException("nextLinks: incoming link " + prevLink + " for node " + this + " not in links set");
         }
 
-        if (!(prevLink.getEndNode().equals(this) && prevLink.getLinkType().isCompatible(gtuType)))
+        if (!(prevLink.getEndNode().equals(this) && prevLink.getType().isCompatible(gtuType)))
         {
             throw new NetworkException(
                     "nextLinks: incoming link " + prevLink + " not connected to node " + this + " for GTU type " + gtuType);
@@ -301,7 +301,7 @@ public class OtsNode implements Node, Locatable, Serializable
         // ----------------------------- defensive copy of the connections for the gtuType
         for (Link link : getLinks())
         {
-            if ((link.getStartNode().equals(this) && link.getLinkType().isCompatible(gtuType)))
+            if ((link.getStartNode().equals(this) && link.getType().isCompatible(gtuType)))
             {
                 if (!link.equals(prevLink)) // no U-turn
                 {
@@ -321,7 +321,7 @@ public class OtsNode implements Node, Locatable, Serializable
     {
         for (Link link : getLinks())
         {
-            if (toNode.equals(link.getEndNode()) && link.getLinkType().isCompatible(gtuType))
+            if (toNode.equals(link.getEndNode()) && link.getType().isCompatible(gtuType))
             {
                 return true;
             }
@@ -336,7 +336,7 @@ public class OtsNode implements Node, Locatable, Serializable
         boolean result = false;
         for (Link link : getLinks())
         {
-            if (!link.getLinkType().isConnector())
+            if (!link.getType().isConnector())
             {
                 return false;
             }
