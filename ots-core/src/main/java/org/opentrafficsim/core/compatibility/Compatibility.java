@@ -37,7 +37,7 @@ import org.opentrafficsim.base.HierarchicalType;
  * @param <U> infrastructure user type
  * @param <I> infrastructure type
  */
-public interface Compatibility<U extends HierarchicalType<U>, I extends HierarchicalType<I>>
+public interface Compatibility<U extends HierarchicalType<U, ?>, I extends HierarchicalType<I, ?>>
 {
     /**
      * Test if a user type is compatible with the infrastructure type. Examples are compatibility of a GtuType with a LinkType,
