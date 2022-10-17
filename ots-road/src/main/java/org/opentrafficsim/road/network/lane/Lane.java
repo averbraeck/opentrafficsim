@@ -62,7 +62,7 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class Lane extends CrossSectionElement implements HierarchicallyTyped<LaneType, Lane> Serializable
+public class Lane extends CrossSectionElement implements HierarchicallyTyped<LaneType, Lane>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150826L;
