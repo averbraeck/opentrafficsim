@@ -94,21 +94,21 @@ public class OtsNode implements Node, Locatable, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final Network getNetwork()
+    public Network getNetwork()
     {
         return this.network;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final String getId()
+    public String getId()
     {
         return this.id;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final OtsPoint3D getPoint()
+    public OtsPoint3D getPoint()
     {
         return this.point;
     }
@@ -122,7 +122,7 @@ public class OtsNode implements Node, Locatable, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final void addLink(final Link link)
+    public void addLink(final Link link)
     {
         this.links.add(link);
         this.cachedLinks = null; // invalidate the cache
@@ -130,7 +130,7 @@ public class OtsNode implements Node, Locatable, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final void removeLink(final Link link)
+    public void removeLink(final Link link)
     {
         this.links.remove(link);
         this.cachedLinks = null; // invalidate the cache
@@ -144,7 +144,7 @@ public class OtsNode implements Node, Locatable, Serializable
      * @param outgoingLink Link; the link that the GTU can use to depart from this Node when coming from the incoming link
      * @throws NetworkException in case one of the links is not (correctly) connected to this Node
      */
-    public final void addConnection(final GtuType gtuType, final Link incomingLink, final Link outgoingLink)
+    public void addConnection(final GtuType gtuType, final Link incomingLink, final Link outgoingLink)
             throws NetworkException
     {
         // ------------------------------------------- check consistency
@@ -202,7 +202,7 @@ public class OtsNode implements Node, Locatable, Serializable
      *            incoming link
      * @throws NetworkException in case one of the links is not (correctly) connected to this Node
      */
-    public final void addConnections(final GtuType gtuType, final Link incomingLink, final Set<Link> outgoingLinks)
+    public void addConnections(final GtuType gtuType, final Link incomingLink, final Set<Link> outgoingLinks)
             throws NetworkException
     {
         // ------------------------------------------- check consistency
@@ -256,7 +256,7 @@ public class OtsNode implements Node, Locatable, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final ImmutableSet<Link> getLinks()
+    public ImmutableSet<Link> getLinks()
     {
         if (this.cachedLinks == null)
         {
@@ -267,7 +267,7 @@ public class OtsNode implements Node, Locatable, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final Set<Link> nextLinks(final GtuType gtuType, final Link prevLink) throws NetworkException
+    public Set<Link> nextLinks(final GtuType gtuType, final Link prevLink) throws NetworkException
     {
         // ------------------------------------------- check consistency
         if (!this.links.contains(prevLink))
@@ -317,7 +317,7 @@ public class OtsNode implements Node, Locatable, Serializable
      * {@inheritDoc}
      */
     @Override
-    public final boolean isConnectedTo(final GtuType gtuType, final Node toNode)
+    public boolean isConnectedTo(final GtuType gtuType, final Node toNode)
     {
         for (Link link : getLinks())
         {
@@ -333,19 +333,14 @@ public class OtsNode implements Node, Locatable, Serializable
     @Override
     public boolean isCentroid()
     {
-        boolean result = false;
-        for (Link link : getLinks())
-        {
-            if (!link.getType().isConnector())
-            {
-                return false;
-            }
-            else
-            {
-                result = true;
-            }
-        }
-        return result;
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public NodeType getType()
+    {
+        return NodeType.NODE;
     }
 
     /** {@inheritDoc} */

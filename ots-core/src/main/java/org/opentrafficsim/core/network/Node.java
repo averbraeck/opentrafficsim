@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 import org.djutils.immutablecollections.ImmutableSet;
+import org.opentrafficsim.base.HierarchicallyTyped;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.geometry.Bounds;
@@ -24,7 +25,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public interface Node extends Locatable, Serializable, Identifiable, Drawable
+public interface Node extends HierarchicallyTyped<NodeType, Node>, Locatable, Serializable, Identifiable, Drawable
 {
     /**
      * Return the network in which this link is registered. Cannot be null.
