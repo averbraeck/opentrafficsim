@@ -1,6 +1,7 @@
 package org.opentrafficsim.base;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import org.djutils.exceptions.Throw;
@@ -29,9 +30,6 @@ public abstract class HierarchicalType<T extends HierarchicalType<T, I>, I exten
 
     /** Parent type. */
     private final T parent;
-
-    /** Cached hash code. */
-    private int hashCode;
 
     /** the children of the hierarchical type. */
     private final Set<T> children = new LinkedHashSet<>();
@@ -126,49 +124,22 @@ public abstract class HierarchicalType<T extends HierarchicalType<T, I>, I exten
     @Override
     public int hashCode()
     {
-        if (this.hashCode == 0)
-        {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + this.id.hashCode();
-            this.hashCode = prime * result + ((this.parent == null) ? 0 : this.parent.hashCode());
-        }
-        return this.hashCode;
+        return Objects.hash(this.id, this.parent);
     }
 
     /** {@inheritDoc} */
     @Override
+    @SuppressWarnings("checkstyle:needbraces")
     public boolean equals(final Object obj)
     {
         if (this == obj)
-        {
             return true;
-        }
         if (obj == null)
-        {
             return false;
-        }
         if (getClass() != obj.getClass())
-        {
             return false;
-        }
         HierarchicalType<?, ?> other = (HierarchicalType<?, ?>) obj;
-        if (!this.id.equals(other.id))
-        {
-            return false;
-        }
-        if (this.parent == null)
-        {
-            if (other.parent != null)
-            {
-                return false;
-            }
-        }
-        else if (!this.parent.equals(other.parent))
-        {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.id, other.id) && Objects.equals(this.parent, other.parent);
     }
 
 }
