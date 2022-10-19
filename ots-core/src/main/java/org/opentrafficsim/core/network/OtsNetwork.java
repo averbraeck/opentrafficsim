@@ -24,7 +24,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.network.route.CompleteRoute;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.core.object.ObjectInterface;
@@ -679,10 +679,10 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final CompleteRoute getShortestRouteBetween(final GtuType gtuType, final Node nodeFrom, final Node nodeTo,
+    public final Route getShortestRouteBetween(final GtuType gtuType, final Node nodeFrom, final Node nodeTo,
             final LinkWeight linkWeight) throws NetworkException
     {
-        CompleteRoute route = new CompleteRoute("Route for " + gtuType + " from " + nodeFrom + "to " + nodeTo, gtuType);
+        Route route = new Route("Route for " + gtuType + " from " + nodeFrom + "to " + nodeTo, gtuType);
         SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = getGraph(gtuType, linkWeight);
         // DijkstraShortestPath<Node, LinkEdge<Link>> dijkstra = new DijkstraShortestPath<>(graph);
         // GraphPath<Node, LinkEdge<Link>> path = dijkstra.getPath(nodeFrom, nodeTo);
@@ -715,7 +715,7 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final CompleteRoute getShortestRouteBetween(final GtuType gtuType, final Node nodeFrom, final Node nodeTo,
+    public final Route getShortestRouteBetween(final GtuType gtuType, final Node nodeFrom, final Node nodeTo,
             final List<Node> nodesVia) throws NetworkException
     {
         return getShortestRouteBetween(gtuType, nodeFrom, nodeTo, nodesVia, LinkWeight.LENGTH_NO_CONNECTORS);
@@ -723,10 +723,10 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final CompleteRoute getShortestRouteBetween(final GtuType gtuType, final Node nodeFrom, final Node nodeTo,
+    public final Route getShortestRouteBetween(final GtuType gtuType, final Node nodeFrom, final Node nodeTo,
             final List<Node> nodesVia, final LinkWeight linkWeight) throws NetworkException
     {
-        CompleteRoute route = new CompleteRoute(
+        Route route = new Route(
                 "Route for " + gtuType + " from " + nodeFrom + "to " + nodeTo + " via " + nodesVia.toString(), gtuType);
         SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = getGraph(gtuType, linkWeight);
         List<Node> nodes = new ArrayList<>();

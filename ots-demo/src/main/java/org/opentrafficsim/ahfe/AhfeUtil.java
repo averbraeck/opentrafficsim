@@ -44,6 +44,7 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactory;
@@ -193,8 +194,8 @@ public final class AhfeUtil
         bcFactory.addParameter(gtuType, ParameterTypes.PERCEPTION, perception);
         bcFactory.addParameter(gtuType, ParameterTypes.FSPEED, 2.0);
 
-        Route leftRoute = new Route("left");
-        Route rightRoute = new Route("right");
+        Route leftRoute = new Route("left", gtuType);
+        Route rightRoute = new Route("right", gtuType);
         try
         {
             leftRoute.addNode(network.getNode("LEFTINPRE"));

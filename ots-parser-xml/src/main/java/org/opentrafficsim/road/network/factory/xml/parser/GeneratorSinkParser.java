@@ -22,6 +22,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
@@ -86,8 +87,8 @@ public final class GeneratorSinkParser
     {
         for (ROUTE routeTag : demand.getROUTE())
         {
-            Route route = new Route(routeTag.getID());
             GtuType gtuType = otsNetwork.getGtuType(routeTag.getGTUTYPE());
+            Route route = new Route(routeTag.getID(), gtuType);
             if (gtuType == null)
                 throw new NetworkException("GTUTYPE " + routeTag.getGTUTYPE() + " not found in ROUTE " + routeTag.getID());
             for (ROUTE.NODE nodeTag : routeTag.getNODE())
@@ -112,8 +113,8 @@ public final class GeneratorSinkParser
     {
         for (SHORTESTROUTE shortestRouteTag : demand.getSHORTESTROUTE())
         {
-            Route route = new Route(shortestRouteTag.getID());
             GtuType gtuType = otsNetwork.getGtuType(shortestRouteTag.getGTUTYPE());
+            Route route = new Route(shortestRouteTag.getID(), gtuType);
             if (gtuType == null)
                 throw new NetworkException(
                         "GTUTYPE " + shortestRouteTag.getGTUTYPE() + " not found in SHORTESTROUTE " + shortestRouteTag.getID());

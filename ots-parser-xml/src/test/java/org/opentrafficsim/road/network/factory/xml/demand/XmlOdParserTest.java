@@ -59,7 +59,7 @@ public class XmlOdParserTest
     OtsSimulatorInterface simulator = new OtsSimulator("XmlOdParserTest");
 
     /** Network. */
-    OtsRoadNetwork network = new OtsRoadNetwork("OD test", true, simulator);
+    OtsRoadNetwork network = new OtsRoadNetwork("OD test", true, this.simulator);
 
     /** Parser. */
     private XmlOdParser parser;
@@ -103,27 +103,40 @@ public class XmlOdParserTest
         OtsRoadNode A = new OtsRoadNode(this.network, "A", new OtsPoint3D(0, 0, 0), Direction.ZERO);
         OtsRoadNode B = new OtsRoadNode(this.network, "B", new OtsPoint3D(1, 0, 0), Direction.ZERO);
         OtsRoadNode C = new OtsRoadNode(this.network, "C", new OtsPoint3D(0, 1, 0), Direction.ZERO);
-        this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE), new Route("AB").addNode(A).addNode(B));
-        this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE),
-                new Route("AB2").addNode(A).addNode(C).addNode(B));
-        this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE), new Route("AC").addNode(A).addNode(C));
-        this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE),
-                new Route("AC2").addNode(A).addNode(B).addNode(C));
-        this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE), new Route("BC").addNode(B).addNode(C));
-        this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE),
-                new Route("BC2").addNode(B).addNode(A).addNode(C));
-        this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE), new Route("BA").addNode(B).addNode(A));
-        this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE),
-                new Route("BA2").addNode(B).addNode(C).addNode(A));
-        this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE), new Route("CA").addNode(C).addNode(A));
-        this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE),
-                new Route("CA2").addNode(C).addNode(B).addNode(A));
-        this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE), new Route("CB").addNode(C).addNode(B));
-        this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE),
-                new Route("CB2").addNode(C).addNode(A).addNode(B));
+
         CrossSectionLink AB =
                 new CrossSectionLink(this.network, "AB", A, B, this.network.getLinkType(LinkType.DEFAULTS.FREEWAY),
                         new OtsLine3D(A.getPoint(), B.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink AC =
+                new CrossSectionLink(this.network, "AC", A, C, this.network.getLinkType(LinkType.DEFAULTS.FREEWAY),
+                        new OtsLine3D(A.getPoint(), C.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink BC =
+                new CrossSectionLink(this.network, "BC", B, C, this.network.getLinkType(LinkType.DEFAULTS.FREEWAY),
+                        new OtsLine3D(B.getPoint(), C.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink BA =
+                new CrossSectionLink(this.network, "BA", B, A, this.network.getLinkType(LinkType.DEFAULTS.FREEWAY),
+                        new OtsLine3D(B.getPoint(), A.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink CA =
+                new CrossSectionLink(this.network, "CA", C, A, this.network.getLinkType(LinkType.DEFAULTS.FREEWAY),
+                        new OtsLine3D(A.getPoint(), C.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink CB =
+                new CrossSectionLink(this.network, "CB", C, B, this.network.getLinkType(LinkType.DEFAULTS.FREEWAY),
+                        new OtsLine3D(C.getPoint(), B.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
+
+        GtuType gtuType = this.network.getGtuType(GtuType.DEFAULTS.VEHICLE);
+        this.network.addRoute(gtuType, new Route("AB", gtuType).addNode(A).addNode(B));
+        this.network.addRoute(gtuType, new Route("AB2", gtuType).addNode(A).addNode(C).addNode(B));
+        this.network.addRoute(gtuType, new Route("AC", gtuType).addNode(A).addNode(C));
+        this.network.addRoute(gtuType, new Route("AC2", gtuType).addNode(A).addNode(B).addNode(C));
+        this.network.addRoute(gtuType, new Route("BC", gtuType).addNode(B).addNode(C));
+        this.network.addRoute(gtuType, new Route("BC2", gtuType).addNode(B).addNode(A).addNode(C));
+        this.network.addRoute(gtuType, new Route("BA", gtuType).addNode(B).addNode(A));
+        this.network.addRoute(gtuType, new Route("BA2", gtuType).addNode(B).addNode(C).addNode(A));
+        this.network.addRoute(gtuType, new Route("CA", gtuType).addNode(C).addNode(A));
+        this.network.addRoute(gtuType, new Route("CA2", gtuType).addNode(C).addNode(B).addNode(A));
+        this.network.addRoute(gtuType, new Route("CB", gtuType).addNode(C).addNode(B));
+        this.network.addRoute(gtuType, new Route("CB2", gtuType).addNode(C).addNode(A).addNode(B));
+
         new Lane(AB, "left", Length.ZERO, Length.ZERO, this.network.getLaneType(LaneType.DEFAULTS.FREEWAY),
                 new LinkedHashMap<>());
     }

@@ -40,6 +40,7 @@ import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
@@ -226,61 +227,11 @@ public class NetworksModel extends AbstractOtsModel implements EventListenerInte
                     new DistErlang(new MersenneTwister(1234), DoubleScalar.minus(averageHeadway, minimumHeadway).getSI(), 4);
 
             LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
+            Lane[] rampLanes = null;
             if (merge)
             {
-                // provide a route -- at the merge point, the GTU can otherwise decide to "go back"
-                ArrayList<Node> mainRouteNodes = new ArrayList<>();
-                mainRouteNodes.add(from);
-                mainRouteNodes.add(firstVia);
-                mainRouteNodes.add(secondVia);
-                mainRouteNodes.add(end);
-                Route mainRoute = new Route("main", mainRouteNodes);
-                this.routeGeneratorMain = new FixedRouteGenerator(mainRoute);
-
-                ArrayList<Node> rampRouteNodes = new ArrayList<>();
-                rampRouteNodes.add(from2a);
-                rampRouteNodes.add(from2b);
-                rampRouteNodes.add(firstVia);
-                rampRouteNodes.add(secondVia);
-                rampRouteNodes.add(end);
-                Route rampRoute = new Route("ramp", rampRouteNodes);
-                this.routeGeneratorRamp = new FixedRouteGenerator(rampRoute);
-            }
-            else
-            {
-                // determine the routes
-                List<FrequencyAndObject<Route>> routeProbabilities = new ArrayList<>();
-
-                ArrayList<Node> mainRouteNodes = new ArrayList<>();
-                mainRouteNodes.add(from);
-                mainRouteNodes.add(firstVia);
-                mainRouteNodes.add(secondVia);
-                mainRouteNodes.add(end);
-                Route mainRoute = new Route("main", mainRouteNodes);
-                routeProbabilities.add(new FrequencyAndObject<>(lanesOnMain, mainRoute));
-
-                ArrayList<Node> sideRouteNodes = new ArrayList<>();
-                sideRouteNodes.add(from);
-                sideRouteNodes.add(firstVia);
-                sideRouteNodes.add(secondVia);
-                sideRouteNodes.add(end2a);
-                sideRouteNodes.add(end2b);
-                Route sideRoute = new Route("side", sideRouteNodes);
-                routeProbabilities.add(new FrequencyAndObject<>(lanesOnBranch, sideRoute));
-                try
-                {
-                    this.routeGeneratorMain = new ProbabilisticRouteGenerator(routeProbabilities, new MersenneTwister(1234));
-                }
-                catch (ProbabilityException exception)
-                {
-                    exception.printStackTrace();
-                }
-            }
-
-            if (merge)
-            {
-                setupGenerator(LaneFactory.makeMultiLane(this.network, "From2a to From2b", from2a, from2b, null, lanesOnBranch,
-                        0, lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator));
+                rampLanes = LaneFactory.makeMultiLane(this.network, "From2a to From2b", from2a, from2b, null, lanesOnBranch, 0,
+                        lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator);
                 LaneFactory.makeMultiLaneBezier(this.network, "From2b to FirstVia", from2a, from2b, firstVia, secondVia,
                         lanesOnBranch, lanesOnCommon - lanesOnBranch, lanesOnCommon - lanesOnBranch, laneType, this.speedLimit,
                         this.simulator);
@@ -296,13 +247,69 @@ public class NetworksModel extends AbstractOtsModel implements EventListenerInte
 
             Lane[] startLanes = LaneFactory.makeMultiLane(this.network, "From to FirstVia", from, firstVia, null,
                     merge ? lanesOnMain : lanesOnCommonCompressed, laneType, this.speedLimit, this.simulator);
-            setupGenerator(startLanes);
             Lane[] common = LaneFactory.makeMultiLane(this.network, "FirstVia to SecondVia", firstVia, secondVia, null,
                     lanesOnCommon, laneType, this.speedLimit, this.simulator);
             setupSink(
                     LaneFactory.makeMultiLane(this.network, "SecondVia to end", secondVia, end, null,
                             merge ? lanesOnCommonCompressed : lanesOnMain, laneType, this.speedLimit, this.simulator),
                     laneType);
+
+            if (merge)
+            {
+                // provide a route -- at the merge point, the GTU can otherwise decide to "go back"
+                ArrayList<Node> mainRouteNodes = new ArrayList<>();
+                mainRouteNodes.add(from);
+                mainRouteNodes.add(firstVia);
+                mainRouteNodes.add(secondVia);
+                mainRouteNodes.add(end);
+                Route mainRoute = new Route("main", car, mainRouteNodes);
+                this.routeGeneratorMain = new FixedRouteGenerator(mainRoute);
+
+                ArrayList<Node> rampRouteNodes = new ArrayList<>();
+                rampRouteNodes.add(from2a);
+                rampRouteNodes.add(from2b);
+                rampRouteNodes.add(firstVia);
+                rampRouteNodes.add(secondVia);
+                rampRouteNodes.add(end);
+                Route rampRoute = new Route("ramp", car, rampRouteNodes);
+                this.routeGeneratorRamp = new FixedRouteGenerator(rampRoute);
+            }
+            else
+            {
+                // determine the routes
+                List<FrequencyAndObject<Route>> routeProbabilities = new ArrayList<>();
+
+                ArrayList<Node> mainRouteNodes = new ArrayList<>();
+                mainRouteNodes.add(from);
+                mainRouteNodes.add(firstVia);
+                mainRouteNodes.add(secondVia);
+                mainRouteNodes.add(end);
+                Route mainRoute = new Route("main", car, mainRouteNodes);
+                routeProbabilities.add(new FrequencyAndObject<>(lanesOnMain, mainRoute));
+
+                ArrayList<Node> sideRouteNodes = new ArrayList<>();
+                sideRouteNodes.add(from);
+                sideRouteNodes.add(firstVia);
+                sideRouteNodes.add(secondVia);
+                sideRouteNodes.add(end2a);
+                sideRouteNodes.add(end2b);
+                Route sideRoute = new Route("side", car, sideRouteNodes);
+                routeProbabilities.add(new FrequencyAndObject<>(lanesOnBranch, sideRoute));
+                try
+                {
+                    this.routeGeneratorMain = new ProbabilisticRouteGenerator(routeProbabilities, new MersenneTwister(1234));
+                }
+                catch (ProbabilityException exception)
+                {
+                    exception.printStackTrace();
+                }
+            }
+
+            if (merge)
+            {
+                setupGenerator(rampLanes);
+            }
+            setupGenerator(startLanes);
 
             for (int index = 0; index < lanesOnCommon; index++)
             {

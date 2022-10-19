@@ -4,30 +4,31 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.Identifiable;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 
 /**
- * A Route consists of a list of Nodes. A route does not have to be complete. As long as all 'splitting' nodes are part of the
- * route and have a valid successor node (connected by a Link), the strategical planner is able to make a plan. An extension of
- * the Route class exists that contains a complete route, where all nodes on the route have to be present and connected.
+ * A route is defined as a series of nodes. Each pair of consecutive nodes should have a link valid for the given direction and
+ * GTU type.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version Jan 1, 2015 <br>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 public class Route implements Serializable, Identifiable
 {
     /** */
-    private static final long serialVersionUID = 20150101L;
+    private static final long serialVersionUID = 20221910L;
 
     /** The nodes of the route. */
     private final List<Node> nodes;
@@ -38,27 +39,49 @@ public class Route implements Serializable, Identifiable
     /** Name of the route. */
     private final String id;
 
+    /** The GtuType for which this is a route. */
+    private final GtuType gtuType;
+
     /**
-     * Create an empty route.
-     * @param id String; the name of the route.
+     * Create an empty route for the given GtuType.
+     * @param id String; the name of the route
+     * @param gtuType GtuType; the GtuType for which this is a route
      */
-    public Route(final String id)
+    public Route(final String id, final GtuType gtuType)
     {
         this.nodes = new ArrayList<>();
         this.id = id;
+        this.gtuType = gtuType;
     }
 
     /**
      * Create a route based on an initial list of nodes. <br>
-     * @param nodes List&lt;Node&gt;; the initial list of nodes.
+     * This constructor makes a defensive copy of the provided List.
      * @param id String; the name of the route.
+     * @param gtuType GtuType; the GtuType for which this is a route
+     * @param nodes List&lt;Node&gt;; the initial list of nodes.
+     * @throws NetworkException if intermediate nodes are missing in the route.
      */
-    public Route(final String id, final List<Node> nodes)
+    public Route(final String id, final GtuType gtuType, final List<Node> nodes) throws NetworkException
     {
         this.id = id;
         this.nodes = new ArrayList<>(nodes); // defensive copy
         this.nodeSet.addAll(nodes);
         verify();
+        this.gtuType = gtuType;
+        Node fromNode = null;
+        for (Node toNode : getNodes())
+        {
+            if (null != fromNode)
+            {
+                if (!fromNode.isConnectedTo(this.gtuType, toNode))
+                {
+                    throw new NetworkException("CompleteRoute: node " + fromNode
+                            + " not directly or not directionally connected to node " + toNode);
+                }
+            }
+            fromNode = toNode;
+        }
     }
 
     /**
@@ -111,9 +134,17 @@ public class Route implements Serializable, Identifiable
      * @return Route; this route for method chaining
      * @throws NetworkException in case node could not be added to the route.
      */
-    @SuppressWarnings("checkstyle:designforextension")
-    public Route addNode(final Node node) throws NetworkException
+    public final Route addNode(final Node node) throws NetworkException
     {
+        if (getNodes().size() > 0)
+        {
+            Node lastNode = getNodes().get(getNodes().size() - 1);
+            if (!lastNode.isConnectedTo(this.gtuType, node))
+            {
+                throw new NetworkException("CompleteRoute: last node " + lastNode
+                        + " not directly or not directionally connected to node " + node);
+            }
+        }
         this.nodes.add(node);
         this.nodeSet.add(node);
         verify();
@@ -206,60 +237,51 @@ public class Route implements Serializable, Identifiable
         return this.id;
     }
 
+    /**
+     * Determine if this Route contains the specified Link.
+     * @param link Link; the link to check in the route.
+     * @return whether the link is part of the route or not.
+     */
+    public final boolean containsLink(final Link link)
+    {
+        int index1 = getNodes().indexOf(link.getStartNode());
+        int index2 = getNodes().indexOf(link.getEndNode());
+        return index1 >= 0 && index2 >= 0 && Math.abs(index2 - index1) == 1;
+    }
+
     /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
-        result = prime * result + ((this.nodeSet == null) ? 0 : this.nodeSet.hashCode());
-        result = prime * result + ((this.nodes == null) ? 0 : this.nodes.hashCode());
-        return result;
+        return Objects.hash(this.gtuType, this.id, this.nodes);
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     @Override
     public boolean equals(final Object obj)
     {
         if (this == obj)
+        {
             return true;
+        }
         if (obj == null)
+        {
             return false;
+        }
         if (getClass() != obj.getClass())
+        {
             return false;
+        }
         Route other = (Route) obj;
-        if (this.id == null)
-        {
-            if (other.id != null)
-                return false;
-        }
-        else if (!this.id.equals(other.id))
-            return false;
-        if (this.nodeSet == null)
-        {
-            if (other.nodeSet != null)
-                return false;
-        }
-        else if (!this.nodeSet.equals(other.nodeSet))
-            return false;
-        if (this.nodes == null)
-        {
-            if (other.nodes != null)
-                return false;
-        }
-        else if (!this.nodes.equals(other.nodes))
-            return false;
-        return true;
+        return Objects.equals(this.gtuType, other.gtuType) && Objects.equals(this.id, other.id)
+                && Objects.equals(this.nodes, other.nodes);
     }
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "Route [id=" + this.id + ", nodes=" + this.nodes + "]";
+        return "CompleteRoute [id=" + this.id + ", gtuType=" + this.gtuType + ", nodes=" + this.nodes + "]";
     }
 
 }

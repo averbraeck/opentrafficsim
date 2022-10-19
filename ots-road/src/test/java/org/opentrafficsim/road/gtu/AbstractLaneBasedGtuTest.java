@@ -32,7 +32,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.route.CompleteRoute;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCfLcTacticalPlanner;
@@ -118,7 +118,7 @@ public class AbstractLaneBasedGtuTest implements UNITS
         nodeList.add(nodeAFrom);
         nodeList.add(nodeATo);
         // Route of the Car
-        CompleteRoute route = new CompleteRoute("Route", gtuType, nodeList);
+        Route route = new Route("Route", gtuType, nodeList);
         // Now we can make a GTU
         Parameters parameters = DefaultTestParameters.create(); // new
                                                                 // BehavioralCharacteristics();

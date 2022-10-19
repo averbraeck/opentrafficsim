@@ -14,7 +14,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.route.CompleteRoute;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
@@ -368,7 +368,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
             nodes.addAll(newNodes);
             this.route =
                     Try.assign(
-                            () -> new CompleteRoute("Route for " + gtuType + " from " + this.origin + "to " + this.destination
+                            () -> new Route("Route for " + gtuType + " from " + this.origin + "to " + this.destination
                                     + " via " + ref.getLane().getParentLink(), gtuType, nodes),
                             "No route possible over nodes %s", nodes);
             // System.out.println("RouteSupplier route for GTU " + getGtu().getId() + ": " + this.route);

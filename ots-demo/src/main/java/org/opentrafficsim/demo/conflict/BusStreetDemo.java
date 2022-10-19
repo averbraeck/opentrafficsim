@@ -24,6 +24,7 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Try;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
@@ -38,7 +39,9 @@ import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactory;
 import org.opentrafficsim.demo.conflict.BusStreetDemo.BusStreetModel;
@@ -245,8 +248,7 @@ public class BusStreetDemo extends OtsSimulationApplication<BusStreetModel>
             Lane lane = ((CrossSectionLink) this.network.getLink("AB")).getLanes().get(0);
             String id = lane.getId();
             Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
-            initialLongitudinalPositions
-                    .add(new LanePosition(lane, new Length(10.0, LengthUnit.SI)));
+            initialLongitudinalPositions.add(new LanePosition(lane, new Length(10.0, LengthUnit.SI)));
             Generator<Duration> headwayGenerator =
                     new HeadwayGenerator(new Frequency(800, FrequencyUnit.PER_HOUR), this.simulator);
             LaneBasedGtuCharacteristicsGenerator characteristicsGenerator =
@@ -376,8 +378,15 @@ public class BusStreetDemo extends OtsSimulationApplication<BusStreetModel>
             List<Node> carNodesO = new ArrayList<>(carNodesN);
             carNodesN.add(network.getNode("N"));
             carNodesO.add(network.getNode("O"));
-            this.carRouteN = new Route("carN", carNodesN);
-            this.carRouteO = new Route("carO", carNodesO);
+            try
+            {
+                this.carRouteN = new Route("carN", this.network.getGtuType(GtuType.DEFAULTS.CAR), carNodesN);
+                this.carRouteO = new Route("carO", this.network.getGtuType(GtuType.DEFAULTS.CAR), carNodesO);
+            }
+            catch (NetworkException ne)
+            {
+                throw new RuntimeException("Route is invalid.", ne);
+            }
             this.busNodes1 = new ArrayList<>();
             this.busNodes1.add(network.getNode("A"));
             this.busNodes1.add(network.getNode("B"));
@@ -452,7 +461,9 @@ public class BusStreetDemo extends OtsSimulationApplication<BusStreetModel>
                     length = new Length(8.0, LengthUnit.SI);
                     width = new Length(2.0, LengthUnit.SI);
                     maximumSpeed = new Speed(100.0, SpeedUnit.KM_PER_HOUR);
-                    BusSchedule schedule = new BusSchedule("bus1." + this.simulator.getSimulatorTime(), this.busNodes1, "1");
+                    BusSchedule schedule = Try.assign(
+                            () -> new BusSchedule("bus1." + this.simulator.getSimulatorTime(), gtuType, this.busNodes1, "1"),
+                            GtuException.class, "Nodes are not consecutive, or are incompatible with the GTU type.");
                     Time now = this.simulator.getSimulatorAbsTime();
                     schedule.addBusStop("Cafe Boszicht.1", now.plus(new Duration(70.0, DurationUnit.SI)), this.longDwellTime,
                             true);
@@ -472,7 +483,9 @@ public class BusStreetDemo extends OtsSimulationApplication<BusStreetModel>
                     length = new Length(12.0, LengthUnit.SI);
                     width = new Length(2.0, LengthUnit.SI);
                     maximumSpeed = new Speed(100.0, SpeedUnit.KM_PER_HOUR);
-                    BusSchedule schedule = new BusSchedule("bus2." + this.simulator.getSimulatorTime(), this.busNodes2, "2");
+                    BusSchedule schedule = Try.assign(
+                            () -> new BusSchedule("bus2." + this.simulator.getSimulatorTime(), gtuType, this.busNodes2, "2"),
+                            GtuException.class, "Nodes are not consecutive, or are incompatible with the GTU type.");
                     Time now = this.simulator.getSimulatorAbsTime();
                     schedule.addBusStop("Cafe Boszicht.2", now.plus(new Duration(80.0, DurationUnit.SI)), this.longDwellTime,
                             true);

@@ -24,7 +24,8 @@ import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.mock.MockGtu;
 import org.opentrafficsim.core.mock.MockSimulator;
-import org.opentrafficsim.core.network.route.CompleteRoute;
+import org.opentrafficsim.core.network.LinkType.DEFAULTS;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.Route;
 
 /**
@@ -401,9 +402,10 @@ public class OtsNetworkTest implements EventListenerInterface
     /**
      * Test the route map stuff.
      * @throws NetworkException if that happens uncaught; this test has failed
+     * @throws OtsGeometryException if that happens uncaught; this test has failed
      */
     @Test
-    public final void testRouteMap() throws NetworkException
+    public final void testRouteMap() throws NetworkException, OtsGeometryException
     {
         OtsNetwork network = new OtsNetwork("Route map test network", true, MockSimulator.createMock());
         Node node1 = new OtsNode(network, "node1", new OtsPoint3D(10, 20, 30));
@@ -411,11 +413,13 @@ public class OtsNetworkTest implements EventListenerInterface
         List<Node> nodeList = new ArrayList<>();
         nodeList.add(node1);
         nodeList.add(node2);
-        Route route1 = new Route("route1", nodeList);
-        Route route2 = new Route("route2");
-        Route route3 = new Route("route3");
         GtuType carType = new GtuType("car", network.getGtuType(GtuType.DEFAULTS.VEHICLE));
         GtuType bicycleType = new GtuType("bicycle", network.getGtuType(GtuType.DEFAULTS.BICYCLE));
+        new OtsLink(network, "Link12", node1, node2, network.getLinkType(DEFAULTS.ROAD),
+                new OtsLine3D(node1.getPoint(), node2.getPoint()));
+        Route route1 = new Route("route1", carType, nodeList);
+        Route route2 = new Route("route2", carType);
+        Route route3 = new Route("route3", bicycleType);
         // The next test makes little sense until the getters are changed to search up to the GtuType root.
         assertEquals("initially the network has 0 routes", 0,
                 network.getDefinedRouteMap(network.getGtuType(GtuType.DEFAULTS.VEHICLE)).size());
@@ -447,11 +451,10 @@ public class OtsNetworkTest implements EventListenerInterface
         badNodeList.add(node1);
         badNodeList.add(node2);
         badNodeList.add(badNode);
-        Route badRoute = new Route("badRoute", badNodeList);
         try
         {
-            network.addRoute(carType, badRoute);
-            fail("adding a route with a node that is not in the network should have thrown a NetworkException");
+            Route badRoute = new Route("badRoute", carType, badNodeList);
+            fail("creating a route with a node that is not in the network should have thrown a NetworkException");
         }
         catch (NetworkException ne)
         {
@@ -509,7 +512,7 @@ public class OtsNetworkTest implements EventListenerInterface
             {
                 Node fromNode = nodes.get(fromNodeIndex);
                 Node toNode = nodes.get((fromNodeIndex + skip) % maxNode);
-                CompleteRoute route =
+                Route route =
                         network.getShortestRouteBetween(network.getGtuType(GtuType.DEFAULTS.VEHICLE), fromNode, toNode);
                 assertEquals("route size is skip + 1", skip + 1, route.size());
                 for (int i = 0; i < route.size(); i++)
@@ -517,7 +520,7 @@ public class OtsNetworkTest implements EventListenerInterface
                     assertEquals("node in route at position i should match", nodes.get((fromNodeIndex + i) % maxNode),
                             route.getNode(i));
                 }
-                CompleteRoute routeWithExplicitLengthWeight = network.getShortestRouteBetween(
+                Route routeWithExplicitLengthWeight = network.getShortestRouteBetween(
                         network.getGtuType(GtuType.DEFAULTS.VEHICLE), fromNode, toNode, LinkWeight.LENGTH);
                 assertEquals("route with explicit link weight should be the same", route, routeWithExplicitLengthWeight);
                 // reverse direction
@@ -550,7 +553,7 @@ public class OtsNetworkTest implements EventListenerInterface
             {
                 Node fromNode = nodes.get(fromNodeIndex);
                 Node toNode = nodes.get((fromNodeIndex + skip) % maxNode);
-                CompleteRoute route =
+                Route route =
                         network.getShortestRouteBetween(network.getGtuType(GtuType.DEFAULTS.VEHICLE), fromNode, toNode);
                 assertEquals("route size is skip + 1", skip + 1, route.size());
                 for (int i = 0; i < route.size(); i++)
@@ -618,7 +621,7 @@ public class OtsNetworkTest implements EventListenerInterface
                         // }
                         // System.out.println("");
                         Node toNode = network.getNode("node" + toNodeIndex);
-                        CompleteRoute route = network.getShortestRouteBetween(network.getGtuType(GtuType.DEFAULTS.VEHICLE),
+                        Route route = network.getShortestRouteBetween(network.getGtuType(GtuType.DEFAULTS.VEHICLE),
                                 fromNode, toNode, viaNodes);
                         // Now compute the expected path using our knowledge about the structure
                         List<Node> expectedPath = new ArrayList<>();
@@ -648,7 +651,7 @@ public class OtsNetworkTest implements EventListenerInterface
                         }
                         route = network.getShortestRouteBetween(network.getGtuType(GtuType.DEFAULTS.VEHICLE), fromNode, toNode,
                                 viaNodes);
-                        CompleteRoute routeWithExplicitLengthAsWeight = network.getShortestRouteBetween(
+                        Route routeWithExplicitLengthAsWeight = network.getShortestRouteBetween(
                                 network.getGtuType(GtuType.DEFAULTS.VEHICLE), fromNode, toNode, viaNodes, LinkWeight.LENGTH);
                         assertEquals("route with explicit weight should be same as route", route,
                                 routeWithExplicitLengthAsWeight);

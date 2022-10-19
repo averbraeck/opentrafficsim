@@ -32,9 +32,11 @@ import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.core.gtu.GtuType.DEFAULTS;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactory;
@@ -205,6 +207,10 @@ public class CrossingTrafficLightsModel extends AbstractOtsModel implements UNIT
 
             for (int i = 0; i < 4; i++)
             {
+
+                // remember the first lanes so we can built generators on them, using routes based on the finished network
+                Lane[] firstLanes = null;
+
                 for (int j = 0; j < 3; j++)
                 {
                     Lane[] lanes = LaneFactory.makeMultiLane(this.network,
@@ -212,36 +218,7 @@ public class CrossingTrafficLightsModel extends AbstractOtsModel implements UNIT
                             2, laneType, this.speedLimit, this.simulator);
                     if (j == 0)
                     {
-                        for (Lane lane : lanes)
-                        {
-                            // make a generator for the lane
-                            Generator<Route> routeGenerator = new FixedRouteGenerator(new Route("main",
-                                    Arrays.asList(new Node[] {nodes[i][0], nodes[i][1], nodes[i][2], nodes[i][3]})));
-                            makeGenerator(lane, routeGenerator);
-
-                            // add the traffic light
-                            SimpleTrafficLight tl = new SimpleTrafficLight(lane.getId() + "_TL", lane,
-                                    new Length(lane.getLength().minus(new Length(10.0, LengthUnit.METER))), this.simulator);
-                            trafficLights.put(lane, tl);
-
-                            try
-                            {
-                                new TrafficLightAnimation(tl, this.simulator);
-                            }
-                            catch (RemoteException | NamingException exception)
-                            {
-                                throw new NetworkException(exception);
-                            }
-
-                            if (i == 0 || i == 2)
-                            {
-                                this.simulator.scheduleEventRel(Duration.ZERO, this, this, "changeTL", new Object[] {tl});
-                            }
-                            else
-                            {
-                                this.simulator.scheduleEventRel(TRED, this, this, "changeTL", new Object[] {tl});
-                            }
-                        }
+                        firstLanes = lanes;
                     }
                     if (j == 2)
                     {
@@ -249,6 +226,38 @@ public class CrossingTrafficLightsModel extends AbstractOtsModel implements UNIT
                         {
                             new SinkSensor(lane, new Length(500.0, METER), Compatible.EVERYTHING, this.simulator);
                         }
+                    }
+                }
+
+                for (Lane lane : firstLanes)
+                {
+                    // make a generator for the lane
+                    Generator<Route> routeGenerator =
+                            new FixedRouteGenerator(new Route("main", this.network.getGtuType(DEFAULTS.VEHICLE),
+                                    Arrays.asList(new Node[] {nodes[i][0], nodes[i][1], nodes[i][2], nodes[i][3]})));
+                    makeGenerator(lane, routeGenerator);
+
+                    // add the traffic light
+                    SimpleTrafficLight tl = new SimpleTrafficLight(lane.getId() + "_TL", lane,
+                            new Length(lane.getLength().minus(new Length(10.0, LengthUnit.METER))), this.simulator);
+                    trafficLights.put(lane, tl);
+
+                    try
+                    {
+                        new TrafficLightAnimation(tl, this.simulator);
+                    }
+                    catch (RemoteException | NamingException exception)
+                    {
+                        throw new NetworkException(exception);
+                    }
+
+                    if (i == 0 || i == 2)
+                    {
+                        this.simulator.scheduleEventRel(Duration.ZERO, this, this, "changeTL", new Object[] {tl});
+                    }
+                    else
+                    {
+                        this.simulator.scheduleEventRel(TRED, this, this, "changeTL", new Object[] {tl});
                     }
                 }
             }

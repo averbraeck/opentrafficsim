@@ -14,7 +14,7 @@ import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.network.route.CompleteRoute;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.core.object.ObjectInterface;
@@ -340,7 +340,7 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      * @throws NetworkException in case nodes cannot be added to the route, e.g. because they are not directly connected. This
      *             can be the case when the links in the network have changed, but the graph has not been rebuilt.
      */
-    default CompleteRoute getShortestRouteBetween(GtuType gtuType, Node nodeFrom, Node nodeTo) throws NetworkException
+    default Route getShortestRouteBetween(GtuType gtuType, Node nodeFrom, Node nodeTo) throws NetworkException
     {
         return getShortestRouteBetween(gtuType, nodeFrom, nodeTo, LinkWeight.LENGTH);
     }
@@ -358,7 +358,7 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      * @throws NetworkException in case nodes cannot be added to the route, e.g. because they are not directly connected. This
      *             can be the case when the links in the network have changed, but the graph has not been rebuilt.
      */
-    CompleteRoute getShortestRouteBetween(GtuType gtuType, Node nodeFrom, Node nodeTo, LinkWeight linkWeight)
+    Route getShortestRouteBetween(GtuType gtuType, Node nodeFrom, Node nodeTo, LinkWeight linkWeight)
             throws NetworkException;
 
     /**
@@ -376,7 +376,7 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      * @throws NetworkException in case nodes cannot be added to the route, e.g. because they are not directly connected. This
      *             can be the case when the links in the network have changed, but the graph has not been rebuilt.
      */
-    default CompleteRoute getShortestRouteBetween(GtuType gtuType, Node nodeFrom, Node nodeTo, List<Node> nodesVia)
+    default Route getShortestRouteBetween(GtuType gtuType, Node nodeFrom, Node nodeTo, List<Node> nodesVia)
             throws NetworkException
     {
         return getShortestRouteBetween(gtuType, nodeFrom, nodeTo, nodesVia, LinkWeight.LENGTH);
@@ -397,7 +397,7 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      * @throws NetworkException in case nodes cannot be added to the route, e.g. because they are not directly connected. This
      *             can be the case when the links in the network have changed, but the graph has not been rebuilt.
      */
-    CompleteRoute getShortestRouteBetween(GtuType gtuType, Node nodeFrom, Node nodeTo, List<Node> nodesVia,
+    Route getShortestRouteBetween(GtuType gtuType, Node nodeFrom, Node nodeTo, List<Node> nodesVia,
             LinkWeight linkWeight) throws NetworkException;
 
     /***************************************************************************************/

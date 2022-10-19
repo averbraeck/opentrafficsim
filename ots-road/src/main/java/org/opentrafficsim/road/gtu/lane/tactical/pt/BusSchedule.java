@@ -8,6 +8,8 @@ import java.util.Set;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 
@@ -40,22 +42,26 @@ public class BusSchedule extends Route
 
     /**
      * @param id String; id
+     * @param gtuType GtuType; the GtuType for which this is a route
      * @param nodes List&lt;Node&gt;; nodes
      * @param line String; line of the bus schedule
+     * @throws NetworkException if intermediate nodes are missing in the route.
      */
-    public BusSchedule(final String id, final List<Node> nodes, final String line)
+    public BusSchedule(final String id, final GtuType gtuType, final List<Node> nodes, final String line)
+            throws NetworkException
     {
-        super(id, nodes);
+        super(id, gtuType, nodes);
         this.line = line;
     }
 
     /**
      * @param id String; id
+     * @param gtuType GtuType; the GtuType for which this is a route
      * @param line String; line of the bus schedule
      */
-    public BusSchedule(final String id, final String line)
+    public BusSchedule(final String id, final GtuType gtuType, final String line)
     {
-        super(id);
+        super(id, gtuType);
         this.line = line;
     }
 
