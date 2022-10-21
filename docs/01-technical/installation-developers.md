@@ -164,3 +164,35 @@ After you pushed to github, you get a confirmation screen about the committed ch
 <center>![](../images/01-technical/install-developer-026.png)</center>
 
 In case there have been others who made changes in the meantime, you get an error message, and you cannot push the head until you fetched the changes from others, and resolved potential conflicts. For conflict resolution and merging, see more extensive git documentation online.
+
+
+## 5. Github Personal Access Token is needed to push to github
+
+Github does not allow to push updates from a remote computer using the standard github password. Instead, a so-called 'Personal Access Token' is needed that enables a push to github. Other developer features can be allowed / disallowed with a personal access token as well. Read more about this in [https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) and about fine-grained access tokens (new) in [https://github.blog/2022-10-18-introducing-fine-grained-personal-access-tokens-for-github/](https://github.blog/2022-10-18-introducing-fine-grained-personal-access-tokens-for-github/). 
+
+A Personal Access Token acts as a password, but it can be revoked (e.g., if your laptop gets stolen), it can give access to some features and not to others, and with the fine-grained tokens, it can give remote access to the features of certain repositories but not to others. One example of a use case is a script that has to be run on a server that needs access to certain features on github. Password-based access would require you to store or expose your github password (sometimes unencrypted) in/for that script. With tokens you can generate a token for just that purpose and use it in the script. If the server gets compromised, misuse will only consider the permissions relating to that script, and only that token needs to be revoked and regenerated.
+
+You find the way to generate a Personal Access Token under the '**Settings**' menu for your personal account.
+- Scroll down and in the left menu select '**<> Developer Settings**'. 
+- There, choose '**Personal access tokens**' and '**Tokens (classic)**'. 
+- Select '**Generate New token**' at the top, and '**Generate New token (classic)**'
+- You can give the token a name and expiration date (or no expiration).
+- Minimally tick the '**repo**' options:
+
+```
+repo     Full control of private repositories
+    repo:status       Access commit status
+    repo_deployment   Access deployment status
+    public_repo       Access public repositories
+    repo:invite       Access repository invitations
+    security_events   Read and write security events
+```
+- Possibly select '**workflow**' to update GitHub Action Workflows, since we use them in our project, and they might be updated from Eclipse. 
+- Reading, writing and deleing packages is not needed since we deploy the packages to Maven Central rather than to GitHub.
+- For the rest, there is no need to tick any other options since we don't use these options *from Eclipse*. 
+- Press '**Generate token**', and use this token **as the password** in Eclipse to access the Git. You use this with your GitHub login name as the usename. So the token *replaces* your GitHub password.
+- Store the token in a vault or secure place, since you will need it for other projects where you want to push code to one of your github projects.
+
+
+
+
