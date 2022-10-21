@@ -1,4 +1,4 @@
-package strategies;
+package org.opentrafficsim.demo.strategies;
 
 import java.awt.Color;
 import java.awt.Component;

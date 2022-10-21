@@ -1,4 +1,4 @@
-package loadfromxml;
+package org.opentrafficsim.demo.loadfromxml;
 
 import java.awt.Dimension;
 import java.io.ByteArrayInputStream;

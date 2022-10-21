@@ -25,10 +25,8 @@ import javax.swing.WindowConstants;
 
 import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
-import org.opentrafficsim.demo.conflict.BusStreetDemo;
 import org.opentrafficsim.demo.conflict.TJunctionDemo;
 import org.opentrafficsim.demo.conflict.TurboRoundaboutDemo;
-import org.opentrafficsim.demo.trafficcontrol.TrafCodDemo1;
 import org.opentrafficsim.demo.trafficcontrol.TrafCodDemo2;
 import org.opentrafficsim.swing.gui.OtsSwingApplication;
 
@@ -70,28 +68,16 @@ public class SuperDemo extends JFrame
     {
         this.demos.add(new Demo("Straight", StraightSwing.class, "Single lane road with a blockage for a while.\n"
                 + "The model shows the dissolving of the congestion that occurs as a result."));
-        this.demos.add(new Demo("SequentialLanes", SequentialLanes.class,
-                "Cars and trucks driving on several sequential lanes, each around 1 km long.\n"));
         this.demos.add(new Demo("CircularRoad", CircularRoadSwing.class, "Model of a two-lane circular road with overtaking.\n"
                 + "Users can specify the fraction of cars and trucks, as well as some driving parameters."));
-        this.demos.add(new Demo("CircularLane", CircularLaneSwing.class, "Model of a one-lane circular road with overtaking.\n"
-                + "Users can specify the fraction of cars and trucks, as well as some driving parameters."));
-        this.demos.add(new Demo("FundamentalDiagrams", FundamentalDiagrams.class,
-                "Creating fundamental diagrams for a straight road.\n"));
         this.demos.add(new Demo("ShortMerge", ShortMerge.class, "Short merge on a highway, followed by a destination split,\n"
                 + "forcing cars to change lanes in a relative short distance."));
         this.demos.add(new Demo("TJunction", TJunctionDemo.class,
                 "Complex crossing traffic on a T-junction with\n" + "automated conflict resolution."));
         this.demos.add(new Demo("TurboRoundabout", TurboRoundaboutDemo.class,
                 "Turbo Roundabout without traffic lights,\n" + "conflict resolution is fully automated."));
-        this.demos.add(new Demo("BusStreet", BusStreetDemo.class,
-                "Interaction between bus traffic and normal road traffic,\n" + "several types of bus stops and busses."));
         this.demos.add(new Demo("Networks", NetworksSwing.class,
                 "A number of different networks with merging and splitting,\n" + "forcing cars to change lanes and to merge."));
-        this.demos.add(new Demo("CrossingTrafficLights", CrossingTrafficLightsSwing.class,
-                "Model of a crossing with traffic lights.\n"));
-        this.demos.add(new Demo("TrafCODDemoSimple", TrafCodDemo1.class,
-                "Model of a simple crossing with traffic lights.\n" + "using a TrafCOD controller"));
         this.demos.add(new Demo("TrafCODDemoComplex", TrafCodDemo2.class,
                 "Model of a complex crossing with traffic lights.\n" + "using a TrafCOD controller"));
     }
