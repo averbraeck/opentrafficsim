@@ -11,7 +11,9 @@ import org.djutils.immutablecollections.ImmutableHashSet;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsShape;
 import org.opentrafficsim.core.gtu.GtuType;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -40,6 +42,9 @@ public class OtsNode implements Node, Locatable, Serializable
 
     /** The point. */
     private final OtsPoint3D point;
+
+    /** the shape. */
+    private final OtsShape shape;
 
     /** Heading. */
     private final double heading;
@@ -89,6 +94,19 @@ public class OtsNode implements Node, Locatable, Serializable
         this.point = new OtsPoint3D(point.x, point.y, point.z);
         this.heading = heading;
 
+        double x = this.point.x;
+        double y = this.point.y;
+        double z = this.point.z;
+        try
+        {
+            this.shape = new OtsShape(new OtsPoint3D(x - 0.5, y - 0.5, z), new OtsPoint3D(x - 0.5, y + 0.5, z),
+                    new OtsPoint3D(x + 0.5, y + 0.5, z), new OtsPoint3D(x + 0.5, y - 0.5, z));
+        }
+        catch (OtsGeometryException exception)
+        {
+            throw new NetworkException(exception);
+        }
+
         this.network.addNode(this);
     }
 
@@ -111,6 +129,13 @@ public class OtsNode implements Node, Locatable, Serializable
     public OtsPoint3D getPoint()
     {
         return this.point;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public OtsShape getShape()
+    {
+        return this.shape;
     }
 
     /** {@inheritDoc} */
@@ -144,8 +169,7 @@ public class OtsNode implements Node, Locatable, Serializable
      * @param outgoingLink Link; the link that the GTU can use to depart from this Node when coming from the incoming link
      * @throws NetworkException in case one of the links is not (correctly) connected to this Node
      */
-    public void addConnection(final GtuType gtuType, final Link incomingLink, final Link outgoingLink)
-            throws NetworkException
+    public void addConnection(final GtuType gtuType, final Link incomingLink, final Link outgoingLink) throws NetworkException
     {
         // ------------------------------------------- check consistency
         if (!this.links.contains(incomingLink))

@@ -6,6 +6,7 @@ import java.util.Set;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.base.HierarchicallyTyped;
 import org.opentrafficsim.base.Identifiable;
+import org.opentrafficsim.core.SpatialObject;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
@@ -25,7 +26,8 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public interface Node extends HierarchicallyTyped<NodeType, Node>, Locatable, Serializable, Identifiable, Drawable
+public interface Node extends HierarchicallyTyped<NodeType, Node>, SpatialObject<NodeType, Node>, Locatable, Serializable,
+        Identifiable, Drawable
 {
     /**
      * Return the network in which this link is registered. Cannot be null.
@@ -68,8 +70,8 @@ public interface Node extends HierarchicallyTyped<NodeType, Node>, Locatable, Se
     Set<Link> nextLinks(GtuType gtuType, Link prevLink) throws NetworkException;
 
     /**
-     * Check if the current node is linked to the given Node for the given GtuType. This means
-     * there is a direct Link from this node to toNode for the provided GtuType.
+     * Check if the current node is linked to the given Node for the given GtuType. This means there is a direct Link from this
+     * node to toNode for the provided GtuType.
      * @param gtuType GtuType; the GTU type to check the connection for.
      * @param toNode Node; the to node
      * @return whether two nodes are linked for the GTU type.
