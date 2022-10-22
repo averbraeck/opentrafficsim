@@ -26,7 +26,9 @@ import org.djutils.immutablecollections.ImmutableList;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.HierarchicallyTyped;
 import org.opentrafficsim.core.SpatialObject;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.geometry.OtsShape;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -73,6 +75,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     /** Type of lane to deduce compatibility with GTU types. */
     private final LaneType laneType;
 
+    /** the shape in absolute coordinates (getContour() returns relative coordinates). */
+    private OtsShape shape = null;
     /**
      * The speed limit of this lane, which can differ per GTU type. Cars might be allowed to drive 120 km/h and trucks 90 km/h.
      * If the speed limit is the same for a family of GTU types, that family name (e.g., GtuType.VEHICLE) can be used. <br>
@@ -892,7 +896,27 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     @Override
     public OtsShape getShape()
     {
-        return getContour();
+        if (this.shape == null)
+        {
+            // the contour is centered around the centroid at (0, 0)
+            List<OtsPoint3D> shapePoints = new ArrayList<>();
+            DirectedPoint l = getLocation();
+            for (OtsPoint3D p : getContour().getPoints())
+            {
+                shapePoints.add(new OtsPoint3D(l.x + p.x, l.y + p.y, l.z + p.z));
+            }
+            try
+            {
+                this.shape = new OtsShape(shapePoints);
+            }
+            catch (OtsGeometryException e)
+            {
+                throw new RuntimeException(e);
+            }
+            // System.out.println("Lane=" + getId() + ", shape=" +  this.shape);
+            // System.out.println("Envelope=" + this.shape.getEnvelope());
+        }
+        return this.shape;
     }
 
     /**
