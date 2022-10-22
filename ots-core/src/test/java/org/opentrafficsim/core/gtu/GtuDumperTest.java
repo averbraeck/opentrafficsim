@@ -37,6 +37,7 @@ import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
+import org.opentrafficsim.core.geometry.OtsShape;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -426,6 +427,20 @@ public class GtuDumperTest implements OtsModelInterface
             public void setErrorHandler(final GtuErrorHandler errorHandler)
             {
                 // Do nothing
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public OtsShape getShape()
+            {
+                return null;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public OtsShape getShape(final Time time)
+            {
+                return null;
             }
 
             @Override

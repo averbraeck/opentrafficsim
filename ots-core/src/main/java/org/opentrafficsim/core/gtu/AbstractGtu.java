@@ -21,7 +21,9 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsShape;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
@@ -127,6 +129,9 @@ public abstract class AbstractGtu extends EventProducer implements Gtu
 
     /** Error handler. */
     private GtuErrorHandler errorHandler = GtuErrorHandler.THROW;
+
+    /** shape of the Gtu contour. */
+    private OtsShape shape = null;
 
     /**
      * @param id String; the id of the GTU
@@ -653,6 +658,53 @@ public abstract class AbstractGtu extends EventProducer implements Gtu
             {
                 return new DirectedPoint(0, 0, 0);
             }
+        }
+    }
+
+    /**
+     * Return the shape of a dynamic object at time 'time'. Note that the getShape() method without a time returns the Minkowski
+     * sum of all shapes of the spatial object for a validity time window, e.g., a contour that describes all locations of a GTU
+     * for the next time step, i.e., the contour of the GTU belonging to the next operational plan.
+     * @param time Time; the time for which we want the shape
+     * @return OtsShape; the shape of the object at time 'time'
+     */
+    @Override
+    public OtsShape getShape(final Time time)
+    {
+        try
+        {
+            if (this.shape == null)
+            {
+                double w = getWidth().si;
+                double l = getLength().si;
+                this.shape = new OtsShape(new OtsPoint3D(-0.5 * l, -0.5 * w, 0.0), new OtsPoint3D(-0.5 * l, 0.5 * w, 0.0),
+                        new OtsPoint3D(0.5 * l, 0.5 * w, 0.0), new OtsPoint3D(0.5 * l, -0.5 * w, 0.0));
+            }
+            return transformShape(this.shape, this.operationalPlan.get(time).getLocation(time));
+        }
+        catch (OtsGeometryException | OperationalPlanException exception)
+        {
+            throw new RuntimeException(exception);
+        }
+    }
+
+    /**
+     * Return the shape of the GTU for the validity time of the operational plan. Note that this method without a time returns
+     * the Minkowski sum of all shapes of the spatial object for a validity time window, e.g., a contour that describes all
+     * locations of a GTU for the next time step, i.e., the contour of the GTU belonging to the next operational plan.
+     * @return OtsShape; the shape of the object over the validity of the operational plan
+     */
+    @Override
+    public OtsShape getShape()
+    {
+        // TODO: the entire contour of the GTU has to be moved over the path
+        try
+        {
+            return new OtsShape(this.operationalPlan.get().getPath().offsetLine(getWidth().si / 2.0).getPoints());
+        }
+        catch (OtsGeometryException exception)
+        {
+            throw new RuntimeException(exception);
         }
     }
 
