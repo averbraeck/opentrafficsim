@@ -79,7 +79,7 @@ public class OtsLine3D implements Locatable, Serializable // XXX: DJ
     private Length[] vertexRadii; // XXX: DJ
 
     /** Bounding of this OTSLine3D. */
-    private Envelope envelope;
+    private Bounds envelope;
 
     /**
      * Construct a new OTSLine3D.
@@ -1787,7 +1787,7 @@ public class OtsLine3D implements Locatable, Serializable // XXX: DJ
         double deltaZ = maxZ - minZ;
         this.bounds = new Bounds(new Point3d(-deltaX / 2.0, -deltaY / 2.0, -deltaZ / 2.0),
                 new Point3d(deltaX / 2, deltaY / 2, deltaZ / 2));
-        this.envelope = new Envelope(minX, maxX, minY, maxY);
+        this.envelope = new Bounds(new Point3d(minX, minY, 0), new Point3d(maxX, maxY, 0));
     }
 
     /**
@@ -1807,7 +1807,7 @@ public class OtsLine3D implements Locatable, Serializable // XXX: DJ
      * Get the bounding rectangle of this OTSLine3D.
      * @return Rectangle2D; the bounding rectangle of this OTSLine3D
      */
-    public final synchronized Envelope getEnvelope() // XXX: DJ uses BoundingRectangle
+    public final synchronized Bounds getEnvelope() // XXX: DJ uses BoundingRectangle
     {
         if (this.envelope == null)
         {

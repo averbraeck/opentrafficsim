@@ -245,9 +245,9 @@ public class Ots2DSet implements Set<OtsShape>, Serializable
      */
     public final Set<OtsShape> intersectingShapes(final OtsShape shape)
     {
-        Envelope envelope = shape.getEnvelope();
+        Bounds envelope = shape.getEnvelope();
         Set<OtsShape> result = intersectingShapes(
-                new Rectangle2D.Double(envelope.getMinX(), envelope.getMinY(), envelope.getWidth(), envelope.getHeight()));
+                new Rectangle2D.Double(envelope.getMinX(), envelope.getMinY(), envelope.getDeltaX(), envelope.getDeltaY()));
         for (Iterator<OtsShape> it = result.iterator(); it.hasNext();)
         {
             if (!it.next().intersects(shape))
