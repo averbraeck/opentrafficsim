@@ -18,6 +18,7 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.HierarchicallyTyped;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.DynamicSpatialObject;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
@@ -46,8 +47,8 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public interface Gtu
-        extends HierarchicallyTyped<GtuType, Gtu>, Locatable, Serializable, EventProducerInterface, Identifiable, Drawable 
+public interface Gtu extends HierarchicallyTyped<GtuType, Gtu>, DynamicSpatialObject<GtuType, Gtu>, Locatable, Serializable,
+        EventProducerInterface, Identifiable, Drawable
 {
     /** @return the id of the GTU */
     @Override
