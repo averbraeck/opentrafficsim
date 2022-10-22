@@ -10,7 +10,9 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
+import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsShape;
 import org.opentrafficsim.core.gtu.Gtu;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -47,6 +49,9 @@ public class OtsLink extends EventProducer implements Link, Serializable, Locata
 
     /** Design line of the link. */
     private final OtsLine3D designLine;
+    
+    /** the shape. */
+    private final OtsShape shape;
 
     /** The GTUs on this Link. */
     private final Set<Gtu> gtus = new LinkedHashSet<>();
@@ -81,6 +86,14 @@ public class OtsLink extends EventProducer implements Link, Serializable, Locata
         this.startNode.addLink(this);
         this.endNode.addLink(this);
         this.designLine = designLine;
+        try
+        {
+            this.shape = new OtsShape(this.designLine.offsetLine(0.5).getPoints());
+        }
+        catch (OtsGeometryException exception)
+        {
+            throw new NetworkException(exception);
+        }
         this.network.addLink(this);
     }
 
@@ -164,6 +177,13 @@ public class OtsLink extends EventProducer implements Link, Serializable, Locata
     public final OtsLine3D getDesignLine()
     {
         return this.designLine;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public OtsShape getShape()
+    {
+        return this.shape;
     }
 
     /** {@inheritDoc} */
