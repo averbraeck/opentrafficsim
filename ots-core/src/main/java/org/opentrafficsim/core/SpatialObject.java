@@ -1,11 +1,10 @@
 package org.opentrafficsim.core;
 
-import org.opentrafficsim.base.HierarchicalType;
-import org.opentrafficsim.base.HierarchicallyTyped;
 import org.opentrafficsim.core.geometry.OtsShape;
 
 /**
- * SpatialObject.java.
+ * SpatialObject indicates that an object has a shape that can be requested. A spatial object can therefore be stored in a
+ * spatial tree such as an R-Tree.
  * <p>
  * Copyright (c) 2022-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -13,10 +12,8 @@ import org.opentrafficsim.core.geometry.OtsShape;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
- * @param <T> The HierarchicalType of the typing object
- * @param <I> The type of the typed object
  */
-public interface SpatialObject<T extends HierarchicalType<T, I>, I extends HierarchicallyTyped<T, I>> extends HierarchicallyTyped<T, I>
+public interface SpatialObject
 {
     /**
      * Return the shape of the object.

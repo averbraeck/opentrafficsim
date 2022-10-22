@@ -2,8 +2,6 @@ package org.opentrafficsim.core;
 
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.Transform2d;
-import org.opentrafficsim.base.HierarchicalType;
-import org.opentrafficsim.base.HierarchicallyTyped;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsPoint3D;
@@ -22,11 +20,8 @@ import org.opentrafficsim.core.geometry.OtsShape;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
- * @param <T> The HierarchicalType of the typing object
- * @param <I> The type of the typed object
  */
-public interface DynamicSpatialObject<T extends HierarchicalType<T, I>, I extends HierarchicallyTyped<T, I>>
-        extends SpatialObject<T, I>
+public interface DynamicSpatialObject extends SpatialObject
 {
     /**
      * Return the shape of a dynamic object at time 'time'. Note that the getShape() method without a time returns the Minkowski
@@ -36,7 +31,7 @@ public interface DynamicSpatialObject<T extends HierarchicalType<T, I>, I extend
      * @return OtsShape; the shape of the object at time 'time'
      */
     OtsShape getShape(Time time);
-    
+
     /**
      * Return the contour of the dynamic object at the right position and in the right direction.
      * @param shape OtsShape; the shape to translate and rotate for point p
