@@ -28,7 +28,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public interface Link extends HierarchicallyTyped<LinkType, Link>, SpatialObject<LinkType, Link>, Locatable, Serializable,
+public interface Link extends HierarchicallyTyped<LinkType, Link>, SpatialObject, Locatable, Serializable,
         Identifiable, Drawable
 {
     /**

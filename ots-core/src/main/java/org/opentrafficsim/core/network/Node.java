@@ -26,7 +26,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public interface Node extends HierarchicallyTyped<NodeType, Node>, SpatialObject<NodeType, Node>, Locatable, Serializable,
+public interface Node extends HierarchicallyTyped<NodeType, Node>, SpatialObject, Locatable, Serializable,
         Identifiable, Drawable
 {
     /**

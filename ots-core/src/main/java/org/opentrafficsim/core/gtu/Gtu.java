@@ -47,7 +47,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public interface Gtu extends HierarchicallyTyped<GtuType, Gtu>, DynamicSpatialObject<GtuType, Gtu>, Locatable, Serializable,
+public interface Gtu extends HierarchicallyTyped<GtuType, Gtu>, DynamicSpatialObject, Locatable, Serializable,
         EventProducerInterface, Identifiable, Drawable
 {
     /** @return the id of the GTU */
