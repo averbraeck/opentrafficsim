@@ -1,7 +1,10 @@
 package org.opentrafficsim.core.gtu;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.djunits.unit.DirectionUnit;
@@ -22,6 +25,7 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.geometry.OtsShape;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
@@ -680,7 +684,9 @@ public abstract class AbstractGtu extends EventProducer implements Gtu
                 this.shape = new OtsShape(new OtsPoint3D(-0.5 * l, -0.5 * w, 0.0), new OtsPoint3D(-0.5 * l, 0.5 * w, 0.0),
                         new OtsPoint3D(0.5 * l, 0.5 * w, 0.0), new OtsPoint3D(0.5 * l, -0.5 * w, 0.0));
             }
-            return transformShape(this.shape, this.operationalPlan.get(time).getLocation(time));
+            OtsShape s = transformShape(this.shape, this.operationalPlan.get(time).getLocation(time));
+            System.out.println("gtu " + getId() + ", shape(t)=" + s);
+            return s;
         }
         catch (OtsGeometryException | OperationalPlanException exception)
         {
@@ -697,14 +703,31 @@ public abstract class AbstractGtu extends EventProducer implements Gtu
     @Override
     public OtsShape getShape()
     {
-        // TODO: the entire contour of the GTU has to be moved over the path
         try
         {
-            return new OtsShape(this.operationalPlan.get().getPath().offsetLine(getWidth().si / 2.0).getPoints());
+            // TODO: the actual contour of the GTU has to be moved over the path
+            OtsLine3D path = this.operationalPlan.get().getPath();
+            // part of the Gtu length has to be added before the start and after the end of the path.
+            // we assume the reference point is within the contour of the Gtu.
+            double rear = Math.max(0.0, getReference().getDx().si - getRear().getDx().si);
+            double front = path.getLengthSI() + Math.max(0.0, getFront().getDx().si - getReference().getDx().si);
+            DirectedPoint p0 = path.getLocationExtendedSI(-rear);
+            DirectedPoint pn = path.getLocationExtendedSI(front);
+            List<OtsPoint3D> pList = new ArrayList<>(Arrays.asList(path.getPoints()));
+            pList.add(0, new OtsPoint3D(p0));
+            pList.add(new OtsPoint3D(pn));
+            OtsLine3D extendedPath = new OtsLine3D(pList);
+            List<OtsPoint3D> swath = new ArrayList<>();
+            swath.addAll(Arrays.asList(extendedPath.offsetLine(getWidth().si / 2.0).getPoints()));
+            swath.addAll(Arrays.asList(extendedPath.offsetLine(-getWidth().si / 2.0).reverse().getPoints()));
+            OtsShape s = new OtsShape(swath);
+            // System.out.println("gtu " + getId() + ", w=" + getWidth() + ", path="
+            //         + this.operationalPlan.get().getPath().toString() + ", shape=" + s);
+            return s;
         }
-        catch (OtsGeometryException exception)
+        catch (Exception e)
         {
-            throw new RuntimeException(exception);
+            throw new RuntimeException(e);
         }
     }
 
