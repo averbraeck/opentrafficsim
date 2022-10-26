@@ -42,15 +42,15 @@ public interface DynamicSpatialObject extends SpatialObject
     default OtsShape transformShape(final OtsShape shape, final DirectedPoint p) throws OtsGeometryException
     {
         Transform2d transform = new Transform2d();
-        transform.rotation(p.getRotZ());
         transform.translate(p.x, p.y);
+        transform.rotation(p.getRotZ());
         OtsPoint3D[] points = new OtsPoint3D[shape.size()];
         int i = 0;
         for (OtsPoint3D sp : shape.getPoints())
         {
             double[] point = {sp.x, sp.y};
             double[] t = transform.transform(point);
-            points[i] = new OtsPoint3D(t[0], t[1], sp.z);
+            points[i++] = new OtsPoint3D(t[0], t[1], sp.z);
         }
         return new OtsShape(points);
     }
