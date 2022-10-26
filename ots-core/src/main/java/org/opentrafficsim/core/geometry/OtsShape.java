@@ -148,7 +148,7 @@ public class OtsShape extends OtsLine3D
     public final synchronized boolean intersects(final OtsShape otsShape)
     {
         // step 1: quick check to see if the bounds intersect
-        if (!getEnvelope().intersects(otsShape.getEnvelope()))
+        if (!getEnvelope().project().intersects(otsShape.getEnvelope().project()))
         {
             return false;
         }
