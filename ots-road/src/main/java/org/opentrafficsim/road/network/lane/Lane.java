@@ -896,27 +896,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     @Override
     public OtsShape getShape()
     {
-        if (this.shape == null)
-        {
-            // the contour is centered around the centroid at (0, 0)
-            List<OtsPoint3D> shapePoints = new ArrayList<>();
-            DirectedPoint l = getLocation();
-            for (OtsPoint3D p : getContour().getPoints())
-            {
-                shapePoints.add(new OtsPoint3D(l.x + p.x, l.y + p.y, l.z + p.z));
-            }
-            try
-            {
-                this.shape = new OtsShape(shapePoints);
-            }
-            catch (OtsGeometryException e)
-            {
-                throw new RuntimeException(e);
-            }
-            // System.out.println("Lane=" + getId() + ", shape=" +  this.shape);
-            // System.out.println("Envelope=" + this.shape.getEnvelope());
-        }
-        return this.shape;
+        return getContour();
     }
 
     /**
