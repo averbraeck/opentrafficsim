@@ -295,7 +295,7 @@ public interface LaneBasedGtu extends Gtu
     {
         double v = getSpeed(when).si;
         double a = getAcceleration(when).si;
-        return a < (v < 6.944 ? 0.0 : -0.2) - 0.15 * v - 0.00025 * v * v;
+        return a < (v < 6.944 ? 0.0 : -0.2) - 0.15 - 0.00025 * v * v;
     }
 
     /**
