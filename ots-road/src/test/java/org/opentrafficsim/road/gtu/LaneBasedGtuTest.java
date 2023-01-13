@@ -31,7 +31,7 @@ import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.road.DefaultTestParameters;
-import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCfLcTacticalPlanner;
@@ -119,8 +119,7 @@ public class LaneBasedGtuTest implements UNITS
         Length truckPosition = new Length(99.5, METER);
         Length truckLength = new Length(15, METER);
 
-        Set<LanePosition> truckPositions =
-                buildPositionsSet(truckPosition, truckLength, links, truckFromLane, truckUpToLane);
+        Set<LanePosition> truckPositions = buildPositionsSet(truckPosition, truckLength, links, truckFromLane, truckUpToLane);
         Speed truckSpeed = new Speed(0, KM_PER_HOUR);
         Length truckWidth = new Length(2.5, METER);
         LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
@@ -128,8 +127,8 @@ public class LaneBasedGtuTest implements UNITS
         GtuFollowingModelOld gtuFollowingModel = new IdmPlusOld();
         Parameters parameters = DefaultTestParameters.create();
 
-        LaneBasedIndividualGtu truck = new LaneBasedIndividualGtu("Truck", truckType, truckLength, truckWidth, maximumSpeed,
-                truckLength.times(0.5), simulator, network);
+        LaneBasedGtu truck =
+                new LaneBasedGtu("Truck", truckType, truckLength, truckWidth, maximumSpeed, truckLength.times(0.5), network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCfLcTacticalPlanner(gtuFollowingModel, laneChangeModel, truck), truck);
         truck.setParameters(parameters);
@@ -205,8 +204,8 @@ public class LaneBasedGtuTest implements UNITS
                         buildPositionsSet(carPosition, carLength, links, laneRank, laneRank + carLanesCovered - 1);
                 parameters = DefaultTestParameters.create();
 
-                LaneBasedIndividualGtu car = new LaneBasedIndividualGtu("Car", carType, carLength, carWidth, maximumSpeed,
-                        carLength.times(0.5), simulator, network);
+                LaneBasedGtu car =
+                        new LaneBasedGtu("Car", carType, carLength, carWidth, maximumSpeed, carLength.times(0.5), network);
                 strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                         new LaneBasedCfLcTacticalPlanner(gtuFollowingModel, laneChangeModel, car), car);
                 car.setParameters(parameters);
@@ -399,8 +398,8 @@ public class LaneBasedGtuTest implements UNITS
             Speed maximumSpeed = new Speed(200, KM_PER_HOUR);
             Parameters parameters = DefaultTestParameters.create();
 
-            LaneBasedIndividualGtu car = new LaneBasedIndividualGtu("Car" + this.idGenerator.nextId(), carType,
-                    new Length(4, METER), new Length(1.8, METER), maximumSpeed, Length.instantiateSI(2.0), simulator, network);
+            LaneBasedGtu car = new LaneBasedGtu("Car" + this.idGenerator.nextId(), carType, new Length(4, METER),
+                    new Length(1.8, METER), maximumSpeed, Length.instantiateSI(2.0), network);
             LaneBasedStrategicalPlanner strategicalPlanner =
                     new LaneBasedStrategicalRoutePlanner(new LaneBasedCfLcTacticalPlanner(fam, laneChangeModel, car), car);
             car.setParameters(parameters);

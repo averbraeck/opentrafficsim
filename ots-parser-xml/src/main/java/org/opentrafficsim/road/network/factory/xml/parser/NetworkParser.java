@@ -35,7 +35,6 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.NoTrafficLane;
 import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
@@ -58,7 +57,6 @@ import org.opentrafficsim.xml.generated.SPEEDLIMIT;
 import org.opentrafficsim.xml.generated.TRAFFICLIGHTTYPE;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * NetworkParser parses the NETWORK tag of the OTS network.
@@ -443,7 +441,7 @@ public final class NetworkParser
                 {
                     CSENOTRAFFICLANE ntlTag = (CSENOTRAFFICLANE) cseTag;
                     String id = ntlTag.getID() != null ? ntlTag.getID() : UUID.randomUUID().toString();
-                    Lane lane = new NoTrafficLane(csl, id, cseData.centerOffsetStart, cseData.centerOffsetEnd,
+                    Lane lane = Lane.noTrafficLane(csl, id, cseData.centerOffsetStart, cseData.centerOffsetEnd,
                             cseData.widthStart, cseData.widthEnd, fixGradualLateralOffset);
                     cseList.add(lane);
                 }
@@ -453,7 +451,7 @@ public final class NetworkParser
                 {
                     CSESHOULDER shoulderTag = (CSESHOULDER) cseTag;
                     String id = shoulderTag.getID() != null ? shoulderTag.getID() : UUID.randomUUID().toString();
-                    Shoulder shoulder = new Shoulder(csl, id, cseData.centerOffsetStart, cseData.centerOffsetEnd,
+                    CrossSectionElement shoulder = new Shoulder(csl, id, cseData.centerOffsetStart, cseData.centerOffsetEnd,
                             cseData.widthStart, cseData.widthEnd, fixGradualLateralOffset);
                     cseList.add(shoulder);
                 }
@@ -715,31 +713,32 @@ public final class NetworkParser
         switch (stripeTag.getTYPE())
         {
             case BLOCKED:
-                Stripe blockedLine = new Stripe(csl, startOffset, endOffset, stripeTag.getDRAWINGWIDTH() != null
-                        ? stripeTag.getDRAWINGWIDTH() : new Length(40.0, LengthUnit.CENTIMETER), fixGradualLateralOffset);
+                Length w = stripeTag.getDRAWINGWIDTH() != null ? stripeTag.getDRAWINGWIDTH()
+                        : new Length(40.0, LengthUnit.CENTIMETER);
+                Stripe blockedLine = new Stripe(csl, startOffset, endOffset, w, w, fixGradualLateralOffset);
                 blockedLine.addPermeability(csl.getNetwork().getGtuType(GtuType.DEFAULTS.ROAD_USER), Permeable.BOTH);
                 cseList.add(blockedLine);
                 break;
 
             case DASHED:
-                Stripe dashedLine = new Stripe(csl, startOffset, endOffset, width, fixGradualLateralOffset);
+                Stripe dashedLine = new Stripe(csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
                 dashedLine.addPermeability(csl.getNetwork().getGtuType(GtuType.DEFAULTS.ROAD_USER), Permeable.BOTH);
                 cseList.add(dashedLine);
                 break;
 
             case DOUBLE:
-                Stripe doubleLine = new Stripe(csl, startOffset, endOffset, width, fixGradualLateralOffset);
+                Stripe doubleLine = new Stripe(csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
                 cseList.add(doubleLine);
                 break;
 
             case LEFTONLY:
-                Stripe leftOnlyLine = new Stripe(csl, startOffset, endOffset, width, fixGradualLateralOffset);
+                Stripe leftOnlyLine = new Stripe(csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
                 leftOnlyLine.addPermeability(csl.getNetwork().getGtuType(GtuType.DEFAULTS.ROAD_USER), Permeable.LEFT);
                 cseList.add(leftOnlyLine);
                 break;
 
             case RIGHTONLY:
-                Stripe rightOnlyLine = new Stripe(csl, startOffset, endOffset, width, fixGradualLateralOffset);
+                Stripe rightOnlyLine = new Stripe(csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
                 rightOnlyLine.addPermeability(csl.getNetwork().getGtuType(GtuType.DEFAULTS.ROAD_USER), Permeable.RIGHT);
                 cseList.add(rightOnlyLine);
                 break;
@@ -747,7 +746,7 @@ public final class NetworkParser
             case SOLID:
                 try
                 {
-                    Stripe solidLine = new Stripe(csl, startOffset, endOffset, width, fixGradualLateralOffset);
+                    Stripe solidLine = new Stripe(csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
                     cseList.add(solidLine);
                 }
                 catch (OtsGeometryException oge)

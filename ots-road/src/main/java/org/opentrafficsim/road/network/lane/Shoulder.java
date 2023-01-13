@@ -1,12 +1,12 @@
 package org.opentrafficsim.road.network.lane;
 
-import java.util.List;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
+ * Represents a shoulder. The purpose opf this class is to be able to toggle animation of shoulders, without also toggling lanes
+ * and stripes.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -21,6 +21,7 @@ public class Shoulder extends CrossSectionElement
     private static final long serialVersionUID = 20140819L;
 
     /**
+     * Creates a shoulder element.
      * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
      * @param id String; the id of the lane. Should be unique within the parentLink.
      * @param lateralPositionStart Length; the lateral start position compared to the linear geometry of the Cross Section Link.
@@ -35,54 +36,7 @@ public class Shoulder extends CrossSectionElement
             final Length lateralPositionEnd, final Length beginWidth, final Length endWidth,
             final boolean fixGradualLateralOffset) throws OtsGeometryException, NetworkException
     {
-        super(parentLink, id, lateralPositionStart, lateralPositionEnd, beginWidth, endWidth, fixGradualLateralOffset);
-    }
-
-    /**
-     * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
-     * @param id String; the id of the lane. Should be unique within the parentLink.
-     * @param lateralPositionStart Length; the lateral start position compared to the linear geometry of the Cross Section Link.
-     * @param lateralPositionEnd Length; the lateral end position compared to the linear geometry of the Cross Section Link
-     * @param beginWidth Length; start width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral start position.
-     * @param endWidth Length; end width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral end position.
-     * @throws OtsGeometryException when creation of the center line or contour geometry fails
-     * @throws NetworkException when id equal to null or not unique
-     */
-    public Shoulder(final CrossSectionLink parentLink, final String id, final Length lateralPositionStart,
-            final Length lateralPositionEnd, final Length beginWidth, final Length endWidth)
-            throws OtsGeometryException, NetworkException
-    {
-        this(parentLink, id, lateralPositionStart, lateralPositionEnd, beginWidth, endWidth, false);
-    }
-
-    /**
-     * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
-     * @param id String; the id of the lane. Should be unique within the parentLink.
-     * @param lateralPosition Length; the lateral start position compared to the linear geometry of the Cross Section Link.
-     * @param width Length; the shoulder width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral start position.
-     * @throws OtsGeometryException when creation of the center line or contour geometry fails
-     * @throws NetworkException when id equal to null or not unique
-     */
-    public Shoulder(final CrossSectionLink parentLink, final String id, final Length lateralPosition, final Length width)
-            throws OtsGeometryException, NetworkException
-    {
-        super(parentLink, id, lateralPosition, width);
-    }
-
-    /**
-     * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
-     * @param id String; the id of the lane. Should be unique within the parentLink.
-     * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; The offsets and widths at positions along the line, relative to
-     *            the design line of the parent link. If there is just one with and offset, there should just be one element in
-     *            the list with Length = 0. If there are more slices, the last one should be at the length of the design line.
-     *            If not, a NetworkException is thrown.
-     * @throws OtsGeometryException when creation of the center line or contour geometry fails
-     * @throws NetworkException when id equal to null or not unique
-     */
-    public Shoulder(final CrossSectionLink parentLink, final String id, final List<CrossSectionSlice> crossSectionSlices)
-            throws OtsGeometryException, NetworkException
-    {
-        super(parentLink, id, crossSectionSlices);
+        super(parentLink, id, lateralPositionStart, lateralPositionEnd, beginWidth, endWidth, false);
     }
 
     /** {@inheritDoc} */

@@ -29,9 +29,9 @@ import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation;
 import org.opentrafficsim.draw.road.BusStopAnimation;
 import org.opentrafficsim.draw.road.ConflictAnimation;
+import org.opentrafficsim.draw.road.CrossSectionElementAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation;
 import org.opentrafficsim.draw.road.SensorAnimation;
-import org.opentrafficsim.draw.road.ShoulderAnimation;
 import org.opentrafficsim.draw.road.SpeedSignAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation.TYPE;
@@ -40,7 +40,6 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.object.BusStop;
@@ -117,10 +116,6 @@ public class DefaultAnimationFactory implements EventListenerInterface
                             {
                                 new LaneAnimation((Lane) element, this.simulator, Color.GRAY.brighter());
                             }
-                            else if (element instanceof Shoulder)
-                            {
-                                new ShoulderAnimation((Shoulder) element, this.simulator, Color.DARK_GRAY);
-                            }
                             else if (element instanceof Stripe)
                             {
                                 Stripe stripe = (Stripe) element;
@@ -136,6 +131,11 @@ public class DefaultAnimationFactory implements EventListenerInterface
                                             LateralDirectionality.RIGHT) ? TYPE.RIGHTONLY : TYPE.SOLID;
                                 }
                                 new StripeAnimation((Stripe) element, this.simulator, type);
+                            }
+                            else
+                            {
+                                // formerly the shoulder animation
+                                new CrossSectionElementAnimation(element, this.simulator, Color.DARK_GRAY);
                             }
                         }
                     }

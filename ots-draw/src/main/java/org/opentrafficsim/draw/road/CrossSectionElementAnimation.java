@@ -10,7 +10,7 @@ import javax.naming.NamingException;
 
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.draw.core.PaintPolygons;
-import org.opentrafficsim.road.network.lane.Shoulder;
+import org.opentrafficsim.road.network.lane.CrossSectionElement;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
@@ -21,7 +21,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * <p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  */
-public class ShoulderAnimation extends Renderable2D<Shoulder> implements Serializable
+public class CrossSectionElementAnimation extends Renderable2D<CrossSectionElement> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20141017L;
@@ -30,14 +30,14 @@ public class ShoulderAnimation extends Renderable2D<Shoulder> implements Seriali
     private final Color color;
 
     /**
-     * @param source Shoulder; s
-     * @param simulator OTSSimulatorInterface; s
+     * @param source CrossSectionElement; cross section element
+     * @param simulator OTSSimulatorInterface; simulator
      * @param color Color; the color to draw the shoulder with
      * @throws NamingException ne
      * @throws RemoteException on communication failure
      */
-    public ShoulderAnimation(final Shoulder source, final OtsSimulatorInterface simulator, final Color color)
-            throws NamingException, RemoteException
+    public CrossSectionElementAnimation(final CrossSectionElement source, final OtsSimulatorInterface simulator,
+            final Color color) throws NamingException, RemoteException
     {
         super(source, simulator);
         this.color = color;
@@ -47,7 +47,7 @@ public class ShoulderAnimation extends Renderable2D<Shoulder> implements Seriali
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        Shoulder shoulder = getSource();
+        CrossSectionElement shoulder = getSource();
         PaintPolygons.paintMultiPolygon(graphics, this.color, shoulder.getLocation(), shoulder.getContour(), true);
     }
 
@@ -55,6 +55,6 @@ public class ShoulderAnimation extends Renderable2D<Shoulder> implements Seriali
     @Override
     public final String toString()
     {
-        return "ShoulderAnimation [source = " + getSource().toString() + ", color=" + this.color + "]";
+        return "CrossSectionElementAnimation [source = " + getSource().toString() + ", color=" + this.color + "]";
     }
 }

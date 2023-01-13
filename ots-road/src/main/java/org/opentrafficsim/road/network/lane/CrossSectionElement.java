@@ -36,7 +36,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public abstract class CrossSectionElement extends EventProducer implements Locatable, Serializable, Identifiable, Drawable
+public class CrossSectionElement extends EventProducer implements Locatable, Serializable, Identifiable, Drawable
 {
     /** */
     private static final long serialVersionUID = 20150826L;
@@ -176,7 +176,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
         this.length = this.centerLine.getLength();
         this.contour = constructContour(this);
         this.parentLink.addCrossSectionElement(this);
-        
+
         // clear lane change info cache for each cross section element created
         parentLink.getNetwork().clearLaneChangeInfoCache();
     }
@@ -498,7 +498,11 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
      * @return double; the Z-offset for drawing (what's on top, what's underneath).
      */
     @Override
-    public abstract double getZ();
+    public double getZ()
+    {
+        // default implementation returns 0.0 in case of a null location or a 2D location
+        return Try.assign(() -> Locatable.super.getZ(), "Remote exception on calling getZ()");
+    }
 
     /**
      * Retrieve the center line of this CrossSectionElement.

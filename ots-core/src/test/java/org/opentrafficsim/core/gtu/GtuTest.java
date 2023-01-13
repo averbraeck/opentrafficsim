@@ -210,22 +210,6 @@ public class GtuTest
             // Ignore expected exception
         }
 
-        IdGenerator idGenerator = new IdGenerator("baseName");
-        assertTrue("The toString method returns something descriptive", idGenerator.toString().startsWith("IdGenerator"));
-        int lastBeforeId = Integer.parseInt(idGenerator.nextId().substring(8));
-        gtu = new TestGtu(idGenerator, gtuType1, simulator, perceivableContext);
-        int firstAfterId = Integer.parseInt(idGenerator.nextId().substring(8));
-        assertEquals("Id generator was called once in the constructor", 1 + 1, firstAfterId - lastBeforeId);
-        try
-        {
-            new TestGtu((IdGenerator) null, gtuType1, simulator, perceivableContext);
-            fail("null idGenerator should have thrown a GTUException");
-        }
-        catch (GtuException ge)
-        {
-            // Ignore expected exception
-        }
-
         Speed initialSpeed = new Speed(10, SpeedUnit.KM_PER_HOUR);
         try
         {
@@ -362,7 +346,7 @@ public class GtuTest
     }
 
     /** */
-    class TestGtu extends AbstractGtu
+    class TestGtu extends Gtu
     {
         /** */
         private static final long serialVersionUID = 20151111L;
@@ -378,87 +362,9 @@ public class GtuTest
         TestGtu(final String id, final GtuType gtuType, final OtsSimulatorInterface simulator,
                 final PerceivableContext perceivableContext) throws SimRuntimeException, GtuException
         {
-            super(id, gtuType, simulator, perceivableContext);
+            super(id, gtuType, simulator, perceivableContext, Length.instantiateSI(4.0), Length.instantiateSI(1.8),
+                    Speed.instantiateSI(50.0), Length.instantiateSI(2.0), Length.ZERO);
         }
-
-        /**
-         * @param idGenerator IdGenerator; id generator that will generate the id of the new GTU
-         * @param gtuType GtuType; type of the new GTU
-         * @param simulator OTSSimulatorInterface; simulator that controls the new GTU
-         * @param perceivableContext PerceivableContext; the perceivable context of the new GTU
-         * @throws SimRuntimeException when something goes wrong in the scheduling of the first move event
-         * @throws GtuException when something goes wrong during GTU instantiation
-         */
-        TestGtu(final IdGenerator idGenerator, final GtuType gtuType, final OtsSimulatorInterface simulator,
-
-                final PerceivableContext perceivableContext) throws SimRuntimeException, GtuException
-        {
-            super(idGenerator, gtuType, simulator, perceivableContext);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Length getLength()
-        {
-            return null;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Length getWidth()
-        {
-            return null;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Speed getMaximumSpeed()
-        {
-            return null;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public RelativePosition getFront()
-        {
-            return null;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public RelativePosition getRear()
-        {
-            return null;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public RelativePosition getCenter()
-        {
-            return null;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public ImmutableMap<TYPE, RelativePosition> getRelativePositions()
-        {
-            return null;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Bounds getBounds()
-        {
-            return null;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public ImmutableSet<RelativePosition> getContourPoints()
-        {
-            return null;
-        }
-        
     }
 
 }

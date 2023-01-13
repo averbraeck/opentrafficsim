@@ -115,8 +115,8 @@ public final class AnimationToggles
         panel.addToggleAnimationButtonIcon("LaneCenter", CenterLine.class, "/icons/CenterLine24.png",
                 "Show/hide lane center lines", false, false);
         panel.addToggleAnimationButtonIcon("Stripe", Stripe.class, "/icons/Stripe24.png", "Show/hide stripes", true, false);
-        panel.addToggleAnimationButtonIcon("Shoulder", Shoulder.class, "/icons/Shoulder24.png", "Show/hide shoulders", true,
-                false);
+        panel.addToggleAnimationButtonIcon("Shoulder", Shoulder.class, "/icons/Shoulder24.png",
+                "Show/hide shoulders", true, false);
         panel.addToggleAnimationButtonIcon("GTU", Gtu.class, "/icons/Gtu24.png", "Show/hide GTUs", true, false);
         panel.addToggleAnimationButtonIcon("GTUId", DefaultCarAnimation.Text.class, "/icons/Id24.png", "Show/hide GTU Ids",
                 false, true);
@@ -155,8 +155,8 @@ public final class AnimationToggles
         panel.addToggleAnimationButtonIcon("LaneCenter", CenterLine.class, "/icons/CenterLine24.png",
                 "Show/hide lane center lines", false, false);
         panel.addToggleAnimationButtonIcon("Stripe", Stripe.class, "/icons/Stripe24.png", "Show/hide stripes", true, false);
-        panel.addToggleAnimationButtonIcon("Shoulder", Shoulder.class, "/icons/Shoulder24.png", "Show/hide shoulders", true,
-                false);
+        panel.addToggleAnimationButtonIcon("Shoulder", Shoulder.class, "/icons/Shoulder24.png",
+                "Show/hide shoulders", true, false);
         panel.addToggleAnimationButtonIcon("GTU", Gtu.class, "/icons/Gtu24.png", "Show/hide GTUs", true, false);
         panel.addToggleAnimationButtonIcon("GTUId", DefaultCarAnimation.Text.class, "/icons/Id24.png", "Show/hide GTU Ids",
                 false, true);

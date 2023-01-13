@@ -176,14 +176,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
         this.downSplit = downSplit;
         this.upMerge = upMerge;
         this.containingGtu = gtu;
-        try
-        {
-            gtu.addListener(this, LaneBasedGtu.LANE_CHANGE_EVENT);
-        }
-        catch (RemoteException exception)
-        {
-            throw new RuntimeException(exception);
-        }
+        gtu.addListener(this, LaneBasedGtu.LANE_CHANGE_EVENT);
     }
 
     /**

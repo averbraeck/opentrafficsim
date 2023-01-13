@@ -25,6 +25,7 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OtsNode;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -154,9 +155,8 @@ public final class LaneFactory
         this.laneWidth0 = laneWidth.neg();
         this.laneType0 = laneType;
         this.speedLimit0 = speedLimit;
-        Try.execute(
-                () -> new Stripe(this.link, this.offset.plus(this.offsetStart), this.offset.plus(this.offsetEnd), STRIPE_WIDTH),
-                "Unexpected exception while building link.");
+        Try.execute(() -> new Stripe(this.link, this.offset.plus(this.offsetStart), this.offset.plus(this.offsetEnd),
+                STRIPE_WIDTH, STRIPE_WIDTH), "Unexpected exception while building link.");
         return this;
     }
 
@@ -175,7 +175,7 @@ public final class LaneFactory
         this.laneWidth0 = laneWidth;
         this.laneType0 = laneType;
         this.speedLimit0 = speedLimit;
-        Try.execute(() -> new Stripe(this.link, this.offset, this.offset, STRIPE_WIDTH),
+        Try.execute(() -> new Stripe(this.link, this.offset, this.offset, STRIPE_WIDTH, STRIPE_WIDTH),
                 "Unexpected exception while building link.");
         return this;
     }
@@ -224,7 +224,7 @@ public final class LaneFactory
                     "Unexpected exception while building link."));
             this.offset = this.offset.plus(this.laneWidth0);
             Stripe stripe = Try.assign(() -> new Stripe(this.link, this.offset.plus(this.offsetStart),
-                    this.offset.plus(this.offsetEnd), STRIPE_WIDTH), "Unexpected exception while building link.");
+                    this.offset.plus(this.offsetEnd), STRIPE_WIDTH, STRIPE_WIDTH), "Unexpected exception while building link.");
             if (perm != null)
             {
                 stripe.addPermeability(this.link.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), perm);
@@ -261,7 +261,7 @@ public final class LaneFactory
             }
             Length start = startOffset.plus(width.times(0.5));
             Length end = endOffset.plus(width.times(0.5));
-            Try.assign(() -> new Shoulder(this.link, "Left shoulder", start, end, width, width),
+            Try.assign(() -> new Shoulder(this.link, "Left shoulder", start, end, width, width, false),
                     "Unexpected exception while building link.");
         }
         if (lat == null || lat.isNone() || lat.isRight())
@@ -282,7 +282,7 @@ public final class LaneFactory
             }
             Length start = startOffset.minus(width.times(0.5));
             Length end = endOffset.minus(width.times(0.5));
-            Try.assign(() -> new Shoulder(this.link, "Right shoulder", start, end, width, width),
+            Try.assign(() -> new Shoulder(this.link, "Right shoulder", start, end, width, width, false),
                     "Unexpected exception while building link.");
         }
         return this;

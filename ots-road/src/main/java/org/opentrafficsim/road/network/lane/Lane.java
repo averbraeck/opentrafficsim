@@ -26,9 +26,7 @@ import org.djutils.immutablecollections.ImmutableList;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.HierarchicallyTyped;
 import org.opentrafficsim.core.SpatialObject;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.geometry.OtsShape;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -77,6 +75,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /** the shape in absolute coordinates (getContour() returns relative coordinates). */
     private OtsShape shape = null;
+
     /**
      * The speed limit of this lane, which can differ per GTU type. Cars might be allowed to drive 120 km/h and trucks 90 km/h.
      * If the speed limit is the same for a family of GTU types, that family name (e.g., GtuType.VEHICLE) can be used. <br>
@@ -1674,6 +1673,42 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
          * @throws GtuException on exception
          */
         double get(int index) throws GtuException;
+    }
+
+    /**
+     * Creates a no-traffic, i.e. a {@code Lane} returning a z-value for drawing of -0.00005 with zero speed for all traffic.
+     * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
+     * @param id String; the id of the lane. Should be unique within the parentLink.
+     * @param lateralOffsetAtStart Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
+     *            design line of the parent Link at the start of the parent Link
+     * @param lateralOffsetAtEnd Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
+     *            design line of the parent Link at the end of the parent Link
+     * @param beginWidth Length; start width, positioned <i>symmetrically around</i> the design line
+     * @param endWidth Length; end width, positioned <i>symmetrically around</i> the design line
+     * @param fixGradualLateralOffset boolean; true if gradualLateralOffset needs to be fixed
+     * @return Lane; lane representing a no-traffic lane.
+     * @throws OtsGeometryException when creation of the geometry fails
+     * @throws NetworkException when id equal to null or not unique
+     */
+    public static Lane noTrafficLane(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtStart,
+            final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth,
+            final boolean fixGradualLateralOffset) throws OtsGeometryException, NetworkException
+    {
+        Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
+        speedMap.put(parentLink.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), Speed.ZERO);
+        return new Lane(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth,
+                parentLink.getNetwork().getLaneType(LaneType.DEFAULTS.NONE), speedMap, fixGradualLateralOffset)
+        {
+            /** */
+            private static final long serialVersionUID = 20230116L;
+            
+            /** {@inheritDoc} */
+            @Override
+            public double getZ()
+            {
+                return -0.00005;
+            }
+        };
     }
 
 }

@@ -328,7 +328,8 @@ public class TransceiverTest
         Mockito.when(simulator.getReplication()).thenReturn(replication);
         Lane lane = new Lane(link, "lane", Length.ZERO, Length.ZERO, new Length(3, LengthUnit.METER),
                 new Length(3, LengthUnit.METER), laneType, new Speed(50, SpeedUnit.KM_PER_HOUR));
-        Stripe stripe = new Stripe(link, Length.ZERO, Length.ZERO, new Length(20, LengthUnit.DECIMETER));
+        Length width = new Length(20, LengthUnit.DECIMETER);
+        Stripe stripe = new Stripe(link, Length.ZERO, Length.ZERO, width, width);
         String stripeId = stripe.getId();
 
         LinkGtuIdTransceiver linkgit = new LinkGtuIdTransceiver(network);

@@ -44,7 +44,7 @@ import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiLane;
 import org.opentrafficsim.kpi.sampling.SamplerData;
-import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCfLcTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
@@ -105,8 +105,7 @@ public class ContourPlotTest implements UNITS
      * @return GraphPath&lt;KpiLaneDirection&gt;; the dummy path
      * @throws Exception when something goes wrong (should not happen)
      */
-    private GraphPath<KpiLane> dummyPath(final OtsSimulatorInterface simulator, final OtsRoadNetwork network)
-            throws Exception
+    private GraphPath<KpiLane> dummyPath(final OtsSimulatorInterface simulator, final OtsRoadNetwork network) throws Exception
     {
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         OtsRoadNode b = new OtsRoadNode(network, "B", new OtsPoint3D(12345, 0, 0), Direction.ZERO);
@@ -769,18 +768,18 @@ public class ContourPlotTest implements UNITS
      * @throws GtuException when construction of the GTU fails (probably due to an invalid parameter)
      * @throws OtsGeometryException when the initial path is wrong
      */
-    private static LaneBasedIndividualGtu makeReferenceCar(final String id, final GtuType gtuType, final Lane lane,
+    private static LaneBasedGtu makeReferenceCar(final String id, final GtuType gtuType, final Lane lane,
             final Length initialPosition, final Speed initialSpeed, final OtsSimulatorInterface simulator,
             final GtuFollowingModelOld gtuFollowingModel, final LaneChangeModel laneChangeModel, final OtsRoadNetwork network)
             throws NamingException, NetworkException, SimRuntimeException, GtuException, OtsGeometryException
     {
+        // TODO: simulator argument can be remove, but this method is currently only used in code that is commented out
         Length length = new Length(5.0, METER);
         Length width = new Length(2.0, METER);
         Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions.add(new LanePosition(lane, initialPosition));
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
-        LaneBasedIndividualGtu gtu =
-                new LaneBasedIndividualGtu(id, gtuType, length, width, maxSpeed, length.times(0.5), simulator, network);
+        LaneBasedGtu gtu = new LaneBasedGtu(id, gtuType, length, width, maxSpeed, length.times(0.5), network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCfLcTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
         gtu.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);

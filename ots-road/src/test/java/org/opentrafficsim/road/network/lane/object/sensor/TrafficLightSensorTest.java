@@ -37,9 +37,7 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.DefaultTestParameters;
-import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCfLcTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
@@ -206,8 +204,8 @@ public class TrafficLightSensorTest implements EventListenerInterface
                 Length gtuLength = new Length(17, LengthUnit.METER);
                 Length gtuWidth = new Length(2, LengthUnit.METER);
                 Speed maximumSpeed = new Speed(90, SpeedUnit.KM_PER_HOUR);
-                LaneBasedGtu gtu = new LaneBasedIndividualGtu("GTU1", gtuType, gtuLength, gtuWidth, maximumSpeed,
-                        gtuLength.times(0.5), simulator, network);
+                LaneBasedGtu gtu =
+                        new LaneBasedGtu("GTU1", gtuType, gtuLength, gtuWidth, maximumSpeed, gtuLength.times(0.5), network);
                 Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
                 Length initialPosition = new Length(pos, LengthUnit.METER);
                 LanePosition gtuPosition = findLaneAndPosition(lanes, initialPosition);
@@ -224,7 +222,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
                 {
                     System.out.println("let op. InitialLongitudinalPositions: " + initialLongitudinalPositions);
                 }
-                ((AbstractLaneBasedGtu) gtu).init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
+                gtu.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
                 if (initialPosition.plus(gtuLength.divide(2)).lt(a) || initialPosition.minus(gtuLength.divide(2)).gt(b))
                 {
                     assertEquals("event list is empty", 0, this.loggedEvents.size());
