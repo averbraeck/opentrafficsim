@@ -21,7 +21,6 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
@@ -316,7 +315,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGtu> implements R
         @Override
         public final void paint(final Graphics2D graphics, final ImageObserver observer)
         {
-            final LaneBasedIndividualGtu car = (LaneBasedIndividualGtu) getSource();
+            final LaneBasedGtu car = (LaneBasedGtu) getSource();
 
             if (car.isDestroyed())
             {
@@ -344,7 +343,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGtu> implements R
         public DirectedPoint getLocation()
         {
             // draw always on top, and not upside down.
-            DirectedPoint p = ((LaneBasedIndividualGtu) getSource()).getLocation();
+            DirectedPoint p = ((LaneBasedGtu) getSource()).getLocation();
             double a = Angle.normalizePi(p.getRotZ());
             if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
             {

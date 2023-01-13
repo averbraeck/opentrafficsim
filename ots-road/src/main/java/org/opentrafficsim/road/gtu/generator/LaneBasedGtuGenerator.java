@@ -42,7 +42,6 @@ import org.opentrafficsim.road.gtu.generator.GeneratorPositions.GeneratorLinkPos
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuReal;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
@@ -372,9 +371,9 @@ public class LaneBasedGtuGenerator extends EventProducer implements Serializable
             final Speed speed) throws NamingException, GtuException, NetworkException, SimRuntimeException, OtsGeometryException
     {
         String gtuId = this.idGenerator.nextId();
-        LaneBasedIndividualGtu gtu = new LaneBasedIndividualGtu(gtuId, characteristics.getGtuType(),
+        LaneBasedGtu gtu = new LaneBasedGtu(gtuId, characteristics.getGtuType(),
                 characteristics.getLength(), characteristics.getWidth(), characteristics.getMaximumSpeed(),
-                characteristics.getFront(), this.simulator, this.network);
+                characteristics.getFront(), this.network);
         gtu.setMaximumAcceleration(characteristics.getMaximumAcceleration());
         gtu.setMaximumDeceleration(characteristics.getMaximumDeceleration());
         gtu.setVehicleModel(characteristics.getVehicleModel());

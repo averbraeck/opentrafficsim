@@ -29,7 +29,6 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
@@ -279,8 +278,8 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
         // GTU itself
         boolean generateTruck = this.stream.nextDouble() > this.carProbability;
         Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
-        LaneBasedIndividualGtu gtu = new LaneBasedIndividualGtu("" + (++this.carsCreated), gtuType, vehicleLength,
-                new Length(1.8, METER), new Speed(200, KM_PER_HOUR), vehicleLength.times(0.5), this.simulator, this.network);
+        LaneBasedGtu gtu = new LaneBasedGtu("" + (++this.carsCreated), gtuType, vehicleLength,
+                new Length(1.8, METER), new Speed(200, KM_PER_HOUR), vehicleLength.times(0.5), this.network);
         gtu.setParameters(generateTruck ? this.parametersTruck : this.parametersCar);
         gtu.setNoLaneChangeDistance(Length.ZERO);
         gtu.setInstantaneousLaneChange(!((boolean) getInputParameter("generic.gradualLaneChange")));
