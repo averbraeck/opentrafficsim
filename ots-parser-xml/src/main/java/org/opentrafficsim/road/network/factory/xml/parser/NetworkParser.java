@@ -731,13 +731,14 @@ public final class NetworkParser
                 break;
 
             case LEFTTORIGHT:
-                Stripe leftOnlyLine = new Stripe(Type.LEFT, csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
+                Stripe leftOnlyLine =
+                        new Stripe(Type.RIGHT, csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
                 cseList.add(leftOnlyLine);
                 break;
 
             case RIGHTTOLEFT:
                 Stripe rightOnlyLine =
-                        new Stripe(Type.RIGHT, csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
+                        new Stripe(Type.LEFT, csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
                 cseList.add(rightOnlyLine);
                 break;
 
