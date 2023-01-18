@@ -112,10 +112,6 @@ public class StripeAnimation extends Renderable2D<Stripe> implements Renderable2
     private ArrayList<OtsPoint3D> makePoints(final Stripe stripe) throws NamingException
     {
         double width = stripe.getWidth(0.5).si;
-        if (stripe.getType()==null)
-        {
-            System.out.println("huh?");
-        }
         switch (stripe.getType())
         {
             case DASHED:// ¦ - Draw a 3-9 dash pattern on the center line
