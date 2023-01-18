@@ -104,29 +104,6 @@ public final class DefaultsNl extends Defaults
         super(new Locale("nl", "NL"));
     }
 
-    /**
-     * Helper class to add all NL defaults to definitions (a network).
-     * @param definitions Definitions; definitions to add the GTU types to.
-     */
-    // TODO: remove this method once XML parsing of imported GTU types works
-    public static void addAllDefaults(final Definitions definitions)
-    {
-        for (Field field : DefaultsNl.class.getDeclaredFields())
-        {
-            if (GtuType.class.isAssignableFrom(field.getType()))
-            {
-                try
-                {
-                    definitions.addGtuType((GtuType) field.get(DefaultsNl.class));
-                }
-                catch (IllegalArgumentException | IllegalAccessException exception)
-                {
-                    exception.printStackTrace();
-                }
-            }
-        }
-    }
-
     /** {@inheritDoc} */
     @Override
     public TemplateGtuType getTemplate(final GtuType gtuType, final StreamInterface randomStream)
