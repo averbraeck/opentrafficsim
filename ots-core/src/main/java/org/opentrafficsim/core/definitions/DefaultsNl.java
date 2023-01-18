@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.definitions;
 
 import java.awt.Color;
-import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 

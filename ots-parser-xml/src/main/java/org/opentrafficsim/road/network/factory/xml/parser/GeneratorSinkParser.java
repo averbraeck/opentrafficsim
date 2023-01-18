@@ -358,7 +358,7 @@ public final class GeneratorSinkParser
 
                 LaneBasedTemplateGtuTypeDistribution characteristicsGenerator =
                         new LaneBasedTemplateGtuTypeDistribution(gtuTypeDistribution);
-                // TODO: GTU type to check space must come from xml
+                // TODO: GTU type to check space must come from xml, or use null in generator
                 generators.add(new LaneBasedGtuGenerator(lane.getFullId(), headwayGenerator, characteristicsGenerator,
                         GeneratorPositions.create(initialLongitudinalPositions, stream), otsNetwork, simulator, roomChecker,
                         idGenerator, DefaultsNl.VEHICLE));

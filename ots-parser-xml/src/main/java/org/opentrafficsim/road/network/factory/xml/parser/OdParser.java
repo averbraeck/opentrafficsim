@@ -580,6 +580,7 @@ public final class OdParser
                         }
                         else
                         {
+                            // TODO: skip this and supply a default_lane_biases.xml?
                             if (otsNetwork.getGtuTypes().containsValue(DefaultsNl.TRUCK))
                             {
                                 laneBiases.addBias(DefaultsNl.TRUCK, LaneBias.TRUCK_RIGHT);

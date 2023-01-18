@@ -60,9 +60,6 @@ public class OdOptions
     /** Lane bias. Default is none, i.e. uniform distribution over lanes for all GTU types. */
     public static final Option<LaneBiases> LANE_BIAS = new Option<>("lane bias", new LaneBiases());
     
-    /** Parent GTU type of relevant GTU's to check for space, look at conflicts, etc. */
-    public static final Option<GtuType> PARENT_GTU_TYPE = new Option<>("parent GTU type", DefaultsNl.VEHICLE);
-
     /** Options overall. */
     private OptionSet<Void> options = new OptionSet<>();
 

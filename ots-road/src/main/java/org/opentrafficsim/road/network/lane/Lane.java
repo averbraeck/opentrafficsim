@@ -1232,7 +1232,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @return the speedLimit.
      * @throws NetworkException on network inconsistency
      */
-    public final Speed getSpeedLimit(final GtuType gtuType) throws NetworkException
+    public Speed getSpeedLimit(final GtuType gtuType) throws NetworkException
     {
         Speed speedLimit = this.cachedSpeedLimits.get(gtuType);
         if (speedLimit == null)
@@ -1558,7 +1558,6 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      *            design line of the parent Link at the end of the parent Link
      * @param beginWidth Length; start width, positioned <i>symmetrically around</i> the design line
      * @param endWidth Length; end width, positioned <i>symmetrically around</i> the design line
-     * @param gtuType GtuType; parent GTU type in simulation.
      * @param fixGradualLateralOffset boolean; true if gradualLateralOffset needs to be fixed
      * @return Lane; lane representing a no-traffic lane.
      * @throws OtsGeometryException when creation of the geometry fails
@@ -1566,12 +1565,11 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane noTrafficLane(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtStart,
-            final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth, final GtuType gtuType,
+            final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth,
             final boolean fixGradualLateralOffset) throws OtsGeometryException, NetworkException
     {
         return new Lane(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth,
-                parentLink.getNetwork().getLaneType(LaneType.DEFAULTS.NONE), Map.of(gtuType, Speed.ZERO),
-                fixGradualLateralOffset)
+                parentLink.getNetwork().getLaneType(LaneType.DEFAULTS.NONE), new LinkedHashMap<>(), fixGradualLateralOffset)
         {
             /** */
             private static final long serialVersionUID = 20230116L;
@@ -1581,6 +1579,13 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             public double getZ()
             {
                 return -0.00005;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public Speed getSpeedLimit(final GtuType gtuType)
+            {
+                return Speed.ZERO;
             }
         };
     }

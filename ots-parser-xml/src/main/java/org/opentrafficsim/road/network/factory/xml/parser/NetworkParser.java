@@ -442,9 +442,9 @@ public final class NetworkParser
                 {
                     CSENOTRAFFICLANE ntlTag = (CSENOTRAFFICLANE) cseTag;
                     String id = ntlTag.getID() != null ? ntlTag.getID() : UUID.randomUUID().toString();
-                    // TODO: obtain
+                    // TODO: obtain GTU type from XML?
                     Lane lane = Lane.noTrafficLane(csl, id, cseData.centerOffsetStart, cseData.centerOffsetEnd,
-                            cseData.widthStart, cseData.widthEnd, DefaultsNl.VEHICLE, fixGradualLateralOffset);
+                            cseData.widthStart, cseData.widthEnd, fixGradualLateralOffset);
                     cseList.add(lane);
                 }
 

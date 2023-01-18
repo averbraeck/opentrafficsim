@@ -205,7 +205,7 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
                     // Ignore exception that is expected to happen when the network is NOT the Barcelona test network
                 }
                 LaneCombinationList permittedList = new LaneCombinationList();
-                // TODO: GtuType must be specified in xml
+                // TODO: GtuType must be specified in xml, or just use null in conflicts
                 ConflictBuilder.buildConflicts(this.network, DefaultsNl.VEHICLE, getSimulator(),
                         new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)), ignoreList, permittedList);
             }

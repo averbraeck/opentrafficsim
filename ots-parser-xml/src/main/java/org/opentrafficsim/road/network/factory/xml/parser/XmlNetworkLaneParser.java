@@ -328,7 +328,7 @@ public final class XmlNetworkLaneParser implements Serializable
             otsNetwork.getSimulator().getLogger().always().info("Map size of conflict candidate regions = {}",
                     conflictCandidateMap.size());
 
-            // TODO: GtuType must be specified in xml
+            // TODO: GtuType must be specified in xml, or just use null in conflicts
             if (conflictCandidateMap.size() == 0)
             {
                 ConflictBuilder.buildConflictsParallel(otsNetwork, DefaultsNl.VEHICLE, otsNetwork.getSimulator(),
