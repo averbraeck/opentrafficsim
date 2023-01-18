@@ -34,7 +34,7 @@ public class CircularModelWeb extends OtsWebServer
     {
         super(title, simulator, new Bounds2d(-200, 200, -200, 200));
         DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getNetwork().getSimulator(),
-                new DefaultSwitchableGtuColorer(), DefaultsNl.TRUCK, DefaultsNl.CAR);
+                new DefaultSwitchableGtuColorer(), DefaultsNl.CAR);
     }
 
     /**

@@ -41,14 +41,13 @@ public class OtsSimulationApplication<T extends OtsModelInterface> extends OtsSw
 
     /**
      * Creates the animation objects. This method is overridable. The default uses {@code DefaultAnimationFactory}.
-     * @param squareType GtuType; GTU type to draw as a square, rather than a circle. This also holds for all sub-types.
      * @param permeabilityType GtuType; GTU type to figure out stripe permeability (and hence dash nature).
      * @throws OtsDrawingException on animation error
      */
-    protected void animateNetwork(final GtuType squareType, final GtuType permeabilityType) throws OtsDrawingException
+    protected void animateNetwork(final GtuType permeabilityType) throws OtsDrawingException
     {
         DefaultAnimationFactory.animateNetwork(getModel().getNetwork(), getModel().getNetwork().getSimulator(),
-                getAnimationPanel().getGtuColorer(), squareType, permeabilityType);
+                getAnimationPanel().getGtuColorer(), permeabilityType);
     }
 
     /**

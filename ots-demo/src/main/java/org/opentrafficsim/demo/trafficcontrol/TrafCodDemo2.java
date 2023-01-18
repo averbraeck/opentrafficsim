@@ -66,7 +66,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCODModel>
     public TrafCodDemo2(final String title, final OtsAnimationPanel panel, final TrafCODModel model) throws OtsDrawingException
     {
         super(model, panel);
-        animateNetwork(DefaultsNl.TRUCK, DefaultsNl.CAR);
+        animateNetwork(DefaultsNl.CAR);
     }
 
     /**

@@ -240,8 +240,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 
                 /** {@inheritDoc} */
                 @Override
-                protected void animateNetwork(final GtuType squareType, final GtuType permeabilityType)
-                        throws OtsDrawingException
+                protected void animateNetwork(final GtuType permeabilityType) throws OtsDrawingException
                 {
                     // override with nothing to prevent double toggles
                 }
@@ -308,11 +307,10 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     {
         try
         {
-            GtuType squareType = net.getGtuTypes().containsValue(DefaultsNl.TRUCK) ? DefaultsNl.TRUCK : null;
             GtuType permeabilityType = net.getGtuTypes().containsValue(DefaultsNl.CAR) ? DefaultsNl.CAR : null;
             // TODO: null permeabilityType is probably not allowed, but we will move stripe type to stripe rather than figuring
             // it out from permeability
-            DefaultAnimationFactory.animateNetwork(net, net.getSimulator(), getGtuColorer(), squareType, permeabilityType);
+            DefaultAnimationFactory.animateNetwork(net, net.getSimulator(), getGtuColorer(), permeabilityType);
         }
         catch (OtsDrawingException exception)
         {

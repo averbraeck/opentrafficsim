@@ -58,7 +58,7 @@ public class StraightSwing extends OtsSimulationApplication<StraightModel> imple
             throws OtsDrawingException
     {
         super(model, panel);
-        animateNetwork(DefaultsNl.TRUCK, DefaultsNl.CAR);
+        animateNetwork(DefaultsNl.CAR);
     }
 
     /** {@inheritDoc} */

@@ -152,7 +152,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
     public ShortMerge(final String title, final OtsAnimationPanel panel, final ShortMergeModel model) throws OtsDrawingException
     {
         super(model, panel);
-        animateNetwork(DefaultsNl.TRUCK, DefaultsNl.CAR);
+        animateNetwork(DefaultsNl.CAR);
     }
 
     /** {@inheritDoc} */

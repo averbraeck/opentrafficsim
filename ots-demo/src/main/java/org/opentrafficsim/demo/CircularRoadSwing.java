@@ -72,7 +72,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
             throws OtsDrawingException
     {
         super(model, panel);
-        animateNetwork(DefaultsNl.TRUCK, DefaultsNl.CAR);
+        animateNetwork(DefaultsNl.CAR);
 
         // NetworkAnimation networkAnimation = new NetworkAnimation(model.getNetwork());
         // networkAnimation.addDrawingInfoClass(Lane.class, new DrawingInfoShape<>(Color.GRAY));

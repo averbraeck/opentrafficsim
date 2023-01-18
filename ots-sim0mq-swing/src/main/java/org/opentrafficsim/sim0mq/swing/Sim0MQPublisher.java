@@ -250,7 +250,7 @@ public final class Sim0MQPublisher
             new OtsSimulationApplication<Sim0MQOTSModel>(this.model, this.animationPanel);
             // TODO: remove these hard-coded default GTU types; delegate types to Stripe and GtuType itself
             DefaultAnimationFactory.animateXmlNetwork(this.model.getNetwork(), new DefaultSwitchableGtuColorer(),
-                    DefaultsNl.TRUCK, DefaultsNl.CAR);
+                    DefaultsNl.CAR);
             JFrame frame = (JFrame) this.animationPanel.getParent().getParent().getParent();
             frame.setExtendedState(Frame.NORMAL);
             frame.setSize(new Dimension(1100, 1000));

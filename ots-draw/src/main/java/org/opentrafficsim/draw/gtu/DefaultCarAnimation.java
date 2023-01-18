@@ -17,7 +17,6 @@ import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.IdGtuColorer;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -44,9 +43,6 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGtu> implements R
 
     /** The GtuColorer that determines the fill color for the car. */
     private GtuColorer gtuColorer = new DefaultSwitchableGtuColorer();
-
-    /** GTU type to draw as a square, rather than a circle. */
-    private final GtuType squareType;
 
     /** the Text object to destroy when the GTU animation is destroyed. */
     private Text text;
@@ -75,8 +71,8 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGtu> implements R
     /** Right brake light. */
     private Rectangle2D.Double rightBrake;
 
-    /** Dot if zoomed out. */
-    private RectangularShape dot;
+    /** Marker if zoomed out. */
+    private RectangularShape marker;
 
     /**
      * Construct the DefaultCarAnimation for a LaneBasedIndividualCar.
@@ -88,7 +84,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGtu> implements R
     public DefaultCarAnimation(final LaneBasedGtu gtu, final OtsSimulatorInterface simulator)
             throws NamingException, RemoteException
     {
-        this(gtu, simulator, null, null);
+        this(gtu, simulator, null);
     }
 
     /**
@@ -96,12 +92,11 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGtu> implements R
      * @param gtu LaneBasedGtu; the Car to draw
      * @param simulator OTSSimulatorInterface; the simulator to schedule on
      * @param gtuColorer GtuColorer; the GtuColorer that determines what fill color to use
-     * @param squareType GtuType; GTU type to draw as a square, rather than a circle. This also holds for all sub-types.
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public DefaultCarAnimation(final LaneBasedGtu gtu, final OtsSimulatorInterface simulator, final GtuColorer gtuColorer,
-            final GtuType squareType) throws NamingException, RemoteException
+    public DefaultCarAnimation(final LaneBasedGtu gtu, final OtsSimulatorInterface simulator, final GtuColorer gtuColorer)
+            throws NamingException, RemoteException
     {
         super(gtu, simulator);
         this.hashCode = gtu.hashCode();
@@ -113,7 +108,6 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGtu> implements R
         {
             this.gtuColorer = gtuColorer;
         }
-        this.squareType = squareType;
         this.text = new Text(gtu, gtu.getId(), 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, simulator,
                 new TextAnimation.ContrastToBackground()
                 {
@@ -156,8 +150,17 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGtu> implements R
             this.rightIndicator = new Rectangle2D.Double(lFront - w4, w2 - w4, w4, w4);
             this.leftBrake = new Rectangle2D.Double(lRear, w2 - w4, w4, w4);
             this.rightBrake = new Rectangle2D.Double(lRear, -w2, w4, w4);
-            this.dot = gtu.getType().isOfType(this.squareType) ? new Rectangle2D.Double(0, 0, 0, 0)
-                    : new Ellipse2D.Double(0, 0, 0, 0);
+            switch (gtu.getType().getMarker())
+            {
+                case CIRCLE:
+                    this.marker = new Ellipse2D.Double(0, 0, 0, 0);
+                    break;
+                case SQUARE:
+                    this.marker = new Rectangle2D.Double(0, 0, 0, 0);
+                    break;
+                default:
+                    this.marker = new Ellipse2D.Double(0, 0, 0, 0);
+            }
         }
 
         double scale = graphics.getTransform().getDeterminant();
@@ -223,8 +226,8 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGtu> implements R
             graphics.setColor(this.gtuColorer.getColor(gtu));
             double w = 7.0 / Math.sqrt(scale);
             double x = -w / 2.0;
-            this.dot.setFrame(x, x, w, w);
-            graphics.fill(this.dot);
+            this.marker.setFrame(x, x, w, w);
+            graphics.fill(this.marker);
         }
     }
 

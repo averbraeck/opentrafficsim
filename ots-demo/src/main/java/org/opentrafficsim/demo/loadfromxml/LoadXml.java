@@ -143,9 +143,7 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(xmlModel.getNetwork().getExtent(), new Dimension(800, 600),
                     simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
             LoadXml loadXml = new LoadXml(xmlModel, animationPanel);
-            loadXml.animateNetwork(
-                    xmlModel.getNetwork().getGtuTypes().containsValue(DefaultsNl.TRUCK) ? DefaultsNl.TRUCK : null,
-                    xmlModel.getNetwork().getGtuTypes().containsValue(DefaultsNl.CAR) ? DefaultsNl.CAR : null);
+            loadXml.animateNetwork(xmlModel.getNetwork().getGtuTypes().containsValue(DefaultsNl.CAR) ? DefaultsNl.CAR : null);
             // TODO: permabilityType (CAR above) can probably not be null, but we will move stripe type to stripe later
             // (now StripeAnimation.TYPE is figured out from permebability)
         }

@@ -67,7 +67,7 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
             throws OtsDrawingException
     {
         super(model, panel);
-        animateNetwork(DefaultsNl.TRUCK, DefaultsNl.CAR);
+        animateNetwork(DefaultsNl.CAR);
         OtsRoadNetwork network = model.getNetwork();
         System.out.println(network.getLinkMap());
     }

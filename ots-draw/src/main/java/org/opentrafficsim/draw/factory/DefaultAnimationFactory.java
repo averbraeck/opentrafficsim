@@ -68,9 +68,6 @@ public class DefaultAnimationFactory implements EventListenerInterface
     /** GTU colorer. */
     private final GtuColorer gtuColorer;
 
-    /** GTU type to draw as a square, rather than a circle. */
-    private final GtuType squareType;
-
     /** rendered gtus. */
     private Map<LaneBasedGtu, Renderable2D<LaneBasedGtu>> animatedGTUs = Collections.synchronizedMap(new LinkedHashMap<>());
 
@@ -82,17 +79,15 @@ public class DefaultAnimationFactory implements EventListenerInterface
      * adding and removing of GTUs and Objects is animated correctly.
      * @param network OTSNetwork; the network
      * @param gtuColorer GtuColorer; GTU colorer
-     * @param squareType GtuType; GTU type to draw as a square, rather than a circle. This also holds for all sub-types.
      * @param permeabilityType GtuType; GTU type to figure out stripe permeability (and hence dash nature).
      * @param animateNetwork boolean; whether to animate the current network objects
      * @throws OtsDrawingException on drawing error
      */
-    protected DefaultAnimationFactory(final OtsNetwork network, final GtuColorer gtuColorer, final GtuType squareType,
-            final GtuType permeabilityType, final boolean animateNetwork) throws OtsDrawingException
+    protected DefaultAnimationFactory(final OtsNetwork network, final GtuColorer gtuColorer, final GtuType permeabilityType,
+            final boolean animateNetwork) throws OtsDrawingException
     {
         this.simulator = network.getSimulator();
         this.gtuColorer = gtuColorer;
-        this.squareType = squareType;
 
         // subscribe to adding and removing events
         network.addListener(this, Network.ANIMATION_GTU_ADD_EVENT);
@@ -157,7 +152,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
             for (Gtu gtu : network.getGTUs())
             {
                 Renderable2D<LaneBasedGtu> gtuAnimation =
-                        new DefaultCarAnimation((LaneBasedGtu) gtu, this.simulator, this.gtuColorer, this.squareType);
+                        new DefaultCarAnimation((LaneBasedGtu) gtu, this.simulator, this.gtuColorer);
                 this.animatedGTUs.put((LaneBasedGtu) gtu, gtuAnimation);
             }
 
@@ -179,15 +174,14 @@ public class DefaultAnimationFactory implements EventListenerInterface
      * @param network OTSNetwork; the network
      * @param simulator OTSSimulatorInterface; the simulator
      * @param gtuColorer GtuColorer; GTU colorer
-     * @param squareType GtuType; GTU type to draw as a square, rather than a circle. This also holds for all sub-types.
      * @param permeabilityType GtuType; GTU type to figure out stripe permeability (and hence dash nature).
      * @return the DefaultAnimationFactory
      * @throws OtsDrawingException on drawing error
      */
     public static DefaultAnimationFactory animateNetwork(final OtsNetwork network, final OtsSimulatorInterface simulator,
-            final GtuColorer gtuColorer, final GtuType squareType, final GtuType permeabilityType) throws OtsDrawingException
+            final GtuColorer gtuColorer, final GtuType permeabilityType) throws OtsDrawingException
     {
-        return new DefaultAnimationFactory(network, gtuColorer, squareType, permeabilityType, true);
+        return new DefaultAnimationFactory(network, gtuColorer, permeabilityType, true);
     }
 
     /**
@@ -195,15 +189,14 @@ public class DefaultAnimationFactory implements EventListenerInterface
      * subscribe to the network and listen to changes, so the adding and removing of GTUs and Objects is animated correctly.
      * @param network OTSNetwork; the network
      * @param gtuColorer GtuColorer; GTU colorer
-     * @param squareType GtuType; GTU type to draw as a square, rather than a circle. This also holds for all sub-types.
      * @param permeabilityType GtuType; GTU type to figure out stripe permeability (and hence dash nature).
      * @return the DefaultAnimationFactory
      * @throws OtsDrawingException on drawing error
      */
     public static DefaultAnimationFactory animateXmlNetwork(final OtsNetwork network, final GtuColorer gtuColorer,
-            final GtuType squareType, final GtuType permeabilityType) throws OtsDrawingException
+            final GtuType permeabilityType) throws OtsDrawingException
     {
-        return new DefaultAnimationFactory(network, gtuColorer, squareType, permeabilityType, false);
+        return new DefaultAnimationFactory(network, gtuColorer, permeabilityType, false);
     }
 
     /** {@inheritDoc} */
@@ -266,8 +259,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
     {
         try
         {
-            Renderable2D<LaneBasedGtu> gtuAnimation =
-                    new DefaultCarAnimation(gtu, this.simulator, this.gtuColorer, this.squareType);
+            Renderable2D<LaneBasedGtu> gtuAnimation = new DefaultCarAnimation(gtu, this.simulator, this.gtuColorer);
             this.animatedGTUs.put(gtu, gtuAnimation);
         }
         catch (RemoteException | NamingException exception)

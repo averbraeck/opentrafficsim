@@ -194,7 +194,7 @@ public class TestDemoServer
                         OtsWebModel webModel = new OtsWebModel(model.getShortName(), simulator);
                         TestDemoServer.this.sessionWebModelMap.put(sessionId, webModel);
                         DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getNetwork().getSimulator(),
-                                new DefaultSwitchableGtuColorer(), DefaultsNl.TRUCK, DefaultsNl.CAR);
+                                new DefaultSwitchableGtuColorer(), DefaultsNl.CAR);
                     }
                     catch (Exception exception)
                     {

@@ -12,6 +12,7 @@ import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.core.gtu.GtuType.Marker;
 import org.opentrafficsim.core.gtu.TemplateGtuType;
 import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
 
@@ -93,6 +94,8 @@ public final class DefaultsNl extends Defaults
         map.put(PEDESTRIAN, Color.YELLOW);
         map.put(BICYCLE, Color.GREEN);
         GTU_TYPE_COLORS = new ImmutableLinkedHashMap<>(map, Immutable.WRAP);
+        
+        TRUCK.setMarker(Marker.SQUARE);
     }
 
     /**

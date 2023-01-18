@@ -59,7 +59,7 @@ public class TurboRoundaboutDemo extends OtsSimulationApplication<TurboRoundabou
             throws OtsDrawingException
     {
         super(model, panel);
-        animateNetwork(DefaultsNl.TRUCK, DefaultsNl.CAR);
+        animateNetwork(DefaultsNl.CAR);
     }
 
     /**
