@@ -58,7 +58,7 @@ The autorun parameter triggers animation when false. These, and other, parameter
         new Stripe(link, Length.instantiateSI(3.5), Length.instantiateSI(3.5), Length.instantiateSI(0.2));
         new Stripe(link, Length.instantiateSI(-3.5), Length.instantiateSI(-3.5), Length.instantiateSI(0.2));
         Stripe stripe = new Stripe(link, Length.instantiateSI(0.0), Length.instantiateSI(0.0), Length.instantiateSI(0.2));
-        stripe.addPermeability(car, Permeable.BOTH);
+        stripe.addPermeability(car, Type.DASHED);
         return network;
     }
 ```

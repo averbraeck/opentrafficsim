@@ -30,7 +30,7 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
-import org.opentrafficsim.road.network.lane.Stripe.Permeable;
+import org.opentrafficsim.road.network.lane.Stripe.Type;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 /**
@@ -42,9 +42,6 @@ import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
  */
 public final class LaneFactory
 {
-
-    /** Stripe width. */
-    private static final Length STRIPE_WIDTH = Length.instantiateSI(0.2);
 
     /** Angle above which a Bezier curve is used over a straight line. */
     private static final double BEZIER_MARGIN = Math.toRadians(0.5);
@@ -73,8 +70,11 @@ public final class LaneFactory
     /** Parent GTU type of relevant GTUs. */
     private GtuType gtuType;
 
-    /** created lanes. */
+    /** Created lanes. */
     private final List<Lane> lanes = new ArrayList<>();
+
+    /** Stored stripes, so we can return it to the user on the addLanes() call. */
+    private Stripe firstStripe;
 
     /**
      * @param network OTSRoadNetwork; network
@@ -161,8 +161,12 @@ public final class LaneFactory
         this.laneWidth0 = laneWidth.neg();
         this.laneType0 = laneType;
         this.speedLimit0 = speedLimit;
-        Try.execute(() -> new Stripe(this.link, this.offset.plus(this.offsetStart), this.offset.plus(this.offsetEnd),
-                STRIPE_WIDTH, STRIPE_WIDTH), "Unexpected exception while building link.");
+        Length width = getWidth(Type.SOLID);
+        this.firstStripe =
+                Try.assign(
+                        () -> new Stripe(Type.SOLID, this.link, this.offset.plus(this.offsetStart),
+                                this.offset.plus(this.offsetEnd), width, width, false),
+                        "Unexpected exception while building link.");
         return this;
     }
 
@@ -181,7 +185,7 @@ public final class LaneFactory
         this.laneWidth0 = laneWidth;
         this.laneType0 = laneType;
         this.speedLimit0 = speedLimit;
-        Try.execute(() -> new Stripe(this.link, this.offset, this.offset, STRIPE_WIDTH, STRIPE_WIDTH),
+        this.firstStripe = Try.assign(() -> new Stripe(Type.SOLID, this.link, this.offset, getWidth(Type.SOLID)),
                 "Unexpected exception while building link.");
         return this;
     }
@@ -209,18 +213,34 @@ public final class LaneFactory
     }
 
     /**
-     * Adds a lane pair for each permeable, where the permeable determines the right-hand side line when building from left to
-     * right and vice versa. The left-most line is created in {@code leftToRight()}, meaning that each permeable describes
-     * permeablility between a lane and it's right-hand neighbor, when building left to right (and vice versa). For no allowed
-     * lane changes use {@code null}. This method internally adds {@code null} to create the final continuous stripe.
-     * @param permeable Permeable...; permeable per lane pair, for N lanes N-1 should be provided
+     * Adds a lane pair for each stripe type, where the type determines the right-hand side stripe when building from left to
+     * right and vice versa. The left-most stripe is created in {@code leftToRight()}, meaning that each type describes
+     * permeablility between a lane and it's right-hand neighbor, when building left to right (and vice versa). This method
+     * internally adds {@code SOLID} to create the final continuous stripe.
+     * @param types Type...; type per lane pair, for N lanes N-1 should be provided
      * @return this LaneFactory this lane factory for method chaining
      */
-    public LaneFactory addLanes(final Permeable... permeable)
+    public LaneFactory addLanes(final Type... types)
     {
-        List<Permeable> list = new ArrayList<>(Arrays.asList(permeable));
-        list.add(null);
-        for (Permeable perm : list)
+        return addLanes(new ArrayList<>(), types);
+    }
+
+    /**
+     * Adds a lane pair for each stripe type, where the type determines the right-hand side stripe when building from left to
+     * right and vice versa. The left-most stripe is created in {@code leftToRight()}, meaning that each type describes
+     * permeablility between a lane and it's right-hand neighbor, when building left to right (and vice versa). This method
+     * internally adds {@code SOLID} to create the final continuous stripe. All generated stripes, including the one generated
+     * in leftToRight() or rightToLeft(), is returned in the provided list for custom permeability.
+     * @param stripeList List&lt;? super Stripe&gt;; list in to which the generated stripes are placed.
+     * @param types Type...; type per lane pair, for N lanes N-1 should be provided
+     * @return this LaneFactory this lane factory for method chaining
+     */
+    public LaneFactory addLanes(final List<? super Stripe> stripeList, final Type... types)
+    {
+        stripeList.add(this.firstStripe);
+        List<Type> typeList = new ArrayList<>(Arrays.asList(types));
+        typeList.add(Type.SOLID);
+        for (Type type : typeList)
         {
             Length startOffset = this.offset.plus(this.laneWidth0.times(0.5)).plus(this.offsetStart);
             Length endOffset = this.offset.plus(this.laneWidth0.times(0.5)).plus(this.offsetEnd);
@@ -230,14 +250,37 @@ public final class LaneFactory
                             this.laneWidth0.abs(), this.laneType0, Map.of(this.gtuType, this.speedLimit0), false),
                     "Unexpected exception while building link."));
             this.offset = this.offset.plus(this.laneWidth0);
-            Stripe stripe = Try.assign(() -> new Stripe(this.link, this.offset.plus(this.offsetStart),
-                    this.offset.plus(this.offsetEnd), STRIPE_WIDTH, STRIPE_WIDTH), "Unexpected exception while building link.");
-            if (perm != null)
-            {
-                stripe.addPermeability(this.gtuType, perm);
-            }
+            Length width = getWidth(type);
+            stripeList
+                    .add(Try.assign(
+                            () -> new Stripe(type, this.link, this.offset.plus(this.offsetStart),
+                                    this.offset.plus(this.offsetEnd), width, width, false),
+                            "Unexpected exception while building link."));
         }
         return this;
+    }
+
+    /**
+     * Return width to use for different stripe types.
+     * @param type Type; stripe type.
+     * @return Length; width.
+     */
+    private Length getWidth(final Type type)
+    {
+        switch (type)
+        {
+            case DASHED:
+            case SOLID:
+                return Length.instantiateSI(0.2);
+            case LEFT:
+            case RIGHT:
+            case DOUBLE:
+                return Length.instantiateSI(0.6);
+            case BLOCK:
+                return Length.instantiateSI(0.45);
+            default:
+                return Length.instantiateSI(0.2);
+        }
     }
 
     /**
@@ -410,6 +453,7 @@ public final class LaneFactory
      * @throws NetworkException on network inconsistency
      * @throws OtsGeometryException when creation of center line or contour fails
      */
+    @SuppressWarnings("checkstyle:parameternumber")
     public static Lane makeLane(final OtsRoadNetwork network, final String name, final OtsRoadNode from, final OtsRoadNode to,
             final OtsPoint3D[] intermediatePoints, final LaneType laneType, final Speed speedLimit,
             final OtsSimulatorInterface simulator, final GtuType gtuType) throws NetworkException, OtsGeometryException

@@ -14,7 +14,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
-import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -59,7 +58,6 @@ public class TurboRoundaboutDemo extends OtsSimulationApplication<TurboRoundabou
             throws OtsDrawingException
     {
         super(model, panel);
-        animateNetwork(DefaultsNl.CAR);
     }
 
     /**

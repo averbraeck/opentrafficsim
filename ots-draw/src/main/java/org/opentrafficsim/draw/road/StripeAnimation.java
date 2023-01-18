@@ -38,9 +38,6 @@ public class StripeAnimation extends Renderable2D<Stripe> implements Renderable2
     /** */
     private static final long serialVersionUID = 20141017L;
 
-    /** The line type. */
-    private final TYPE type;
-
     /** The points for the outline of the Stripe. */
     private final OtsLine3D line;
 
@@ -109,28 +106,33 @@ public class StripeAnimation extends Renderable2D<Stripe> implements Renderable2
     /**
      * Generate the points needed to draw the stripe pattern.
      * @param stripe Stripe; the stripe
-     * @param stripeType TYPE; the stripe type
      * @return Coordinate[]; array of Coordinate
      * @throws NamingException when <cite>type</cite> is not supported
      */
-    private ArrayList<OtsPoint3D> makePoints(final Stripe stripe, final TYPE stripeType) throws NamingException
+    private ArrayList<OtsPoint3D> makePoints(final Stripe stripe) throws NamingException
     {
-        switch (this.type)
+        double width = stripe.getWidth(0.5).si;
+        if (stripe.getType()==null)
+        {
+            System.out.println("huh?");
+        }
+        switch (stripe.getType())
         {
             case DASHED:// ¦ - Draw a 3-9 dash pattern on the center line
-                return makeDashes(new LengthIndexedLine(stripe.getCenterLine().getLineString()), 0.2, 3.0, new double[] {3, 9});
+                return makeDashes(new LengthIndexedLine(stripe.getCenterLine().getLineString()), width, 3.0,
+                        new double[] {3, 9});
 
             case BLOCK:// : - Draw a 1-3 dash pattern on the center line
-                return makeDashes(new LengthIndexedLine(stripe.getCenterLine().getLineString()), 0.45, 1.0,
+                return makeDashes(new LengthIndexedLine(stripe.getCenterLine().getLineString()), width, 1.0,
                         new double[] {1, 3});
 
             case DOUBLE:// ||- Draw two solid lines
             {
                 OtsLine3D centerLine = stripe.getCenterLine();
-                Coordinate[] leftLine = centerLine.offsetLine(0.2).getLineString()
-                        .buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
-                Coordinate[] rightLine = centerLine.offsetLine(-0.2).getLineString()
-                        .buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
+                Coordinate[] leftLine = centerLine.offsetLine(width / 3).getLineString()
+                        .buffer(width / 6, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
+                Coordinate[] rightLine = centerLine.offsetLine(-width / 3).getLineString()
+                        .buffer(width / 6, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
                 ArrayList<OtsPoint3D> result = new ArrayList<>(leftLine.length + rightLine.length);
                 for (int i = 0; i < leftLine.length; i++)
                 {
@@ -143,14 +145,14 @@ public class StripeAnimation extends Renderable2D<Stripe> implements Renderable2
                 return result;
             }
 
-            case LEFTONLY: // |¦ - Draw left solid, right 3-9 dashed
+            case LEFT: // |¦ - Draw left solid, right 3-9 dashed
             {
                 OtsLine3D centerLine = stripe.getCenterLine();
-                Geometry rightDesignLine = centerLine.offsetLine(-0.2).getLineString();
+                Geometry rightDesignLine = centerLine.offsetLine(-width / 3).getLineString();
                 ArrayList<OtsPoint3D> result =
-                        makeDashes(new LengthIndexedLine(rightDesignLine), 0.2, 0.0, new double[] {3, 9});
-                Coordinate[] leftCoordinates = centerLine.offsetLine(0.2).getLineString()
-                        .buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
+                        makeDashes(new LengthIndexedLine(rightDesignLine), width / 3, 0.0, new double[] {3, 9});
+                Coordinate[] leftCoordinates = centerLine.offsetLine(width / 3).getLineString()
+                        .buffer(width / 6, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
                 for (int i = 0; i < leftCoordinates.length; i++)
                 {
                     result.add(new OtsPoint3D(leftCoordinates[i]));
@@ -159,13 +161,14 @@ public class StripeAnimation extends Renderable2D<Stripe> implements Renderable2
                 return result;
             }
 
-            case RIGHTONLY: // ¦| - Draw left 3-9 dashed, right solid
+            case RIGHT: // ¦| - Draw left 3-9 dashed, right solid
             {
                 OtsLine3D centerLine = stripe.getCenterLine();
-                Geometry leftDesignLine = centerLine.offsetLine(0.2).getLineString();
-                ArrayList<OtsPoint3D> result = makeDashes(new LengthIndexedLine(leftDesignLine), 0.2, 0.0, new double[] {3, 9});
-                Coordinate[] rightCoordinates = centerLine.offsetLine(-0.2).getLineString()
-                        .buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
+                Geometry leftDesignLine = centerLine.offsetLine(width / 3).getLineString();
+                ArrayList<OtsPoint3D> result =
+                        makeDashes(new LengthIndexedLine(leftDesignLine), width / 3, 0.0, new double[] {3, 9});
+                Coordinate[] rightCoordinates = centerLine.offsetLine(-width / 3).getLineString()
+                        .buffer(width / 6, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
                 for (int i = 0; i < rightCoordinates.length; i++)
                 {
                     result.add(new OtsPoint3D(rightCoordinates[i]));
@@ -178,7 +181,7 @@ public class StripeAnimation extends Renderable2D<Stripe> implements Renderable2
                 return new ArrayList<>(Arrays.asList(stripe.getContour().getPoints()));
 
             default:
-                throw new NamingException("Unsupported stripe type: " + stripeType);
+                throw new NamingException("Unsupported stripe type: " + stripe.getType());
         }
 
     }
@@ -186,17 +189,15 @@ public class StripeAnimation extends Renderable2D<Stripe> implements Renderable2
     /**
      * @param source Stripe; s
      * @param simulator OTSSimulatorInterface; s
-     * @param type TYPE; t
      * @throws NamingException ne
      * @throws RemoteException on communication failure
      * @throws OtsGeometryException when something is very wrong with the geometry of the line
      */
-    public StripeAnimation(final Stripe source, final OtsSimulatorInterface simulator, final TYPE type)
+    public StripeAnimation(final Stripe source, final OtsSimulatorInterface simulator)
             throws NamingException, RemoteException, OtsGeometryException
     {
         super(source, simulator);
-        this.type = type;
-        ArrayList<OtsPoint3D> list = makePoints(source, type);
+        ArrayList<OtsPoint3D> list = makePoints(source);
         if (!list.isEmpty())
         {
             this.line = new OtsLine3D(list);
@@ -219,38 +220,10 @@ public class StripeAnimation extends Renderable2D<Stripe> implements Renderable2
         }
     }
 
-    /**
-     * Stripe type.
-     * <p>
-     * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands.<br>
-     * All rights reserved. <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     */
-    public enum TYPE
-    {
-        /** Single solid line. */
-        SOLID,
-
-        /** Line |¦ allow to go to left, but not to right. */
-        LEFTONLY,
-
-        /** Line ¦| allow to go to right, but not to left. */
-        RIGHTONLY,
-
-        /** Dashes ¦ allow to cross in both directions. */
-        DASHED,
-
-        /** Double solid line ||, don't cross. */
-        DOUBLE,
-
-        /** Block : allow to cross in both directions. */
-        BLOCK
-    }
-
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "StripeAnimation [source = " + getSource().toString() + ", type=" + this.type + ", line=" + this.line + "]";
+        return "StripeAnimation [source = " + getSource().toString() + ", line=" + this.line + "]";
     }
 }

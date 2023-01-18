@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -26,12 +27,18 @@ public class Stripe extends CrossSectionElement
     /** */
     private static final long serialVersionUID = 20141025L;
 
+    /** Type of the stripe, defining default permeability. */
+    private final Type type;
+
+    /** Type to overrule the normal type, e.g. rush-hour lanes without changing the appearance of the stripe. */
+    private Type overruleType;
+
     /** Lateral permeability per GTU type and direction. */
     private final Map<GtuType, Set<LateralDirectionality>> permeabilityMap = new LinkedHashMap<>();
 
     /**
-     * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
-     * the StartNode towards the EndNode as the longitudinal direction.
+     * Constructor allowing difference at start at end.
+     * @param type Type; strip type defining appearance and default permeability.
      * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
      * @param startCenterPosition Length; the lateral start position compared to the linear geometry of the Cross Section Link
      *            at the start of the road marker.
@@ -43,36 +50,19 @@ public class Stripe extends CrossSectionElement
      * @throws OtsGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public Stripe(final CrossSectionLink parentLink, final Length startCenterPosition, final Length endCenterPosition,
-            final Length beginWidth, final Length endWidth, final boolean fixGradualLateralOffset)
-            throws OtsGeometryException, NetworkException
+    public Stripe(final Type type, final CrossSectionLink parentLink, final Length startCenterPosition,
+            final Length endCenterPosition, final Length beginWidth, final Length endWidth,
+            final boolean fixGradualLateralOffset) throws OtsGeometryException, NetworkException
     {
         super(parentLink, UUID.randomUUID().toString(), startCenterPosition, endCenterPosition, beginWidth, endWidth,
                 fixGradualLateralOffset);
+        Throw.whenNull(type, "Type may not be null.");
+        this.type = type;
     }
 
     /**
-     * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
-     * the StartNode towards the EndNode as the longitudinal direction.
-     * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
-     * @param startCenterPosition Length; the lateral start position compared to the linear geometry of the Cross Section Link
-     *            at the start of the road marker.
-     * @param endCenterPosition Length; the lateral end position compared to the linear geometry of the Cross Section Link at
-     *            the end of the road marker.
-     * @param beginWidth Length; start width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral start position.
-     * @param endWidth Length; end width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral end position.
-     * @throws OtsGeometryException when creation of the center line or contour geometry fails
-     * @throws NetworkException when id equal to null or not unique
-     */
-    public Stripe(final CrossSectionLink parentLink, final Length startCenterPosition, final Length endCenterPosition,
-            final Length beginWidth, final Length endWidth) throws OtsGeometryException, NetworkException
-    {
-        this(parentLink, startCenterPosition, endCenterPosition, beginWidth, endWidth, false);
-    }
-
-    /**
-     * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
-     * the StartNode towards the EndNode as the longitudinal direction.
+     * Constructor for constant properties along the length.
+     * @param type Type; strip type defining appearance and default permeability.
      * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
      * @param lateralCenterPosition Length; the lateral start position compared to the linear geometry of the Cross Section
      *            Link.
@@ -80,15 +70,15 @@ public class Stripe extends CrossSectionElement
      * @throws OtsGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public Stripe(final CrossSectionLink parentLink, final Length lateralCenterPosition, final Length width)
+    public Stripe(final Type type, final CrossSectionLink parentLink, final Length lateralCenterPosition, final Length width)
             throws OtsGeometryException, NetworkException
     {
-        super(parentLink, UUID.randomUUID().toString(), lateralCenterPosition, width);
+        this(type, parentLink, lateralCenterPosition, lateralCenterPosition, width, width, false);
     }
 
     /**
-     * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
-     * the StartNode towards the EndNode as the longitudinal direction.
+     * Constructor for elaborate longitudinal property changes.
+     * @param type Type; strip type defining appearance and default permeability.
      * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
      * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; The offsets and widths at positions along the line, relative to
      *            the design line of the parent link. If there is just one with and offset, there should just be one element in
@@ -97,10 +87,48 @@ public class Stripe extends CrossSectionElement
      * @throws OtsGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public Stripe(final CrossSectionLink parentLink, final List<CrossSectionSlice> crossSectionSlices)
+    public Stripe(final Type type, final CrossSectionLink parentLink, final List<CrossSectionSlice> crossSectionSlices)
             throws OtsGeometryException, NetworkException
     {
         super(parentLink, UUID.randomUUID().toString(), crossSectionSlices);
+        Throw.whenNull(type, "Type may not be null.");
+        this.type = type;
+    }
+
+    /**
+     * Returns the stripe type.
+     * @return Type; stripe type.
+     */
+    public Type getType()
+    {
+        return this.type;
+    }
+
+    /**
+     * Sets an overruling stripe type. This can be used for e.g. rush-hour lanes, without changing the appearance of the stripe.
+     * Note that custom set permeabilities (addPermeability()) remain active.
+     * @param overruleType Type; overruling stripe type.
+     */
+    public void setOverruleType(final Type overruleType)
+    {
+        this.overruleType = overruleType;
+    }
+
+    /**
+     * Clears the overrule type, after which the normal type will hold.
+     */
+    public void clearOverruleType()
+    {
+        this.overruleType = null;
+    }
+
+    /**
+     * Returns the currently active stripe type.
+     * @return Type; the currently active stripe type.
+     */
+    private Type activeType()
+    {
+        return this.overruleType == null ? this.type : this.overruleType;
     }
 
     /** {@inheritDoc} */
@@ -111,43 +139,13 @@ public class Stripe extends CrossSectionElement
     }
 
     /**
-     * Add lateral permeability for a GTU type in the direction of the design line of the overarching CrossSectionLink.
-     * Therefore, the lateral directionality of one-sided permeability has to be switched for left lanes. This is done because
-     * the CrossSectionLink has no idea in which direction vehicles will be moving. On a 1+1 lane road with overtaking
-     * possibilities, the longitudinal directionality of both lanes will be BOTH. Example:
-     * 
-     * <pre>
-     * Suppose the design line runs from left to right.
-     * 
-     * =========================
-     * 
-     * LANE 1L (BACKWARD)         GTUs are allowed to move to lane 2L 
-     *                            Permeability RIGHT is true, although vehicles will go to the LEFT...
-     * -------------------------  
-     * =========================
-     * 
-     * LANE 2L (BACKWARD)         GTUs are NOT allowed to move to lane 1L nor to lane 2R
-     *                            No permeability defined (empty set)
-     * =========================
-     * =========================
-     * 
-     * LANE 2R (FORWARD)          GTUs are NOT allowed to move to lane 1R nor to lane 2L
-     *                            No permeability defined (empty set)
-     * =========================
-     * -------------------------
-     * 
-     * LANE 1R (FORWARD)          GTUs are allowed to move to lane 2R
-     *                            Permeability LEFT is true
-     * =========================
-     * </pre>
-     * 
-     * <b>Note:</b> GtuType.ALL can be used to set permeability for all types of GTU at once.
-     * <p>
+     * Add lateral permeability for a GTU type in the direction of the design line of the overarching CrossSectionLink. Add NONE
+     * to prevent lane changes relative to the stripe type. Add LEFT or RIGHT, or both in two calls, to enable lane changes
+     * relative to the stripe type.
      * @param gtuType GtuType; GTU type to add permeability for.
-     * @param lateralDirection LateralDirectionality; direction to add (LEFT or RIGHT) compared to the direction of the design
-     *            line.
+     * @param lateralDirection LateralDirectionality; direction to add compared to the direction of the design line.
      */
-    private void addPermeability(final GtuType gtuType, final LateralDirectionality lateralDirection)
+    public void addPermeability(final GtuType gtuType, final LateralDirectionality lateralDirection)
     {
         if (!this.permeabilityMap.containsKey(gtuType))
         {
@@ -165,51 +163,84 @@ public class Stripe extends CrossSectionElement
      */
     public final boolean isPermeable(final GtuType gtuType, final LateralDirectionality lateralDirection)
     {
+        Throw.when(lateralDirection.isNone(), RuntimeException.class,
+                "May not request NONE lateral direction for permeability.");
         for (GtuType testGtuType = gtuType; null != testGtuType; testGtuType = testGtuType.getParent())
         {
-            Set<LateralDirectionality> directions = this.permeabilityMap.get(testGtuType);
-            if (null != directions)
+            Set<LateralDirectionality> set = this.permeabilityMap.get(testGtuType);
+            if (null != set)
             {
-                return directions.contains(lateralDirection);
+                return set.contains(lateralDirection);
             }
         }
-        return false;
+        return lateralDirection.isLeft() ? activeType().left() : activeType().right;
     }
 
     /**
-     * @return permeabilityMap for internal use in (sub)classes.
+     * Defines the visible type of the stripe, and the standard permeability that pertains to it.
+     * <p>
+     * Copyright (c) 2022-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    protected final Map<GtuType, Set<LateralDirectionality>> getPermeabilityMap()
+    public enum Type
     {
-        return this.permeabilityMap;
-    }
+        /** Single solid line. */
+        SOLID(false, false),
 
-    /**
-     * Sets the permeability.
-     * @param gtuType GtuType; GTU type to add permeability for.
-     * @param permeable Permeable; direction(s) to add compared to the direction of the design line.
-     */
-    public final void addPermeability(final GtuType gtuType, final Permeable permeable)
-    {
-        if (permeable.equals(Permeable.LEFT) || permeable.equals(Permeable.BOTH))
-        {
-            addPermeability(gtuType, LateralDirectionality.LEFT);
-        }
-        if (permeable.equals(Permeable.RIGHT) || permeable.equals(Permeable.BOTH))
-        {
-            addPermeability(gtuType, LateralDirectionality.RIGHT);
-        }
-    }
+        /** Line |¦ allow to go to left, but not to right. */
+        LEFT(true, false),
 
-    /** The types of permeability of a stripe. */
-    public enum Permeable
-    {
-        /** Permeable in the positive lateral direction compared to the design line direction. */
-        LEFT,
-        /** Permeable in the negative lateral direction compared to the design line direction. */
-        RIGHT,
-        /** Permeable in both directions. */
-        BOTH;
+        /** Line ¦| allow to go to right, but not to left. */
+        RIGHT(false, true),
+
+        /** Dashes ¦ allow to cross in both directions. */
+        DASHED(true, true),
+
+        /** Double solid line ||, don't cross. */
+        DOUBLE(false, false),
+
+        /** Block : allow to cross in both directions. */
+        BLOCK(true, true);
+
+        /** Left permeable. */
+        private final boolean left;
+
+        /** Right permeable. */
+        private final boolean right;
+
+        /**
+         * Constructor setting permeability.
+         * @param left boolean; left permeability.
+         * @param right boolean; right permeability.
+         */
+        Type(final boolean left, final boolean right)
+        {
+            this.left = left;
+            this.right = right;
+        }
+
+        /**
+         * Returns the left permeability.
+         * @return boolean; left permeability.
+         */
+        public boolean left()
+        {
+            return this.left;
+        }
+
+        /**
+         * Returns the right permeability.
+         * @return boolean; right permeability.
+         */
+        public boolean right()
+        {
+            return this.right;
+        }
     }
 
 }

@@ -98,7 +98,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OtsRoadNode;
-import org.opentrafficsim.road.network.lane.Stripe.Permeable;
+import org.opentrafficsim.road.network.lane.Stripe.Type;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel.DemoPanelPosition;
@@ -497,7 +497,7 @@ public class StrategiesDemo extends AbstractSimulationScript
     protected OtsRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
     {
         OtsRoadNetwork network = new OtsRoadNetwork("Strategies demo", true, getSimulator());
-        
+
         GtuType.registerTemplateSupplier(DefaultsNl.TRUCK, Defaults.NL);
         GtuType.registerTemplateSupplier(DefaultsNl.CAR, Defaults.NL);
         GtuCharacteristics truck = GtuType.defaultCharacteristics(DefaultsNl.TRUCK, network, this.stream);
@@ -523,7 +523,7 @@ public class StrategiesDemo extends AbstractSimulationScript
         List<Lane> lanes1 = new LaneFactory(network, nodeB, nodeA, network.getLinkType(LinkType.DEFAULTS.FREEWAY), sim,
                 LaneKeepingPolicy.KEEPLEFT, DefaultsNl.VEHICLE, new OtsLine3D(coordsHalf1))
                         .leftToRight(0.0, Length.instantiateSI(3.5), network.getLaneType(LaneType.DEFAULTS.FREEWAY), speedLimit)
-                        .addLanes(Permeable.BOTH).getLanes();
+                        .addLanes(Type.DASHED).getLanes();
         OtsPoint3D[] coordsHalf2 = new OtsPoint3D[127];
         for (int i = 0; i < coordsHalf2.length; i++)
         {
@@ -533,7 +533,7 @@ public class StrategiesDemo extends AbstractSimulationScript
         List<Lane> lanes2 = new LaneFactory(network, nodeA, nodeB, network.getLinkType(LinkType.DEFAULTS.FREEWAY), sim,
                 LaneKeepingPolicy.KEEPLEFT, DefaultsNl.VEHICLE, new OtsLine3D(coordsHalf2))
                         .leftToRight(0.0, Length.instantiateSI(3.5), network.getLaneType(LaneType.DEFAULTS.FREEWAY), speedLimit)
-                        .addLanes(Permeable.BOTH).getLanes();
+                        .addLanes(Type.DASHED).getLanes();
 
         // Strategical factories
         PerceptionFactory perceptionFactory = new LmrsStrategiesPerceptionFactory();

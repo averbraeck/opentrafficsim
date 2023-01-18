@@ -1,7 +1,6 @@
 package org.opentrafficsim.swing.gui;
 
 import org.opentrafficsim.core.dsol.OtsModelInterface;
-import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 
@@ -35,19 +34,19 @@ public class OtsSimulationApplication<T extends OtsModelInterface> extends OtsSw
         super(model, panel);
         this.animationPanel = panel;
         setAnimationToggles();
+        animateNetwork();
         addTabs();
         setAppearance(getAppearance()); // update appearance of added objects
     }
 
     /**
      * Creates the animation objects. This method is overridable. The default uses {@code DefaultAnimationFactory}.
-     * @param permeabilityType GtuType; GTU type to figure out stripe permeability (and hence dash nature).
      * @throws OtsDrawingException on animation error
      */
-    protected void animateNetwork(final GtuType permeabilityType) throws OtsDrawingException
+    private void animateNetwork() throws OtsDrawingException
     {
         DefaultAnimationFactory.animateNetwork(getModel().getNetwork(), getModel().getNetwork().getSimulator(),
-                getAnimationPanel().getGtuColorer(), permeabilityType);
+                getAnimationPanel().getGtuColorer());
     }
 
     /**

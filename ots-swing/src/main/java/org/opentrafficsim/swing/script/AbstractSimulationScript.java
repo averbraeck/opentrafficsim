@@ -19,12 +19,10 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
-import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
@@ -240,13 +238,6 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 
                 /** {@inheritDoc} */
                 @Override
-                protected void animateNetwork(final GtuType permeabilityType) throws OtsDrawingException
-                {
-                    // override with nothing to prevent double toggles
-                }
-
-                /** {@inheritDoc} */
-                @Override
                 protected void setAnimationToggles()
                 {
                     // override with nothing to prevent double toggles
@@ -307,10 +298,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     {
         try
         {
-            GtuType permeabilityType = net.getGtuTypes().containsValue(DefaultsNl.CAR) ? DefaultsNl.CAR : null;
-            // TODO: null permeabilityType is probably not allowed, but we will move stripe type to stripe rather than figuring
-            // it out from permeability
-            DefaultAnimationFactory.animateNetwork(net, net.getSimulator(), getGtuColorer(), permeabilityType);
+            DefaultAnimationFactory.animateNetwork(net, net.getSimulator(), getGtuColorer());
         }
         catch (OtsDrawingException exception)
         {

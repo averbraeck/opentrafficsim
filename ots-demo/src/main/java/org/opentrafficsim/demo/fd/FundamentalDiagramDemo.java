@@ -95,7 +95,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OtsRoadNode;
-import org.opentrafficsim.road.network.lane.Stripe.Permeable;
+import org.opentrafficsim.road.network.lane.Stripe.Type;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
@@ -220,9 +220,9 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         Speed speedLim = new Speed(120.0, SpeedUnit.KM_PER_HOUR);
 
         List<Lane> lanesAB = new LaneFactory(network, nodeA, nodeB, linkType, sim, policy, DefaultsNl.VEHICLE)
-                .leftToRight(3.0, laneWidth, laneType, speedLim).addLanes(Permeable.BOTH, Permeable.BOTH).getLanes();
+                .leftToRight(3.0, laneWidth, laneType, speedLim).addLanes(Type.DASHED, Type.DASHED).getLanes();
         List<Lane> lanesBC = new LaneFactory(network, nodeB, nodeC, linkType, sim, policy, DefaultsNl.VEHICLE)
-                .leftToRight(2.0, laneWidth, laneType, speedLim).addLanes(Permeable.BOTH).getLanes();
+                .leftToRight(2.0, laneWidth, laneType, speedLim).addLanes(Type.DASHED).getLanes();
 
         // Generator
         // inter-arrival time generator

@@ -1,5 +1,7 @@
 package org.opentrafficsim.xml.bindings;
 
+import java.util.Map;
+
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.djutils.logger.CategoryLogger;
@@ -15,6 +17,10 @@ import org.opentrafficsim.xml.bindings.types.StripeType;
  */
 public class StripeTypeAdapter extends XmlAdapter<String, StripeType>
 {
+    /** Dictionary. */
+    private final static Map<String, String> DICTIONARY =
+            Map.of("|", "SOLID", ":", "DASHED", "||", "DOUBLE", "|:", "RIGHTTOLEFT", ":|", "LEFTTORIGHT");
+
     /** {@inheritDoc} */
     @Override
     public StripeType unmarshal(final String field) throws IllegalArgumentException
@@ -22,6 +28,7 @@ public class StripeTypeAdapter extends XmlAdapter<String, StripeType>
         try
         {
             String clean = field.replaceAll("\\s", "");
+            clean = DICTIONARY.getOrDefault(clean, clean);
             for (StripeType st : StripeType.values())
             {
                 if (clean.equals(st.name()))

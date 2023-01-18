@@ -59,7 +59,6 @@ public class TJunctionDemo extends OtsSimulationApplication<TJunctionModel>
             throws OtsDrawingException
     {
         super(model, panel);
-        animateNetwork(DefaultsNl.CAR);
     }
 
     /**

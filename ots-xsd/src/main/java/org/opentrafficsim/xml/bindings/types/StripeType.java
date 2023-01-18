@@ -14,6 +14,6 @@ public enum StripeType
     DASHED,
     BLOCKED,
     DOUBLE,
-    LEFTONLY,
-    RIGHTONLY
+    LEFTTORIGHT,
+    RIGHTTOLEFT
 }

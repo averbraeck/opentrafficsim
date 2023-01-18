@@ -23,7 +23,6 @@ import org.djutils.event.EventTypeInterface;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.io.URLResource;
 import org.djutils.logger.CategoryLogger;
-import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -66,7 +65,6 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCODModel>
     public TrafCodDemo2(final String title, final OtsAnimationPanel panel, final TrafCODModel model) throws OtsDrawingException
     {
         super(model, panel);
-        animateNetwork(DefaultsNl.CAR);
     }
 
     /**

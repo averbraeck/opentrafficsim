@@ -4,7 +4,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.bounds.Bounds2d;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
-import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -34,7 +33,7 @@ public class CircularModelWeb extends OtsWebServer
     {
         super(title, simulator, new Bounds2d(-200, 200, -200, 200));
         DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getNetwork().getSimulator(),
-                new DefaultSwitchableGtuColorer(), DefaultsNl.CAR);
+                new DefaultSwitchableGtuColorer());
     }
 
     /**

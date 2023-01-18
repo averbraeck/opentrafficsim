@@ -15,7 +15,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.draw.point.Point3d;
 import org.djutils.reflection.ClassUtil;
-import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.DirectedPoint;
@@ -39,7 +38,7 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
-import org.opentrafficsim.road.network.lane.Stripe.Permeable;
+import org.opentrafficsim.road.network.lane.Stripe.Type;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.xml.bindings.types.ArcDirection;
 import org.opentrafficsim.xml.generated.BASICROADLAYOUT;
@@ -714,49 +713,37 @@ public final class NetworkParser
                 stripeTag.getDRAWINGWIDTH() != null ? stripeTag.getDRAWINGWIDTH() : new Length(20.0, LengthUnit.CENTIMETER);
         switch (stripeTag.getTYPE())
         {
-            // TODO: obtain relevant GTU type from xml
-
             case BLOCKED:
                 Length w = stripeTag.getDRAWINGWIDTH() != null ? stripeTag.getDRAWINGWIDTH()
                         : new Length(40.0, LengthUnit.CENTIMETER);
-                Stripe blockedLine = new Stripe(csl, startOffset, endOffset, w, w, fixGradualLateralOffset);
-                blockedLine.addPermeability(DefaultsNl.ROAD_USER, Permeable.BOTH);
+                Stripe blockedLine = new Stripe(Type.BLOCK, csl, startOffset, endOffset, w, w, fixGradualLateralOffset);
                 cseList.add(blockedLine);
                 break;
 
             case DASHED:
-                Stripe dashedLine = new Stripe(csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
-                dashedLine.addPermeability(DefaultsNl.ROAD_USER, Permeable.BOTH);
+                Stripe dashedLine = new Stripe(Type.DASHED, csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
                 cseList.add(dashedLine);
                 break;
 
             case DOUBLE:
-                Stripe doubleLine = new Stripe(csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
+                Stripe doubleLine = new Stripe(Type.DOUBLE, csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
                 cseList.add(doubleLine);
                 break;
 
-            case LEFTONLY:
-                Stripe leftOnlyLine = new Stripe(csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
-                leftOnlyLine.addPermeability(DefaultsNl.ROAD_USER, Permeable.LEFT);
+            case LEFTTORIGHT:
+                Stripe leftOnlyLine = new Stripe(Type.LEFT, csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
                 cseList.add(leftOnlyLine);
                 break;
 
-            case RIGHTONLY:
-                Stripe rightOnlyLine = new Stripe(csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
-                rightOnlyLine.addPermeability(DefaultsNl.ROAD_USER, Permeable.RIGHT);
+            case RIGHTTOLEFT:
+                Stripe rightOnlyLine =
+                        new Stripe(Type.RIGHT, csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
                 cseList.add(rightOnlyLine);
                 break;
 
             case SOLID:
-                try
-                {
-                    Stripe solidLine = new Stripe(csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
-                    cseList.add(solidLine);
-                }
-                catch (OtsGeometryException oge)
-                {
-                    System.out.println("Caught OTSGeometryException constructing a stripe on " + csl);
-                }
+                Stripe solidLine = new Stripe(Type.SOLID, csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
+                cseList.add(solidLine);
                 break;
 
             default:

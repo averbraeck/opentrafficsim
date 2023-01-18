@@ -16,8 +16,6 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuGenerator;
-import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.Node;
@@ -34,7 +32,6 @@ import org.opentrafficsim.draw.road.LaneAnimation;
 import org.opentrafficsim.draw.road.SensorAnimation;
 import org.opentrafficsim.draw.road.SpeedSignAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation;
-import org.opentrafficsim.draw.road.StripeAnimation.TYPE;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
@@ -79,12 +76,11 @@ public class DefaultAnimationFactory implements EventListenerInterface
      * adding and removing of GTUs and Objects is animated correctly.
      * @param network OTSNetwork; the network
      * @param gtuColorer GtuColorer; GTU colorer
-     * @param permeabilityType GtuType; GTU type to figure out stripe permeability (and hence dash nature).
      * @param animateNetwork boolean; whether to animate the current network objects
      * @throws OtsDrawingException on drawing error
      */
-    protected DefaultAnimationFactory(final OtsNetwork network, final GtuColorer gtuColorer, final GtuType permeabilityType,
-            final boolean animateNetwork) throws OtsDrawingException
+    protected DefaultAnimationFactory(final OtsNetwork network, final GtuColorer gtuColorer, final boolean animateNetwork)
+            throws OtsDrawingException
     {
         this.simulator = network.getSimulator();
         this.gtuColorer = gtuColorer;
@@ -119,19 +115,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
                             }
                             else if (element instanceof Stripe)
                             {
-                                Stripe stripe = (Stripe) element;
-                                TYPE type;
-                                if (stripe.isPermeable(permeabilityType, LateralDirectionality.LEFT))
-                                {
-                                    type = stripe.isPermeable(permeabilityType, LateralDirectionality.RIGHT) ? TYPE.DASHED
-                                            : TYPE.LEFTONLY;
-                                }
-                                else
-                                {
-                                    type = stripe.isPermeable(permeabilityType, LateralDirectionality.RIGHT) ? TYPE.RIGHTONLY
-                                            : TYPE.SOLID;
-                                }
-                                new StripeAnimation((Stripe) element, this.simulator, type);
+                                new StripeAnimation((Stripe) element, this.simulator);
                             }
                             else
                             {
@@ -174,14 +158,13 @@ public class DefaultAnimationFactory implements EventListenerInterface
      * @param network OTSNetwork; the network
      * @param simulator OTSSimulatorInterface; the simulator
      * @param gtuColorer GtuColorer; GTU colorer
-     * @param permeabilityType GtuType; GTU type to figure out stripe permeability (and hence dash nature).
      * @return the DefaultAnimationFactory
      * @throws OtsDrawingException on drawing error
      */
     public static DefaultAnimationFactory animateNetwork(final OtsNetwork network, final OtsSimulatorInterface simulator,
-            final GtuColorer gtuColorer, final GtuType permeabilityType) throws OtsDrawingException
+            final GtuColorer gtuColorer) throws OtsDrawingException
     {
-        return new DefaultAnimationFactory(network, gtuColorer, permeabilityType, true);
+        return new DefaultAnimationFactory(network, gtuColorer, true);
     }
 
     /**
@@ -189,14 +172,13 @@ public class DefaultAnimationFactory implements EventListenerInterface
      * subscribe to the network and listen to changes, so the adding and removing of GTUs and Objects is animated correctly.
      * @param network OTSNetwork; the network
      * @param gtuColorer GtuColorer; GTU colorer
-     * @param permeabilityType GtuType; GTU type to figure out stripe permeability (and hence dash nature).
      * @return the DefaultAnimationFactory
      * @throws OtsDrawingException on drawing error
      */
-    public static DefaultAnimationFactory animateXmlNetwork(final OtsNetwork network, final GtuColorer gtuColorer,
-            final GtuType permeabilityType) throws OtsDrawingException
+    public static DefaultAnimationFactory animateXmlNetwork(final OtsNetwork network, final GtuColorer gtuColorer)
+            throws OtsDrawingException
     {
-        return new DefaultAnimationFactory(network, gtuColorer, permeabilityType, false);
+        return new DefaultAnimationFactory(network, gtuColorer, false);
     }
 
     /** {@inheritDoc} */
