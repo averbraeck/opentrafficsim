@@ -13,7 +13,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -125,7 +124,7 @@ public class TJunctionDemo extends OtsSimulationApplication<TJunctionModel>
                 // add conflicts
                 // ((CrossSectionLink) this.network.getLink("SCEC")).setPriority(Priority.STOP);
                 // ((CrossSectionLink) this.network.getLink("SCWC")).setPriority(Priority.STOP);
-                ConflictBuilder.buildConflicts(this.network, DefaultsNl.VEHICLE, this.simulator,
+                ConflictBuilder.buildConflicts(this.network, this.simulator,
                         new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
 
                 // add trafficlight after

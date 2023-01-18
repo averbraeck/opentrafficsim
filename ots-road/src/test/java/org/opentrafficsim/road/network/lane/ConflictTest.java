@@ -29,7 +29,6 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.core.geometry.OtsPoint3D;
-import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
@@ -153,15 +152,12 @@ public class ConflictTest implements EventListenerInterface
                 conflictBStart.si));
         System.out.println(String.format("c0,0,0 l%f,0", conflictBLength.si));
 
-        GtuType bicycles = network.getGtuType("BICYCLE");
-        GtuType cars = network.getGtuType("CAR");
-
         assertEquals("not events received yet", 0, this.collectedEvents.size());
 
         // That was a lot of code - just to prepare things to call generateConflictPair ...
         Conflict.generateConflictPair(ConflictType.CROSSING, new DefaultConflictRule(), false, laneA,
                 new Length(conflictStart.x, LengthUnit.SI), new Length(conflictEnd.x - conflictStart.x, LengthUnit.SI),
-                geometry1, bicycles, laneB, conflictBStart, conflictBLength, geometry2, cars, simulator);
+                geometry1, laneB, conflictBStart, conflictBLength, geometry2, simulator);
 
         // Check that two conflicts have been created
         assertEquals("one conflict on lane A", 1, laneA.getLaneBasedObjects().size());
@@ -184,8 +180,6 @@ public class ConflictTest implements EventListenerInterface
         assertTrue("conflict rule", conflictB.getConflictRule() instanceof DefaultConflictRule);
         assertFalse("conflict A is not permitted", conflictA.isPermitted());
         assertFalse("conflict B is not permitted", conflictB.isPermitted());
-        assertEquals("conflict A is about bicycles", bicycles, conflictA.getGtuType());
-        assertEquals("conflict B is about cars", cars, conflictB.getGtuType());
         assertEquals("construction of two conflicts has generated two events", 2, this.collectedEvents.size());
         // Not checking the contents of those events; these are subject to change; as they indirectly link to the Network
 

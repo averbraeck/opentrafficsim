@@ -22,7 +22,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
@@ -202,8 +201,7 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
                     // Ignore exception that is expected to happen when the network is NOT the Barcelona test network
                 }
                 LaneCombinationList permittedList = new LaneCombinationList();
-                // TODO: GtuType must be specified in xml, or just use null in conflicts
-                ConflictBuilder.buildConflicts(this.network, DefaultsNl.VEHICLE, getSimulator(),
+                ConflictBuilder.buildConflicts(this.network, getSimulator(),
                         new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)), ignoreList, permittedList);
             }
             catch (NetworkException | OtsGeometryException | JAXBException | URISyntaxException | XmlParserException

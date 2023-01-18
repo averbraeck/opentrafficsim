@@ -21,7 +21,6 @@ import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -76,9 +75,6 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
     /** The length of the conflict along the lane centerline. */
     private final Length length;
-
-    /** GTU type. */
-    private final GtuType gtuType;
 
     /** Whether the conflict is a permitted conflict in traffic light control. */
     private final boolean permitted;
@@ -142,20 +138,17 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * @param geometry OTSLine3D; geometry of conflict
      * @param conflictType ConflictType; conflict type, i.e. crossing, merge or split
      * @param conflictRule ConflictRule; conflict rule, i.e. determines priority, give way, stop or all-stop
-     * @param gtuType GtuType; GTU type
      * @param permitted boolean; whether the conflict is permitted in traffic light control
      * @throws NetworkException when the position on the lane is out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
     private Conflict(final Lane lane, final Length longitudinalPosition, final Length length, final OtsLine3D geometry,
-            final ConflictType conflictType, final ConflictRule conflictRule, final GtuType gtuType, final boolean permitted)
-            throws NetworkException
+            final ConflictType conflictType, final ConflictRule conflictRule, final boolean permitted) throws NetworkException
     {
         super(UUID.randomUUID().toString(), lane, longitudinalPosition, geometry);
         this.length = length;
         this.conflictType = conflictType;
         this.conflictRule = conflictRule;
-        this.gtuType = gtuType;
         this.permitted = permitted;
 
         // Create conflict end
@@ -175,7 +168,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
         // Lane record for GTU provision
         this.rootPosition = longitudinalPosition;
-        this.root = new LaneRecord(lane, this.rootPosition.neg(), gtuType);
+        this.root = new LaneRecord(lane, this.rootPosition.neg(), null);
     }
 
     /**
@@ -364,14 +357,6 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     }
 
     /**
-     * @return gtuType.
-     */
-    public GtuType getGtuType()
-    {
-        return this.gtuType;
-    }
-
-    /**
      * If permitted, traffic upstream of traffic lights may not be ignored, as these can have green light.
      * @return permitted.
      */
@@ -428,30 +413,25 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * @param longitudinalPosition1 Length; longitudinal position of conflict 1
      * @param length1 Length; {@code Length} of conflict 1
      * @param geometry1 OTSLine3D; geometry of conflict 1
-     * @param gtuType1 GtuType; gtu type of conflict 1
      * @param lane2 Lane; lane of conflict 2
      * @param longitudinalPosition2 Length; longitudinal position of conflict 2
      * @param length2 Length; {@code Length} of conflict 2
      * @param geometry2 OTSLine3D; geometry of conflict 2
-     * @param gtuType2 GtuType; gtu type of conflict 2
      * @param simulator OTSSimulatorInterface; the simulator for animation and timed events
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static void generateConflictPair(final ConflictType conflictType, final ConflictRule conflictRule,
             final boolean permitted, final Lane lane1, final Length longitudinalPosition1, final Length length1,
-            final OtsLine3D geometry1, final GtuType gtuType1, final Lane lane2, final Length longitudinalPosition2,
-            final Length length2, final OtsLine3D geometry2, final GtuType gtuType2, final OtsSimulatorInterface simulator)
-            throws NetworkException
+            final OtsLine3D geometry1, final Lane lane2, final Length longitudinalPosition2, final Length length2,
+            final OtsLine3D geometry2, final OtsSimulatorInterface simulator) throws NetworkException
     {
         // lane, longitudinalPosition, length and geometry are checked in AbstractLaneBasedObject
         Throw.whenNull(conflictType, "Conflict type may not be null.");
 
-        Conflict conf1 =
-                new Conflict(lane1, longitudinalPosition1, length1, geometry1, conflictType, conflictRule, gtuType1, permitted);
+        Conflict conf1 = new Conflict(lane1, longitudinalPosition1, length1, geometry1, conflictType, conflictRule, permitted);
         conf1.init(); // fire events and register on lane
-        Conflict conf2 =
-                new Conflict(lane2, longitudinalPosition2, length2, geometry2, conflictType, conflictRule, gtuType2, permitted);
+        Conflict conf2 = new Conflict(lane2, longitudinalPosition2, length2, geometry2, conflictType, conflictRule, permitted);
         conf2.init(); // fire events and register on lane
         conf1.otherConflict = conf2;
         conf2.otherConflict = conf1;
