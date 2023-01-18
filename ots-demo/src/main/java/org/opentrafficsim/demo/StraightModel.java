@@ -183,7 +183,7 @@ public class StraightModel extends AbstractOtsModel implements UNITS
                     new LaneBasedTemplateGtuTypeDistribution(gtuTypeDistribution);
             new LaneBasedGtuGenerator("Generator", headwayGenerator, characteristicsGenerator,
                     GeneratorPositions.create(initialLongitudinalPositions, this.stream), this.network, getSimulator(),
-                    roomChecker, idGenerator, DefaultsNl.VEHICLE);
+                    roomChecker, idGenerator);
             // End generation
 
             this.block = new SimpleTrafficLight(this.lane.getId() + "_TL", this.lane,

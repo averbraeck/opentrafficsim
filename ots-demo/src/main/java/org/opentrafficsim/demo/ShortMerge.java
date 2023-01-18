@@ -447,7 +447,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
                     new LaneBasedTemplateGtuTypeDistribution(distribution);
             new LaneBasedGtuGenerator(id, headwayGenerator, characteristicsGenerator,
                     GeneratorPositions.create(initialLongitudinalPositions, stream), this.network, getSimulator(), roomChecker,
-                    idGenerator, DefaultsNl.VEHICLE);
+                    idGenerator);
         }
 
         /** {@inheritDoc} */

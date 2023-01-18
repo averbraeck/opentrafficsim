@@ -13,7 +13,6 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
@@ -23,7 +22,6 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
@@ -358,10 +356,9 @@ public final class GeneratorSinkParser
 
                 LaneBasedTemplateGtuTypeDistribution characteristicsGenerator =
                         new LaneBasedTemplateGtuTypeDistribution(gtuTypeDistribution);
-                // TODO: GTU type to check space must come from xml, or use null in generator
                 generators.add(new LaneBasedGtuGenerator(lane.getFullId(), headwayGenerator, characteristicsGenerator,
                         GeneratorPositions.create(initialLongitudinalPositions, stream), otsNetwork, simulator, roomChecker,
-                        idGenerator, DefaultsNl.VEHICLE));
+                        idGenerator));
             }
         }
         catch (Exception exception)

@@ -290,9 +290,8 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         // id generator
         IdGenerator idGenerator = new IdGenerator("");
         // generator
-        LaneBasedGtuGenerator generator =
-                new LaneBasedGtuGenerator("generator", interarrivelTimeGenerator, laneBasedGtuCharacteristicsGenerator,
-                        generatorPositions, network, sim, roomChecker, idGenerator, DefaultsNl.VEHICLE);
+        LaneBasedGtuGenerator generator = new LaneBasedGtuGenerator("generator", interarrivelTimeGenerator,
+                laneBasedGtuCharacteristicsGenerator, generatorPositions, network, sim, roomChecker, idGenerator);
         generator.setErrorHandler(GtuErrorHandler.DELETE);
         generator.setInstantaneousLaneChange(true);
         generator.setNoLaneChangeDistance(Length.instantiateSI(100.0));

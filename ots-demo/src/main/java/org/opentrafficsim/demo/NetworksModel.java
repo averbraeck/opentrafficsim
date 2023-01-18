@@ -411,7 +411,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListenerInte
                 return new Duration(NetworksModel.this.headwayGenerator.draw(), DurationUnit.SI);
             }
         }, templateDistribution, GeneratorPositions.create(initialPositions, this.stream), this.network, this.simulator,
-                roomChecker, this.idGenerator, DefaultsNl.VEHICLE);
+                roomChecker, this.idGenerator);
     }
 
     /**
