@@ -58,17 +58,6 @@ public class Detector extends AbstractSensor
     public static final TimedEventType DETECTOR_AGGREGATE =
             new TimedEventType("DUAL_LOOP_DETECTOR.AGGREGATE", MetaData.NO_META_DATA);
 
-    /** Vehicles only compatibility. */
-    private static Compatible compatible = new Compatible()
-    {
-        /** {@inheritDoc} */
-        @Override
-        public boolean isCompatible(final GtuType gtuType)
-        {
-            return gtuType.isOfType(gtuType.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE));
-        }
-    };
-
     /** Mean speed measurement. */
     public static final DetectorMeasurement<Double, Speed> MEAN_SPEED = new DetectorMeasurement<Double, Speed>()
     {
@@ -310,14 +299,15 @@ public class Detector extends AbstractSensor
      * @param id String; detector id
      * @param lane Lane; lane
      * @param longitudinalPosition Length; position
+     * @param gtuType GtuType; GTU type.
      * @param simulator OTSSimulatorInterface; simulator
      * @throws NetworkException on network exception
      */
-    public Detector(final String id, final Lane lane, final Length longitudinalPosition, final OtsSimulatorInterface simulator)
-            throws NetworkException
+    public Detector(final String id, final Lane lane, final Length longitudinalPosition, final GtuType gtuType,
+            final OtsSimulatorInterface simulator) throws NetworkException
     {
         // Note: length not important for flow and mean speed
-        this(id, lane, longitudinalPosition, Length.ZERO, simulator, Duration.instantiateSI(60.0), MEAN_SPEED);
+        this(id, lane, longitudinalPosition, Length.ZERO, gtuType, simulator, Duration.instantiateSI(60.0), MEAN_SPEED);
     }
 
     /**
@@ -326,16 +316,25 @@ public class Detector extends AbstractSensor
      * @param lane Lane; lane
      * @param longitudinalPosition Length; position
      * @param length Length; length
+     * @param gtuType GtuType; GTU type.
      * @param simulator OTSSimulatorInterface; simulator
      * @param aggregation Duration; aggregation period
      * @param measurements DetectorMeasurement&lt;?, ?&gt;...; measurements to obtain
      * @throws NetworkException on network exception
      */
     public Detector(final String id, final Lane lane, final Length longitudinalPosition, final Length length,
-            final OtsSimulatorInterface simulator, final Duration aggregation, final DetectorMeasurement<?, ?>... measurements)
-            throws NetworkException
+            final GtuType gtuType, final OtsSimulatorInterface simulator, final Duration aggregation,
+            final DetectorMeasurement<?, ?>... measurements) throws NetworkException
     {
-        super(id, lane, longitudinalPosition, RelativePosition.FRONT, simulator, compatible);
+        super(id, lane, longitudinalPosition, RelativePosition.FRONT, simulator, new Compatible()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public boolean isCompatible(final GtuType gtuTypeInner)
+            {
+                return gtuTypeInner.isOfType(gtuType);
+            }
+        });
         Throw.when(aggregation.si <= 0.0, IllegalArgumentException.class, "Aggregation time should be positive.");
         this.length = length;
         this.aggregation = aggregation;
@@ -369,7 +368,15 @@ public class Detector extends AbstractSensor
             RearDetector(final String idRear, final Lane laneRear, final Length longitudinalPositionRear,
                     final OtsSimulatorInterface simulatorRear) throws NetworkException
             {
-                super(idRear, laneRear, longitudinalPositionRear, RelativePosition.REAR, simulatorRear, compatible);
+                super(idRear, laneRear, longitudinalPositionRear, RelativePosition.REAR, simulatorRear, new Compatible()
+                {
+                    /** {@inheritDoc} */
+                    @Override
+                    public boolean isCompatible(final GtuType gtuTypeInner)
+                    {
+                        return gtuTypeInner.isOfType(gtuType);
+                    }
+                });
             }
 
             /** {@inheritDoc} */

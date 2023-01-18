@@ -6,8 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.djutils.exceptions.Try;
 import org.junit.Test;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulator;
-import org.opentrafficsim.core.gtu.GtuType.DEFAULTS;
 import org.opentrafficsim.core.network.OtsNetwork;
 
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -32,13 +32,13 @@ public class GtuTypeTest
     public final void constructorTest()
     {
         OtsNetwork network = new OtsNetwork("network", true, new OtsSimulator("Simulator for GtuTypeTest"));
-        GtuType t = new GtuType("abc", network.getGtuType(GtuType.DEFAULTS.VEHICLE));
+        GtuType t = new GtuType("abc", DefaultsNl.VEHICLE);
         assertTrue("Id is stored in the newly created GtuType", "abc".equals(t.getId()));
-        GtuType t2 = new GtuType("pqr", network.getGtuType(GtuType.DEFAULTS.VEHICLE));
+        GtuType t2 = new GtuType("pqr", DefaultsNl.VEHICLE);
         assertTrue("Id is stored in the newly created GtuType", "pqr".equals(t2.getId()));
         // prove that the two are really distinct (do not use the same storage for the type string
         assertTrue("Id is stored in the newly created GtuType", "abc".equals(t.getId()));
-        assertEquals("parent can be retrieved", network.getGtuType(GtuType.DEFAULTS.VEHICLE), t.getParent());
+        assertEquals("parent can be retrieved", DefaultsNl.VEHICLE, t.getParent());
     }
 
     /**
@@ -49,7 +49,7 @@ public class GtuTypeTest
     {
         OtsNetwork network = new OtsNetwork("network", true, new OtsSimulator("Simulator for GtuTypeTest"));
         StreamInterface randomStream = new MersenneTwister();
-        GtuType car = network.getGtuType(DEFAULTS.CAR);
+        GtuType car = DefaultsNl.CAR;
         String message = "Exception while deriving default GTU characteristics";
         GtuCharacteristics characteristicsCar1 =
                 Try.assign(() -> GtuType.defaultCharacteristics(car, network, randomStream), message);
@@ -60,7 +60,7 @@ public class GtuTypeTest
                 Try.assign(() -> GtuType.defaultCharacteristics(spaceCar, network, randomStream), message);
         GtuCharacteristics characteristicsSpaceCar2 =
                 Try.assign(() -> GtuType.defaultCharacteristics(spaceCar, network, randomStream), message);
-        GtuType truck = network.getGtuType(DEFAULTS.TRUCK);
+        GtuType truck = DefaultsNl.TRUCK;
         GtuCharacteristics characteristicsTruck =
                 Try.assign(() -> GtuType.defaultCharacteristics(truck, network, randomStream), message);
 

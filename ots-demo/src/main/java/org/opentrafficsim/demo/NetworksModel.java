@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -25,6 +26,7 @@ import org.djutils.event.EventListenerInterface;
 import org.djutils.event.EventTypeInterface;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.compatibility.Compatible;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
@@ -40,7 +42,6 @@ import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
@@ -189,7 +190,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListenerInte
         this.network.addListener(this, Network.GTU_REMOVE_EVENT);
         try
         {
-            GtuType car = this.network.getGtuType(GtuType.DEFAULTS.CAR);
+            GtuType car = DefaultsNl.CAR;
             this.carProbability = (double) getInputParameter("generic.carProbability");
 
             ParameterFactory params = new InputParameterHelper(getInputParameterMap());
@@ -231,28 +232,29 @@ public class NetworksModel extends AbstractOtsModel implements EventListenerInte
             if (merge)
             {
                 rampLanes = LaneFactory.makeMultiLane(this.network, "From2a to From2b", from2a, from2b, null, lanesOnBranch, 0,
-                        lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator);
+                        lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator, DefaultsNl.VEHICLE);
                 LaneFactory.makeMultiLaneBezier(this.network, "From2b to FirstVia", from2a, from2b, firstVia, secondVia,
                         lanesOnBranch, lanesOnCommon - lanesOnBranch, lanesOnCommon - lanesOnBranch, laneType, this.speedLimit,
-                        this.simulator);
+                        this.simulator, DefaultsNl.VEHICLE);
             }
             else
             {
                 LaneFactory.makeMultiLaneBezier(this.network, "SecondVia to end2a", firstVia, secondVia, end2a, end2b,
                         lanesOnBranch, lanesOnCommon - lanesOnBranch, lanesOnCommon - lanesOnBranch, laneType, this.speedLimit,
-                        this.simulator);
+                        this.simulator, DefaultsNl.VEHICLE);
                 setupSink(LaneFactory.makeMultiLane(this.network, "end2a to end2b", end2a, end2b, null, lanesOnBranch,
-                        lanesOnCommon - lanesOnBranch, 0, laneType, this.speedLimit, this.simulator), laneType);
+                        lanesOnCommon - lanesOnBranch, 0, laneType, this.speedLimit, this.simulator, DefaultsNl.VEHICLE),
+                        laneType);
             }
 
             Lane[] startLanes = LaneFactory.makeMultiLane(this.network, "From to FirstVia", from, firstVia, null,
-                    merge ? lanesOnMain : lanesOnCommonCompressed, laneType, this.speedLimit, this.simulator);
+                    merge ? lanesOnMain : lanesOnCommonCompressed, laneType, this.speedLimit, this.simulator,
+                    DefaultsNl.VEHICLE);
             Lane[] common = LaneFactory.makeMultiLane(this.network, "FirstVia to SecondVia", firstVia, secondVia, null,
-                    lanesOnCommon, laneType, this.speedLimit, this.simulator);
-            setupSink(
-                    LaneFactory.makeMultiLane(this.network, "SecondVia to end", secondVia, end, null,
-                            merge ? lanesOnCommonCompressed : lanesOnMain, laneType, this.speedLimit, this.simulator),
-                    laneType);
+                    lanesOnCommon, laneType, this.speedLimit, this.simulator, DefaultsNl.VEHICLE);
+            setupSink(LaneFactory.makeMultiLane(this.network, "SecondVia to end", secondVia, end, null,
+                    merge ? lanesOnCommonCompressed : lanesOnMain, laneType, this.speedLimit, this.simulator,
+                    DefaultsNl.VEHICLE), laneType);
 
             if (merge)
             {
@@ -409,7 +411,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListenerInte
                 return new Duration(NetworksModel.this.headwayGenerator.draw(), DurationUnit.SI);
             }
         }, templateDistribution, GeneratorPositions.create(initialPositions, this.stream), this.network, this.simulator,
-                roomChecker, this.idGenerator);
+                roomChecker, this.idGenerator, DefaultsNl.VEHICLE);
     }
 
     /**
@@ -432,7 +434,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListenerInte
             final Set<LanePosition> initialPositions,
             final LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory) throws GtuException
     {
-        return new LaneBasedTemplateGtuType(this.network.getGtuType(GtuType.DEFAULTS.CAR), new Generator<Length>()
+        return new LaneBasedTemplateGtuType(DefaultsNl.CAR, new Generator<Length>()
         {
             @Override
             public Length draw()
@@ -481,7 +483,8 @@ public class NetworksModel extends AbstractOtsModel implements EventListenerInte
         {
             // Overtaking left and right allowed on the sinkLane
             Lane sinkLane = new Lane(endLink, lane.getId() + "." + "sinkLane", lane.getLateralCenterPosition(1.0),
-                    lane.getLateralCenterPosition(1.0), lane.getWidth(1.0), lane.getWidth(1.0), laneType, this.speedLimit);
+                    lane.getLateralCenterPosition(1.0), lane.getWidth(1.0), lane.getWidth(1.0), laneType,
+                    Map.of(DefaultsNl.VEHICLE, this.speedLimit), false);
             new SinkSensor(sinkLane, new Length(10.0, METER), Compatible.EVERYTHING, this.simulator);
         }
         return lanes;

@@ -7,9 +7,9 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.gtu.GtuType.DEFAULTS;
 import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType.Correlation;
 
@@ -39,12 +39,11 @@ public final class ParameterFactoryByTypeTest
     public void testParameterFactoryByType() throws ParameterException
     {
 
-        OtsNetwork network = new OtsNetwork("network", true, new OtsSimulator("Simulator for ParameterFactoryByTypeTest"));
-        GtuType roadUser = network.getGtuType(DEFAULTS.ROAD_USER);
-        GtuType bicycle = network.getGtuType(DEFAULTS.BICYCLE);
-        GtuType vehicle = network.getGtuType(DEFAULTS.VEHICLE);
-        GtuType car = network.getGtuType(DEFAULTS.CAR);
-        GtuType truck = network.getGtuType(DEFAULTS.TRUCK);
+        GtuType roadUser = DefaultsNl.ROAD_USER;
+        GtuType bicycle = DefaultsNl.BICYCLE;
+        GtuType vehicle = DefaultsNl.VEHICLE;
+        GtuType car = DefaultsNl.CAR;
+        GtuType truck = DefaultsNl.TRUCK;
 
         ParameterFactoryByType parameterFactory = new ParameterFactoryByType();
 

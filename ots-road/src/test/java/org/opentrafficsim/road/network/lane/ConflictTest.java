@@ -8,6 +8,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.djunits.unit.DirectionUnit;
@@ -22,6 +23,7 @@ import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
@@ -80,7 +82,7 @@ public class ConflictTest implements EventListenerInterface
         CrossSectionLink linkA = new CrossSectionLink(network, "Link A", nodeAFrom, nodeATo, linkType,
                 new OtsLine3D(pointAFrom, pointATo), LaneKeepingPolicy.KEEPRIGHT);
         Lane laneA = new Lane(linkA, "lane A", Length.ZERO, new Length(2, LengthUnit.METER), laneType,
-                new Speed(50, SpeedUnit.KM_PER_HOUR));
+                Map.of(DefaultsNl.VEHICLE, new Speed(50, SpeedUnit.KM_PER_HOUR)));
         laneA.addListener(this, Lane.OBJECT_ADD_EVENT);
 
         OtsPoint3D pointBFrom = new OtsPoint3D(30, -15, 0);
@@ -92,7 +94,7 @@ public class ConflictTest implements EventListenerInterface
         CrossSectionLink linkB = new CrossSectionLink(network, "Link B", nodeBFrom, nodeBTo, linkType,
                 new OtsLine3D(pointBFrom, pointBTo), LaneKeepingPolicy.KEEPRIGHT);
         Lane laneB = new Lane(linkB, "lane B", Length.ZERO, new Length(4, LengthUnit.METER), laneType,
-                new Speed(50, SpeedUnit.KM_PER_HOUR));
+                Map.of(DefaultsNl.VEHICLE, new Speed(50, SpeedUnit.KM_PER_HOUR)));
         laneB.addListener(this, Lane.OBJECT_ADD_EVENT);
         // The intersection of the link design lines is at 50, 0
         System.out.print(laneA.getContour().toPlot());
@@ -159,8 +161,7 @@ public class ConflictTest implements EventListenerInterface
         // That was a lot of code - just to prepare things to call generateConflictPair ...
         Conflict.generateConflictPair(ConflictType.CROSSING, new DefaultConflictRule(), false, laneA,
                 new Length(conflictStart.x, LengthUnit.SI), new Length(conflictEnd.x - conflictStart.x, LengthUnit.SI),
-                geometry1, bicycles, laneB, conflictBStart, conflictBLength, geometry2,
-                cars, simulator);
+                geometry1, bicycles, laneB, conflictBStart, conflictBLength, geometry2, cars, simulator);
 
         // Check that two conflicts have been created
         assertEquals("one conflict on lane A", 1, laneA.getLaneBasedObjects().size());

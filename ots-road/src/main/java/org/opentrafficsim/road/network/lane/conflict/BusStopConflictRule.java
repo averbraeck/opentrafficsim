@@ -28,13 +28,18 @@ public class BusStopConflictRule implements ConflictRule
     /** Simulator. */
     private final OtsSimulatorInterface simulator;
 
+    /** GTU type for buses. */
+    private final GtuType busType;
+
     /**
      * Constructor.
      * @param simulator OTSSimulatorInterface; simulator
+     * @param busType GtuType; GTU type for buses.
      */
-    public BusStopConflictRule(final OtsSimulatorInterface simulator)
+    public BusStopConflictRule(final OtsSimulatorInterface simulator, final GtuType busType)
     {
         this.simulator = simulator;
+        this.busType = busType;
     }
 
     /** {@inheritDoc} */
@@ -71,7 +76,7 @@ public class BusStopConflictRule implements ConflictRule
                 gtu = lane.getGtuBehind(pos, RelativePosition.FRONT, this.simulator.getSimulatorAbsTime());
                 if (gtu == null)
                 {
-                    Set<Lane> set = lane.prevLanes(lane.getNetwork().getGtuType(GtuType.DEFAULTS.BUS));
+                    Set<Lane> set = lane.prevLanes(this.busType);
                     if (set.size() == 1)
                     {
                         lane = set.iterator().next();
@@ -96,8 +101,7 @@ public class BusStopConflictRule implements ConflictRule
         {
             throw new RuntimeException("Error while looking for GTU upstream of merge at bus stop.", exception);
         }
-        boolean busHasPriority =
-                gtu != null && gtu.getType().isOfType(GtuType.DEFAULTS.BUS) && gtu.getTurnIndicatorStatus().isLeft();
+        boolean busHasPriority = gtu != null && gtu.getType().isOfType(this.busType) && gtu.getTurnIndicatorStatus().isLeft();
 
         // if bus has priority and bus is asking, PRIORITY
         // if bus has no priority and bus is not asking (i.e. car is asking), PRIORITY

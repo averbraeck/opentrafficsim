@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.Serializable;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.naming.NamingException;
@@ -19,6 +20,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -73,7 +75,7 @@ public class CarTest implements UNITS
         Time initialTime = new Time(0, TimeUnit.BASE_SECOND);
         OtsSimulatorInterface simulator = makeSimulator();
         OtsRoadNetwork network = new OtsRoadNetwork("network", true, simulator);
-        GtuType gtuType = network.getGtuType(GtuType.DEFAULTS.CAR);
+        GtuType gtuType = DefaultsNl.CAR;
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         Lane lane = makeLane(network, laneType, simulator);
         Length initialPosition = new Length(12, METER);
@@ -164,7 +166,8 @@ public class CarTest implements UNITS
                 new OtsLine3D(coordinates), LaneKeepingPolicy.KEEPRIGHT);
         Length latPos = new Length(0.0, METER);
         Length width = new Length(4.0, METER);
-        return new Lane(link12, "lane.1", latPos, latPos, width, width, laneType, new Speed(100, KM_PER_HOUR));
+        return new Lane(link12, "lane.1", latPos, latPos, width, width, laneType,
+                Map.of(DefaultsNl.VEHICLE, new Speed(100, KM_PER_HOUR)), false);
     }
 
     /** The helper model. */

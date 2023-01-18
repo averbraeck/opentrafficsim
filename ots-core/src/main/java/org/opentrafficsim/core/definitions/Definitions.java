@@ -57,13 +57,6 @@ public interface Definitions
     /***************************************************************************************/
 
     /**
-     * Add the default GTU Types that have been defined in the enum GtuType.DEFAULTS to the network. It is not necessary to call
-     * this method on every network; when the GtuTypes are for instance defined in an XML file, adding the default types might
-     * not be needed.
-     */
-    void addDefaultGtuTypes();
-
-    /**
      * Add a GTU type to the map. This method is automatically called from the GtuType constructor.
      * @param gtuType the GtuType to add
      */
@@ -75,13 +68,6 @@ public interface Definitions
      * @return the GtuType or null in case it could not be found
      */
     GtuType getGtuType(String gtuId);
-
-    /**
-     * Retrieve a defined default GtuType based on its enum.
-     * @param gtuEnum the enum to search for
-     * @return the GtuType or null in case it could not be found
-     */
-    GtuType getGtuType(GtuType.DEFAULTS gtuEnum);
 
     /**
      * Retrieve a safe copy of the map of defined GtuTypes in this network.

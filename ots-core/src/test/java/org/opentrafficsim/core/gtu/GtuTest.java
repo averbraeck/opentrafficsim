@@ -16,21 +16,17 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.immutablecollections.ImmutableMap;
-import org.djutils.immutablecollections.ImmutableSet;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
-import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
@@ -143,8 +139,8 @@ public class GtuTest
         Parameters parameters = new ParameterSet();
         DirectedPoint initialLocation =
                 new DirectedPoint(10, 20, 30, Math.toRadians(10), Math.toRadians(20), Math.toRadians(30));
-        GtuType gtuType1 = new GtuType("gtu type 1", perceivableContext.getGtuType(GtuType.DEFAULTS.VEHICLE));
-        GtuType gtuType2 = new GtuType("gtu type 2", perceivableContext.getGtuType(GtuType.DEFAULTS.VEHICLE));
+        GtuType gtuType1 = new GtuType("gtu type 1", DefaultsNl.VEHICLE);
+        GtuType gtuType2 = new GtuType("gtu type 2", DefaultsNl.VEHICLE);
         for (String id : new String[] {"id1", "id2"})
         {
             for (GtuType gtuType : new GtuType[] {gtuType1, gtuType2})

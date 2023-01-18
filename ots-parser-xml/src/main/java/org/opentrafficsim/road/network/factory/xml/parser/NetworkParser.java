@@ -15,6 +15,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.draw.point.Point3d;
 import org.djutils.reflection.ClassUtil;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.DirectedPoint;
@@ -441,8 +442,9 @@ public final class NetworkParser
                 {
                     CSENOTRAFFICLANE ntlTag = (CSENOTRAFFICLANE) cseTag;
                     String id = ntlTag.getID() != null ? ntlTag.getID() : UUID.randomUUID().toString();
+                    // TODO: obtain
                     Lane lane = Lane.noTrafficLane(csl, id, cseData.centerOffsetStart, cseData.centerOffsetEnd,
-                            cseData.widthStart, cseData.widthEnd, fixGradualLateralOffset);
+                            cseData.widthStart, cseData.widthEnd, DefaultsNl.VEHICLE, fixGradualLateralOffset);
                     cseList.add(lane);
                 }
 
@@ -712,17 +714,19 @@ public final class NetworkParser
                 stripeTag.getDRAWINGWIDTH() != null ? stripeTag.getDRAWINGWIDTH() : new Length(20.0, LengthUnit.CENTIMETER);
         switch (stripeTag.getTYPE())
         {
+            // TODO: obtain relevant GTU type from xml
+
             case BLOCKED:
                 Length w = stripeTag.getDRAWINGWIDTH() != null ? stripeTag.getDRAWINGWIDTH()
                         : new Length(40.0, LengthUnit.CENTIMETER);
                 Stripe blockedLine = new Stripe(csl, startOffset, endOffset, w, w, fixGradualLateralOffset);
-                blockedLine.addPermeability(csl.getNetwork().getGtuType(GtuType.DEFAULTS.ROAD_USER), Permeable.BOTH);
+                blockedLine.addPermeability(DefaultsNl.ROAD_USER, Permeable.BOTH);
                 cseList.add(blockedLine);
                 break;
 
             case DASHED:
                 Stripe dashedLine = new Stripe(csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
-                dashedLine.addPermeability(csl.getNetwork().getGtuType(GtuType.DEFAULTS.ROAD_USER), Permeable.BOTH);
+                dashedLine.addPermeability(DefaultsNl.ROAD_USER, Permeable.BOTH);
                 cseList.add(dashedLine);
                 break;
 
@@ -733,13 +737,13 @@ public final class NetworkParser
 
             case LEFTONLY:
                 Stripe leftOnlyLine = new Stripe(csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
-                leftOnlyLine.addPermeability(csl.getNetwork().getGtuType(GtuType.DEFAULTS.ROAD_USER), Permeable.LEFT);
+                leftOnlyLine.addPermeability(DefaultsNl.ROAD_USER, Permeable.LEFT);
                 cseList.add(leftOnlyLine);
                 break;
 
             case RIGHTONLY:
                 Stripe rightOnlyLine = new Stripe(csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
-                rightOnlyLine.addPermeability(csl.getNetwork().getGtuType(GtuType.DEFAULTS.ROAD_USER), Permeable.RIGHT);
+                rightOnlyLine.addPermeability(DefaultsNl.ROAD_USER, Permeable.RIGHT);
                 cseList.add(rightOnlyLine);
                 break;
 

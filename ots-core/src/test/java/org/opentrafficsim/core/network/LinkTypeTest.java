@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import org.djutils.exceptions.Try;
 import org.junit.Test;
 import org.opentrafficsim.core.compatibility.GtuCompatibility;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.gtu.GtuType;
 
@@ -35,15 +36,15 @@ public class LinkTypeTest
         Try.testFail(() -> new LinkType(null, null, network), NullPointerException.class);
         Try.testFail(() -> new LinkType("name", null, null), NullPointerException.class);
 
-        GtuType carType = new GtuType("Car", network.getGtuType(GtuType.DEFAULTS.VEHICLE));
-        GtuType truckType = new GtuType("Truck", network.getGtuType(GtuType.DEFAULTS.VEHICLE));
-        GtuType catamaran = new GtuType("Catamaran", network.getGtuType(GtuType.DEFAULTS.SHIP));
+        GtuType carType = new GtuType("Car", DefaultsNl.VEHICLE);
+        GtuType truckType = new GtuType("Truck", DefaultsNl.VEHICLE);
+        GtuType catamaran = new GtuType("Catamaran", DefaultsNl.SHIP);
 
         LinkType roadLinkType = new LinkType("Vehicles", null, network);
-        roadLinkType.addCompatibleGtuType(network.getGtuType(GtuType.DEFAULTS.VEHICLE));
+        roadLinkType.addCompatibleGtuType(DefaultsNl.VEHICLE);
 
         LinkType waterwayType = new LinkType("Waterway", null, network);
-        waterwayType.addCompatibleGtuType(network.getGtuType(GtuType.DEFAULTS.SHIP));
+        waterwayType.addCompatibleGtuType(DefaultsNl.SHIP);
 
         assertTrue("equals to itself", roadLinkType.equals(roadLinkType));
         assertFalse("not equal to the other", roadLinkType.equals(waterwayType));
@@ -69,14 +70,12 @@ public class LinkTypeTest
         assertFalse("waterWayType2 is not a road", waterWayType2.isRoad());
 
         LinkType poorSurfaceLinkType = new LinkType("PoorSurfaceType", network.getLinkType(LinkType.DEFAULTS.ROAD), network);
-        poorSurfaceLinkType.addCompatibleGtuType(network.getGtuType(GtuType.DEFAULTS.CAR));
+        poorSurfaceLinkType.addCompatibleGtuType(DefaultsNl.CAR);
         assertTrue("poor road is of type ROAD", poorSurfaceLinkType.isOfType(LinkType.DEFAULTS.ROAD));
-        assertFalse("compatibility of waterway for car is false",
-                waterwayType.isCompatible(carType));
-        assertNull("compatibility of waterway for car is undecidable on level",
-                waterwayType.isCompatibleOnInfraLevel(carType));
+        assertFalse("compatibility of waterway for car is false", waterwayType.isCompatible(carType));
+        assertNull("compatibility of waterway for car is undecidable on level", waterwayType.isCompatibleOnInfraLevel(carType));
         GtuCompatibility<LinkType> compatibility = waterwayType.getGtuCompatibility();
-        assertTrue("compatibility allows SHIP", compatibility.isCompatible(network.getGtuType(GtuType.DEFAULTS.SHIP)));
+        assertTrue("compatibility allows SHIP", compatibility.isCompatible(DefaultsNl.SHIP));
     }
 
 }

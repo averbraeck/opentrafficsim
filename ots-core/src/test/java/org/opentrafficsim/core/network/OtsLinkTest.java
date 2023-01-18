@@ -11,14 +11,12 @@ import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.event.EventTypeInterface;
 import org.junit.Test;
-import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.mock.MockGtu;
 import org.opentrafficsim.core.mock.MockSimulator;
 
@@ -57,8 +55,6 @@ public class OtsLinkTest implements EventListenerInterface
         OtsNetwork network = new OtsNetwork("OTSLinkTestNetwork", true, MockSimulator.createMock());
         Node startNode = new OtsNode(network, "start", new OtsPoint3D(10, 20, 0));
         Node endNode = new OtsNode(network, "end", new OtsPoint3D(1000, 2000, 10));
-        GtuCompatibility<LinkType> compatibility = new GtuCompatibility<LinkType>((LinkType) null)
-                .addIncompatibleGtuType(network.getGtuType(GtuType.DEFAULTS.VEHICLE));
         LinkType linkType = new LinkType("myLinkType", network.getLinkType(LinkType.DEFAULTS.ROAD), network);
         OtsLine3D designLine = new OtsLine3D(startNode.getPoint(), endNode.getPoint());
         OtsLink link = new OtsLink(network, "link1", startNode, endNode, linkType, designLine);

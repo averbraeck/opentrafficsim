@@ -11,9 +11,9 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.io.URLResource;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
@@ -63,7 +63,7 @@ public class TJunctionModel extends AbstractOtsModel
             // add conflicts
             // ((CrossSectionLink) this.network.getLink("SCEC")).setPriority(Priority.STOP);
             // ((CrossSectionLink) this.network.getLink("SCWC")).setPriority(Priority.STOP);
-            ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GtuType.DEFAULTS.VEHICLE), this.simulator,
+            ConflictBuilder.buildConflicts(this.network, DefaultsNl.VEHICLE, this.simulator,
                     new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
 
             // add trafficlight after

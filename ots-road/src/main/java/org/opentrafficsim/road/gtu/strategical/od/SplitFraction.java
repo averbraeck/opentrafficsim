@@ -66,16 +66,6 @@ public class SplitFraction
     }
 
     /**
-     * Add fraction to link, this will apply to {@code GtuType.ALL} and all time.
-     * @param link Link; link
-     * @param fraction double; fraction
-     */
-    public void addFraction(final Link link, final double fraction)
-    {
-        addFraction(link, link.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), fraction);
-    }
-
-    /**
      * Add fraction to link for gtu type, this will apply to all time.
      * @param link Link; link
      * @param gtuType GtuType; gtu type
@@ -99,17 +89,6 @@ public class SplitFraction
             throw new RuntimeException("Input null while creating duration vector.", exception);
         }
         addFraction(link, gtuType, time, fracs);
-    }
-
-    /**
-     * Add fraction to link over time, this will apply to {@code GtuType.ALL}.
-     * @param link Link; link
-     * @param time DurationVector; time
-     * @param fraction double[]; fraction
-     */
-    public void addFraction(final Link link, final DurationVector time, final double[] fraction)
-    {
-        addFraction(link, link.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), time, fraction);
     }
 
     /**

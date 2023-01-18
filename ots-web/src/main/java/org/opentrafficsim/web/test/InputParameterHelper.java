@@ -9,6 +9,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.parameters.ParameterFactory;
 
@@ -46,11 +47,11 @@ public final class InputParameterHelper implements ParameterFactory
     {
         try
         {
-            if (gtuType.isOfType(GtuType.DEFAULTS.CAR))
+            if (gtuType.isOfType(DefaultsNl.CAR))
             {
                 getParametersCar(this.rootMap).setAllIn(parameters);
             }
-            else if (gtuType.isOfType(GtuType.DEFAULTS.TRUCK))
+            else if (gtuType.isOfType(DefaultsNl.TRUCK))
             {
                 getParametersTruck(this.rootMap).setAllIn(parameters);
             }

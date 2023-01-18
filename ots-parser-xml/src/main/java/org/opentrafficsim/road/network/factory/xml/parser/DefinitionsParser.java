@@ -7,7 +7,8 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.logger.Cat;
 import org.opentrafficsim.base.parameters.ParameterType;
-import org.opentrafficsim.core.compatibility.GtuCompatibility;
+import org.opentrafficsim.core.definitions.Defaults;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
@@ -63,7 +64,7 @@ public final class DefinitionsParser
             final Map<String, GTUTEMPLATE> gtuTemplates, final StreamInformation streamInformation,
             final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap) throws XmlParserException
     {
-        parseGtuTypes(definitions, otsNetwork, overwriteDefaults);
+        parseGtuTypes(definitions, otsNetwork);
         parseLinkTypes(definitions, otsNetwork, overwriteDefaults, linkTypeSpeedLimitMap);
         parseLaneTypes(definitions, otsNetwork, overwriteDefaults);
         parseGtuTemplates(definitions, otsNetwork, overwriteDefaults, gtuTemplates, streamInformation);
@@ -74,41 +75,38 @@ public final class DefinitionsParser
      * Parse the GTUTYPES tag in the OTS XML file.
      * @param definitions the DEFINTIONS tag
      * @param otsNetwork the network
-     * @param overwriteDefaults overwrite default definitions in otsNetwork or not
      * @throws XmlParserException on parsing error
      */
-    public static void parseGtuTypes(final DEFINITIONS definitions, final OtsRoadNetwork otsNetwork,
-            final boolean overwriteDefaults) throws XmlParserException
+    public static void parseGtuTypes(final DEFINITIONS definitions, final OtsRoadNetwork otsNetwork) throws XmlParserException
     {
         for (GTUTYPES gtuTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(), GTUTYPES.class))
         {
             for (GTUTYPE gtuTag : gtuTypes.getGTUTYPE())
             {
-                GtuType networkGtuType = otsNetwork.getGtuTypes().get(gtuTag.getID());
-                if (networkGtuType == null || (networkGtuType != null && !gtuTag.isDEFAULT())
-                        || (networkGtuType != null && gtuTag.isDEFAULT() && overwriteDefaults))
+                GtuType gtuType;
+                if (gtuTag.isDEFAULT())
                 {
-                    if (gtuTag.getPARENT() != null)
+                    // TODO: remove addition of "NL." once the xml standard has been updated
+                    String id = gtuTag.getID().contains(".") ? gtuTag.getID() : "NL." + gtuTag.getID();
+                    gtuType = Defaults.getByName(GtuType.class, id);
+                }
+                else if (gtuTag.getPARENT() != null)
+                {
+                    GtuType parent = otsNetwork.getGtuType(gtuTag.getPARENT());
+                    if (parent == null)
                     {
-                        GtuType parent = otsNetwork.getGtuType(gtuTag.getPARENT());
-                        if (parent == null)
-                        {
-                            throw new XmlParserException(
-                                    "GtuType " + gtuTag.getID() + " parent " + gtuTag.getPARENT() + " not found");
-                        }
-                        GtuType gtuType = new GtuType(gtuTag.getID(), parent);
-                        CategoryLogger.filter(Cat.PARSER).trace("Added GtuType {}", gtuType);
+                        throw new XmlParserException(
+                                "GtuType " + gtuTag.getID() + " parent " + gtuTag.getPARENT() + " not found");
                     }
-                    else
-                    {
-                        GtuType gtuType = new GtuType(gtuTag.getID(), otsNetwork);
-                        CategoryLogger.filter(Cat.PARSER).trace("Added GtuType {}", gtuType);
-                    }
+                    gtuType = new GtuType(gtuTag.getID(), parent);
+                    CategoryLogger.filter(Cat.PARSER).trace("Added GtuType {}", gtuType);
                 }
                 else
                 {
-                    CategoryLogger.filter(Cat.PARSER).trace("Did NOT add GtuType {}", gtuTag.getID());
+                    gtuType = new GtuType(gtuTag.getID());
+                    CategoryLogger.filter(Cat.PARSER).trace("Added GtuType {}", gtuType);
                 }
+                otsNetwork.addGtuType(gtuType);
             }
         }
     }

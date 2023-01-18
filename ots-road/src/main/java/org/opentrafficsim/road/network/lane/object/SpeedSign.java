@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.network.lane.object;
 
-import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -24,9 +23,6 @@ public class SpeedSign extends AbstractLaneBasedObject
 
     /** */
     private static final long serialVersionUID = 20170420L;
-
-    /** End of day. */
-    private static final Duration ENDOFDAY = new Duration(24, DurationUnit.HOUR);
 
     /** Speed limit. */
     private final Speed speed;
@@ -64,57 +60,6 @@ public class SpeedSign extends AbstractLaneBasedObject
         this.endTimeOfDay = endTimeOfDay;
 
         init();
-    }
-
-    /**
-     * Speed sign active all day.
-     * @param id String; id
-     * @param lane Lane; lane
-     * @param longitudinalPosition Length; longitudinal position
-     * @param simulator OTSSimulatorInterface; simulator
-     * @param speed Speed; speed
-     * @param gtuType GtuType; GTU type
-     * @throws NetworkException when the position on the lane is out of bounds
-     */
-    public SpeedSign(final String id, final Lane lane, final Length longitudinalPosition, final OtsSimulatorInterface simulator,
-            final Speed speed, final GtuType gtuType) throws NetworkException
-    {
-        this(id, lane, longitudinalPosition, simulator, speed, gtuType, Duration.ZERO, ENDOFDAY);
-    }
-
-    /**
-     * Speed sign for all GTU types.
-     * @param id String; id
-     * @param lane Lane; lane
-     * @param longitudinalPosition Length; longitudinal position
-     * @param simulator OTSSimulatorInterface; simulator
-     * @param speed Speed; speed
-     * @param startTimeOfDay Duration; start time-of-day
-     * @param endTimeOfDay Duration; end time-of-day
-     * @throws NetworkException when the position on the lane is out of bounds
-     */
-    @SuppressWarnings("checkstyle:parameternumber")
-    public SpeedSign(final String id, final Lane lane, final Length longitudinalPosition, final OtsSimulatorInterface simulator,
-            final Speed speed, final Duration startTimeOfDay, final Duration endTimeOfDay) throws NetworkException
-    {
-        this(id, lane, longitudinalPosition, simulator, speed, lane.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE),
-                startTimeOfDay, endTimeOfDay);
-    }
-
-    /**
-     * Speed sign active all day for all GTU types.
-     * @param id String; id
-     * @param lane Lane; lane
-     * @param longitudinalPosition Length; longitudinal position
-     * @param simulator OTSSimulatorInterface; simulator
-     * @param speed Speed; speed
-     * @throws NetworkException when the position on the lane is out of bounds
-     */
-    public SpeedSign(final String id, final Lane lane, final Length longitudinalPosition, final OtsSimulatorInterface simulator,
-            final Speed speed) throws NetworkException
-    {
-        this(id, lane, longitudinalPosition, simulator, speed, lane.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE),
-                Duration.ZERO, ENDOFDAY);
     }
 
     /**

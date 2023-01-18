@@ -6,7 +6,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.network.OtsNetwork;
 
 /**
  * <p>
@@ -98,19 +97,6 @@ public class DirectEgoPerception<G extends Gtu, P extends Perception<G>> extends
     @Override
     public final Speed getSpeed()
     {
-        try
-        {
-            if (null == this.speed)
-            {
-                System.out.println("GetSpeed: GTU is " + getGtu() + " this.speed is " + this.speed + " cached speed is null");
-                System.out.println(getGtu().getOperationalPlan());
-                System.out.println(((OtsNetwork) getGtu().getType().getNetwork()).getGTUs());
-            }
-        }
-        catch (GtuException e1)
-        {
-            e1.printStackTrace();
-        }
         return this.speed.getObject();
     }
 
@@ -177,15 +163,15 @@ public class DirectEgoPerception<G extends Gtu, P extends Perception<G>> extends
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((acceleration == null) ? 0 : acceleration.hashCode());
-        result = prime * result + ((length == null) ? 0 : length.hashCode());
-        result = prime * result + ((speed == null) ? 0 : speed.hashCode());
-        result = prime * result + ((width == null) ? 0 : width.hashCode());
+        result = prime * result + ((this.acceleration == null) ? 0 : this.acceleration.hashCode());
+        result = prime * result + ((this.length == null) ? 0 : this.length.hashCode());
+        result = prime * result + ((this.speed == null) ? 0 : this.speed.hashCode());
+        result = prime * result + ((this.width == null) ? 0 : this.width.hashCode());
         return result;
     }
 
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
         if (this == obj)
             return true;
@@ -194,33 +180,33 @@ public class DirectEgoPerception<G extends Gtu, P extends Perception<G>> extends
         if (getClass() != obj.getClass())
             return false;
         DirectEgoPerception other = (DirectEgoPerception) obj;
-        if (acceleration == null)
+        if (this.acceleration == null)
         {
             if (other.acceleration != null)
                 return false;
         }
-        else if (!acceleration.equals(other.acceleration))
+        else if (!this.acceleration.equals(other.acceleration))
             return false;
-        if (length == null)
+        if (this.length == null)
         {
             if (other.length != null)
                 return false;
         }
-        else if (!length.equals(other.length))
+        else if (!this.length.equals(other.length))
             return false;
-        if (speed == null)
+        if (this.speed == null)
         {
             if (other.speed != null)
                 return false;
         }
-        else if (!speed.equals(other.speed))
+        else if (!this.speed.equals(other.speed))
             return false;
-        if (width == null)
+        if (this.width == null)
         {
             if (other.width != null)
                 return false;
         }
-        else if (!width.equals(other.width))
+        else if (!this.width.equals(other.width))
             return false;
         return true;
     }

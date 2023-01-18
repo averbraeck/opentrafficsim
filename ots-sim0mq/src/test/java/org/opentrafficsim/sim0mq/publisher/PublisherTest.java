@@ -22,6 +22,7 @@ import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.serialization.SerializationException;
 import org.junit.Test;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
@@ -238,9 +239,8 @@ public class PublisherTest implements OtsModelInterface
                         false);
                 LaneCombinationList ignoreList = new LaneCombinationList();
                 LaneCombinationList permittedList = new LaneCombinationList();
-                ConflictBuilder.buildConflictsParallel(this.network, this.network.getGtuType(GtuType.DEFAULTS.VEHICLE),
-                        getSimulator(), new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)), ignoreList,
-                        permittedList);
+                ConflictBuilder.buildConflictsParallel(this.network, DefaultsNl.VEHICLE, getSimulator(),
+                        new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)), ignoreList, permittedList);
             }
             catch (Exception e)
             {

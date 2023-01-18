@@ -18,6 +18,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -345,13 +346,14 @@ public final class OdApplier
                         simulator, odOptions.get(OdOptions.GTU_TYPE, lane, o, linkType), stream);
                 RoomChecker roomChecker = odOptions.get(OdOptions.ROOM_CHECKER, lane, o, linkType);
                 IdGenerator idGenerator = odOptions.get(OdOptions.GTU_ID, lane, o, linkType);
-                LaneBiases biases = odOptions.get(OdOptions.getLaneBiasOption(network), lane, o, linkType);
+                LaneBiases biases = odOptions.get(OdOptions.LANE_BIAS, lane, o, linkType);
                 // and finally, the generator
                 try
                 {
+                    // TODO: obtain GTU type to check space from network
                     LaneBasedGtuGenerator generator = new LaneBasedGtuGenerator(id, headwayGenerator, characteristicsGenerator,
                             GeneratorPositions.create(initialPosition, stream, biases, linkWeights, viaNodes), network,
-                            simulator, roomChecker, idGenerator);
+                            simulator, roomChecker, idGenerator, DefaultsNl.VEHICLE);
                     generator.setNoLaneChangeDistance(odOptions.get(OdOptions.NO_LC_DIST, lane, o, linkType));
                     generator.setInstantaneousLaneChange(odOptions.get(OdOptions.INSTANT_LC, lane, o, linkType));
                     generator.setErrorHandler(odOptions.get(OdOptions.ERROR_HANDLER, lane, o, linkType));

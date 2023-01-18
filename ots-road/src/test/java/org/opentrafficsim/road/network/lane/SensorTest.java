@@ -16,6 +16,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.compatibility.Compatible;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
@@ -66,12 +67,12 @@ public class SensorTest implements UNITS
         OtsRoadNode nodeATo = new OtsRoadNode(network, "ATo", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
         OtsRoadNode nodeBTo = new OtsRoadNode(network, "BTo", new OtsPoint3D(20000, 0, 0), Direction.ZERO);
         // so car won't run off lane B in 100 s.
-        GtuType gtuType = network.getGtuType(GtuType.DEFAULTS.CAR);
+        GtuType gtuType = DefaultsNl.CAR;
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         Lane[] lanesA = LaneFactory.makeMultiLane(network, "A", nodeAFrom, nodeATo, null, 3, laneType,
-                new Speed(100, KM_PER_HOUR), simulator);
+                new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
         Lane[] lanesB = LaneFactory.makeMultiLane(network, "B", nodeATo, nodeBTo, null, 3, laneType,
-                new Speed(100, KM_PER_HOUR), simulator);
+                new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
 
         // put a sensor on each of the lanes at the end of LaneA
         for (Lane lane : lanesA)

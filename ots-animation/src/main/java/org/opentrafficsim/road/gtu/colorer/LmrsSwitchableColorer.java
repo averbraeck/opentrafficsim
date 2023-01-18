@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.colorer;
 
 import java.awt.Color;
+import java.util.Map;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -9,6 +10,7 @@ import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGtuColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.IdGtuColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SpeedGtuColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGtuColorer;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveBusStop;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveGetInLane;
@@ -36,11 +38,12 @@ public class LmrsSwitchableColorer extends SwitchableGtuColorer
 
     /**
      * Constructor.
+     * @param gtuTypeColors Map&lt;GtuType, Color&gt;; colors per GTU type in the GTU type colorer.
      * @throws IndexOutOfBoundsException initial index out of bounds
      */
-    public LmrsSwitchableColorer() throws IndexOutOfBoundsException
+    public LmrsSwitchableColorer(final Map<GtuType, Color> gtuTypeColors) throws IndexOutOfBoundsException
     {
-        super(0, new FixedColor(Color.BLUE, "Blue"), GtuTypeColorer.DEFAULT, new IdGtuColorer(),
+        super(0, new FixedColor(Color.BLUE, "Blue"), GtuTypeColorer.fromMap(gtuTypeColors), new IdGtuColorer(),
                 new SpeedGtuColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)),
                 new DesiredSpeedColorer(new Speed(50, SpeedUnit.KM_PER_HOUR), new Speed(150, SpeedUnit.KM_PER_HOUR)),
                 new AccelerationGtuColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)), new SplitColorer(),

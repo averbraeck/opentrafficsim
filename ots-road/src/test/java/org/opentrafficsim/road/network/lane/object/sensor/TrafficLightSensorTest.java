@@ -26,6 +26,7 @@ import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.compatibility.Compatible;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -96,7 +97,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
                 OtsRoadNode toNode = node;
                 int laneOffset = 0;
                 result[nodeNumber - 1] = LaneFactory.makeMultiLane(network, "Link" + nodeNumber, fromNode, toNode, null, 1,
-                        laneOffset, laneOffset, laneType, speedLimit, simulator)[0];
+                        laneOffset, laneOffset, laneType, speedLimit, simulator, DefaultsNl.VEHICLE)[0];
                 System.out.println("Created lane with center line " + result[nodeNumber - 1].getCenterLine());
             }
             if (nodeNumber < lengths.length)
@@ -200,7 +201,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
                 tls.addListener(this, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT);
                 assertEquals("event list is empty", 0, this.loggedEvents.size());
 
-                GtuType gtuType = network.getGtuType(GtuType.DEFAULTS.TRUCK);
+                GtuType gtuType = DefaultsNl.TRUCK;
                 Length gtuLength = new Length(17, LengthUnit.METER);
                 Length gtuWidth = new Length(2, LengthUnit.METER);
                 Speed maximumSpeed = new Speed(90, SpeedUnit.KM_PER_HOUR);

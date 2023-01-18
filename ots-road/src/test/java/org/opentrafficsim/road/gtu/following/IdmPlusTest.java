@@ -20,6 +20,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -69,7 +70,7 @@ public class IdmPlusTest implements UNITS
         Length s0 = new Length(2, METER);
         GtuFollowingModelOld carFollowingModel = new IdmPlusOld(new Acceleration(1.25, METER_PER_SECOND_2),
                 new Acceleration(1.5, METER_PER_SECOND_2), s0, new Duration(1, SECOND), 1d);
-        GtuType gtuType = network.getGtuType(GtuType.DEFAULTS.CAR);
+        GtuType gtuType = DefaultsNl.CAR;
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         Lane lane = CarTest.makeLane(network, laneType, simulator);
         Time initialTime = new Time(0, TimeUnit.BASE_SECOND);

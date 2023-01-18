@@ -32,12 +32,12 @@ import org.djutils.decoderdumper.HexDumper;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
@@ -248,7 +248,8 @@ public final class Sim0MQPublisher
             this.animationPanel = new OtsAnimationPanel(this.model.getNetwork().getExtent(), new Dimension(1100, 1000),
                     animator, this.model, OtsSwingApplication.DEFAULT_COLORER, this.model.getNetwork());
             new OtsSimulationApplication<Sim0MQOTSModel>(this.model, this.animationPanel);
-            DefaultAnimationFactory.animateXmlNetwork(this.model.getNetwork(), new DefaultSwitchableGtuColorer());
+            DefaultAnimationFactory.animateXmlNetwork(this.model.getNetwork(), new DefaultSwitchableGtuColorer(),
+                    DefaultsNl.TRUCK, DefaultsNl.CAR);
             JFrame frame = (JFrame) this.animationPanel.getParent().getParent().getParent();
             frame.setExtendedState(Frame.NORMAL);
             frame.setSize(new Dimension(1100, 1000));
@@ -530,9 +531,10 @@ class Sim0MQOTSModel extends AbstractOtsModel
         {
             XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,
                     false);
-            ConflictBuilder.buildConflictsParallel(this.network, this.network.getGtuType(GtuType.DEFAULTS.VEHICLE),
-                    getSimulator(), new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)),
-                    new LaneCombinationList(), new LaneCombinationList());
+            // TODO: obtain relevant GTU type from xml
+            ConflictBuilder.buildConflictsParallel(this.network, DefaultsNl.VEHICLE, getSimulator(),
+                    new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)), new LaneCombinationList(),
+                    new LaneCombinationList());
         }
         catch (NetworkException | OtsGeometryException | JAXBException | URISyntaxException | XmlParserException | SAXException
                 | ParserConfigurationException | GtuException | IOException | TrafficControlException exception)

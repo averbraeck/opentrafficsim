@@ -22,6 +22,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
@@ -29,7 +30,6 @@ import org.opentrafficsim.core.dsol.OtsSimulationException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
@@ -142,7 +142,12 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), xmlModel, map);
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(xmlModel.getNetwork().getExtent(), new Dimension(800, 600),
                     simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
-            new LoadXml(xmlModel, animationPanel);
+            LoadXml loadXml = new LoadXml(xmlModel, animationPanel);
+            loadXml.animateNetwork(
+                    xmlModel.getNetwork().getGtuTypes().containsValue(DefaultsNl.TRUCK) ? DefaultsNl.TRUCK : null,
+                    xmlModel.getNetwork().getGtuTypes().containsValue(DefaultsNl.CAR) ? DefaultsNl.CAR : null);
+            // TODO: permabilityType (CAR above) can probably not be null, but we will move stripe type to stripe later
+            // (now StripeAnimation.TYPE is figured out from permebability)
         }
         catch (SimRuntimeException | OtsDrawingException sre)
         {
@@ -200,7 +205,8 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
                     // Ignore exception that is expected to happen when the network is NOT the Barcelona test network
                 }
                 LaneCombinationList permittedList = new LaneCombinationList();
-                ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GtuType.DEFAULTS.VEHICLE), getSimulator(),
+                // TODO: GtuType must be specified in xml
+                ConflictBuilder.buildConflicts(this.network, DefaultsNl.VEHICLE, getSimulator(),
                         new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)), ignoreList, permittedList);
             }
             catch (NetworkException | OtsGeometryException | JAXBException | URISyntaxException | XmlParserException

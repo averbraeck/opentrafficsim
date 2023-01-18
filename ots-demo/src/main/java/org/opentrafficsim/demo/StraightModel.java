@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.djunits.unit.DurationUnit;
@@ -20,6 +21,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.core.compatibility.Compatible;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
@@ -134,13 +136,14 @@ public class StraightModel extends AbstractOtsModel implements UNITS
             OtsRoadNode end = new OtsRoadNode(this.network, "End", new OtsPoint3D(this.maximumDistance.getSI() + 50.0, 0, 0),
                     Direction.ZERO);
             LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
-            this.lane = LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator);
+            this.lane = LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator,
+                    DefaultsNl.VEHICLE);
             this.path.add(this.lane);
             CrossSectionLink endLink = LaneFactory.makeLink(this.network, "endLink", to, end, null, this.simulator);
             // No overtaking, single lane
             Lane sinkLane = new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
                     this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,
-                    this.speedLimit);
+                    Map.of(DefaultsNl.VEHICLE, this.speedLimit), false);
             new SinkSensor(sinkLane, new Length(10.0, METER), Compatible.EVERYTHING, this.simulator);
             this.path.add(sinkLane);
 
@@ -151,8 +154,8 @@ public class StraightModel extends AbstractOtsModel implements UNITS
             IdGenerator idGenerator = new IdGenerator("");
             ParameterSet params = new ParameterSet();
             params.setDefaultParameter(AbstractIdm.DELTA);
-            GtuType car = new GtuType("car", this.network.getGtuType(GtuType.DEFAULTS.CAR));
-            GtuType truck = new GtuType("truck", this.network.getGtuType(GtuType.DEFAULTS.TRUCK));
+            GtuType car = DefaultsNl.CAR;
+            GtuType truck = DefaultsNl.TRUCK;
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedCar =
                     new ContinuousDistDoubleScalar.Rel<>(new DistUniform(this.stream, 90.0, 110.0), SpeedUnit.KM_PER_HOUR);
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedTruck =
@@ -175,13 +178,12 @@ public class StraightModel extends AbstractOtsModel implements UNITS
             gtuTypeDistribution.add(new FrequencyAndObject<>(1.0 - this.carProbability, truckTemplate));
             Generator<Duration> headwayGenerator = new HeadwayGenerator(new Frequency(1500.0, PER_HOUR));
             Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
-            initialLongitudinalPositions
-                    .add(new LanePosition(this.lane, new Length(5.0, LengthUnit.SI)));
+            initialLongitudinalPositions.add(new LanePosition(this.lane, new Length(5.0, LengthUnit.SI)));
             LaneBasedTemplateGtuTypeDistribution characteristicsGenerator =
                     new LaneBasedTemplateGtuTypeDistribution(gtuTypeDistribution);
             new LaneBasedGtuGenerator("Generator", headwayGenerator, characteristicsGenerator,
                     GeneratorPositions.create(initialLongitudinalPositions, this.stream), this.network, getSimulator(),
-                    roomChecker, idGenerator);
+                    roomChecker, idGenerator, DefaultsNl.VEHICLE);
             // End generation
 
             this.block = new SimpleTrafficLight(this.lane.getId() + "_TL", this.lane,

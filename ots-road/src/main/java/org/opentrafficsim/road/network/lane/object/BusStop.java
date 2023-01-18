@@ -43,6 +43,9 @@ public class BusStop extends AbstractLaneBasedObject
 
     /** Stored conflicts downstream. */
     private Set<Conflict> conflicts = null;
+    
+    /** Bus type. */
+    private final GtuType busType;
 
     /**
      * @param id String; id
@@ -50,14 +53,15 @@ public class BusStop extends AbstractLaneBasedObject
      * @param longitudinalPosition Length; position
      * @param name String; name of stop
      * @param simulator OTSSimulatorInterface; the simulator to schedule on
+     * @param busType GtuType; bus type.
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public BusStop(final String id, final Lane lane, final Length longitudinalPosition, final String name,
-            final OtsSimulatorInterface simulator) throws NetworkException
+            final OtsSimulatorInterface simulator, final GtuType busType) throws NetworkException
     {
         super(id, lane, longitudinalPosition, LaneBasedObject.makeGeometry(lane, longitudinalPosition), Length.ZERO);
         this.name = name;
-
+        this.busType = busType;
         init();
     }
 
@@ -110,7 +114,8 @@ public class BusStop extends AbstractLaneBasedObject
                     }
                     objects = lane.getObjectAhead(objects.get(0).getLongitudinalPosition());
                 }
-                Set<Lane> downstreamLanes = lane.nextLanes(lane.getNetwork().getGtuType(GtuType.DEFAULTS.BUS));
+                //
+                Set<Lane> downstreamLanes = lane.nextLanes(this.busType);
                 int numLanes = 0;
                 for (Lane nextLane : downstreamLanes)
                 {

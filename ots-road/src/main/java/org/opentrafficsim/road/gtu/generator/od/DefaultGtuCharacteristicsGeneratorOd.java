@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -53,29 +54,33 @@ public final class DefaultGtuCharacteristicsGeneratorOd implements GtuCharacteri
 
     /**
      * Constructor using null-routes, default GTU characteristics and LMRS.
+     * @param truck GtuType; truck GTU type.
      */
-    public DefaultGtuCharacteristicsGeneratorOd()
+    public DefaultGtuCharacteristicsGeneratorOd(final GtuType truck)
     {
-        this(null, RouteGeneratorOd.NULL, new LinkedHashSet<>(), StrategicalPlannerFactorySupplierOd.lmrs());
+        this(null, RouteGeneratorOd.NULL, new LinkedHashSet<>(), StrategicalPlannerFactorySupplierOd.lmrs(truck));
     }
 
     /**
      * Constructor using route generator, default GTU characteristics and LMRS.
      * @param routeGenerator RouteGeneratorOD; route generator
+     * @param truck GtuType; truck GTU type.
      */
-    public DefaultGtuCharacteristicsGeneratorOd(final RouteGeneratorOd routeGenerator)
+    public DefaultGtuCharacteristicsGeneratorOd(final RouteGeneratorOd routeGenerator, final GtuType truck)
     {
-        this(null, routeGenerator, new LinkedHashSet<>(), StrategicalPlannerFactorySupplierOd.lmrs());
+        this(null, routeGenerator, new LinkedHashSet<>(), StrategicalPlannerFactorySupplierOd.lmrs(truck));
     }
 
     /**
      * Constructor using route supplier, provided GTU templates and LMRS.
      * @param routeSupplier RouteGeneratorOD; route supplier
      * @param templates Set&lt;TemplateGTUType&gt;; templates
+     * @param truck GtuType; truck GTU type.
      */
-    public DefaultGtuCharacteristicsGeneratorOd(final RouteGeneratorOd routeSupplier, final Set<TemplateGtuType> templates)
+    public DefaultGtuCharacteristicsGeneratorOd(final RouteGeneratorOd routeSupplier, final Set<TemplateGtuType> templates,
+            final GtuType truck)
     {
-        this(null, routeSupplier, templates, StrategicalPlannerFactorySupplierOd.lmrs());
+        this(null, routeSupplier, templates, StrategicalPlannerFactorySupplierOd.lmrs(truck));
     }
 
     /**
@@ -123,10 +128,11 @@ public final class DefaultGtuCharacteristicsGeneratorOd implements GtuCharacteri
     /**
      * Constructor using null-routes, provided GTU templates and LMRS.
      * @param templates Set&lt;TemplateGTUType&gt;; templates
+     * @param truck GtuType; truck GTU type.
      */
-    public DefaultGtuCharacteristicsGeneratorOd(final Set<TemplateGtuType> templates)
+    public DefaultGtuCharacteristicsGeneratorOd(final Set<TemplateGtuType> templates, final GtuType truck)
     {
-        this(null, RouteGeneratorOd.NULL, templates, StrategicalPlannerFactorySupplierOd.lmrs());
+        this(null, RouteGeneratorOd.NULL, templates, StrategicalPlannerFactorySupplierOd.lmrs(truck));
     }
 
     /**
@@ -210,7 +216,7 @@ public final class DefaultGtuCharacteristicsGeneratorOd implements GtuCharacteri
         }
         else
         {
-            gtuType = origin.getNetwork().getGtuType(GtuType.DEFAULTS.CAR);
+            gtuType = DefaultsNl.CAR;
         }
         GtuCharacteristics gtuCharacteristics;
         if (this.templates.containsKey(gtuType))
@@ -269,7 +275,7 @@ public final class DefaultGtuCharacteristicsGeneratorOd implements GtuCharacteri
         private RouteGeneratorOd routeGenerator = RouteGeneratorOd.NULL;
 
         /** Supplies a strategical factory. */
-        private StrategicalPlannerFactorySupplierOd factorySupplier = StrategicalPlannerFactorySupplierOd.lmrs();
+        private StrategicalPlannerFactorySupplierOd factorySupplier = StrategicalPlannerFactorySupplierOd.lmrs(null);
 
         /** Vehicle factory. */
         private VehicleModelFactory vehicleModelFactory = VehicleModelFactory.MINMAX;

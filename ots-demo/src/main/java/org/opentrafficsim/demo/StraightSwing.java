@@ -8,6 +8,7 @@ import javax.naming.NamingException;
 import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
@@ -57,6 +58,7 @@ public class StraightSwing extends OtsSimulationApplication<StraightModel> imple
             throws OtsDrawingException
     {
         super(model, panel);
+        animateNetwork(DefaultsNl.TRUCK, DefaultsNl.CAR);
     }
 
     /** {@inheritDoc} */

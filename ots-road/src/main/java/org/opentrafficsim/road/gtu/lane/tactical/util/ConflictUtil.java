@@ -26,6 +26,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
@@ -184,8 +185,9 @@ public final class ConflictUtil
             // indicator if bus
             if (lane.isCurrent())
             {
+                // TODO: priority rules of busses should be handled differently, this also makes a GTU type unnecessary here
                 if (gtu.getStrategicalPlanner().getRoute() instanceof BusSchedule
-                        && gtu.getType().isOfType(GtuType.DEFAULTS.BUS)
+                        && gtu.getType().isOfType(DefaultsNl.BUS)
                         && conflict.getConflictRuleType().equals(BusStopConflictRule.class))
                 {
                     BusSchedule busSchedule = (BusSchedule) gtu.getStrategicalPlanner().getRoute();
@@ -734,9 +736,8 @@ public final class ConflictUtil
                 {
                     RoadNetwork network = conflict.getConflictingLink().getNetwork();
                     HeadwayGtuSimple conflictGtu = new HeadwayGtuSimple("virtual " + UUID.randomUUID().toString(),
-                            network.getGtuType(GtuType.DEFAULTS.CAR), conflict.getConflictingVisibility(),
-                            new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI), conflict.getConflictingSpeedLimit(),
-                            Acceleration.ZERO, Speed.ZERO);
+                            DefaultsNl.CAR, conflict.getConflictingVisibility(), new Length(4.0, LengthUnit.SI),
+                            new Length(2.0, LengthUnit.SI), conflict.getConflictingSpeedLimit(), Acceleration.ZERO, Speed.ZERO);
                     List<HeadwayGtu> conflictingVehiclesList = new ArrayList<>();
                     conflictingVehiclesList.add(conflictGtu);
                     conflictingVehicles = conflictingVehiclesList;

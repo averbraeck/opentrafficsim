@@ -14,6 +14,7 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.junit.Test;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -46,10 +47,10 @@ public class HeadwayGtuTest
     {
         // Make two headway GTUs with different values to prove that HeadwayGtus do not share static fields.
         String id1 = "id1";
-        GtuType gtuType1 = new GtuType("type1", this.network.getGtuType(GtuType.DEFAULTS.CAR));
+        GtuType gtuType1 = new GtuType("type1", DefaultsNl.CAR);
         Length distance1 = new Length(123, LengthUnit.METER);
         String id2 = "id2";
-        GtuType gtuType2 = new GtuType("type2", this.network.getGtuType(GtuType.DEFAULTS.CAR));
+        GtuType gtuType2 = new GtuType("type2", DefaultsNl.CAR);
         Length distance2 = new Length(234, LengthUnit.METER);
         HeadwayGtuSimple hg1 = new HeadwayGtuSimple(id1, gtuType1, distance1, Length.ZERO, Length.ZERO, (Speed) null,
                 (Acceleration) null, null);

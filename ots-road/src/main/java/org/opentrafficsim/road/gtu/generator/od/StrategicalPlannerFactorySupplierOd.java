@@ -3,7 +3,7 @@ package org.opentrafficsim.road.gtu.generator.od;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.gtu.GtuType.DEFAULTS;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
@@ -45,9 +45,10 @@ public interface StrategicalPlannerFactorySupplierOd
 
     /**
      * Returns a standard implementation for LMRS.
+     * @param truck GtuType; GTU Type for trucks.
      * @return standard implementation for LMRS
      */
-    static StrategicalPlannerFactorySupplierOd lmrs()
+    static StrategicalPlannerFactorySupplierOd lmrs(final GtuType truck)
     {
         return new StrategicalPlannerFactorySupplierOd()
         {
@@ -57,8 +58,10 @@ public interface StrategicalPlannerFactorySupplierOd
                     final Category category, final StreamInterface randomStream) throws GtuException
             {
                 ParameterFactoryByType params = new ParameterFactoryByType();
-                params.addParameter(origin.getNetwork().getGtuType(DEFAULTS.TRUCK), ParameterTypes.A,
-                        Acceleration.instantiateSI(0.4));
+                if (truck != null)
+                {
+                    params.addParameter(truck, ParameterTypes.A, Acceleration.instantiateSI(0.4));
+                }
                 return new LaneBasedStrategicalRoutePlannerFactory(
                         new LmrsFactory(new IdmPlusFactory(randomStream), new DefaultLmrsPerceptionFactory()), params,
                         RouteGeneratorOd.getDefaultRouteSupplier(randomStream));

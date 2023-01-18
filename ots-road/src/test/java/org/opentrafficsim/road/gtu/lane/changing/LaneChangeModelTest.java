@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -23,6 +22,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -123,10 +123,9 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
     private static Lane makeLane(final CrossSectionLink link, final String id, final LaneType laneType, final Length latPos,
             final Length width) throws NamingException, NetworkException, OtsGeometryException
     {
-        Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
-        speedMap.put(link.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), new Speed(100, KM_PER_HOUR));
         // XXX Decide what type of overtaking conditions we want in this test
-        Lane result = new Lane(link, id, latPos, latPos, width, width, laneType, speedMap);
+        Lane result = new Lane(link, id, latPos, latPos, width, width, laneType,
+                Map.of(DefaultsNl.VEHICLE, new Speed(100, KM_PER_HOUR)), false);
         return result;
     }
 
@@ -166,7 +165,7 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
     @Test
     public final void changeRight() throws Exception
     {
-        GtuType gtuType = this.network.getGtuType(GtuType.DEFAULTS.CAR);
+        GtuType gtuType = DefaultsNl.CAR;
         LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         int laneCount = 2;
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), this);

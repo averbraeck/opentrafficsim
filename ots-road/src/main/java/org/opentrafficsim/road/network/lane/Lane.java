@@ -39,7 +39,6 @@ import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.collections.HistoricalArrayList;
 import org.opentrafficsim.core.perception.collections.HistoricalList;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.sensor.DestinationSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
@@ -202,79 +201,6 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Construct a new Lane.
-     * @param parentLink CrossSectionLink; the link to which the new Lane will belong (must be constructed first)
-     * @param id String; the id of this lane within the link; should be unique within the link.
-     * @param lateralOffsetAtStart Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
-     *            design line of the parent Link at the start of the parent Link
-     * @param lateralOffsetAtEnd Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
-     *            design line of the parent Link at the end of the parent Link
-     * @param beginWidth Length; start width, positioned <i>symmetrically around</i> the design line
-     * @param endWidth Length; end width, positioned <i>symmetrically around</i> the design line
-     * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
-     * @param speedLimitMap Map&lt;GtuType, Speed&gt;; speed limit on this lane, specified per GTU Type
-     * @throws OtsGeometryException when creation of the center line or contour geometry fails
-     * @throws NetworkException when id equal to null or not unique
-     */
-    @SuppressWarnings("checkstyle:parameternumber")
-    public Lane(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtStart,
-            final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth, final LaneType laneType,
-            final Map<GtuType, Speed> speedLimitMap) throws OtsGeometryException, NetworkException
-    {
-        this(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, laneType, speedLimitMap, false);
-    }
-
-    /**
-     * Construct a new Lane.
-     * @param parentLink CrossSectionLink; the link to which the element will belong (must be constructed first)
-     * @param id String; the id of this lane within the link; should be unique within the link.
-     * @param lateralOffsetAtStart Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
-     *            design line of the parent Link at the start of the parent Link
-     * @param lateralOffsetAtEnd Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
-     *            design line of the parent Link at the end of the parent Link
-     * @param beginWidth Length; start width, positioned <i>symmetrically around</i> the design line
-     * @param endWidth Length; end width, positioned <i>symmetrically around</i> the design line
-     * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
-     * @param speedLimit Speed; speed limit on this lane
-     * @param fixGradualLateralOffset boolean; true if gradualLateralOffset needs to be fixed
-     * @throws OtsGeometryException when creation of the center line or contour geometry fails
-     * @throws NetworkException when id equal to null or not unique
-     */
-    @SuppressWarnings("checkstyle:parameternumber")
-    public Lane(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtStart,
-            final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth, final LaneType laneType,
-            final Speed speedLimit, final boolean fixGradualLateralOffset) throws OtsGeometryException, NetworkException
-    {
-        super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, fixGradualLateralOffset);
-        this.laneType = laneType;
-        this.speedLimitMap.put(parentLink.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), speedLimit);
-        this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
-    }
-
-    /**
-     * Construct a new Lane.
-     * @param parentLink CrossSectionLink; the link to which the element will belong (must be constructed first)
-     * @param id String; the id of this lane within the link; should be unique within the link.
-     * @param lateralOffsetAtStart Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
-     *            design line of the parent Link at the start of the parent Link
-     * @param lateralOffsetAtEnd Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
-     *            design line of the parent Link at the end of the parent Link
-     * @param beginWidth Length; start width, positioned <i>symmetrically around</i> the design line
-     * @param endWidth Length; end width, positioned <i>symmetrically around</i> the design line
-     * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
-     * @param speedLimit Speed; speed limit on this lane
-     * @throws OtsGeometryException when creation of the center line or contour geometry fails
-     * @throws NetworkException when id equal to null or not unique
-     */
-    @SuppressWarnings("checkstyle:parameternumber")
-    public Lane(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtStart,
-            final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth, final LaneType laneType,
-            final Speed speedLimit) throws OtsGeometryException, NetworkException
-    {
-        this(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, laneType, speedLimit, false);
-    }
-
-    /**
-     * Construct a new Lane.
      * @param parentLink CrossSectionLink; the link to which the element will belong (must be constructed first)
      * @param id String; the id of this lane within the link; should be unique within the link.
      * @param lateralOffset Length; the lateral offset of the design line of the new CrossSectionLink with respect to the design
@@ -293,39 +219,6 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         this.laneType = laneType;
         this.speedLimitMap.putAll(speedLimitMap);
         this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
-    }
-
-    /**
-     * Construct a speed limit map that contains the provided speed limit for VEHICLE.
-     * @param speedLimit Speed; the speed limit
-     * @param network RoadNetwork; the road network (needed to obtain the VEHICLE GTU type)
-     * @return Map<GtuType, Speed>; the speed limit map
-     */
-    private static Map<GtuType, Speed> constructDefaultSpeedLimitMap(final Speed speedLimit, final RoadNetwork network)
-    {
-        Map<GtuType, Speed> result = new LinkedHashMap<>();
-        result.put(network.getGtuType(GtuType.DEFAULTS.VEHICLE), speedLimit);
-        return result;
-    }
-
-    /**
-     * Construct a new Lane.
-     * @param parentLink CrossSectionLink; the link to which the element belongs (must be constructed first)
-     * @param id String; the id of this lane within the link; should be unique within the link
-     * @param lateralOffset Length; the lateral offset of the design line of the new CrossSectionLink with respect to the design
-     *            line of the parent Link
-     * @param width Length; width, positioned <i>symmetrically around</i> the design line
-     * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
-     * @param speedLimit Speed; the speed limit on this lane
-     * @throws OtsGeometryException when creation of the center line or contour geometry fails
-     * @throws NetworkException when id equal to null or not unique
-     */
-    @SuppressWarnings("checkstyle:parameternumber")
-    public Lane(final CrossSectionLink parentLink, final String id, final Length lateralOffset, final Length width,
-            final LaneType laneType, final Speed speedLimit) throws OtsGeometryException, NetworkException
-    {
-        this(parentLink, id, lateralOffset, width, laneType,
-                constructDefaultSpeedLimitMap(speedLimit, parentLink.getNetwork()));
     }
 
     /**
@@ -349,26 +242,6 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         this.laneType = laneType;
         this.speedLimitMap.putAll(speedLimitMap);
         this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
-    }
-
-    /**
-     * Construct a new Lane.
-     * @param parentLink CrossSectionLink; the link to which the element belongs (must be constructed first)
-     * @param id String; the id of this lane within the link; should be unique within the link.
-     * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; the offsets and widths at positions along the line, relative to
-     *            the design line of the parent link. If there is just one with and offset, there should just be one element in
-     *            the list with Length = 0. If there are more slices, the last one should be at the length of the design line.
-     *            If not, a NetworkException is thrown.
-     * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
-     * @param speedLimit Speed; the speed limit on this lane
-     * @throws OtsGeometryException when creation of the center line or contour geometry fails
-     * @throws NetworkException when id equal to null or not unique
-     */
-    @SuppressWarnings("checkstyle:parameternumber")
-    public Lane(final CrossSectionLink parentLink, final String id, final List<CrossSectionSlice> crossSectionSlices,
-            final LaneType laneType, final Speed speedLimit) throws OtsGeometryException, NetworkException
-    {
-        this(parentLink, id, crossSectionSlices, laneType, constructDefaultSpeedLimitMap(speedLimit, parentLink.getNetwork()));
     }
 
     /**
@@ -1685,23 +1558,24 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      *            design line of the parent Link at the end of the parent Link
      * @param beginWidth Length; start width, positioned <i>symmetrically around</i> the design line
      * @param endWidth Length; end width, positioned <i>symmetrically around</i> the design line
+     * @param gtuType GtuType; parent GTU type in simulation.
      * @param fixGradualLateralOffset boolean; true if gradualLateralOffset needs to be fixed
      * @return Lane; lane representing a no-traffic lane.
      * @throws OtsGeometryException when creation of the geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
+    @SuppressWarnings("checkstyle:parameternumber")
     public static Lane noTrafficLane(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtStart,
-            final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth,
+            final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth, final GtuType gtuType,
             final boolean fixGradualLateralOffset) throws OtsGeometryException, NetworkException
     {
-        Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
-        speedMap.put(parentLink.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), Speed.ZERO);
         return new Lane(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth,
-                parentLink.getNetwork().getLaneType(LaneType.DEFAULTS.NONE), speedMap, fixGradualLateralOffset)
+                parentLink.getNetwork().getLaneType(LaneType.DEFAULTS.NONE), Map.of(gtuType, Speed.ZERO),
+                fixGradualLateralOffset)
         {
             /** */
             private static final long serialVersionUID = 20230116L;
-            
+
             /** {@inheritDoc} */
             @Override
             public double getZ()

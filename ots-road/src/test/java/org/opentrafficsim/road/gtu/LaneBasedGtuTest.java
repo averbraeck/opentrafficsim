@@ -24,6 +24,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -93,8 +94,8 @@ public class LaneBasedGtuTest implements UNITS
 
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
-        GtuType carType = network.getGtuType(GtuType.DEFAULTS.CAR);
-        GtuType truckType = network.getGtuType(GtuType.DEFAULTS.TRUCK);
+        GtuType carType = DefaultsNl.CAR;
+        GtuType truckType = DefaultsNl.TRUCK;
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         // Create a series of Nodes (some closely bunched together)
         List<OtsRoadNode> nodes = new ArrayList<>();
@@ -112,7 +113,7 @@ public class LaneBasedGtuTest implements UNITS
             OtsRoadNode toNode = nodes.get(i);
             String linkName = fromNode.getId() + "-" + toNode.getId();
             Lane[] lanes = LaneFactory.makeMultiLane(network, linkName, fromNode, toNode, null, laneCount, laneType,
-                    new Speed(100, KM_PER_HOUR), simulator);
+                    new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
             links.add(lanes[0].getParentLink());
         }
         // Create a long truck with its front (reference) one meter in the last link on the 3rd lane
@@ -381,13 +382,13 @@ public class LaneBasedGtuTest implements UNITS
                     ie = null; // ignore
                 }
             }
-            GtuType carType = network.getGtuType(GtuType.DEFAULTS.CAR);
+            GtuType carType = DefaultsNl.CAR;
             LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
             OtsRoadNode fromNode = new OtsRoadNode(network, "Node A", new OtsPoint3D(0, 0, 0), Direction.ZERO);
             OtsRoadNode toNode = new OtsRoadNode(network, "Node B", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
             String linkName = "AB";
             Lane lane = LaneFactory.makeMultiLane(network, linkName, fromNode, toNode, null, 1, laneType,
-                    new Speed(200, KM_PER_HOUR), simulator)[0];
+                    new Speed(200, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE)[0];
             Length carPosition = new Length(100, METER);
             Set<LanePosition> carPositions = new LinkedHashSet<>(1);
             carPositions.add(new LanePosition(lane, carPosition));

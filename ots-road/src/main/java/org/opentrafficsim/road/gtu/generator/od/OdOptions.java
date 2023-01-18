@@ -6,18 +6,17 @@ import java.util.Map;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.gtu.GtuErrorHandler;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.generator.CfBaRoomChecker;
-import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayDistribution;
-import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -41,7 +40,7 @@ public class OdOptions
 
     /** GTU characteristics generator option. */
     public static final Option<GtuCharacteristicsGeneratorOd> GTU_TYPE =
-            new Option<>("gtu type", new DefaultGtuCharacteristicsGeneratorOd());
+            new Option<>("gtu type", new DefaultGtuCharacteristicsGeneratorOd((GtuType) null));
 
     /** Room checker option. */
     public static final Option<RoomChecker> ROOM_CHECKER = new Option<>("room checker", new CfBaRoomChecker());
@@ -58,6 +57,12 @@ public class OdOptions
     /** Error handler when GTU exceptions occur. */
     public static final Option<GtuErrorHandler> ERROR_HANDLER = new Option<>("error handler", GtuErrorHandler.THROW);
 
+    /** Lane bias. Default is none, i.e. uniform distribution over lanes for all GTU types. */
+    public static final Option<LaneBiases> LANE_BIAS = new Option<>("lane bias", new LaneBiases());
+    
+    /** Parent GTU type of relevant GTU's to check for space, look at conflicts, etc. */
+    public static final Option<GtuType> PARENT_GTU_TYPE = new Option<>("parent GTU type", DefaultsNl.VEHICLE);
+
     /** Options overall. */
     private OptionSet<Void> options = new OptionSet<>();
 
@@ -69,27 +74,6 @@ public class OdOptions
 
     /** Options per road type. */
     private OptionSet<LinkType> linkTypeOptions = new OptionSet<>();
-
-    /** cache for lane biases per network. */
-    private static final Map<RoadNetwork, Option<LaneBiases>> LANE_BIAS_CACHE = new LinkedHashMap<>();
-
-    /**
-     * Lane bias. Default is Truck: truck right (strong right, max 2 lanes), Vehicle (other): weak left.
-     * @param network the network for which to return the lane bias
-     * @return the lane bias
-     */
-    public static final Option<LaneBiases> getLaneBiasOption(final RoadNetwork network)
-    {
-        Option<LaneBiases> laneBiases = LANE_BIAS_CACHE.get(network);
-        if (laneBiases == null)
-        {
-            laneBiases = new Option<>("lane bias",
-                    new LaneBiases().addBias(network.getGtuType(GtuType.DEFAULTS.TRUCK), LaneBias.TRUCK_RIGHT)
-                            .addBias(network.getGtuType(GtuType.DEFAULTS.VEHICLE), LaneBias.WEAK_LEFT));
-            LANE_BIAS_CACHE.put(network, laneBiases);
-        }
-        return laneBiases;
-    }
 
     /**
      * Set option value.

@@ -26,6 +26,7 @@ import org.djutils.exceptions.Try;
 import org.djutils.logger.CategoryLogger;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.logger.Cat;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -411,6 +412,10 @@ public final class OdParser
                 }
                 // default global option to integrate defined templates
                 Factory factory = new Factory(); // DefaultGtuCharacteristicsGeneratorOD factory
+                if (otsNetwork.getGtuTypes().containsValue(DefaultsNl.TRUCK))
+                {
+                    factory.setFactorySupplier(StrategicalPlannerFactorySupplierOd.lmrs(DefaultsNl.TRUCK));
+                }
                 factory.setTemplates(templates);
                 odOptions.set(OdOptions.GTU_TYPE, factory.create());
                 // other options
@@ -534,9 +539,9 @@ public final class OdParser
                             setOption(odOptions, OdOptions.MARKOV, markov, options, otsNetwork);
                         }
                         // lane biases
+                        LaneBiases laneBiases = new LaneBiases();
                         if (options.getLANEBIASES() != null)
                         {
-                            LaneBiases laneBiases = new LaneBiases();
                             for (LANEBIAS laneBias : options.getLANEBIASES().getLANEBIAS())
                             {
                                 GtuType gtuType = otsNetwork.getGtuType(laneBias.getGTUTYPE());
@@ -572,8 +577,19 @@ public final class OdParser
                                 }
                                 laneBiases.addBias(gtuType, new LaneBias(roadPosition, bias, stickyLanes));
                             }
-                            setOption(odOptions, OdOptions.getLaneBiasOption(otsNetwork), laneBiases, options, otsNetwork);
                         }
+                        else
+                        {
+                            if (otsNetwork.getGtuTypes().containsValue(DefaultsNl.TRUCK))
+                            {
+                                laneBiases.addBias(DefaultsNl.TRUCK, LaneBias.TRUCK_RIGHT);
+                            }
+                            if (otsNetwork.getGtuTypes().containsValue(DefaultsNl.VEHICLE))
+                            {
+                                laneBiases.addBias(DefaultsNl.VEHICLE, LaneBias.WEAK_LEFT);
+                            }
+                        }
+                        setOption(odOptions, OdOptions.LANE_BIAS, laneBiases, options, otsNetwork);
                     }
                 }
 

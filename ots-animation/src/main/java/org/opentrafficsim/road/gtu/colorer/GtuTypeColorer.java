@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.gtu.Gtu;
@@ -48,27 +49,6 @@ public class GtuTypeColorer implements GtuColorer, Serializable
         standardColors[9] = Color.WHITE;
     }
 
-    /** Default instance with colors for common GtuTypes. */
-    public static final GtuTypeColorer DEFAULT = new GtuTypeColorer().add(GtuType.DEFAULTS.CAR, Color.BLUE)
-            .add(GtuType.DEFAULTS.TRUCK, Color.RED).add(GtuType.DEFAULTS.VEHICLE, Color.GRAY)
-            .add(GtuType.DEFAULTS.PEDESTRIAN, Color.YELLOW).add(GtuType.DEFAULTS.BICYCLE, Color.GREEN);
-
-    /**
-     * Adds a GTU type to the list with color from the default list.
-     * @param gtuTypeEnum GtuType; GTU type
-     * @return this GTUTypeColorer
-     */
-    public GtuTypeColorer add(final GtuType.DEFAULTS gtuTypeEnum)
-    {
-        this.map.put(gtuTypeEnum.getId(), standardColors[this.nextDefault]);
-        this.nextDefault++;
-        if (this.nextDefault == standardColors.length)
-        {
-            this.nextDefault = 0;
-        }
-        return this;
-    }
-
     /**
      * Adds a GTU type to the list with color based on the type.
      * @param gtuType GtuType; GTU type
@@ -98,15 +78,18 @@ public class GtuTypeColorer implements GtuColorer, Serializable
     }
 
     /**
-     * Adds a GTU type based on its enum to the list with given color.
-     * @param gtuTypeEnum GtuType.DEFAULTS; GTU type default enum
-     * @param color Color; color
-     * @return this GTUTypeColorer
+     * Returns a colorer from a map.
+     * @param gtuTypeColors Map&lt;GtuType, Color&gt;; colors per GTU type in the GTU type colorer.
+     * @return GtuTypeColorer; based on the map.
      */
-    public GtuTypeColorer add(final GtuType.DEFAULTS gtuTypeEnum, final Color color)
+    public static GtuTypeColorer fromMap(final Map<GtuType, Color> gtuTypeColors)
     {
-        this.map.put(gtuTypeEnum.getId(), color);
-        return this;
+        GtuTypeColorer colorer = new GtuTypeColorer();
+        for (Entry<GtuType, Color> entry : gtuTypeColors.entrySet())
+        {
+            colorer.add(entry.getKey(), entry.getValue());
+        }
+        return colorer;
     }
 
     /** {@inheritDoc} */

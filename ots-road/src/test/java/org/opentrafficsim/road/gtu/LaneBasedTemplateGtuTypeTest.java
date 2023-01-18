@@ -18,6 +18,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.compatibility.GtuCompatibility;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
@@ -66,7 +67,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
     {
         OtsSimulatorInterface simulator = new OtsSimulator("LaneBasedTemplateGTUTypeTest");
         OtsRoadNetwork network = new OtsRoadNetwork("TemplateGTU network", true, simulator);
-        GtuType pcType = network.getGtuType(GtuType.DEFAULTS.CAR);
+        GtuType pcType = DefaultsNl.CAR;
         final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcLength =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 4), METER);
         final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcWidth =
@@ -98,7 +99,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
             }
         }, new DummyStrategicalPlannerFactory(), new FixedRouteGenerator(null));
         verifyFields(passengerCar, pcType, pcLength, pcWidth, pcMaximumSpeed);
-        GtuType truckType = network.getGtuType(GtuType.DEFAULTS.TRUCK);
+        GtuType truckType = DefaultsNl.TRUCK;
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> truckLength =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 18), METER);
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> truckWidth =
@@ -171,7 +172,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
         OtsSimulatorInterface simulator = new OtsSimulator("LaneBasedTemplateGTUTypeTest");
         OtsRoadNetwork network = new OtsRoadNetwork("TemplateGTU network", true, simulator);
         // Create some TemplateGTUTypes
-        GtuType pc = network.getGtuType(GtuType.DEFAULTS.CAR);
+        GtuType pc = DefaultsNl.CAR;
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcLength =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 4), METER);
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcWidth =
@@ -200,7 +201,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
                 return pcMaximumSpeed.draw();
             }
         });
-        GtuType truckType = network.getGtuType(GtuType.DEFAULTS.TRUCK);
+        GtuType truckType = DefaultsNl.TRUCK;
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> truckLength =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 18), METER);
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> truckWidth =

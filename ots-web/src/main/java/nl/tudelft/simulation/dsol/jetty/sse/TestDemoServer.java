@@ -32,6 +32,7 @@ import org.eclipse.jetty.server.session.SessionDataStore;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.resource.Resource;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -193,7 +194,7 @@ public class TestDemoServer
                         OtsWebModel webModel = new OtsWebModel(model.getShortName(), simulator);
                         TestDemoServer.this.sessionWebModelMap.put(sessionId, webModel);
                         DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getNetwork().getSimulator(),
-                                new DefaultSwitchableGtuColorer());
+                                new DefaultSwitchableGtuColorer(), DefaultsNl.TRUCK, DefaultsNl.CAR);
                     }
                     catch (Exception exception)
                     {
@@ -297,7 +298,7 @@ public class TestDemoServer
          * @param model the model with parameters
          * @return an XML string with the parameters
          */
-        private String makeParameterMap(OtsModelInterface model)
+        private String makeParameterMap(final OtsModelInterface model)
         {
             StringBuffer answer = new StringBuffer();
             answer.append("<parameters>\n");
@@ -422,7 +423,7 @@ public class TestDemoServer
          * @return default value in the unit
          */
         private <U extends Unit<U>,
-                T extends AbstractDoubleScalar<U, T>> String getValueInUnit(InputParameterDoubleScalar<U, T> parameter)
+                T extends AbstractDoubleScalar<U, T>> String getValueInUnit(final InputParameterDoubleScalar<U, T> parameter)
         {
             return "" + parameter.getDefaultTypedValue().getInUnit(parameter.getDefaultTypedValue().getDisplayUnit());
         }
@@ -432,7 +433,7 @@ public class TestDemoServer
          * @return abbreviations for the units
          */
         private <U extends Unit<U>,
-                T extends AbstractDoubleScalar<U, T>> List<String> getUnits(InputParameterDoubleScalar<U, T> parameter)
+                T extends AbstractDoubleScalar<U, T>> List<String> getUnits(final InputParameterDoubleScalar<U, T> parameter)
         {
             List<String> unitList = new ArrayList<>();
             for (String option : parameter.getUnitParameter().getOptions().keySet())
@@ -447,7 +448,7 @@ public class TestDemoServer
          * @return default value in the unit
          */
         private <U extends Unit<U>,
-                T extends AbstractFloatScalar<U, T>> String getValueInUnit(InputParameterFloatScalar<U, T> parameter)
+                T extends AbstractFloatScalar<U, T>> String getValueInUnit(final InputParameterFloatScalar<U, T> parameter)
         {
             return "" + parameter.getDefaultTypedValue().getInUnit(parameter.getDefaultTypedValue().getDisplayUnit());
         }
@@ -457,7 +458,7 @@ public class TestDemoServer
          * @return abbreviations for the units
          */
         private <U extends Unit<U>,
-                T extends AbstractFloatScalar<U, T>> List<String> getUnits(InputParameterFloatScalar<U, T> parameter)
+                T extends AbstractFloatScalar<U, T>> List<String> getUnits(final InputParameterFloatScalar<U, T> parameter)
         {
             List<String> unitList = new ArrayList<>();
             for (String option : parameter.getUnitParameter().getOptions().keySet())
@@ -473,7 +474,7 @@ public class TestDemoServer
          * @param message the key-value pairs of the set parameters
          * @return the errors if they are detected. If none, errors is set to "OK"
          */
-        private String setParameters(OtsModelInterface model, String message)
+        private String setParameters(final OtsModelInterface model, final String message)
         {
             String errors = "OK";
             InputParameterMap inputParameters = model.getInputParameterMap();

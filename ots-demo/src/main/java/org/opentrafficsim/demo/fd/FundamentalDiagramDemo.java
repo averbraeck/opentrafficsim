@@ -42,6 +42,8 @@ import org.djutils.means.HarmonicMean;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.definitions.Defaults;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -50,7 +52,6 @@ import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuErrorHandler;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.gtu.GtuType.DEFAULTS;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Link;
@@ -203,8 +204,10 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
     {
         // Network
         OtsRoadNetwork network = new OtsRoadNetwork("FD demo network", true, sim);
-        GtuType car = network.getGtuType(DEFAULTS.CAR);
-        GtuType truck = network.getGtuType(DEFAULTS.TRUCK);
+        GtuType car = DefaultsNl.CAR;
+        GtuType truck = DefaultsNl.TRUCK;
+        GtuType.registerTemplateSupplier(car, Defaults.NL);
+        GtuType.registerTemplateSupplier(truck, Defaults.NL);
 
         OtsRoadNode nodeA = new OtsRoadNode(network, "Origin", new OtsPoint3D(0.0, 0.0), Direction.ZERO);
         OtsRoadNode nodeB = new OtsRoadNode(network, "Lane-drop", new OtsPoint3D(1500.0, 0.0), Direction.ZERO);
@@ -216,9 +219,9 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.FREEWAY);
         Speed speedLim = new Speed(120.0, SpeedUnit.KM_PER_HOUR);
 
-        List<Lane> lanesAB = new LaneFactory(network, nodeA, nodeB, linkType, sim, policy)
+        List<Lane> lanesAB = new LaneFactory(network, nodeA, nodeB, linkType, sim, policy, DefaultsNl.VEHICLE)
                 .leftToRight(3.0, laneWidth, laneType, speedLim).addLanes(Permeable.BOTH, Permeable.BOTH).getLanes();
-        List<Lane> lanesBC = new LaneFactory(network, nodeB, nodeC, linkType, sim, policy)
+        List<Lane> lanesBC = new LaneFactory(network, nodeB, nodeC, linkType, sim, policy, DefaultsNl.VEHICLE)
                 .leftToRight(2.0, laneWidth, laneType, speedLim).addLanes(Permeable.BOTH).getLanes();
 
         // Generator
@@ -287,8 +290,9 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         // id generator
         IdGenerator idGenerator = new IdGenerator("");
         // generator
-        LaneBasedGtuGenerator generator = new LaneBasedGtuGenerator("generator", interarrivelTimeGenerator,
-                laneBasedGtuCharacteristicsGenerator, generatorPositions, network, sim, roomChecker, idGenerator);
+        LaneBasedGtuGenerator generator =
+                new LaneBasedGtuGenerator("generator", interarrivelTimeGenerator, laneBasedGtuCharacteristicsGenerator,
+                        generatorPositions, network, sim, roomChecker, idGenerator, DefaultsNl.VEHICLE);
         generator.setErrorHandler(GtuErrorHandler.DELETE);
         generator.setInstantaneousLaneChange(true);
         generator.setNoLaneChangeDistance(Length.instantiateSI(100.0));
@@ -534,7 +538,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
                 {
                     for (Lane lane : ((CrossSectionLink) link).getLanes())
                     {
-                        lane.setSpeedLimit(getNetwork().getGtuType(DEFAULTS.VEHICLE), FundamentalDiagramDemo.this.speedLimit);
+                        lane.setSpeedLimit(DefaultsNl.VEHICLE, FundamentalDiagramDemo.this.speedLimit);
                     }
                 }
                 for (Gtu gtu : getNetwork().getGTUs())

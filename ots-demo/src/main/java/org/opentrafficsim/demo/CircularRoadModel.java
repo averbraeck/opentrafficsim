@@ -19,6 +19,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.traceverifier.TraceVerifier;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
@@ -207,7 +208,7 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
             this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
                     new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()));
 
-            GtuType gtuType = this.network.getGtuType(GtuType.DEFAULTS.CAR);
+            GtuType gtuType = DefaultsNl.CAR;
             LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
             OtsRoadNode start = new OtsRoadNode(this.network, "Start", new OtsPoint3D(radius, 0, 0),
                     new Direction(90, DirectionUnit.EAST_DEGREE));
@@ -221,7 +222,7 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
                 coordsHalf1[i] = new OtsPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
             }
             Lane[] lanes1 = LaneFactory.makeMultiLane(this.network, "FirstHalf", start, halfway, coordsHalf1, laneCount,
-                    laneType, this.speedLimit, this.simulator);
+                    laneType, this.speedLimit, this.simulator, DefaultsNl.VEHICLE);
             OtsPoint3D[] coordsHalf2 = new OtsPoint3D[127];
             for (int i = 0; i < coordsHalf2.length; i++)
             {
@@ -229,7 +230,7 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
                 coordsHalf2[i] = new OtsPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
             }
             Lane[] lanes2 = LaneFactory.makeMultiLane(this.network, "SecondHalf", halfway, start, coordsHalf2, laneCount,
-                    laneType, this.speedLimit, this.simulator);
+                    laneType, this.speedLimit, this.simulator, DefaultsNl.VEHICLE);
             for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
             {
                 this.paths.get(laneIndex).add(lanes1[laneIndex]);
@@ -278,8 +279,8 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
         // GTU itself
         boolean generateTruck = this.stream.nextDouble() > this.carProbability;
         Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
-        LaneBasedGtu gtu = new LaneBasedGtu("" + (++this.carsCreated), gtuType, vehicleLength,
-                new Length(1.8, METER), new Speed(200, KM_PER_HOUR), vehicleLength.times(0.5), this.network);
+        LaneBasedGtu gtu = new LaneBasedGtu("" + (++this.carsCreated), gtuType, vehicleLength, new Length(1.8, METER),
+                new Speed(200, KM_PER_HOUR), vehicleLength.times(0.5), this.network);
         gtu.setParameters(generateTruck ? this.parametersTruck : this.parametersCar);
         gtu.setNoLaneChangeDistance(Length.ZERO);
         gtu.setInstantaneousLaneChange(!((boolean) getInputParameter("generic.gradualLaneChange")));

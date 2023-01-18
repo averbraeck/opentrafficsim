@@ -39,6 +39,8 @@ import org.opentrafficsim.core.animation.gtu.colorer.IdGtuColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SpeedGtuColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGtuColorer;
 import org.opentrafficsim.core.compatibility.Compatible;
+import org.opentrafficsim.core.definitions.Defaults;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsPoint3D;
@@ -59,6 +61,9 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.road.gtu.colorer.GtuTypeColorer;
+import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
+import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
+import org.opentrafficsim.road.gtu.generator.GeneratorPositions.RoadPosition.ByValue;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
 import org.opentrafficsim.road.gtu.generator.od.DefaultGtuCharacteristicsGeneratorOd;
 import org.opentrafficsim.road.gtu.generator.od.GtuCharacteristicsGeneratorOd;
@@ -249,8 +254,11 @@ public class RampMeteringDemo extends AbstractSimulationScript
             network.addListener(this, Network.GTU_ADD_EVENT);
             network.addListener(this, Network.GTU_REMOVE_EVENT);
         }
-        GtuType car = network.getGtuType(GtuType.DEFAULTS.CAR);
+        GtuType car = DefaultsNl.CAR;
+        GtuType.registerTemplateSupplier(car, Defaults.NL);
         GtuType controlledCar = new GtuType(CONTROLLED_CAR_ID, car);
+        network.addGtuType(car);
+        network.addGtuType(controlledCar);
 
         GtuColorer[] colorers =
                 new GtuColorer[] {new IdGtuColorer(), new SpeedGtuColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)),
@@ -276,16 +284,16 @@ public class RampMeteringDemo extends AbstractSimulationScript
         LaneType freewayLane = network.getLaneType(LaneType.DEFAULTS.FREEWAY);
         Speed speedLimit = new Speed(120, SpeedUnit.KM_PER_HOUR);
         Speed rampSpeedLimit = new Speed(70, SpeedUnit.KM_PER_HOUR);
-        List<Lane> lanesAB = new LaneFactory(network, nodeA, nodeB, freeway, sim, policy)
+        List<Lane> lanesAB = new LaneFactory(network, nodeA, nodeB, freeway, sim, policy, DefaultsNl.VEHICLE)
                 .leftToRight(1.0, laneWidth, freewayLane, speedLimit).addLanes(Permeable.BOTH).getLanes();
-        List<Lane> lanesBC = new LaneFactory(network, nodeB, nodeC, freeway, sim, policy)
+        List<Lane> lanesBC = new LaneFactory(network, nodeB, nodeC, freeway, sim, policy, DefaultsNl.VEHICLE)
                 .leftToRight(1.0, laneWidth, freewayLane, speedLimit).addLanes(Permeable.BOTH, Permeable.LEFT).getLanes();
-        List<Lane> lanesCD = new LaneFactory(network, nodeC, nodeD, freeway, sim, policy)
+        List<Lane> lanesCD = new LaneFactory(network, nodeC, nodeD, freeway, sim, policy, DefaultsNl.VEHICLE)
                 .leftToRight(1.0, laneWidth, freewayLane, speedLimit).addLanes(Permeable.BOTH).getLanes();
-        List<Lane> lanesEF =
-                new LaneFactory(network, nodeE, nodeF, freeway, sim, policy).setOffsetEnd(laneWidth.times(1.5).neg())
-                        .leftToRight(0.5, laneWidth, freewayLane, rampSpeedLimit).addLanes().getLanes();
-        List<Lane> lanesFB = new LaneFactory(network, nodeF, nodeB, freeway, sim, policy)
+        List<Lane> lanesEF = new LaneFactory(network, nodeE, nodeF, freeway, sim, policy, DefaultsNl.VEHICLE)
+                .setOffsetEnd(laneWidth.times(1.5).neg()).leftToRight(0.5, laneWidth, freewayLane, rampSpeedLimit).addLanes()
+                .getLanes();
+        List<Lane> lanesFB = new LaneFactory(network, nodeF, nodeB, freeway, sim, policy, DefaultsNl.VEHICLE)
                 .setOffsetStart(laneWidth.times(1.5).neg()).setOffsetEnd(laneWidth.times(1.5).neg())
                 .leftToRight(0.5, laneWidth, freewayLane, speedLimit).addLanes().getLanes();
         for (Lane lane : lanesCD)
@@ -296,14 +304,14 @@ public class RampMeteringDemo extends AbstractSimulationScript
         Duration agg = Duration.instantiateSI(60.0);
         // TODO: detector length affects occupancy, which length to use?
         Length detectorLength = Length.ZERO;
-        Detector det1 = new Detector("1", lanesAB.get(0), Length.instantiateSI(2900), detectorLength, sim, agg,
-                Detector.MEAN_SPEED, Detector.OCCUPANCY);
-        Detector det2 = new Detector("2", lanesAB.get(1), Length.instantiateSI(2900), detectorLength, sim, agg,
-                Detector.MEAN_SPEED, Detector.OCCUPANCY);
-        Detector det3 = new Detector("3", lanesCD.get(0), Length.instantiateSI(100), detectorLength, sim, agg,
-                Detector.MEAN_SPEED, Detector.OCCUPANCY);
-        Detector det4 = new Detector("4", lanesCD.get(1), Length.instantiateSI(100), detectorLength, sim, agg,
-                Detector.MEAN_SPEED, Detector.OCCUPANCY);
+        Detector det1 = new Detector("1", lanesAB.get(0), Length.instantiateSI(2900), detectorLength, DefaultsNl.VEHICLE, sim,
+                agg, Detector.MEAN_SPEED, Detector.OCCUPANCY);
+        Detector det2 = new Detector("2", lanesAB.get(1), Length.instantiateSI(2900), detectorLength, DefaultsNl.VEHICLE, sim,
+                agg, Detector.MEAN_SPEED, Detector.OCCUPANCY);
+        Detector det3 = new Detector("3", lanesCD.get(0), Length.instantiateSI(100), detectorLength, DefaultsNl.VEHICLE, sim,
+                agg, Detector.MEAN_SPEED, Detector.OCCUPANCY);
+        Detector det4 = new Detector("4", lanesCD.get(1), Length.instantiateSI(100), detectorLength, DefaultsNl.VEHICLE, sim,
+                agg, Detector.MEAN_SPEED, Detector.OCCUPANCY);
         List<Detector> detectors12 = new ArrayList<>();
         detectors12.add(det1);
         detectors12.add(det2);
@@ -345,6 +353,8 @@ public class RampMeteringDemo extends AbstractSimulationScript
         od.putDemandVector(nodeE, nodeD, controlledCarCat, this.rampDemand, 0.4);
         OdOptions odOptions = new OdOptions();
         odOptions.set(OdOptions.GTU_TYPE, new ControlledStrategicalPlannerGenerator()).set(OdOptions.INSTANT_LC, true);
+        odOptions.set(OdOptions.LANE_BIAS, new LaneBiases().addBias(car, LaneBias.WEAK_LEFT));
+        odOptions.set(OdOptions.NO_LC_DIST, Length.instantiateSI(300));
         OdApplier.applyOD(network, od, odOptions);
 
         return network;
@@ -447,7 +457,8 @@ public class RampMeteringDemo extends AbstractSimulationScript
     {
 
         /** Default generator. */
-        private DefaultGtuCharacteristicsGeneratorOd defaultGenerator = new DefaultGtuCharacteristicsGeneratorOd();
+        private DefaultGtuCharacteristicsGeneratorOd defaultGenerator =
+                new DefaultGtuCharacteristicsGeneratorOd(DefaultsNl.TRUCK);
 
         /** Controlled planner factory. */
         private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> controlledPlannerFactory;

@@ -9,6 +9,7 @@ import static org.junit.Assert.fail;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Map;
 
 import javax.naming.NamingException;
 
@@ -33,8 +34,10 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.core.geometry.OtsPoint3D;
@@ -55,7 +58,6 @@ import org.sim0mq.Sim0MQException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 
 /**
  * Unit tests.
@@ -185,7 +187,7 @@ public class TransceiverTest
         assertNull("Bad address",
                 checkAckNack(gtuIdTransceiver, new Object[] {"this is a bad address"}, false, "wrong length"));
 
-        GtuType gtuType = new GtuType("gtuType 1", network);
+        GtuType gtuType = new GtuType("gtuType 1");
         LaneBasedGtu gtu1 =
                 new MyMockGTU("gtu 1", gtuType, new DirectedPoint(1, 10, 100, 1, 1, 1), new Speed(1, SpeedUnit.KM_PER_HOUR),
                         new Acceleration(1, AccelerationUnit.METER_PER_SECOND_2), simulator).getMock();
@@ -326,8 +328,8 @@ public class TransceiverTest
         Mockito.when(hmd.now()).thenReturn(Time.ZERO);
         Mockito.when(replication.getHistoryManager(simulator)).thenReturn(hmd);
         Mockito.when(simulator.getReplication()).thenReturn(replication);
-        Lane lane = new Lane(link, "lane", Length.ZERO, Length.ZERO, new Length(3, LengthUnit.METER),
-                new Length(3, LengthUnit.METER), laneType, new Speed(50, SpeedUnit.KM_PER_HOUR));
+        Lane lane = new Lane(link, "lane", Length.ZERO, new Length(3, LengthUnit.METER), laneType,
+                Map.of(DefaultsNl.VEHICLE, new Speed(50, SpeedUnit.KM_PER_HOUR)));
         Length width = new Length(20, LengthUnit.DECIMETER);
         Stripe stripe = new Stripe(link, Length.ZERO, Length.ZERO, width, width);
         String stripeId = stripe.getId();

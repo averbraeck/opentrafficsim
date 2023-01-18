@@ -28,6 +28,7 @@ import org.djutils.io.URLResource;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.logger.Cat;
 import org.opentrafficsim.base.parameters.ParameterType;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -148,16 +149,11 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws JAXBException when the parsing fails
      * @throws ParserConfigurationException on error with parser configuration
      * @throws SAXException on error creating SAX parser
+     * @throws IOException if the URL does not exist
      */
-    public static OTS parseXML(final URL xmlURL) throws JAXBException, SAXException, ParserConfigurationException
+    public static OTS parseXML(final URL xmlURL) throws JAXBException, SAXException, ParserConfigurationException, IOException
     {
-        JAXBContext jc = JAXBContext.newInstance(OTS.class);
-        Unmarshaller unmarshaller = jc.createUnmarshaller();
-        SAXParserFactory spf = SAXParserFactory.newInstance();
-        spf.setXIncludeAware(true);
-        spf.setNamespaceAware(true);
-        spf.setValidating(true);
-        return (OTS) unmarshaller.unmarshal(xmlURL);
+        return parseXML(xmlURL.openStream());
     }
 
     /**
@@ -332,16 +328,16 @@ public final class XmlNetworkLaneParser implements Serializable
             otsNetwork.getSimulator().getLogger().always().info("Map size of conflict candidate regions = {}",
                     conflictCandidateMap.size());
 
+            // TODO: GtuType must be specified in xml
             if (conflictCandidateMap.size() == 0)
             {
-                ConflictBuilder.buildConflictsParallel(otsNetwork, otsNetwork.getGtuType(GtuType.DEFAULTS.VEHICLE),
-                        otsNetwork.getSimulator(), new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
+                ConflictBuilder.buildConflictsParallel(otsNetwork, DefaultsNl.VEHICLE, otsNetwork.getSimulator(),
+                        new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
             }
             else
             {
-                ConflictBuilder.buildConflictsParallel(otsNetwork, conflictCandidateMap,
-                        otsNetwork.getGtuType(GtuType.DEFAULTS.VEHICLE), otsNetwork.getSimulator(),
-                        new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
+                ConflictBuilder.buildConflictsParallel(otsNetwork, conflictCandidateMap, DefaultsNl.VEHICLE,
+                        otsNetwork.getSimulator(), new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
             }
             otsNetwork.getSimulator().getLogger().always().info("Object map size = {}", otsNetwork.getObjectMap().size());
         }

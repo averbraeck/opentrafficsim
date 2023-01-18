@@ -12,6 +12,7 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.junit.Test;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.OtsNetwork;
@@ -43,8 +44,8 @@ public class GtuCharacteristicsTest implements OtsModelInterface
     {
         OtsNetwork network = new OtsNetwork("network", true, this.simulator);
         // Make two sets of values so we can prove that the constructed GtuCharacteristics sets are really distinct.
-        GtuType gtuTypeA = new GtuType("Type A", network.getGtuType(GtuType.DEFAULTS.VEHICLE));
-        GtuType gtuTypeB = new GtuType("Type B", network.getGtuType(GtuType.DEFAULTS.VEHICLE));
+        GtuType gtuTypeA = new GtuType("Type A", DefaultsNl.VEHICLE);
+        GtuType gtuTypeB = new GtuType("Type B", DefaultsNl.VEHICLE);
         Length lengthA = new Length(5, LengthUnit.METER);
         Length lengthB = new Length(10, LengthUnit.METER);
         Length widthA = new Length(2, LengthUnit.METER);

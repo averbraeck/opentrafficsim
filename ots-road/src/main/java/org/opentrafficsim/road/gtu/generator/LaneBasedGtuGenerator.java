@@ -119,6 +119,9 @@ public class LaneBasedGtuGenerator extends EventProducer implements Serializable
 
     /** Vehicle generation is ignored on these lanes. */
     private Set<Lane> disabled = new LinkedHashSet<>();
+    
+    /** GTU type to find GTUs to see whether there is space. */
+    private final GtuType spaceType;
 
     /**
      * Construct a new lane base GTU generator.
@@ -131,6 +134,7 @@ public class LaneBasedGtuGenerator extends EventProducer implements Serializable
      * @param simulator OTSSimulatorInterface; simulator
      * @param roomChecker RoomChecker; the way that this generator checks that there is sufficient room to place a new GTU
      * @param idGenerator IdGenerator; id generator
+     * @param spaceType GtuType; GTU type to find GTUs to see whether there is space
      * @throws SimRuntimeException when <cite>startTime</cite> lies before the current simulation time
      * @throws ProbabilityException pe
      * @throws ParameterException if drawing from the interarrival generator fails
@@ -139,7 +143,7 @@ public class LaneBasedGtuGenerator extends EventProducer implements Serializable
     public LaneBasedGtuGenerator(final String id, final Generator<Duration> interarrivelTimeGenerator,
             final LaneBasedGtuCharacteristicsGenerator laneBasedGtuCharacteristicsGenerator,
             final GeneratorPositions generatorPositions, final OtsRoadNetwork network, final OtsSimulatorInterface simulator,
-            final RoomChecker roomChecker, final IdGenerator idGenerator)
+            final RoomChecker roomChecker, final IdGenerator idGenerator, final GtuType spaceType)
             throws SimRuntimeException, ProbabilityException, ParameterException
     {
         this.id = id;
@@ -150,6 +154,7 @@ public class LaneBasedGtuGenerator extends EventProducer implements Serializable
         this.simulator = simulator;
         this.roomChecker = roomChecker;
         this.idGenerator = idGenerator;
+        this.spaceType = spaceType;
         Duration headway = this.interarrivelTimeGenerator.draw();
         if (headway != null) // otherwise no demand at all
         {
@@ -407,7 +412,7 @@ public class LaneBasedGtuGenerator extends EventProducer implements Serializable
             }
             return;
         }
-        Set<Lane> downstreamLanes = lane.nextLanes(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE));
+        Set<Lane> downstreamLanes = lane.nextLanes(this.spaceType);
         for (Lane downstreamLane : downstreamLanes)
         {
             Length startDistanceDownstream = startDistance.plus(lane.getLength());

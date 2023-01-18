@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableMap;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3D;
@@ -499,7 +500,8 @@ public final class ConflictBuilder
         {
             Throw.when(lane1.getParentLink().getPriority().isBusStop() && lane2.getParentLink().getPriority().isBusStop(),
                     IllegalArgumentException.class, "Merge conflict between two links with bus stop priority not supported.");
-            conflictRule = new BusStopConflictRule(simulator);
+            // TODO: handle bus priority on the model side
+            conflictRule = new BusStopConflictRule(simulator, DefaultsNl.BUS);
         }
         else
         {
@@ -610,7 +612,8 @@ public final class ConflictBuilder
         {
             Throw.when(lane1.getParentLink().getPriority().isBusStop() && lane2.getParentLink().getPriority().isBusStop(),
                     IllegalArgumentException.class, "Merge conflict between two links with bus stop priority not supported.");
-            conflictRule = new BusStopConflictRule(simulator);
+            // TODO: handle bus priority on the model side
+            conflictRule = new BusStopConflictRule(simulator, DefaultsNl.BUS);
         }
         else
         {

@@ -31,6 +31,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -112,12 +113,12 @@ public class ContourPlotTest implements UNITS
         ArrayList<Lane> result = new ArrayList<Lane>();
         Lane[] lanes = LaneFactory.makeMultiLane(network, "AtoB",
                 new OtsRoadNode(network, "A", new OtsPoint3D(1234, 0, 0), Direction.ZERO), b, null, 1, laneType,
-                new Speed(100, KM_PER_HOUR), simulator);
+                new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
         result.add(lanes[0]);
         // Make a continuation lane to prevent errors when the operational plan exceeds the available remaining length
         lanes = LaneFactory.makeMultiLane(network, "BtoC", b,
                 new OtsRoadNode(network, "C", new OtsPoint3D(99999, 0, 0), Direction.ZERO), null, 1, laneType,
-                new Speed(100, KM_PER_HOUR), null);
+                new Speed(100, KM_PER_HOUR), null, DefaultsNl.VEHICLE);
         return GraphLaneUtil.createPath("AtoB", lanes[0]);
     }
 
@@ -202,7 +203,6 @@ public class ContourPlotTest implements UNITS
         ContourPlotDensity dcp = new ContourPlotDensity("density", simulator, dataPool);
         assertTrue("newly created DensityContourPlot should not be null", null != dcp);
         assertEquals("SeriesKey should be \"density\"", "density", dcp.getSeriesKey(0));
-        GtuType gtuType = network.getGtuType(GtuType.DEFAULTS.CAR);
         standardContourTests(simulator, dcp, path, Double.NaN, Double.NaN);
     }
 
@@ -222,7 +222,6 @@ public class ContourPlotTest implements UNITS
         ContourPlotFlow fcp = new ContourPlotFlow("flow", simulator, dataPool);
         assertTrue("newly created DensityContourPlot should not be null", null != fcp);
         assertEquals("SeriesKey should be \"flow\"", "flow", fcp.getSeriesKey(0));
-        GtuType gtuType = network.getGtuType(GtuType.DEFAULTS.CAR);
         standardContourTests(simulator, fcp, path, Double.NaN, Double.NaN);
     }
 
@@ -242,7 +241,6 @@ public class ContourPlotTest implements UNITS
         ContourPlotSpeed scp = new ContourPlotSpeed("speed", simulator, dataPool);
         assertTrue("newly created DensityContourPlot should not be null", null != scp);
         assertEquals("SeriesKey should be \"speed\"", "speed", scp.getSeriesKey(0));
-        GtuType gtuType = network.getGtuType(GtuType.DEFAULTS.CAR);
         standardContourTests(simulator, scp, path, Double.NaN, 50);
     }
 

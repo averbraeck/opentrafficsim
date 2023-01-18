@@ -32,6 +32,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.mockito.Mockito;
 import org.opentrafficsim.core.compatibility.GtuCompatibility;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -87,16 +88,16 @@ public class LaneTest implements UNITS
         Length endLateralPos = new Length(5, METER);
         Length startWidth = new Length(3, METER);
         Length endWidth = new Length(4, METER);
-        GtuType gtuTypeCar = network.getGtuType(GtuType.DEFAULTS.CAR);
+        GtuType gtuTypeCar = DefaultsNl.CAR;
 
         GtuCompatibility<LaneType> GtuCompatibility = new GtuCompatibility<>((LaneType) null);
-        GtuCompatibility.addCompatibleGtuType(network.getGtuType(GtuType.DEFAULTS.VEHICLE));
+        GtuCompatibility.addCompatibleGtuType(DefaultsNl.VEHICLE);
         LaneType laneType = new LaneType("One way", network.getLaneType(LaneType.DEFAULTS.FREEWAY), network);
         Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
-        speedMap.put(network.getGtuType(GtuType.DEFAULTS.VEHICLE), new Speed(100, KM_PER_HOUR));
+        speedMap.put(DefaultsNl.VEHICLE, new Speed(100, KM_PER_HOUR));
         // Now we can construct a Lane
         // FIXME what overtaking conditions do we want to test in this unit test?
-        Lane lane = new Lane(link, "lane", startLateralPos, endLateralPos, startWidth, endWidth, laneType, speedMap);
+        Lane lane = new Lane(link, "lane", startLateralPos, endLateralPos, startWidth, endWidth, laneType, speedMap, false);
         // Verify the easy bits
         assertEquals("Link returns network", network, link.getNetwork());
         assertEquals("Lane returns network", network, lane.getNetwork());
@@ -107,7 +108,7 @@ public class LaneTest implements UNITS
         assertEquals("Length of contour is approximately " + approximateLengthOfContour, approximateLengthOfContour,
                 lane.getContour().getLengthSI(), 0.1);
         assertEquals("SpeedLimit should be " + (new Speed(100, KM_PER_HOUR)), new Speed(100, KM_PER_HOUR),
-                lane.getSpeedLimit(network.getGtuType(GtuType.DEFAULTS.VEHICLE)));
+                lane.getSpeedLimit(DefaultsNl.VEHICLE));
         assertEquals("There should be no GTUs on the lane", 0, lane.getGtuList().size());
         assertEquals("LaneType should be " + laneType, laneType, lane.getType());
         // TODO: This test for expectedLateralCenterOffset fails
@@ -147,7 +148,7 @@ public class LaneTest implements UNITS
         link = new CrossSectionLink(network, "A to B with Kink", nodeFrom, nodeTo,
                 network.getLinkType(LinkType.DEFAULTS.FREEWAY), new OtsLine3D(coordinates), LaneKeepingPolicy.KEEPRIGHT);
         // FIXME what overtaking conditions do we want to test in this unit test?
-        lane = new Lane(link, "lane.1", startLateralPos, endLateralPos, startWidth, endWidth, laneType, speedMap);
+        lane = new Lane(link, "lane.1", startLateralPos, endLateralPos, startWidth, endWidth, laneType, speedMap, false);
         // Verify the easy bits
         assertEquals("PrevLanes should contain one lane from the other link", 1, lane.prevLanes(gtuTypeCar).size());
         assertEquals("NextLanes should contain one lane from the other link", 1, lane.nextLanes(gtuTypeCar).size());
@@ -163,7 +164,8 @@ public class LaneTest implements UNITS
         Length startLateralPos2 = new Length(-8, METER);
         Length endLateralPos2 = new Length(-5, METER);
         // FIXME what overtaking conditions do we ant to test in this unit test?
-        Lane lane2 = new Lane(link, "lane.2", startLateralPos2, endLateralPos2, startWidth, endWidth, laneType, speedMap);
+        Lane lane2 =
+                new Lane(link, "lane.2", startLateralPos2, endLateralPos2, startWidth, endWidth, laneType, speedMap, false);
         // Verify the easy bits
         assertEquals("PrevLanes should be empty", 0, lane2.prevLanes(gtuTypeCar).size());
         assertEquals("NextLanes should be empty", 0, lane2.nextLanes(gtuTypeCar).size());
@@ -195,7 +197,7 @@ public class LaneTest implements UNITS
             // Ignore expected exception
         }
         crossSectionSlices.add(new CrossSectionSlice(Length.ZERO, startLateralPos, startWidth));
-        lane = new Lane(link, "lanex", crossSectionSlices, laneType, new Speed(100, KM_PER_HOUR));
+        lane = new Lane(link, "lanex", crossSectionSlices, laneType, speedMap);
         sensorTest(lane);
     }
 
@@ -226,26 +228,23 @@ public class LaneTest implements UNITS
         assertEquals("lane now contains two sensors", 2, sensors.size());
         assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
         assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
-        sensors = lane.getSensors(Length.ZERO, Length.instantiateSI(length / 3),
-                lane.getParentLink().getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE));
+        sensors = lane.getSensors(Length.ZERO, Length.instantiateSI(length / 3), DefaultsNl.VEHICLE);
         assertEquals("first third of lane contains 1 sensor", 1, sensors.size());
         assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
-        sensors = lane.getSensors(Length.instantiateSI(length / 3), Length.instantiateSI(length),
-                lane.getParentLink().getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE));
+        sensors = lane.getSensors(Length.instantiateSI(length / 3), Length.instantiateSI(length), DefaultsNl.VEHICLE);
         assertEquals("last two-thirds of lane contains 1 sensor", 1, sensors.size());
         assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
-        sensors = lane.getSensors(lane.getParentLink().getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE));
+        sensors = lane.getSensors(DefaultsNl.VEHICLE);
         // NB. The mocked sensor is compatible with all GTU types in all directions.
         assertEquals("sensor list contains two sensors", 2, sensors.size());
         assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
         assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
-        sensors = lane.getSensors(lane.getParentLink().getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE));
+        sensors = lane.getSensors(DefaultsNl.VEHICLE);
         // NB. The mocked sensor is compatible with all GTU types in all directions.
         assertEquals("sensor list contains two sensors", 2, sensors.size());
         assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
         assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
-        SortedMap<Double, List<SingleSensor>> sensorMap =
-                lane.getSensorMap(lane.getParentLink().getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE));
+        SortedMap<Double, List<SingleSensor>> sensorMap = lane.getSensorMap(DefaultsNl.VEHICLE);
         assertEquals("sensor map contains two entries", 2, sensorMap.size());
         for (Double d : sensorMap.keySet())
         {
@@ -562,9 +561,9 @@ public class LaneTest implements UNITS
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         OtsRoadNetwork network = new OtsRoadNetwork("contour test network", true, simulator);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
-        laneType.addCompatibleGtuType(network.getGtuType(GtuType.DEFAULTS.VEHICLE));
+        laneType.addCompatibleGtuType(DefaultsNl.VEHICLE);
         Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
-        speedMap.put(network.getGtuType(GtuType.DEFAULTS.VEHICLE), new Speed(50, KM_PER_HOUR));
+        speedMap.put(DefaultsNl.VEHICLE, new Speed(50, KM_PER_HOUR));
         OtsRoadNode start = new OtsRoadNode(network, "start", from, Direction.ZERO);
         OtsRoadNode end = new OtsRoadNode(network, "end", to, Direction.ZERO);
         OtsPoint3D[] coordinates = new OtsPoint3D[2];
@@ -643,9 +642,9 @@ public class LaneTest implements UNITS
                     simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
                     OtsRoadNetwork network = new OtsRoadNetwork("contour test network", true, simulator);
                     LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
-                    laneType.addCompatibleGtuType(network.getGtuType(GtuType.DEFAULTS.VEHICLE));
+                    laneType.addCompatibleGtuType(DefaultsNl.VEHICLE);
                     Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
-                    speedMap.put(network.getGtuType(GtuType.DEFAULTS.VEHICLE), new Speed(50, KM_PER_HOUR));
+                    speedMap.put(DefaultsNl.VEHICLE, new Speed(50, KM_PER_HOUR));
                     OtsRoadNode start =
                             new OtsRoadNode(network, "start", new OtsPoint3D(xStart, yStart), Direction.instantiateSI(angle));
                     double linkLength = 1000;
@@ -671,7 +670,7 @@ public class LaneTest implements UNITS
                                 // FIXME what overtaking conditions do we want to test in this unit test?
                                 Lane lane = new Lane(link, "lane." + ++laneNum, new Length(startLateralOffset, METER),
                                         new Length(endLateralOffset, METER), new Length(startWidth, METER),
-                                        new Length(endWidth, METER), laneType, speedMap);
+                                        new Length(endWidth, METER), laneType, speedMap, false);
                                 final Geometry geometry = lane.getContour().getLineString();
                                 assertNotNull("geometry of the lane should not be null", geometry);
                                 // Verify a couple of points that should be inside the contour of the Lane

@@ -20,11 +20,11 @@ import org.djutils.logger.CategoryLogger;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.core.object.ObjectInterface;
@@ -91,7 +91,6 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
         this.simulator = simulator;
         if (addDefaultTypes)
         {
-            addDefaultGtuTypes();
             addDefaultLinkTypes();
         }
     }
@@ -852,23 +851,23 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
         new LinkType("NONE", null, this);
         //
         LinkType road = new LinkType("ROAD", null, this);
-        road.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER));
+        road.addCompatibleGtuType(DefaultsNl.ROAD_USER);
         //
         LinkType freeway = new LinkType("FREEWAY", road, this);
-        freeway.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER));
-        freeway.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.PEDESTRIAN));
-        freeway.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.BICYCLE));
+        freeway.addCompatibleGtuType(DefaultsNl.ROAD_USER);
+        freeway.addCompatibleGtuType(DefaultsNl.PEDESTRIAN);
+        freeway.addCompatibleGtuType(DefaultsNl.BICYCLE);
         //
         LinkType waterway = new LinkType("WATERWAY", null, this);
-        waterway.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.WATERWAY_USER));
+        waterway.addCompatibleGtuType(DefaultsNl.WATERWAY_USER);
         //
         LinkType railway = new LinkType("RAILWAY", null, this);
-        railway.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.RAILWAY_USER));
+        railway.addCompatibleGtuType(DefaultsNl.RAILWAY_USER);
         //
         LinkType connector = new LinkType("CONNECTOR", null, this);
-        connector.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER));
-        connector.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.WATERWAY_USER));
-        connector.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.RAILWAY_USER));
+        connector.addCompatibleGtuType(DefaultsNl.ROAD_USER);
+        connector.addCompatibleGtuType(DefaultsNl.WATERWAY_USER);
+        connector.addCompatibleGtuType(DefaultsNl.RAILWAY_USER);
     }
 
     /** {@inheritDoc} */
@@ -905,30 +904,6 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public void addDefaultGtuTypes()
-    {
-        GtuType roadUser = new GtuType("ROAD_USER", this);
-        GtuType waterwayUser = new GtuType("WATERWAY_USER", this);
-        GtuType railwayUser = new GtuType("RAILWAY_USER", this);
-
-        new GtuType("SHIP", waterwayUser);
-        new GtuType("TRAIN", railwayUser);
-        new GtuType("PEDESTRIAN", roadUser);
-        GtuType bicycle = new GtuType("BICYCLE", roadUser);
-
-        new GtuType("MOPED", bicycle);
-
-        GtuType vehicle = new GtuType("VEHICLE", roadUser);
-        new GtuType("EMERGENCY_VEHICLE", vehicle);
-        new GtuType("CAR", vehicle);
-        new GtuType("VAN", vehicle);
-        GtuType bus = new GtuType("BUS", vehicle);
-        new GtuType("TRUCK", vehicle);
-        new GtuType("SCHEDULED_BUS", bus);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public void addGtuType(final GtuType gtuType)
     {
         this.gtuTypeMap.put(gtuType.getId(), gtuType);
@@ -939,13 +914,6 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
     public GtuType getGtuType(final String gtuId)
     {
         return this.gtuTypeMap.get(gtuId);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public GtuType getGtuType(final GtuType.DEFAULTS gtuEnum)
-    {
-        return this.gtuTypeMap.get(gtuEnum.getId());
     }
 
     /** {@inheritDoc} */

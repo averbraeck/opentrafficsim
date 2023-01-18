@@ -20,6 +20,7 @@ import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.opentrafficsim.base.Identifiable;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -86,29 +87,29 @@ public class OtsRoadNetwork extends OtsNetwork implements RoadNetwork
         new LaneType("RURAL_ROAD", road, this);
         new LaneType("URBAN_ROAD", road, this);
         new LaneType("RESIDENTIAL_ROAD", road, this);
-        road.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER));
+        road.addCompatibleGtuType(DefaultsNl.ROAD_USER);
 
         LaneType oneWayLane = new LaneType("ONE_WAY_LANE", road, this);
-        oneWayLane.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER));
-        oneWayLane.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.PEDESTRIAN));
+        oneWayLane.addCompatibleGtuType(DefaultsNl.ROAD_USER);
+        oneWayLane.addCompatibleGtuType(DefaultsNl.PEDESTRIAN);
 
         LaneType freeway = new LaneType("FREEWAY", oneWayLane, this);
-        freeway.addIncompatibleGtuType(getGtuType(GtuType.DEFAULTS.PEDESTRIAN));
+        freeway.addIncompatibleGtuType(DefaultsNl.PEDESTRIAN);
         LaneType highway = new LaneType("HIGHWAY", oneWayLane, this);
-        highway.addIncompatibleGtuType(getGtuType(GtuType.DEFAULTS.PEDESTRIAN));
+        highway.addIncompatibleGtuType(DefaultsNl.PEDESTRIAN);
 
         LaneType busLane = new LaneType("BUS_LANE", this);
-        busLane.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.BUS));
+        busLane.addCompatibleGtuType(DefaultsNl.BUS);
 
         LaneType mopedAndBicycleLane = new LaneType("MOPED_PATH", this);
-        mopedAndBicycleLane.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.BICYCLE));
-        mopedAndBicycleLane.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.MOPED));
+        mopedAndBicycleLane.addCompatibleGtuType(DefaultsNl.BICYCLE);
+        mopedAndBicycleLane.addCompatibleGtuType(DefaultsNl.MOPED);
 
         LaneType bicycleOnly = new LaneType("BICYCLE_PATH", mopedAndBicycleLane, this);
-        bicycleOnly.addIncompatibleGtuType(getGtuType(GtuType.DEFAULTS.MOPED));
+        bicycleOnly.addIncompatibleGtuType(DefaultsNl.MOPED);
 
         LaneType pedestriansOnly = new LaneType("FOOTPATH", this);
-        pedestriansOnly.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.PEDESTRIAN));
+        pedestriansOnly.addCompatibleGtuType(DefaultsNl.PEDESTRIAN);
     }
 
     /** {@inheritDoc} */

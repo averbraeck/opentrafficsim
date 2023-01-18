@@ -16,6 +16,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
@@ -97,8 +98,8 @@ public class XmlOdParserTest
             }
         };
         this.simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), model);
-        this.gtuTypes.add(this.network.getGtuType(GtuType.DEFAULTS.CAR));
-        this.gtuTypes.add(this.network.getGtuType(GtuType.DEFAULTS.TRUCK));
+        this.gtuTypes.add(DefaultsNl.CAR);
+        this.gtuTypes.add(DefaultsNl.TRUCK);
         // TODO verify that Direction.ZERO will not cause problems...
         OtsRoadNode A = new OtsRoadNode(this.network, "A", new OtsPoint3D(0, 0, 0), Direction.ZERO);
         OtsRoadNode B = new OtsRoadNode(this.network, "B", new OtsPoint3D(1, 0, 0), Direction.ZERO);
@@ -123,7 +124,7 @@ public class XmlOdParserTest
                 new CrossSectionLink(this.network, "CB", C, B, this.network.getLinkType(LinkType.DEFAULTS.FREEWAY),
                         new OtsLine3D(C.getPoint(), B.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
 
-        GtuType gtuType = this.network.getGtuType(GtuType.DEFAULTS.VEHICLE);
+        GtuType gtuType = DefaultsNl.VEHICLE;
         this.network.addRoute(gtuType, new Route("AB", gtuType).addNode(A).addNode(B));
         this.network.addRoute(gtuType, new Route("AB2", gtuType).addNode(A).addNode(C).addNode(B));
         this.network.addRoute(gtuType, new Route("AC", gtuType).addNode(A).addNode(C));
