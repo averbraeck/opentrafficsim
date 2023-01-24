@@ -279,14 +279,31 @@ public class SamplerData<G extends GtuData> extends Table
         @Override
         public boolean hasNext()
         {
-            return this.indexIterator.hasNext() || this.trajectoryIterator.hasNext() || this.laneIterator.hasNext();
+            while (!this.indexIterator.hasNext())
+            {
+                while (!this.trajectoryIterator.hasNext())
+                {
+                    if (!this.laneIterator.hasNext())
+                    {
+                        return false;
+                    }
+                    Entry<LaneData, TrajectoryGroup<G>> entry = this.laneIterator.next();
+                    this.currentLane = entry.getKey();
+                    this.trajectoryIterator = entry.getValue().iterator();
+                }
+                this.currentTrajectory = this.trajectoryIterator.next();
+                this.currentTrajectorySize = this.currentTrajectory.size();
+                this.trajectoryCounter++;
+                this.indexIterator = IntStream.range(0, this.currentTrajectory.size()).iterator();
+            }
+            return true;
         }
 
         /** {@inheritDoc} */
         @Override
         public Row next()
         {
-            assureNextAvailable();
+            Throw.when(!hasNext(), NoSuchElementException.class, "Sampler data has no next row.");
             Throw.when(this.currentTrajectory.size() != this.currentTrajectorySize, ConcurrentModificationException.class,
                     "Trajectory modified while iterating.");
 
@@ -319,29 +336,6 @@ public class SamplerData<G extends GtuData> extends Table
             catch (SamplingException se)
             {
                 throw new RuntimeException("Sampling exception during iteration over sampler data.", se);
-            }
-        }
-
-        /**
-         * Assures that all the iterators have a next item. If any iterator does not have a next item, the iterator is replaced
-         * based on the next value from the iterator a level up.
-         * @throws NoSuchElementException if the root iterator is requested for a next value it does not have.
-         */
-        private void assureNextAvailable()
-        {
-            while (!this.indexIterator.hasNext())
-            {
-                while (!this.trajectoryIterator.hasNext())
-                {
-                    Throw.when(!this.laneIterator.hasNext(), NoSuchElementException.class, "Sampler data has no next row.");
-                    Entry<LaneData, TrajectoryGroup<G>> entry = this.laneIterator.next();
-                    this.currentLane = entry.getKey();
-                    this.trajectoryIterator = entry.getValue().iterator();
-                }
-                this.currentTrajectory = this.trajectoryIterator.next();
-                this.currentTrajectorySize = this.currentTrajectory.size();
-                this.trajectoryCounter++;
-                this.indexIterator = IntStream.range(0, this.currentTrajectory.size()).iterator();
             }
         }
 
