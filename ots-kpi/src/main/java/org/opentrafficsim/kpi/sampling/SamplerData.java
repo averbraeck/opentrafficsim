@@ -213,7 +213,7 @@ public class SamplerData<G extends GtuData> extends Table
      */
     public final void writeToFile(final String file, final String format, final Compression compression)
     {
-        TableCsvWriter.create().setFormat(format).setCompression(null).write(this, file);
+        TableCsvWriter.create().setFormat(format).setCompression(compression).write(this, file);
     }
 
     /** {@inheritDoc} */
