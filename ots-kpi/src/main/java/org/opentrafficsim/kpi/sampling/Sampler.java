@@ -3,6 +3,7 @@ package org.opentrafficsim.kpi.sampling;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -10,10 +11,10 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
+import org.opentrafficsim.kpi.interfaces.GtuData;
+import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
 import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
-import org.opentrafficsim.kpi.sampling.meta.MetaData;
 
 /**
  * Sampler is the highest level organizer for sampling.
@@ -26,7 +27,7 @@ import org.opentrafficsim.kpi.sampling.meta.MetaData;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <G> gtu data type
  */
-public abstract class Sampler<G extends GtuDataInterface>
+public abstract class Sampler<G extends GtuData>
 {
 
     /** Sampler data. */
@@ -39,35 +40,24 @@ public abstract class Sampler<G extends GtuDataInterface>
     private final Set<FilterDataType<?>> filterDataTypes;
 
     /** Registration of current trajectories of each GTU per lane. */
-    private final Map<String, Map<KpiLane, Trajectory<G>>> trajectoryPerGtu = new LinkedHashMap<>();
+    private final Map<String, Map<LaneData, Trajectory<G>>> trajectoryPerGtu = new LinkedHashMap<>();
 
     /** End times of active samplings. */
-    private final Map<KpiLane, Time> endTimes = new LinkedHashMap<>();
+    private final Map<LaneData, Time> endTimes = new LinkedHashMap<>();
 
     /** Space time regions. */
     private Set<SpaceTimeRegion> spaceTimeRegions = new LinkedHashSet<>();
 
     /**
      * Constructor.
-     * @param extendedDataTypes Set&lt;ExtendedDataType&lt;?, ?, ?, G&gt;&gt;; extended data types
-     * @param filterDataTypes Set&lt;FilterDataType&lt;?&gt;&gt;; filter data types
+     * @param extendedDataTypes Set&lt;ExtendedDataType&lt;?, ?, ?, G&gt;&gt;; extended data types.
+     * @param filterDataTypes Set&lt;FilterDataType&lt;?&gt;&gt;; filter data types.
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public Sampler(final Set<ExtendedDataType<?, ?, ?, G>> extendedDataTypes, final Set<FilterDataType<?>> filterDataTypes)
     {
         this.extendedDataTypes = new LinkedHashSet<>(extendedDataTypes);
         this.filterDataTypes = new LinkedHashSet<>(filterDataTypes);
-        Set<Column<?>> columns = new LinkedHashSet<>();
-        // TODO: fixed columns!
-        for (ExtendedDataType<?, ?, ?, G> extendedDataType : this.extendedDataTypes)
-        {
-            columns.add(new SimpleColumn(extendedDataType.getId(), extendedDataType.getId(), extendedDataType.getType()));
-        }
-        for (FilterDataType<?> filterDataType : this.filterDataTypes)
-        {
-            columns.add(new SimpleColumn(filterDataType.getId(), filterDataType.getId(), String.class));
-        }
-        this.samplerData = new SamplerData<>(columns);
+        this.samplerData = new SamplerData<>(extendedDataTypes, filterDataTypes);
     }
 
     /**
@@ -133,148 +123,148 @@ public abstract class Sampler<G extends GtuDataInterface>
     /**
      * Schedules the start of recording for a given lane-direction.
      * @param time Time; time to start recording
-     * @param kpiLaneDirection KpiLaneDirection; lane-direction to start recording
+     * @param lane LaneData; lane-direction to start recording
      */
-    public abstract void scheduleStartRecording(Time time, KpiLane kpiLaneDirection);
+    public abstract void scheduleStartRecording(Time time, LaneData lane);
 
     /**
-     * Schedules the stop of recording for a given lane-direction.
+     * Schedules the stop of recording for a given lane.
      * @param time Time; time to stop recording
-     * @param kpiLaneDirection KpiLaneDirection; lane-direction to stop recording
+     * @param lane LaneData; lane to stop recording
      */
-    public abstract void scheduleStopRecording(Time time, KpiLane kpiLaneDirection);
+    public abstract void scheduleStopRecording(Time time, LaneData lane);
 
     /**
      * Start recording at the given time (which should be the current time) on the given lane direction.
-     * @param kpiLaneDirection KpiLaneDirection; lane direction
+     * @param lane LaneData; lane
      */
-    public final void startRecording(final KpiLane kpiLaneDirection)
+    public final void startRecording(final LaneData lane)
     {
-        Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
-        if (this.samplerData.contains(kpiLaneDirection))
+        Throw.whenNull(lane, "KpiLaneDirection may not be null.");
+        if (this.samplerData.contains(lane))
         {
             return;
         }
-        this.samplerData.putTrajectoryGroup(kpiLaneDirection, new TrajectoryGroup<>(now(), kpiLaneDirection));
-        initRecording(kpiLaneDirection);
+        this.samplerData.putTrajectoryGroup(lane, new TrajectoryGroup<>(now(), lane));
+        initRecording(lane);
     }
 
     /**
      * Adds listeners to start recording.
-     * @param kpiLaneDirection KpiLaneDirection; lane direction to initialize recording for
+     * @param lane LaneData; lane to initialize recording for
      */
-    public abstract void initRecording(KpiLane kpiLaneDirection);
+    public abstract void initRecording(LaneData lane);
 
     /**
      * Stop recording at given lane direction.
-     * @param kpiLaneDirection KpiLaneDirection; lane direction
+     * @param lane LaneData; lane
      */
-    public final void stopRecording(final KpiLane kpiLaneDirection)
+    public final void stopRecording(final LaneData lane)
     {
-        Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
-        if (!this.samplerData.contains(kpiLaneDirection) || this.endTimes.get(kpiLaneDirection).gt(now()))
+        Throw.whenNull(lane, "KpiLaneDirection may not be null.");
+        if (!this.samplerData.contains(lane) || this.endTimes.get(lane).gt(now()))
         {
             return;
         }
-        finalizeRecording(kpiLaneDirection);
+        finalizeRecording(lane);
     }
 
     /**
      * Remove listeners to stop recording.
-     * @param kpiLaneDirection KpiLaneDirection; lane direction to finalize recording for
+     * @param lane LaneData; lane
      */
-    public abstract void finalizeRecording(KpiLane kpiLaneDirection);
+    public abstract void finalizeRecording(LaneData lane);
 
     /**
      * Creates a trajectory with the current snapshot of a GTU.
-     * @param kpiLaneDirection KpiLaneDirection; lane direction the gtu is at
+     * @param lane LaneData; lane the gtu is at
      * @param position Length; position of the gtu on the lane
      * @param speed Speed; speed of the gtu
      * @param acceleration Acceleration; acceleration of the gtu
      * @param time Time; current time
      * @param gtu G; gtu
      */
-    public final void processGtuAddEvent(final KpiLane kpiLaneDirection, final Length position, final Speed speed,
+    public final void processGtuAddEvent(final LaneData lane, final Length position, final Speed speed,
             final Acceleration acceleration, final Time time, final G gtu)
     {
-        Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
+        Throw.whenNull(lane, "KpiLaneDirection may not be null.");
         Throw.whenNull(position, "Position may not be null.");
         Throw.whenNull(speed, "Speed may not be null.");
         Throw.whenNull(acceleration, "Acceleration may not be null.");
         Throw.whenNull(time, "Time may not be null.");
-        Throw.whenNull(gtu, "GtuDataInterface may not be null.");
-        if (kpiLaneDirection.getLaneData().getLength().lt(position))
+        Throw.whenNull(gtu, "GtuData may not be null.");
+        if (lane.getLength().lt(position))
         {
             // ignore event if beyond lane length (may happen during lane change)
             return;
         }
         String gtuId = gtu.getId();
-        Trajectory<G> trajectory = new Trajectory<>(gtu, makeMetaData(gtu), this.extendedDataTypes, kpiLaneDirection);
+        Trajectory<G> trajectory = new Trajectory<>(gtu, makeFilterData(gtu), this.extendedDataTypes, lane);
         if (!this.trajectoryPerGtu.containsKey(gtuId))
         {
-            Map<KpiLane, Trajectory<G>> map = new LinkedHashMap<>();
+            Map<LaneData, Trajectory<G>> map = new LinkedHashMap<>();
             this.trajectoryPerGtu.put(gtuId, map);
         }
-        this.trajectoryPerGtu.get(gtuId).put(kpiLaneDirection, trajectory);
-        this.samplerData.getTrajectoryGroup(kpiLaneDirection).addTrajectory(trajectory);
-        processGtuMoveEvent(kpiLaneDirection, position, speed, acceleration, time, gtu);
+        this.trajectoryPerGtu.get(gtuId).put(lane, trajectory);
+        this.samplerData.getTrajectoryGroup(lane).addTrajectory(trajectory);
+        processGtuMoveEvent(lane, position, speed, acceleration, time, gtu);
     }
 
     /**
      * Adds a new snapshot of a GTU to its recording trajectory, if recorded. This method may be invoked on GTU that are not
      * being recorded; the event will then be ignored.
-     * @param kpiLaneDirection KpiLaneDirection; lane direction the gtu is at
+     * @param lane LaneData; lane the gtu is at
      * @param position Length; position of the gtu on the lane
      * @param speed Speed; speed of the gtu
      * @param acceleration Acceleration; acceleration of the gtu
      * @param time Time; current time
      * @param gtu G; gtu
      */
-    public final void processGtuMoveEvent(final KpiLane kpiLaneDirection, final Length position, final Speed speed,
+    public final void processGtuMoveEvent(final LaneData lane, final Length position, final Speed speed,
             final Acceleration acceleration, final Time time, final G gtu)
     {
-        Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
+        Throw.whenNull(lane, "KpiLaneDirection may not be null.");
         Throw.whenNull(position, "Position may not be null.");
         Throw.whenNull(speed, "Speed may not be null.");
         Throw.whenNull(acceleration, "Acceleration may not be null.");
         Throw.whenNull(time, "Time may not be null.");
-        Throw.whenNull(gtu, "GtuDataInterface may not be null.");
+        Throw.whenNull(gtu, "GtuData may not be null.");
         String gtuId = gtu.getId();
-        if (this.trajectoryPerGtu.containsKey(gtuId) && this.trajectoryPerGtu.get(gtuId).containsKey(kpiLaneDirection))
+        if (this.trajectoryPerGtu.containsKey(gtuId) && this.trajectoryPerGtu.get(gtuId).containsKey(lane))
         {
-            this.trajectoryPerGtu.get(gtuId).get(kpiLaneDirection).add(position, speed, acceleration, time, gtu);
+            this.trajectoryPerGtu.get(gtuId).get(lane).add(position, speed, acceleration, time, gtu);
         }
     }
 
     /**
      * Finalizes a trajectory with the current snapshot of a GTU.
-     * @param kpiLaneDirection KpiLaneDirection; lane direction the gtu is at
+     * @param lane LaneData; lane direction the gtu is at
      * @param position Length; position of the gtu on the lane
      * @param speed Speed; speed of the gtu
      * @param acceleration Acceleration; acceleration of the gtu
      * @param time Time; current time
      * @param gtu G; gtu
      */
-    public final void processGtuRemoveEvent(final KpiLane kpiLaneDirection, final Length position, final Speed speed,
+    public final void processGtuRemoveEvent(final LaneData lane, final Length position, final Speed speed,
             final Acceleration acceleration, final Time time, final G gtu)
     {
-        processGtuMoveEvent(kpiLaneDirection, position, speed, acceleration, time, gtu);
-        processGtuRemoveEvent(kpiLaneDirection, gtu);
+        processGtuMoveEvent(lane, position, speed, acceleration, time, gtu);
+        processGtuRemoveEvent(lane, gtu);
     }
 
     /**
      * Finalizes a trajectory.
-     * @param kpiLaneDirection KpiLaneDirection; lane direction the gtu is at
+     * @param lane LaneData; lane the gtu is at
      * @param gtu G; gtu
      */
-    public final void processGtuRemoveEvent(final KpiLane kpiLaneDirection, final G gtu)
+    public final void processGtuRemoveEvent(final LaneData lane, final G gtu)
     {
-        Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
-        Throw.whenNull(gtu, "GtuDataInterface may not be null.");
+        Throw.whenNull(lane, "KpiLaneDirection may not be null.");
+        Throw.whenNull(gtu, "GtuData may not be null.");
         String gtuId = gtu.getId();
         if (this.trajectoryPerGtu.containsKey(gtuId))
         {
-            this.trajectoryPerGtu.get(gtuId).remove(kpiLaneDirection);
+            this.trajectoryPerGtu.get(gtuId).remove(lane);
             if (this.trajectoryPerGtu.get(gtuId).isEmpty())
             {
                 this.trajectoryPerGtu.remove(gtuId);
@@ -283,25 +273,47 @@ public abstract class Sampler<G extends GtuDataInterface>
     }
 
     /**
-     * @param gtu G; gtu to return meta data for
-     * @param <T> underlying type of a meta data type
-     * @return meta data for the given gtu
+     * Gathers the filter data for filter data types.
+     * @param gtu G; gtu to return filter data for a GTU
+     * @return filter data for the given gtu
      */
-    @SuppressWarnings("unchecked")
-    private <T> MetaData makeMetaData(final G gtu)
+    private Map<FilterDataType<?>, Object> makeFilterData(final G gtu)
     {
-        MetaData metaData = new MetaData();
-        for (FilterDataType<?> metaDataType : this.filterDataTypes)
+        Map<FilterDataType<?>, Object> filterData = new LinkedHashMap<>();
+        for (FilterDataType<?> filterDataType : this.filterDataTypes)
         {
-            T value = (T) metaDataType.getValue(gtu);
-            if (value != null)
-            {
-                metaData.put((FilterDataType<T>) metaDataType, value);
-            }
+            filterData.put(filterDataType, filterDataType.getValue(gtu));
         }
-        return metaData;
+        return filterData;
     }
 
-    // TODO: hashCode / equals
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(this.extendedDataTypes, this.filterDataTypes, this.spaceTimeRegions);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(final Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        Sampler<?> other = (Sampler<?>) obj;
+        return Objects.equals(this.extendedDataTypes, other.extendedDataTypes)
+                && Objects.equals(this.filterDataTypes, other.filterDataTypes)
+                && Objects.equals(this.spaceTimeRegions, other.spaceTimeRegions);
+    }
 
 }

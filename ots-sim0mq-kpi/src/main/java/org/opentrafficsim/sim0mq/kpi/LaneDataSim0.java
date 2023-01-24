@@ -1,8 +1,8 @@
 package org.opentrafficsim.sim0mq.kpi;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
-import org.opentrafficsim.kpi.interfaces.LinkDataInterface;
+import org.opentrafficsim.kpi.interfaces.LaneData;
+import org.opentrafficsim.kpi.interfaces.LinkData;
 
 /**
  * <p>
@@ -13,10 +13,10 @@ import org.opentrafficsim.kpi.interfaces.LinkDataInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LaneData implements LaneDataInterface
+public class LaneDataSim0 implements LaneData
 {
     /** Corresponding Link. */
-    private LinkData linkData;
+    private LinkDataSim0 linkData;
 
     /** Wrapped lane. */
     private final String laneName;
@@ -29,7 +29,7 @@ public class LaneData implements LaneDataInterface
      * @param laneName String; name of the lane
      * @param length Length; length of the lane
      */
-    public LaneData(final LinkData linkData, final String laneName, final Length length)
+    public LaneDataSim0(final LinkDataSim0 linkData, final String laneName, final Length length)
     {
         this.linkData = linkData;
         this.laneName = laneName;
@@ -46,7 +46,7 @@ public class LaneData implements LaneDataInterface
 
     /** {@inheritDoc} */
     @Override
-    public final LinkDataInterface getLinkData()
+    public final LinkData getLinkData()
     {
         return this.linkData;
     }
@@ -69,7 +69,7 @@ public class LaneData implements LaneDataInterface
     /**
      * @param linkData LinkData; set linkData
      */
-    public final void setLinkData(LinkData linkData)
+    public final void setLinkData(LinkDataSim0 linkData)
     {
         this.linkData = linkData;
     }
@@ -94,7 +94,7 @@ public class LaneData implements LaneDataInterface
             return false;
         if (getClass() != obj.getClass())
             return false;
-        LaneData other = (LaneData) obj;
+        LaneDataSim0 other = (LaneDataSim0) obj;
         if (this.laneName == null)
         {
             if (other.laneName != null)

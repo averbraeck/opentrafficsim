@@ -7,7 +7,8 @@ import java.util.List;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
+import org.opentrafficsim.kpi.interfaces.GtuData;
+import org.opentrafficsim.kpi.interfaces.LaneData;
 
 /**
  * Contains all trajectories pertaining to a certain space-time region.
@@ -20,7 +21,7 @@ import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <G> gtu data type
  */
-public class TrajectoryGroup<G extends GtuDataInterface> implements Iterable<Trajectory<G>>
+public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G>>
 {
 
     /** Start time of trajectories. */
@@ -33,7 +34,7 @@ public class TrajectoryGroup<G extends GtuDataInterface> implements Iterable<Tra
     private final Length endPosition;
 
     /** Direction for which the trajectories have been sampled. */
-    private final KpiLane lane;
+    private final LaneData lane;
 
     /** Trajectories. */
     private final List<Trajectory<G>> trajectories = new ArrayList<>();
@@ -41,21 +42,21 @@ public class TrajectoryGroup<G extends GtuDataInterface> implements Iterable<Tra
     /**
      * Constructor without length specification. The complete lane will be used.
      * @param startTime Time; start time of trajectories
-     * @param laneDirection KpiLaneDirection; lane direction
+     * @param lane LaneData; lane
      */
-    public TrajectoryGroup(final Time startTime, final KpiLane laneDirection)
+    public TrajectoryGroup(final Time startTime, final LaneData lane)
     {
-        this(startTime, Length.ZERO, laneDirection == null ? null : laneDirection.getLaneData().getLength(), laneDirection);
+        this(startTime, Length.ZERO, lane == null ? null : lane.getLength(), lane);
     }
 
     /**
      * @param startTime Time; start time of trajectory group
      * @param startPosition Length; start position
      * @param endPosition Length; end position
-     * @param lane KpiLane; the lane
+     * @param lane LaneData; the lane
      */
     public TrajectoryGroup(final Time startTime, final Length startPosition, final Length endPosition,
-            final KpiLane lane)
+            final LaneData lane)
     {
         Throw.whenNull(startTime, "Start time may not be null.");
         // keep before position check; prevents "End position may not be null" due to missing direction in other constructor
@@ -182,7 +183,7 @@ public class TrajectoryGroup<G extends GtuDataInterface> implements Iterable<Tra
      * Returns the lane.
      * @return lane
      */
-    public final KpiLane getKpiLane()
+    public final LaneData getLane()
     {
         return this.lane;
     }

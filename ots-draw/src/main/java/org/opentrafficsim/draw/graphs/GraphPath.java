@@ -13,7 +13,7 @@ import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
 import org.opentrafficsim.base.WeightedMeanAndSum;
-import org.opentrafficsim.kpi.sampling.KpiLane;
+import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;
 
@@ -202,16 +202,16 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
     /**
      * Start recording along path.
      * @param sampler Sampler&lt;?&gt;; sampler
-     * @param path GraphPath&lt;KpiLaneDirection&gt;; path
+     * @param path GraphPath&lt;LaneData&gt;; path
      */
-    public static void initRecording(final Sampler<?> sampler, final GraphPath<KpiLane> path)
+    public static void initRecording(final Sampler<?> sampler, final GraphPath<LaneData> path)
     {
-        for (Section<KpiLane> section : path.getSections())
+        for (Section<LaneData> section : path.getSections())
         {
-            for (KpiLane kpiLaneDirection : section)
+            for (LaneData kpiLaneDirection : section)
             {
                 sampler.registerSpaceTimeRegion(new SpaceTimeRegion(kpiLaneDirection, Length.ZERO,
-                        kpiLaneDirection.getLaneData().getLength(), Time.ZERO, Time.instantiateSI(Double.MAX_VALUE)));
+                        kpiLaneDirection.getLength(), Time.ZERO, Time.instantiateSI(Double.MAX_VALUE)));
             }
         }
     }

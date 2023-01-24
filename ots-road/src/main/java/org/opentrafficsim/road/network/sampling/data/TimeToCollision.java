@@ -14,7 +14,7 @@ import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeDuration;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
-import org.opentrafficsim.road.network.sampling.GtuData;
+import org.opentrafficsim.road.network.sampling.GtuDataRoad;
 
 /**
  * Time-to-collision for trajectories.
@@ -26,7 +26,7 @@ import org.opentrafficsim.road.network.sampling.GtuData;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class TimeToCollision extends ExtendedDataTypeDuration<GtuData>
+public class TimeToCollision extends ExtendedDataTypeDuration<GtuDataRoad>
 {
 
     /**
@@ -34,12 +34,12 @@ public class TimeToCollision extends ExtendedDataTypeDuration<GtuData>
      */
     public TimeToCollision()
     {
-        super("timeToCollision");
+        super("timeToCollision", "Time to collision");
     }
 
     /** {@inheritDoc} */
     @Override
-    public final FloatDuration getValue(final GtuData gtu)
+    public final FloatDuration getValue(final GtuDataRoad gtu)
     {
         LaneBasedGtu gtuObj = gtu.getGtu();
         try

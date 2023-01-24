@@ -1,10 +1,15 @@
 package org.opentrafficsim.road.network.sampling;
 
-import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.kpi.interfaces.RouteDataInterface;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.kpi.interfaces.LinkData;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.Lane;
 
 /**
- * Route representation in road sampler.
+ * Link representation in road sampler.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -13,33 +18,52 @@ import org.opentrafficsim.kpi.interfaces.RouteDataInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class RouteData implements RouteDataInterface
+public class LinkDataRoad implements LinkData
 {
 
-    /** Route. */
-    private final Route route;
+    /** Wrapped link. */
+    private final CrossSectionLink link;
 
     /**
-     * @param route Route; route
+     * @param link CrossSectionLink; wrapped link
      */
-    public RouteData(final Route route)
+    public LinkDataRoad(final CrossSectionLink link)
     {
-        this.route = route;
+        this.link = link;
     }
 
     /**
-     * @return route.
+     * @return link.
      */
-    public final Route getRoute()
+    public final CrossSectionLink getLink()
     {
-        return this.route;
+        return this.link;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final List<LaneDataRoad> getLaneDatas()
+    {
+        List<LaneDataRoad> lanes = new ArrayList<>();
+        for (Lane lane : this.link.getLanes())
+        {
+            lanes.add(new LaneDataRoad(lane));
+        }
+        return lanes;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Length getLength()
+    {
+        return this.link.getLength();
     }
 
     /** {@inheritDoc} */
     @Override
     public final String getId()
     {
-        return this.route.getId();
+        return this.link.getId();
     }
 
     /** {@inheritDoc} */
@@ -48,7 +72,7 @@ public class RouteData implements RouteDataInterface
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.route == null) ? 0 : this.route.hashCode());
+        result = prime * result + ((this.link == null) ? 0 : this.link.hashCode());
         return result;
     }
 
@@ -68,15 +92,15 @@ public class RouteData implements RouteDataInterface
         {
             return false;
         }
-        RouteData other = (RouteData) obj;
-        if (this.route == null)
+        LinkDataRoad other = (LinkDataRoad) obj;
+        if (this.link == null)
         {
-            if (other.route != null)
+            if (other.link != null)
             {
                 return false;
             }
         }
-        else if (!this.route.equals(other.route))
+        else if (!this.link.equals(other.link))
         {
             return false;
         }
@@ -87,7 +111,7 @@ public class RouteData implements RouteDataInterface
     @Override
     public final String toString()
     {
-        return "RouteData [route=" + this.route + "]";
+        return "LinkData [link=" + this.link + "]";
     }
 
 }

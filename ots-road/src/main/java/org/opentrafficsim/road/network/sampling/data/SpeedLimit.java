@@ -7,7 +7,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeSpeed;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.network.sampling.GtuData;
+import org.opentrafficsim.road.network.sampling.GtuDataRoad;
 
 /**
  * Speed limit for trajectories.
@@ -19,7 +19,7 @@ import org.opentrafficsim.road.network.sampling.GtuData;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class SpeedLimit extends ExtendedDataTypeSpeed<GtuData>
+public class SpeedLimit extends ExtendedDataTypeSpeed<GtuDataRoad>
 {
 
     /**
@@ -27,12 +27,12 @@ public class SpeedLimit extends ExtendedDataTypeSpeed<GtuData>
      */
     public SpeedLimit()
     {
-        super("SpeedLimit");
+        super("speedLimit", "Speed limit");
     }
 
     /** {@inheritDoc} */
     @Override
-    public final FloatSpeed getValue(final GtuData gtu)
+    public final FloatSpeed getValue(final GtuDataRoad gtu)
     {
         Throw.whenNull(gtu, "GTU may not be null.");
         LaneBasedGtu laneGtu = gtu.getGtu();

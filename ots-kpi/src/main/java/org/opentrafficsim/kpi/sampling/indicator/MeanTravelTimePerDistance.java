@@ -5,7 +5,7 @@ import java.util.List;
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
+import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 
@@ -35,7 +35,7 @@ public class MeanTravelTimePerDistance extends AbstractIndicator<Duration>
 
     /** {@inheritDoc} */
     @Override
-    protected <G extends GtuDataInterface> Duration calculate(final Query<G> query, final Time startTime, final Time endTime,
+    protected <G extends GtuData> Duration calculate(final Query<G> query, final Time startTime, final Time endTime,
             final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         return new Duration(1.0 / this.meanSpeed.getValue(query, startTime, endTime, trajectoryGroups).si, DurationUnit.SI);

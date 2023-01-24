@@ -25,8 +25,8 @@ import org.opentrafficsim.core.egtf.Filter;
 import org.opentrafficsim.core.egtf.Quantity;
 import org.opentrafficsim.core.egtf.typed.TypedQuantity;
 import org.opentrafficsim.draw.graphs.GraphPath.Section;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
-import org.opentrafficsim.kpi.sampling.KpiLane;
+import org.opentrafficsim.kpi.interfaces.GtuData;
+import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.SamplerData;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.Trajectory.SpaceTimeView;
@@ -46,7 +46,7 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <G> gtu type data
  */
-public class ContourDataSource<G extends GtuDataInterface>
+public class ContourDataSource<G extends GtuData>
 {
 
     // *************************
@@ -107,7 +107,7 @@ public class ContourDataSource<G extends GtuDataInterface>
     private final Duration delay;
 
     /** Path. */
-    private final GraphPath<KpiLane> path;
+    private final GraphPath<LaneData> path;
 
     /** Space axis. */
     final Axis spaceAxis;
@@ -194,9 +194,9 @@ public class ContourDataSource<G extends GtuDataInterface>
     /**
      * Constructor using default granularities.
      * @param samplerData SamplerData&lt;G&gt;; sampler data
-     * @param path GraphPath&lt;KpiLaneDirection&gt;; path
+     * @param path GraphPath&lt;LaneData&gt;; path
      */
-    public ContourDataSource(final SamplerData<G> samplerData, final GraphPath<KpiLane> path)
+    public ContourDataSource(final SamplerData<G> samplerData, final GraphPath<LaneData> path)
     {
         this(samplerData, Duration.instantiateSI(1.0), path, DEFAULT_SPACE_GRANULARITIES, DEFAULT_SPACE_GRANULARITY_INDEX,
                 DEFAULT_TIME_GRANULARITIES, DEFAULT_TIME_GRANULARITY_INDEX, DEFAULT_LOWER_TIME_BOUND,
@@ -207,7 +207,7 @@ public class ContourDataSource<G extends GtuDataInterface>
      * Constructor for non-default input.
      * @param samplerData SamplerData&lt;G&gt;; sampler data
      * @param delay Duration; delay so critical future events have occurred, e.g. GTU's next move's to extend trajectories
-     * @param path GraphPath&lt;KpiLaneDirection&gt;; path
+     * @param path GraphPath&lt;LaneData&gt;; path
      * @param spaceGranularity double[]; granularity options for space dimension
      * @param initSpaceIndex int; initial selected space granularity
      * @param timeGranularity double[]; granularity options for time dimension
@@ -216,7 +216,7 @@ public class ContourDataSource<G extends GtuDataInterface>
      * @param initialEnd Time; initial end time of plots, will be expanded if simulation time exceeds it
      */
     @SuppressWarnings("parameternumber")
-    public ContourDataSource(final SamplerData<G> samplerData, final Duration delay, final GraphPath<KpiLane> path,
+    public ContourDataSource(final SamplerData<G> samplerData, final Duration delay, final GraphPath<LaneData> path,
             final double[] spaceGranularity, final int initSpaceIndex, final double[] timeGranularity, final int initTimeIndex,
             final Time start, final Time initialEnd)
     {
@@ -270,9 +270,9 @@ public class ContourDataSource<G extends GtuDataInterface>
 
     /**
      * Returns the path for an {@code AbstractContourPlot} using this {@code ContourDataSource}.
-     * @return GraphPath&lt;KpiLaneDirection&gt;; the path
+     * @return GraphPath&lt;LaneData&gt;; the path
      */
-    final GraphPath<KpiLane> getPath()
+    final GraphPath<LaneData> getPath()
     {
         return this.path;
     }
@@ -695,7 +695,7 @@ public class ContourDataSource<G extends GtuDataInterface>
                 {
                     // obtain trajectories
                     List<TrajectoryGroup<?>> trajectories = new ArrayList<>();
-                    for (Section<KpiLane> section : getPath().getSections())
+                    for (Section<LaneData> section : getPath().getSections())
                     {
                         TrajectoryGroup<?> trajectoryGroup = this.samplerData.getTrajectoryGroup(section.getSource(series));
                         if (null == trajectoryGroup)
@@ -712,17 +712,16 @@ public class ContourDataSource<G extends GtuDataInterface>
                     for (int k = 0; k < trajectories.size(); k++)
                     {
                         TrajectoryGroup<?> trajectoryGroup = trajectories.get(k);
-                        KpiLane lane = trajectoryGroup.getKpiLane();
+                        LaneData lane = trajectoryGroup.getLane();
                         Length startDistance = this.path.getStartDistance(this.path.get(k));
                         if (startDistance.si + this.path.get(k).getLength().si > spaceTicks[i]
                                 && startDistance.si < spaceTicks[i + 1])
                         {
                             included.add(trajectoryGroup);
-                            double scale = this.path.get(k).getLength().si / lane.getLaneData().getLength().si;
+                            double scale = this.path.get(k).getLength().si / lane.getLength().si;
                             // divide by scale, so we go from base length to section length
                             xStart.add(Length.max(xFrom.minus(startDistance).divide(scale), Length.ZERO));
-                            xEnd.add(Length.min(xTo.minus(startDistance).divide(scale),
-                                    trajectoryGroup.getKpiLane().getLaneData().getLength()));
+                            xEnd.add(Length.min(xTo.minus(startDistance).divide(scale), trajectoryGroup.getLane().getLength()));
                         }
                     }
 

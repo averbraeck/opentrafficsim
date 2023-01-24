@@ -6,7 +6,7 @@ import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeString;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.network.sampling.GtuData;
+import org.opentrafficsim.road.network.sampling.GtuDataRoad;
 
 /**
  * Leader id in trajectory information.
@@ -18,7 +18,7 @@ import org.opentrafficsim.road.network.sampling.GtuData;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LeaderId extends ExtendedDataTypeString<GtuData>
+public class LeaderId extends ExtendedDataTypeString<GtuDataRoad>
 {
 
     /**
@@ -26,12 +26,12 @@ public class LeaderId extends ExtendedDataTypeString<GtuData>
      */
     public LeaderId()
     {
-        super("leaderId");
+        super("leaderId", "Id of the leading GTU");
     }
 
     /** {@inheritDoc} */
     @Override
-    public String getValue(final GtuData gtu)
+    public String getValue(final GtuDataRoad gtu)
     {
         NeighborsPerception neigbors =
                 gtu.getGtu().getTacticalPlanner().getPerception().getPerceptionCategoryOrNull(NeighborsPerception.class);

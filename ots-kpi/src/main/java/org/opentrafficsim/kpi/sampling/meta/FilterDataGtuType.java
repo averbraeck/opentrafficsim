@@ -1,8 +1,7 @@
 package org.opentrafficsim.kpi.sampling.meta;
 
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
-import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
+import org.opentrafficsim.kpi.interfaces.GtuData;
 
 /**
  * Accepts trajectories with a GtuType included in a set in a query.
@@ -14,7 +13,7 @@ import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class FilterDataGtuType extends FilterDataType<GtuTypeDataInterface>
+public class FilterDataGtuType extends FilterDataType<String>
 {
 
     /**
@@ -22,22 +21,15 @@ public class FilterDataGtuType extends FilterDataType<GtuTypeDataInterface>
      */
     public FilterDataGtuType()
     {
-        super("gtuType");
+        super("gtuType", "GTU type id");
     }
 
     /** {@inheritDoc} */
     @Override
-    public final GtuTypeDataInterface getValue(final GtuDataInterface gtu)
+    public final String getValue(final GtuData gtu)
     {
         Throw.whenNull(gtu, "GTU may not be null.");
-        return gtu.getGtuTypeData();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String formatValue(final String format, final GtuTypeDataInterface value)
-    {
-        return value.getId();
+        return gtu.getGtuId();
     }
 
     /** {@inheritDoc} */

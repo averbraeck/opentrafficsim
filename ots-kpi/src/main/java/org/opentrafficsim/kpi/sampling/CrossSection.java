@@ -7,8 +7,8 @@ import java.util.Set;
 
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableIterator;
-import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
-import org.opentrafficsim.kpi.interfaces.LinkDataInterface;
+import org.opentrafficsim.kpi.interfaces.LaneData;
+import org.opentrafficsim.kpi.interfaces.LinkData;
 
 /**
  * A cross sections contains locations on lanes that together make up a cross section. It is not required that this is on a
@@ -28,13 +28,13 @@ public class CrossSection implements Serializable
     private static final long serialVersionUID = 20160929L;
 
     /** Set of lane locations. */
-    private final Set<KpiLanePosition> lanePositions;
+    private final Set<LanePosition> lanePositions;
 
     /**
      * Constructor with set of lane positions.
      * @param lanePositions Set&lt;KpiDirectedLanePosition&gt;; set of lane locations
      */
-    public CrossSection(final Set<KpiLanePosition> lanePositions)
+    public CrossSection(final Set<LanePosition> lanePositions)
     {
         Throw.whenNull(lanePositions, "Lane positions may not be null.");
         this.lanePositions = new LinkedHashSet<>(lanePositions);
@@ -42,22 +42,23 @@ public class CrossSection implements Serializable
 
     /**
      * Constructor with link and fraction.
-     * @param link LinkDataInterface; link
+     * @param link LinkData; link
      * @param fraction double; fraction on link
      * @throws SamplingException if an input is null
      */
-    public CrossSection(final LinkDataInterface link, final double fraction) throws SamplingException
+    public CrossSection(final LinkData link, final double fraction) throws SamplingException
     {
         Throw.whenNull(link, "Link lane positions may not be null.");
         this.lanePositions = new LinkedHashSet<>();
-        for (LaneDataInterface lane : link.getLaneDatas())
+        for (LaneData lane : link.getLaneDatas())
         {
-            KpiLanePosition lanePosition = new KpiLanePosition(lane, lane.getLength().times(fraction));
+            LanePosition lanePosition = new LanePosition(lane, lane.getLength().times(fraction));
             this.lanePositions.add(lanePosition);
         }
     }
 
     /**
+     * Returns the number of lane positions.
      * @return number of directed lane positions
      */
     public final int size()
@@ -66,17 +67,19 @@ public class CrossSection implements Serializable
     }
 
     /**
+     * Returns a safe copy of the lane positions.
      * @return safe copy of lane positions
      */
-    public final Set<KpiLanePosition> getLanePositions()
+    public final Set<LanePosition> getLanePositions()
     {
         return new LinkedHashSet<>(this.lanePositions);
     }
 
     /**
+     * Returns an iterator over the lane positions.
      * @return iterator over lane positions
      */
-    public final Iterator<KpiLanePosition> getIterator()
+    public final Iterator<LanePosition> getIterator()
     {
         return new ImmutableIterator<>(this.lanePositions.iterator());
     }

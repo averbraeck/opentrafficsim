@@ -3,6 +3,7 @@ package org.opentrafficsim.kpi.sampling;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.kpi.interfaces.LaneData;
 
 /**
  * <p>
@@ -16,8 +17,8 @@ import org.djutils.exceptions.Throw;
 public class SpaceTimeRegion
 {
 
-    /** Lane direction. */
-    private final KpiLane laneDirection;
+    /** Lane. */
+    private final LaneData laneDirection;
 
     /** Start position. */
     private final Length startPosition;
@@ -32,14 +33,14 @@ public class SpaceTimeRegion
     private final Time endTime;
 
     /**
-     * @param laneDirection KpiLaneDirection; lane direction
+     * @param lane LaneData; lane
      * @param startPosition Length; start position
      * @param endPosition Length; end position
      * @param startTime Time; start time
      * @param endTime Time; end time
      * @throws IllegalArgumentException if start time is larger than end time
      */
-    public SpaceTimeRegion(final KpiLane laneDirection, final Length startPosition, final Length endPosition,
+    public SpaceTimeRegion(final LaneData lane, final Length startPosition, final Length endPosition,
             final Time startTime, final Time endTime)
     {
         Throw.whenNull(startPosition, "Start position may not be null.");
@@ -49,7 +50,7 @@ public class SpaceTimeRegion
         Throw.when(endPosition.lt(startPosition), IllegalArgumentException.class,
                 "End position should be greater than start position.");
         Throw.when(endTime.lt(startTime), IllegalArgumentException.class, "End time should be greater than start time.");
-        this.laneDirection = laneDirection;
+        this.laneDirection = lane;
         this.startPosition = startPosition;
         this.endPosition = endPosition;
         this.startTime = startTime;
@@ -59,7 +60,7 @@ public class SpaceTimeRegion
     /**
      * @return laneDirection.
      */
-    public final KpiLane getLaneDirection()
+    public final LaneData getLaneDirection()
     {
         return this.laneDirection;
     }

@@ -20,11 +20,11 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.draw.graphs.GraphCrossSection;
 import org.opentrafficsim.draw.graphs.GraphPath;
 import org.opentrafficsim.draw.graphs.GraphPath.Section;
-import org.opentrafficsim.kpi.sampling.KpiLane;
+import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
-import org.opentrafficsim.road.network.sampling.LaneData;
+import org.opentrafficsim.road.network.sampling.LaneDataRoad;
 
 /**
  * Utilities to create {@code GraphPath}s and {@code GraphCrossSection}s for graphs, based on lanes.
@@ -51,28 +51,28 @@ public final class GraphLaneUtil
      * Creates a path starting at the provided lane and moving downstream until a dead-end, split, or loop.
      * @param name String; path name
      * @param first LaneDirection; first lane
-     * @return GraphPath&lt;KpiLaneDirection&gt; path
+     * @return GraphPath&lt;LaneData&gt; path
      * @throws NetworkException when the lane does not have any set speed limit
      */
-    public static GraphPath<KpiLane> createPath(final String name, final Lane first) throws NetworkException
+    public static GraphPath<LaneData> createPath(final String name, final Lane first) throws NetworkException
     {
         Throw.whenNull(name, "Name may not be null.");
         Throw.whenNull(first, "First may not be null.");
-        List<Section<KpiLane>> sections = new ArrayList<>();
+        List<Section<LaneData>> sections = new ArrayList<>();
         Set<Lane> set = new LinkedHashSet<>();
         Lane lane = first;
         while (lane != null && !set.contains(lane))
         {
-            KpiLane kpiLaneDirection = new KpiLane(new LaneData(lane));
-            List<KpiLane> list = new ArrayList<>();
+            LaneData kpiLaneDirection = new LaneDataRoad(lane);
+            List<LaneData> list = new ArrayList<>();
             list.add(kpiLaneDirection);
             Speed speed = lane.getLowestSpeedLimit();
             Length length = lane.getLength();
-            sections.add(new Section<KpiLane>()
+            sections.add(new Section<LaneData>()
             {
                 /** {@inheritDoc} */
                 @Override
-                public Iterator<KpiLane> iterator()
+                public Iterator<LaneData> iterator()
                 {
                     return list.iterator();
                 }
@@ -93,7 +93,7 @@ public final class GraphLaneUtil
 
                 /** {@inheritDoc} */
                 @Override
-                public KpiLane getSource(final int series)
+                public LaneData getSource(final int series)
                 {
                     return kpiLaneDirection;
                 }
@@ -121,20 +121,21 @@ public final class GraphLaneUtil
      * lanes) and there's a unique link all lanes have downstream. The length and speed limit are taken from the first lane.
      * @param names List&lt;String&gt;; lane names
      * @param first List&lt;LaneDirection&gt;; first lanes
-     * @return GraphPath&lt;KpiLaneDirection&gt; path
+     * @return GraphPath&lt;LaneData&gt; path
      * @throws NetworkException when a lane does not have any set speed limit
      */
-    public static GraphPath<KpiLane> createPath(final List<String> names, final List<Lane> first) throws NetworkException
+    public static GraphPath<LaneData> createPath(final List<String> names, final List<Lane> first)
+            throws NetworkException
     {
         Throw.whenNull(names, "Names may not be null.");
         Throw.whenNull(first, "First may not be null.");
         Throw.when(names.size() != first.size(), IllegalArgumentException.class, "Size of 'names' and 'first' must be equal.");
-        List<Section<KpiLane>> sections = new ArrayList<>();
+        List<Section<LaneData>> sections = new ArrayList<>();
         Set<Lane> set = new LinkedHashSet<>();
         List<Lane> lanes = first;
         while (lanes != null && Collections.disjoint(set, lanes))
         {
-            List<KpiLane> list = new ArrayList<>();
+            List<LaneData> list = new ArrayList<>();
             Speed speed = null;
             for (Lane lane : lanes)
             {
@@ -144,7 +145,7 @@ public final class GraphLaneUtil
                     continue;
                 }
                 speed = speed == null ? lane.getLowestSpeedLimit() : Speed.min(speed, lane.getLowestSpeedLimit());
-                KpiLane kpiLaneDirection = new KpiLane(new LaneData(lane));
+                LaneData kpiLaneDirection = new LaneDataRoad(lane);
                 list.add(kpiLaneDirection);
             }
             Speed finalSpeed = speed;
@@ -158,11 +159,11 @@ public final class GraphLaneUtil
                 }
             }
             Length length = firstNextLane.getLength();
-            sections.add(new Section<KpiLane>()
+            sections.add(new Section<LaneData>()
             {
                 /** {@inheritDoc} */
                 @Override
-                public Iterator<KpiLane> iterator()
+                public Iterator<LaneData> iterator()
                 {
                     return list.iterator();
                 }
@@ -183,7 +184,7 @@ public final class GraphLaneUtil
 
                 /** {@inheritDoc} */
                 @Override
-                public KpiLane getSource(final int series)
+                public LaneData getSource(final int series)
                 {
                     return list.get(series);
                 }
@@ -255,21 +256,21 @@ public final class GraphLaneUtil
      * Creates a single-lane path.
      * @param name String; name
      * @param lane LaneDirection; lane
-     * @return GraphPath&lt;KpiLaneDirection&gt; path
+     * @return GraphPath&lt;LaneData&gt; path
      * @throws NetworkException when a lane does not have any set speed limit
      */
-    public static GraphPath<KpiLane> createSingleLanePath(final String name, final Lane lane) throws NetworkException
+    public static GraphPath<LaneData> createSingleLanePath(final String name, final Lane lane) throws NetworkException
     {
-        List<KpiLane> lanes = new ArrayList<>();
-        lanes.add(new KpiLane(new LaneData(lane)));
-        List<Section<KpiLane>> sections = new ArrayList<>();
+        List<LaneData> lanes = new ArrayList<>();
+        lanes.add(new LaneDataRoad(lane));
+        List<Section<LaneData>> sections = new ArrayList<>();
         Speed speed = lane.getLowestSpeedLimit();
-        sections.add(new Section<KpiLane>()
+        sections.add(new Section<LaneData>()
         {
 
             /** {@inheritDoc} */
             @Override
-            public Iterator<KpiLane> iterator()
+            public Iterator<LaneData> iterator()
             {
                 return lanes.iterator();
             }
@@ -290,7 +291,7 @@ public final class GraphLaneUtil
 
             /** {@inheritDoc} */
             @Override
-            public KpiLane getSource(final int series)
+            public LaneData getSource(final int series)
             {
                 return lanes.get(0);
             }
@@ -303,20 +304,20 @@ public final class GraphLaneUtil
      * Creates a cross section at the provided lane and position.
      * @param name String; name
      * @param lanePosition DirectedLanePosition; lane position
-     * @return GraphCrossSection&lt;KpiLaneDirection&gt; cross section
+     * @return GraphCrossSection&lt;LaneData&gt; cross section
      * @throws NetworkException when the lane does not have any set speed limit
      */
-    public static GraphCrossSection<KpiLane> createCrossSection(final String name, final LanePosition lanePosition)
+    public static GraphCrossSection<LaneData> createCrossSection(final String name, final LanePosition lanePosition)
             throws NetworkException
     {
         Throw.whenNull(name, "Name may not be null.");
         Throw.whenNull(lanePosition, "Lane position may not be null.");
-        List<KpiLane> list = new ArrayList<>();
+        List<LaneData> list = new ArrayList<>();
         List<String> names = new ArrayList<>();
         List<Length> positions = new ArrayList<>();
         names.add(name);
         positions.add(lanePosition.getPosition());
-        list.add(new KpiLane(new LaneData(lanePosition.getLane())));
+        list.add(new LaneDataRoad(lanePosition.getLane()));
         Speed speed = lanePosition.getLane().getLowestSpeedLimit();
         return createCrossSection(names, list, positions, speed);
     }
@@ -325,11 +326,11 @@ public final class GraphLaneUtil
      * Creates a cross section at the provided link and position.
      * @param names List&lt;String&gt;; lane names
      * @param linkPosition DirectedLinkPosition; link position
-     * @return GraphCrossSection&lt;KpiLaneDirection&gt; cross section
+     * @return GraphCrossSection&lt;LaneData&gt; cross section
      * @throws NetworkException when a lane does not have any set speed limit
      */
-    public static GraphCrossSection<KpiLane> createCrossSection(final List<String> names, final LinkPosition linkPosition)
-            throws NetworkException
+    public static GraphCrossSection<LaneData> createCrossSection(final List<String> names,
+            final LinkPosition linkPosition) throws NetworkException
     {
         Throw.whenNull(names, "Names may not be null.");
         Throw.whenNull(linkPosition, "Link position may not be null.");
@@ -348,13 +349,13 @@ public final class GraphLaneUtil
             }
 
         });
-        List<KpiLane> list = new ArrayList<>();
+        List<LaneData> list = new ArrayList<>();
         List<Length> positions = new ArrayList<>();
         Speed speed = null;
         for (Lane lane : lanes)
         {
             speed = speed == null ? lane.getLowestSpeedLimit() : Speed.min(speed, lane.getLowestSpeedLimit());
-            list.add(new KpiLane(new LaneData(lane)));
+            list.add(new LaneDataRoad(lane));
             positions.add(lane.getLength().times(linkPosition.getFractionalLongitudinalPosition()));
         }
         return createCrossSection(names, list, positions, speed);
@@ -363,19 +364,19 @@ public final class GraphLaneUtil
     /**
      * Creates a cross section.
      * @param names List&lt;String&gt;;; names
-     * @param lanes List&lt;KpiLaneDirection&gt;;; lanes
+     * @param lanes List&lt;LaneData&gt;;; lanes
      * @param positions List&lt;Length&gt;; positions
      * @param speed Speed; speed
-     * @return GraphCrossSection&lt;KpiLaneDirection&gt;; cross section
+     * @return GraphCrossSection&lt;LaneData&gt;; cross section
      */
-    public static GraphCrossSection<KpiLane> createCrossSection(final List<String> names, final List<KpiLane> lanes,
-            final List<Length> positions, final Speed speed)
+    public static GraphCrossSection<LaneData> createCrossSection(final List<String> names,
+            final List<LaneData> lanes, final List<Length> positions, final Speed speed)
     {
-        Section<KpiLane> section = new Section<KpiLane>()
+        Section<LaneData> section = new Section<LaneData>()
         {
             /** {@inheritDoc} */
             @Override
-            public Iterator<KpiLane> iterator()
+            public Iterator<LaneData> iterator()
             {
                 return lanes.iterator();
             }
@@ -384,7 +385,7 @@ public final class GraphLaneUtil
             @Override
             public Length getLength()
             {
-                return lanes.get(0).getLaneData().getLength();
+                return lanes.get(0).getLength();
             }
 
             /** {@inheritDoc} */
@@ -396,7 +397,7 @@ public final class GraphLaneUtil
 
             /** {@inheritDoc} */
             @Override
-            public KpiLane getSource(final int series)
+            public LaneData getSource(final int series)
             {
                 return lanes.get(series);
             }

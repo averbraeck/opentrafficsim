@@ -6,7 +6,7 @@ import org.djunits.value.storage.StorageType;
 import org.djunits.value.vfloat.scalar.FloatSpeed;
 import org.djunits.value.vfloat.vector.FloatSpeedVector;
 import org.djunits.value.vfloat.vector.base.FloatVector;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
+import org.opentrafficsim.kpi.interfaces.GtuData;
 
 /**
  * Extended data type for speed values.
@@ -19,17 +19,18 @@ import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <G> gtu data type
  */
-public abstract class ExtendedDataTypeSpeed<G extends GtuDataInterface>
+public abstract class ExtendedDataTypeSpeed<G extends GtuData>
         extends ExtendedDataTypeFloat<SpeedUnit, FloatSpeed, FloatSpeedVector, G>
 {
 
     /**
      * Constructor setting the id.
      * @param id String; id
+     * @param description String; description
      */
-    public ExtendedDataTypeSpeed(final String id)
+    public ExtendedDataTypeSpeed(final String id, final String description)
     {
-        super(id, FloatSpeed.class);
+        super(id, description, FloatSpeed.class);
     }
 
     /** {@inheritDoc} */

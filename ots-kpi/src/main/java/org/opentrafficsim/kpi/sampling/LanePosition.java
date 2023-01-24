@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
+import org.opentrafficsim.kpi.interfaces.LaneData;
 
 /**
  * Store one position and lane of a GTU.
@@ -15,23 +15,23 @@ import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class KpiLanePosition implements Serializable
+public class LanePosition implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20151111L;
 
     /** The lane for the position. */
-    private final LaneDataInterface lane;
+    private final LaneData lane;
 
     /** The position on the lane, relative to the cross section link (design line). */
     private final Length position;
 
     /**
      * Construct a new KpiLanePosition.
-     * @param lane LaneDataInterface; the lane for the position
+     * @param lane LaneData; the lane for the position
      * @param position Length; the position on the lane, relative to the cross section link (design line)
      */
-    public KpiLanePosition(final LaneDataInterface lane, final Length position)
+    public LanePosition(final LaneData lane, final Length position)
     {
         Throw.whenNull(lane, "lane is null");
         Throw.whenNull(position, "position is null");
@@ -41,9 +41,9 @@ public class KpiLanePosition implements Serializable
 
     /**
      * Retrieve the lane.
-     * @return LaneDataInterface; the lane for the position
+     * @return LaneData; the lane for the position
      */
-    public final LaneDataInterface getLaneData()
+    public final LaneData getLaneData()
     {
         return this.lane;
     }
@@ -79,7 +79,7 @@ public class KpiLanePosition implements Serializable
             return false;
         if (getClass() != obj.getClass())
             return false;
-        KpiLanePosition other = (KpiLanePosition) obj;
+        LanePosition other = (LanePosition) obj;
         if (this.lane == null)
         {
             if (other.lane != null)

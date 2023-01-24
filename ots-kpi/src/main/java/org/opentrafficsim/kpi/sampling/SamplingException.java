@@ -18,13 +18,14 @@ public class SamplingException extends Exception
     private static final long serialVersionUID = 20160929L;
 
     /**
-     * 
+     * Constructor.
      */
     public SamplingException()
     {
     }
 
     /**
+     * Constructor.
      * @param message String; String
      */
     public SamplingException(final String message)
@@ -33,6 +34,7 @@ public class SamplingException extends Exception
     }
 
     /**
+     * Constructor.
      * @param cause Throwable; Throwable
      */
     public SamplingException(final Throwable cause)
@@ -41,6 +43,7 @@ public class SamplingException extends Exception
     }
 
     /**
+     * Constructor.
      * @param message String; String
      * @param cause Throwable; Throwable
      */
@@ -50,6 +53,7 @@ public class SamplingException extends Exception
     }
 
     /**
+     * Constructor.
      * @param message String; description of the problem
      * @param cause Throwable; the cause of this Exception
      * @param enableSuppression boolean; whether or not suppression is enabled or disabled

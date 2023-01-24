@@ -31,7 +31,7 @@ import org.opentrafficsim.draw.graphs.GraphCrossSection;
 import org.opentrafficsim.draw.graphs.GraphPath;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
-import org.opentrafficsim.kpi.sampling.KpiLane;
+import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
@@ -293,9 +293,9 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
      */
     protected final void addStatisticsTabs(final OtsSimulatorInterface simulator)
     {
-        GraphPath<KpiLane> path01;
-        GraphPath<KpiLane> path0;
-        GraphPath<KpiLane> path1;
+        GraphPath<LaneData> path01;
+        GraphPath<LaneData> path0;
+        GraphPath<LaneData> path1;
         try
         {
             List<String> names = new ArrayList<>();
@@ -321,7 +321,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
         Duration updateInterval = Duration.instantiateSI(10.0);
 
         SwingPlot plot = null;
-        GraphPath<KpiLane> path = null;
+        GraphPath<LaneData> path = null;
         ContourDataSource<?> dataPool = null;
 
         TablePanel trajectoryChart = new TablePanel(2, 2);
@@ -329,7 +329,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
                 new TrajectoryPlot("Trajectory all lanes", updateInterval, simulator, sampler.getSamplerData(), path01));
         trajectoryChart.setCell(plot.getContentPane(), 0, 0);
 
-        List<KpiLane> lanes = new ArrayList<>();
+        List<LaneData> lanes = new ArrayList<>();
         List<Length> positions = new ArrayList<>();
         lanes.add(path01.get(0).getSource(0));
         lanes.add(path1.get(0).getSource(0));
@@ -339,7 +339,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
         names.add("Left lane");
         names.add("Right lane");
         LinkPosition linkPosition = new LinkPosition(getModel().getPath(0).get(0).getParentLink(), 0.0);
-        GraphCrossSection<KpiLane> crossSection;
+        GraphCrossSection<LaneData> crossSection;
         try
         {
             crossSection = GraphLaneUtil.createCrossSection(names, linkPosition);

@@ -3,10 +3,9 @@ package org.opentrafficsim.sim0mq.kpi;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.kpi.sampling.KpiLane;
+import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.Sampler;
 
 /**
@@ -31,25 +30,25 @@ public abstract class Sim0MQSampler extends Sampler
     private Time lastTimestamp = Time.ZERO;
 
     /** The recording start times per KpiLaneDirection. */
-    private final Map<KpiLane, Time> startRecordingMap = new LinkedHashMap<>();
+    private final Map<LaneData, Time> startRecordingMap = new LinkedHashMap<>();
 
     /** The recording stop times per KpiLaneDirection. */
-    private final Map<KpiLane, Time> stopRecordingMap = new LinkedHashMap<>();
+    private final Map<LaneData, Time> stopRecordingMap = new LinkedHashMap<>();
 
     /** the nodes. */
-    protected final Map<String, NodeData> nodes = new LinkedHashMap<>();
+    protected final Map<String, String> nodes = new LinkedHashMap<>();
 
     /** the links. */
-    protected final Map<String, LinkData> links = new LinkedHashMap<>();
+    protected final Map<String, LinkDataSim0> links = new LinkedHashMap<>();
 
     /** the lanes. */
-    protected final Map<String, LaneData> lanes = new LinkedHashMap<>();
+    protected final Map<String, LaneDataSim0> lanes = new LinkedHashMap<>();
 
     /** the gtus. */
-    protected final Map<String, GtuData> gtus = new LinkedHashMap<>();
+    protected final Map<String, GtuDataSim0> gtus = new LinkedHashMap<>();
 
     /** last lane of gtus. */
-    protected final Map<String, KpiLane> lastLanes = new LinkedHashMap<>();
+    protected final Map<String, LaneData> lastLanes = new LinkedHashMap<>();
 
     /** the default gtu type (for now). */
     // protected final GtuTypeData defaultGtuType;

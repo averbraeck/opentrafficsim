@@ -1,7 +1,5 @@
 package org.opentrafficsim.sim0mq.kpi;
 
-import org.opentrafficsim.kpi.interfaces.NodeDataInterface;
-
 import nl.tudelft.simulation.language.d3.CartesianPoint;
 
 /**
@@ -13,7 +11,7 @@ import nl.tudelft.simulation.language.d3.CartesianPoint;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class NodeData implements NodeDataInterface
+public class NodeDataDeprecated // implements NodeDataInterface
 {
 
     /** Node name. */
@@ -26,7 +24,7 @@ public class NodeData implements NodeDataInterface
      * @param nodeName String; name of the node
      * @param position CartesianPoint; position of the node
      */
-    public NodeData(final String nodeName, final CartesianPoint position)
+    public NodeDataDeprecated(final String nodeName, final CartesianPoint position)
     {
         this.nodeName = nodeName;
         this.position = position;
@@ -49,7 +47,7 @@ public class NodeData implements NodeDataInterface
     }
 
     /** {@inheritDoc} */
-    @Override
+    // @Override
     public String getId()
     {
         return this.nodeName;
@@ -67,7 +65,7 @@ public class NodeData implements NodeDataInterface
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
         if (this == obj)
             return true;
@@ -75,7 +73,7 @@ public class NodeData implements NodeDataInterface
             return false;
         if (getClass() != obj.getClass())
             return false;
-        NodeData other = (NodeData) obj;
+        NodeDataDeprecated other = (NodeDataDeprecated) obj;
         if (this.nodeName == null)
         {
             if (other.nodeName != null)

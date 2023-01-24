@@ -6,7 +6,7 @@ import org.djunits.value.storage.StorageType;
 import org.djunits.value.vfloat.scalar.FloatDuration;
 import org.djunits.value.vfloat.vector.FloatDurationVector;
 import org.djunits.value.vfloat.vector.base.FloatVector;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
+import org.opentrafficsim.kpi.interfaces.GtuData;
 
 /**
  * Extended data type for duration values.
@@ -19,17 +19,18 @@ import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <G> gtu data type
  */
-public abstract class ExtendedDataTypeDuration<G extends GtuDataInterface>
+public abstract class ExtendedDataTypeDuration<G extends GtuData>
         extends ExtendedDataTypeFloat<DurationUnit, FloatDuration, FloatDurationVector, G>
 {
 
     /**
      * Constructor setting the id.
      * @param id String; id
+     * @param description String; description
      */
-    public ExtendedDataTypeDuration(final String id)
+    public ExtendedDataTypeDuration(final String id, final String description)
     {
-        super(id, FloatDuration.class);
+        super(id, description, FloatDuration.class);
     }
 
     /** {@inheritDoc} */

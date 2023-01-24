@@ -10,7 +10,8 @@ import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableIterator;
 
 /**
- * Set of trajectories to be accepted or rejected for a query.
+ * Set of trajectories to be accepted or rejected for a query. All the trajectories pertain to one GTU. A {@code Query} may
+ * reject or accept all, or a specific subset, based on the specific needs of different {@code FilterDataType}s.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -29,20 +30,21 @@ public class TrajectoryAcceptList
     private final List<Trajectory<?>> trajectoryList = new ArrayList<>();
 
     /** List of trajectory groups. */
-    private final List<TrajectoryGroup> trajectoryGroupList = new ArrayList<>();
+    private final List<TrajectoryGroup<?>> trajectoryGroupList = new ArrayList<>();
 
     /** Map of trajectory's and acceptance boolean. */
     private final Map<Trajectory<?>, Boolean> trajectoryMap = new LinkedHashMap<>();
 
     /**
-     * Adds a {@code Trajectory} with the {@code TrajectoryGroup} it is from to the accept list.
+     * Adds a {@code Trajectory} with the {@code TrajectoryGroup} it is from to the accept list. By default it is registered to
+     * be not accepted for a query.
      * @param trajectory Trajectory&lt;?&gt;; {@code Trajectory} trajectory
-     * @param trajectoryGroup TrajectoryGroup; {@code TrajectoryGroup} trajectories
+     * @param trajectoryGroup &lt;TrajectoryGroup&gt;; {@code TrajectoryGroup} trajectories
      * @throws IllegalArgumentException if the {@code Trajectory} is not within the {@code TrajectoryGroup}
      * @throws IllegalArgumentException if the {@code Trajectory} belongs to a different GTU than an earlier provided
      *             {@code Trajectory}
      */
-    public final void addTrajectory(final Trajectory<?> trajectory, final TrajectoryGroup trajectoryGroup)
+    public final void addTrajectory(final Trajectory<?> trajectory, final TrajectoryGroup<?> trajectoryGroup)
     {
         Throw.whenNull(trajectory, "Trajectory may not be null.");
         Throw.whenNull(trajectoryGroup, "Trajectory group may not be null.");
@@ -58,6 +60,7 @@ public class TrajectoryAcceptList
     }
 
     /**
+     * Returns the number of trajectories.
      * @return number of trajectories
      */
     public final int size()
@@ -66,6 +69,7 @@ public class TrajectoryAcceptList
     }
 
     /**
+     * Returns trajectory by index.
      * @param i int; number of {@code trajectory} to get
      * @return i'th {@code trajectory}
      * @throws IndexOutOfBoundsException if the index is out of range (<code>index &lt; 0 || index &gt;= size()</code>)
@@ -76,16 +80,18 @@ public class TrajectoryAcceptList
     }
 
     /**
+     * Returns a trajectory group by index.
      * @param i int; number of {@code TrajectoryGroup} to get
      * @return i'th {@code TrajectoryGroup}
      * @throws IndexOutOfBoundsException if the index is out of range (<code>index &lt; 0 || index &gt;= size()</code>)
      */
-    public final TrajectoryGroup getTrajectoryGroup(final int i)
+    public final TrajectoryGroup<?> getTrajectoryGroup(final int i)
     {
         return this.trajectoryGroupList.get(i);
     }
 
     /**
+     * Returns an iterator over the trajectories.
      * @return iterator over {@code trajectory}'s, does not allow removal
      */
     public final Iterator<Trajectory<?>> getTrajectoryIterator()
@@ -94,9 +100,10 @@ public class TrajectoryAcceptList
     }
 
     /**
+     * Returns an iterator over the trajectory groups.
      * @return iterator over {@code TrajectoryGroup}'s, does not allow removal
      */
-    public final Iterator<TrajectoryGroup> getTrajectoryGroupIterator()
+    public final Iterator<TrajectoryGroup<?>> getTrajectoryGroupIterator()
     {
         return new ImmutableIterator<>(this.trajectoryGroupList.iterator());
     }
@@ -157,7 +164,7 @@ public class TrajectoryAcceptList
     }
 
     /**
-     * Returns whether the given trajectory is accepted or not. If this was not determined, it is {@code false} by default.
+     * Returns whether the given trajectory is accepted or not.
      * @param trajectory Trajectory&lt;?&gt;; trajectory
      * @return whether the given trajectory is accepted or not
      * @throws IllegalArgumentException if the trajectory is not part of the trajectory accept list

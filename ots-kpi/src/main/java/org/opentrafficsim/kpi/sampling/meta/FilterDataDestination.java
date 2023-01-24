@@ -1,8 +1,7 @@
 package org.opentrafficsim.kpi.sampling.meta;
 
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
-import org.opentrafficsim.kpi.interfaces.NodeDataInterface;
+import org.opentrafficsim.kpi.interfaces.GtuData;
 
 /**
  * Accepts trajectories with a destination node included in a set in a query.
@@ -14,7 +13,7 @@ import org.opentrafficsim.kpi.interfaces.NodeDataInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class FilterDataDestination extends FilterDataType<NodeDataInterface>
+public class FilterDataDestination extends FilterDataType<String>
 {
 
     /**
@@ -22,22 +21,15 @@ public class FilterDataDestination extends FilterDataType<NodeDataInterface>
      */
     public FilterDataDestination()
     {
-        super("destination");
+        super("destination", "Destination node id");
     }
 
     /** {@inheritDoc} */
     @Override
-    public final NodeDataInterface getValue(final GtuDataInterface gtu)
+    public final String getValue(final GtuData gtu)
     {
         Throw.whenNull(gtu, "GTU may not be null.");
-        return gtu.getDestinationNodeData();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String formatValue(final String format, final NodeDataInterface value)
-    {
-        return value.getId();
+        return gtu.getDestinationId();
     }
 
     /** {@inheritDoc} */

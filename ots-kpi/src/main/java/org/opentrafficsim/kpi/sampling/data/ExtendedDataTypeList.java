@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
+import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 
 /**
@@ -19,17 +19,18 @@ import org.opentrafficsim.kpi.sampling.SamplingException;
  * @param <T> type of value
  * @param <G> gtu data type
  */
-public abstract class ExtendedDataTypeList<T, G extends GtuDataInterface> extends ExtendedDataType<T, List<T>, List<T>, G>
+public abstract class ExtendedDataTypeList<T, G extends GtuData> extends ExtendedDataType<T, List<T>, List<T>, G>
 {
 
     /**
      * Constructor setting the id.
      * @param id String; id
+     * @param description String; description
      * @param type Class&lt;T&gt;; type class
      */
-    public ExtendedDataTypeList(final String id, final Class<T> type)
+    public ExtendedDataTypeList(final String id, final String description, final Class<T> type)
     {
-        super(id, type);
+        super(id, description, type);
     }
 
     /** {@inheritDoc} */

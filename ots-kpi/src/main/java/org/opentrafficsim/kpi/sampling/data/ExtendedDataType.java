@@ -8,7 +8,7 @@ import org.djunits.value.vfloat.scalar.base.FloatScalar;
 import org.djunits.value.vfloat.scalar.base.FloatScalarInterface;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
+import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 
 /**
@@ -28,11 +28,14 @@ import org.opentrafficsim.kpi.sampling.SamplingException;
  * @param <S> storage type
  * @param <G> gtu data type
  */
-public abstract class ExtendedDataType<T, O, S, G extends GtuDataInterface> implements Identifiable
+public abstract class ExtendedDataType<T, O, S, G extends GtuData> implements Identifiable
 {
 
     /** Id. */
     private final String id;
+    
+    /** Description. */
+    private final String description;
 
     /** Type of value. */
     private final Class<T> type;
@@ -40,13 +43,16 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuDataInterface> impl
     /**
      * Constructor setting the id.
      * @param id String; id
+     * @param description String; description
      * @param type Class&lt;T&gt;; type class
      */
-    public ExtendedDataType(final String id, final Class<T> type)
+    public ExtendedDataType(final String id, final String description, final Class<T> type)
     {
         Throw.whenNull(id, "Id may nog be null.");
+        Throw.whenNull(description, "Description may nog be null.");
         Throw.whenNull(type, "Type may not bee null.");
         this.id = id;
+        this.description = description;
         this.type = type;
     }
 
@@ -55,6 +61,15 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuDataInterface> impl
     public final String getId()
     {
         return this.id;
+    }
+    
+    /**
+     * Returns the description.
+     * @return String; description.
+     */
+    public String getDescription()
+    {
+        return this.description;
     }
 
     /**
@@ -113,19 +128,6 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuDataInterface> impl
      * @return converted output
      */
     public abstract O convert(S storage, int size);
-
-    /**
-     * Formats the value into a string. If the value is numeric, the default implementation is:
-     * 
-     * <pre>
-     * String.format(format, value.si);
-     * </pre>
-     * 
-     * @param format String; format
-     * @param value T; value
-     * @return formatted value
-     */
-    public abstract String formatValue(String format, T value);
 
     /**
      * Parses a stored string representation to original type.
@@ -228,6 +230,13 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuDataInterface> impl
             return false;
         }
         return true;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "ExtendedDataType [id=" + this.id + ", description=" + this.description + "]";
     }
 
 }

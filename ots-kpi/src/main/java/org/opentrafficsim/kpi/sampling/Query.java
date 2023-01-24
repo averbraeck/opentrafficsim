@@ -18,15 +18,15 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableIterator;
 import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
-import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
-import org.opentrafficsim.kpi.interfaces.LinkDataInterface;
+import org.opentrafficsim.kpi.interfaces.GtuData;
+import org.opentrafficsim.kpi.interfaces.LaneData;
+import org.opentrafficsim.kpi.interfaces.LinkData;
 import org.opentrafficsim.kpi.sampling.meta.FilterDataSet;
 import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
 
 /**
  * A query defines which subset of trajectory information should be included. This is in terms of space-time regions, and in
- * terms of meta data of trajectories, e.g. only include trajectories of trucks.
+ * terms of filter data of trajectories, e.g. only include trajectories of trucks.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -36,7 +36,7 @@ import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <G> gtu data type
  */
-public final class Query<G extends GtuDataInterface> implements Identifiable
+public final class Query<G extends GtuData> implements Identifiable
 {
     /** unique id. */
     private final String id;
@@ -47,7 +47,7 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
     /** Description. */
     private final String description;
 
-    /** Meta data set. */
+    /** Filter data set. */
     private final FilterDataSet filterDataSet;
 
     /** Update frequency. */
@@ -60,10 +60,11 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
     private final List<SpaceTimeRegion> spaceTimeRegions = new ArrayList<>();
 
     /**
+     * Constructor.
      * @param sampler Sampler&lt;G&gt;; sampler
      * @param id String; id
      * @param description String; description
-     * @param filterDataSet filterDataSet; meta data
+     * @param filterDataSet FilterDataSet; filter data
      * @throws NullPointerException if sampling, description or filterDataSet is null
      */
     public Query(final Sampler<G> sampler, final String id, final String description, final FilterDataSet filterDataSet)
@@ -72,10 +73,11 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
     }
 
     /**
+     * Constructor with time interval.
      * @param sampler Sampler&lt;G&gt;; sampler
      * @param id String; id
      * @param description String; description
-     * @param filterDataSet filterDataSet; meta data
+     * @param filterDataSet FilterDataSet; filter data
      * @param interval Duration; interval to gather statistics over
      * @throws NullPointerException if sampling, description or filterDataSet is null
      */
@@ -86,10 +88,11 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
     }
 
     /**
+     * Constructor with update frequency.
      * @param sampler Sampler&lt;G&gt;; sampler
      * @param id String; id
      * @param description String; description
-     * @param filterDataSet filterDataSet; meta data
+     * @param filterDataSet FilterDataSet; filter data
      * @param updateFrequency Frequency; update frequency
      * @throws NullPointerException if sampling, description or filterDataSet is null
      */
@@ -100,11 +103,11 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
     }
 
     /**
-     * Constructor. The filter data types must be registered with the sampler.
+     * Constructor with time interval and update frequency. 
      * @param sampler Sampler&lt;G&gt;; sampler
      * @param id String; id
      * @param description String; description
-     * @param filterDataSet filterDataSet; filter data
+     * @param filterDataSet FilterDataSet; filter data
      * @param updateFrequency Frequency; update frequency
      * @param interval Duration; interval to gather statistics over
      * @throws NullPointerException if sampling, description or filterDataSet is null
@@ -124,10 +127,10 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
     }
 
     /**
-     * Constructor. The filter data types must be registered with the sampler.
+     * Constructor without id.
      * @param sampler Sampler&lt;G&gt;; sampler
      * @param description String; description
-     * @param filterDataSet filterDataSet; filter data
+     * @param filterDataSet FilterDataSet; filter data
      * @throws NullPointerException if sampling, description or filterDataSet is null
      */
     public Query(final Sampler<G> sampler, final String description, final FilterDataSet filterDataSet)
@@ -136,7 +139,7 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
     }
 
     /**
-     * Constructor. The filter data types must be registered with the sampler.
+     * Constructor without id, with time interval.
      * @param sampler Sampler&lt;G&gt;; sampler
      * @param description String; description
      * @param filterDataSet filterDataSet; filter data
@@ -149,7 +152,7 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
     }
 
     /**
-     * Constructor. The filter data types must be registered with the sampler.
+     * Constructor without id, with time update frequency.
      * @param sampler Sampler&lt;G&gt;; sampler
      * @param description String; description
      * @param filterDataSet filterDataSet; filter data
@@ -163,7 +166,7 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
     }
 
     /**
-     * Constructor. The filter data types must be registered with the sampler.
+     * Constructor without id, with time interval and update frequency.
      * @param sampler Sampler&lt;G&gt;; sampler
      * @param description String; description
      * @param filterDataSet filterDataSet; filter data
@@ -178,7 +181,7 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
     }
 
     /**
-     * return the unique id for the query.
+     * Returns the unique id for the query.
      * @return String; the unique id for the query
      */
     @Override
@@ -188,6 +191,7 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
     }
 
     /**
+     * Returns the description.
      * @return description
      */
     public String getDescription()
@@ -196,6 +200,7 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
     }
 
     /**
+     * Returns the update frequency.
      * @return updateFrequency.
      */
     public Frequency getUpdateFrequency()
@@ -204,6 +209,7 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
     }
 
     /**
+     * Returns the time interval.
      * @return interval.
      */
     public Duration getInterval()
@@ -212,14 +218,16 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
     }
 
     /**
-     * @return number of meta data entries
+     * Returns the number of filter datas.
+     * @return number of filter data entries
      */
-    public int metaFilterSize()
+    public int filterSize()
     {
         return this.filterDataSet.size();
     }
 
     /**
+     * Returns an iterator over the filter datas and the related data sets.
      * @return iterator over filter data entries, removal is not allowed
      */
     public Iterator<Entry<FilterDataType<?>, Set<?>>> getFilterDataSetIterator()
@@ -229,13 +237,13 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
 
     /**
      * Defines a region in space and time for which this query is valid. All lanes in the link are included.
-     * @param link LinkDataInterface; link
+     * @param link LinkData; link
      * @param startPosition Length; start position
      * @param endPosition Length; end position
      * @param startTime Time; start time
      * @param endTime Time; end time
      */
-    public void addSpaceTimeRegionLink(final LinkDataInterface link, final Length startPosition, final Length endPosition,
+    public void addSpaceTimeRegionLink(final LinkData link, final Length startPosition, final Length endPosition,
             final Time startTime, final Time endTime)
     {
         Throw.whenNull(link, "Link may not be null.");
@@ -246,26 +254,26 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
         Throw.when(endPosition.lt(startPosition), IllegalArgumentException.class,
                 "End position should be greater than start position.");
         Throw.when(endTime.lt(startTime), IllegalArgumentException.class, "End time should be greater than start time.");
-        for (LaneDataInterface lane : link.getLaneDatas())
+        for (LaneData lane : link.getLaneDatas())
         {
             Length x0 = new Length(lane.getLength().si * startPosition.si / link.getLength().si, LengthUnit.SI);
             Length x1 = new Length(lane.getLength().si * endPosition.si / link.getLength().si, LengthUnit.SI);
-            addSpaceTimeRegion(new KpiLane(lane), x0, x1, startTime, endTime);
+            addSpaceTimeRegion(lane, x0, x1, startTime, endTime);
         }
     }
 
     /**
      * Defines a region in space and time for which this query is valid.
-     * @param laneDirection KpiLaneDirection; lane direction
+     * @param lane LaneData; lane
      * @param startPosition Length; start position
      * @param endPosition Length; end position
      * @param startTime Time; start time
      * @param endTime Time; end time
      */
-    public void addSpaceTimeRegion(final KpiLane laneDirection, final Length startPosition, final Length endPosition,
+    public void addSpaceTimeRegion(final LaneData lane, final Length startPosition, final Length endPosition,
             final Time startTime, final Time endTime)
     {
-        Throw.whenNull(laneDirection, "Lane direction may not be null.");
+        Throw.whenNull(lane, "Lane direction may not be null.");
         Throw.whenNull(startPosition, "Start position may not be null.");
         Throw.whenNull(endPosition, "End position may not be null.");
         Throw.whenNull(startTime, "Start time may not be null.");
@@ -273,12 +281,13 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
         Throw.when(endPosition.lt(startPosition), IllegalArgumentException.class,
                 "End position should be greater than start position.");
         Throw.when(endTime.lt(startTime), IllegalArgumentException.class, "End time should be greater than start time.");
-        SpaceTimeRegion spaceTimeRegion = new SpaceTimeRegion(laneDirection, startPosition, endPosition, startTime, endTime);
+        SpaceTimeRegion spaceTimeRegion = new SpaceTimeRegion(lane, startPosition, endPosition, startTime, endTime);
         this.sampler.registerSpaceTimeRegion(spaceTimeRegion);
         this.spaceTimeRegions.add(spaceTimeRegion);
     }
 
     /**
+     * Returns the number of space-time regions.
      * @return number of space-time regions
      */
     public int spaceTimeRegionSize()
@@ -287,6 +296,7 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
     }
 
     /**
+     * Returns an iterator over the space-time regions.
      * @return iterator over space-time regions, removal is not allowed
      */
     public Iterator<SpaceTimeRegion> getSpaceTimeIterator()
@@ -296,10 +306,10 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
 
     /**
      * Returns a list of TrajectoryGroups in accordance with the query. Each {@code TrajectoryGroup} contains {@code Trajectory}
-     * objects pertaining to a {@code SpaceTimeRegion} from the query. A {@code Trajectory} is only included if all the meta
+     * objects pertaining to a {@code SpaceTimeRegion} from the query. A {@code Trajectory} is only included if all the filter
      * data of this query accepts the trajectory. This method uses {@code Time.ZERO} as start.
      * @param endTime Time; end time of interval to get trajectory groups for
-     * @param <T> underlying class of meta data type and its value
+     * @param <T> underlying class of filter data type and its value
      * @return list of trajectory groups in accordance with the query
      */
     public <T> List<TrajectoryGroup<G>> getTrajectoryGroups(final Time endTime)
@@ -309,11 +319,11 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
 
     /**
      * Returns a list of TrajectoryGroups in accordance with the query. Each {@code TrajectoryGroup} contains {@code Trajectory}
-     * objects pertaining to a {@code SpaceTimeRegion} from the query. A {@code Trajectory} is only included if all the meta
+     * objects pertaining to a {@code SpaceTimeRegion} from the query. A {@code Trajectory} is only included if all the filter
      * data of this query accepts the trajectory.
      * @param startTime Time; start time of interval to get trajectory groups for
      * @param endTime Time; start time of interval to get trajectory groups for
-     * @param <T> underlying class of meta data type and its value
+     * @param <T> underlying class of filter data type and its value
      * @return list of trajectory groups in accordance with the query
      */
     @SuppressWarnings("unchecked")
@@ -353,22 +363,16 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
         while (iterator.hasNext())
         {
             String gtuId = iterator.next();
-            TrajectoryAcceptList trajectoryAcceptListCombined = trajectoryAcceptLists.get(gtuId);
-            trajectoryAcceptListCombined.acceptAll(); // refuse only if any meta data type refuses
-            for (FilterDataType<?> metaDataType : this.filterDataSet.getMetaDataTypes())
+            TrajectoryAcceptList trajectoryAcceptListCombined = copyTrajectoryAcceptList(trajectoryAcceptLists.get(gtuId));
+            trajectoryAcceptListCombined.acceptAll(); // refuse only if any filter data type refuses
+            for (FilterDataType<?> filterDataType : this.filterDataSet.getMetaDataTypes())
             {
-                // create safe copy per meta data type, with defaults accepts = false
-                TrajectoryAcceptList trajectoryAcceptList = trajectoryAcceptLists.get(gtuId);
-                TrajectoryAcceptList trajectoryAcceptListCopy = new TrajectoryAcceptList();
-                for (int i = 0; i < trajectoryAcceptList.size(); i++)
-                {
-                    trajectoryAcceptListCopy.addTrajectory(trajectoryAcceptList.getTrajectory(i),
-                            trajectoryAcceptList.getTrajectoryGroup(i));
-                }
-                // request meta data type to accept or reject
-                ((FilterDataType<T>) metaDataType).accept(trajectoryAcceptListCopy,
-                        (Set<T>) new LinkedHashSet<>(this.filterDataSet.get(metaDataType)));
-                // combine acceptance/rejection of meta data type so far
+                // create safe copy per filter data type, with defaults accepts = false
+                TrajectoryAcceptList trajectoryAcceptListCopy = copyTrajectoryAcceptList(trajectoryAcceptLists.get(gtuId));
+                // request filter data type to accept or reject
+                ((FilterDataType<T>) filterDataType).accept(trajectoryAcceptListCopy,
+                        (Set<T>) new LinkedHashSet<>(this.filterDataSet.get(filterDataType)));
+                // combine acceptance/rejection of filter data types so far
                 for (int i = 0; i < trajectoryAcceptListCopy.size(); i++)
                 {
                     Trajectory<?> trajectory = trajectoryAcceptListCopy.getTrajectory(i);
@@ -382,7 +386,7 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
         List<TrajectoryGroup<G>> out = new ArrayList<>();
         for (TrajectoryGroup<G> full : trajectoryGroupList)
         {
-            TrajectoryGroup<G> filtered = new TrajectoryGroup<>(full.getStartTime(), full.getKpiLane());
+            TrajectoryGroup<G> filtered = new TrajectoryGroup<>(full.getStartTime(), full.getLane());
             for (Trajectory<G> trajectory : full.getTrajectories())
             {
                 String gtuId = trajectory.getGtuId();
@@ -395,9 +399,26 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
         }
         return out;
     }
+    
+    /**
+     * Returns a copy of the trajectory accept list, with all assumed not accepted.
+     * @param trajectoryAcceptList TrajectoryAcceptList; trajectory accept list to copy.
+     * @return TrajectoryAcceptList; copy of the trajectory accept list, with all assumed not accepted.
+     */
+    private TrajectoryAcceptList copyTrajectoryAcceptList(final TrajectoryAcceptList trajectoryAcceptList)
+    {
+        TrajectoryAcceptList trajectoryAcceptListCopy = new TrajectoryAcceptList();
+        for (int i = 0; i < trajectoryAcceptList.size(); i++)
+        {
+            trajectoryAcceptListCopy.addTrajectory(trajectoryAcceptList.getTrajectory(i),
+                    trajectoryAcceptList.getTrajectoryGroup(i));
+        }
+        return trajectoryAcceptListCopy;
+    }
 
     /**
-     * @return sampling.
+     * Returns the sampler.
+     * @return sampler.
      */
     public Sampler<?> getSampler()
     {

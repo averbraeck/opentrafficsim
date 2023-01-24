@@ -1,9 +1,6 @@
 package org.opentrafficsim.sim0mq.kpi;
 
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
-import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
-import org.opentrafficsim.kpi.interfaces.NodeDataInterface;
-import org.opentrafficsim.kpi.interfaces.RouteDataInterface;
+import org.opentrafficsim.kpi.interfaces.GtuData;
 
 /**
  * <p>
@@ -14,13 +11,13 @@ import org.opentrafficsim.kpi.interfaces.RouteDataInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class GtuData implements GtuDataInterface
+public class GtuDataSim0 implements GtuData
 {
     /** id. */
     private final String id;
 
     /** gtu type. */
-    private final GtuTypeData gtuType;
+    private final String gtuType;
 
     /** route. */
     private final RouteData route;
@@ -30,7 +27,7 @@ public class GtuData implements GtuDataInterface
      * @param gtuType GtuTypeData; the gtu type
      * @param route RouteData; the route
      */
-    public GtuData(final String id, final GtuTypeData gtuType, final RouteData route)
+    public GtuDataSim0(final String id, final String gtuType, final RouteData route)
     {
         this.id = id;
         this.gtuType = gtuType;
@@ -46,30 +43,30 @@ public class GtuData implements GtuDataInterface
 
     /** {@inheritDoc} */
     @Override
-    public final NodeDataInterface getOriginNodeData()
+    public final String getOriginId()
     {
         return this.route.getStartNode();
     }
 
     /** {@inheritDoc} */
     @Override
-    public final NodeDataInterface getDestinationNodeData()
+    public final String getDestinationId()
     {
         return this.route.getEndNode();
     }
 
     /** {@inheritDoc} */
     @Override
-    public final GtuTypeDataInterface getGtuTypeData()
+    public final String getGtuId()
     {
         return this.gtuType;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final RouteDataInterface getRouteData()
+    public final String getRouteId()
     {
-        return this.route;
+        return this.route.getId();
     }
 
     /** {@inheritDoc} */
@@ -84,7 +81,7 @@ public class GtuData implements GtuDataInterface
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
         if (this == obj)
             return true;
@@ -92,7 +89,7 @@ public class GtuData implements GtuDataInterface
             return false;
         if (getClass() != obj.getClass())
             return false;
-        GtuData other = (GtuData) obj;
+        GtuDataSim0 other = (GtuDataSim0) obj;
         if (this.id == null)
         {
             if (other.id != null)

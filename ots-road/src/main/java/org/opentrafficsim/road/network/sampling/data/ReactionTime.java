@@ -5,7 +5,7 @@ import org.djunits.value.vfloat.scalar.FloatDuration;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeDuration;
-import org.opentrafficsim.road.network.sampling.GtuData;
+import org.opentrafficsim.road.network.sampling.GtuDataRoad;
 
 /**
  * Leader id in trajectory information.
@@ -17,7 +17,7 @@ import org.opentrafficsim.road.network.sampling.GtuData;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class ReactionTime extends ExtendedDataTypeDuration<GtuData>
+public class ReactionTime extends ExtendedDataTypeDuration<GtuDataRoad>
 {
 
     /**
@@ -25,12 +25,12 @@ public class ReactionTime extends ExtendedDataTypeDuration<GtuData>
      */
     public ReactionTime()
     {
-        super("Tr");
+        super("Tr", "Reaction time");
     }
 
     /** {@inheritDoc} */
     @Override
-    public FloatDuration getValue(final GtuData gtu)
+    public FloatDuration getValue(final GtuDataRoad gtu)
     {
         try
         {

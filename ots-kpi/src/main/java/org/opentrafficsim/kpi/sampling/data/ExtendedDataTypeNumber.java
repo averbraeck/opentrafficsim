@@ -3,7 +3,7 @@ package org.opentrafficsim.kpi.sampling.data;
 import java.util.Arrays;
 
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
+import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 
 /**
@@ -17,16 +17,17 @@ import org.opentrafficsim.kpi.sampling.SamplingException;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <G> gtu data type
  */
-public abstract class ExtendedDataTypeNumber<G extends GtuDataInterface> extends ExtendedDataType<Float, float[], float[], G>
+public abstract class ExtendedDataTypeNumber<G extends GtuData> extends ExtendedDataType<Float, float[], float[], G>
 {
 
     /**
      * Constructor.
      * @param id String; id
+     * @param description String; description
      */
-    public ExtendedDataTypeNumber(final String id)
+    public ExtendedDataTypeNumber(final String id, final String description)
     {
-        super(id, Float.class);
+        super(id, description, Float.class);
     }
 
     /** {@inheritDoc} */
@@ -74,13 +75,6 @@ public abstract class ExtendedDataTypeNumber<G extends GtuDataInterface> extends
     public float[] convert(final float[] storage, final int size)
     {
         return Arrays.copyOf(storage, size);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String formatValue(final String format, final Float value)
-    {
-        return String.format(format, value);
     }
 
     /** {@inheritDoc} */

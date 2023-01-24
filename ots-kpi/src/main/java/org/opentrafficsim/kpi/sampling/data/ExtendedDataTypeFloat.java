@@ -7,7 +7,7 @@ import org.djunits.value.ValueRuntimeException;
 import org.djunits.value.vfloat.scalar.base.AbstractFloatScalar;
 import org.djunits.value.vfloat.vector.base.AbstractFloatVector;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
+import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 
 /**
@@ -25,16 +25,17 @@ import org.opentrafficsim.kpi.sampling.SamplingException;
  * @param <G> gtu data type
  */
 public abstract class ExtendedDataTypeFloat<U extends Unit<U>, T extends AbstractFloatScalar<U, T>,
-        O extends AbstractFloatVector<U, T, O>, G extends GtuDataInterface> extends ExtendedDataType<T, O, float[], G>
+        O extends AbstractFloatVector<U, T, O>, G extends GtuData> extends ExtendedDataType<T, O, float[], G>
 {
     /**
      * Constructor setting the id.
      * @param id String; id
+     * @param description String; description
      * @param type Class&lt;T&gt;; type class
      */
-    public ExtendedDataTypeFloat(final String id, final Class<T> type)
+    public ExtendedDataTypeFloat(final String id, final String description, final Class<T> type)
     {
-        super(id, type);
+        super(id, description, type);
     }
 
     /** {@inheritDoc} */
@@ -60,13 +61,6 @@ public abstract class ExtendedDataTypeFloat<U extends Unit<U>, T extends Abstrac
     public final float[] initializeStorage()
     {
         return new float[10];
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String formatValue(final String format, final T value)
-    {
-        return String.format(format, value.getSI());
     }
 
     /** {@inheritDoc} */

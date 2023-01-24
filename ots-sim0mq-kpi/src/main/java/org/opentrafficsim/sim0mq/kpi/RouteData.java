@@ -1,7 +1,5 @@
 package org.opentrafficsim.sim0mq.kpi;
 
-import org.opentrafficsim.kpi.interfaces.RouteDataInterface;
-
 /**
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -11,23 +9,23 @@ import org.opentrafficsim.kpi.interfaces.RouteDataInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class RouteData implements RouteDataInterface
+public class RouteData
 {
     /** Route name. */
     private final String routeName;
 
     /** Route start. */
-    private final NodeData startNode;
+    private final String startNode;
 
     /** Route end. */
-    private final NodeData endNode;
+    private final String endNode;
 
     /**
      * @param routeName String; name of the route
-     * @param startNode NodeData; data of the start node of the route
-     * @param endNode NodeData; data of the end node of the route
+     * @param startNode String; data of the start node of the route
+     * @param endNode String; data of the end node of the route
      */
-    public RouteData(final String routeName, final NodeData startNode, final NodeData endNode)
+    public RouteData(final String routeName, final String startNode, final String endNode)
     {
         this.routeName = routeName;
         this.startNode = startNode;
@@ -45,7 +43,7 @@ public class RouteData implements RouteDataInterface
     /**
      * @return startNode
      */
-    public final NodeData getStartNode()
+    public final String getStartNode()
     {
         return this.startNode;
     }
@@ -53,13 +51,14 @@ public class RouteData implements RouteDataInterface
     /**
      * @return endNode
      */
-    public final NodeData getEndNode()
+    public final String getEndNode()
     {
         return this.endNode;
     }
 
-    /** {@inheritDoc} */
-    @Override
+    /**
+     * @return id
+     */
     public String getId()
     {
         return this.routeName;
@@ -77,7 +76,7 @@ public class RouteData implements RouteDataInterface
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
         if (this == obj)
             return true;

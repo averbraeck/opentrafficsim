@@ -4,7 +4,7 @@ import java.util.Set;
 
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
+import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.sampling.TrajectoryAcceptList;
 
 /**
@@ -23,15 +23,20 @@ public abstract class FilterDataType<T> implements Identifiable
 
     /** Id. */
     private final String id;
+    
+    /** Description. */
+    private final String description;
 
     /**
      * Constructor.
      * @param id String; id
+     * @param description String; description
      */
-    public FilterDataType(final String id)
+    public FilterDataType(final String id, final String description)
     {
         Throw.whenNull(id, "Id may not be null.");
         this.id = id;
+        this.description = description;
     }
 
     /**
@@ -46,39 +51,26 @@ public abstract class FilterDataType<T> implements Identifiable
 
     /**
      * Retrieves the value of the meta data of this type from a GTU.
-     * @param gtu GtuDataInterface; gtu to retrieve the value from
+     * @param gtu GtuData; gtu to retrieve the value from
      * @return value of the meta data of this type from a GTU, may be {@code null} if not applicable.
      */
-    public abstract T getValue(GtuDataInterface gtu);
+    public abstract T getValue(GtuData gtu);
 
     /**
-     * Formats the value into a string. If the value is numeric, the default implementation is:
-     * 
-     * <pre>
-     * String.format(format, value.si);
-     * </pre>
-     * 
-     * @param format String; format
-     * @param value T; value
-     * @return formatted value
-     */
-    public abstract String formatValue(String format, T value);
-
-    /**
-     * Determines for a set of {@code trajectory}'s from a single GTU, which may be accepted according to this meta data type.
+     * Determines for a set of {@code trajectory}'s from a single GTU, which may be accepted according to this filter data type.
      * As a single GTU may have several trajectories for a single {@code TrajectoryGroup} object, the specified
-     * {@code TrajectoryGroup}'s may have duplicates. As the {@code trajectory}'s are from a single GTU, the meta data is equal
-     * for all. Implementations of this method may for instance:
+     * {@code TrajectoryGroup}'s may have duplicates. As the {@code trajectory}'s are from a single GTU, the filter data is
+     * equal for all. Implementations of this method may for instance:
      * <ol>
-     * <li>Determine only from the first {@code Trajectory}s' meta data that all may be accepted.</li>
+     * <li>Determine only from the first {@code Trajectory}s' filter data that all may be accepted.</li>
      * <li>Determine for the separate {@code Trajectory}'s whether they are acceptable.</li>
      * <li>The same as 2, but refuse all if any is refused.</li>
      * <li>The same as 2, but accept all if any is accepted.</li>
      * <li>etc.</li>
      * </ol>
-     * The default implementation is that of 1, checking that the meta data value is in the provided query set.<br>
+     * The default implementation is that of 1, checking that the filter data value is in the provided query set.<br>
      * @param trajectoryAcceptList TrajectoryAcceptList; containing {@code Trajectory}'s and {@code TrajectoryGroup}'s
-     *            pertaining to a single GTU
+     *            pertaining to a single GTU, all assumed not accepted
      * @param querySet Set&lt;T&gt;; set of values in the query for this metadata type
      */
     @SuppressWarnings("checkstyle:designforextension")
@@ -87,18 +79,26 @@ public abstract class FilterDataType<T> implements Identifiable
         Throw.whenNull(trajectoryAcceptList, "Trajectory accept list may not be null.");
         Throw.whenNull(querySet, "Qeury set may not be null.");
         if (trajectoryAcceptList.getTrajectory(0).contains(this)
-                && querySet.contains(trajectoryAcceptList.getTrajectory(0).getMetaData(this)))
+                && querySet.contains(trajectoryAcceptList.getTrajectory(0).getFilterData(this)))
         {
             trajectoryAcceptList.acceptAll();
         }
     }
 
-    /** {@inheritDoc} */
-    @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public String toString()
+    /**
+     * Returns the description.
+     * @return String; description.
+     */
+    public String getDescription()
     {
-        return "FilterDataType [id=" + this.id + "]";
+        return this.description;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "FilterDataType [id=" + this.id + ", description=" + this.description + "]";
+    }
+    
 }

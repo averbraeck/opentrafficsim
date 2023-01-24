@@ -1,7 +1,5 @@
 package org.opentrafficsim.sim0mq.kpi;
 
-import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
-
 /**
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -11,7 +9,7 @@ import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class GtuTypeData implements GtuTypeDataInterface
+public class GtuTypeDataDeprecated
 {
     /** type name. */
     private final String gtuTypeName;
@@ -19,7 +17,7 @@ public class GtuTypeData implements GtuTypeDataInterface
     /**
      * @param gtuTypeName String; gtu type name
      */
-    public GtuTypeData(final String gtuTypeName)
+    public GtuTypeDataDeprecated(final String gtuTypeName)
     {
         this.gtuTypeName = gtuTypeName;
     }
@@ -33,7 +31,7 @@ public class GtuTypeData implements GtuTypeDataInterface
     }
 
     /** {@inheritDoc} */
-    @Override
+    //@Override
     public String getId()
     {
         return this.gtuTypeName;
@@ -51,7 +49,7 @@ public class GtuTypeData implements GtuTypeDataInterface
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
         if (this == obj)
             return true;
@@ -59,7 +57,7 @@ public class GtuTypeData implements GtuTypeDataInterface
             return false;
         if (getClass() != obj.getClass())
             return false;
-        GtuTypeData other = (GtuTypeData) obj;
+        GtuTypeDataDeprecated other = (GtuTypeDataDeprecated) obj;
         if (this.gtuTypeName == null)
         {
             if (other.gtuTypeName != null)

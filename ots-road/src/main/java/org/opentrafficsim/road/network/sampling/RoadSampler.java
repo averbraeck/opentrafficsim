@@ -21,7 +21,7 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.kpi.sampling.KpiLane;
+import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
 import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
@@ -43,7 +43,7 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class RoadSampler extends Sampler<GtuData> implements EventListenerInterface
+public class RoadSampler extends Sampler<GtuDataRoad> implements EventListenerInterface
 {
 
     /** */
@@ -81,7 +81,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
      * @param network OTSRoadNetwork; the network
      * @throws NullPointerException if the simulator is {@code null}
      */
-    public RoadSampler(final Set<ExtendedDataType<?, ?, ?, GtuData>> extendedDataTypes,
+    public RoadSampler(final Set<ExtendedDataType<?, ?, ?, GtuDataRoad>> extendedDataTypes,
             final Set<FilterDataType<?>> filterDataTypes, final OtsRoadNetwork network)
     {
         super(extendedDataTypes, filterDataTypes);
@@ -105,14 +105,14 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
 
     /**
      * Constructor which uses the given frequency to determine the sampling interval.
-     * @param extendedDataTypes Set&lt;ExtendedDataType&lt;?, ?, ?, GGtuData&gt;&gt;; extended data types
+     * @param extendedDataTypes Set&lt;ExtendedDataType&lt;?, ?, ?, GtuData&gt;&gt;; extended data types
      * @param filterDataTypes Set&lt;FilterDataType&lt;?&gt;&gt;; filter data types
      * @param network OTSRoadNetwork; the network
      * @param frequency Frequency; sampling frequency
      * @throws NullPointerException if an input is {@code null}
      * @throws IllegalArgumentException if frequency is negative or zero
      */
-    public RoadSampler(final Set<ExtendedDataType<?, ?, ?, GtuData>> extendedDataTypes,
+    public RoadSampler(final Set<ExtendedDataType<?, ?, ?, GtuDataRoad>> extendedDataTypes,
             final Set<FilterDataType<?>> filterDataTypes, final OtsRoadNetwork network, final Frequency frequency)
     {
         super(extendedDataTypes, filterDataTypes);
@@ -134,11 +134,11 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
 
     /** {@inheritDoc} */
     @Override
-    public final void scheduleStartRecording(final Time time, final KpiLane kpiLane)
+    public final void scheduleStartRecording(final Time time, final LaneData lane)
     {
         try
         {
-            this.simulator.scheduleEventAbsTime(time, this, this, "startRecording", new Object[] {kpiLane});
+            this.simulator.scheduleEventAbsTime(time, this, this, "startRecording", new Object[] {lane});
         }
         catch (SimRuntimeException exception)
         {
@@ -148,11 +148,11 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
 
     /** {@inheritDoc} */
     @Override
-    public final void scheduleStopRecording(final Time time, final KpiLane kpiLane)
+    public final void scheduleStopRecording(final Time time, final LaneData lane)
     {
         try
         {
-            this.simulator.scheduleEventAbsTime(time, this, this, "stopRecording", new Object[] {kpiLane});
+            this.simulator.scheduleEventAbsTime(time, this, this, "stopRecording", new Object[] {lane});
         }
         catch (SimRuntimeException exception)
         {
@@ -162,18 +162,18 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
 
     /** {@inheritDoc} */
     @Override
-    public final void initRecording(final KpiLane kpiLane)
+    public final void initRecording(final LaneData lane)
     {
-        Lane lane = ((LaneData) kpiLane.getLaneData()).getLane();
-        lane.addListener(this, Lane.GTU_ADD_EVENT, ReferenceType.WEAK);
-        lane.addListener(this, Lane.GTU_REMOVE_EVENT, ReferenceType.WEAK);
+        Lane roadLane = ((LaneDataRoad) lane).getLane();
+        roadLane.addListener(this, Lane.GTU_ADD_EVENT, ReferenceType.WEAK);
+        roadLane.addListener(this, Lane.GTU_REMOVE_EVENT, ReferenceType.WEAK);
         int count = 1;
-        for (LaneBasedGtu gtu : lane.getGtuList())
+        for (LaneBasedGtu gtu : roadLane.getGtuList())
         {
             try
             {
                 // Payload: Object[] {String gtuId, int count_after_addition}
-                notify(new TimedEvent<>(Lane.GTU_ADD_EVENT, lane, new Object[] {gtu.getId(), count},
+                notify(new TimedEvent<>(Lane.GTU_ADD_EVENT, roadLane, new Object[] {gtu.getId(), count},
                         gtu.getSimulator().getSimulatorTime()));
                 count++;
             }
@@ -186,11 +186,11 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
 
     /** {@inheritDoc} */
     @Override
-    public final void finalizeRecording(final KpiLane kpiLane)
+    public final void finalizeRecording(final LaneData lane)
     {
-        Lane lane = ((LaneData) kpiLane.getLaneData()).getLane();
-        lane.removeListener(this, Lane.GTU_ADD_EVENT);
-        lane.removeListener(this, Lane.GTU_REMOVE_EVENT);
+        Lane roadLane = ((LaneDataRoad) lane).getLane();
+        roadLane.removeListener(this, Lane.GTU_ADD_EVENT);
+        roadLane.removeListener(this, Lane.GTU_REMOVE_EVENT);
     }
 
     /** {@inheritDoc} */
@@ -206,17 +206,16 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
             CrossSectionLink link = (CrossSectionLink) this.network.getLink(payload[7].toString());
             Lane lane = (Lane) link.getCrossSectionElement(payload[8].toString());
             LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU(payload[0].toString());
-            KpiLane laneDirection = new KpiLane(new LaneData(lane));
+            LaneData laneDirection = new LaneDataRoad(lane);
             processGtuMoveEvent(laneDirection, (Length) payload[9], (Speed) payload[3], (Acceleration) payload[4], now(),
-                    new GtuData(gtu));
+                    new GtuDataRoad(gtu));
         }
         else if (event.getType().equals(Lane.GTU_ADD_EVENT))
         {
             // Payload: Object[] {String gtuId, LaneBasedGtu gtu, int count_after_addition}
             // Assumes that the lane itself is the sourceId
             Lane lane = (Lane) event.getSourceId();
-            // TODO GTUDirectionality from Lane.GTU_ADD_EVENT
-            KpiLane laneDirection = new KpiLane(new LaneData(lane));
+            LaneData laneDirection = new LaneDataRoad(lane);
             if (!getSamplerData().contains(laneDirection))
             {
                 // we are not sampling this Lane
@@ -237,7 +236,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
             }
             Speed speed = gtu.getSpeed();
             Acceleration acceleration = gtu.getAcceleration();
-            processGtuAddEvent(laneDirection, position, speed, acceleration, now(), new GtuData(gtu));
+            processGtuAddEvent(laneDirection, position, speed, acceleration, now(), new GtuDataRoad(gtu));
             if (isIntervalBased())
             {
                 scheduleSamplingEvent(gtu, lane);
@@ -258,13 +257,13 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
             // Assumes that the lane itself is the sourceId
             Lane lane = (Lane) event.getSourceId();
             // TODO GTUDirectionality from Lane.GTU_REMOVE_EVENT
-            KpiLane kpiLane = new KpiLane(new LaneData(lane));
+            LaneData kpiLane = new LaneDataRoad(lane);
             Object[] payload = (Object[]) event.getContent();
             LaneBasedGtu gtu = (LaneBasedGtu) payload[1];
             Length position = (Length) payload[3];
             Speed speed = gtu.getSpeed();
             Acceleration acceleration = gtu.getAcceleration();
-            processGtuRemoveEvent(kpiLane, position, speed, acceleration, now(), new GtuData(gtu));
+            processGtuRemoveEvent(kpiLane, position, speed, acceleration, now(), new GtuDataRoad(gtu));
             if (isIntervalBased())
             {
                 String gtuId = (String) payload[0];
@@ -339,11 +338,11 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
      */
     public final void notifySample(final LaneBasedGtu gtu, final Lane lane)
     {
-        KpiLane kpiLane = new KpiLane(new LaneData(lane));
+        LaneData kpiLane = new LaneDataRoad(lane);
         try
         {
             this.processGtuMoveEvent(kpiLane, gtu.position(lane, RelativePosition.REFERENCE_POSITION), gtu.getSpeed(),
-                    gtu.getAcceleration(), now(), new GtuData(gtu));
+                    gtu.getAcceleration(), now(), new GtuDataRoad(gtu));
         }
         catch (GtuException exception)
         {
@@ -443,7 +442,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
         private final OtsRoadNetwork network;
 
         /** Registration of included extended data types. */
-        private final Set<ExtendedDataType<?, ?, ?, GtuData>> extendedDataTypes = new LinkedHashSet<>();
+        private final Set<ExtendedDataType<?, ?, ?, GtuDataRoad>> extendedDataTypes = new LinkedHashSet<>();
 
         /** Set of registered filter data types. */
         private final Set<FilterDataType<?>> filterDataTypes = new LinkedHashSet<>();
@@ -465,7 +464,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
          * @param extendedDataType ExtendedDataType&lt;?, ?, ?, GtuData&gt;; extended data type
          * @return Factory; this factory
          */
-        public Factory registerExtendedDataType(final ExtendedDataType<?, ?, ?, GtuData> extendedDataType)
+        public Factory registerExtendedDataType(final ExtendedDataType<?, ?, ?, GtuDataRoad> extendedDataType)
         {
             Throw.whenNull(extendedDataType, "Extended data type may not be null.");
             this.extendedDataTypes.add(extendedDataType);

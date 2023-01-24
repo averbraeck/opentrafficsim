@@ -31,7 +31,7 @@ import org.opentrafficsim.core.animation.gtu.colorer.IdGtuColorer;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.draw.core.BoundsPaintScale;
 import org.opentrafficsim.draw.graphs.GraphPath.Section;
-import org.opentrafficsim.kpi.sampling.KpiLane;
+import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.SamplerData;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 import org.opentrafficsim.kpi.sampling.Trajectory;
@@ -65,7 +65,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
     private final GraphUpdater<Time> graphUpdater;
 
     /** Counter of the number of trajectories imported per lane. */
-    private final Map<KpiLane, Integer> knownTrajectories = new LinkedHashMap<>();
+    private final Map<LaneData, Integer> knownTrajectories = new LinkedHashMap<>();
 
     /** Per lane, mapping from series rank number to trajectory. */
     private List<List<OffsetTrajectory>> curves = new ArrayList<>();
@@ -98,10 +98,10 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
      * @param updateInterval Duration; regular update interval (simulation time)
      * @param simulator OTSSimulatorInterface; simulator
      * @param samplerData SamplerData&lt;?&gt;; sampler data
-     * @param path GraphPath&lt;KpiLaneDirection&gt;; path
+     * @param path GraphPath&lt;LaneData&gt;; path
      */
     public TrajectoryPlot(final String caption, final Duration updateInterval, final OtsSimulatorInterface simulator,
-            final SamplerData<?> samplerData, final GraphPath<KpiLane> path)
+            final SamplerData<?> samplerData, final GraphPath<LaneData> path)
     {
         super(caption, updateInterval, simulator, samplerData, path, Duration.ZERO);
         for (int i = 0; i < path.getNumberOfSeries(); i++)
@@ -118,12 +118,12 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
                 t
         ) ->
         {
-            for (Section<KpiLane> section : path.getSections())
+            for (Section<LaneData> section : path.getSections())
             {
                 Length startDistance = path.getStartDistance(section);
                 for (int i = 0; i < path.getNumberOfSeries(); i++)
                 {
-                    KpiLane lane = section.getSource(i);
+                    LaneData lane = section.getSource(i);
                     if (lane == null)
                     {
                         continue; // lane is not part of this section, e.g. after a lane-drop
@@ -131,7 +131,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
                     TrajectoryGroup<?> trajectoryGroup = getSamplerData().getTrajectoryGroup(lane);
                     int from = this.knownTrajectories.getOrDefault(lane, 0);
                     int to = trajectoryGroup.size();
-                    double scaleFactor = section.getLength().si / lane.getLaneData().getLength().si;
+                    double scaleFactor = section.getLength().si / lane.getLength().si;
                     for (Trajectory<?> trajectory : trajectoryGroup.getTrajectories().subList(from, to))
                     {
                         if (getPath().getNumberOfSeries() > 1)
@@ -150,8 +150,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
                             }
                             this.strokes.get(i).add(stroke);
                         }
-                        this.curves.get(i).add(
-                                new OffsetTrajectory(trajectory, startDistance, scaleFactor, lane.getLaneData().getLength()));
+                        this.curves.get(i).add(new OffsetTrajectory(trajectory, startDistance, scaleFactor, lane.getLength()));
                     }
                     this.knownTrajectories.put(lane, to);
                 }

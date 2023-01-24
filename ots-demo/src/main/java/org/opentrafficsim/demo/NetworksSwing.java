@@ -24,7 +24,7 @@ import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.draw.graphs.GraphPath;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
-import org.opentrafficsim.kpi.sampling.KpiLane;
+import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
@@ -135,7 +135,7 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
         {
             List<Lane> start = new ArrayList<>();
             start.add(getModel().getPath(graphIndex).get(0));
-            GraphPath<KpiLane> path;
+            GraphPath<LaneData> path;
             try
             {
                 path = GraphLaneUtil.createPath("name", start.get(0));

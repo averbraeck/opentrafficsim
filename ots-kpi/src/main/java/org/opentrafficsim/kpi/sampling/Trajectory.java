@@ -23,10 +23,10 @@ import org.djunits.value.vfloat.vector.FloatSpeedVector;
 import org.djunits.value.vfloat.vector.FloatTimeVector;
 import org.djunits.value.vfloat.vector.base.FloatVector;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
+import org.opentrafficsim.kpi.interfaces.GtuData;
+import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
 import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
-import org.opentrafficsim.kpi.sampling.meta.MetaData;
 
 /**
  * Contains position, speed, acceleration and time data of a GTU, over some section. Position is relative to the start of the
@@ -42,8 +42,7 @@ import org.opentrafficsim.kpi.sampling.meta.MetaData;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <G> gtu data type
  */
-// TODO some trajectories have the first time stamp twice, with possibly different values for acceleration (and TTC)
-public final class Trajectory<G extends GtuDataInterface>
+public final class Trajectory<G extends GtuData>
 {
 
     /** Default array capacity. */
@@ -71,47 +70,47 @@ public final class Trajectory<G extends GtuDataInterface>
     private final String gtuId;
 
     /** Meta data. */
-    private final MetaData metaData;
+    private final Map<FilterDataType<?>, Object> filterData = new LinkedHashMap<>();
 
     /** Map of array data types and their values. */
     private final Map<ExtendedDataType<?, ?, ?, G>, Object> extendedData = new LinkedHashMap<>();
 
     /** Lane of travel. */
-    private final KpiLane kpiLane;
+    private final LaneData lane;
 
     /**
-     * @param gtu GtuDataInterface; GTU of this trajectory, only the id is stored.
-     * @param metaData MetaData; meta data
+     * @param gtu GtuData; GTU of this trajectory, only the id is stored.
+     * @param filterData Map&lt;FilterDataType&lt;?&gt;, Object&gt;; filter data
      * @param extendedData Set&lt;ExtendedDataType&lt;?,?,?,G&gt;&gt;; types of extended data
-     * @param kpiLane KpiLane; lane of travel
+     * @param lane LaneData; lane of travel
      */
-    public Trajectory(final GtuDataInterface gtu, final MetaData metaData, final Set<ExtendedDataType<?, ?, ?, G>> extendedData,
-            final KpiLane kpiLane)
+    public Trajectory(final GtuData gtu, final Map<FilterDataType<?>, Object> filterData,
+            final Set<ExtendedDataType<?, ?, ?, G>> extendedData, final LaneData lane)
     {
-        this(gtu == null ? null : gtu.getId(), metaData, extendedData, kpiLane);
+        this(gtu == null ? null : gtu.getId(), filterData, extendedData, lane);
     }
 
     /**
      * Private constructor for creating subsets.
      * @param gtuId String; GTU id
-     * @param metaData MetaData; meta data
+     * @param filterData Map&lt;FilterDataType&lt;?&gt;, Object&gt;; filter data
      * @param extendedData Set&lt;ExtendedDataType&lt;?,?,?,G&gt;&gt;; types of extended data
-     * @param kpiLane KpiLane; lane of travel
+     * @param lane LaneData; lane of travel
      */
-    private Trajectory(final String gtuId, final MetaData metaData, final Set<ExtendedDataType<?, ?, ?, G>> extendedData,
-            final KpiLane kpiLane)
+    private Trajectory(final String gtuId, final Map<FilterDataType<?>, Object> filterData,
+            final Set<ExtendedDataType<?, ?, ?, G>> extendedData, final LaneData lane)
     {
         Throw.whenNull(gtuId, "GTU may not be null.");
-        Throw.whenNull(metaData, "Meta data may not be null.");
+        Throw.whenNull(filterData, "Filter data may not be null.");
         Throw.whenNull(extendedData, "Extended data may not be null.");
-        Throw.whenNull(kpiLane, "Lane direction may not be null.");
+        Throw.whenNull(lane, "Lane direction may not be null.");
         this.gtuId = gtuId;
-        this.metaData = new MetaData(metaData);
+        this.filterData.putAll(filterData);
         for (ExtendedDataType<?, ?, ?, G> dataType : extendedData)
         {
             this.extendedData.put(dataType, dataType.initializeStorage());
         }
-        this.kpiLane = kpiLane;
+        this.lane = lane;
     }
 
     /**
@@ -166,8 +165,11 @@ public final class Trajectory<G extends GtuDataInterface>
     }
 
     /**
+     * Append value of the extended data type.
      * @param extendedDataType ExtendedDataType&lt;T,?,S,G&gt;; extended data type
      * @param gtu G; gtu
+     * @param <T> extended data value type
+     * @param <S> extended data storage data type
      */
     @SuppressWarnings("unchecked")
     private <T, S> void appendValue(final ExtendedDataType<T, ?, S, G> extendedDataType, final G gtu)
@@ -181,6 +183,7 @@ public final class Trajectory<G extends GtuDataInterface>
     }
 
     /**
+     * The size of the underlying data.
      * @return size of the underlying trajectory data
      */
     public int size()
@@ -189,6 +192,7 @@ public final class Trajectory<G extends GtuDataInterface>
     }
 
     /**
+     * Returns the id.
      * @return GTU id
      */
     public String getGtuId()
@@ -197,8 +201,8 @@ public final class Trajectory<G extends GtuDataInterface>
     }
 
     /**
-     * @return si position values, position is relative to the start of the lane, also when trajectories have been truncated at
-     *         a position x &gt; 0
+     * Returns the position array.
+     * @return si position values.
      */
     public float[] getX()
     {
@@ -206,6 +210,7 @@ public final class Trajectory<G extends GtuDataInterface>
     }
 
     /**
+     * Returns the speed array.
      * @return si speed values
      */
     public float[] getV()
@@ -214,6 +219,7 @@ public final class Trajectory<G extends GtuDataInterface>
     }
 
     /**
+     * Returns the acceleration array.
      * @return si acceleration values
      */
     public float[] getA()
@@ -222,6 +228,7 @@ public final class Trajectory<G extends GtuDataInterface>
     }
 
     /**
+     * Returns the time array.
      * @return si time values
      */
     public float[] getT()
@@ -335,8 +342,8 @@ public final class Trajectory<G extends GtuDataInterface>
     }
 
     /**
-     * @return strongly typed copy of position, position is relative to the start of the lane, also when trajectories have been
-     *         truncated at a position x &gt; 0
+     * Returns strongly type position array.
+     * @return strongly typed position array.
      */
     public FloatLengthVector getPosition()
     {
@@ -352,7 +359,8 @@ public final class Trajectory<G extends GtuDataInterface>
     }
 
     /**
-     * @return strongly typed copy of speed
+     * Returns strongly typed speed array.
+     * @return strongly typed speed array.
      */
     public FloatSpeedVector getSpeed()
     {
@@ -368,7 +376,8 @@ public final class Trajectory<G extends GtuDataInterface>
     }
 
     /**
-     * @return strongly typed copy of acceleration
+     * Returns strongly typed acceleration array.
+     * @return strongly typed acceleration array.
      */
     public FloatAccelerationVector getAcceleration()
     {
@@ -384,7 +393,8 @@ public final class Trajectory<G extends GtuDataInterface>
     }
 
     /**
-     * @return strongly typed copy of time
+     * Returns strongly typed time array.
+     * @return strongly typed time array.
      */
     public FloatTimeVector getTime()
     {
@@ -400,6 +410,7 @@ public final class Trajectory<G extends GtuDataInterface>
     }
 
     /**
+     * Returns the length of the data.
      * @return total length of this trajectory
      * @throws IllegalStateException if trajectory is empty
      */
@@ -415,6 +426,7 @@ public final class Trajectory<G extends GtuDataInterface>
     }
 
     /**
+     * Returns the total duration span.
      * @return total duration of this trajectory
      * @throws IllegalStateException if trajectory is empty
      */
@@ -430,34 +442,38 @@ public final class Trajectory<G extends GtuDataInterface>
     }
 
     /**
-     * @param metaDataType MetaDataType&lt;?&gt;; meta data type
-     * @return whether the trajectory contains the meta data of give type
+     * Returns whether the filter data is contained.
+     * @param filterDataType MetaDataType&lt;?&gt;; filter data type
+     * @return whether the trajectory contains the filter data of give type
      */
-    public boolean contains(final FilterDataType<?> metaDataType)
+    public boolean contains(final FilterDataType<?> filterDataType)
     {
-        return this.metaData.contains(metaDataType);
+        return this.filterData.containsKey(filterDataType);
     }
 
     /**
-     * @param metaDataType MetaDataType&lt;T&gt;; meta data type
-     * @param <T> class of meta data
-     * @return value of meta data
+     * Returns the value of the filter data.
+     * @param filterDataType MetaDataType&lt;T&gt;; filter data type
+     * @param <T> class of filter data
+     * @return value of filter data
      */
-    public <T> T getMetaData(final FilterDataType<T> metaDataType)
+    @SuppressWarnings("unchecked")
+    public <T> T getFilterData(final FilterDataType<T> filterDataType)
     {
-        return this.metaData.get(metaDataType);
+        return (T) this.filterData.get(filterDataType);
     }
 
     /**
-     * Returns the included meta data types.
-     * @return included meta data types
+     * Returns the included filter data types.
+     * @return included filter data types
      */
     public Set<FilterDataType<?>> getFilterDataTypes()
     {
-        return this.metaData.getMetaDataTypes();
+        return this.filterData.keySet();
     }
 
     /**
+     * Returns whether ths extended data type is contained.
      * @param extendedDataType ExtendedDataType&lt;?,?,?,?&gt;; extended data type
      * @return whether the trajectory contains the extended data of give type
      */
@@ -467,6 +483,7 @@ public final class Trajectory<G extends GtuDataInterface>
     }
 
     /**
+     * Returns the output data of the extended data type.
      * @param extendedDataType ExtendedDataType&lt;?,O,S,?&gt;; extended data type to return
      * @param <O> output type
      * @param <S> storage type
@@ -551,7 +568,7 @@ public final class Trajectory<G extends GtuDataInterface>
                 "Start position should be smaller than end position in the direction of travel");
         if (this.size == 0)
         {
-            return new Trajectory<>(this.gtuId, this.metaData, this.extendedData.keySet(), this.kpiLane);
+            return new Trajectory<>(this.gtuId, this.filterData, this.extendedData.keySet(), this.lane);
         }
         return subSet(spaceBoundaries(startPosition, endPosition));
     }
@@ -571,7 +588,7 @@ public final class Trajectory<G extends GtuDataInterface>
         Throw.when(startTime.gt(endTime), IllegalArgumentException.class, "Start time should be smaller than end time.");
         if (this.size == 0)
         {
-            return new Trajectory<>(this.gtuId, this.metaData, this.extendedData.keySet(), this.kpiLane);
+            return new Trajectory<>(this.gtuId, this.filterData, this.extendedData.keySet(), this.lane);
         }
         return subSet(timeBoundaries(startTime, endTime));
     }
@@ -598,7 +615,7 @@ public final class Trajectory<G extends GtuDataInterface>
         Throw.when(startTime.gt(endTime), IllegalArgumentException.class, "Start time should be smaller than end time.");
         if (this.size == 0)
         {
-            return new Trajectory<>(this.gtuId, this.metaData, this.extendedData.keySet(), this.kpiLane);
+            return new Trajectory<>(this.gtuId, this.filterData, this.extendedData.keySet(), this.lane);
         }
         return subSet(spaceBoundaries(startPosition, endPosition).intersect(timeBoundaries(startTime, endTime)));
     }
@@ -621,19 +638,6 @@ public final class Trajectory<G extends GtuDataInterface>
         Boundary from = getBoundaryAtPosition(startPos, false);
         Boundary to = getBoundaryAtPosition(endPos, true);
         return new Boundaries(from.index, from.fraction, to.index, to.fraction);
-        // int from = binarySearchX(startPos);
-        // double fFrom = 0;
-        // if (this.x[from] < startPos)
-        // {
-        // fFrom = (startPos - this.x[from]) / (this.x[from + 1] - this.x[from]);
-        // }
-        // int to = binarySearchX(endPos);
-        // double fTo = 0;
-        // if (to < this.size - 1)
-        // {
-        // fTo = (endPos - this.x[to]) / (this.x[to + 1] - this.x[to]);
-        // }
-        // return new Boundaries(from, fFrom, to, fTo);
     }
 
     /**
@@ -654,19 +658,6 @@ public final class Trajectory<G extends GtuDataInterface>
         Boundary from = getBoundaryAtTime(startTim, false);
         Boundary to = getBoundaryAtTime(endTim, true);
         return new Boundaries(from.index, from.fraction, to.index, to.fraction);
-        // int from = binarySearchT(startTim);
-        // double fFrom = 0;
-        // if (this.t[from] < startTim)
-        // {
-        // fFrom = (startTim - this.t[from]) / (this.t[from + 1] - this.t[from]);
-        // }
-        // int to = binarySearchT(endTim);
-        // double fTo = 0;
-        // if (to < this.size - 1)
-        // {
-        // fTo = (endTim - this.t[to]) / (this.t[to + 1] - this.t[to]);
-        // }
-        // return new Boundaries(from, fFrom, to, fTo);
     }
 
     /**
@@ -773,7 +764,7 @@ public final class Trajectory<G extends GtuDataInterface>
     @SuppressWarnings("unchecked")
     private <T, S> Trajectory<G> subSet(final Boundaries bounds)
     {
-        Trajectory<G> out = new Trajectory<>(this.gtuId, this.metaData, this.extendedData.keySet(), this.kpiLane);
+        Trajectory<G> out = new Trajectory<>(this.gtuId, this.filterData, this.extendedData.keySet(), this.lane);
         if (bounds.from < bounds.to) // otherwise empty, no data in the subset
         {
             int nBefore = bounds.fFrom < 1.0 ? 1 : 0;
@@ -906,12 +897,13 @@ public final class Trajectory<G extends GtuDataInterface>
         if (this.size > 0)
         {
             return "Trajectory [size=" + this.size + ", x={" + this.x[0] + "..." + this.x[this.size - 1] + "}, t={" + this.t[0]
-                    + "..." + this.t[this.size - 1] + "}, metaData=" + this.metaData + ", gtuId=" + this.gtuId + "]";
+                    + "..." + this.t[this.size - 1] + "}, filterData=" + this.filterData + ", gtuId=" + this.gtuId + "]";
         }
-        return "Trajectory [size=" + this.size + ", x={}, t={}, metaData=" + this.metaData + ", gtuId=" + this.gtuId + "]";
+        return "Trajectory [size=" + this.size + ", x={}, t={}, filterData=" + this.filterData + ", gtuId=" + this.gtuId + "]";
     }
 
     /**
+     * Spatial or temporal boundary as a fractional position in the array.
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
@@ -968,6 +960,7 @@ public final class Trajectory<G extends GtuDataInterface>
     }
 
     /**
+     * Spatial or temporal range as a fractional positions in the array.
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
@@ -1020,8 +1013,9 @@ public final class Trajectory<G extends GtuDataInterface>
         }
 
         /**
+         * Returns the intersect of both boundaries.
          * @param boundaries Boundaries; boundaries
-         * @return intersection of both boundaries
+         * @return intersect of both boundaries
          */
         public Boundaries intersect(final Boundaries boundaries)
         {
@@ -1078,14 +1072,14 @@ public final class Trajectory<G extends GtuDataInterface>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public static class SpaceTimeView
+    public static final class SpaceTimeView
     {
 
         /** Distance. */
-        final Length distance;
+        private final Length distance;
 
         /** Time. */
-        final Duration time;
+        private final Duration time;
 
         /**
          * Constructor.
@@ -1102,7 +1096,7 @@ public final class Trajectory<G extends GtuDataInterface>
          * Returns the distance.
          * @return Length; distance
          */
-        public final Length getDistance()
+        public Length getDistance()
         {
             return this.distance;
         }
@@ -1111,7 +1105,7 @@ public final class Trajectory<G extends GtuDataInterface>
          * Returns the time.
          * @return Duration; time
          */
-        public final Duration getTime()
+        public Duration getTime()
         {
             return this.time;
         }

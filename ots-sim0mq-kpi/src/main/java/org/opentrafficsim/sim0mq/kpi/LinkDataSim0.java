@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
-import org.opentrafficsim.kpi.interfaces.LinkDataInterface;
+import org.opentrafficsim.kpi.interfaces.LaneData;
+import org.opentrafficsim.kpi.interfaces.LinkData;
 
 /**
  * <p>
@@ -16,20 +16,20 @@ import org.opentrafficsim.kpi.interfaces.LinkDataInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LinkData implements LinkDataInterface
+public class LinkDataSim0 implements LinkData
 {
 
     /** Wrapped link. */
     private final String linkName;
 
     /** start node. */
-    final NodeData startNode;
+    final String startNode;
 
     /** end node. */
-    final NodeData endNode;
+    final String endNode;
 
     /** Lanes on this link. */
-    private final List<LaneDataInterface> laneDataList = new ArrayList<>();
+    private final List<LaneData> laneDataList = new ArrayList<>();
 
     /** the link length. */
     private final Length length;
@@ -40,7 +40,7 @@ public class LinkData implements LinkDataInterface
      * @param endNode NodeData; data of end node
      * @param length Length; the length
      */
-    public LinkData(final String linkName, final NodeData startNode, final NodeData endNode, final Length length)
+    public LinkDataSim0(final String linkName, final String startNode, final String endNode, final Length length)
     {
         this.linkName = linkName;
         this.length = length;
@@ -52,14 +52,14 @@ public class LinkData implements LinkDataInterface
      * Add the lane to the list of lanes for this link.
      * @param laneData LaneData; the lane to add
      */
-    public void addLaneData(final LaneData laneData)
+    public void addLaneData(final LaneDataSim0 laneData)
     {
         this.laneDataList.add(laneData);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final List<LaneDataInterface> getLaneDatas()
+    public final List<LaneData> getLaneDatas()
     {
         return this.laneDataList;
     }
@@ -74,7 +74,7 @@ public class LinkData implements LinkDataInterface
     /**
      * @return startNode
      */
-    public final NodeData getStartNode()
+    public final String getStartNode()
     {
         return this.startNode;
     }
@@ -82,7 +82,7 @@ public class LinkData implements LinkDataInterface
     /**
      * @return endNode
      */
-    public final NodeData getEndNode()
+    public final String getEndNode()
     {
         return this.endNode;
     }
@@ -117,7 +117,7 @@ public class LinkData implements LinkDataInterface
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
         if (this == obj)
             return true;
@@ -125,7 +125,7 @@ public class LinkData implements LinkDataInterface
             return false;
         if (getClass() != obj.getClass())
             return false;
-        LinkData other = (LinkData) obj;
+        LinkDataSim0 other = (LinkDataSim0) obj;
         if (this.linkName == null)
         {
             if (other.linkName != null)

@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.network.sampling;
 
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
+import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
 /**
@@ -14,7 +14,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class GtuData implements GtuDataInterface
+public class GtuDataRoad implements GtuData
 {
 
     /** Gtu. */
@@ -23,7 +23,7 @@ public class GtuData implements GtuDataInterface
     /**
      * @param gtu LaneBasedGtu; gtu
      */
-    public GtuData(final LaneBasedGtu gtu)
+    public GtuDataRoad(final LaneBasedGtu gtu)
     {
         this.gtu = gtu;
     }
@@ -45,11 +45,11 @@ public class GtuData implements GtuDataInterface
 
     /** {@inheritDoc} */
     @Override
-    public final NodeData getOriginNodeData()
+    public final String getOriginId()
     {
         try
         {
-            return new NodeData(this.gtu.getStrategicalPlanner().getRoute().originNode());
+            return this.gtu.getStrategicalPlanner().getRoute().originNode().getId();
         }
         catch (NetworkException exception)
         {
@@ -59,11 +59,11 @@ public class GtuData implements GtuDataInterface
 
     /** {@inheritDoc} */
     @Override
-    public final NodeData getDestinationNodeData()
+    public final String getDestinationId()
     {
         try
         {
-            return new NodeData(this.gtu.getStrategicalPlanner().getRoute().destinationNode());
+            return this.gtu.getStrategicalPlanner().getRoute().destinationNode().getId();
         }
         catch (NetworkException exception)
         {
@@ -73,16 +73,16 @@ public class GtuData implements GtuDataInterface
 
     /** {@inheritDoc} */
     @Override
-    public final GtuTypeData getGtuTypeData()
+    public final String getGtuId()
     {
-        return new GtuTypeData(this.gtu.getType());
+        return this.gtu.getType().getId();
     }
 
     /** {@inheritDoc} */
     @Override
-    public final RouteData getRouteData()
+    public final String getRouteId()
     {
-        return new RouteData(this.gtu.getStrategicalPlanner().getRoute());
+        return this.gtu.getStrategicalPlanner().getRoute().getId();
     }
 
     /** {@inheritDoc} */

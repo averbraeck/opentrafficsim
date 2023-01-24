@@ -1,12 +1,9 @@
 package org.opentrafficsim.kpi.interfaces;
 
-import java.util.List;
-
-import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.Identifiable;
 
 /**
- * Represents a link for sampling.
+ * Represents a GTU for sampling.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -15,23 +12,31 @@ import org.opentrafficsim.base.Identifiable;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public interface LinkDataInterface extends Identifiable
+public interface GtuData extends Identifiable
 {
 
     /**
-     * @return length of the link
+     * Returns the origin id.
+     * @return origin id of the gtu
      */
-    Length getLength();
+    String getOriginId();
 
     /**
-     * @return list of lanes of the link
+     * Returns the destination id.
+     * @return destination id of the gtu
      */
-    List<? extends LaneDataInterface> getLaneDatas();
+    String getDestinationId();
 
     /**
-     * @return link id
+     * Returns the GTU type id.
+     * @return type id of the gtu
      */
-    @Override
-    String getId();
+    String getGtuId();
+
+    /**
+     * Returns the route id.
+     * @return route id of the gtu
+     */
+    String getRouteId();
 
 }

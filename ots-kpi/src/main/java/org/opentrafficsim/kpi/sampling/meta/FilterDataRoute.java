@@ -1,8 +1,7 @@
 package org.opentrafficsim.kpi.sampling.meta;
 
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
-import org.opentrafficsim.kpi.interfaces.RouteDataInterface;
+import org.opentrafficsim.kpi.interfaces.GtuData;
 
 /**
  * Accepts trajectories with a Route included in a set in a query.
@@ -14,7 +13,7 @@ import org.opentrafficsim.kpi.interfaces.RouteDataInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class FilterDataRoute extends FilterDataType<RouteDataInterface>
+public class FilterDataRoute extends FilterDataType<String>
 {
 
     /**
@@ -22,22 +21,15 @@ public class FilterDataRoute extends FilterDataType<RouteDataInterface>
      */
     public FilterDataRoute()
     {
-        super("route");
+        super("route", "Route id");
     }
 
     /** {@inheritDoc} */
     @Override
-    public final RouteDataInterface getValue(final GtuDataInterface gtu)
+    public final String getValue(final GtuData gtu)
     {
         Throw.whenNull(gtu, "GTU may not be null.");
-        return gtu.getRouteData();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String formatValue(final String format, final RouteDataInterface value)
-    {
-        return value.getId();
+        return gtu.getRouteId();
     }
 
     /** {@inheritDoc} */

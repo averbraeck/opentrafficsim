@@ -8,7 +8,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.draw.graphs.GraphPath.Section;
-import org.opentrafficsim.kpi.sampling.KpiLane;
+import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.SamplerData;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 
@@ -32,7 +32,7 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
     private final SamplerData<?> samplerData;
 
     /** KPI lane directions registered in the sampler. */
-    private final GraphPath<KpiLane> path;
+    private final GraphPath<LaneData> path;
 
     /** Time when trajectories were last updated per series in the path. */
     private List<Time> lastUpdateTime = new ArrayList<>();
@@ -46,11 +46,11 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
      * @param updateInterval Duration; regular update interval (simulation time)
      * @param simulator OTSSimulatorInterface; simulator
      * @param samplerData SamplerData&lt;?&gt;; sampler data
-     * @param path GraphPath&lt;KpiLaneDirection&gt;; path
+     * @param path GraphPath&lt;LaneData&gt;; path
      * @param delay Duration; amount of time that chart runs behind simulation to prevent gaps in the charted data
      */
     public AbstractSamplerPlot(final String caption, final Duration updateInterval, final OtsSimulatorInterface simulator,
-            final SamplerData<?> samplerData, final GraphPath<KpiLane> path, final Duration delay)
+            final SamplerData<?> samplerData, final GraphPath<LaneData> path, final Duration delay)
     {
         super(caption, updateInterval, simulator, delay, DEFAULT_INITIAL_UPPER_TIME_BOUND);
         this.samplerData = samplerData;
@@ -72,7 +72,7 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
         if (this.lastUpdateTime.get(series) == null || this.lastUpdateTime.get(series).lt(getUpdateTime()))
         {
             List<TrajectoryGroup<?>> cache = new ArrayList<>();
-            for (Section<KpiLane> section : getPath().getSections())
+            for (Section<LaneData> section : getPath().getSections())
             {
                 cache.add(this.samplerData.getTrajectoryGroup(section.getSource(series)));
             }
@@ -84,9 +84,9 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
 
     /**
      * Returns the path.
-     * @return GraphPath&lt;KpiLaneDirection&gt;; the path
+     * @return GraphPath&lt;LaneData&gt;; the path
      */
-    public final GraphPath<KpiLane> getPath()
+    public final GraphPath<LaneData> getPath()
     {
         return this.path;
     }

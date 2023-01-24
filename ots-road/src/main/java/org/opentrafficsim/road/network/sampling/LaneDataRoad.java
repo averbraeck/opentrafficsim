@@ -1,53 +1,65 @@
-package org.opentrafficsim.kpi.sampling;
+package org.opentrafficsim.road.network.sampling;
 
-import java.io.Serializable;
-
-import org.djutils.exceptions.Throw;
-import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
+import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.kpi.interfaces.LaneData;
+import org.opentrafficsim.road.network.lane.Lane;
 
 /**
+ * Lane representation in road sampler.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
- * </p>
+ * <p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class KpiLane implements Serializable
+public class LaneDataRoad implements LaneData
 {
-    /** */
-    private static final long serialVersionUID = 20160330L;
 
-    /** The lane. */
-    private final LaneDataInterface lane;
+    /** Wrapped lane. */
+    private final Lane lane;
 
     /**
-     * @param lane LaneDataInterface; the lane
+     * @param lane Lane; wrapped lane
      */
-    public KpiLane(final LaneDataInterface lane)
+    public LaneDataRoad(final Lane lane)
     {
-        Throw.whenNull(lane, "Lane may not be null.");
         this.lane = lane;
     }
 
     /**
-     * @return the lane
+     * @return lane.
      */
-    public LaneDataInterface getLaneData()
+    public final Lane getLane()
     {
         return this.lane;
     }
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final Length getLength()
     {
-        return "[" + this.lane + "]";
+        return this.lane.getLength();
     }
 
     /** {@inheritDoc} */
     @Override
-    public int hashCode()
+    public final LinkDataRoad getLinkData()
+    {
+        return new LinkDataRoad(this.lane.getParentLink());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String getId()
+    {
+        return this.lane.getId();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final int hashCode()
     {
         final int prime = 31;
         int result = 1;
@@ -57,7 +69,7 @@ public class KpiLane implements Serializable
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(final Object obj)
+    public final boolean equals(final Object obj)
     {
         if (this == obj)
         {
@@ -71,7 +83,7 @@ public class KpiLane implements Serializable
         {
             return false;
         }
-        KpiLane other = (KpiLane) obj;
+        LaneDataRoad other = (LaneDataRoad) obj;
         if (this.lane == null)
         {
             if (other.lane != null)
@@ -84,6 +96,13 @@ public class KpiLane implements Serializable
             return false;
         }
         return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LaneData [lane=" + this.lane + "]";
     }
 
 }

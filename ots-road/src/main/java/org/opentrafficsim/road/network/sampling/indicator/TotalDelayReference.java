@@ -10,7 +10,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vfloat.vector.FloatSpeedVector;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
+import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 import org.opentrafficsim.kpi.sampling.Trajectory;
@@ -36,12 +36,12 @@ public class TotalDelayReference extends AbstractIndicator<Duration>
 
     /** {@inheritDoc} */
     @Override
-    protected final <G extends GtuDataInterface> Duration calculate(final Query<G> query, final Time startTime,
+    protected final <G extends GtuData> Duration calculate(final Query<G> query, final Time startTime,
             final Time endTime, final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         Map<String, Duration> gtuTimes = new LinkedHashMap<>();
         Map<String, Duration> gtuRefTimes = new LinkedHashMap<>();
-        for (TrajectoryGroup<? extends GtuDataInterface> trajectoryGroup : trajectoryGroups)
+        for (TrajectoryGroup<? extends GtuData> trajectoryGroup : trajectoryGroups)
         {
             try
             {

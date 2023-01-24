@@ -67,7 +67,7 @@ import org.opentrafficsim.draw.graphs.GraphCrossSection;
 import org.opentrafficsim.draw.graphs.GraphPath;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
-import org.opentrafficsim.kpi.sampling.KpiLane;
+import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.road.gtu.generator.CfBaRoomChecker;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
@@ -612,7 +612,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
                 linkId = "OriginLane-drop";
             }
             LinkPosition linkPosition = new LinkPosition(getNetwork().getLink(linkId), lanePosition);
-            GraphCrossSection<KpiLane> crossSection;
+            GraphCrossSection<LaneData> crossSection;
             try
             {
                 crossSection = GraphLaneUtil.createCrossSection(names, linkPosition);
@@ -636,7 +636,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         {
             firstLanes.add(lane);
         }
-        GraphPath<KpiLane> path = Try.assign(() -> GraphLaneUtil.createPath(names, firstLanes), "");
+        GraphPath<LaneData> path = Try.assign(() -> GraphLaneUtil.createPath(names, firstLanes), "");
         TrajectoryPlot trajectoryPlot = new TrajectoryPlot("Trajectories", Duration.instantiateSI(5.0), getSimulator(),
                 this.sampler.getSamplerData(), path);
         trajectoryPlot.updateFixedDomainRange(true);

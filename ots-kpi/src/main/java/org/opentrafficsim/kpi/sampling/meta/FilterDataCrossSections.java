@@ -5,9 +5,9 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
+import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.sampling.CrossSection;
-import org.opentrafficsim.kpi.sampling.KpiLanePosition;
+import org.opentrafficsim.kpi.sampling.LanePosition;
 import org.opentrafficsim.kpi.sampling.TrajectoryAcceptList;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 
@@ -29,32 +29,14 @@ public class FilterDataCrossSections extends FilterDataType<CrossSection>
      */
     public FilterDataCrossSections()
     {
-        super("crossSection");
+        super("crossSection", "Cross sections");
     }
 
     /** {@inheritDoc} */
     @Override
-    public final CrossSection getValue(final GtuDataInterface gtu)
+    public final CrossSection getValue(final GtuData gtu)
     {
         return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String formatValue(final String format, final CrossSection value)
-    {
-        StringBuilder str = new StringBuilder();
-        str.append("[");
-        String delimiter = "";
-        for (KpiLanePosition kpiLanePosition : value.getLanePositions())
-        {
-            str.append(delimiter);
-            delimiter = "|";
-            str.append(kpiLanePosition.getLaneData().getId());
-            str.append(String.format(format, kpiLanePosition.getPosition().si));
-        }
-        str.append("]");
-        return str.toString();
     }
 
     /**
@@ -69,19 +51,19 @@ public class FilterDataCrossSections extends FilterDataType<CrossSection>
         // Loop over trajectoryList/trajectoryGroupList combo
         for (int i = 0; i < trajectoryAcceptList.size(); i++)
         {
-            TrajectoryGroup trajectoryGroup = trajectoryAcceptList.getTrajectoryGroup(i);
+            TrajectoryGroup<?> trajectoryGroup = trajectoryAcceptList.getTrajectoryGroup(i);
             // Loop over cross sections
             Iterator<CrossSection> crossSectionIterator = querySet.iterator();
             while (crossSectionIterator.hasNext())
             {
                 CrossSection crossSection = crossSectionIterator.next();
                 // Loop over lanes in cross section
-                Iterator<KpiLanePosition> lanePositionIterator = crossSection.getIterator();
+                Iterator<LanePosition> lanePositionIterator = crossSection.getIterator();
                 while (lanePositionIterator.hasNext())
                 {
-                    KpiLanePosition lanePosition = lanePositionIterator.next();
+                    LanePosition lanePosition = lanePositionIterator.next();
                     // If Trajectories is of same lane, check position
-                    if (trajectoryGroup.getKpiLane().getLaneData().equals(lanePosition.getLaneData()))
+                    if (trajectoryGroup.getLane().equals(lanePosition.getLaneData()))
                     {
                         double position = lanePosition.getPosition().si;
                         float[] x = trajectoryAcceptList.getTrajectory(i).getX();

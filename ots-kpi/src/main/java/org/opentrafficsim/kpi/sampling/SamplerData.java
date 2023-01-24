@@ -1,26 +1,33 @@
 package org.opentrafficsim.kpi.sampling;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import java.util.stream.IntStream;
 
-import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.base.CompressedFileWriter;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
-import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
-import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
-import org.opentrafficsim.kpi.interfaces.LinkDataInterface;
-import org.opentrafficsim.kpi.interfaces.NodeDataInterface;
-import org.opentrafficsim.kpi.interfaces.RouteDataInterface;
+import org.djunits.Throw;
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.DurationUnit;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.Unit;
+import org.djunits.value.base.Scalar;
+import org.djunits.value.vfloat.scalar.FloatAcceleration;
+import org.djunits.value.vfloat.scalar.FloatDuration;
+import org.djunits.value.vfloat.scalar.FloatLength;
+import org.djunits.value.vfloat.scalar.FloatSpeed;
+import org.opentrafficsim.kpi.interfaces.GtuData;
+import org.opentrafficsim.kpi.interfaces.LaneData;
+import org.opentrafficsim.kpi.sampling.TableCsvWriter.Compression;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
 import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
 
@@ -37,59 +44,156 @@ import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
  * @author <a href="https://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <G> gtu data type
  */
-// TODO: extending list table requires us to know the columns beforehand, create a view asTable()?
-public class SamplerData<G extends GtuDataInterface> extends AbstractTable
+public class SamplerData<G extends GtuData> extends Table
 {
+
+    /** Base columns. */
+    private static Collection<Column<?>> baseColumns = new LinkedHashSet<>();
+
+    /** Extended data types, in order of relevant columns. */
+    private final List<ExtendedDataType<?, ?, ?, G>> extendedDataTypes;
+
+    /** Filter data types, in order of relevant columns. */
+    private final List<FilterDataType<?>> filterDataTypes;
+
+    /** Map with all sampling data. */
+    private final Map<LaneData, TrajectoryGroup<G>> trajectories = new LinkedHashMap<>();
+
+    static
+    {
+        baseColumns.add(new Column<>("traj#", "Trajectory number", Integer.class, null));
+        baseColumns.add(new Column<>("linkId", "Link id", String.class, null));
+        baseColumns.add(new Column<>("laneId&dir", "Lane id and direction", String.class, null));
+        baseColumns.add(new Column<>("gtuId", "GTU id", String.class, null));
+        baseColumns.add(new Column<>("t", "Simulation time", FloatDuration.class, DurationUnit.SI.getId()));
+        baseColumns.add(new Column<>("x", "Position on the lane", FloatLength.class, LengthUnit.SI.getId()));
+        baseColumns.add(new Column<>("v", "Speed", FloatSpeed.class, SpeedUnit.SI.getId()));
+        baseColumns.add(new Column<>("a", "Acceleration", FloatAcceleration.class, AccelerationUnit.SI.getId()));
+    }
 
     /**
      * Constructor.
-     * @param columns Collection&lt;Column&lt;?&gt;&gt;; columns
+     * @param extendedDataTypes Set&lt;? extends ExtendedDataType&lt;?, ?, ?, G&gt;&gt;; extended data types.
+     * @param filterDataTypes Set&lt;FilterDataType&lt;?&gt;&gt;; filter data types.
      */
-    public SamplerData(final Collection<Column<?>> columns)
+    public SamplerData(final Set<ExtendedDataType<?, ?, ?, G>> extendedDataTypes, final Set<FilterDataType<?>> filterDataTypes)
     {
-        super("sampler", "Trajectory data", columns);
+        super("sampler", "Trajectory data", generateColumns(extendedDataTypes, filterDataTypes));
+        /*
+         * The delivered types may not have a consistent iteration order. We need to store them in a data structure that does.
+         * The order in which we add them needs to be consistent with the columns generated, where we skip the 8 base columns.
+         */
+        this.extendedDataTypes = new ArrayList<>(extendedDataTypes.size());
+        for (int i = 8; i < 8 + extendedDataTypes.size(); i++)
+        {
+            String columnId = getColumn(i).getId();
+            for (ExtendedDataType<?, ?, ?, G> extendedDataType : extendedDataTypes)
+            {
+                if (extendedDataType.getId().equals(columnId))
+                {
+                    this.extendedDataTypes.add(extendedDataType);
+                }
+            }
+        }
+        this.filterDataTypes = new ArrayList<>(filterDataTypes.size());
+        for (int i = 8 + extendedDataTypes.size(); i < 8 + extendedDataTypes.size() + filterDataTypes.size(); i++)
+        {
+            String columnId = getColumn(i).getId();
+            for (FilterDataType<?> filterType : filterDataTypes)
+            {
+                if (filterType.getId().equals(columnId))
+                {
+                    this.filterDataTypes.add(filterType);
+                }
+            }
+        }
     }
 
-    /** Map with all sampling data. */
-    private final Map<KpiLane, TrajectoryGroup<G>> trajectories = new LinkedHashMap<>();
+    /**
+     * Generates the columns based on base information and the extended and filter types.
+     * @param extendedDataTypes Set&lt;? extends ExtendedDataType&lt;?, ?, ?, ? extends GtuData&gt;&gt;; extended data types.
+     * @param filterDataTypes Set&lt;FilterDataType&lt;?&gt;&gt;; filter data types.
+     * @return Collection&lt;Column&lt;?&gt;&gt;; columns.
+     */
+    private static Collection<Column<?>> generateColumns(
+            final Set<? extends ExtendedDataType<?, ?, ?, ? extends GtuData>> extendedDataTypes,
+            final Set<FilterDataType<?>> filterDataTypes)
+    {
+        Collection<Column<?>> out = new ArrayList<>(baseColumns.size() + extendedDataTypes.size() + filterDataTypes.size());
+        out.addAll(baseColumns);
+        for (ExtendedDataType<?, ?, ?, ?> extendedDataType : extendedDataTypes)
+        {
+            out.add(new Column<>(extendedDataType.getId(), extendedDataType.getDescription(), extendedDataType.getType(),
+                    getUnit(extendedDataType)));
+        }
+        for (FilterDataType<?> filterDataType : filterDataTypes)
+        {
+            out.add(new Column<>(filterDataType.getId(), filterDataType.getDescription(), String.class, null));
+        }
+        return out;
+    }
+
+    /**
+     * Returns the unit for values in an extended data type.
+     * @param extendedDataType ExtendedDataType&lt;?, ?, ?, ?&gt;; extended data type.
+     * @return String; representation of the unit
+     */
+    private static String getUnit(final ExtendedDataType<?, ?, ?, ?> extendedDataType)
+    {
+        if (Scalar.class.isAssignableFrom(extendedDataType.getType()))
+        {
+            try
+            {
+                Class<?> unitClass = Class.forName(
+                        "org.djunits.unit." + extendedDataType.getType().getSimpleName().replace("Float", "") + "Unit");
+                return ((Unit<?>) unitClass.getDeclaredField("SI").get(unitClass)).getId();
+            }
+            catch (ClassNotFoundException | IllegalArgumentException | IllegalAccessException | NoSuchFieldException
+                    | SecurityException exception)
+            {
+                return null;
+            }
+        }
+        return null;
+    }
 
     /**
      * Stores a trajectory group with the lane direction.
-     * @param kpiLaneDirection KpiLaneDirection; lane direction
+     * @param lane LaneData; lane direction
      * @param trajectoryGroup trajectory group for given lane direction
      */
-    protected final void putTrajectoryGroup(final KpiLane kpiLaneDirection, final TrajectoryGroup<G> trajectoryGroup)
+    protected final void putTrajectoryGroup(final LaneData lane, final TrajectoryGroup<G> trajectoryGroup)
     {
-        this.trajectories.put(kpiLaneDirection, trajectoryGroup);
+        this.trajectories.put(lane, trajectoryGroup);
     }
 
     /**
      * Returns the set of lane directions.
-     * @return Set&lt;KpiLaneDirection&gt;; lane directions
+     * @return Set&lt;LaneData&gt;; lane directions
      */
-    public final Set<KpiLane> getLaneDirections()
+    public final Set<LaneData> getLanes()
     {
         return this.trajectories.keySet();
     }
 
     /**
-     * Returns whether there is data for the give lane direction.
-     * @param kpiLaneDirection KpiLaneDirection; lane direction
-     * @return whether there is data for the give lane direction
+     * Returns whether there is data for the give lane.
+     * @param lane LaneData; lane
+     * @return whether there is data for the give lane
      */
-    public final boolean contains(final KpiLane kpiLaneDirection)
+    public final boolean contains(final LaneData lane)
     {
-        return this.trajectories.containsKey(kpiLaneDirection);
+        return this.trajectories.containsKey(lane);
     }
 
     /**
-     * Returns the trajectory group of given lane direction.
-     * @param kpiLaneDirection KpiLaneDirection; lane direction
-     * @return trajectory group of given lane direction, {@code null} if none
+     * Returns the trajectory group of given lane.
+     * @param lane LaneData; lane
+     * @return trajectory group of given lane, {@code null} if none
      */
-    public final TrajectoryGroup<G> getTrajectoryGroup(final KpiLane kpiLaneDirection)
+    public final TrajectoryGroup<G> getTrajectoryGroup(final LaneData lane)
     {
-        return this.trajectories.get(kpiLaneDirection);
+        return this.trajectories.get(lane);
     }
 
     /**
@@ -98,313 +202,25 @@ public class SamplerData<G extends GtuDataInterface> extends AbstractTable
      */
     public final void writeToFile(final String file)
     {
-        writeToFile(file, "%.3f", CompressionMethod.ZIP);
+        writeToFile(file, "%.3f", Compression.ZIP);
     }
 
     /**
      * Write the contents of the sampler in to a file.
      * @param file String; file
      * @param format String; number format, as used in {@code String.format()}
-     * @param compression CompressionMethod; how to compress the data
+     * @param compression Compression; how to compress the data
      */
-    public final void writeToFile(final String file, final String format, final CompressionMethod compression)
+    public final void writeToFile(final String file, final String format, final Compression compression)
     {
-        int counter = 0;
-        BufferedWriter bw = CompressedFileWriter.create(file, compression.equals(CompressionMethod.ZIP));
-
-        // TODO: Sampler used this to cut-off space if SpaceTimeRegion's did not cover complete lanes. Trajectories are however
-        // recorded over the complete length.
-
-        /*
-         * // create Query, as this class is designed to filter for space-time regions Query<G> query = new Query<>(this, "",
-         * new MetaDataSet()); for (SpaceTimeRegion str : this.spaceTimeRegions) {
-         * query.addSpaceTimeRegion(str.getLaneDirection(), str.getStartPosition(), str.getEndPosition(), str.getStartTime(),
-         * str.getEndTime()); } List<TrajectoryGroup<G>> groups =
-         * query.getTrajectoryGroups(Time.instantiateSI(Double.POSITIVE_INFINITY));
-         */
-
-        Collection<TrajectoryGroup<G>> groups = this.trajectories.values();
-        try
-        {
-            // gather all filter data types for the header line
-            List<FilterDataType<?>> allFilterDataTypes = new ArrayList<>();
-            for (TrajectoryGroup<G> group : groups)
-            {
-                for (Trajectory<G> trajectory : group.getTrajectories())
-                {
-                    for (FilterDataType<?> filterDataType : trajectory.getFilterDataTypes())
-                    {
-                        if (!allFilterDataTypes.contains(filterDataType))
-                        {
-                            allFilterDataTypes.add(filterDataType);
-                        }
-                    }
-                }
-            }
-            // gather all extended data types for the header line
-            List<ExtendedDataType<?, ?, ?, ?>> allExtendedDataTypes = new ArrayList<>();
-            for (TrajectoryGroup<G> group : groups)
-            {
-                for (Trajectory<?> trajectory : group.getTrajectories())
-                {
-                    for (ExtendedDataType<?, ?, ?, ?> extendedDataType : trajectory.getExtendedDataTypes())
-                    {
-                        if (!allExtendedDataTypes.contains(extendedDataType))
-                        {
-                            allExtendedDataTypes.add(extendedDataType);
-                        }
-                    }
-                }
-            }
-            // create header line
-            StringBuilder str = new StringBuilder();
-            str.append("traj#,linkId,laneId&dir,gtuId,t,x,v,a");
-            for (FilterDataType<?> metaDataType : allFilterDataTypes)
-            {
-                str.append(",");
-                str.append(metaDataType.getId());
-            }
-            for (ExtendedDataType<?, ?, ?, ?> extendedDataType : allExtendedDataTypes)
-            {
-                str.append(",");
-                str.append(extendedDataType.getId());
-            }
-            bw.write(str.toString());
-            bw.newLine();
-            for (TrajectoryGroup<G> group : groups)
-            {
-                for (Trajectory<G> trajectory : group.getTrajectories())
-                {
-                    counter++;
-                    float[] t = trajectory.getT();
-                    float[] x = trajectory.getX();
-                    float[] v = trajectory.getV();
-                    float[] a = trajectory.getA();
-                    Map<ExtendedDataType<?, ?, ?, ?>, Object> extendedData = new LinkedHashMap<>();
-                    for (ExtendedDataType<?, ?, ?, ?> extendedDataType : allExtendedDataTypes)
-                    {
-                        if (trajectory.contains(extendedDataType))
-                        {
-                            try
-                            {
-                                extendedData.put(extendedDataType, trajectory.getExtendedData(extendedDataType));
-                            }
-                            catch (SamplingException exception)
-                            {
-                                // should not occur, we obtain the extended data types from the trajectory
-                                throw new RuntimeException("Error while loading extended data type.", exception);
-                            }
-                        }
-                    }
-                    for (int i = 0; i < t.length; i++)
-                    {
-                        // TODO: values can contain ","; use csv writer
-                        str = new StringBuilder();
-                        str.append(counter);
-                        str.append(",");
-                        if (!compression.equals(CompressionMethod.OMIT_DUPLICATE_INFO) || i == 0)
-                        {
-                            str.append(group.getKpiLane().getLaneData().getLinkData().getId());
-                            str.append(",");
-                            str.append(group.getKpiLane().getLaneData().getId());
-                            str.append(",");
-                            str.append(trajectory.getGtuId());
-                            str.append(",");
-                        }
-                        else
-                        {
-                            // one trajectory is on the same lane and pertains to the same GTU, no need to repeat data
-                            str.append(",,,");
-                        }
-                        str.append(String.format(format, t[i]));
-                        str.append(",");
-                        str.append(String.format(format, x[i]));
-                        str.append(",");
-                        str.append(String.format(format, v[i]));
-                        str.append(",");
-                        str.append(String.format(format, a[i]));
-                        for (FilterDataType<?> metaDataType : allFilterDataTypes)
-                        {
-                            str.append(",");
-                            if (i == 0 && trajectory.contains(metaDataType))
-                            {
-                                // no need to repeat meta data
-                                str.append(metaDataType.formatValue(format, castValue(trajectory.getMetaData(metaDataType))));
-                            }
-                        }
-                        for (ExtendedDataType<?, ?, ?, ?> extendedDataType : allExtendedDataTypes)
-                        {
-                            str.append(",");
-                            if (trajectory.contains(extendedDataType))
-                            {
-                                try
-                                {
-                                    str.append(
-                                            extendedDataType.formatValue(format, castValue(extendedData, extendedDataType, i)));
-                                }
-                                catch (SamplingException exception)
-                                {
-                                    // should not occur, we obtain the extended data types from the trajectory
-                                    throw new RuntimeException("Error while loading extended data type.", exception);
-                                }
-                            }
-                        }
-                        bw.write(str.toString());
-                        bw.newLine();
-                    }
-                }
-            }
-        }
-        catch (IOException exception)
-        {
-            throw new RuntimeException("Could not write to file.", exception);
-        }
-        // close file on fail
-        finally
-        {
-            try
-            {
-                if (bw != null)
-                {
-                    bw.close();
-                }
-            }
-            catch (IOException ex)
-            {
-                ex.printStackTrace();
-            }
-        }
+        TableCsvWriter.create().setFormat(format).setCompression(null).write(this, file);
     }
-
-    /**
-     * Cast value to type for meta data.
-     * @param value Object; value object to cast
-     * @return cast value
-     * @param <T> type of value
-     */
-    @SuppressWarnings("unchecked")
-    private <T> T castValue(final Object value)
-    {
-        return (T) value;
-    }
-
-    /**
-     * Cast value to type for extended data.
-     * @param extendedData Map&lt;ExtendedDataType&lt;?,?,?,?&gt;,Object&gt;; extended data of trajectory in output form
-     * @param extendedDataType ExtendedDataType&lt;?,?,?,?&gt;; extended data type
-     * @param i int; index of value to return
-     * @return cast value
-     * @throws SamplingException when the found index is out of bounds
-     * @param <T> type of value
-     * @param <O> output type
-     * @param <S> storage type
-     */
-    @SuppressWarnings("unchecked")
-    private <T, O, S> T castValue(final Map<ExtendedDataType<?, ?, ?, ?>, Object> extendedData,
-            final ExtendedDataType<?, ?, ?, ?> extendedDataType, final int i) throws SamplingException
-    {
-        // is only called on value directly taken from an ExtendedDataType within range of trajectory
-        ExtendedDataType<T, O, S, ?> edt = (ExtendedDataType<T, O, S, ?>) extendedDataType;
-        return edt.getOutputValue((O) extendedData.get(edt), i);
-    }
-
-    /**
-     * Defines the compression method for stored data.
-     * <p>
-     * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * <p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
-     */
-    public enum CompressionMethod
-    {
-        /** No compression. */
-        NONE,
-
-        /** Duplicate info per trajectory is only stored at the first sample, and empty for other samples. */
-        OMIT_DUPLICATE_INFO,
-
-        /** Zip compression. */
-        ZIP,
-    }
-
-    /**
-     * Returns a value from the map. Creates a value if needed.
-     * @param id String; id of object (key in map)
-     * @param map Map&lt;String, T&gt;; stored values
-     * @param producer Supplier&lt;TT&gt;; producer used if no value exists in the map
-     * @param <T> type
-     * @return value for the id
-     */
-    private final <T> T getOrCreate(final String id, final Map<String, T> map, final Function<String, T> producer)
-    {
-        if (!map.containsKey(id))
-        {
-            map.put(id, producer.apply(id));
-        }
-        return map.get(id);
-    }
-
-    // TABLE METHODS
 
     /** {@inheritDoc} */
     @Override
-    public Iterator<Record> iterator()
+    public Iterator<Row> iterator()
     {
-        // TODO: local iterator over this.trajectories, trajectories per group, and length of each trajectory
-
-        // TODO: gathering the extended and filter data types should be done here, these are within the trajectories, and upon
-        // file loading, this should be mimicked
-
-        Iterator<KpiLane> laneIterator = this.trajectories.keySet().iterator();
-
-        return new Iterator<Record>()
-        {
-            private Iterator<Trajectory<G>> trajectoryIterator =
-                    laneIterator.hasNext() ? SamplerData.this.trajectories.get(laneIterator.next()).iterator() : null;
-
-            private Trajectory<G> trajectory = this.trajectoryIterator != null && this.trajectoryIterator.hasNext()
-                    ? this.trajectoryIterator.next() : null;
-
-            private Trajectory<G> currentTrajectory;
-
-            private int index;
-
-            @Override
-            public boolean hasNext()
-            {
-                if (this.index == this.currentTrajectory.size())
-                {
-                    // get next trajectory
-
-                }
-                return true;
-            }
-
-            @Override
-            public Record next()
-            {
-                Record record = new Record()
-                {
-                    @Override
-                    public <T> T getValue(final Column<T> column)
-                    {
-                        return null;
-                    }
-
-                    @Override
-                    public Object getValue(final String id)
-                    {
-                        return null;
-                    }
-                };
-                this.index++;
-                return record;
-            }
-        };
+        return new SamplerDataIterator();
     }
 
     /** {@inheritDoc} */
@@ -424,335 +240,156 @@ public class SamplerData<G extends GtuDataInterface> extends AbstractTable
         return true;
     }
 
-    // LOCAL HELPER CLASSES TO IMPLEMENT INTERFACES //
-
     /**
-     * Getter for single {@code String} input.
-     * @param <T> output value type
+     * Iterator over the sampler data. It iterates over lanes, trajectories on a lane, and indices within the trajectory.
+     * <p>
+     * Copyright (c) 2022-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    private static class Getter<T>
+    private final class SamplerDataIterator implements Iterator<Row>
     {
+        /** Iterator over the sampled lanes. */
+        private Iterator<Entry<LaneData, TrajectoryGroup<G>>> laneIterator =
+                SamplerData.this.trajectories.entrySet().iterator();
 
-        /** Map with cached values. */
-        private final Map<String, T> map = new LinkedHashMap<>();
+        /** Current lane. */
+        private LaneData currentLane;
 
-        /** Provider function. */
-        private Function<String, T> function;
+        /** Iterator over trajectories on a lane. */
+        private Iterator<Trajectory<G>> trajectoryIterator = Collections.emptyIterator();
 
-        /**
-         * Constructor.
-         * @param function Function&lt;String, T&gt;; provider function
-         */
-        Getter(final Function<String, T> function)
+        /** Current trajectory. */
+        private Trajectory<G> currentTrajectory;
+
+        /** Size of current trajectory, to check concurrent modification. */
+        private int currentTrajectorySize = 0;
+
+        /** Trajectory counter (first column). */
+        private int trajectoryCounter = 0;
+
+        /** Iterator over indices in a trajectory. */
+        private Iterator<Integer> indexIterator = Collections.emptyIterator();
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean hasNext()
         {
-            this.function = function;
+            return this.indexIterator.hasNext() || this.trajectoryIterator.hasNext() || this.laneIterator.hasNext();
         }
 
-        /**
-         * Get value, from cache or provider function.
-         * @param id String; id
-         * @return T; value, from cache or provider function
-         */
-        public T get(final String id)
+        /** {@inheritDoc} */
+        @Override
+        public Row next()
         {
-            T t;
-            if (!this.map.containsKey(id))
+            assureNextAvailable();
+            Throw.when(this.currentTrajectory.size() != this.currentTrajectorySize, ConcurrentModificationException.class,
+                    "Trajectory modified while iterating.");
+
+            int trajectoryIndex = this.indexIterator.next();
+            try
             {
-                t = this.function.apply(id);
-                this.map.put(id, t);
+                // base data
+                Object[] data = getBaseData(trajectoryIndex);
+                int dataIndex = 8;
+
+                // extended data
+                for (int i = 0; i < SamplerData.this.extendedDataTypes.size(); i++)
+                {
+                    ExtendedDataType<?, ?, ?, G> extendedDataType = SamplerData.this.extendedDataTypes.get(i);
+                    data[dataIndex++] = this.currentTrajectory.contains(extendedDataType)
+                            ? this.currentTrajectory.getExtendedData(extendedDataType, trajectoryIndex) : null;
+                }
+
+                // filter data
+                for (int i = 0; i < SamplerData.this.filterDataTypes.size(); i++)
+                {
+                    FilterDataType<?> filterDataType = SamplerData.this.filterDataTypes.get(i);
+                    // filter data is only stored on the first index, as this data is fixed over a trajectory
+                    data[dataIndex++] = trajectoryIndex == 0 && this.currentTrajectory.contains(filterDataType)
+                            ? this.currentTrajectory.getFilterData(filterDataType) : null;
+                }
+
+                return new Row(SamplerData.this, data);
             }
-            else
+            catch (SamplingException se)
             {
-                t = this.map.get(id);
+                throw new RuntimeException("Sampling exception during iteration over sampler data.", se);
             }
-            return t;
-        }
-    }
-
-    /**
-     * Getter for dual {@code String} and {@code O} input.
-     * @param <O> type of second input (besides the first being {@code String})
-     * @param <T> output value type
-     */
-    private static class BiGetter<O, T>
-    {
-
-        /** Map with cached values. */
-        private final Map<String, T> map = new LinkedHashMap<>();
-
-        /** Provider function. */
-        private BiFunction<String, O, T> function;
-
-        /**
-         * Constructor.
-         * @param function BiFunction&lt;String, T&gt;; provider function
-         */
-        BiGetter(final BiFunction<String, O, T> function)
-        {
-            this.function = function;
         }
 
         /**
-         * Get value, from cache or provider function.
-         * @param id String; id
-         * @param o O; other object
-         * @return T; value, from cache or provider function
+         * Assures that all the iterators have a next item. If any iterator does not have a next item, the iterator is replaced
+         * based on the next value from the iterator a level up.
+         * @throws NoSuchElementException if the root iterator is requested for a next value it does not have.
          */
-        public T get(final String id, final O o)
+        private void assureNextAvailable()
         {
-            T t;
-            if (!this.map.containsKey(id))
+            while (!this.indexIterator.hasNext())
             {
-                t = this.function.apply(id, o);
-                this.map.put(id, t);
+                while (!this.trajectoryIterator.hasNext())
+                {
+                    Throw.when(!this.laneIterator.hasNext(), NoSuchElementException.class, "Sampler data has no next row.");
+                    Entry<LaneData, TrajectoryGroup<G>> entry = this.laneIterator.next();
+                    this.currentLane = entry.getKey();
+                    this.trajectoryIterator = entry.getValue().iterator();
+                }
+                this.currentTrajectory = this.trajectoryIterator.next();
+                this.currentTrajectorySize = this.currentTrajectory.size();
+                this.trajectoryCounter++;
+                this.indexIterator = IntStream.range(0, this.currentTrajectory.size()).iterator();
             }
-            else
+        }
+
+        /**
+         * Returns an array with the base data. The array is of size to also contain the extended and filter data.
+         * @param trajectoryIndex int; trajectory index in the current trajectory.
+         * @return Object[] base data of size to also contain the extended and filter data.
+         * @throws SamplingException if data can not be obtained.
+         */
+        private Object[] getBaseData(final int trajectoryIndex) throws SamplingException
+        {
+            Object[] data = new Object[SamplerData.this.getNumberOfColumns()];
+            int dataIndex = 0;
+            for (Column<?> column : baseColumns)
             {
-                t = this.map.get(id);
+                switch (column.getId())
+                {
+                    case "traj#":
+                        data[dataIndex] = this.trajectoryCounter;
+                        break;
+                    case "linkId":
+                        data[dataIndex] = this.currentLane.getLinkData().getId();
+                        break;
+                    case "laneId&dir":
+                        data[dataIndex] = this.currentLane.getId();
+                        break;
+                    case "gtuId":
+                        data[dataIndex] = this.currentTrajectory.getGtuId();
+                        break;
+                    case "t":
+                        data[dataIndex] = FloatDuration.instantiateSI(this.currentTrajectory.getT(trajectoryIndex));
+                        break;
+                    case "x":
+                        data[dataIndex] = FloatLength.instantiateSI(this.currentTrajectory.getX(trajectoryIndex));
+                        break;
+                    case "v":
+                        data[dataIndex] = FloatSpeed.instantiateSI(this.currentTrajectory.getV(trajectoryIndex));
+                        break;
+                    case "a":
+                        data[dataIndex] = FloatAcceleration.instantiateSI(this.currentTrajectory.getA(trajectoryIndex));
+                        break;
+                    default:
+
+                }
+                dataIndex++;
             }
-            return t;
+            return data;
         }
-    }
-
-    /** Helper class LinkData. */
-    private static class LinkData implements LinkDataInterface
-    {
-
-        /** Length ({@code null} always). */
-        private final Length length = null; // unknown in this context
-
-        /** Id. */
-        private final String id;
-
-        /** Lanes. */
-        private final List<LaneData> lanes = new ArrayList<>();
-
-        /**
-         * @param id String; id
-         */
-        LinkData(final String id)
-        {
-            this.id = id;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Length getLength()
-        {
-            return this.length;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public List<? extends LaneDataInterface> getLaneDatas()
-        {
-            return this.lanes;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String getId()
-        {
-            return this.id;
-        }
-
-    }
-
-    /** Helper class LaneData. */
-    private static class LaneData implements LaneDataInterface
-    {
-
-        /** Length ({@code null} always). */
-        private final Length length = null; // unknown in this context
-
-        /** Id. */
-        private final String id;
-
-        /** Link. */
-        private final LinkData link;
-
-        /**
-         * Constructor.
-         * @param id String; id
-         * @param link LinkData; link
-         */
-        @SuppressWarnings("synthetic-access")
-        LaneData(final String id, final LinkData link)
-        {
-            this.id = id;
-            this.link = link;
-            link.lanes.add(this);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Length getLength()
-        {
-            return this.length;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public LinkData getLinkData()
-        {
-            return this.link;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String getId()
-        {
-            return this.id;
-        }
-
-    }
-
-    /** Helper class NodeData. */
-    private static class NodeData implements NodeDataInterface
-    {
-
-        /** Node id. */
-        private String id;
-
-        /**
-         * Constructor.
-         * @param id String; id
-         */
-        NodeData(final String id)
-        {
-            this.id = id;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String getId()
-        {
-            return null;
-        }
-
-    }
-
-    /** Helper class GtuTypeData. */
-    private static class GtuTypeData implements GtuTypeDataInterface
-    {
-
-        /** Node id. */
-        private String id;
-
-        /**
-         * Constructor.
-         * @param id String; id
-         */
-        GtuTypeData(final String id)
-        {
-            this.id = id;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String getId()
-        {
-            return null;
-        }
-
-    }
-
-    /** Helper class RouteData. */
-    private static class RouteData implements RouteDataInterface
-    {
-
-        /** Node id. */
-        private String id;
-
-        /**
-         * Constructor.
-         * @param id String; id
-         */
-        RouteData(final String id)
-        {
-            this.id = id;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String getId()
-        {
-            return null;
-        }
-
-    }
-
-    /** Helper class GtuData. */
-    private static class GtuData implements GtuDataInterface
-    {
-
-        /** Id. */
-        private final String id;
-
-        /** Origin. */
-        private final NodeData origin;
-
-        /** Destination. */
-        private final NodeData destination;
-
-        /** GTU type. */
-        private final GtuTypeData gtuType;
-
-        /** Route. */
-        private final RouteData route;
-
-        /**
-         * @param id String; id
-         * @param origin NodeData; origin
-         * @param destination NodeData; destination
-         * @param gtuType GtuTypeData; GTU type
-         * @param route RouteData; route
-         */
-        GtuData(final String id, final NodeData origin, final NodeData destination, final GtuTypeData gtuType,
-                final RouteData route)
-        {
-            this.id = id;
-            this.origin = origin;
-            this.destination = destination;
-            this.gtuType = gtuType;
-            this.route = route;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String getId()
-        {
-            return this.id;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public NodeDataInterface getOriginNodeData()
-        {
-            return this.origin;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public NodeDataInterface getDestinationNodeData()
-        {
-            return this.destination;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public GtuTypeDataInterface getGtuTypeData()
-        {
-            return this.gtuType;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public RouteDataInterface getRouteData()
-        {
-            return this.route;
-        }
-
     }
 
 }
