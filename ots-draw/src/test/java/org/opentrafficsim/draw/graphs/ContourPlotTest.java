@@ -102,7 +102,7 @@ public class ContourPlotTest implements UNITS
      * Create a network and a path for the tests.
      * @param simulator OTSSimulatorInterface; the simulator
      * @param network OTSRoadNetwork; the network
-     * @return GraphPath&lt;KpiLaneDirection&gt;; the dummy path
+     * @return GraphPath&lt;LaneData&gt;; the dummy path
      * @throws Exception when something goes wrong (should not happen)
      */
     private GraphPath<LaneData> dummyPath(final OtsSimulatorInterface simulator, final OtsRoadNetwork network)

@@ -29,10 +29,10 @@ public abstract class Sim0MQSampler extends Sampler
     /** The last received timestamp. */
     private Time lastTimestamp = Time.ZERO;
 
-    /** The recording start times per KpiLaneDirection. */
+    /** The recording start times per LaneData. */
     private final Map<LaneData, Time> startRecordingMap = new LinkedHashMap<>();
 
-    /** The recording stop times per KpiLaneDirection. */
+    /** The recording stop times per LaneData. */
     private final Map<LaneData, Time> stopRecordingMap = new LinkedHashMap<>();
 
     /** the nodes. */
@@ -128,7 +128,7 @@ public abstract class Sim0MQSampler extends Sampler
     //
     // /** {@inheritDoc} */
     // @Override
-    // public final void scheduleStartRecording(final Time time, final KpiLaneDirection kpiLaneDirection)
+    // public final void scheduleStartRecording(final Time time, final LaneData kpiLaneDirection)
     // {
     // // store the start time in the internal map to indicate from which time we want to consider events.
     // this.startRecordingMap.put(kpiLaneDirection, time);
@@ -136,7 +136,7 @@ public abstract class Sim0MQSampler extends Sampler
     //
     // /** {@inheritDoc} */
     // @Override
-    // public final void scheduleStopRecording(final Time time, final KpiLaneDirection kpiLaneDirection)
+    // public final void scheduleStopRecording(final Time time, final LaneData kpiLaneDirection)
     // {
     // // store the stop time in the internal map to indicate from which time we want to consider events.
     // this.stopRecordingMap.put(kpiLaneDirection, time);
@@ -144,14 +144,14 @@ public abstract class Sim0MQSampler extends Sampler
     //
     // /** {@inheritDoc} */
     // @Override
-    // public final void initRecording(final KpiLaneDirection kpiLaneDirection)
+    // public final void initRecording(final LaneData kpiLaneDirection)
     // {
     // // Nothing to do -- we get data on all GTUs
     // }
     //
     // /** {@inheritDoc} */
     // @Override
-    // public final void finalizeRecording(final KpiLaneDirection kpiLaneDirection)
+    // public final void finalizeRecording(final LaneData kpiLaneDirection)
     // {
     // // Nothing to do -- we get data on all GTUs
     // }
@@ -176,7 +176,7 @@ public abstract class Sim0MQSampler extends Sampler
     // // lane not part of this network, or new message of gtu not (yet) received
     // return;
     // }
-    // KpiLaneDirection kpiLaneDirection = new KpiLaneDirection(this.lanes.get(laneId),
+    // LaneData kpiLaneDirection = new LaneData(this.lanes.get(laneId),
     // forward ? KpiGtuDirectionality.DIR_PLUS : KpiGtuDirectionality.DIR_MINUS);
     // GtuData gtu = this.gtus.get(gtuId);
     // if (this.lastLanes.containsKey(gtuId) && contains(this.lastLanes.get(gtuId))
@@ -239,10 +239,10 @@ public abstract class Sim0MQSampler extends Sampler
     // this.imbKpiTransceiver.notifyTime(now());
     // }
     // this.lastTimestamp = new Time(timeStamp, TimeUnit.SI);
-    // Iterator<KpiLaneDirection> iterator = this.startRecordingMap.keySet().iterator();
+    // Iterator<LaneData> iterator = this.startRecordingMap.keySet().iterator();
     // while (iterator.hasNext())
     // {
-    // KpiLaneDirection kpiLaneDirection = iterator.next();
+    // LaneData kpiLaneDirection = iterator.next();
     // if (now().ge(this.startRecordingMap.get(kpiLaneDirection)))
     // {
     // startRecording(kpiLaneDirection);
@@ -252,7 +252,7 @@ public abstract class Sim0MQSampler extends Sampler
     // iterator = this.stopRecordingMap.keySet().iterator();
     // while (iterator.hasNext())
     // {
-    // KpiLaneDirection kpiLaneDirection = iterator.next();
+    // LaneData kpiLaneDirection = iterator.next();
     // if (now().ge(this.stopRecordingMap.get(kpiLaneDirection)))
     // {
     // stopRecording(kpiLaneDirection);

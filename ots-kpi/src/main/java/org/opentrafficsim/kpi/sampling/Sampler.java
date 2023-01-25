@@ -140,7 +140,7 @@ public abstract class Sampler<G extends GtuData>
      */
     public final void startRecording(final LaneData lane)
     {
-        Throw.whenNull(lane, "KpiLaneDirection may not be null.");
+        Throw.whenNull(lane, "LaneData may not be null.");
         if (this.samplerData.contains(lane))
         {
             return;
@@ -161,7 +161,7 @@ public abstract class Sampler<G extends GtuData>
      */
     public final void stopRecording(final LaneData lane)
     {
-        Throw.whenNull(lane, "KpiLaneDirection may not be null.");
+        Throw.whenNull(lane, "LaneData may not be null.");
         if (!this.samplerData.contains(lane) || this.endTimes.get(lane).gt(now()))
         {
             return;
@@ -187,7 +187,7 @@ public abstract class Sampler<G extends GtuData>
     public final void processGtuAddEvent(final LaneData lane, final Length position, final Speed speed,
             final Acceleration acceleration, final Time time, final G gtu)
     {
-        Throw.whenNull(lane, "KpiLaneDirection may not be null.");
+        Throw.whenNull(lane, "LaneData may not be null.");
         Throw.whenNull(position, "Position may not be null.");
         Throw.whenNull(speed, "Speed may not be null.");
         Throw.whenNull(acceleration, "Acceleration may not be null.");
@@ -223,7 +223,7 @@ public abstract class Sampler<G extends GtuData>
     public final void processGtuMoveEvent(final LaneData lane, final Length position, final Speed speed,
             final Acceleration acceleration, final Time time, final G gtu)
     {
-        Throw.whenNull(lane, "KpiLaneDirection may not be null.");
+        Throw.whenNull(lane, "LaneData may not be null.");
         Throw.whenNull(position, "Position may not be null.");
         Throw.whenNull(speed, "Speed may not be null.");
         Throw.whenNull(acceleration, "Acceleration may not be null.");
@@ -259,7 +259,7 @@ public abstract class Sampler<G extends GtuData>
      */
     public final void processGtuRemoveEvent(final LaneData lane, final G gtu)
     {
-        Throw.whenNull(lane, "KpiLaneDirection may not be null.");
+        Throw.whenNull(lane, "LaneData may not be null.");
         Throw.whenNull(gtu, "GtuData may not be null.");
         String gtuId = gtu.getId();
         if (this.trajectoryPerGtu.containsKey(gtuId))
