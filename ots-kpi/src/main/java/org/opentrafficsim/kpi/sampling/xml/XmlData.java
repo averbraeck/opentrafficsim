@@ -268,14 +268,14 @@ public final class XmlData
             {
                 ListTable listTable = new ListTable(tableProperties[0], tableProperties[1], columns);
                 table = listTable;
-                unserializableTable = listTable;
+                unserializableTable = (data) -> listTable.addRow(data);
             }
             else
             {
                 // fallback
                 ListTable listTable = new ListTable(tableProperties[0], tableProperties[1], columns);
                 table = listTable;
-                unserializableTable = listTable;
+                unserializableTable = (data) -> listTable.addRow(data);
             }
 
             // obtain the serializers

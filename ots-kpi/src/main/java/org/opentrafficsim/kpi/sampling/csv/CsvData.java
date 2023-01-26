@@ -314,14 +314,14 @@ public final class CsvData
             {
                 ListTable listTable = new ListTable(tableRow.get("id"), tableRow.get("description"), columns);
                 table = listTable;
-                unserializableTable = listTable;
+                unserializableTable = (data) -> listTable.addRow(data);
             }
             else
             {
                 // fallback
                 ListTable listTable = new ListTable(tableRow.get("id"), tableRow.get("description"), columns);
                 table = listTable;
-                unserializableTable = listTable;
+                unserializableTable = (data) -> listTable.addRow(data);
             }
 
             // Assemble the serializer array

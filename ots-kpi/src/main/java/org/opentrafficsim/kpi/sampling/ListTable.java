@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import org.djunits.Throw;
 
@@ -20,7 +19,7 @@ import org.djunits.Throw;
  * @author <a href="https://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="https://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ListTable extends Table implements Consumer<Object[]>
+public class ListTable extends Table
 {
 
     /** Records. */
@@ -130,17 +129,6 @@ public class ListTable extends Table implements Consumer<Object[]>
                     "Data value for column %s is not of type %s, but of type %s.", column.getId(), column.getValueType(),
                     valueType);
         }
-    }
-
-    /**
-     * Adds the object array as a row. The order in which the elements in the array are offered should be the same as the order
-     * of the columns.
-     * @param t Object[]; object array with values for each column.
-     */
-    @Override
-    public void accept(final Object[] t)
-    {
-        addRow(t);
     }
 
 }
