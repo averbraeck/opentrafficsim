@@ -10,7 +10,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vfloat.scalar.FloatDuration;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeDuration;
+import org.opentrafficsim.kpi.sampling.data.ExtendedDataDuration;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
@@ -26,7 +26,7 @@ import org.opentrafficsim.road.network.sampling.GtuDataRoad;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class TimeToCollision extends ExtendedDataTypeDuration<GtuDataRoad>
+public class TimeToCollision extends ExtendedDataDuration<GtuDataRoad>
 {
 
     /**

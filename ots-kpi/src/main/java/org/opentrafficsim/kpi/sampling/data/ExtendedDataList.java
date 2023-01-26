@@ -19,7 +19,7 @@ import org.opentrafficsim.kpi.sampling.SamplingException;
  * @param <T> type of value
  * @param <G> gtu data type
  */
-public abstract class ExtendedDataTypeList<T, G extends GtuData> extends ExtendedDataType<T, List<T>, List<T>, G>
+public abstract class ExtendedDataList<T, G extends GtuData> extends ExtendedDataType<T, List<T>, List<T>, G>
 {
 
     /**
@@ -28,7 +28,7 @@ public abstract class ExtendedDataTypeList<T, G extends GtuData> extends Extende
      * @param description String; description
      * @param type Class&lt;T&gt;; type class
      */
-    public ExtendedDataTypeList(final String id, final String description, final Class<T> type)
+    public ExtendedDataList(final String id, final String description, final Class<T> type)
     {
         super(id, description, type);
     }

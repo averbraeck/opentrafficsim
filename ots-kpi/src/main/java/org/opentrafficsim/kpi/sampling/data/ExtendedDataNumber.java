@@ -17,7 +17,7 @@ import org.opentrafficsim.kpi.sampling.SamplingException;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <G> gtu data type
  */
-public abstract class ExtendedDataTypeNumber<G extends GtuData> extends ExtendedDataType<Float, float[], float[], G>
+public abstract class ExtendedDataNumber<G extends GtuData> extends ExtendedDataType<Float, float[], float[], G>
 {
 
     /**
@@ -25,7 +25,7 @@ public abstract class ExtendedDataTypeNumber<G extends GtuData> extends Extended
      * @param id String; id
      * @param description String; description
      */
-    public ExtendedDataTypeNumber(final String id, final String description)
+    public ExtendedDataNumber(final String id, final String description)
     {
         super(id, description, Float.class);
     }

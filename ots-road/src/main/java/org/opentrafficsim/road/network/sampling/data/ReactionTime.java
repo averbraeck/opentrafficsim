@@ -4,7 +4,7 @@ import org.djunits.unit.DurationUnit;
 import org.djunits.value.vfloat.scalar.FloatDuration;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeDuration;
+import org.opentrafficsim.kpi.sampling.data.ExtendedDataDuration;
 import org.opentrafficsim.road.network.sampling.GtuDataRoad;
 
 /**
@@ -17,7 +17,7 @@ import org.opentrafficsim.road.network.sampling.GtuDataRoad;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class ReactionTime extends ExtendedDataTypeDuration<GtuDataRoad>
+public class ReactionTime extends ExtendedDataDuration<GtuDataRoad>
 {
 
     /**

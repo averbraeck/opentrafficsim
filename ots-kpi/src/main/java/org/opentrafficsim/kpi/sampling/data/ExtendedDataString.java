@@ -13,7 +13,7 @@ import org.opentrafficsim.kpi.interfaces.GtuData;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <G> gtu data type
  */
-public abstract class ExtendedDataTypeString<G extends GtuData> extends ExtendedDataTypeList<String, G>
+public abstract class ExtendedDataString<G extends GtuData> extends ExtendedDataList<String, G>
 {
 
     /**
@@ -21,7 +21,7 @@ public abstract class ExtendedDataTypeString<G extends GtuData> extends Extended
      * @param id String; id
      * @param description String; description
      */
-    public ExtendedDataTypeString(final String id, final String description)
+    public ExtendedDataString(final String id, final String description)
     {
         super(id, description, String.class);
     }

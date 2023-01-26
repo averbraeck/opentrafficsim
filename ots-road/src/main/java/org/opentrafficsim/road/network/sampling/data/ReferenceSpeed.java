@@ -4,7 +4,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vfloat.scalar.FloatSpeed;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeSpeed;
+import org.opentrafficsim.kpi.sampling.data.ExtendedDataSpeed;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.sampling.GtuDataRoad;
 
@@ -18,7 +18,7 @@ import org.opentrafficsim.road.network.sampling.GtuDataRoad;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class ReferenceSpeed extends ExtendedDataTypeSpeed<GtuDataRoad>
+public class ReferenceSpeed extends ExtendedDataSpeed<GtuDataRoad>
 {
 
     /** Single instance. */

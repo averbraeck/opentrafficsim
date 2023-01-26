@@ -24,7 +24,7 @@ import org.opentrafficsim.kpi.sampling.SamplingException;
  * @param <O> vector type
  * @param <G> gtu data type
  */
-public abstract class ExtendedDataTypeFloat<U extends Unit<U>, T extends AbstractFloatScalar<U, T>,
+public abstract class ExtendedDataFloat<U extends Unit<U>, T extends AbstractFloatScalar<U, T>,
         O extends AbstractFloatVector<U, T, O>, G extends GtuData> extends ExtendedDataType<T, O, float[], G>
 {
     /**
@@ -33,7 +33,7 @@ public abstract class ExtendedDataTypeFloat<U extends Unit<U>, T extends Abstrac
      * @param description String; description
      * @param type Class&lt;T&gt;; type class
      */
-    public ExtendedDataTypeFloat(final String id, final String description, final Class<T> type)
+    public ExtendedDataFloat(final String id, final String description, final Class<T> type)
     {
         super(id, description, type);
     }
