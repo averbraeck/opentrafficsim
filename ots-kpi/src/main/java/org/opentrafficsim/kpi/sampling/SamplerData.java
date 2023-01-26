@@ -1,5 +1,7 @@
 package org.opentrafficsim.kpi.sampling;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,11 +27,13 @@ import org.djunits.value.vfloat.scalar.FloatAcceleration;
 import org.djunits.value.vfloat.scalar.FloatDuration;
 import org.djunits.value.vfloat.scalar.FloatLength;
 import org.djunits.value.vfloat.scalar.FloatSpeed;
+import org.opentrafficsim.base.CompressedFileWriter;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.interfaces.LaneData;
-import org.opentrafficsim.kpi.sampling.TableCsvWriter.Compression;
+import org.opentrafficsim.kpi.sampling.csv.CsvData;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
 import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
+import org.opentrafficsim.kpi.sampling.serialization.TextSerializationException;
 
 /**
  * SamplerData is a storage for trajectory data. Adding trajectory groups can only be done by subclasses. This is however not a
@@ -197,23 +201,35 @@ public class SamplerData<G extends GtuData> extends Table
     }
 
     /**
-     * Write the contents of the sampler in to a file. By default this is zipped and numeric data is formated %.3f.
+     * Write the contents of the sampler in to a file. By default this is zipped.
      * @param file String; file
      */
     public final void writeToFile(final String file)
     {
-        writeToFile(file, "%.3f", Compression.ZIP);
+        writeToFile(file, Compression.ZIP);
     }
 
     /**
      * Write the contents of the sampler in to a file.
      * @param file String; file
-     * @param format String; number format, as used in {@code String.format()}
      * @param compression Compression; how to compress the data
      */
-    public final void writeToFile(final String file, final String format, final Compression compression)
+    public final void writeToFile(final String file, final Compression compression)
     {
-        TableCsvWriter.create().setFormat(format).setCompression(compression).write(this, file);
+        try
+        {
+            if (compression.equals(Compression.ZIP))
+            {
+                String name = new File(file).getName();
+                String csvName = name.toLowerCase().endsWith(".zip") ? name.substring(0, name.length() - 4) : name;
+                CsvData.writeZippedData(new CompressedFileWriter(file), csvName, csvName + ".header", this);
+            }
+            CsvData.writeData(file, file + ".header", this);
+        }
+        catch (IOException | TextSerializationException exception)
+        {
+            throw new RuntimeException("Unable to write sampler data.", exception);
+        }
     }
 
     /** {@inheritDoc} */
@@ -384,6 +400,26 @@ public class SamplerData<G extends GtuData> extends Table
             }
             return data;
         }
+    }
+
+    /**
+     * Compression method.
+     * <p>
+     * Copyright (c) 2022-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     */
+    public enum Compression
+    {
+        /** No compression. */
+        NONE,
+
+        /** Zip compression. */
+        ZIP
     }
 
 }

@@ -37,12 +37,16 @@ public abstract class Table implements Iterable<Row>, Identifiable
      * @param id String; id
      * @param description String; description
      * @param columns Collection&lt;Column&lt;?&gt;&gt;; columns
-     * @throws IllegalArgumentException in case of duplicate column ids.
+     * @throws NullPointerException when id, description or columns is null
+     * @throws IllegalArgumentException when id is empty, duplicate column ids, or there are zero columns
      */
     public Table(final String id, final String description, final Collection<Column<?>> columns)
     {
         Throw.whenNull(id, "Id may not be null.");
         Throw.whenNull(description, "Description may not be null.");
+        Throw.whenNull(columns, "Columns may not be null.");
+        Throw.when(id.length() == 0, IllegalArgumentException.class, "id cannot be empty");
+        Throw.when(columns.size() == 0, IllegalArgumentException.class, "there should be at least one column");
         Set<String> ids = new LinkedHashSet<>();
         columns.forEach((column) -> ids.add(column.getId()));
         Throw.when(ids.size() != columns.size(), IllegalArgumentException.class, "Duplicate column ids are not allowed.");
@@ -127,6 +131,71 @@ public abstract class Table implements Iterable<Row>, Identifiable
         throw new IllegalArgumentException("Column " + columnId + " is not in the table.");
     }
 
+    /**
+     * Return the column ids as a String[].
+     * @return String[]; the column ids
+     */
+    public String[] getColumnIds()
+    {
+        String[] headers = new String[getNumberOfColumns()];
+        int index = 0;
+        for (Column<?> column : this.columns)
+        {
+            headers[index++] = column.getId();
+        }
+        return headers;
+    }
+    
+    /**
+     * Return the column descriptions as a String[].
+     * @return String[] the column headers
+     */
+    public String[] getColumnDescriptions()
+    {
+        String[] descriptions = new String[getNumberOfColumns()];
+        int index = 0;
+        for (Column<?> column : this.columns)
+        {
+            descriptions[index++] = column.getDescription();
+        }
+        return descriptions;
+    }
+    
+    /**
+     * Return the column data types as a Class&lt;?&gt;[].
+     * @return Class&lt;?&gt;[] the column data types
+     */
+    public Class<?>[] getColumnDataTypes()
+    {
+        Class<?>[] dataTypes = new Class[getNumberOfColumns()];
+        int index = 0;
+        for (Column<?> column : this.columns)
+        {
+            dataTypes[index++] = column.getValueType();
+        }
+        return dataTypes;
+    }
+    
+    /**
+     * Return the column data types as a String[]. Each data type is presented as the full class name or the primitive name. In
+     * case of an array, the result is preceded by an "[" for each dimension. After one or more "[" symbols, the class name is
+     * preceded by an "L" for a non-primitive class or interface, and by "I" for integer, "Z" for boolean, "B" for byte, "C" for
+     * char, "D" for double, "F" for float, "J" for long and "S" for short. So for a column with a double, "double" is returned.
+     * For a column with a "Double", "java.lang.Double" is returned, for an int[][], "[[I" is returned, and for a Long[],
+     * "[Ljava.lang.Long" is returned.
+     * @return String[] the column data types as an array of Strings
+     */
+    public String[] getColumnDataTypeStrings()
+    {
+        String[] dataTypes = new String[getNumberOfColumns()];
+        int index = 0;
+        for (Column<?> column : this.columns)
+        {
+            dataTypes[index++] = column.getValueType().getName();
+        }
+        return dataTypes;
+    }
+    
     /**
      * Returns whether the table is empty.
      * @return whether the table is empty

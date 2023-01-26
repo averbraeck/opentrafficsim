@@ -4,15 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
-import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vfloat.scalar.FloatSpeed;
 import org.djutils.exceptions.Try;
 import org.junit.Test;
@@ -20,11 +17,6 @@ import org.opentrafficsim.kpi.sampling.Column;
 import org.opentrafficsim.kpi.sampling.ListTable;
 import org.opentrafficsim.kpi.sampling.Row;
 import org.opentrafficsim.kpi.sampling.Table;
-import org.opentrafficsim.kpi.sampling.TableCsvReader;
-import org.opentrafficsim.kpi.sampling.TableCsvReader.Unmarshaller;
-import org.opentrafficsim.kpi.sampling.TableCsvWriter;
-import org.opentrafficsim.kpi.sampling.TableCsvWriter.Compression;
-import org.opentrafficsim.kpi.sampling.TableCsvWriter.Marshaller;
 
 /** Table test. */
 public class TableTester
@@ -89,8 +81,7 @@ public class TableTester
         // add data, incorrectly
         Try.testFail(() -> table.addRow(new Object[] {data2[0], data1[0], data3[0]}),
                 "Adding data types in wrong order should fail.");
-        Try.testFail(() -> table.addRow(new Object[] {data1[0], data2[0]}),
-                "Adding too few data types should fail.");
+        Try.testFail(() -> table.addRow(new Object[] {data1[0], data2[0]}), "Adding too few data types should fail.");
         Try.testFail(() -> table.addRow(Map.of(column2, data1[1], column1, data2[1], column3, data3[1])),
                 "Adding data types in wrong order should fail.");
         Try.testFail(() -> table.addRow(Map.of(column1, data1[1], column2, data2[1])),
@@ -103,21 +94,6 @@ public class TableTester
         // test contents
         testTableInstance(table, column1, column2, column3, data1, data2, data3);
 
-        // write and read
-        File file = File.createTempFile("test", ".csv");
-        Try.testFail(() -> TableCsvWriter.create().write(table, "test"), "File name without .csv at the end should fail.");
-        TableCsvWriter.create().write(new ListTable("empty", "does not write", columns), file.getAbsolutePath()); // no writing
-        TableCsvWriter.create().setLocale(Locale.US).setDelimiter("\r\n").setSeparator(",").setFormat("%.3f")
-                .setCompression(Compression.NONE).registerMarshaller(Integer.class, (l, f, v) -> v.toString())
-                .write(table, file.getAbsolutePath());
-        Try.testFail(() -> TableCsvReader.create().read("test"), "File name without .csv at the end should fail.");
-        Table table2 = TableCsvReader.create().setDelimiter("\r\n")
-                .registerUnmarshaller(Integer.class, (c, l, v, u) -> Integer.valueOf(v)).read(file.getAbsolutePath());
-        file.delete();
-        new File(file.getAbsolutePath() + ".header").delete();
-
-        // test contents after writing and reading
-        testTableInstance(table2, column1, column2, column3, data1, data2, data3);
     }
 
     /**
@@ -175,38 +151,6 @@ public class TableTester
             rowNum++;
         }
         assertTrue("Table has wrong number of rows.", rowNum == data1.length);
-    }
-
-    /** Test default marshaller. */
-    @Test
-    public void testMarshaller()
-    {
-        Locale locale = Locale.US;
-        String format = "%.3f";
-        assertEquals(Marshaller.marshalDefault(locale, format, 0), "0");
-        assertEquals(Marshaller.marshalDefault(locale, format, 0.0), "0.000");
-        assertEquals(Marshaller.marshalDefault(locale, format, "0.00000"), "0.00000");
-    }
-
-    /** Test default unmarshaller. */
-    @Test
-    public void testUnmarshaller()
-    {
-        Locale locale = Locale.US;
-        assertEquals(Unmarshaller.unmarshalDefault(String.class, locale, "string", "m/s"), "string");
-        assertEquals(Unmarshaller.unmarshalDefault(Character.class, locale, "s", "m/s"), 's');
-        assertEquals(Unmarshaller.unmarshalDefault(Float.class, locale, "0.000", "m/s"), 0.0f);
-        assertEquals(Unmarshaller.unmarshalDefault(Double.class, locale, "0.000", "m/s"), 0.0);
-        assertEquals(Unmarshaller.unmarshalDefault(Boolean.class, locale, "false", "m/s"), false);
-        assertEquals(Unmarshaller.unmarshalDefault(Short.class, locale, "0", "m/s"), (short) 0);
-        assertEquals(Unmarshaller.unmarshalDefault(Integer.class, locale, "0", "m/s"), 0);
-        assertEquals(Unmarshaller.unmarshalDefault(Long.class, locale, "0", "m/s"), (long) 0);
-        assertEquals(Unmarshaller.unmarshalDefault(Byte.class, locale, "0", "m/s"), (byte) 0);
-        assertEquals(Unmarshaller.unmarshalDefault(FloatSpeed.class, locale, "0.000", "m/s"), FloatSpeed.ZERO);
-        assertEquals(Unmarshaller.unmarshalDefault(Speed.class, locale, "0.000", "m/s"), Speed.ZERO);
-
-        Try.testFail(() -> Unmarshaller.unmarshalDefault(Speed.class, locale, "tralalala", "m/s"));
-        Try.testFail(() -> Unmarshaller.unmarshalDefault(Map.class, locale, "0.000", "m/s"));
     }
 
 }

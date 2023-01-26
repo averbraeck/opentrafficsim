@@ -572,8 +572,7 @@ public class Detector extends AbstractSensor
     public static final <C> void writeToFile(final OtsRoadNetwork network, final String file, final boolean periodic,
             final String format, final CompressionMethod compression)
     {
-        BufferedWriter bw = CompressedFileWriter.create(file, compression.equals(CompressionMethod.ZIP));
-        try
+        try (BufferedWriter bw = CompressedFileWriter.create(file, compression.equals(CompressionMethod.ZIP)))
         {
             // gather all DetectorMeasurements and Detectors (sorted)
             Set<DetectorMeasurement<?, ?>> measurements = new LinkedHashSet<>();
@@ -660,21 +659,6 @@ public class Detector extends AbstractSensor
         catch (IOException exception)
         {
             throw new RuntimeException("Could not write to file.", exception);
-        }
-        // close file on fail
-        finally
-        {
-            try
-            {
-                if (bw != null)
-                {
-                    bw.close();
-                }
-            }
-            catch (IOException ex)
-            {
-                ex.printStackTrace();
-            }
         }
     }
 

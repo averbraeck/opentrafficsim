@@ -36,7 +36,7 @@ public class Row
      * Returns the column value in this row. For performance, use {@code getValue(int columnNumber)}.
      * @param column Column&lt;T&gt;; column.
      * @param <T> value type.
-     * @return the column value in this row.
+     * @return T; the column value in this row.
      */
     @SuppressWarnings("unchecked")
     public <T> T getValue(final Column<T> column)
@@ -57,11 +57,20 @@ public class Row
     /**
      * Returns the column value in this row.
      * @param columnNumber int; column number.
-     * @return the column value in this row.
+     * @return Object; the column value in this row.
      */
     public Object getValue(final int columnNumber)
     {
         return this.values[columnNumber];
+    }
+    
+    /**
+     * Returns the column values of this record in the natural order of the columns.
+     * @return Object[]; the column value in this record
+     */
+    public Object[] getValues()
+    {
+        return this.values;
     }
     
     /** {@inheritDoc} */

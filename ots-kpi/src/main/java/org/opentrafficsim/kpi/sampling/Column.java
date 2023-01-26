@@ -1,5 +1,6 @@
 package org.opentrafficsim.kpi.sampling;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import org.djunits.Throw;
@@ -16,8 +17,11 @@ import org.opentrafficsim.base.Identifiable;
  * @author <a href="https://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <T> value type
  */
-public class Column<T> implements Identifiable
+public class Column<T> implements Identifiable, Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20230125L;
 
     /** Id. */
     private final String id;
@@ -27,7 +31,7 @@ public class Column<T> implements Identifiable
 
     /** Value type. */
     private final Class<T> valueType;
-    
+
     /** Unit. */
     private final String unit;
 
@@ -41,6 +45,7 @@ public class Column<T> implements Identifiable
     public Column(final String id, final String description, final Class<T> valueType, final String unit)
     {
         Throw.whenNull(id, "id may not be null.");
+        Throw.when(id.length() == 0, IllegalArgumentException.class, "id cannot be empty");
         Throw.whenNull(description, "description may not be null.");
         Throw.whenNull(valueType, "valueType may not be null.");
         this.id = id;
@@ -73,7 +78,7 @@ public class Column<T> implements Identifiable
     {
         return this.valueType;
     }
-    
+
     /**
      * Returns the unit of the column. Data is written an read using this unit.
      * @return String; unit of the column
@@ -82,7 +87,7 @@ public class Column<T> implements Identifiable
     {
         return this.unit;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public int hashCode()
@@ -114,7 +119,8 @@ public class Column<T> implements Identifiable
     @Override
     public String toString()
     {
-        return "Column [id=" + this.id + ", description=" + this.description + ", valueType=" + this.valueType + "]";
+        return "Column [id=" + this.id + ", description=" + this.description + ", valueType=" + this.valueType
+                + (this.unit == null ? "]" : ", unit=" + this.unit + "]");
     }
 
 }
