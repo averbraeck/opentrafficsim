@@ -25,7 +25,6 @@ import org.opentrafficsim.draw.graphs.GraphUtil;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
-import org.opentrafficsim.road.network.sampling.GtuDataRoad;
 import org.opentrafficsim.road.network.sampling.data.ReferenceSpeed;
 
 /**
@@ -139,8 +138,7 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
      * @param simulator OTSSimulatorInterface; simulator
      * @param dataPool ContourDataSource&lt;GtuData&gt;; data pool
      */
-    public ContourPlotDelay(final String caption, final OtsSimulatorInterface simulator,
-            final ContourDataSource<GtuDataRoad> dataPool)
+    public ContourPlotDelay(final String caption, final OtsSimulatorInterface simulator, final ContourDataSource dataPool)
     {
         super(caption, simulator, dataPool, createPaintScale(), new Duration(0.05, DurationUnit.SI), "%.1f/km",
                 "delay %.1f /km");

@@ -115,7 +115,7 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
      * @param dataPool ContourDataSource&lt;?&gt;; data pool
      */
     public ContourPlotAcceleration(final String caption, final OtsSimulatorInterface simulator,
-            final ContourDataSource<?> dataPool)
+            final ContourDataSource dataPool)
     {
         super(caption, simulator, dataPool, createPaintScale(), new Acceleration(1.0, AccelerationUnit.SI), "%.0fm/s\u00B2",
                 "acceleration %.2f m/s\u00B2");

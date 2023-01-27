@@ -42,11 +42,11 @@ public class CrossSection implements Serializable
 
     /**
      * Constructor with link and fraction.
-     * @param link LinkData; link
+     * @param link LinkData&lt;?&gt;; link
      * @param fraction double; fraction on link
      * @throws SamplingException if an input is null
      */
-    public CrossSection(final LinkData link, final double fraction) throws SamplingException
+    public CrossSection(final LinkData<?> link, final double fraction) throws SamplingException
     {
         Throw.whenNull(link, "Link lane positions may not be null.");
         this.lanePositions = new LinkedHashSet<>();

@@ -35,7 +35,7 @@ public class MeanDensity extends AbstractIndicator<LinearDensity>
 
     /** {@inheritDoc} */
     @Override
-    protected <G extends GtuData> LinearDensity calculate(final Query<G> query, final Time startTime,
+    protected <G extends GtuData> LinearDensity calculate(final Query<G, ?> query, final Time startTime,
             final Time endTime, final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         double ttt = this.travelTime.getValue(query, startTime, endTime, trajectoryGroups).si;

@@ -34,6 +34,7 @@ import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.sampling.LaneDataRoad;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.graphs.SwingContourPlot;
 import org.opentrafficsim.swing.graphs.SwingFundamentalDiagram;
@@ -293,9 +294,9 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
      */
     protected final void addStatisticsTabs(final OtsSimulatorInterface simulator)
     {
-        GraphPath<LaneData> path01;
-        GraphPath<LaneData> path0;
-        GraphPath<LaneData> path1;
+        GraphPath<LaneDataRoad> path01;
+        GraphPath<LaneDataRoad> path0;
+        GraphPath<LaneDataRoad> path1;
         try
         {
             List<String> names = new ArrayList<>();
@@ -316,13 +317,13 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
         GraphPath.initRecording(sampler, path01);
         GraphPath.initRecording(sampler, path0);
         GraphPath.initRecording(sampler, path1);
-        ContourDataSource<?> dataPool0 = new ContourDataSource<>(sampler.getSamplerData(), path0);
-        ContourDataSource<?> dataPool1 = new ContourDataSource<>(sampler.getSamplerData(), path1);
+        ContourDataSource dataPool0 = new ContourDataSource(sampler.getSamplerData(), path0);
+        ContourDataSource dataPool1 = new ContourDataSource(sampler.getSamplerData(), path1);
         Duration updateInterval = Duration.instantiateSI(10.0);
 
         SwingPlot plot = null;
-        GraphPath<LaneData> path = null;
-        ContourDataSource<?> dataPool = null;
+        GraphPath<LaneDataRoad> path = null;
+        ContourDataSource dataPool = null;
 
         TablePanel trajectoryChart = new TablePanel(2, 2);
         plot = new SwingTrajectoryPlot(
@@ -339,7 +340,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
         names.add("Left lane");
         names.add("Right lane");
         LinkPosition linkPosition = new LinkPosition(getModel().getPath(0).get(0).getParentLink(), 0.0);
-        GraphCrossSection<LaneData> crossSection;
+        GraphCrossSection<LaneDataRoad> crossSection;
         try
         {
             crossSection = GraphLaneUtil.createCrossSection(names, linkPosition);

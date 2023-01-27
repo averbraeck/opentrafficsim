@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.interfaces.LinkData;
 
 /**
@@ -16,7 +15,7 @@ import org.opentrafficsim.kpi.interfaces.LinkData;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LinkDataSim0 implements LinkData
+public class LinkDataSim0 implements LinkData<LaneDataSim0>
 {
 
     /** Wrapped link. */
@@ -29,7 +28,7 @@ public class LinkDataSim0 implements LinkData
     final String endNode;
 
     /** Lanes on this link. */
-    private final List<LaneData> laneDataList = new ArrayList<>();
+    private final List<LaneDataSim0> laneDataList = new ArrayList<>();
 
     /** the link length. */
     private final Length length;
@@ -59,7 +58,7 @@ public class LinkDataSim0 implements LinkData
 
     /** {@inheritDoc} */
     @Override
-    public final List<LaneData> getLaneDatas()
+    public final List<LaneDataSim0> getLaneDatas()
     {
         return this.laneDataList;
     }

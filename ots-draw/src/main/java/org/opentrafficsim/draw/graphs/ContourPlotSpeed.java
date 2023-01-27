@@ -30,7 +30,7 @@ public class ContourPlotSpeed extends AbstractContourPlot<Speed>
      * @param simulator OTSSimulatorInterface; simulator
      * @param dataPool ContourDataSource&lt;?&gt;; data pool
      */
-    public ContourPlotSpeed(final String caption, final OtsSimulatorInterface simulator, final ContourDataSource<?> dataPool)
+    public ContourPlotSpeed(final String caption, final OtsSimulatorInterface simulator, final ContourDataSource dataPool)
     {
         super(caption, simulator, dataPool, createPaintScale(), new Speed(30.0, SpeedUnit.KM_PER_HOUR), "%.0fkm/h",
                 "speed %.1f km/h");

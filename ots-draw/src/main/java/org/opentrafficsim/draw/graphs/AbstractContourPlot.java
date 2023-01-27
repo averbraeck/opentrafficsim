@@ -47,7 +47,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
     private final String valueFormat;
 
     /** Data pool. */
-    private final ContourDataSource<?> dataPool;
+    private final ContourDataSource dataPool;
 
     /** Block renderer in chart. */
     private XYInterpolatedBlockRenderer blockRenderer = null;
@@ -62,7 +62,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      * @param legendFormat String; format string for the captions in the color legend
      * @param valueFormat String; format string used to create status label (under the mouse)
      */
-    public AbstractContourPlot(final String caption, final OtsSimulatorInterface simulator, final ContourDataSource<?> dataPool,
+    public AbstractContourPlot(final String caption, final OtsSimulatorInterface simulator, final ContourDataSource dataPool,
             final BoundsPaintScale paintScale, final Z legendStep, final String legendFormat, final String valueFormat)
     {
         super(caption, dataPool.getUpdateInterval(), simulator, dataPool.getSamplerData(), dataPool.getPath(),
@@ -84,7 +84,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      * Constructor with default paint scale.
      * @param caption String; caption
      * @param simulator OTSSimulatorInterface; simulator
-     * @param dataPool ContourDataSource&lt;?&gt;; data pool
+     * @param dataPool ContourDataSource; data pool
      * @param legendStep Z; increment between color legend entries
      * @param legendFormat String; format string for the captions in the color legend
      * @param minValue Z; minimum value
@@ -92,7 +92,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      * @param valueFormat String; format string used to create status label (under the mouse)
      */
     @SuppressWarnings("parameternumber")
-    public AbstractContourPlot(final String caption, final OtsSimulatorInterface simulator, final ContourDataSource<?> dataPool,
+    public AbstractContourPlot(final String caption, final OtsSimulatorInterface simulator, final ContourDataSource dataPool,
             final Z legendStep, final String legendFormat, final Z minValue, final Z maxValue, final String valueFormat)
     {
         this(caption, simulator, dataPool, createPaintScale(minValue, maxValue), legendStep, legendFormat, valueFormat);
@@ -195,7 +195,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      * Returns the data pool for sub classes.
      * @return ContourDataSource; data pool for subclasses
      */
-    public final ContourDataSource<?> getDataPool()
+    public final ContourDataSource getDataPool()
     {
         return this.dataPool;
     }

@@ -24,7 +24,7 @@ public class TotalTravelDistance extends AbstractIndicator<Length>
 
     /** {@inheritDoc} */
     @Override
-    protected <G extends GtuData> Length calculate(final Query<G> query, final Time startTime, final Time endTime,
+    protected <G extends GtuData> Length calculate(final Query<G, ?> query, final Time startTime, final Time endTime,
             final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         Length sum = Length.ZERO;

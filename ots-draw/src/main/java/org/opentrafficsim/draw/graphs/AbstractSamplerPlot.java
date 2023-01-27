@@ -32,7 +32,7 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
     private final SamplerData<?> samplerData;
 
     /** KPI lane directions registered in the sampler. */
-    private final GraphPath<LaneData> path;
+    private final GraphPath<? extends LaneData> path;
 
     /** Time when trajectories were last updated per series in the path. */
     private List<Time> lastUpdateTime = new ArrayList<>();
@@ -46,11 +46,11 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
      * @param updateInterval Duration; regular update interval (simulation time)
      * @param simulator OTSSimulatorInterface; simulator
      * @param samplerData SamplerData&lt;?&gt;; sampler data
-     * @param path GraphPath&lt;LaneData&gt;; path
+     * @param path GraphPath&lt;? extends LaneData&gt;; path
      * @param delay Duration; amount of time that chart runs behind simulation to prevent gaps in the charted data
      */
     public AbstractSamplerPlot(final String caption, final Duration updateInterval, final OtsSimulatorInterface simulator,
-            final SamplerData<?> samplerData, final GraphPath<LaneData> path, final Duration delay)
+            final SamplerData<?> samplerData, final GraphPath<? extends LaneData> path, final Duration delay)
     {
         super(caption, updateInterval, simulator, delay, DEFAULT_INITIAL_UPPER_TIME_BOUND);
         this.samplerData = samplerData;
@@ -72,7 +72,7 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
         if (this.lastUpdateTime.get(series) == null || this.lastUpdateTime.get(series).lt(getUpdateTime()))
         {
             List<TrajectoryGroup<?>> cache = new ArrayList<>();
-            for (Section<LaneData> section : getPath().getSections())
+            for (Section<? extends LaneData> section : getPath().getSections())
             {
                 cache.add(this.samplerData.getTrajectoryGroup(section.getSource(series)));
             }
@@ -84,9 +84,9 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
 
     /**
      * Returns the path.
-     * @return GraphPath&lt;LaneData&gt;; the path
+     * @return GraphPath&lt;? extends LaneData&gt;; the path
      */
-    public final GraphPath<LaneData> getPath()
+    public final GraphPath<? extends LaneData> getPath()
     {
         return this.path;
     }

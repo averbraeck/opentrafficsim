@@ -36,6 +36,8 @@ import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.Trajectory.SpaceTimeView;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
+import org.opentrafficsim.road.network.sampling.LaneDataRoad;
+import org.opentrafficsim.road.network.sampling.RoadSampler;
 
 /**
  * Fundamental diagram from various sources.
@@ -635,7 +637,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
     /**
      * Creates a {@code Source} from a sampler and positions.
-     * @param sampler Sampler&lt;?&gt;; sampler
+     * @param sampler RoadSampler; sampler
      * @param crossSection GraphCrossSection&lt;LaneData&gt;; cross section
      * @param aggregateLanes boolean; whether to aggregate the positions
      * @param aggregationTime Duration; aggregation time (and update time)
@@ -643,7 +645,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
      * @return Source; source for a fundamental diagram from a sampler and positions
      */
     @SuppressWarnings("methodlength")
-    public static FdSource sourceFromSampler(final Sampler<?> sampler, final GraphCrossSection<LaneData> crossSection,
+    public static FdSource sourceFromSampler(final RoadSampler sampler, final GraphCrossSection<LaneDataRoad> crossSection,
             final boolean aggregateLanes, final Duration aggregationTime, final boolean harmonic)
     {
         return new CrossSectionSamplerFdSource<>(sampler, crossSection, aggregateLanes, aggregationTime, harmonic);
@@ -651,13 +653,13 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
     /**
      * Creates a {@code Source} from a sampler and positions.
-     * @param sampler Sampler&lt;?&gt;; sampler
+     * @param sampler RoadSampler; sampler
      * @param path GraphPath&lt;LaneData&gt;; cross section
      * @param aggregateLanes boolean; whether to aggregate the positions
      * @param aggregationTime Duration; aggregation time (and update time)
      * @return Source; source for a fundamental diagram from a sampler and positions
      */
-    public static FdSource sourceFromSampler(final Sampler<?> sampler, final GraphPath<LaneData> path,
+    public static FdSource sourceFromSampler(final RoadSampler sampler, final GraphPath<LaneDataRoad> path,
             final boolean aggregateLanes, final Duration aggregationTime)
     {
         return new PathSamplerFdSource<>(sampler, path, aggregateLanes, aggregationTime);
@@ -677,7 +679,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
      * Fundamental diagram source based on a cross section.
      * @param <S> underlying source type
      */
-    private static class CrossSectionSamplerFdSource<S extends GraphCrossSection<? extends LaneData>>
+    private static class CrossSectionSamplerFdSource<S extends GraphCrossSection<? extends LaneDataRoad>>
             extends AbstractSpaceSamplerFdSource<S>
     {
         /** Harmonic mean. */
@@ -685,13 +687,13 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
         /**
          * Constructor.
-         * @param sampler Sampler&lt;?&gt;; sampler
+         * @param sampler RoadSampler; sampler
          * @param crossSection S; cross section
          * @param aggregateLanes boolean; whether to aggregate the lanes
          * @param aggregationPeriod Duration; initial aggregation {@link Period}
          * @param harmonic boolean; harmonic mean
          */
-        CrossSectionSamplerFdSource(final Sampler<?> sampler, final S crossSection, final boolean aggregateLanes,
+        CrossSectionSamplerFdSource(final RoadSampler sampler, final S crossSection, final boolean aggregateLanes,
                 final Duration aggregationPeriod, final boolean harmonic)
         {
             super(sampler, crossSection, aggregateLanes, aggregationPeriod);
@@ -744,17 +746,17 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
      * Fundamental diagram source based on a path. Density, speed and flow over the entire path are calculated per lane.
      * @param <S> underlying source type
      */
-    private static class PathSamplerFdSource<S extends GraphPath<? extends LaneData>>
+    private static class PathSamplerFdSource<S extends GraphPath<? extends LaneDataRoad>>
             extends AbstractSpaceSamplerFdSource<S>
     {
         /**
          * Constructor.
-         * @param sampler Sampler&lt;?&gt;; sampler
+         * @param sampler RoadSampler; sampler
          * @param path S; path
          * @param aggregateLanes boolean; whether to aggregate the lanes
          * @param aggregationPeriod Duration; initial aggregation period
          */
-        PathSamplerFdSource(final Sampler<?> sampler, final S path, final boolean aggregateLanes,
+        PathSamplerFdSource(final RoadSampler sampler, final S path, final boolean aggregateLanes,
                 final Duration aggregationPeriod)
         {
             super(sampler, path, aggregateLanes, aggregationPeriod);
@@ -797,7 +799,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
      * Abstract class that deals with updating and recalculating the fundamental diagram.
      * @param <S> underlying source type
      */
-    private abstract static class AbstractSpaceSamplerFdSource<S extends AbstractGraphSpace<? extends LaneData>>
+    private abstract static class AbstractSpaceSamplerFdSource<S extends AbstractGraphSpace<? extends LaneDataRoad>>
             extends AbstractFdSource
     {
         /** Period number of last calculated period. */
@@ -825,7 +827,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         private boolean invalid = false;
 
         /** The sampler. */
-        private final Sampler<?> sampler;
+        private final Sampler<?, ?> sampler;
 
         /** Space. */
         private final S space;
@@ -844,12 +846,12 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
         /**
          * Constructor.
-         * @param sampler Sampler&lt;?&gt;; sampler
+         * @param sampler RoadSampler; sampler
          * @param space S; space
          * @param aggregateLanes boolean; whether to aggregate the lanes
          * @param aggregationPeriod Duration; initial aggregation period
          */
-        AbstractSpaceSamplerFdSource(final Sampler<?> sampler, final S space, final boolean aggregateLanes,
+        AbstractSpaceSamplerFdSource(final RoadSampler sampler, final S space, final boolean aggregateLanes,
                 final Duration aggregationPeriod)
         {
             this.sampler = sampler;
@@ -857,9 +859,9 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             this.aggregateLanes = aggregateLanes;
             this.nSeries = aggregateLanes ? 1 : space.getNumberOfSeries();
             // create and register kpi lane directions
-            for (LaneData laneDirection : space)
+            for (LaneDataRoad laneDirection : space)
             {
-                sampler.registerSpaceTimeRegion(new SpaceTimeRegion(laneDirection, Length.ZERO, laneDirection.getLength(),
+                sampler.registerSpaceTimeRegion(new SpaceTimeRegion<LaneDataRoad>(laneDirection, Length.ZERO, laneDirection.getLength(),
                         sampler.now(), Time.instantiateSI(Double.MAX_VALUE)));
 
                 // info per kpi lane direction

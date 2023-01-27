@@ -21,7 +21,6 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
 import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
@@ -43,7 +42,7 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class RoadSampler extends Sampler<GtuDataRoad> implements EventListenerInterface
+public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements EventListenerInterface
 {
 
     /** */
@@ -140,7 +139,7 @@ public class RoadSampler extends Sampler<GtuDataRoad> implements EventListenerIn
 
     /** {@inheritDoc} */
     @Override
-    public final void scheduleStartRecording(final Time time, final LaneData lane)
+    public final void scheduleStartRecording(final Time time, final LaneDataRoad lane)
     {
         try
         {
@@ -154,7 +153,7 @@ public class RoadSampler extends Sampler<GtuDataRoad> implements EventListenerIn
 
     /** {@inheritDoc} */
     @Override
-    public final void scheduleStopRecording(final Time time, final LaneData lane)
+    public final void scheduleStopRecording(final Time time, final LaneDataRoad lane)
     {
         try
         {
@@ -168,9 +167,9 @@ public class RoadSampler extends Sampler<GtuDataRoad> implements EventListenerIn
 
     /** {@inheritDoc} */
     @Override
-    public final void initRecording(final LaneData lane)
+    public final void initRecording(final LaneDataRoad lane)
     {
-        Lane roadLane = ((LaneDataRoad) lane).getLane();
+        Lane roadLane = lane.getLane();
         roadLane.addListener(this, Lane.GTU_ADD_EVENT, ReferenceType.WEAK);
         roadLane.addListener(this, Lane.GTU_REMOVE_EVENT, ReferenceType.WEAK);
         int count = 1;
@@ -192,9 +191,9 @@ public class RoadSampler extends Sampler<GtuDataRoad> implements EventListenerIn
 
     /** {@inheritDoc} */
     @Override
-    public final void finalizeRecording(final LaneData lane)
+    public final void finalizeRecording(final LaneDataRoad lane)
     {
-        Lane roadLane = ((LaneDataRoad) lane).getLane();
+        Lane roadLane = lane.getLane();
         roadLane.removeListener(this, Lane.GTU_ADD_EVENT);
         roadLane.removeListener(this, Lane.GTU_REMOVE_EVENT);
     }
@@ -212,7 +211,7 @@ public class RoadSampler extends Sampler<GtuDataRoad> implements EventListenerIn
             CrossSectionLink link = (CrossSectionLink) this.network.getLink(payload[7].toString());
             Lane lane = (Lane) link.getCrossSectionElement(payload[8].toString());
             LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU(payload[0].toString());
-            LaneData laneData = new LaneDataRoad(lane);
+            LaneDataRoad laneData = new LaneDataRoad(lane);
             if (!this.activeGtus.contains(gtu.getId()))
             {
                 // GTU add was skipped during add event, do here instead (note: also triggers a move, and thus a record)
@@ -230,7 +229,7 @@ public class RoadSampler extends Sampler<GtuDataRoad> implements EventListenerIn
             // Payload: Object[] {String gtuId, int count_after_addition}
             // Assumes that the lane itself is the sourceId
             Lane lane = (Lane) event.getSourceId();
-            LaneData laneData = new LaneDataRoad(lane);
+            LaneDataRoad laneData = new LaneDataRoad(lane);
             if (!getSamplerData().contains(laneData))
             {
                 // we are not sampling this Lane
@@ -266,7 +265,7 @@ public class RoadSampler extends Sampler<GtuDataRoad> implements EventListenerIn
             // Payload: Object[] {String gtuId, LaneBasedGtu gtu, int count_after_removal, Length position}
             // Assumes that the lane itself is the sourceId
             Lane lane = (Lane) event.getSourceId();
-            LaneData laneData = new LaneDataRoad(lane);
+            LaneDataRoad laneData = new LaneDataRoad(lane);
             Object[] payload = (Object[]) event.getContent();
             LaneBasedGtu gtu = (LaneBasedGtu) payload[1];
             Length position = (Length) payload[3];
@@ -315,9 +314,9 @@ public class RoadSampler extends Sampler<GtuDataRoad> implements EventListenerIn
      * Processes a GTU add event by obtaining the relevant info from the GTU.
      * @param gtu LaneBasedGtu; GTU.
      * @param lane Lane; lane.
-     * @param laneData LaneData; lane data.
+     * @param laneData LaneDataRoad; lane data.
      */
-    private void processGtuAddEvent(final LaneBasedGtu gtu, final Lane lane, final LaneData laneData)
+    private void processGtuAddEvent(final LaneBasedGtu gtu, final Lane lane, final LaneDataRoad laneData)
     {
         Length position;
         try
@@ -375,7 +374,7 @@ public class RoadSampler extends Sampler<GtuDataRoad> implements EventListenerIn
      */
     public final void notifySample(final LaneBasedGtu gtu, final Lane lane)
     {
-        LaneData laneData = new LaneDataRoad(lane);
+        LaneDataRoad laneData = new LaneDataRoad(lane);
         try
         {
             Length position = gtu.position(lane, RelativePosition.REFERENCE_POSITION);

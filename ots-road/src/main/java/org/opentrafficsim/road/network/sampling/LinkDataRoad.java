@@ -18,7 +18,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LinkDataRoad implements LinkData
+public class LinkDataRoad implements LinkData<LaneDataRoad>
 {
 
     /** Wrapped link. */

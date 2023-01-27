@@ -14,20 +14,21 @@ import org.opentrafficsim.base.Identifiable;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @param <L> lane data type
  */
-public interface LinkData extends Identifiable
+public interface LinkData<L extends LaneData> extends Identifiable
 {
 
     /**
      * Returns the length of the link.
-     * @return length of the link
+     * @return Length; length of the link
      */
     Length getLength();
 
     /**
      * Returns the lanes of the link.
-     * @return list of lanes of the link
+     * @return List&lt;L&gt;; list of lanes of the link
      */
-    List<? extends LaneData> getLaneDatas();
+    List<L> getLaneDatas();
 
 }

@@ -27,7 +27,7 @@ public class ContourPlotDensity extends AbstractContourPlot<LinearDensity>
      * @param simulator OTSSimulatorInterface; simulator
      * @param dataPool ContourDataSource&lt;?&gt;; data pool
      */
-    public ContourPlotDensity(final String caption, final OtsSimulatorInterface simulator, final ContourDataSource<?> dataPool)
+    public ContourPlotDensity(final String caption, final OtsSimulatorInterface simulator, final ContourDataSource dataPool)
     {
         super(caption, simulator, dataPool, createPaintScale(), new LinearDensity(30.0, LinearDensityUnit.PER_KILOMETER),
                 "%.0f/km", "density %.1f veh/km");

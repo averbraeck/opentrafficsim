@@ -88,10 +88,10 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
 
     /**
      * Returns the start distance of the section.
-     * @param section Section&lt;S&gt;; Section&lt;S&gt; section
+     * @param section Section&lt;?&gt; section
      * @return Length; start distance of the section
      */
-    public Length getStartDistance(final Section<S> section)
+    public Length getStartDistance(final Section<?> section)
     {
         int index = this.sections.indexOf(section);
         Throw.when(index == -1, IllegalArgumentException.class, "Section is not part of the path.");
@@ -201,17 +201,18 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
 
     /**
      * Start recording along path.
-     * @param sampler Sampler&lt;?&gt;; sampler
-     * @param path GraphPath&lt;LaneData&gt;; path
+     * @param sampler RoadSampler; sampler
+     * @param path GraphPath&lt;L&gt;; path
+     * @param <L> lane data type
      */
-    public static void initRecording(final Sampler<?> sampler, final GraphPath<LaneData> path)
+    public static <L extends LaneData> void initRecording(final Sampler<?, L> sampler, final GraphPath<L> path)
     {
-        for (Section<LaneData> section : path.getSections())
+        for (Section<L> section : path.getSections())
         {
-            for (LaneData kpiLaneDirection : section)
+            for (L lane : section)
             {
-                sampler.registerSpaceTimeRegion(new SpaceTimeRegion(kpiLaneDirection, Length.ZERO,
-                        kpiLaneDirection.getLength(), Time.ZERO, Time.instantiateSI(Double.MAX_VALUE)));
+                sampler.registerSpaceTimeRegion(new SpaceTimeRegion<>(lane, Length.ZERO, lane.getLength(), Time.ZERO,
+                        Time.instantiateSI(Double.MAX_VALUE)));
             }
         }
     }

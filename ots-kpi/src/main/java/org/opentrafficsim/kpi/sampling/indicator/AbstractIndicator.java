@@ -21,11 +21,11 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <T> class of the value
  */
-public abstract class AbstractIndicator<T extends DoubleScalarInterface>
+public abstract class AbstractIndicator<T extends DoubleScalarInterface<?, ?>>
 {
 
     /** Last query. */
-    private Query<?> lastQuery;
+    private Query<?, ?> lastQuery;
 
     /** Last start time. */
     private Time lastStartTime;
@@ -39,13 +39,13 @@ public abstract class AbstractIndicator<T extends DoubleScalarInterface>
     /**
      * Get value for given query over time interval, returning earlier calculated value if possible. This method uses
      * {@code Time.ZERO} as start time.
-     * @param query Query&lt;G&gt;; query
+     * @param query Query&lt;G, ?&gt;; query
      * @param endTime Time; start time of interval to calculate indicator over
      * @param trajectoryGroups List&lt;TrajectoryGroup&lt;G&gt;&gt;; group of trajectories to calculate the indicator for
      * @param <G> gtu data type
      * @return value for given query
      */
-    public final <G extends GtuData> T getValue(final Query<G> query, final Time endTime,
+    public final <G extends GtuData> T getValue(final Query<G, ?> query, final Time endTime,
             final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         return getValue(query, Time.ZERO, endTime, trajectoryGroups);
@@ -53,14 +53,14 @@ public abstract class AbstractIndicator<T extends DoubleScalarInterface>
 
     /**
      * Get value for given query over time interval, returning earlier calculated value if possible.
-     * @param query Query&lt;G&gt;; query
+     * @param query Query&lt;G, ?&gt;; query
      * @param startTime Time; start time of interval to calculate indicator over
      * @param endTime Time; start time of interval to calculate indicator over
      * @param trajectoryGroups List&lt;TrajectoryGroup&lt;G&gt;&gt;; group of trajectories to calculate the indicator for
      * @param <G> gtu data type
      * @return value for given query
      */
-    public final <G extends GtuData> T getValue(final Query<G> query, final Time startTime, final Time endTime,
+    public final <G extends GtuData> T getValue(final Query<G, ?> query, final Time startTime, final Time endTime,
             final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         Throw.whenNull(query, "Query may not be null.");
@@ -79,14 +79,14 @@ public abstract class AbstractIndicator<T extends DoubleScalarInterface>
 
     /**
      * Calculate value for given trajectory group.
-     * @param query Query&lt;G&gt;; query
+     * @param query Query&lt;G, ?&gt;; query
      * @param startTime Time; start time of interval to calculate indicator over
      * @param endTime Time; start time of interval to calculate indicator over
      * @param trajectoryGroups List&lt;TrajectoryGroup&lt;G&gt;&gt;; group of trajectories to calculate the indicator for
      * @param <G> gtu data type
      * @return value for given trajectory group
      */
-    protected abstract <G extends GtuData> T calculate(final Query<G> query, final Time startTime, final Time endTime,
-            final List<TrajectoryGroup<G>> trajectoryGroups);
+    protected abstract <G extends GtuData> T calculate(Query<G, ?> query, Time startTime, Time endTime,
+            List<TrajectoryGroup<G>> trajectoryGroups);
 
 }

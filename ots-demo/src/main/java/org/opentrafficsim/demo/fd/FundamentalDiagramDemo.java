@@ -98,6 +98,7 @@ import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.Stripe.Type;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
+import org.opentrafficsim.road.network.sampling.LaneDataRoad;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.graphs.SwingFundamentalDiagram;
 import org.opentrafficsim.swing.graphs.SwingTrajectoryPlot;
@@ -612,7 +613,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
                 linkId = "OriginLane-drop";
             }
             LinkPosition linkPosition = new LinkPosition(getNetwork().getLink(linkId), lanePosition);
-            GraphCrossSection<LaneData> crossSection;
+            GraphCrossSection<LaneDataRoad> crossSection;
             try
             {
                 crossSection = GraphLaneUtil.createCrossSection(names, linkPosition);
@@ -636,7 +637,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         {
             firstLanes.add(lane);
         }
-        GraphPath<LaneData> path = Try.assign(() -> GraphLaneUtil.createPath(names, firstLanes), "");
+        GraphPath<LaneDataRoad> path = Try.assign(() -> GraphLaneUtil.createPath(names, firstLanes), "");
         TrajectoryPlot trajectoryPlot = new TrajectoryPlot("Trajectories", Duration.instantiateSI(5.0), getSimulator(),
                 this.sampler.getSamplerData(), path);
         trajectoryPlot.updateFixedDomainRange(true);

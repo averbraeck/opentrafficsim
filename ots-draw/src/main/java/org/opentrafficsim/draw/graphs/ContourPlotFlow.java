@@ -27,7 +27,7 @@ public class ContourPlotFlow extends AbstractContourPlot<Frequency>
      * @param simulator OTSSimulatorInterface; simulator
      * @param dataPool ContourDataSource&lt;?&gt;; data pool
      */
-    public ContourPlotFlow(final String caption, final OtsSimulatorInterface simulator, final ContourDataSource<?> dataPool)
+    public ContourPlotFlow(final String caption, final OtsSimulatorInterface simulator, final ContourDataSource dataPool)
     {
         super(caption, simulator, dataPool, createPaintScale(), new Frequency(500.0, FrequencyUnit.PER_HOUR), "%.0f/h",
                 "flow %.1f veh/h");

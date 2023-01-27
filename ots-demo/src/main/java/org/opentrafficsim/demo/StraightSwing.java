@@ -20,7 +20,7 @@ import org.opentrafficsim.draw.graphs.ContourPlotSpeed;
 import org.opentrafficsim.draw.graphs.GraphPath;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
-import org.opentrafficsim.kpi.interfaces.LaneData;
+import org.opentrafficsim.road.network.sampling.LaneDataRoad;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.graphs.SwingContourPlot;
 import org.opentrafficsim.swing.graphs.SwingPlot;
@@ -114,7 +114,7 @@ public class StraightSwing extends OtsSimulationApplication<StraightModel> imple
      */
     protected final void addStatisticsTabs(final OtsSimulatorInterface simulator)
     {
-        GraphPath<LaneData> path;
+        GraphPath<LaneDataRoad> path;
         try
         {
             path = GraphLaneUtil.createPath("Lane", getModel().getPath().get(0));
@@ -126,7 +126,7 @@ public class StraightSwing extends OtsSimulationApplication<StraightModel> imple
 
         RoadSampler sampler = new RoadSampler(getModel().getNetwork());
         GraphPath.initRecording(sampler, path);
-        ContourDataSource<?> dataPool = new ContourDataSource<>(sampler.getSamplerData(), path);
+        ContourDataSource dataPool = new ContourDataSource(sampler.getSamplerData(), path);
         TablePanel charts = new TablePanel(3, 2);
         SwingPlot plot = null;
 

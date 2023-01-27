@@ -98,10 +98,10 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
      * @param updateInterval Duration; regular update interval (simulation time)
      * @param simulator OTSSimulatorInterface; simulator
      * @param samplerData SamplerData&lt;?&gt;; sampler data
-     * @param path GraphPath&lt;LaneData&gt;; path
+     * @param path GraphPath&lt;? extends LaneData&gt;; path
      */
     public TrajectoryPlot(final String caption, final Duration updateInterval, final OtsSimulatorInterface simulator,
-            final SamplerData<?> samplerData, final GraphPath<LaneData> path)
+            final SamplerData<?> samplerData, final GraphPath<? extends LaneData> path)
     {
         super(caption, updateInterval, simulator, samplerData, path, Duration.ZERO);
         for (int i = 0; i < path.getNumberOfSeries(); i++)
@@ -114,11 +114,9 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
         setChart(createChart());
 
         // setup updater to do the actual work in another thread
-        this.graphUpdater = new GraphUpdater<>("Trajectories worker", Thread.currentThread(), (
-                t
-        ) ->
+        this.graphUpdater = new GraphUpdater<>("Trajectories worker", Thread.currentThread(), (t) ->
         {
-            for (Section<LaneData> section : path.getSections())
+            for (Section<? extends LaneData> section : path.getSections())
             {
                 Length startDistance = path.getStartDistance(section);
                 for (int i = 0; i < path.getNumberOfSeries(); i++)

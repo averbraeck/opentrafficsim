@@ -24,7 +24,7 @@ public class TotalTravelTime extends AbstractIndicator<Duration>
 
     /** {@inheritDoc} */
     @Override
-    protected <G extends GtuData> Duration calculate(final Query<G> query, final Time startTime, final Time endTime,
+    protected <G extends GtuData> Duration calculate(final Query<G, ?> query, final Time startTime, final Time endTime,
             final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         Duration sum = Duration.ZERO;

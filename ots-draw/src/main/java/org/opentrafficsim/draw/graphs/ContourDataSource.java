@@ -25,7 +25,6 @@ import org.opentrafficsim.core.egtf.Filter;
 import org.opentrafficsim.core.egtf.Quantity;
 import org.opentrafficsim.core.egtf.typed.TypedQuantity;
 import org.opentrafficsim.draw.graphs.GraphPath.Section;
-import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.SamplerData;
 import org.opentrafficsim.kpi.sampling.Trajectory;
@@ -44,9 +43,8 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
- * @param <G> gtu type data
  */
-public class ContourDataSource<G extends GtuData>
+public class ContourDataSource
 {
 
     // *************************
@@ -98,7 +96,7 @@ public class ContourDataSource<G extends GtuData>
     // *****************************
 
     /** Sampler data. */
-    private final SamplerData<G> samplerData;
+    private final SamplerData<?> samplerData;
 
     /** Update interval. */
     private final Duration updateInterval;
@@ -107,7 +105,7 @@ public class ContourDataSource<G extends GtuData>
     private final Duration delay;
 
     /** Path. */
-    private final GraphPath<LaneData> path;
+    private final GraphPath<? extends LaneData> path;
 
     /** Space axis. */
     final Axis spaceAxis;
@@ -193,10 +191,10 @@ public class ContourDataSource<G extends GtuData>
 
     /**
      * Constructor using default granularities.
-     * @param samplerData SamplerData&lt;G&gt;; sampler data
-     * @param path GraphPath&lt;LaneData&gt;; path
+     * @param samplerData SamplerData&lt;?&gt;; sampler data
+     * @param path GraphPath&lt;? extends LaneData&gt;; path
      */
-    public ContourDataSource(final SamplerData<G> samplerData, final GraphPath<LaneData> path)
+    public ContourDataSource(final SamplerData<?> samplerData, final GraphPath<? extends LaneData> path)
     {
         this(samplerData, Duration.instantiateSI(1.0), path, DEFAULT_SPACE_GRANULARITIES, DEFAULT_SPACE_GRANULARITY_INDEX,
                 DEFAULT_TIME_GRANULARITIES, DEFAULT_TIME_GRANULARITY_INDEX, DEFAULT_LOWER_TIME_BOUND,
@@ -205,9 +203,9 @@ public class ContourDataSource<G extends GtuData>
 
     /**
      * Constructor for non-default input.
-     * @param samplerData SamplerData&lt;G&gt;; sampler data
+     * @param samplerData SamplerData&lt;?&gt;; sampler data
      * @param delay Duration; delay so critical future events have occurred, e.g. GTU's next move's to extend trajectories
-     * @param path GraphPath&lt;LaneData&gt;; path
+     * @param path GraphPath&lt;? extends LaneData&gt;; path
      * @param spaceGranularity double[]; granularity options for space dimension
      * @param initSpaceIndex int; initial selected space granularity
      * @param timeGranularity double[]; granularity options for time dimension
@@ -216,7 +214,7 @@ public class ContourDataSource<G extends GtuData>
      * @param initialEnd Time; initial end time of plots, will be expanded if simulation time exceeds it
      */
     @SuppressWarnings("parameternumber")
-    public ContourDataSource(final SamplerData<G> samplerData, final Duration delay, final GraphPath<LaneData> path,
+    public ContourDataSource(final SamplerData<?> samplerData, final Duration delay, final GraphPath<? extends LaneData> path,
             final double[] spaceGranularity, final int initSpaceIndex, final double[] timeGranularity, final int initTimeIndex,
             final Time start, final Time initialEnd)
     {
@@ -232,9 +230,7 @@ public class ContourDataSource<G extends GtuData>
         this.vc = Speed.min(path.getSpeedLimit().times(VC_FACRTOR), MAX_C_FREE);
 
         // setup updater to do the actual work in another thread
-        this.graphUpdater = new GraphUpdater<>("Contour Data Source worker", Thread.currentThread(), (
-                t
-        ) -> update(t));
+        this.graphUpdater = new GraphUpdater<>("Contour Data Source worker", Thread.currentThread(), (t) -> update(t));
     }
 
     // ************************************
@@ -243,9 +239,9 @@ public class ContourDataSource<G extends GtuData>
 
     /**
      * Returns the sampler data for an {@code AbstractContourPlot} using this {@code ContourDataSource}.
-     * @return SamplerData&lt;G&gt;; the sampler
+     * @return SamplerData&lt;?&gt;; the sampler
      */
-    public final SamplerData<G> getSamplerData()
+    public final SamplerData<?> getSamplerData()
     {
         return this.samplerData;
     }
@@ -270,9 +266,9 @@ public class ContourDataSource<G extends GtuData>
 
     /**
      * Returns the path for an {@code AbstractContourPlot} using this {@code ContourDataSource}.
-     * @return GraphPath&lt;LaneData&gt;; the path
+     * @return GraphPath&lt;? extends LaneData&gt;; the path
      */
-    final GraphPath<LaneData> getPath()
+    final GraphPath<? extends LaneData> getPath()
     {
         return this.path;
     }
@@ -695,7 +691,7 @@ public class ContourDataSource<G extends GtuData>
                 {
                     // obtain trajectories
                     List<TrajectoryGroup<?>> trajectories = new ArrayList<>();
-                    for (Section<LaneData> section : getPath().getSections())
+                    for (Section<? extends LaneData> section : getPath().getSections())
                     {
                         TrajectoryGroup<?> trajectoryGroup = this.samplerData.getTrajectoryGroup(section.getSource(series));
                         if (null == trajectoryGroup)
@@ -804,9 +800,7 @@ public class ContourDataSource<G extends GtuData>
             }
 
             // notify changes for every time slice
-            this.plots.forEach((
-                    plot
-            ) -> plot.notifyPlotChange());
+            this.plots.forEach((plot) -> plot.notifyPlotChange());
         }
 
         // smooth all data that is as old as our kernel includes (or all data on a redo)
@@ -831,9 +825,7 @@ public class ContourDataSource<G extends GtuData>
                     overwriteSmoothed(this.additionalData.get(contourDataType), nFromEgtf,
                             filter.getSI(contourDataType.getQuantity()));
                 }
-                this.plots.forEach((
-                        plot
-                ) -> plot.notifyPlotChange());
+                this.plots.forEach((plot) -> plot.notifyPlotChange());
             }
         }
     }
@@ -1007,7 +999,7 @@ public class ContourDataSource<G extends GtuData>
         {
             /** {@inheritDoc} */
             @Override
-            protected Axis getAxis(final ContourDataSource<?> dataPool)
+            protected Axis getAxis(final ContourDataSource dataPool)
             {
                 return dataPool.spaceAxis;
             }
@@ -1018,7 +1010,7 @@ public class ContourDataSource<G extends GtuData>
         {
             /** {@inheritDoc} */
             @Override
-            protected Axis getAxis(final ContourDataSource<?> dataPool)
+            protected Axis getAxis(final ContourDataSource dataPool)
             {
                 return dataPool.timeAxis;
             }
@@ -1026,10 +1018,10 @@ public class ContourDataSource<G extends GtuData>
 
         /**
          * Returns the {@code Axis} object.
-         * @param dataPool ContourDataSource&lt;?&gt;; data pool
+         * @param dataPool ContourDataSource; data pool
          * @return Axis; axis
          */
-        protected abstract Axis getAxis(ContourDataSource<?> dataPool);
+        protected abstract Axis getAxis(ContourDataSource dataPool);
     }
 
     /**
