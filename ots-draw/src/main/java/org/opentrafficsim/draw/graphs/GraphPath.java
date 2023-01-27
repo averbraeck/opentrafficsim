@@ -201,7 +201,7 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
 
     /**
      * Start recording along path.
-     * @param sampler RoadSampler; sampler
+     * @param sampler Sampler&lt;?, L&gt;; sampler
      * @param path GraphPath&lt;L&gt;; path
      * @param <L> lane data type
      */

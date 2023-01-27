@@ -240,7 +240,7 @@ public final class Query<G extends GtuData, L extends LaneData> implements Ident
 
     /**
      * Defines a region in space and time for which this query is valid. All lanes in the link are included.
-     * @param link LinkData; link
+     * @param link LinkData&lt;? extends L&gt;; link
      * @param startPosition Length; start position
      * @param endPosition Length; end position
      * @param startTime Time; start time

@@ -1,4 +1,4 @@
-package org.opentrafficsim.draw.graphs.road;
+package org.opentrafficsim.draw.graphs;
 
 import java.awt.Color;
 import java.util.List;
@@ -17,11 +17,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.egtf.Converter;
 import org.opentrafficsim.core.egtf.Quantity;
 import org.opentrafficsim.draw.core.BoundsPaintScale;
-import org.opentrafficsim.draw.graphs.AbstractContourPlot;
-import org.opentrafficsim.draw.graphs.ContourDataSource;
 import org.opentrafficsim.draw.graphs.ContourDataSource.ContourDataType;
-import org.opentrafficsim.draw.graphs.GraphType;
-import org.opentrafficsim.draw.graphs.GraphUtil;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
@@ -136,7 +132,7 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
      * extended data type {@code ReferenceSpeed.INSTANCE} registered.
      * @param caption String; caption
      * @param simulator OTSSimulatorInterface; simulator
-     * @param dataPool ContourDataSource&lt;GtuData&gt;; data pool
+     * @param dataPool ContourDataSource; data pool
      */
     public ContourPlotDelay(final String caption, final OtsSimulatorInterface simulator, final ContourDataSource dataPool)
     {

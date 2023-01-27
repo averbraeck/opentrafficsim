@@ -56,7 +56,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      * Constructor with specified paint scale.
      * @param caption String; caption
      * @param simulator OTSSimulatorInterface; simulator
-     * @param dataPool ContourDataSource&lt;?&gt;; data pool
+     * @param dataPool ContourDataSource; data pool
      * @param paintScale BoundsPaintScale; paint scale
      * @param legendStep Z; increment between color legend entries
      * @param legendFormat String; format string for the captions in the color legend

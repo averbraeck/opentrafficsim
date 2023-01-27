@@ -25,7 +25,7 @@ public class ContourPlotDensity extends AbstractContourPlot<LinearDensity>
      * Constructor.
      * @param caption String; caption
      * @param simulator OTSSimulatorInterface; simulator
-     * @param dataPool ContourDataSource&lt;?&gt;; data pool
+     * @param dataPool ContourDataSource; data pool
      */
     public ContourPlotDensity(final String caption, final OtsSimulatorInterface simulator, final ContourDataSource dataPool)
     {
