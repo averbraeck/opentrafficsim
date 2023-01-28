@@ -55,7 +55,7 @@ Some neurons have no input neurons as they provide a constant, a parameter value
 Neurons may in principle do anything with the input, and may hence output a different data type from the input data type. All neurons expose their result to be influenced through the axon. The mechanism of this influence is up to the neuron, but other neurons provide values for this influence. The typical axon allows serial multiplication of the result by the values from the neurons attached to the axon. Note that in this case the neuron is completely _inhibited_ if any value on the axon is 0. In this case, the neuron does not have to supply a value, including all upstream neurons that only this neuron uses (indirectly). The framework allows the value not to be determined for inhibited neurons, such that no unnecessary computation is done. Axons are always dynamic, any number of neurons providing the right data type may attach. But the value type through the axon may not be altered, and the various neurons attaching to the axon are unaware of each other; their influence is implemented in a serial manner. This is different from the operation of the neuron itself, where input-specific logic can be implemented such as simple if-statements. An overview of these different roles is given in table 1.
 
 _Table 1: Function of dendrites and axon of neuron._
-<table border=1 id="table-1" style="text-align: left">
+<table border="1" id="table-1" style="text-align: left">
     <tr style="font-weight: bold"><td></td><td>Dendrites</td><td>Axon</td></tr>
     <tr><td>Role</td><td>Core function</td><td>Influence on output</td></tr>
     <tr><td>Processing</td><td>Anything</td><td>Serial</td></tr>
