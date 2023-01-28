@@ -218,7 +218,7 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
     }
 
     /**
-     * Interface for sections.
+     * Class for sections.
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
@@ -227,28 +227,66 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
-     * @param <S> underlying type
+     * @param <L> underlying type
      */
-    public interface Section<S> extends Iterable<S>
+    public static class Section<L> implements Iterable<L>
     {
+        /** Length. */
+        private final Length length;
+
+        /** Speed limit. */
+        private final Speed speedLimit;
+
+        /** List of underlying objects. */
+        private final List<L> objects;
+
+        /**
+         * Constructor.
+         * @param length Length; length of the section
+         * @param speedLimit Speed; speed limit on the section
+         * @param sections List&lt;S&gt;; list of underlying objects
+         */
+        public Section(final Length length, final Speed speedLimit, final List<L> sections)
+        {
+            this.length = length;
+            this.speedLimit = speedLimit;
+            this.objects = sections;
+        }
+
         /**
          * Returns the section length.
          * @return Length; section length
          */
-        Length getLength();
+        public Length getLength()
+        {
+            return this.length;
+        }
 
         /**
          * Returns the speed limit on the section.
          * @return Speed; speed limit on the section
          */
-        Speed getSpeedLimit();
+        public Speed getSpeedLimit()
+        {
+            return this.speedLimit;
+        }
 
         /**
          * Returns the source object.
          * @param series int; number
          * @return S; underlying object of the series
          */
-        S getSource(int series);
+        public L getSource(final int series)
+        {
+            return this.objects.get(series);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Iterator<L> iterator()
+        {
+            return this.objects.iterator();
+        }
     }
 
 }

@@ -67,43 +67,7 @@ public final class GraphLaneUtil
             list.add(laneData);
             Speed speed = lane.getLowestSpeedLimit();
             Length length = lane.getLength();
-            sections.add(new Section<LaneDataRoad>()
-            {
-                /** {@inheritDoc} */
-                @Override
-                public Iterator<LaneDataRoad> iterator()
-                {
-                    return list.iterator();
-                }
-
-                /** {@inheritDoc} */
-                @Override
-                public Length getLength()
-                {
-                    return length;
-                }
-
-                /** {@inheritDoc} */
-                @Override
-                public Speed getSpeedLimit()
-                {
-                    return speed;
-                }
-
-                /** {@inheritDoc} */
-                @Override
-                public LaneDataRoad getSource(final int series)
-                {
-                    return laneData;
-                }
-
-                /** {@inheritDoc} */
-                @Override
-                public String toString()
-                {
-                    return String.format("(Anonymous) Section[length=%s, speedLimit=%s, source=%s]", length, speed, laneData);
-                }
-            });
+            sections.add(new Section<>(length, speed, list));
             set.add(lane);
             Set<Lane> nextLaneSet = lane.nextLanes(null);
             if (nextLaneSet.size() == 1)
@@ -155,36 +119,7 @@ public final class GraphLaneUtil
                 }
             }
             Length length = firstNextLane.getLength();
-            sections.add(new Section<LaneDataRoad>()
-            {
-                /** {@inheritDoc} */
-                @Override
-                public Iterator<LaneDataRoad> iterator()
-                {
-                    return list.iterator();
-                }
-
-                /** {@inheritDoc} */
-                @Override
-                public Length getLength()
-                {
-                    return length;
-                }
-
-                /** {@inheritDoc} */
-                @Override
-                public Speed getSpeedLimit()
-                {
-                    return finalSpeed;
-                }
-
-                /** {@inheritDoc} */
-                @Override
-                public LaneDataRoad getSource(final int series)
-                {
-                    return list.get(series);
-                }
-            });
+            sections.add(new Section<>(length, finalSpeed, list));
             set.addAll(lanes);
             // per link and then per lane, find the downstream lane
             Map<Link, List<Lane>> linkMap = new LinkedHashMap<>();
@@ -261,38 +196,7 @@ public final class GraphLaneUtil
         lanes.add(new LaneDataRoad(lane));
         List<Section<LaneDataRoad>> sections = new ArrayList<>();
         Speed speed = lane.getLowestSpeedLimit();
-        sections.add(new Section<LaneDataRoad>()
-        {
-
-            /** {@inheritDoc} */
-            @Override
-            public Iterator<LaneDataRoad> iterator()
-            {
-                return lanes.iterator();
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public Length getLength()
-            {
-                return lane.getLength();
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public Speed getSpeedLimit()
-            {
-                return speed;
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public LaneDataRoad getSource(final int series)
-            {
-                return lanes.get(0);
-            }
-
-        });
+        sections.add(new Section<>(lane.getLength(), speed, lanes));
         return new GraphPath<>(name, sections);
     }
 
@@ -368,36 +272,7 @@ public final class GraphLaneUtil
     public static GraphCrossSection<LaneDataRoad> createCrossSection(final List<String> names, final List<LaneDataRoad> lanes,
             final List<Length> positions, final Speed speed)
     {
-        Section<LaneDataRoad> section = new Section<>()
-        {
-            /** {@inheritDoc} */
-            @Override
-            public Iterator<LaneDataRoad> iterator()
-            {
-                return lanes.iterator();
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public Length getLength()
-            {
-                return lanes.get(0).getLength();
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public Speed getSpeedLimit()
-            {
-                return speed;
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public LaneDataRoad getSource(final int series)
-            {
-                return lanes.get(series);
-            }
-        };
+        Section<LaneDataRoad> section = new Section<>(lanes.get(0).getLength(), speed, lanes);
         return new GraphCrossSection<>(names, section, positions);
     }
 
