@@ -70,8 +70,6 @@ _Table 2: Overview of events in OTS._
   <tr><td>TrafficLight</td><td>TRAFFICLIGHT_CHANGE_EVENT</td><td>AbtstractTrafficLight</td><td>yes</td></tr>
   <tr><td>AbstractPlot</td><td>GRAPH_ADD_EVENT</td><td><i>not thrown</i></td><td>no</td></tr>
   <tr><td></td><td>GRAPH_REMOVE_EVENT</td><td><i>not thrown</i></td><td>no</td></tr>
-  <tr><td>XYSeries</td><td>LOWER_RANGE_EVENT</td><td><i>not thrown</i></td><td>no</td></tr>
-  <tr><td></td><td>UPPER_RANGE_EVENT</td><td><i>not thrown</i></td><td>no</td></tr>
 </table>
 <sup>1</sup>) Registers as listener, but does (effectively) nothing with it in `notify()`.<br>
 <sup>2</sup>) Should use `GtuGeneratorQueueAnimation`.<br>
