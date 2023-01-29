@@ -4,7 +4,7 @@ This chapter provides tutorials for specific usages and extensions of OTS. Secti
 
 ## Simulation setup
 
-[How to set up a simulation](simulation-setup#how-to-set-up-a-simulation)<br>
+[How to set up a simulation](simulation-setup.md#how-to-set-up-a-simulation)<br>
 [How to create an OD matrix and add demand data](simulation-setup#how-to-create-an-od-matrix-and-add-demand-data)<br>
 [How to set up model factories when using an OD matrix](simulation-setup#how-to-set-up-model-factories-when-using-an-od-matrix)<br>
 [How to set up bus traffic](/tutorials/simulation-setup#how-to-set-up-bus-traffic)
@@ -20,7 +20,7 @@ This chapter provides tutorials for specific usages and extensions of OTS. Secti
 [How to make a property historical](development#how-to-make-a-property-historical)
 
 
-##Visualization
+## Visualization
 
 [How to add a GTU colorer](visualization#how-to-add-a-gtu-colorer)<br>
 [How to add an animation](visualization#how-to-add-an-animation)
