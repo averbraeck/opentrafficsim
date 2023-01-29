@@ -49,9 +49,6 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
     /** */
     private static final long serialVersionUID = 20200228L;
 
-    /** Threshold for time checks to prevent duplicate events. */
-    private static final double DUPLICATE_THRESHOLD = 1e-9;
-
     /** Simulator. */
     private final OtsSimulatorInterface simulator;
 

@@ -32,6 +32,7 @@ nav:
     - GTU - Generalized Travel Unit: 02-model-structure/gtu.md
     - DSOL - event-based simulation: 02-model-structure/dsol.md
     - DJUTILS - Delft Java Utils: 02-model-structure/djutils.md
+    - List of event types in OTS: 02-model-structure/events.md
     - DJUNITS - Delft Java Units: 02-model-structure/djunits.md
     - Java programming standards: 02-model-structure/java.md
   - 3. Network:

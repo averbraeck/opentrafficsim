@@ -1,4 +1,13 @@
-# Events in OTS
+# Event types in OTS
+
+Below is a complete list of all event types in OTS. For these events we have the following contract:
+
+1. `ADD` events make no guarantee whatsoever as to the state of the added object, other than it having an id. The object may be in a non-operable state during initialization. These events can be used to register listeners with the added object, and to allocate resources for the object (e.g. `Map.put(gtuId, new ArrayList<Speed>());`.
+2. Any other events, such as `MOVE`, must occur with the object in question in a complete state.
+
+This contract means that in some cases, bookkeeping has to take place specifically for the first event of a certain type. For example, the `RoadSampler` cannot start up a trajectory on an `ADD` event, as the GTU is not yet able to report for example its route. Listeners are however added, and on the first `MOVE`, the trajectory may be initiated.
+
+In some cases it could be valuable during an `ADD` to register as a listener to some other event, e.g. `MOVE`, and to unregister as a listener on the first occurrence of that event.
 
 _Table 2: Overview of events in OTS._
 <table border="1" width="800px">

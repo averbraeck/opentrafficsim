@@ -14,6 +14,8 @@ The way in which event producers and listeners work is explained below. For furt
 
 ## Event producers and listeners
 
+\[[List of all event types in OTS](/manual/02-model-structure/events/)\]
+
 The events between event producers and listeners should not be confused with the events in event-based simulation. Here, specific actions that may occur result in events, and any listener that registered itselft for certain events being produced by certain event producers, will then be notified of the event. We have:
 
 * _Event type_; event types define different events. They form an understanding between producer and listener with regards to what happened for a specific event, and what sort of information comes with the event. All events are defined as `public static EventType` fields at the producer. Note that the included information with the event is not stipulated with the event type, but both producer and listener simply have to assume the same information, which is usually mentioned in the Javadoc regarding the static public field of the event type.
@@ -35,8 +37,8 @@ The events between event producers and listeners should not be confused with the
 As an example, we show some of the interaction that a lane (producer) may have with a data sampler (listener). The sampler is explained in detail in section 7. When the sampler starts to record data on a specific lane, it adds itself as a listener on the lane, for both add and remove events of GTUs on that lane.
 
 ```java
-    lane.addListener(this, Lane.GTU_ADD_EVENT, true);
-    lane.addListener(this, Lane.GTU_REMOVE_EVENT, true);
+    roadLane.addListener(this, Lane.GTU_ADD_EVENT, ReferenceType.WEAK);
+    roadLane.addListener(this, Lane.GTU_REMOVE_EVENT, ReferenceType.WEAK);
 ```
 
 Now, whenever a GTU enters or leaves the lane, the sampler will be notified by the lane. In `Lane` we have the following two methods. They fire events through a method of the super class `EventProducer.fireTimedEvent(…)`, and provide the payload that comes with the event as an object array.
@@ -46,8 +48,9 @@ Now, whenever a GTU enters or leaves the lane, the sampler will be notified by t
             final double fractionalPosition) throws GTUException
     {
         …
-        fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] { gtu.getId(), gtu, 
-                this.gtuList.size() }, gtu.getSimulator().getSimulatorTime());
+        fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] {gtu.getId(), 
+                this.gtuList.size(), getId(), getParentLink().getId()},
+                gtu.getSimulator().getSimulatorTime());
         …
     }
 
@@ -56,7 +59,7 @@ Now, whenever a GTU enters or leaves the lane, the sampler will be notified by t
     {
         …
         fireTimedEvent(Lane.GTU_REMOVE_EVENT, 
-                new Object[] { gtu.getId(), gtu, this.gtuList.size(), position }, 
+                new Object[] {gtu.getId(), gtu, this.gtuList.size(), position}, 
                 gtu.getSimulator().getSimulatorTime());
         …
     }
@@ -74,7 +77,7 @@ The sampler has registered itself as a listener and will be notified. To process
         else if (event.getType().equals(Lane.GTU_ADD_EVENT))
         {
             …
-            gtu.addListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT, true);
+            gtu.addListener(this, LaneBasedGtu.LANEBASED_MOVE_EVENT, ReferenceType.WEAK);
             …
         }
         else if (event.getType().equals(Lane.GTU_REMOVE_EVENT))
