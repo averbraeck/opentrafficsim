@@ -135,7 +135,7 @@ public class Stripe extends CrossSectionElement
     @Override
     public final double getZ()
     {
-        return 0.0001;
+        return -0.0001;
     }
 
     /**

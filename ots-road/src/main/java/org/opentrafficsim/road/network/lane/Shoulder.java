@@ -43,7 +43,7 @@ public class Shoulder extends CrossSectionElement
     @Override
     public final double getZ()
     {
-        return -0.0002;
+        return -0.0003;
     }
 
     /** {@inheritDoc} */

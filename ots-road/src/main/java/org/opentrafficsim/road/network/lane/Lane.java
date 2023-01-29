@@ -1475,7 +1475,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     @SuppressWarnings("checkstyle:designforextension")
     public double getZ()
     {
-        return 0.0;
+        return -0.0002;
     }
 
     /** {@inheritDoc} */
