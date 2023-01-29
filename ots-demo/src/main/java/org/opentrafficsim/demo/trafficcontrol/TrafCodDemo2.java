@@ -131,8 +131,8 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCODModel>
         {
             return;
         }
-        ImmutableMap<String, NonLocatedObject> invisibleObjectMap = getModel().getNetwork().getInvisibleObjectMap();
-        for (NonLocatedObject ioi : invisibleObjectMap.values())
+        ImmutableMap<String, NonLocatedObject> nonLocatedObjectMap = getModel().getNetwork().getNonLocatedObjectMap();
+        for (NonLocatedObject ioi : nonLocatedObjectMap.values())
         {
             if (ioi instanceof TrafCod)
             {

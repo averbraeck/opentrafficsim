@@ -257,8 +257,8 @@ public final class Sim0MQPublisher
             animator.setSpeedFactor(Double.MAX_VALUE, true);
             animator.setSpeedFactor(1000.0, true);
 
-            ImmutableMap<String, NonLocatedObject> invisibleObjectMap = this.model.getNetwork().getInvisibleObjectMap();
-            for (NonLocatedObject ioi : invisibleObjectMap.values())
+            ImmutableMap<String, NonLocatedObject> onLocatedObjectMap = this.model.getNetwork().getNonLocatedObjectMap();
+            for (NonLocatedObject ioi : onLocatedObjectMap.values())
             {
                 if (ioi instanceof TrafCod)
                 {

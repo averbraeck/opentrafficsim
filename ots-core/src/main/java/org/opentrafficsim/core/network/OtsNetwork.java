@@ -58,8 +58,8 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
     /** Map of ObjectInterface. */
     private Map<String, LocatedObject> objectMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
-    /** Map of InvisibleObjects. */
-    private Map<String, NonLocatedObject> invisibleObjectMap = Collections.synchronizedMap(new LinkedHashMap<>());
+    /** Map of NonLocatedObjects. */
+    private Map<String, NonLocatedObject> nonLocatedObjectMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** Map of Routes. */
     private Map<GtuType, Map<String, Route>> routeMap = Collections.synchronizedMap(new LinkedHashMap<>());
@@ -417,28 +417,28 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final ImmutableMap<String, NonLocatedObject> getInvisibleObjectMap()
+    public final ImmutableMap<String, NonLocatedObject> getNonLocatedObjectMap()
     {
-        return new ImmutableHashMap<>(this.invisibleObjectMap, Immutable.WRAP);
+        return new ImmutableHashMap<>(this.nonLocatedObjectMap, Immutable.WRAP);
     }
 
     /**
-     * @return the original InvisibleObjectMap; only to be used in the 'network' package for cloning.
+     * @return the original NonLocatedObjectMap; only to be used in the 'network' package for cloning.
      */
-    final Map<String, NonLocatedObject> getRawInvisibleObjectMap()
+    final Map<String, NonLocatedObject> getRawNonLocatedObjectMap()
     {
-        return this.invisibleObjectMap;
+        return this.nonLocatedObjectMap;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final ImmutableMap<String, NonLocatedObject> getInvisibleObjectMap(
+    public final ImmutableMap<String, NonLocatedObject> getNonLocatedObjectMap(
             final Class<NonLocatedObject> objectType)
     {
         Map<String, NonLocatedObject> result = new LinkedHashMap<>();
         for (String key : this.objectMap.keySet())
         {
-            NonLocatedObject o = this.invisibleObjectMap.get(key);
+            NonLocatedObject o = this.nonLocatedObjectMap.get(key);
             if (objectType.isInstance(o))
             {
                 result.put(key, o);
@@ -449,28 +449,28 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final void addInvisibleObject(final NonLocatedObject object) throws NetworkException
+    public final void addNonLocatedObject(final NonLocatedObject object) throws NetworkException
     {
-        if (containsInvisibleObject(object))
+        if (containsNonLocatedObject(object))
         {
-            throw new NetworkException("InvisibleObject " + object + " already registered in network " + this.id);
+            throw new NetworkException("NonLocatedObject " + object + " already registered in network " + this.id);
         }
-        if (containsInvisibleObject(object.getFullId()))
+        if (containsNonLocatedObject(object.getFullId()))
         {
             throw new NetworkException(
-                    "InvisibleObject with name " + object.getFullId() + " already registered in network " + this.id);
+                    "NonLocatedObject with name " + object.getFullId() + " already registered in network " + this.id);
         }
-        this.invisibleObjectMap.put(object.getFullId(), object);
+        this.nonLocatedObjectMap.put(object.getFullId(), object);
         fireTimedEvent(Network.NONLOCATED_OBJECT_ADD_EVENT, object.getFullId(), getSimulator().getSimulatorTime());
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void removeInvisibleObject(final NonLocatedObject object) throws NetworkException
+    public final void removeNonLocatedObject(final NonLocatedObject object) throws NetworkException
     {
-        if (!containsInvisibleObject(object))
+        if (!containsNonLocatedObject(object))
         {
-            throw new NetworkException("InvisibleObject " + object + " not registered in network " + this.id);
+            throw new NetworkException("NonLocatedObject " + object + " not registered in network " + this.id);
         }
         fireTimedEvent(Network.NONLOCATED_OBJECT_REMOVE_EVENT, object.getFullId(), getSimulator().getSimulatorTime());
         this.objectMap.remove(object.getFullId());
@@ -478,9 +478,9 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final boolean containsInvisibleObject(final NonLocatedObject object)
+    public final boolean containsNonLocatedObject(final NonLocatedObject object)
     {
-        return this.invisibleObjectMap.containsKey(object.getFullId());
+        return this.nonLocatedObjectMap.containsKey(object.getFullId());
     }
 
     /**
@@ -490,9 +490,9 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
      * etc.
      */
     @Override
-    public final boolean containsInvisibleObject(final String objectId)
+    public final boolean containsNonLocatedObject(final String objectId)
     {
-        return this.invisibleObjectMap.containsKey(objectId);
+        return this.nonLocatedObjectMap.containsKey(objectId);
     }
 
     /***************************************************************************************/

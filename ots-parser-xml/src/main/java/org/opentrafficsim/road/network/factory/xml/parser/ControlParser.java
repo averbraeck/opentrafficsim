@@ -161,7 +161,7 @@ public final class ControlParser
                         ? TrafCod.loadTextFromURL(new URL(trafCod.getCONSOLE().getCOORDINATESFILE()))
                         : Arrays.asList(objectLocationsString.split("\n"));
                 TrafCod trafCOD = new TrafCod(controllerName, program, simulator, backgroundImage, displayObjectLocations);
-                otsNetwork.addInvisibleObject(trafCOD);
+                otsNetwork.addNonLocatedObject(trafCOD);
                 // this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
                 // this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
                 // this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED);

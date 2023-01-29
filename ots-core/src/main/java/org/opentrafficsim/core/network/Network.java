@@ -210,49 +210,48 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
     /***************************************************************************************/
 
     /**
-     * Return an immutable map of all InvisibleObject implementing objects in the Network.
-     * @return ImmutableMap&lt;String, ObjectInterface&gt;; the immutable map of all ObjectInterface implementing objects in the
-     *         Network
+     * Return an immutable map of all NonLocatedObject implementing objects in the Network.
+     * @return ImmutableMap&lt;String, ObjectInterface&gt;; the immutable map of all NonLocatedObject implementing objects in
+     *         the Network
      */
-    ImmutableMap<String, NonLocatedObject> getInvisibleObjectMap();
+    ImmutableMap<String, NonLocatedObject> getNonLocatedObjectMap();
 
     /**
-     * Return an immutable map of all InvisibleObject implementing objects in the network that are of type objectType, or any
+     * Return an immutable map of all NonLocatedObject implementing objects in the network that are of type objectType, or any
      * sub type thereof.
-     * @param objectType Class&lt;NonLocatedObject&gt;; the (sub-)type of InvisibleObject that the returned map is
-     *            reduced to
-     * @return ImmutableMap&lt;String, InvisibleObject&gt;; the immutable map of all InvisibleObject implementing objects in the
-     *         Network that are of the type objectType, or any sub type thereof
+     * @param objectType Class&lt;NonLocatedObject&gt;; the (sub-)type of NonLocatedObject that the returned map is reduced to
+     * @return ImmutableMap&lt;String, NonLocatedObject&gt;; the immutable map of all NonLocatedObject implementing objects in
+     *         the Network that are of the type objectType, or any sub type thereof
      */
-    ImmutableMap<String, NonLocatedObject> getInvisibleObjectMap(Class<NonLocatedObject> objectType);
+    ImmutableMap<String, NonLocatedObject> getNonLocatedObjectMap(Class<NonLocatedObject> objectType);
 
     /**
-     * Add an ObjectInterface implementing object to the Network.
+     * Add a NonLocatedObject implementing object to the Network.
      * @param object NonLocatedObject; the object that implements ObjectInterface
      * @throws NetworkException if link already exists in the network, if name of the object is not unique.
      */
-    void addInvisibleObject(NonLocatedObject object) throws NetworkException;
+    void addNonLocatedObject(NonLocatedObject object) throws NetworkException;
 
     /**
-     * Remove an ObjectInterface implementing object form the Network.
+     * Remove a NonLocatedObject implementing object form the Network.
      * @param object NonLocatedObject; the object that implements ObjectInterface
      * @throws NetworkException if the object does not exist in the network.
      */
-    void removeInvisibleObject(NonLocatedObject object) throws NetworkException;
+    void removeNonLocatedObject(NonLocatedObject object) throws NetworkException;
 
     /**
-     * Test whether the invisible object is present in the Network.
+     * Test whether the NonLocatedObject is present in the Network.
      * @param object NonLocatedObject; the object that is tested for presence
      * @return boolean; whether the invisible object is present in the Network
      */
-    boolean containsInvisibleObject(NonLocatedObject object);
+    boolean containsNonLocatedObject(NonLocatedObject object);
 
     /**
      * Test whether an invisible object with the given id is present in the Network.
      * @param objectId String; the id that is tested for presence
      * @return boolean; whether an invisible object with the given id is present in the Network
      */
-    boolean containsInvisibleObject(String objectId);
+    boolean containsNonLocatedObject(String objectId);
 
     /***************************************************************************************/
     /*************************************** ROUTES ****************************************/
