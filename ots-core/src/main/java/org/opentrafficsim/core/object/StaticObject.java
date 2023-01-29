@@ -22,7 +22,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class StaticObject extends EventProducer implements ObjectInterface, Serializable, Identifiable, Drawable
+public class StaticObject extends EventProducer implements LocatedObject, Serializable, Identifiable, Drawable
 {
     /** */
     private static final long serialVersionUID = 20160400L;

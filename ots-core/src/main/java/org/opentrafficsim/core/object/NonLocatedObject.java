@@ -17,7 +17,7 @@ import org.opentrafficsim.core.animation.Drawable;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public interface InvisibleObjectInterface extends Identifiable, Drawable, Serializable
+public interface NonLocatedObject extends Identifiable, Drawable, Serializable
 {
 
     /** @return the full id that makes the id unique in the network. */

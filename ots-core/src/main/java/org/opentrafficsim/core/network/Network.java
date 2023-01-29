@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.network;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
@@ -12,12 +11,10 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.core.object.InvisibleObjectInterface;
-import org.opentrafficsim.core.object.ObjectInterface;
+import org.opentrafficsim.core.object.NonLocatedObject;
+import org.opentrafficsim.core.object.LocatedObject;
 
 /**
  * Interface that defines what information a network should be able to provide about Nodes, Links and Routes.
@@ -159,7 +156,7 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      * @return ImmutableMap&lt;String, ObjectInterface&gt;; the immutable map of all ObjectInterface implementing objects in the
      *         Network
      */
-    ImmutableMap<String, ObjectInterface> getObjectMap();
+    ImmutableMap<String, LocatedObject> getObjectMap();
 
     /**
      * Return an immutable map of all ObjectInterface implementing objects in the network that are of type objectType, or any
@@ -169,7 +166,7 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      * @return ImmutableMap&lt;String, ObjectInterface&gt;; the immutable map of all ObjectInterface implementing objects in the
      *         Network that are of the type objectType, or any sub type thereof
      */
-    <T extends ObjectInterface> ImmutableMap<String, T> getObjectMap(Class<T> objectType);
+    <T extends LocatedObject> ImmutableMap<String, T> getObjectMap(Class<T> objectType);
 
     /**
      * Return object of given type with given id.
@@ -178,28 +175,28 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      * @param <T> object type
      * @return T; object of given type with given id, {@code null} if no such object
      */
-    <T extends ObjectInterface> T getObject(Class<T> objectType, String objectId);
+    <T extends LocatedObject> T getObject(Class<T> objectType, String objectId);
 
     /**
      * Add an ObjectInterface implementing object to the Network.
      * @param object ObjectInterface; the object that implements ObjectInterface
      * @throws NetworkException if link already exists in the network, if name of the object is not unique.
      */
-    void addObject(ObjectInterface object) throws NetworkException;
+    void addObject(LocatedObject object) throws NetworkException;
 
     /**
      * Remove an ObjectInterface implementing object form the Network.
      * @param object ObjectInterface; the object that implements ObjectInterface
      * @throws NetworkException if the object does not exist in the network.
      */
-    void removeObject(ObjectInterface object) throws NetworkException;
+    void removeObject(LocatedObject object) throws NetworkException;
 
     /**
      * Test whether the object is present in the Network.
      * @param object ObjectInterface; the object that is tested for presence
      * @return boolean; whether the object is present in the Network
      */
-    boolean containsObject(ObjectInterface object);
+    boolean containsObject(LocatedObject object);
 
     /**
      * Test whether an object with the given id is present in the Network.
@@ -217,38 +214,38 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      * @return ImmutableMap&lt;String, ObjectInterface&gt;; the immutable map of all ObjectInterface implementing objects in the
      *         Network
      */
-    ImmutableMap<String, InvisibleObjectInterface> getInvisibleObjectMap();
+    ImmutableMap<String, NonLocatedObject> getInvisibleObjectMap();
 
     /**
      * Return an immutable map of all InvisibleObject implementing objects in the network that are of type objectType, or any
      * sub type thereof.
-     * @param objectType Class&lt;InvisibleObjectInterface&gt;; the (sub-)type of InvisibleObject that the returned map is
+     * @param objectType Class&lt;NonLocatedObject&gt;; the (sub-)type of InvisibleObject that the returned map is
      *            reduced to
      * @return ImmutableMap&lt;String, InvisibleObject&gt;; the immutable map of all InvisibleObject implementing objects in the
      *         Network that are of the type objectType, or any sub type thereof
      */
-    ImmutableMap<String, InvisibleObjectInterface> getInvisibleObjectMap(Class<InvisibleObjectInterface> objectType);
+    ImmutableMap<String, NonLocatedObject> getInvisibleObjectMap(Class<NonLocatedObject> objectType);
 
     /**
      * Add an ObjectInterface implementing object to the Network.
-     * @param object InvisibleObjectInterface; the object that implements ObjectInterface
+     * @param object NonLocatedObject; the object that implements ObjectInterface
      * @throws NetworkException if link already exists in the network, if name of the object is not unique.
      */
-    void addInvisibleObject(InvisibleObjectInterface object) throws NetworkException;
+    void addInvisibleObject(NonLocatedObject object) throws NetworkException;
 
     /**
      * Remove an ObjectInterface implementing object form the Network.
-     * @param object InvisibleObjectInterface; the object that implements ObjectInterface
+     * @param object NonLocatedObject; the object that implements ObjectInterface
      * @throws NetworkException if the object does not exist in the network.
      */
-    void removeInvisibleObject(InvisibleObjectInterface object) throws NetworkException;
+    void removeInvisibleObject(NonLocatedObject object) throws NetworkException;
 
     /**
      * Test whether the invisible object is present in the Network.
-     * @param object InvisibleObjectInterface; the object that is tested for presence
+     * @param object NonLocatedObject; the object that is tested for presence
      * @return boolean; whether the invisible object is present in the Network
      */
-    boolean containsInvisibleObject(InvisibleObjectInterface object);
+    boolean containsInvisibleObject(NonLocatedObject object);
 
     /**
      * Test whether an invisible object with the given id is present in the Network.
@@ -358,8 +355,7 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      * @throws NetworkException in case nodes cannot be added to the route, e.g. because they are not directly connected. This
      *             can be the case when the links in the network have changed, but the graph has not been rebuilt.
      */
-    Route getShortestRouteBetween(GtuType gtuType, Node nodeFrom, Node nodeTo, LinkWeight linkWeight)
-            throws NetworkException;
+    Route getShortestRouteBetween(GtuType gtuType, Node nodeFrom, Node nodeTo, LinkWeight linkWeight) throws NetworkException;
 
     /**
      * Calculate the shortest route between two nodes in the network, via a list of intermediate nodes. If no path exists from
@@ -376,8 +372,8 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      * @throws NetworkException in case nodes cannot be added to the route, e.g. because they are not directly connected. This
      *             can be the case when the links in the network have changed, but the graph has not been rebuilt.
      */
-    default Route getShortestRouteBetween(final GtuType gtuType, final Node nodeFrom, final Node nodeTo, final List<Node> nodesVia)
-            throws NetworkException
+    default Route getShortestRouteBetween(final GtuType gtuType, final Node nodeFrom, final Node nodeTo,
+            final List<Node> nodesVia) throws NetworkException
     {
         return getShortestRouteBetween(gtuType, nodeFrom, nodeTo, nodesVia, LinkWeight.LENGTH);
     }
@@ -397,8 +393,8 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      * @throws NetworkException in case nodes cannot be added to the route, e.g. because they are not directly connected. This
      *             can be the case when the links in the network have changed, but the graph has not been rebuilt.
      */
-    Route getShortestRouteBetween(GtuType gtuType, Node nodeFrom, Node nodeTo, List<Node> nodesVia,
-            LinkWeight linkWeight) throws NetworkException;
+    Route getShortestRouteBetween(GtuType gtuType, Node nodeFrom, Node nodeTo, List<Node> nodesVia, LinkWeight linkWeight)
+            throws NetworkException;
 
     /***************************************************************************************/
     /*************************************** EVENTS ****************************************/
@@ -449,20 +445,20 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
                     new ObjectDescriptor("id of Static object", "id of Visible, stationary object", String.class)));
 
     /**
-     * The timed event type for pub/sub indicating the addition of an InvisibleObjectInterface implementing object. <br>
+     * The timed event type for pub/sub indicating the addition of a NonLocatedObject implementing object. <br>
      * Payload: String ObjectId (not an array, just a String)
      */
-    TimedEventType INVISIBLE_OBJECT_ADD_EVENT = new TimedEventType("NETWORK.INVISIBLE_OBJECT.ADD",
-            new MetaData("Invisible object added", "Invisible, stationary object added",
-                    new ObjectDescriptor("InvisibleObjectInterface", "Id of invisible, stationary object", String.class)));
+    TimedEventType NONLOCATED_OBJECT_ADD_EVENT = new TimedEventType("NETWORK.NONLOCATED_OBJECT.ADD",
+            new MetaData("Non-located object added", "Non-located, stationary object added",
+                    new ObjectDescriptor("NonLocatedObject", "Id of non-located, stationary object", String.class)));
 
     /**
-     * The timed event type for pub/sub indicating the removal of an InvisibleObjectInterface implementing object. <br>
+     * The timed event type for pub/sub indicating the removal of a NonLocatedObject implementing object. <br>
      * Payload: String objectId (not an array, just a String)
      */
-    TimedEventType INVISIBLE_OBJECT_REMOVE_EVENT = new TimedEventType("NETWORK.INVISIBLE_OBJECT.REMOVE",
-            new MetaData("Invisible object removed", "Invisible, stationary object removed",
-                    new ObjectDescriptor("InvisibleObjectInterface", "Id of invisible, stationary object", String.class)));
+    TimedEventType NONLOCATED_OBJECT_REMOVE_EVENT = new TimedEventType("NETWORK.NONLOCATED_OBJECT.REMOVE",
+            new MetaData("Non-located object removed", "Non-located, stationary object removed",
+                    new ObjectDescriptor("NonLocatedObject", "Id of non-located, stationary object", String.class)));
 
     /**
      * The timed event type for pub/sub indicating the addition of a Route for a gtuType. <br>

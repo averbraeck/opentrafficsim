@@ -5,7 +5,7 @@ import org.djutils.event.EventProducerInterface;
 import org.djutils.event.EventType;
 import org.djutils.event.TimedEventType;
 import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.core.object.InvisibleObjectInterface;
+import org.opentrafficsim.core.object.NonLocatedObject;
 
 /**
  * Interface for traffic light controllers.
@@ -18,7 +18,7 @@ import org.opentrafficsim.core.object.InvisibleObjectInterface;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 public interface TrafficController
-        extends EventProducerInterface, EventListenerInterface, InvisibleObjectInterface, Identifiable
+        extends EventProducerInterface, EventListenerInterface, NonLocatedObject, Identifiable
 {
     /**
      * Retrieve the Id of the traffic light controller.

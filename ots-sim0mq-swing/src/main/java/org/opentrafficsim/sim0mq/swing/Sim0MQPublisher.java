@@ -40,7 +40,7 @@ import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OtsNetwork;
-import org.opentrafficsim.core.object.InvisibleObjectInterface;
+import org.opentrafficsim.core.object.NonLocatedObject;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
@@ -257,8 +257,8 @@ public final class Sim0MQPublisher
             animator.setSpeedFactor(Double.MAX_VALUE, true);
             animator.setSpeedFactor(1000.0, true);
 
-            ImmutableMap<String, InvisibleObjectInterface> invisibleObjectMap = this.model.getNetwork().getInvisibleObjectMap();
-            for (InvisibleObjectInterface ioi : invisibleObjectMap.values())
+            ImmutableMap<String, NonLocatedObject> invisibleObjectMap = this.model.getNetwork().getInvisibleObjectMap();
+            for (NonLocatedObject ioi : invisibleObjectMap.values())
             {
                 if (ioi instanceof TrafCod)
                 {

@@ -26,7 +26,7 @@ import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.object.InvisibleObjectInterface;
+import org.opentrafficsim.core.object.NonLocatedObject;
 import org.opentrafficsim.demo.trafficcontrol.TrafCodDemo2.TrafCODModel;
 import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
@@ -131,8 +131,8 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCODModel>
         {
             return;
         }
-        ImmutableMap<String, InvisibleObjectInterface> invisibleObjectMap = getModel().getNetwork().getInvisibleObjectMap();
-        for (InvisibleObjectInterface ioi : invisibleObjectMap.values())
+        ImmutableMap<String, NonLocatedObject> invisibleObjectMap = getModel().getNetwork().getInvisibleObjectMap();
+        for (NonLocatedObject ioi : invisibleObjectMap.values())
         {
             if (ioi instanceof TrafCod)
             {

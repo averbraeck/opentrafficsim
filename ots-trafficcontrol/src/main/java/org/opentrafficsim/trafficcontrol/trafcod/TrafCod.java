@@ -31,7 +31,7 @@ import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.object.ObjectInterface;
+import org.opentrafficsim.core.object.LocatedObject;
 import org.opentrafficsim.road.network.lane.object.sensor.NonDirectionalOccupancySensor;
 import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.FlankSensor;
@@ -2330,7 +2330,7 @@ class Variable implements EventListenerInterface
         {
             for (TrafficLight tl : fromVariable.trafficLights)
             {
-                ObjectInterface clonedTrafficLight = newNetwork.getObjectMap().get(tl.getId());
+                LocatedObject clonedTrafficLight = newNetwork.getObjectMap().get(tl.getId());
                 if (null != clonedTrafficLight)
                 {
                     throw new NetworkException("newNetwork does not contain a clone of traffic light " + tl.getId());

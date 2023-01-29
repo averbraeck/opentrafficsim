@@ -26,8 +26,8 @@ import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.core.object.InvisibleObjectInterface;
-import org.opentrafficsim.core.object.ObjectInterface;
+import org.opentrafficsim.core.object.NonLocatedObject;
+import org.opentrafficsim.core.object.LocatedObject;
 import org.opentrafficsim.core.perception.PerceivableContext;
 
 /**
@@ -56,10 +56,10 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
     private Map<String, Link> linkMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** Map of ObjectInterface. */
-    private Map<String, ObjectInterface> objectMap = Collections.synchronizedMap(new LinkedHashMap<>());
+    private Map<String, LocatedObject> objectMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** Map of InvisibleObjects. */
-    private Map<String, InvisibleObjectInterface> invisibleObjectMap = Collections.synchronizedMap(new LinkedHashMap<>());
+    private Map<String, NonLocatedObject> invisibleObjectMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** Map of Routes. */
     private Map<GtuType, Map<String, Route>> routeMap = Collections.synchronizedMap(new LinkedHashMap<>());
@@ -319,7 +319,7 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final ImmutableMap<String, ObjectInterface> getObjectMap()
+    public final ImmutableMap<String, LocatedObject> getObjectMap()
     {
         return new ImmutableHashMap<>(this.objectMap, Immutable.WRAP);
     }
@@ -327,7 +327,7 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
     /**
      * @return the original ObjectMap; only to be used in the 'network' package for cloning.
      */
-    final Map<String, ObjectInterface> getRawObjectMap()
+    final Map<String, LocatedObject> getRawObjectMap()
     {
         return this.objectMap;
     }
@@ -335,12 +335,12 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
-    public final <T extends ObjectInterface> ImmutableMap<String, T> getObjectMap(final Class<T> objectType)
+    public final <T extends LocatedObject> ImmutableMap<String, T> getObjectMap(final Class<T> objectType)
     {
         Map<String, T> result = new LinkedHashMap<>();
         for (String key : this.objectMap.keySet())
         {
-            ObjectInterface o = this.objectMap.get(key);
+            LocatedObject o = this.objectMap.get(key);
             if (objectType.isInstance(o))
             {
                 result.put(key, (T) o);
@@ -352,9 +352,9 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
-    public final <T extends ObjectInterface> T getObject(final Class<T> objectType, final String objectId)
+    public final <T extends LocatedObject> T getObject(final Class<T> objectType, final String objectId)
     {
-        for (Entry<String, ObjectInterface> entry : this.objectMap.entrySet())
+        for (Entry<String, LocatedObject> entry : this.objectMap.entrySet())
         {
             if (entry.getKey().equals(objectId) && objectType.isInstance(entry.getValue()))
             {
@@ -366,7 +366,7 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final void addObject(final ObjectInterface object) throws NetworkException
+    public final void addObject(final LocatedObject object) throws NetworkException
     {
         if (containsObject(object))
         {
@@ -382,7 +382,7 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final void removeObject(final ObjectInterface object) throws NetworkException
+    public final void removeObject(final LocatedObject object) throws NetworkException
     {
         if (!containsObject(object))
         {
@@ -394,7 +394,7 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final boolean containsObject(final ObjectInterface object)
+    public final boolean containsObject(final LocatedObject object)
     {
         return this.objectMap.containsKey(object.getFullId());
     }
@@ -417,7 +417,7 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final ImmutableMap<String, InvisibleObjectInterface> getInvisibleObjectMap()
+    public final ImmutableMap<String, NonLocatedObject> getInvisibleObjectMap()
     {
         return new ImmutableHashMap<>(this.invisibleObjectMap, Immutable.WRAP);
     }
@@ -425,20 +425,20 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
     /**
      * @return the original InvisibleObjectMap; only to be used in the 'network' package for cloning.
      */
-    final Map<String, InvisibleObjectInterface> getRawInvisibleObjectMap()
+    final Map<String, NonLocatedObject> getRawInvisibleObjectMap()
     {
         return this.invisibleObjectMap;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final ImmutableMap<String, InvisibleObjectInterface> getInvisibleObjectMap(
-            final Class<InvisibleObjectInterface> objectType)
+    public final ImmutableMap<String, NonLocatedObject> getInvisibleObjectMap(
+            final Class<NonLocatedObject> objectType)
     {
-        Map<String, InvisibleObjectInterface> result = new LinkedHashMap<>();
+        Map<String, NonLocatedObject> result = new LinkedHashMap<>();
         for (String key : this.objectMap.keySet())
         {
-            InvisibleObjectInterface o = this.invisibleObjectMap.get(key);
+            NonLocatedObject o = this.invisibleObjectMap.get(key);
             if (objectType.isInstance(o))
             {
                 result.put(key, o);
@@ -449,7 +449,7 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final void addInvisibleObject(final InvisibleObjectInterface object) throws NetworkException
+    public final void addInvisibleObject(final NonLocatedObject object) throws NetworkException
     {
         if (containsInvisibleObject(object))
         {
@@ -461,24 +461,24 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
                     "InvisibleObject with name " + object.getFullId() + " already registered in network " + this.id);
         }
         this.invisibleObjectMap.put(object.getFullId(), object);
-        fireTimedEvent(Network.INVISIBLE_OBJECT_ADD_EVENT, object.getFullId(), getSimulator().getSimulatorTime());
+        fireTimedEvent(Network.NONLOCATED_OBJECT_ADD_EVENT, object.getFullId(), getSimulator().getSimulatorTime());
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void removeInvisibleObject(final InvisibleObjectInterface object) throws NetworkException
+    public final void removeInvisibleObject(final NonLocatedObject object) throws NetworkException
     {
         if (!containsInvisibleObject(object))
         {
             throw new NetworkException("InvisibleObject " + object + " not registered in network " + this.id);
         }
-        fireTimedEvent(Network.INVISIBLE_OBJECT_REMOVE_EVENT, object.getFullId(), getSimulator().getSimulatorTime());
+        fireTimedEvent(Network.NONLOCATED_OBJECT_REMOVE_EVENT, object.getFullId(), getSimulator().getSimulatorTime());
         this.objectMap.remove(object.getFullId());
     }
 
     /** {@inheritDoc} */
     @Override
-    public final boolean containsInvisibleObject(final InvisibleObjectInterface object)
+    public final boolean containsInvisibleObject(final NonLocatedObject object)
     {
         return this.invisibleObjectMap.containsKey(object.getFullId());
     }
@@ -1007,7 +1007,7 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
                 maxY = Math.max(maxY, link.getLocation().getY() + b.getMaxY());
                 content = true;
             }
-            for (ObjectInterface object : this.objectMap.values())
+            for (LocatedObject object : this.objectMap.values())
             {
                 Bounds b = new Bounds(object.getBounds());
                 minX = Math.min(minX, object.getLocation().getX() + b.getMinX());

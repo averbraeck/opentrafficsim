@@ -20,7 +20,7 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OtsNetwork;
-import org.opentrafficsim.core.object.ObjectInterface;
+import org.opentrafficsim.core.object.LocatedObject;
 import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation;
 import org.opentrafficsim.draw.network.LinkAnimation;
@@ -75,7 +75,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
     private Map<LaneBasedGtu, Renderable2D<LaneBasedGtu>> animatedGTUs = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** Rendered static objects. */
-    public Map<ObjectInterface, Renderable2D<?>> animatedObjects = Collections.synchronizedMap(new LinkedHashMap<>());
+    public Map<LocatedObject, Renderable2D<?>> animatedObjects = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /**
      * Creates animations for nodes, links and lanes. The class will subscribe to the network and listen to changes, so the
@@ -147,7 +147,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
                 this.animatedGTUs.put((LaneBasedGtu) gtu, gtuAnimation);
             }
 
-            for (ObjectInterface object : network.getObjectMap().values())
+            for (LocatedObject object : network.getObjectMap().values())
             {
                 animateStaticObject(object);
             }
@@ -211,12 +211,12 @@ public class DefaultAnimationFactory implements EventListenerInterface
             }
             else if (event.getType().equals(Network.OBJECT_ADD_EVENT))
             {
-                ObjectInterface object = this.network.getObjectMap().get((String) event.getContent());
+                LocatedObject object = this.network.getObjectMap().get((String) event.getContent());
                 animateStaticObject(object);
             }
             else if (event.getType().equals(Network.OBJECT_REMOVE_EVENT))
             {
-                ObjectInterface object = this.network.getObjectMap().get((String) event.getContent());
+                LocatedObject object = this.network.getObjectMap().get((String) event.getContent());
                 if (this.animatedObjects.containsKey(object))
                 {
                     // TODO: this.animatedObjects.get(object).destroy(object.getSimulator());
@@ -263,7 +263,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
      * Draw the static object.
      * @param object ObjectInterface; the object to draw
      */
-    protected void animateStaticObject(final ObjectInterface object)
+    protected void animateStaticObject(final LocatedObject object)
     {
         try
         {

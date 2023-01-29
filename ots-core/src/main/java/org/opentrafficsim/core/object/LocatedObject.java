@@ -19,7 +19,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public interface ObjectInterface extends Locatable, Identifiable, EventProducerInterface, Serializable
+public interface LocatedObject extends Locatable, Identifiable, EventProducerInterface, Serializable
 {
     /** @return the outline geometry of the object. */
     OtsLine3D getGeometry();

@@ -7,7 +7,7 @@ import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.core.geometry.OtsPoint3D;
-import org.opentrafficsim.core.object.ObjectInterface;
+import org.opentrafficsim.core.object.LocatedObject;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -20,7 +20,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public interface LaneBasedObject extends ObjectInterface
+public interface LaneBasedObject extends LocatedObject
 {
     /** @return The lane for which this is a sensor. */
     Lane getLane();
