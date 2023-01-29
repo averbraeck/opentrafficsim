@@ -59,16 +59,22 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  */
 public class DefaultAnimationFactory implements EventListenerInterface
 {
-    /** the simulator. */
-    private final OtsSimulatorInterface simulator;
+    /** */
+    private static final long serialVersionUID = 20230129L;
 
+    /** The network. */
+    private final OtsNetwork network;
+    
+    /** The simulator. */
+    private final OtsSimulatorInterface simulator;
+    
     /** GTU colorer. */
     private final GtuColorer gtuColorer;
 
-    /** rendered gtus. */
+    /** Rendered gtus. */
     private Map<LaneBasedGtu, Renderable2D<LaneBasedGtu>> animatedGTUs = Collections.synchronizedMap(new LinkedHashMap<>());
 
-    /** rendered static objects. */
+    /** Rendered static objects. */
     public Map<ObjectInterface, Renderable2D<?>> animatedObjects = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /**
@@ -82,16 +88,17 @@ public class DefaultAnimationFactory implements EventListenerInterface
     protected DefaultAnimationFactory(final OtsNetwork network, final GtuColorer gtuColorer, final boolean animateNetwork)
             throws OtsDrawingException
     {
+        this.network = network;
         this.simulator = network.getSimulator();
         this.gtuColorer = gtuColorer;
 
         // subscribe to adding and removing events
-        network.addListener(this, Network.ANIMATION_GTU_ADD_EVENT);
-        network.addListener(this, Network.ANIMATION_GTU_REMOVE_EVENT);
-        network.addListener(this, Network.ANIMATION_OBJECT_ADD_EVENT);
-        network.addListener(this, Network.ANIMATION_OBJECT_REMOVE_EVENT);
-        network.addListener(this, Network.ANIMATION_GENERATOR_ADD_EVENT);
-        network.addListener(this, Network.ANIMATION_GENERATOR_REMOVE_EVENT);
+        network.addListener(this, Network.GTU_ADD_EVENT);
+        network.addListener(this, Network.GTU_REMOVE_EVENT);
+        network.addListener(this, Network.OBJECT_ADD_EVENT);
+        network.addListener(this, Network.OBJECT_REMOVE_EVENT);
+        network.addListener(this, Network.GENERATOR_ADD_EVENT);
+        network.addListener(this, Network.GENERATOR_REMOVE_EVENT);
 
         // model the current infrastructure
         try
@@ -187,29 +194,29 @@ public class DefaultAnimationFactory implements EventListenerInterface
     {
         try
         {
-            if (event.getType().equals(Network.ANIMATION_GTU_ADD_EVENT))
+            if (event.getType().equals(Network.GTU_ADD_EVENT))
             {
                 // schedule the addition of the GTU to prevent it from not having an operational plan
-                LaneBasedGtu gtu = (LaneBasedGtu) event.getContent();
+                LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU((String) event.getContent());
                 this.simulator.scheduleEventNow(this, this, "animateGTU", new Object[] {gtu});
             }
-            else if (event.getType().equals(Network.ANIMATION_GTU_REMOVE_EVENT))
+            else if (event.getType().equals(Network.GTU_REMOVE_EVENT))
             {
-                LaneBasedGtu gtu = (LaneBasedGtu) event.getContent();
+                LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU((String) event.getContent());
                 if (this.animatedGTUs.containsKey(gtu))
                 {
                     this.animatedGTUs.get(gtu).destroy(gtu.getSimulator());
                     this.animatedGTUs.remove(gtu);
                 }
             }
-            else if (event.getType().equals(Network.ANIMATION_OBJECT_ADD_EVENT))
+            else if (event.getType().equals(Network.OBJECT_ADD_EVENT))
             {
-                ObjectInterface object = (ObjectInterface) event.getContent();
+                ObjectInterface object = this.network.getObjectMap().get((String) event.getContent());
                 animateStaticObject(object);
             }
-            else if (event.getType().equals(Network.ANIMATION_OBJECT_REMOVE_EVENT))
+            else if (event.getType().equals(Network.OBJECT_REMOVE_EVENT))
             {
-                ObjectInterface object = (ObjectInterface) event.getContent();
+                ObjectInterface object = this.network.getObjectMap().get((String) event.getContent());
                 if (this.animatedObjects.containsKey(object))
                 {
                     // TODO: this.animatedObjects.get(object).destroy(object.getSimulator());
@@ -217,12 +224,14 @@ public class DefaultAnimationFactory implements EventListenerInterface
                     this.animatedObjects.remove(object);
                 }
             }
-            else if (event.getType().equals(Network.ANIMATION_GENERATOR_ADD_EVENT))
+            else if (event.getType().equals(Network.GENERATOR_ADD_EVENT))
             {
-                GtuGenerator gtuGenerator = (GtuGenerator) event.getContent();
+                // TODO: let GtuGenerator implement ObjectInterface (LocatedObject)
+                //GtuGenerator gtuGenerator = this.network.getObject(GtuGenerator.class, (String) event.getContent());
+                GtuGenerator gtuGenerator = null;
                 animateGtuGenerator(gtuGenerator);
             }
-            else if (event.getType().equals(Network.ANIMATION_GENERATOR_REMOVE_EVENT))
+            else if (event.getType().equals(Network.GENERATOR_REMOVE_EVENT))
             {
                 // TODO: change the way generators are animated
             }
@@ -312,7 +321,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
      */
     protected void animateGtuGenerator(final GtuGenerator gtuGenerator)
     {
-        // TODO: default animation of GTU generator
+        // TODO: default animation of GTU generator (GtuGeneratorQueueAnimation?)
     }
 
 }

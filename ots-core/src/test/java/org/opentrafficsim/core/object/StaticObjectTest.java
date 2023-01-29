@@ -76,7 +76,7 @@ public class StaticObjectTest implements EventListenerInterface
         }
         this.lastEvent = null;
         OtsNetwork network = new OtsNetwork("Test network for static object test", false, MockSimulator.createMock());
-        network.addListener(this, Network.ANIMATION_OBJECT_ADD_EVENT);
+        network.addListener(this, Network.OBJECT_ADD_EVENT);
         StaticObject so = new StaticObject(id, geometry, height);
         assertNull("Constructor should not have fired an event", this.lastEvent);
         network.addObject(so);
@@ -89,7 +89,7 @@ public class StaticObjectTest implements EventListenerInterface
         assertTrue("toString returns something descriptive", so.toString().startsWith("StaticObject"));
         so.init();
         assertNotNull("adding so to network should have fired an event", this.lastEvent);
-        assertEquals("Payload of event is the static object", so, this.lastEvent.getContent());
+        assertEquals("Payload of event is the static object id", so.getId(), this.lastEvent.getContent());
         this.lastEvent = null;
         StaticObject so2 = StaticObject.create(id, geometry, height);
         assertEquals("id", id, so2.getId());

@@ -138,7 +138,6 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
         }
         this.nodeMap.put(node.getId(), node);
         fireTimedEvent(Network.NODE_ADD_EVENT, node.getId(), getSimulator().getSimulatorTime());
-        fireTimedEvent(Network.ANIMATION_NODE_ADD_EVENT, node, getSimulator().getSimulatorTime());
     }
 
     /** {@inheritDoc} */
@@ -150,7 +149,6 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
             throw new NetworkException("Node " + node + " not registered in network " + this.id);
         }
         fireTimedEvent(Network.NODE_REMOVE_EVENT, node.getId(), getSimulator().getSimulatorTime());
-        fireTimedEvent(Network.ANIMATION_NODE_REMOVE_EVENT, node, getSimulator().getSimulatorTime());
         this.nodeMap.remove(node.getId());
     }
 
@@ -251,7 +249,6 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
         }
         this.linkMap.put(link.getId(), link);
         fireTimedEvent(Network.LINK_ADD_EVENT, link.getId(), getSimulator().getSimulatorTime());
-        fireTimedEvent(Network.ANIMATION_LINK_ADD_EVENT, link, getSimulator().getSimulatorTime());
     }
 
     /** {@inheritDoc} */
@@ -263,7 +260,6 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
             throw new NetworkException("Link " + link + " not registered in network " + this.id);
         }
         fireTimedEvent(Network.LINK_REMOVE_EVENT, link.getId(), getSimulator().getSimulatorTime());
-        fireTimedEvent(Network.ANIMATION_LINK_REMOVE_EVENT, link, getSimulator().getSimulatorTime());
         this.linkMap.remove(link.getId());
     }
 
@@ -382,7 +378,6 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
         }
         this.objectMap.put(object.getFullId(), object);
         fireTimedEvent(Network.OBJECT_ADD_EVENT, object.getFullId(), getSimulator().getSimulatorTime());
-        fireTimedEvent(Network.ANIMATION_OBJECT_ADD_EVENT, object, getSimulator().getSimulatorTime());
     }
 
     /** {@inheritDoc} */
@@ -394,7 +389,6 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
             throw new NetworkException("Object " + object + " not registered in network " + this.id);
         }
         fireTimedEvent(Network.OBJECT_REMOVE_EVENT, object.getFullId(), getSimulator().getSimulatorTime());
-        fireTimedEvent(Network.ANIMATION_OBJECT_REMOVE_EVENT, object, getSimulator().getSimulatorTime());
         this.objectMap.remove(object.getFullId());
     }
 
@@ -468,7 +462,6 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
         }
         this.invisibleObjectMap.put(object.getFullId(), object);
         fireTimedEvent(Network.INVISIBLE_OBJECT_ADD_EVENT, object.getFullId(), getSimulator().getSimulatorTime());
-        fireTimedEvent(Network.ANIMATION_INVISIBLE_OBJECT_ADD_EVENT, object, getSimulator().getSimulatorTime());
     }
 
     /** {@inheritDoc} */
@@ -480,7 +473,6 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
             throw new NetworkException("InvisibleObject " + object + " not registered in network " + this.id);
         }
         fireTimedEvent(Network.INVISIBLE_OBJECT_REMOVE_EVENT, object.getFullId(), getSimulator().getSimulatorTime());
-        fireTimedEvent(Network.ANIMATION_INVISIBLE_OBJECT_REMOVE_EVENT, object, getSimulator().getSimulatorTime());
         this.objectMap.remove(object.getFullId());
     }
 
@@ -548,7 +540,6 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
         this.routeMap.get(gtuType).put(route.getId(), route);
         fireTimedEvent(Network.ROUTE_ADD_EVENT, new Object[] {gtuType.getId(), route.getId()},
                 getSimulator().getSimulatorTime());
-        fireTimedEvent(Network.ANIMATION_ROUTE_ADD_EVENT, new Object[] {gtuType, route}, getSimulator().getSimulatorTime());
     }
 
     /** {@inheritDoc} */
@@ -561,7 +552,6 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
         }
         fireTimedEvent(Network.ROUTE_REMOVE_EVENT, new Object[] {gtuType.getId(), route.getId()},
                 getSimulator().getSimulatorTime());
-        fireTimedEvent(Network.ANIMATION_ROUTE_REMOVE_EVENT, new Object[] {gtuType, route}, getSimulator().getSimulatorTime());
         this.routeMap.get(gtuType).remove(route.getId());
     }
 
@@ -934,7 +924,6 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
         this.gtuMap.put(gtu.getId(), gtu);
         // TODO verify that gtu.getSimulator() equals getSimulator() ?
         fireTimedEvent(Network.GTU_ADD_EVENT, gtu.getId(), getSimulator().getSimulatorTime());
-        fireTimedEvent(Network.ANIMATION_GTU_ADD_EVENT, gtu, getSimulator().getSimulatorTime());
     }
 
     /** {@inheritDoc} */
@@ -942,7 +931,6 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
     public final void removeGTU(final Gtu gtu)
     {
         fireTimedEvent(Network.GTU_REMOVE_EVENT, gtu.getId(), getSimulator().getSimulatorTime());
-        fireTimedEvent(Network.ANIMATION_GTU_REMOVE_EVENT, gtu, getSimulator().getSimulatorTime());
         this.gtuMap.remove(gtu.getId());
     }
 

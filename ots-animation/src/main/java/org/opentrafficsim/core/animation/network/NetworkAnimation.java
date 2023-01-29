@@ -45,20 +45,20 @@ public class NetworkAnimation extends EventProducer implements EventListenerInte
     public NetworkAnimation(final Network network) throws RemoteException
     {
         this.network = network;
-        this.network.addListener(this, Network.ANIMATION_GTU_ADD_EVENT);
-        this.network.addListener(this, Network.ANIMATION_GTU_REMOVE_EVENT);
-        this.network.addListener(this, Network.ANIMATION_NODE_ADD_EVENT);
-        this.network.addListener(this, Network.ANIMATION_NODE_REMOVE_EVENT);
-        this.network.addListener(this, Network.ANIMATION_LINK_ADD_EVENT);
-        this.network.addListener(this, Network.ANIMATION_LINK_REMOVE_EVENT);
-        this.network.addListener(this, Network.ANIMATION_OBJECT_ADD_EVENT);
-        this.network.addListener(this, Network.ANIMATION_OBJECT_REMOVE_EVENT);
-        this.network.addListener(this, Network.ANIMATION_INVISIBLE_OBJECT_ADD_EVENT);
-        this.network.addListener(this, Network.ANIMATION_INVISIBLE_OBJECT_REMOVE_EVENT);
-        this.network.addListener(this, Network.ANIMATION_ROUTE_ADD_EVENT);
-        this.network.addListener(this, Network.ANIMATION_ROUTE_REMOVE_EVENT);
-        this.network.addListener(this, Network.ANIMATION_GTU_ADD_EVENT);
-        this.network.addListener(this, Network.ANIMATION_GTU_REMOVE_EVENT);
+        this.network.addListener(this, Network.GTU_ADD_EVENT);
+        this.network.addListener(this, Network.GTU_REMOVE_EVENT);
+        this.network.addListener(this, Network.NODE_ADD_EVENT);
+        this.network.addListener(this, Network.NODE_REMOVE_EVENT);
+        this.network.addListener(this, Network.LINK_ADD_EVENT);
+        this.network.addListener(this, Network.LINK_REMOVE_EVENT);
+        this.network.addListener(this, Network.OBJECT_ADD_EVENT);
+        this.network.addListener(this, Network.OBJECT_REMOVE_EVENT);
+        this.network.addListener(this, Network.INVISIBLE_OBJECT_ADD_EVENT);
+        this.network.addListener(this, Network.INVISIBLE_OBJECT_REMOVE_EVENT);
+        this.network.addListener(this, Network.ROUTE_ADD_EVENT);
+        this.network.addListener(this, Network.ROUTE_REMOVE_EVENT);
+        this.network.addListener(this, Network.GENERATOR_ADD_EVENT);
+        this.network.addListener(this, Network.GENERATOR_REMOVE_EVENT);
     }
 
     /**
@@ -153,7 +153,7 @@ public class NetworkAnimation extends EventProducer implements EventListenerInte
     @Override
     public void notify(final EventInterface event) throws RemoteException
     {
-        if (event.getType().equals(Network.ANIMATION_NODE_ADD_EVENT))
+        if (event.getType().equals(Network.NODE_ADD_EVENT))
         {
             //
         }
