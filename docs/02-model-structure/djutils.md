@@ -14,7 +14,7 @@ The way in which event producers and listeners work is explained below. For furt
 
 ## Event producers and listeners
 
-\[[List of all event types in OTS](events)\]
+\[[List of all event types in OTS](events.md)\]
 
 The events between event producers and listeners should not be confused with the events in event-based simulation. Here, specific actions that may occur result in events, and any listener that registered itselft for certain events being produced by certain event producers, will then be notified of the event. We have:
 
