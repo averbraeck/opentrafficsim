@@ -3,34 +3,20 @@
 _Table 2: Overview of events in OTS._
 <table border="1" width="800px">
   <tr style="font-weight: bold"><td>Class</td><td>Event field</td><td>Listeners (excluding test code)</td><td>Used</td></tr>
-  <tr><td>Network</td><td>ANIMATION_GENERATOR_ADD_EVENT</td><td>DefaultAnimationFactory<sup>1,2</sup></td><td>yes</td></tr>
-  <tr><td></td><td>ANIMATION_GENERATOR_REMOVE_EVENT</td><td>DefaultAnimationFactory<sup>1,2</sup></td><td>yes</td></tr>
-  <tr><td></td><td>ANIMATION_GTU_ADD_EVENT</td><td>DefaultAnimationFactory, NetworkAnimation<sup>1</sup></td><td>yes</td></tr>
-  <tr><td></td><td>ANIMATION_GTU_REMOVE_EVENT</td><td>DefaultAnimationFactory, NetworkAnimation<sup>1</sup></td><td>yes</td></tr>
-  <tr><td></td><td>ANIMATION_INVISIBLE_OBJECT_ADD_EVENT</td><td>NetworkAnimation<sup>1</sup></td><td>no</td></tr>
-  <tr><td></td><td>ANIMATION_INVISIBLE_OBJECT_REMOVE_EVENT</td><td>NetworkAnimation<sup>1</sup></td><td>no</td></tr>
-  <tr><td></td><td>ANIMATION_LINK_ADD_EVENT</td><td>NetworkAnimation<sup>1</sup></td><td>no</td></tr>
-  <tr><td></td><td>ANIMATION_LINK_REMOVE_EVENT</td><td>NetworkAnimation<sup>1</sup></td><td>no</td></tr>
-  <tr><td></td><td>ANIMATION_NODE_ADD_EVENT</td><td>NetworkAnimation<sup>1</sup></td><td>no</td></tr>
-  <tr><td></td><td>ANIMATION_NODE_REMOVE_EVENT</td><td>NetworkAnimation<sup>1</sup></td><td>no</td></tr>
-  <tr><td></td><td>ANIMATION_OBJECT_ADD_EVENT</td><td>DefaultAnimationFactory, NetworkAnimation<sup>1</sup></td><td>yes</td></tr>
-  <tr><td></td><td>ANIMATION_OBJECT_REMOVE_EVENT</td><td>DefaultAnimationFactory, NetworkAnimation<sup>1</sup></td><td>yes</td></tr>
-  <tr><td></td><td>ANIMATION_ROUTE_ADD_EVENT</td><td>NetworkAnimation<sup>1</sup></td><td>no</td></tr>
-  <tr><td></td><td>ANIMATION_ROUTE_REMOVE_EVENT</td><td>NetworkAnimation<sup>1</sup></td><td>no</td></tr>
-  <tr><td></td><td>GENERATOR_ADD_EVENT</td><td><i>not thrown</i></td><td>no</td></tr>
-  <tr><td></td><td>GENERATOR_REMOVE_EVENT</td><td><i>not thrown</i></td><td>no</td></tr>
-  <tr><td></td><td>GTU_ADD_EVENT</td><td>AbstractLaneBasedMoveChecker, Publisher<sup>3</sup>, NetworkModel, StochasticDistractionModel, RampMeteringDemo, OtsAnimationPanel</td><td>yes</td></tr>
-  <tr><td></td><td>GTU_REMOVE_EVENT</td><td>AbstractLaneBasedMoveChecker, Publisher<sup>3</sup>, NetworkModel, StochasticDistractionModel, RampMeteringDemo, OtsAnimationPanel</td><td>yes</td></tr>
-  <tr><td></td><td>INVISIBLE_OBJECT_ADD_EVENT</td><td></td><td>no</td></tr>
-  <tr><td></td><td>INVISIBLE_OBJECT_REMOVE_EVENT</td><td></td><td>no</td></tr>
-  <tr><td></td><td>LINK_ADD_EVENT</td><td>Publisher<sup>3</sup></td><td>yes</td></tr>
-  <tr><td></td><td>LINK_REMOVE_EVENT</td><td>Publisher<sup>3</sup></td><td>yes</td></tr>
-  <tr><td></td><td>NODE_ADD_EVENT</td><td>Publisher<sup>3</sup></td><td>yes</td></tr>
-  <tr><td></td><td>NODE_REMOVE_EVENT</td><td>Publisher<sup>3</sup></td><td>yes</td></tr>
-  <tr><td></td><td>OBJECT_ADD_EVENT</td><td></td><td>no</td></tr>
-  <tr><td></td><td>OBJECT_REMOVE_EVENT</td><td></td><td>no</td></tr>
-  <tr><td></td><td>ROUTE_ADD_EVENT</td><td></td><td>no</td></tr>
-  <tr><td></td><td>ROUTE_REMOVE_EVENT</td><td></td><td>no</td></tr>
+  <tr><td>Network</td><td>GENERATOR_ADD_EVENT</td><td><i>not thrown</i>, DefaultAnimationFactory<sup>1,2</sup>, NetworkAnimation<sup>1</sup></td><td>yes</td></tr>
+  <tr><td></td><td>GENERATOR_REMOVE_EVENT</td><td><i>not thrown</i>, DefaultAnimationFactory<sup>1,2</sup>, NetworkAnimation<sup>1</sup></td><td>yes</td></tr>
+  <tr><td></td><td>GTU_ADD_EVENT</td><td>DefaultAnimationFactory, NetworkAnimation<sup>1</sup>, AbstractLaneBasedMoveChecker, Publisher<sup>3</sup>, NetworkModel, StochasticDistractionModel, RampMeteringDemo, OtsAnimationPanel</td><td>yes</td></tr>
+  <tr><td></td><td>GTU_REMOVE_EVENT</td><td>DefaultAnimationFactory, NetworkAnimation<sup>1</sup>, AbstractLaneBasedMoveChecker, Publisher<sup>3</sup>, NetworkModel, StochasticDistractionModel, RampMeteringDemo, OtsAnimationPanel</td><td>yes</td></tr>
+  <tr><td></td><td>INVISIBLE_OBJECT_ADD_EVENT</td><td>NetworkAnimation<sup>1</sup></td><td>yes</td></tr>
+  <tr><td></td><td>INVISIBLE_OBJECT_REMOVE_EVENT</td><td>NetworkAnimation<sup>1</sup></td><td>yes</td></tr>
+  <tr><td></td><td>LINK_ADD_EVENT</td><td>NetworkAnimation<sup>1</sup>, Publisher<sup>3</sup></td><td>yes</td></tr>
+  <tr><td></td><td>LINK_REMOVE_EVENT</td><td>NetworkAnimation<sup>1</sup>, Publisher<sup>3</sup></td><td>yes</td></tr>
+  <tr><td></td><td>NODE_ADD_EVENT</td><td>NetworkAnimation<sup>1</sup>, Publisher<sup>3</sup></td><td>yes</td></tr>
+  <tr><td></td><td>NODE_REMOVE_EVENT</td><td>NetworkAnimation<sup>1</sup>, Publisher<sup>3</sup></td><td>yes</td></tr>
+  <tr><td></td><td>OBJECT_ADD_EVENT</td><td>DefaultAnimationFactory, NetworkAnimation<sup>1</sup></td><td>yes</td></tr>
+  <tr><td></td><td>OBJECT_REMOVE_EVENT</td><td>DefaultAnimationFactory, NetworkAnimation<sup>1</sup></td><td>yes</td></tr>
+  <tr><td></td><td>ROUTE_ADD_EVENT</td><td>NetworkAnimation<sup>1</sup></td><td>yes</td></tr>
+  <tr><td></td><td>ROUTE_REMOVE_EVENT</td><td>NetworkAnimation<sup>1</sup></td><td>yes</td></tr>
   <tr><td>Link</td><td>GTU_ADD_EVENT</td><td>Publisher<sup>3</sup></td><td>yes</td></tr>
   <tr><td></td><td>GTU_REMOVE_EVENT</td><td>Publisher<sup>3</sup></td><td>yes</td></tr>
   <tr><td>CrossSectionLink</td><td>LANE_ADD_EVENT</td><td>Publisher<sup>3</sup></td><td>yes</td></tr>
