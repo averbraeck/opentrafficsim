@@ -42,21 +42,21 @@ _Table 2: Overview of events in OTS._
   <tr><td></td><td>DETECTOR_AGGREGATE</td><td></td><td>no</td></tr>
   <tr><td>NonDirectionalOccupancySensor</td><td>NON_DIRECTIONAL_OCCUPANCY_SENSOR_ TRIGGER_ENTRY_EVENT</td><td>TrafficLightSensor, TrafCod, DetectrorImage, Variable</td><td>yes</td></tr>
   <tr><td></td><td>NON_DIRECTIONAL_OCCUPANCY_SENSOR_ TRIGGER_EXIT_EVENT</td><td>TrafficLightSensor, TrafCod, DetectrorImage, Variable</td><td>yes</td></tr>
-  <tr><td>DirectionalOccupancySensor</td><td>DIRECTIONAL_OCCUPANCY_SENSOR_ TRIGGER_ENTRY_EVENT</td><td></td><td>no</td></tr>
-  <tr><td></td><td>DIRECTIONAL_OCCUPANCY_SENSOR_ TRIGGER_EXIT_EVENT</td><td></td><td>no</td></tr>
-  <tr><td>TrafficController</td><td>TRAFFICCONTROL_CONTROLLER_CREATED</td><td>AbstractTrafficController</td><td>yes</td></tr>
-  <tr><td></td><td>TRAFFICCONTROL_CONTROLLER_EVALUATING</td><td>TrafCod, TrafCODModel</td><td>yes</td></tr>
-  <tr><td></td><td>TRAFFICCONTROL_CONTROLLER_WARNING</td><td>TrafCodDemo2, TrafCod, TrafCODModel</td><td>yes</td></tr>
-  <tr><td></td><td>TRAFFICCONTROL_STATE_CHANGED</td><td>TrafCodDemo2</td><td>yes</td></tr>
-  <tr><td></td><td>TRAFFIC_LIGHT_CHANGED</td><td>TrafCod</td><td>yes</td></tr>
-  <tr><td></td><td>TRAFFICCONTROL_VARIABLE_CREATED</td><td>TrafCodDemo2, TrafCod</td><td>yes</td></tr>
-  <tr><td></td><td>TRAFFICCONTROL_SET_TRACING</td><td>TrafCod</td><td>yes</td></tr>
-  <tr><td></td><td>TRAFFICCONTROL_TRACED_VARIABLE_UPDATED</td><td>TrafCodDemo2, TrafCODModel, Variable</td><td>yes</td></tr>
-  <tr><td></td><td>TRAFFICCONTROL_CONFLICT_GROUP_CHANGED</td><td>TrafCodDemo2, TrafCODModel, TrafCod</td><td>yes</td></tr>
-  <tr><td>TrafficLight</td><td>TRAFFICLIGHT_CHANGE_EVENT</td><td>AbtstractTrafficLight</td><td>yes</td></tr>
+  <tr><td>DirectionalOccupancySensor</td><td>DIRECTIONAL_OCCUPANCY_SENSOR_ TRIGGER_ENTRY_EVENT</td><td><i>not thrown</i></td><td>no</td></tr>
+  <tr><td></td><td>DIRECTIONAL_OCCUPANCY_SENSOR_ TRIGGER_EXIT_EVENT</td><td><i>not thrown</i></td><td>no</td></tr>
+  <tr><td>TrafficController</td><td>TRAFFICCONTROL_CONTROLLER_CREATED</td><td></td><td>no</td></tr>
+  <tr><td></td><td>TRAFFICCONTROL_CONTROLLER_EVALUATING</td><td>TrafCODModel</td><td>yes</td></tr>
+  <tr><td></td><td>TRAFFICCONTROL_CONTROLLER_WARNING</td><td>TrafCODModel</td><td>yes</td></tr>
+  <tr><td></td><td>TRAFFICCONTROL_STATE_CHANGED</td><td><i>not thrown</i></td><td>no</td></tr>
+  <tr><td></td><td>TRAFFIC_LIGHT_CHANGED</td><td></td><td>no</td></tr>
+  <tr><td></td><td>TRAFFICCONTROL_VARIABLE_CREATED</td><td></td><td>no</td></tr>
+  <tr><td></td><td>TRAFFICCONTROL_SET_TRACING</td><td><i>not thrown</i>, TrafCod</td><td>yes</td></tr>
+  <tr><td></td><td>TRAFFICCONTROL_TRACED_VARIABLE_UPDATED</td><td>TrafCODModel</td><td>yes</td></tr>
+  <tr><td></td><td>TRAFFICCONTROL_CONFLICT_GROUP_CHANGED</td><td>TrafCODModel</td><td>yes</td></tr>
+  <tr><td>TrafficLight</td><td>TRAFFICLIGHT_CHANGE_EVENT</td><td></td><td>no</td></tr>
   <tr><td>AbstractPlot</td><td>GRAPH_ADD_EVENT</td><td><i>not thrown</i></td><td>no</td></tr>
   <tr><td></td><td>GRAPH_REMOVE_EVENT</td><td><i>not thrown</i></td><td>no</td></tr>
 </table>
 <sup>1</sup>) Registers as listener, but does (effectively) nothing with it in `notify()`.<br>
 <sup>2</sup>) Should use `GtuGeneratorQueueAnimation`.<br>
-<sup>3</sup>) Part of `ots-sim0mq`.
+<sup>3</sup>) Part of `ots-sim0mq`.<br>
