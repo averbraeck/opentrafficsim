@@ -21,11 +21,9 @@ _Table 2: Overview of events in OTS._
   <tr><td></td><td>GTU_REMOVE_EVENT</td><td>Publisher<sup>3</sup></td><td>yes</td></tr>
   <tr><td>CrossSectionLink</td><td>LANE_ADD_EVENT</td><td>Publisher<sup>3</sup></td><td>yes</td></tr>
   <tr><td></td><td>LANE_REMOVE_EVENT</td><td>Publisher<sup>3</sup></td><td>yes</td></tr>
-  <tr><td>Gtu</td><td>INIT_EVENT</td><td>StochasticDistractionModel</td><td>yes</td></tr>
-  <tr><td></td><td>MOVE_EVENT</td><td>Publisher<sup>3</sup>, GtuTransceiver<sup>3</sup></td><td>yes</td></tr>
+  <tr><td>Gtu</td><td>MOVE_EVENT</td><td>Publisher<sup>3</sup>, GtuTransceiver<sup>3</sup></td><td>yes</td></tr>
   <tr><td></td><td>DESTROY_EVENT</td><td></td><td>no</td></tr>  
-  <tr><td>LaneBasedGtu</td><td>LANEBASED_INIT_EVENT</td><td></td><td>no</td></tr>
-  <tr><td></td><td>LANEBASED_MOVE_EVENT</td><td>AbstractLaneBasedMoveChecker, RoadSampler</td><td>yes</td></tr>
+  <tr><td>LaneBasedGtu</td><td>LANEBASED_MOVE_EVENT</td><td>AbstractLaneBasedMoveChecker, RoadSampler</td><td>yes</td></tr>
   <tr><td></td><td>LANEBASED_DESTROY_EVENT</td><td></td><td>no</td></tr>
   <tr><td></td><td>LANE_CHANGE_EVENT</td><td>Conflict, StrategiesDemo</td><td>yes</td></tr>
   <tr><td></td><td>LANE_ENTER_EVENT</td><td><i>not thrown</i></td><td>no</td></tr>

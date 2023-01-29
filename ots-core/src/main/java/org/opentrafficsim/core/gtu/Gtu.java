@@ -267,11 +267,6 @@ public class Gtu extends EventProducer implements HierarchicallyTyped<GtuType, G
 
         this.strategicalPlanner.set(strategicalPlanner);
         this.tacticalPlanner.set(strategicalPlanner.getTacticalPlanner());
-        Time now = this.simulator.getSimulatorAbsTime();
-
-        DirectedPoint location = getLocation();
-        fireTimedEvent(Gtu.INIT_EVENT, new Object[] {getId(), new OtsPoint3D(location).doubleVector(PositionUnit.METER),
-                new Direction(location.getZ(), DirectionUnit.EAST_RADIAN), getLength(), getWidth()}, now);
 
         try
         {
@@ -1005,18 +1000,6 @@ public class Gtu extends EventProducer implements HierarchicallyTyped<GtuType, G
             return false;
         return true;
     }
-    
-    /**
-     * The event type for pub/sub indicating the initialization of a new GTU. <br>
-     * Payload: [String id, PositionVector initialPosition, Direction initialDirection, Length length, Length width]
-     */
-    public static TimedEventType INIT_EVENT = new TimedEventType("GTU.INIT",
-            new MetaData("GTU init", "GTU id, initial position and size",
-                    new ObjectDescriptor[] {new ObjectDescriptor("Id", "GTU Id", String.class),
-                            new ObjectDescriptor("initial position", "initial position", PositionVector.class),
-                            new ObjectDescriptor("initial direction", "initial direction", Direction.class),
-                            new ObjectDescriptor("Length", "Length", Length.class),
-                            new ObjectDescriptor("Width", "Width", Length.class)}));
 
     /**
      * The event type for pub/sub indicating a move. <br>

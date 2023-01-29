@@ -161,9 +161,9 @@ public class StochasticDistractionModel implements EventListenerInterface
             // The GTU is not initialized yet, so we can't obtain the tactical planner
             String gtuId = (String) event.getContent();
             Gtu gtu = this.network.getGTU(gtuId);
-            gtu.addListener(this, Gtu.INIT_EVENT);
+            gtu.addListener(this, Gtu.MOVE_EVENT);
         }
-        else if (event.getType().equals(Gtu.INIT_EVENT))
+        else if (event.getType().equals(Gtu.MOVE_EVENT))
         {
             String gtuId = (String) ((Object[]) event.getContent())[0];
             LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU(gtuId);
@@ -181,6 +181,7 @@ public class StochasticDistractionModel implements EventListenerInterface
                     }
                 }
             }
+            gtu.removeListener(this, Gtu.MOVE_EVENT);
         }
         else if (event.getType().equals(Network.GTU_REMOVE_EVENT))
         {

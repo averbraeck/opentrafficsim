@@ -350,15 +350,6 @@ public class LaneBasedGtu extends Gtu
             this.crossSections.add(new CrossSection(lanes)); // enter lane part 1
         }
 
-        // init event
-        LanePosition referencePosition = getReferencePosition();
-        fireTimedEvent(LaneBasedGtu.LANEBASED_INIT_EVENT,
-                new Object[] {getId(), new OtsPoint3D(initialLocation).doubleVector(PositionUnit.METER),
-                        OtsPoint3D.direction(initialLocation, DirectionUnit.EAST_RADIAN), getLength(), getWidth(),
-                        referencePosition.getLane().getParentLink().getId(), referencePosition.getLane().getId(),
-                        referencePosition.getPosition(), getType().getId()},
-                getSimulator().getSimulatorTime());
-
         // register the GTU on the lanes
         for (LanePosition directedLanePosition : initialLongitudinalPositions)
         {
@@ -1819,23 +1810,6 @@ public class LaneBasedGtu extends Gtu
         }
 
     }
-
-    /**
-     * The lane-based event type for pub/sub indicating the initialization of a new GTU. <br>
-     * Payload: [String gtuId, PositionVector initialPosition, Direction initialDirection, Length length, Length width, String
-     * linkId, String laneId, Length positionOnReferenceLane, GTUDirectionality direction, GtuType gtuType]
-     */
-    public static TimedEventType LANEBASED_INIT_EVENT = new TimedEventType("LANEBASEDGTU.INIT", new MetaData("Lane based GTU created",
-            "Lane based GTU created",
-            new ObjectDescriptor[] {new ObjectDescriptor("GTU id", "GTU id", String.class),
-                    new ObjectDescriptor("initial position", "initial position", PositionVector.class),
-                    new ObjectDescriptor("initial direction", "initial direction", Direction.class),
-                    new ObjectDescriptor("Length", "Length", Length.class),
-                    new ObjectDescriptor("Width", "Width", Length.class),
-                    new ObjectDescriptor("Link id", "Link id", String.class),
-                    new ObjectDescriptor("Lane id", "Lane id", String.class),
-                    new ObjectDescriptor("Longitudinal position on lane", "Longitudinal position on lane", Length.class),
-                    new ObjectDescriptor("GTU type name", "GTU type name", String.class)}));
 
     /**
      * The lane-based event type for pub/sub indicating a move. <br>
