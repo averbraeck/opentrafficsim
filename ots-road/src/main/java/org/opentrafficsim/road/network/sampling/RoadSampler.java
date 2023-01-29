@@ -18,6 +18,7 @@ import org.djutils.event.EventListenerInterface;
 import org.djutils.event.TimedEvent;
 import org.djutils.event.ref.ReferenceType;
 import org.djutils.exceptions.Throw;
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -61,10 +62,10 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
     private final Duration samplingInterval;
 
     /** Registration of sampling events of each GTU per lane, if interval based. */
-    private final Map<String, Map<Lane, SimEventInterface<Duration>>> eventPerGtu = new LinkedHashMap<>();
+    private final Map<String, Map<Lane, SimEventInterface<Duration>>> eventsPerGtu = new LinkedHashMap<>();
 
-    /** Set of lane the sampler is listening to for each GTU. Usually 1, could be 2 during a trajectory transition. */
-    private final Map<String, Set<Lane>> listenersPerGtu = new LinkedHashMap<>();
+    /** Set of lanes the sampler knows each GTU to be at. Usually 1, could be 2 during a trajectory transition. */
+    private final Map<String, Set<Lane>> activeLanesPerGtu = new LinkedHashMap<>();
 
     /** Set of actively sampled GTUs. */
     private final Set<String> activeGtus = new LinkedHashSet<>();
@@ -213,17 +214,15 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
             Lane lane = (Lane) link.getCrossSectionElement(payload[8].toString());
             LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU(payload[0].toString());
             LaneDataRoad laneData = new LaneDataRoad(lane);
+            
             if (!this.activeGtus.contains(gtu.getId()))
             {
-                // GTU add was skipped during add event, do here instead (note: also triggers a move, and thus a record)
-                processGtuAddEvent(gtu, lane, laneData);
+                // GTU add was skipped during add event due to an improper phase of initialization, do here instead
+                processGtuAddEvent(laneData, new GtuDataRoad(gtu));
                 this.activeGtus.add(gtu.getId());
             }
-            else
-            {
-                processGtuMoveEvent(laneData, (Length) payload[9], (Speed) payload[3], (Acceleration) payload[4], now(),
-                        new GtuDataRoad(gtu));
-            }
+            processGtuMoveEvent(laneData, (Length) payload[9], (Speed) payload[3], (Acceleration) payload[4], now(),
+                    new GtuDataRoad(gtu));
         }
         else if (event.getType().equals(Lane.GTU_ADD_EVENT))
         {
@@ -234,31 +233,30 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
             LaneDataRoad laneData = new LaneDataRoad(lane);
             if (!getSamplerData().contains(laneData))
             {
-                // we are not sampling this Lane
-                return;
+                return; // we are not sampling this Lane
             }
-
             LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU((String) payload[0]);
-            // skip add when first encountering this GTU, it is in an improper phase of initialization
-            // if interval-based, a GTU is also not in the active list in the moment of a lane-change
+            
+            // Skip add when first encountering this GTU, it is in an improper phase of initialization.
+            // If interval-based, a GTU is also not in the active list in the moment of an instantaneous lane-change.
             boolean active = this.activeGtus.contains(gtu.getId());
             if (active)
             {
-                processGtuAddEvent(gtu, lane, laneData);
+                Length position = Try.assign(() -> gtu.position(lane, RelativePosition.REFERENCE_POSITION),
+                        "Could not determine position.");
+                Speed speed = gtu.getSpeed();
+                Acceleration acceleration = gtu.getAcceleration();
+                processGtuAddEventWithMove(laneData, position, speed, acceleration, now(), new GtuDataRoad(gtu));
             }
+
             if (isIntervalBased())
             {
-                // schedule now if 'active' as processGtuAddEvent (which triggers a data record) was skipped above
-                scheduleSamplingEvent(gtu, lane, active ? this.samplingInterval : Duration.ZERO);
+                Duration nowOnFirstEncounterOtherwiseAtInterval = active ? this.samplingInterval : Duration.ZERO;
+                scheduleSamplingInterval(gtu, lane, nowOnFirstEncounterOtherwiseAtInterval);
             }
             else
             {
-                // add listener for move events
-                if (!this.listenersPerGtu.containsKey(gtu.getId()))
-                {
-                    this.listenersPerGtu.put(gtu.getId(), new LinkedHashSet<>());
-                }
-                this.listenersPerGtu.get(gtu.getId()).add(lane);
+                this.activeLanesPerGtu.computeIfAbsent(gtu.getId(), (key) -> new LinkedHashSet<>()).add(lane);
                 gtu.addListener(this, LaneBasedGtu.LANEBASED_MOVE_EVENT, ReferenceType.WEAK);
             }
         }
@@ -273,65 +271,34 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
             Length position = (Length) payload[3];
             Speed speed = gtu.getSpeed();
             Acceleration acceleration = gtu.getAcceleration();
+            
+            processGtuRemoveEventWithMove(laneData, position, speed, acceleration, now(), new GtuDataRoad(gtu));
+            
             if (isIntervalBased())
             {
-                SimEventInterface<Duration> e = this.eventPerGtu.get(gtu.getId()).remove(lane);
-                // if there is an event, check that its scheduled an interval from now, in that case data was recorded now
-                if (e != null && Math
-                        .abs((e.getAbsoluteExecutionTime().si - this.samplingInterval.si) - now().si) < DUPLICATE_THRESHOLD)
-                {
-                    // already did a move
-                    processGtuRemoveEvent(laneData, new GtuDataRoad(gtu));
-                }
-                else
-                {
-                    processGtuRemoveEvent(laneData, position, speed, acceleration, now(), new GtuDataRoad(gtu));
-                }
+                Map<Lane, SimEventInterface<Duration>> events = this.eventsPerGtu.get(gtu.getId()); 
+                SimEventInterface<Duration> e = events.remove(lane);
                 if (e != null)
                 {
                     this.simulator.cancelEvent(e);
                 }
-                // remove if no events left for any lane (which may trigger an inactive state at the moment of a lane change)
-                if (this.eventPerGtu.get(gtu.getId()).isEmpty())
+                if (events.isEmpty())
                 {
-                    this.eventPerGtu.remove(gtu.getId());
+                    this.eventsPerGtu.remove(gtu.getId());
                     this.activeGtus.remove(gtu.getId());
                 }
             }
             else
             {
-                processGtuRemoveEvent(laneData, position, speed, acceleration, now(), new GtuDataRoad(gtu));
-                this.listenersPerGtu.get(gtu.getId()).remove(lane);
-                if (this.listenersPerGtu.get(gtu.getId()).isEmpty())
+                this.activeLanesPerGtu.get(gtu.getId()).remove(lane);
+                if (this.activeLanesPerGtu.get(gtu.getId()).isEmpty())
                 {
-                    this.listenersPerGtu.remove(gtu.getId());
+                    this.activeLanesPerGtu.remove(gtu.getId());
                     gtu.removeListener(this, LaneBasedGtu.LANEBASED_MOVE_EVENT);
                     this.activeGtus.remove(gtu.getId());
                 }
             }
         }
-    }
-
-    /**
-     * Processes a GTU add event by obtaining the relevant info from the GTU.
-     * @param gtu LaneBasedGtu; GTU.
-     * @param lane Lane; lane.
-     * @param laneData LaneDataRoad; lane data.
-     */
-    private void processGtuAddEvent(final LaneBasedGtu gtu, final Lane lane, final LaneDataRoad laneData)
-    {
-        Length position;
-        try
-        {
-            position = gtu.position(lane, RelativePosition.REFERENCE_POSITION);
-        }
-        catch (GtuException exception)
-        {
-            throw new RuntimeException(exception);
-        }
-        Speed speed = gtu.getSpeed();
-        Acceleration acceleration = gtu.getAcceleration();
-        processGtuAddEvent(laneData, position, speed, acceleration, now(), new GtuDataRoad(gtu));
     }
 
     /**
@@ -348,7 +315,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
      * @param lane Lane; lane where the gtu is at
      * @param inTime Duration; relative time to schedule
      */
-    private void scheduleSamplingEvent(final LaneBasedGtu gtu, final Lane lane, final Duration inTime)
+    private void scheduleSamplingInterval(final LaneBasedGtu gtu, final Lane lane, final Duration inTime)
     {
         SimEventInterface<Duration> simEvent;
         try
@@ -360,13 +327,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
             // should not happen with getSimulatorTime.add()
             throw new RuntimeException("Scheduling sampling in the past.", exception);
         }
-        String gtuId = gtu.getId();
-        if (!this.eventPerGtu.containsKey(gtuId))
-        {
-            Map<Lane, SimEventInterface<Duration>> map = new LinkedHashMap<>();
-            this.eventPerGtu.put(gtuId, map);
-        }
-        this.eventPerGtu.get(gtuId).put(lane, simEvent);
+        this.eventsPerGtu.computeIfAbsent(gtu.getId(), (key) -> new LinkedHashMap<>()).put(lane, simEvent);
     }
 
     /**
@@ -388,7 +349,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
             else
             {
                 // first time encountering this GTU so add, which also triggers a record through a move
-                processGtuAddEvent(laneData, position, gtu.getSpeed(), gtu.getAcceleration(), now(), new GtuDataRoad(gtu));
+                processGtuAddEventWithMove(laneData, position, gtu.getSpeed(), gtu.getAcceleration(), now(), new GtuDataRoad(gtu));
                 this.activeGtus.add(gtu.getId());
             }
         }
@@ -396,7 +357,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
         {
             throw new RuntimeException("Requesting position on lane, but the GTU is not on the lane.", exception);
         }
-        scheduleSamplingEvent(gtu, lane, this.samplingInterval);
+        scheduleSamplingInterval(gtu, lane, this.samplingInterval);
     }
 
     /** {@inheritDoc} */
@@ -405,7 +366,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
     {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((this.eventPerGtu == null) ? 0 : this.eventPerGtu.hashCode());
+        result = prime * result + ((this.eventsPerGtu == null) ? 0 : this.eventsPerGtu.hashCode());
         result = prime * result + ((this.samplingInterval == null) ? 0 : this.samplingInterval.hashCode());
         result = prime * result + ((this.simulator == null) ? 0 : this.simulator.hashCode());
         return result;
@@ -428,14 +389,14 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
             return false;
         }
         RoadSampler other = (RoadSampler) obj;
-        if (this.eventPerGtu == null)
+        if (this.eventsPerGtu == null)
         {
-            if (other.eventPerGtu != null)
+            if (other.eventsPerGtu != null)
             {
                 return false;
             }
         }
-        else if (!this.eventPerGtu.equals(other.eventPerGtu))
+        else if (!this.eventsPerGtu.equals(other.eventsPerGtu))
         {
             return false;
         }

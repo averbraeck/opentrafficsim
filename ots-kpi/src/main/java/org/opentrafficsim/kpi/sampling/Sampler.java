@@ -122,21 +122,25 @@ public abstract class Sampler<G extends GtuData, L extends LaneData>
     public abstract Time now();
 
     /**
-     * Schedules the start of recording for a given lane-direction.
+     * Schedules the start of recording for a given lane, i.e. the implementation has to invoke {@code startRecording} at the
+     * specified time, with the given lane as input. In case multiple space time-regions are registered for the same lane, this
+     * method is invoked whenever the next space-time region that is added has an earlier start time than any before.
      * @param time Time; time to start recording
-     * @param lane L; lane-direction to start recording
+     * @param lane L; lane to start recording
      */
     public abstract void scheduleStartRecording(Time time, L lane);
 
     /**
-     * Schedules the stop of recording for a given lane.
+     * Schedules the stop of recording for a given lane, i.e. the implementation has to invoke {@code stopRecording} at the
+     * specified time, with the given lane as input. In case multiple space time-regions are registered for the same lane, this
+     * method is invoked whenever the next space-time region that is added has a late end time than any before.
      * @param time Time; time to stop recording
      * @param lane L; lane to stop recording
      */
     public abstract void scheduleStopRecording(Time time, L lane);
 
     /**
-     * Start recording at the given time (which should be the current time) on the given lane direction.
+     * Start recording at the given time (which should be the current time) on the given lane.
      * @param lane L; lane
      */
     public final void startRecording(final L lane)
@@ -157,7 +161,7 @@ public abstract class Sampler<G extends GtuData, L extends LaneData>
     public abstract void initRecording(L lane);
 
     /**
-     * Stop recording at given lane direction.
+     * Stop recording at given lane.
      * @param lane L; lane
      */
     public final void stopRecording(final L lane)
@@ -185,30 +189,33 @@ public abstract class Sampler<G extends GtuData, L extends LaneData>
      * @param time Time; current time
      * @param gtu G; gtu
      */
-    public final void processGtuAddEvent(final L lane, final Length position, final Speed speed,
+    public final void processGtuAddEventWithMove(final L lane, final Length position, final Speed speed,
             final Acceleration acceleration, final Time time, final G gtu)
     {
         Throw.whenNull(lane, "LaneData may not be null.");
         Throw.whenNull(position, "Position may not be null.");
-        Throw.whenNull(speed, "Speed may not be null.");
-        Throw.whenNull(acceleration, "Acceleration may not be null.");
-        Throw.whenNull(time, "Time may not be null.");
-        Throw.whenNull(gtu, "GtuData may not be null.");
         if (lane.getLength().lt(position))
         {
             // ignore event if beyond lane length (may happen during lane change)
             return;
         }
+        processGtuAddEvent(lane, gtu);
+        processGtuMoveEvent(lane, position, speed, acceleration, time, gtu);
+    }
+
+    /**
+     * Creates a trajectory, including filter data.
+     * @param lane L; lane the gtu is at
+     * @param gtu G; gtu
+     */
+    public final void processGtuAddEvent(final L lane, final G gtu)
+    {
+        Throw.whenNull(lane, "LaneData may not be null.");
+        Throw.whenNull(gtu, "GtuData may not be null.");
         String gtuId = gtu.getId();
         Trajectory<G> trajectory = new Trajectory<>(gtu, makeFilterData(gtu), this.extendedDataTypes, lane);
-        if (!this.trajectoryPerGtu.containsKey(gtuId))
-        {
-            Map<L, Trajectory<G>> map = new LinkedHashMap<>();
-            this.trajectoryPerGtu.put(gtuId, map);
-        }
-        this.trajectoryPerGtu.get(gtuId).put(lane, trajectory);
+        this.trajectoryPerGtu.computeIfAbsent(gtuId, (key) -> new LinkedHashMap<>()).put(lane, trajectory);
         this.samplerData.getTrajectoryGroup(lane).addTrajectory(trajectory);
-        processGtuMoveEvent(lane, position, speed, acceleration, time, gtu);
     }
 
     /**
@@ -231,22 +238,27 @@ public abstract class Sampler<G extends GtuData, L extends LaneData>
         Throw.whenNull(time, "Time may not be null.");
         Throw.whenNull(gtu, "GtuData may not be null.");
         String gtuId = gtu.getId();
-        if (this.trajectoryPerGtu.containsKey(gtuId) && this.trajectoryPerGtu.get(gtuId).containsKey(lane))
+        Map<L, Trajectory<G>> trajectoryPerLane = this.trajectoryPerGtu.get(gtuId);
+        if (trajectoryPerLane != null)
         {
-            this.trajectoryPerGtu.get(gtuId).get(lane).add(position, speed, acceleration, time, gtu);
+            Trajectory<G> trajectory = trajectoryPerLane.get(lane);
+            if (trajectory != null)
+            {
+                trajectory.add(position, speed, acceleration, time, gtu);
+            }
         }
     }
 
     /**
      * Finalizes a trajectory with the current snapshot of a GTU.
-     * @param lane L; lane direction the gtu is at
+     * @param lane L; lane the gtu is at
      * @param position Length; position of the gtu on the lane
      * @param speed Speed; speed of the gtu
      * @param acceleration Acceleration; acceleration of the gtu
      * @param time Time; current time
      * @param gtu G; gtu
      */
-    public final void processGtuRemoveEvent(final L lane, final Length position, final Speed speed,
+    public final void processGtuRemoveEventWithMove(final L lane, final Length position, final Speed speed,
             final Acceleration acceleration, final Time time, final G gtu)
     {
         processGtuMoveEvent(lane, position, speed, acceleration, time, gtu);
@@ -263,10 +275,11 @@ public abstract class Sampler<G extends GtuData, L extends LaneData>
         Throw.whenNull(lane, "LaneData may not be null.");
         Throw.whenNull(gtu, "GtuData may not be null.");
         String gtuId = gtu.getId();
-        if (this.trajectoryPerGtu.containsKey(gtuId))
+        Map<L, Trajectory<G>> trajectoryPerLane = this.trajectoryPerGtu.get(gtuId);
+        if (trajectoryPerLane != null)
         {
-            this.trajectoryPerGtu.get(gtuId).remove(lane);
-            if (this.trajectoryPerGtu.get(gtuId).isEmpty())
+            trajectoryPerLane.remove(lane);
+            if (trajectoryPerLane.isEmpty())
             {
                 this.trajectoryPerGtu.remove(gtuId);
             }
@@ -281,10 +294,7 @@ public abstract class Sampler<G extends GtuData, L extends LaneData>
     private Map<FilterDataType<?>, Object> makeFilterData(final G gtu)
     {
         Map<FilterDataType<?>, Object> filterData = new LinkedHashMap<>();
-        for (FilterDataType<?> filterDataType : this.filterDataTypes)
-        {
-            filterData.put(filterDataType, filterDataType.getValue(gtu));
-        }
+        this.filterDataTypes.forEach((filterDataType) -> filterData.put(filterDataType, filterDataType.getValue(gtu)));
         return filterData;
     }
 
