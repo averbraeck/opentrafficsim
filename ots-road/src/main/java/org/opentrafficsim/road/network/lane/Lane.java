@@ -133,7 +133,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the lane. <br>
-     * Payload: Object[] {String gtuId, LaneBasedGtu gtu, int count_after_addition}
+     * Payload: Object[] {String gtuId, int count_after_addition, String laneId, String linkId}
      */
     public static final TimedEventType GTU_ADD_EVENT = new TimedEventType("LANE.GTU.ADD");
     // public static final TimedEventType GTU_ADD_EVENT = new TimedEventType("LANE.GTU.ADD",
@@ -807,7 +807,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             }
             this.gtuList.add(index, gtu);
         }
-        fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] {gtu.getId(), this.gtuList.size()},
+        fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] {gtu.getId(), this.gtuList.size(), getId(), getParentLink().getId()},
                 gtu.getSimulator().getSimulatorTime());
         getParentLink().addGTU(gtu);
         return index;

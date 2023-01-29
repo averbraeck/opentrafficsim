@@ -177,8 +177,9 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
         {
             try
             {
-                // Payload: Object[] {String gtuId, int count_after_addition}
-                notify(new TimedEvent<>(Lane.GTU_ADD_EVENT, roadLane, new Object[] {gtu.getId(), count},
+                // Payload: Object[] {String gtuId, Lane source}
+                notify(new TimedEvent<>(Lane.GTU_ADD_EVENT, roadLane,
+                        new Object[] {gtu.getId(), count, roadLane.getId(), roadLane.getParentLink().getId()},
                         gtu.getSimulator().getSimulatorTime()));
                 count++;
             }
@@ -226,16 +227,17 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
         }
         else if (event.getType().equals(Lane.GTU_ADD_EVENT))
         {
-            // Payload: Object[] {String gtuId, int count_after_addition}
-            // Assumes that the lane itself is the sourceId
-            Lane lane = (Lane) event.getSourceId();
+            // Payload: Object[] {String gtuId, int count_after_addition, String laneId, String linkId}
+            Object[] payload = (Object[]) event.getContent();
+            Lane lane = (Lane) ((CrossSectionLink) this.network.getLink((String) payload[3]))
+                    .getCrossSectionElement((String) payload[2]);
             LaneDataRoad laneData = new LaneDataRoad(lane);
             if (!getSamplerData().contains(laneData))
             {
                 // we are not sampling this Lane
                 return;
             }
-            Object[] payload = (Object[]) event.getContent();
+
             LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU((String) payload[0]);
             // skip add when first encountering this GTU, it is in an improper phase of initialization
             // if interval-based, a GTU is also not in the active list in the moment of a lane-change
