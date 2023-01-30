@@ -299,6 +299,7 @@ public class OtsRoadNetwork extends OtsNetwork implements RoadNetwork
         }
 
         // add edges
+        boolean legal = laneChangeLaw.equals(LaneAccessLaw.LEGAL);
         for (Link link : this.getLinkMap().values())
         {
             for (Lane lane : ((CrossSectionLink) link).getLanes())
@@ -307,7 +308,7 @@ public class OtsRoadNetwork extends OtsNetwork implements RoadNetwork
                 for (LateralDirectionality lat : List.of(LateralDirectionality.LEFT, LateralDirectionality.RIGHT))
                 {
                     Set<Lane> adjacentLanes;
-                    if (laneChangeLaw.equals(LaneAccessLaw.LEGAL))
+                    if (legal)
                     {
                         adjacentLanes = lane.accessibleAdjacentLanesLegal(lat, gtuType);
                     }
@@ -325,8 +326,7 @@ public class OtsRoadNetwork extends OtsNetwork implements RoadNetwork
                     }
                 }
                 // next lanes
-                // TODO: nextLanes adheres to GTU type, which makes the legal/physical question invalid
-                Set<Lane> nextLanes = lane.nextLanes(gtuType);
+                Set<Lane> nextLanes = lane.nextLanes(legal ? gtuType : null);
                 for (Lane nextLane : nextLanes)
                 {
                     LaneChangeInfoEdge edge =
@@ -351,7 +351,7 @@ public class OtsRoadNetwork extends OtsNetwork implements RoadNetwork
     private List<LaneChangeInfoEdge> findPath(final Lane lane, final RouteWeightedGraph graph, final GtuType gtuType,
             final Route route)
     {
-        // if there is no route, find the destination node by moving down the links
+        // if there is no route, find the destination node by moving down the links (no splits allowed)
         Node destination = null;
         Route routeForWeights = route;
         if (route == null)
