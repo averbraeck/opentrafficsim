@@ -141,7 +141,7 @@ public class TestFixedTimeController
         Map<String, TrafficLight> trafficLightMap = new LinkedHashMap<String, TrafficLight>();
         String networkId = "networkID";
         trafficLightMap.put(trafficLightId, createTrafficLightMock(trafficLightId, networkId, simulator));
-        OtsNetwork network = new OtsNetwork(networkId, true, simulator);
+        OtsNetwork network = new OtsNetwork(networkId, simulator);
         network.addObject(trafficLightMap.get(trafficLightId));
 
         Duration cycleTime = Duration.instantiateSI(90);
@@ -293,7 +293,7 @@ public class TestFixedTimeController
         Map<String, TrafficLight> trafficLightMap = new LinkedHashMap<String, TrafficLight>();
         String networkId = "networkID";
         trafficLightMap.put(trafficLightId, createTrafficLightMock(trafficLightId, networkId, simulator));
-        OtsNetwork network = new OtsNetwork(networkId, true, simulator);
+        OtsNetwork network = new OtsNetwork(networkId, simulator);
         network.addObject(trafficLightMap.get(trafficLightId));
 
         Duration cycleTime = Duration.instantiateSI(90);
@@ -356,7 +356,7 @@ public class TestFixedTimeController
                                 String networkId = "networkID";
                                 trafficLightMap.put(trafficLightId,
                                         createTrafficLightMock(trafficLightId, networkId, simulator));
-                                OtsNetwork network = new OtsNetwork(networkId, true, simulator);
+                                OtsNetwork network = new OtsNetwork(networkId, simulator);
                                 network.addObject(trafficLightMap.get(trafficLightId));
                                 // System.out.println(cycle);
                                 FixedTimeController ftc =

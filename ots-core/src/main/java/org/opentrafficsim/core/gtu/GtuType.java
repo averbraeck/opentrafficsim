@@ -38,7 +38,7 @@ public final class GtuType extends HierarchicalType<GtuType, Gtu> implements Ser
     private Marker marker;
 
     /**
-     * Constructor for root-level GTU types. The parent will be {@code GtuType.ALL}.
+     * Constructor for root-level GTU types. The parent will be {@code null}.
      * @param id String; The id of the GtuType to make it identifiable.
      * @throws NullPointerException if the id is null
      */
@@ -49,7 +49,7 @@ public final class GtuType extends HierarchicalType<GtuType, Gtu> implements Ser
 
     /**
      * @param id String; The id of the GtuType to make it identifiable.
-     * @param parent GtuType; parent GTU type
+     * @param parent GtuType; parent GTU type.
      * @throws NullPointerException if the id is null
      */
     public GtuType(final String id, final GtuType parent) throws NullPointerException

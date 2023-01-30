@@ -32,18 +32,17 @@ public class LinkTypeTest
     @SuppressWarnings({"unlikely-arg-type"})
     public final void testLinkType()
     {
-        OtsNetwork network = new OtsNetwork("test", true, new OtsSimulator("Simulator for LinkTypeTest"));
-        Try.testFail(() -> new LinkType(null, null, network), NullPointerException.class);
-        Try.testFail(() -> new LinkType("name", null, null), NullPointerException.class);
+        OtsNetwork network = new OtsNetwork("test", new OtsSimulator("Simulator for LinkTypeTest"));
+        Try.testFail(() -> new LinkType(null, null), NullPointerException.class);
 
         GtuType carType = new GtuType("Car", DefaultsNl.VEHICLE);
         GtuType truckType = new GtuType("Truck", DefaultsNl.VEHICLE);
         GtuType catamaran = new GtuType("Catamaran", DefaultsNl.SHIP);
 
-        LinkType roadLinkType = new LinkType("Vehicles", null, network);
+        LinkType roadLinkType = new LinkType("Vehicles", null);
         roadLinkType.addCompatibleGtuType(DefaultsNl.VEHICLE);
 
-        LinkType waterwayType = new LinkType("Waterway", null, network);
+        LinkType waterwayType = new LinkType("Waterway", null);
         waterwayType.addCompatibleGtuType(DefaultsNl.SHIP);
 
         assertTrue("equals to itself", roadLinkType.equals(roadLinkType));
@@ -58,20 +57,17 @@ public class LinkTypeTest
         assertTrue("toString returns something with the name in it", waterwayType.toString().contains("Waterway"));
         assertFalse("waterwayType is not equal to null", waterwayType.equals(null));
         assertFalse("waterwayType is not equal to some String", waterwayType.equals("Hello world!"));
-        LinkType lava = network.getLinkType(LinkType.DEFAULTS.NONE);
+        LinkType lava = DefaultsNl.NONE_LINK;
         assertFalse("waterwayType is not equal to lava", waterwayType.equals(lava));
 
         // Try to create another waterwayType
-        LinkType waterWayType2 = new LinkType("Waterway", null, network);
+        LinkType waterWayType2 = new LinkType("Waterway", null);
         assertTrue("waterwayType2 is equal to the first", waterwayType.equals(waterWayType2));
-        assertFalse("road is not of type NONE", roadLinkType.isOfType(LinkType.DEFAULTS.NONE));
-        assertFalse("road is not of type NONE (alterative way to test)", roadLinkType.isNone());
-        assertTrue("none returns true for isNone()", network.getLinkType(LinkType.DEFAULTS.NONE).isNone());
-        assertFalse("waterWayType2 is not a road", waterWayType2.isRoad());
+        assertFalse("road is not of type NONE", roadLinkType.isOfType(DefaultsNl.NONE_LINK));
 
-        LinkType poorSurfaceLinkType = new LinkType("PoorSurfaceType", network.getLinkType(LinkType.DEFAULTS.ROAD), network);
+        LinkType poorSurfaceLinkType = new LinkType("PoorSurfaceType", DefaultsNl.ROAD);
         poorSurfaceLinkType.addCompatibleGtuType(DefaultsNl.CAR);
-        assertTrue("poor road is of type ROAD", poorSurfaceLinkType.isOfType(LinkType.DEFAULTS.ROAD));
+        assertTrue("poor road is of type ROAD", poorSurfaceLinkType.isOfType(DefaultsNl.ROAD));
         assertFalse("compatibility of waterway for car is false", waterwayType.isCompatible(carType));
         assertNull("compatibility of waterway for car is undecidable on level", waterwayType.isCompatibleOnInfraLevel(carType));
         GtuCompatibility<LinkType> compatibility = waterwayType.getGtuCompatibility();

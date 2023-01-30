@@ -70,7 +70,7 @@ public class OtsRoadNetwork extends OtsNetwork implements RoadNetwork
      */
     public OtsRoadNetwork(final String id, final boolean addDefaultTypes, final OtsSimulatorInterface simulator)
     {
-        super(id, addDefaultTypes, simulator);
+        super(id, simulator);
         if (addDefaultTypes)
         {
             addDefaultLaneTypes();

@@ -6,12 +6,12 @@ import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.junit.Test;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.network.LinkLocation;
-import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.mock.MockSimulator;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -42,8 +42,8 @@ public class LinkLocationTest implements UNITS
         OtsRoadNode nodeFrom = new OtsRoadNode(network, "From", new OtsPoint3D(0, 0, 0), Direction.ZERO);
         OtsRoadNode nodeTo = new OtsRoadNode(network, "To", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
         OtsLine3D line = new OtsLine3D(new OtsPoint3D[] {new OtsPoint3D(0, 0, 0), new OtsPoint3D(1000, 0, 0)});
-        CrossSectionLink link = new CrossSectionLink(network, "Link", nodeFrom, nodeTo,
-                network.getLinkType(LinkType.DEFAULTS.ROAD), line, LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink link =
+                new CrossSectionLink(network, "Link", nodeFrom, nodeTo, DefaultsNl.ROAD, line, LaneKeepingPolicy.KEEPRIGHT);
         Length linkLength = line.getLength();
         // Now we can make a LinkLocation.
         Length referenceLocationDistance = new Length(123, METER);

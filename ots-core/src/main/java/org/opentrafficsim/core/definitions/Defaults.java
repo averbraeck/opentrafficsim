@@ -9,7 +9,7 @@ import org.opentrafficsim.core.gtu.TemplateGtuType;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
- * This class houses defaults instances for different types, such as GTU types and lane types. The static fields should only be
+ * This class houses defaults instances for different types, such as GTU types and link types. The static fields should only be
  * accessed in the setup of a simulation. The simulation itself should be fed the relevant types, and not assume any specific or
  * more generic super type. Only in this way can simulations be run with entirely different type structures.
  * <p>
@@ -64,13 +64,12 @@ public abstract class Defaults
      * Returns a default value of a type, indicated by its name. This should only be used by parsers. Simulations defined in
      * code should access the relevant static fields directly for code maintainability.
      * @param clazz Class&lt;T&gtT;; class instance of type T.
-     * @param name String; name referring to a default thought static field names, e.g. "NL.VEHICLE".
+     * @param name String; name referring to a default through static field names, e.g. "NL.VEHICLE".
      * @param <T> type of the value.
-     * @return T; returned default value.
-     * @throws RuntimeException if the field does not exists, may not be accessed, or is not of type T.
+     * @return T; returned default value, {@code null} if the default could not be found.
      */
     @SuppressWarnings("unchecked")
-    public static <T> T getByName(final Class<T> clazz, final String name) throws RuntimeException
+    public static <T> T getByName(final Class<T> clazz, final String name)
     {
         try
         {
@@ -82,7 +81,11 @@ public abstract class Defaults
         }
         catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException ex)
         {
-            throw new RuntimeException("Default " + name + " could not be loaded.", ex);
+            return null;
+        }
+        catch (ClassCastException ex)
+        {
+            return null;
         }
     }
 

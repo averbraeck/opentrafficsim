@@ -189,8 +189,6 @@ public class CrossSectionLink extends OtsLink implements Serializable
     public final void setDemandWeight(final double demandWeight)
     {
         Throw.when(demandWeight < 0.0, IllegalArgumentException.class, "Demand weight should be positive.");
-        Throw.when(!getType().isConnector(), IllegalArgumentException.class,
-                "Demand weight can only be set on connectors.");
         this.demandWeight = demandWeight;
     }
 

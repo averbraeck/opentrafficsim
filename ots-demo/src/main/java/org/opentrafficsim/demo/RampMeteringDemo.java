@@ -278,7 +278,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
         OtsRoadNode nodeE = new OtsRoadNode(network, "E", new OtsPoint3D(2000, -25), Direction.ZERO);
         OtsRoadNode nodeF = new OtsRoadNode(network, "F", new OtsPoint3D(2750, 0.0), Direction.ZERO);
 
-        LinkType freeway = network.getLinkType(LinkType.DEFAULTS.FREEWAY);
+        LinkType freeway = DefaultsNl.FREEWAY;
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;
         Length laneWidth = Length.instantiateSI(3.6);
         LaneType freewayLane = network.getLaneType(LaneType.DEFAULTS.FREEWAY);

@@ -72,7 +72,7 @@ public class ConflictTest implements EventListener
         Mockito.when(simulator.getSimulatorAbsTime()).thenReturn(Time.ZERO);
         Mockito.when(simulator.getSimulatorTime()).thenReturn(Duration.ZERO);
         OtsRoadNetwork network = new OtsRoadNetwork("Network for conflict test", true, simulator);
-        LinkType linkType = network.getLinkType(LinkType.DEFAULTS.ROAD);
+        LinkType linkType = DefaultsNl.ROAD;
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.ONE_WAY_LANE);
         OtsPoint3D pointAFrom = new OtsPoint3D(0, 0, 0);
         OtsRoadNode nodeAFrom = new OtsRoadNode(network, "A from", pointAFrom, Direction.ZERO);

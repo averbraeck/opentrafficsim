@@ -15,6 +15,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.draw.point.Point3d;
 import org.djutils.reflection.ClassUtil;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.DirectedPoint;
@@ -170,8 +171,8 @@ public final class NetworkParser
             String id = xmlConnector.getID();
             double demandWeight = xmlConnector.getDEMANDWEIGHT();
             OtsLine3D designLine = new OtsLine3D(startNode.getPoint(), endNode.getPoint());
-            CrossSectionLink link = new CrossSectionLink(otsNetwork, id, startNode, endNode,
-                    otsNetwork.getLinkType(LinkType.DEFAULTS.CONNECTOR), designLine, null);
+            // TODO: xml definition needs a LinkType for CONNECTOR too
+            CrossSectionLink link = new CrossSectionLink(otsNetwork, id, startNode, endNode, DefaultsNl.ROAD, designLine, null);
             link.setDemandWeight(demandWeight);
         }
 

@@ -39,7 +39,7 @@ public class OtsNodeTest
     @Test
     public final void testOTSNode() throws NetworkException, OtsGeometryException
     {
-        OtsNetwork network = new OtsNetwork("Node test network", true, MockSimulator.createMock());
+        OtsNetwork network = new OtsNetwork("Node test network", MockSimulator.createMock());
         OtsPoint3D point1 = new OtsPoint3D(20, 40, 60);
         double heading = Math.toRadians(123);
         OtsNode node1 = new OtsNode(network, "node 1", point1, heading);
@@ -60,25 +60,25 @@ public class OtsNodeTest
         assertTrue("Node 2 has heading NaN", Double.isNaN(node2.getHeading()));
         // Create another node with name node 1 in another network
         OtsSimulatorInterface simulator = MockSimulator.createMock();
-        Network otherNetwork = new OtsNetwork("Node test network 2", true, simulator);
+        Network otherNetwork = new OtsNetwork("Node test network 2", simulator);
         OtsNode node3 = new OtsNode(otherNetwork, "node 1", point1);
         assertTrue("Node 1 does match node 3 in other network", node1.equals(node3));
 
         assertEquals("node 1 has no links", 0, node1.getLinks().size());
 
         // Create a couple of links
-        Link link1 = new OtsLink(network, "link 1", node1, node2, network.getLinkType(LinkType.DEFAULTS.ROAD),
+        Link link1 = new OtsLink(network, "link 1", node1, node2, DefaultsNl.ROAD,
                 new OtsLine3D(node1.getPoint(), node2.getPoint()));
         assertEquals("node 1 has one link", 1, node1.getLinks().size());
         assertEquals("node 2 has one link", 1, node2.getLinks().size());
         assertEquals("link at node 1 is link1", link1, node1.getLinks().iterator().next());
         assertEquals("link at node 2 is link1", link1, node2.getLinks().iterator().next());
         OtsNode node4 = new OtsNode(network, "node 3", new OtsPoint3D(10, 10, 10));
-        Link link2 = new OtsLink(network, "link 2", node1, node4, network.getLinkType(LinkType.DEFAULTS.ROAD),
+        Link link2 = new OtsLink(network, "link 2", node1, node4, DefaultsNl.ROAD,
                 new OtsLine3D(node1.getPoint(), node4.getPoint()));
-        Link link3 = new OtsLink(network, "link 3", node4, node2, network.getLinkType(LinkType.DEFAULTS.ROAD),
+        Link link3 = new OtsLink(network, "link 3", node4, node2, DefaultsNl.ROAD,
                 new OtsLine3D(node4.getPoint(), node2.getPoint()));
-        Link link4 = new OtsLink(network, "link 4", node2, node1, network.getLinkType(LinkType.DEFAULTS.ROAD),
+        Link link4 = new OtsLink(network, "link 4", node2, node1, DefaultsNl.ROAD,
                 new OtsLine3D(node2.getPoint(), node1.getPoint()));
         assertEquals("node 1 has three links", 3, node1.getLinks().size());
         assertEquals("node 2 has three links", 3, node2.getLinks().size());
@@ -100,21 +100,16 @@ public class OtsNodeTest
         {
             // Ignore expected exception
         }
-        assertTrue("node 1 has direct connection to node 2",
-                node1.isConnectedTo(DefaultsNl.VEHICLE, node2));
+        assertTrue("node 1 has direct connection to node 2", node1.isConnectedTo(DefaultsNl.VEHICLE, node2));
         Node node5 = new OtsNode(network, "node 5", new OtsPoint3D(1000, 0, 0));
-        assertFalse("node 1 has no direct connection to node 5",
-                node1.isConnectedTo(DefaultsNl.VEHICLE, node5));
-        Link link5 = new OtsLink(network, "link 5", node5, node1, network.getLinkType(LinkType.DEFAULTS.FREEWAY),
+        assertFalse("node 1 has no direct connection to node 5", node1.isConnectedTo(DefaultsNl.VEHICLE, node5));
+        Link link5 = new OtsLink(network, "link 5", node5, node1, DefaultsNl.FREEWAY,
                 new OtsLine3D(node1.getPoint(), node5.getPoint()));
-        assertFalse("node 1 still has no direct connection to node 5",
-                node1.isConnectedTo(DefaultsNl.VEHICLE, node5));
-        assertTrue("node 5 does have a direct connection to node 1",
-                node5.isConnectedTo(DefaultsNl.VEHICLE, node1));
+        assertFalse("node 1 still has no direct connection to node 5", node1.isConnectedTo(DefaultsNl.VEHICLE, node5));
+        assertTrue("node 5 does have a direct connection to node 1", node5.isConnectedTo(DefaultsNl.VEHICLE, node1));
         assertEquals("Connection from node 5 to node 1 is link5", link5, node5.getLinks().iterator().next());
         node5.removeLink(link5);
-        assertFalse("node 5 no longer has direct connection to node 1",
-                node5.isConnectedTo(DefaultsNl.VEHICLE, node1));
+        assertFalse("node 5 no longer has direct connection to node 1", node5.isConnectedTo(DefaultsNl.VEHICLE, node1));
     }
 
     /**
@@ -126,14 +121,14 @@ public class OtsNodeTest
     public final void connectionTest() throws NetworkException, OtsGeometryException
     {
         OtsSimulatorInterface simulator = MockSimulator.createMock();
-        OtsNetwork network = new OtsNetwork("connection test network", true, simulator);
+        OtsNetwork network = new OtsNetwork("connection test network", simulator);
         OtsNode node = new OtsNode(network, "main", new OtsPoint3D(10, 100, 10));
         int maxNeighbor = 10;
         for (int i = 0; i < maxNeighbor; i++)
         {
             Node neighborNode = new OtsNode(network, "neighbor node " + i, new OtsPoint3D(20 + 10 * i, 0, 10));
-            new OtsLink(network, "link from neighbor node " + i, neighborNode, node,
-                    network.getLinkType(LinkType.DEFAULTS.ROAD), new OtsLine3D(neighborNode.getPoint(), node.getPoint()));
+            new OtsLink(network, "link from neighbor node " + i, neighborNode, node, DefaultsNl.ROAD,
+                    new OtsLine3D(neighborNode.getPoint(), node.getPoint()));
         }
         // Prove that we can go from any neighborNode to any OTHER neighborNode
         for (int fromIndex = 0; fromIndex < maxNeighbor; fromIndex++)
@@ -163,12 +158,11 @@ public class OtsNodeTest
         }
         Node n1 = network.getNode("neighbor node 1");
         Node n2 = network.getNode("neighbor node 2");
-        Link unrelatedLink = new OtsLink(network, "unrelated link", n1, n2, network.getLinkType(LinkType.DEFAULTS.ROAD),
-                new OtsLine3D(n1.getPoint(), n2.getPoint()));
+        Link unrelatedLink =
+                new OtsLink(network, "unrelated link", n1, n2, DefaultsNl.ROAD, new OtsLine3D(n1.getPoint(), n2.getPoint()));
         try
         {
-            node.addConnection(DefaultsNl.VEHICLE, unrelatedLink,
-                    network.getLink("link from neighbor node 1"));
+            node.addConnection(DefaultsNl.VEHICLE, unrelatedLink, network.getLink("link from neighbor node 1"));
             fail("attempt to connect from a link not connected to node should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -177,8 +171,7 @@ public class OtsNodeTest
         }
         try
         {
-            node.addConnection(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"),
-                    unrelatedLink);
+            node.addConnection(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"), unrelatedLink);
             fail("attempt to connect to a link not connected to node should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -196,14 +189,13 @@ public class OtsNodeTest
             // Ignore expected exception
         }
         // Create a link that does not allow traffic TO the node
-        Link oneWayFromNode = new OtsLink(network, "one way from node", node, n1,
-                network.getLinkType(LinkType.DEFAULTS.FREEWAY), new OtsLine3D(node.getPoint(), n1.getPoint()));
-        Link oneWayToNode = new OtsLink(network, "one way towards node", n1, node,
-                network.getLinkType(LinkType.DEFAULTS.FREEWAY), new OtsLine3D(n1.getPoint(), node.getPoint()));
+        Link oneWayFromNode = new OtsLink(network, "one way from node", node, n1, DefaultsNl.FREEWAY,
+                new OtsLine3D(node.getPoint(), n1.getPoint()));
+        Link oneWayToNode = new OtsLink(network, "one way towards node", n1, node, DefaultsNl.FREEWAY,
+                new OtsLine3D(n1.getPoint(), node.getPoint()));
         try
         {
-            node.addConnection(DefaultsNl.VEHICLE, oneWayFromNode,
-                    network.getLink("link from neighbor node 1"));
+            node.addConnection(DefaultsNl.VEHICLE, oneWayFromNode, network.getLink("link from neighbor node 1"));
             fail("attempt to connect from a link that does not allow traffic TO the node should have thrown a "
                     + "NetworkException");
         }
@@ -213,20 +205,18 @@ public class OtsNodeTest
         }
         try
         {
-            node.addConnection(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"),
-                    oneWayToNode);
+            node.addConnection(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"), oneWayToNode);
             fail("attempt to connect to a link that does not allow outbound traffic should have thrown a NetworkException");
         }
         catch (NetworkException ne)
         {
             // Ignore expected exception
         }
-        Link noWay = new OtsLink(network, "no way traffic inbound link", n2, node,
-                network.getLinkType(LinkType.DEFAULTS.RAILWAY), new OtsLine3D(n2.getPoint(), node.getPoint()));
+        Link noWay = new OtsLink(network, "no way traffic inbound link", n2, node, DefaultsNl.RAILWAY,
+                new OtsLine3D(n2.getPoint(), node.getPoint()));
         try
         {
-            node.addConnection(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"),
-                    noWay);
+            node.addConnection(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"), noWay);
             fail("attempt to connect to a no way link should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -235,20 +225,18 @@ public class OtsNodeTest
         }
         try
         {
-            node.addConnection(DefaultsNl.VEHICLE, noWay,
-                    network.getLink("link from neighbor node 1"));
+            node.addConnection(DefaultsNl.VEHICLE, noWay, network.getLink("link from neighbor node 1"));
             fail("attempt to connect from a no way link should have thrown a NetworkException");
         }
         catch (NetworkException ne)
         {
             // Ignore expected exception
         }
-        noWay = new OtsLink(network, "no way traffic outbound link", node, n2, network.getLinkType(LinkType.DEFAULTS.RAILWAY),
+        noWay = new OtsLink(network, "no way traffic outbound link", node, n2, DefaultsNl.RAILWAY,
                 new OtsLine3D(node.getPoint(), n2.getPoint()));
         try
         {
-            node.addConnection(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"),
-                    noWay);
+            node.addConnection(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"), noWay);
             fail("attempt to connect to a no way link should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -257,8 +245,7 @@ public class OtsNodeTest
         }
         try
         {
-            node.addConnection(DefaultsNl.VEHICLE, noWay,
-                    network.getLink("link from neighbor node 1"));
+            node.addConnection(DefaultsNl.VEHICLE, noWay, network.getLink("link from neighbor node 1"));
             fail("attempt to connect from a no way link should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -276,14 +263,14 @@ public class OtsNodeTest
     public final void connectionSetTest() throws NetworkException, OtsGeometryException
     {
         OtsSimulatorInterface simulator = MockSimulator.createMock();
-        OtsNetwork network = new OtsNetwork("connectionSets test network", true, simulator);
+        OtsNetwork network = new OtsNetwork("connectionSets test network", simulator);
         OtsNode node = new OtsNode(network, "main", new OtsPoint3D(10, 100, 10));
         int maxNeighbor = 10;
         for (int i = 0; i < maxNeighbor; i++)
         {
             Node neighborNode = new OtsNode(network, "neighbor node " + i, new OtsPoint3D(20 + 10 * i, 0, 10));
-            new OtsLink(network, "link from neighbor node " + i, neighborNode, node,
-                    network.getLinkType(LinkType.DEFAULTS.ROAD), new OtsLine3D(neighborNode.getPoint(), node.getPoint()));
+            new OtsLink(network, "link from neighbor node " + i, neighborNode, node, DefaultsNl.ROAD,
+                    new OtsLine3D(neighborNode.getPoint(), node.getPoint()));
         }
         // Prove that we can go from any neighborNode to any OTHER neighborNode
         for (int fromIndex = 0; fromIndex < maxNeighbor; fromIndex++)
@@ -313,12 +300,11 @@ public class OtsNodeTest
         }
         Node n1 = network.getNode("neighbor node 1");
         Node n2 = network.getNode("neighbor node 2");
-        Link unrelatedLink = new OtsLink(network, "unrelated link", n1, n2, network.getLinkType(LinkType.DEFAULTS.ROAD),
-                new OtsLine3D(n1.getPoint(), n2.getPoint()));
+        Link unrelatedLink =
+                new OtsLink(network, "unrelated link", n1, n2, DefaultsNl.ROAD, new OtsLine3D(n1.getPoint(), n2.getPoint()));
         try
         {
-            node.addConnections(DefaultsNl.VEHICLE, unrelatedLink,
-                    wrap(network.getLink("link from neighbor node 1")));
+            node.addConnections(DefaultsNl.VEHICLE, unrelatedLink, wrap(network.getLink("link from neighbor node 1")));
             fail("attempt to connect from a link not connected to node should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -327,8 +313,7 @@ public class OtsNodeTest
         }
         try
         {
-            node.addConnections(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"),
-                    wrap(unrelatedLink));
+            node.addConnections(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"), wrap(unrelatedLink));
             fail("attempt to connect to a link not connected to node should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -346,15 +331,14 @@ public class OtsNodeTest
             // Ignore expected exception
         }
         // Create a link that does not allow traffic TO the node
-        Link oneWayFromNodeOnly = new OtsLink(network, "one way away from node", node, n1,
-                network.getLinkType(LinkType.DEFAULTS.FREEWAY), new OtsLine3D(node.getPoint(), n1.getPoint()));
+        Link oneWayFromNodeOnly = new OtsLink(network, "one way away from node", node, n1, DefaultsNl.FREEWAY,
+                new OtsLine3D(node.getPoint(), n1.getPoint()));
         // Create a link that does not allow traffic FROM the node
-        Link oneWayToNodeOnly = new OtsLink(network, "one way towards node", n1, node,
-                network.getLinkType(LinkType.DEFAULTS.FREEWAY), new OtsLine3D(n1.getPoint(), node.getPoint()));
+        Link oneWayToNodeOnly = new OtsLink(network, "one way towards node", n1, node, DefaultsNl.FREEWAY,
+                new OtsLine3D(n1.getPoint(), node.getPoint()));
         try
         {
-            node.addConnections(DefaultsNl.VEHICLE, oneWayFromNodeOnly,
-                    wrap(network.getLink("link from neighbor node 1")));
+            node.addConnections(DefaultsNl.VEHICLE, oneWayFromNodeOnly, wrap(network.getLink("link from neighbor node 1")));
             fail("attempt to connect from a link that does not allow traffic TO the node should have thrown a "
                     + "NetworkException");
         }
@@ -364,20 +348,18 @@ public class OtsNodeTest
         }
         try
         {
-            node.addConnections(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"),
-                    wrap(oneWayToNodeOnly));
+            node.addConnections(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"), wrap(oneWayToNodeOnly));
             fail("attempt to connect to a link that does not allow outbound traffic should have thrown a NetworkException");
         }
         catch (NetworkException ne)
         {
             // Ignore expected exception
         }
-        Link noWay = new OtsLink(network, "no way traffic inbound link", n2, node,
-                network.getLinkType(LinkType.DEFAULTS.RAILWAY), new OtsLine3D(n2.getPoint(), node.getPoint()));
+        Link noWay = new OtsLink(network, "no way traffic inbound link", n2, node, DefaultsNl.RAILWAY,
+                new OtsLine3D(n2.getPoint(), node.getPoint()));
         try
         {
-            node.addConnections(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"),
-                    wrap(noWay));
+            node.addConnections(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"), wrap(noWay));
             fail("attempt to connect to a rail way link should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -386,20 +368,18 @@ public class OtsNodeTest
         }
         try
         {
-            node.addConnections(DefaultsNl.VEHICLE, noWay,
-                    wrap(network.getLink("link from neighbor node 1")));
+            node.addConnections(DefaultsNl.VEHICLE, noWay, wrap(network.getLink("link from neighbor node 1")));
             fail("attempt to connect from a tail way link should have thrown a NetworkException");
         }
         catch (NetworkException ne)
         {
             // Ignore expected exception
         }
-        noWay = new OtsLink(network, "no way traffic outbound link", node, n2, network.getLinkType(LinkType.DEFAULTS.RAILWAY),
+        noWay = new OtsLink(network, "no way traffic outbound link", node, n2, DefaultsNl.RAILWAY,
                 new OtsLine3D(node.getPoint(), n2.getPoint()));
         try
         {
-            node.addConnections(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"),
-                    wrap(noWay));
+            node.addConnections(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"), wrap(noWay));
             fail("attempt to connect to a rail way link should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -408,8 +388,7 @@ public class OtsNodeTest
         }
         try
         {
-            node.addConnections(DefaultsNl.VEHICLE, noWay,
-                    wrap(network.getLink("link from neighbor node 1")));
+            node.addConnections(DefaultsNl.VEHICLE, noWay, wrap(network.getLink("link from neighbor node 1")));
             fail("attempt to connect from a rail way link should have thrown a NetworkException");
         }
         catch (NetworkException ne)

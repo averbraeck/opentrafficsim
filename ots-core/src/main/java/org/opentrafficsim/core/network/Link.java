@@ -82,9 +82,19 @@ public interface Link extends HierarchicallyTyped<LinkType, Link>, SpatialObject
      */
     int getGTUCount();
 
+    /** {@inheritDoc} */
     @Override
     Bounds getBounds();
-
+    
+    /**
+     * Returns whether the link is a connector. By default this returns {@code false}.
+     * @return boolean; whether the link is a connector, by default this returns {@code false}.
+     */
+    default boolean isConnector()
+    {
+        return false;
+    }
+    
     /**
      * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the link. <br>
      * Payload: Object[] {String gtuId, int count_after_addition}

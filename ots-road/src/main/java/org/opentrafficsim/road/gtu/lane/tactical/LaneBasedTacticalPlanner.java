@@ -147,7 +147,7 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGtu, 
             Node endNode = lane.getParentLink().getEndNode();
             Set<Link> links = endNode.getLinks().toSet();
             links.remove(lane.getParentLink());
-            if (route.contains(endNode) && (links.isEmpty() || links.iterator().next().getType().isConnector()))
+            if (route.contains(endNode) && (links.isEmpty() || links.iterator().next().isConnector()))
             {
                 // dead-end link, must be destination
                 return maxDistance;

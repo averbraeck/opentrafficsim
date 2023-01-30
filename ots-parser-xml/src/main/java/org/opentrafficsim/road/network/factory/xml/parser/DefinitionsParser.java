@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.exceptions.Throw;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.logger.Cat;
 import org.opentrafficsim.base.parameters.ParameterType;
@@ -89,15 +90,14 @@ public final class DefinitionsParser
                     // TODO: remove addition of "NL." once the xml standard has been updated
                     String id = gtuTag.getID().contains(".") ? gtuTag.getID() : "NL." + gtuTag.getID();
                     gtuType = Defaults.getByName(GtuType.class, id);
+                    Throw.when(gtuType == null, XmlParserException.class, "GtuType %s could not be found as default.",
+                            gtuTag.getID());
                 }
                 else if (gtuTag.getPARENT() != null)
                 {
                     GtuType parent = otsNetwork.getGtuType(gtuTag.getPARENT());
-                    if (parent == null)
-                    {
-                        throw new XmlParserException(
-                                "GtuType " + gtuTag.getID() + " parent " + gtuTag.getPARENT() + " not found");
-                    }
+                    Throw.when(parent == null, XmlParserException.class, "GtuType %s parent %s not found", gtuTag.getID(),
+                            gtuTag.getPARENT());
                     gtuType = new GtuType(gtuTag.getID(), parent);
                     CategoryLogger.filter(Cat.PARSER).trace("Added GtuType {}", gtuType);
                 }
@@ -128,35 +128,51 @@ public final class DefinitionsParser
         {
             for (LINKTYPE linkTag : linkTypes.getLINKTYPE())
             {
-                LinkType networkLinkType = otsNetwork.getLinkTypes().get(linkTag.getID());
-                if (networkLinkType == null || (networkLinkType != null && !linkTag.isDEFAULT())
-                        || (networkLinkType != null && linkTag.isDEFAULT() && overwriteDefaults))
+                LinkType linkType;
+                if (linkTag.isDEFAULT())
+                {
+                    // TODO: remove if-statement (keep else-part) once the xml standard has been updated
+                    if (linkTag.getID().equals("NONE"))
+                    {
+                        linkType = DefaultsNl.NONE_LINK;
+                    }
+                    else
+                    {
+                        // TODO: remove addition of "NL." once the xml standard has been updated
+                        String id = linkTag.getID().contains(".") ? linkTag.getID() : "NL." + linkTag.getID();
+                        linkType = Defaults.getByName(LinkType.class, id);
+                        Throw.when(linkType == null, XmlParserException.class, "LinkType %s could not be found as default.",
+                                linkTag.getID());
+                    }
+                }
+                else if (linkTag.getPARENT() != null)
                 {
                     LinkType parent = otsNetwork.getLinkType(linkTag.getPARENT());
-                    LinkType linkType = new LinkType(linkTag.getID(), parent, otsNetwork);
-                    for (COMPATIBILITY compTag : linkTag.getCOMPATIBILITY())
-                    {
-                        GtuType gtuType = otsNetwork.getGtuType(compTag.getGTUTYPE());
-                        if (gtuType == null)
-                        {
-                            throw new XmlParserException("LinkType " + linkTag.getID() + ".compatibility: GtuType "
-                                    + compTag.getGTUTYPE() + " not found");
-                        }
-                        linkType.addCompatibleGtuType(gtuType);
-                    }
-                    networkLinkType = linkType;
+                    Throw.when(parent == null, XmlParserException.class, "LinkType %s parent %s not found", linkTag.getID(),
+                            linkTag.getPARENT());
+                    linkType = new LinkType(linkTag.getID(), parent);
                     CategoryLogger.filter(Cat.PARSER).trace("Added LinkType {}", linkType);
                 }
                 else
                 {
-                    CategoryLogger.filter(Cat.PARSER).trace("Did NOT add LinkType {}", linkTag.getID());
+                    linkType = new LinkType(linkTag.getID());
+                    CategoryLogger.filter(Cat.PARSER).trace("Added LinkType {}", linkType);
+                }
+                otsNetwork.addLinkType(linkType);
+
+                for (COMPATIBILITY compTag : linkTag.getCOMPATIBILITY())
+                {
+                    GtuType gtuType = otsNetwork.getGtuType(compTag.getGTUTYPE());
+                    Throw.when(gtuType == null, XmlParserException.class, "LinkType %s.compatibility: GtuType %s not found",
+                            linkTag.getID(), compTag.getGTUTYPE());
+                    linkType.addCompatibleGtuType(gtuType);
                 }
 
-                linkTypeSpeedLimitMap.put(networkLinkType, new LinkedHashMap<>());
+                linkTypeSpeedLimitMap.put(linkType, new LinkedHashMap<>());
                 for (SPEEDLIMIT speedLimitTag : linkTag.getSPEEDLIMIT())
                 {
                     GtuType gtuType = otsNetwork.getGtuType(speedLimitTag.getGTUTYPE());
-                    linkTypeSpeedLimitMap.get(networkLinkType).put(gtuType, speedLimitTag.getLEGALSPEEDLIMIT());
+                    linkTypeSpeedLimitMap.get(linkType).put(gtuType, speedLimitTag.getLEGALSPEEDLIMIT());
                 }
             }
         }
@@ -185,11 +201,8 @@ public final class DefinitionsParser
                     if (laneTag.getPARENT() != null)
                     {
                         LaneType parent = otsNetwork.getLaneType(laneTag.getPARENT());
-                        if (parent == null)
-                        {
-                            throw new XmlParserException(
-                                    "LaneType " + laneTag.getID() + " parent " + laneTag.getPARENT() + " not found");
-                        }
+                        Throw.when(parent == null, XmlParserException.class, "LaneType %s parent %s not found", laneTag.getID(),
+                                laneTag.getPARENT());
                         laneType = new LaneType(laneTag.getID(), parent, otsNetwork);
                         CategoryLogger.filter(Cat.PARSER).trace("Added LaneType {}", laneType);
                     }
@@ -201,11 +214,8 @@ public final class DefinitionsParser
                     for (COMPATIBILITY compTag : laneTag.getCOMPATIBILITY())
                     {
                         GtuType gtuType = otsNetwork.getGtuType(compTag.getGTUTYPE());
-                        if (gtuType == null)
-                        {
-                            throw new XmlParserException("LaneType " + laneTag.getID() + ".compatibility: GtuType "
-                                    + compTag.getGTUTYPE() + " not found");
-                        }
+                        Throw.when(gtuType == null, XmlParserException.class, "LaneType %s.compatibility: GtuType %s not found",
+                                laneTag.getID(), compTag.getGTUTYPE());
                         laneType.addCompatibleGtuType(gtuType);
                     }
                 }

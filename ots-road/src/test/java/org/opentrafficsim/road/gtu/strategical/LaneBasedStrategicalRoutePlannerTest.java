@@ -2,12 +2,12 @@ package org.opentrafficsim.road.gtu.strategical;
 
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OtsLink;
 import org.opentrafficsim.core.network.OtsNode;
@@ -45,7 +45,7 @@ public class LaneBasedStrategicalRoutePlannerTest
         OtsNode fromNode = new OtsNode(network, "from", new OtsPoint3D(0, 0, 0));
         OtsNode toNode = new OtsNode(network, "to", new OtsPoint3D(100, 0, 0));
         OtsLine3D designLine = new OtsLine3D(fromNode.getPoint(), toNode.getPoint());
-        OtsLink link = new OtsLink(network, "link", fromNode, toNode, network.getLinkType(LinkType.DEFAULTS.ROAD), designLine);
+        OtsLink link = new OtsLink(network, "link", fromNode, toNode, DefaultsNl.ROAD, designLine);
         CarFollowingModel cfm = new IdmPlus();
         LaneBasedCfLcTacticalPlanner tacticalPlanner = new LaneBasedCfLcTacticalPlanner(null, null, null);
         Parameters params = DefaultTestParameters.create();

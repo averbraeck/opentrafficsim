@@ -100,7 +100,7 @@ public class Route implements Serializable, Identifiable
             {
                 if (link.getStartNode().equals(to) || link.getEndNode().equals(to))
                 {
-                    if (link.getType().isConnector())
+                    if (link.isConnector())
                     {
                         connectorFound = true;
                     }

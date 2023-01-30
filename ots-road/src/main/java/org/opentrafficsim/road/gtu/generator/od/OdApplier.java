@@ -262,7 +262,7 @@ public final class OdApplier
                 Set<LanePosition> positionSet = new LinkedHashSet<>();
                 for (Link link : origin.getLinks())
                 {
-                    if (link.getType().isConnector())
+                    if (link.isConnector())
                     {
                         if (link.getStartNode().equals(origin))
                         {
@@ -271,7 +271,7 @@ public final class OdApplier
                             int served = 0;
                             for (Link connectedLink : connectedNode.getLinks())
                             {
-                                if (connectedLink instanceof CrossSectionLink && !connectedLink.getType().isConnector())
+                                if (connectedLink instanceof CrossSectionLink && !connectedLink.isConnector())
                                 {
                                     served++;
                                 }
@@ -383,7 +383,7 @@ public final class OdApplier
     {
         for (Link link : destination.getLinks())
         {
-            if (link.getType().isConnector() && !link.getStartNode().equals(destination))
+            if (link.isConnector() && !link.getStartNode().equals(destination))
             {
                 createSensorsAtDestinationNode(link.getStartNode(), simulator);
             }
@@ -463,12 +463,12 @@ public final class OdApplier
         for (Link link : node.getLinks())
         {
             LinkType next = link.getType();
-            if (!ignoreConnectors && next.isConnector())
+            if (!ignoreConnectors && link.isConnector())
             {
                 Node otherNode = link.getStartNode().equals(node) ? link.getEndNode() : link.getStartNode();
                 next = getLinkTypeFromNode0(otherNode, true);
             }
-            if (next != null && !next.isConnector())
+            if (next != null && !link.isConnector())
             {
                 if (linkType == null)
                 {
@@ -517,9 +517,7 @@ public final class OdApplier
                 }
                 return c;
             }
-        }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (
-                e1, e2
-        ) -> e1, LinkedHashMap::new));
+        }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
     }
 
     /**

@@ -34,6 +34,7 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -320,7 +321,7 @@ public class TransceiverTest
         OtsPoint3D node1Point = new OtsPoint3D(10, 20, 30);
         OtsRoadNode node1 = new OtsRoadNode(network, "node 1", node1Point, Direction.ZERO);
         OtsRoadNode node2 = new OtsRoadNode(network, "node 2", new OtsPoint3D(110, 20, 30), Direction.ZERO);
-        LinkType roadLinkType = network.getLinkType(LinkType.DEFAULTS.ROAD);
+        LinkType roadLinkType = DefaultsNl.ROAD;
         CrossSectionLink link = new CrossSectionLink(network, "1 to 2", node1, node2, roadLinkType,
                 new OtsLine3D(node1.getPoint(), node2.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.RESIDENTIAL_ROAD_LANE);
@@ -482,7 +483,7 @@ public class TransceiverTest
         assertNull("No ACK or NACK", this.lastAckNack);
         assertEquals("result contains 7 elements", 7, result.length);
         assertEquals("result is our link", link.getId(), result[0]);
-        assertEquals("link type is ROAD", LinkType.DEFAULTS.ROAD.getId(), result[1]);
+        assertEquals("link type is ROAD", DefaultsNl.ROAD.getId(), result[1]);
         assertEquals("from node", node1.getId(), result[2]);
         assertEquals("to node", node2.getId(), result[3]);
         assertEquals("number of points in design line is 2", link.getDesignLine().size(), result[4]);

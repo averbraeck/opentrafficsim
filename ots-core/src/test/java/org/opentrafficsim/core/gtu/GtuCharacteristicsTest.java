@@ -42,7 +42,7 @@ public class GtuCharacteristicsTest implements OtsModelInterface
     @Test
     public final void testGtuCharacteristics() throws SimRuntimeException, NamingException
     {
-        OtsNetwork network = new OtsNetwork("network", true, this.simulator);
+        OtsNetwork network = new OtsNetwork("network", this.simulator);
         // Make two sets of values so we can prove that the constructed GtuCharacteristics sets are really distinct.
         GtuType gtuTypeA = new GtuType("Type A", DefaultsNl.VEHICLE);
         GtuType gtuTypeB = new GtuType("Type B", DefaultsNl.VEHICLE);

@@ -213,7 +213,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         OtsRoadNode nodeB = new OtsRoadNode(network, "Lane-drop", new OtsPoint3D(1500.0, 0.0), Direction.ZERO);
         OtsRoadNode nodeC = new OtsRoadNode(network, "Destination", new OtsPoint3D(2500.0, 0.0), Direction.ZERO);
 
-        LinkType linkType = network.getLinkType(LinkType.DEFAULTS.FREEWAY);
+        LinkType linkType = DefaultsNl.FREEWAY;
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;
         Length laneWidth = Length.instantiateSI(3.5);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.FREEWAY);

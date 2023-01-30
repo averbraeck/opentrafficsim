@@ -2,7 +2,6 @@ package org.opentrafficsim.road.gtu.lane.changing;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -32,7 +31,6 @@ import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -103,8 +101,8 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
         OtsPoint3D[] coordinates = new OtsPoint3D[] {new OtsPoint3D(from.getPoint().x, from.getPoint().y, 0),
                 new OtsPoint3D(to.getPoint().x, to.getPoint().y, 0)};
         OtsLine3D line = new OtsLine3D(coordinates);
-        CrossSectionLink link = new CrossSectionLink(network, name, from, to, network.getLinkType(LinkType.DEFAULTS.ROAD), line,
-                LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink link =
+                new CrossSectionLink(network, name, from, to, DefaultsNl.ROAD, line, LaneKeepingPolicy.KEEPRIGHT);
         return link;
     }
 

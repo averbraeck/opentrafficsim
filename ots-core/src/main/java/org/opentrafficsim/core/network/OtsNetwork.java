@@ -20,7 +20,6 @@ import org.djutils.logger.CategoryLogger;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
-import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.gtu.Gtu;
@@ -55,7 +54,7 @@ public class OtsNetwork extends LocalEventProducer implements Network, Perceivab
     /** Map of Links. */
     private Map<String, Link> linkMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
-    /** Map of ObjectInterface. */
+    /** Map of LocatedObject. */
     private Map<String, LocatedObject> objectMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** Map of NonLocatedObjects. */
@@ -82,17 +81,12 @@ public class OtsNetwork extends LocalEventProducer implements Network, Perceivab
     /**
      * Construction of an empty network.
      * @param id String; the network id.
-     * @param addDefaultTypes add the default GtuTypes and LinkTypes, or not
      * @param simulator OTSSimulatorInterface; the DSOL simulator engine
      */
-    public OtsNetwork(final String id, final boolean addDefaultTypes, final OtsSimulatorInterface simulator)
+    public OtsNetwork(final String id, final OtsSimulatorInterface simulator)
     {
         this.id = id;
         this.simulator = simulator;
-        if (addDefaultTypes)
-        {
-            addDefaultLinkTypes();
-        }
     }
 
     /** {@inheritDoc} */
@@ -432,8 +426,7 @@ public class OtsNetwork extends LocalEventProducer implements Network, Perceivab
 
     /** {@inheritDoc} */
     @Override
-    public final ImmutableMap<String, NonLocatedObject> getNonLocatedObjectMap(
-            final Class<NonLocatedObject> objectType)
+    public final ImmutableMap<String, NonLocatedObject> getNonLocatedObjectMap(final Class<NonLocatedObject> objectType)
     {
         Map<String, NonLocatedObject> result = new LinkedHashMap<>();
         for (String key : this.objectMap.keySet())
@@ -715,8 +708,8 @@ public class OtsNetwork extends LocalEventProducer implements Network, Perceivab
     public final Route getShortestRouteBetween(final GtuType gtuType, final Node nodeFrom, final Node nodeTo,
             final List<Node> nodesVia, final LinkWeight linkWeight) throws NetworkException
     {
-        Route route = new Route(
-                "Route for " + gtuType + " from " + nodeFrom + "to " + nodeTo + " via " + nodesVia.toString(), gtuType);
+        Route route = new Route("Route for " + gtuType + " from " + nodeFrom + "to " + nodeTo + " via " + nodesVia.toString(),
+                gtuType);
         SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = getGraph(gtuType, linkWeight);
         List<Node> nodes = new ArrayList<>();
         nodes.add(nodeFrom);
@@ -836,32 +829,6 @@ public class OtsNetwork extends LocalEventProducer implements Network, Perceivab
 
     /** {@inheritDoc} */
     @Override
-    public void addDefaultLinkTypes()
-    {
-        new LinkType("NONE", null, this);
-        //
-        LinkType road = new LinkType("ROAD", null, this);
-        road.addCompatibleGtuType(DefaultsNl.ROAD_USER);
-        //
-        LinkType freeway = new LinkType("FREEWAY", road, this);
-        freeway.addCompatibleGtuType(DefaultsNl.ROAD_USER);
-        freeway.addCompatibleGtuType(DefaultsNl.PEDESTRIAN);
-        freeway.addCompatibleGtuType(DefaultsNl.BICYCLE);
-        //
-        LinkType waterway = new LinkType("WATERWAY", null, this);
-        waterway.addCompatibleGtuType(DefaultsNl.WATERWAY_USER);
-        //
-        LinkType railway = new LinkType("RAILWAY", null, this);
-        railway.addCompatibleGtuType(DefaultsNl.RAILWAY_USER);
-        //
-        LinkType connector = new LinkType("CONNECTOR", null, this);
-        connector.addCompatibleGtuType(DefaultsNl.ROAD_USER);
-        connector.addCompatibleGtuType(DefaultsNl.WATERWAY_USER);
-        connector.addCompatibleGtuType(DefaultsNl.RAILWAY_USER);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public void addLinkType(final LinkType linkType)
     {
         this.linkTypeMap.put(linkType.getId(), linkType);
@@ -872,13 +839,6 @@ public class OtsNetwork extends LocalEventProducer implements Network, Perceivab
     public LinkType getLinkType(final String linkId)
     {
         return this.linkTypeMap.get(linkId);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public LinkType getLinkType(final LinkType.DEFAULTS linkEnum)
-    {
-        return this.linkTypeMap.get(linkEnum.getId());
     }
 
     /** {@inheritDoc} */

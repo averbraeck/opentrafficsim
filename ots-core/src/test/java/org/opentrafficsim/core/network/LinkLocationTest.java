@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.junit.Test;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.core.geometry.OtsPoint3D;
@@ -34,10 +35,10 @@ public class LinkLocationTest
     {
         OtsPoint3D fromPoint = new OtsPoint3D(100, 200, 300);
         OtsPoint3D toPoint = new OtsPoint3D(1000, 2000, 330);
-        OtsNetwork network = new OtsNetwork("testNetworkForCapacityOTSLink", true, MockSimulator.createMock());
+        OtsNetwork network = new OtsNetwork("testNetworkForCapacityOTSLink", MockSimulator.createMock());
         Node fromNode = new OtsNode(network, "startNode", fromPoint);
         Node toNode = new OtsNode(network, "endNode", toPoint);
-        LinkType linkType = network.getLinkType(LinkType.DEFAULTS.ROAD);
+        LinkType linkType = DefaultsNl.ROAD;
         OtsLine3D designLine = new OtsLine3D(fromPoint, toPoint);
         Link link = new OtsLink(network, "link", fromNode, toNode, linkType, designLine);
         Length linkLength = link.getLength();

@@ -20,13 +20,6 @@ public interface Definitions
     /***************************************************************************************/
 
     /**
-     * Add the default LinkTypes that have been defined in the enum LinkType.DEFAULTS to the network. It is not necessary to
-     * call this method on every network; when the LinkTypes are for instance defined in an XML file, adding the default types
-     * might not be needed.
-     */
-    void addDefaultLinkTypes();
-
-    /**
      * Add a Link type to the map. This method is automatically called from the LinkType constructor.
      * @param linkType the LinkType to add
      */
@@ -38,13 +31,6 @@ public interface Definitions
      * @return the LinkType or null in case it could not be found
      */
     LinkType getLinkType(String linkId);
-
-    /**
-     * Retrieve a defined default LinkType based on its enum.
-     * @param linkEnum the enum to search for
-     * @return the LinkType or null in case it could not be found
-     */
-    LinkType getLinkType(LinkType.DEFAULTS linkEnum);
 
     /**
      * Retrieve a safe copy of the map of defined LinkTypes in this network.

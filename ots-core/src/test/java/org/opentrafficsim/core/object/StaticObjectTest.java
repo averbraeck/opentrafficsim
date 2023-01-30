@@ -75,7 +75,7 @@ public class StaticObjectTest implements EventListener
             // Ignore expected exception
         }
         this.lastEvent = null;
-        OtsNetwork network = new OtsNetwork("Test network for static object test", false, MockSimulator.createMock());
+        OtsNetwork network = new OtsNetwork("Test network for static object test", MockSimulator.createMock());
         network.addListener(this, Network.OBJECT_ADD_EVENT);
         StaticObject so = new StaticObject(id, geometry, height);
         assertNull("Constructor should not have fired an event", this.lastEvent);

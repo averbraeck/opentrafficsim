@@ -67,7 +67,7 @@ public class LaneChangeInfoTest
         OtsRoadNetwork network = new OtsRoadNetwork("Lane change info test network", true, simulator);
         GtuType car = DefaultsNl.CAR;
 
-        LinkType freeway = network.getLinkType(LinkType.DEFAULTS.FREEWAY);
+        LinkType freeway = DefaultsNl.FREEWAY;
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;
         Length laneWidth = Length.instantiateSI(3.5);
         LaneType freewayLane = network.getLaneType(LaneType.DEFAULTS.FREEWAY);

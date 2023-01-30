@@ -60,8 +60,7 @@ public class LinkAnimation extends Renderable2D<Link> implements Renderable2DInt
         super(link, simulator);
         this.width = width;
         this.text = new Text(link, link.getId(), 0.0f, 1.5f, TextAlignment.CENTER, Color.BLACK, simulator,
-                link.getType().getId().equals(LinkType.DEFAULTS.FREEWAY.getId()) ? TextAnimation.RENDERWHEN10
-                        : TextAnimation.RENDERWHEN1);
+                TextAnimation.RENDERWHEN10);
     }
 
     /** {@inheritDoc} */
@@ -70,7 +69,7 @@ public class LinkAnimation extends Renderable2D<Link> implements Renderable2DInt
     {
         try
         {
-            Color color = getSource().getType().isConnector() ? Color.PINK.darker() : Color.BLUE;
+            Color color = getSource().isConnector() ? Color.PINK.darker() : Color.BLUE;
             OtsLine3D designLine = getSource().getDesignLine();
             PaintLine.paintLine(graphics, color, this.width, getSource().getLocation(), designLine);
             // Accentuate the end points
@@ -111,8 +110,8 @@ public class LinkAnimation extends Renderable2D<Link> implements Renderable2DInt
         {
             PolyLine3d line = new PolyLine3d(new Point3d(endPoint.x - dy, endPoint.y + dx, endPoint.z),
                     new Point3d(endPoint.x + dy, endPoint.y - dx, endPoint.z));
-            PaintLine.paintLine(graphics, getSource().getType().isConnector() ? Color.PINK.darker() : Color.BLUE,
-                    this.width / 30, getSource().getLocation(), line);
+            PaintLine.paintLine(graphics, getSource().isConnector() ? Color.PINK.darker() : Color.BLUE, this.width / 30,
+                    getSource().getLocation(), line);
         }
         catch (RemoteException exception)
         {

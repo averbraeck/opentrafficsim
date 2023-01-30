@@ -2,7 +2,6 @@ package org.opentrafficsim.road.car;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -29,7 +28,6 @@ import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -162,8 +160,8 @@ public class CarTest implements UNITS
         OtsRoadNode n1 = new OtsRoadNode(network, "n1", new OtsPoint3D(0, 0), Direction.ZERO);
         OtsRoadNode n2 = new OtsRoadNode(network, "n2", new OtsPoint3D(100000.0, 0.0), Direction.ZERO);
         OtsPoint3D[] coordinates = new OtsPoint3D[] {new OtsPoint3D(0.0, 0.0), new OtsPoint3D(100000.0, 0.0)};
-        CrossSectionLink link12 = new CrossSectionLink(network, "link12", n1, n2, network.getLinkType(LinkType.DEFAULTS.ROAD),
-                new OtsLine3D(coordinates), LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink link12 = new CrossSectionLink(network, "link12", n1, n2, DefaultsNl.ROAD, new OtsLine3D(coordinates),
+                LaneKeepingPolicy.KEEPRIGHT);
         Length latPos = new Length(0.0, METER);
         Length width = new Length(4.0, METER);
         return new Lane(link12, "lane.1", latPos, latPos, width, width, laneType,

@@ -54,7 +54,6 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.road.gtu.colorer.DesiredHeadwayColorer;
@@ -520,8 +519,8 @@ public class StrategiesDemo extends AbstractSimulationScript
             double angle = Math.PI * (i) / (coordsHalf1.length - 1);
             coordsHalf1[i] = new OtsPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
         }
-        List<Lane> lanes1 = new LaneFactory(network, nodeB, nodeA, network.getLinkType(LinkType.DEFAULTS.FREEWAY), sim,
-                LaneKeepingPolicy.KEEPLEFT, DefaultsNl.VEHICLE, new OtsLine3D(coordsHalf1))
+        List<Lane> lanes1 = new LaneFactory(network, nodeB, nodeA, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPLEFT,
+                DefaultsNl.VEHICLE, new OtsLine3D(coordsHalf1))
                         .leftToRight(0.0, Length.instantiateSI(3.5), network.getLaneType(LaneType.DEFAULTS.FREEWAY), speedLimit)
                         .addLanes(Type.DASHED).getLanes();
         OtsPoint3D[] coordsHalf2 = new OtsPoint3D[127];
@@ -530,8 +529,8 @@ public class StrategiesDemo extends AbstractSimulationScript
             double angle = Math.PI + Math.PI * (i) / (coordsHalf2.length - 1);
             coordsHalf2[i] = new OtsPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
         }
-        List<Lane> lanes2 = new LaneFactory(network, nodeA, nodeB, network.getLinkType(LinkType.DEFAULTS.FREEWAY), sim,
-                LaneKeepingPolicy.KEEPLEFT, DefaultsNl.VEHICLE, new OtsLine3D(coordsHalf2))
+        List<Lane> lanes2 = new LaneFactory(network, nodeA, nodeB, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPLEFT,
+                DefaultsNl.VEHICLE, new OtsLine3D(coordsHalf2))
                         .leftToRight(0.0, Length.instantiateSI(3.5), network.getLaneType(LaneType.DEFAULTS.FREEWAY), speedLimit)
                         .addLanes(Type.DASHED).getLanes();
 

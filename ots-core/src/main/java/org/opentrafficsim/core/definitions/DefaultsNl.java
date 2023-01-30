@@ -14,6 +14,7 @@ import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.GtuType.Marker;
 import org.opentrafficsim.core.gtu.TemplateGtuType;
+import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
@@ -31,7 +32,20 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  */
 public final class DefaultsNl extends Defaults
 {
-    // TODO: prepend id's with "NL."
+
+    // TODO: prepend all type id's with "NL."
+
+    /**
+     * Constructor setting locale nl_NL.
+     */
+    DefaultsNl()
+    {
+        super(new Locale("nl", "NL"));
+    }
+
+    /***************************************************************************************/
+    /***************************************** GTU *****************************************/
+    /***************************************************************************************/
 
     /** This is here only because it is in the file default_gtutypes.xml as a default, i.e the parser needs to find it. */
     @Deprecated
@@ -94,16 +108,8 @@ public final class DefaultsNl extends Defaults
         map.put(PEDESTRIAN, Color.YELLOW);
         map.put(BICYCLE, Color.GREEN);
         GTU_TYPE_COLORS = new ImmutableLinkedHashMap<>(map, Immutable.WRAP);
-        
-        TRUCK.setMarker(Marker.SQUARE);
-    }
 
-    /**
-     * Constructor setting locale nl_NL.
-     */
-    DefaultsNl()
-    {
-        super(new Locale("nl", "NL"));
+        TRUCK.setMarker(Marker.SQUARE);
     }
 
     /** {@inheritDoc} */
@@ -145,4 +151,56 @@ public final class DefaultsNl extends Defaults
         }
         return template;
     };
+
+    /***************************************************************************************/
+    /**************************************** LINK *****************************************/
+    /***************************************************************************************/
+
+    /** This is here only because it is in the file default_linktypes.xml as a default, i.e the parser needs to find it. */
+    @Deprecated
+    public static final LinkType NONE_LINK = new LinkType("NONE");
+    
+    /** This is here only because it is in the file default_linktypes.xml as a default, i.e the parser needs to find it. */
+    @Deprecated
+    public static final LinkType CONNECTOR = new LinkType("CONNECTOR");
+    
+    /** Super type for all roads. */
+    public static final LinkType ROAD = new LinkType("ROAD");
+
+    /** Freeway (snelweg, 130km/h). */
+    public static final LinkType FREEWAY = new LinkType("FREEWAY", ROAD);
+
+    /** Motorway (autoweg, 100km/h). */
+    public static final LinkType MOTORWAY = new LinkType("MOTORWAY", ROAD);
+
+    /** Provincial (provinciaalse weg / N-weg, 80km/h). */
+    public static final LinkType PROVINCIAL = new LinkType("PROVINCIAL", ROAD);
+
+    /** Rural (lanedelijk, 60km/h). */
+    public static final LinkType RURAL = new LinkType("RURAL", ROAD);
+
+    /** Urban (stedelijl, 50km/h). */
+    public static final LinkType URBAN = new LinkType("URBAN", ROAD);
+
+    /** Residential (woonerf, 30km/h). */
+    public static final LinkType RESIDENTIAL = new LinkType("RESIDENTIAL", ROAD);
+
+    /** Waterway. */
+    public static final LinkType WATERWAY = new LinkType("WATERWAY");
+
+    /** Railway. */
+    public static final LinkType RAILWAY = new LinkType("RAILWAY");
+
+    static
+    {
+        ROAD.addCompatibleGtuType(ROAD_USER);
+        FREEWAY.addIncompatibleGtuType(PEDESTRIAN);
+        FREEWAY.addIncompatibleGtuType(BICYCLE);
+        MOTORWAY.addIncompatibleGtuType(PEDESTRIAN);
+        MOTORWAY.addIncompatibleGtuType(BICYCLE);
+        PROVINCIAL.addIncompatibleGtuType(PEDESTRIAN);
+        PROVINCIAL.addIncompatibleGtuType(BICYCLE);
+        WATERWAY.addCompatibleGtuType(WATERWAY_USER);
+        RAILWAY.addCompatibleGtuType(RAILWAY_USER);
+    }
 }

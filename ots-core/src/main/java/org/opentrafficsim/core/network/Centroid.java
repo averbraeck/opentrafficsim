@@ -49,8 +49,7 @@ public class Centroid extends OtsNode
     @Override
     public void addLink(final Link link)
     {
-        Throw.when(!link.isOfType(this.getNetwork().getLinkType(LinkType.DEFAULTS.CONNECTOR)), OtsRuntimeException.class,
-                "Centroids can only be connected by connector links");
+        Throw.when(!link.isConnector(), OtsRuntimeException.class, "Centroids can only be connected by connector links");
         super.addLink(link);
     }
 

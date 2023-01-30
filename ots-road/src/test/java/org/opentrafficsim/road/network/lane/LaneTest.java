@@ -42,7 +42,6 @@ import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.mock.MockDevsSimulator;
@@ -81,8 +80,8 @@ public class LaneTest implements UNITS
         OtsPoint3D[] coordinates = new OtsPoint3D[2];
         coordinates[0] = new OtsPoint3D(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
         coordinates[1] = new OtsPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
-        CrossSectionLink link = new CrossSectionLink(network, "A to B", nodeFrom, nodeTo,
-                network.getLinkType(LinkType.DEFAULTS.FREEWAY), new OtsLine3D(coordinates), LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink link = new CrossSectionLink(network, "A to B", nodeFrom, nodeTo, DefaultsNl.FREEWAY,
+                new OtsLine3D(coordinates), LaneKeepingPolicy.KEEPRIGHT);
         Length startLateralPos = new Length(2, METER);
         Length endLateralPos = new Length(5, METER);
         Length startWidth = new Length(3, METER);
@@ -144,8 +143,8 @@ public class LaneTest implements UNITS
         coordinates[0] = new OtsPoint3D(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
         coordinates[1] = new OtsPoint3D(200, 100);
         coordinates[2] = new OtsPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
-        link = new CrossSectionLink(network, "A to B with Kink", nodeFrom, nodeTo,
-                network.getLinkType(LinkType.DEFAULTS.FREEWAY), new OtsLine3D(coordinates), LaneKeepingPolicy.KEEPRIGHT);
+        link = new CrossSectionLink(network, "A to B with Kink", nodeFrom, nodeTo, DefaultsNl.FREEWAY,
+                new OtsLine3D(coordinates), LaneKeepingPolicy.KEEPRIGHT);
         // FIXME what overtaking conditions do we want to test in this unit test?
         lane = new Lane(link, "lane.1", startLateralPos, endLateralPos, startWidth, endWidth, laneType, speedMap, false);
         // Verify the easy bits
@@ -569,8 +568,8 @@ public class LaneTest implements UNITS
         coordinates[0] = start.getPoint();
         coordinates[1] = end.getPoint();
         OtsLine3D line = new OtsLine3D(coordinates);
-        CrossSectionLink link = new CrossSectionLink(network, "A to B", start, end, network.getLinkType(LinkType.DEFAULTS.ROAD),
-                line, LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink link =
+                new CrossSectionLink(network, "A to B", start, end, DefaultsNl.ROAD, line, LaneKeepingPolicy.KEEPRIGHT);
         Length offsetAtStart = Length.instantiateSI(5);
         Length offsetAtEnd = Length.instantiateSI(15);
         Length width = Length.instantiateSI(4);
@@ -655,8 +654,8 @@ public class LaneTest implements UNITS
                     coordinates[0] = start.getPoint();
                     coordinates[1] = end.getPoint();
                     OtsLine3D line = new OtsLine3D(coordinates);
-                    CrossSectionLink link = new CrossSectionLink(network, "A to B", start, end,
-                            network.getLinkType(LinkType.DEFAULTS.ROAD), line, LaneKeepingPolicy.KEEPRIGHT);
+                    CrossSectionLink link = new CrossSectionLink(network, "A to B", start, end, DefaultsNl.ROAD, line,
+                            LaneKeepingPolicy.KEEPRIGHT);
                     final int[] lateralOffsets = {-10, -3, -1, 0, 1, 3, 10};
                     for (int startLateralOffset : lateralOffsets)
                     {

@@ -3,7 +3,6 @@ package org.opentrafficsim.road.network.factory.xml.demand;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
-import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -25,7 +24,6 @@ import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
@@ -99,24 +97,18 @@ public class XmlOdParserTest
         OtsRoadNode B = new OtsRoadNode(this.network, "B", new OtsPoint3D(1, 0, 0), Direction.ZERO);
         OtsRoadNode C = new OtsRoadNode(this.network, "C", new OtsPoint3D(0, 1, 0), Direction.ZERO);
 
-        CrossSectionLink AB =
-                new CrossSectionLink(this.network, "AB", A, B, this.network.getLinkType(LinkType.DEFAULTS.FREEWAY),
-                        new OtsLine3D(A.getPoint(), B.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
-        CrossSectionLink AC =
-                new CrossSectionLink(this.network, "AC", A, C, this.network.getLinkType(LinkType.DEFAULTS.FREEWAY),
-                        new OtsLine3D(A.getPoint(), C.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
-        CrossSectionLink BC =
-                new CrossSectionLink(this.network, "BC", B, C, this.network.getLinkType(LinkType.DEFAULTS.FREEWAY),
-                        new OtsLine3D(B.getPoint(), C.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
-        CrossSectionLink BA =
-                new CrossSectionLink(this.network, "BA", B, A, this.network.getLinkType(LinkType.DEFAULTS.FREEWAY),
-                        new OtsLine3D(B.getPoint(), A.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
-        CrossSectionLink CA =
-                new CrossSectionLink(this.network, "CA", C, A, this.network.getLinkType(LinkType.DEFAULTS.FREEWAY),
-                        new OtsLine3D(A.getPoint(), C.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
-        CrossSectionLink CB =
-                new CrossSectionLink(this.network, "CB", C, B, this.network.getLinkType(LinkType.DEFAULTS.FREEWAY),
-                        new OtsLine3D(C.getPoint(), B.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink AB = new CrossSectionLink(this.network, "AB", A, B, DefaultsNl.FREEWAY,
+                new OtsLine3D(A.getPoint(), B.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink AC = new CrossSectionLink(this.network, "AC", A, C, DefaultsNl.FREEWAY,
+                new OtsLine3D(A.getPoint(), C.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink BC = new CrossSectionLink(this.network, "BC", B, C, DefaultsNl.FREEWAY,
+                new OtsLine3D(B.getPoint(), C.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink BA = new CrossSectionLink(this.network, "BA", B, A, DefaultsNl.FREEWAY,
+                new OtsLine3D(B.getPoint(), A.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink CA = new CrossSectionLink(this.network, "CA", C, A, DefaultsNl.FREEWAY,
+                new OtsLine3D(A.getPoint(), C.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink CB = new CrossSectionLink(this.network, "CB", C, B, DefaultsNl.FREEWAY,
+                new OtsLine3D(C.getPoint(), B.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
 
         GtuType gtuType = DefaultsNl.VEHICLE;
         this.network.addRoute(gtuType, new Route("AB", gtuType).addNode(A).addNode(B));

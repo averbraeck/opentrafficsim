@@ -15,12 +15,9 @@ import javax.naming.NamingException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
-import org.opentrafficsim.draw.core.TextAnimation.ScaleDependentRendering;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
@@ -54,20 +51,11 @@ public class NodeAnimation extends Renderable2D<NodeAnimation.ElevatedNode>
      * @throws NamingException when animation context cannot be found.
      * @throws RemoteException on communication failure
      */
-    @SuppressWarnings("unchecked")
     public NodeAnimation(final Node node, final OtsSimulatorInterface simulator) throws NamingException, RemoteException
     {
         super(new ElevatedNode(node), simulator);
-        // Figure out the relevance of this node
-        ScaleDependentRendering sizeLimiter = TextAnimation.RENDERWHEN1;
-        for (Link link : node.getLinks())
-        {
-            if (link.getType().getId().equals(LinkType.DEFAULTS.FREEWAY.getId()))
-            {
-                sizeLimiter = TextAnimation.RENDERWHEN10;
-            }
-        }
-        this.text = new Text(node, node.getId(), 0.0f, 3.0f, TextAlignment.CENTER, Color.BLACK, simulator, sizeLimiter);
+        this.text = new Text(node, node.getId(), 0.0f, 3.0f, TextAlignment.CENTER, Color.BLACK, simulator,
+                TextAnimation.RENDERWHEN10);
     }
 
     /** {@inheritDoc} */

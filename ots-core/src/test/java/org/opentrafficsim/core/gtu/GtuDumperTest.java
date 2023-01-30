@@ -72,7 +72,7 @@ public class GtuDumperTest implements OtsModelInterface
         this.containerDir = this.testDir.newFolder("subfolder");
         // System.out.println("containerDir is " + this.containerDir);
         this.simulator = new OtsSimulator("Simulator for testing GTUDumper class");
-        this.network = new OtsNetwork("Network for testing GTUDumper class", true, this.simulator);
+        this.network = new OtsNetwork("Network for testing GTUDumper class", this.simulator);
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this);
         this.simulator.scheduleEventAbsTime(new Time(40, TimeUnit.BASE_SECOND), this, "createGTU", new Object[] {});
         this.simulator.start();
@@ -200,7 +200,7 @@ public class GtuDumperTest implements OtsModelInterface
     {
         this.containerDir = this.testDir.newFolder("subfolder");
         this.simulator = new OtsSimulator("Simulator for testing GTUDumper class");
-        this.network = new OtsNetwork("Network for testing GTUDumper class", true, this.simulator);
+        this.network = new OtsNetwork("Network for testing GTUDumper class", this.simulator);
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this);
         try
         {
