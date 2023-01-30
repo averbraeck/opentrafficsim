@@ -46,7 +46,6 @@ public class NodeType extends HierarchicalType<NodeType, Node>
         super(id, parent);
         Throw.whenNull(network, "network should not be null");
         this.network = network;
-        // TODO: this.network.addNodeType(this);
     }
 
     /**
