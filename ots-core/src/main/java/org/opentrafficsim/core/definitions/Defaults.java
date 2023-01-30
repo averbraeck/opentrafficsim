@@ -83,10 +83,6 @@ public abstract class Defaults
         {
             return null;
         }
-        catch (ClassCastException ex)
-        {
-            return null;
-        }
     }
 
 }

@@ -28,7 +28,7 @@ import org.djutils.io.URLResource;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.logger.Cat;
 import org.opentrafficsim.base.parameters.ParameterType;
-import org.opentrafficsim.core.definitions.DefaultsNl;
+import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -238,25 +238,26 @@ public final class XmlNetworkLaneParser implements Serializable
         Map<String, ROADLAYOUT> roadLayoutMap = new LinkedHashMap<>();
         Map<String, GTUTEMPLATE> gtuTemplates = new LinkedHashMap<>();
         Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap = new LinkedHashMap<>();
-        DefinitionsParser.parseDefinitions(otsNetwork, ots.getDEFINITIONS(), true, roadLayoutMap, gtuTemplates,
-                streamInformation, linkTypeSpeedLimitMap);
+        Definitions definitions = DefinitionsParser.parseDefinitions(otsNetwork, ots.getDEFINITIONS(), true, roadLayoutMap,
+                gtuTemplates, streamInformation, linkTypeSpeedLimitMap);
 
         NETWORK network = ots.getNETWORK();
         Map<String, Direction> nodeDirections = NetworkParser.calculateNodeAngles(otsNetwork, network);
         NetworkParser.parseNodes(otsNetwork, network, nodeDirections);
-        NetworkParser.parseLinks(otsNetwork, network, nodeDirections, otsNetwork.getSimulator());
-        NetworkParser.applyRoadLayout(otsNetwork, network, otsNetwork.getSimulator(), roadLayoutMap, linkTypeSpeedLimitMap);
+        NetworkParser.parseLinks(otsNetwork, definitions, network, nodeDirections, otsNetwork.getSimulator());
+        NetworkParser.applyRoadLayout(otsNetwork, definitions, network, otsNetwork.getSimulator(), roadLayoutMap,
+                linkTypeSpeedLimitMap);
 
         List<NETWORKDEMAND> demands = ots.getNETWORKDEMAND();
         for (NETWORKDEMAND demand : demands)
         {
-            GeneratorSinkParser.parseRoutes(otsNetwork, demand);
-            GeneratorSinkParser.parseShortestRoutes(otsNetwork, demand);
+            GeneratorSinkParser.parseRoutes(otsNetwork, definitions, demand);
+            GeneratorSinkParser.parseShortestRoutes(otsNetwork, definitions, demand);
             Map<String, List<FrequencyAndObject<Route>>> routeMixMap = GeneratorSinkParser.parseRouteMix(otsNetwork, demand);
             Map<String, List<FrequencyAndObject<Route>>> shortestRouteMixMap =
                     GeneratorSinkParser.parseShortestRouteMix(otsNetwork, demand);
-            List<LaneBasedGtuGenerator> generators = GeneratorSinkParser.parseGenerators(otsNetwork, demand, gtuTemplates,
-                    routeMixMap, shortestRouteMixMap, streamInformation);
+            List<LaneBasedGtuGenerator> generators = GeneratorSinkParser.parseGenerators(otsNetwork, definitions, demand,
+                    gtuTemplates, routeMixMap, shortestRouteMixMap, streamInformation);
             System.out.println("Created " + generators.size() + " generators based on explicit generator definitions");
             GeneratorSinkParser.parseSinks(otsNetwork, demand, otsNetwork.getSimulator());
         }
@@ -289,15 +290,15 @@ public final class XmlNetworkLaneParser implements Serializable
         };
         Map<String, ParameterType<?>> parameterTypes = new LinkedHashMap<>();
         Map<String, ParameterFactory> parameterFactories =
-                ModelParser.parseParameters(otsNetwork, models, inputParameters, parameterTypes, streamInformation);
-        DefinitionsParser.parseParameterTypes(ots.getDEFINITIONS(), otsNetwork, parameterTypes);
+                ModelParser.parseParameters(definitions, models, inputParameters, parameterTypes, streamInformation);
+        DefinitionsParser.parseParameterTypes(ots.getDEFINITIONS(), parameterTypes);
         Map<String, LaneBasedStrategicalPlannerFactory<?>> factories = ModelParser.parseModel(otsNetwork, models,
                 inputParameters, parameterTypes, streamInformation, parameterFactories);
         Map<String, String> modelIdReferrals = ScenarioParser.parseModelIdReferral(ots.getSCENARIO(), ots.getNETWORKDEMAND());
         try
         {
-            List<LaneBasedGtuGenerator> generators =
-                    OdParser.parseDemand(otsNetwork, demands, gtuTemplates, factories, modelIdReferrals, streamInformation);
+            List<LaneBasedGtuGenerator> generators = OdParser.parseDemand(otsNetwork, definitions, demands, gtuTemplates,
+                    factories, modelIdReferrals, streamInformation);
             System.out.println("Created " + generators.size() + " generators based on origin destination matrices");
         }
         catch (Exception e)
@@ -330,7 +331,7 @@ public final class XmlNetworkLaneParser implements Serializable
 
             if (conflictCandidateMap.size() == 0)
             {
-                ConflictBuilder.buildConflictsParallel(otsNetwork, DefaultsNl.VEHICLE, otsNetwork.getSimulator(),
+                ConflictBuilder.buildConflictsParallel(otsNetwork, otsNetwork.getSimulator(),
                         new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
             }
             else

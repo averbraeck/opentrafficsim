@@ -27,7 +27,7 @@ import org.opentrafficsim.core.object.NonLocatedObject;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public interface Network extends Definitions, EventProducer, Identifiable
+public interface Network extends EventProducer, Identifiable
 {
     /** @return String; the id */
     @Override
@@ -206,7 +206,7 @@ public interface Network extends Definitions, EventProducer, Identifiable
     boolean containsObject(String objectId);
 
     /***************************************************************************************/
-    /********************************* INVISIBLE OBJECTS ***********************************/
+    /********************************* NONLOCATED OBJECTS **********************************/
     /***************************************************************************************/
 
     /**
@@ -317,12 +317,6 @@ public interface Network extends Definitions, EventProducer, Identifiable
      *         returned.
      */
     Set<Route> getRoutesBetween(GtuType gtuType, Node nodeFrom, Node nodeTo);
-
-    /**
-     * (Re)build the underlying graph for the given GtuType.
-     * @param gtuType GtuType; the GtuType for which to (re)build the graph
-     */
-    void buildGraph(GtuType gtuType);
 
     /**
      * Calculate the shortest route between two nodes in the network. If no path exists from the start node to the end node in

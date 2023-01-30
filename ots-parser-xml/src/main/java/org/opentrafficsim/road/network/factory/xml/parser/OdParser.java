@@ -27,11 +27,13 @@ import org.djutils.logger.CategoryLogger;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.logger.Cat;
 import org.opentrafficsim.core.definitions.DefaultsNl;
+import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.TemplateGtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
+import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
@@ -98,6 +100,7 @@ public final class OdParser
     /**
      * Creates generators and returns OD matrices.
      * @param otsNetwork OTSRoadNetwork; network
+     * @param definitions Definitions; parsed definitions.
      * @param demands List&lt;NETWORKDEMAND&gt;; demand
      * @param gtuTemplates Map&lt;String, GTUTEMPLATE&gt;; GTU templates
      * @param factories Map&lt;String, LaneBasedStrategicalPlannerFactory&lt;?&gt;&gt;; factories from model parser
@@ -107,9 +110,10 @@ public final class OdParser
      * @throws XmlParserException if the OD contains an inconsistency or error
      */
     @SuppressWarnings("checkstyle:methodlength")
-    public static List<LaneBasedGtuGenerator> parseDemand(final OtsRoadNetwork otsNetwork, final List<NETWORKDEMAND> demands,
-            final Map<String, GTUTEMPLATE> gtuTemplates, final Map<String, LaneBasedStrategicalPlannerFactory<?>> factories,
-            final Map<String, String> modelIdReferrals, final StreamInformation streamMap) throws XmlParserException
+    public static List<LaneBasedGtuGenerator> parseDemand(final OtsRoadNetwork otsNetwork, final Definitions definitions,
+            final List<NETWORKDEMAND> demands, final Map<String, GTUTEMPLATE> gtuTemplates,
+            final Map<String, LaneBasedStrategicalPlannerFactory<?>> factories, final Map<String, String> modelIdReferrals,
+            final StreamInformation streamMap) throws XmlParserException
     {
         List<LaneBasedGtuGenerator> generators = new ArrayList<>();
 
@@ -216,7 +220,7 @@ public final class OdParser
                         List<Object> objects = new ArrayList<>();
                         if (categorization.entails(GtuType.class))
                         {
-                            objects.add(otsNetwork.getGtuType(category.getGTUTYPE()));
+                            objects.add(definitions.get(GtuType.class, category.getGTUTYPE()));
                         }
                         if (categorization.entails(Route.class))
                         {
@@ -391,7 +395,7 @@ public final class OdParser
                 Set<TemplateGtuType> templates = new LinkedHashSet<>();
                 for (GTUTEMPLATE template : gtuTemplates.values())
                 {
-                    GtuType gtuType = otsNetwork.getGtuType(template.getGTUTYPE());
+                    GtuType gtuType = definitions.get(GtuType.class, template.getGTUTYPE());
                     Generator<Length> lengthGenerator = ParseDistribution.parseLengthDist(streamMap, template.getLENGTHDIST());
                     Generator<Length> widthGenerator = ParseDistribution.parseLengthDist(streamMap, template.getWIDTHDIST());
                     Generator<Speed> maximumSpeedGenerator =
@@ -412,7 +416,7 @@ public final class OdParser
                 }
                 // default global option to integrate defined templates
                 Factory factory = new Factory(); // DefaultGtuCharacteristicsGeneratorOD factory
-                if (otsNetwork.getGtuTypes().containsValue(DefaultsNl.TRUCK))
+                if (definitions.getAll(GtuType.class).containsValue(DefaultsNl.TRUCK))
                 {
                     factory.setFactorySupplier(StrategicalPlannerFactorySupplierOd.lmrs(DefaultsNl.TRUCK));
                 }
@@ -456,7 +460,7 @@ public final class OdParser
                             {
                                 for (MODEL model : options.getMODEL())
                                 {
-                                    GtuType gtuType = otsNetwork.getGtuType(model.getGTUTYPE());
+                                    GtuType gtuType = definitions.get(GtuType.class, model.getGTUTYPE());
                                     Throw.when(!factories.containsKey(model.getID()), XmlParserException.class,
                                             "OD option MODEL refers to a non existent-model with ID %s.", model.getID());
                                     gtuTypeFactoryMap.put(gtuType, factories.get(getModelId(model, modelIdReferrals)));
@@ -496,18 +500,19 @@ public final class OdParser
                                             RouteGeneratorOd.getDefaultRouteSupplier(randomStream));
                                 }
                             });
-                            setOption(odOptions, OdOptions.GTU_TYPE, factory.create(), options, otsNetwork);
+                            setOption(odOptions, OdOptions.GTU_TYPE, factory.create(), options, otsNetwork, definitions);
                         }
                         // no lc
-                        setOption(odOptions, OdOptions.NO_LC_DIST, options.getNOLANECHANGE(), options, otsNetwork);
+                        setOption(odOptions, OdOptions.NO_LC_DIST, options.getNOLANECHANGE(), options, otsNetwork, definitions);
                         // room checker
                         setOption(odOptions, OdOptions.ROOM_CHECKER, Transformer.parseRoomChecker(options.getROOMCHECKER()),
-                                options, otsNetwork);
+                                options, otsNetwork, definitions);
                         // headway distribution
                         try
                         {
                             setOption(odOptions, OdOptions.HEADWAY_DIST,
-                                    Transformer.parseHeadwayDistribution(options.getHEADWAYDIST()), options, otsNetwork);
+                                    Transformer.parseHeadwayDistribution(options.getHEADWAYDIST()), options, otsNetwork,
+                                    definitions);
                         }
                         catch (NoSuchFieldException | IllegalAccessException exception)
                         {
@@ -524,7 +529,7 @@ public final class OdParser
                             MarkovCorrelation<GtuType, Frequency> markov = new MarkovCorrelation<>();
                             for (STATE state : options.getMARKOV().getSTATE())
                             {
-                                GtuType gtuType = otsNetwork.getGtuType(state.getGTUTYPE());
+                                GtuType gtuType = definitions.get(GtuType.class, state.getGTUTYPE());
                                 double correlation = state.getCORRELATION();
                                 if (state.getPARENT() == null)
                                 {
@@ -532,11 +537,11 @@ public final class OdParser
                                 }
                                 else
                                 {
-                                    GtuType parentType = otsNetwork.getGtuType(state.getPARENT());
+                                    GtuType parentType = definitions.get(GtuType.class, state.getPARENT());
                                     markov.addState(parentType, gtuType, correlation);
                                 }
                             }
-                            setOption(odOptions, OdOptions.MARKOV, markov, options, otsNetwork);
+                            setOption(odOptions, OdOptions.MARKOV, markov, options, otsNetwork, definitions);
                         }
                         // lane biases
                         LaneBiases laneBiases = new LaneBiases();
@@ -544,7 +549,7 @@ public final class OdParser
                         {
                             for (LANEBIAS laneBias : options.getLANEBIASES().getLANEBIAS())
                             {
-                                GtuType gtuType = otsNetwork.getGtuType(laneBias.getGTUTYPE());
+                                GtuType gtuType = definitions.get(GtuType.class, laneBias.getGTUTYPE());
                                 double bias = laneBias.getBIAS();
                                 int stickyLanes;
                                 if (laneBias.getSTICKYLANES() == null)
@@ -581,16 +586,16 @@ public final class OdParser
                         else
                         {
                             // TODO: skip this and supply a default_lane_biases.xml?
-                            if (otsNetwork.getGtuTypes().containsValue(DefaultsNl.TRUCK))
+                            if (definitions.getAll(GtuType.class).containsValue(DefaultsNl.TRUCK))
                             {
                                 laneBiases.addBias(DefaultsNl.TRUCK, LaneBias.TRUCK_RIGHT);
                             }
-                            if (otsNetwork.getGtuTypes().containsValue(DefaultsNl.VEHICLE))
+                            if (definitions.getAll(GtuType.class).containsValue(DefaultsNl.VEHICLE))
                             {
                                 laneBiases.addBias(DefaultsNl.VEHICLE, LaneBias.WEAK_LEFT);
                             }
                         }
-                        setOption(odOptions, OdOptions.LANE_BIAS, laneBiases, options, otsNetwork);
+                        setOption(odOptions, OdOptions.LANE_BIAS, laneBiases, options, otsNetwork, definitions);
                     }
                 }
 
@@ -692,16 +697,17 @@ public final class OdParser
      * @param value T; value to set the option to
      * @param options ODOPTIONSITEM; used to set the option on the right level (Link type, origin node, lane
      * @param otsNetwork OTSRoadNetwork; to get the link type, origin node or lane from
+     * @param definitions Definitions; parsed definitions.
      * @param <T> option value type
      */
     private static <T> void setOption(final OdOptions odOptions, final Option<T> option, final T value,
-            final ODOPTIONSITEM options, final OtsRoadNetwork otsNetwork)
+            final ODOPTIONSITEM options, final OtsRoadNetwork otsNetwork, final Definitions definitions)
     {
         if (value != null)
         {
             if (options.getLINKTYPE() != null)
             {
-                odOptions.set(otsNetwork.getLinkType(options.getLINKTYPE().getVALUE()), option, value);
+                odOptions.set(definitions.get(LinkType.class, options.getLINKTYPE().getVALUE()), option, value);
             }
             else if (options.getORIGIN() != null)
             {

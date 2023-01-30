@@ -16,6 +16,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.draw.point.Point3d;
 import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.core.definitions.DefaultsNl;
+import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.DirectedPoint;
@@ -145,14 +146,16 @@ public final class NetworkParser
     /**
      * Build the links with the correct design line.
      * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
+     * @param definitions Definitions; parsed definitions.
      * @param network NETWORK; the NETWORK tag
      * @param nodeDirections Map&lt;String,Direction&gt;; a map of the node ids and their default directions
      * @param simulator OTSSimulatorInterface; the simulator
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      * @throws OtsGeometryException when the design line is invalid
      */
-    static void parseLinks(final OtsRoadNetwork otsNetwork, final NETWORK network, final Map<String, Direction> nodeDirections,
-            final OtsSimulatorInterface simulator) throws NetworkException, OtsGeometryException
+    static void parseLinks(final OtsRoadNetwork otsNetwork, final Definitions definitions, final NETWORK network,
+            final Map<String, Direction> nodeDirections, final OtsSimulatorInterface simulator)
+            throws NetworkException, OtsGeometryException
     {
         for (CONNECTOR xmlConnector : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), CONNECTOR.class))
         {
@@ -307,7 +310,7 @@ public final class NetworkParser
 
             // TODO: Directionality has to be added later when the lanes and their direction are known.
             LaneKeepingPolicy laneKeepingPolicy = LaneKeepingPolicy.valueOf(xmlLink.getLANEKEEPING().name());
-            LinkType linkType = otsNetwork.getLinkType(xmlLink.getTYPE());
+            LinkType linkType = definitions.get(LinkType.class, xmlLink.getTYPE());
             CrossSectionLink link = new CrossSectionLink(otsNetwork, xmlLink.getID(), startNode, endNode, linkType, designLine,
                     laneKeepingPolicy);
 
@@ -322,6 +325,7 @@ public final class NetworkParser
     /**
      * Build the links with the correct design line.
      * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
+     * @param definitions Definitions; parsed definitions.
      * @param network NETWORK; the NETWORK tag
      * @param simulator OTSSimulatorInterface; the simulator
      * @param roadLayoutMap the map of the tags of the predefined ROADLAYOUT tags in DEFINITIONS
@@ -332,8 +336,9 @@ public final class NetworkParser
      * @throws SimRuntimeException in case of simulation problems building the car generator
      * @throws GtuException when construction of the Strategical Planner failed
      */
-    static void applyRoadLayout(final OtsRoadNetwork otsNetwork, final NETWORK network, final OtsSimulatorInterface simulator,
-            final Map<String, ROADLAYOUT> roadLayoutMap, final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap)
+    static void applyRoadLayout(final OtsRoadNetwork otsNetwork, final Definitions definitions, final NETWORK network,
+            final OtsSimulatorInterface simulator, final Map<String, ROADLAYOUT> roadLayoutMap,
+            final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap)
             throws NetworkException, OtsGeometryException, XmlParserException, SimRuntimeException, GtuException
     {
         for (LINK xmlLink : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), LINK.class))
@@ -412,7 +417,7 @@ public final class NetworkParser
                 {
                     CSELANE laneTag = (CSELANE) cseTag;
                     boolean direction = laneTag.isDESIGNDIRECTION();
-                    LaneType laneType = otsNetwork.getLaneType(laneTag.getLANETYPE());
+                    LaneType laneType = definitions.get(LaneType.class, laneTag.getLANETYPE());
                     // TODO: Use the DESIGNDIRECTION
                     Map<GtuType, Speed> speedLimitMap = new LinkedHashMap<>();
                     LinkType linkType = csl.getType();
@@ -423,12 +428,12 @@ public final class NetworkParser
                     speedLimitMap.putAll(linkTypeSpeedLimitMap.get(linkType));
                     for (SPEEDLIMIT speedLimitTag : roadLayoutTag.getSPEEDLIMIT())
                     {
-                        GtuType gtuType = otsNetwork.getGtuType(speedLimitTag.getGTUTYPE());
+                        GtuType gtuType = definitions.get(GtuType.class, speedLimitTag.getGTUTYPE());
                         speedLimitMap.put(gtuType, speedLimitTag.getLEGALSPEEDLIMIT());
                     }
                     for (SPEEDLIMIT speedLimitTag : laneTag.getSPEEDLIMIT())
                     {
-                        GtuType gtuType = otsNetwork.getGtuType(speedLimitTag.getGTUTYPE());
+                        GtuType gtuType = definitions.get(GtuType.class, speedLimitTag.getGTUTYPE());
                         speedLimitMap.put(gtuType, speedLimitTag.getLEGALSPEEDLIMIT());
                     }
                     Lane lane = new Lane(csl, laneTag.getID(), cseData.centerOffsetStart, cseData.centerOffsetEnd,

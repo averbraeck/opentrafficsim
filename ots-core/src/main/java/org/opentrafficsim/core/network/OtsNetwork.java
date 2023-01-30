@@ -66,12 +66,6 @@ public class OtsNetwork extends LocalEventProducer implements Network, Perceivab
     /** Graphs to calculate shortest paths per GtuType. */
     private Map<GtuType, SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>> linkGraphs = new LinkedHashMap<>();
 
-    /** GtuTypes registered for this network. */
-    private Map<String, GtuType> gtuTypeMap = Collections.synchronizedMap(new LinkedHashMap<>());
-
-    /** LinkTypes registered for this network. */
-    private Map<String, LinkType> linkTypeMap = Collections.synchronizedMap(new LinkedHashMap<>());
-
     /** GTUs registered in this network. */
     private Map<String, Gtu> gtuMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
@@ -624,14 +618,6 @@ public class OtsNetwork extends LocalEventProducer implements Network, Perceivab
         return routes;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final void buildGraph(final GtuType gtuType)
-    {
-        SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = buildGraph(gtuType, LinkWeight.LENGTH_NO_CONNECTORS);
-        this.linkGraphs.put(gtuType, graph);
-    }
-
     /**
      * Builds a graph using the specified link weight.
      * @param gtuType GtuType; GTU type
@@ -765,13 +751,14 @@ public class OtsNetwork extends LocalEventProducer implements Network, Perceivab
      */
     private SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> getGraph(final GtuType gtuType, final LinkWeight linkWeight)
     {
+        // TODO: this code makes no sense, properly cache per LinkWeight and GtuType, where LinkWeight must be static
         SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph;
         if (linkWeight.equals(LinkWeight.LENGTH))
         {
             // stored default
             if (!this.linkGraphs.containsKey(gtuType))
             {
-                buildGraph(gtuType);
+                this.linkGraphs.put(gtuType, buildGraph(gtuType, LinkWeight.LENGTH_NO_CONNECTORS));
             }
             graph = this.linkGraphs.get(gtuType);
         }
@@ -821,56 +808,6 @@ public class OtsNetwork extends LocalEventProducer implements Network, Perceivab
     final Map<GtuType, SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>> getRawLinkGraphs()
     {
         return this.linkGraphs;
-    }
-
-    /***************************************************************************************/
-    /************************************** LinkTypes **************************************/
-    /***************************************************************************************/
-
-    /** {@inheritDoc} */
-    @Override
-    public void addLinkType(final LinkType linkType)
-    {
-        this.linkTypeMap.put(linkType.getId(), linkType);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public LinkType getLinkType(final String linkId)
-    {
-        return this.linkTypeMap.get(linkId);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public ImmutableMap<String, LinkType> getLinkTypes()
-    {
-        return new ImmutableHashMap<>(this.linkTypeMap, Immutable.WRAP);
-    }
-
-    /***************************************************************************************/
-    /************************************** GtuTypes ***************************************/
-    /***************************************************************************************/
-
-    /** {@inheritDoc} */
-    @Override
-    public void addGtuType(final GtuType gtuType)
-    {
-        this.gtuTypeMap.put(gtuType.getId(), gtuType);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public GtuType getGtuType(final String gtuId)
-    {
-        return this.gtuTypeMap.get(gtuId);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public ImmutableMap<String, GtuType> getGtuTypes()
-    {
-        return new ImmutableHashMap<>(this.gtuTypeMap, Immutable.WRAP);
     }
 
     /***************************************************************************************/

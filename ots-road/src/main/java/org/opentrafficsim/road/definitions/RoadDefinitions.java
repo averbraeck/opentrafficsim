@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.definitions;
 
 import org.djutils.immutablecollections.ImmutableMap;
-import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.road.network.lane.LaneType;
 
 /**
@@ -13,7 +12,7 @@ import org.opentrafficsim.road.network.lane.LaneType;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public interface RoadDefinitions extends Definitions
+public interface RoadDefinitions
 {
     /***************************************************************************************/
     /************************************** LaneTypes **************************************/

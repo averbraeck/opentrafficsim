@@ -7,7 +7,6 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
@@ -32,7 +31,6 @@ import org.djutils.decoderdumper.HexDumper;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
-import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -532,7 +530,7 @@ class Sim0MQOTSModel extends AbstractOtsModel
             XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,
                     false);
             // TODO: obtain relevant GTU type from xml
-            ConflictBuilder.buildConflictsParallel(this.network, DefaultsNl.VEHICLE, getSimulator(),
+            ConflictBuilder.buildConflictsParallel(this.network, getSimulator(),
                     new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)), new LaneCombinationList(),
                     new LaneCombinationList());
         }

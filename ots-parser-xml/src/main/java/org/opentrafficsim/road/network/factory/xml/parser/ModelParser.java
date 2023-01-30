@@ -26,6 +26,7 @@ import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeNumeric;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -155,7 +156,7 @@ public class ModelParser
 
     /**
      * Parse parameter factories.
-     * @param otsNetwork OTSRoadNetwork; network
+     * @param definitions Definitions; parsed definitions.
      * @param models List&lt;MODEL&gt;; models
      * @param inputParameters InputParameters; input parameters
      * @param parameterTypes Map&lt;String, ParameterType&lt;?&gt;&gt;; parameter types
@@ -168,7 +169,7 @@ public class ModelParser
      */
     @SuppressWarnings("unchecked")
     public static <U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>, K> Map<String, ParameterFactory> parseParameters(
-            final OtsRoadNetwork otsNetwork, final List<MODELTYPE> models, final InputParameters inputParameters,
+            final Definitions definitions, final List<MODELTYPE> models, final InputParameters inputParameters,
             final Map<String, ParameterType<?>> parameterTypes, final StreamInformation streamMap) throws XmlParserException
     {
         Map<String, ParameterFactory> map = new LinkedHashMap<>();
@@ -185,115 +186,115 @@ public class ModelParser
                     if (parameter instanceof STRING)
                     {
                         STRING p = (STRING) parameter;
-                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), otsNetwork),
+                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), definitions),
                                 (ParameterType<String>) parameterTypes.get(p.getID()), p.getValue());
                     }
                     else if (parameter instanceof ACCELERATION)
                     {
                         ACCELERATION p = (ACCELERATION) parameter;
-                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), otsNetwork),
+                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), definitions),
                                 (ParameterTypeNumeric<Acceleration>) parameterTypes.get(p.getID()), p.getValue());
                     }
                     else if (parameter instanceof ACCELERATIONDIST)
                     {
                         ACCELERATIONDIST p = (ACCELERATIONDIST) parameter;
-                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), otsNetwork),
+                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), definitions),
                                 (ParameterTypeNumeric<Acceleration>) parameterTypes.get(p.getID()),
                                 ParseDistribution.parseAccelerationDist(streamMap, p));
                     }
                     else if (parameter instanceof BOOLEAN)
                     {
                         BOOLEAN p = (BOOLEAN) parameter;
-                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), otsNetwork),
+                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), definitions),
                                 (ParameterType<Boolean>) parameterTypes.get(p.getID()), p.isValue());
                     }
                     else if (parameter instanceof CLASS)
                     {
                         CLASS p = (CLASS) parameter;
-                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), otsNetwork),
+                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), definitions),
                                 (ParameterType<Class<?>>) parameterTypes.get(p.getID()), p.getValue());
                     }
                     else if (parameter instanceof DOUBLE)
                     {
                         DOUBLE p = (DOUBLE) parameter;
-                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), otsNetwork),
+                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), definitions),
                                 (ParameterType<Double>) parameterTypes.get(p.getID()), p.getValue());
                     }
                     else if (parameter instanceof DOUBLEDIST)
                     {
                         DOUBLEDIST p = (DOUBLEDIST) parameter;
-                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), otsNetwork),
+                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), definitions),
                                 (ParameterType<Double>) parameterTypes.get(p.getID()),
                                 ParseDistribution.makeDistContinuous(streamMap, p));
                     }
                     else if (parameter instanceof FRACTION)
                     {
                         FRACTION p = (FRACTION) parameter;
-                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), otsNetwork),
+                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), definitions),
                                 (ParameterType<Double>) parameterTypes.get(p.getID()), p.getValue());
                     }
                     else if (parameter instanceof FREQUENCY)
                     {
                         FREQUENCY p = (FREQUENCY) parameter;
-                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), otsNetwork),
+                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), definitions),
                                 (ParameterTypeNumeric<Frequency>) parameterTypes.get(p.getID()), p.getValue());
                     }
                     else if (parameter instanceof FREQUENCYDIST)
                     {
                         FREQUENCYDIST p = (FREQUENCYDIST) parameter;
-                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), otsNetwork),
+                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), definitions),
                                 (ParameterTypeNumeric<Frequency>) parameterTypes.get(p.getID()),
                                 ParseDistribution.parseFrequencyDist(streamMap, p));
                     }
                     else if (parameter instanceof INTEGER)
                     {
                         INTEGER p = (INTEGER) parameter;
-                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), otsNetwork),
+                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), definitions),
                                 (ParameterType<Integer>) parameterTypes.get(p.getID()), p.getValue());
                     }
                     else if (parameter instanceof INTEGERDIST)
                     {
                         INTEGERDIST p = (INTEGERDIST) parameter;
-                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), otsNetwork),
+                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), definitions),
                                 (ParameterType<Integer>) parameterTypes.get(p.getID()),
                                 ParseDistribution.makeDistDiscrete(streamMap, p));
                     }
                     else if (parameter instanceof LENGTH)
                     {
                         LENGTH p = (LENGTH) parameter;
-                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), otsNetwork),
+                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), definitions),
                                 (ParameterType<Length>) parameterTypes.get(p.getID()), p.getValue());
                     }
                     else if (parameter instanceof LENGTHDIST)
                     {
                         LENGTHDIST p = (LENGTHDIST) parameter;
-                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), otsNetwork),
+                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), definitions),
                                 (ParameterTypeNumeric<Length>) parameterTypes.get(p.getID()),
                                 ParseDistribution.parseLengthDist(streamMap, p));
                     }
                     else if (parameter instanceof LINEARDENSITY)
                     {
                         LINEARDENSITY p = (LINEARDENSITY) parameter;
-                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), otsNetwork),
+                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), definitions),
                                 (ParameterType<LinearDensity>) parameterTypes.get(p.getID()), p.getValue());
                     }
                     else if (parameter instanceof LINEARDENSITYDIST)
                     {
                         LINEARDENSITYDIST p = (LINEARDENSITYDIST) parameter;
-                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), otsNetwork),
+                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), definitions),
                                 (ParameterTypeNumeric<LinearDensity>) parameterTypes.get(p.getID()),
                                 ParseDistribution.parseLinearDensityDist(streamMap, p));
                     }
                     else if (parameter instanceof SPEED)
                     {
                         SPEED p = (SPEED) parameter;
-                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), otsNetwork),
+                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), definitions),
                                 (ParameterType<Speed>) parameterTypes.get(p.getID()), p.getValue());
                     }
                     else if (parameter instanceof SPEEDDIST)
                     {
                         SPEEDDIST p = (SPEEDDIST) parameter;
-                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), otsNetwork),
+                        paramFactory.addParameter(getGtuType(p.getGTUTYPE(), definitions),
                                 (ParameterTypeNumeric<Speed>) parameterTypes.get(p.getID()),
                                 ParseDistribution.parseSpeedDist(streamMap, p));
                     }
@@ -452,16 +453,16 @@ public class ModelParser
 
     /**
      * @param gtuTypeId the gtu type
-     * @param network the network
+     * @param definitions Definitions; parsed definitions
      * @return the GtuType belonging to the id
      */
-    private static GtuType getGtuType(final String gtuTypeId, final OtsRoadNetwork network)
+    private static GtuType getGtuType(final String gtuTypeId, final Definitions definitions)
     {
         if (gtuTypeId == null)
         {
             return null;
         }
-        return network.getGtuType(gtuTypeId);
+        return definitions.get(GtuType.class, gtuTypeId);
     }
 
     /**
@@ -685,15 +686,13 @@ public class ModelParser
         CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory;
         if (carFollowingModel.getIDM() != null)
         {
-            carFollowingModelFactory = parseCarFollowingModelHeadwaySpeed(carFollowingModel.getIDM(), (
-                    headway, speed
-            ) -> new Idm(headway, speed));
+            carFollowingModelFactory =
+                    parseCarFollowingModelHeadwaySpeed(carFollowingModel.getIDM(), (headway, speed) -> new Idm(headway, speed));
         }
         else if (carFollowingModel.getIDMPLUS() != null)
         {
-            carFollowingModelFactory = parseCarFollowingModelHeadwaySpeed(carFollowingModel.getIDMPLUS(), (
-                    headway, speed
-            ) -> new IdmPlus(headway, speed));
+            carFollowingModelFactory = parseCarFollowingModelHeadwaySpeed(carFollowingModel.getIDMPLUS(),
+                    (headway, speed) -> new IdmPlus(headway, speed));
         }
         else
         {
@@ -708,9 +707,7 @@ public class ModelParser
      * function:
      * 
      * <pre>
-     * (
-     *         headway, speed
-     * ) -&gt; new MyCarFollowingModel(headway, speed)
+     * (headway, speed) -&gt; new MyCarFollowingModel(headway, speed)
      * </pre>
      * 
      * @param carFollowingModelHeadwaySpeed CARFOLLOWINGMODELHEADWAYSPEEDTYPE; information about desired headway and speed model

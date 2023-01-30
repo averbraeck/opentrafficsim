@@ -13,6 +13,7 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
@@ -78,15 +79,17 @@ public final class GeneratorSinkParser
     /**
      * Parse the ROUTE tags.
      * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
+     * @param definitions Definitions; parsed definitions
      * @param demand NETWORKDEMAND; the NETWORKDEMAND tag
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseRoutes(final OtsRoadNetwork otsNetwork, final NETWORKDEMAND demand) throws NetworkException
+    static void parseRoutes(final OtsRoadNetwork otsNetwork, final Definitions definitions, final NETWORKDEMAND demand)
+            throws NetworkException
     {
         for (ROUTE routeTag : demand.getROUTE())
         {
-            GtuType gtuType = otsNetwork.getGtuType(routeTag.getGTUTYPE());
+            GtuType gtuType = definitions.get(GtuType.class, routeTag.getGTUTYPE());
             Route route = new Route(routeTag.getID(), gtuType);
             if (gtuType == null)
                 throw new NetworkException("GTUTYPE " + routeTag.getGTUTYPE() + " not found in ROUTE " + routeTag.getID());
@@ -104,15 +107,17 @@ public final class GeneratorSinkParser
     /**
      * Parse the SHORTESTROUTE tags.
      * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
+     * @param definitions Definitions; parsed definitions
      * @param demand NETWORKDEMAND; the NETWORKDEMAND tag
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseShortestRoutes(final OtsRoadNetwork otsNetwork, final NETWORKDEMAND demand) throws NetworkException
+    static void parseShortestRoutes(final OtsRoadNetwork otsNetwork, final Definitions definitions, final NETWORKDEMAND demand)
+            throws NetworkException
     {
         for (SHORTESTROUTE shortestRouteTag : demand.getSHORTESTROUTE())
         {
-            GtuType gtuType = otsNetwork.getGtuType(shortestRouteTag.getGTUTYPE());
+            GtuType gtuType = definitions.get(GtuType.class, shortestRouteTag.getGTUTYPE());
             Route route = new Route(shortestRouteTag.getID(), gtuType);
             if (gtuType == null)
                 throw new NetworkException(
@@ -211,6 +216,7 @@ public final class GeneratorSinkParser
     /**
      * Parse the Generators.
      * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
+     * @param definitions Definitions; parsed definitions
      * @param demand NETWORK; the NETWORK tag
      * @param gtuTemplates GGTUTEMPLATE tags
      * @param routeMixMap map with route mix entries
@@ -220,8 +226,9 @@ public final class GeneratorSinkParser
      * @throws XmlParserException when the objects cannot be inserted into the network due to inconsistencies
      */
     @SuppressWarnings("checkstyle:needbraces")
-    public static List<LaneBasedGtuGenerator> parseGenerators(final OtsRoadNetwork otsNetwork, final NETWORKDEMAND demand,
-            final Map<String, GTUTEMPLATE> gtuTemplates, final Map<String, List<FrequencyAndObject<Route>>> routeMixMap,
+    public static List<LaneBasedGtuGenerator> parseGenerators(final OtsRoadNetwork otsNetwork, final Definitions definitions,
+            final NETWORKDEMAND demand, final Map<String, GTUTEMPLATE> gtuTemplates,
+            final Map<String, List<FrequencyAndObject<Route>>> routeMixMap,
             final Map<String, List<FrequencyAndObject<Route>>> shortestRouteMixMap, final StreamInformation streamInformation)
             throws XmlParserException
     {
@@ -315,7 +322,7 @@ public final class GeneratorSinkParser
                     if (templateTag == null)
                         throw new XmlParserException(
                                 "GTUTEMPLATE " + generatorTag.getGTUTEMPLATE() + " in generator not defined");
-                    GtuType gtuType = otsNetwork.getGtuType(templateTag.getGTUTYPE());
+                    GtuType gtuType = definitions.get(GtuType.class, templateTag.getGTUTYPE());
                     if (gtuType == null)
                         throw new XmlParserException("GTUTYPE " + templateTag.getGTUTYPE() + " in GTUTEMPLATE "
                                 + generatorTag.getGTUTEMPLATE() + " not defined");

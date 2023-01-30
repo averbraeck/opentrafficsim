@@ -1,8 +1,14 @@
 package org.opentrafficsim.core.definitions;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.djutils.exceptions.Throw;
+import org.djutils.immutablecollections.Immutable;
+import org.djutils.immutablecollections.ImmutableHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
-import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.network.LinkType;
+import org.opentrafficsim.base.HierarchicalType;
 
 /**
  * The Definitions interface contains access to the core definitions that can be used to interpret the Network and the
@@ -13,52 +19,52 @@ import org.opentrafficsim.core.network.LinkType;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public interface Definitions
+public class Definitions
 {
-    /***************************************************************************************/
-    /************************************** LinkTypes **************************************/
-    /***************************************************************************************/
+
+    /** Map of maps of types per id. */
+    private Map<Class<? extends HierarchicalType<?, ?>>, Map<String, HierarchicalType<?, ?>>> typeMap = new LinkedHashMap<>();
 
     /**
-     * Add a Link type to the map. This method is automatically called from the LinkType constructor.
-     * @param linkType the LinkType to add
+     * Add a type (e.g. a GtuType instance).
+     * @param <T> type type (e.g. GtuType).
+     * @param typeClass Class&lt;T&gt;; class of type (e.g. GtuType.class).
+     * @param t T; type instance (e.g DefaultsNl.CAR).
      */
-    void addLinkType(LinkType linkType);
+    public <T extends HierarchicalType<T, ?>> void add(final Class<T> typeClass, final T t)
+    {
+        Throw.whenNull(typeClass, "Type class may not be null.");
+        Throw.whenNull(t, "Type may not be null.");
+        this.typeMap.computeIfAbsent(typeClass, (key) -> Collections.synchronizedMap(new LinkedHashMap<>())).put(t.getId(), t);
+    }
 
     /**
-     * Retrieve a defined LinkType based on its id.
-     * @param linkId the id to search for
-     * @return the LinkType or null in case it could not be found
+     * Obtain a type by its id. Returns {@code null} if it is not present.
+     * @param <T> type type (e.g. GtuType).
+     * @param typeClass typeClass Class&lt;T&gt;; class of type (e.g. GtuType.class).
+     * @param id String; id of the class.
+     * @return T; instance with given id, or {@code null} if it is not present.
      */
-    LinkType getLinkType(String linkId);
+    @SuppressWarnings("unchecked")
+    public <T extends HierarchicalType<T, ?>> T get(final Class<T> typeClass, final String id)
+    {
+        Throw.whenNull(typeClass, "Type class may not be null.");
+        Throw.whenNull(id, "Id may not be null.");
+        return (T) this.typeMap.computeIfAbsent(typeClass, (key) -> Collections.synchronizedMap(new LinkedHashMap<>())).get(id);
+    }
 
     /**
-     * Retrieve a safe copy of the map of defined LinkTypes in this network.
-     * @return the map of defined LinkTypes
+     * Obtain all present type of given type type.
+     * @param <T> type type (e.g. GtuType).
+     * @param typeClass typeClass Class&lt;T&gt;; class of type (e.g. GtuType.class).
+     * @return ImmutableMap&lt;String, T&gt;; map of all types of give type type, empty if there are no types of the type type.
      */
-    ImmutableMap<String, LinkType> getLinkTypes();
-
-    /***************************************************************************************/
-    /************************************** GtuTypes ***************************************/
-    /***************************************************************************************/
-
-    /**
-     * Add a GTU type to the map. This method is automatically called from the GtuType constructor.
-     * @param gtuType the GtuType to add
-     */
-    void addGtuType(GtuType gtuType);
-
-    /**
-     * Retrieve a defined GtuType based on its id.
-     * @param gtuId the id to search for
-     * @return the GtuType or null in case it could not be found
-     */
-    GtuType getGtuType(String gtuId);
-
-    /**
-     * Retrieve a safe copy of the map of defined GtuTypes in this network.
-     * @return the map of defined GtuTypes
-     */
-    ImmutableMap<String, GtuType> getGtuTypes();
+    @SuppressWarnings("unchecked")
+    public <T extends HierarchicalType<T, ?>> ImmutableMap<String, T> getAll(final Class<T> typeClass)
+    {
+        Throw.whenNull(typeClass, "Type class may not be null.");
+        return new ImmutableHashMap<>((Map<String, T>) this.typeMap.computeIfAbsent(typeClass,
+                (key) -> Collections.synchronizedMap(new LinkedHashMap<>())), Immutable.WRAP);
+    }
 
 }

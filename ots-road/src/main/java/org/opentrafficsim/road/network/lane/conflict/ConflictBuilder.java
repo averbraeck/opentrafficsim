@@ -20,7 +20,6 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.core.geometry.OtsPoint3D;
-import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
@@ -976,31 +975,28 @@ public final class ConflictBuilder
     /**
      * Build conflicts on network; parallel implementation.
      * @param network OTSRoadNetwork; network
-     * @param gtuType GtuType; gtu type
      * @param simulator OTSSimulatorInterface; simulator
      * @param widthGenerator WidthGenerator; width generator
      * @throws OtsGeometryException in case of geometry exception
      */
-    public static void buildConflictsParallel(final OtsRoadNetwork network, final GtuType gtuType,
-            final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator) throws OtsGeometryException
+    public static void buildConflictsParallel(final OtsRoadNetwork network, final OtsSimulatorInterface simulator,
+            final WidthGenerator widthGenerator) throws OtsGeometryException
     {
-        buildConflictsParallel(network, gtuType, simulator, widthGenerator, new LaneCombinationList(),
-                new LaneCombinationList());
+        buildConflictsParallel(network, simulator, widthGenerator, new LaneCombinationList(), new LaneCombinationList());
     }
 
     /**
      * Build conflicts on network; parallel implementation.
      * @param network OTSRoadNetwork; network
-     * @param gtuType GtuType; gtu type
      * @param simulator OTSSimulatorInterface; simulator
      * @param widthGenerator WidthGenerator; width generator
      * @param ignoreList LaneCombinationList; lane combinations to ignore
      * @param permittedList LaneCombinationList; lane combinations that are permitted by traffic control
      * @throws OtsGeometryException in case of geometry exception
      */
-    public static void buildConflictsParallel(final OtsRoadNetwork network, final GtuType gtuType,
-            final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator, final LaneCombinationList ignoreList,
-            final LaneCombinationList permittedList) throws OtsGeometryException
+    public static void buildConflictsParallel(final OtsRoadNetwork network, final OtsSimulatorInterface simulator,
+            final WidthGenerator widthGenerator, final LaneCombinationList ignoreList, final LaneCombinationList permittedList)
+            throws OtsGeometryException
     {
         // Create list of lanes
         ImmutableMap<String, Link> links = network.getLinkMap();
@@ -1019,22 +1015,20 @@ public final class ConflictBuilder
                 }
             }
         }
-        buildConflictsParallelBig(lanes, gtuType, simulator, widthGenerator, ignoreList, permittedList);
+        buildConflictsParallelBig(lanes, simulator, widthGenerator, ignoreList, permittedList);
     }
 
     /**
      * Build conflicts on list of lanes; parallel implementation.
      * @param lanes List&lt;Lane&gt;; lanes
-     * @param gtuType GtuType; gtu type
      * @param simulator OTSSimulatorInterface; simulator
      * @param widthGenerator WidthGenerator; width generator
      * @throws OtsGeometryException in case of geometry exception
      */
-    public static void buildConflictsParallel(final List<Lane> lanes, final GtuType gtuType,
-            final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator) throws OtsGeometryException
+    public static void buildConflictsParallel(final List<Lane> lanes, final OtsSimulatorInterface simulator,
+            final WidthGenerator widthGenerator) throws OtsGeometryException
     {
-        buildConflictsParallelBig(lanes, gtuType, simulator, widthGenerator, new LaneCombinationList(),
-                new LaneCombinationList());
+        buildConflictsParallelBig(lanes, simulator, widthGenerator, new LaneCombinationList(), new LaneCombinationList());
     }
 
     /**
@@ -1168,16 +1162,15 @@ public final class ConflictBuilder
     /**
      * Build conflicts on list of lanes; parallel implementation. Big jobs.
      * @param lanes List&lt;Lane&gt;; list of Lanes
-     * @param gtuType GtuType; the GTU type
      * @param simulator OTSSimulatorInterface; the simulator
      * @param widthGenerator WidthGenerator; the width generator
      * @param ignoreList LaneCombinationList; lane combinations to ignore
      * @param permittedList LaneCombinationList; lane combinations that are permitted by traffic control
      * @throws OtsGeometryException in case of geometry exception
      */
-    public static void buildConflictsParallelBig(final List<Lane> lanes, final GtuType gtuType,
-            final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator, final LaneCombinationList ignoreList,
-            final LaneCombinationList permittedList) throws OtsGeometryException
+    public static void buildConflictsParallelBig(final List<Lane> lanes, final OtsSimulatorInterface simulator,
+            final WidthGenerator widthGenerator, final LaneCombinationList ignoreList, final LaneCombinationList permittedList)
+            throws OtsGeometryException
     {
         // Loop Lane / GTUDirectionality combinations
         long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
@@ -1213,8 +1206,8 @@ public final class ConflictBuilder
                 lastReported = combinationsDone / 100000000;
             }
             Lane lane1 = lanes.get(i);
-            Set<Lane> down1 = lane1.nextLanes(gtuType);
-            Set<Lane> up1 = lane1.prevLanes(gtuType);
+            Set<Lane> down1 = lane1.nextLanes(null);
+            Set<Lane> up1 = lane1.prevLanes(null);
 
             while (numberOfJobs.get() > maxqueue) // keep max maxqueue jobs in the pool
             {
@@ -1230,7 +1223,7 @@ public final class ConflictBuilder
             numberOfJobs.incrementAndGet();
 
             ConflictBuilderRecordBig cbr = new ConflictBuilderRecordBig(i, lanes, ignoreList, permittedList, lane1, down1, up1,
-                    gtuType, simulator, widthGenerator, leftEdges, rightEdges);
+                    simulator, widthGenerator, leftEdges, rightEdges);
             executor.execute(new CbrTaskBig(numberOfJobs, cbr));
 
         }
@@ -1479,8 +1472,8 @@ public final class ConflictBuilder
 
                     boolean permitted = this.cbr.permittedList.contains(this.cbr.lane1, lane2);
 
-                    Set<Lane> down2 = lane2.nextLanes(this.cbr.gtuType);
-                    Set<Lane> up2 = lane2.prevLanes(this.cbr.gtuType);
+                    Set<Lane> down2 = lane2.nextLanes(null);
+                    Set<Lane> up2 = lane2.prevLanes(null);
 
                     try
                     {
@@ -1530,9 +1523,6 @@ public final class ConflictBuilder
         final Set<Lane> up1;
 
         /** */
-        final GtuType gtuType;
-
-        /** */
         final OtsSimulatorInterface simulator;
 
         /** */
@@ -1553,7 +1543,6 @@ public final class ConflictBuilder
          * @param lane1 Lane; lane 1
          * @param down1 Map&lt;Lane,GTUDirectionality&gt;; downstream lanes 1
          * @param up1 Map&lt;Lane,GTUDirectionality&gt;; upstream lanes 1
-         * @param gtuType GtuType; gtu type
          * @param simulator OTSSimulatorInterface; simulator
          * @param widthGenerator WidthGenerator; width generator
          * @param leftEdges Map&lt;Lane, OTSLine3D&gt;; cache of left edge lines
@@ -1562,7 +1551,7 @@ public final class ConflictBuilder
         @SuppressWarnings("checkstyle:parameternumber")
         ConflictBuilderRecordBig(final int starti, final List<Lane> lanes, final LaneCombinationList ignoreList,
                 final LaneCombinationList permittedList, final Lane lane1, final Set<Lane> down1, final Set<Lane> up1,
-                final GtuType gtuType, final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator,
+                final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator,
                 final Map<Lane, OtsLine3D> leftEdges, final Map<Lane, OtsLine3D> rightEdges)
         {
             this.starti = starti;
@@ -1572,7 +1561,6 @@ public final class ConflictBuilder
             this.lane1 = lane1;
             this.down1 = down1;
             this.up1 = up1;
-            this.gtuType = gtuType;
             this.simulator = simulator;
             this.widthGenerator = widthGenerator;
             this.leftEdges = leftEdges;

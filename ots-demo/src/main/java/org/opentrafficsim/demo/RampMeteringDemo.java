@@ -41,6 +41,7 @@ import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGtuColorer;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
+import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsPoint3D;
@@ -196,6 +197,9 @@ public class RampMeteringDemo extends AbstractSimulationScript
     /** Total travel time delay, accumulated. */
     private double totalTravelTimeDelay = 0.0;
 
+    /** Stores defintions such as GtuTypes. */
+    private Definitions definitions = new Definitions();
+
     /**
      * Constructor.
      */
@@ -257,8 +261,8 @@ public class RampMeteringDemo extends AbstractSimulationScript
         GtuType car = DefaultsNl.CAR;
         GtuType.registerTemplateSupplier(car, Defaults.NL);
         GtuType controlledCar = new GtuType(CONTROLLED_CAR_ID, car);
-        network.addGtuType(car);
-        network.addGtuType(controlledCar);
+        this.definitions.add(GtuType.class, car);
+        this.definitions.add(GtuType.class, controlledCar);
 
         GtuColorer[] colorers =
                 new GtuColorer[] {new IdGtuColorer(), new SpeedGtuColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)),
@@ -532,7 +536,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
         {
             GtuType gtuType = category.get(GtuType.class);
             // if GTU type is a controlled car, create characteristics for a controlled car
-            if (gtuType.equals(getNetwork().getGtuType(CONTROLLED_CAR_ID)))
+            if (gtuType.equals(RampMeteringDemo.this.definitions.get(GtuType.class, CONTROLLED_CAR_ID)))
             {
                 Route route = null;
                 VehicleModel vehicleModel = VehicleModel.MINMAX;
