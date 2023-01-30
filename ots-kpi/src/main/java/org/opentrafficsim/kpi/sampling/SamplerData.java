@@ -27,13 +27,16 @@ import org.djunits.value.vfloat.scalar.FloatAcceleration;
 import org.djunits.value.vfloat.scalar.FloatDuration;
 import org.djunits.value.vfloat.scalar.FloatLength;
 import org.djunits.value.vfloat.scalar.FloatSpeed;
-import org.opentrafficsim.base.CompressedFileWriter;
+import org.djutils.data.Column;
+import org.djutils.data.Row;
+import org.djutils.data.Table;
+import org.djutils.data.csv.CsvData;
+import org.djutils.data.serialization.TextSerializationException;
+import org.djutils.io.CompressedFileWriter;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.interfaces.LaneData;
-import org.opentrafficsim.kpi.sampling.csv.CsvData;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
 import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
-import org.opentrafficsim.kpi.sampling.serialization.TextSerializationException;
 
 /**
  * SamplerData is a storage for trajectory data. Adding trajectory groups can only be done by subclasses. This is however not a

@@ -146,6 +146,12 @@
 
       <dependency>
         <groupId>org.djutils</groupId>
+        <artifactId>djutils-data</artifactId>
+        <version>${djutils.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.djutils</groupId>
         <artifactId>djutils-draw</artifactId>
         <version>${djutils.version}</version>
       </dependency>
@@ -513,6 +519,7 @@
             <link>https://djutils.org/docs/latest/djutils/apidocs/</link>
             <link>https://djutils.org/docs/latest/djutils-serialization/apidocs/</link>
             <link>https://djutils.org/docs/latest/djutils-cli/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils-data/apidocs/</link>
             <link>https://djutils.org/docs/latest/djutils-draw/apidocs/</link>
             <link>http://www.jdom.org/docs/apidocs/</link>
             <link>https://sim0mq.org/docs/latest/apidocs/</link>
@@ -771,6 +778,7 @@
             <link>https://djunits.org/docs/latest/apidocs/</link>
             <link>https://djutils.org/docs/latest/djutils/apidocs/</link>
             <link>https://djutils.org/docs/latest/djutils-serialization/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils-data/apidocs/</link>
             <link>https://djutils.org/docs/latest/djutils-cli/apidocs/</link>
             <link>https://djutils.org/docs/latest/djutils-draw/apidocs/</link>
             <link>http://www.jdom.org/docs/apidocs/</link>

@@ -26,7 +26,7 @@ import org.djutils.cli.CliUtil;
 import org.djutils.event.Event;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.base.CompressedFileWriter;
+import org.djutils.io.CompressedFileWriter;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
@@ -422,9 +422,10 @@ public class RampMeteringDemo extends AbstractSimulationScript
             Throw.when(!this.gtusInSimulation.isEmpty(), RuntimeException.class,
                     "GTUs remain in simulation that are not measured.");
             file = String.format("%s_%02d_time.txt", this.scenario, getSeed());
-            BufferedWriter bw = CompressedFileWriter.create(file, false);
+            BufferedWriter bw = null;
             try
             {
+                bw = CompressedFileWriter.create(file, false);
                 bw.write(String.format("Total travel time: %.3fs", this.totalTravelTime));
                 bw.newLine();
                 bw.write(String.format("Total travel time delay: %.3fs", this.totalTravelTimeDelay));

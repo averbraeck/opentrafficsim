@@ -13,24 +13,10 @@
   <description>OpenTrafficSim KPI Module without dependencies to ots-road or ots-core</description>
 
   <dependencies>
-
     <dependency>
       <groupId>org.opentrafficsim</groupId>
       <artifactId>ots-base</artifactId>
     </dependency>
-
-    <dependency>
-      <groupId>de.siegmar</groupId>
-      <artifactId>fastcsv</artifactId>
-      <version>2.2.0</version>
-    </dependency>
-    
-	<dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>2.9.1</version>
-    </dependency>
-    
   </dependencies>
 
 </project>
