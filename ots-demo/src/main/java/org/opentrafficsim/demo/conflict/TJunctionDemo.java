@@ -194,12 +194,5 @@ public class TJunctionDemo extends OtsSimulationApplication<TJunctionModel>
             return this.network;
         }
 
-        /** {@inheritDoc} */
-        @Override
-        public Serializable getSourceId()
-        {
-            return "TJunctionModel";
-        }
-
     }
 }

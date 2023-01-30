@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.djutils.event.EventProducer;
+import org.djutils.event.LocalEventProducer;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
@@ -26,8 +26,8 @@ import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.core.object.NonLocatedObject;
 import org.opentrafficsim.core.object.LocatedObject;
+import org.opentrafficsim.core.object.NonLocatedObject;
 import org.opentrafficsim.core.perception.PerceivableContext;
 
 /**
@@ -41,7 +41,7 @@ import org.opentrafficsim.core.perception.PerceivableContext;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class OtsNetwork extends EventProducer implements Network, PerceivableContext, Serializable
+public class OtsNetwork extends LocalEventProducer implements Network, PerceivableContext, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150722;
@@ -1032,13 +1032,6 @@ public class OtsNetwork extends EventProducer implements Network, PerceivableCon
         {
             return new Rectangle2D.Double(-500, -500, 1000, 1000);
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Serializable getSourceId()
-    {
-        return this.id;
     }
 
     /** {@inheritDoc} */

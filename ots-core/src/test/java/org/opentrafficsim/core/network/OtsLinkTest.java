@@ -7,9 +7,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.rmi.RemoteException;
 
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
-import org.djutils.event.EventTypeInterface;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
+import org.djutils.event.EventType;
 import org.junit.Test;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
@@ -30,7 +30,7 @@ import org.opentrafficsim.core.mock.MockSimulator;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class OtsLinkTest implements EventListenerInterface
+public class OtsLinkTest implements EventListener
 {
     /** ... */
     private static final long serialVersionUID = 1L;
@@ -133,9 +133,9 @@ public class OtsLinkTest implements EventListenerInterface
 
     /** {@inheritDoc} */
     @Override
-    public final void notify(final EventInterface event) throws RemoteException
+    public final void notify(final Event event) throws RemoteException
     {
-        EventTypeInterface eventType = event.getType();
+        EventType eventType = event.getType();
         if (eventType.equals(Link.GTU_ADD_EVENT))
         {
             this.gtuAddedCount++;

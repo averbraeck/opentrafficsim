@@ -23,7 +23,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.PositionVector;
 import org.djutils.event.EventType;
-import org.djutils.event.TimedEventType;
+import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableLinkedHashSet;
@@ -753,7 +753,7 @@ public class LaneBasedGtu extends Gtu
                     enterTime = getSimulator().getSimulatorAbsTime();
                 }
                 this.pendingEnterTrigger =
-                        getSimulator().scheduleEventAbsTime(enterTime, this, this, "enterCrossSection", null);
+                        getSimulator().scheduleEventAbsTime(enterTime, this, "enterCrossSection", null);
             }
         }
     }
@@ -899,7 +899,7 @@ public class LaneBasedGtu extends Gtu
                     leaveTime = getSimulator().getSimulatorAbsTime();
                 }
                 this.pendingLeaveTrigger =
-                        getSimulator().scheduleEventAbsTime(leaveTime, this, this, "leaveCrossSection", null);
+                        getSimulator().scheduleEventAbsTime(leaveTime, this, "leaveCrossSection", null);
             }
         }
     }
@@ -950,7 +950,7 @@ public class LaneBasedGtu extends Gtu
                 if (time != null)
                 {
                     this.sensorEvents
-                            .add(getSimulator().scheduleEventAbsTime(time, this, sensor, "trigger", new Object[] {this}));
+                            .add(getSimulator().scheduleEventAbsTime(time, sensor, "trigger", new Object[] {this}));
                 }
             }
         }
@@ -1817,7 +1817,7 @@ public class LaneBasedGtu extends Gtu
      * acceleration, TurnIndicatorStatus turnIndicatorStatus, Length odometer, Link id of referenceLane, Lane id of
      * referenceLane, Length positionOnReferenceLane, GTUDirectionality direction]
      */
-    public static TimedEventType LANEBASED_MOVE_EVENT = new TimedEventType("LANEBASEDGTU.MOVE", new MetaData("Lane based GTU moved",
+    public static EventType LANEBASED_MOVE_EVENT = new EventType("LANEBASEDGTU.MOVE", new MetaData("Lane based GTU moved",
             "Lane based GTU moved",
             new ObjectDescriptor[] {new ObjectDescriptor("GTU id", "GTU id", String.class),
                     new ObjectDescriptor("Position", "Position", PositionVector.class),
@@ -1835,7 +1835,7 @@ public class LaneBasedGtu extends Gtu
      * Payload: [String gtuId, PositionVector finalPosition, Direction finalDirection, Length finalOdometer, Link referenceLink,
      * Lane referenceLane, Length positionOnReferenceLane, GTUDirectionality direction]
      */
-    public static TimedEventType LANEBASED_DESTROY_EVENT = new TimedEventType("LANEBASEDGTU.DESTROY", new MetaData(
+    public static EventType LANEBASED_DESTROY_EVENT = new EventType("LANEBASEDGTU.DESTROY", new MetaData(
             "Lane based GTU destroyed", "Lane based GTU destroyed",
             new ObjectDescriptor[] {new ObjectDescriptor("GTU id", "GTU id", String.class),
                     new ObjectDescriptor("Position", "Position", PositionVector.class),
@@ -1872,7 +1872,7 @@ public class LaneBasedGtu extends Gtu
      * The event type for pub/sub indicating that the GTU change lane. <br>
      * Payload: [String gtuId, LateralDirectionality direction, DirectedLanePosition from]
      */
-    public static TimedEventType LANE_CHANGE_EVENT = new TimedEventType("LANE.CHANGE",
+    public static EventType LANE_CHANGE_EVENT = new EventType("LANE.CHANGE",
             new MetaData("Lane based GTU changes lane", "Lane based GTU changes lane",
                     new ObjectDescriptor[] {new ObjectDescriptor("GTU id", "GTU id", String.class),
                             new ObjectDescriptor("Lateral direction of lane change", "Lateral direction of lane change",

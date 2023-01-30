@@ -8,8 +8,8 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -57,17 +57,17 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class DefaultAnimationFactory implements EventListenerInterface
+public class DefaultAnimationFactory implements EventListener
 {
     /** */
     private static final long serialVersionUID = 20230129L;
 
     /** The network. */
     private final OtsNetwork network;
-    
+
     /** The simulator. */
     private final OtsSimulatorInterface simulator;
-    
+
     /** GTU colorer. */
     private final GtuColorer gtuColorer;
 
@@ -190,7 +190,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
 
     /** {@inheritDoc} */
     @Override
-    public void notify(final EventInterface event) throws RemoteException
+    public void notify(final Event event) throws RemoteException
     {
         try
         {
@@ -227,7 +227,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
             else if (event.getType().equals(Network.GENERATOR_ADD_EVENT))
             {
                 // TODO: let GtuGenerator implement ObjectInterface (LocatedObject)
-                //GtuGenerator gtuGenerator = this.network.getObject(GtuGenerator.class, (String) event.getContent());
+                // GtuGenerator gtuGenerator = this.network.getObject(GtuGenerator.class, (String) event.getContent());
                 GtuGenerator gtuGenerator = null;
                 animateGtuGenerator(gtuGenerator);
             }

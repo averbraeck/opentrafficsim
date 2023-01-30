@@ -322,13 +322,6 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
         {
             return null;
         }
-
-        /** {@inheritDoc} */
-        @Override
-        public Serializable getSourceId()
-        {
-            return "LaneBasedTemplateGTUTypeTest.Model";
-        }
     }
 
 }

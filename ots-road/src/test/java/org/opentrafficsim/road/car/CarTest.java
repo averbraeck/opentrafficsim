@@ -197,12 +197,5 @@ public class CarTest implements UNITS
         {
             return null;
         }
-
-        /** {@inheritDoc} */
-        @Override
-        public Serializable getSourceId()
-        {
-            return "CarTestModel";
-        }
     }
 }

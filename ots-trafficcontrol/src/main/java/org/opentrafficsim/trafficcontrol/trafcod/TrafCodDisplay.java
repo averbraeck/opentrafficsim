@@ -9,7 +9,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -18,10 +17,11 @@ import javax.swing.JPanel;
 import javax.swing.ToolTipManager;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
-import org.djutils.event.EventTypeInterface;
-import org.djutils.event.ref.ReferenceType;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
+import org.djutils.event.EventType;
+import org.djutils.event.LocalEventProducer;
+import org.djutils.event.reference.ReferenceType;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsLine3D;
@@ -190,7 +190,7 @@ interface TrafCODObject
 /**
  * Draws a detector.
  */
-class DetectorImage implements TrafCODObject, EventListenerInterface
+class DetectorImage implements TrafCODObject, EventListener
 {
     /** ... */
     private static final long serialVersionUID = 20200313L;
@@ -251,7 +251,7 @@ class DetectorImage implements TrafCODObject, EventListenerInterface
 
     /** {@inheritDoc} */
     @Override
-    public void notify(final EventInterface event) throws RemoteException
+    public void notify(final Event event) throws RemoteException
     {
         if (event.getType().equals(NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT))
         {
@@ -291,7 +291,7 @@ class DetectorImage implements TrafCODObject, EventListenerInterface
  * Draws a traffic light. <br>
  * The implementation of TrafficLight only implements setTrafficLightColor. All other methods are dummies.
  */
-class TrafficLightImage implements TrafficLight, TrafCODObject
+class TrafficLightImage extends LocalEventProducer implements TrafficLight, TrafCODObject
 {
     /** ... */
     private static final long serialVersionUID = 20200313L;
@@ -396,67 +396,57 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
 
     /** {@inheritDoc} */
     @Override
-    public Serializable getSourceId() throws RemoteException
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean addListener(final EventListenerInterface listener, final EventTypeInterface eventType,
-            final ReferenceType referenceType) throws RemoteException
+    public boolean addListener(final EventListener listener, final EventType eventType, final ReferenceType referenceType)
     {
         return false;
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean addListener(final EventListenerInterface listener, final EventTypeInterface eventType, final int position)
-            throws RemoteException
+    public boolean addListener(final EventListener listener, final EventType eventType, final int position)
     {
         return false;
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean addListener(final EventListenerInterface listener, final EventTypeInterface eventType, final int position,
-            final ReferenceType referenceType) throws RemoteException
+    public boolean addListener(final EventListener listener, final EventType eventType, final int position,
+            final ReferenceType referenceType)
     {
         return false;
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean addListener(final EventListenerInterface listener, final EventTypeInterface eventType) throws RemoteException
+    public boolean addListener(final EventListener listener, final EventType eventType)
     {
         return false;
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean hasListeners() throws RemoteException
+    public boolean hasListeners()
     {
         return false;
     }
 
     /** {@inheritDoc} */
     @Override
-    public int numberOfListeners(final EventTypeInterface eventType) throws RemoteException
+    public int numberOfListeners(final EventType eventType)
     {
         return 0;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Set<EventTypeInterface> getEventTypesWithListeners() throws RemoteException
+    public Set<EventType> getEventTypesWithListeners()
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean removeListener(final EventListenerInterface listener, final EventTypeInterface eventType)
-            throws RemoteException
+    public boolean removeListener(final EventListener listener, final EventType eventType)
     {
         return false;
     }

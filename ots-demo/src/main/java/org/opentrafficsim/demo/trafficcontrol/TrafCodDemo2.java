@@ -5,7 +5,6 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
@@ -17,9 +16,9 @@ import javax.swing.JScrollPane;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
-import org.djutils.event.EventTypeInterface;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
+import org.djutils.event.EventType;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.io.URLResource;
 import org.djutils.logger.CategoryLogger;
@@ -159,7 +158,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCODModel>
     /**
      * The simulation model.
      */
-    public static class TrafCODModel extends AbstractOtsModel implements EventListenerInterface
+    public static class TrafCODModel extends AbstractOtsModel implements EventListener
     {
         /** */
         private static final long serialVersionUID = 20161020L;
@@ -208,9 +207,9 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCODModel>
 
         /** {@inheritDoc} */
         @Override
-        public void notify(final EventInterface event) throws RemoteException
+        public void notify(final Event event) throws RemoteException
         {
-            EventTypeInterface type = event.getType();
+            EventType type = event.getType();
             Object[] payload = (Object[]) event.getContent();
             if (TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING.equals(type))
             {
@@ -242,13 +241,6 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCODModel>
                 stringBuilder.append("]");
                 CategoryLogger.always().info(stringBuilder.toString());
             }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Serializable getSourceId()
-        {
-            return "TrafCODModel";
         }
 
         /** {@inheritDoc} */

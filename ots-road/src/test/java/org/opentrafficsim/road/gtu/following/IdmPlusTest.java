@@ -387,11 +387,4 @@ class IDMPlusTestModel extends AbstractOtsModel
         return null;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public Serializable getSourceId()
-    {
-        return "IDMPlusTest.Model";
-    }
-
 }

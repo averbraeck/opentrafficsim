@@ -11,8 +11,8 @@ import java.util.UUID;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -58,7 +58,7 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public final class Conflict extends AbstractLaneBasedObject implements EventListenerInterface
+public final class Conflict extends AbstractLaneBasedObject implements EventListener
 {
 
     /** */
@@ -303,9 +303,10 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
     /** {@inheritDoc} */
     @Override
-    public void notify(final EventInterface event) throws RemoteException
+    public void notify(final Event event) throws RemoteException
     {
-        LaneBasedGtu gtu = (LaneBasedGtu) event.getSourceId();
+        Object[] payload = (Object[]) event.getContent();
+        LaneBasedGtu gtu = (LaneBasedGtu) getLane().getNetwork().getGTU((String) payload[0]);
         if (this.upstreamListening.contains(gtu))
         {
             this.upstreamTime = null;

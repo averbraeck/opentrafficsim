@@ -310,7 +310,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
             this.updates++;
             // events are scheduled slightly later, so all influencing movements have occurred
             this.updateEvent = this.simulator.scheduleEventAbsTime(
-                    Time.instantiateSI(this.updateInterval.si * this.updates + this.delay.si), this, this, "update", null);
+                    Time.instantiateSI(this.updateInterval.si * this.updates + this.delay.si), this, "update", null);
         }
         catch (SimRuntimeException exception)
         {

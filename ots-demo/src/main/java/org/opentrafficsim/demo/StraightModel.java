@@ -190,9 +190,9 @@ public class StraightModel extends AbstractOtsModel implements UNITS
                     new Length(new Length(4000.0, LengthUnit.METER)), this.simulator);
             this.block.setTrafficLightColor(TrafficLightColor.GREEN);
             // Create a block at t = 5 minutes
-            this.simulator.scheduleEventAbsTime(new Time(300, TimeUnit.BASE_SECOND), this, this, "createBlock", null);
+            this.simulator.scheduleEventAbsTime(new Time(300, TimeUnit.BASE_SECOND), this, "createBlock", null);
             // Remove the block at t = 7 minutes
-            this.simulator.scheduleEventAbsTime(new Time(420, TimeUnit.BASE_SECOND), this, this, "removeBlock", null);
+            this.simulator.scheduleEventAbsTime(new Time(420, TimeUnit.BASE_SECOND), this, "removeBlock", null);
         }
         catch (SimRuntimeException | NetworkException | OtsGeometryException | InputParameterException | GtuException
                 | ParameterException | ProbabilityException exception)
@@ -230,13 +230,6 @@ public class StraightModel extends AbstractOtsModel implements UNITS
     public final List<Lane> getPath()
     {
         return this.path;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Serializable getSourceId()
-    {
-        return "StraightModel";
     }
 
     /**

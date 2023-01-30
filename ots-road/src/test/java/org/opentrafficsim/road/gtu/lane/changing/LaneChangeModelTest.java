@@ -315,11 +315,4 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
         return this.network;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public Serializable getSourceId()
-    {
-        return "LaneChangeModelTest.Model";
-    }
-
 }

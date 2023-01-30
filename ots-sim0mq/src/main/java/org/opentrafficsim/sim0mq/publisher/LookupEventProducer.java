@@ -1,14 +1,14 @@
 package org.opentrafficsim.sim0mq.publisher;
 
-import org.djutils.event.EventProducerInterface;
+import org.djutils.event.EventProducer;
 import org.djutils.metadata.MetaData;
 import org.djutils.serialization.SerializationException;
 import org.sim0mq.Sim0MQException;
 
 /**
- * Object that can find the EventProducerInterface object for an address.
+ * Object that can find the EventProducer object for an address.
  */
-public interface LookupEventProducerInterface
+public interface LookupEventProducer
 {
     /**
      * Find the EventProducerInterface with the given address.
@@ -18,7 +18,7 @@ public interface LookupEventProducerInterface
      * @throws SerializationException when an error occurs while serializing an error response
      * @throws Sim0MQException when an error occurs while serializing an error response
      */
-    EventProducerInterface lookup(Object[] address, ReturnWrapper returnWrapper) throws Sim0MQException, SerializationException;
+    EventProducer lookup(Object[] address, ReturnWrapper returnWrapper) throws Sim0MQException, SerializationException;
 
     /**
      * Return a MetaData object that can be used to verify the correctness of an address for the <code>lookup</code> method.

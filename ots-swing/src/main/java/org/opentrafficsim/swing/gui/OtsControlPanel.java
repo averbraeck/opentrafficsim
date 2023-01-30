@@ -48,8 +48,8 @@ import javax.swing.text.MaskFormatter;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
@@ -69,8 +69,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class OtsControlPanel extends JPanel
-        implements ActionListener, PropertyChangeListener, WindowListener, EventListenerInterface
+public class OtsControlPanel extends JPanel implements ActionListener, PropertyChangeListener, WindowListener, EventListener
 {
     /** */
     private static final long serialVersionUID = 20150617L;
@@ -305,8 +304,8 @@ public class OtsControlPanel extends JPanel
     private SimEvent<Duration> scheduleEvent(final Time executionTime, final short priority, final Object source,
             final Object eventTarget, final String method, final Object[] args) throws SimRuntimeException
     {
-        SimEvent<Duration> simEvent = new SimEvent<>(executionTime.minus(getSimulator().getStartTimeAbs()), priority, source,
-                eventTarget, method, args);
+        SimEvent<Duration> simEvent =
+                new SimEvent<>(executionTime.minus(getSimulator().getStartTimeAbs()), priority, eventTarget, method, args);
         this.simulator.scheduleEvent(simEvent);
         return simEvent;
     }
@@ -1178,7 +1177,7 @@ public class OtsControlPanel extends JPanel
 
     /** {@inheritDoc} */
     @Override
-    public final void notify(final EventInterface event) throws RemoteException
+    public final void notify(final Event event) throws RemoteException
     {
         if (event.getType().equals(ReplicationInterface.END_REPLICATION_EVENT)
                 || event.getType().equals(SimulatorInterface.START_EVENT)

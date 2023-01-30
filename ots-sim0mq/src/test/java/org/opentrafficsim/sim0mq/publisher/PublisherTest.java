@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
@@ -18,8 +17,8 @@ import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
 import org.djutils.serialization.SerializationException;
 import org.junit.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
@@ -28,7 +27,6 @@ import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
@@ -198,7 +196,7 @@ public class PublisherTest implements OtsModelInterface
     /**
      * The Model.
      */
-    class TestModel extends AbstractOtsModel implements EventListenerInterface
+    class TestModel extends AbstractOtsModel implements EventListener
     {
         /** */
         private static final long serialVersionUID = 20170419L;
@@ -223,7 +221,7 @@ public class PublisherTest implements OtsModelInterface
 
         /** {@inheritDoc} */
         @Override
-        public void notify(final EventInterface event) throws RemoteException
+        public void notify(final Event event) throws RemoteException
         {
             System.err.println("Received event " + event);
         }
@@ -267,13 +265,6 @@ public class PublisherTest implements OtsModelInterface
         public StreamInformation getStreamInformation()
         {
             return null;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Serializable getSourceId()
-        {
-            return "Sim0MQOTSModel";
         }
 
     }

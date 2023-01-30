@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.djunits.Throw;
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
-import org.djutils.event.EventProducerInterface;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
+import org.djutils.event.EventProducer;
+import org.djutils.event.EventType;
 import org.djutils.event.TimedEvent;
-import org.djutils.event.TimedEventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
@@ -36,16 +36,16 @@ public class SubscriptionHandler
     private final TransceiverInterface listTransceiver;
 
     /** Event producer for add, remove, or change events; e.g. the OTSNetwork. */
-    private final LookupEventProducerInterface eventProducerForAddRemoveOrChange;
+    private final LookupEventProducer eventProducerForAddRemoveOrChange;
 
-    /** TimedEventType to subscribe to in order to receive creation of added object events; e.g. NETWORK.GTU_ADD_EVENT. */
-    private final TimedEventType addedEventType;
+    /** EventType to subscribe to in order to receive creation of added object events; e.g. NETWORK.GTU_ADD_EVENT. */
+    private final EventType addedEventType;
 
-    /** TimedEventType to subscribe to in order to receive removed object events; e.g. NETWORK.GTU_REMOVE_EVENT. */
-    private final TimedEventType removedEventType;
+    /** EventType to subscribe to in order to receive removed object events; e.g. NETWORK.GTU_REMOVE_EVENT. */
+    private final EventType removedEventType;
 
-    /** TimedEventType to subscript to in order to receive change of the collection, or object events. */
-    private final TimedEventType changeEventType;
+    /** EventType to subscript to in order to receive change of the collection, or object events. */
+    private final EventType changeEventType;
 
     /** SubscriptionHandler that handles subscriptions to individual objects; e.g. GTU.MOVE_EVENT. */
     private final SubscriptionHandler elementSubscriptionHandler;
@@ -57,7 +57,7 @@ public class SubscriptionHandler
      * Create a new SubscriptionHandler.
      * @param id String; id of the new SubscriptionHandler
      * @param listTransceiver TransceiverInterface; transceiver to retrieve the data of <i>the addressed object</i> right now
-     * @param eventProducerForAddRemoveOrChange LookupEventProducerInterface; the event producer that can emit the
+     * @param eventProducerForAddRemoveOrChange LookupEventProducer; the event producer that can emit the
      *            <code>addedEventType</code>, <code>removedEventType</code>, or <code>changeEventType</code> events
      * @param addedEventType EventType; event type that signals that a new element has been added, should be null if there is no
      *            added event type for the data
@@ -68,8 +68,8 @@ public class SubscriptionHandler
      * @param elementSubscriptionHandler SubscriptionHandler; SubscriptionHandler for events produced by the underlying elements
      */
     public SubscriptionHandler(final String id, final TransceiverInterface listTransceiver,
-            final LookupEventProducerInterface eventProducerForAddRemoveOrChange, final TimedEventType addedEventType,
-            final TimedEventType removedEventType, final TimedEventType changeEventType,
+            final LookupEventProducer eventProducerForAddRemoveOrChange, final EventType addedEventType,
+            final EventType removedEventType, final EventType changeEventType,
             final SubscriptionHandler elementSubscriptionHandler)
     {
         Throw.whenNull(id, "Id may not be null");
@@ -163,13 +163,13 @@ public class SubscriptionHandler
     /**
      * Create a new subscription to ADD, REMOVE, or CHANGE events.
      * @param address Object[]; the data that is required to find the correct EventProducer
-     * @param eventType TimedEventType; one of the event types that the addressed EventProducer can fire
+     * @param eventType EventType; one of the event types that the addressed EventProducer can fire
      * @param returnWrapper ReturnWrapper; generates envelopes for the returned events
      * @throws RemoteException when communication fails
      * @throws SerializationException should never happen
      * @throws Sim0MQException should never happen
      */
-    private void subscribeTo(final Object[] address, final TimedEventType eventType, final ReturnWrapper returnWrapper)
+    private void subscribeTo(final Object[] address, final EventType eventType, final ReturnWrapper returnWrapper)
             throws RemoteException, Sim0MQException, SerializationException
     {
         if (null == eventType)
@@ -183,7 +183,7 @@ public class SubscriptionHandler
             returnWrapper.nack("Bad address: " + bad);
             return;
         }
-        EventProducerInterface epi = this.eventProducerForAddRemoveOrChange.lookup(address, returnWrapper);
+        EventProducer epi = this.eventProducerForAddRemoveOrChange.lookup(address, returnWrapper);
         if (null == epi)
         {
             // Not necessarily bad; some EventProducers (e.g. GTUs) may disappear at any time
@@ -211,13 +211,13 @@ public class SubscriptionHandler
     /**
      * Cancel a subscription to ADD, REMOVE, or CHANGE events.
      * @param address Object[]; the data that is required to find the correct EventProducer
-     * @param eventType TimedEventType; one of the event types that the addressed EventProducer can fire
+     * @param eventType EventType; one of the event types that the addressed EventProducer can fire
      * @param returnWrapper ReturnWrapper; the ReturnWapper that sent the results until now
      * @throws RemoteException when communication fails
      * @throws SerializationException should never happen
      * @throws Sim0MQException should never happen
      */
-    private void unsubscribeFrom(final Object[] address, final TimedEventType eventType, final ReturnWrapper returnWrapper)
+    private void unsubscribeFrom(final Object[] address, final EventType eventType, final ReturnWrapper returnWrapper)
             throws RemoteException, Sim0MQException, SerializationException
     {
         if (null == eventType)
@@ -231,7 +231,7 @@ public class SubscriptionHandler
             returnWrapper.nack("Bad address: " + bad);
             return;
         }
-        EventProducerInterface epi = this.eventProducerForAddRemoveOrChange.lookup(address, returnWrapper);
+        EventProducer epi = this.eventProducerForAddRemoveOrChange.lookup(address, returnWrapper);
         if (null == epi)
         {
             returnWrapper.nack("Cound not find the event producer of the subscription; has it dissapeared?");
@@ -524,7 +524,7 @@ public class SubscriptionHandler
 /**
  * Handles one subscription.
  */
-class Subscription implements EventListenerInterface
+class Subscription implements EventListener
 {
     /** ... */
     private static final long serialVersionUID = 20200428L;
@@ -543,10 +543,10 @@ class Subscription implements EventListenerInterface
 
     /** {@inheritDoc} */
     @Override
-    public void notify(final EventInterface event) throws RemoteException
+    public void notify(final Event event) throws RemoteException
     {
         MetaData metaData = event.getType().getMetaData();
-        int additionalFields = event.getType() instanceof TimedEventType ? 1 : 0;
+        int additionalFields = event.getType() instanceof EventType ? 1 : 0;
         Object[] result = new Object[additionalFields + metaData.size()];
         // result[0] = event.getType().getName();
         if (additionalFields > 0)

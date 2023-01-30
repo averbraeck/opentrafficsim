@@ -450,13 +450,6 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
                     idGenerator);
         }
 
-        /** {@inheritDoc} */
-        @Override
-        public Serializable getSourceId()
-        {
-            return "ShortMergeModel";
-        }
-
     }
 
     /**

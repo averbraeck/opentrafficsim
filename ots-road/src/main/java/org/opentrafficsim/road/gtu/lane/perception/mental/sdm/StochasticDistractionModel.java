@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -34,7 +34,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class StochasticDistractionModel implements EventListenerInterface
+public class StochasticDistractionModel implements EventListener
 {
 
     /** Whether to allow multi-tasking. */
@@ -154,7 +154,7 @@ public class StochasticDistractionModel implements EventListenerInterface
 
     /** {@inheritDoc} */
     @Override
-    public void notify(final EventInterface event) throws RemoteException
+    public void notify(final Event event) throws RemoteException
     {
         if (event.getType().equals(Network.GTU_ADD_EVENT))
         {

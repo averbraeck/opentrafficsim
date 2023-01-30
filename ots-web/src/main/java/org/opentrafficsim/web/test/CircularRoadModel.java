@@ -305,11 +305,4 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
         throw new Error(errorMessage);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public Serializable getSourceId()
-    {
-        return "CircularRoadModel";
-    }
-
 }

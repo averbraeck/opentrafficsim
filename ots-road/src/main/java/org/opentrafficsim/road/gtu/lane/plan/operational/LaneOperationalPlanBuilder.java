@@ -621,8 +621,8 @@ public final class LaneOperationalPlanBuilder // class package private for sched
             // rounding...
             time = gtu.getOperationalPlan().getEndTime();
         }
-        SimEventInterface<Duration> event = gtu.getSimulator().scheduleEventAbsTime(time, (short) 6, gtu, gtu,
-                "finalizeLaneChange", new Object[] {laneChangeDirection});
+        SimEventInterface<Duration> event = gtu.getSimulator().scheduleEventAbsTime(time, (short) 6, gtu, "finalizeLaneChange",
+                new Object[] {laneChangeDirection});
         gtu.setFinalizeLaneChangeEvent(event);
     }
 

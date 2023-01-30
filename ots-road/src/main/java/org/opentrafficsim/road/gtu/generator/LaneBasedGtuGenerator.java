@@ -19,8 +19,8 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.event.EventProducer;
 import org.djutils.event.EventType;
+import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.TimeStampedObject;
@@ -63,7 +63,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class LaneBasedGtuGenerator extends EventProducer implements Serializable, Identifiable, GtuGeneratorQueue
+public class LaneBasedGtuGenerator extends LocalEventProducer implements Serializable, Identifiable, GtuGeneratorQueue
 {
     /** */
     private static final long serialVersionUID = 20160000L;
@@ -456,8 +456,8 @@ public class LaneBasedGtuGenerator extends EventProducer implements Serializable
     public void disable(final Time start, final Time end, final Set<Lane> laneDirections) throws SimRuntimeException
     {
         Throw.when(end.lt(start), SimRuntimeException.class, "End time %s is before start time %s.", end, start);
-        this.simulator.scheduleEventAbsTime(start, this, this, "disable", new Object[] {laneDirections});
-        this.simulator.scheduleEventAbsTime(end, this, this, "enable", new Object[0]);
+        this.simulator.scheduleEventAbsTime(start, this, "disable", new Object[] {laneDirections});
+        this.simulator.scheduleEventAbsTime(end, this, "enable", new Object[0]);
     }
 
     /**
@@ -621,13 +621,6 @@ public class LaneBasedGtuGenerator extends EventProducer implements Serializable
             }
         }
         return result;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Serializable getSourceId()
-    {
-        return this.id;
     }
 
 }

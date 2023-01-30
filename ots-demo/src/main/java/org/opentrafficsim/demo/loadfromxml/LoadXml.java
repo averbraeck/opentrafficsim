@@ -222,13 +222,6 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
             return this.network;
         }
 
-        /** {@inheritDoc} */
-        @Override
-        public Serializable getSourceId()
-        {
-            return "LoadXML.Model";
-        }
-
     }
 
 }

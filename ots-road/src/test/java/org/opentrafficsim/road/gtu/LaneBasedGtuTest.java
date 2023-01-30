@@ -534,12 +534,5 @@ public class LaneBasedGtuTest implements UNITS
         {
             return null;
         }
-
-        /** {@inheritDoc} */
-        @Override
-        public Serializable getSourceId()
-        {
-            return "LaneBasedGtuTest.Model";
-        }
     }
 }

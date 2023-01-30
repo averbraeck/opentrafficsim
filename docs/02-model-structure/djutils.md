@@ -19,7 +19,7 @@ The way in which event producers and listeners work is explained below. For furt
 The events between event producers and listeners should not be confused with the events in event-based simulation. Here, specific actions that may occur result in events, and any listener that registered itselft for certain events being produced by certain event producers, will then be notified of the event. We have:
 
 * _Event type_; event types define different events. They form an understanding between producer and listener with regards to what happened for a specific event, and what sort of information comes with the event. All events are defined as `public static EventType` fields at the producer. Note that the included information with the event is not stipulated with the event type, but both producer and listener simply have to assume the same information, which is usually mentioned in the Javadoc regarding the static public field of the event type.
-* _Event producer_; classes that implement `EventProducerInterface` are event producers. This interface has methods to add (`addListener(…)`) and remove (`removeListener(…)`) listeners. When a certain event occurs, and there are listeners for such an event, the event producer creates an event with payload and of a certain `EventType`, which gets send to all the listeners. Classes can extend `EventProducer` to take care of bookkeeping of listeners. This minimizes the effort on the producer to calling `fireEvent(…)` or `fireTimedEvent(…)`.
+* _Event producer_; classes that implement `EventProducer` are event producers. This interface has methods to add (`addListener(…)`) and remove (`removeListener(…)`) listeners. When a certain event occurs, and there are listeners for such an event, the event producer creates an event with payload and of a certain `EventType`, which gets send to all the listeners. Classes can extend `EventProducer` to take care of bookkeeping of listeners. This minimizes the effort on the producer to calling `fireEvent(…)` or `fireTimedEvent(…)`.
 
 <pre>
 <b>Event producer</b>
@@ -27,7 +27,7 @@ The events between event producers and listeners should not be confused with the
 &lfloor; removeListener(…)
 </pre>
 
-* _Event listeners_; classes that implement `EventListenerInterface` are event listeners. This interface defines one method; `notify(…)`, which event producers use to notify the listeners for a specific event. For producer and listener to interact, the listener has to add itself to the producer with `addListener(…)`.
+* _Event listeners_; classes that implement `EventListener` are event listeners. This interface defines one method; `notify(…)`, which event producers use to notify the listeners for a specific event. For producer and listener to interact, the listener has to add itself to the producer with `addListener(…)`.
 
 <pre>
 <b>Event listener</b>
@@ -68,7 +68,7 @@ Now, whenever a GTU enters or leaves the lane, the sampler will be notified by t
 The sampler has registered itself as a listener and will be notified. To process the events, the sampler has the following code. We leave out the details, but clearly this allows the sampler to respond to the GTU being on the lane. And in fact for as long as the GTU is on the lane, the sampler registers itself as a listener for the GTU’s `LaneBasedGTU.LANEBASED_MOVE_EVENT` event, using `addListener(…)` and `removeListener(…)` on the GTU. This means that every movement step of each GTU on the lane on which data sampling was started, is recorded. (The sampler can also operate using its own sampling frequency. In that case, subscribing to the GTU move events is not done. Instead, the sampler maintains a list of GTUs that are being sampled and schedules a sampling event in the simulator event queue.)
 
 ```java
-    public final void notify(final EventInterface event) throws RemoteException
+    public final void notify(final Event event) throws RemoteException
     {
         if (event.getType().equals(LaneBasedGTU.LANEBASED_MOVE_EVENT))
         {

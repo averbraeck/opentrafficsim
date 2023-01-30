@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.awt.geom.Point2D;
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -24,8 +23,8 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
 import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -405,13 +404,13 @@ public class LaneTest implements UNITS
     /**
      * Simple event listener that collects events in a list.
      */
-    class Listener implements EventListenerInterface
+    class Listener implements EventListener
     {
         /** Collect the received events. */
-        private List<EventInterface> events = new ArrayList<>();
+        private List<Event> events = new ArrayList<>();
 
         @Override
-        public void notify(final EventInterface event) throws RemoteException
+        public void notify(final Event event) throws RemoteException
         {
             this.events.add(event);
         }
@@ -420,7 +419,7 @@ public class LaneTest implements UNITS
          * Retrieve the collected events.
          * @return List&lt;EventInterface&gt;; the events
          */
-        public List<EventInterface> getEvents()
+        public List<Event> getEvents()
         {
             return this.events;
         }
@@ -839,13 +838,6 @@ public class LaneTest implements UNITS
         public final OtsRoadNetwork getNetwork()
         {
             return null;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Serializable getSourceId()
-        {
-            return "LaneTest.Model";
         }
     }
 

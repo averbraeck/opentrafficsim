@@ -19,8 +19,8 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.opentrafficsim.core.definitions.DefaultsNl;
@@ -47,13 +47,13 @@ import org.opentrafficsim.road.network.lane.conflict.DefaultConflictRule;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class ConflictTest implements EventListenerInterface
+public class ConflictTest implements EventListener
 {
     /** ... */
     private static final long serialVersionUID = 20200708L;
 
     /** Storage for received events. */
-    private List<EventInterface> collectedEvents = new ArrayList<>();
+    private List<Event> collectedEvents = new ArrayList<>();
 
     /**
      * Test the Conflict class.
@@ -220,7 +220,7 @@ public class ConflictTest implements EventListenerInterface
     }
 
     @Override
-    public final void notify(final EventInterface event) throws RemoteException
+    public final void notify(final Event event) throws RemoteException
     {
         // System.out.println("received event " + event);
         this.collectedEvents.add(event);

@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -22,9 +21,9 @@ import javax.swing.JPanel;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
-import org.djutils.event.TimedEventType;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
+import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableCollection;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
@@ -53,7 +52,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * <p>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class TrafCod extends AbstractTrafficController implements ActuatedTrafficController, EventListenerInterface
+public class TrafCod extends AbstractTrafficController implements ActuatedTrafficController, EventListener
 {
     /** */
     private static final long serialVersionUID = 20161014L;
@@ -531,15 +530,15 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
                 if (null != this.stateDisplay)
                 {
                     // Lookup the detector
-                    EventListenerInterface eli =
+                    EventListener el =
                             this.stateDisplay.getDetectorImage(String.format("%02d.%s", variable.getStream(), subNumber));
-                    if (null == eli)
+                    if (null == el)
                     {
                         throw new TrafficControlException("Cannor find detector image matching variable " + variable);
                     }
                     // System.out.println("creating subscriptions to sensor " + tls);
-                    tls.addListener(eli, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT);
-                    tls.addListener(eli, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT);
+                    tls.addListener(el, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT);
+                    tls.addListener(el, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT);
                 }
             }
         }
@@ -1806,7 +1805,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
 
     /** {@inheritDoc} */
     @Override
-    public void notify(final EventInterface event) throws RemoteException
+    public void notify(final Event event) throws RemoteException
     {
         System.out.println("TrafCOD: received an event");
         if (event.getType().equals(TrafficController.TRAFFICCONTROL_SET_TRACING))
@@ -1871,10 +1870,10 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
 
     /**
      * Fire an event on behalf of this TrafCOD engine (used for tracing variable changes).
-     * @param eventType TimedEventType; the type of the event
+     * @param eventType EventType; the type of the event
      * @param payload Object[]; the payload of the event
      */
-    void fireTrafCODEvent(final TimedEventType eventType, final Object[] payload)
+    void fireTrafCODEvent(final EventType eventType, final Object[] payload)
     {
         fireTimedEvent(eventType, payload, getSimulator().getSimulatorTime());
     }
@@ -1891,13 +1890,6 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
     public Container getDisplayContainer()
     {
         return this.displayContainer;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Serializable getSourceId()
-    {
-        return null;
     }
 
     /** {@inheritDoc} */
@@ -2052,7 +2044,7 @@ class NameAndStream
 /**
  * A TrafCOD variable, timer, or detector.
  */
-class Variable implements EventListenerInterface
+class Variable implements EventListener
 {
     /** ... */
     private static final long serialVersionUID = 20200313L;
@@ -2670,7 +2662,7 @@ class Variable implements EventListenerInterface
 
     /** {@inheritDoc} */
     @Override
-    public void notify(final EventInterface event) throws RemoteException
+    public void notify(final Event event) throws RemoteException
     {
         if (event.getType().equals(NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT))
         {

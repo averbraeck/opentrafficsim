@@ -84,7 +84,7 @@ public class GtuDumper
         this.interval = interval;
         this.network = network;
         this.fileNamePrefix = fileNamePrefix;
-        this.simulator.scheduleEventAbsTime(firstDumpTime, this, this, "dump", new Object[] {});
+        this.simulator.scheduleEventAbsTime(firstDumpTime, this, "dump", new Object[] {});
     }
 
     /** {@inheritDoc} */

@@ -21,9 +21,8 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.PositionVector;
 import org.djutils.draw.point.Point3d;
-import org.djutils.event.EventProducer;
-import org.djutils.event.EventProducerInterface;
-import org.djutils.event.TimedEventType;
+import org.djutils.event.EventType;
+import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.Immutable;
@@ -70,8 +69,8 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class Gtu extends EventProducer implements HierarchicallyTyped<GtuType, Gtu>, DynamicSpatialObject, Locatable,
-        Serializable, EventProducerInterface, Identifiable, Drawable
+public class Gtu extends LocalEventProducer
+        implements HierarchicallyTyped<GtuType, Gtu>, DynamicSpatialObject, Locatable, Serializable, Identifiable, Drawable
 {
     /** */
     private static final long serialVersionUID = 20140822L;
@@ -209,7 +208,7 @@ public class Gtu extends EventProducer implements HierarchicallyTyped<GtuType, G
             throw new GtuException("maximumSpeed may not be null");
         }
         this.maximumSpeed = maximumSpeed;
-        
+
         HistoryManager historyManager = simulator.getReplication().getHistoryManager(simulator);
         this.id = id;
         this.uniqueNumber = ++staticUNIQUENUMBER;
@@ -425,7 +424,7 @@ public class Gtu extends EventProducer implements HierarchicallyTyped<GtuType, G
                         : newOperationalPlan.getLocation(new Duration(tNext - now.si, DurationUnit.SI));
                 this.nextMoveEvent =
                         new SimEvent<Duration>(new Duration(tNext - getSimulator().getStartTimeAbs().si, DurationUnit.SI), this,
-                                this, "move", new Object[] {p});
+                                "move", new Object[] {p});
                 ALIGN_COUNT++;
             }
             else
@@ -434,7 +433,7 @@ public class Gtu extends EventProducer implements HierarchicallyTyped<GtuType, G
                 // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
                 this.nextMoveEvent =
                         new SimEvent<>(now.plus(newOperationalPlan.getTotalDuration()).minus(getSimulator().getStartTimeAbs()),
-                                this, this, "move", new Object[] {newOperationalPlan.getEndLocation()});
+                                this, "move", new Object[] {newOperationalPlan.getEndLocation()});
             }
             this.simulator.scheduleEvent(this.nextMoveEvent);
             fireTimedEvent(Gtu.MOVE_EVENT,
@@ -534,7 +533,7 @@ public class Gtu extends EventProducer implements HierarchicallyTyped<GtuType, G
     {
         return this.strategicalPlanner.get(time);
     }
-    
+
     /** @return TacticalPlanner; the current tactical planner that can generate an operational plan */
     public TacticalPlanner<?, ?> getTacticalPlanner()
     {
@@ -564,7 +563,7 @@ public class Gtu extends EventProducer implements HierarchicallyTyped<GtuType, G
     {
         return this.operationalPlan.get(time);
     }
-    
+
     /**
      * Set the operational plan. This method is for sub classes.
      * @param operationalPlan OperationalPlan; operational plan.
@@ -949,13 +948,6 @@ public class Gtu extends EventProducer implements HierarchicallyTyped<GtuType, G
         this.errorHandler = errorHandler;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final Serializable getSourceId()
-    {
-        return this; // TODO: see where the actual pointer to the GTU is needed
-    }
-
     /**
      * Note that destroying the next move event of the GTU can be dangerous!
      * @return nextMoveEvent the next move event of the GTU, e.g. to cancel it from outside.
@@ -1005,7 +997,7 @@ public class Gtu extends EventProducer implements HierarchicallyTyped<GtuType, G
      * The event type for pub/sub indicating a move. <br>
      * Payload: [String id, DirectedPoint position, Speed speed, Acceleration acceleration, Length odometer]
      */
-    public static TimedEventType MOVE_EVENT = new TimedEventType("GTU.MOVE",
+    public static EventType MOVE_EVENT = new EventType("GTU.MOVE",
             new MetaData("GTU move", "GTU id, position, speed, acceleration, odometer",
                     new ObjectDescriptor[] {new ObjectDescriptor("Id", "GTU Id", String.class),
                             new ObjectDescriptor("position", "position", PositionVector.class),
@@ -1018,7 +1010,7 @@ public class Gtu extends EventProducer implements HierarchicallyTyped<GtuType, G
      * The event type for pub/sub indicating destruction of the GTU. <br>
      * Payload: [String id, DirectedPoint lastPosition, Length odometer]
      */
-    public static TimedEventType DESTROY_EVENT = new TimedEventType("GTU.DESTROY",
+    public static EventType DESTROY_EVENT = new EventType("GTU.DESTROY",
             new MetaData("GTU destroy", "GTU id, final position, final odometer",
                     new ObjectDescriptor[] {new ObjectDescriptor("Id", "GTU Id", String.class),
                             new ObjectDescriptor("position", "position", PositionVector.class),

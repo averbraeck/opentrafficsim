@@ -3,7 +3,7 @@ package org.opentrafficsim.core.object;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.event.EventProducerInterface;
+import org.djutils.event.EventProducer;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.OtsLine3D;
@@ -19,7 +19,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public interface LocatedObject extends Locatable, Identifiable, EventProducerInterface, Serializable
+public interface LocatedObject extends Locatable, Identifiable, EventProducer, Serializable
 {
     /** @return the outline geometry of the object. */
     OtsLine3D getGeometry();

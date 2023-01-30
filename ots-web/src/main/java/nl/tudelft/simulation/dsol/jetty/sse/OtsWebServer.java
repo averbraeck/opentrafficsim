@@ -18,8 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.Point2d;
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
 import org.djutils.event.TimedEvent;
 import org.djutils.io.URLResource;
 import org.eclipse.jetty.server.Handler;
@@ -53,7 +53,7 @@ import nl.tudelft.simulation.introspection.beans.BeanIntrospector;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public abstract class OtsWebServer implements EventListenerInterface
+public abstract class OtsWebServer implements EventListener
 {
     /** the title for the model window. */
     private final String title;
@@ -94,7 +94,7 @@ public abstract class OtsWebServer implements EventListenerInterface
             WebAnimationToggles.setTextAnimationTogglesStandard(this.animationPanel);
             // get the already created elements in context(/animation/D2)
             this.animationPanel.notify(new TimedEvent(ReplicationInterface.START_REPLICATION_EVENT,
-                    this.simulator.getSourceId(), null, this.simulator.getSimulatorTime()));
+                    null, this.simulator.getSimulatorTime()));
         }
 
         new ServerThread().start();
@@ -226,7 +226,7 @@ public abstract class OtsWebServer implements EventListenerInterface
 
     /** {@inheritDoc} */
     @Override
-    public void notify(final EventInterface event) throws RemoteException
+    public void notify(final Event event) throws RemoteException
     {
         if (event.getType().equals(SimulatorInterface.START_EVENT))
         {

@@ -103,12 +103,6 @@ public class OtsReplicationTest
             // Do nothing
         }
 
-        @Override
-        public Serializable getSourceId()
-        {
-            return "sourceID";
-        }
-
     }
 
 }

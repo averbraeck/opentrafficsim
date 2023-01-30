@@ -212,11 +212,4 @@ class DummyModelForSensorTest extends AbstractOtsModel
     {
         return null;
     }
-
-    /** {@inheritDoc} */
-    @Override
-    public Serializable getSourceId()
-    {
-        return "SensorTest.Model";
-    }
 }

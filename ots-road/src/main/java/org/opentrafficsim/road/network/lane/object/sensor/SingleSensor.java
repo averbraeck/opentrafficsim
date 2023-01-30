@@ -2,7 +2,7 @@ package org.opentrafficsim.road.network.lane.object.sensor;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.event.TimedEventType;
+import org.djutils.event.EventType;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -38,7 +38,7 @@ public interface SingleSensor extends Sensor, Comparable<SingleSensor>, LaneBase
      * The <b>timed</b> event type for pub/sub indicating the triggering of a Sensor on a lane. <br>
      * Payload: Object[] {String sensorId, Sensor sensor, LaneBasedGtu gtu, RelativePosition.TYPE relativePosition}
      */
-    TimedEventType SENSOR_TRIGGER_EVENT = new TimedEventType("SENSOR.TRIGGER");
+    EventType SENSOR_TRIGGER_EVENT = new EventType("SENSOR.TRIGGER");
 
     /** Default elevation of a sensor; if the lane is not at elevation 0; this value is probably far off. */
     Length DEFAULT_SENSOR_ELEVATION = new Length(0.1, LengthUnit.METER);

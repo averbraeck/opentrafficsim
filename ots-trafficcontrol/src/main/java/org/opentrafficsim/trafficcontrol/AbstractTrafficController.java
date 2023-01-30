@@ -1,6 +1,6 @@
 package org.opentrafficsim.trafficcontrol;
 
-import org.djutils.event.EventProducer;
+import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
@@ -13,7 +13,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class AbstractTrafficController extends EventProducer implements TrafficController
+public abstract class AbstractTrafficController extends LocalEventProducer implements TrafficController
 {
 
     /** */

@@ -5,7 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.event.EventProducer;
+import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
@@ -27,7 +27,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class OtsLink extends EventProducer implements Link, Serializable, Locatable
+public class OtsLink extends LocalEventProducer implements Link, Serializable, Locatable
 {
     /** */
     private static final long serialVersionUID = 20150101L;
@@ -49,7 +49,7 @@ public class OtsLink extends EventProducer implements Link, Serializable, Locata
 
     /** Design line of the link. */
     private final OtsLine3D designLine;
-    
+
     /** the shape. */
     private final OtsShape shape;
 
@@ -178,7 +178,7 @@ public class OtsLink extends EventProducer implements Link, Serializable, Locata
     {
         return this.designLine;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public OtsShape getShape()
@@ -289,10 +289,4 @@ public class OtsLink extends EventProducer implements Link, Serializable, Locata
         return true;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public Serializable getSourceId()
-    {
-        return this;
-    }
 }

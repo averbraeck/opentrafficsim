@@ -343,10 +343,10 @@ public final class XmlNetworkLaneParser implements Serializable
         }
 
         // The code below can be used to visualize the LaneStructure of a particular GTU
-        /*-EventListenerInterface listener = new EventListenerInterface()
+        /*-EventListener listener = new EventListener()
         {
             @Override
-            public void notify(final EventInterface event) throws RemoteException
+            public void notify(final Event event) throws RemoteException
             {
                 LaneBasedGtu gtu = (LaneBasedGtu) event.getContent();
                 if (gtu.getId().equals("27"))

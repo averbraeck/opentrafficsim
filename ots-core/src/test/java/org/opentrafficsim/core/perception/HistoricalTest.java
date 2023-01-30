@@ -233,8 +233,6 @@ public class HistoricalTest
         hist.put(2, "4.0"); // 0=3.0, 2=4.0
         Try.testFail(() -> hist.keySet().clear(), "HistoricalMap keySet clear should fail.",
                 UnsupportedOperationException.class);
-        Try.testSucceed(() -> hist.keySet().size(), "HistoricalMap keySet size should not fail.",
-                UnsupportedOperationException.class);
         this.time = Time.instantiateSI(6.0);
         hist.clear();
         hist.putAll(asMap(5, "5.0", 6, "6.0"));

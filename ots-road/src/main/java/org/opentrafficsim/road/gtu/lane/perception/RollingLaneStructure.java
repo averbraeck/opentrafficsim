@@ -14,8 +14,8 @@ import java.util.TreeSet;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -99,7 +99,7 @@ import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  */
-public class RollingLaneStructure implements LaneStructure, Serializable, EventListenerInterface
+public class RollingLaneStructure implements LaneStructure, Serializable, EventListener
 {
     /** */
     private static final long serialVersionUID = 20160400L;
@@ -1540,7 +1540,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
 
     /** {@inheritDoc} */
     @Override
-    public void notify(final EventInterface event) throws RemoteException
+    public void notify(final Event event) throws RemoteException
     {
         // triggers an update of the lane structure at the end of the final plan during the lane change, which is deviative
         this.previouslyDeviative = false;

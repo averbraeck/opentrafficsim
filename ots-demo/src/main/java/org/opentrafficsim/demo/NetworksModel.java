@@ -1,6 +1,5 @@
 package org.opentrafficsim.demo;
 
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -21,9 +20,9 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.base.DoubleScalar;
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
-import org.djutils.event.EventTypeInterface;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
+import org.djutils.event.EventType;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.definitions.DefaultsNl;
@@ -97,7 +96,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class NetworksModel extends AbstractOtsModel implements EventListenerInterface, UNITS
+public class NetworksModel extends AbstractOtsModel implements EventListener, UNITS
 {
     /** */
     private static final long serialVersionUID = 20140815L;
@@ -495,9 +494,9 @@ public class NetworksModel extends AbstractOtsModel implements EventListenerInte
 
     /** {@inheritDoc} */
     @Override
-    public void notify(final EventInterface event) throws RemoteException
+    public void notify(final Event event) throws RemoteException
     {
-        EventTypeInterface eventType = event.getType();
+        EventType eventType = event.getType();
         if (Network.GTU_ADD_EVENT.equals(eventType))
         {
             System.out.println("A GTU was created (id " + (String) event.getContent() + ")");
@@ -549,13 +548,6 @@ public class NetworksModel extends AbstractOtsModel implements EventListenerInte
     public final Length getMaximumDistance()
     {
         return this.maximumDistance;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Serializable getSourceId()
-    {
-        return "NetworksModel";
     }
 
 }

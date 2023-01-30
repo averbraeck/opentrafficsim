@@ -32,8 +32,8 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.cli.CliException;
 import org.djutils.cli.CliUtil;
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
@@ -444,7 +444,7 @@ public class StrategiesDemo extends AbstractSimulationScript
     }
 
     /** Lane change listener. */
-    private class KmplcListener implements EventListenerInterface
+    private class KmplcListener implements EventListener
     {
         /** Label to show statistic. */
         private final JLabel label;
@@ -468,7 +468,7 @@ public class StrategiesDemo extends AbstractSimulationScript
         /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
-        public void notify(final EventInterface event) throws RemoteException
+        public void notify(final Event event) throws RemoteException
         {
             if (event.getType().equals(LaneBasedGtu.LANE_CHANGE_EVENT))
             {

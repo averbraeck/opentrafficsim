@@ -3,12 +3,12 @@ package org.opentrafficsim.sim0mq.publisher;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
 import org.djutils.event.EventProducer;
-import org.djutils.event.EventProducerInterface;
+import org.djutils.event.EventType;
+import org.djutils.event.LocalEventProducer;
 import org.djutils.event.TimedEvent;
-import org.djutils.event.TimedEventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
@@ -32,13 +32,12 @@ public class SimulatorStateTransceiver extends AbstractTransceiver
 
     /** Multiplexes SimulatorInterface.START_EVENT and SimulatorInterface.STOP_EVENT. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    final EventProducerInterface eventMultiplexer;
+    final EventProducer eventMultiplexer;
 
     /** The event that will be emitted for either the START_EVENT or the STOP_EVENT. */
-    public static final TimedEventType SIMULATOR_STATE_CHANGED =
-            new TimedEventType(new MetaData("SIMULATOR_STATE_CHANGED_EVENT", "simulator started or stopped",
-                    new ObjectDescriptor[] {new ObjectDescriptor("New simulator state",
-                            "New simulator state; true if running; false if stopped", Boolean.class)}));
+    public static final EventType SIMULATOR_STATE_CHANGED = new EventType(new MetaData("SIMULATOR_STATE_CHANGED_EVENT",
+            "simulator started or stopped", new ObjectDescriptor[] {new ObjectDescriptor("New simulator state",
+                    "New simulator state; true if running; false if stopped", Boolean.class)}));
 
     /**
      * Construct a new SimulatorStateTransceiver.
@@ -78,11 +77,11 @@ public class SimulatorStateTransceiver extends AbstractTransceiver
         return new Object[] {result};
     }
 
-    /** Result of the getLookupEventProducerInterface method. */
-    private LookupEventProducerInterface lepi = new LookupEventProducerInterface()
+    /** Result of the getLookupEventProducer method. */
+    private LookupEventProducer lepi = new LookupEventProducer()
     {
         @Override
-        public EventProducerInterface lookup(final Object[] address, final ReturnWrapper returnWrapper)
+        public EventProducer lookup(final Object[] address, final ReturnWrapper returnWrapper)
                 throws Sim0MQException, SerializationException
         {
             String bad = AbstractTransceiver.verifyMetaData(MetaData.EMPTY, address);
@@ -102,10 +101,10 @@ public class SimulatorStateTransceiver extends AbstractTransceiver
     };
 
     /**
-     * Retrieve the event LookupEventProducerInterface.
+     * Retrieve the event LookupEventProducer.
      * @return EventProducerInterface; the event multiplexer
      */
-    public LookupEventProducerInterface getLookupEventProducerInterface()
+    public LookupEventProducer getLookupEventProducer()
     {
         return this.lepi;
     }
@@ -116,7 +115,7 @@ public class SimulatorStateTransceiver extends AbstractTransceiver
  * Create a subscription to SimulatorInterface.START_EVENT and SimulatorInterface.STOP_EVENT and emit a SIMULATOR_STATE_CHANGED
  * event for each.
  */
-class EventMultiplexer extends EventProducer implements EventListenerInterface
+class EventMultiplexer extends LocalEventProducer implements EventListener
 {
     /** ... */
     private static final long serialVersionUID = 20200618L;
@@ -133,7 +132,7 @@ class EventMultiplexer extends EventProducer implements EventListenerInterface
 
     /** {@inheritDoc} */
     @Override
-    public void notify(final EventInterface event) throws RemoteException
+    public void notify(final Event event) throws RemoteException
     {
         notifyTimedEvent(event);
     }
@@ -144,20 +143,12 @@ class EventMultiplexer extends EventProducer implements EventListenerInterface
      * @param <C> the casting class for the event timestamp
      * @param event the event to be notified of
      */
-    private <C extends Serializable & Comparable<C>> void notifyTimedEvent(final EventInterface event)
+    private <C extends Serializable & Comparable<C>> void notifyTimedEvent(final Event event)
     {
         @SuppressWarnings("unchecked")
         TimedEvent<C> timedEvent = (TimedEvent<C>) event;
         fireTimedEvent(SimulatorStateTransceiver.SIMULATOR_STATE_CHANGED,
                 event.getType().equals(SimulatorInterface.START_EVENT), timedEvent.getTimeStamp());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Serializable getSourceId()
-    {
-        // TODO Auto-generated method stub
-        return "EventMultiplexer";
     }
 
 }

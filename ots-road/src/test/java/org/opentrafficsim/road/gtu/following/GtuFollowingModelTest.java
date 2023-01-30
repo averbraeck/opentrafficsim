@@ -367,12 +367,5 @@ public class GtuFollowingModelTest implements UNITS
         {
             return this.network;
         }
-
-        /** {@inheritDoc} */
-        @Override
-        public Serializable getSourceId()
-        {
-            return "GtuFollowingModelTest.Model";
-        }
     }
 }

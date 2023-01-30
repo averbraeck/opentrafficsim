@@ -90,12 +90,6 @@ public class XmlOdParserTest
             {
                 return XmlOdParserTest.this.network;
             }
-
-            @Override
-            public Serializable getSourceId()
-            {
-                return "XmlOdParserTest.Model";
-            }
         };
         this.simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), model);
         this.gtuTypes.add(DefaultsNl.CAR);

@@ -18,7 +18,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.event.TimedEventType;
+import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
@@ -135,41 +135,42 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the lane. <br>
      * Payload: Object[] {String gtuId, int count_after_addition, String laneId, String linkId}
      */
-    public static final TimedEventType GTU_ADD_EVENT = new TimedEventType("LANE.GTU.ADD");
-    // public static final TimedEventType GTU_ADD_EVENT = new TimedEventType("LANE.GTU.ADD",
+    public static final EventType GTU_ADD_EVENT = new EventType("LANE.GTU.ADD");
+    // public static final EventType GTU_ADD_EVENT = new EventType("LANE.GTU.ADD",
     // new MetaData("GTU added to lane", "GTU added",
     // new ObjectDescriptor[] { new ObjectDescriptor("Id of newly added GTU", "GTU id", String.class),
     // new ObjectDescriptor("New number of GTUs in lane", "GTU count", Integer.class) }));
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the removal of a GTU from the lane. <br>
-     * Payload: Object[] {String gtuId, LaneBasedGtu gtu, int count_after_removal, Length position}
+     * Payload: Object[] {String gtuId, LaneBasedGtu gtu, int count_after_removal, Length position, String laneId, String
+     * linkId}
      */
-    public static final TimedEventType GTU_REMOVE_EVENT = new TimedEventType("LANE.GTU.REMOVE");
+    public static final EventType GTU_REMOVE_EVENT = new EventType("LANE.GTU.REMOVE");
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the addition of a Sensor to the lane. <br>
      * Payload: Object[] {String sensorId, Sensor sensor}
      */
-    public static final TimedEventType SENSOR_ADD_EVENT = new TimedEventType("LANE.SENSOR.ADD");
+    public static final EventType SENSOR_ADD_EVENT = new EventType("LANE.SENSOR.ADD");
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the removal of a Sensor from the lane. <br>
      * Payload: Object[] {String sensorId, Sensor sensor}
      */
-    public static final TimedEventType SENSOR_REMOVE_EVENT = new TimedEventType("LANE.SENSOR.REMOVE");
+    public static final EventType SENSOR_REMOVE_EVENT = new EventType("LANE.SENSOR.REMOVE");
 
     /**
      * The event type for pub/sub indicating the addition of a LaneBasedObject to the lane. <br>
      * Payload: Object[] {LaneBasedObject laneBasedObject}
      */
-    public static final TimedEventType OBJECT_ADD_EVENT = new TimedEventType("LANE.OBJECT.ADD");
+    public static final EventType OBJECT_ADD_EVENT = new EventType("LANE.OBJECT.ADD");
 
     /**
      * The event type for pub/sub indicating the removal of a LaneBasedObject from the lane. <br>
      * Payload: Object[] {LaneBasedObject laneBasedObject}
      */
-    public static final TimedEventType OBJECT_REMOVE_EVENT = new TimedEventType("LANE.OBJECT.REMOVE");
+    public static final EventType OBJECT_REMOVE_EVENT = new EventType("LANE.OBJECT.REMOVE");
 
     /**
      * Construct a new Lane.
@@ -584,8 +585,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                                     TimeUnit.DEFAULT);
                         }
                         SimEvent<Duration> event =
-                                new SimEvent<>(new Duration(triggerTime.minus(gtu.getSimulator().getStartTimeAbs())), this,
-                                        sensor, "trigger", new Object[] {gtu});
+                                new SimEvent<>(new Duration(triggerTime.minus(gtu.getSimulator().getStartTimeAbs())), sensor,
+                                        "trigger", new Object[] {gtu});
                         gtu.getSimulator().scheduleEvent(event);
                         gtu.addTrigger(this, event);
                     }
@@ -594,8 +595,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                     {
                         // TODO this is a hack for when sink sensors aren't perfectly adjacent or the GTU overshoots with nose
                         // due to curvature
-                        SimEvent<Duration> event = new SimEvent<>(new Duration(gtu.getSimulator().getSimulatorTime()), this,
-                                sensor, "trigger", new Object[] {gtu});
+                        SimEvent<Duration> event = new SimEvent<>(new Duration(gtu.getSimulator().getSimulatorTime()), sensor,
+                                "trigger", new Object[] {gtu});
                         gtu.getSimulator().scheduleEvent(event);
                         gtu.addTrigger(this, event);
                     }
@@ -837,7 +838,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         boolean contained = this.gtuList.remove(gtu);
         if (contained)
         {
-            fireTimedEvent(Lane.GTU_REMOVE_EVENT, new Object[] {gtu.getId(), gtu, this.gtuList.size(), position},
+            fireTimedEvent(Lane.GTU_REMOVE_EVENT,
+                    new Object[] {gtu.getId(), gtu, this.gtuList.size(), position, getId(), getParentLink().getId()},
                     gtu.getSimulator().getSimulatorTime());
         }
         if (removeFromParentLink)
@@ -892,9 +894,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         {
             return null;
         }
-        int[] search = lineSearch((
-                final int index
-        ) ->
+        int[] search = lineSearch((final int index) ->
         {
             LaneBasedGtu gtu = list.get(index);
             return gtu.position(this, gtu.getRelativePositions().get(relativePosition), when).si;
@@ -924,9 +924,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         {
             return null;
         }
-        int[] search = lineSearch((
-                final int index
-        ) ->
+        int[] search = lineSearch((final int index) ->
         {
             LaneBasedGtu gtu = list.get(index);
             return gtu.position(this, gtu.getRelativePositions().get(relativePosition), when).si;
@@ -1379,9 +1377,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      */
     public final int indexOfGtu(final LaneBasedGtu gtu)
     {
-        return Collections.binarySearch(this.gtuList, gtu, (
-                gtu1, gtu2
-        ) ->
+        return Collections.binarySearch(this.gtuList, gtu, (gtu1, gtu2) ->
         {
             try
             {
@@ -1402,9 +1398,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      */
     public final int indexOfGtu(final LaneBasedGtu gtu, final Time time)
     {
-        return Collections.binarySearch(getGtuList(time), gtu, (
-                gtu1, gtu2
-        ) ->
+        return Collections.binarySearch(getGtuList(time), gtu, (gtu1, gtu2) ->
         {
             try
             {

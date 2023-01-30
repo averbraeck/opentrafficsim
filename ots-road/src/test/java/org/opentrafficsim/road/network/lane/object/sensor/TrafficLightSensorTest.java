@@ -2,7 +2,6 @@ package org.opentrafficsim.road.network.lane.object.sensor;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -22,8 +21,8 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.definitions.DefaultsNl;
@@ -65,7 +64,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class TrafficLightSensorTest implements EventListenerInterface
+public class TrafficLightSensorTest implements EventListener
 {
     /**
      * Build the test network.
@@ -257,11 +256,11 @@ public class TrafficLightSensorTest implements EventListenerInterface
     }
 
     /** Storage for logged events. */
-    private List<EventInterface> loggedEvents = new ArrayList<>();
+    private List<Event> loggedEvents = new ArrayList<>();
 
     /** {@inheritDoc} */
     @Override
-    public final void notify(final EventInterface event) throws RemoteException
+    public final void notify(final Event event) throws RemoteException
     {
         System.out.println("Received event " + event);
         this.loggedEvents.add(event);
@@ -293,13 +292,6 @@ public class TrafficLightSensorTest implements EventListenerInterface
         public final OtsRoadNetwork getNetwork()
         {
             return null;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Serializable getSourceId()
-        {
-            return "TrafficLightSensorTest.Model";
         }
     }
 

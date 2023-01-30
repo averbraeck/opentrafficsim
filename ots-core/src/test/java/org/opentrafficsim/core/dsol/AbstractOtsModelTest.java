@@ -90,12 +90,6 @@ public class AbstractOtsModelTest
             // Do nothing
         }
 
-        @Override
-        public Serializable getSourceId()
-        {
-            return "sourceID";
-        }
-
     }
 
 }

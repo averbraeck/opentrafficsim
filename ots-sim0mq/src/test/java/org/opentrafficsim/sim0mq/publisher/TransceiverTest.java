@@ -24,11 +24,11 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.PositionVector;
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
-import org.djutils.event.EventProducerInterface;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
+import org.djutils.event.EventProducer;
+import org.djutils.event.EventType;
 import org.djutils.event.TimedEvent;
-import org.djutils.event.TimedEventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
@@ -78,7 +78,7 @@ public class TransceiverTest
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Object[] lastPayload = null;
 
-    /** Storage for last content submitted to notify method in EventListenerInterface. */
+    /** Storage for last content submitted to notify method in EventListener. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Serializable lastContent = null;
 
@@ -400,18 +400,17 @@ public class TransceiverTest
         result = sst.get(null, storeLastResult);
         assertEquals("get returned one element Object array", 1, result.length);
         assertEquals("Mock simulator pretends be in stopped state", "Starting or running", result[0]);
-        LookupEventProducerInterface lepi = sst.getLookupEventProducerInterface();
-        EventProducerInterface epi = lepi.lookup(null, storeLastResult);
-        TimedEvent<Time> tev =
-                new TimedEvent<>(SimulatorInterface.START_EVENT, simulator, null, new Time(123, TimeUnit.BASE_SECOND));
-        EventListenerInterface recordingListener = new EventListenerInterface()
+        LookupEventProducer lepi = sst.getLookupEventProducer();
+        EventProducer epi = lepi.lookup(null, storeLastResult);
+        TimedEvent<Time> tev = new TimedEvent<>(SimulatorInterface.START_EVENT, null, new Time(123, TimeUnit.BASE_SECOND));
+        EventListener recordingListener = new EventListener()
         {
             /** ... */
             private static final long serialVersionUID = 1L;
 
             @SuppressWarnings("unchecked")
             @Override
-            public void notify(final EventInterface event) throws RemoteException
+            public void notify(final Event event) throws RemoteException
             {
                 TransceiverTest.this.lastContent = event.getContent();
                 TransceiverTest.this.lastTime = null;
@@ -423,11 +422,11 @@ public class TransceiverTest
         };
         epi.addListener(recordingListener, SimulatorStateTransceiver.SIMULATOR_STATE_CHANGED);
         this.lastContent = null;
-        ((EventListenerInterface) epi).notify(tev);
+        ((EventListener) epi).notify(tev);
         assertEquals("last time is 123", 123.0, this.lastTime.si, 0);
-        tev = new TimedEvent<>(SimulatorInterface.STOP_EVENT, simulator, null, new Time(1234, TimeUnit.BASE_SECOND));
+        tev = new TimedEvent<>(SimulatorInterface.STOP_EVENT, null, new Time(1234, TimeUnit.BASE_SECOND));
         this.lastContent = null;
-        ((EventListenerInterface) epi).notify(tev);
+        ((EventListener) epi).notify(tev);
         assertEquals("lastContent is now true", Boolean.FALSE, this.lastContent);
         assertEquals("last time is 1234", 1234.0, this.lastTime.si, 0);
 
@@ -557,7 +556,7 @@ public class TransceiverTest
     @Test
     public void testNoTransceiver()
     {
-        TimedEventType noTranceiver = new TimedEventType("NoTransceiverEventType",
+        EventType noTranceiver = new EventType("NoTransceiverEventType",
                 new MetaData("NoTransceiverEventType", "Event type for which the AbstractEventTransceiver will fail",
                         new ObjectDescriptor[] {new ObjectDescriptor("NoTransceiverEventType",
                                 "Event type for which the AbstractEventTransceiver will fail", NoTransceiver.class)}));

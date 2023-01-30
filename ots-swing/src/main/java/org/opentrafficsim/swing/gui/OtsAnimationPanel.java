@@ -38,8 +38,8 @@ import javax.swing.border.EmptyBorder;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.Point;
 import org.djutils.draw.point.Point2d;
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
 import org.djutils.event.TimedEvent;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
@@ -69,7 +69,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListener, WindowListener, EventListenerInterface
+public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListener, WindowListener, EventListener
 {
     /** */
     private static final long serialVersionUID = 20150617L;
@@ -220,8 +220,8 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         setGtuCountText();
 
         // Tell the animation to build the list of animation objects.
-        this.animationPanel.notify(new TimedEvent(ReplicationInterface.START_REPLICATION_EVENT, simulator.getSourceId(), null,
-                getSimulator().getSimulatorTime()));
+        this.animationPanel.notify(
+                new TimedEvent<>(ReplicationInterface.START_REPLICATION_EVENT, null, getSimulator().getSimulatorTime()));
 
         // switch off the X and Y coordinates in a tooltip.
         this.animationPanel.setShowToolTip(false);
@@ -791,7 +791,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
 
     /** {@inheritDoc} */
     @Override
-    public void notify(final EventInterface event) throws RemoteException
+    public void notify(final Event event) throws RemoteException
     {
         if (event.getType().equals(Network.GTU_ADD_EVENT))
         {

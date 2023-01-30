@@ -3,7 +3,7 @@ package org.opentrafficsim.core.object;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.event.EventProducer;
+import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.animation.Drawable;
@@ -22,7 +22,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class StaticObject extends EventProducer implements LocatedObject, Serializable, Identifiable, Drawable
+public class StaticObject extends LocalEventProducer implements LocatedObject, Serializable, Identifiable, Drawable
 {
     /** */
     private static final long serialVersionUID = 20160400L;
@@ -143,13 +143,6 @@ public class StaticObject extends EventProducer implements LocatedObject, Serial
     public String toString()
     {
         return "StaticObject3D [geometry=" + getGeometry() + ", height=" + this.height + "]";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Serializable getSourceId()
-    {
-        return this.id;
     }
 
 }

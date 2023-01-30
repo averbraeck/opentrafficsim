@@ -428,11 +428,4 @@ class DummyModel extends AbstractOtsModel
         return null;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public Serializable getSourceId()
-    {
-        return "AbstractLaneBasedGtuTest.DummyModel";
-    }
-
 }

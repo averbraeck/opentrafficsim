@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.event.EventProducer;
+import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.logger.CategoryLogger;
@@ -36,7 +36,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class CrossSectionElement extends EventProducer implements Locatable, Serializable, Identifiable, Drawable
+public class CrossSectionElement extends LocalEventProducer implements Locatable, Serializable, Identifiable, Drawable
 {
     /** */
     private static final long serialVersionUID = 20150826L;
@@ -675,13 +675,6 @@ public class CrossSectionElement extends EventProducer implements Locatable, Ser
 
     /** {@inheritDoc} */
     @Override
-    public Serializable getSourceId()
-    {
-        return this; // TODO: for now, lane object is returned as source. See if this can be an id / simple object
-    }
-
-    /** {@inheritDoc} */
-    @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
@@ -690,8 +683,8 @@ public class CrossSectionElement extends EventProducer implements Locatable, Ser
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("checkstyle:designforextension")
     @Override
+    @SuppressWarnings("checkstyle:designforextension")
     public int hashCode()
     {
         final int prime = 31;
@@ -702,8 +695,8 @@ public class CrossSectionElement extends EventProducer implements Locatable, Ser
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     @Override
+    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     public boolean equals(final Object obj)
     {
         if (this == obj)

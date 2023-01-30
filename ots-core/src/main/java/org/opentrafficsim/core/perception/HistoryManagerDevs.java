@@ -4,8 +4,8 @@ import java.rmi.RemoteException;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
@@ -22,7 +22,7 @@ import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class HistoryManagerDevs extends HistoryManager implements EventListenerInterface
+public class HistoryManagerDevs extends HistoryManager implements EventListener
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -83,7 +83,7 @@ public class HistoryManagerDevs extends HistoryManager implements EventListenerI
 
     /** {@inheritDoc} */
     @Override
-    public void notify(final EventInterface event) throws RemoteException
+    public void notify(final Event event) throws RemoteException
     {
         if (event.getType().equals(ReplicationInterface.END_REPLICATION_EVENT))
         {

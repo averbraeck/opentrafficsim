@@ -332,13 +332,6 @@ public class GtuTest
         {
             return null;
         }
-
-        /** {@inheritDoc} */
-        @Override
-        public Serializable getSourceId()
-        {
-            return "GTUModel";
-        }
     }
 
     /** */

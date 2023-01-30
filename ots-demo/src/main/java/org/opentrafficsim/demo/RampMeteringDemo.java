@@ -23,7 +23,7 @@ import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
 import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.cli.CliUtil;
-import org.djutils.event.EventInterface;
+import org.djutils.event.Event;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.CompressedFileWriter;
@@ -373,7 +373,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    public void notify(final EventInterface event) throws RemoteException
+    public void notify(final Event event) throws RemoteException
     {
         if (event.getType().equals(Network.GTU_ADD_EVENT))
         {

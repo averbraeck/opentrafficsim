@@ -50,11 +50,4 @@ public class FundamentalDiagramModel extends AbstractOtsModel
         this.network = new OtsRoadNetwork("FdNetwork", true, getSimulator());
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public Serializable getSourceId()
-    {
-        return "FdDemo";
-    }
-
 }

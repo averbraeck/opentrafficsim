@@ -210,12 +210,5 @@ public class TurboRoundaboutDemo extends OtsSimulationApplication<TurboRoundabou
             return this.network;
         }
 
-        /** {@inheritDoc} */
-        @Override
-        public Serializable getSourceId()
-        {
-            return "TurboRoundaboutModel";
-        }
-
     }
 }

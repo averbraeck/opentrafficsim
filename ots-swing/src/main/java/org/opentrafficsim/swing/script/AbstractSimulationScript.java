@@ -1,7 +1,6 @@
 package org.opentrafficsim.swing.script;
 
 import java.awt.Dimension;
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,8 +12,8 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.cli.Checkable;
 import org.djutils.cli.CliException;
 import org.djutils.cli.CliUtil;
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.reflection.ClassUtil;
@@ -53,7 +52,7 @@ import picocli.CommandLine.Option;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 @Command(description = "Test program for CLI", name = "Program", mixinStandardHelpOptions = true, showDefaultValues = true)
-public abstract class AbstractSimulationScript implements EventListenerInterface, Checkable
+public abstract class AbstractSimulationScript implements EventListener, Checkable
 {
     /** */
     private static final long serialVersionUID = 20200129L;
@@ -251,7 +250,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 
     /** {@inheritDoc} */
     @Override
-    public void notify(final EventInterface event) throws RemoteException
+    public void notify(final Event event) throws RemoteException
     {
         if (event.getType().equals(ReplicationInterface.END_REPLICATION_EVENT))
         {
@@ -413,13 +412,6 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         public OtsRoadNetwork getNetwork()
         {
             return AbstractSimulationScript.this.network;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Serializable getSourceId()
-        {
-            return getShortName();
         }
 
     }

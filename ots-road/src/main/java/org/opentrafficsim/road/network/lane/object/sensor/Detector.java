@@ -18,7 +18,7 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.event.TimedEventType;
+import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.metadata.MetaData;
@@ -50,13 +50,13 @@ public class Detector extends AbstractSensor
     private static final long serialVersionUID = 20180312L;
 
     /** Trigger event. Payload: [Id of LaneBasedGtu]. */
-    public static final TimedEventType DETECTOR_TRIGGERED = new TimedEventType("DUAL_LOOP_DETECTOR.TRIGGER",
+    public static final EventType DETECTOR_TRIGGERED = new EventType("DUAL_LOOP_DETECTOR.TRIGGER",
             new MetaData("Dual loop detector triggered", "Dual loop detector triggered",
                     new ObjectDescriptor[] {new ObjectDescriptor("Id of GTU", "Id of GTU", String.class)}));
 
     /** Aggregation event. Payload: [Frequency, measurement, ...]/ */
-    public static final TimedEventType DETECTOR_AGGREGATE =
-            new TimedEventType("DUAL_LOOP_DETECTOR.AGGREGATE", MetaData.NO_META_DATA);
+    public static final EventType DETECTOR_AGGREGATE =
+            new EventType("DUAL_LOOP_DETECTOR.AGGREGATE", MetaData.NO_META_DATA);
 
     /** Mean speed measurement. */
     public static final DetectorMeasurement<Double, Speed> MEAN_SPEED = new DetectorMeasurement<Double, Speed>()
@@ -338,7 +338,7 @@ public class Detector extends AbstractSensor
         Throw.when(aggregation.si <= 0.0, IllegalArgumentException.class, "Aggregation time should be positive.");
         this.length = length;
         this.aggregation = aggregation;
-        Try.execute(() -> simulator.scheduleEventAbsTime(Time.instantiateSI(aggregation.si), this, this, "aggregate", null),
+        Try.execute(() -> simulator.scheduleEventAbsTime(Time.instantiateSI(aggregation.si), this, "aggregate", null),
                 "");
         for (DetectorMeasurement<?, ?> measurement : measurements)
         {
@@ -467,7 +467,7 @@ public class Detector extends AbstractSensor
         this.period++;
         double t = this.aggregation.si * this.period;
         Time time = Time.instantiateSI(t);
-        Try.execute(() -> getSimulator().scheduleEventAbsTime(time, this, this, "aggregate", null), "");
+        Try.execute(() -> getSimulator().scheduleEventAbsTime(time, this, "aggregate", null), "");
     }
 
     /**

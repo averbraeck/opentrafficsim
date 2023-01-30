@@ -9,8 +9,8 @@ import java.rmi.RemoteException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
 import org.junit.Test;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3D;
@@ -28,13 +28,13 @@ import org.opentrafficsim.core.network.OtsNetwork;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class StaticObjectTest implements EventListenerInterface
+public class StaticObjectTest implements EventListener
 {
     /** ... */
     private static final long serialVersionUID = 1L;
 
     /** Last received event. */
-    private EventInterface lastEvent = null;
+    private Event lastEvent = null;
 
     /**
      * Test the StaticObject class.
@@ -106,7 +106,7 @@ public class StaticObjectTest implements EventListenerInterface
      * Receiver for the events that should be emitted when a StaticObject is constructed.
      */
     @Override
-    public void notify(final EventInterface event) throws RemoteException
+    public void notify(final Event event) throws RemoteException
     {
         this.lastEvent = event;
     }

@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.network.lane.object.sensor;
 
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -9,10 +8,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
-import org.djutils.event.EventProducer;
-import org.djutils.event.EventProducerInterface;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
+import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -43,8 +41,8 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class TrafficLightSensor extends EventProducer
-        implements EventListenerInterface, NonDirectionalOccupancySensor, EventProducerInterface, Locatable, Sensor
+public class TrafficLightSensor extends LocalEventProducer
+        implements EventListener, NonDirectionalOccupancySensor, Locatable, Sensor
 {
     /** */
     private static final long serialVersionUID = 20161103L;
@@ -200,7 +198,7 @@ public class TrafficLightSensor extends EventProducer
 
     /** {@inheritDoc} */
     @Override
-    public final void notify(final EventInterface event) throws RemoteException
+    public final void notify(final Event event) throws RemoteException
     {
         // System.out.println("Received notification: " + event);
         String gtuId = (String) ((Object[]) event.getContent())[0];
@@ -410,13 +408,6 @@ public class TrafficLightSensor extends EventProducer
         return "TrafficLightSensor [id=" + this.id + ", entryA=" + this.entryA + ", exitA=" + this.exitA + ", entryB="
                 + this.entryB + ", exitB=" + this.exitB + ", currentGTUs=" + this.currentGTUs + ", lanes=" + this.lanes
                 + ", path=" + this.path + "]";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Serializable getSourceId()
-    {
-        return this.id;
     }
 
 }

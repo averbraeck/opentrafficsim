@@ -3,7 +3,6 @@ package org.opentrafficsim.sim0mq.publisher;
 import org.djunits.Throw;
 import org.djutils.event.Event;
 import org.djutils.event.EventType;
-import org.djutils.event.EventTypeInterface;
 import org.djutils.metadata.MetaData;
 import org.djutils.serialization.EndianUtil;
 import org.djutils.serialization.SerializationException;
@@ -39,7 +38,7 @@ public class EventSerializer<E extends Event> implements Serializer<Event>
     @Override
     public int size(final Event event) throws SerializationException
     {
-        EventTypeInterface et = event.getType();
+        EventType et = event.getType();
         Throw.when(et.equals(this.eventType), ClassCastException.class,
                 "EventSerializer for " + this.eventType.getName() + " cannot handle event " + event);
         int result = et.getName().length();

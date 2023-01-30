@@ -49,8 +49,8 @@ public class DSOLProblem
         OtsModelInterface model = new DummyModel(this.simulator);
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), model);
         Time eventTime = this.simulator.getSimulatorAbsTime().plus(new Duration(10, DurationUnit.SECOND));
-        SimEvent<Duration> se = new SimEvent<>(new Duration(eventTime.minus(this.simulator.getStartTimeAbs())), this, this,
-                "move", new Object[] {});
+        SimEvent<Duration> se =
+                new SimEvent<>(new Duration(eventTime.minus(this.simulator.getStartTimeAbs())), this, "move", new Object[] {});
         this.simulator.scheduleEvent(se);
         double step = 0.01d;
         for (int i = 0;; i++)
@@ -134,13 +134,6 @@ class DummyModel extends AbstractOtsModel
     public final OtsRoadNetwork getNetwork()
     {
         return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Serializable getSourceId()
-    {
-        return "AbstractLaneBasedGtuTest.DummyModel";
     }
 
 }

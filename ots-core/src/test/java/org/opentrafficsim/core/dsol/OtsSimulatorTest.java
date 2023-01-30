@@ -39,7 +39,6 @@ public class OtsSimulatorTest
     {
         String id = "Simulator for OTSSimulator test";
         OtsSimulator simulator = new OtsSimulator(id);
-        assertEquals("id can be retrieved", id, simulator.getSourceId());
         Time startTime = new Time(10, TimeUnit.BASE_SECOND);
         Duration warmupDuration = new Duration(20, DurationUnit.SECOND);
         Duration runLength = new Duration(500, DurationUnit.SECOND);
@@ -50,8 +49,7 @@ public class OtsSimulatorTest
         assertEquals("runLength is returned", runLength, simulator.getReplication().getRunLength());
         assertTrue("toString returns something descriptive", simulator.toString().startsWith("OTSSimulator"));
         String testArgument = "test argument";
-        simulator.scheduleEventAbsTime(new Time(400, TimeUnit.BASE_SECOND), (short) 0, this, this, "eventReceiver",
-                new Object[] {testArgument});
+        simulator.scheduleEventAbsTime(new Time(400, TimeUnit.BASE_SECOND), (short) 0, this, "eventReceiver", new Object[] {testArgument});
         simulator.start();
         while (simulator.isStartingOrRunning())
         {

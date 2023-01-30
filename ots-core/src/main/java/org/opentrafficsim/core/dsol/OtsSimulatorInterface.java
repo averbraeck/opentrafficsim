@@ -65,7 +65,6 @@ public interface OtsSimulatorInterface extends DEVSSimulatorInterface<Duration>,
      * @param priority short; should be between <cite>SimEventInterface.MAX_PRIORITY</cite> and
      *            <cite>SimEventInterface.MIN_PRIORITY</cite>; most normal events should use
      *            <cite>SimEventInterface.NORMAL_PRIORITY</cite>
-     * @param source Object; the object that creates/schedules the event
      * @param target Object; the object that must execute the event
      * @param method String; the name of the method of <code>target</code> that must execute the event
      * @param args Object[]; the arguments of the <code>method</code> that must execute the event
@@ -73,11 +72,11 @@ public interface OtsSimulatorInterface extends DEVSSimulatorInterface<Duration>,
      *         may arise later)
      * @throws SimRuntimeException when the <code>executionTime</code> is in the past
      */
-    default SimEvent<Duration> scheduleEventAbsTime(final Time executionTime, final short priority, final Object source,
-            final Object target, final String method, final Object[] args) throws SimRuntimeException
+    default SimEvent<Duration> scheduleEventAbsTime(final Time executionTime, final short priority, final Object target,
+            final String method, final Object[] args) throws SimRuntimeException
     {
         SimEvent<Duration> simEvent =
-                new SimEvent<>(executionTime.minus(getStartTimeAbs()), priority, source, target, method, args);
+                new SimEvent<>(executionTime.minus(getStartTimeAbs()), priority, target, method, args);
         scheduleEvent(simEvent);
         return simEvent;
     }
@@ -85,7 +84,6 @@ public interface OtsSimulatorInterface extends DEVSSimulatorInterface<Duration>,
     /**
      * Construct and schedule a SimEvent using a Time to specify the execution time.
      * @param executionTime Time; the time at which the event must happen
-     * @param source Object; the object that creates/schedules the event
      * @param target Object; the object that must execute the event
      * @param method String; the name of the method of <code>target</code> that must execute the event
      * @param args Object[]; the arguments of the <code>method</code> that must execute the event
@@ -93,10 +91,10 @@ public interface OtsSimulatorInterface extends DEVSSimulatorInterface<Duration>,
      *         may arise later)
      * @throws SimRuntimeException when the <code>executionTime</code> is in the past
      */
-    default SimEvent<Duration> scheduleEventAbsTime(final Time executionTime, final Object source, final Object target,
-            final String method, final Object[] args) throws SimRuntimeException
+    default SimEvent<Duration> scheduleEventAbsTime(final Time executionTime, final Object target, final String method,
+            final Object[] args) throws SimRuntimeException
     {
-        return scheduleEventAbsTime(executionTime, SimEventInterface.NORMAL_PRIORITY, source, target, method, args);
+        return scheduleEventAbsTime(executionTime, SimEventInterface.NORMAL_PRIORITY, target, method, args);
     }
 
     /**

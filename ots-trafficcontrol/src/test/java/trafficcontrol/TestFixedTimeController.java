@@ -397,10 +397,10 @@ public class TestFixedTimeController
                                     for (int second = 0; second <= 300; second++)
                                     {
                                         Object[] args = new Object[] {simulator, ftc, Boolean.TRUE};
-                                        simulator.scheduleEventAbsTime(Time.instantiateSI(second + 0.25), this, this,
-                                                "checkState", args);
-                                        simulator.scheduleEventAbsTime(Time.instantiateSI(second + 0.75), this, this,
-                                                "checkState", args);
+                                        simulator.scheduleEventAbsTime(Time.instantiateSI(second + 0.25), this, "checkState",
+                                                args);
+                                        simulator.scheduleEventAbsTime(Time.instantiateSI(second + 0.75), this, "checkState",
+                                                args);
                                     }
                                     Time stopTime = Time.instantiateSI(300);
                                     simulator.runUpTo(stopTime);

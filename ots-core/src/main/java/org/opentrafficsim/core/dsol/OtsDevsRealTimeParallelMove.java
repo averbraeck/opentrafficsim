@@ -296,7 +296,7 @@ public class OtsDevsRealTimeParallelMove extends DEVSRealTimeAnimator<Duration>
                 {
                     SimEvent<Duration> se = (SimEvent<Duration>) moveEvents.get(i);
                     final SimEventInterface<Duration> moveEvent =
-                            new SimEvent<>(this.simulatorTime, se.getSource(), se.getTarget(), "movePrep", se.getArgs());
+                            new SimEvent<>(this.simulatorTime, se.getTarget(), "movePrep", se.getArgs());
                     this.executor.execute(new Runnable()
                     {
                         @Override
@@ -339,7 +339,7 @@ public class OtsDevsRealTimeParallelMove extends DEVSRealTimeAnimator<Duration>
                 {
                     SimEvent<Duration> se = (SimEvent<Duration>) moveEvents.get(i);
                     final SimEventInterface<Duration> moveEvent =
-                            new SimEvent<>(this.simulatorTime, se.getSource(), se.getTarget(), "moveGenerate", se.getArgs());
+                            new SimEvent<>(this.simulatorTime, se.getTarget(), "moveGenerate", se.getArgs());
                     this.executor.execute(new Runnable()
                     {
                         @Override
@@ -382,7 +382,7 @@ public class OtsDevsRealTimeParallelMove extends DEVSRealTimeAnimator<Duration>
                 {
                     SimEvent<Duration> se = (SimEvent<Duration>) moveEvents.get(i);
                     final SimEventInterface<Duration> moveEvent =
-                            new SimEvent<>(this.simulatorTime, se.getSource(), se.getTarget(), "moveFinish", se.getArgs());
+                            new SimEvent<>(this.simulatorTime, se.getTarget(), "moveFinish", se.getArgs());
                     this.executor.execute(new Runnable()
                     {
                         @Override

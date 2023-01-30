@@ -196,8 +196,8 @@ public class CycleTimeLightController implements RampMeteringLightController
                         green = cycleRedTime;
                     }
                     CycleTimeLightController.this.greenEvents.put(this.trafficLight,
-                            CycleTimeLightController.this.simulator.scheduleEventAbsTime(green, this,
-                                    CycleTimeLightController.this, "setGreen", new Object[] {this.trafficLight}));
+                            CycleTimeLightController.this.simulator.scheduleEventAbsTime(green, CycleTimeLightController.this,
+                                    "setGreen", new Object[] {this.trafficLight}));
                 }
                 catch (SimRuntimeException exception)
                 {

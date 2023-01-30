@@ -155,7 +155,7 @@ public class ContourPlotTest implements UNITS
         Mockito.when(this.section0.getLength()).thenReturn(Length.valueOf("2000m"));
         Mockito.when(this.section1.getLength()).thenReturn(Length.valueOf("766m"));
         Mockito.when(this.mockedSimulator.scheduleEventAbsTime(ArgumentMatchers.any(Time.class), ArgumentMatchers.any(),
-                ArgumentMatchers.any(), ArgumentMatchers.anyString(), ArgumentMatchers.isNull()))
+                ArgumentMatchers.anyString(), ArgumentMatchers.isNull()))
                 .thenAnswer(new Answer<SimEventInterface<Duration>>()
                 {
                     @Override

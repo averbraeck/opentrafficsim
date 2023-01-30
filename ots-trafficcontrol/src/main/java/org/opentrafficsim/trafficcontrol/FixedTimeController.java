@@ -12,7 +12,7 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.event.EventInterface;
+import org.djutils.event.Event;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
@@ -257,7 +257,7 @@ public class FixedTimeController extends AbstractTrafficController
             }
         }
         // Schedule setup at time == 0 (when the network should be fully created and all traffic lights have been constructed)
-        simulator.scheduleEventAbsTime(Time.ZERO, this, this, "setup", new Object[] {simulator, network});
+        simulator.scheduleEventAbsTime(Time.ZERO, this, "setup", new Object[] {simulator, network});
     }
 
     /**
@@ -277,7 +277,7 @@ public class FixedTimeController extends AbstractTrafficController
 
     /** {@inheritDoc} */
     @Override
-    public void notify(final EventInterface event) throws RemoteException
+    public void notify(final Event event) throws RemoteException
     {
         // nothing
     }
@@ -743,13 +743,6 @@ public class FixedTimeController extends AbstractTrafficController
             return 0;
         }
 
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Serializable getSourceId()
-    {
-        return getId();
     }
 
 }

@@ -1,13 +1,12 @@
 package org.opentrafficsim.core.animation.network;
 
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
-import org.djutils.event.EventProducer;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
+import org.djutils.event.LocalEventProducer;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.animation.DrawingInfo;
 import org.opentrafficsim.core.network.Network;
@@ -20,7 +19,7 @@ import org.opentrafficsim.core.network.Network;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class NetworkAnimation extends EventProducer implements EventListenerInterface
+public class NetworkAnimation extends LocalEventProducer implements EventListener
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -151,19 +150,12 @@ public class NetworkAnimation extends EventProducer implements EventListenerInte
 
     /** {@inheritDoc} */
     @Override
-    public void notify(final EventInterface event) throws RemoteException
+    public void notify(final Event event) throws RemoteException
     {
         if (event.getType().equals(Network.NODE_ADD_EVENT))
         {
             //
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Serializable getSourceId()
-    {
-        return "Animation." + this.network.getId();
     }
 
 }

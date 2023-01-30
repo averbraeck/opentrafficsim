@@ -11,9 +11,9 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
-import org.djutils.event.EventTypeInterface;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
+import org.djutils.event.EventType;
 import org.junit.Test;
 import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.definitions.DefaultsNl;
@@ -37,7 +37,7 @@ import org.opentrafficsim.core.network.route.Route;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class OtsNetworkTest implements EventListenerInterface
+public class OtsNetworkTest implements EventListener
 {
     /** ... */
     private static final long serialVersionUID = 1L;
@@ -366,9 +366,9 @@ public class OtsNetworkTest implements EventListenerInterface
 
     /** {@inheritDoc} */
     @Override
-    public final void notify(final EventInterface event) throws RemoteException
+    public final void notify(final Event event) throws RemoteException
     {
-        EventTypeInterface type = event.getType();
+        EventType type = event.getType();
         if (type.equals(Network.NODE_ADD_EVENT))
         {
             this.nodeAddedCount++;

@@ -5,7 +5,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.io.Serializable;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.RemoteException;
@@ -13,14 +12,10 @@ import java.util.Set;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventProducer;
-import org.djutils.event.EventTypeInterface;
+import org.djutils.event.Event;
+import org.djutils.event.EventType;
+import org.djutils.event.LocalEventProducer;
 import org.opentrafficsim.core.dsol.OtsSimulator;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.network.Network;
-import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.object.NonLocatedObject;
 import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.trafficcontrol.ActuatedTrafficController;
@@ -39,7 +34,7 @@ import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class Ccol extends EventProducer implements ActuatedTrafficController
+public class Ccol extends LocalEventProducer implements ActuatedTrafficController
 {
     /** */
     private static final long serialVersionUID = 20170126L;
@@ -189,9 +184,9 @@ public class Ccol extends EventProducer implements ActuatedTrafficController
 
     /** {@inheritDoc} */
     @Override
-    public void notify(final EventInterface event) throws RemoteException
+    public void notify(final Event event) throws RemoteException
     {
-        EventTypeInterface eventType = event.getType();
+        EventType eventType = event.getType();
         if (eventType.equals(ReplicationInterface.END_REPLICATION_EVENT))
         {
             if (null != this.serverSocket)
@@ -243,13 +238,6 @@ public class Ccol extends EventProducer implements ActuatedTrafficController
         // FIXME: format of messages is TBD
         String message = String.format("DET %s %s", detectorId, detectingGTU);
         this.ccolWriter.print(message);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Serializable getSourceId()
-    {
-        return "CCOL";
     }
 
     /** {@inheritDoc} */

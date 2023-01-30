@@ -553,11 +553,4 @@ class Sim0MQOTSModel extends AbstractOtsModel
         return this.network;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public Serializable getSourceId()
-    {
-        return "Sim0MQPublisherModel";
-    }
-
 }
