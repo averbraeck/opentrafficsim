@@ -28,8 +28,8 @@ import org.opentrafficsim.draw.network.NodeAnimation;
 import org.opentrafficsim.draw.road.BusStopAnimation;
 import org.opentrafficsim.draw.road.ConflictAnimation;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation;
+import org.opentrafficsim.draw.road.DetectorAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation;
-import org.opentrafficsim.draw.road.SensorAnimation;
 import org.opentrafficsim.draw.road.SpeedSignAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
@@ -42,8 +42,8 @@ import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.object.BusStop;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.road.network.lane.object.sensor.DestinationSensor;
-import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
-import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
+import org.opentrafficsim.road.network.lane.object.sensor.Detector;
+import org.opentrafficsim.road.network.lane.object.sensor.SinkDetector;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -267,27 +267,24 @@ public class DefaultAnimationFactory implements EventListener
     {
         try
         {
-            if (object instanceof SinkSensor)
+            if (object instanceof SinkDetector)
             {
-                SinkSensor sensor = (SinkSensor) object;
-                // Renderable2D<SinkSensor> objectAnimation = new SinkAnimation(sensor, this.simulator);
-                Renderable2D<SingleSensor> objectAnimation =
-                        new SensorAnimation(sensor, sensor.getLongitudinalPosition(), this.simulator, Color.YELLOW);
+                SinkDetector detector = (SinkDetector) object;
+                // Renderable2D<SinkSensor> objectAnimation = new SinkAnimation(detector, this.simulator);
+                Renderable2D<Detector> objectAnimation = new DetectorAnimation(detector, this.simulator, Color.YELLOW);
                 this.animatedObjects.put(object, objectAnimation);
             }
             else if (object instanceof DestinationSensor)
             {
-                DestinationSensor sensor = (DestinationSensor) object;
-                // Renderable2D<DestinationSensor> objectAnimation = new DestinationAnimation(sensor, this.simulator);
-                Renderable2D<SingleSensor> objectAnimation =
-                        new SensorAnimation(sensor, sensor.getLongitudinalPosition(), this.simulator, Color.ORANGE);
+                DestinationSensor detector = (DestinationSensor) object;
+                // Renderable2D<DestinationSensor> objectAnimation = new DestinationAnimation(detector, this.simulator);
+                Renderable2D<Detector> objectAnimation = new DetectorAnimation(detector, this.simulator, Color.ORANGE);
                 this.animatedObjects.put(object, objectAnimation);
             }
-            else if (object instanceof SingleSensor)
+            else if (object instanceof Detector)
             {
-                SingleSensor sensor = (SingleSensor) object;
-                Renderable2D<SingleSensor> objectAnimation =
-                        new SensorAnimation(sensor, sensor.getLongitudinalPosition(), this.simulator, Color.GREEN);
+                Detector detector = (Detector) object;
+                Renderable2D<Detector> objectAnimation = new DetectorAnimation(detector, this.simulator, Color.GREEN);
                 this.animatedObjects.put(object, objectAnimation);
             }
             else if (object instanceof Conflict)

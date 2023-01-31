@@ -13,14 +13,14 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
-import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
+import org.opentrafficsim.road.network.lane.object.sensor.Detector;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
- * Sensor animation.
+ * Detector animation.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands.<br>
  * All rights reserved. <br>
@@ -29,39 +29,34 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class SensorAnimation extends AbstractLineAnimation<SingleSensor>
-        implements Renderable2DInterface<SingleSensor>, Serializable
+public class DetectorAnimation extends AbstractLineAnimation<Detector> implements Renderable2DInterface<Detector>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150130L;
 
-    /** the position of the sensor on the lane to determine the width of the lane at that point. */
-    private final Length sensorPosition;
-
-    /** The color of the sensor. */
+    /** The color of the detector. */
     private final Color color;
 
     /** the Text object to destroy when the animation is destroyed. */
     private final Text text;
 
     /**
-     * Construct a SensorAnimation.
-     * @param sensor SingleSensor; the Sensor to draw
-     * @param sensorPosition Length; the position of the sensor on the lane to determine the width of the lane at that point
+     * Construct a DetectorAnimation.
+     * @param detector Detector; the Sensor to draw
      * @param simulator OTSSimulatorInterface; the simulator to schedule on
-     * @param color Color; the display color of the sensor
+     * @param color Color; the display color of the detector
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
-    public SensorAnimation(final SingleSensor sensor, final Length sensorPosition, final OtsSimulatorInterface simulator,
-            final Color color) throws NamingException, RemoteException
+    public DetectorAnimation(final Detector detector, final OtsSimulatorInterface simulator, final Color color)
+            throws NamingException, RemoteException
     {
-        super(sensor, simulator, .9, new Length(0.5, LengthUnit.SI));
-        this.sensorPosition = sensorPosition;
+        super(detector, simulator, .9, new Length(0.5, LengthUnit.SI));
         this.color = color;
 
-        this.text = new Text(sensor, sensor.getLane().getParentLink().getId() + "." + sensor.getLane().getId() + sensor.getId(),
-                0.0f, (float) getHalfLength() + 0.2f, TextAlignment.CENTER, Color.BLACK, simulator);
+        this.text = new Text(detector,
+                detector.getLane().getParentLink().getId() + "." + detector.getLane().getId() + detector.getId(), 0.0f,
+                (float) getHalfLength() + 0.2f, TextAlignment.CENTER, Color.BLACK, simulator);
     }
 
     /**
@@ -92,11 +87,11 @@ public class SensorAnimation extends AbstractLineAnimation<SingleSensor>
     @Override
     public final String toString()
     {
-        return "SensorAnimation [getSource()=" + this.getSource() + "]";
+        return "DetectorAnimation [getSource()=" + this.getSource() + "]";
     }
 
     /**
-     * Text animation for the Sensor. Separate class to be able to turn it on and off...
+     * Text animation for the Detector. Separate class to be able to turn it on and off...
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>

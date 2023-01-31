@@ -9,7 +9,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
- * A SinkSensor is a sensor that deletes every GTU that hits it.
+ * A SinkDetector is a detector that deletes every GTU that hits it.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands.<br>
  * All rights reserved. <br>
@@ -18,30 +18,30 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class SinkSensor extends AbstractSensor
+public class SinkDetector extends Detector
 {
     /** */
     private static final long serialVersionUID = 20150130L;
 
     /**
      * @param lane Lane; the lane that triggers the deletion of the GTU.
-     * @param position Length; the position of the sensor
+     * @param position Length; the position of the detector
      * @param simulator OTSSimulatorInterface; the simulator to enable animation.
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
-    public SinkSensor(final Lane lane, final Length position, final OtsSimulatorInterface simulator) throws NetworkException
+    public SinkDetector(final Lane lane, final Length position, final OtsSimulatorInterface simulator) throws NetworkException
     {
         this(lane, position, Compatible.EVERYTHING, simulator);
     }
 
     /**
      * @param lane Lane; the lane that triggers the deletion of the GTU.
-     * @param position Length; the position of the sensor
+     * @param position Length; the position of the detector
      * @param compatible Compatible; compatible GTU type and direction
      * @param simulator OTSSimulatorInterface; the simulator to enable animation.
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
-    public SinkSensor(final Lane lane, final Length position, final Compatible compatible,
+    public SinkDetector(final Lane lane, final Length position, final Compatible compatible,
             final OtsSimulatorInterface simulator) throws NetworkException
     {
         super("SINK@" + lane.getFullId() + "." + position, lane, position, RelativePosition.FRONT, simulator,
@@ -59,7 +59,7 @@ public class SinkSensor extends AbstractSensor
     @Override
     public final String toString()
     {
-        return "SinkSensor [Lane=" + this.getLane() + "]";
+        return "SinkDetector [Lane=" + this.getLane() + "]";
     }
 
 }

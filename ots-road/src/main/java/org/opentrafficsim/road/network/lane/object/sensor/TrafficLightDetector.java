@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.lane.object.sensor;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -10,8 +11,10 @@ import java.util.Set;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
+import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
@@ -26,13 +29,15 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.object.trafficlight.FlankSensor;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 
 /**
- * This traffic light sensor reports whether it whether any GTUs are within its area. The area is a sub-section of a Lane. This
- * traffic sensor does <b>not</b> report the total number of GTUs within the area; only whether that number is zero or non-zero.
+ * This traffic light reports whether any GTUs are within its area. The area is two sub-sections on one or two lanes. This
+ * traffic does <b>not</b> report the total number of GTUs within the area; only whether that number is zero or non-zero. This
+ * class does not derive from {@code Detector} as it concerns an area, not a cross-section. All sides of the 2 areas are managed
+ * by 4 {@code Detector}s to capture GTU longitudinal movement, and by listening to events to capture lane changes, vehicle
+ * generation, and vehicle destruction.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -41,28 +46,28 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class TrafficLightSensor extends LocalEventProducer
-        implements EventListener, NonDirectionalOccupancySensor, Locatable, Sensor
+public class TrafficLightDetector extends LocalEventProducer
+        implements EventListener, Locatable, DetectorAnimationToggle, Serializable, Identifiable
 {
     /** */
     private static final long serialVersionUID = 20161103L;
 
-    /** Id of this TrafficLightSensor. */
+    /** Id of this TrafficLightDetector. */
     private final String id;
 
-    /** The sensor that detects when a GTU enters the sensor area at point A. */
-    private final FlankSensor entryA;
+    /** The detector that detects when a GTU enters the detector area at point A. */
+    private final StartEndDetector entryA;
 
-    /** The sensor that detects when a GTU exits the sensor area at point A. */
-    private final FlankSensor exitA;
+    /** The detector that detects when a GTU exits the detector area at point A. */
+    private final StartEndDetector exitA;
 
-    /** The sensor that detects when a GTU enters the sensor area at point B. */
-    private final FlankSensor entryB;
+    /** The detector that detects when a GTU enters the detector area at detectorB. */
+    private final StartEndDetector entryB;
 
-    /** The sensor that detects when a GTU exits the sensor area at point B. */
-    private final FlankSensor exitB;
+    /** The detector that detects when a GTU exits the detector area at point B. */
+    private final StartEndDetector exitB;
 
-    /** GTUs detected by the upSensor, but not yet removed by the downSensor. */
+    /** GTUs detected by the entrance detectors, but not yet removed by the exit detectors. */
     private final Set<LaneBasedGtu> currentGTUs = new LinkedHashSet<>();
 
     /** The lanes that the detector (partly) covers. */
@@ -71,17 +76,33 @@ public class TrafficLightSensor extends LocalEventProducer
     /** The OTS network. */
     private final OtsNetwork network;
 
-    /** Design line of the sensor. */
+    /** Design line of the detector. */
     private final OtsLine3D path;
 
     /**
-     * Construct a new traffic light sensor.<br>
-     * TODO Possibly provide the GtuTypes that trigger the sensor as an argument for the constructor
-     * @param id String; id of this sensor
-     * @param laneA Lane; the lane of the A detection point of this traffic light sensor
-     * @param positionA Length; the position of the A detection point of this traffic light sensor
-     * @param laneB Lane; the lane of the B detection point of this traffic light sensor
-     * @param positionB Length; the position of the B detection point of this traffic light sensor
+     * The <b>timed</b> event type for pub/sub indicating the triggering of the entry of a NonDirectionalOccupancyDetector. <br>
+     * Payload: Object[] {String detectorId, NonDirectionalOccupancyDetector detector, LaneBasedGtu gtu, RelativePosition.TYPE
+     * relativePosition}
+     */
+    public static final EventType TRAFFIC_LIGHT_DETECTOR_TRIGGER_ENTRY_EVENT =
+            new EventType("TRAFFICLIGHTDETECTOR.TRIGGER.ENTRY");
+
+    /**
+     * The <b>timed</b> event type for pub/sub indicating the triggering of the exit of an NonDirectionalOccupancyDetector. <br>
+     * Payload: Object[] {String detectorId, NonDirectionalOccupancyDetector detector, LaneBasedGtu gtu, RelativePosition.TYPE
+     * relativePosition}
+     */
+    public static final EventType TRAFFIC_LIGHT_DETECTOR_TRIGGER_EXIT_EVENT =
+            new EventType("TRAFFICLIGHTDETECTOR.TRIGGER.EXIT");
+
+    /**
+     * Construct a new traffic light detector.<br>
+     * TODO Possibly provide the GtuTypes that trigger the detector as an argument for the constructor
+     * @param id String; id of this detector
+     * @param laneA Lane; the lane of the A detection point of this traffic light detector
+     * @param positionA Length; the position of the A detection point of this traffic light detector
+     * @param laneB Lane; the lane of the B detection point of this traffic light detector
+     * @param positionB Length; the position of the B detection point of this traffic light detector
      * @param intermediateLanes List&lt;Lane&gt;; list of intermediate lanes
      * @param entryPosition TYPE; the position on the GTUs that trigger the entry events
      * @param exitPosition TYPE; the position on the GTUs that trigger the exit events
@@ -90,17 +111,18 @@ public class TrafficLightSensor extends LocalEventProducer
      * @throws NetworkException when the network is inconsistent.
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public TrafficLightSensor(final String id, final Lane laneA, final Length positionA, final Lane laneB,
+    public TrafficLightDetector(final String id, final Lane laneA, final Length positionA, final Lane laneB,
             final Length positionB, final List<Lane> intermediateLanes, final TYPE entryPosition, final TYPE exitPosition,
             final OtsSimulatorInterface simulator, final Compatible compatible) throws NetworkException
     {
         Throw.whenNull(id, "id may not be null");
         this.id = id;
-        this.entryA = new FlankSensor(id + ".entryA", laneA, positionA, entryPosition, simulator, this, compatible);
-        this.exitA = new FlankSensor(id + ".exitA", laneA, positionA, exitPosition, simulator, this, compatible);
-        this.entryB = new FlankSensor(id + ".entryB", laneB, positionB, entryPosition, simulator, this, compatible);
-        this.exitB = new FlankSensor(id + ".exitB", laneB, positionB, exitPosition, simulator, this, compatible);
-        // Set up detection of GTUs that enter or leave the sensor laterally or appear due to a generator or disappear due to a
+        this.entryA = new StartEndDetector(id + ".entryA", laneA, positionA, entryPosition, simulator, compatible);
+        this.exitA = new StartEndDetector(id + ".exitA", laneA, positionA, exitPosition, simulator, compatible);
+        this.entryB = new StartEndDetector(id + ".entryB", laneB, positionB, entryPosition, simulator, compatible);
+        this.exitB = new StartEndDetector(id + ".exitB", laneB, positionB, exitPosition, simulator, compatible);
+        // Set up detection of GTUs that enter or leave the detector laterally or appear due to a generator or disappear due to
+        // a
         // sink
         this.lanes.add(laneA);
         this.network = laneA.getParentLink().getNetwork();
@@ -167,7 +189,7 @@ public class TrafficLightSensor extends LocalEventProducer
      */
     private OtsPoint3D fixElevation(final OtsPoint3D point)
     {
-        return new OtsPoint3D(point.x, point.y, point.z + SingleSensor.DEFAULT_SENSOR_ELEVATION.si);
+        return new OtsPoint3D(point.x, point.y, point.z + Detector.DEFAULT_DETECTOR_ELEVATION.si);
     }
 
     /**
@@ -178,8 +200,8 @@ public class TrafficLightSensor extends LocalEventProducer
     {
         if (this.currentGTUs.add(gtu) && this.currentGTUs.size() == 1)
         {
-            fireTimedEvent(NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT,
-                    new Object[] {getId()}, getSimulator().getSimulatorTime());
+            fireTimedEvent(TrafficLightDetector.TRAFFIC_LIGHT_DETECTOR_TRIGGER_ENTRY_EVENT, new Object[] {getId()},
+                    getSimulator().getSimulatorTime());
         }
     }
 
@@ -191,8 +213,8 @@ public class TrafficLightSensor extends LocalEventProducer
     {
         if (this.currentGTUs.remove(gtu) && this.currentGTUs.size() == 0)
         {
-            fireTimedEvent(NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT,
-                    new Object[] {getId()}, getSimulator().getSimulatorTime());
+            fireTimedEvent(TrafficLightDetector.TRAFFIC_LIGHT_DETECTOR_TRIGGER_EXIT_EVENT, new Object[] {getId()},
+                    getSimulator().getSimulatorTime());
         }
     }
 
@@ -219,7 +241,7 @@ public class TrafficLightSensor extends LocalEventProducer
                     removeGTU(gtu);
                 }
                 // else: GTU is still in one of our lanes and we will get another GTU_REMOVE_EVENT or the GTU will trigger one
-                // of our exit flank sensors or when the GTU leaves this detector laterally
+                // of our exit flank detectors or when the GTU leaves this detector laterally
                 return;
             }
             catch (GtuException exception)
@@ -309,61 +331,68 @@ public class TrafficLightSensor extends LocalEventProducer
         }
     }
 
-    /** {@inheritDoc} */
-    @Override
+    /** @return the relative position type of the vehicle (e.g., FRONT, BACK) that triggers the detector. */
     public final TYPE getPositionTypeEntry()
     {
         return this.entryA.getPositionType();
     }
 
-    /** {@inheritDoc} */
-    @Override
+    /** @return the relative position type of the vehicle (e.g., FRONT, BACK) that triggers the detector. */
     public final TYPE getPositionTypeExit()
     {
         return this.exitA.getPositionType();
     }
 
-    /** {@inheritDoc} */
-    @Override
+    /**
+     * Return the A position of this NonDirectionalOccupancyDetector.
+     * @return Length; the lane and position on the lane where GTU entry is detected
+     */
     public final Length getLanePositionA()
     {
         return this.entryA.getLongitudinalPosition();
     }
 
-    /** {@inheritDoc} */
-    @Override
+    /**
+     * Return the B position of this NonDirectionalOccupancyDetector.
+     * @return Length; the lane and position on the lane where GTU exit is detected
+     */
     public final Length getLanePositionB()
     {
         return this.entryB.getLongitudinalPosition();
     }
 
     /**
-     * One of our flank sensors has triggered.
-     * @param sensor FlankSensor; the sensor that was triggered
-     * @param gtu LaneBasedGtu; the gtu that triggered the flank sensor
+     * One of our flank detectors has triggered.
+     * @param detector StartEndDetector; the detector that was triggered
+     * @param gtu LaneBasedGtu; the gtu that triggered the flank detector
      */
-    public final void signalDetection(final FlankSensor sensor, final LaneBasedGtu gtu)
+    public final void signalDetection(final StartEndDetector detector, final LaneBasedGtu gtu)
     {
-        if (this.entryA == sensor || this.entryB == sensor)
+        if (this.entryA == detector || this.entryB == detector)
         {
             addGTU(gtu);
         }
-        else if (this.exitA == sensor || this.exitB == sensor)
-        // Some exit sensor has triggered
+        else if (this.exitA == detector || this.exitB == detector)
+        // Some exit detector has triggered
         {
             removeGTU(gtu);
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Returns the id.
+     * @return The id of the detector.
+     */
     @Override
     public final String getId()
     {
         return this.id;
     }
 
-    /** {@inheritDoc} */
-    @Override
+    /**
+     * Returns the simulator.
+     * @return The simulator.
+     */
     public final OtsSimulatorInterface getSimulator()
     {
         return this.entryA.getSimulator();
@@ -384,8 +413,8 @@ public class TrafficLightSensor extends LocalEventProducer
     }
 
     /**
-     * Return the path of this traffic light sensor.
-     * @return OTSLine3D; the path of this traffic light sensor
+     * Return the path of this traffic light detector.
+     * @return OTSLine3D; the path of this traffic light detector
      */
     public final OtsLine3D getPath()
     {
@@ -393,7 +422,7 @@ public class TrafficLightSensor extends LocalEventProducer
     }
 
     /**
-     * Return the state of this traffic light sensor.
+     * Return the state of this traffic light detector.
      * @return boolean; true if one or more GTUs are currently detected; false of no GTUs are currently detected
      */
     public final boolean getOccupancy()
@@ -405,9 +434,66 @@ public class TrafficLightSensor extends LocalEventProducer
     @Override
     public final String toString()
     {
-        return "TrafficLightSensor [id=" + this.id + ", entryA=" + this.entryA + ", exitA=" + this.exitA + ", entryB="
+        return "TrafficLightDetector [id=" + this.id + ", entryA=" + this.entryA + ", exitA=" + this.exitA + ", entryB="
                 + this.entryB + ", exitB=" + this.exitB + ", currentGTUs=" + this.currentGTUs + ", lanes=" + this.lanes
                 + ", path=" + this.path + "]";
+    }
+
+    /**
+     * Embedded detectors used by a TrafficLightDetector.
+     * <p>
+     * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * <p>
+     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     */
+    public class StartEndDetector extends Detector
+    {
+        /** */
+        private static final long serialVersionUID = 20161104L;
+
+        /**
+         * Construct a new StartEndDetector.
+         * @param id String; the name of the new StartEndDetector
+         * @param lane Lane; the lane of the new StartEndDetector
+         * @param longitudinalPosition Length; the longitudinal position of the new StartEndDetector
+         * @param positionType TYPE; the position on the GTUs that triggers the new StartEndDetector
+         * @param simulator OTSSimulatorInterface; the simulator engine
+         * @param compatible Compatible; object that determines if a GTU is detectable by the new StartEndDetector
+         * @throws NetworkException when the network is inconsistent
+         */
+        public StartEndDetector(final String id, final Lane lane, final Length longitudinalPosition, final TYPE positionType,
+                final OtsSimulatorInterface simulator, final Compatible compatible) throws NetworkException
+        {
+            super(id, lane, longitudinalPosition, positionType, simulator, compatible);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected final void triggerResponse(final LaneBasedGtu gtu)
+        {
+            TrafficLightDetector.this.signalDetection(this, gtu);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "FlankSensor [parent=" + TrafficLightDetector.this.getId() + "]";
+        }
+
+        /**
+         * Returns the parent TrafficLightDetector.
+         * @return TrafficLightDetector; parent.
+         */
+        public TrafficLightDetector getParent()
+        {
+            return TrafficLightDetector.this;
+        }
+
     }
 
 }

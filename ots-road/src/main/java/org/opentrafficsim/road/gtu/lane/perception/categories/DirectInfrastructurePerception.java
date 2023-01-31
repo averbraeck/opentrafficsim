@@ -24,8 +24,8 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
-import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
+import org.opentrafficsim.road.network.lane.object.sensor.Detector;
+import org.opentrafficsim.road.network.lane.object.sensor.SinkDetector;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
@@ -294,10 +294,10 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
             return ok;
         }
         // sink
-        for (SingleSensor s : record.getLane().getSensors())
+        for (Detector s : record.getLane().getDetectors())
         {
             // XXX for now, we do allow to lower speed for a DestinationSensor (e.g., to brake for parking)
-            if (s instanceof SinkSensor)
+            if (s instanceof SinkDetector)
             {
                 this.anyNextOkCache.put(record, true);
                 return true; // ok towards sink

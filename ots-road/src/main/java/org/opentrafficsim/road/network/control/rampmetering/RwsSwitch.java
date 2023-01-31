@@ -9,7 +9,7 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
 import org.djutils.logger.CategoryLogger;
-import org.opentrafficsim.road.network.lane.object.sensor.Detector;
+import org.opentrafficsim.road.network.lane.object.sensor.LoopDetector;
 
 /**
  * Switch implementing the RWS algorithm.
@@ -45,7 +45,7 @@ public class RwsSwitch extends SingleCrossSectionSwitch
     /**
      * @param detectors List&lt;Detector&gt;; detectors
      */
-    public RwsSwitch(final List<Detector> detectors)
+    public RwsSwitch(final List<LoopDetector> detectors)
     {
         super(Duration.instantiateSI(60.0), detectors);
         this.capacity = new Frequency(2000, FrequencyUnit.PER_HOUR).times(detectors.size());

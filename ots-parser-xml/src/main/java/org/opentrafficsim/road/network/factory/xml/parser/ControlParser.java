@@ -26,7 +26,7 @@ import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.utils.Transformer;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
+import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightDetector;
 import org.opentrafficsim.trafficcontrol.FixedTimeController;
 import org.opentrafficsim.trafficcontrol.FixedTimeController.SignalGroup;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
@@ -193,7 +193,7 @@ public final class ControlParser
                                 Transformer.parseLengthBeginEnd(singleLaneSensor.getENTRYPOSITION(), lane.getLength());
                         Length exitPosition =
                                 Transformer.parseLengthBeginEnd(singleLaneSensor.getEXITPOSITION(), lane.getLength());
-                        new TrafficLightSensor(sensor.getID(), lane, entryPosition, lane, exitPosition, null,
+                        new TrafficLightDetector(sensor.getID(), lane, entryPosition, lane, exitPosition, null,
                                 RelativePosition.FRONT, RelativePosition.REAR, simulator, Compatible.EVERYTHING);
                     }
                     else
@@ -214,7 +214,7 @@ public final class ControlParser
                             CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(linkAndLane.getLINK());
                             intermediateLanes.add((Lane) link.getCrossSectionElement(linkAndLane.getLANE()));
                         }
-                        new TrafficLightSensor(sensor.getID(), entryLane, entryPosition, exitLane, exitPosition,
+                        new TrafficLightDetector(sensor.getID(), entryLane, entryPosition, exitLane, exitPosition,
                                 intermediateLanes, RelativePosition.FRONT, RelativePosition.REAR, simulator,
                                 Compatible.EVERYTHING);
                     }

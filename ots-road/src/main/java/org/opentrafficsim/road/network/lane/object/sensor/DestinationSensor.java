@@ -19,7 +19,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class DestinationSensor extends AbstractSensor
+public class DestinationSensor extends Detector
 {
     /** */
     private static final long serialVersionUID = 20150130L;

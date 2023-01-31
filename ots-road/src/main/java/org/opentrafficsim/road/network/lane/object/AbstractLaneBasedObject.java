@@ -7,7 +7,7 @@ import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.object.StaticObject;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
+import org.opentrafficsim.road.network.lane.object.sensor.Detector;
 
 /**
  * An abstract implementation of the LaneBasedObject interface with the required fields being initialized and getters for those
@@ -85,8 +85,8 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
     {
         super.init();
 
-        // OTS-218: sensors register themselves.
-        if (!(this instanceof SingleSensor))
+        // OTS-218: detectors register themselves.
+        if (!(this instanceof Detector))
         {
             this.lane.addLaneBasedObject(this); // implements OTS-218
         }

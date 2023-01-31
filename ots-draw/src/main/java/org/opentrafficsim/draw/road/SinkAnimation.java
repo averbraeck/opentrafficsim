@@ -11,7 +11,7 @@ import javax.naming.NamingException;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
+import org.opentrafficsim.road.network.lane.object.sensor.SinkDetector;
 
 /**
  * sink sensor animation.
@@ -23,7 +23,7 @@ import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class SinkAnimation extends AbstractLineAnimation<SinkSensor> implements Serializable
+public class SinkAnimation extends AbstractLineAnimation<SinkDetector> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20150130L;
@@ -35,7 +35,7 @@ public class SinkAnimation extends AbstractLineAnimation<SinkSensor> implements 
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
-    public SinkAnimation(final SinkSensor source, final OtsSimulatorInterface simulator) throws NamingException, RemoteException
+    public SinkAnimation(final SinkDetector source, final OtsSimulatorInterface simulator) throws NamingException, RemoteException
     {
         super(source, simulator, 0.8, new Length(0.5, LengthUnit.SI));
     }

@@ -34,8 +34,8 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
-import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
-import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
+import org.opentrafficsim.road.network.lane.object.sensor.Detector;
+import org.opentrafficsim.road.network.lane.object.sensor.SinkDetector;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
@@ -337,12 +337,12 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                 from = gtu.getNextLaneForRoute(from);
                 if (from == null)
                 {
-                    // check sink sensor
+                    // check sink detector
                     Length pos = prevFrom.getLength();
-                    for (SingleSensor sensor : prevFrom.getSensors(pos, pos, gtu.getType()))
+                    for (Detector detector : prevFrom.getDetectors(pos, pos, gtu.getType()))
                     {
                         // XXX for now, the same is not done for the DestinationSensor (e.g., decrease speed for parking)
-                        if (sensor instanceof SinkSensor)
+                        if (detector instanceof SinkDetector)
                         {
                             // just add some length so the GTU is happy to go to the sink
                             DirectedPoint end = path.getLocationExtendedSI(distance.si + n * Lane.MARGIN.si);
@@ -402,7 +402,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                     }
                     */
                     // END CLEVER
-                    CategoryLogger.always().error("GTU {} has nowhere to go and no sink sensor either", gtu);
+                    CategoryLogger.always().error("GTU {} has nowhere to go and no sink detector either", gtu);
                     // gtu.getReferencePosition(); // CLEVER
                     gtu.destroy();
                     return path;

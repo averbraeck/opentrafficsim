@@ -5,7 +5,7 @@ import java.io.Writer;
 
 import org.djutils.event.EventProducer;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
-import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
+import org.opentrafficsim.road.network.lane.object.sensor.Detector;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -51,7 +51,7 @@ public final class OtsRoadNetworkUtils
         xstream.omitField(EventProducer.class, "listeners"); // no listeners
         xstream.omitField(JVMContext.class, "atomicName"); // no JVMContext
         xstream.omitField(JVMContext.class, "elements"); // no JVMContext
-        xstream.omitField(AbstractSensor.class, "simulator"); // no reference to a simulator
+        xstream.omitField(Detector.class, "simulator"); // no reference to a simulator
         return xstream.toXML(network);
     }
 

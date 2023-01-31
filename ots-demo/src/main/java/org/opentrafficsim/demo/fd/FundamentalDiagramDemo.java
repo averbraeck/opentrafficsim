@@ -97,7 +97,7 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.Stripe.Type;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
-import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
+import org.opentrafficsim.road.network.lane.object.sensor.SinkDetector;
 import org.opentrafficsim.road.network.sampling.LaneDataRoad;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.graphs.SwingFundamentalDiagram;
@@ -300,7 +300,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         // Sinks
         for (Lane lane : lanesBC)
         {
-            new SinkSensor(lane, lane.getLength(), sim);
+            new SinkDetector(lane, lane.getLength(), sim);
         }
 
         return network;
