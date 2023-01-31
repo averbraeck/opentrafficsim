@@ -46,7 +46,7 @@ import org.opentrafficsim.road.network.factory.xml.utils.Transformer;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
-import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
+import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 import org.opentrafficsim.xml.generated.GENERATOR;
 import org.opentrafficsim.xml.generated.GTUTEMPLATE;
 import org.opentrafficsim.xml.generated.NETWORKDEMAND;
@@ -390,7 +390,7 @@ public final class GeneratorSinkParser
             CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(sinkTag.getLINK());
             Lane lane = (Lane) link.getCrossSectionElement(sinkTag.getLANE());
             Length position = Transformer.parseLengthBeginEnd(sinkTag.getPOSITION(), lane.getLength());
-            new SinkSensor(lane, position, simulator);
+            new SinkDetector(lane, position, simulator);
         }
     }
 

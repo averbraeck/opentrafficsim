@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.network.lane.object.sensor;
+package org.opentrafficsim.road.network.lane.object.detector;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.compatibility.Compatible;
@@ -9,7 +9,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
- * Sensor that prints which GTU triggers it.
+ * Detector that prints which GTU triggers it.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands.<br>
  * All rights reserved. <br>
@@ -18,24 +18,24 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class SimpleReportingSensor extends AbstractSensor
+public class ReportingDetector extends Detector
 {
     /** */
     private static final long serialVersionUID = 20150130L;
 
     /**
-     * Construct a new SimpleReportingSensor.
-     * @param lane Lane; the lane on which the new SimpleReportingSensor will be located
-     * @param position Length; the position of the sensor along the lane
+     * Construct a new ReportingDetector.
+     * @param lane Lane; the lane on which the new ReportingDetector will be located
+     * @param position Length; the position of the detector along the lane
      * @param triggerPosition RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
-     *            the sensor
-     * @param id String; the id of the new SimpleReportingSensor
+     *            the detector
+     * @param id String; the id of the new ReportingDetector
      * @param simulator OTSSimulatorInterface; the simulator to enable animation
      * @param compatible Compatible; object that can decide if a particular GTU type in a particular driving direction will
-     *            trigger the new SimpleReportingSensor
+     *            trigger the new ReportingDetector
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
-    public SimpleReportingSensor(final String id, final Lane lane, final Length position,
+    public ReportingDetector(final String id, final Lane lane, final Length position,
             final RelativePosition.TYPE triggerPosition, final OtsSimulatorInterface simulator, final Compatible compatible)
             throws NetworkException
     {
@@ -53,7 +53,7 @@ public class SimpleReportingSensor extends AbstractSensor
     @Override
     public final String toString()
     {
-        return "SimpleReportingSensor []";
+        return "ReportingDetector []";
     }
 
 }

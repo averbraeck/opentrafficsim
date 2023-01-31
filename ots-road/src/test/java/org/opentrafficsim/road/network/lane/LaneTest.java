@@ -49,7 +49,7 @@ import org.opentrafficsim.road.mock.MockDevsSimulator;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
-import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
+import org.opentrafficsim.road.network.lane.object.detector.Detector;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -207,61 +207,61 @@ public class LaneTest implements UNITS
      */
     public final void sensorTest(final Lane lane) throws NetworkException
     {
-        assertEquals("List of sensor is initially empty", 0, lane.getSensors().size());
+        assertEquals("List of sensor is initially empty", 0, lane.getDetectors().size());
         Listener listener = new Listener();
         double length = lane.getLength().si;
-        lane.addListener(listener, Lane.SENSOR_ADD_EVENT);
-        lane.addListener(listener, Lane.SENSOR_REMOVE_EVENT);
+        lane.addListener(listener, Lane.DETECTOR_ADD_EVENT);
+        lane.addListener(listener, Lane.DETECTOR_REMOVE_EVENT);
         assertEquals("event list is initially empty", 0, listener.events.size());
-        SingleSensor sensor1 = new MockSensor("sensor1", Length.instantiateSI(length / 4)).getMock();
-        lane.addSensor(sensor1);
+        Detector sensor1 = new MockSensor("sensor1", Length.instantiateSI(length / 4)).getMock();
+        lane.addDetector(sensor1);
         assertEquals("event list now contains one event", 1, listener.events.size());
-        assertEquals("event indicates that a sensor got added", listener.events.get(0).getType(), Lane.SENSOR_ADD_EVENT);
-        assertEquals("lane now contains one sensor", 1, lane.getSensors().size());
-        assertEquals("sensor on lane is sensor1", sensor1, lane.getSensors().get(0));
-        SingleSensor sensor2 = new MockSensor("sensor2", Length.instantiateSI(length / 2)).getMock();
-        lane.addSensor(sensor2);
+        assertEquals("event indicates that a sensor got added", listener.events.get(0).getType(), Lane.DETECTOR_ADD_EVENT);
+        assertEquals("lane now contains one sensor", 1, lane.getDetectors().size());
+        assertEquals("sensor on lane is sensor1", sensor1, lane.getDetectors().get(0));
+        Detector sensor2 = new MockSensor("sensor2", Length.instantiateSI(length / 2)).getMock();
+        lane.addDetector(sensor2);
         assertEquals("event list now contains two events", 2, listener.events.size());
-        assertEquals("event indicates that a sensor got added", listener.events.get(1).getType(), Lane.SENSOR_ADD_EVENT);
-        List<SingleSensor> sensors = lane.getSensors();
+        assertEquals("event indicates that a sensor got added", listener.events.get(1).getType(), Lane.DETECTOR_ADD_EVENT);
+        List<Detector> sensors = lane.getDetectors();
         assertEquals("lane now contains two sensors", 2, sensors.size());
         assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
         assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
-        sensors = lane.getSensors(Length.ZERO, Length.instantiateSI(length / 3), DefaultsNl.VEHICLE);
+        sensors = lane.getDetectors(Length.ZERO, Length.instantiateSI(length / 3), DefaultsNl.VEHICLE);
         assertEquals("first third of lane contains 1 sensor", 1, sensors.size());
         assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
-        sensors = lane.getSensors(Length.instantiateSI(length / 3), Length.instantiateSI(length), DefaultsNl.VEHICLE);
+        sensors = lane.getDetectors(Length.instantiateSI(length / 3), Length.instantiateSI(length), DefaultsNl.VEHICLE);
         assertEquals("last two-thirds of lane contains 1 sensor", 1, sensors.size());
         assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
-        sensors = lane.getSensors(DefaultsNl.VEHICLE);
+        sensors = lane.getDetectors(DefaultsNl.VEHICLE);
         // NB. The mocked sensor is compatible with all GTU types in all directions.
         assertEquals("sensor list contains two sensors", 2, sensors.size());
         assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
         assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
-        sensors = lane.getSensors(DefaultsNl.VEHICLE);
+        sensors = lane.getDetectors(DefaultsNl.VEHICLE);
         // NB. The mocked sensor is compatible with all GTU types in all directions.
         assertEquals("sensor list contains two sensors", 2, sensors.size());
         assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
         assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
-        SortedMap<Double, List<SingleSensor>> sensorMap = lane.getSensorMap(DefaultsNl.VEHICLE);
+        SortedMap<Double, List<Detector>> sensorMap = lane.getDetectorMap(DefaultsNl.VEHICLE);
         assertEquals("sensor map contains two entries", 2, sensorMap.size());
         for (Double d : sensorMap.keySet())
         {
-            List<SingleSensor> sensorsAtD = sensorMap.get(d);
+            List<Detector> sensorsAtD = sensorMap.get(d);
             assertEquals("There is one sensor at position d", 1, sensorsAtD.size());
             assertEquals("Sensor map contains the correct sensor at the correct distance", d < length / 3 ? sensor1 : sensor2,
                     sensorsAtD.get(0));
         }
 
-        lane.removeSensor(sensor1);
+        lane.removeDetector(sensor1);
         assertEquals("event list now contains three events", 3, listener.events.size());
-        assertEquals("event indicates that a sensor got removed", listener.events.get(2).getType(), Lane.SENSOR_REMOVE_EVENT);
-        sensors = lane.getSensors();
+        assertEquals("event indicates that a sensor got removed", listener.events.get(2).getType(), Lane.DETECTOR_REMOVE_EVENT);
+        sensors = lane.getDetectors();
         assertEquals("lane now contains one sensor", 1, sensors.size());
         assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
         try
         {
-            lane.removeSensor(sensor1);
+            lane.removeDetector(sensor1);
             fail("Removing a sensor twice should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -270,17 +270,17 @@ public class LaneTest implements UNITS
         }
         try
         {
-            lane.addSensor(sensor2);
+            lane.addDetector(sensor2);
             fail("Adding a sensor twice should have thrown a NetworkException");
         }
         catch (NetworkException ne)
         {
             // Ignore expected exception
         }
-        SingleSensor badSensor = new MockSensor("sensor3", Length.instantiateSI(-0.1)).getMock();
+        Detector badSensor = new MockSensor("sensor3", Length.instantiateSI(-0.1)).getMock();
         try
         {
-            lane.addSensor(badSensor);
+            lane.addDetector(badSensor);
             fail("Adding a sensor at negative position should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -290,14 +290,14 @@ public class LaneTest implements UNITS
         badSensor = new MockSensor("sensor4", Length.instantiateSI(length + 0.1)).getMock();
         try
         {
-            lane.addSensor(badSensor);
+            lane.addDetector(badSensor);
             fail("Adding a sensor at position beyond the end of the lane should have thrown a NetworkException");
         }
         catch (NetworkException ne)
         {
             // Ignore expected exception
         }
-        lane.removeSensor(sensor2);
+        lane.removeDetector(sensor2);
         List<LaneBasedObject> lboList = lane.getLaneBasedObjects();
         assertEquals("lane initially contains zero lane based objects", 0, lboList.size());
         LaneBasedObject lbo1 = new MockLaneBasedObject("lbo1", Length.instantiateSI(length / 4)).getMock();
@@ -427,12 +427,12 @@ public class LaneTest implements UNITS
     }
 
     /**
-     * Mock a SingleSensor.
+     * Mock a Detector.
      */
     class MockSensor
     {
         /** The mocked sensor. */
-        private final SingleSensor mockSensor;
+        private final Detector mockSensor;
 
         /** Id of the mocked sensor. */
         private final String id;
@@ -444,13 +444,13 @@ public class LaneTest implements UNITS
         private final OtsSimulatorInterface simulator = MockDevsSimulator.createMock();
 
         /**
-         * Construct a new Mocked SingleSensor.
-         * @param id String; result of the getId() method of the mocked SingleSensor
-         * @param position Length; result of the getLongitudinalPosition of the mocked SingleSensor
+         * Construct a new Mocked Detector.
+         * @param id String; result of the getId() method of the mocked Detector
+         * @param position Length; result of the getLongitudinalPosition of the mocked Detector
          */
         MockSensor(final String id, final Length position)
         {
-            this.mockSensor = Mockito.mock(SingleSensor.class);
+            this.mockSensor = Mockito.mock(Detector.class);
             this.id = id;
             this.position = position;
             Mockito.when(this.mockSensor.getId()).thenReturn(this.id);
@@ -462,9 +462,9 @@ public class LaneTest implements UNITS
 
         /**
          * Retrieve the mocked sensor.
-         * @return SingleSensor; the mocked sensor
+         * @return Detector; the mocked sensor
          */
-        public SingleSensor getMock()
+        public Detector getMock()
         {
             return this.mockSensor;
         }
@@ -501,13 +501,13 @@ public class LaneTest implements UNITS
         private final Length position;
 
         /**
-         * Construct a new Mocked SingleSensor.
-         * @param id String; result of the getId() method of the mocked SingleSensor
-         * @param position Length; result of the getLongitudinalPosition of the mocked SingleSensor
+         * Construct a new Mocked Detector.
+         * @param id String; result of the getId() method of the mocked Detector
+         * @param position Length; result of the getLongitudinalPosition of the mocked Detector
          */
         MockLaneBasedObject(final String id, final Length position)
         {
-            this.mockLaneBasedObject = Mockito.mock(SingleSensor.class);
+            this.mockLaneBasedObject = Mockito.mock(Detector.class);
             this.id = id;
             this.position = position;
             Mockito.when(this.mockLaneBasedObject.getId()).thenReturn(this.id);

@@ -11,7 +11,7 @@ import javax.naming.NamingException;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.road.network.lane.object.sensor.DestinationSensor;
+import org.opentrafficsim.road.network.lane.object.detector.DestinationSensor;
 
 /**
  * Destination sensor animation.

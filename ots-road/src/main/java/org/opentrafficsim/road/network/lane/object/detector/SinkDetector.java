@@ -1,16 +1,15 @@
-package org.opentrafficsim.road.network.lane.object.sensor;
+package org.opentrafficsim.road.network.lane.object.detector;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
- * A DestinationSensor is a sensor that deletes a GTU that has the node it will pass after this sensor as its destination.
+ * A SinkDetector is a detector that deletes every GTU that hits it.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands.<br>
  * All rights reserved. <br>
@@ -19,66 +18,48 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class DestinationSensor extends AbstractSensor
+public class SinkDetector extends Detector
 {
     /** */
     private static final long serialVersionUID = 20150130L;
 
-    /** the destination node for which this is the DestinationSensor. */
-    private final Node destinationNode;
-
     /**
      * @param lane Lane; the lane that triggers the deletion of the GTU.
-     * @param position Length; the position of the sensor
+     * @param position Length; the position of the detector
      * @param simulator OTSSimulatorInterface; the simulator to enable animation.
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
-    public DestinationSensor(final Lane lane, final Length position, final OtsSimulatorInterface simulator)
-            throws NetworkException
+    public SinkDetector(final Lane lane, final Length position, final OtsSimulatorInterface simulator) throws NetworkException
     {
         this(lane, position, Compatible.EVERYTHING, simulator);
     }
 
     /**
      * @param lane Lane; the lane that triggers the deletion of the GTU.
-     * @param position Length; the position of the sensor
+     * @param position Length; the position of the detector
      * @param compatible Compatible; compatible GTU type and direction
      * @param simulator OTSSimulatorInterface; the simulator to enable animation.
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
-    public DestinationSensor(final Lane lane, final Length position, final Compatible compatible,
+    public SinkDetector(final Lane lane, final Length position, final Compatible compatible,
             final OtsSimulatorInterface simulator) throws NetworkException
     {
-        super("DESTINATION@" + lane.getFullId(), lane, position, RelativePosition.FRONT, simulator,
+        super("SINK@" + lane.getFullId() + "." + position, lane, position, RelativePosition.FRONT, simulator,
                 makeGeometry(lane, position, 1.0), compatible);
-        this.destinationNode = compatible.equals(PLUS) || compatible.equals(EVERYTHING) ? lane.getParentLink().getEndNode()
-                : lane.getParentLink().getStartNode();
     }
 
     /** {@inheritDoc} */
     @Override
     public final void triggerResponse(final LaneBasedGtu gtu)
     {
-        try
-        {
-            if (gtu.getStrategicalPlanner().getRoute() == null
-                    || gtu.getStrategicalPlanner().getRoute().destinationNode().equals(this.destinationNode))
-            {
-                gtu.destroy();
-            }
-        }
-        catch (NetworkException exception)
-        {
-            getSimulator().getLogger().always().error(exception, "Error destroying GTU: {} at destination sensor: {}", gtu,
-                    toString());
-        }
+        gtu.destroy();
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "DestinationSensor [Lane=" + this.getLane() + "]";
+        return "SinkDetector [Lane=" + this.getLane() + "]";
     }
 
 }

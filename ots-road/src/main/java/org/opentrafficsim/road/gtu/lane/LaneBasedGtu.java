@@ -69,7 +69,7 @@ import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
-import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
+import org.opentrafficsim.road.network.lane.object.detector.Detector;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
@@ -752,8 +752,7 @@ public class LaneBasedGtu extends Gtu
                             "Time travel? enterTime=" + enterTime + "; simulator time=" + getSimulator().getSimulatorAbsTime());
                     enterTime = getSimulator().getSimulatorAbsTime();
                 }
-                this.pendingEnterTrigger =
-                        getSimulator().scheduleEventAbsTime(enterTime, this, "enterCrossSection", null);
+                this.pendingEnterTrigger = getSimulator().scheduleEventAbsTime(enterTime, this, "enterCrossSection", null);
             }
         }
     }
@@ -898,8 +897,7 @@ public class LaneBasedGtu extends Gtu
                             "Time travel? leaveTime=" + leaveTime + "; simulator time=" + getSimulator().getSimulatorAbsTime());
                     leaveTime = getSimulator().getSimulatorAbsTime();
                 }
-                this.pendingLeaveTrigger =
-                        getSimulator().scheduleEventAbsTime(leaveTime, this, "leaveCrossSection", null);
+                this.pendingLeaveTrigger = getSimulator().scheduleEventAbsTime(leaveTime, this, "leaveCrossSection", null);
             }
         }
     }
@@ -940,17 +938,16 @@ public class LaneBasedGtu extends Gtu
         Length remain = remainingEventDistance();
         double min = position(lane, getRear()).si;
         double max = min + remain.si + getLength().si;
-        SortedMap<Double, List<SingleSensor>> sensors = lane.getSensorMap(getType()).subMap(min, max);
-        for (List<SingleSensor> list : sensors.values())
+        SortedMap<Double, List<Detector>> detectors = lane.getDetectorMap(getType()).subMap(min, max);
+        for (List<Detector> list : detectors.values())
         {
-            for (SingleSensor sensor : list)
+            for (Detector detector : list)
             {
-                RelativePosition pos = this.getRelativePositions().get(sensor.getPositionType());
-                Time time = timeAtLine(sensor.getGeometry(), pos);
+                RelativePosition pos = this.getRelativePositions().get(detector.getPositionType());
+                Time time = timeAtLine(detector.getGeometry(), pos);
                 if (time != null)
                 {
-                    this.sensorEvents
-                            .add(getSimulator().scheduleEventAbsTime(time, sensor, "trigger", new Object[] {this}));
+                    this.sensorEvents.add(getSimulator().scheduleEventAbsTime(time, detector, "trigger", new Object[] {this}));
                 }
             }
         }
@@ -1731,7 +1728,7 @@ public class LaneBasedGtu extends Gtu
     {
         return this.noLaneChangeDistance == null ? true : getOdometer().gt(this.noLaneChangeDistance);
     }
-    
+
     /**
      * The default implementation returns {@code true} if the deceleration is larger than a speed-dependent threshold given
      * by:<br>
@@ -1764,7 +1761,7 @@ public class LaneBasedGtu extends Gtu
         double a = getAcceleration(when).si;
         return a < (v < 6.944 ? 0.0 : -0.2) - 0.15 - 0.00025 * v * v;
     }
-    
+
     /**
      * Get projected length on the lane.
      * @param lane Lane; lane to project the vehicle on

@@ -65,7 +65,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OtsRoadNode;
-import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
+import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDouble;
@@ -485,7 +485,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
             Lane sinkLane = new Lane(endLink, lane.getId() + "." + "sinkLane", lane.getLateralCenterPosition(1.0),
                     lane.getLateralCenterPosition(1.0), lane.getWidth(1.0), lane.getWidth(1.0), laneType,
                     Map.of(DefaultsNl.VEHICLE, this.speedLimit), false);
-            new SinkSensor(sinkLane, new Length(10.0, METER), Compatible.EVERYTHING, this.simulator);
+            new SinkDetector(sinkLane, new Length(10.0, METER), Compatible.EVERYTHING, this.simulator);
         }
         return lanes;
     }

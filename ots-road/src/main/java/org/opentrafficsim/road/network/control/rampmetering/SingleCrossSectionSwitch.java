@@ -6,7 +6,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.road.network.lane.object.sensor.Detector;
+import org.opentrafficsim.road.network.lane.object.detector.LoopDetector;
 
 /**
  * Super class for feed-forward controller. This class contains some helper methods for sub-classes.
@@ -25,14 +25,14 @@ public abstract class SingleCrossSectionSwitch implements RampMeteringSwitch
     private final Duration interval;
 
     /** Detectors (on downstream section). */
-    private final List<Detector> detectors;
+    private final List<LoopDetector> detectors;
 
     /**
      * Constructor.
      * @param interval Duration; interval
      * @param detectors List&lt;Detector&gt;; detectors
      */
-    public SingleCrossSectionSwitch(final Duration interval, final List<Detector> detectors)
+    public SingleCrossSectionSwitch(final Duration interval, final List<LoopDetector> detectors)
     {
         Throw.whenNull(interval, "Interval may not be null.");
         Throw.when(detectors == null || detectors.size() == 0, IllegalArgumentException.class,
@@ -56,11 +56,11 @@ public abstract class SingleCrossSectionSwitch implements RampMeteringSwitch
     {
         int n = 0;
         double value = 0.0;
-        for (Detector detector : this.detectors)
+        for (LoopDetector detector : this.detectors)
         {
             if (detector.hasLastValue())
             {
-                value += detector.getLastValue(Detector.MEAN_SPEED).si;
+                value += detector.getLastValue(LoopDetector.MEAN_SPEED).si;
                 n++;
             }
         }
@@ -83,7 +83,7 @@ public abstract class SingleCrossSectionSwitch implements RampMeteringSwitch
     protected final Frequency totalFlow()
     {
         double value = 0.0;
-        for (Detector detector : this.detectors)
+        for (LoopDetector detector : this.detectors)
         {
             if (detector.hasLastValue())
             {

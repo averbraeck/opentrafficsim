@@ -37,20 +37,20 @@ _Table 2: Overview of events in OTS._
   <tr><td></td><td>LANE_CHANGE_EVENT</td><td>Conflict, StrategiesDemo</td><td>yes</td></tr>
   <tr><td></td><td>LANE_ENTER_EVENT</td><td><i>not thrown</i></td><td>no</td></tr>
   <tr><td></td><td>LANE_EXIT_EVENT</td><td><i>not thrown</i></td><td>no</td></tr>
-  <tr><td>Lane</td><td>GTU_ADD_EVENT</td><td>RoadSampler, TrafficLightSensor</td><td>yes</td></tr>
-  <tr><td></td><td>GTU_REMOVE_EVENT</td><td>RoadSampler, TrafficLightSensor</td><td>yes</td></tr>
+  <tr><td>Lane</td><td>GTU_ADD_EVENT</td><td>RoadSampler, TrafficLightDetector</td><td>yes</td></tr>
+  <tr><td></td><td>GTU_REMOVE_EVENT</td><td>RoadSampler, TrafficLightDetector</td><td>yes</td></tr>
   <tr><td></td><td>OBJECT_ADD_EVENT</td><td></td><td>no</td></tr>
   <tr><td></td><td>OBJECT_REMOVE_EVENT</td><td></td><td>no</td></tr>
-  <tr><td></td><td>SENSOR_ADD_EVENT</td><td></td><td>no</td></tr>
-  <tr><td></td><td>SENSOR_REMOVE_EVENT</td><td></td><td>no</td></tr>
+  <tr><td></td><td>DETECTOR_ADD_EVENT</td><td></td><td>no</td></tr>
+  <tr><td></td><td>DETECTOR_REMOVE_EVENT</td><td></td><td>no</td></tr>
   <tr><td>LaneBasedGtuGenerator</td><td>GTU_GENERATED_EVENT</td><td></td><td>no</td></tr>
-  <tr><td>SingleSensor</td><td>SENSOR_TRIGGER_EVENT</td><td></td><td>no</td></tr>
-  <tr><td>Detector</td><td>DETECTOR_TRIGGERED</td><td></td><td>no</td></tr>
-  <tr><td></td><td>DETECTOR_AGGREGATE</td><td></td><td>no</td></tr>
-  <tr><td>NonDirectionalOccupancySensor</td><td>NON_DIRECTIONAL_OCCUPANCY_SENSOR_ TRIGGER_ENTRY_EVENT</td><td>TrafficLightSensor, TrafCod, DetectrorImage, Variable</td><td>yes</td></tr>
-  <tr><td></td><td>NON_DIRECTIONAL_OCCUPANCY_SENSOR_ TRIGGER_EXIT_EVENT</td><td>TrafficLightSensor, TrafCod, DetectrorImage, Variable</td><td>yes</td></tr>
-  <tr><td>DirectionalOccupancySensor</td><td>DIRECTIONAL_OCCUPANCY_SENSOR_ TRIGGER_ENTRY_EVENT</td><td><i>not thrown</i></td><td>no</td></tr>
-  <tr><td></td><td>DIRECTIONAL_OCCUPANCY_SENSOR_ TRIGGER_EXIT_EVENT</td><td><i>not thrown</i></td><td>no</td></tr>
+  <tr><td>Detector</td><td>DETECTOR_TRIGGER_EVENT</td><td></td><td>no</td></tr>
+  <tr><td>LoopDetector</td><td>LOOP_DETECTOR_TRIGGERED</td><td></td><td>no</td></tr>
+  <tr><td></td><td>LOOP_DETECTOR_AGGREGATE</td><td></td><td>no</td></tr>
+  <tr><td>TrafficLightDetector</td><td>TRAFFIC_LIGHT_DETECTOR_ TRIGGER_ENTRY_EVENT</td><td>TrafficLightDetector, TrafCod, DetectrorImage, Variable</td><td>yes</td></tr>
+  <tr><td></td><td>TRAFFIC_LIGHT_DETECTOR_ TRIGGER_EXIT_EVENT</td><td>TrafficLightDetector, TrafCod, DetectrorImage, Variable</td><td>yes</td></tr>
+  <tr><td>DirectionalOccupancyDetector</td><td>DIRECTIONAL_OCCUPANCY_DETECTOR_ TRIGGER_ENTRY_EVENT</td><td><i>not thrown</i></td><td>no</td></tr>
+  <tr><td></td><td>DIRECTIONAL_OCCUPANCY_DETECTOR_ TRIGGER_EXIT_EVENT</td><td><i>not thrown</i></td><td>no</td></tr>
   <tr><td>TrafficController</td><td>TRAFFICCONTROL_CONTROLLER_CREATED</td><td></td><td>no</td></tr>
   <tr><td></td><td>TRAFFICCONTROL_CONTROLLER_EVALUATING</td><td>TrafCODModel</td><td>yes</td></tr>
   <tr><td></td><td>TRAFFICCONTROL_CONTROLLER_WARNING</td><td>TrafCODModel</td><td>yes</td></tr>

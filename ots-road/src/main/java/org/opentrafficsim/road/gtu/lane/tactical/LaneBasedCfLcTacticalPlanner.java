@@ -47,8 +47,8 @@ import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
-import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
-import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
+import org.opentrafficsim.road.network.lane.object.detector.Detector;
+import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 
 /**
  * Lane-based tactical planner that implements car following and lane change behavior. This lane-based tactical planner makes
@@ -353,9 +353,9 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
         double remainingTimeSI = TIMEHORIZON.getSI() - remainingLength / lane.getSpeedLimit(gtu.getType()).getSI();
         while (remainingTimeSI >= 0)
         {
-            for (SingleSensor s : lane.getSensors())
+            for (Detector detector : lane.getDetectors())
             {
-                if (s instanceof SinkSensor)
+                if (detector instanceof SinkDetector)
                 {
                     return NOLANECHANGENEEDED;
                 }

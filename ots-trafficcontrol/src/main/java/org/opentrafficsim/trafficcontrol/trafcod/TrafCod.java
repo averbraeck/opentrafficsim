@@ -31,9 +31,8 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.object.LocatedObject;
-import org.opentrafficsim.road.network.lane.object.sensor.NonDirectionalOccupancySensor;
-import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
-import org.opentrafficsim.road.network.lane.object.trafficlight.FlankSensor;
+import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector;
+import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector.StartEndDetector;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.trafficcontrol.AbstractTrafficController;
@@ -464,12 +463,12 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
             }
             list.add(tl);
         }
-        Map<String, TrafficLightSensor> sensors = new LinkedHashMap<>();
-        // Look up all the flank sensors and collect their parents (the traffic light sensors)
-        for (FlankSensor flankSensor : network.getObjectMap(FlankSensor.class).values())
+        Map<String, TrafficLightDetector> detectors = new LinkedHashMap<>();
+        // Look up all the start/end detector and collect their parents (the traffic light sensors)
+        for (StartEndDetector startEndDetector : network.getObjectMap(StartEndDetector.class).values())
         {
-            TrafficLightSensor trafficLightSensor = flankSensor.getParent();
-            sensors.put(trafficLightSensor.getId(), trafficLightSensor);
+            TrafficLightDetector trafficLightSensor = startEndDetector.getParent();
+            detectors.put(trafficLightSensor.getId(), trafficLightSensor);
         }
         for (Variable variable : this.variables.values())
         {
@@ -520,7 +519,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
                 name = name.substring(0, name.length() - 1);
                 name = String.format("%s%02d", name, variable.getStream());
                 String digits = String.format("%02d", variable.getStream());
-                TrafficLightSensor tls = sensors.get("D" + digits + subNumber);
+                TrafficLightDetector tls = detectors.get("D" + digits + subNumber);
                 if (null == tls)
                 {
                     throw new TrafficControlException(
@@ -537,8 +536,8 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
                         throw new TrafficControlException("Cannor find detector image matching variable " + variable);
                     }
                     // System.out.println("creating subscriptions to sensor " + tls);
-                    tls.addListener(el, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT);
-                    tls.addListener(el, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT);
+                    tls.addListener(el, TrafficLightDetector.TRAFFIC_LIGHT_DETECTOR_TRIGGER_ENTRY_EVENT);
+                    tls.addListener(el, TrafficLightDetector.TRAFFIC_LIGHT_DETECTOR_TRIGGER_EXIT_EVENT);
                 }
             }
         }
@@ -2147,14 +2146,14 @@ class Variable implements EventListener
      * @param sensor TrafficLightSensor; the sensor
      * @throws TrafficControlException when this variable is not a detector
      */
-    public void subscribeToDetector(final TrafficLightSensor sensor) throws TrafficControlException
+    public void subscribeToDetector(final TrafficLightDetector sensor) throws TrafficControlException
     {
         if (!isDetector())
         {
             throw new TrafficControlException("Cannot subscribe a non-detector to a TrafficLightSensor");
         }
-        sensor.addListener(this, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT);
-        sensor.addListener(this, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT);
+        sensor.addListener(this, TrafficLightDetector.TRAFFIC_LIGHT_DETECTOR_TRIGGER_ENTRY_EVENT);
+        sensor.addListener(this, TrafficLightDetector.TRAFFIC_LIGHT_DETECTOR_TRIGGER_EXIT_EVENT);
     }
 
     /**
@@ -2664,11 +2663,11 @@ class Variable implements EventListener
     @Override
     public void notify(final Event event) throws RemoteException
     {
-        if (event.getType().equals(NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT))
+        if (event.getType().equals(TrafficLightDetector.TRAFFIC_LIGHT_DETECTOR_TRIGGER_ENTRY_EVENT))
         {
             setValue(1, this.updateTime10, new CausePrinter("Detector became occupied"), this.trafCOD);
         }
-        else if (event.getType().equals(NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT))
+        else if (event.getType().equals(TrafficLightDetector.TRAFFIC_LIGHT_DETECTOR_TRIGGER_EXIT_EVENT))
         {
             setValue(0, this.updateTime10, new CausePrinter("Detector became unoccupied"), this.trafCOD);
         }

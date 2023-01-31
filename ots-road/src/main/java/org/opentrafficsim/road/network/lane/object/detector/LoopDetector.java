@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.network.lane.object.sensor;
+package org.opentrafficsim.road.network.lane.object.detector;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -34,7 +34,8 @@ import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
- * Detector, measuring a dynamic set of measurements.
+ * Detector, measuring a dynamic set of measurements typical for single- or dual-loop detectors. A subsidiary detector is placed
+ * at a position downstream based on the detector length, that triggers when the rear leaves the detector.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -43,23 +44,22 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class Detector extends AbstractSensor
+public class LoopDetector extends Detector
 {
 
     /** */
     private static final long serialVersionUID = 20180312L;
 
     /** Trigger event. Payload: [Id of LaneBasedGtu]. */
-    public static final EventType DETECTOR_TRIGGERED = new EventType("DUAL_LOOP_DETECTOR.TRIGGER",
-            new MetaData("Dual loop detector triggered", "Dual loop detector triggered",
+    public static final EventType LOOP_DETECTOR_TRIGGERED =
+            new EventType("LOOPDETECTOR.TRIGGER", new MetaData("Dual loop detector triggered", "Dual loop detector triggered",
                     new ObjectDescriptor[] {new ObjectDescriptor("Id of GTU", "Id of GTU", String.class)}));
 
-    /** Aggregation event. Payload: [Frequency, measurement, ...]/ */
-    public static final EventType DETECTOR_AGGREGATE =
-            new EventType("DUAL_LOOP_DETECTOR.AGGREGATE", MetaData.NO_META_DATA);
+    /** Aggregation event. Payload: [Frequency, measurement...]/ */
+    public static final EventType LOOP_DETECTOR_AGGREGATE = new EventType("LOOPDETECTOR.AGGREGATE", MetaData.NO_META_DATA);
 
     /** Mean speed measurement. */
-    public static final DetectorMeasurement<Double, Speed> MEAN_SPEED = new DetectorMeasurement<Double, Speed>()
+    public static final LoopDetectorMeasurement<Double, Speed> MEAN_SPEED = new LoopDetectorMeasurement<Double, Speed>()
     {
         @Override
         public Double identity()
@@ -68,13 +68,13 @@ public class Detector extends AbstractSensor
         }
 
         @Override
-        public Double accumulateEntry(final Double cumulative, final LaneBasedGtu gtu, final Detector loopDetector)
+        public Double accumulateEntry(final Double cumulative, final LaneBasedGtu gtu, final LoopDetector loopDetector)
         {
             return cumulative + gtu.getSpeed().si;
         }
 
         @Override
-        public Double accumulateExit(final Double cumulative, final LaneBasedGtu gtu, final Detector loopDetector)
+        public Double accumulateExit(final Double cumulative, final LaneBasedGtu gtu, final LoopDetector loopDetector)
         {
             return cumulative;
         }
@@ -86,9 +86,9 @@ public class Detector extends AbstractSensor
         }
 
         @Override
-        public Speed aggregate(final Double cumulative, final int count, final Duration aggregation)
+        public Speed aggregate(final Double cumulative, final int gtuCount, final Duration aggregation)
         {
-            return Speed.instantiateSI(cumulative / count);
+            return Speed.instantiateSI(cumulative / gtuCount);
         }
 
         @Override
@@ -111,60 +111,67 @@ public class Detector extends AbstractSensor
     };
 
     /** Harmonic mean speed measurement. */
-    public static final DetectorMeasurement<Double, Speed> HARMONIC_MEAN_SPEED = new DetectorMeasurement<Double, Speed>()
-    {
-        @Override
-        public Double identity()
-        {
-            return 0.0;
-        }
+    public static final LoopDetectorMeasurement<Double, Speed> HARMONIC_MEAN_SPEED =
+            new LoopDetectorMeasurement<Double, Speed>()
+            {
+                @Override
+                public Double identity()
+                {
+                    return 0.0;
+                }
 
-        @Override
-        public Double accumulateEntry(final Double cumulative, final LaneBasedGtu gtu, final Detector loopDetector)
-        {
-            return cumulative + (1.0 / gtu.getSpeed().si);
-        }
+                @Override
+                public Double accumulateEntry(final Double cumulative, final LaneBasedGtu gtu, final LoopDetector loopDetector)
+                {
+                    return cumulative + (1.0 / gtu.getSpeed().si);
+                }
 
-        @Override
-        public Double accumulateExit(final Double cumulative, final LaneBasedGtu gtu, final Detector loopDetector)
-        {
-            return cumulative;
-        }
+                @Override
+                public Double accumulateExit(final Double cumulative, final LaneBasedGtu gtu, final LoopDetector loopDetector)
+                {
+                    return cumulative;
+                }
 
-        @Override
-        public boolean isPeriodic()
-        {
-            return true;
-        }
+                @Override
+                public boolean isPeriodic()
+                {
+                    return true;
+                }
 
-        @Override
-        public Speed aggregate(final Double cumulative, final int count, final Duration aggregation)
-        {
-            return Speed.instantiateSI(count / cumulative);
-        }
+                @Override
+                public Speed aggregate(final Double cumulative, final int gtuCount, final Duration aggregation)
+                {
+                    return Speed.instantiateSI(gtuCount / cumulative);
+                }
 
-        @Override
-        public String getName()
-        {
-            return "vHarm[km/h]";
-        }
+                @Override
+                public String getName()
+                {
+                    return "vHarm[km/h]";
+                }
 
-        @Override
-        public String stringValue(final Speed aggregate, final String format)
-        {
-            return String.format(format, aggregate.getInUnit(SpeedUnit.KM_PER_HOUR));
-        }
+                @Override
+                public String stringValue(final Speed aggregate, final String format)
+                {
+                    return String.format(format, aggregate.getInUnit(SpeedUnit.KM_PER_HOUR));
+                }
 
-        @Override
-        public String toString()
-        {
-            return getName();
-        }
-    };
+                @Override
+                public String toString()
+                {
+                    return getName();
+                }
+            };
 
     /** Occupancy measurement. */
-    public static final DetectorMeasurement<Double, Double> OCCUPANCY = new DetectorMeasurement<Double, Double>()
+    public static final LoopDetectorMeasurement<Double, Double> OCCUPANCY = new LoopDetectorMeasurement<Double, Double>()
     {
+        /** Time the last GTU triggered the upstream detector. */
+        private double lastEntry = Double.NaN;
+
+        /** Id of last GTU that triggered the upstream detector. */
+        private String lastId;
+
         @Override
         public Double identity()
         {
@@ -172,15 +179,23 @@ public class Detector extends AbstractSensor
         }
 
         @Override
-        public Double accumulateEntry(final Double cumulative, final LaneBasedGtu gtu, final Detector loopDetector)
+        public Double accumulateEntry(final Double cumulative, final LaneBasedGtu gtu, final LoopDetector loopDetector)
         {
-            return cumulative + ((gtu.getLength().si + loopDetector.getLength().si) / gtu.getSpeed().si);
+            this.lastEntry = gtu.getSimulator().getSimulatorTime().si;
+            this.lastId = gtu.getId();
+            return cumulative;
         }
 
         @Override
-        public Double accumulateExit(final Double cumulative, final LaneBasedGtu gtu, final Detector loopDetector)
+        public Double accumulateExit(final Double cumulative, final LaneBasedGtu gtu, final LoopDetector loopDetector)
         {
-            return cumulative;
+            if (!gtu.getId().equals(this.lastId))
+            {
+                // vehicle entered the lane along the length of the detector; we can skip as occupancy detector are not long
+                return cumulative;
+            }
+            this.lastId = null;
+            return cumulative + (gtu.getSimulator().getSimulatorTime().si - this.lastEntry);
         }
 
         @Override
@@ -190,7 +205,7 @@ public class Detector extends AbstractSensor
         }
 
         @Override
-        public Double aggregate(final Double cumulative, final int count, final Duration aggregation)
+        public Double aggregate(final Double cumulative, final int gtuCount, final Duration aggregation)
         {
             return cumulative / aggregation.si;
         }
@@ -215,8 +230,8 @@ public class Detector extends AbstractSensor
     };
 
     /** Passages measurement. */
-    public static final DetectorMeasurement<List<Double>, List<Double>> PASSAGES =
-            new DetectorMeasurement<List<Double>, List<Double>>()
+    public static final LoopDetectorMeasurement<List<Double>, List<Double>> PASSAGES =
+            new LoopDetectorMeasurement<List<Double>, List<Double>>()
             {
                 @Override
                 public List<Double> identity()
@@ -226,7 +241,7 @@ public class Detector extends AbstractSensor
 
                 @Override
                 public List<Double> accumulateEntry(final List<Double> cumulative, final LaneBasedGtu gtu,
-                        final Detector loopDetector)
+                        final LoopDetector loopDetector)
                 {
                     cumulative.add(gtu.getSimulator().getSimulatorTime().si);
                     return cumulative;
@@ -234,7 +249,7 @@ public class Detector extends AbstractSensor
 
                 @Override
                 public List<Double> accumulateExit(final List<Double> cumulative, final LaneBasedGtu gtu,
-                        final Detector loopDetector)
+                        final LoopDetector loopDetector)
                 {
                     return cumulative;
                 }
@@ -246,7 +261,7 @@ public class Detector extends AbstractSensor
                 }
 
                 @Override
-                public List<Double> aggregate(final List<Double> cumulative, final int count, final Duration aggregation)
+                public List<Double> aggregate(final List<Double> cumulative, final int gtuCount, final Duration aggregation)
                 {
                     return cumulative;
                 }
@@ -273,11 +288,11 @@ public class Detector extends AbstractSensor
     /** Aggregation time. */
     private final Duration aggregation;
 
-    /** Count per aggregation period. */
-    private final List<Frequency> count = new ArrayList<>();
+    /** Flow per aggregation period. */
+    private final List<Frequency> flow = new ArrayList<>();
 
     /** Measurements per aggregation period. */
-    private final Map<DetectorMeasurement<?, ?>, List<?>> dataMap = new LinkedHashMap<>();
+    private final Map<LoopDetectorMeasurement<?, ?>, List<?>> periodicDataMap = new LinkedHashMap<>();
 
     /** Detector length. */
     private final Length length;
@@ -286,13 +301,13 @@ public class Detector extends AbstractSensor
     private int period = 1;
 
     /** Count in current period. */
-    private int periodCount = 0;
+    private int gtuCountCurrentPeriod = 0;
 
     /** Count overall. */
-    private int overallCount = 0;
+    private int overallGtuCount = 0;
 
-    /** Cumulative measurements. */
-    private final Map<DetectorMeasurement<?, ?>, Object> cumulDataMap = new LinkedHashMap<>();
+    /** Current cumulative measurements. */
+    private final Map<LoopDetectorMeasurement<?, ?>, Object> currentCumulativeDataMap = new LinkedHashMap<>();
 
     /**
      * Constructor for regular Dutch dual-loop detectors measuring flow and mean speed aggregated over 60s.
@@ -303,7 +318,7 @@ public class Detector extends AbstractSensor
      * @param simulator OTSSimulatorInterface; simulator
      * @throws NetworkException on network exception
      */
-    public Detector(final String id, final Lane lane, final Length longitudinalPosition, final GtuType gtuType,
+    public LoopDetector(final String id, final Lane lane, final Length longitudinalPosition, final GtuType gtuType,
             final OtsSimulatorInterface simulator) throws NetworkException
     {
         // Note: length not important for flow and mean speed
@@ -322,9 +337,9 @@ public class Detector extends AbstractSensor
      * @param measurements DetectorMeasurement&lt;?, ?&gt;...; measurements to obtain
      * @throws NetworkException on network exception
      */
-    public Detector(final String id, final Lane lane, final Length longitudinalPosition, final Length length,
+    public LoopDetector(final String id, final Lane lane, final Length longitudinalPosition, final Length length,
             final GtuType gtuType, final OtsSimulatorInterface simulator, final Duration aggregation,
-            final DetectorMeasurement<?, ?>... measurements) throws NetworkException
+            final LoopDetectorMeasurement<?, ?>... measurements) throws NetworkException
     {
         super(id, lane, longitudinalPosition, RelativePosition.FRONT, simulator, new Compatible()
         {
@@ -338,20 +353,19 @@ public class Detector extends AbstractSensor
         Throw.when(aggregation.si <= 0.0, IllegalArgumentException.class, "Aggregation time should be positive.");
         this.length = length;
         this.aggregation = aggregation;
-        Try.execute(() -> simulator.scheduleEventAbsTime(Time.instantiateSI(aggregation.si), this, "aggregate", null),
-                "");
-        for (DetectorMeasurement<?, ?> measurement : measurements)
+        Try.execute(() -> simulator.scheduleEventAbsTime(Time.instantiateSI(aggregation.si), this, "aggregate", null), "");
+        for (LoopDetectorMeasurement<?, ?> measurement : measurements)
         {
-            this.cumulDataMap.put(measurement, measurement.identity());
+            this.currentCumulativeDataMap.put(measurement, measurement.identity());
             if (measurement.isPeriodic())
             {
-                this.dataMap.put(measurement, new ArrayList<>());
+                this.periodicDataMap.put(measurement, new ArrayList<>());
             }
         }
 
         // rear detector
-        /** Abstract sensor. */
-        class RearDetector extends AbstractSensor
+        /** Abstract detector. */
+        class RearDetector extends Detector
         {
             /** */
             private static final long serialVersionUID = 20180315L;
@@ -384,7 +398,7 @@ public class Detector extends AbstractSensor
             @Override
             protected void triggerResponse(final LaneBasedGtu gtu)
             {
-                for (DetectorMeasurement<?, ?> measurement : Detector.this.cumulDataMap.keySet())
+                for (LoopDetectorMeasurement<?, ?> measurement : LoopDetector.this.currentCumulativeDataMap.keySet())
                 {
                     accumulate(measurement, gtu, false);
                 }
@@ -409,13 +423,13 @@ public class Detector extends AbstractSensor
     @Override
     protected void triggerResponse(final LaneBasedGtu gtu)
     {
-        this.periodCount++;
-        this.overallCount++;
-        for (DetectorMeasurement<?, ?> measurement : this.cumulDataMap.keySet())
+        this.gtuCountCurrentPeriod++;
+        this.overallGtuCount++;
+        for (LoopDetectorMeasurement<?, ?> measurement : this.currentCumulativeDataMap.keySet())
         {
             accumulate(measurement, gtu, true);
         }
-        this.fireTimedEvent(DETECTOR_TRIGGERED, new Object[] {gtu.getId()}, getSimulator().getSimulatorTime());
+        this.fireTimedEvent(LOOP_DETECTOR_TRIGGERED, new Object[] {gtu.getId()}, getSimulator().getSimulatorTime());
     }
 
     /**
@@ -426,15 +440,17 @@ public class Detector extends AbstractSensor
      * @param <C> accumulated type
      */
     @SuppressWarnings("unchecked")
-    <C> void accumulate(final DetectorMeasurement<C, ?> measurement, final LaneBasedGtu gtu, final boolean front)
+    <C> void accumulate(final LoopDetectorMeasurement<C, ?> measurement, final LaneBasedGtu gtu, final boolean front)
     {
         if (front)
         {
-            this.cumulDataMap.put(measurement, measurement.accumulateEntry((C) this.cumulDataMap.get(measurement), gtu, this));
+            this.currentCumulativeDataMap.put(measurement,
+                    measurement.accumulateEntry((C) this.currentCumulativeDataMap.get(measurement), gtu, this));
         }
         else
         {
-            this.cumulDataMap.put(measurement, measurement.accumulateExit((C) this.cumulDataMap.get(measurement), gtu, this));
+            this.currentCumulativeDataMap.put(measurement,
+                    measurement.accumulateExit((C) this.currentCumulativeDataMap.get(measurement), gtu, this));
         }
     }
 
@@ -443,26 +459,26 @@ public class Detector extends AbstractSensor
      */
     private void aggregate()
     {
-        Frequency frequency = Frequency.instantiateSI(this.periodCount / this.aggregation.si);
-        this.count.add(frequency);
-        for (DetectorMeasurement<?, ?> measurement : this.dataMap.keySet())
+        Frequency frequency = Frequency.instantiateSI(this.gtuCountCurrentPeriod / this.aggregation.si);
+        this.flow.add(frequency);
+        for (LoopDetectorMeasurement<?, ?> measurement : this.periodicDataMap.keySet())
         {
-            aggregate(measurement, this.periodCount, this.aggregation);
-            this.cumulDataMap.put(measurement, measurement.identity());
+            aggregate(measurement, this.gtuCountCurrentPeriod, this.aggregation);
+            this.currentCumulativeDataMap.put(measurement, measurement.identity());
         }
-        this.periodCount = 0;
-        if (!getListenerReferences(DETECTOR_AGGREGATE).isEmpty())
+        this.gtuCountCurrentPeriod = 0;
+        if (!getListenerReferences(LOOP_DETECTOR_AGGREGATE).isEmpty())
         {
-            Object[] data = new Object[this.dataMap.size() + 1];
+            Object[] data = new Object[this.periodicDataMap.size() + 1];
             data[0] = frequency;
             int i = 1;
-            for (DetectorMeasurement<?, ?> measurement : this.dataMap.keySet())
+            for (LoopDetectorMeasurement<?, ?> measurement : this.periodicDataMap.keySet())
             {
-                List<?> list = this.dataMap.get(measurement);
+                List<?> list = this.periodicDataMap.get(measurement);
                 data[i] = list.get(list.size() - 1);
                 i++;
             }
-            this.fireTimedEvent(DETECTOR_AGGREGATE, data, getSimulator().getSimulatorTime());
+            this.fireTimedEvent(LOOP_DETECTOR_AGGREGATE, data, getSimulator().getSimulatorTime());
         }
         this.period++;
         double t = this.aggregation.si * this.period;
@@ -476,7 +492,7 @@ public class Detector extends AbstractSensor
      */
     public boolean hasLastValue()
     {
-        return !this.count.isEmpty();
+        return !this.flow.isEmpty();
     }
 
     /**
@@ -485,7 +501,7 @@ public class Detector extends AbstractSensor
      */
     public Frequency getLastFlow()
     {
-        return this.count.get(this.count.size() - 1);
+        return this.flow.get(this.flow.size() - 1);
     }
 
     /**
@@ -494,54 +510,54 @@ public class Detector extends AbstractSensor
      * @return last value of the detector measurement
      * @param <A> aggregate value type of the detector measurement
      */
-    public <A> A getLastValue(final DetectorMeasurement<?, A> detectorMeasurement)
+    public <A> A getLastValue(final LoopDetectorMeasurement<?, A> detectorMeasurement)
     {
         @SuppressWarnings("unchecked")
-        List<A> list = (List<A>) this.dataMap.get(detectorMeasurement);
+        List<A> list = (List<A>) this.periodicDataMap.get(detectorMeasurement);
         return list.get(list.size() - 1);
     }
 
     /**
      * Aggregates a periodic measurement.
      * @param measurement DetectorMeasurement&lt;C, A&gt;; measurement to aggregate
-     * @param cnt int; number of GTUs
+     * @param gtuCount int; number of GTUs
      * @param agg Duration; aggregation period
      * @param <C> accumulated type
      * @param <A> aggregated type
      */
     @SuppressWarnings("unchecked")
-    private <C, A> void aggregate(final DetectorMeasurement<C, A> measurement, final int cnt, final Duration agg)
+    private <C, A> void aggregate(final LoopDetectorMeasurement<C, A> measurement, final int gtuCount, final Duration agg)
     {
-        ((List<A>) this.dataMap.get(measurement)).add(getAggregateValue(measurement, cnt, agg));
+        ((List<A>) this.periodicDataMap.get(measurement)).add(getAggregateValue(measurement, gtuCount, agg));
     }
 
     /**
      * Returns the aggregated value of the measurement.
      * @param measurement DetectorMeasurement&lt;C, A&gt;; measurement to aggregate
-     * @param cnt int; number of GTUs
+     * @param gtuCount int; number of GTUs
      * @param agg Duration; aggregation period
      * @return A; aggregated value of the measurement
      * @param <C> accumulated type
      * @param <A> aggregated type
      */
     @SuppressWarnings("unchecked")
-    private <C, A> A getAggregateValue(final DetectorMeasurement<C, A> measurement, final int cnt, final Duration agg)
+    private <C, A> A getAggregateValue(final LoopDetectorMeasurement<C, A> measurement, final int gtuCount, final Duration agg)
     {
-        return measurement.aggregate((C) this.cumulDataMap.get(measurement), cnt, agg);
+        return measurement.aggregate((C) this.currentCumulativeDataMap.get(measurement), gtuCount, agg);
     }
 
     /**
      * Returns a map of non-periodical measurements.
      * @return Map&lt;DetectorMeasurement, Object&gt;; map of non-periodical measurements
      */
-    private Map<DetectorMeasurement<?, ?>, Object> getMesoMeasurements()
+    private Map<LoopDetectorMeasurement<?, ?>, Object> getMesoMeasurements()
     {
-        Map<DetectorMeasurement<?, ?>, Object> map = new LinkedHashMap<>();
-        for (DetectorMeasurement<?, ?> measurement : this.cumulDataMap.keySet())
+        Map<LoopDetectorMeasurement<?, ?>, Object> map = new LinkedHashMap<>();
+        for (LoopDetectorMeasurement<?, ?> measurement : this.currentCumulativeDataMap.keySet())
         {
             if (!measurement.isPeriodic())
             {
-                map.put(measurement, getAggregateValue(measurement, this.overallCount,
+                map.put(measurement, getAggregateValue(measurement, this.overallGtuCount,
                         this.getSimulator().getSimulatorAbsTime().minus(Time.ZERO)));
             }
         }
@@ -575,22 +591,22 @@ public class Detector extends AbstractSensor
         try (BufferedWriter bw = CompressedFileWriter.create(file, compression.equals(CompressionMethod.ZIP)))
         {
             // gather all DetectorMeasurements and Detectors (sorted)
-            Set<DetectorMeasurement<?, ?>> measurements = new LinkedHashSet<>();
-            Set<Detector> detectors = new TreeSet<>(new Comparator<Detector>()
+            Set<LoopDetectorMeasurement<?, ?>> measurements = new LinkedHashSet<>();
+            Set<LoopDetector> detectors = new TreeSet<>(new Comparator<LoopDetector>()
             {
                 @Override
-                public int compare(final Detector o1, final Detector o2)
+                public int compare(final LoopDetector o1, final LoopDetector o2)
                 {
                     return o1.getId().compareTo(o2.getId());
                 }
             });
-            for (Detector detector : network.getObjectMap(Detector.class).values())
+            for (LoopDetector detector : network.getObjectMap(LoopDetector.class).values())
             {
                 detectors.add(detector);
             }
-            for (Detector detector : detectors)
+            for (LoopDetector detector : detectors)
             {
-                for (DetectorMeasurement<?, ?> measurement : detector.cumulDataMap.keySet())
+                for (LoopDetectorMeasurement<?, ?> measurement : detector.currentCumulativeDataMap.keySet())
                 {
                     if (measurement.isPeriodic() == periodic)
                     {
@@ -602,7 +618,7 @@ public class Detector extends AbstractSensor
             StringBuilder str = periodic ? new StringBuilder("id,t[s],q[veh/h]") : new StringBuilder("id,measurement,data");
             if (periodic)
             {
-                for (DetectorMeasurement<?, ?> measurement : measurements)
+                for (LoopDetectorMeasurement<?, ?> measurement : measurements)
                 {
                     str.append(",");
                     str.append(measurement.getName());
@@ -611,20 +627,20 @@ public class Detector extends AbstractSensor
             bw.write(str.toString());
             bw.newLine();
             // create data lines
-            for (Detector detector : detectors)
+            for (LoopDetector detector : detectors)
             {
                 String id = detector.getFullId();
                 // meso
                 if (!periodic)
                 {
-                    Map<DetectorMeasurement<?, ?>, Object> map = detector.getMesoMeasurements();
-                    for (DetectorMeasurement<?, ?> measurement : measurements)
+                    Map<LoopDetectorMeasurement<?, ?>, Object> map = detector.getMesoMeasurements();
+                    for (LoopDetectorMeasurement<?, ?> measurement : measurements)
                     {
                         if (map.containsKey(measurement))
                         {
                             // TODO: values can contain ","; use csv writer
-                            bw.write(id + "," + measurement.getName() + ","
-                                    + ((DetectorMeasurement<?, C>) measurement).stringValue((C) map.get(measurement), format));
+                            bw.write(id + "," + measurement.getName() + "," + ((LoopDetectorMeasurement<?, C>) measurement)
+                                    .stringValue((C) map.get(measurement), format));
                             bw.newLine();
                         }
                     }
@@ -634,19 +650,19 @@ public class Detector extends AbstractSensor
                     // periodic
                     detector.aggregate();
                     double t = 0.0;
-                    for (int i = 0; i < detector.count.size(); i++)
+                    for (int i = 0; i < detector.flow.size(); i++)
                     {
                         str = new StringBuilder(id + "," + removeTrailingZeros(String.format(format, t)) + ",");
                         str.append(removeTrailingZeros(
-                                String.format(format, detector.count.get(i).getInUnit(FrequencyUnit.PER_HOUR))));
-                        for (DetectorMeasurement<?, ?> measurement : measurements)
+                                String.format(format, detector.flow.get(i).getInUnit(FrequencyUnit.PER_HOUR))));
+                        for (LoopDetectorMeasurement<?, ?> measurement : measurements)
                         {
                             str.append(",");
-                            List<?> list = detector.dataMap.get(measurement);
+                            List<?> list = detector.periodicDataMap.get(measurement);
                             if (list != null)
                             {
                                 str.append(removeTrailingZeros(
-                                        ((DetectorMeasurement<?, C>) measurement).stringValue((C) list.get(i), format)));
+                                        ((LoopDetectorMeasurement<?, C>) measurement).stringValue((C) list.get(i), format)));
                             }
                         }
                         bw.write(str.toString());
@@ -725,7 +741,7 @@ public class Detector extends AbstractSensor
      * @param <C> accumulated type
      * @param <A> aggregated type
      */
-    public interface DetectorMeasurement<C, A>
+    public interface LoopDetectorMeasurement<C, A>
     {
         /**
          * Returns the initial value before accumulation.
@@ -741,7 +757,7 @@ public class Detector extends AbstractSensor
          * @param loopDetector Detector; loop detector
          * @return C; accumulated value
          */
-        C accumulateEntry(C cumulative, LaneBasedGtu gtu, Detector loopDetector);
+        C accumulateEntry(C cumulative, LaneBasedGtu gtu, LoopDetector loopDetector);
 
         /**
          * Returns an accumulated value for when the rear leaves the detector. GTU's may trigger an exit without having
@@ -751,7 +767,7 @@ public class Detector extends AbstractSensor
          * @param loopDetector Detector; loop detector
          * @return C; accumulated value
          */
-        C accumulateExit(C cumulative, LaneBasedGtu gtu, Detector loopDetector);
+        C accumulateExit(C cumulative, LaneBasedGtu gtu, LoopDetector loopDetector);
 
         /**
          * Returns whether the measurement aggregates every aggregation period (or only over the entire simulation).
@@ -762,11 +778,11 @@ public class Detector extends AbstractSensor
         /**
          * Returns an aggregated value.
          * @param cumulative C; accumulated value
-         * @param count int; GTU count
+         * @param gtuCount int; GTU gtuCount
          * @param aggregation Duration; aggregation period
          * @return A; aggregated value
          */
-        A aggregate(C cumulative, int count, Duration aggregation);
+        A aggregate(C cumulative, int gtuCount, Duration aggregation);
 
         /**
          * Returns the value name.
@@ -794,7 +810,7 @@ public class Detector extends AbstractSensor
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public static class PlatoonSizes implements DetectorMeasurement<PlatoonMeasurement, List<Integer>>
+    public static class PlatoonSizes implements LoopDetectorMeasurement<PlatoonMeasurement, List<Integer>>
     {
 
         /** Maximum time between two vehicles that are considered to be in the same platoon. */
@@ -820,20 +836,20 @@ public class Detector extends AbstractSensor
         @SuppressWarnings("synthetic-access")
         @Override
         public PlatoonMeasurement accumulateEntry(final PlatoonMeasurement cumulative, final LaneBasedGtu gtu,
-                final Detector loopDetector)
+                final LoopDetector loopDetector)
         {
             Time now = gtu.getSimulator().getSimulatorAbsTime();
             if (now.si - cumulative.lastExitTime.si < this.threshold.si)
             {
-                cumulative.count++;
+                cumulative.gtuCount++;
             }
             else
             {
-                if (cumulative.count > 0) // 0 means this is the first vehicle of the first platoon
+                if (cumulative.gtuCount > 0) // 0 means this is the first vehicle of the first platoon
                 {
-                    cumulative.platoons.add(cumulative.count);
+                    cumulative.platoons.add(cumulative.gtuCount);
                 }
-                cumulative.count = 1;
+                cumulative.gtuCount = 1;
             }
             cumulative.enteredGTUs.add(gtu);
             cumulative.lastExitTime = now; // should we change lane before triggering the exit
@@ -844,7 +860,7 @@ public class Detector extends AbstractSensor
         @SuppressWarnings("synthetic-access")
         @Override
         public PlatoonMeasurement accumulateExit(final PlatoonMeasurement cumulative, final LaneBasedGtu gtu,
-                final Detector loopDetector)
+                final LoopDetector loopDetector)
         {
             int index = cumulative.enteredGTUs.indexOf(gtu);
             if (index >= 0)
@@ -869,10 +885,10 @@ public class Detector extends AbstractSensor
         @Override
         public List<Integer> aggregate(final PlatoonMeasurement cumulative, final int count, final Duration aggregation)
         {
-            if (cumulative.count > 0)
+            if (cumulative.gtuCount > 0)
             {
-                cumulative.platoons.add(cumulative.count);
-                cumulative.count = 0; // prevent that the last platoon is added again if the same output is saved again
+                cumulative.platoons.add(cumulative.gtuCount);
+                cumulative.gtuCount = 0; // prevent that the last platoon is added again if the same output is saved again
             }
             return cumulative.platoons;
         }
@@ -914,7 +930,7 @@ public class Detector extends AbstractSensor
     static class PlatoonMeasurement
     {
         /** GTU's counted so far in the current platoon. */
-        private int count = 0;
+        private int gtuCount = 0;
 
         /** Time the last GTU exited the detector. */
         private Time lastExitTime = Time.instantiateSI(Double.NEGATIVE_INFINITY);

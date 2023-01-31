@@ -57,7 +57,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OtsRoadNode;
-import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
+import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 
@@ -144,7 +144,7 @@ public class StraightModel extends AbstractOtsModel implements UNITS
             Lane sinkLane = new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
                     this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,
                     Map.of(DefaultsNl.VEHICLE, this.speedLimit), false);
-            new SinkSensor(sinkLane, new Length(10.0, METER), Compatible.EVERYTHING, this.simulator);
+            new SinkDetector(sinkLane, new Length(10.0, METER), Compatible.EVERYTHING, this.simulator);
             this.path.add(sinkLane);
 
             this.carProbability = (double) getInputParameter("generic.carProbability");

@@ -16,7 +16,7 @@ import org.djutils.event.Event;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
 import org.opentrafficsim.core.dsol.OtsSimulator;
-import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
+import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.trafficcontrol.ActuatedTrafficController;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
@@ -79,7 +79,7 @@ public class Ccol extends LocalEventProducer implements ActuatedTrafficControlle
      * @throws SimRuntimeException on failure to schedule the first evaluation event
      */
     public Ccol(final String id, final String controlProgram, final Set<TrafficLight> trafficLights,
-            final Set<TrafficLightSensor> sensors, final OtsSimulator simulator)
+            final Set<TrafficLightDetector> sensors, final OtsSimulator simulator)
             throws TrafficControlException, SimRuntimeException
     {
         this.id = id;

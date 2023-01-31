@@ -33,7 +33,7 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
-import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
+import org.opentrafficsim.road.network.lane.object.detector.Detector;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.eventlists.EventListInterface;
@@ -150,7 +150,7 @@ public class SensorTest implements UNITS
 }
 
 /** */
-class TriggerSensor extends AbstractSensor
+class TriggerSensor extends Detector
 {
     /** */
     private static final long serialVersionUID = 1L;

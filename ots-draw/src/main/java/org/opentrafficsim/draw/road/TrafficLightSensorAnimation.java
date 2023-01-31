@@ -14,7 +14,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.core.geometry.OtsPoint3D;
-import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
+import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
@@ -28,13 +28,13 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class TrafficLightSensorAnimation extends Renderable2D<TrafficLightSensor> implements Serializable
+public class TrafficLightSensorAnimation extends Renderable2D<TrafficLightDetector> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20150130L;
 
     /** The traffic light sensor. */
-    private final TrafficLightSensor sensor;
+    private final TrafficLightDetector sensor;
 
     /** Path of the detector. */
     private final OtsLine3D path;
@@ -47,7 +47,7 @@ public class TrafficLightSensorAnimation extends Renderable2D<TrafficLightSensor
      * @throws RemoteException in case of remote registration failure of the animation
      * @throws OtsGeometryException when the geometry is bad
      */
-    public TrafficLightSensorAnimation(final TrafficLightSensor sensor, final OtsSimulatorInterface simulator)
+    public TrafficLightSensorAnimation(final TrafficLightDetector sensor, final OtsSimulatorInterface simulator)
             throws NamingException, RemoteException, OtsGeometryException
     {
         super(sensor, simulator);

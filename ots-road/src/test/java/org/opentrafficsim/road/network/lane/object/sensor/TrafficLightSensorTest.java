@@ -52,6 +52,8 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OtsRoadNode;
+import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
+import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -109,7 +111,7 @@ public class TrafficLightSensorTest implements EventListener
         // put a sink at halfway point of last lane
         Lane lastLane = result[lengths.length - 1];
         Length sinkPosition = new Length(lengths[lengths.length - 1] > 0 ? lastLane.getLength().si - 10 : 10, LengthUnit.METER);
-        new SinkSensor(lastLane, sinkPosition, simulator);
+        new SinkDetector(lastLane, sinkPosition, simulator);
         return result;
     }
 
@@ -187,7 +189,7 @@ public class TrafficLightSensorTest implements EventListener
                         intermediateLanes.add(lane);
                     }
                 }
-                TrafficLightSensor tls = new TrafficLightSensor(sensorId, pA.getLane(), pA.getPosition(), pB.getLane(),
+                TrafficLightDetector tls = new TrafficLightDetector(sensorId, pA.getLane(), pA.getPosition(), pB.getLane(),
                         pB.getPosition(), intermediateLanes, entryPosition, exitPosition, simulator, Compatible.EVERYTHING);
                 assertEquals("Id should match the provided id", sensorId, tls.getId());
                 assertEquals("Simulator should match", simulator, tls.getSimulator());
@@ -197,8 +199,8 @@ public class TrafficLightSensorTest implements EventListener
                 assertEquals("Position b", pB.getPosition().si, tls.getLanePositionB().si, 0.00001);
                 this.loggedEvents.clear();
                 assertEquals("event list is empty", 0, this.loggedEvents.size());
-                tls.addListener(this, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT);
-                tls.addListener(this, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT);
+                tls.addListener(this, TrafficLightDetector.TRAFFIC_LIGHT_DETECTOR_TRIGGER_ENTRY_EVENT);
+                tls.addListener(this, TrafficLightDetector.TRAFFIC_LIGHT_DETECTOR_TRIGGER_EXIT_EVENT);
                 assertEquals("event list is empty", 0, this.loggedEvents.size());
 
                 GtuType gtuType = DefaultsNl.TRUCK;

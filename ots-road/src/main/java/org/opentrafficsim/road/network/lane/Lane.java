@@ -40,9 +40,9 @@ import org.opentrafficsim.core.perception.collections.HistoricalArrayList;
 import org.opentrafficsim.core.perception.collections.HistoricalList;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
-import org.opentrafficsim.road.network.lane.object.sensor.DestinationSensor;
-import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
-import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
+import org.opentrafficsim.road.network.lane.object.detector.DestinationSensor;
+import org.opentrafficsim.road.network.lane.object.detector.Detector;
+import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
@@ -51,8 +51,8 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
  * The Lane is the CrossSectionElement of a CrossSectionLink on which GTUs can drive. The Lane stores several important
  * properties, such as the successor lane(s), predecessor lane(s), and adjacent lane(s), all separated per GTU type. It can, for
  * instance, be that a truck is not allowed to move into an adjacent lane, while a car is allowed to do so. Furthermore, the
- * lane contains sensors that can be triggered by passing GTUs. The Lane class also contains methods to determine to trigger the
- * sensors at exactly calculated and scheduled times, given the movement of the GTUs. <br>
+ * lane contains detectors that can be triggered by passing GTUs. The Lane class also contains methods to determine to trigger
+ * the detectors at exactly calculated and scheduled times, given the movement of the GTUs. <br>
  * Finally, the Lane stores the GTUs on the lane, and contains several access methods to determine successor and predecessor
  * GTUs, as well as methods to add a GTU to a lane (either at the start or in the middle when changing lanes), and remove a GTU
  * from the lane (either at the end, or in the middle when changing onto another lane). The GTU is only booked with its
@@ -85,10 +85,10 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     private final Map<GtuType, Speed> cachedSpeedLimits = new LinkedHashMap<>();
 
     /**
-     * Sensors on the lane to trigger behavior of the GTU, sorted by longitudinal position. The triggering of sensors is done
-     * per GTU type, so different GTUs can trigger different sensors.
+     * Detectors on the lane to trigger behavior of the GTU, sorted by longitudinal position. The triggering of detectors is
+     * done per GTU type, so different GTUs can trigger different detectors.
      */
-    private final SortedMap<Double, List<SingleSensor>> sensors = new TreeMap<>();
+    private final SortedMap<Double, List<Detector>> detectors = new TreeMap<>();
 
     /**
      * Objects on the lane can be observed by the GTU. Examples are signs, speed signs, blocks, and traffic lights. They are
@@ -149,16 +149,16 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     public static final EventType GTU_REMOVE_EVENT = new EventType("LANE.GTU.REMOVE");
 
     /**
-     * The <b>timed</b> event type for pub/sub indicating the addition of a Sensor to the lane. <br>
-     * Payload: Object[] {String sensorId, Sensor sensor}
+     * The <b>timed</b> event type for pub/sub indicating the addition of a Detector to the lane. <br>
+     * Payload: Object[] {String detectorId, Detector detector}
      */
-    public static final EventType SENSOR_ADD_EVENT = new EventType("LANE.SENSOR.ADD");
+    public static final EventType DETECTOR_ADD_EVENT = new EventType("LANE.DETECTOR.ADD");
 
     /**
-     * The <b>timed</b> event type for pub/sub indicating the removal of a Sensor from the lane. <br>
-     * Payload: Object[] {String sensorId, Sensor sensor}
+     * The <b>timed</b> event type for pub/sub indicating the removal of a Detector from the lane. <br>
+     * Payload: Object[] {String detectorId, Detector detector}
      */
-    public static final EventType SENSOR_REMOVE_EVENT = new EventType("LANE.SENSOR.REMOVE");
+    public static final EventType DETECTOR_REMOVE_EVENT = new EventType("LANE.DETECTOR.REMOVE");
 
     /**
      * The event type for pub/sub indicating the addition of a LaneBasedObject to the lane. <br>
@@ -396,178 +396,180 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     }
 
     /**
-     * Insert a sensor at the right place in the sensor list of this Lane.
-     * @param sensor SingleSensor; the sensor to add
-     * @throws NetworkException when the position of the sensor is beyond (or before) the range of this Lane
+     * Insert a detector at the right place in the detector list of this Lane.
+     * @param detector Detector; the detector to add
+     * @throws NetworkException when the position of the detector is beyond (or before) the range of this Lane
      */
-    public final void addSensor(final SingleSensor sensor) throws NetworkException
+    public final void addDetector(final Detector detector) throws NetworkException
     {
-        double position = sensor.getLongitudinalPosition().si;
+        double position = detector.getLongitudinalPosition().si;
         if (position < 0 || position > getLength().getSI())
         {
-            throw new NetworkException("Illegal position for sensor " + position + " valid range is 0.." + getLength().getSI());
+            throw new NetworkException(
+                    "Illegal position for detector " + position + " valid range is 0.." + getLength().getSI());
         }
-        if (this.parentLink.getNetwork().containsObject(sensor.getFullId()))
+        if (this.parentLink.getNetwork().containsObject(detector.getFullId()))
         {
-            throw new NetworkException("Network already contains an object with the name " + sensor.getFullId());
+            throw new NetworkException("Network already contains an object with the name " + detector.getFullId());
         }
-        List<SingleSensor> sensorList = this.sensors.get(position);
-        if (null == sensorList)
+        List<Detector> detectorList = this.detectors.get(position);
+        if (null == detectorList)
         {
-            sensorList = new ArrayList<>(1);
-            this.sensors.put(position, sensorList);
+            detectorList = new ArrayList<>(1);
+            this.detectors.put(position, detectorList);
         }
-        sensorList.add(sensor);
-        this.parentLink.getNetwork().addObject(sensor);
-        fireTimedEvent(Lane.SENSOR_ADD_EVENT, new Object[] {sensor.getId(), sensor}, sensor.getSimulator().getSimulatorTime());
+        detectorList.add(detector);
+        this.parentLink.getNetwork().addObject(detector);
+        fireTimedEvent(Lane.DETECTOR_ADD_EVENT, new Object[] {detector.getId(), detector},
+                detector.getSimulator().getSimulatorTime());
     }
 
     /**
-     * Remove a sensor from the sensor list of this Lane.
-     * @param sensor SingleSensor; the sensor to remove.
-     * @throws NetworkException when the sensor was not found on this Lane
+     * Remove a detector from the detector list of this Lane.
+     * @param detector Detector; the detector to remove.
+     * @throws NetworkException when the detector was not found on this Lane
      */
-    public final void removeSensor(final SingleSensor sensor) throws NetworkException
+    public final void removeDetector(final Detector detector) throws NetworkException
     {
-        fireTimedEvent(Lane.SENSOR_REMOVE_EVENT, new Object[] {sensor.getId(), sensor},
-                sensor.getSimulator().getSimulatorTime());
-        List<SingleSensor> sensorList = this.sensors.get(sensor.getLongitudinalPosition().si);
-        if (null == sensorList)
+        fireTimedEvent(Lane.DETECTOR_REMOVE_EVENT, new Object[] {detector.getId(), detector},
+                detector.getSimulator().getSimulatorTime());
+        List<Detector> detectorList = this.detectors.get(detector.getLongitudinalPosition().si);
+        if (null == detectorList)
         {
-            throw new NetworkException("No sensor at " + sensor.getLongitudinalPosition().si);
+            throw new NetworkException("No detector at " + detector.getLongitudinalPosition().si);
         }
-        sensorList.remove(sensor);
-        if (sensorList.size() == 0)
+        detectorList.remove(detector);
+        if (detectorList.size() == 0)
         {
-            this.sensors.remove(sensor.getLongitudinalPosition().si);
+            this.detectors.remove(detector.getLongitudinalPosition().si);
         }
-        this.parentLink.getNetwork().removeObject(sensor);
+        this.parentLink.getNetwork().removeObject(detector);
     }
 
     /**
-     * Retrieve the list of Sensors of this Lane in the specified distance range for the given GtuType. The resulting list is a
-     * defensive copy.
+     * Retrieve the list of Detectors of this Lane in the specified distance range for the given GtuType. The resulting list is
+     * a defensive copy.
      * @param minimumPosition Length; the minimum distance on the Lane (inclusive)
      * @param maximumPosition Length; the maximum distance on the Lane (inclusive)
-     * @param gtuType GtuType; the GTU type to provide the sensors for
-     * @return List&lt;Sensor&gt;; list of the sensor in the specified range. This is a defensive copy.
+     * @param gtuType GtuType; the GTU type to provide the detectors for
+     * @return List&lt;Detector&gt;; list of the detectors in the specified range. This is a defensive copy.
      */
-    public final List<SingleSensor> getSensors(final Length minimumPosition, final Length maximumPosition,
-            final GtuType gtuType)
+    public final List<Detector> getDetectors(final Length minimumPosition, final Length maximumPosition, final GtuType gtuType)
     {
-        List<SingleSensor> sensorList = new ArrayList<>(1);
-        for (List<SingleSensor> sl : this.sensors.values())
+        List<Detector> detectorList = new ArrayList<>(1);
+        for (List<Detector> dets : this.detectors.values())
         {
-            for (SingleSensor sensor : sl)
+            for (Detector detector : dets)
             {
-                if (sensor.isCompatible(gtuType) && sensor.getLongitudinalPosition().ge(minimumPosition)
-                        && sensor.getLongitudinalPosition().le(maximumPosition))
+                if (detector.isCompatible(gtuType) && detector.getLongitudinalPosition().ge(minimumPosition)
+                        && detector.getLongitudinalPosition().le(maximumPosition))
                 {
-                    sensorList.add(sensor);
+                    detectorList.add(detector);
                 }
             }
         }
-        return sensorList;
+        return detectorList;
     }
 
     /**
-     * Retrieve the list of Sensors of this Lane that are triggered by the given GtuType. The resulting list is a defensive
+     * Retrieve the list of Detectors of this Lane that are triggered by the given GtuType. The resulting list is a defensive
      * copy.
-     * @param gtuType GtuType; the GTU type to provide the sensors for
-     * @return List&lt;Sensor&gt;; list of the sensors, in ascending order for the location on the Lane
+     * @param gtuType GtuType; the GTU type to provide the detectors for
+     * @return List&lt;Detector&gt;; list of the detectors, in ascending order for the location on the Lane
      */
-    public final List<SingleSensor> getSensors(final GtuType gtuType)
+    public final List<Detector> getDetectors(final GtuType gtuType)
     {
-        List<SingleSensor> sensorList = new ArrayList<>(1);
-        for (List<SingleSensor> sl : this.sensors.values())
+        List<Detector> detectorList = new ArrayList<>(1);
+        for (List<Detector> dets : this.detectors.values())
         {
-            for (SingleSensor sensor : sl)
+            for (Detector detector : dets)
             {
-                if (sensor.isCompatible(gtuType))
+                if (detector.isCompatible(gtuType))
                 {
-                    sensorList.add(sensor);
+                    detectorList.add(detector);
                 }
             }
         }
-        return sensorList;
+        return detectorList;
     }
 
     /**
-     * Retrieve the list of all Sensors of this Lane. The resulting list is a defensive copy.
-     * @return List&lt;Sensor&gt;; list of the sensors, in ascending order for the location on the Lane
+     * Retrieve the list of all Detectors of this Lane. The resulting list is a defensive copy.
+     * @return List&lt;Detector&gt;; list of the detectors, in ascending order for the location on the Lane
      */
-    public final List<SingleSensor> getSensors()
+    public final List<Detector> getDetectors()
     {
-        if (this.sensors == null)
+        if (this.detectors == null)
         {
             return new ArrayList<>();
         }
-        List<SingleSensor> sensorList = new ArrayList<>(1);
-        for (List<SingleSensor> sl : this.sensors.values())
+        List<Detector> detectorList = new ArrayList<>(1);
+        for (List<Detector> dets : this.detectors.values())
         {
-            for (SingleSensor sensor : sl)
+            for (Detector detector : dets)
             {
-                sensorList.add(sensor);
+                detectorList.add(detector);
             }
         }
-        return sensorList;
+        return detectorList;
     }
 
     /**
-     * Retrieve the list of Sensors of this Lane for the given GtuType. The resulting Map is a defensive copy.
-     * @param gtuType GtuType; the GTU type to provide the sensors for
-     * @return SortedMap&lt;Double, List&lt;Sensor&gt;&gt;; all sensors on this lane for the given GtuType as a map per distance
+     * Retrieve the list of Detectors of this Lane for the given GtuType. The resulting Map is a defensive copy.
+     * @param gtuType GtuType; the GTU type to provide the detectors for
+     * @return SortedMap&lt;Double, List&lt;Detector&gt;&gt;; all detectors on this lane for the given GtuType as a map per
+     *         distance
      */
-    public final SortedMap<Double, List<SingleSensor>> getSensorMap(final GtuType gtuType)
+    public final SortedMap<Double, List<Detector>> getDetectorMap(final GtuType gtuType)
     {
-        SortedMap<Double, List<SingleSensor>> sensorMap = new TreeMap<>();
-        for (double d : this.sensors.keySet())
+        SortedMap<Double, List<Detector>> detectorMap = new TreeMap<>();
+        for (double d : this.detectors.keySet())
         {
-            List<SingleSensor> sensorList = new ArrayList<>(1);
-            for (List<SingleSensor> sl : this.sensors.values())
+            List<Detector> detectorList = new ArrayList<>(1);
+            for (List<Detector> dets : this.detectors.values())
             {
-                for (SingleSensor sensor : sl)
+                for (Detector detector : dets)
                 {
-                    if (sensor.getLongitudinalPosition().si == d && sensor.isCompatible(gtuType))
+                    if (detector.getLongitudinalPosition().si == d && detector.isCompatible(gtuType))
                     {
-                        sensorList.add(sensor);
+                        detectorList.add(detector);
                     }
                 }
             }
-            if (sensorList.size() > 0)
+            if (detectorList.size() > 0)
             {
-                sensorMap.put(d, sensorList);
+                detectorMap.put(d, detectorList);
             }
         }
-        return sensorMap;
+        return detectorMap;
     }
 
     /**
-     * Schedule triggering of the sensors for a certain time step; from now until the nextEvaluationTime of the GTU.
-     * @param gtu LaneBasedGtu; the lane based GTU for which to schedule triggering of the sensors.
+     * Schedule triggering of the detectors for a certain time step; from now until the nextEvaluationTime of the GTU.
+     * @param gtu LaneBasedGtu; the lane based GTU for which to schedule triggering of the detectors.
      * @param referenceStartSI double; the SI distance of the GTU reference point on the lane at the current time
      * @param referenceMoveSI double; the SI distance travelled in the next time step.
      * @throws NetworkException when GTU not on this lane.
      * @throws SimRuntimeException when method cannot be scheduled.
      */
-    public final void scheduleSensorTriggers(final LaneBasedGtu gtu, final double referenceStartSI,
+    public final void scheduleDetectorrTriggers(final LaneBasedGtu gtu, final double referenceStartSI,
             final double referenceMoveSI) throws NetworkException, SimRuntimeException
     {
         double minPos = referenceStartSI + gtu.getRear().getDx().si;
         double maxPos = referenceStartSI + gtu.getFront().getDx().si + referenceMoveSI;
-        Map<Double, List<SingleSensor>> map = this.sensors.subMap(minPos, maxPos);
+        Map<Double, List<Detector>> map = this.detectors.subMap(minPos, maxPos);
         for (double pos : map.keySet())
         {
-            for (SingleSensor sensor : map.get(pos))
+            for (Detector detector : map.get(pos))
             {
-                if (sensor.isCompatible(gtu.getType()))
+                if (detector.isCompatible(gtu.getType()))
                 {
-                    double dx = gtu.getRelativePositions().get(sensor.getPositionType()).getDx().si;
+                    double dx = gtu.getRelativePositions().get(detector.getPositionType()).getDx().si;
                     minPos = referenceStartSI + dx;
                     maxPos = minPos + referenceMoveSI;
-                    if (minPos <= sensor.getLongitudinalPosition().si && maxPos > sensor.getLongitudinalPosition().si)
+                    if (minPos <= detector.getLongitudinalPosition().si && maxPos > detector.getLongitudinalPosition().si)
                     {
-                        double d = sensor.getLongitudinalPosition().si - minPos;
+                        double d = detector.getLongitudinalPosition().si - minPos;
                         if (d < 0)
                         {
                             throw new NetworkException("scheduleTriggers for gtu: " + gtu + ", d<0 d=" + d);
@@ -578,24 +580,24 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                         {
                             System.err.println("Time=" + gtu.getSimulator().getSimulatorTime().getSI()
                                     + " - Scheduling trigger at " + triggerTime.getSI() + "s. > " + oPlan.getEndTime().getSI()
-                                    + "s. (nextEvalTime) for sensor " + sensor + " , gtu " + gtu);
+                                    + "s. (nextEvalTime) for detector " + detector + " , gtu " + gtu);
                             System.err.println("  v=" + gtu.getSpeed() + ", a=" + gtu.getAcceleration() + ", lane=" + toString()
                                     + ", refStartSI=" + referenceStartSI + ", moveSI=" + referenceMoveSI);
                             triggerTime = new Time(oPlan.getEndTime().getSI() - Math.ulp(oPlan.getEndTime().getSI()),
                                     TimeUnit.DEFAULT);
                         }
                         SimEvent<Duration> event =
-                                new SimEvent<>(new Duration(triggerTime.minus(gtu.getSimulator().getStartTimeAbs())), sensor,
+                                new SimEvent<>(new Duration(triggerTime.minus(gtu.getSimulator().getStartTimeAbs())), detector,
                                         "trigger", new Object[] {gtu});
                         gtu.getSimulator().scheduleEvent(event);
                         gtu.addTrigger(this, event);
                     }
-                    else if (sensor.getLongitudinalPosition().si < minPos
-                            && (sensor instanceof SinkSensor || sensor instanceof DestinationSensor))
+                    else if (detector.getLongitudinalPosition().si < minPos
+                            && (detector instanceof SinkDetector || detector instanceof DestinationSensor))
                     {
-                        // TODO this is a hack for when sink sensors aren't perfectly adjacent or the GTU overshoots with nose
+                        // TODO this is a hack for when sink detector aren't perfectly adjacent or the GTU overshoots with nose
                         // due to curvature
-                        SimEvent<Duration> event = new SimEvent<>(new Duration(gtu.getSimulator().getSimulatorTime()), sensor,
+                        SimEvent<Duration> event = new SimEvent<>(new Duration(gtu.getSimulator().getSimulatorTime()), detector,
                                 "trigger", new Object[] {gtu});
                         gtu.getSimulator().scheduleEvent(event);
                         gtu.addTrigger(this, event);

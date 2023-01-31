@@ -121,9 +121,9 @@ import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Type;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
-import org.opentrafficsim.road.network.lane.object.sensor.Detector;
-import org.opentrafficsim.road.network.lane.object.sensor.Detector.CompressionMethod;
-import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
+import org.opentrafficsim.road.network.lane.object.detector.LoopDetector;
+import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
+import org.opentrafficsim.road.network.lane.object.detector.LoopDetector.CompressionMethod;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -305,24 +305,24 @@ public class RampMeteringDemo extends AbstractSimulationScript
                 .leftToRight(0.5, laneWidth, freewayLane, speedLimit).addLanes().getLanes();
         for (Lane lane : lanesCD)
         {
-            new SinkSensor(lane, lane.getLength().minus(Length.instantiateSI(50)), sim);
+            new SinkDetector(lane, lane.getLength().minus(Length.instantiateSI(50)), sim);
         }
         // detectors
         Duration agg = Duration.instantiateSI(60.0);
         // TODO: detector length affects occupancy, which length to use?
         Length detectorLength = Length.ZERO;
-        Detector det1 = new Detector("1", lanesAB.get(0), Length.instantiateSI(2900), detectorLength, DefaultsNl.VEHICLE, sim,
-                agg, Detector.MEAN_SPEED, Detector.OCCUPANCY);
-        Detector det2 = new Detector("2", lanesAB.get(1), Length.instantiateSI(2900), detectorLength, DefaultsNl.VEHICLE, sim,
-                agg, Detector.MEAN_SPEED, Detector.OCCUPANCY);
-        Detector det3 = new Detector("3", lanesCD.get(0), Length.instantiateSI(100), detectorLength, DefaultsNl.VEHICLE, sim,
-                agg, Detector.MEAN_SPEED, Detector.OCCUPANCY);
-        Detector det4 = new Detector("4", lanesCD.get(1), Length.instantiateSI(100), detectorLength, DefaultsNl.VEHICLE, sim,
-                agg, Detector.MEAN_SPEED, Detector.OCCUPANCY);
-        List<Detector> detectors12 = new ArrayList<>();
+        LoopDetector det1 = new LoopDetector("1", lanesAB.get(0), Length.instantiateSI(2900), detectorLength, DefaultsNl.VEHICLE, sim,
+                agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+        LoopDetector det2 = new LoopDetector("2", lanesAB.get(1), Length.instantiateSI(2900), detectorLength, DefaultsNl.VEHICLE, sim,
+                agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+        LoopDetector det3 = new LoopDetector("3", lanesCD.get(0), Length.instantiateSI(100), detectorLength, DefaultsNl.VEHICLE, sim,
+                agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+        LoopDetector det4 = new LoopDetector("4", lanesCD.get(1), Length.instantiateSI(100), detectorLength, DefaultsNl.VEHICLE, sim,
+                agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+        List<LoopDetector> detectors12 = new ArrayList<>();
         detectors12.add(det1);
         detectors12.add(det2);
-        List<Detector> detectors34 = new ArrayList<>();
+        List<LoopDetector> detectors34 = new ArrayList<>();
         detectors34.add(det3);
         detectors34.add(det4);
         if (this.rampMetering)
@@ -417,7 +417,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
         {
             // detector data
             String file = String.format("%s_%02d_detectors.txt", this.scenario, getSeed());
-            Detector.writeToFile(getNetwork(), file, true, "%.3f", CompressionMethod.NONE);
+            LoopDetector.writeToFile(getNetwork(), file, true, "%.3f", CompressionMethod.NONE);
 
             // travel time data
             for (Gtu gtu : getNetwork().getGTUs())
