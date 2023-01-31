@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.network;
 
-import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.HierarchicalType;
 
 /**

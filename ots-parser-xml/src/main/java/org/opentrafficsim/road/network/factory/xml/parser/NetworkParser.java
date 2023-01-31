@@ -25,6 +25,7 @@ import org.opentrafficsim.core.geometry.OtsLine3D;
 import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.core.network.Connector;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
@@ -173,9 +174,8 @@ public final class NetworkParser
             }
             String id = xmlConnector.getID();
             double demandWeight = xmlConnector.getDEMANDWEIGHT();
-            OtsLine3D designLine = new OtsLine3D(startNode.getPoint(), endNode.getPoint());
             // TODO: xml definition needs a LinkType for CONNECTOR too
-            CrossSectionLink link = new CrossSectionLink(otsNetwork, id, startNode, endNode, DefaultsNl.ROAD, designLine, null);
+            Connector link = new Connector(otsNetwork, id, startNode, endNode, new LinkType("CONNECTOR"));
             link.setDemandWeight(demandWeight);
         }
 

@@ -45,9 +45,6 @@ public class CrossSectionLink extends OtsLink implements Serializable
     /** Priority. */
     private Priority priority = Priority.NONE;
 
-    /** Fraction in range 0...1 to divide origin or destination flow over connectors. */
-    private Double demandWeight = null;
-
     /** Line over which GTUs enter or leave the link at the start node. */
     private OtsLine3D startLine;
 
@@ -180,33 +177,6 @@ public class CrossSectionLink extends OtsLink implements Serializable
     public final void setPriority(final Priority priority)
     {
         this.priority = priority;
-    }
-
-    /**
-     * Sets the demand weight. This is only applicable to links of type CONNECTOR.
-     * @param demandWeight double; demand weight, which is any positive value
-     */
-    public final void setDemandWeight(final double demandWeight)
-    {
-        Throw.when(demandWeight < 0.0, IllegalArgumentException.class, "Demand weight should be positive.");
-        this.demandWeight = demandWeight;
-    }
-
-    /**
-     * Clears the demand weight. This is only applicable to links of type CONNECTOR.
-     */
-    public final void clearDemandWeight()
-    {
-        this.demandWeight = null;
-    }
-
-    /**
-     * Returns the demand weight. This is only applicable to links of type CONNECTOR.
-     * @return Double; demand weight, any positive value, or {@code null}
-     */
-    public final Double getDemandWeight()
-    {
-        return this.demandWeight;
     }
 
     /**

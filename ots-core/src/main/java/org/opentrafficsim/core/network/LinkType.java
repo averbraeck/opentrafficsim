@@ -26,7 +26,7 @@ public class LinkType extends GtuCompatibleInfraType<LinkType, Link>
     {
         super(id, null);
     }
-    
+
     /**
      * Create a new Link type.
      * @param id String; the id of the link type (may not be {@code null}).

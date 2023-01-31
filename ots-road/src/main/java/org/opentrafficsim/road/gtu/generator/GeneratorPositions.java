@@ -158,7 +158,7 @@ public final class GeneratorPositions implements Locatable
      * @param positions Set&lt;DirectedLanePosition&gt;; all considered positions, each lane is considered separately
      * @param stream StreamInterface; stream for random numbers
      * @param laneBiases LaneBiases; lane biases for GTU types
-     * @param linkWeights Map&lt;CrossSectionLink, Double&gt;; weight per link direction
+     * @param linkWeights Map&lt;CrossSectionLink, Double&gt;; weight per link
      * @param viaNodes Map&lt;CrossSectionLink, Node&gt;; nodes connectors feed to for each link where GTU's will be generated
      * @return GeneratorPositions; object to draw positions from
      */
@@ -205,17 +205,17 @@ public final class GeneratorPositions implements Locatable
                         (CrossSectionLink) splitLink));
             }
             // create the GeneratorLinkPosition
-            CrossSectionLink link = (CrossSectionLink) splitLink;
             if (linkWeights == null)
             {
-                linkPositions.add(new GeneratorLinkPosition(lanePositions, link, stream, laneBiases));
+                linkPositions.add(new GeneratorLinkPosition(lanePositions, splitLink, stream, laneBiases));
             }
             else
             {
-                Double weight = linkWeights.get(link);
-                Throw.whenNull(weight, "Using link weights for GTU generation, but no weight for link %s is defined.", link);
-                linkPositions
-                        .add(new GeneratorLinkPosition(lanePositions, link, stream, laneBiases, weight, viaNodes.get(link)));
+                Double weight = linkWeights.get(splitLink);
+                Throw.whenNull(weight, "Using link weights for GTU generation, but no weight for link %s is defined.",
+                        splitLink);
+                linkPositions.add(new GeneratorLinkPosition(lanePositions, splitLink, stream, laneBiases, weight,
+                        viaNodes.get(splitLink)));
             }
         }
 
@@ -399,7 +399,7 @@ public final class GeneratorPositions implements Locatable
         private final List<GeneratorLanePosition> positions;
 
         /** The link. */
-        private final CrossSectionLink link;
+        private final Link link;
 
         /** Random stream. */
         private final StreamInterface stream;
@@ -416,12 +416,12 @@ public final class GeneratorPositions implements Locatable
         /**
          * Constructor.
          * @param positions List&lt;GeneratorLanePosition&gt;; contained lanes
-         * @param link CrossSectionLink; the link
+         * @param link Link; the link
          * @param stream StreamInterface; stream
          * @param laneBiases LaneBiases; lane biases
          */
-        GeneratorLinkPosition(final List<GeneratorLanePosition> positions, final CrossSectionLink link,
-                final StreamInterface stream, final LaneBiases laneBiases)
+        GeneratorLinkPosition(final List<GeneratorLanePosition> positions, final Link link, final StreamInterface stream,
+                final LaneBiases laneBiases)
         {
             this.positions = positions;
             this.link = link;
@@ -434,14 +434,14 @@ public final class GeneratorPositions implements Locatable
         /**
          * Constructor.
          * @param positions List&lt;GeneratorLanePosition&gt;; contained lanes
-         * @param link CrossSectionLink; the link
+         * @param link Link; the link
          * @param stream StreamInterface; stream
          * @param laneBiases LaneBiases; lane biases
          * @param weight double; weight for drawing this link
          * @param viaNode Node; node by which a connector connects
          */
-        GeneratorLinkPosition(final List<GeneratorLanePosition> positions, final CrossSectionLink link,
-                final StreamInterface stream, final LaneBiases laneBiases, final double weight, final Node viaNode)
+        GeneratorLinkPosition(final List<GeneratorLanePosition> positions, final Link link, final StreamInterface stream,
+                final LaneBiases laneBiases, final double weight, final Node viaNode)
         {
             this.positions = positions;
             this.link = link;
@@ -455,7 +455,7 @@ public final class GeneratorPositions implements Locatable
          * Return the link.
          * @return CrossSectionLink; link
          */
-        CrossSectionLink getLink()
+        Link getLink()
         {
             return this.link;
         }

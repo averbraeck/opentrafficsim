@@ -10,11 +10,11 @@ import org.djutils.exceptions.Try;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.math.Draw;
+import org.opentrafficsim.core.network.Connector;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
 
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
@@ -85,13 +85,11 @@ public interface RouteGeneratorOd
         {
             List<Node> viaNodes = new ArrayList<>();
             double cumulWeight = 0.0;
-            List<Double> weights = new ArrayList<>();
             Map<Link, Double> links = new LinkedHashMap<>();
             boolean directLinkExists = false;
             for (Link link : destination.getLinks())
             {
-                if (link.isConnector() 
-                        && link instanceof CrossSectionLink && ((CrossSectionLink) link).getDemandWeight() != null)
+                if (link.isConnector() && link instanceof Connector && ((Connector) link).getDemandWeight() > 0.0)
                 {
                     // Verify there is a route from origin to this link
                     List<Node> testViaNode = new ArrayList<>();
@@ -101,8 +99,7 @@ public interface RouteGeneratorOd
                     {
                         if (origin.getNetwork().getShortestRouteBetween(gtuType, origin, destination, viaNodes) != null)
                         {
-                            Double weight = ((CrossSectionLink) link).getDemandWeight();
-                            weights.add(weight);
+                            Double weight = ((Connector) link).getDemandWeight();
                             links.put(link, weight);
                             cumulWeight += weight;
                         }
@@ -148,7 +145,7 @@ public interface RouteGeneratorOd
                     // + "selected access point to destination centroid");
                     viaNodes.add(via.getEndNode());
                 }
-                if (viaNodes.size() > 0 && viaNodes.get(0).getId().startsWith("Centroid "))
+                if (viaNodes.size() > 0 && viaNodes.get(0).isCentroid())
                 {
                     System.out.println("oops:   via node is a centroid");
                 }

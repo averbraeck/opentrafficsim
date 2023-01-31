@@ -25,6 +25,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.math.Draw;
+import org.opentrafficsim.core.network.Connector;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -262,16 +263,17 @@ public final class OdApplier
                 Set<LanePosition> positionSet = new LinkedHashSet<>();
                 for (Link link : origin.getLinks())
                 {
-                    if (link.isConnector())
+                    if (link instanceof Connector)
                     {
-                        if (link.getStartNode().equals(origin))
+                        Connector connector = (Connector) link;
+                        if (connector.getStartNode().equals(origin))
                         {
-                            Node connectedNode = link.getEndNode();
+                            Node connectedNode = connector.getEndNode();
                             // count number of served links
                             int served = 0;
                             for (Link connectedLink : connectedNode.getLinks())
                             {
-                                if (connectedLink instanceof CrossSectionLink && !connectedLink.isConnector())
+                                if (connectedLink instanceof CrossSectionLink)
                                 {
                                     served++;
                                 }
@@ -280,7 +282,7 @@ public final class OdApplier
                             {
                                 if (connectedLink instanceof CrossSectionLink)
                                 {
-                                    if (link instanceof CrossSectionLink && ((CrossSectionLink) link).getDemandWeight() != null)
+                                    if (connector.getDemandWeight() > 0.0)
                                     {
                                         if (linkWeights == null)
                                         {
@@ -289,7 +291,7 @@ public final class OdApplier
                                         }
                                         // store weight under connected link, as this
                                         linkWeights.put(((CrossSectionLink) connectedLink),
-                                                ((CrossSectionLink) link).getDemandWeight() / served);
+                                                connector.getDemandWeight() / served);
                                         viaNodes.put((CrossSectionLink) connectedLink, connectedNode);
                                     }
                                     setDirectedLanePosition((CrossSectionLink) connectedLink, connectedNode, positionSet);
