@@ -13,6 +13,7 @@ import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
+import org.opentrafficsim.road.definitions.DefaultsRoad;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -166,6 +167,7 @@ public final class DefinitionsParser
 
                 for (COMPATIBILITY compTag : linkTag.getCOMPATIBILITY())
                 {
+                    // TODO: direction is ignored, NONE value erroneously results in accessibility
                     GtuType gtuType = parsedDefinitions.get(GtuType.class, compTag.getGTUTYPE());
                     Throw.when(gtuType == null, XmlParserException.class, "LinkType %s.compatibility: GtuType %s not found",
                             linkTag.getID(), compTag.getGTUTYPE());
@@ -197,37 +199,37 @@ public final class DefinitionsParser
         {
             for (LANETYPE laneTag : laneTypes.getLANETYPE())
             {
-                LaneType networkLaneType = parsedDefinitions.get(LaneType.class, laneTag.getID());
-                if (networkLaneType == null || (networkLaneType != null && !laneTag.isDEFAULT())
-                        || (networkLaneType != null && laneTag.isDEFAULT() && overwriteDefaults))
+                LaneType laneType;
+                if (laneTag.isDEFAULT())
                 {
-                    LaneType laneType;
-                    if (laneTag.getPARENT() != null)
-                    {
-                        LaneType parent = parsedDefinitions.get(LaneType.class, laneTag.getPARENT());
-                        Throw.when(parent == null, XmlParserException.class, "LaneType %s parent %s not found", laneTag.getID(),
-                                laneTag.getPARENT());
-                        laneType = new LaneType(laneTag.getID(), parent);
-                        CategoryLogger.filter(Cat.PARSER).trace("Added LaneType {}", laneType);
-                    }
-                    else
-                    {
-                        laneType = new LaneType(laneTag.getID());
-                        CategoryLogger.filter(Cat.PARSER).trace("Added LaneType {}", laneType);
-                    }
-                    parsedDefinitions.add(LaneType.class, laneType);
-
-                    for (COMPATIBILITY compTag : laneTag.getCOMPATIBILITY())
-                    {
-                        GtuType gtuType = parsedDefinitions.get(GtuType.class, compTag.getGTUTYPE());
-                        Throw.when(gtuType == null, XmlParserException.class, "LaneType %s.compatibility: GtuType %s not found",
-                                laneTag.getID(), compTag.getGTUTYPE());
-                        laneType.addCompatibleGtuType(gtuType);
-                    }
+                    // TODO: remove addition of "NL." once the xml standard has been updated
+                    String id = laneTag.getID().contains(".") ? laneTag.getID() : "NL." + laneTag.getID();
+                    laneType = DefaultsRoad.getByName(LaneType.class, id);
+                    Throw.when(laneType == null, XmlParserException.class, "LaneType %s could not be found as default.",
+                            laneTag.getID());
+                }
+                else if (laneTag.getPARENT() != null)
+                {
+                    LaneType parent = parsedDefinitions.get(LaneType.class, laneTag.getPARENT());
+                    Throw.when(parent == null, XmlParserException.class, "LaneType %s parent %s not found", laneTag.getID(),
+                            laneTag.getPARENT());
+                    laneType = new LaneType(laneTag.getID(), parent);
+                    CategoryLogger.filter(Cat.PARSER).trace("Added LaneType {}", laneType);
                 }
                 else
                 {
-                    CategoryLogger.filter(Cat.PARSER).trace("Did NOT add LaneType {}", laneTag.getID());
+                    laneType = new LaneType(laneTag.getID());
+                    CategoryLogger.filter(Cat.PARSER).trace("Added LaneType {}", laneType);
+                }
+                parsedDefinitions.add(LaneType.class, laneType);
+
+                for (COMPATIBILITY compTag : laneTag.getCOMPATIBILITY())
+                {
+                    // TODO: direction is ignored, NONE value erroneously results in accessibility
+                    GtuType gtuType = parsedDefinitions.get(GtuType.class, compTag.getGTUTYPE());
+                    Throw.when(gtuType == null, XmlParserException.class, "LaneType %s.compatibility: GtuType %s not found",
+                            laneTag.getID(), compTag.getGTUTYPE());
+                    laneType.addCompatibleGtuType(gtuType);
                 }
             }
         }
