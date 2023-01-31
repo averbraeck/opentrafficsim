@@ -182,7 +182,7 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
         @Override
         public void constructModel() throws SimRuntimeException
         {
-            this.network = new OtsRoadNetwork(getShortName(), true, getSimulator());
+            this.network = new OtsRoadNetwork(getShortName(), getSimulator());
             try
             {
                 XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,

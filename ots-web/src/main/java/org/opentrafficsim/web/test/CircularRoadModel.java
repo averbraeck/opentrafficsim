@@ -1,6 +1,5 @@
 package org.opentrafficsim.web.test;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -24,6 +23,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
@@ -98,7 +98,7 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
     public CircularRoadModel(final OtsSimulatorInterface simulator)
     {
         super(simulator);
-        this.network = new OtsRoadNetwork("network", true, simulator);
+        this.network = new OtsRoadNetwork("network", simulator);
         makeInputParameterMap();
     }
 
@@ -173,7 +173,7 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
                     new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()));
 
             GtuType gtuType = DefaultsNl.CAR;
-            LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
+            LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
             OtsRoadNode start = new OtsRoadNode(this.network, "Start", new OtsPoint3D(radius, 0, 0),
                     new Direction(90, DirectionUnit.EAST_DEGREE));
             OtsRoadNode halfway = new OtsRoadNode(this.network, "Halfway", new OtsPoint3D(-radius, 0, 0),

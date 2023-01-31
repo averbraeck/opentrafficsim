@@ -27,13 +27,13 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
@@ -58,7 +58,7 @@ public class XmlOdParserTest
     OtsSimulatorInterface simulator = new OtsSimulator("XmlOdParserTest");
 
     /** Network. */
-    OtsRoadNetwork network = new OtsRoadNetwork("OD test", true, this.simulator);
+    OtsRoadNetwork network = new OtsRoadNetwork("OD test", this.simulator);
 
     /** Parser. */
     private XmlOdParser parser;
@@ -124,8 +124,7 @@ public class XmlOdParserTest
         this.network.addRoute(gtuType, new Route("CB", gtuType).addNode(C).addNode(B));
         this.network.addRoute(gtuType, new Route("CB2", gtuType).addNode(C).addNode(A).addNode(B));
 
-        new Lane(AB, "left", Length.ZERO, Length.ZERO, this.network.getLaneType(LaneType.DEFAULTS.FREEWAY),
-                new LinkedHashMap<>());
+        new Lane(AB, "left", Length.ZERO, Length.ZERO, DefaultsRoadNl.FREEWAY, new LinkedHashMap<>());
     }
 
     /**

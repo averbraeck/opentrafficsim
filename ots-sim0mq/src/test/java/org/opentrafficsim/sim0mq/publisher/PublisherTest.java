@@ -21,7 +21,6 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.serialization.SerializationException;
 import org.junit.Test;
-import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
@@ -81,7 +80,7 @@ public class PublisherTest implements OtsModelInterface
             }
         };
         OtsSimulatorInterface simulator = new OtsSimulator("test simulator for PublisherTest");
-        OtsRoadNetwork network = new OtsRoadNetwork("test network for PublisherTest", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("test network for PublisherTest", simulator);
         Publisher publisher = new Publisher(network);
         assertTrue("id of publisher contains id of network", publisher.getId().contains(network.getId()));
         TransceiverInterface transceiverInterface = publisher.getIdSource(0, storeLastResult);
@@ -230,7 +229,7 @@ public class PublisherTest implements OtsModelInterface
         @Override
         public void constructModel() throws SimRuntimeException
         {
-            this.network = new OtsRoadNetwork(getShortName(), true, getSimulator());
+            this.network = new OtsRoadNetwork(getShortName(), getSimulator());
             try
             {
                 XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,

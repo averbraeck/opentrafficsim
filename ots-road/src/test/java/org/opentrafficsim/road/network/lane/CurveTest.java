@@ -22,6 +22,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.car.CarTest;
+import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.FixedLaneChangeModel;
@@ -58,9 +59,9 @@ public class CurveTest
     {
         final int laneCount = 1;
         OtsSimulatorInterface simulator = CarTest.makeSimulator();
-        OtsRoadNetwork network = new OtsRoadNetwork("curve test network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("curve test network", simulator);
         GtuType gtuType = DefaultsNl.CAR;
-        LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
+        LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
         Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
         OtsRoadNode origin = new OtsRoadNode(network, "origin", new OtsPoint3D(10, 10, 0), Direction.ZERO);
         OtsRoadNode curveStart = new OtsRoadNode(network, "curveStart", new OtsPoint3D(100, 10, 0), Direction.ZERO);

@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -35,6 +34,7 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.DefaultTestParameters;
+import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCfLcTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
@@ -76,13 +76,13 @@ public class AbstractLaneBasedGtuTest implements UNITS
         // To create Lanes we need Nodes and a LaneType
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OtsSimulatorInterface simulator = new OtsSimulator("abstractLaneBasedGtuTest");
-        OtsRoadNetwork network = new OtsRoadNetwork("lane base gtu test network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("lane base gtu test network", simulator);
         OtsModelInterface model = new DummyModel(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), model);
         OtsRoadNode nodeAFrom = new OtsRoadNode(network, "AFrom", new OtsPoint3D(0, 0, 0), Direction.ZERO);
         OtsRoadNode nodeATo = new OtsRoadNode(network, "ATo", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
         GtuType gtuType = DefaultsNl.CAR;
-        LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
+        LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
 
         Lane[] lanesGroupA = LaneFactory.makeMultiLane(network, "A", nodeAFrom, nodeATo, null, 3, laneType,
                 new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);

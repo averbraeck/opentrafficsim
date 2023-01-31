@@ -52,6 +52,13 @@ public class Centroid extends OtsNode
         Throw.when(!link.isConnector(), OtsRuntimeException.class, "Centroids can only be connected by connector links");
         super.addLink(link);
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public NodeType getType()
+    {
+        return NodeType.CENTROID;
+    }
 
     /** {@inheritDoc} */
     @Override

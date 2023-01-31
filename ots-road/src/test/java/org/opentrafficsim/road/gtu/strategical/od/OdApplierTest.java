@@ -47,6 +47,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
+import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayDistribution;
 import org.opentrafficsim.road.gtu.generator.od.OdApplier;
 import org.opentrafficsim.road.gtu.generator.od.OdApplier.GeneratorObjects;
@@ -54,7 +55,6 @@ import org.opentrafficsim.road.gtu.generator.od.OdOptions;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
@@ -166,7 +166,7 @@ public class OdApplierTest
      */
     private void makeNetwork() throws NetworkException, OtsGeometryException
     {
-        this.network = new OtsRoadNetwork("ODApplierExample", true, this.simulator);
+        this.network = new OtsRoadNetwork("ODApplierExample", this.simulator);
         OtsPoint3D pointA = new OtsPoint3D(0, 0, 0);
         OtsPoint3D pointB = new OtsPoint3D(1000, 0, 0);
         OtsRoadNode nodeA = new OtsRoadNode(this.network, "A", pointA, Direction.ZERO);
@@ -175,11 +175,11 @@ public class OdApplierTest
                 new OtsLine3D(pointA, pointB), LaneKeepingPolicy.KEEPRIGHT);
         this.lanes.put("lane1",
                 new Lane(linkAB, "lane1", Length.instantiateSI(1.75), Length.instantiateSI(1.75), Length.instantiateSI(3.5),
-                        Length.instantiateSI(3.5), this.network.getLaneType(LaneType.DEFAULTS.HIGHWAY),
+                        Length.instantiateSI(3.5), DefaultsRoadNl.HIGHWAY,
                         Map.of(DefaultsNl.VEHICLE, new Speed(120, SpeedUnit.KM_PER_HOUR)), false));
         this.lanes.put("lane2",
                 new Lane(linkAB, "lane2", Length.instantiateSI(-1.75), Length.instantiateSI(-1.75), Length.instantiateSI(3.5),
-                        Length.instantiateSI(3.5), this.network.getLaneType(LaneType.DEFAULTS.HIGHWAY),
+                        Length.instantiateSI(3.5), DefaultsRoadNl.HIGHWAY,
                         Map.of(DefaultsNl.VEHICLE, new Speed(120, SpeedUnit.KM_PER_HOUR)), false));
         Set<GtuType> gtuTypes = new LinkedHashSet<>();
         gtuTypes.add(DefaultsNl.VEHICLE);

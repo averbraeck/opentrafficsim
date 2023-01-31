@@ -47,6 +47,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
+import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -122,7 +123,7 @@ public class TransceiverTest
         }
         OtsSimulatorInterface simulator = MockDevsSimulator.createMock();
 
-        OtsRoadNetwork network = new OtsRoadNetwork("test network for TransceiverTest", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("test network for TransceiverTest", simulator);
         GtuIdTransceiver gtuIdTransceiver = new GtuIdTransceiver(network);
         assertEquals("getId returns correct id", "GTU id transceiver", gtuIdTransceiver.getId());
         assertEquals("address has 0 entries", 0, gtuIdTransceiver.getAddressFields().size());
@@ -324,7 +325,7 @@ public class TransceiverTest
         LinkType roadLinkType = DefaultsNl.ROAD;
         CrossSectionLink link = new CrossSectionLink(network, "1 to 2", node1, node2, roadLinkType,
                 new OtsLine3D(node1.getPoint(), node2.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
-        LaneType laneType = network.getLaneType(LaneType.DEFAULTS.RESIDENTIAL_ROAD_LANE);
+        LaneType laneType = DefaultsRoadNl.RESIDENTIAL_ROAD;
         OtsReplication replication = Mockito.mock(OtsReplication.class);
         HistoryManagerDevs hmd = Mockito.mock(HistoryManagerDevs.class);
         Mockito.when(hmd.now()).thenReturn(Time.ZERO);

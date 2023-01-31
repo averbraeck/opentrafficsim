@@ -47,7 +47,7 @@ public class FundamentalDiagramModel extends AbstractOtsModel
     @Override
     public void constructModel() throws SimRuntimeException
     {
-        this.network = new OtsRoadNetwork("FdNetwork", true, getSimulator());
+        this.network = new OtsRoadNetwork("FdNetwork", getSimulator());
     }
 
 }

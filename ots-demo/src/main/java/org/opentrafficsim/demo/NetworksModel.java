@@ -46,6 +46,7 @@ import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactory;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.generator.CfRoomChecker;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
@@ -102,7 +103,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
     private static final long serialVersionUID = 20140815L;
 
     /** The network. */
-    private final OtsRoadNetwork network = new OtsRoadNetwork("network", true, getSimulator());
+    private final OtsRoadNetwork network = new OtsRoadNetwork("network", getSimulator());
 
     /** Strategical planner generator for cars. */
     private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactoryCars = null;
@@ -226,7 +227,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
             this.headwayGenerator =
                     new DistErlang(new MersenneTwister(1234), DoubleScalar.minus(averageHeadway, minimumHeadway).getSI(), 4);
 
-            LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
+            LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
             Lane[] rampLanes = null;
             if (merge)
             {

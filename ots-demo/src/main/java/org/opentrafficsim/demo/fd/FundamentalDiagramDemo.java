@@ -67,6 +67,7 @@ import org.opentrafficsim.draw.graphs.GraphCrossSection;
 import org.opentrafficsim.draw.graphs.GraphPath;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
+import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.generator.CfBaRoomChecker;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
@@ -203,7 +204,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
     protected OtsRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
     {
         // Network
-        OtsRoadNetwork network = new OtsRoadNetwork("FD demo network", true, sim);
+        OtsRoadNetwork network = new OtsRoadNetwork("FD demo network", sim);
         GtuType car = DefaultsNl.CAR;
         GtuType truck = DefaultsNl.TRUCK;
         GtuType.registerTemplateSupplier(car, Defaults.NL);
@@ -216,7 +217,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         LinkType linkType = DefaultsNl.FREEWAY;
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;
         Length laneWidth = Length.instantiateSI(3.5);
-        LaneType laneType = network.getLaneType(LaneType.DEFAULTS.FREEWAY);
+        LaneType laneType = DefaultsRoadNl.FREEWAY;
         Speed speedLim = new Speed(120.0, SpeedUnit.KM_PER_HOUR);
 
         List<Lane> lanesAB = new LaneFactory(network, nodeA, nodeB, linkType, sim, policy, DefaultsNl.VEHICLE)

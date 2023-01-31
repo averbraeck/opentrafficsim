@@ -33,6 +33,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.car.CarTest;
+import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuSimple;
@@ -73,7 +74,7 @@ public class GtuFollowingModelTest implements UNITS
     private void gtuFollowingModelTests(final GtuFollowingModelOld gtuFollowingModel) throws Exception
     {
         OtsSimulatorInterface simulator = new OtsSimulator("GtuFollowingModelTest");
-        OtsRoadNetwork network = new OtsRoadNetwork("gtu following test network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("gtu following test network", simulator);
         Model model = new Model(simulator, network);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
 
@@ -106,7 +107,7 @@ public class GtuFollowingModelTest implements UNITS
         assertTrue("minimum headway at speed 0 hould have value >= 0", 0 <= minimumHeadway.getSI());
         // System.out.println("minimum headway at speed " + speed + " is " + minimumHeadway);
         GtuType carType = DefaultsNl.CAR;
-        LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
+        LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
         Lane lane = CarTest.makeLane(network, laneType, simulator);
         Length initialPosition = new Length(1234.567, METER);
         Length length = new Length(5.0, METER);

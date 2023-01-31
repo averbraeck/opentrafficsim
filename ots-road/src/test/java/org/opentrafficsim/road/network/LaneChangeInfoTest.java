@@ -28,6 +28,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -64,13 +65,13 @@ public class LaneChangeInfoTest
         OtsModelInterface model = Mockito.mock(OtsModelInterface.class);
         OtsSimulatorInterface simulator = new OtsSimulator("Lane change info test");
         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600), model);
-        OtsRoadNetwork network = new OtsRoadNetwork("Lane change info test network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("Lane change info test network", simulator);
         GtuType car = DefaultsNl.CAR;
 
         LinkType freeway = DefaultsNl.FREEWAY;
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;
         Length laneWidth = Length.instantiateSI(3.5);
-        LaneType freewayLane = network.getLaneType(LaneType.DEFAULTS.FREEWAY);
+        LaneType freewayLane = DefaultsRoadNl.FREEWAY;
         Speed speedLimit = new Speed(120, SpeedUnit.KM_PER_HOUR);
 
         /*-

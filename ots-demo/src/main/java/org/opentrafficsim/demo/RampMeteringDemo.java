@@ -61,6 +61,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
+import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.colorer.GtuTypeColorer;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
@@ -252,7 +253,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
     @Override
     protected OtsRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
     {
-        OtsRoadNetwork network = new OtsRoadNetwork("RampMetering", true, sim);
+        OtsRoadNetwork network = new OtsRoadNetwork("RampMetering", sim);
         if (this.output)
         {
             network.addListener(this, Network.GTU_ADD_EVENT);
@@ -285,7 +286,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
         LinkType freeway = DefaultsNl.FREEWAY;
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;
         Length laneWidth = Length.instantiateSI(3.6);
-        LaneType freewayLane = network.getLaneType(LaneType.DEFAULTS.FREEWAY);
+        LaneType freewayLane = DefaultsRoadNl.FREEWAY;
         Speed speedLimit = new Speed(120, SpeedUnit.KM_PER_HOUR);
         Speed rampSpeedLimit = new Speed(70, SpeedUnit.KM_PER_HOUR);
         List<Lane> lanesAB = new LaneFactory(network, nodeA, nodeB, freeway, sim, policy, DefaultsNl.VEHICLE)

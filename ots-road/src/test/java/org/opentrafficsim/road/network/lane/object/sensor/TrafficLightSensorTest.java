@@ -37,6 +37,7 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.DefaultTestParameters;
+import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCfLcTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
@@ -80,10 +81,10 @@ public class TrafficLightSensorTest implements EventListener
     private static Lane[] buildNetwork(final double[] lengths, final OtsSimulatorInterface simulator)
             throws NetworkException, NamingException, OtsGeometryException, SimRuntimeException
     {
-        OtsRoadNetwork network = new OtsRoadNetwork("network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("network", simulator);
         OtsRoadNode prevNode = null;
         Lane[] result = new Lane[lengths.length];
-        LaneType laneType = network.getLaneType(LaneType.DEFAULTS.FREEWAY);
+        LaneType laneType = DefaultsRoadNl.FREEWAY;
         Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
         double cumulativeLength = 0;
         for (int nodeNumber = 0; nodeNumber <= lengths.length; nodeNumber++)

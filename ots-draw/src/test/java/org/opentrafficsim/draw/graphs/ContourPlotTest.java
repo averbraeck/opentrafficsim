@@ -44,6 +44,7 @@ import org.opentrafficsim.draw.graphs.GraphPath.Section;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.SamplerData;
+import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCfLcTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
@@ -109,7 +110,7 @@ public class ContourPlotTest implements UNITS
     private GraphPath<LaneDataRoad> dummyPath(final OtsSimulatorInterface simulator, final OtsRoadNetwork network)
             throws Exception
     {
-        LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
+        LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
         OtsRoadNode b = new OtsRoadNode(network, "B", new OtsPoint3D(12345, 0, 0), Direction.ZERO);
         ArrayList<Lane> result = new ArrayList<Lane>();
         Lane[] lanes = LaneFactory.makeMultiLane(network, "AtoB",
@@ -155,8 +156,7 @@ public class ContourPlotTest implements UNITS
         Mockito.when(this.section0.getLength()).thenReturn(Length.valueOf("2000m"));
         Mockito.when(this.section1.getLength()).thenReturn(Length.valueOf("766m"));
         Mockito.when(this.mockedSimulator.scheduleEventAbsTime(ArgumentMatchers.any(Time.class), ArgumentMatchers.any(),
-                ArgumentMatchers.anyString(), ArgumentMatchers.isNull()))
-                .thenAnswer(new Answer<SimEventInterface<Duration>>()
+                ArgumentMatchers.anyString(), ArgumentMatchers.isNull())).thenAnswer(new Answer<SimEventInterface<Duration>>()
                 {
                     @Override
                     public SimEventInterface<Duration> answer(final InvocationOnMock invocation) throws Throwable
@@ -197,7 +197,7 @@ public class ContourPlotTest implements UNITS
     {
         setUp();
         OtsSimulatorInterface simulator = this.mockedSimulator;
-        OtsRoadNetwork network = new OtsRoadNetwork("density contour test network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("density contour test network", simulator);
         GraphPath<LaneDataRoad> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(network);
         ContourDataSource dataPool = new ContourDataSource(sampler.getSamplerData(), path);
@@ -216,7 +216,7 @@ public class ContourPlotTest implements UNITS
     {
         setUp();
         OtsSimulatorInterface simulator = this.mockedSimulator;
-        OtsRoadNetwork network = new OtsRoadNetwork("flow contour test network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("flow contour test network", simulator);
         GraphPath<LaneDataRoad> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(network);
         ContourDataSource dataPool = new ContourDataSource(sampler.getSamplerData(), path);
@@ -235,7 +235,7 @@ public class ContourPlotTest implements UNITS
     {
         setUp();
         OtsSimulatorInterface simulator = this.mockedSimulator;
-        OtsRoadNetwork network = new OtsRoadNetwork("flow contour test network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("flow contour test network", simulator);
         GraphPath<LaneDataRoad> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(network);
         ContourDataSource dataPool = new ContourDataSource(sampler.getSamplerData(), path);

@@ -3,8 +3,6 @@ package org.opentrafficsim.road.gtu;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.Serializable;
-
 import javax.naming.NamingException;
 
 import org.djunits.unit.DurationUnit;
@@ -32,6 +30,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuType;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -66,7 +65,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
     public final void constructorTest() throws Exception
     {
         OtsSimulatorInterface simulator = new OtsSimulator("LaneBasedTemplateGTUTypeTest");
-        OtsRoadNetwork network = new OtsRoadNetwork("TemplateGTU network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("TemplateGTU network", simulator);
         GtuType pcType = DefaultsNl.CAR;
         final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcLength =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 4), METER);
@@ -170,7 +169,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
     public final void compatibleLaneTypeTest() throws Exception
     {
         OtsSimulatorInterface simulator = new OtsSimulator("LaneBasedTemplateGTUTypeTest");
-        OtsRoadNetwork network = new OtsRoadNetwork("TemplateGTU network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("TemplateGTU network", simulator);
         // Create some TemplateGTUTypes
         GtuType pc = DefaultsNl.CAR;
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcLength =
@@ -234,21 +233,19 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
         // Create some LaneTypes
         GtuCompatibility<LaneType> noTrucks = new GtuCompatibility<>((LaneType) null);
         noTrucks.addCompatibleGtuType(passengerCar.getGtuType());
-        LaneType trucksForbidden = new LaneType("No Trucks", network.getLaneType(LaneType.DEFAULTS.FREEWAY), network);
+        LaneType trucksForbidden = new LaneType("No Trucks", DefaultsRoadNl.FREEWAY);
 
         GtuCompatibility<LaneType> truckOnly = new GtuCompatibility<>((LaneType) null);
         truckOnly.addCompatibleGtuType(truck.getGtuType());
-        LaneType trucksOnly = new LaneType("Trucks Only", network.getLaneType(LaneType.DEFAULTS.FREEWAY), network);
+        LaneType trucksOnly = new LaneType("Trucks Only", DefaultsRoadNl.FREEWAY);
 
         GtuCompatibility<LaneType> bicyclesOnly = new GtuCompatibility<>((LaneType) null);
-        LaneType bicycleLane =
-                new LaneType("Bicycles Only", network.getLaneType(LaneType.DEFAULTS.FREEWAY), network);
+        LaneType bicycleLane = new LaneType("Bicycles Only", DefaultsRoadNl.FREEWAY);
 
         GtuCompatibility<LaneType> urban = new GtuCompatibility<>((LaneType) null);
         urban.addCompatibleGtuType(passengerCar.getGtuType());
         urban.addCompatibleGtuType(truck.getGtuType());
-        LaneType urbanRoad = new LaneType("Urban road - open to all traffic", network.getLaneType(LaneType.DEFAULTS.FREEWAY),
-                network);
+        LaneType urbanRoad = new LaneType("Urban road - open to all traffic", DefaultsRoadNl.FREEWAY);
 
         // Now we test all combinations
         // TODO assertTrue("Passengers cars are allowed on a no trucks lane", passengerCar.isCompatible(trucksForbidden));

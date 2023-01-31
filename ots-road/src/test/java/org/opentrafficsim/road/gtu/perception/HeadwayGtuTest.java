@@ -36,7 +36,7 @@ import org.opentrafficsim.road.network.OtsRoadNetwork;
 public class HeadwayGtuTest
 {
     /** The network. */
-    private OtsRoadNetwork network = new OtsRoadNetwork("test network", true, new OtsSimulator("Simulator for HeadwayGtuTest"));
+    private OtsRoadNetwork network = new OtsRoadNetwork("test network", new OtsSimulator("Simulator for HeadwayGtuTest"));
 
     /**
      * Test the constructor and the getters.

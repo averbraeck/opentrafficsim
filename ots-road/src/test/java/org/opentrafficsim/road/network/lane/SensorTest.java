@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.network.lane;
 
-import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -26,6 +25,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.DefaultTestParameters;
+import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGtuFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
@@ -60,7 +60,7 @@ public class SensorTest implements UNITS
         OtsSimulatorInterface simulator = new OtsSimulator("SensorTest");
         OtsModelInterface model = new DummyModelForSensorTest(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
-        OtsRoadNetwork network = new OtsRoadNetwork("sensor test network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("sensor test network", simulator);
         // Now we need a set of Lanes
         // To create Lanes we need Nodes and a LaneType
         OtsRoadNode nodeAFrom = new OtsRoadNode(network, "AFrom", new OtsPoint3D(0, 0, 0), Direction.ZERO);
@@ -68,7 +68,7 @@ public class SensorTest implements UNITS
         OtsRoadNode nodeBTo = new OtsRoadNode(network, "BTo", new OtsPoint3D(20000, 0, 0), Direction.ZERO);
         // so car won't run off lane B in 100 s.
         GtuType gtuType = DefaultsNl.CAR;
-        LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
+        LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
         Lane[] lanesA = LaneFactory.makeMultiLane(network, "A", nodeAFrom, nodeATo, null, 3, laneType,
                 new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
         Lane[] lanesB = LaneFactory.makeMultiLane(network, "B", nodeATo, nodeBTo, null, 3, laneType,

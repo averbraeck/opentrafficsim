@@ -3,11 +3,11 @@ package org.opentrafficsim.core.gtu;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.HierarchicalType;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.network.Network;
 
@@ -32,7 +32,8 @@ public final class GtuType extends HierarchicalType<GtuType, Gtu> implements Ser
     private static final Map<Network, Map<GtuType, TemplateGtuType>> DEFAULT_TEMPLATES = new LinkedHashMap<>();
 
     /** Template suppliers. */
-    private static final Map<GtuType, Defaults> TEMPLATE_SUPPLIERS = new LinkedHashMap<>();
+    private static final Map<GtuType, BiFunction<GtuType, StreamInterface, TemplateGtuType>> TEMPLATE_SUPPLIERS =
+            new LinkedHashMap<>();
 
     /** Defines the shape of a marker GTUs are drawn with when zoomed out. */
     private Marker marker;
@@ -79,9 +80,10 @@ public final class GtuType extends HierarchicalType<GtuType, Gtu> implements Ser
     /**
      * Register a supplier for default GTU types.
      * @param gtuType GtuType; default GTU type.
-     * @param defaults Defaults; supplier of the template.
+     * @param defaults BiFunction&lt;GtuType, StreamInterface, TemplateGtuType&gt;; supplier of the template.
      */
-    public static void registerTemplateSupplier(final GtuType gtuType, final Defaults defaults)
+    public static void registerTemplateSupplier(final GtuType gtuType,
+            final BiFunction<GtuType, StreamInterface, TemplateGtuType> defaults)
     {
         TEMPLATE_SUPPLIERS.put(gtuType, defaults);
     }
@@ -110,7 +112,7 @@ public final class GtuType extends HierarchicalType<GtuType, Gtu> implements Ser
             // try to obtain from supplier
             if (TEMPLATE_SUPPLIERS.containsKey(type))
             {
-                template = TEMPLATE_SUPPLIERS.get(type).getTemplate(type, randomStream);
+                template = TEMPLATE_SUPPLIERS.get(type).apply(type, randomStream);
             }
 
             // check parent type if that gave null

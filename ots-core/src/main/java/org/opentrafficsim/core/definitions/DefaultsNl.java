@@ -3,6 +3,7 @@ package org.opentrafficsim.core.definitions;
 import java.awt.Color;
 import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.function.BiFunction;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Length;
@@ -30,7 +31,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public final class DefaultsNl extends Defaults
+public final class DefaultsNl extends Defaults implements BiFunction<GtuType, StreamInterface, TemplateGtuType>
 {
 
     // TODO: prepend all type id's with "NL."
@@ -112,9 +113,19 @@ public final class DefaultsNl extends Defaults
         TRUCK.setMarker(Marker.SQUARE);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Returns a template for the given GTU type. This can be defined at the level of super types, returning {@code null} for
+     * more specific types. There is no need to define a template for all default types defined for a locale, so long as at
+     * least one parent of each type has a template defined.<br>
+     * <br>
+     * Note: implementations should not cache the template per GTU type, as different simulations may request templates for the
+     * same GTU type, while having their separate random streams.
+     * @param gtuType GtuType; GTU type.
+     * @param randomStream StreamInterface; random stream.
+     * @return TemplateGtuType; template, {@code null} if no default is defined.
+     */
     @Override
-    public TemplateGtuType getTemplate(final GtuType gtuType, final StreamInterface randomStream)
+    public TemplateGtuType apply(final GtuType gtuType, final StreamInterface randomStream)
     {
         TemplateGtuType template = null;
         if (gtuType.equals(CAR))
@@ -159,30 +170,30 @@ public final class DefaultsNl extends Defaults
     /** This is here only because it is in the file default_linktypes.xml as a default, i.e the parser needs to find it. */
     @Deprecated
     public static final LinkType NONE_LINK = new LinkType("NONE");
-    
+
     /** This is here only because it is in the file default_linktypes.xml as a default, i.e the parser needs to find it. */
     @Deprecated
     public static final LinkType CONNECTOR = new LinkType("CONNECTOR");
-    
+
     /** Super type for all roads. */
     public static final LinkType ROAD = new LinkType("ROAD");
 
     /** Freeway (snelweg, 130km/h). */
     public static final LinkType FREEWAY = new LinkType("FREEWAY", ROAD);
 
-    /** Motorway (autoweg, 100km/h). */
-    public static final LinkType MOTORWAY = new LinkType("MOTORWAY", ROAD);
+    /** Highway (autoweg, 100km/h). */
+    public static final LinkType HIGHWAY = new LinkType("HIGHWAY", ROAD);
 
     /** Provincial (provinciaalse weg / N-weg, 80km/h). */
     public static final LinkType PROVINCIAL = new LinkType("PROVINCIAL", ROAD);
 
-    /** Rural (lanedelijk, 60km/h). */
+    /** Rural (landelijk, 60km/h). */
     public static final LinkType RURAL = new LinkType("RURAL", ROAD);
 
-    /** Urban (stedelijl, 50km/h). */
+    /** Urban (stedelijk, 50km/h). */
     public static final LinkType URBAN = new LinkType("URBAN", ROAD);
 
-    /** Residential (woonerf, 30km/h). */
+    /** Residential (buurtweg, 30km/h). */
     public static final LinkType RESIDENTIAL = new LinkType("RESIDENTIAL", ROAD);
 
     /** Waterway. */
@@ -196,11 +207,12 @@ public final class DefaultsNl extends Defaults
         ROAD.addCompatibleGtuType(ROAD_USER);
         FREEWAY.addIncompatibleGtuType(PEDESTRIAN);
         FREEWAY.addIncompatibleGtuType(BICYCLE);
-        MOTORWAY.addIncompatibleGtuType(PEDESTRIAN);
-        MOTORWAY.addIncompatibleGtuType(BICYCLE);
+        HIGHWAY.addIncompatibleGtuType(PEDESTRIAN);
+        HIGHWAY.addIncompatibleGtuType(BICYCLE);
         PROVINCIAL.addIncompatibleGtuType(PEDESTRIAN);
         PROVINCIAL.addIncompatibleGtuType(BICYCLE);
         WATERWAY.addCompatibleGtuType(WATERWAY_USER);
         RAILWAY.addCompatibleGtuType(RAILWAY_USER);
     }
+
 }

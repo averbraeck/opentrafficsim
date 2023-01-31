@@ -238,8 +238,8 @@ public final class XmlNetworkLaneParser implements Serializable
         Map<String, ROADLAYOUT> roadLayoutMap = new LinkedHashMap<>();
         Map<String, GTUTEMPLATE> gtuTemplates = new LinkedHashMap<>();
         Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap = new LinkedHashMap<>();
-        Definitions definitions = DefinitionsParser.parseDefinitions(otsNetwork, ots.getDEFINITIONS(), true, roadLayoutMap,
-                gtuTemplates, streamInformation, linkTypeSpeedLimitMap);
+        Definitions definitions = DefinitionsParser.parseDefinitions(ots.getDEFINITIONS(), true, roadLayoutMap, gtuTemplates,
+                streamInformation, linkTypeSpeedLimitMap);
 
         NETWORK network = ots.getNETWORK();
         Map<String, Direction> nodeDirections = NetworkParser.calculateNodeAngles(otsNetwork, network);
@@ -385,7 +385,7 @@ public final class XmlNetworkLaneParser implements Serializable
     public static void main(final String[] args) throws Exception
     {
         OtsSimulatorInterface simulator = new OtsSimulator("XmlNetworkLaneParser");
-        build("/example.xml", new OtsRoadNetwork("", true, simulator), false);
+        build("/example.xml", new OtsRoadNetwork("", simulator), false);
         System.exit(0);
     }
 }

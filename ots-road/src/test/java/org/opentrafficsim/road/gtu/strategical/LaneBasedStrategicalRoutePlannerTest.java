@@ -40,7 +40,7 @@ public class LaneBasedStrategicalRoutePlannerTest
     public final void nextLinkDirectionTest() throws GtuException, NetworkException, OtsGeometryException
     {
         OtsSimulatorInterface simulator = MockSimulator.createMock();
-        OtsRoadNetwork network = new OtsRoadNetwork("next link direction test", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("next link direction test", simulator);
         // Build a really simple network
         OtsNode fromNode = new OtsNode(network, "from", new OtsPoint3D(0, 0, 0));
         OtsNode toNode = new OtsNode(network, "to", new OtsPoint3D(100, 0, 0));

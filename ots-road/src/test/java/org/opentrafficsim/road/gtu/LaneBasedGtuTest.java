@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -32,6 +31,7 @@ import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.road.DefaultTestParameters;
+import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
@@ -90,13 +90,13 @@ public class LaneBasedGtuTest implements UNITS
             fail("truckUpToLane must be >= truckFromLane");
         }
         OtsSimulatorInterface simulator = new OtsSimulator("leaderFollowerParallel");
-        OtsRoadNetwork network = new OtsRoadNetwork("leader follower parallel gtu test network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("leader follower parallel gtu test network", simulator);
 
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         GtuType carType = DefaultsNl.CAR;
         GtuType truckType = DefaultsNl.TRUCK;
-        LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
+        LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
         // Create a series of Nodes (some closely bunched together)
         List<OtsRoadNode> nodes = new ArrayList<>();
         int[] linkBoundaries = {0, 25, 50, 100, 101, 102, 103, 104, 105, 150, 175, 200};
@@ -365,7 +365,7 @@ public class LaneBasedGtuTest implements UNITS
         for (int a = 1; a >= -1; a--)
         {
             OtsSimulatorInterface simulator = new OtsSimulator("timeAtDistanceTest");
-            OtsRoadNetwork network = new OtsRoadNetwork("test", true, simulator);
+            OtsRoadNetwork network = new OtsRoadNetwork("test", simulator);
             // Create a car with constant acceleration
             Model model = new Model(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
@@ -383,7 +383,7 @@ public class LaneBasedGtuTest implements UNITS
                 }
             }
             GtuType carType = DefaultsNl.CAR;
-            LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
+            LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
             OtsRoadNode fromNode = new OtsRoadNode(network, "Node A", new OtsPoint3D(0, 0, 0), Direction.ZERO);
             OtsRoadNode toNode = new OtsRoadNode(network, "Node B", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
             String linkName = "AB";

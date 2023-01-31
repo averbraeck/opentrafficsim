@@ -2,7 +2,6 @@ package org.opentrafficsim.road.network;
 
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.perception.PerceivableContext;
-import org.opentrafficsim.road.definitions.RoadDefinitions;
 
 /**
  * RoadNetwork adds a number of methods to the Network class that are specific for roads, such as the LaneTypes.
@@ -12,7 +11,7 @@ import org.opentrafficsim.road.definitions.RoadDefinitions;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public interface RoadNetwork extends Network, PerceivableContext, RoadDefinitions
+public interface RoadNetwork extends Network, PerceivableContext
 {
     // interfaces that are unique to a Roadnetwork as opposed to a Network
 }

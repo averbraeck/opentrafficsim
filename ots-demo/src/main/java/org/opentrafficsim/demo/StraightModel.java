@@ -1,6 +1,5 @@
 package org.opentrafficsim.demo;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -38,6 +37,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.generator.TtcRoomChecker;
@@ -92,7 +92,7 @@ public class StraightModel extends AbstractOtsModel implements UNITS
     private static final long serialVersionUID = 20140815L;
 
     /** The network. */
-    private final OtsRoadNetwork network = new OtsRoadNetwork("network", true, getSimulator());
+    private final OtsRoadNetwork network = new OtsRoadNetwork("network", getSimulator());
 
     /** The probability that the next generated GTU is a passenger car. */
     private double carProbability;
@@ -135,7 +135,7 @@ public class StraightModel extends AbstractOtsModel implements UNITS
                     new OtsRoadNode(this.network, "To", new OtsPoint3D(this.maximumDistance.getSI(), 0, 0), Direction.ZERO);
             OtsRoadNode end = new OtsRoadNode(this.network, "End", new OtsPoint3D(this.maximumDistance.getSI() + 50.0, 0, 0),
                     Direction.ZERO);
-            LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
+            LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
             this.lane = LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator,
                     DefaultsNl.VEHICLE);
             this.path.add(this.lane);

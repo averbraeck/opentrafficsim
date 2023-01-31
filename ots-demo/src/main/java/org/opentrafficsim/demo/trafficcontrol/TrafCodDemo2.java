@@ -188,7 +188,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCODModel>
         {
             try
             {
-                this.network = new OtsRoadNetwork(getShortName(), true, getSimulator());
+                this.network = new OtsRoadNetwork(getShortName(), getSimulator());
                 OTS ots = XmlNetworkLaneParser.parseXML(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)));
                 XmlNetworkLaneParser.build(ots, this.network, false);
             }

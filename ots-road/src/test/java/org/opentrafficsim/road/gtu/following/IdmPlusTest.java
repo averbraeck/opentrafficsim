@@ -27,6 +27,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.car.CarTest;
+import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuSimple;
@@ -64,14 +65,14 @@ public class IdmPlusTest implements UNITS
         // Test 1. Check a car standing still with no leaders accelerates with maximum acceleration
         // cars have #10 and up
         OtsSimulatorInterface simulator = new OtsSimulator("IDMPlusTest");
-        OtsRoadNetwork network = new OtsRoadNetwork("IDMPlus test network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("IDMPlus test network", simulator);
         IDMPlusTestModel model = new IDMPlusTestModel(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         Length s0 = new Length(2, METER);
         GtuFollowingModelOld carFollowingModel = new IdmPlusOld(new Acceleration(1.25, METER_PER_SECOND_2),
                 new Acceleration(1.5, METER_PER_SECOND_2), s0, new Duration(1, SECOND), 1d);
         GtuType gtuType = DefaultsNl.CAR;
-        LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
+        LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
         Lane lane = CarTest.makeLane(network, laneType, simulator);
         Time initialTime = new Time(0, TimeUnit.BASE_SECOND);
         Length initialPosition = new Length(123.456, METER);

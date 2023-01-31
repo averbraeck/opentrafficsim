@@ -3,11 +3,6 @@ package org.opentrafficsim.core.definitions;
 import java.lang.reflect.Field;
 import java.util.Locale;
 
-import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.gtu.TemplateGtuType;
-
-import nl.tudelft.simulation.jstats.streams.StreamInterface;
-
 /**
  * This class houses defaults instances for different types, such as GTU types and link types. The static fields should only be
  * accessed in the setup of a simulation. The simulation itself should be fed the relevant types, and not assume any specific or
@@ -48,34 +43,35 @@ public abstract class Defaults
     }
 
     /**
-     * Returns a template for the given GTU type. This can be defined at the level of super types, returning {@code null} for
-     * more specific types. There is no need to define a template for all default types defined for a locale, so long as at
-     * least one parent of each type has a template defined.<br>
-     * <br>
-     * Note: implementations should not cache the template per GTU type, as different simulations may request templates for the
-     * same GTU type, while having their separate random streams.
-     * @param gtuType GtuType; GTU type.
-     * @param randomStream StreamInterface; random stream.
-     * @return TemplateGtuType; template, {@code null} if no default is defined.
+     * Returns a default value of a type, indicated by its name. This should only be used by parsers. Simulations defined in
+     * code should access the relevant static fields directly for code maintainability.
+     * @param clazz Class&lt;T&gt;; class instance of type T.
+     * @param name String; name referring to a default through static field names, e.g. "NL.VEHICLE".
+     * @param <T> type of the value.
+     * @return T; returned default value, {@code null} if the default could not be found.
      */
-    public abstract TemplateGtuType getTemplate(GtuType gtuType, StreamInterface randomStream);
-
+    public static <T> T getByName(final Class<T> clazz, final String name)
+    {
+        return getByName(Defaults.class, clazz, name);
+    }
+    
     /**
      * Returns a default value of a type, indicated by its name. This should only be used by parsers. Simulations defined in
      * code should access the relevant static fields directly for code maintainability.
-     * @param clazz Class&lt;T&gtT;; class instance of type T.
+     * @param defaultsClass Class&lt;? extends Defaults&gt;; defaults class.
+     * @param clazz Class&lt;T&gt;; class instance of type T.
      * @param name String; name referring to a default through static field names, e.g. "NL.VEHICLE".
      * @param <T> type of the value.
      * @return T; returned default value, {@code null} if the default could not be found.
      */
     @SuppressWarnings("unchecked")
-    public static <T> T getByName(final Class<T> clazz, final String name)
+    protected static <T> T getByName(final Class<? extends Defaults> defaultsClass, final Class<T> clazz, final String name)
     {
         try
         {
             String[] subNames = name.split("\\.");
-            Field field1 = Defaults.class.getDeclaredField(subNames[0]);
-            Object defaults = field1.get(Defaults.class);
+            Field field1 = defaultsClass.getDeclaredField(subNames[0]);
+            Object defaults = field1.get(defaultsClass);
             Field field2 = defaults.getClass().getDeclaredField(subNames[1]);
             return (T) field2.get(defaults.getClass());
         }

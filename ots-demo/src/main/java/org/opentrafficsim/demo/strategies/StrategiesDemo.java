@@ -56,6 +56,7 @@ import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
+import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.colorer.DesiredHeadwayColorer;
 import org.opentrafficsim.road.gtu.colorer.FixedColor;
 import org.opentrafficsim.road.gtu.colorer.IncentiveColorer;
@@ -95,7 +96,6 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
-import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.Stripe.Type;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -495,7 +495,7 @@ public class StrategiesDemo extends AbstractSimulationScript
     @Override
     protected OtsRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
     {
-        OtsRoadNetwork network = new OtsRoadNetwork("Strategies demo", true, getSimulator());
+        OtsRoadNetwork network = new OtsRoadNetwork("Strategies demo", getSimulator());
 
         GtuType.registerTemplateSupplier(DefaultsNl.TRUCK, Defaults.NL);
         GtuType.registerTemplateSupplier(DefaultsNl.CAR, Defaults.NL);
@@ -521,8 +521,8 @@ public class StrategiesDemo extends AbstractSimulationScript
         }
         List<Lane> lanes1 = new LaneFactory(network, nodeB, nodeA, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPLEFT,
                 DefaultsNl.VEHICLE, new OtsLine3D(coordsHalf1))
-                        .leftToRight(0.0, Length.instantiateSI(3.5), network.getLaneType(LaneType.DEFAULTS.FREEWAY), speedLimit)
-                        .addLanes(Type.DASHED).getLanes();
+                        .leftToRight(0.0, Length.instantiateSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit).addLanes(Type.DASHED)
+                        .getLanes();
         OtsPoint3D[] coordsHalf2 = new OtsPoint3D[127];
         for (int i = 0; i < coordsHalf2.length; i++)
         {
@@ -531,8 +531,8 @@ public class StrategiesDemo extends AbstractSimulationScript
         }
         List<Lane> lanes2 = new LaneFactory(network, nodeA, nodeB, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPLEFT,
                 DefaultsNl.VEHICLE, new OtsLine3D(coordsHalf2))
-                        .leftToRight(0.0, Length.instantiateSI(3.5), network.getLaneType(LaneType.DEFAULTS.FREEWAY), speedLimit)
-                        .addLanes(Type.DASHED).getLanes();
+                        .leftToRight(0.0, Length.instantiateSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit).addLanes(Type.DASHED)
+                        .getLanes();
 
         // Strategical factories
         PerceptionFactory perceptionFactory = new LmrsStrategiesPerceptionFactory();

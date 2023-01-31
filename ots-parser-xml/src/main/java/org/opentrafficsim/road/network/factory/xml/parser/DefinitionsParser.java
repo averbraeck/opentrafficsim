@@ -13,7 +13,6 @@ import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -53,7 +52,6 @@ public final class DefinitionsParser
 
     /**
      * Parse the DEFINITIONS tag in the OTS XML file.
-     * @param network deprecated
      * @param definitions the DEFINTIONS tag
      * @param overwriteDefaults overwrite default definitions in otsNetwork or not
      * @param roadLayoutMap temporary storage for the road layouts
@@ -63,15 +61,15 @@ public final class DefinitionsParser
      * @return the parsed definitions
      * @throws XmlParserException on parsing error
      */
-    public static Definitions parseDefinitions(final OtsRoadNetwork network, final DEFINITIONS definitions,
-            final boolean overwriteDefaults, final Map<String, ROADLAYOUT> roadLayoutMap,
-            final Map<String, GTUTEMPLATE> gtuTemplates, final StreamInformation streamInformation,
-            final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap) throws XmlParserException
+    public static Definitions parseDefinitions(final DEFINITIONS definitions, final boolean overwriteDefaults,
+            final Map<String, ROADLAYOUT> roadLayoutMap, final Map<String, GTUTEMPLATE> gtuTemplates,
+            final StreamInformation streamInformation, final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap)
+            throws XmlParserException
     {
         Definitions parsedDefinitions = new Definitions();
         parseGtuTypes(definitions, parsedDefinitions);
         parseLinkTypes(definitions, parsedDefinitions, overwriteDefaults, linkTypeSpeedLimitMap);
-        parseLaneTypes(network, definitions, parsedDefinitions, overwriteDefaults);
+        parseLaneTypes(definitions, parsedDefinitions, overwriteDefaults);
         parseGtuTemplates(definitions, parsedDefinitions, overwriteDefaults, gtuTemplates, streamInformation);
         parseRoadLayouts(definitions, parsedDefinitions, roadLayoutMap);
         return parsedDefinitions;
@@ -186,14 +184,13 @@ public final class DefinitionsParser
 
     /**
      * Parse the LANETYPES tag in the OTS XML file.
-     * @param otsNetwork deprecated
      * @param definitions the DEFINTIONS tag
      * @param parsedDefinitions Definitions; parsed definitions (definitions are stored in this)
      * @param overwriteDefaults overwrite default definitions in otsNetwork or not
      * @throws XmlParserException on parsing error
      */
-    public static void parseLaneTypes(final OtsRoadNetwork otsNetwork, final DEFINITIONS definitions,
-            final Definitions parsedDefinitions, final boolean overwriteDefaults) throws XmlParserException
+    public static void parseLaneTypes(final DEFINITIONS definitions, final Definitions parsedDefinitions,
+            final boolean overwriteDefaults) throws XmlParserException
     {
         for (LANETYPES laneTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(),
                 LANETYPES.class))
@@ -210,16 +207,16 @@ public final class DefinitionsParser
                         LaneType parent = parsedDefinitions.get(LaneType.class, laneTag.getPARENT());
                         Throw.when(parent == null, XmlParserException.class, "LaneType %s parent %s not found", laneTag.getID(),
                                 laneTag.getPARENT());
-                        laneType = new LaneType(laneTag.getID(), parent, otsNetwork);
+                        laneType = new LaneType(laneTag.getID(), parent);
                         CategoryLogger.filter(Cat.PARSER).trace("Added LaneType {}", laneType);
                     }
                     else
                     {
-                        laneType = new LaneType(laneTag.getID(), otsNetwork);
+                        laneType = new LaneType(laneTag.getID());
                         CategoryLogger.filter(Cat.PARSER).trace("Added LaneType {}", laneType);
                     }
                     parsedDefinitions.add(LaneType.class, laneType);
-                    
+
                     for (COMPATIBILITY compTag : laneTag.getCOMPATIBILITY())
                     {
                         GtuType gtuType = parsedDefinitions.get(GtuType.class, compTag.getGTUTYPE());
@@ -291,8 +288,8 @@ public final class DefinitionsParser
      * @param parameterMap map to store parameter type by id
      * @throws XmlParserException if the field in a PARAMETERTYPE does not refer to a ParameterType&lt;?&gt;
      */
-    public static void parseParameterTypes(final DEFINITIONS definitions,
-            final Map<String, ParameterType<?>> parameterMap) throws XmlParserException
+    public static void parseParameterTypes(final DEFINITIONS definitions, final Map<String, ParameterType<?>> parameterMap)
+            throws XmlParserException
     {
         for (PARAMETERTYPE parameterType : ParseUtil.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(),
                 PARAMETERTYPE.class))

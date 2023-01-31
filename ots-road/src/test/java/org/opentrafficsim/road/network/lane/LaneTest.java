@@ -44,6 +44,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.mock.MockDevsSimulator;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -70,7 +71,7 @@ public class LaneTest implements UNITS
     public void laneConstructorTest() throws Exception
     {
         OtsSimulatorInterface simulator = new OtsSimulator("LaneTest");
-        OtsRoadNetwork network = new OtsRoadNetwork("lane test network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("lane test network", simulator);
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         // First we need two Nodes
@@ -90,7 +91,7 @@ public class LaneTest implements UNITS
 
         GtuCompatibility<LaneType> GtuCompatibility = new GtuCompatibility<>((LaneType) null);
         GtuCompatibility.addCompatibleGtuType(DefaultsNl.VEHICLE);
-        LaneType laneType = new LaneType("One way", network.getLaneType(LaneType.DEFAULTS.FREEWAY), network);
+        LaneType laneType = new LaneType("One way", DefaultsRoadNl.FREEWAY);
         Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
         speedMap.put(DefaultsNl.VEHICLE, new Speed(100, KM_PER_HOUR));
         // Now we can construct a Lane
@@ -557,8 +558,8 @@ public class LaneTest implements UNITS
         OtsSimulatorInterface simulator = new OtsSimulator("LaneTest");
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
-        OtsRoadNetwork network = new OtsRoadNetwork("contour test network", true, simulator);
-        LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
+        OtsRoadNetwork network = new OtsRoadNetwork("contour test network", simulator);
+        LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
         laneType.addCompatibleGtuType(DefaultsNl.VEHICLE);
         Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
         speedMap.put(DefaultsNl.VEHICLE, new Speed(50, KM_PER_HOUR));
@@ -638,8 +639,8 @@ public class LaneTest implements UNITS
                     OtsSimulatorInterface simulator = new OtsSimulator("LaneTest");
                     Model model = new Model(simulator);
                     simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
-                    OtsRoadNetwork network = new OtsRoadNetwork("contour test network", true, simulator);
-                    LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
+                    OtsRoadNetwork network = new OtsRoadNetwork("contour test network", simulator);
+                    LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
                     laneType.addCompatibleGtuType(DefaultsNl.VEHICLE);
                     Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
                     speedMap.put(DefaultsNl.VEHICLE, new Speed(50, KM_PER_HOUR));

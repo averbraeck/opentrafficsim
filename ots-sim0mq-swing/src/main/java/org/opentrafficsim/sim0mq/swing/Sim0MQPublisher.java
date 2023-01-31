@@ -237,7 +237,7 @@ public final class Sim0MQPublisher
         try
         {
             OtsAnimator animator = new OtsAnimator("OTS Animator");
-            this.network = new OtsRoadNetwork("OTS model for Sim0MQPublisher", true, animator);
+            this.network = new OtsRoadNetwork("OTS model for Sim0MQPublisher", animator);
             this.model = new Sim0MQOTSModel("Remotely controlled OTS model", this.network, xml);
             Map<String, StreamInterface> map = new LinkedHashMap<>();
             map.put("generation", new MersenneTwister(seed));

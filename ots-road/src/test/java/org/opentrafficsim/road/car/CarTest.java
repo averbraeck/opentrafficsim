@@ -30,6 +30,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.DefaultTestParameters;
+import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCfLcTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
@@ -72,9 +73,9 @@ public class CarTest implements UNITS
     {
         Time initialTime = new Time(0, TimeUnit.BASE_SECOND);
         OtsSimulatorInterface simulator = makeSimulator();
-        OtsRoadNetwork network = new OtsRoadNetwork("network", true, simulator);
+        OtsRoadNetwork network = new OtsRoadNetwork("network", simulator);
         GtuType gtuType = DefaultsNl.CAR;
-        LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
+        LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
         Lane lane = makeLane(network, laneType, simulator);
         Length initialPosition = new Length(12, METER);
         Speed initialSpeed = new Speed(34, KM_PER_HOUR);

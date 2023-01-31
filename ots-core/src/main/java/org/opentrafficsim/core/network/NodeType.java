@@ -20,9 +20,6 @@ public class NodeType extends HierarchicalType<NodeType, Node>
     /** */
     private static final long serialVersionUID = 20140821L;
 
-    /** the network to which the NodeType belongs. */
-    private final Network network;
-
     /** Name of default type NODE. */
     public static final String NODE_NAME = "NODE";
 
@@ -38,14 +35,10 @@ public class NodeType extends HierarchicalType<NodeType, Node>
     /**
      * Create a new Node type.
      * @param id String; the id of the node type (may not be null)
-     * @param parent NodeType; the parent type (may be null)
-     * @param network Network; The network to which the NodeType belongs (may not be null)
      */
-    public NodeType(final String id, final NodeType parent, final Network network)
+    public NodeType(final String id)
     {
-        super(id, parent);
-        Throw.whenNull(network, "network should not be null");
-        this.network = network;
+        super(id, null);
     }
 
     /**
@@ -53,37 +46,9 @@ public class NodeType extends HierarchicalType<NodeType, Node>
      * @param id String; the id of the node type (may not be null)
      * @param parent NodeType; the parent type (may be null)
      */
-    protected NodeType(final String id, final NodeType parent)
+    public NodeType(final String id, final NodeType parent)
     {
         super(id, parent);
-        this.network = null;
-    }
-
-    /**
-     * Return whether this is a centroid.
-     * @return boolean; whether this is a {@code CENTROID}
-     */
-    public final boolean isCentroid()
-    {
-        return this.equals(CENTROID);
-    }
-
-    /**
-     * Return whether this is a regular node.
-     * @return boolean; whether this is a regular node
-     */
-    public final boolean isNode()
-    {
-        return this.equals(NODE);
-    }
-
-    /**
-     * Return the network (may be null for default types).
-     * @return the network to which the NodeType belongs
-     */
-    public Network getNetwork()
-    {
-        return this.network;
     }
 
     /** {@inheritDoc} */

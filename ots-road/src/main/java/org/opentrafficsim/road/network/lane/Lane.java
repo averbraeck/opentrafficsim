@@ -1563,7 +1563,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             final boolean fixGradualLateralOffset) throws OtsGeometryException, NetworkException
     {
         return new Lane(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth,
-                parentLink.getNetwork().getLaneType(LaneType.DEFAULTS.NONE), new LinkedHashMap<>(), fixGradualLateralOffset)
+                new LaneType("NO_TRAFFIC"), new LinkedHashMap<>(), fixGradualLateralOffset)
         {
             /** */
             private static final long serialVersionUID = 20230116L;
