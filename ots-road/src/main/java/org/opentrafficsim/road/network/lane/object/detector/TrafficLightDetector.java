@@ -15,7 +15,6 @@ import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
@@ -107,20 +106,20 @@ public class TrafficLightDetector extends LocalEventProducer
      * @param entryPosition TYPE; the position on the GTUs that trigger the entry events
      * @param exitPosition TYPE; the position on the GTUs that trigger the exit events
      * @param simulator OTSSimulatorInterface; the simulator
-     * @param compatible Compatible; object that checks that the detector detects a GTU.
+     * @param detectorType DetectorType; detector type.
      * @throws NetworkException when the network is inconsistent.
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public TrafficLightDetector(final String id, final Lane laneA, final Length positionA, final Lane laneB,
             final Length positionB, final List<Lane> intermediateLanes, final TYPE entryPosition, final TYPE exitPosition,
-            final OtsSimulatorInterface simulator, final Compatible compatible) throws NetworkException
+            final OtsSimulatorInterface simulator, final DetectorType detectorType) throws NetworkException
     {
         Throw.whenNull(id, "id may not be null");
         this.id = id;
-        this.entryA = new StartEndDetector(id + ".entryA", laneA, positionA, entryPosition, simulator, compatible);
-        this.exitA = new StartEndDetector(id + ".exitA", laneA, positionA, exitPosition, simulator, compatible);
-        this.entryB = new StartEndDetector(id + ".entryB", laneB, positionB, entryPosition, simulator, compatible);
-        this.exitB = new StartEndDetector(id + ".exitB", laneB, positionB, exitPosition, simulator, compatible);
+        this.entryA = new StartEndDetector(id + ".entryA", laneA, positionA, entryPosition, simulator, detectorType);
+        this.exitA = new StartEndDetector(id + ".exitA", laneA, positionA, exitPosition, simulator, detectorType);
+        this.entryB = new StartEndDetector(id + ".entryB", laneB, positionB, entryPosition, simulator, detectorType);
+        this.exitB = new StartEndDetector(id + ".exitB", laneB, positionB, exitPosition, simulator, detectorType);
         // Set up detection of GTUs that enter or leave the detector laterally or appear due to a generator or disappear due to
         // a
         // sink
@@ -462,13 +461,13 @@ public class TrafficLightDetector extends LocalEventProducer
          * @param longitudinalPosition Length; the longitudinal position of the new StartEndDetector
          * @param positionType TYPE; the position on the GTUs that triggers the new StartEndDetector
          * @param simulator OTSSimulatorInterface; the simulator engine
-         * @param compatible Compatible; object that determines if a GTU is detectable by the new StartEndDetector
+         * @param detectorType DetectorType; detector type.
          * @throws NetworkException when the network is inconsistent
          */
         public StartEndDetector(final String id, final Lane lane, final Length longitudinalPosition, final TYPE positionType,
-                final OtsSimulatorInterface simulator, final Compatible compatible) throws NetworkException
+                final OtsSimulatorInterface simulator, final DetectorType detectorType) throws NetworkException
         {
-            super(id, lane, longitudinalPosition, positionType, simulator, compatible);
+            super(id, lane, longitudinalPosition, positionType, simulator, detectorType);
         }
 
         /** {@inheritDoc} */

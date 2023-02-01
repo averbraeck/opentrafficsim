@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.lane.object.trafficlight;
 
+import java.rmi.RemoteException;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
@@ -81,6 +83,13 @@ public abstract class AbstractTrafficLight extends AbstractLaneBasedObject imple
         this.trafficLightColor = trafficLightColor;
         fireTimedEvent(TRAFFICLIGHT_CHANGE_EVENT, new Object[] {getId(), this, trafficLightColor},
                 this.simulator.getSimulatorTime());
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public double getZ() throws RemoteException
+    {
+        return -0.0001;
     }
 
 }

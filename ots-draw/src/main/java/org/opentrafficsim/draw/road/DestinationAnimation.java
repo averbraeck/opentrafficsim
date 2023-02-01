@@ -11,7 +11,7 @@ import javax.naming.NamingException;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.road.network.lane.object.detector.DestinationSensor;
+import org.opentrafficsim.road.network.lane.object.detector.DestinationDetector;
 
 /**
  * Destination sensor animation.
@@ -23,7 +23,7 @@ import org.opentrafficsim.road.network.lane.object.detector.DestinationSensor;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class DestinationAnimation extends AbstractLineAnimation<DestinationSensor> implements Serializable
+public class DestinationAnimation extends AbstractLineAnimation<DestinationDetector> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20150130L;
@@ -35,7 +35,7 @@ public class DestinationAnimation extends AbstractLineAnimation<DestinationSenso
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
-    public DestinationAnimation(final DestinationSensor source, final OtsSimulatorInterface simulator)
+    public DestinationAnimation(final DestinationDetector source, final OtsSimulatorInterface simulator)
             throws NamingException, RemoteException
     {
         super(source, simulator, 0.8, new Length(0.5, LengthUnit.SI));

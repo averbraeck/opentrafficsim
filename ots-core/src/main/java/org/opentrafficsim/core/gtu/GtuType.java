@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.gtu;
 
-import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -23,7 +22,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public final class GtuType extends HierarchicalType<GtuType, Gtu> implements Serializable
+public final class GtuType extends HierarchicalType<GtuType, Gtu>
 {
     /** */
     private static final long serialVersionUID = 20141231L;

@@ -133,7 +133,7 @@ public final class AnimationToggles
         panel.addToggleAnimationButtonIcon("Generator", GtuGeneratorQueueAnimation.class, "/icons/Generator24.png",
                 "Show/hide generators", false, false);
         panel.addToggleAnimationButtonIcon("Bus", BusStop.class, "/icons/BusStop24.png", "Show/hide bus stops", true, false);
-        panel.addToggleAnimationButtonIcon("BusId", BusStopAnimation.Text.class, "/icons/Id24.png", "Show/hide bus stops",
+        panel.addToggleAnimationButtonIcon("BusId", BusStopAnimation.Text.class, "/icons/Id24.png", "Show/hide bus stops Ids",
                 false, true);
     }
 
@@ -174,7 +174,7 @@ public final class AnimationToggles
         panel.addToggleAnimationButtonIcon("Generator", GtuGeneratorQueueAnimation.class, "/icons/Generator24.png",
                 "Show/hide generators", false, false);
         panel.addToggleAnimationButtonIcon("Bus", BusStop.class, "/icons/BusStop24.png", "Show/hide bus stops", false, false);
-        panel.addToggleAnimationButtonIcon("BusId", BusStopAnimation.Text.class, "/icons/Id24.png", "Show/hide bus stops",
+        panel.addToggleAnimationButtonIcon("BusId", BusStopAnimation.Text.class, "/icons/Id24.png", "Show/hide bus stops Ids",
                 false, true);
     }
 

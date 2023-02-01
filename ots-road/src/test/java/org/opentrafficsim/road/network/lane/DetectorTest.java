@@ -14,7 +14,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
@@ -40,14 +39,14 @@ import nl.tudelft.simulation.dsol.eventlists.EventListInterface;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 
 /**
- * Test sensors and scheduling of trigger.
+ * Test detectors and scheduling of trigger.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class SensorTest implements UNITS
+public class DetectorTest implements UNITS
 {
     /**
      * Test the constructors of SensorLaneEnd and SensorLaneStart.
@@ -78,7 +77,7 @@ public class SensorTest implements UNITS
         for (Lane lane : lanesA)
         {
             Length longitudinalPosition = new Length(999.9999, METER);
-            TriggerSensor sensor = new TriggerSensor(lane, longitudinalPosition, RelativePosition.REFERENCE,
+            TriggerDetector sensor = new TriggerDetector(lane, longitudinalPosition, RelativePosition.REFERENCE,
                     "Trigger@" + lane.toString(), simulator);
         }
 
@@ -150,7 +149,7 @@ public class SensorTest implements UNITS
 }
 
 /** */
-class TriggerSensor extends Detector
+class TriggerDetector extends Detector
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -163,10 +162,10 @@ class TriggerSensor extends Detector
      * @param simulator the simulator
      * @throws NetworkException in case position is out of bounds
      */
-    TriggerSensor(final Lane lane, final Length longitudinalPosition, final RelativePosition.TYPE positionType,
+    TriggerDetector(final Lane lane, final Length longitudinalPosition, final RelativePosition.TYPE positionType,
             final String name, final OtsSimulatorInterface simulator) throws NetworkException
     {
-        super(name, lane, longitudinalPosition, positionType, simulator, Compatible.EVERYTHING);
+        super(name, lane, longitudinalPosition, positionType, simulator, DefaultsRoadNl.ROAD_USERS);
     }
 
     /** {@inheritDoc} */

@@ -38,6 +38,7 @@ import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
+import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -71,6 +72,9 @@ public class XmlOdParser implements Serializable
     /** GTU types. */
     private final Map<String, GtuType> gtuTypes = new LinkedHashMap<>();
 
+    /** Type for destination detectors. */
+    private final DetectorType detectorType;
+
     /** Categorization. */
     Categorization categorization;
 
@@ -92,8 +96,10 @@ public class XmlOdParser implements Serializable
      * @param simulator OTSSimulatorInterface; simulator
      * @param network OTSRoadNetwork; network
      * @param gtuTypes Set&lt;GtuType&gt;; set of GTU types
+     * @param detectorType DetectorType; detector type.
      */
-    public XmlOdParser(final OtsSimulatorInterface simulator, final OtsRoadNetwork network, final Set<GtuType> gtuTypes)
+    public XmlOdParser(final OtsSimulatorInterface simulator, final OtsRoadNetwork network, final Set<GtuType> gtuTypes,
+            final DetectorType detectorType)
     {
         Throw.whenNull(simulator, "Simulator should not be null.");
         Throw.whenNull(network, "Network should not be null.");
@@ -103,6 +109,7 @@ public class XmlOdParser implements Serializable
         {
             this.gtuTypes.put(gtuType.getId(), gtuType);
         }
+        this.detectorType = detectorType;
     }
 
     /**
@@ -197,7 +204,7 @@ public class XmlOdParser implements Serializable
     {
         try
         {
-            OdApplier.applyOD(this.network, od, odOptions);
+            OdApplier.applyOD(this.network, od, odOptions, this.detectorType);
         }
         catch (ParameterException | SimRuntimeException exception)
         {

@@ -41,7 +41,7 @@ import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.object.BusStop;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
-import org.opentrafficsim.road.network.lane.object.detector.DestinationSensor;
+import org.opentrafficsim.road.network.lane.object.detector.DestinationDetector;
 import org.opentrafficsim.road.network.lane.object.detector.Detector;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -132,12 +132,6 @@ public class DefaultAnimationFactory implements EventListener
                         }
                     }
                 }
-
-                for (TrafficLight tl : network.getObjectMap(TrafficLight.class).values())
-                {
-                    new TrafficLightAnimation(tl, this.simulator);
-                }
-
             }
 
             for (Gtu gtu : network.getGTUs())
@@ -271,12 +265,12 @@ public class DefaultAnimationFactory implements EventListener
             {
                 SinkDetector detector = (SinkDetector) object;
                 // Renderable2D<SinkSensor> objectAnimation = new SinkAnimation(detector, this.simulator);
-                Renderable2D<Detector> objectAnimation = new DetectorAnimation(detector, this.simulator, Color.YELLOW);
+                Renderable2D<Detector> objectAnimation = new DetectorAnimation(detector, this.simulator, Color.ORANGE);
                 this.animatedObjects.put(object, objectAnimation);
             }
-            else if (object instanceof DestinationSensor)
+            else if (object instanceof DestinationDetector)
             {
-                DestinationSensor detector = (DestinationSensor) object;
+                DestinationDetector detector = (DestinationDetector) object;
                 // Renderable2D<DestinationSensor> objectAnimation = new DestinationAnimation(detector, this.simulator);
                 Renderable2D<Detector> objectAnimation = new DetectorAnimation(detector, this.simulator, Color.ORANGE);
                 this.animatedObjects.put(object, objectAnimation);
@@ -284,13 +278,19 @@ public class DefaultAnimationFactory implements EventListener
             else if (object instanceof Detector)
             {
                 Detector detector = (Detector) object;
-                Renderable2D<Detector> objectAnimation = new DetectorAnimation(detector, this.simulator, Color.GREEN);
+                Renderable2D<Detector> objectAnimation = new DetectorAnimation(detector, this.simulator, Color.BLACK);
                 this.animatedObjects.put(object, objectAnimation);
             }
             else if (object instanceof Conflict)
             {
                 Conflict conflict = (Conflict) object;
                 Renderable2D<Conflict> objectAnimation = new ConflictAnimation(conflict, this.simulator);
+                this.animatedObjects.put(object, objectAnimation);
+            }
+            else if (object instanceof TrafficLight)
+            {
+                TrafficLight trafficLight = (TrafficLight) object;
+                Renderable2D<TrafficLight> objectAnimation = new TrafficLightAnimation(trafficLight, this.simulator);
                 this.animatedObjects.put(object, objectAnimation);
             }
             else if (object instanceof SpeedSign)

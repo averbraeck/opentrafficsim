@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.lane.object.trafficlight;
 
+import java.rmi.RemoteException;
+
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
@@ -38,6 +40,13 @@ public class SimpleTrafficLight extends AbstractTrafficLight
     public String toString()
     {
         return "SimpleTrafficLight [trafficLightColor=" + getTrafficLightColor() + "]";
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public double getZ() throws RemoteException
+    {
+        return -0.0001;
     }
 
 }

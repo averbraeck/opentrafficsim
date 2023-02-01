@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.network.lane.object.detector;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -10,7 +9,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
- * A DestinationSensor is a sensor that deletes a GTU that has the node it will pass after this sensor as its destination.
+ * A DestinationDetector is a detector that deletes a GTU that has the node it will pass after this detector as its destination.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands.<br>
  * All rights reserved. <br>
@@ -19,40 +18,27 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class DestinationSensor extends Detector
+public class DestinationDetector extends Detector
 {
     /** */
     private static final long serialVersionUID = 20150130L;
 
-    /** the destination node for which this is the DestinationSensor. */
+    /** the destination node for which this is the DestinationDetector. */
     private final Node destinationNode;
 
     /**
      * @param lane Lane; the lane that triggers the deletion of the GTU.
-     * @param position Length; the position of the sensor
+     * @param position Length; the position of the detector
      * @param simulator OTSSimulatorInterface; the simulator to enable animation.
+     * @param detectorType DetectorType; detector type.
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
-    public DestinationSensor(final Lane lane, final Length position, final OtsSimulatorInterface simulator)
-            throws NetworkException
-    {
-        this(lane, position, Compatible.EVERYTHING, simulator);
-    }
-
-    /**
-     * @param lane Lane; the lane that triggers the deletion of the GTU.
-     * @param position Length; the position of the sensor
-     * @param compatible Compatible; compatible GTU type and direction
-     * @param simulator OTSSimulatorInterface; the simulator to enable animation.
-     * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
-     */
-    public DestinationSensor(final Lane lane, final Length position, final Compatible compatible,
-            final OtsSimulatorInterface simulator) throws NetworkException
+    public DestinationDetector(final Lane lane, final Length position, final OtsSimulatorInterface simulator,
+            final DetectorType detectorType) throws NetworkException
     {
         super("DESTINATION@" + lane.getFullId(), lane, position, RelativePosition.FRONT, simulator,
-                makeGeometry(lane, position, 1.0), compatible);
-        this.destinationNode = compatible.equals(PLUS) || compatible.equals(EVERYTHING) ? lane.getParentLink().getEndNode()
-                : lane.getParentLink().getStartNode();
+                makeGeometry(lane, position, 1.0), detectorType);
+        this.destinationNode = lane.getParentLink().getEndNode();
     }
 
     /** {@inheritDoc} */
@@ -69,7 +55,7 @@ public class DestinationSensor extends Detector
         }
         catch (NetworkException exception)
         {
-            getSimulator().getLogger().always().error(exception, "Error destroying GTU: {} at destination sensor: {}", gtu,
+            getSimulator().getLogger().always().error(exception, "Error destroying GTU: {} at destination detector: {}", gtu,
                     toString());
         }
     }
@@ -78,7 +64,7 @@ public class DestinationSensor extends Detector
     @Override
     public final String toString()
     {
-        return "DestinationSensor [Lane=" + this.getLane() + "]";
+        return "DestinationDetector [Lane=" + this.getLane() + "]";
     }
 
 }

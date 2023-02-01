@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
 
 /**
  * Road defaults for locale nl_NL.
@@ -27,48 +28,48 @@ public class DefaultsRoadNl extends DefaultsRoad
     {
         super(new Locale("nl", "NL"));
     }
-    
+
     /***************************************************************************************/
     /**************************************** LANE *****************************************/
     /***************************************************************************************/
-    
+
     /** This is here only because it is in the file default_lanetypes.xml as a default, i.e the parser needs to find it. */
     @Deprecated
     public static final LaneType NONE = new LaneType("NONE");
-    
+
     /** For two-way roads. */
     public static final LaneType TWO_WAY_LANE = new LaneType("TWO_WAY_LANE");
-    
+
     /** Provincial road (provinciaalse weg / N-weg, 80km/h). */
     public static final LaneType PROVINCIAL_ROAD = new LaneType("PROVINCIAL_ROAD", TWO_WAY_LANE);
-    
+
     /** Rural (landelijk, 60km/h). */
     public static final LaneType RURAL_ROAD = new LaneType("RURAL_ROAD", TWO_WAY_LANE);
-    
+
     /** Urban (stedelijk, 50km/h). */
     public static final LaneType URBAN_ROAD = new LaneType("URBAN_ROAD", TWO_WAY_LANE);
-    
+
     /** Residential (woonerf, 30km/h). */
     public static final LaneType RESIDENTIAL_ROAD = new LaneType("RESIDENTIAL_ROAD", TWO_WAY_LANE);
-    
+
     /** For one-way roads. */
     public static final LaneType ONE_WAY_LANE = new LaneType("ONE_WAY_LANE");
-    
+
     /** Freeway (snelweg, 130km/h). */
     public static final LaneType FREEWAY = new LaneType("FREEWAY", ONE_WAY_LANE);
-    
+
     /** Highway (autoweg, 100km/h). */
     public static final LaneType HIGHWAY = new LaneType("HIGHWAY", ONE_WAY_LANE);
-    
+
     /** Bus lane. */
     public static final LaneType BUS_LANE = new LaneType("BUS_LANE");
-    
+
     /** Moped path (fiets-/bromfietspad). */
     public static final LaneType MOPED_PATH = new LaneType("MOPED_PATH");
-    
+
     /** Bicycle path (fietspad). */
     public static final LaneType BICYCLE_PATH = new LaneType("BICYCLE_PATH", MOPED_PATH);
-    
+
     /** Footpath (voetpad). */
     public static final LaneType FOOTPATH = new LaneType("FOOTPATH");
 
@@ -88,4 +89,26 @@ public class DefaultsRoadNl extends DefaultsRoad
         FOOTPATH.addCompatibleGtuType(DefaultsNl.PEDESTRIAN);
     }
 
+    /***************************************************************************************/
+    /************************************** DETECTOR ***************************************/
+    /***************************************************************************************/
+
+    /** Makes a Detector compatible with all road users, e.g. for SinkDetector, DestinationDetector. */
+    public static final DetectorType ROAD_USERS = new DetectorType("ROAD_USERS");
+
+    /** Makes a Detector compatible with all vehicles, e.g. for loop detectors. */
+    public static final DetectorType VEHICLES = new DetectorType("VEHICLES");
+
+    /** Loop detector type. */
+    public static final DetectorType LOOP_DETECTOR = new DetectorType("LOOP_DETECTOR", VEHICLES);
+
+    /** Traffic light detector type. */
+    public static final DetectorType TRAFFIC_LIGHT = new DetectorType("TRAFFIC_LIGHT", LOOP_DETECTOR);
+
+    static
+    {
+        ROAD_USERS.addCompatibleGtuType(DefaultsNl.ROAD_USER);
+        VEHICLES.addCompatibleGtuType(DefaultsNl.VEHICLE);
+        TRAFFIC_LIGHT.addCompatibleGtuType(DefaultsNl.BICYCLE);
+    }
 }

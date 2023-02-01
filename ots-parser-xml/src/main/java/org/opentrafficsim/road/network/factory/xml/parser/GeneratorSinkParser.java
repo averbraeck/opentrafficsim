@@ -46,6 +46,7 @@ import org.opentrafficsim.road.network.factory.xml.utils.Transformer;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
+import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 import org.opentrafficsim.xml.generated.GENERATOR;
 import org.opentrafficsim.xml.generated.GTUTEMPLATE;
@@ -380,17 +381,20 @@ public final class GeneratorSinkParser
      * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
      * @param demand NETWORK; the NETWORK tag
      * @param simulator OTSSimulatorInterface; the simulator
+     * @param definitions Definitions; type definitions.
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
     public static void parseSinks(final OtsRoadNetwork otsNetwork, final NETWORKDEMAND demand,
-            final OtsSimulatorInterface simulator) throws NetworkException
+            final OtsSimulatorInterface simulator, final Definitions definitions) throws NetworkException
     {
         for (SINK sinkTag : demand.getSINK())
         {
             CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(sinkTag.getLINK());
             Lane lane = (Lane) link.getCrossSectionElement(sinkTag.getLANE());
             Length position = Transformer.parseLengthBeginEnd(sinkTag.getPOSITION(), lane.getLength());
-            new SinkDetector(lane, position, simulator);
+            // TODO: definitions.get(DetectorType.class, sinkTag.getDETECTORTYPE)
+            DetectorType detectorType = definitions.get(DetectorType.class, "ROAD_USERS");
+            new SinkDetector(lane, position, simulator, detectorType);
         }
     }
 

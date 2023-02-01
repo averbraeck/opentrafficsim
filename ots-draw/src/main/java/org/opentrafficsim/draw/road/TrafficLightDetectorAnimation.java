@@ -19,7 +19,7 @@ import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 /**
- * sink sensor animation.
+ * Traffic light detector animation.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands.<br>
  * All rights reserved. <br>
@@ -28,7 +28,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class TrafficLightSensorAnimation extends Renderable2D<TrafficLightDetector> implements Serializable
+public class TrafficLightDetectorAnimation extends Renderable2D<TrafficLightDetector> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20150130L;
@@ -40,18 +40,18 @@ public class TrafficLightSensorAnimation extends Renderable2D<TrafficLightDetect
     private final OtsLine3D path;
 
     /**
-     * Construct a SensorAnimation.
-     * @param sensor TrafficLightSensor; the traffic light sensor that will be animated
+     * Construct a TrafficLightDetectorAnimation.
+     * @param detector TrafficLightSensor; the traffic light detector that will be animated
      * @param simulator OTSSimulatorInterface; the simulator to schedule on
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      * @throws OtsGeometryException when the geometry is bad
      */
-    public TrafficLightSensorAnimation(final TrafficLightDetector sensor, final OtsSimulatorInterface simulator)
+    public TrafficLightDetectorAnimation(final TrafficLightDetector detector, final OtsSimulatorInterface simulator)
             throws NamingException, RemoteException, OtsGeometryException
     {
-        super(sensor, simulator);
-        this.sensor = sensor;
+        super(detector, simulator);
+        this.sensor = detector;
         OtsLine3D coordinates = this.sensor.getPath();
         double dx = this.sensor.getLocation().x;
         double dy = this.sensor.getLocation().y;

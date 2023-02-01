@@ -41,11 +41,13 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.InputParameters;
 import org.opentrafficsim.core.parameters.ParameterFactory;
+import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
+import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.opentrafficsim.xml.generated.ANIMATION;
 import org.opentrafficsim.xml.generated.CONTROL;
@@ -240,6 +242,12 @@ public final class XmlNetworkLaneParser implements Serializable
         Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap = new LinkedHashMap<>();
         Definitions definitions = DefinitionsParser.parseDefinitions(ots.getDEFINITIONS(), true, roadLayoutMap, gtuTemplates,
                 streamInformation, linkTypeSpeedLimitMap);
+        
+        // TODO: remove this, we need a default_detectortypes.xml
+        definitions.add(DetectorType.class, DefaultsRoadNl.ROAD_USERS);
+        definitions.add(DetectorType.class, DefaultsRoadNl.VEHICLES);
+        definitions.add(DetectorType.class, DefaultsRoadNl.LOOP_DETECTOR);
+        definitions.add(DetectorType.class, DefaultsRoadNl.TRAFFIC_LIGHT);
 
         NETWORK network = ots.getNETWORK();
         Map<String, Direction> nodeDirections = NetworkParser.calculateNodeAngles(otsNetwork, network);
@@ -259,7 +267,7 @@ public final class XmlNetworkLaneParser implements Serializable
             List<LaneBasedGtuGenerator> generators = GeneratorSinkParser.parseGenerators(otsNetwork, definitions, demand,
                     gtuTemplates, routeMixMap, shortestRouteMixMap, streamInformation);
             System.out.println("Created " + generators.size() + " generators based on explicit generator definitions");
-            GeneratorSinkParser.parseSinks(otsNetwork, demand, otsNetwork.getSimulator());
+            GeneratorSinkParser.parseSinks(otsNetwork, demand, otsNetwork.getSimulator(), definitions);
         }
 
         List<MODELTYPE> models = ots.getMODEL();
@@ -373,7 +381,7 @@ public final class XmlNetworkLaneParser implements Serializable
         List<SCENARIO> scenario = ots.getSCENARIO();
         ANIMATION animation = ots.getANIMATION();
 
-        ControlParser.parseControl(otsNetwork, otsNetwork.getSimulator(), controls);
+        ControlParser.parseControl(otsNetwork, otsNetwork.getSimulator(), controls, definitions);
 
         return runControl;
     }

@@ -24,7 +24,6 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
@@ -111,7 +110,7 @@ public class TrafficLightSensorTest implements EventListener
         // put a sink at halfway point of last lane
         Lane lastLane = result[lengths.length - 1];
         Length sinkPosition = new Length(lengths[lengths.length - 1] > 0 ? lastLane.getLength().si - 10 : 10, LengthUnit.METER);
-        new SinkDetector(lastLane, sinkPosition, simulator);
+        new SinkDetector(lastLane, sinkPosition, simulator, DefaultsRoadNl.ROAD_USERS);
         return result;
     }
 
@@ -189,8 +188,9 @@ public class TrafficLightSensorTest implements EventListener
                         intermediateLanes.add(lane);
                     }
                 }
-                TrafficLightDetector tls = new TrafficLightDetector(sensorId, pA.getLane(), pA.getPosition(), pB.getLane(),
-                        pB.getPosition(), intermediateLanes, entryPosition, exitPosition, simulator, Compatible.EVERYTHING);
+                TrafficLightDetector tls =
+                        new TrafficLightDetector(sensorId, pA.getLane(), pA.getPosition(), pB.getLane(), pB.getPosition(),
+                                intermediateLanes, entryPosition, exitPosition, simulator, DefaultsRoadNl.TRAFFIC_LIGHT);
                 assertEquals("Id should match the provided id", sensorId, tls.getId());
                 assertEquals("Simulator should match", simulator, tls.getSimulator());
                 assertEquals("Entry position", entryPosition, tls.getPositionTypeEntry());

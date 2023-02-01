@@ -474,7 +474,7 @@ public class XmlOdParserTest
      */
     private ODMatrix fromString(final String str) throws XmlParserException
     {
-        this.parser = new XmlOdParser(this.simulator, this.network, this.gtuTypes);
+        this.parser = new XmlOdParser(this.simulator, this.network, this.gtuTypes, DefaultsRoadNl.ROAD_USERS);
         return this.parser.build(new ByteArrayInputStream(
                 ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + str).getBytes(StandardCharsets.UTF_8)));
     }

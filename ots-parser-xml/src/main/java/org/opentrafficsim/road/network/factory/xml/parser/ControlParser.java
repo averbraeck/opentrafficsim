@@ -18,7 +18,7 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.compatibility.Compatible;
+import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -26,6 +26,7 @@ import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.utils.Transformer;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
 import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector;
 import org.opentrafficsim.trafficcontrol.FixedTimeController;
 import org.opentrafficsim.trafficcontrol.FixedTimeController.SignalGroup;
@@ -65,6 +66,7 @@ public final class ControlParser
      * @param otsNetwork OTSRoadNetwork; network
      * @param simulator OTSSimulatorInterface; simulator
      * @param controls List&lt;CONTROL&gt;; control objects
+     * @param definitions Definitions; type definitions.
      * @throws NetworkException when sensors could not be added to the network
      * @throws IOException when a TrafCOD engine cannot be loaded
      * @throws MalformedURLException when a TrafCOD engine cannot be loaded
@@ -72,7 +74,7 @@ public final class ControlParser
      * @throws SimRuntimeException when a TrafCOD engine fails to initialize
      */
     public static void parseControl(final OtsRoadNetwork otsNetwork, final OtsSimulatorInterface simulator,
-            final List<CONTROL> controls)
+            final List<CONTROL> controls, final Definitions definitions)
             throws NetworkException, MalformedURLException, IOException, SimRuntimeException, TrafficControlException
     {
         for (CONTROL control : controls)
@@ -193,8 +195,10 @@ public final class ControlParser
                                 Transformer.parseLengthBeginEnd(singleLaneSensor.getENTRYPOSITION(), lane.getLength());
                         Length exitPosition =
                                 Transformer.parseLengthBeginEnd(singleLaneSensor.getEXITPOSITION(), lane.getLength());
+                        // TODO: definitions.get(DetectorType.class, sensor.getDETECTORTYPE)
+                        DetectorType detectorType = definitions.get(DetectorType.class, "TRAFFIC_LIGHT");
                         new TrafficLightDetector(sensor.getID(), lane, entryPosition, lane, exitPosition, null,
-                                RelativePosition.FRONT, RelativePosition.REAR, simulator, Compatible.EVERYTHING);
+                                RelativePosition.FRONT, RelativePosition.REAR, simulator, detectorType);
                     }
                     else
                     {
@@ -214,9 +218,10 @@ public final class ControlParser
                             CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(linkAndLane.getLINK());
                             intermediateLanes.add((Lane) link.getCrossSectionElement(linkAndLane.getLANE()));
                         }
+                        // TODO: definitions.get(DetectorType.class, sensor.getDETECTORTYPE)
+                        DetectorType detectorType = definitions.get(DetectorType.class, "TRAFFIC_LIGHT");
                         new TrafficLightDetector(sensor.getID(), entryLane, entryPosition, exitLane, exitPosition,
-                                intermediateLanes, RelativePosition.FRONT, RelativePosition.REAR, simulator,
-                                Compatible.EVERYTHING);
+                                intermediateLanes, RelativePosition.FRONT, RelativePosition.REAR, simulator, detectorType);
                     }
                 }
                 // TODO get the TrafCOD program, etc.

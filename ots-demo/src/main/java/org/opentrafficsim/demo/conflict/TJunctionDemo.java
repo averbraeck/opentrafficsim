@@ -132,14 +132,6 @@ public class TJunctionDemo extends OtsSimulationApplication<TJunctionModel>
                 SimpleTrafficLight trafficLight =
                         new SimpleTrafficLight("light", lane, new Length(50.0, LengthUnit.SI), this.simulator);
 
-                try
-                {
-                    new TrafficLightAnimation(trafficLight, this.simulator);
-                }
-                catch (RemoteException | NamingException exception)
-                {
-                    throw new NetworkException(exception);
-                }
                 trafficLight.setTrafficLightColor(TrafficLightColor.RED);
                 changePhase(trafficLight);
 

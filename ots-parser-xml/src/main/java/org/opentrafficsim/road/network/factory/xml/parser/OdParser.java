@@ -63,6 +63,7 @@ import org.opentrafficsim.road.network.factory.xml.utils.ParseDistribution;
 import org.opentrafficsim.road.network.factory.xml.utils.Transformer;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
 import org.opentrafficsim.xml.generated.CATEGORYTYPE;
 import org.opentrafficsim.xml.generated.GLOBALTIMETYPE.TIME;
 import org.opentrafficsim.xml.generated.GTUTEMPLATE;
@@ -600,8 +601,11 @@ public final class OdParser
                 }
 
                 // Invoke ODApplier
-                Map<String, GeneratorObjects> output = Try.assign(() -> OdApplier.applyOD(otsNetwork, odMatrix, odOptions),
-                        XmlParserException.class, "Simulator time should be zero when parsing an OD.");
+                // TODO: definitions.get(DetectorType.class, od.getDETECTORTYPE)
+                DetectorType detectorType = definitions.get(DetectorType.class, "ROAD_USERS");
+                Map<String, GeneratorObjects> output =
+                        Try.assign(() -> OdApplier.applyOD(otsNetwork, odMatrix, odOptions, detectorType),
+                                XmlParserException.class, "Simulator time should be zero when parsing an OD.");
 
                 // Collect generators in output
                 for (GeneratorObjects generatorObject : output.values())

@@ -19,7 +19,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
-import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.distributions.Distribution;
@@ -144,7 +143,7 @@ public class StraightModel extends AbstractOtsModel implements UNITS
             Lane sinkLane = new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
                     this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,
                     Map.of(DefaultsNl.VEHICLE, this.speedLimit), false);
-            new SinkDetector(sinkLane, new Length(10.0, METER), Compatible.EVERYTHING, this.simulator);
+            new SinkDetector(sinkLane, new Length(10.0, METER), this.simulator, DefaultsRoadNl.ROAD_USERS);
             this.path.add(sinkLane);
 
             this.carProbability = (double) getInputParameter("generic.carProbability");

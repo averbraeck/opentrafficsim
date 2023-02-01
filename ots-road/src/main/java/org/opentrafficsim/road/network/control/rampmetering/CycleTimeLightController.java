@@ -8,12 +8,12 @@ import java.util.Map;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.object.detector.Detector;
+import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 
@@ -60,16 +60,16 @@ public class CycleTimeLightController implements RampMeteringLightController
     /**
      * @param simulator OTSSimulatorInterface; simulator
      * @param trafficLights List&lt;TrafficLight&gt;; traffic lights
-     * @param compatible Compatible; GTU types that trigger the detector, and hence the light to red
+     * @param detectorType DetectorType; detector type.
      */
     public CycleTimeLightController(final OtsSimulatorInterface simulator, final List<TrafficLight> trafficLights,
-            final Compatible compatible)
+            final DetectorType detectorType)
     {
         this.simulator = simulator;
         this.trafficLights = trafficLights;
         for (TrafficLight trafficLight : trafficLights)
         {
-            Try.execute(() -> new RampMeteringSensor(trafficLight, simulator, compatible),
+            Try.execute(() -> new RampMeteringDetector(trafficLight, simulator, detectorType),
                     "Unexpected exception while creating a detector with a ramp metering traffic light.");
             this.greenStarts.put(trafficLight, Time.instantiateSI(Double.NEGATIVE_INFINITY));
         }
@@ -143,7 +143,7 @@ public class CycleTimeLightController implements RampMeteringLightController
     }
 
     /** Ramp metering sensor. */
-    private class RampMeteringSensor extends Detector
+    private class RampMeteringDetector extends Detector
     {
 
         /** */
@@ -155,14 +155,14 @@ public class CycleTimeLightController implements RampMeteringLightController
         /**
          * @param trafficLight TrafficLight; traffic light
          * @param simulator TimeDoubleUnit; simulator
-         * @param detectedGtuTypes Compatible; GTU types
+         * @param detectorType DetectorType; detector type.
          * @throws NetworkException when the position on the lane is out of bounds
          */
-        RampMeteringSensor(final TrafficLight trafficLight, final OtsSimulatorInterface simulator,
-                final Compatible detectedGtuTypes) throws NetworkException
+        RampMeteringDetector(final TrafficLight trafficLight, final OtsSimulatorInterface simulator,
+                final DetectorType detectorType) throws NetworkException
         {
             super(trafficLight.getId() + "_sensor", trafficLight.getLane(), trafficLight.getLongitudinalPosition(),
-                    RelativePosition.FRONT, simulator, detectedGtuTypes);
+                    RelativePosition.FRONT, simulator, detectorType);
             this.trafficLight = trafficLight;
         }
 

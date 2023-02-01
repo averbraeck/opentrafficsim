@@ -1,10 +1,12 @@
 package org.opentrafficsim.road.network.lane.object.detector;
 
+import java.rmi.RemoteException;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.compatibility.Compatible;
+import org.opentrafficsim.base.HierarchicallyTyped;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
@@ -29,7 +31,7 @@ import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
 public abstract class Detector extends AbstractLaneBasedObject
-        implements DetectorAnimationToggle, Comparable<Detector>, LaneBasedObject, Compatible
+        implements DetectorAnimationToggle, Comparable<Detector>, LaneBasedObject, HierarchicallyTyped<DetectorType, Detector>
 {
     /** */
     private static final long serialVersionUID = 20141231L;
@@ -40,8 +42,8 @@ public abstract class Detector extends AbstractLaneBasedObject
     /** The simulator for being able to generate an animation. */
     private final OtsSimulatorInterface simulator;
 
-    /** The GTU types and driving directions that this detector will trigger on. */
-    private final Compatible detectedGtuTypes;
+    /** Detector type. */
+    private final DetectorType detectorType;
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the triggering of a Detector on a lane. <br>
@@ -63,21 +65,22 @@ public abstract class Detector extends AbstractLaneBasedObject
      * @param simulator OTSSimulatorInterface; the simulator (needed to generate the animation).
      * @param geometry OTSLine3D; the geometry of the object, which provides its location and bounds as well
      * @param elevation Length; elevation of the detector
-     * @param detectedGtuTypes Compatible; The GTU types will trigger this detector
+     * @param detectorType DetectorType; detector type.
      * @throws NetworkException when the position on the lane is out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Detector(final String id, final Lane lane, final Length longitudinalPosition,
             final RelativePosition.TYPE positionType, final OtsSimulatorInterface simulator, final OtsLine3D geometry,
-            final Length elevation, final Compatible detectedGtuTypes) throws NetworkException
+            final Length elevation, final DetectorType detectorType) throws NetworkException
     {
         super(id, lane, longitudinalPosition, geometry, elevation);
-        Throw.when(simulator == null, NullPointerException.class, "simulator is null");
-        Throw.when(positionType == null, NullPointerException.class, "positionType is null");
-        Throw.when(id == null, NullPointerException.class, "id is null");
+        Throw.whenNull(simulator, "simulator is null");
+        Throw.whenNull(positionType, "positionType is null");
+        Throw.whenNull(id, "id is null");
+        Throw.whenNull(detectorType, "detectorType is null");
         this.positionType = positionType;
         this.simulator = simulator;
-        this.detectedGtuTypes = detectedGtuTypes;
+        this.detectorType = detectorType;
 
         init();
 
@@ -94,15 +97,15 @@ public abstract class Detector extends AbstractLaneBasedObject
      *            the detector.
      * @param simulator OTSSimulatorInterface; the simulator (needed to generate the animation).
      * @param geometry OTSLine3D; the geometry of the object, which provides its location and bounds as well
-     * @param detectedGtuTypes Compatible; The GTU types will trigger this detector
+     * @param detectorType DetectorType; detector type.
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public Detector(final String id, final Lane lane, final Length longitudinalPosition,
             final RelativePosition.TYPE positionType, final OtsSimulatorInterface simulator, final OtsLine3D geometry,
-            final Compatible detectedGtuTypes) throws NetworkException
+            final DetectorType detectorType) throws NetworkException
     {
         this(id, lane, longitudinalPosition, positionType, simulator, geometry, Detector.DEFAULT_DETECTOR_ELEVATION,
-                detectedGtuTypes);
+                detectorType);
     }
 
     /**
@@ -115,15 +118,15 @@ public abstract class Detector extends AbstractLaneBasedObject
      * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the detector.
      * @param simulator OTSSimulatorInterface; the simulator (needed to generate the animation).
-     * @param detectedGtuTypes Compatible; The GTU types will trigger this detector
+     * @param detectorType DetectorType; detector type.
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public Detector(final String id, final Lane lane, final Length longitudinalPosition,
-            final RelativePosition.TYPE positionType, final OtsSimulatorInterface simulator, final Compatible detectedGtuTypes)
+            final RelativePosition.TYPE positionType, final OtsSimulatorInterface simulator, final DetectorType detectorType)
             throws NetworkException
     {
         this(id, lane, longitudinalPosition, positionType, simulator, makeGeometry(lane, longitudinalPosition, 0.9),
-                detectedGtuTypes);
+                detectorType);
     }
 
     /**
@@ -150,6 +153,13 @@ public abstract class Detector extends AbstractLaneBasedObject
         {
             throw new NetworkException(exception);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public DetectorType getType()
+    {
+        return this.detectorType;
     }
 
     /**
@@ -183,6 +193,23 @@ public abstract class Detector extends AbstractLaneBasedObject
     public final OtsSimulatorInterface getSimulator()
     {
         return this.simulator;
+    }
+
+    /**
+     * Returns whether this Detector can detector GTUs of the given type.
+     * @param gtuType GtuType; GTU type.
+     * @return boolean; whether this Detector can detector GTUs of the given type.
+     */
+    public final boolean isCompatible(final GtuType gtuType)
+    {
+        return this.getType().isCompatible(gtuType);
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public double getZ() throws RemoteException
+    {
+        return -0.0002;
     }
 
     /** {@inheritDoc} */
@@ -262,22 +289,6 @@ public abstract class Detector extends AbstractLaneBasedObject
     public String toString()
     {
         return "Detector[" + getId() + "]";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final boolean isCompatible(final GtuType gtuType)
-    {
-        return this.detectedGtuTypes.isCompatible(gtuType);
-    }
-
-    /**
-     * Retrieve the object that decides if a particular GTU type is detected when passing in a particular direction.
-     * @return Compatible; the object that decides if a particular GTU type is detected when passing in a particular direction
-     */
-    public final Compatible getDetectedGtuTypes()
-    {
-        return this.detectedGtuTypes;
     }
 
 }

@@ -2,7 +2,7 @@ package org.opentrafficsim.base;
 
 /**
  * HierarchicallyTyped is the interface of objects that are of a HierarchicalType. Examples are Gtu (of type GtuType),
- * Link (of type LinkType), and Sensor (of type SensorType). By making these objects HierarchicallyTyped, they can 
+ * Link (of type LinkType), and Detector (of type DetectorType). By making these objects HierarchicallyTyped, they can 
  * return their correct 'type' as well as check whether they belong to a certain hierarchical type. 
  * <p>
  * Copyright (c) 2022-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>

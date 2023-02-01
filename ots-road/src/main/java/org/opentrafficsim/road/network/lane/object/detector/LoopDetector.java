@@ -24,7 +24,6 @@ import org.djutils.exceptions.Try;
 import org.djutils.io.CompressedFileWriter;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
-import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -316,13 +315,15 @@ public class LoopDetector extends Detector
      * @param longitudinalPosition Length; position
      * @param gtuType GtuType; GTU type.
      * @param simulator OTSSimulatorInterface; simulator
+     * @param detectorType DetectorType; detector type.
      * @throws NetworkException on network exception
      */
     public LoopDetector(final String id, final Lane lane, final Length longitudinalPosition, final GtuType gtuType,
-            final OtsSimulatorInterface simulator) throws NetworkException
+            final DetectorType detectorType, final OtsSimulatorInterface simulator) throws NetworkException
     {
         // Note: length not important for flow and mean speed
-        this(id, lane, longitudinalPosition, Length.ZERO, gtuType, simulator, Duration.instantiateSI(60.0), MEAN_SPEED);
+        this(id, lane, longitudinalPosition, Length.ZERO, gtuType, detectorType, simulator, Duration.instantiateSI(60.0),
+                MEAN_SPEED);
     }
 
     /**
@@ -335,21 +336,14 @@ public class LoopDetector extends Detector
      * @param simulator OTSSimulatorInterface; simulator
      * @param aggregation Duration; aggregation period
      * @param measurements DetectorMeasurement&lt;?, ?&gt;...; measurements to obtain
+     * @param detectorType DetectorType; detector type.
      * @throws NetworkException on network exception
      */
     public LoopDetector(final String id, final Lane lane, final Length longitudinalPosition, final Length length,
-            final GtuType gtuType, final OtsSimulatorInterface simulator, final Duration aggregation,
-            final LoopDetectorMeasurement<?, ?>... measurements) throws NetworkException
+            final GtuType gtuType, final DetectorType detectorType, final OtsSimulatorInterface simulator,
+            final Duration aggregation, final LoopDetectorMeasurement<?, ?>... measurements) throws NetworkException
     {
-        super(id, lane, longitudinalPosition, RelativePosition.FRONT, simulator, new Compatible()
-        {
-            /** {@inheritDoc} */
-            @Override
-            public boolean isCompatible(final GtuType gtuTypeInner)
-            {
-                return gtuTypeInner.isOfType(gtuType);
-            }
-        });
+        super(id, lane, longitudinalPosition, RelativePosition.FRONT, simulator, detectorType);
         Throw.when(aggregation.si <= 0.0, IllegalArgumentException.class, "Aggregation time should be positive.");
         this.length = length;
         this.aggregation = aggregation;
@@ -376,21 +370,14 @@ public class LoopDetector extends Detector
              * @param laneRear Lane; lane
              * @param longitudinalPositionRear Length; position
              * @param simulatorRear OTSSimulatorInterface; simulator
+             * @param detectorType DetectorType; detector type.
              * @throws NetworkException on network exception
              */
             @SuppressWarnings("synthetic-access")
             RearDetector(final String idRear, final Lane laneRear, final Length longitudinalPositionRear,
-                    final OtsSimulatorInterface simulatorRear) throws NetworkException
+                    final OtsSimulatorInterface simulatorRear, final DetectorType detectorType) throws NetworkException
             {
-                super(idRear, laneRear, longitudinalPositionRear, RelativePosition.REAR, simulatorRear, new Compatible()
-                {
-                    /** {@inheritDoc} */
-                    @Override
-                    public boolean isCompatible(final GtuType gtuTypeInner)
-                    {
-                        return gtuTypeInner.isOfType(gtuType);
-                    }
-                });
+                super(idRear, laneRear, longitudinalPositionRear, RelativePosition.REAR, simulatorRear, detectorType);
             }
 
             /** {@inheritDoc} */
@@ -407,7 +394,7 @@ public class LoopDetector extends Detector
         Length position = longitudinalPosition.plus(length);
         Throw.when(position.gt(lane.getLength()), IllegalStateException.class,
                 "A Detector can not be placed at a lane boundary");
-        new RearDetector(id + "_rear", lane, position, simulator);
+        new RearDetector(id + "_rear", lane, position, simulator, detectorType);
     }
 
     /**

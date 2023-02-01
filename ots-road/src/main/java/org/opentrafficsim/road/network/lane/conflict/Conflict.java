@@ -437,6 +437,13 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         conf1.otherConflict = conf2;
         conf2.otherConflict = conf1;
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public double getZ() throws RemoteException
+    {
+        return -0.0001;
+    }
 
     /** {@inheritDoc} */
     @Override

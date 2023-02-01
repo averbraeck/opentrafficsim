@@ -38,7 +38,6 @@ import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.IdGtuColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SpeedGtuColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGtuColorer;
-import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.definitions.Definitions;
@@ -122,8 +121,8 @@ import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Type;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.object.detector.LoopDetector;
-import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 import org.opentrafficsim.road.network.lane.object.detector.LoopDetector.CompressionMethod;
+import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -305,20 +304,20 @@ public class RampMeteringDemo extends AbstractSimulationScript
                 .leftToRight(0.5, laneWidth, freewayLane, speedLimit).addLanes().getLanes();
         for (Lane lane : lanesCD)
         {
-            new SinkDetector(lane, lane.getLength().minus(Length.instantiateSI(50)), sim);
+            new SinkDetector(lane, lane.getLength().minus(Length.instantiateSI(50)), sim, DefaultsRoadNl.ROAD_USERS);
         }
         // detectors
         Duration agg = Duration.instantiateSI(60.0);
         // TODO: detector length affects occupancy, which length to use?
         Length detectorLength = Length.ZERO;
-        LoopDetector det1 = new LoopDetector("1", lanesAB.get(0), Length.instantiateSI(2900), detectorLength, DefaultsNl.VEHICLE, sim,
-                agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
-        LoopDetector det2 = new LoopDetector("2", lanesAB.get(1), Length.instantiateSI(2900), detectorLength, DefaultsNl.VEHICLE, sim,
-                agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
-        LoopDetector det3 = new LoopDetector("3", lanesCD.get(0), Length.instantiateSI(100), detectorLength, DefaultsNl.VEHICLE, sim,
-                agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
-        LoopDetector det4 = new LoopDetector("4", lanesCD.get(1), Length.instantiateSI(100), detectorLength, DefaultsNl.VEHICLE, sim,
-                agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+        LoopDetector det1 = new LoopDetector("1", lanesAB.get(0), Length.instantiateSI(2900), detectorLength,
+                DefaultsNl.VEHICLE, DefaultsRoadNl.LOOP_DETECTOR, sim, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+        LoopDetector det2 = new LoopDetector("2", lanesAB.get(1), Length.instantiateSI(2900), detectorLength,
+                DefaultsNl.VEHICLE, DefaultsRoadNl.LOOP_DETECTOR, sim, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+        LoopDetector det3 = new LoopDetector("3", lanesCD.get(0), Length.instantiateSI(100), detectorLength, DefaultsNl.VEHICLE,
+                DefaultsRoadNl.LOOP_DETECTOR, sim, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+        LoopDetector det4 = new LoopDetector("4", lanesCD.get(1), Length.instantiateSI(100), detectorLength, DefaultsNl.VEHICLE,
+                DefaultsRoadNl.LOOP_DETECTOR, sim, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
         List<LoopDetector> detectors12 = new ArrayList<>();
         detectors12.add(det1);
         detectors12.add(det2);
@@ -334,7 +333,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
             // ramp metering
             RampMeteringSwitch rampSwitch = new RwsSwitch(detectors12);
             RampMeteringLightController rampLightController =
-                    new CycleTimeLightController(sim, lightList, Compatible.EVERYTHING);
+                    new CycleTimeLightController(sim, lightList, DefaultsRoadNl.LOOP_DETECTOR);
             new RampMetering(sim, rampSwitch, rampLightController);
         }
 
@@ -362,7 +361,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
         odOptions.set(OdOptions.GTU_TYPE, new ControlledStrategicalPlannerGenerator()).set(OdOptions.INSTANT_LC, true);
         odOptions.set(OdOptions.LANE_BIAS, new LaneBiases().addBias(car, LaneBias.WEAK_LEFT));
         odOptions.set(OdOptions.NO_LC_DIST, Length.instantiateSI(300));
-        OdApplier.applyOD(network, od, odOptions);
+        OdApplier.applyOD(network, od, odOptions, DefaultsRoadNl.ROAD_USERS);
 
         return network;
     }

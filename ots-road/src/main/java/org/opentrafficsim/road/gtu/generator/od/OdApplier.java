@@ -48,8 +48,9 @@ import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
-import org.opentrafficsim.road.network.lane.object.detector.DestinationSensor;
+import org.opentrafficsim.road.network.lane.object.detector.DestinationDetector;
 import org.opentrafficsim.road.network.lane.object.detector.DetectorAnimationToggle;
+import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -113,13 +114,14 @@ public final class OdApplier
      * @param network OTSRoadNetwork; network
      * @param od ODMatrix; OD matrix
      * @param odOptions ODOptions; options for vehicle generation
+     * @param detectorType DetectorType; detector type.
      * @return Map&lt;String, GeneratorObjects&gt; map of generator id's and created generator objects mainly for testing
      * @throws ParameterException if a parameter is missing
      * @throws SimRuntimeException if this method is called after simulation time 0
      */
     @SuppressWarnings("checkstyle:methodlength")
     public static Map<String, GeneratorObjects> applyOD(final OtsRoadNetwork network, final ODMatrix od,
-            final OdOptions odOptions) throws ParameterException, SimRuntimeException
+            final OdOptions odOptions, final DetectorType detectorType) throws ParameterException, SimRuntimeException
     {
         Throw.whenNull(network, "Network may not be null.");
         Throw.whenNull(od, "OD matrix may not be null.");
@@ -131,7 +133,7 @@ public final class OdApplier
         // TODO sinks? white extension links?
         for (Node destination : od.getDestinations())
         {
-            createSensorsAtDestination(destination, simulator);
+            createSensorsAtDestination(destination, simulator, detectorType);
         }
 
         final Categorization categorization = od.getCategorization();
@@ -380,18 +382,20 @@ public final class OdApplier
      * Create destination sensors at all lanes connected to a destination node. This method considers connectors too.
      * @param destination Node; destination node
      * @param simulator OTSSimulatorInterface; simulator
+     * @param detectorType DetectorType; detector type.
      */
-    private static void createSensorsAtDestination(final Node destination, final OtsSimulatorInterface simulator)
+    private static void createSensorsAtDestination(final Node destination, final OtsSimulatorInterface simulator,
+            final DetectorType detectorType)
     {
         for (Link link : destination.getLinks())
         {
             if (link.isConnector() && !link.getStartNode().equals(destination))
             {
-                createSensorsAtDestinationNode(link.getStartNode(), simulator);
+                createSensorsAtDestinationNode(link.getStartNode(), simulator, detectorType);
             }
             else
             {
-                createSensorsAtDestinationNode(destination, simulator);
+                createSensorsAtDestinationNode(destination, simulator, detectorType);
             }
         }
     }
@@ -400,8 +404,10 @@ public final class OdApplier
      * Create sensors at all lanes connected to this node. This method does not handle connectors.
      * @param destination Node; the destination node
      * @param simulator OTSSimulatorInterface; simulator
+     * @param detectorType DetectorType; detector type.
      */
-    private static void createSensorsAtDestinationNode(final Node destination, final OtsSimulatorInterface simulator)
+    private static void createSensorsAtDestinationNode(final Node destination, final OtsSimulatorInterface simulator,
+            final DetectorType detectorType)
     {
         for (Link link : destination.getLinks())
         {
@@ -415,7 +421,7 @@ public final class OdApplier
                         boolean destinationSensorExists = false;
                         for (DetectorAnimationToggle sensor : lane.getDetectors())
                         {
-                            if (sensor instanceof DestinationSensor)
+                            if (sensor instanceof DestinationDetector)
                             {
                                 destinationSensorExists = true;
                             }
@@ -424,11 +430,11 @@ public final class OdApplier
                         {
                             if (link.getEndNode().equals(destination))
                             {
-                                new DestinationSensor(lane, lane.getLength(), simulator);
+                                new DestinationDetector(lane, lane.getLength(), simulator, detectorType);
                             }
                             else if (link.getStartNode().equals(destination))
                             {
-                                new DestinationSensor(lane, Length.ZERO, simulator);
+                                new DestinationDetector(lane, Length.ZERO, simulator, detectorType);
                             }
                         }
                     }

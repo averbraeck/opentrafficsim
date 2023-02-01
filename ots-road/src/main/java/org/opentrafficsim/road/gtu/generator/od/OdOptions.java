@@ -6,7 +6,6 @@ import java.util.Map;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.gtu.GtuErrorHandler;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
@@ -59,7 +58,7 @@ public class OdOptions
 
     /** Lane bias. Default is none, i.e. uniform distribution over lanes for all GTU types. */
     public static final Option<LaneBiases> LANE_BIAS = new Option<>("lane bias", new LaneBiases());
-    
+
     /** Options overall. */
     private OptionSet<Void> options = new OptionSet<>();
 

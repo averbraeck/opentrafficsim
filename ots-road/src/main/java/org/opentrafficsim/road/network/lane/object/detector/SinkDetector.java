@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.network.lane.object.detector;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -27,25 +26,14 @@ public class SinkDetector extends Detector
      * @param lane Lane; the lane that triggers the deletion of the GTU.
      * @param position Length; the position of the detector
      * @param simulator OTSSimulatorInterface; the simulator to enable animation.
+     * @param detectorType DetectorType; detector type.
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
-    public SinkDetector(final Lane lane, final Length position, final OtsSimulatorInterface simulator) throws NetworkException
-    {
-        this(lane, position, Compatible.EVERYTHING, simulator);
-    }
-
-    /**
-     * @param lane Lane; the lane that triggers the deletion of the GTU.
-     * @param position Length; the position of the detector
-     * @param compatible Compatible; compatible GTU type and direction
-     * @param simulator OTSSimulatorInterface; the simulator to enable animation.
-     * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
-     */
-    public SinkDetector(final Lane lane, final Length position, final Compatible compatible,
-            final OtsSimulatorInterface simulator) throws NetworkException
+    public SinkDetector(final Lane lane, final Length position, final OtsSimulatorInterface simulator,
+            final DetectorType detectorType) throws NetworkException
     {
         super("SINK@" + lane.getFullId() + "." + position, lane, position, RelativePosition.FRONT, simulator,
-                makeGeometry(lane, position, 1.0), compatible);
+                makeGeometry(lane, position, 1.0), detectorType);
     }
 
     /** {@inheritDoc} */

@@ -40,7 +40,7 @@ import org.opentrafficsim.core.perception.collections.HistoricalArrayList;
 import org.opentrafficsim.core.perception.collections.HistoricalList;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
-import org.opentrafficsim.road.network.lane.object.detector.DestinationSensor;
+import org.opentrafficsim.road.network.lane.object.detector.DestinationDetector;
 import org.opentrafficsim.road.network.lane.object.detector.Detector;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 
@@ -311,7 +311,6 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             // not accessible for the given GTU type
             return false;
         }
-
         if (direction.equals(LateralDirectionality.LEFT))
         {
             // TODO take the cross section slices into account...
@@ -593,7 +592,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                         gtu.addTrigger(this, event);
                     }
                     else if (detector.getLongitudinalPosition().si < minPos
-                            && (detector instanceof SinkDetector || detector instanceof DestinationSensor))
+                            && (detector instanceof SinkDetector || detector instanceof DestinationDetector))
                     {
                         // TODO this is a hack for when sink detector aren't perfectly adjacent or the GTU overshoots with nose
                         // due to curvature
@@ -1471,7 +1470,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     @SuppressWarnings("checkstyle:designforextension")
     public double getZ()
     {
-        return -0.0002;
+        return -0.0003;
     }
 
     /** {@inheritDoc} */
