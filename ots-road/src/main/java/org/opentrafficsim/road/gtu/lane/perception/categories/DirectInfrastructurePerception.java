@@ -108,9 +108,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         if (this.root == null || !newRoot.equals(this.root)
                 || !this.lanes.equals(getPerception().getGtu().positions(RelativePosition.REFERENCE_POSITION).keySet())
                 || !Objects.equals(this.route, getPerception().getGtu().getStrategicalPlanner().getRoute())
-                || this.cutOff.stream().filter((
-                        record
-                ) -> !record.isCutOffEnd()).count() > 0)
+                || this.cutOff.stream().filter((record) -> !record.isCutOffEnd()).count() > 0)
         {
             this.cutOff.clear();
             this.root = newRoot;
@@ -358,8 +356,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
             Lane laneObj = getGtu().getReferencePosition().getLane();
             if (!slp.containsAddSource(laneObj))
             {
-                slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.FIXED_SIGN, laneObj.getSpeedLimit(getGtu().getType()),
-                        laneObj);
+                slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.FIXED_SIGN, laneObj.getSpeedLimit(getGtu().getType()), laneObj);
             }
         }
         catch (NetworkException exception)
