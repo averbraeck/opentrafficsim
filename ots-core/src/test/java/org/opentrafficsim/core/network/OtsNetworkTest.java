@@ -10,6 +10,7 @@ import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
@@ -697,6 +698,135 @@ public class OtsNetworkTest implements EventListener
             prevNode = node;
         }
         return nodes;
+    }
+
+    /**
+     * Tests whether the A* algorithm delivers the same shortest path as Dijkstra.
+     * @throws OtsGeometryException
+     * @throws NetworkException
+     */
+    @Test
+    public void testAStar() throws NetworkException, OtsGeometryException
+    {
+        boolean showTime = false; // not part of formal test, set to true for benchmarking
+        long totalTimeDijkstra = 0;
+        long totalTimeAStar = 0;
+        int gridSize = 20;
+        double sigma = 1.0;
+        double sigmaLim = 0.4;
+        int trials = 100;
+        for (int i = 0; i < trials; i++)
+        {
+            OtsNetwork network = new OtsNetwork("shortest path test network", MockSimulator.createMock());
+            Node[] od = randomTestNetwork(network, gridSize, sigma, sigmaLim);
+            // this first call triggers the graph to be constructed, which should not be part of timing an algorithm
+            if (showTime)
+            {
+                network.getShortestRouteBetween(DefaultsNl.VEHICLE, od[0], od[1], LinkWeight.LENGTH_NO_CONNECTORS);
+            }
+            long t1 = System.currentTimeMillis();
+            Route dijkstra = network.getShortestRouteBetween(DefaultsNl.VEHICLE, od[0], od[1], LinkWeight.LENGTH_NO_CONNECTORS);
+            long t2 = System.currentTimeMillis();
+            Route aStar =
+                    network.getShortestRouteBetween(DefaultsNl.VEHICLE, od[0], od[1], LinkWeight.ASTAR_LENGTH_NO_CONNECTORS);
+            long t3 = System.currentTimeMillis();
+            totalTimeDijkstra += (t2 - t1);
+            totalTimeAStar += (t3 - t2);
+            assertEquals("A* gave different shortest path from Dijkstra.", routeLength(dijkstra), routeLength(aStar), 0.001);
+        }
+        double percentage = 100.0 * totalTimeAStar / totalTimeDijkstra;
+        if (showTime)
+        {
+            System.out.println("Dijkstra took a total of " + totalTimeDijkstra + "ms.");
+            System.out.println("A* took a total of " + totalTimeAStar + "ms, which is " + percentage + "%.");
+        }
+    }
+
+    /**
+     * Creates a random grid network, where each node is randomly located with a 'cell' surrounding it. These cells do not
+     * overlap, guaranteeing a logical network, but with random lengths. The origin will be roughly in the middle, while the
+     * destination will by roughly in the middle of the upper-right quadrant. The grid will have an overall spacing of 10m.
+     * @param network Network; network.
+     * @param gridSize int; the network will consist of gridSize x gridSize nodes.
+     * @param sigma double; Gaussian standard deviation for node location, assuming a unit grid with a spacing of 1.
+     * @param sigmaLim double; limits the random location between -sigmaLim and sigmaLim around its regular grid point.
+     * @return Node[]; origin (at index 0) and destination (at index 1) to use.
+     * @throws NetworkException
+     * @throws OtsGeometryException
+     */
+    private Node[] randomTestNetwork(final Network network, final int gridSize, final double sigma, final double sigmaLim)
+            throws NetworkException, OtsGeometryException
+    {
+        double originLocation = (gridSize - 1.0) * 0.5;
+        double destinationLocation = (gridSize - 1.0) * 0.75;
+
+        int nodeNumber = 1;
+        Random r = new Random();
+        Node[] returnOriginDestination = new Node[2];
+        for (int i = 0; i < gridSize; i++)
+        {
+            double y = 10.0 * (Math.max(Math.min(sigma * r.nextGaussian(), sigmaLim), -sigmaLim) + i);
+            for (int j = 0; j < gridSize; j++)
+            {
+                double x = 10.0 * (Math.max(Math.min(sigma * r.nextGaussian(), sigmaLim), -sigmaLim) + j);
+                OtsPoint3D point = new OtsPoint3D(x, y);
+                Node node = new OtsNode(network, "Node " + nodeNumber, point);
+
+                // origin-destination
+                if (returnOriginDestination[0] == null && i > originLocation && j > originLocation)
+                {
+                    returnOriginDestination[0] = node;
+                }
+                if (returnOriginDestination[1] == null && i > destinationLocation && j > destinationLocation)
+                {
+                    returnOriginDestination[1] = node;
+                }
+
+                // create links
+                if (j > 0)
+                {
+                    Node up = network.getNode("Node " + (nodeNumber - 1));
+                    String id = "Link " + (nodeNumber - 1) + "-" + nodeNumber;
+                    OtsLine3D designLine = new OtsLine3D(up.getPoint(), node.getPoint());
+                    new OtsLink(network, id, up, node, DefaultsNl.RURAL, designLine);
+                    id = "Link " + nodeNumber + "-" + (nodeNumber - 1);
+                    designLine = new OtsLine3D(node.getPoint(), up.getPoint());
+                    new OtsLink(network, id, node, up, DefaultsNl.RURAL, designLine);
+                }
+                if (i > 0)
+                {
+                    Node left = network.getNode("Node " + (nodeNumber - gridSize));
+                    String id = "Link " + (nodeNumber - gridSize) + "-" + nodeNumber;
+                    OtsLine3D designLine = new OtsLine3D(left.getPoint(), node.getPoint());
+                    new OtsLink(network, id, left, node, DefaultsNl.RURAL, designLine);
+                    id = "Link " + nodeNumber + "-" + (nodeNumber - gridSize);
+                    designLine = new OtsLine3D(node.getPoint(), left.getPoint());
+                    new OtsLink(network, id, node, left, DefaultsNl.RURAL, designLine);
+                }
+
+                nodeNumber++;
+            }
+        }
+        return returnOriginDestination;
+    }
+
+    /**
+     * Calculates length of the route.
+     * @param route Route; route.
+     * @return double; route length.
+     * @throws NetworkException
+     */
+    private double routeLength(final Route route) throws NetworkException
+    {
+        double length = 0.0;
+        for (int i = 0; i < route.size(); i++)
+        {
+            if (i > 0)
+            {
+                length += route.getNode(i - 1).getPoint().distanceSI(route.getNode(i).getPoint());
+            }
+        }
+        return length;
     }
 
 }

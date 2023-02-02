@@ -18,6 +18,7 @@ import org.djutils.immutablecollections.ImmutableHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.logger.CategoryLogger;
 import org.jgrapht.GraphPath;
+import org.jgrapht.alg.shortestpath.AStarShortestPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -64,7 +65,7 @@ public class OtsNetwork extends LocalEventProducer implements Network, Perceivab
     private Map<GtuType, Map<String, Route>> routeMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** Graphs to calculate shortest paths per GtuType. */
-    private Map<GtuType, SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>> linkGraphs = new LinkedHashMap<>();
+    private Map<GtuType, SimpleDirectedWeightedGraph<Node, Link>> linkGraphs = new LinkedHashMap<>();
 
     /** GTUs registered in this network. */
     private Map<String, Gtu> gtuMap = Collections.synchronizedMap(new LinkedHashMap<>());
@@ -624,13 +625,10 @@ public class OtsNetwork extends LocalEventProducer implements Network, Perceivab
      * @param linkWeight LinkWeight; link weight
      * @return SimpleDirectedWeightedGraph graph
      */
-    private SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> buildGraph(final GtuType gtuType, final LinkWeight linkWeight)
+    private SimpleDirectedWeightedGraph<Node, Link> buildGraph(final GtuType gtuType, final LinkWeight linkWeight)
     {
         // TODO: take connections into account, and possibly do node expansion to build the graph
-        @SuppressWarnings({"unchecked"})
-        // TODO: the next line with .class has problems compiling... So used a dirty hack instead for now...
-        Class<LinkEdge<Link>> linkEdgeClass = (Class<LinkEdge<Link>>) new LinkEdge<OtsLink>(null).getClass();
-        SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = new SimpleDirectedWeightedGraph<>(linkEdgeClass);
+        SimpleDirectedWeightedGraph<Node, Link> graph = new SimpleDirectedWeightedGraph<>(Link.class);
         for (Node node : this.nodeMap.values())
         {
             graph.addVertex(node);
@@ -638,9 +636,8 @@ public class OtsNetwork extends LocalEventProducer implements Network, Perceivab
         for (Link link : this.linkMap.values())
         {
             // determine if the link is accessible for the GtuType , and in which direction(s)
-            LinkEdge<Link> linkEdge = new LinkEdge<>(link);
-            graph.addEdge(link.getStartNode(), link.getEndNode(), linkEdge);
-            graph.setEdgeWeight(linkEdge, linkWeight.getWeight(link));
+            graph.addEdge(link.getStartNode(), link.getEndNode(), link);
+            graph.setEdgeWeight(link, linkWeight.getWeight(link));
         }
         return graph;
     }
@@ -650,35 +647,7 @@ public class OtsNetwork extends LocalEventProducer implements Network, Perceivab
     public final Route getShortestRouteBetween(final GtuType gtuType, final Node nodeFrom, final Node nodeTo,
             final LinkWeight linkWeight) throws NetworkException
     {
-        Route route = new Route("Route for " + gtuType + " from " + nodeFrom + "to " + nodeTo, gtuType);
-        SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = getGraph(gtuType, linkWeight);
-        // DijkstraShortestPath<Node, LinkEdge<Link>> dijkstra = new DijkstraShortestPath<>(graph);
-        // GraphPath<Node, LinkEdge<Link>> path = dijkstra.getPath(nodeFrom, nodeTo);
-        GraphPath<Node, LinkEdge<Link>> path = DijkstraShortestPath.findPathBetween(graph, nodeFrom, nodeTo);
-        if (path == null)
-        {
-            CategoryLogger.always().debug("No path from " + nodeFrom + " to " + nodeTo + " for gtuType " + gtuType);
-            return null;
-        }
-        route.addNode(nodeFrom);
-        for (LinkEdge<Link> link : path.getEdgeList())
-        {
-            if (!link.getLink().getEndNode().equals(route.destinationNode())
-                    && route.destinationNode().isConnectedTo(gtuType, link.getLink().getEndNode()))
-            {
-                route.addNode(link.getLink().getEndNode());
-            }
-            else if (!link.getLink().getStartNode().equals(route.destinationNode())
-                    && route.destinationNode().isConnectedTo(gtuType, link.getLink().getStartNode()))
-            {
-                route.addNode(link.getLink().getStartNode());
-            }
-            else
-            {
-                throw new NetworkException("Cannot connect two links when calculating shortest route");
-            }
-        }
-        return route;
+        return getShortestRouteBetween(gtuType, nodeFrom, nodeTo, new ArrayList<>(), linkWeight);
     }
 
     /** {@inheritDoc} */
@@ -696,7 +665,7 @@ public class OtsNetwork extends LocalEventProducer implements Network, Perceivab
     {
         Route route = new Route("Route for " + gtuType + " from " + nodeFrom + "to " + nodeTo + " via " + nodesVia.toString(),
                 gtuType);
-        SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = getGraph(gtuType, linkWeight);
+        SimpleDirectedWeightedGraph<Node, Link> graph = getGraph(gtuType, linkWeight);
         List<Node> nodes = new ArrayList<>();
         nodes.add(nodeFrom);
         nodes.addAll(nodesVia);
@@ -706,31 +675,26 @@ public class OtsNetwork extends LocalEventProducer implements Network, Perceivab
         for (int i = 1; i < nodes.size(); i++)
         {
             Node to = nodes.get(i);
-            DijkstraShortestPath<Node, LinkEdge<Link>> dijkstra = new DijkstraShortestPath<>(graph);
-            GraphPath<Node, LinkEdge<Link>> path = dijkstra.getPath(from, to);
+            GraphPath<Node, Link> path =
+                    linkWeight.getAStarHeuristic() == null ? DijkstraShortestPath.findPathBetween(graph, from, to)
+                            : new AStarShortestPath<>(graph, linkWeight.getAStarHeuristic()).getPath(from, to);
             if (path == null)
             {
                 CategoryLogger.always().debug("Cannot find a path from " + nodeFrom + " via " + nodesVia + " to " + nodeTo
                         + " (failing between " + from + " and " + to + ")");
-                // dijkstra.getPath(from, to);
                 return null;
             }
-            // System.out.println("Dijkstra generated path:");
-            // for (LinkEdge<Link> link : path.getEdgeList())
-            // {
-            // System.out.println((link.getLink().getLinkType().isConnector() ? "CONNECTOR " : " ") + link);
-            // }
-            for (LinkEdge<Link> linkEdge : path.getEdgeList())
+            for (Link link : path.getEdgeList())
             {
-                if (!linkEdge.getLink().getEndNode().equals(route.destinationNode())
-                        && route.destinationNode().isConnectedTo(gtuType, linkEdge.getLink().getEndNode()))
+                if (!link.getEndNode().equals(route.destinationNode())
+                        && route.destinationNode().isConnectedTo(gtuType, link.getEndNode()))
                 {
-                    route.addNode(linkEdge.getLink().getEndNode());
+                    route.addNode(link.getEndNode());
                 }
-                else if (!linkEdge.getLink().getStartNode().equals(route.destinationNode())
-                        && route.destinationNode().isConnectedTo(gtuType, linkEdge.getLink().getStartNode()))
+                else if (!link.getStartNode().equals(route.destinationNode())
+                        && route.destinationNode().isConnectedTo(gtuType, link.getStartNode()))
                 {
-                    route.addNode(linkEdge.getLink().getStartNode());
+                    route.addNode(link.getStartNode());
                 }
                 else
                 {
@@ -749,10 +713,10 @@ public class OtsNetwork extends LocalEventProducer implements Network, Perceivab
      * @param linkWeight LinkWeight; link weight
      * @return SimpleDirectedWeightedGraph
      */
-    private SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> getGraph(final GtuType gtuType, final LinkWeight linkWeight)
+    private SimpleDirectedWeightedGraph<Node, Link> getGraph(final GtuType gtuType, final LinkWeight linkWeight)
     {
         // TODO: this code makes no sense, properly cache per LinkWeight and GtuType, where LinkWeight must be static
-        SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph;
+        SimpleDirectedWeightedGraph<Node, Link> graph;
         if (linkWeight.equals(LinkWeight.LENGTH))
         {
             // stored default
@@ -797,7 +761,7 @@ public class OtsNetwork extends LocalEventProducer implements Network, Perceivab
     /**
      * @return linkGraphs; only to be used in the 'network' package for cloning.
      */
-    public final ImmutableMap<GtuType, SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>> getLinkGraphs()
+    public final ImmutableMap<GtuType, SimpleDirectedWeightedGraph<Node, Link>> getLinkGraphs()
     {
         return new ImmutableHashMap<>(this.linkGraphs, Immutable.WRAP);
     }
@@ -805,7 +769,7 @@ public class OtsNetwork extends LocalEventProducer implements Network, Perceivab
     /**
      * @return linkGraphs; only to be used in the 'network' package for cloning.
      */
-    final Map<GtuType, SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>> getRawLinkGraphs()
+    final Map<GtuType, SimpleDirectedWeightedGraph<Node, Link>> getRawLinkGraphs()
     {
         return this.linkGraphs;
     }

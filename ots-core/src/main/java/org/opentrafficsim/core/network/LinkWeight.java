@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.network;
 
+import org.jgrapht.alg.interfaces.AStarAdmissibleHeuristic;
+
 /**
  * Interface to determine a link weight.
  * <p>
@@ -59,10 +61,58 @@ public interface LinkWeight
         }
     };
 
+    /** Link weight with very high penalty for Connectors. */
+    LinkWeight ASTAR_LENGTH_NO_CONNECTORS = new LinkWeight()
+    {
+        /** {@inheritDoc} */
+        @Override
+        public double getWeight(final Link link)
+        {
+            return LENGTH_NO_CONNECTORS.getWeight(link);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public AStarAdmissibleHeuristic<Node> getAStarHeuristic()
+        {
+            return EUCLIDEAN_DISTANCE;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "ASTAR_LENGTH_NO_CONNECTORS";
+        }
+    };
+
+    /**
+     * Heuristic for the A* algorithm that uses Euclidean distance.
+     */
+    AStarAdmissibleHeuristic<Node> EUCLIDEAN_DISTANCE = new AStarAdmissibleHeuristic<>()
+    {
+        /** {@inheritDoc} */
+        @Override
+        public double getCostEstimate(final Node sourceVertex, final Node targetVertex)
+        {
+            return sourceVertex.getPoint().distanceSI(targetVertex.getPoint());
+        }
+    };
+
     /**
      * Returns the link weight.
      * @param link Link; link
      * @return double; link weight
      */
     double getWeight(Link link);
+
+    /**
+     * Return a heuristic for the A* algorithm. The default value is {@code null} in which case {@code OtsNetwork} will use a
+     * regular Dijkstra shortest path algorithm.
+     * @return AStarAdmissibleHeuristic&lt;Node&gt;; heuristic for the A* algorithm, default is {@code null}.
+     */
+    default AStarAdmissibleHeuristic<Node> getAStarHeuristic()
+    {
+        return null;
+    }
 }
