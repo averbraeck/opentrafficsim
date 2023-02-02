@@ -23,6 +23,8 @@ import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
 import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.cli.CliUtil;
+import org.djutils.data.csv.CsvData;
+import org.djutils.data.serialization.TextSerializationException;
 import org.djutils.event.Event;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
@@ -121,7 +123,6 @@ import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Type;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.object.detector.LoopDetector;
-import org.opentrafficsim.road.network.lane.object.detector.LoopDetector.CompressionMethod;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -311,12 +312,12 @@ public class RampMeteringDemo extends AbstractSimulationScript
         // TODO: detector length affects occupancy, which length to use?
         Length detectorLength = Length.ZERO;
         LoopDetector det1 = new LoopDetector("1", lanesAB.get(0), Length.instantiateSI(2900), detectorLength,
-                DefaultsNl.VEHICLE, DefaultsRoadNl.LOOP_DETECTOR, sim, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
-        LoopDetector det2 = new LoopDetector("2", lanesAB.get(1), Length.instantiateSI(2900), detectorLength,
-                DefaultsNl.VEHICLE, DefaultsRoadNl.LOOP_DETECTOR, sim, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
-        LoopDetector det3 = new LoopDetector("3", lanesCD.get(0), Length.instantiateSI(100), detectorLength, DefaultsNl.VEHICLE,
                 DefaultsRoadNl.LOOP_DETECTOR, sim, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
-        LoopDetector det4 = new LoopDetector("4", lanesCD.get(1), Length.instantiateSI(100), detectorLength, DefaultsNl.VEHICLE,
+        LoopDetector det2 = new LoopDetector("2", lanesAB.get(1), Length.instantiateSI(2900), detectorLength,
+                DefaultsRoadNl.LOOP_DETECTOR, sim, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+        LoopDetector det3 = new LoopDetector("3", lanesCD.get(0), Length.instantiateSI(100), detectorLength,
+                DefaultsRoadNl.LOOP_DETECTOR, sim, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+        LoopDetector det4 = new LoopDetector("4", lanesCD.get(1), Length.instantiateSI(100), detectorLength,
                 DefaultsRoadNl.LOOP_DETECTOR, sim, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
         List<LoopDetector> detectors12 = new ArrayList<>();
         detectors12.add(det1);
@@ -415,8 +416,15 @@ public class RampMeteringDemo extends AbstractSimulationScript
         if (this.output)
         {
             // detector data
-            String file = String.format("%s_%02d_detectors.txt", this.scenario, getSeed());
-            LoopDetector.writeToFile(getNetwork(), file, true, "%.3f", CompressionMethod.NONE);
+            String file = String.format("%s_%02d_detectors.csv", this.scenario, getSeed());
+            try
+            {
+                CsvData.writeData(file, file + ".header", LoopDetector.asTablePeriodicData(getNetwork()));
+            }
+            catch (IOException | TextSerializationException exception)
+            {
+                throw new RuntimeException(exception);
+            }
 
             // travel time data
             for (Gtu gtu : getNetwork().getGTUs())

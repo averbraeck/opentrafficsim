@@ -1,31 +1,35 @@
 package org.opentrafficsim.road.network.lane.object.detector;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.data.Column;
+import org.djutils.data.Row;
+import org.djutils.data.Table;
 import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
-import org.djutils.io.CompressedFileWriter;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -87,25 +91,37 @@ public class LoopDetector extends Detector
         @Override
         public Speed aggregate(final Double cumulative, final int gtuCount, final Duration aggregation)
         {
-            return Speed.instantiateSI(cumulative / gtuCount);
+            return new Speed(3.6 * cumulative / gtuCount, SpeedUnit.KM_PER_HOUR);
         }
 
         @Override
         public String getName()
         {
-            return "v[km/h]";
-        }
-
-        @Override
-        public String stringValue(final Speed aggregate, final String format)
-        {
-            return String.format(format, aggregate.getInUnit(SpeedUnit.KM_PER_HOUR));
+            return "v";
         }
 
         @Override
         public String toString()
         {
             return getName();
+        }
+
+        @Override
+        public String getDescription()
+        {
+            return "mean speed";
+        }
+
+        @Override
+        public String getUnit()
+        {
+            return "km/h";
+        }
+
+        @Override
+        public Class<Speed> getValueType()
+        {
+            return Speed.class;
         }
     };
 
@@ -140,25 +156,37 @@ public class LoopDetector extends Detector
                 @Override
                 public Speed aggregate(final Double cumulative, final int gtuCount, final Duration aggregation)
                 {
-                    return Speed.instantiateSI(gtuCount / cumulative);
+                    return new Speed(3.6 * gtuCount / cumulative, SpeedUnit.KM_PER_HOUR);
                 }
 
                 @Override
                 public String getName()
                 {
-                    return "vHarm[km/h]";
-                }
-
-                @Override
-                public String stringValue(final Speed aggregate, final String format)
-                {
-                    return String.format(format, aggregate.getInUnit(SpeedUnit.KM_PER_HOUR));
+                    return "vHarm";
                 }
 
                 @Override
                 public String toString()
                 {
                     return getName();
+                }
+
+                @Override
+                public String getDescription()
+                {
+                    return "harmonic mean speed";
+                }
+
+                @Override
+                public String getUnit()
+                {
+                    return "km/h";
+                }
+
+                @Override
+                public Class<Speed> getValueType()
+                {
+                    return Speed.class;
                 }
             };
 
@@ -216,38 +244,44 @@ public class LoopDetector extends Detector
         }
 
         @Override
-        public String stringValue(final Double aggregate, final String format)
-        {
-            return String.format(format, aggregate);
-        }
-
-        @Override
         public String toString()
         {
             return getName();
         }
+
+        @Override
+        public String getDescription()
+        {
+            return "occupancy as fraction of time";
+        }
+
+        @Override
+        public Class<Double> getValueType()
+        {
+            return Double.class;
+        }
     };
 
     /** Passages measurement. */
-    public static final LoopDetectorMeasurement<List<Double>, List<Double>> PASSAGES =
-            new LoopDetectorMeasurement<List<Double>, List<Double>>()
+    public static final LoopDetectorMeasurement<List<Duration>, List<Duration>> PASSAGES =
+            new LoopDetectorMeasurement<List<Duration>, List<Duration>>()
             {
                 @Override
-                public List<Double> identity()
+                public List<Duration> identity()
                 {
                     return new ArrayList<>();
                 }
 
                 @Override
-                public List<Double> accumulateEntry(final List<Double> cumulative, final LaneBasedGtu gtu,
+                public List<Duration> accumulateEntry(final List<Duration> cumulative, final LaneBasedGtu gtu,
                         final LoopDetector loopDetector)
                 {
-                    cumulative.add(gtu.getSimulator().getSimulatorTime().si);
+                    cumulative.add(gtu.getSimulator().getSimulatorTime());
                     return cumulative;
                 }
 
                 @Override
-                public List<Double> accumulateExit(final List<Double> cumulative, final LaneBasedGtu gtu,
+                public List<Duration> accumulateExit(final List<Duration> cumulative, final LaneBasedGtu gtu,
                         final LoopDetector loopDetector)
                 {
                     return cumulative;
@@ -260,7 +294,7 @@ public class LoopDetector extends Detector
                 }
 
                 @Override
-                public List<Double> aggregate(final List<Double> cumulative, final int gtuCount, final Duration aggregation)
+                public List<Duration> aggregate(final List<Duration> cumulative, final int gtuCount, final Duration aggregation)
                 {
                     return cumulative;
                 }
@@ -272,15 +306,27 @@ public class LoopDetector extends Detector
                 }
 
                 @Override
-                public String stringValue(final List<Double> aggregate, final String format)
-                {
-                    return printListDouble(aggregate, format);
-                }
-
-                @Override
                 public String toString()
                 {
                     return getName();
+                }
+
+                @Override
+                public String getDescription()
+                {
+                    return "list of vehicle passage time";
+                }
+
+                @Override
+                public String getUnit()
+                {
+                    return "s";
+                }
+
+                @Override
+                public Class<Duration> getValueType()
+                {
+                    return Duration.class;
                 }
             };
 
@@ -313,17 +359,15 @@ public class LoopDetector extends Detector
      * @param id String; detector id
      * @param lane Lane; lane
      * @param longitudinalPosition Length; position
-     * @param gtuType GtuType; GTU type.
      * @param simulator OTSSimulatorInterface; simulator
      * @param detectorType DetectorType; detector type.
      * @throws NetworkException on network exception
      */
-    public LoopDetector(final String id, final Lane lane, final Length longitudinalPosition, final GtuType gtuType,
-            final DetectorType detectorType, final OtsSimulatorInterface simulator) throws NetworkException
+    public LoopDetector(final String id, final Lane lane, final Length longitudinalPosition, final DetectorType detectorType,
+            final OtsSimulatorInterface simulator) throws NetworkException
     {
         // Note: length not important for flow and mean speed
-        this(id, lane, longitudinalPosition, Length.ZERO, gtuType, detectorType, simulator, Duration.instantiateSI(60.0),
-                MEAN_SPEED);
+        this(id, lane, longitudinalPosition, Length.ZERO, detectorType, simulator, Duration.instantiateSI(60.0), MEAN_SPEED);
     }
 
     /**
@@ -332,7 +376,6 @@ public class LoopDetector extends Detector
      * @param lane Lane; lane
      * @param longitudinalPosition Length; position
      * @param length Length; length
-     * @param gtuType GtuType; GTU type.
      * @param simulator OTSSimulatorInterface; simulator
      * @param aggregation Duration; aggregation period
      * @param measurements DetectorMeasurement&lt;?, ?&gt;...; measurements to obtain
@@ -340,8 +383,8 @@ public class LoopDetector extends Detector
      * @throws NetworkException on network exception
      */
     public LoopDetector(final String id, final Lane lane, final Length longitudinalPosition, final Length length,
-            final GtuType gtuType, final DetectorType detectorType, final OtsSimulatorInterface simulator,
-            final Duration aggregation, final LoopDetectorMeasurement<?, ?>... measurements) throws NetworkException
+            final DetectorType detectorType, final OtsSimulatorInterface simulator, final Duration aggregation,
+            final LoopDetectorMeasurement<?, ?>... measurements) throws NetworkException
     {
         super(id, lane, longitudinalPosition, RelativePosition.FRONT, simulator, detectorType);
         Throw.when(aggregation.si <= 0.0, IllegalArgumentException.class, "Aggregation time should be positive.");
@@ -534,10 +577,10 @@ public class LoopDetector extends Detector
     }
 
     /**
-     * Returns a map of non-periodical measurements.
-     * @return Map&lt;DetectorMeasurement, Object&gt;; map of non-periodical measurements
+     * Returns a map of non-periodic measurements, mapping measurement type and the data.
+     * @return Map&lt;DetectorMeasurement, Object&gt;; map of non-periodic measurements
      */
-    private Map<LoopDetectorMeasurement<?, ?>, Object> getMesoMeasurements()
+    private Map<LoopDetectorMeasurement<?, ?>, Object> getNonPeriodicMeasurements()
     {
         Map<LoopDetectorMeasurement<?, ?>, Object> map = new LinkedHashMap<>();
         for (LoopDetectorMeasurement<?, ?> measurement : this.currentCumulativeDataMap.keySet())
@@ -552,167 +595,293 @@ public class LoopDetector extends Detector
     }
 
     /**
-     * Write the contents of all detectors in to a file.
-     * @param network OTSRoadNetwork; network
-     * @param file String; file
-     * @param periodic boolean; periodic data
+     * Returns a Table with loop detector positions.
+     * @param network OtsRoadNetwork; network from which all detectors are found.
+     * @return Table; with loop detector positions.
      */
-    public static final void writeToFile(final OtsRoadNetwork network, final String file, final boolean periodic)
+    public static Table asTablePositions(final OtsRoadNetwork network)
     {
-        writeToFile(network, file, periodic, "%.3f", CompressionMethod.ZIP);
+        Set<LoopDetector> detectors = getLoopDetectors(network);
+        Collection<Column<?>> columns = new LinkedHashSet<>();
+        columns.add(new Column<>("id", "detector id", String.class, null));
+        columns.add(new Column<>("laneId", "lane id", String.class, null));
+        columns.add(new Column<>("linkId", "link id", String.class, null));
+        columns.add(new Column<>("position", "detector position on the lane", Length.class, "m"));
+
+        return new Table("detectors", "list of all loop-detectors", columns)
+        {
+            /** {@inheritDoc} */
+            @Override
+            public Iterator<Row> iterator()
+            {
+                Iterator<LoopDetector> iterator = detectors.iterator();
+                return new Iterator<>()
+                {
+                    /** {@inheritDoc} */
+                    @Override
+                    public boolean hasNext()
+                    {
+                        return iterator.hasNext();
+                    }
+
+                    /** {@inheritDoc} */
+                    @Override
+                    public Row next()
+                    {
+                        LoopDetector detector = iterator.next();
+                        return new Row(table(), new Object[] {detector.getId(), detector.getLane().getId(),
+                                detector.getLane().getParentLink().getId(), detector.getLongitudinalPosition()});
+                    }
+                };
+            }
+
+            /**
+             * Returns this table instance for inner classes as {@code Table.this} is not possible in an anonymous Table class.
+             * @return Table; this table instance for inner classes.
+             */
+            private Table table()
+            {
+                return this;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public boolean isEmpty()
+            {
+                return detectors.isEmpty();
+            }
+        };
     }
 
     /**
-     * Write the contents of all detectors in to a file.
-     * @param network OTSRoadNetwork; network
-     * @param file String; file
-     * @param periodic boolean; periodic data
-     * @param format String; number format, as used in {@code String.format()}
-     * @param compression CompressionMethod; how to compress the data
-     * @param <C> accumulated type
+     * Returns a Table with all periodic data, such as flow and speed per minute.
+     * @param network OtsRoadNetwork; network from which all detectors are found.
+     * @return Table; with all periodic data, such as flow and speed per minute.
      */
-    @SuppressWarnings("unchecked")
-    public static final <C> void writeToFile(final OtsRoadNetwork network, final String file, final boolean periodic,
-            final String format, final CompressionMethod compression)
+    public static Table asTablePeriodicData(final OtsRoadNetwork network)
     {
-        try (BufferedWriter bw = CompressedFileWriter.create(file, compression.equals(CompressionMethod.ZIP)))
+        Set<LoopDetector> detectors = getLoopDetectors(network);
+        Set<LoopDetectorMeasurement<?, ?>> measurements = getMeasurements(detectors, true);
+        Collection<Column<?>> columns = new LinkedHashSet<>();
+        columns.add(new Column<>("id", "detector id", String.class, null));
+        columns.add(new Column<>("t", "time (start of aggregation period)", Duration.class, "s"));
+        columns.add(new Column<>("q", "flow", Frequency.class, "/h"));
+        for (LoopDetectorMeasurement<?, ?> measurement : measurements)
         {
-            // gather all DetectorMeasurements and Detectors (sorted)
-            Set<LoopDetectorMeasurement<?, ?>> measurements = new LinkedHashSet<>();
-            Set<LoopDetector> detectors = new TreeSet<>(new Comparator<LoopDetector>()
+            columns.add(new Column<>(measurement.getName(), measurement.getDescription(), measurement.getValueType(),
+                    measurement.getUnit()));
+        }
+
+        return new Table("periodic", "periodic measurements", columns)
+        {
+            /** {@inheritDoc} */
+            @Override
+            public Iterator<Row> iterator()
             {
-                @Override
-                public int compare(final LoopDetector o1, final LoopDetector o2)
+                Iterator<LoopDetector> iterator = detectors.iterator();
+                return new Iterator<>()
                 {
-                    return o1.getId().compareTo(o2.getId());
-                }
-            });
-            for (LoopDetector detector : network.getObjectMap(LoopDetector.class).values())
-            {
-                detectors.add(detector);
-            }
-            for (LoopDetector detector : detectors)
-            {
-                for (LoopDetectorMeasurement<?, ?> measurement : detector.currentCumulativeDataMap.keySet())
-                {
-                    if (measurement.isPeriodic() == periodic)
+                    /** Index iterator. */
+                    private Iterator<Integer> indexIterator = Collections.emptyIterator();
+
+                    /** Current loop detector. */
+                    private LoopDetector loopDetector;
+
+                    /** Map of measurement data per measurement, updated for each detector. */
+                    private Map<LoopDetectorMeasurement<?, ?>, List<?>> map;
+
+                    /** {@inheritDoc} */
+                    @Override
+                    public boolean hasNext()
                     {
-                        measurements.add(measurement);
-                    }
-                }
-            }
-            // create headerline
-            StringBuilder str = periodic ? new StringBuilder("id,t[s],q[veh/h]") : new StringBuilder("id,measurement,data");
-            if (periodic)
-            {
-                for (LoopDetectorMeasurement<?, ?> measurement : measurements)
-                {
-                    str.append(",");
-                    str.append(measurement.getName());
-                }
-            }
-            bw.write(str.toString());
-            bw.newLine();
-            // create data lines
-            for (LoopDetector detector : detectors)
-            {
-                String id = detector.getFullId();
-                // meso
-                if (!periodic)
-                {
-                    Map<LoopDetectorMeasurement<?, ?>, Object> map = detector.getMesoMeasurements();
-                    for (LoopDetectorMeasurement<?, ?> measurement : measurements)
-                    {
-                        if (map.containsKey(measurement))
+                        while (!this.indexIterator.hasNext())
                         {
-                            // TODO: values can contain ","; use csv writer
-                            bw.write(id + "," + measurement.getName() + "," + ((LoopDetectorMeasurement<?, C>) measurement)
-                                    .stringValue((C) map.get(measurement), format));
-                            bw.newLine();
+                            if (!iterator.hasNext())
+                            {
+                                return false;
+                            }
+                            this.loopDetector = iterator.next();
+                            this.loopDetector.aggregate();
+                            this.indexIterator = IntStream.range(0, this.loopDetector.flow.size()).iterator();
+                            this.map = this.loopDetector.periodicDataMap;
                         }
+                        return true;
                     }
-                }
-                else
-                {
-                    // periodic
-                    detector.aggregate();
-                    double t = 0.0;
-                    for (int i = 0; i < detector.flow.size(); i++)
+
+                    /** {@inheritDoc} */
+                    @Override
+                    public Row next()
                     {
-                        str = new StringBuilder(id + "," + removeTrailingZeros(String.format(format, t)) + ",");
-                        str.append(removeTrailingZeros(
-                                String.format(format, detector.flow.get(i).getInUnit(FrequencyUnit.PER_HOUR))));
+                        Throw.when(!hasNext(), NoSuchElementException.class, "Periodic data unavailable.");
+                        Object[] data = new Object[columns.size()];
+                        int index = this.indexIterator.next();
+
+                        data[0] = this.loopDetector.getId();
+                        data[1] = Duration.instantiateSI(index * this.loopDetector.aggregation.si);
+                        data[2] = this.loopDetector.flow.get(index);
+                        int dataIndex = 3;
                         for (LoopDetectorMeasurement<?, ?> measurement : measurements)
                         {
-                            str.append(",");
-                            List<?> list = detector.periodicDataMap.get(measurement);
-                            if (list != null)
+                            if (this.map.containsKey(measurement))
                             {
-                                str.append(removeTrailingZeros(
-                                        ((LoopDetectorMeasurement<?, C>) measurement).stringValue((C) list.get(i), format)));
+                                data[dataIndex++] = this.map.get(measurement).get(index);
+                            }
+                            else
+                            {
+                                // this data is not available for this detector
+                                data[dataIndex++] = null;
                             }
                         }
-                        bw.write(str.toString());
-                        bw.newLine();
-                        t += detector.aggregation.si;
+                        return new Row(table(), data);
                     }
-                }
+                };
             }
-        }
-        catch (IOException exception)
+
+            /**
+             * Returns this table instance for inner classes as {@code Table.this} is not possible in an anonymous Table class.
+             * @return Table; this table instance for inner classes.
+             */
+            private Table table()
+            {
+                return this;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public boolean isEmpty()
+            {
+                return detectors.isEmpty() || !detectors.iterator().next().hasLastValue();
+            }
+        };
+    }
+
+    /**
+     * Returns a Table with all non-periodic data, such as vehicle passage times or platoon counts.
+     * @param network OtsRoadNetwork; network from which all detectors are found.
+     * @return Table; with all non-periodic data, such as vehicle passage times or platoon counts.
+     */
+    public static Table asTableNonPeriodicData(final OtsRoadNetwork network)
+    {
+        Set<LoopDetector> detectors = getLoopDetectors(network);
+        Set<LoopDetectorMeasurement<?, ?>> measurements = getMeasurements(detectors, false);
+        Collection<Column<?>> columns = new LinkedHashSet<>();
+        columns.add(new Column<>("id", "detector id", String.class, null));
+        columns.add(new Column<>("measurement", "measurement type", String.class, null));
+        columns.add(new Column<>("data", "data in any form", String.class, null));
+
+        return new Table("non-periodic", "non-periodic measurements", columns)
         {
-            throw new RuntimeException("Could not write to file.", exception);
-        }
+            /** {@inheritDoc} */
+            @Override
+            public Iterator<Row> iterator()
+            {
+                Iterator<LoopDetector> iterator = detectors.iterator();
+                return new Iterator<>()
+                {
+                    /** Index iterator. */
+                    private Iterator<LoopDetectorMeasurement<?, ?>> measurementIterator = Collections.emptyIterator();
+
+                    /** Current loop detector. */
+                    private LoopDetector loopDetector;
+
+                    /** Map of measurement data per measurement, updated for each detector. */
+                    private Map<LoopDetectorMeasurement<?, ?>, Object> map;
+
+                    /** Current measurement. */
+                    private LoopDetectorMeasurement<?, ?> measurement;
+
+                    /** {@inheritDoc} */
+                    @Override
+                    public boolean hasNext()
+                    {
+                        if (this.measurement != null)
+                        {
+                            return true; // catch consecutive 'hasNext' calls before next 'next' call
+                        }
+                        while (!this.measurementIterator.hasNext())
+                        {
+                            if (!iterator.hasNext())
+                            {
+                                return false;
+                            }
+                            this.loopDetector = iterator.next();
+                            this.measurementIterator = measurements.iterator();
+                            this.map = this.loopDetector.getNonPeriodicMeasurements();
+                        }
+                        // skip if data is not available for this detector
+                        this.measurement = this.measurementIterator.next();
+                        if (!this.map.containsKey(this.measurement))
+                        {
+                            this.measurement = null;
+                            return hasNext();
+                        }
+                        return true;
+                    }
+
+                    /** {@inheritDoc} */
+                    @Override
+                    public Row next()
+                    {
+                        Throw.when(!hasNext(), NoSuchElementException.class, "Non-periodic data unavailable.");
+                        Object[] data = new Object[columns.size()];
+
+                        data[0] = this.loopDetector.getId();
+                        data[1] = this.measurement.getName();
+                        data[2] = this.map.get(this.measurement).toString();
+                        this.measurement = null;
+                        return new Row(table(), data);
+                    }
+                };
+            }
+
+            /**
+             * Returns this table instance for inner classes as {@code Table.this} is not possible in an anonymous Table class.
+             * @return Table; this table instance for inner classes.
+             */
+            private Table table()
+            {
+                return this;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public boolean isEmpty()
+            {
+                return detectors.isEmpty() || measurements.isEmpty();
+            }
+        };
     }
 
     /**
-     * Remove any trailing zeros.
-     * @param string String; string of number
-     * @return String; string without trailing zeros
+     * Gathers all loop detectors from the network and puts them in a set sorted by loop detector id.
+     * @param network OtsRoadNetwork; network.
+     * @return Set&lt;LoopDetector&gt;; set of loop detector sorted by loop detector id.
      */
-    public static final String removeTrailingZeros(final String string)
+    private static Set<LoopDetector> getLoopDetectors(final OtsRoadNetwork network)
     {
-        return string.replaceFirst("\\.0*$|(\\.\\d*?)0+$", "$1");
-    }
-
-    /**
-     * Prints a list of doubles in to a formatted string.
-     * @param list List&lt;Double&gt;; double values
-     * @param format String; format string
-     * @return formatted string of doubles
-     */
-    public static final String printListDouble(final List<Double> list, final String format)
-    {
-        StringBuilder str = new StringBuilder("[");
-        String sep = "";
-        for (double t : list)
+        Set<LoopDetector> detectors = new TreeSet<>(new Comparator<LoopDetector>()
         {
-            str.append(sep);
-            str.append(removeTrailingZeros(String.format(format, t)));
-            sep = ", ";
-        }
-        str.append("]");
-        return str.toString();
+            @Override
+            public int compare(final LoopDetector o1, final LoopDetector o2)
+            {
+                return o1.getId().compareTo(o2.getId());
+            }
+        });
+        detectors.addAll(network.getObjectMap(LoopDetector.class).values().toCollection());
+        return detectors;
     }
 
     /**
-     * Defines the compression method for stored data.
-     * <p>
-     * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * <p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * Returns all measurement type that are found accross a set of loop detectors.
+     * @param detectors Set&lt;LoopDetector&gt;; set of loop detectors.
+     * @param periodic boolean; gather the periodic measurements {@code true}, or the non-periodic measurements {@code false}.
+     * @return Set&lt;LoopDetectorMeasurement&lt;?, ?&gt;&gt;; set of periodic or non-periodic measurements from the detectors.
      */
-    public enum CompressionMethod
+    private static Set<LoopDetectorMeasurement<?, ?>> getMeasurements(final Set<LoopDetector> detectors, final boolean periodic)
     {
-        /** No compression. */
-        NONE,
-
-        /** Zip compression. */
-        ZIP,
+        return detectors.stream().flatMap((det) -> det.currentCumulativeDataMap.keySet().stream())
+                .filter((measurement) -> measurement.isPeriodic() == periodic)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     /**
@@ -778,12 +947,25 @@ public class LoopDetector extends Detector
         String getName();
 
         /**
-         * Returns a string representation of the aggregate result.
-         * @param aggregate A; aggregate result
-         * @param format String; format string
-         * @return String; string representation of the aggregate result
+         * Measurement description.
+         * @return String; measurement description.
          */
-        String stringValue(A aggregate, String format);
+        String getDescription();
+
+        /**
+         * Returns the unit string, default is {@code null}.
+         * @return String; unit string.
+         */
+        default String getUnit()
+        {
+            return null;
+        }
+
+        /**
+         * Returns the data type.
+         * @return Class&lt;?&gt;; data type.
+         */
+        Class<?> getValueType();
     }
 
     /**
@@ -889,16 +1071,23 @@ public class LoopDetector extends Detector
 
         /** {@inheritDoc} */
         @Override
-        public String stringValue(final List<Integer> aggregate, final String format)
+        public String toString()
         {
-            return aggregate.toString();
+            return getName();
         }
 
         /** {@inheritDoc} */
         @Override
-        public String toString()
+        public String getDescription()
         {
-            return getName();
+            return "list of platoon sizes (threshold: " + this.threshold + ")";
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Class<Integer> getValueType()
+        {
+            return Integer.class;
         }
 
     }
