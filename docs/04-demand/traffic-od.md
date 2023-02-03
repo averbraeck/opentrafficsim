@@ -120,7 +120,8 @@ Values on the diagonal <i>i</i>&nbsp;=&nbsp;<i>j</i> are simply 1 minus the othe
 
 ![](../images/OTS_formula_4.png)
 
-The resulting steady-state in the example is not changed as is shown by: 
+The resulting steady-state in the example is not changed as is shown by the following equations regarding each column:
+
 * 0.7·0.74 + 0.2·0.7 + 0.1·0.42 = 0.7
 * 0.7·0.2 + 0.2·0.24 + 0.1·0.12 = 0.2
 * 0.7·0.06 + 0.2·0.06 + 0.1·0.46 = 0.1
@@ -145,6 +146,7 @@ Suppose we have 80% cars and 20% truck with <i>c<sub>truck</sub></i>&nbsp;=&nbsp
 </table>
 
 Next, we equip 25% of the trucks (5% of all traffic) with CACC. For the moment we assume no different correlation for these trucks, hence <i>c<sub>cacc</sub></i>&nbsp;=&nbsp;0.4. Giving trucks and CACC trucks their own independent correlation, the following transition matrix follows. There are some undesired outcomes, given that the inclusion of CACC should under the current assumptions not influence the traffic composition:
+
 * The probability of a car following a car is reduced from 0.88 to 0.731.
 * If the previous GTU was a truck, and the next one is a truck or CACC truck, the probability the next GTU is a CACC truck is 0.124&nbsp;/&nbsp;(0.545&nbsp;+&nbsp;0.124)&nbsp;=&nbsp;18.6%, rather than 25%.
 * Similarly, if the previous GTU was a CACC truck, and the next one is a truck or CACC truck, the probability the next GTU is a CACC truck is 0.632&nbsp;/&nbsp;(0.037&nbsp;+&nbsp;0.632)&nbsp;=&nbsp;94.4%, rather than 25%.
@@ -166,6 +168,7 @@ The solution is to see GTU types truck and CACC truck as a group with correlatio
 </table>
 
 This transition matrix has all desired properties:
+
 * The steady-state of 80%-15%-5% is maintained
 * 88% of GTUs behind a car is another car
 * 48% of GTUs behind either a truck or CACC truck is a car
@@ -193,8 +196,8 @@ Concluding, complex transition matrices including correlations between GTU types
 
 ```java
     MarkovCorrelation<GTUType, Frequency> markov = new MarkovCorrelation<>();
-    GTUType truck = network.getGtuType(GTUType.DEFAULTS.TRUCK);
+    GTUType truck = DefaultsNl.TRUCK;
     GTUType caccTruck = new GTUType("caccTruck", truck);
     markov.addState(truck, 0.4);
-  markov.addState(truck, caccTruck, 0.64);
+    markov.addState(truck, caccTruck, 0.64);
 ```
