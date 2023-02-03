@@ -45,8 +45,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class TrafficLightDetector extends LocalEventProducer
-        implements EventListener, Locatable, DetectorAnimationToggle, Serializable, Identifiable
+public class TrafficLightDetector extends LocalEventProducer implements EventListener, Locatable, Serializable, Identifiable
 {
     /** */
     private static final long serialVersionUID = 20161103L;

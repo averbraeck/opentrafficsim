@@ -31,7 +31,7 @@ import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
 public abstract class Detector extends AbstractLaneBasedObject
-        implements DetectorAnimationToggle, Comparable<Detector>, LaneBasedObject, HierarchicallyTyped<DetectorType, Detector>
+        implements Comparable<Detector>, LaneBasedObject, HierarchicallyTyped<DetectorType, Detector>
 {
     /** */
     private static final long serialVersionUID = 20141231L;
@@ -204,7 +204,7 @@ public abstract class Detector extends AbstractLaneBasedObject
     {
         return this.getType().isCompatible(gtuType);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public double getZ() throws RemoteException

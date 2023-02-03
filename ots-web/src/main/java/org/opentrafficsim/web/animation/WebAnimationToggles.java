@@ -17,7 +17,6 @@ import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.object.BusStop;
 import org.opentrafficsim.road.network.lane.object.detector.Detector;
-import org.opentrafficsim.road.network.lane.object.detector.DetectorAnimationToggle;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -87,7 +86,7 @@ public final class WebAnimationToggles
         panel.addToggleAnimationButtonText("Shoulder", Shoulder.class, "Show/hide shoulders", true);
         panel.addToggleAnimationButtonText("GTU", Gtu.class, "Show/hide GTUs", true);
         panel.addToggleAnimationButtonText("GTUId", DefaultCarAnimation.Text.class, "Show/hide GTU Ids", false);
-        panel.addToggleAnimationButtonText("Detector", DetectorAnimationToggle.class, "Show/hide detector", false);
+        panel.addToggleAnimationButtonText("Detector", Detector.class, "Show/hide detector", false);
         panel.addToggleAnimationButtonText("DetectorId", DetectorAnimation.Text.class, "Show/hide detector Ids", false);
         panel.addToggleAnimationButtonText("Light", TrafficLight.class, "Show/hide traffic lights", true);
         panel.addToggleAnimationButtonText("LightId", TrafficLightAnimation.Text.class, "Show/hide traffic light Ids", false);

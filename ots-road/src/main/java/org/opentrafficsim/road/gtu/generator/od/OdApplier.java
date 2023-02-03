@@ -49,7 +49,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.object.detector.DestinationDetector;
-import org.opentrafficsim.road.network.lane.object.detector.DetectorAnimationToggle;
+import org.opentrafficsim.road.network.lane.object.detector.Detector;
 import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -417,16 +417,16 @@ public final class OdApplier
                 {
                     try
                     {
-                        // if the lane already contains a SinkSensor, skip creating a new one
-                        boolean destinationSensorExists = false;
-                        for (DetectorAnimationToggle sensor : lane.getDetectors())
+                        // if the lane already contains a DestinationDetector, skip creating a new one
+                        boolean destinationDetectorExists = false;
+                        for (Detector detector : lane.getDetectors())
                         {
-                            if (sensor instanceof DestinationDetector)
+                            if (detector instanceof DestinationDetector)
                             {
-                                destinationSensorExists = true;
+                                destinationDetectorExists = true;
                             }
                         }
-                        if (!destinationSensorExists)
+                        if (!destinationDetectorExists)
                         {
                             if (link.getEndNode().equals(destination))
                             {
