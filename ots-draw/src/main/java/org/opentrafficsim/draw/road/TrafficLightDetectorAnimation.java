@@ -1,12 +1,12 @@
 package org.opentrafficsim.draw.road;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.naming.NamingException;
 
@@ -19,7 +19,6 @@ import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 /**
-<<<<<<< HEAD
  * Traffic light detector animation.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands.<br>
@@ -34,11 +33,11 @@ public class TrafficLightDetectorAnimation extends Renderable2D<TrafficLightDete
     /** */
     private static final long serialVersionUID = 20150130L;
 
-    /** The traffic light sensor. */
-    private final TrafficLightDetector sensor;
+    /** The traffic light detector. */
+    private final TrafficLightDetector detector;
 
     /** Path of the detector. */
-    private final OtsLine3D path;
+    private final Path2D.Float polygon;
 
     /**
      * Construct a TrafficLightDetectorAnimation.
@@ -52,41 +51,38 @@ public class TrafficLightDetectorAnimation extends Renderable2D<TrafficLightDete
             throws NamingException, RemoteException, OtsGeometryException
     {
         super(detector, simulator);
-        this.sensor = detector;
-        OtsLine3D coordinates = this.sensor.getPath();
-        double dx = this.sensor.getLocation().x;
-        double dy = this.sensor.getLocation().y;
-        double dz = this.sensor.getLocation().z;
-        List<OtsPoint3D> points = new ArrayList<>(coordinates.size());
-        for (OtsPoint3D p : coordinates.getPoints())
+        this.detector = detector;
+        OtsLine3D coordinates = this.detector.getPath();
+        double dx = this.detector.getLocation().x;
+        double dy = this.detector.getLocation().y;
+        OtsLine3D left = coordinates.offsetLine(0.5);
+        OtsLine3D right = coordinates.offsetLine(-0.5);
+        this.polygon = new Path2D.Float();
+        this.polygon.moveTo(right.getPoints()[0].x - dx, right.getPoints()[0].y - dy);
+        for (OtsPoint3D p : left.getPoints())
         {
-            points.add(new OtsPoint3D(p.x - dx, p.y - dy, p.z - dz));
+            this.polygon.lineTo(p.x - dx, p.y - dy);
         }
-        this.path = new OtsLine3D(points);
+        for (OtsPoint3D p : right.reverse().getPoints())
+        {
+            this.polygon.lineTo(p.x - dx, p.y - dy);
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        graphics.setColor(this.sensor.getOccupancy() ? Color.BLUE : Color.BLACK);
-        OtsPoint3D prevPoint = null;
-        for (OtsPoint3D p : this.path.getPoints())
-        {
-            if (null != prevPoint)
-            {
-                // System.out.println("Drawing sensor line from " + prevPoint + " to " + p);
-                graphics.drawLine((int) prevPoint.x, (int) prevPoint.y, (int) p.x, (int) p.y);
-            }
-            prevPoint = p;
-        }
+        graphics.setColor(this.detector.getOccupancy() ? Color.BLUE : Color.BLACK);
+        graphics.setStroke(new BasicStroke(0.2f));
+        graphics.draw(this.polygon);
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "SensorAnimation [getSource()=" + this.getSource() + "]";
+        return "TrafficLightDetectorAnimation [getSource()=" + this.getSource() + "]";
     }
 
 }

@@ -57,7 +57,7 @@ import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
- * Test the TrafficLightSensor class.
+ * Test the TrafficLightDetector class.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -66,7 +66,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class TrafficLightSensorTest implements EventListener
+public class TrafficLightDetectorTest implements EventListener
 {
     /**
      * Build the test network.
