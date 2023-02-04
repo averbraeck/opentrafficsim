@@ -11,7 +11,6 @@ import javax.naming.NamingException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.gtu.GtuGenerator.GtuGeneratorPosition;
-import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
 
