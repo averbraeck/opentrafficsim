@@ -12,12 +12,10 @@ In some cases it could be valuable during an `ADD` to register as a listener to 
 _Table 2: Overview of events in OTS._
 <table border="1" width="800px">
   <tr style="font-weight: bold"><td>Class</td><td>Event field</td><td>Listeners (excluding test code)</td><td>Used</td></tr>
-  <tr><td>Network</td><td>GENERATOR_ADD_EVENT</td><td><i>not thrown</i>, DefaultAnimationFactory<sup>1,2</sup>, NetworkAnimation<sup>1</sup></td><td>yes</td></tr>
-  <tr><td></td><td>GENERATOR_REMOVE_EVENT</td><td><i>not thrown</i>, DefaultAnimationFactory<sup>1,2</sup>, NetworkAnimation<sup>1</sup></td><td>yes</td></tr>
-  <tr><td></td><td>GTU_ADD_EVENT</td><td>DefaultAnimationFactory, NetworkAnimation<sup>1</sup>, AbstractLaneBasedMoveChecker, Publisher<sup>3</sup>, NetworkModel, StochasticDistractionModel, RampMeteringDemo, OtsAnimationPanel</td><td>yes</td></tr>
+  <tr><td>Network</td><td>GTU_ADD_EVENT</td><td>DefaultAnimationFactory, NetworkAnimation<sup>1</sup>, AbstractLaneBasedMoveChecker, Publisher<sup>3</sup>, NetworkModel, StochasticDistractionModel, RampMeteringDemo, OtsAnimationPanel</td><td>yes</td></tr>
   <tr><td></td><td>GTU_REMOVE_EVENT</td><td>DefaultAnimationFactory, NetworkAnimation<sup>1</sup>, AbstractLaneBasedMoveChecker, Publisher<sup>3</sup>, NetworkModel, StochasticDistractionModel, RampMeteringDemo, OtsAnimationPanel</td><td>yes</td></tr>
-  <tr><td></td><td>INVISIBLE_OBJECT_ADD_EVENT</td><td>NetworkAnimation<sup>1</sup></td><td>yes</td></tr>
-  <tr><td></td><td>INVISIBLE_OBJECT_REMOVE_EVENT</td><td>NetworkAnimation<sup>1</sup></td><td>yes</td></tr>
+  <tr><td></td><td>NONLOCATED_OBJECT_ADD_EVENT</td><td>NetworkAnimation<sup>1</sup></td><td>yes</td></tr>
+  <tr><td></td><td>NONLOCATED_OBJECT_REMOVE_EVENT</td><td>NetworkAnimation<sup>1</sup></td><td>yes</td></tr>
   <tr><td></td><td>LINK_ADD_EVENT</td><td>NetworkAnimation<sup>1</sup>, Publisher<sup>3</sup></td><td>yes</td></tr>
   <tr><td></td><td>LINK_REMOVE_EVENT</td><td>NetworkAnimation<sup>1</sup>, Publisher<sup>3</sup></td><td>yes</td></tr>
   <tr><td></td><td>NODE_ADD_EVENT</td><td>NetworkAnimation<sup>1</sup>, Publisher<sup>3</sup></td><td>yes</td></tr>

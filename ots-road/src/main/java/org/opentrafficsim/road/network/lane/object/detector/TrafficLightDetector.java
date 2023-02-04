@@ -1,12 +1,12 @@
 package org.opentrafficsim.road.network.lane.object.detector;
 
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.event.Event;
@@ -14,7 +14,6 @@ import org.djutils.event.EventListener;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
@@ -28,8 +27,6 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.Lane;
-
-import nl.tudelft.simulation.dsol.animation.Locatable;
 
 /**
  * This traffic light reports whether any GTUs are within its area. The area is two sub-sections on one or two lanes. This
@@ -45,13 +42,16 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class TrafficLightDetector extends LocalEventProducer implements EventListener, Locatable, Serializable, Identifiable
+public class TrafficLightDetector extends LocalEventProducer implements EventListener, Detector
 {
     /** */
     private static final long serialVersionUID = 20161103L;
 
     /** Id of this TrafficLightDetector. */
     private final String id;
+
+    /** Unique id for network. */
+    private final String uniqueId;
 
     /** The detector that detects when a GTU enters the detector area at point A. */
     private final StartEndDetector entryA;
@@ -74,8 +74,14 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
     /** The OTS network. */
     private final OtsNetwork network;
 
-    /** Design line of the detector. */
-    private final OtsLine3D path;
+    /** Type. */
+    private final DetectorType type;
+
+    /** Center location. */
+    private final DirectedPoint location;
+
+    /** Geometry of the detector. */
+    private final OtsLine3D geometry;
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the triggering of the entry of a NonDirectionalOccupancyDetector. <br>
@@ -115,6 +121,8 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
     {
         Throw.whenNull(id, "id may not be null");
         this.id = id;
+        this.uniqueId = UUID.randomUUID().toString() + "_" + id;
+        this.type = detectorType;
         this.entryA = new StartEndDetector(id + ".entryA", laneA, positionA, entryPosition, simulator, detectorType);
         // this.exitA = new StartEndDetector(id + ".exitA", laneA, positionA, exitPosition, simulator, detectorType);
         // this.entryB = new StartEndDetector(id + ".entryB", laneB, positionB, entryPosition, simulator, detectorType);
@@ -135,24 +143,44 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
         }
         try
         {
+            OtsLine3D path;
             if (this.lanes.size() == 1)
             {
-                this.path = laneA.getCenterLine().extract(positionA, positionB);
-                return;
+                path = laneA.getCenterLine().extract(positionA, positionB);
             }
-            List<OtsPoint3D> pathPoints = new ArrayList<>();
-            pathPoints.addAll(Arrays.asList(laneA.getCenterLine().extract(positionA, laneA.getLength()).getPoints()));
-            for (Lane intermediateLane : intermediateLanes)
+            else
             {
-                pathPoints.addAll(Arrays.asList(intermediateLane.getCenterLine().getPoints()));
+                List<OtsPoint3D> pathPoints = new ArrayList<>();
+                pathPoints.addAll(Arrays.asList(laneA.getCenterLine().extract(positionA, laneA.getLength()).getPoints()));
+                for (Lane intermediateLane : intermediateLanes)
+                {
+                    pathPoints.addAll(Arrays.asList(intermediateLane.getCenterLine().getPoints()));
+                }
+                pathPoints.addAll(Arrays.asList(laneB.getCenterLine().extract(Length.ZERO, positionB).getPoints()));
+                path = OtsLine3D.createAndCleanOTSLine3D(pathPoints);
             }
-            pathPoints.addAll(Arrays.asList(laneB.getCenterLine().extract(Length.ZERO, positionB).getPoints()));
-            this.path = OtsLine3D.createAndCleanOTSLine3D(pathPoints);
+            OtsLine3D left = path.offsetLine(0.5);
+            OtsLine3D right = path.offsetLine(-0.5);
+            this.location = path.getLocation();
+            double dx = this.location.x;
+            double dy = this.location.y;
+            List<OtsPoint3D> geometryPoints = new ArrayList<>();
+            geometryPoints.add(new OtsPoint3D(right.get(0).x - dx, right.get(0).y - dy));
+            for (OtsPoint3D p : left.getPoints())
+            {
+                geometryPoints.add(new OtsPoint3D(p.x - dx, p.y - dy));
+            }
+            for (OtsPoint3D p : right.reverse().getPoints())
+            {
+                geometryPoints.add(new OtsPoint3D(p.x - dx, p.y - dy));
+            }
+            this.geometry = new OtsLine3D(geometryPoints);
         }
         catch (OtsGeometryException exception)
         {
             throw new NetworkException("Points A and B may be the same.", exception);
         }
+        this.network.addObject(this);
 
         /*-
         outLine.add(fixElevation(this.entryA.getGeometry().getCentroid()));
@@ -499,23 +527,14 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
     @Override
     public final DirectedPoint getLocation()
     {
-        return this.path.getLocation();
+        return this.location;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Bounds getBounds() throws RemoteException
+    public final Bounds getBounds()
     {
-        return this.path.getBounds();
-    }
-
-    /**
-     * Return the path of this traffic light detector.
-     * @return OTSLine3D; the path of this traffic light detector
-     */
-    public final OtsLine3D getPath()
-    {
-        return this.path;
+        return this.geometry.getBounds();
     }
 
     /**
@@ -529,6 +548,34 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
 
     /** {@inheritDoc} */
     @Override
+    public OtsLine3D getGeometry()
+    {
+        return this.geometry;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Length getHeight()
+    {
+        return Length.ZERO;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getFullId()
+    {
+        return this.uniqueId;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public DetectorType getType()
+    {
+        return this.type;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         /*-
@@ -537,7 +584,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
                 + ", path=" + this.path + "]";
         */
         return "TrafficLightDetector [id=" + this.id + ", entryA=" + this.entryA + ", exitB=" + this.exitB + ", currentGTUs="
-                + this.currentGTUs + ", lanes=" + this.lanes + ", path=" + this.path + "]";
+                + this.currentGTUs + ", lanes=" + this.lanes + ", geometry=" + this.geometry + "]";
     }
 
     /**
@@ -551,7 +598,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public class StartEndDetector extends Detector
+    public class StartEndDetector extends LaneDetector
     {
         /** */
         private static final long serialVersionUID = 20161104L;

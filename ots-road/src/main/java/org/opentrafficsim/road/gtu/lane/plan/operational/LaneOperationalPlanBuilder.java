@@ -34,7 +34,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
-import org.opentrafficsim.road.network.lane.object.detector.Detector;
+import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -339,7 +339,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                 {
                     // check sink detector
                     Length pos = prevFrom.getLength();
-                    for (Detector detector : prevFrom.getDetectors(pos, pos, gtu.getType()))
+                    for (LaneDetector detector : prevFrom.getDetectors(pos, pos, gtu.getType()))
                     {
                         // XXX for now, the same is not done for the DestinationSensor (e.g., decrease speed for parking)
                         if (detector instanceof SinkDetector)

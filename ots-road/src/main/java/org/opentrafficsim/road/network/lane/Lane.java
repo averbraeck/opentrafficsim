@@ -41,7 +41,7 @@ import org.opentrafficsim.core.perception.collections.HistoricalList;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.detector.DestinationDetector;
-import org.opentrafficsim.road.network.lane.object.detector.Detector;
+import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -88,7 +88,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * Detectors on the lane to trigger behavior of the GTU, sorted by longitudinal position. The triggering of detectors is
      * done per GTU type, so different GTUs can trigger different detectors.
      */
-    private final SortedMap<Double, List<Detector>> detectors = new TreeMap<>();
+    private final SortedMap<Double, List<LaneDetector>> detectors = new TreeMap<>();
 
     /**
      * Objects on the lane can be observed by the GTU. Examples are signs, speed signs, blocks, and traffic lights. They are
@@ -399,7 +399,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param detector Detector; the detector to add
      * @throws NetworkException when the position of the detector is beyond (or before) the range of this Lane
      */
-    public final void addDetector(final Detector detector) throws NetworkException
+    public final void addDetector(final LaneDetector detector) throws NetworkException
     {
         double position = detector.getLongitudinalPosition().si;
         if (position < 0 || position > getLength().getSI())
@@ -411,7 +411,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         {
             throw new NetworkException("Network already contains an object with the name " + detector.getFullId());
         }
-        List<Detector> detectorList = this.detectors.get(position);
+        List<LaneDetector> detectorList = this.detectors.get(position);
         if (null == detectorList)
         {
             detectorList = new ArrayList<>(1);
@@ -428,11 +428,11 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param detector Detector; the detector to remove.
      * @throws NetworkException when the detector was not found on this Lane
      */
-    public final void removeDetector(final Detector detector) throws NetworkException
+    public final void removeDetector(final LaneDetector detector) throws NetworkException
     {
         fireTimedEvent(Lane.DETECTOR_REMOVE_EVENT, new Object[] {detector.getId(), detector},
                 detector.getSimulator().getSimulatorTime());
-        List<Detector> detectorList = this.detectors.get(detector.getLongitudinalPosition().si);
+        List<LaneDetector> detectorList = this.detectors.get(detector.getLongitudinalPosition().si);
         if (null == detectorList)
         {
             throw new NetworkException("No detector at " + detector.getLongitudinalPosition().si);
@@ -453,12 +453,12 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param gtuType GtuType; the GTU type to provide the detectors for
      * @return List&lt;Detector&gt;; list of the detectors in the specified range. This is a defensive copy.
      */
-    public final List<Detector> getDetectors(final Length minimumPosition, final Length maximumPosition, final GtuType gtuType)
+    public final List<LaneDetector> getDetectors(final Length minimumPosition, final Length maximumPosition, final GtuType gtuType)
     {
-        List<Detector> detectorList = new ArrayList<>(1);
-        for (List<Detector> dets : this.detectors.values())
+        List<LaneDetector> detectorList = new ArrayList<>(1);
+        for (List<LaneDetector> dets : this.detectors.values())
         {
-            for (Detector detector : dets)
+            for (LaneDetector detector : dets)
             {
                 if (detector.isCompatible(gtuType) && detector.getLongitudinalPosition().ge(minimumPosition)
                         && detector.getLongitudinalPosition().le(maximumPosition))
@@ -476,12 +476,12 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param gtuType GtuType; the GTU type to provide the detectors for
      * @return List&lt;Detector&gt;; list of the detectors, in ascending order for the location on the Lane
      */
-    public final List<Detector> getDetectors(final GtuType gtuType)
+    public final List<LaneDetector> getDetectors(final GtuType gtuType)
     {
-        List<Detector> detectorList = new ArrayList<>(1);
-        for (List<Detector> dets : this.detectors.values())
+        List<LaneDetector> detectorList = new ArrayList<>(1);
+        for (List<LaneDetector> dets : this.detectors.values())
         {
-            for (Detector detector : dets)
+            for (LaneDetector detector : dets)
             {
                 if (detector.isCompatible(gtuType))
                 {
@@ -496,16 +496,16 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * Retrieve the list of all Detectors of this Lane. The resulting list is a defensive copy.
      * @return List&lt;Detector&gt;; list of the detectors, in ascending order for the location on the Lane
      */
-    public final List<Detector> getDetectors()
+    public final List<LaneDetector> getDetectors()
     {
         if (this.detectors == null)
         {
             return new ArrayList<>();
         }
-        List<Detector> detectorList = new ArrayList<>(1);
-        for (List<Detector> dets : this.detectors.values())
+        List<LaneDetector> detectorList = new ArrayList<>(1);
+        for (List<LaneDetector> dets : this.detectors.values())
         {
-            for (Detector detector : dets)
+            for (LaneDetector detector : dets)
             {
                 detectorList.add(detector);
             }
@@ -519,15 +519,15 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @return SortedMap&lt;Double, List&lt;Detector&gt;&gt;; all detectors on this lane for the given GtuType as a map per
      *         distance
      */
-    public final SortedMap<Double, List<Detector>> getDetectorMap(final GtuType gtuType)
+    public final SortedMap<Double, List<LaneDetector>> getDetectorMap(final GtuType gtuType)
     {
-        SortedMap<Double, List<Detector>> detectorMap = new TreeMap<>();
+        SortedMap<Double, List<LaneDetector>> detectorMap = new TreeMap<>();
         for (double d : this.detectors.keySet())
         {
-            List<Detector> detectorList = new ArrayList<>(1);
-            for (List<Detector> dets : this.detectors.values())
+            List<LaneDetector> detectorList = new ArrayList<>(1);
+            for (List<LaneDetector> dets : this.detectors.values())
             {
-                for (Detector detector : dets)
+                for (LaneDetector detector : dets)
                 {
                     if (detector.getLongitudinalPosition().si == d && detector.isCompatible(gtuType))
                     {
@@ -556,10 +556,10 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     {
         double minPos = referenceStartSI + gtu.getRear().getDx().si;
         double maxPos = referenceStartSI + gtu.getFront().getDx().si + referenceMoveSI;
-        Map<Double, List<Detector>> map = this.detectors.subMap(minPos, maxPos);
+        Map<Double, List<LaneDetector>> map = this.detectors.subMap(minPos, maxPos);
         for (double pos : map.keySet())
         {
-            for (Detector detector : map.get(pos))
+            for (LaneDetector detector : map.get(pos))
             {
                 if (detector.isCompatible(gtu.getType()))
                 {

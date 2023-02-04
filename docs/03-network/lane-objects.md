@@ -12,17 +12,17 @@ OTS Link
       &lfloor; Longitudinal position
 </pre>
 
-Many types of objects exist or can be created by extending `AbstractLaneBasedObject`. The next few sections will discuss sensors, traffic lights and conflicts. Other lane-based objects include a bus stop, distraction or a speed sign, but these are not discussed in more detail here.
+Many types of objects exist or can be created by extending `AbstractLaneBasedObject`. The next few sections will discuss detectors, traffic lights and conflicts. Other lane-based objects include a bus stop, distraction or a speed sign, but these are not discussed in more detail here.
 
 
-## Sensors
-Sensors are treated differently from other lane-based objects in that they are stored in a separate list at the lane. When GTUs move they automatically trigger any sensor they cross. Such triggers pertain to a specific `RelativePosition` of the GTU, e.g. the front for a detector.
+## Detectors
+Detectors are treated differently from other lane-based objects in that they are stored in a separate list at the lane. When GTUs move they automatically trigger any sensor they cross. Such triggers pertain to a specific `RelativePosition` of the GTU, e.g. the front for a detector.
 
-An important type of sensor is the `Detector`, which is a type of sensor that can be geared to measure any set of measurements. There are two types of such measurements as defined in `DetectorMeasurement`, namely periodic (or aggregate) measurements, and meso measurements with growing arrays of individual measurements. Typical periodic measurements are mean speed, harmonic mean speed and occupancy, for which implementations are defined under the fields `MEAN_SPEED`, `HARMONIC_MEAN_SPEED` and `OCCUPANCY`. Note that flow is measured intrinsically by the detector.
+An important type of detector is the `LoopDetector`, which is a type of detector that can be geared to measure any set of measurements. There are two types of such measurements as defined in `DetectorMeasurement`, namely periodic (or aggregate) measurements, and meso measurements with growing arrays of individual measurements. Typical periodic measurements are mean speed, harmonic mean speed and occupancy, for which implementations are defined under the fields `MEAN_SPEED`, `HARMONIC_MEAN_SPEED` and `OCCUPANCY`. Note that flow is measured intrinsically by the detector.
 
 <pre>
-<b>Sensor</b>
-&lfloor; Detector
+<b>Detector</b>
+&lfloor; LoopDetector
   &lfloor; {Measurements}
     &lfloor; <i>Mean speed measurement</i>
     &lfloor; <i>Harmonic mean speed measurement</i>

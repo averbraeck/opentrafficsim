@@ -47,7 +47,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
-import org.opentrafficsim.road.network.lane.object.detector.Detector;
+import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 
 /**
@@ -353,7 +353,7 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
         double remainingTimeSI = TIMEHORIZON.getSI() - remainingLength / lane.getSpeedLimit(gtu.getType()).getSI();
         while (remainingTimeSI >= 0)
         {
-            for (Detector detector : lane.getDetectors())
+            for (LaneDetector detector : lane.getDetectors())
             {
                 if (detector instanceof SinkDetector)
                 {

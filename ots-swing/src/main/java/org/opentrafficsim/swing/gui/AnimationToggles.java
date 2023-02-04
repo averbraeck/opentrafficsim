@@ -1,14 +1,15 @@
 package org.opentrafficsim.swing.gui;
 
 import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.core.gtu.GtuGenerator.GtuGeneratorPosition;
 import org.opentrafficsim.core.network.OtsLink;
 import org.opentrafficsim.core.network.OtsNode;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation;
-import org.opentrafficsim.draw.gtu.GtuGeneratorQueueAnimation;
 import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation;
 import org.opentrafficsim.draw.road.BusStopAnimation;
 import org.opentrafficsim.draw.road.DetectorAnimation;
+import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation.CenterLine;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
@@ -64,9 +65,11 @@ public final class AnimationToggles
         panel.addToggleAnimationButtonText("DetectorId", DetectorAnimation.Text.class, "Show/hide detector Ids", false);
         panel.addToggleAnimationButtonText("Light", TrafficLight.class, "Show/hide traffic lights", true);
         panel.addToggleAnimationButtonText("LightId", TrafficLightAnimation.Text.class, "Show/hide traffic light Ids", false);
-        panel.addToggleAnimationButtonText("Conflict", Conflict.class, "Show/hide conflicts", false);
-        panel.addToggleAnimationButtonText("Generator", GtuGeneratorQueueAnimation.class, "Show/hide generators", false);
-        panel.addToggleAnimationButtonText("Bus", BusStop.class, "Show/hide bus stops", false);
+        panel.addToggleAnimationButtonText("Conflict", Conflict.class, "Show/hide conflicts", true);
+        panel.addToggleAnimationButtonText("Generator", GtuGeneratorPosition.class, "Show/hide generators", true);
+        panel.addToggleAnimationButtonText("GeneratorQ", GtuGeneratorPositionAnimation.Queue.class,
+                "Show/hide generator queues", false);
+        panel.addToggleAnimationButtonText("Bus", BusStop.class, "Show/hide bus stops", true);
         panel.addToggleAnimationButtonText("BusId", BusStopAnimation.Text.class, "Show/hide bus stop Ids", false);
     }
 
@@ -92,7 +95,11 @@ public final class AnimationToggles
         panel.addToggleAnimationButtonText("Light", TrafficLight.class, "Show/hide traffic lights", true);
         panel.addToggleAnimationButtonText("LightId", TrafficLightAnimation.Text.class, "Show/hide traffic light Ids", false);
         panel.addToggleAnimationButtonText("Conflict", Conflict.class, "Show/hide conflicts", false);
-        panel.addToggleAnimationButtonText("Generator", GtuGeneratorQueueAnimation.class, "Show/hide generators", false);
+        panel.addToggleAnimationButtonText("Generator", GtuGeneratorPosition.class, "Show/hide generators", false);
+        panel.addToggleAnimationButtonText("GeneratorQ", GtuGeneratorPositionAnimation.Queue.class,
+                "Show/hide generator queues", false);
+        panel.addToggleAnimationButtonText("Bus", BusStop.class, "Show/hide bus stops", false);
+        panel.addToggleAnimationButtonText("BusId", BusStopAnimation.Text.class, "Show/hide bus stop Ids", false);
     }
 
     /**
@@ -127,10 +134,12 @@ public final class AnimationToggles
                 true, false);
         panel.addToggleAnimationButtonIcon("LightId", TrafficLightAnimation.Text.class, "/icons/Id24.png",
                 "Show/hide traffic light Ids", false, true);
-        panel.addToggleAnimationButtonIcon("Conflict", Conflict.class, "/icons/Conflict24.png", "Show/hide conflicts", false,
+        panel.addToggleAnimationButtonIcon("Conflict", Conflict.class, "/icons/Conflict24.png", "Show/hide conflicts", true,
                 false);
-        panel.addToggleAnimationButtonIcon("Generator", GtuGeneratorQueueAnimation.class, "/icons/Generator24.png",
-                "Show/hide generators", false, false);
+        panel.addToggleAnimationButtonIcon("Generator", GtuGeneratorPosition.class, "/icons/Generator24.png",
+                "Show/hide generators", true, false);
+        panel.addToggleAnimationButtonIcon("GeneratorQ", GtuGeneratorPositionAnimation.Queue.class, "/icons/Queue24.png",
+                "Show/hide generator queues", false, true);
         panel.addToggleAnimationButtonIcon("Bus", BusStop.class, "/icons/BusStop24.png", "Show/hide bus stops", true, false);
         panel.addToggleAnimationButtonIcon("BusId", BusStopAnimation.Text.class, "/icons/Id24.png", "Show/hide bus stops Ids",
                 false, true);
@@ -170,8 +179,10 @@ public final class AnimationToggles
                 "Show/hide traffic light Ids", false, true);
         panel.addToggleAnimationButtonIcon("Conflict", Conflict.class, "/icons/Conflict24.png", "Show/hide conflicts", false,
                 false);
-        panel.addToggleAnimationButtonIcon("Generator", GtuGeneratorQueueAnimation.class, "/icons/Generator24.png",
+        panel.addToggleAnimationButtonIcon("Generator", GtuGeneratorPosition.class, "/icons/Generator24.png",
                 "Show/hide generators", false, false);
+        panel.addToggleAnimationButtonIcon("GeneratorQ", GtuGeneratorPositionAnimation.Queue.class, "/icons/Queue24.png",
+                "Show/hide generator queues", false, true);
         panel.addToggleAnimationButtonIcon("Bus", BusStop.class, "/icons/BusStop24.png", "Show/hide bus stops", false, false);
         panel.addToggleAnimationButtonIcon("BusId", BusStopAnimation.Text.class, "/icons/Id24.png", "Show/hide bus stops Ids",
                 false, true);
@@ -220,9 +231,11 @@ public final class AnimationToggles
         showAnimationClass(panel, TrafficLight.class);
         hideAnimationClass(panel, TrafficLightAnimation.Text.class);
         showAnimationClass(panel, Conflict.class);
-        hideAnimationClass(panel, BusStop.class);
+        showAnimationClass(panel, GtuGeneratorPosition.class);
+        hideAnimationClass(panel, GtuGeneratorPositionAnimation.Queue.class);
+        showAnimationClass(panel, BusStop.class);
         hideAnimationClass(panel, BusStopAnimation.Text.class);
-        showAnimationClass(panel, GtuGeneratorQueueAnimation.class);
+
     }
 
     /**
@@ -246,9 +259,10 @@ public final class AnimationToggles
         showAnimationClass(panel, TrafficLight.class);
         hideAnimationClass(panel, TrafficLightAnimation.Text.class);
         hideAnimationClass(panel, Conflict.class);
+        hideAnimationClass(panel, GtuGeneratorPosition.class);
+        hideAnimationClass(panel, GtuGeneratorPositionAnimation.Queue.class);
         hideAnimationClass(panel, BusStop.class);
         hideAnimationClass(panel, BusStopAnimation.Text.class);
-        hideAnimationClass(panel, GtuGeneratorQueueAnimation.class);
     }
 
 }

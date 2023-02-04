@@ -228,7 +228,6 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
                     new OtsAnimationPanel(scriptModel.getNetwork().getExtent(), new Dimension(800, 600),
                             (OtsAnimator) this.simulator, scriptModel, getGtuColorer(), scriptModel.getNetwork());
             setAnimationToggles(animationPanel);
-            animateNetwork(scriptModel.getNetwork());
             setupDemo(animationPanel, scriptModel.getNetwork());
             OtsSimulationApplication<ScriptModel> app = new OtsSimulationApplication<ScriptModel>(scriptModel, animationPanel)
             {

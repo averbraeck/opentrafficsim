@@ -12,7 +12,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.network.lane.object.detector.Detector;
+import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
 import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
@@ -143,7 +143,7 @@ public class CycleTimeLightController implements RampMeteringLightController
     }
 
     /** Ramp metering sensor. */
-    private class RampMeteringDetector extends Detector
+    private class RampMeteringDetector extends LaneDetector
     {
 
         /** */

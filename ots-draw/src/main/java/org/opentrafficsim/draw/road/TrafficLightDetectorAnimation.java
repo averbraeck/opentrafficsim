@@ -13,7 +13,6 @@ import javax.naming.NamingException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
 import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
@@ -52,20 +51,12 @@ public class TrafficLightDetectorAnimation extends Renderable2D<TrafficLightDete
     {
         super(detector, simulator);
         this.detector = detector;
-        OtsLine3D coordinates = this.detector.getPath();
-        double dx = this.detector.getLocation().x;
-        double dy = this.detector.getLocation().y;
-        OtsLine3D left = coordinates.offsetLine(0.5);
-        OtsLine3D right = coordinates.offsetLine(-0.5);
+        OtsLine3D coordinates = this.detector.getGeometry();
         this.polygon = new Path2D.Float();
-        this.polygon.moveTo(right.getPoints()[0].x - dx, right.getPoints()[0].y - dy);
-        for (OtsPoint3D p : left.getPoints())
+        this.polygon.moveTo(coordinates.get(0).x, coordinates.get(0).y);
+        for (int i = 1; i < coordinates.size(); i++)
         {
-            this.polygon.lineTo(p.x - dx, p.y - dy);
-        }
-        for (OtsPoint3D p : right.reverse().getPoints())
-        {
-            this.polygon.lineTo(p.x - dx, p.y - dy);
+            this.polygon.lineTo(coordinates.get(i).x, coordinates.get(i).y);
         }
     }
 

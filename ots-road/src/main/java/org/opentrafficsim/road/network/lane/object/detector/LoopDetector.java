@@ -47,7 +47,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LoopDetector extends Detector
+public class LoopDetector extends LaneDetector
 {
 
     /** */
@@ -402,7 +402,7 @@ public class LoopDetector extends Detector
 
         // rear detector
         /** Abstract detector. */
-        class RearDetector extends Detector
+        class RearDetector extends LaneDetector
         {
             /** */
             private static final long serialVersionUID = 20180315L;

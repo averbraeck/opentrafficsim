@@ -11,6 +11,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.UUID;
 
 import javax.naming.NamingException;
 
@@ -19,6 +20,9 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.bounds.Bounds;
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.point.Point;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
@@ -28,11 +32,11 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuErrorHandler;
 import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuGenerator;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
@@ -63,7 +67,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class LaneBasedGtuGenerator extends LocalEventProducer implements Serializable, Identifiable, GtuGeneratorQueue
+public class LaneBasedGtuGenerator extends LocalEventProducer implements Serializable, Identifiable, GtuGenerator
 {
     /** */
     private static final long serialVersionUID = 20160000L;
@@ -80,6 +84,9 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
 
     /** Name of the GTU generator. */
     private final String id;
+
+    /** Unique id in the network. */
+    private final String uniqueId;
 
     /** Time distribution that determines the interval times between GTUs. */
     private final Generator<Duration> interarrivelTimeGenerator;
@@ -119,7 +126,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
 
     /** Vehicle generation is ignored on these lanes. */
     private Set<Lane> disabled = new LinkedHashSet<>();
-    
+
     /**
      * Construct a new lane base GTU generator.
      * @param id String; name of the new GTU generator
@@ -134,15 +141,17 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
      * @throws SimRuntimeException when <cite>startTime</cite> lies before the current simulation time
      * @throws ProbabilityException pe
      * @throws ParameterException if drawing from the interarrival generator fails
+     * @throws NetworkException if the object could not be added to the network
      */
     @SuppressWarnings("parameternumber")
     public LaneBasedGtuGenerator(final String id, final Generator<Duration> interarrivelTimeGenerator,
             final LaneBasedGtuCharacteristicsGenerator laneBasedGtuCharacteristicsGenerator,
             final GeneratorPositions generatorPositions, final OtsRoadNetwork network, final OtsSimulatorInterface simulator,
             final RoomChecker roomChecker, final IdGenerator idGenerator)
-            throws SimRuntimeException, ProbabilityException, ParameterException
+            throws SimRuntimeException, ProbabilityException, ParameterException, NetworkException
     {
         this.id = id;
+        this.uniqueId = UUID.randomUUID().toString() + "_" + id;
         this.interarrivelTimeGenerator = interarrivelTimeGenerator;
         this.laneBasedGtuCharacteristicsGenerator = laneBasedGtuCharacteristicsGenerator;
         this.generatorPositions = generatorPositions;
@@ -155,6 +164,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
         {
             simulator.scheduleEventRel(headway, this, this, "generateCharacteristics", new Object[] {});
         }
+        this.network.addNonLocatedObject(this);
     }
 
     /**
@@ -371,9 +381,8 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
             final Speed speed) throws NamingException, GtuException, NetworkException, SimRuntimeException, OtsGeometryException
     {
         String gtuId = this.idGenerator.nextId();
-        LaneBasedGtu gtu = new LaneBasedGtu(gtuId, characteristics.getGtuType(),
-                characteristics.getLength(), characteristics.getWidth(), characteristics.getMaximumSpeed(),
-                characteristics.getFront(), this.network);
+        LaneBasedGtu gtu = new LaneBasedGtu(gtuId, characteristics.getGtuType(), characteristics.getLength(),
+                characteristics.getWidth(), characteristics.getMaximumSpeed(), characteristics.getFront(), this.network);
         gtu.setMaximumAcceleration(characteristics.getMaximumAcceleration());
         gtu.setMaximumDeceleration(characteristics.getMaximumDeceleration());
         gtu.setVehicleModel(characteristics.getVehicleModel());
@@ -587,40 +596,64 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
 
     /** {@inheritDoc} */
     @Override
-    public DirectedPoint getLocation()
+    public String getFullId()
     {
-        return this.generatorPositions.getLocation();
+        return this.uniqueId;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Bounds getBounds() throws RemoteException
+    public Set<GtuGeneratorPosition> getPositions()
     {
-        return this.generatorPositions.getBounds();
+        Set<GtuGeneratorPosition> set = new LinkedHashSet<>();
+        for (GeneratorLanePosition lanePosition : this.generatorPositions.getAllPositions())
+        {
+            DirectedPoint p = lanePosition.getPosition().iterator().next().getLocation();
+            set.add(new GtuGeneratorPosition()
+            {
+                /** {@inheritDoc} */
+                @Override
+                public Point<?> getLocation() throws RemoteException
+                {
+                    return p;
+                }
+
+                /** {@inheritDoc} */
+                @Override
+                public Bounds<?, ?, ?> getBounds() throws RemoteException
+                {
+                    return new Bounds2d(-2.0, 2.0, -2.0, 2.0);
+                }
+
+                /** {@inheritDoc} */
+                @Override
+                public int getQueueCount()
+                {
+                    return getQueueLength(lanePosition);
+                }
+            });
+        }
+        return set;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public Map<DirectedPoint, Integer> getQueueLengths()
+    /**
+     * Returns the number of GTUs in queue at the position.
+     * @param position GeneratorLanePosition; position.
+     * @return int; number of GTUs in queue at the position.
+     */
+    private int getQueueLength(final GeneratorLanePosition position)
     {
-        Map<DirectedPoint, Integer> result = new LinkedHashMap<>();
         for (CrossSectionLink link : this.unplacedTemplates.keySet())
         {
             for (GeneratorLanePosition lanePosition : this.unplacedTemplates.get(link).keySet())
             {
-                result.put(lanePosition.getPosition().iterator().next().getLocation(),
-                        this.unplacedTemplates.get(link).get(lanePosition).size());
+                if (lanePosition.equals(position))
+                {
+                    return this.unplacedTemplates.get(link).get(lanePosition).size();
+                }
             }
         }
-        for (GeneratorLanePosition lanePosition : this.generatorPositions.getAllPositions())
-        {
-            DirectedPoint p = lanePosition.getPosition().iterator().next().getLocation();
-            if (!result.containsKey(p))
-            {
-                result.put(p, 0);
-            }
-        }
-        return result;
+        return 0;
     }
 
 }

@@ -30,7 +30,6 @@ import org.opentrafficsim.road.network.lane.conflict.ConflictType;
  */
 public class ConflictAnimation extends AbstractLineAnimation<Conflict> implements Serializable
 {
-    // TODO should ConflictAnimation implement the Renderable2DInterface?
 
     /** */
     private static final long serialVersionUID = 20161207L;
@@ -52,11 +51,6 @@ public class ConflictAnimation extends AbstractLineAnimation<Conflict> implement
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         Conflict conflict = this.getSource();
-        // if ((!conflict.getLane().toString().equals("Lane FORWARD1 of 6077_J8854"))
-        // && (!conflict.getOtherConflict().getLane().toString().equals("Lane FORWARD1 of 6077_J8854")))
-        // {
-        // return;
-        // }
         Color fillColor;
         switch (conflict.conflictPriority())
         {
@@ -73,7 +67,7 @@ public class ConflictAnimation extends AbstractLineAnimation<Conflict> implement
                 break;
 
             default:
-                // STOP, ALL_STOP
+                // STOP, ALL_STOP, TURN_ON_RED
                 fillColor = Color.red;
                 break;
         }
@@ -105,16 +99,17 @@ public class ConflictAnimation extends AbstractLineAnimation<Conflict> implement
         if (conflict.getGeometry() != null)
         {
             PaintPolygons.paintMultiPolygon(graphics, fillColor, conflict.getLocation(), conflict.getGeometry(), false);
-            // if (conflict.conflictPriority().isPriority())
-            // {
-            // graphics.setColor(Color.BLACK);
-            // DirectedPoint from = conflict.getLocation();
-            // DirectedPoint to = conflict.getOtherConflict().getLocation();
-            // System.out.println("from: " + from + ", to " + to);
-            // graphics.setStroke(new BasicStroke(0.1f));
-            // Line2D line = new Line2D.Double(0, 0, to.x - from.x, from.y - to.y);
-            // graphics.draw(line);
-            // }
+            
+            /*- This code may be used to visually check conflicts are correctly paired
+            if (conflict.conflictPriority().isPriority())
+            {
+                graphics.setColor(Color.BLACK);
+                DirectedPoint from = conflict.getLocation();
+                DirectedPoint to = conflict.getOtherConflict().getLocation();
+                graphics.setStroke(new BasicStroke(0.1f));
+                Line2D line = new Line2D.Double(0, 0, to.x - from.x, from.y - to.y);
+                graphics.draw(line);
+            }*/
         }
         if (isRotate() && angle != 0.0)
         {

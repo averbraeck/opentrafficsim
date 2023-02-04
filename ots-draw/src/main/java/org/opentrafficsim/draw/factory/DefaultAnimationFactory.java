@@ -15,12 +15,13 @@ import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.core.gtu.GtuGenerator;
+import org.opentrafficsim.core.gtu.GtuGenerator.GtuGeneratorPosition;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.core.object.LocatedObject;
+import org.opentrafficsim.core.object.NonLocatedObject;
 import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation;
 import org.opentrafficsim.draw.network.LinkAnimation;
@@ -29,10 +30,13 @@ import org.opentrafficsim.draw.road.BusStopAnimation;
 import org.opentrafficsim.draw.road.ConflictAnimation;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation;
 import org.opentrafficsim.draw.road.DetectorAnimation;
+import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation;
 import org.opentrafficsim.draw.road.SpeedSignAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
+import org.opentrafficsim.draw.road.TrafficLightDetectorAnimation;
+import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -42,11 +46,13 @@ import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.object.BusStop;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.road.network.lane.object.detector.DestinationDetector;
-import org.opentrafficsim.road.network.lane.object.detector.Detector;
+import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
+import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 /**
@@ -74,8 +80,12 @@ public class DefaultAnimationFactory implements EventListener
     /** Rendered gtus. */
     private Map<LaneBasedGtu, Renderable2D<LaneBasedGtu>> animatedGTUs = Collections.synchronizedMap(new LinkedHashMap<>());
 
-    /** Rendered static objects. */
-    public Map<LocatedObject, Renderable2D<?>> animatedObjects = Collections.synchronizedMap(new LinkedHashMap<>());
+    /** Rendered located objects. */
+    private Map<Locatable, Renderable2D<?>> animatedLocatedObjects = Collections.synchronizedMap(new LinkedHashMap<>());
+
+    /** Rendered non-located objects. */
+    private Map<NonLocatedObject, Renderable2D<?>> animatedNonLocatedObjects =
+            Collections.synchronizedMap(new LinkedHashMap<>());
 
     /**
      * Creates animations for nodes, links and lanes. The class will subscribe to the network and listen to changes, so the
@@ -97,8 +107,8 @@ public class DefaultAnimationFactory implements EventListener
         network.addListener(this, Network.GTU_REMOVE_EVENT);
         network.addListener(this, Network.OBJECT_ADD_EVENT);
         network.addListener(this, Network.OBJECT_REMOVE_EVENT);
-        network.addListener(this, Network.GENERATOR_ADD_EVENT);
-        network.addListener(this, Network.GENERATOR_REMOVE_EVENT);
+        network.addListener(this, Network.NONLOCATED_OBJECT_ADD_EVENT);
+        network.addListener(this, Network.NONLOCATED_OBJECT_REMOVE_EVENT);
 
         // model the current infrastructure
         try
@@ -143,7 +153,12 @@ public class DefaultAnimationFactory implements EventListener
 
             for (LocatedObject object : network.getObjectMap().values())
             {
-                animateStaticObject(object);
+                animateLocatedObject(object);
+            }
+
+            for (NonLocatedObject object : network.getNonLocatedObjectMap().values())
+            {
+                animateNonLocatedObject(object);
             }
         }
         catch (RemoteException | NamingException | OtsGeometryException exception)
@@ -206,28 +221,26 @@ public class DefaultAnimationFactory implements EventListener
             else if (event.getType().equals(Network.OBJECT_ADD_EVENT))
             {
                 LocatedObject object = this.network.getObjectMap().get((String) event.getContent());
-                animateStaticObject(object);
+                animateLocatedObject(object);
             }
             else if (event.getType().equals(Network.OBJECT_REMOVE_EVENT))
             {
                 LocatedObject object = this.network.getObjectMap().get((String) event.getContent());
-                if (this.animatedObjects.containsKey(object))
-                {
-                    // TODO: this.animatedObjects.get(object).destroy(object.getSimulator());
-                    // XXX: this is now a memory leak; we don't expect static animation objects to be removed during the run
-                    this.animatedObjects.remove(object);
-                }
+                // TODO: this.animatedObjects.get(object).destroy(object.getSimulator());
+                // XXX: this is now a memory leak; we don't expect static animation objects to be removed during the run
+                this.animatedLocatedObjects.remove(object);
             }
-            else if (event.getType().equals(Network.GENERATOR_ADD_EVENT))
+            else if (event.getType().equals(Network.NONLOCATED_OBJECT_ADD_EVENT))
             {
-                // TODO: let GtuGenerator implement ObjectInterface (LocatedObject)
-                // GtuGenerator gtuGenerator = this.network.getObject(GtuGenerator.class, (String) event.getContent());
-                GtuGenerator gtuGenerator = null;
-                animateGtuGenerator(gtuGenerator);
+                NonLocatedObject object = this.network.getNonLocatedObjectMap().get((String) event.getContent());
+                animateNonLocatedObject(object);
             }
-            else if (event.getType().equals(Network.GENERATOR_REMOVE_EVENT))
+            else if (event.getType().equals(Network.NONLOCATED_OBJECT_REMOVE_EVENT))
             {
-                // TODO: change the way generators are animated
+                NonLocatedObject object = this.network.getNonLocatedObjectMap().get((String) event.getContent());
+                // TODO: this.animatedObjects.get(object).destroy(object.getSimulator());
+                // XXX: this is now a memory leak; we don't expect static animation objects to be removed during the run
+                this.animatedNonLocatedObjects.remove(object);
             }
         }
         catch (SimRuntimeException exception)
@@ -257,7 +270,7 @@ public class DefaultAnimationFactory implements EventListener
      * Draw the static object.
      * @param object ObjectInterface; the object to draw
      */
-    protected void animateStaticObject(final LocatedObject object)
+    protected void animateLocatedObject(final LocatedObject object)
     {
         try
         {
@@ -265,60 +278,88 @@ public class DefaultAnimationFactory implements EventListener
             {
                 SinkDetector detector = (SinkDetector) object;
                 // Renderable2D<SinkSensor> objectAnimation = new SinkAnimation(detector, this.simulator);
-                Renderable2D<Detector> objectAnimation = new DetectorAnimation(detector, this.simulator, Color.ORANGE);
-                this.animatedObjects.put(object, objectAnimation);
+                Renderable2D<LaneDetector> objectAnimation = new DetectorAnimation(detector, this.simulator, Color.ORANGE);
+                this.animatedLocatedObjects.put(object, objectAnimation);
             }
             else if (object instanceof DestinationDetector)
             {
                 DestinationDetector detector = (DestinationDetector) object;
                 // Renderable2D<DestinationSensor> objectAnimation = new DestinationAnimation(detector, this.simulator);
-                Renderable2D<Detector> objectAnimation = new DetectorAnimation(detector, this.simulator, Color.ORANGE);
-                this.animatedObjects.put(object, objectAnimation);
+                Renderable2D<LaneDetector> objectAnimation = new DetectorAnimation(detector, this.simulator, Color.ORANGE);
+                this.animatedLocatedObjects.put(object, objectAnimation);
             }
-            else if (object instanceof Detector)
+            else if (object instanceof TrafficLightDetector)
             {
-                Detector detector = (Detector) object;
-                Renderable2D<Detector> objectAnimation = new DetectorAnimation(detector, this.simulator, Color.BLACK);
-                this.animatedObjects.put(object, objectAnimation);
+                TrafficLightDetector trafficLigthDetector = (TrafficLightDetector) object;
+                Renderable2D<TrafficLightDetector> objectAnimation =
+                        new TrafficLightDetectorAnimation(trafficLigthDetector, this.simulator);
+                this.animatedLocatedObjects.put(object, objectAnimation);
+            }
+            else if (object instanceof TrafficLightDetector.StartEndDetector)
+            {
+                // we do not draw these, as we draw the TrafficLightDetector
+                return;
+            }
+            else if (object instanceof LaneDetector)
+            {
+                LaneDetector detector = (LaneDetector) object;
+                Renderable2D<LaneDetector> objectAnimation = new DetectorAnimation(detector, this.simulator, Color.BLACK);
+                this.animatedLocatedObjects.put(object, objectAnimation);
             }
             else if (object instanceof Conflict)
             {
                 Conflict conflict = (Conflict) object;
                 Renderable2D<Conflict> objectAnimation = new ConflictAnimation(conflict, this.simulator);
-                this.animatedObjects.put(object, objectAnimation);
+                this.animatedLocatedObjects.put(object, objectAnimation);
             }
             else if (object instanceof TrafficLight)
             {
                 TrafficLight trafficLight = (TrafficLight) object;
                 Renderable2D<TrafficLight> objectAnimation = new TrafficLightAnimation(trafficLight, this.simulator);
-                this.animatedObjects.put(object, objectAnimation);
+                this.animatedLocatedObjects.put(object, objectAnimation);
             }
             else if (object instanceof SpeedSign)
             {
                 SpeedSign speedSign = (SpeedSign) object;
                 Renderable2D<SpeedSign> objectAnimation = new SpeedSignAnimation(speedSign, this.simulator);
-                this.animatedObjects.put(object, objectAnimation);
+                this.animatedLocatedObjects.put(object, objectAnimation);
             }
             else if (object instanceof BusStop)
             {
                 BusStop busStop = (BusStop) object;
                 Renderable2D<BusStop> objectAnimation = new BusStopAnimation(busStop, this.simulator);
-                this.animatedObjects.put(object, objectAnimation);
+                this.animatedLocatedObjects.put(object, objectAnimation);
             }
         }
-        catch (RemoteException | NamingException exception)
+        catch (RemoteException | NamingException | OtsGeometryException exception)
         {
-            CategoryLogger.always().error(exception, "Exception while drawing Object of class ObjectInterface.");
+            CategoryLogger.always().error(exception, "Exception while drawing Object of class LocatedObject.");
         }
     }
 
     /**
-     * Draw the GtuGenerator.
-     * @param gtuGenerator GtuGenerator; the GtuGenerator to draw
+     * Draw non-located objects.
+     * @param object NonLocatedObject; the object to draw.
      */
-    protected void animateGtuGenerator(final GtuGenerator gtuGenerator)
+    private void animateNonLocatedObject(final NonLocatedObject object)
     {
-        // TODO: default animation of GTU generator (GtuGeneratorQueueAnimation?)
+        try
+        {
+            if (object instanceof LaneBasedGtuGenerator)
+            {
+                LaneBasedGtuGenerator generator = (LaneBasedGtuGenerator) object;
+                for (GtuGeneratorPosition position : generator.getPositions())
+                {
+                    Renderable2D<GtuGeneratorPosition> objectAnimation =
+                            new GtuGeneratorPositionAnimation(position, this.simulator);
+                    this.animatedLocatedObjects.put(position, objectAnimation);
+                }
+            }
+        }
+        catch (RemoteException | NamingException exception)
+        {
+            CategoryLogger.always().error(exception, "Exception while drawing Object of class NonLocatedObject.");
+        }
     }
 
 }

@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.generator;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,11 +12,7 @@ import java.util.Set;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djutils.draw.point.Point3d;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.geometry.Bounds;
-import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Link;
@@ -31,7 +26,6 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
@@ -46,7 +40,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public final class GeneratorPositions implements Locatable
+public final class GeneratorPositions
 {
 
     /** Underlying object representing the zone. */
@@ -54,12 +48,6 @@ public final class GeneratorPositions implements Locatable
 
     /** Stream for random numbers. */
     private final StreamInterface stream;
-
-    /** Location. */
-    private final DirectedPoint location;
-
-    /** Bounds. */
-    private final Bounds bounds;
 
     /** Set of all positions. */
     private final Set<GeneratorLanePosition> allPositions = new LinkedHashSet<>();
@@ -75,41 +63,13 @@ public final class GeneratorPositions implements Locatable
     {
         this.position = position;
         this.stream = stream;
-        double x = 0.0;
-        double y = 0.0;
-        double xMin = Double.POSITIVE_INFINITY;
-        double xMax = Double.NEGATIVE_INFINITY;
-        double yMin = Double.POSITIVE_INFINITY;
-        double yMax = Double.NEGATIVE_INFINITY;
-        int n = 0;
         for (GeneratorLinkPosition linkPosition : position.positions)
         {
             for (GeneratorLanePosition lanePosition : linkPosition.positions)
             {
                 this.allPositions.add(lanePosition);
-                for (LanePosition pos : lanePosition.getPosition())
-                {
-                    DirectedPoint point;
-                    try
-                    {
-                        point = pos.getLane().getCenterLine().getLocation(pos.getPosition());
-                    }
-                    catch (OtsGeometryException exception)
-                    {
-                        point = new DirectedPoint(0, 0, 0);
-                    }
-                    x += point.x;
-                    y += point.y;
-                    xMin = xMin < point.x ? xMin : point.x;
-                    yMin = yMin < point.y ? yMin : point.y;
-                    xMax = xMax > point.x ? xMax : point.x;
-                    yMax = yMax > point.y ? yMax : point.y;
-                    n++;
-                }
             }
         }
-        this.location = new DirectedPoint(x / n, y / n, 0);
-        this.bounds = new Bounds(new Point3d(xMin, yMin, 0.0), new Point3d(xMax, yMax, 0.0));
     }
 
     /**
@@ -235,20 +195,6 @@ public final class GeneratorPositions implements Locatable
     public GeneratorLinkPosition draw(final GtuType gtuType, final Node destination, final Route route)
     {
         return this.position.draw(gtuType, this.stream, destination, route);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public DirectedPoint getLocation()
-    {
-        return this.location;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Bounds getBounds() throws RemoteException
-    {
-        return this.bounds;
     }
 
     /**
@@ -963,7 +909,7 @@ public final class GeneratorPositions implements Locatable
          * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
          * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
          */
-        public class ByValue implements RoadPosition
+        class ByValue implements RoadPosition
         {
 
             /** Road position. */
@@ -1062,8 +1008,8 @@ public final class GeneratorPositions implements Locatable
             @Override
             public double getValue(final Speed desiredSpeed)
             {
-                Throw.whenNull(desiredSpeed,
-                        "Peeked desired speed from a strategical planner factory is null, while a lane bias depends on desired speed.");
+                Throw.whenNull(desiredSpeed, "Peeked desired speed from a strategical planner factory is null, "
+                        + "while a lane bias depends on desired speed.");
                 double value = (desiredSpeed.si - this.rightSpeed.si) / (this.leftSpeed.si - this.rightSpeed.si);
                 return value < 0.0 ? 0.0 : (value > 1.0 ? 1.0 : value);
             }

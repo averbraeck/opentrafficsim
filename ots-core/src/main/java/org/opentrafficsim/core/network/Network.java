@@ -9,7 +9,6 @@ import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.route.Route;
@@ -484,19 +483,5 @@ public interface Network extends EventProducer, Identifiable
      */
     EventType GTU_REMOVE_EVENT = new EventType("NETWORK.GTU.REMOVE",
             new MetaData("GTU removed", "GTU removed", new ObjectDescriptor("GTU id", "GTU id", String.class)));
-
-    /**
-     * The timed event type for pub/sub indicating the addition of a GtuGenerator to the network. <br>
-     * Payload: String generatorName (not an array, just a String)
-     */
-    EventType GENERATOR_ADD_EVENT = new EventType("NETWORK.GENERATOR.ADD", new MetaData("GTU generator added",
-            "GTU generator added", new ObjectDescriptor("GTU generator name", "GTU generator name", String.class)));
-
-    /**
-     * The timed event type for pub/sub indicating the removal of a GtuGenerator from the network. <br>
-     * Payload: String generatorName (not an array, just a String)
-     */
-    EventType GENERATOR_REMOVE_EVENT = new EventType("NETWORK.GENERATOR.REMOVE", new MetaData("GTU generator removed",
-            "GTU generator removed", new ObjectDescriptor("GTU generator name", "GTU generator name", String.class)));
 
 }

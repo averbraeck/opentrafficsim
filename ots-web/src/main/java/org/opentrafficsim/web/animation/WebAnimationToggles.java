@@ -1,14 +1,15 @@
 package org.opentrafficsim.web.animation;
 
 import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.core.gtu.GtuGenerator.GtuGeneratorPosition;
 import org.opentrafficsim.core.network.OtsLink;
 import org.opentrafficsim.core.network.OtsNode;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation;
-import org.opentrafficsim.draw.gtu.GtuGeneratorQueueAnimation;
 import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation;
 import org.opentrafficsim.draw.road.BusStopAnimation;
 import org.opentrafficsim.draw.road.DetectorAnimation;
+import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -64,7 +65,9 @@ public final class WebAnimationToggles
         panel.addToggleAnimationButtonText("Light", TrafficLight.class, "Show/hide traffic lights", true);
         panel.addToggleAnimationButtonText("LightId", TrafficLightAnimation.Text.class, "Show/hide traffic light Ids", false);
         panel.addToggleAnimationButtonText("Conflict", Conflict.class, "Show/hide conflicts", false);
-        panel.addToggleAnimationButtonText("Generator", GtuGeneratorQueueAnimation.class, "Show/hide generators", false);
+        panel.addToggleAnimationButtonText("Generator", GtuGeneratorPosition.class, "Show/hide generators", false);
+        panel.addToggleAnimationButtonText("GeneratorQ", GtuGeneratorPositionAnimation.Queue.class,
+                "Show/hide generator queues", false);
         panel.addToggleAnimationButtonText("Bus", BusStop.class, "Show/hide bus stops", false);
         panel.addToggleAnimationButtonText("BusId", BusStopAnimation.Text.class, "Show/hide bus stop Ids", false);
     }
@@ -91,7 +94,11 @@ public final class WebAnimationToggles
         panel.addToggleAnimationButtonText("Light", TrafficLight.class, "Show/hide traffic lights", true);
         panel.addToggleAnimationButtonText("LightId", TrafficLightAnimation.Text.class, "Show/hide traffic light Ids", false);
         panel.addToggleAnimationButtonText("Conflict", Conflict.class, "Show/hide conflicts", false);
-        panel.addToggleAnimationButtonText("Generator", GtuGeneratorQueueAnimation.class, "Show/hide generators", false);
+        panel.addToggleAnimationButtonText("Generator", GtuGeneratorPosition.class, "Show/hide generators", false);
+        panel.addToggleAnimationButtonText("GeneratorQ", GtuGeneratorPositionAnimation.Queue.class,
+                "Show/hide generator queues", false);
+        panel.addToggleAnimationButtonText("Bus", BusStop.class, "Show/hide bus stops", false);
+        panel.addToggleAnimationButtonText("BusId", BusStopAnimation.Text.class, "Show/hide bus stop Ids", false);
     }
 
     /**
@@ -136,9 +143,10 @@ public final class WebAnimationToggles
         showAnimationClass(panel, TrafficLight.class);
         hideAnimationClass(panel, TrafficLightAnimation.Text.class);
         showAnimationClass(panel, Conflict.class);
-        hideAnimationClass(panel, BusStop.class);
+        showAnimationClass(panel, GtuGeneratorPosition.class);
+        hideAnimationClass(panel, GtuGeneratorPositionAnimation.Queue.class);
+        showAnimationClass(panel, BusStop.class);
         hideAnimationClass(panel, BusStopAnimation.Text.class);
-        showAnimationClass(panel, GtuGeneratorQueueAnimation.class);
     }
 
     /**
@@ -163,9 +171,10 @@ public final class WebAnimationToggles
         showAnimationClass(panel, TrafficLight.class);
         hideAnimationClass(panel, TrafficLightAnimation.Text.class);
         hideAnimationClass(panel, Conflict.class);
+        hideAnimationClass(panel, GtuGeneratorPosition.class);
+        hideAnimationClass(panel, GtuGeneratorPositionAnimation.Queue.class);
         hideAnimationClass(panel, BusStop.class);
         hideAnimationClass(panel, BusStopAnimation.Text.class);
-        hideAnimationClass(panel, GtuGeneratorQueueAnimation.class);
     }
 
 }

@@ -357,9 +357,10 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
      * @throws SimRuntimeException when generation scheduling fails
      * @throws ProbabilityException when probability distribution is wrong
      * @throws ParameterException when a parameter is missing for the perception of the GTU
+     * @throws NetworkException if the object could not be added to the network
      */
     private Lane[] setupGenerator(final Lane[] lanes)
-            throws SimRuntimeException, GtuException, ProbabilityException, ParameterException
+            throws SimRuntimeException, GtuException, ProbabilityException, ParameterException, NetworkException
     {
         for (Lane lane : lanes)
         {
@@ -376,9 +377,10 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
      * @throws SimRuntimeException when generation scheduling fails
      * @throws ProbabilityException when probability distribution is wrong
      * @throws ParameterException when a parameter is missing for the perception of the GTU
+     * @throws NetworkException if the object could not be added to the network
      */
     private LaneBasedGtuGenerator makeGenerator(final Lane lane)
-            throws GtuException, SimRuntimeException, ProbabilityException, ParameterException
+            throws GtuException, SimRuntimeException, ProbabilityException, ParameterException, NetworkException
     {
         Distribution<LaneBasedTemplateGtuType> distribution = new Distribution<>(this.stream);
         Length initialPosition = new Length(16, METER);

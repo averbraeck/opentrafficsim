@@ -251,7 +251,7 @@ public abstract class TextAnimation implements Locatable, Serializable
             float dxText =
                     this.textAlignment.equals(TextAlignment.LEFT) ? 0.0f : this.textAlignment.equals(TextAlignment.CENTER)
                             ? (float) -scaledFontRectangle.getWidth() / 2.0f : (float) -scaledFontRectangle.getWidth();
-            graphics.drawString(this.text, dxText + this.dx, this.fontSize / 2.0f - this.dy);
+            graphics.drawString(this.text, dxText + this.dx, -this.dy);
         }
     }
 

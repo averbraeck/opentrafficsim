@@ -432,12 +432,13 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
          * @throws ProbabilityException in case of an illegal probability distribution
          * @throws GtuException in case the GTU is inconsistent
          * @throws ParameterException in case a parameter for the perception is missing
+         * @throws NetworkException if the object could not be added to the network
          */
         private void makeGenerator(final Lane lane, final Speed generationSpeed, final String id, final IdGenerator idGenerator,
                 final Distribution<LaneBasedTemplateGtuType> distribution, final Generator<Duration> headwayGenerator,
                 final GtuColorer gtuColorer, final RoomChecker roomChecker, final ParameterFactory bcFactory,
                 final LaneBasedTacticalPlannerFactory<?> tacticalFactory, final Time simulationTime,
-                final StreamInterface stream) throws SimRuntimeException, ProbabilityException, GtuException, ParameterException
+                final StreamInterface stream) throws SimRuntimeException, ProbabilityException, GtuException, ParameterException, NetworkException
         {
 
             Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>();

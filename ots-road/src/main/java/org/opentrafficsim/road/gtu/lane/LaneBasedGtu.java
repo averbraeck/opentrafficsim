@@ -68,7 +68,7 @@ import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
-import org.opentrafficsim.road.network.lane.object.detector.Detector;
+import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
@@ -937,10 +937,10 @@ public class LaneBasedGtu extends Gtu
         Length remain = remainingEventDistance();
         double min = position(lane, getRear()).si;
         double max = min + remain.si + getLength().si;
-        SortedMap<Double, List<Detector>> detectors = lane.getDetectorMap(getType()).subMap(min, max);
-        for (List<Detector> list : detectors.values())
+        SortedMap<Double, List<LaneDetector>> detectors = lane.getDetectorMap(getType()).subMap(min, max);
+        for (List<LaneDetector> list : detectors.values())
         {
-            for (Detector detector : list)
+            for (LaneDetector detector : list)
             {
                 RelativePosition pos = this.getRelativePositions().get(detector.getPositionType());
                 Time time = timeAtLine(detector.getGeometry(), pos);

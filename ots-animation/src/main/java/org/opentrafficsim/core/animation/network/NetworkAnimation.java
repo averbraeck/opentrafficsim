@@ -56,8 +56,6 @@ public class NetworkAnimation extends LocalEventProducer implements EventListene
         this.network.addListener(this, Network.NONLOCATED_OBJECT_REMOVE_EVENT);
         this.network.addListener(this, Network.ROUTE_ADD_EVENT);
         this.network.addListener(this, Network.ROUTE_REMOVE_EVENT);
-        this.network.addListener(this, Network.GENERATOR_ADD_EVENT);
-        this.network.addListener(this, Network.GENERATOR_REMOVE_EVENT);
     }
 
     /**

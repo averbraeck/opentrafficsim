@@ -49,8 +49,8 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.object.detector.DestinationDetector;
-import org.opentrafficsim.road.network.lane.object.detector.Detector;
 import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
+import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -373,6 +373,12 @@ public final class OdApplier
                     simulator.getLogger().always().error(exception);
                     throw new RuntimeException(exception);
                 }
+                catch (NetworkException exception)
+                {
+                    // should not happen, as unique ids are guaranteed by UUID
+                    simulator.getLogger().always().error(exception);
+                    throw new RuntimeException(exception);
+                }
             }
         }
         return output;
@@ -419,7 +425,7 @@ public final class OdApplier
                     {
                         // if the lane already contains a DestinationDetector, skip creating a new one
                         boolean destinationDetectorExists = false;
-                        for (Detector detector : lane.getDetectors())
+                        for (LaneDetector detector : lane.getDetectors())
                         {
                             if (detector instanceof DestinationDetector)
                             {
