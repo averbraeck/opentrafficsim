@@ -107,8 +107,8 @@ public class TemplateGtuTypeTest implements OtsModelInterface
                 return new Speed(70, SpeedUnit.KM_PER_HOUR);
             }
         };
-        TemplateGtuType templateA = new TemplateGtuType(gtuTypeA, lengthGeneratorA, widthGeneratorA, maximumSpeedGeneratorA);
-        TemplateGtuType templateB = new TemplateGtuType(gtuTypeB, lengthGeneratorB, widthGeneratorB, maximumSpeedGeneratorB);
+        GtuTemplate templateA = new GtuTemplate(gtuTypeA, lengthGeneratorA, widthGeneratorA, maximumSpeedGeneratorA);
+        GtuTemplate templateB = new GtuTemplate(gtuTypeB, lengthGeneratorB, widthGeneratorB, maximumSpeedGeneratorB);
         assertEquals("typenameA", gtuTypeA.getId(), templateA.getGtuType().getId());
         assertEquals("typenameB", gtuTypeB.getId(), templateB.getGtuType().getId());
         GtuCharacteristics characteristicsA = templateA.draw();
@@ -126,7 +126,7 @@ public class TemplateGtuTypeTest implements OtsModelInterface
         // Test that the constructor throws the expected Exception when an argument is invalid
         try
         {
-            new TemplateGtuType(null, lengthGeneratorA, widthGeneratorA, maximumSpeedGeneratorA);
+            new GtuTemplate(null, lengthGeneratorA, widthGeneratorA, maximumSpeedGeneratorA);
             fail("Previous statement should have thrown a NullPointerException");
         }
         catch (NullPointerException gtue)
@@ -135,7 +135,7 @@ public class TemplateGtuTypeTest implements OtsModelInterface
         }
         try
         {
-            new TemplateGtuType(gtuTypeA, null, widthGeneratorA, maximumSpeedGeneratorA);
+            new GtuTemplate(gtuTypeA, null, widthGeneratorA, maximumSpeedGeneratorA);
             fail("Previous statement should have thrown a NullPointerException");
         }
         catch (NullPointerException gtue)
@@ -144,7 +144,7 @@ public class TemplateGtuTypeTest implements OtsModelInterface
         }
         try
         {
-            new TemplateGtuType(gtuTypeA, lengthGeneratorA, null, maximumSpeedGeneratorA);
+            new GtuTemplate(gtuTypeA, lengthGeneratorA, null, maximumSpeedGeneratorA);
             fail("Previous statement should have thrown a NullPointerException");
         }
         catch (NullPointerException gtue)
@@ -153,7 +153,7 @@ public class TemplateGtuTypeTest implements OtsModelInterface
         }
         try
         {
-            new TemplateGtuType(gtuTypeA, lengthGeneratorA, widthGeneratorA, null);
+            new GtuTemplate(gtuTypeA, lengthGeneratorA, widthGeneratorA, null);
             fail("Previous statement should have thrown a NullPointerException");
         }
         catch (NullPointerException gtue)

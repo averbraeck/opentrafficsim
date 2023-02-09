@@ -318,7 +318,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             if (links.size() > 1)
             {
                 nextSplitNode = lastNode;
-                Link nextLink = gtu.getStrategicalPlanner().nextLink(nextSplitNode, lastLink, gtu.getType());
+                Link nextLink = gtu.getStrategicalPlanner().nextLink(lastLink, gtu.getType());
                 // which lane(s) we are registered on and adjacent lanes link to a lane
                 // that is on the route at the next split?
                 for (CrossSectionElement cse : referenceLane.getParentLink().getCrossSectionElementList())

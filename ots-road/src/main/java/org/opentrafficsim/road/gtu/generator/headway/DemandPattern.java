@@ -4,7 +4,7 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
-import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
+import org.opentrafficsim.road.od.Interpolation;
 
 /**
  * Demand pattern defined by a frequency vector, time vector and interpolation.

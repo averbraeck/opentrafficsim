@@ -110,7 +110,7 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
         // integrate until rem (by reducing it to 0.0, possibly in steps per slice)
         while (rem > 0.0)
         {
-            // extrapolate to find 'integration = rem' in this slice giving demand slope, this may beyond the slice length
+            // extrapolate to find 'integration = rem' in this slice giving demand slope, this may be beyond the slice length
             double dt = t2.si - t1.si;
             double t;
             double slope = (f2 - f1) / dt;
@@ -160,6 +160,7 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
         throw new RuntimeException("Exception while determining headway from Arrivals.");
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString()
     {

@@ -29,7 +29,6 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsPoint3D;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
@@ -40,15 +39,14 @@ import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.generator.TtcRoomChecker;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuType;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuTypeDistribution;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplate;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplateDistribution;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
-import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
-import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -160,26 +158,24 @@ public class StraightModel extends AbstractOtsModel implements UNITS
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedTruck =
                     new ContinuousDistDoubleScalar.Rel<>(new DistUniform(this.stream, 80, 95), SpeedUnit.KM_PER_HOUR);
             Generator<Route> routeGenerator = new FixedRouteGenerator(null);
-            LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactoryCars =
-                    new LaneBasedStrategicalRoutePlannerFactory(
-                            new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()));
-            LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFctoryTrucks =
-                    new LaneBasedStrategicalRoutePlannerFactory(
-                            new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()));
-            LaneBasedTemplateGtuType carTemplate = new LaneBasedTemplateGtuType(car,
-                    new ConstantGenerator<>(Length.instantiateSI(4.0)), new ConstantGenerator<>(Length.instantiateSI(2.0)),
-                    speedCar, strategicalPlannerFactoryCars, routeGenerator);
-            LaneBasedTemplateGtuType truckTemplate = new LaneBasedTemplateGtuType(truck,
+            LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactoryCars = new LaneBasedStrategicalRoutePlannerFactory(
+                    new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()));
+            LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFctoryTrucks = new LaneBasedStrategicalRoutePlannerFactory(
+                    new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()));
+            LaneBasedGtuTemplate carTemplate = new LaneBasedGtuTemplate(car, new ConstantGenerator<>(Length.instantiateSI(4.0)),
+                    new ConstantGenerator<>(Length.instantiateSI(2.0)), speedCar, strategicalPlannerFactoryCars,
+                    routeGenerator);
+            LaneBasedGtuTemplate truckTemplate = new LaneBasedGtuTemplate(truck,
                     new ConstantGenerator<>(Length.instantiateSI(15.0)), new ConstantGenerator<>(Length.instantiateSI(2.5)),
                     speedTruck, strategicalPlannerFctoryTrucks, routeGenerator);
-            Distribution<LaneBasedTemplateGtuType> gtuTypeDistribution = new Distribution<>(this.stream);
+            Distribution<LaneBasedGtuTemplate> gtuTypeDistribution = new Distribution<>(this.stream);
             gtuTypeDistribution.add(new FrequencyAndObject<>(this.carProbability, carTemplate));
             gtuTypeDistribution.add(new FrequencyAndObject<>(1.0 - this.carProbability, truckTemplate));
             Generator<Duration> headwayGenerator = new HeadwayGenerator(new Frequency(1500.0, PER_HOUR));
             Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
             initialLongitudinalPositions.add(new LanePosition(this.lane, new Length(5.0, LengthUnit.SI)));
-            LaneBasedTemplateGtuTypeDistribution characteristicsGenerator =
-                    new LaneBasedTemplateGtuTypeDistribution(gtuTypeDistribution);
+            LaneBasedGtuTemplateDistribution characteristicsGenerator =
+                    new LaneBasedGtuTemplateDistribution(gtuTypeDistribution);
             new LaneBasedGtuGenerator("Generator", headwayGenerator, characteristicsGenerator,
                     GeneratorPositions.create(initialLongitudinalPositions, this.stream), this.network, getSimulator(),
                     roomChecker, idGenerator);
@@ -193,8 +189,8 @@ public class StraightModel extends AbstractOtsModel implements UNITS
             // Remove the block at t = 7 minutes
             this.simulator.scheduleEventAbsTime(new Time(420, TimeUnit.BASE_SECOND), this, "removeBlock", null);
         }
-        catch (SimRuntimeException | NetworkException | OtsGeometryException | InputParameterException | GtuException
-                | ParameterException | ProbabilityException exception)
+        catch (SimRuntimeException | NetworkException | OtsGeometryException | InputParameterException | ParameterException
+                | ProbabilityException exception)
         {
             exception.printStackTrace();
         }

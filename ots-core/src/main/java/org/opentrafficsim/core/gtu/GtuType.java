@@ -28,10 +28,10 @@ public final class GtuType extends HierarchicalType<GtuType, Gtu>
     private static final long serialVersionUID = 20141231L;
 
     /** Templates for GTU characteristics within a network. */
-    private static final Map<Network, Map<GtuType, TemplateGtuType>> DEFAULT_TEMPLATES = new LinkedHashMap<>();
+    private static final Map<Network, Map<GtuType, GtuTemplate>> DEFAULT_TEMPLATES = new LinkedHashMap<>();
 
     /** Template suppliers. */
-    private static final Map<GtuType, BiFunction<GtuType, StreamInterface, TemplateGtuType>> TEMPLATE_SUPPLIERS =
+    private static final Map<GtuType, BiFunction<GtuType, StreamInterface, GtuTemplate>> TEMPLATE_SUPPLIERS =
             new LinkedHashMap<>();
 
     /** Defines the shape of a marker GTUs are drawn with when zoomed out. */
@@ -82,7 +82,7 @@ public final class GtuType extends HierarchicalType<GtuType, Gtu>
      * @param defaults BiFunction&lt;GtuType, StreamInterface, TemplateGtuType&gt;; supplier of the template.
      */
     public static void registerTemplateSupplier(final GtuType gtuType,
-            final BiFunction<GtuType, StreamInterface, TemplateGtuType> defaults)
+            final BiFunction<GtuType, StreamInterface, GtuTemplate> defaults)
     {
         TEMPLATE_SUPPLIERS.put(gtuType, defaults);
     }
@@ -98,13 +98,13 @@ public final class GtuType extends HierarchicalType<GtuType, Gtu>
     public static GtuCharacteristics defaultCharacteristics(final GtuType gtuType, final Network network,
             final StreamInterface randomStream) throws GtuException
     {
-        Map<GtuType, TemplateGtuType> map = DEFAULT_TEMPLATES.get(network);
+        Map<GtuType, GtuTemplate> map = DEFAULT_TEMPLATES.get(network);
         if (map == null)
         {
             map = new LinkedHashMap<>();
             DEFAULT_TEMPLATES.put(network, map);
         }
-        TemplateGtuType template = map.get(gtuType);
+        GtuTemplate template = map.get(gtuType);
         GtuType type = gtuType;
         while (template == null)
         {

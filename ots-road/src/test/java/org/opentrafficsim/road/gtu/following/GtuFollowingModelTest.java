@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -45,7 +44,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusOld;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
-import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;

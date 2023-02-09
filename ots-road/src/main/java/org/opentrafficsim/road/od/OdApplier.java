@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.generator.od;
+package org.opentrafficsim.road.od;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,13 +37,11 @@ import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGenerator;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGeneratorOd;
 import org.opentrafficsim.road.gtu.generator.headway.Arrivals;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayDistribution;
 import org.opentrafficsim.road.gtu.generator.headway.DemandPattern;
-import org.opentrafficsim.road.gtu.strategical.od.Categorization;
-import org.opentrafficsim.road.gtu.strategical.od.Category;
-import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -835,7 +833,7 @@ public final class OdApplier
         private final OtsSimulatorInterface simulator;
 
         /** Characteristics generator based on OD information. */
-        private final GtuCharacteristicsGeneratorOd characteristicsGenerator;
+        private final LaneBasedGtuCharacteristicsGeneratorOd characteristicsGenerator;
 
         /** Stream for random numbers. */
         private final StreamInterface randomStream;
@@ -847,7 +845,7 @@ public final class OdApplier
          * @param randomStream StreamInterface; stream for random numbers
          */
         GtuCharacteristicsGeneratorODWrapper(final DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root,
-                final OtsSimulatorInterface simulator, final GtuCharacteristicsGeneratorOd characteristicsGenerator,
+                final OtsSimulatorInterface simulator, final LaneBasedGtuCharacteristicsGeneratorOd characteristicsGenerator,
                 final StreamInterface randomStream)
         {
             this.root = root;

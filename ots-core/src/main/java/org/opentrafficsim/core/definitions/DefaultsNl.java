@@ -14,7 +14,7 @@ import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.GtuType.Marker;
-import org.opentrafficsim.core.gtu.TemplateGtuType;
+import org.opentrafficsim.core.gtu.GtuTemplate;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
 
@@ -31,7 +31,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public final class DefaultsNl extends Defaults implements BiFunction<GtuType, StreamInterface, TemplateGtuType>
+public final class DefaultsNl extends Defaults implements BiFunction<GtuType, StreamInterface, GtuTemplate>
 {
 
     // TODO: prepend all type id's with "NL."
@@ -125,38 +125,38 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
      * @return TemplateGtuType; template, {@code null} if no default is defined.
      */
     @Override
-    public TemplateGtuType apply(final GtuType gtuType, final StreamInterface randomStream)
+    public GtuTemplate apply(final GtuType gtuType, final StreamInterface randomStream)
     {
-        TemplateGtuType template = null;
+        GtuTemplate template = null;
         if (gtuType.equals(CAR))
         {
             // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
-            template = new TemplateGtuType(gtuType, new ConstantGenerator<>(Length.instantiateSI(4.19)),
+            template = new GtuTemplate(gtuType, new ConstantGenerator<>(Length.instantiateSI(4.19)),
                     new ConstantGenerator<>(Length.instantiateSI(1.7)),
                     new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
         }
         else if (gtuType.equals(TRUCK))
         {
             // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
-            template = new TemplateGtuType(gtuType, new ConstantGenerator<>(Length.instantiateSI(12.0)),
+            template = new GtuTemplate(gtuType, new ConstantGenerator<>(Length.instantiateSI(12.0)),
                     new ConstantGenerator<>(Length.instantiateSI(2.55)),
                     new ContinuousDistSpeed(new DistNormal(randomStream, 85.0, 2.5), SpeedUnit.KM_PER_HOUR));
         }
         else if (gtuType.equals(BUS))
         {
-            template = new TemplateGtuType(gtuType, new ConstantGenerator<>(Length.instantiateSI(12.0)),
+            template = new GtuTemplate(gtuType, new ConstantGenerator<>(Length.instantiateSI(12.0)),
                     new ConstantGenerator<>(Length.instantiateSI(2.55)),
                     new ConstantGenerator<>(new Speed(90, SpeedUnit.KM_PER_HOUR)));
         }
         else if (gtuType.equals(VAN))
         {
-            template = new TemplateGtuType(gtuType, new ConstantGenerator<>(Length.instantiateSI(5.0)),
+            template = new GtuTemplate(gtuType, new ConstantGenerator<>(Length.instantiateSI(5.0)),
                     new ConstantGenerator<>(Length.instantiateSI(2.4)),
                     new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
         }
         else if (gtuType.equals(EMERGENCY_VEHICLE))
         {
-            template = new TemplateGtuType(gtuType, new ConstantGenerator<>(Length.instantiateSI(5.0)),
+            template = new GtuTemplate(gtuType, new ConstantGenerator<>(Length.instantiateSI(5.0)),
                     new ConstantGenerator<>(Length.instantiateSI(2.55)),
                     new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
         }

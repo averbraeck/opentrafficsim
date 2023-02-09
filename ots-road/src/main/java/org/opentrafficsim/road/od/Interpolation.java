@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.strategical.od;
+package org.opentrafficsim.road.od;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.TimeUnit;

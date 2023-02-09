@@ -94,7 +94,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
-import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseDistribution;
@@ -380,21 +380,15 @@ public class ModelParser
             else
             {
                 // default
-                try
-                {
-                    tacticalPlannerFactory = new LmrsFactory(new IdmPlusFactory(streamInformation.getStream("generation")),
-                            new DefaultLmrsPerceptionFactory());
-                }
-                catch (GtuException exception)
-                {
-                    throw new XmlParserException(exception);
-                }
+                tacticalPlannerFactory = new LmrsFactory(new IdmPlusFactory(streamInformation.getStream("generation")),
+                        new DefaultLmrsPerceptionFactory());
             }
 
             LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory;
             if (model.getSTRATEGICALPLANNER() == null || model.getSTRATEGICALPLANNER().getROUTE() != null)
             {
                 // TODO: RouteGeneratorOD as third argument, which may however be based on demand
+                // TODO: model.getSTRATEGICALPLANNER().getROUTE() defines route finding procedure: NONE|SHORTEST
                 strategicalPlannerFactory = new LaneBasedStrategicalRoutePlannerFactory(tacticalPlannerFactory, paramFactory);
             }
             else

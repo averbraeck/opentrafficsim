@@ -66,11 +66,9 @@ import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.colorer.GtuTypeColorer;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
+import org.opentrafficsim.road.gtu.generator.characteristics.DefaultLaneBasedGtuCharacteristicsGeneratorOd;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
-import org.opentrafficsim.road.gtu.generator.od.DefaultGtuCharacteristicsGeneratorOd;
-import org.opentrafficsim.road.gtu.generator.od.GtuCharacteristicsGeneratorOd;
-import org.opentrafficsim.road.gtu.generator.od.OdApplier;
-import org.opentrafficsim.road.gtu.generator.od.OdOptions;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGeneratorOd;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
@@ -93,8 +91,11 @@ import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AbstractIncentivesTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
@@ -102,13 +103,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Incentive;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
-import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
-import org.opentrafficsim.road.gtu.strategical.od.Categorization;
-import org.opentrafficsim.road.gtu.strategical.od.Category;
-import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
-import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
-import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.control.rampmetering.CycleTimeLightController;
 import org.opentrafficsim.road.network.control.rampmetering.RampMetering;
@@ -128,6 +124,12 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLig
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
+import org.opentrafficsim.road.od.Categorization;
+import org.opentrafficsim.road.od.Category;
+import org.opentrafficsim.road.od.Interpolation;
+import org.opentrafficsim.road.od.ODMatrix;
+import org.opentrafficsim.road.od.OdApplier;
+import org.opentrafficsim.road.od.OdOptions;
 import org.opentrafficsim.swing.script.AbstractSimulationScript;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
@@ -359,7 +361,11 @@ public class RampMeteringDemo extends AbstractSimulationScript
         od.putDemandVector(nodeE, nodeD, carCatRamp, this.rampDemand, 0.6);
         od.putDemandVector(nodeE, nodeD, controlledCarCat, this.rampDemand, 0.4);
         OdOptions odOptions = new OdOptions();
-        odOptions.set(OdOptions.GTU_TYPE, new ControlledStrategicalPlannerGenerator()).set(OdOptions.INSTANT_LC, true);
+        DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory factory =
+                new DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory(new LaneBasedStrategicalRoutePlannerFactory(
+                        new LmrsFactory(new IdmPlusFactory(stream), new DefaultLmrsPerceptionFactory())));
+        odOptions.set(OdOptions.GTU_TYPE, new ControlledStrategicalPlannerGenerator(factory.create()));
+        odOptions.set(OdOptions.INSTANT_LC, true);
         odOptions.set(OdOptions.LANE_BIAS, new LaneBiases().addBias(car, LaneBias.WEAK_LEFT));
         odOptions.set(OdOptions.NO_LC_DIST, Length.instantiateSI(300));
         OdApplier.applyOD(network, od, odOptions, DefaultsRoadNl.ROAD_USERS);
@@ -468,19 +474,22 @@ public class RampMeteringDemo extends AbstractSimulationScript
      * Strategical planner generator. This class can be used as input in {@code ODOptions} to generate the right models with
      * different GTU types.
      */
-    private class ControlledStrategicalPlannerGenerator implements GtuCharacteristicsGeneratorOd
+    private class ControlledStrategicalPlannerGenerator implements LaneBasedGtuCharacteristicsGeneratorOd
     {
 
         /** Default generator. */
-        private DefaultGtuCharacteristicsGeneratorOd defaultGenerator =
-                new DefaultGtuCharacteristicsGeneratorOd(DefaultsNl.TRUCK);
+        private final DefaultLaneBasedGtuCharacteristicsGeneratorOd defaultGenerator;
 
         /** Controlled planner factory. */
-        private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> controlledPlannerFactory;
+        private LaneBasedStrategicalPlannerFactory<?> controlledPlannerFactory;
 
-        /** Constructor. */
-        ControlledStrategicalPlannerGenerator()
+        /**
+         * Constructor.
+         * @param defaultGenerator LaneBasedGtuCharacteristicsGenerator; generator for non-controlled GTU's
+         */
+        ControlledStrategicalPlannerGenerator(final DefaultLaneBasedGtuCharacteristicsGeneratorOd defaultGenerator)
         {
+            this.defaultGenerator = defaultGenerator;
             // anonymous factory to create tactical planners for controlled GTU's
             LaneBasedTacticalPlannerFactory<?> tacticalPlannerFactory =
                     new LaneBasedTacticalPlannerFactory<LaneBasedTacticalPlanner>()

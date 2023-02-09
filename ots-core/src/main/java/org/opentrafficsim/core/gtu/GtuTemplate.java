@@ -12,7 +12,7 @@ import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 
 /**
- * TemplateGTUType stores some of the information that is needed to generate a GTU.
+ * Stores some of the information that is needed to generate a GTU.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -20,7 +20,7 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
  * $LastChangedDate$, @version $Revision$, by $Author$, initial version Jul 8, 2014 <br>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  */
-public class TemplateGtuType implements Serializable, Generator<GtuCharacteristics>
+public class GtuTemplate implements Serializable, Generator<GtuCharacteristics>
 {
     /** */
     private static final long serialVersionUID = 20141230L;
@@ -53,7 +53,7 @@ public class TemplateGtuType implements Serializable, Generator<GtuCharacteristi
      *            direction).
      * @throws NullPointerException when one of the arguments is null
      */
-    public TemplateGtuType(final GtuType gtuType, final Generator<Length> lengthGenerator,
+    public GtuTemplate(final GtuType gtuType, final Generator<Length> lengthGenerator,
             final Generator<Length> widthGenerator, final Generator<Speed> maximumSpeedGenerator) throws NullPointerException
     {
         this(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator,
@@ -73,7 +73,7 @@ public class TemplateGtuType implements Serializable, Generator<GtuCharacteristi
      * @param maximumDecelerationGenerator Generator&lt;Acceleration&gt;; generator for the maximum deceleration of the GTU type
      * @throws NullPointerException when one of the arguments is null
      */
-    public TemplateGtuType(final GtuType gtuType, final Generator<Length> lengthGenerator,
+    public GtuTemplate(final GtuType gtuType, final Generator<Length> lengthGenerator,
             final Generator<Length> widthGenerator, final Generator<Speed> maximumSpeedGenerator,
             final Generator<Acceleration> maximumAccelerationGenerator,
             final Generator<Acceleration> maximumDecelerationGenerator) throws NullPointerException
@@ -99,9 +99,9 @@ public class TemplateGtuType implements Serializable, Generator<GtuCharacteristi
      * @param newGtuType GtuType; the new GTU type.
      * @return Copy of this {@code TemplateGTUType} linked to the new GTU type.
      */
-    public TemplateGtuType copyForGtuType(final GtuType newGtuType)
+    public GtuTemplate copyForGtuType(final GtuType newGtuType)
     {
-        return new TemplateGtuType(newGtuType, this.lengthGenerator, this.widthGenerator, this.maximumSpeedGenerator,
+        return new GtuTemplate(newGtuType, this.lengthGenerator, this.widthGenerator, this.maximumSpeedGenerator,
                 this.maxAcceleration, this.maxDeceleration);
     }
 

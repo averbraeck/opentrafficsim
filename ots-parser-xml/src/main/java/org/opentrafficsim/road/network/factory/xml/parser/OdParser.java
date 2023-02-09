@@ -30,8 +30,8 @@ import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuTemplate;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.gtu.TemplateGtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
@@ -39,24 +39,14 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.RoadPosition;
+import org.opentrafficsim.road.gtu.generator.characteristics.DefaultLaneBasedGtuCharacteristicsGeneratorOd;
+import org.opentrafficsim.road.gtu.generator.characteristics.DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
-import org.opentrafficsim.road.gtu.generator.od.DefaultGtuCharacteristicsGeneratorOd.Factory;
-import org.opentrafficsim.road.gtu.generator.od.OdApplier;
-import org.opentrafficsim.road.gtu.generator.od.OdApplier.GeneratorObjects;
-import org.opentrafficsim.road.gtu.generator.od.OdOptions;
-import org.opentrafficsim.road.gtu.generator.od.OdOptions.Option;
-import org.opentrafficsim.road.gtu.generator.od.StrategicalPlannerFactorySupplierOd;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
-import org.opentrafficsim.road.gtu.strategical.od.Categorization;
-import org.opentrafficsim.road.gtu.strategical.od.Category;
-import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
-import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
-import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.gtu.strategical.route.RouteGeneratorOd;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseDistribution;
@@ -64,6 +54,14 @@ import org.opentrafficsim.road.network.factory.xml.utils.Transformer;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
+import org.opentrafficsim.road.od.Categorization;
+import org.opentrafficsim.road.od.Category;
+import org.opentrafficsim.road.od.Interpolation;
+import org.opentrafficsim.road.od.ODMatrix;
+import org.opentrafficsim.road.od.OdApplier;
+import org.opentrafficsim.road.od.OdOptions;
+import org.opentrafficsim.road.od.OdApplier.GeneratorObjects;
+import org.opentrafficsim.road.od.OdOptions.Option;
 import org.opentrafficsim.xml.generated.CATEGORYTYPE;
 import org.opentrafficsim.xml.generated.GLOBALTIMETYPE.TIME;
 import org.opentrafficsim.xml.generated.GTUTEMPLATE;
@@ -372,8 +370,8 @@ public final class OdParser
                                         baseDemand.get(i).getTIME() != null && factors != null
                                                 && factors.get(i).getTIME() != null
                                                 && !baseDemand.get(i).getTIME().eq(factors.get(i).getTIME()),
-                                        XmlParserException.class,
-                                        "Demand from %s to %s is specified with factors that have different time from the base demand.",
+                                        XmlParserException.class, "Demand from %s to %s is specified with factors that have "
+                                                + "different time from the base demand.",
                                         origin, destination);
                                 demandRaw[i] = parseLevel(baseDemand.get(i).getValue(),
                                         factor * (factors == null ? 1.0 : parsePositiveFactor(factors.get(i).getValue())));
@@ -393,7 +391,7 @@ public final class OdParser
                 OdOptions odOptions =
                         new OdOptions().set(OdOptions.GTU_ID, idGenerator).set(OdOptions.NO_LC_DIST, Length.instantiateSI(1.0));
                 // templates
-                Set<TemplateGtuType> templates = new LinkedHashSet<>();
+                Set<GtuTemplate> templates = new LinkedHashSet<>();
                 for (GTUTEMPLATE template : gtuTemplates.values())
                 {
                     GtuType gtuType = definitions.get(GtuType.class, template.getGTUTYPE());
@@ -403,7 +401,7 @@ public final class OdParser
                             ParseDistribution.parseSpeedDist(streamMap, template.getMAXSPEEDDIST());
                     if (template.getMAXACCELERATIONDIST() == null || template.getMAXDECELERATIONDIST() == null)
                     {
-                        templates.add(new TemplateGtuType(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator));
+                        templates.add(new GtuTemplate(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator));
                     }
                     else
                     {
@@ -411,18 +409,17 @@ public final class OdParser
                                 ParseDistribution.parseAccelerationDist(streamMap, template.getMAXACCELERATIONDIST());
                         Generator<Acceleration> maxDecelerationGenerator =
                                 ParseDistribution.parseAccelerationDist(streamMap, template.getMAXDECELERATIONDIST());
-                        templates.add(new TemplateGtuType(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator,
+                        templates.add(new GtuTemplate(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator,
                                 maxAccelerationGenerator, maxDecelerationGenerator));
                     }
                 }
                 // default global option to integrate defined templates
-                Factory factory = new Factory(); // DefaultGtuCharacteristicsGeneratorOD factory
-                if (definitions.getAll(GtuType.class).containsValue(DefaultsNl.TRUCK))
-                {
-                    factory.setFactorySupplier(StrategicalPlannerFactorySupplierOd.lmrs(DefaultsNl.TRUCK));
-                }
-                factory.setTemplates(templates);
-                odOptions.set(OdOptions.GTU_TYPE, factory.create());
+                StreamInterface stream = streamMap.getStream("generation");
+                LaneBasedStrategicalRoutePlannerFactory defaultLmrsFactory =
+                        DefaultLaneBasedGtuCharacteristicsGeneratorOd.defaultLmrs(stream);
+                Factory characteristicsGeneratorFactory = new Factory(defaultLmrsFactory);
+                characteristicsGeneratorFactory.setTemplates(templates);
+                odOptions.set(OdOptions.GTU_TYPE, characteristicsGeneratorFactory.create());
                 // other options
                 if (od.getOPTIONS() != null)
                 {
@@ -467,41 +464,33 @@ public final class OdParser
                                     gtuTypeFactoryMap.put(gtuType, factories.get(getModelId(model, modelIdReferrals)));
                                 }
                             }
-                            factory = new Factory(); // DefaultGtuCharacteristicsGeneratorOD factory
-                            factory.setTemplates(templates);
-                            factory.setFactorySupplier(new StrategicalPlannerFactorySupplierOd()
-                            {
-                                /** {@inheritDoc} */
-                                @Override
-                                public LaneBasedStrategicalPlannerFactory<?> getFactory(final Node origin,
-                                        final Node destination, final Category category, final StreamInterface randomStream)
-                                        throws GtuException
-                                {
-                                    if (category.getCategorization().entails(GtuType.class))
+
+                            LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> factoryByGtuType =
+                                    new LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner>()
                                     {
-                                        LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory =
-                                                gtuTypeFactoryMap.get(category.get(GtuType.class));
-                                        if (strategicalPlannerFactory != null)
+                                        /** {@inheritDoc} */
+                                        @Override
+                                        public LaneBasedStrategicalPlanner create(final LaneBasedGtu gtu, final Route route,
+                                                final Node origin, final Node destination) throws GtuException
                                         {
-                                            // a model factory for this GTU type is specified
-                                            return strategicalPlannerFactory;
+                                            LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory =
+                                                    gtuTypeFactoryMap.get(gtu.getType());
+                                            if (strategicalPlannerFactory != null)
+                                            {
+                                                // a model factory for this GTU type is specified
+                                                return strategicalPlannerFactory.create(gtu, route, origin, destination);
+                                            }
+                                            if (defaultFactory != null)
+                                            {
+                                                // a default model factory is specified
+                                                return defaultFactory.create(gtu, route, origin, destination);
+                                            }
+                                            return defaultLmrsFactory.create(gtu, route, origin, destination);
                                         }
-                                    }
-                                    if (defaultFactory != null)
-                                    {
-                                        // a default model factory is specified
-                                        return defaultFactory;
-                                    }
-                                    // no model factory specified, return a default LMRS factory
-                                    // TODO: LMRSFactory can receive a parameter factory, but how to define those parameters in
-                                    // XML?
-                                    return new LaneBasedStrategicalRoutePlannerFactory(
-                                            new LmrsFactory(new IdmPlusFactory(randomStream),
-                                                    new DefaultLmrsPerceptionFactory()),
-                                            RouteGeneratorOd.getDefaultRouteSupplier(randomStream));
-                                }
-                            });
-                            setOption(odOptions, OdOptions.GTU_TYPE, factory.create(), options, otsNetwork, definitions);
+                                    };
+                            characteristicsGeneratorFactory = new Factory(factoryByGtuType).setTemplates(templates);
+                            setOption(odOptions, OdOptions.GTU_TYPE, characteristicsGeneratorFactory.create(), options,
+                                    otsNetwork, definitions);
                         }
                         // no lc
                         setOption(odOptions, OdOptions.NO_LC_DIST, options.getNOLANECHANGE(), options, otsNetwork, definitions);

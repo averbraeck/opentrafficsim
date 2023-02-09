@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.generator.od;
+package org.opentrafficsim.road.od;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -15,6 +15,7 @@ import org.opentrafficsim.road.gtu.generator.CfBaRoomChecker;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGeneratorOd;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayDistribution;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -38,8 +39,7 @@ public class OdOptions
     public static final Option<IdGenerator> GTU_ID = new Option<>("gtu id", new IdGenerator(""));
 
     /** GTU characteristics generator option. */
-    public static final Option<GtuCharacteristicsGeneratorOd> GTU_TYPE =
-            new Option<>("gtu type", new DefaultGtuCharacteristicsGeneratorOd((GtuType) null));
+    public static final Option<LaneBasedGtuCharacteristicsGeneratorOd> GTU_TYPE = new Option<>("gtu type", null);
 
     /** Room checker option. */
     public static final Option<RoomChecker> ROOM_CHECKER = new Option<>("room checker", new CfBaRoomChecker());

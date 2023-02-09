@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.strategical.route;
+package org.opentrafficsim.road.gtu.strategical;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -12,6 +12,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Connector;
 import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.LinkWeight;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
@@ -19,7 +20,7 @@ import org.opentrafficsim.core.network.route.Route;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
- * Generates a route by determining one. This class is different from {@code RouteGenerator} in that it has the origin,
+ * Generates a route by determining one. This class is different from {@code Generator<Route>} in that it has the origin,
  * destination and GTU type as input.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -29,10 +30,10 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public interface RouteGeneratorOd
+public interface RouteGenerator
 {
     /** No route route generator. */
-    RouteGeneratorOd NULL = new RouteGeneratorOd()
+    RouteGenerator NULL = new RouteGenerator()
     {
         @Override
         public Route getRoute(final Node origin, final Node destination, final GtuType gtuType)
@@ -41,30 +42,35 @@ public interface RouteGeneratorOd
         }
     };
 
-    /** Cache of default route generators per stream. */
-    Map<StreamInterface, RouteGeneratorOd> DEFAULT_MAP = new LinkedHashMap<>();
+    /** Cache of default route generators per stream and link-weight. */
+    MultiKeyMap<RouteGenerator> DEFAULT_SUPPLIERS = new MultiKeyMap<>(StreamInterface.class, LinkWeight.class);
 
     /**
      * Returns a default route generator for shortest routes based on the given stream.
      * @param stream StreamInterface; random number stream
+     * @param linkWeight LinkWeight; link weight.
      * @return RouteSupplier; default route generator for shortest routes based on the given stream
      */
-    static RouteGeneratorOd getDefaultRouteSupplier(final StreamInterface stream)
+    static RouteGenerator getDefaultRouteSupplier(final StreamInterface stream, final LinkWeight linkWeight)
     {
-        RouteGeneratorOd def = DEFAULT_MAP.get(stream);
+        RouteGenerator def = DEFAULT_SUPPLIERS.get(stream, linkWeight);
         if (def == null)
         {
-            def = new DefaultRouteGenerator(stream);
-            DEFAULT_MAP.put(stream, def);
+            def = new DefaultRouteGenerator(stream, linkWeight);
+            DEFAULT_SUPPLIERS.put(def, stream, linkWeight);
         }
         return def;
     }
 
     /** Shortest route route generator. */
-    class DefaultRouteGenerator implements RouteGeneratorOd
+    class DefaultRouteGenerator implements RouteGenerator
     {
         /** Shortest route cache. */
-        private MultiKeyMap<Route> shortestRouteCache = new MultiKeyMap<>(GtuType.class, Node.class, Node.class, List.class);
+        private final MultiKeyMap<Route> shortestRouteCache =
+                new MultiKeyMap<>(GtuType.class, Node.class, Node.class, List.class);
+
+        /** Link weight. */
+        private final LinkWeight linkWeight;
 
         /** Stream of random numbers. */
         private final StreamInterface stream;
@@ -72,11 +78,14 @@ public interface RouteGeneratorOd
         /**
          * Constructor.
          * @param stream StreamInterface; stream of random numbers
+         * @param linkWeight LinkWeight; link weight.
          */
-        public DefaultRouteGenerator(final StreamInterface stream)
+        public DefaultRouteGenerator(final StreamInterface stream, final LinkWeight linkWeight)
         {
             Throw.whenNull(stream, "Stream may not be null.");
+            Throw.whenNull(linkWeight, "Link weight may not be null.");
             this.stream = stream;
+            this.linkWeight = linkWeight;
         }
 
         /** {@inheritDoc} */
@@ -97,20 +106,17 @@ public interface RouteGeneratorOd
                     testViaNode.add(linkEntryNode);
                     try
                     {
-                        if (origin.getNetwork().getShortestRouteBetween(gtuType, origin, destination, viaNodes) != null)
+                        if (origin.getNetwork().getShortestRouteBetween(gtuType, origin, destination, viaNodes,
+                                this.linkWeight) != null)
                         {
                             Double weight = ((Connector) link).getDemandWeight();
                             links.put(link, weight);
                             cumulWeight += weight;
                         }
-                        else
-                        {
-                            System.out.println("No route from origin to link; NOT including link " + link);
-                        }
                     }
                     catch (NetworkException e)
                     {
-                        e.printStackTrace();
+                        // ignore this link
                     }
                 }
                 if (link.getStartNode().equals(origin) || link.getEndNode().equals(origin))
@@ -120,49 +126,39 @@ public interface RouteGeneratorOd
             }
             if (cumulWeight > 0.0 && links.size() > 1 && (!directLinkExists))
             {
-                System.out.println("Need to select access point to destination from " + links.size() + " options:");
-                for (Link link : links.keySet())
-                {
-                    System.out.println(" " + link);
-                }
                 Link via = Draw.drawWeighted(links, this.stream);
-                // System.out.println("selected via " + via);
                 if (via.getEndNode().equals(destination))
                 {
-                    // System.out
-                    // .println("using start node to force use of randomly selected access point to destination centroid");
                     viaNodes.add(via.getStartNode());
                 }
                 else if (via.getStartNode().equals(destination))
                 {
-                    // System.out.println("using end node to force use of randomly selected access point to destination
-                    // centroid");
                     viaNodes.add(via.getEndNode());
                 }
                 else
                 {
-                    // System.out.println("using end node (could also have used start node) to force use of randomly "
-                    // + "selected access point to destination centroid");
                     viaNodes.add(via.getEndNode());
                 }
-                if (viaNodes.size() > 0 && viaNodes.get(0).isCentroid())
-                {
-                    System.out.println("oops:   via node is a centroid");
-                }
-                System.out.println("Selected via node(s) " + viaNodes);
             }
-            // XXX make silent, as the higher level method should draw another destination if the route does not exist
-            return this.shortestRouteCache.get(
-                    () -> Try.assign(() -> origin.getNetwork().getShortestRouteBetween(gtuType, origin, destination, viaNodes),
-                            "Could not determine the shortest route from %s to %s via %s.", origin, destination, viaNodes),
-                    gtuType, origin, destination, viaNodes);
+            if (!this.linkWeight.isStatic())
+            {
+                return Try.assign(
+                        () -> origin.getNetwork().getShortestRouteBetween(gtuType, origin, destination, viaNodes,
+                                this.linkWeight),
+                        "Could not determine the shortest route from %s to %s via %s.", origin, destination, viaNodes);
+            }
+            return this.shortestRouteCache.get(() -> Try.assign(
+                    () -> origin.getNetwork().getShortestRouteBetween(gtuType, origin, destination, viaNodes, this.linkWeight),
+                    "Could not determine the shortest route from %s to %s via %s.", origin, destination, viaNodes), gtuType,
+                    origin, destination, viaNodes);
         }
 
         /** {@inheritDoc} */
         @Override
         public String toString()
         {
-            return "ShortestRouteGtuCharacteristicsGeneratorOD [shortestRouteCache=" + this.shortestRouteCache + "]";
+            return "DefaultRouteGenerator [linkWeight=" + this.linkWeight + "shortestRouteCache=" + this.shortestRouteCache
+                    + "]";
         }
     };
 

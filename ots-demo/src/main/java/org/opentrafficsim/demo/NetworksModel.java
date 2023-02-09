@@ -49,14 +49,13 @@ import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.generator.CfRoomChecker;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuType;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuTypeDistribution;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplate;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplateDistribution;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
-import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
-import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -105,10 +104,10 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
     private final OtsRoadNetwork network = new OtsRoadNetwork("network", getSimulator());
 
     /** Strategical planner generator for cars. */
-    private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactoryCars = null;
+    private LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactoryCars = null;
 
     /** Strategical planner generator for trucks. */
-    private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactoryTrucks = null;
+    private LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactoryTrucks = null;
 
     /** The probability that the next generated GTU is a passenger car. */
     private double carProbability;
@@ -382,12 +381,12 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
     private LaneBasedGtuGenerator makeGenerator(final Lane lane)
             throws GtuException, SimRuntimeException, ProbabilityException, ParameterException, NetworkException
     {
-        Distribution<LaneBasedTemplateGtuType> distribution = new Distribution<>(this.stream);
+        Distribution<LaneBasedGtuTemplate> distribution = new Distribution<>(this.stream);
         Length initialPosition = new Length(16, METER);
         Set<LanePosition> initialPositions = new LinkedHashSet<>(1);
         initialPositions.add(new LanePosition(lane, initialPosition));
 
-        LaneBasedTemplateGtuType template = makeTemplate(this.stream, lane,
+        LaneBasedGtuTemplate template = makeTemplate(this.stream, lane,
                 new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(this.stream, 3, 6), METER),
                 new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(this.stream, 1.6, 2.0), METER),
                 new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistUniform(this.stream, 140, 180), KM_PER_HOUR),
@@ -401,7 +400,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
                 initialPositions, this.strategicalPlannerFactoryTrucks);
         // System.out.println("Constructed template " + template);
         distribution.add(new FrequencyAndObject<>(1.0 - this.carProbability, template));
-        LaneBasedTemplateGtuTypeDistribution templateDistribution = new LaneBasedTemplateGtuTypeDistribution(distribution);
+        LaneBasedGtuTemplateDistribution templateDistribution = new LaneBasedGtuTemplateDistribution(distribution);
         LaneBasedGtuGenerator.RoomChecker roomChecker = new CfRoomChecker();
         return new LaneBasedGtuGenerator(lane.getId(), new Generator<Duration>()
         {
@@ -423,19 +422,19 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
      * @param maximumSpeedDistribution ContinuousDistDoubleScalar.Rel&lt;Speed,SpeedUnit&gt;; distribution of the GTU's maximum
      *            speed
      * @param initialPositions Set&lt;DirectedLanePosition&gt;; initial position(s) of the GTU on the Lane(s)
-     * @param strategicalPlannerFactory LaneBasedStrategicalPlannerFactory&lt;LaneBasedStrategicalPlanner&gt;; factory to
-     *            generate the strategical planner for the GTU
+     * @param strategicalPlannerFactory LaneBasedStrategicalPlannerFactory&lt;?&gt;; factory to generate the strategical planner
+     *            for the GTU
      * @return template for a GTU
      * @throws GtuException when characteristics cannot be initialized
      */
-    LaneBasedTemplateGtuType makeTemplate(final StreamInterface randStream, final Lane lane,
+    LaneBasedGtuTemplate makeTemplate(final StreamInterface randStream, final Lane lane,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDistribution,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDistribution,
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDistribution,
-            final Set<LanePosition> initialPositions,
-            final LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory) throws GtuException
+            final Set<LanePosition> initialPositions, final LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory)
+            throws GtuException
     {
-        return new LaneBasedTemplateGtuType(DefaultsNl.CAR, new Generator<Length>()
+        return new LaneBasedGtuTemplate(DefaultsNl.CAR, new Generator<Length>()
         {
             @Override
             public Length draw()

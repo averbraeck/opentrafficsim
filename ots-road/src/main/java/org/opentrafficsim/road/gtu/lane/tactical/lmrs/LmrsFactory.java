@@ -67,10 +67,9 @@ public class LmrsFactory extends AbstractLaneBasedTacticalPlannerFactory<Lmrs> i
      * @param carFollowingModelFactory CarFollowingModelFactory&lt;? extends CarFollowingModel&gt;; factory of the car-following
      *            model
      * @param perceptionFactory PerceptionFactory; perception factory
-     * @throws GtuException if the supplied car-following model does not have an accessible empty constructor
      */
     public LmrsFactory(final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory,
-            final PerceptionFactory perceptionFactory) throws GtuException
+            final PerceptionFactory perceptionFactory)
     {
         super(carFollowingModelFactory, perceptionFactory);
         this.synchronization = Synchronization.PASSIVE;

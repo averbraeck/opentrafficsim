@@ -76,25 +76,7 @@ public class GtuTest
         {
 
             @Override
-            public Node nextNode(final Node node, final Link previousLink, final GtuType gtuType) throws NetworkException
-            {
-                return null;
-            }
-
-            @Override
             public Node nextNode(final Link link, final GtuType gtuType) throws NetworkException
-            {
-                return null;
-            }
-
-            @Override
-            public Link nextLink(final Node node, final Link previousLink, final GtuType gtuType) throws NetworkException
-            {
-                return null;
-            }
-
-            @Override
-            public Link nextLink(final Link link, final GtuType gtuType) throws NetworkException
             {
                 return null;
             }
@@ -131,6 +113,12 @@ public class GtuTest
 
             @Override
             public Node getDestination()
+            {
+                return null;
+            }
+
+            @Override
+            public Link nextLink(final Link previousLink, final GtuType gtuType) throws NetworkException
             {
                 return null;
             }

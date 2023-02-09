@@ -1,15 +1,14 @@
-package org.opentrafficsim.road.gtu.generator.od;
+package org.opentrafficsim.road.gtu.generator.characteristics;
 
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
-import org.opentrafficsim.road.gtu.strategical.od.Category;
+import org.opentrafficsim.road.od.Category;
 
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
- * Interface for classes that generate GTU characteristics based on an OD. Contrary to lower-level vehicle generation, the OD
- * can pre-determine some information, such as GTU type and route.
+ * Interface for classes that generate GTU characteristics based on OD information. Additional to
+ * {@code LaneBasedGtuCharacteristicsGenerator} this class draws based on origin, destination, category, and a random stream.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -18,7 +17,8 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public interface GtuCharacteristicsGeneratorOd
+@FunctionalInterface
+public interface LaneBasedGtuCharacteristicsGeneratorOd
 {
 
     /**

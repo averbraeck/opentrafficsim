@@ -7,7 +7,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.gtu.TemplateGtuType;
+import org.opentrafficsim.core.gtu.GtuTemplate;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
@@ -21,7 +21,7 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactor
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class LaneBasedTemplateGtuType extends TemplateGtuType implements LaneBasedGtuCharacteristicsGenerator
+public class LaneBasedGtuTemplate extends GtuTemplate implements LaneBasedGtuCharacteristicsGenerator
 {
     /** */
     private static final long serialVersionUID = 20160101L;
@@ -31,9 +31,6 @@ public class LaneBasedTemplateGtuType extends TemplateGtuType implements LaneBas
 
     /** Route Generator. */
     private final Generator<Route> routeGenerator;
-
-    /** Generator for the initial speed of the next GTU. */
-    private Generator<Speed> initialSpeedGenerator;
 
     /**
      * @param gtuType GtuType; The GtuType to make it identifiable.
@@ -49,7 +46,7 @@ public class LaneBasedTemplateGtuType extends TemplateGtuType implements LaneBas
      * @throws NullPointerException when one or more parameters are null
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public LaneBasedTemplateGtuType(final GtuType gtuType, final Generator<Length> lengthGenerator,
+    public LaneBasedGtuTemplate(final GtuType gtuType, final Generator<Length> lengthGenerator,
             final Generator<Length> widthGenerator, final Generator<Speed> maximumSpeedGenerator,
             final LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory, final Generator<Route> routeGenerator)
             throws NullPointerException
@@ -79,7 +76,7 @@ public class LaneBasedTemplateGtuType extends TemplateGtuType implements LaneBas
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return String.format("LaneBasedGtuTemplate [%s, %s, %s]", this.strategicalPlannerFactory, this.initialSpeedGenerator,
+        return String.format("LaneBasedGtuTemplate [%s, %s]", this.strategicalPlannerFactory,
                 super.toString());
     }
 

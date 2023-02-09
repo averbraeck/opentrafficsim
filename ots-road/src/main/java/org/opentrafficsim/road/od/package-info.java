@@ -7,4 +7,4 @@
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-package org.opentrafficsim.road.gtu.strategical.od;
+package org.opentrafficsim.road.od;

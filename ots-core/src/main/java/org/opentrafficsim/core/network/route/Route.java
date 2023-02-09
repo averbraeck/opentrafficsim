@@ -76,7 +76,7 @@ public class Route implements Serializable, Identifiable
             {
                 if (!fromNode.isConnectedTo(this.gtuType, toNode))
                 {
-                    throw new NetworkException("CompleteRoute: node " + fromNode
+                    throw new NetworkException("Route: node " + fromNode
                             + " not directly or not directionally connected to node " + toNode);
                 }
             }
@@ -141,7 +141,7 @@ public class Route implements Serializable, Identifiable
             Node lastNode = getNodes().get(getNodes().size() - 1);
             if (!lastNode.isConnectedTo(this.gtuType, node))
             {
-                throw new NetworkException("CompleteRoute: last node " + lastNode
+                throw new NetworkException("Route: last node " + lastNode
                         + " not directly or not directionally connected to node " + node);
             }
         }
@@ -281,7 +281,7 @@ public class Route implements Serializable, Identifiable
     @Override
     public String toString()
     {
-        return "CompleteRoute [id=" + this.id + ", gtuType=" + this.gtuType + ", nodes=" + this.nodes + "]";
+        return "Route [id=" + this.id + ", gtuType=" + this.gtuType + ", nodes=" + this.nodes + "]";
     }
 
 }

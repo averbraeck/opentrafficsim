@@ -30,7 +30,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFacto
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
-import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -78,10 +78,10 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
     private StreamInterface stream = new MersenneTwister(12345);
 
     /** Strategical planner generator for cars. */
-    private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerGeneratorCars = null;
+    private LaneBasedStrategicalPlannerFactory<?> strategicalPlannerGeneratorCars = null;
 
     /** Strategical planner generator for trucks. */
-    private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerGeneratorTrucks = null;
+    private LaneBasedStrategicalPlannerFactory<?> strategicalPlannerGeneratorTrucks = null;
 
     /** Car parameters. */
     private Parameters parametersCar;

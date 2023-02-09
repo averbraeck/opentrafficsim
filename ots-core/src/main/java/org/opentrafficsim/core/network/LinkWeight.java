@@ -115,4 +115,13 @@ public interface LinkWeight
     {
         return null;
     }
+
+    /**
+     * Returns whether the link weights are static. In that case caching may be done on shortest routes.
+     * @return boolean; whether the link weights are static.
+     */
+    default boolean isStatic()
+    {
+        return true;
+    }
 }

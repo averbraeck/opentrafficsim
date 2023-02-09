@@ -1,11 +1,15 @@
 package org.opentrafficsim.road.gtu.strategical;
 
+import java.io.Serializable;
+
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactory;
 import org.opentrafficsim.core.parameters.ParameterFactoryDefault;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -13,9 +17,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 
 /**
- * Factory for creating {@code LaneBasedStrategicalRoutePlanner} using any {@code LaneBasedTacticalPlannerFactory}. This
- * abstract class deals with forwarding peeking from the GTU generator to the tactical planner factory. Parameters are set using
- * a {@code ParameterFactory}, after the method {@code setParameters()} has been called, which subclasses need to implement.
+ * Factory for creating {@code LaneBasedStrategicalRoutePlanner} using any {@code LaneBasedTacticalPlannerFactory}.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -23,14 +25,19 @@ import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
- * @param <T> class of the strategical planner generated
  */
-public abstract class AbstractLaneBasedStrategicalPlannerFactory<T extends LaneBasedStrategicalPlanner>
-        implements LaneBasedStrategicalPlannerFactory<T>
+public class LaneBasedStrategicalRoutePlannerFactory
+        implements LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalRoutePlanner>, Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20160811L;
 
     /** Factory for tactical planners. */
     private final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory;
+
+    /** Route supplier. */
+    private final RouteGenerator routeGenerator;
 
     /** Parameter factory. */
     private final ParameterFactory parameterFactory;
@@ -43,10 +50,11 @@ public abstract class AbstractLaneBasedStrategicalPlannerFactory<T extends LaneB
      * @param tacticalPlannerFactory LaneBasedTacticalPlannerFactory&lt;? extends LaneBasedTacticalPlanner&gt;; factory for
      *            tactical planners
      */
-    public AbstractLaneBasedStrategicalPlannerFactory(
+    public LaneBasedStrategicalRoutePlannerFactory(
             final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory)
     {
         this.tacticalPlannerFactory = tacticalPlannerFactory;
+        this.routeGenerator = RouteGenerator.NULL;
         this.parameterFactory = new ParameterFactoryDefault();
     }
 
@@ -56,12 +64,29 @@ public abstract class AbstractLaneBasedStrategicalPlannerFactory<T extends LaneB
      *            tactical planners
      * @param parametersFactory ParameterFactory; factory for parameters
      */
-    public AbstractLaneBasedStrategicalPlannerFactory(
+    public LaneBasedStrategicalRoutePlannerFactory(
             final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory,
             final ParameterFactory parametersFactory)
     {
         this.tacticalPlannerFactory = tacticalPlannerFactory;
+        this.routeGenerator = RouteGenerator.NULL;
         this.parameterFactory = parametersFactory;
+    }
+
+    /**
+     * Constructor with factory for tactical planners.
+     * @param tacticalPlannerFactory LaneBasedTacticalPlannerFactory&lt;? extends LaneBasedTacticalPlanner&gt;; factory for
+     *            tactical planners
+     * @param parametersFactory ParameterFactory; factory for parameters
+     * @param routeGenerator RouteGenerator; route supplier
+     */
+    public LaneBasedStrategicalRoutePlannerFactory(
+            final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory,
+            final ParameterFactory parametersFactory, final RouteGenerator routeGenerator)
+    {
+        this.tacticalPlannerFactory = tacticalPlannerFactory;
+        this.parameterFactory = parametersFactory;
+        this.routeGenerator = routeGenerator;
     }
 
     /** {@inheritDoc} */
@@ -94,11 +119,6 @@ public abstract class AbstractLaneBasedStrategicalPlannerFactory<T extends LaneB
         try
         {
             this.peekedParameters = this.tacticalPlannerFactory.getParameters();
-            Parameters parameters = getParameters();
-            if (parameters != null)
-            {
-                parameters.setAllIn(this.peekedParameters);
-            }
             this.parameterFactory.setValues(this.peekedParameters, gtuType);
         }
         catch (ParameterException exception)
@@ -108,13 +128,16 @@ public abstract class AbstractLaneBasedStrategicalPlannerFactory<T extends LaneB
         return this.peekedParameters;
     }
 
-    /**
-     * Returns parameters specific to the strategical planner. The input already contains parameters from the tactical planner.
-     * After this method, the {@code ParameterFactory} sets or overwrites additional parameters. Hence, this method may set
-     * default (distributed) values for parameters specific to the strategical planner.
-     * @return parameters Parameters; parameters for the strategical planner, may be {@code null}
-     */
-    protected abstract Parameters getParameters();
+    /** {@inheritDoc} */
+    @Override
+    public final LaneBasedStrategicalRoutePlanner create(final LaneBasedGtu gtu, final Route route, final Node origin,
+            final Node destination) throws GtuException
+    {
+        LaneBasedStrategicalRoutePlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
+                this.tacticalPlannerFactory.create(gtu), route, gtu, origin, destination, this.routeGenerator);
+        gtu.setParameters(nextParameters(gtu.getType()));
+        return strategicalPlanner;
+    }
 
     /**
      * Returns the parameters for the next GTU.
@@ -129,24 +152,11 @@ public abstract class AbstractLaneBasedStrategicalPlannerFactory<T extends LaneB
         return parameters;
     }
 
-    /**
-     * Returns the next tactical planner.
-     * @param gtu LaneBasedGtu; GTU to be generated
-     * @return T; next tactical planner
-     * @throws GtuException on exception during tactical planner creation
-     */
-    protected final LaneBasedTacticalPlanner nextTacticalPlanner(final LaneBasedGtu gtu) throws GtuException
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
     {
-        return this.tacticalPlannerFactory.create(gtu);
-    }
-
-    /**
-     * Returns the tactical planner factory.
-     * @return LaneBasedTacticalPlannerFactory; tactical planner factory
-     */
-    protected final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> getTacticalPlannerFactory()
-    {
-        return this.tacticalPlannerFactory;
+        return "LaneBasedStrategicalRoutePlannerFactory [tacticalPlannerFactory=" + this.tacticalPlannerFactory + "]";
     }
 
 }

@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.strategical.od;
+package org.opentrafficsim.road.od;
 
 import java.io.Serializable;
 import java.util.ArrayList;

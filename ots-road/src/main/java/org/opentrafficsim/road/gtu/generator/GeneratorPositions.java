@@ -21,7 +21,6 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.RoadPosition.BySpeed;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.RoadPosition.ByValue;
-import org.opentrafficsim.road.gtu.strategical.route.RouteGeneratorOd;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
@@ -131,11 +130,7 @@ public final class GeneratorPositions
         Map<Link, Set<LanePosition>> linkSplit = new LinkedHashMap<>();
         for (LanePosition position : positions)
         {
-            if (!linkSplit.containsKey(position.getLane().getParentLink()))
-            {
-                linkSplit.put(position.getLane().getParentLink(), new LinkedHashSet<>());
-            }
-            linkSplit.get(position.getLane().getParentLink()).add(position);
+            linkSplit.computeIfAbsent(position.getLane().getParentLink(), (link) -> new LinkedHashSet<>()).add(position);
         }
 
         // create list of GeneratorLinkPositions
@@ -589,9 +584,15 @@ public final class GeneratorPositions
                     // let's check whether any route is possible over this link
                     if (glp.getViaNode() != null)
                     {
-                        // this uses a shortest-path algorithm with caching
-                        Route r = RouteGeneratorOd.getDefaultRouteSupplier(stream).getRoute(glp.getViaNode(), destination,
-                                gtuType);
+                        Route r;
+                        try
+                        {
+                            r = glp.getViaNode().getNetwork().getShortestRouteBetween(gtuType, glp.getViaNode(), destination);
+                        }
+                        catch (NetworkException exception)
+                        {
+                            r = null;
+                        }
                         if (r != null)
                         {
                             map.put(glp, glp.getWeight(gtuType));

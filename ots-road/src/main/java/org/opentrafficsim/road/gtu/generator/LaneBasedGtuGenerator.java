@@ -490,6 +490,69 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
         this.disabled = new LinkedHashSet<>();
     }
 
+
+    /** {@inheritDoc} */
+    @Override
+    public String getFullId()
+    {
+        return this.uniqueId;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Set<GtuGeneratorPosition> getPositions()
+    {
+        Set<GtuGeneratorPosition> set = new LinkedHashSet<>();
+        for (GeneratorLanePosition lanePosition : this.generatorPositions.getAllPositions())
+        {
+            DirectedPoint p = lanePosition.getPosition().iterator().next().getLocation();
+            set.add(new GtuGeneratorPosition()
+            {
+                /** {@inheritDoc} */
+                @Override
+                public Point<?> getLocation() throws RemoteException
+                {
+                    return p;
+                }
+
+                /** {@inheritDoc} */
+                @Override
+                public Bounds<?, ?, ?> getBounds() throws RemoteException
+                {
+                    return new Bounds2d(-2.0, 2.0, -2.0, 2.0);
+                }
+
+                /** {@inheritDoc} */
+                @Override
+                public int getQueueCount()
+                {
+                    return getQueueLength(lanePosition);
+                }
+            });
+        }
+        return set;
+    }
+
+    /**
+     * Returns the number of GTUs in queue at the position.
+     * @param position GeneratorLanePosition; position.
+     * @return int; number of GTUs in queue at the position.
+     */
+    private int getQueueLength(final GeneratorLanePosition position)
+    {
+        for (CrossSectionLink link : this.unplacedTemplates.keySet())
+        {
+            for (GeneratorLanePosition lanePosition : this.unplacedTemplates.get(link).keySet())
+            {
+                if (lanePosition.equals(position))
+                {
+                    return this.unplacedTemplates.get(link).get(lanePosition).size();
+                }
+            }
+        }
+        return 0;
+    }
+    
     /**
      * Interface for class that checks that there is sufficient room for a proposed new GTU and returns the maximum safe speed
      * and position for the proposed new GTU.
@@ -592,68 +655,6 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
             return "Placement [speed=" + this.speed + ", position=" + this.position + "]";
         }
 
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getFullId()
-    {
-        return this.uniqueId;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Set<GtuGeneratorPosition> getPositions()
-    {
-        Set<GtuGeneratorPosition> set = new LinkedHashSet<>();
-        for (GeneratorLanePosition lanePosition : this.generatorPositions.getAllPositions())
-        {
-            DirectedPoint p = lanePosition.getPosition().iterator().next().getLocation();
-            set.add(new GtuGeneratorPosition()
-            {
-                /** {@inheritDoc} */
-                @Override
-                public Point<?> getLocation() throws RemoteException
-                {
-                    return p;
-                }
-
-                /** {@inheritDoc} */
-                @Override
-                public Bounds<?, ?, ?> getBounds() throws RemoteException
-                {
-                    return new Bounds2d(-2.0, 2.0, -2.0, 2.0);
-                }
-
-                /** {@inheritDoc} */
-                @Override
-                public int getQueueCount()
-                {
-                    return getQueueLength(lanePosition);
-                }
-            });
-        }
-        return set;
-    }
-
-    /**
-     * Returns the number of GTUs in queue at the position.
-     * @param position GeneratorLanePosition; position.
-     * @return int; number of GTUs in queue at the position.
-     */
-    private int getQueueLength(final GeneratorLanePosition position)
-    {
-        for (CrossSectionLink link : this.unplacedTemplates.keySet())
-        {
-            for (GeneratorLanePosition lanePosition : this.unplacedTemplates.get(link).keySet())
-            {
-                if (lanePosition.equals(position))
-                {
-                    return this.unplacedTemplates.get(link).get(lanePosition).size();
-                }
-            }
-        }
-        return 0;
     }
 
 }

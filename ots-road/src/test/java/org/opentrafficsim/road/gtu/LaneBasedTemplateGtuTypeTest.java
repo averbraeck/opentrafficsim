@@ -25,14 +25,14 @@ import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.gtu.TemplateGtuType;
+import org.opentrafficsim.core.gtu.GtuTemplate;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuType;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplate;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
@@ -75,7 +75,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 180), KM_PER_HOUR);
         OtsModelInterface model = new DummyModelForTemplateGTUTest(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
-        LaneBasedTemplateGtuType passengerCar = new LaneBasedTemplateGtuType(pcType, new Generator<Length>()
+        LaneBasedGtuTemplate passengerCar = new LaneBasedGtuTemplate(pcType, new Generator<Length>()
         {
             @Override
             public Length draw()
@@ -105,7 +105,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 2.2), METER);
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> truckMaximumSpeed =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 110), KM_PER_HOUR);
-        LaneBasedTemplateGtuType truck = new LaneBasedTemplateGtuType(truckType, new Generator<Length>()
+        LaneBasedGtuTemplate truck = new LaneBasedGtuTemplate(truckType, new Generator<Length>()
         {
             @Override
             public Length draw()
@@ -178,7 +178,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 1.6), METER);
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> pcMaximumSpeed =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 180), KM_PER_HOUR);
-        TemplateGtuType passengerCar = new TemplateGtuType(pc, new Generator<Length>()
+        GtuTemplate passengerCar = new GtuTemplate(pc, new Generator<Length>()
         {
             @Override
             public Length draw()
@@ -207,7 +207,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 2.2), METER);
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> truckMaximumSpeed =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 110), KM_PER_HOUR);
-        TemplateGtuType truck = new TemplateGtuType(truckType, new Generator<Length>()
+        GtuTemplate truck = new GtuTemplate(truckType, new Generator<Length>()
         {
             @Override
             public Length draw()
@@ -270,7 +270,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
      * @throws GtuException in case of a GTU exception
      * @throws NamingException in case of a naming exception
      */
-    private void verifyFields(final LaneBasedTemplateGtuType templateGtuType, final GtuType gtuType,
+    private void verifyFields(final LaneBasedGtuTemplate templateGtuType, final GtuType gtuType,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> length,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> width,
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeed)
