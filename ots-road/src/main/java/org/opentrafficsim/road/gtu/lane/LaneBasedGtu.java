@@ -745,6 +745,12 @@ public class LaneBasedGtu extends Gtu
             Time enterTime = timeAtLine(enterLine, getFront());
             if (enterTime != null)
             {
+                if (Double.isNaN(enterTime.si))
+                {
+                    // NaN indicates we just missed it between moves, due to curvature and small gaps
+                    enterTime = getSimulator().getSimulatorAbsTime();
+                    CategoryLogger.always().error("GTU {} enters cross-section through hack.", getId());
+                }
                 if (enterTime.lt(getSimulator().getSimulatorAbsTime()))
                 {
                     System.err.println(
@@ -890,6 +896,12 @@ public class LaneBasedGtu extends Gtu
             }
             if (leaveTime != null)
             {
+                if (Double.isNaN(leaveTime.si))
+                {
+                    // NaN indicates we just missed it between moves, due to curvature and small gaps
+                    leaveTime = getSimulator().getSimulatorAbsTime();
+                    CategoryLogger.always().error("GTU {} leaves cross-section through hack.", getId());
+                }
                 if (leaveTime.lt(getSimulator().getSimulatorAbsTime()))
                 {
                     System.err.println(
@@ -944,7 +956,7 @@ public class LaneBasedGtu extends Gtu
             {
                 RelativePosition pos = this.getRelativePositions().get(detector.getPositionType());
                 Time time = timeAtLine(detector.getGeometry(), pos);
-                if (time != null)
+                if (time != null && !Double.isNaN(time.si))
                 {
                     this.sensorEvents.add(getSimulator().scheduleEventAbsTime(time, detector, "trigger", new Object[] {this}));
                 }
@@ -1091,7 +1103,10 @@ public class LaneBasedGtu extends Gtu
                 {
                     // return getSimulator().getSimulatorAbsTime(); // this was a mistake...
                     // relative position already crossed the point, e.g. FRONT
-                    return null;
+                    // SKL 02-08-2023: if the nose did not trigger at and of last move by mm's and due to vehicle rotation
+                    // having been assumed straight, we should trigger it now. However, we should not double-trigger e.g. 
+                    // detectors. Let's return NaN to indicate this problem.
+                    return Time.instantiateSI(Double.NaN);
                 }
                 if (cumul <= getOperationalPlan().getTotalLength().si)
                 {
