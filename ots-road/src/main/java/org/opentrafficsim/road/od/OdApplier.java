@@ -139,21 +139,7 @@ public final class OdApplier
         boolean markovian = od.getCategorization().entails(GtuType.class);
 
         // TODO clean up stream acquiring code after task OTS-315 has been completed
-        StreamInterface stream = simulator.getModel().getStream("generation");
-        if (stream == null)
-        {
-            stream = simulator.getModel().getStream("default");
-            if (stream == null)
-            {
-                System.out
-                        .println("Using locally created stream (not from the simulator) for vehicle generation, with seed 1.");
-                stream = new MersenneTwister(1L);
-            }
-            else
-            {
-                System.out.println("Using stream 'default' for vehicle generation.");
-            }
-        }
+        StreamInterface stream = getStream(simulator);
 
         Map<String, GeneratorObjects> output = new LinkedHashMap<>();
         for (Node origin : od.getOrigins())
@@ -343,8 +329,23 @@ public final class OdApplier
                 HeadwayDistribution randomization = odOptions.get(OdOptions.HEADWAY_DIST, lane, o, linkType);
                 ArrivalsHeadwayGenerator headwayGenerator =
                         new ArrivalsHeadwayGenerator(root, simulator, stream, randomization);
-                GtuCharacteristicsGeneratorODWrapper characteristicsGenerator = new GtuCharacteristicsGeneratorODWrapper(root,
-                        simulator, odOptions.get(OdOptions.GTU_TYPE, lane, o, linkType), stream);
+                LaneBasedGtuCharacteristicsGeneratorOd characteristicsGeneratorOd =
+                        odOptions.get(OdOptions.GTU_TYPE, lane, o, linkType);
+                LaneBasedGtuCharacteristicsGenerator characteristicsGenerator = new LaneBasedGtuCharacteristicsGenerator()
+                {
+                    /** {@inheritDoc} */
+                    @Override
+                    public LaneBasedGtuCharacteristics draw() throws ProbabilityException, ParameterException, GtuException
+                    {
+                        Time time = simulator.getSimulatorAbsTime();
+                        Node origin = root.getObject();
+                        DemandNode<Node, DemandNode<Category, ?>> destinationNode = root.draw(time);
+                        Node destination = destinationNode.getObject();
+                        Category category = destinationNode.draw(time).getObject();
+                        return characteristicsGeneratorOd.draw(origin, destination, category, stream);
+                    }
+                };
+
                 RoomChecker roomChecker = odOptions.get(OdOptions.ROOM_CHECKER, lane, o, linkType);
                 IdGenerator idGenerator = odOptions.get(OdOptions.GTU_ID, lane, o, linkType);
                 LaneBiases biases = odOptions.get(OdOptions.LANE_BIAS, lane, o, linkType);
@@ -380,6 +381,31 @@ public final class OdApplier
             }
         }
         return output;
+    }
+
+    /**
+     * Obtains a stream for vehicle generation.
+     * @param simulator OtsSimulatorInterface; simulator.
+     * @return StreamInterface; stream for vehicle generation.
+     */
+    private static StreamInterface getStream(final OtsSimulatorInterface simulator)
+    {
+        StreamInterface stream = simulator.getModel().getStream("generation");
+        if (stream == null)
+        {
+            stream = simulator.getModel().getStream("default");
+            if (stream == null)
+            {
+                System.out
+                        .println("Using locally created stream (not from the simulator) for vehicle generation, with seed 1.");
+                stream = new MersenneTwister(1L);
+            }
+            else
+            {
+                System.out.println("Using stream 'default' for vehicle generation.");
+            }
+        }
+        return stream;
     }
 
     /**
@@ -810,74 +836,6 @@ public final class OdApplier
             this.previousGtuType = this.markov.drawState(this.previousGtuType, gtuTypes, intensities, stream);
             return this.previousGtuType;
         }
-    }
-
-    /**
-     * Characteristics generation based on OD demand.
-     * <p>
-     * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * <p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
-     */
-    private static class GtuCharacteristicsGeneratorODWrapper implements LaneBasedGtuCharacteristicsGenerator
-    {
-
-        /** Root node with origin. */
-        private final DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root;
-
-        /** Simulator. */
-        private final OtsSimulatorInterface simulator;
-
-        /** Characteristics generator based on OD information. */
-        private final LaneBasedGtuCharacteristicsGeneratorOd characteristicsGenerator;
-
-        /** Stream for random numbers. */
-        private final StreamInterface randomStream;
-
-        /**
-         * @param root DemandNode&lt;Node, DemandNode&lt;Node, DemandNode&lt;Category, ?&gt;&gt;&gt;; root node with origin
-         * @param simulator OTSSimulatorInterface; simulator
-         * @param characteristicsGenerator GtuCharacteristicsGeneratorOD; characteristics generator based on OD information
-         * @param randomStream StreamInterface; stream for random numbers
-         */
-        GtuCharacteristicsGeneratorODWrapper(final DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root,
-                final OtsSimulatorInterface simulator, final LaneBasedGtuCharacteristicsGeneratorOd characteristicsGenerator,
-                final StreamInterface randomStream)
-        {
-            this.root = root;
-            this.simulator = simulator;
-            this.characteristicsGenerator = characteristicsGenerator;
-            this.randomStream = randomStream;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public LaneBasedGtuCharacteristics draw() throws ProbabilityException, ParameterException, GtuException
-        {
-            // obtain node objects
-            Time time = this.simulator.getSimulatorAbsTime();
-            Node origin = this.root.getObject();
-            DemandNode<Node, DemandNode<Category, ?>> destinationNode = this.root.draw(time);
-            Node destination = destinationNode.getObject();
-            Category category = destinationNode.draw(time).getObject();
-            // forward to lower-level generator
-            // XXX typically calls DefaultGtuCharacteristicsGeneratorOD.draw(...)
-            return this.characteristicsGenerator.draw(origin, destination, category, this.randomStream);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String toString()
-        {
-            return "GtuCharacteristicsGeneratorODWrapper [root=" + this.root + ", simulator=" + this.simulator
-                    + ", characteristicsGenerator=" + this.characteristicsGenerator + ", randomStream=" + this.randomStream
-                    + "]";
-        }
-
     }
 
     /**
