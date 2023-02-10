@@ -227,7 +227,10 @@ public class SamplerData<G extends GtuData> extends Table
                 String csvName = name.toLowerCase().endsWith(".zip") ? name.substring(0, name.length() - 4) : name;
                 CsvData.writeZippedData(new CompressedFileWriter(file), csvName, csvName + ".header", this);
             }
-            CsvData.writeData(file, file + ".header", this);
+            else
+            {
+                CsvData.writeData(file, file + ".header", this);
+            }
         }
         catch (IOException | TextSerializationException exception)
         {
