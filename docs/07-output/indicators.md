@@ -1,13 +1,13 @@
 # Performance indicators
 
-Performance indicators as calculated based on trajectories are extensions of `AbstractIndicator`. They integrate easily with a `Sampler` using a `Query`. It is up to the specific simulation to report the calculated indicator values either during or after the simulation, there is no standard way for this in OTS. The reporting code can report a number of indicators for a number of queries. For instance average travel time and travel time delay, for different parts of the network, different time slices, different GTU types, different routes, etc. The subset of all data over which the indicator should be calculated is defined in a `Query`. It has meta data, which are pairs of a meta data type (e.g. for GTU type, route) and applicable values in the meta data set (e.g. trucks & cars, and a route from A to B). Using meta data types, categorization of indicator values is possible. For segregation in time and/or space, a number of applicable space-time regions is attached to the query. With the query being coupled to a sampler, the method `getTrajectoryGroups(…)` can provide all applicable (parts of) trajectories.
+Performance indicators as calculated based on trajectories are extensions of `AbstractIndicator`. They integrate easily with a `Sampler` using a `Query`. It is up to the specific simulation to report the calculated indicator values either during or after the simulation, there is no standard way for this in OTS. The reporting code can report a number of indicators for a number of queries. For instance average travel time and travel time delay, for different parts of the network, different time slices, different GTU types, different routes, etc. The subset of all data over which the indicator should be calculated is defined in a `Query`. It has filter data, which are pairs of a filter data type (e.g. for GTU type, route) and applicable values in the filter data set (e.g. trucks & cars, and a route from A to B). Using filter data types, categorization of indicator values is possible. For segregation in time and/or space, a number of applicable space-time regions is attached to the query. With the query being coupled to a sampler, the method `getTrajectoryGroups(…)` can provide all applicable (parts of) trajectories.
 
 <pre>
 <b>Query</b>
 &lfloor; Sampler
-&lfloor; Meta data
-  &lfloor; {Meta data type}
-  &lfloor; {Meta data set}
+&lfloor; Filter data
+  &lfloor; {Filter data type}
+  &lfloor; {Filter data set}
 &lfloor; {Space-time region}
 </pre>
 

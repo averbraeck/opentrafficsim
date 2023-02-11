@@ -381,7 +381,7 @@ public class SamplerData<G extends GtuData> extends Table
                     case "linkId":
                         data[dataIndex] = this.currentLane.getLinkData().getId();
                         break;
-                    case "laneId&dir":
+                    case "laneId":
                         data[dataIndex] = this.currentLane.getId();
                         break;
                     case "gtuId":

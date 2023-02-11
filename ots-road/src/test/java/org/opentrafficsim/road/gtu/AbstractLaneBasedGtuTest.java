@@ -348,7 +348,6 @@ public class AbstractLaneBasedGtuTest implements UNITS
         OtsRoadNode nodeCTo = new OtsRoadNode(network, "CTo", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
         Lane[] lanesGroupC = LaneFactory.makeMultiLane(network, "C", nodeCFrom, nodeCTo, null, 3, laneType,
                 new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
-        // wouter schakel car.enterLane(lanesGroupC[0], new Length(0.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS);
         for (RelativePosition relativePosition : new RelativePosition[] {car.getFront(), car.getRear()})
         {
             Map<Lane, Double> positions = car.fractionalPositions(relativePosition);
@@ -362,13 +361,6 @@ public class AbstractLaneBasedGtuTest implements UNITS
             assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos,
                     car.fractionalPosition(lanesGroupB[1], relativePosition), 0.0000001);
             pos = positions.get(lanesGroupC[0]);
-            // wouter schakel assertTrue("Car should be in lane 0 of lane group C", null != pos);
-            // The next one fails - maybe I don't understand something - PK
-            // assertEquals("fractional position should be 0", 0,
-            // car.fractionalPosition(lanesGroupC[0], relativePosition), 0.0000001);
-            // wouter schakel assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)",
-            // pos,
-            // car.fractionalPosition(lanesGroupC[0], relativePosition), 0.0000001);
         }
         // wouter schakel car.leaveLane(lanesGroupA[1]);
         for (RelativePosition relativePosition : new RelativePosition[] {car.getFront(), car.getRear()})

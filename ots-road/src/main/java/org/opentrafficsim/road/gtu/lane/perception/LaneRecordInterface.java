@@ -20,13 +20,13 @@ public interface LaneRecordInterface<R extends LaneRecordInterface<R>>
 {
 
     /**
-     * Returns a list of next lanes. Callers of this method do not have to mind GTUDirectionality, this is taken care of.
+     * Returns a list of next lanes.
      * @return List; list of next lanes
      */
     List<? extends R> getNext();
 
     /**
-     * Returns a list of previous lanes. Callers of this method do not have to mind GTUDirectionality, this is taken care of.
+     * Returns a list of previous lanes.
      * @return List; list of previous lanes
      */
     List<? extends R> getPrev();
@@ -50,8 +50,7 @@ public interface LaneRecordInterface<R extends LaneRecordInterface<R>>
     Lane getLane();
 
     /**
-     * Returns the distance from the reference to the given location. Callers of this method do not have to mind
-     * GTUDirectionality, this is taken care of.
+     * Returns the distance from the reference to the given location.
      * @param position Length; position on the lane
      * @return Length; distance from the reference to the given location
      */

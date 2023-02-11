@@ -131,7 +131,6 @@ public final class ConflictBuilderParallel
             final WidthGenerator widthGenerator, final LaneCombinationList ignoreList, final LaneCombinationList permittedList)
             throws OtsGeometryException
     {
-        // Loop Lane / GTUDirectionality combinations
         long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
         System.out.println("GENERATING CONFLICTS (SMALL JOBS). " + totalCombinations + " COMBINATIONS");
         CategoryLogger.setAllLogLevel(Level.DEBUG);
@@ -257,7 +256,6 @@ public final class ConflictBuilderParallel
             final WidthGenerator widthGenerator, final LaneCombinationList ignoreList, final LaneCombinationList permittedList)
             throws OtsGeometryException
     {
-        // Loop Lane / GTUDirectionality combinations
         long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
         System.out.println("GENERATING CONFLICTS (BIG JOBS). " + totalCombinations + " COMBINATIONS");
         CategoryLogger.setAllLogLevel(Level.DEBUG);
@@ -489,11 +487,11 @@ public final class ConflictBuilderParallel
     /**
      * Build conflicts on single lane pair.
      * @param lane1 Lane; lane 1
-     * @param down1 Map&lt;Lane,GTUDirectionality&gt;; downstream lanes 1
-     * @param up1 Map&lt;Lane,GTUDirectionality&gt;; upstream lanes 1
+     * @param down1 Set&lt;Lane&gt;; downstream lanes 1
+     * @param up1 Set&lt;Lane&gt;; upstream lanes 1
      * @param lane2 Lane; lane 2
-     * @param down2 Map&lt;Lane,GTUDirectionality&gt;; downstream lane 2
-     * @param up2 Map&lt;Lane,GTUDirectionality&gt;; upstream lanes 2
+     * @param down2 Set&lt;Lane&gt;; downstream lane 2
+     * @param up2 Set&lt;Lane&gt;; upstream lanes 2
      * @param permitted boolean; conflict permitted by traffic control
      * @param simulator OTSSimulatorInterface; simulator
      * @param widthGenerator WidthGenerator; width generator
@@ -1240,11 +1238,11 @@ public final class ConflictBuilderParallel
         /**
          * Stores conflicts about a single lane pair.
          * @param lane1 Lane; lane 1
-         * @param down1 Map&lt;Lane,GTUDirectionality&gt;; downstream lanes 1
-         * @param up1 Map&lt;Lane,GTUDirectionality&gt;; upstream lanes 1
+         * @param down1 Set&lt;Lane&gt;; downstream lanes 1
+         * @param up1 Set&lt;Lane&gt;; upstream lanes 1
          * @param lane2 Lane; lane 2
-         * @param down2 Map&lt;Lane,GTUDirectionality&gt;; downstream lane 2
-         * @param up2 Map&lt;Lane,GTUDirectionality&gt;; upstream lanes 2
+         * @param down2 Set&lt;Lane&gt;; downstream lane 2
+         * @param up2 Set&lt;Lane&gt;; upstream lanes 2
          * @param permitted boolean; conflict permitted by traffic control
          * @param simulator OTSSimulatorInterface; simulator
          * @param widthGenerator WidthGenerator; width generator

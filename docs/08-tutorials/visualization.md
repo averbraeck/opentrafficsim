@@ -2,10 +2,10 @@
 
 ## How to add a GTU colorer
 
-An important way to visualize workings of a simulation is to provide each GTU with a color that represents a value of the GTU. Typically, these are speed, acceleration, etc. To visualize a custom variable, a custom GTU colorer is required. These have to implement interface `GTUColorer`. This interface has two methods: `getColor(GTU)` and `getLegend()`. The latter is used by OTS to show a user what the colors indicate for the selected GTU colorer, for example as in Figure 4.
+An important way to visualize workings of a simulation is to provide each GTU with a color that represents a value of the GTU. Typically, these are speed, acceleration, etc. To visualize a custom variable, a custom GTU colorer is required. These have to implement interface `GTUColorer`. This interface has two methods: `getColor(GTU)` and `getLegend()`. The latter is used by OTS to show a user what the colors indicate for the selected GTU colorer, for example as in Figure 8.1.
 
-![](../images/OTS_Figure_4.png)
-_Figure 4: Legend for the ‘Speed’ GTU colorer._
+![](../images/OTS_Figure_8.1.png)
+_Figure 8.1: Legend for the ‘Speed’ GTU colorer._
 
 As an example we are going to create a colorer that indicates whether a driver is on the phone or not. We use three colors, for ‘yes’, ‘no’ and ‘unkown’. The latter is applicable if the GTU for which a color is determined, does not provide such information. With a static code block the legend is created, which is returned in `getLegend()`.
 
@@ -124,7 +124,7 @@ The class needs to implement method `paint(…)` for the actual drawing, which i
 
 The resulting animation is given in Figure 5. Despite the location at these signs pointing northeast, the text is horizontal as rotation has been disabled by `setRotate(false)`.
 
-![](../images/OTS_Figure_5.png)
-_Figure 5: Speed sign animation._
+![](../images/OTS_Figure_8.2.png)
+_Figure 8.2: Speed sign animation._
 
 To enable users to enable or disable the animation of a particular kind of object (any type of `Locatable`) OTS provides toggle buttons on the left hand side of the window. Items can be added here using several methods of `AbstractWrappableAnimation`. When setting up a simulation using `AbstractSimulationScript`, this can be done by overriding `addAnimationToggles(…)` (calling the super implementation to get all default toggle buttons). Methods `addToggleAnimationButtonText(…)` and `addToggleAnimationButtonIcon(…)` add either a check-mark with text label, or an icon button. The icon version has a last boolean input called `idButton`. When `false` a regular toggle button is added. When `true` a toggle button is added to the right hand side of the previously added button. This is used to add buttons that show or hide text labels showing ids. For example, the regular button for `Link`’s is accompanied by an id button to the right. The id button toggles the id text in the middle of the link. An example use can be found in class `AnimationToggles`, method `setIconAnimationTogglesFull(…)`. It is important to realize that the text label animates a dedicated `Locatable` extension. This allows the link and its id to be toggled separately.

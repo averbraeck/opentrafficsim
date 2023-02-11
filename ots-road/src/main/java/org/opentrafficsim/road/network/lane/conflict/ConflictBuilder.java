@@ -133,7 +133,6 @@ public final class ConflictBuilder
             final WidthGenerator widthGenerator, final LaneCombinationList ignoreList, final LaneCombinationList permittedList,
             final String conflictId) throws OtsGeometryException
     {
-        // Loop Lane / GTUDirectionality combinations
         long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
         simulator.getLogger().always().trace("GENERATING CONFLICTS (NON-PARALLEL MODE). {} COMBINATIONS", totalCombinations);
         long lastReported = 0;
@@ -233,11 +232,11 @@ public final class ConflictBuilder
     /**
      * Build conflicts on single lane pair.
      * @param lane1 Lane; lane 1
-     * @param down1 Map&lt;Lane,GTUDirectionality&gt;; downstream lanes 1
-     * @param up1 Map&lt;Lane,GTUDirectionality&gt;; upstream lanes 1
+     * @param down1 Set&lt;Lane&gt;; downstream lanes 1
+     * @param up1 Set&lt;Lane&gt;; upstream lanes 1
      * @param lane2 Lane; lane 2
-     * @param down2 Map&lt;Lane,GTUDirectionality&gt;; downstream lane 2
-     * @param up2 Map&lt;Lane,GTUDirectionality&gt;; upstream lanes 2
+     * @param down2 Set&lt;Lane&gt;; downstream lane 2
+     * @param up2 Set&lt;Lane&gt;; upstream lanes 2
      * @param permitted boolean; conflict permitted by traffic control
      * @param simulator OTSSimulatorInterface; simulator
      * @param widthGenerator WidthGenerator; width generator
@@ -1044,7 +1043,6 @@ public final class ConflictBuilder
             final WidthGenerator widthGenerator, final LaneCombinationList ignoreList, final LaneCombinationList permittedList)
             throws OtsGeometryException
     {
-        // Loop Lane / GTUDirectionality combinations
         long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
         System.out.println("PARALLEL GENERATING OF CONFLICTS (SMALL JOBS). " + totalCombinations + " COMBINATIONS");
         long lastReported = 0;
@@ -1172,7 +1170,6 @@ public final class ConflictBuilder
             final WidthGenerator widthGenerator, final LaneCombinationList ignoreList, final LaneCombinationList permittedList)
             throws OtsGeometryException
     {
-        // Loop Lane / GTUDirectionality combinations
         long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
         System.out.println("PARALLEL GENERATING OF CONFLICTS (BIG JOBS). " + totalCombinations + " COMBINATIONS");
         long lastReported = 0;
@@ -1392,11 +1389,11 @@ public final class ConflictBuilder
         /**
          * Stores conflicts about a single lane pair.
          * @param lane1 Lane; lane 1
-         * @param down1 Map&lt;Lane,GTUDirectionality&gt;; downstream lanes 1
-         * @param up1 Map&lt;Lane,GTUDirectionality&gt;; upstream lanes 1
+         * @param down1 Set&lt;Lane&gt;; downstream lanes 1
+         * @param up1 Set&lt;Lane&gt;; upstream lanes 1
          * @param lane2 Lane; lane 2
-         * @param down2 Map&lt;Lane,GTUDirectionality&gt;; downstream lane 2
-         * @param up2 Map&lt;Lane,GTUDirectionality&gt;; upstream lanes 2
+         * @param down2 Set&lt;Lane&gt;; downstream lane 2
+         * @param up2 Set&lt;Lane&gt;; upstream lanes 2
          * @param permitted boolean; conflict permitted by traffic control
          * @param simulator OTSSimulatorInterface; simulator
          * @param widthGenerator WidthGenerator; width generator
@@ -1541,8 +1538,8 @@ public final class ConflictBuilder
          * @param ignoreList list of lane combinations to ignore
          * @param permittedList list of lane combinations to permit
          * @param lane1 Lane; lane 1
-         * @param down1 Map&lt;Lane,GTUDirectionality&gt;; downstream lanes 1
-         * @param up1 Map&lt;Lane,GTUDirectionality&gt;; upstream lanes 1
+         * @param down1 Set&lt;Lane&gt;; downstream lanes 1
+         * @param up1 Set&lt;Lane&gt;; upstream lanes 1
          * @param simulator OTSSimulatorInterface; simulator
          * @param widthGenerator WidthGenerator; width generator
          * @param leftEdges Map&lt;Lane, OTSLine3D&gt;; cache of left edge lines

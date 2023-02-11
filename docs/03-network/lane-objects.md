@@ -8,7 +8,6 @@ OTS Link
   &lfloor; Lane
     &lfloor; {<b>Lane-based object</b>}
       &lfloor; Lane
-      &lfloor; Direction
       &lfloor; Longitudinal position
 </pre>
 

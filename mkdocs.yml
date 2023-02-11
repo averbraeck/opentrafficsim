@@ -38,7 +38,6 @@ nav:
   - 3. Network:
     - Link level: 03-network/link-level.md
     - Lane level: 03-network/lane-level.md
-    - Network directions: 03-network/directions.md
     - Lane-based objects: 03-network/lane-objects.md
   - 4. Traffic demand:
     - Introduction: 04-demand/introduction.md

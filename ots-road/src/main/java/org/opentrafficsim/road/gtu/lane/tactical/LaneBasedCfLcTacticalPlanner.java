@@ -432,7 +432,6 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
     /**
      * Determine the suitability of being at a particular longitudinal position in a particular Lane for following this Route.
      * <br>
-     * TODO this code assumes GTUDirectionality.DIR_PLUS on all lanes of interest
      * @param lane Lane; the lane to consider
      * @param longitudinalPosition Length; the longitudinal position in the lane
      * @param gtu LaneBasedGtu; the GTU (used to check lane compatibility of lanes, and current lane the GTU is on)

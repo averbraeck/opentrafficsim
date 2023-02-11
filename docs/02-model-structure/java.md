@@ -20,7 +20,7 @@ Eclipse is an Integrated Development Environment (IDE), which is a tool that off
     <tr><td colspan=3><b>ots-core</b><br><i>core of traffic simulation including network representation and macroscopic models</i></td><td colspan=3><b>ots-kpi</b><br><i>stand-alone key-performance-indicator module, including trajectory sampling</i></td></tr>
     <tr><td colspan=6><b>ots-base</b><br><i>contains some generic simulation utilities such as parameter management</i></td></tr>
 </table>
-Figure 1: OTS project dependencies. Projects depend on the projects directly below them. Project <b>ots-parser-xml</b> also depends on a separate project <b>ots-xsd</b>, containing xml specifications.
+Figure 2.2: OTS project dependencies. Projects depend on the projects directly below them. Project <b>ots-parser-xml</b> also depends on a separate project <b>ots-xsd</b>, containing xml specifications.
 
 
 ## Commit check list

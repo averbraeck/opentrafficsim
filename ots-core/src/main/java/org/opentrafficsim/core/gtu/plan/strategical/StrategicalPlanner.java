@@ -82,7 +82,7 @@ public interface StrategicalPlanner
      * Determine the next link in a network based on a current Link we are on.
      * @param previousLink Link; the link before the node to avoid U-turn
      * @param gtuType GtuType; the GtuType to determine the next node for
-     * @return LinkDirection; the next link and GTU direction in the route AFTER the current link
+     * @return Link; the next link in the route AFTER the current link
      * @throws NetworkException when no route planner is present or the final node in the current link cannot be found in the
      *             route
      */
