@@ -51,6 +51,7 @@ nav:
     - Positions: 04-demand/positions.md
     - Room checker: 04-demand/room-checker.md
     - Traffic from OD matrix: 04-demand/traffic-od.md
+    - Traffic from injection: 04-demand/injections.md
   - 5. Perception:
     - Introduction: 05-perception/introduction.md
     - Headway information: 05-perception/headway.md

@@ -1,6 +1,6 @@
 # Traffic from an Origin-Destination matrix
 
-Setting up GTU generators takes a considerable effort, as the previous sections point out. Demand data has to be prepared, and factories have to be set up. A utility takes away most of the effort if an OD matrix is available. This utility is `ODApplier.applyOD(…)`, which takes a network, an OD matrix, and a set of options. The options mainly determine which sub-components the GTU generators will use.
+Setting up GTU generators takes a considerable effort, as the previous sections point out. Demand data has to be prepared, and factories have to be set up. A utility takes away most of the effort if an OD matrix is available. This utility is `OdApplier.applyOd(…)`, which takes a network, an OD matrix, and a set of options. The options mainly determine which sub-components the GTU generators will use.
 
 The utility sets up an inter-arrival time generator for each GTU generator by using the OD matrix. Internally it uses a 3-layered node-tree, where each node represents demand. To each generator, a root node wrapped in an arrivals headway generator (the root node represents an `Arrivals` object) is provided from which the generator obtains headways. The root node represents the origin. Destinations are found in the second layer, while categories are found in the third layer. Each of these nodes can have its own form of demand data, with varying time vectors, and varying interpolation. The nodes in the 1<sup>st</sup> and 2<sup>nd</sup> layer work according to a simple delegate principle:
 * When the frequency at a specific time is requested, this is a sum of the frequencies from the nodes in the next layer.
@@ -31,20 +31,20 @@ The utility to create GTU generators from an OD matrix accepts options which det
 * Origin
 * Lane
 
-When the utility requests an option, the value that is most specific is obtained, which is from bottom to top in the above list. If the option is not assigned any value, a default value is used. The following options, available as static fields in `ODOptions`, are available to the utility.
+When the utility requests an option, the value that is most specific is obtained, which is from bottom to top in the above list. If the option is not assigned any value, a default value is used. The following options, available as static fields in `OdOptions`, are available to the utility.
 
-_Table 1: Overview of options for the utility to create GTU generators from an OD matrix._
+_Table 4.1: Overview of options for the utility to create GTU generators from an OD matrix._
 <table>
     <tr><th>Option</th><th>Type</th><th>Default value</th><th>Comment</th></tr>
     <tr><td><code>HEADWAY_DIST</code></td><td><code>HeadwayDistribution</code></td><td><code>EXPONENTIAL</code></td><td>Headway distribution for the arrivals headway generator.</td></tr>
     <tr><td><code>GTU_ID</code></td><td><code>IdGenerator</code></td><td><code>IdGenerator("")</code></td><td>Generator for GTU ID’s.</td></tr>
-    <tr><td><code>GTU_TYPE</code></td><td><code>GTUCharacteristicsGeneratorOD</code></td><td><code>DefaultGTUCharacteristicsGeneratorOD</code></td><td>Determines the GTU characteristics as explained in section <a href="#gtu-characteristics">GTU characteristics</a>.</td></tr>
-    <tr><td><code>ROOM_CHECKER</code></td><td><code>RoomChecker</code></td><td><code>CFBARoomChecker</code></td><td>Determines if a GTU can be generated.</td></tr>
+    <tr><td><code>GTU_TYPE</code></td><td><code>LaneBasedGtuCharacteristicsGeneratorOd</code></td><td><code>null</code></td><td>Determines the GTU characteristics as explained in section <a href="#gtu-characteristics">GTU characteristics</a>.</td></tr>
+    <tr><td><code>ROOM_CHECKER</code></td><td><code>RoomChecker</code></td><td><code>CfBaRoomChecker</code></td><td>Determines if a GTU can be generated.</td></tr>
     <tr><td><code>MARKOV</code>*</td><td><code>MarkovCorrelation</code></td><td><code>null</code></td><td>Grouping of GTU types generated as explained in section <a href="#markov-chain-for-gtu-types">Markov chain for GTU types</a>.</td></tr>
     <tr><td><code>LANE_BIAS</code></td><td><code>LaneBiases</code></td><td><code>TRUCK_RIGHT</code>, and <code>WEAK_LEFT</code> for others</td><td>Lateral lane bias as discussed in section <a href="positions#lane-biases">Lane biases</a>.</td></tr>
     <tr><td><code>NO_LC_DIST</code></td><td><code>Length</code></td><td><code>null</code></td><td>Distance after generation during which GTUs may not change lane.</td></tr>
     <tr><td><code>INSTANT_LC</code></td><td><code>Boolean</code></td><td><code>false</code></td><td>Instant lane changes.</td></tr>
-    <tr><td><code>ERROR_HANDLER</code></td><td><code>GTUErrorHandler</code></td><td><code>GTUErrorHandler.THROW</code></td><td>How to handle GTU errors.</td></tr>
+    <tr><td><code>ERROR_HANDLER</code></td><td><code>GtuErrorHandler</code></td><td><code>GtuErrorHandler.THROW</code></td><td>How to handle GTU errors.</td></tr>
 </table>
 *)  Advised to only use at origin level and for origins with 1 connecting link. Requires the OD categorization to include GTU type.
 
@@ -55,7 +55,7 @@ Two complex options are discussed in the following sections.
 
 ## GTU characteristics
 
-The utility prepares a GTU characteristics generator for the GTU generators, of type `GTUCharacteristicsGeneratorODWrapper`. It obtains from the 3-layered node-tree of demand the origin node, and draws the destination node and OD category for a next GTU, depending on various current intensities of the destinations and categories. This information is forwarded to an internal `GTUCharacteristicsGeneratorOD`, which is similar to any other GTU characteristics generator except that it additionally accepts the origin node, destination node and OD category to determine the characteristics.
+The utility prepares a GTU characteristics generator for the GTU generators, of type `LaneBasedGtuCharacteristicsGenerator`. It obtains from the 3-layered node-tree of demand the origin node, and draws the destination node and OD category for a next GTU, depending on various current intensities of the destinations and categories. This information is forwarded to an internal `LaneBasedGtuCharacteristicsGeneratorOd`, which is similar to any other GTU characteristics generator except that it additionally accepts the origin node, destination node and OD category to determine the characteristics.
 
 <pre>
 Lane-based GTU generator
@@ -70,15 +70,15 @@ Lane-based GTU generator
         &lfloor; <i>Vehicle model factory</i>
 </pre>
 
-The default implementation is `DefaultGTUCharacteristicsGeneratorOD`, which does the following:
+The default implementation is `DefaultLaneBasedGtuCharacteristicsGeneratorOd`, which does the following:
 
 * If the OD category contains a GTU type, a GTU of that type is generated. Otherwise, if there is a generator, it is used to draw a GTU type. If neither is defined, a car is generated.
-* If a GTU type template is provided to the `DefaultGTUCharacteristicsGeneratorOD` for the GTU type, it is used to obtain GTU length, width, etc. Otherwise, default values for common GTU types are used.
-* If the OD category contains a route, that route is used. Otherwise a route is determined by a route generator. For instance `RouteGeneratorOD. getDefaultRouteSupplier(…)` returns a generator which provides the shortest route from origin to destination. If no route supplier is provided, the route will be `null`, which might be ok on some simple networks.
-* If a strategical planner factory supplier was provided, it is used to obtain a strategical planner factory. Otherwise factories for a default LMRS model are created.
+* If a GTU type template is provided to the `DefaultLaneBasedGtuCharacteristicsGeneratorOd` for the GTU type, it is used to obtain GTU length, width, etc. Otherwise, default values for common GTU types are used.
+* If the OD category contains a route, that route is used. Otherwise it will be `null`, which might be ok on some simple networks.
+* A strategical planner is created with the help of a provided `LaneBasedStrategicalPlannerFactory`.
 * If a vehicle mode factory is given, it is used to generate a vehicle model. Otherwise `VehicleModel.MINMAX` is used by default.
 
-By default the `GTU_TYPE` option has a `DefaultGTUCharacteristicsGeneratorOD`, without templates, without a route generator, without a strategical planner factory supplier, and without a vehicle model factory. This means default GTU characteristics (length, width, etc.), `null` routes, a default LMRS model are used and `VehicleModel.MINMAX` are used. For cases where this functionality is not sufficient, either some of the information needs to be specified in `DefaultGTUCharacteristicsGeneratorOD` or an implementation of `GTUCharacteristicsGeneratorOD` needs to be made, and set as `GTU_TYPE` option value. In section [How to set up model factories when using an OD matrix](/tutorials/simulation-setup#how-to-set-up-model-factories-when-using-an-od-matrix) a tutorial is available that gives some examples on how to use `DefaultGTUCharacteristicsGeneratorOD` or how to implement `GTUCharacteristicsGeneratorOD`.
+By default the `GTU_TYPE` option has a `null`, without templates. In section [How to set up model factories when using an OD matrix](/tutorials/simulation-setup#how-to-set-up-model-factories-when-using-an-od-matrix) a tutorial is available that gives some examples on how to use `DefaultLaneBasedGtuCharacteristicsGeneratorOd` or how to implement `LaneBasedGtuCharacteristicsGeneratorOd`.
 
 ## Markov chain for GTU types
 

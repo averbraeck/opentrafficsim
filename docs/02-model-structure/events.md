@@ -9,7 +9,7 @@ This contract means that in some cases, bookkeeping has to take place specifical
 
 In some cases it could be valuable during an `ADD` to register as a listener to some other event, e.g. `MOVE`, and to unregister as a listener on the first occurrence of that event.
 
-_Table 2: Overview of events in OTS._
+_Table 2.1: Overview of events in OTS._
 <table border="1" width="800px">
   <tr style="font-weight: bold"><td>Class</td><td>Event field</td><td>Listeners (excluding test code)</td><td>Used</td></tr>
   <tr><td>Network</td><td>GTU_ADD_EVENT</td><td>DefaultAnimationFactory, NetworkAnimation<sup>1</sup>, AbstractLaneBasedMoveChecker, Publisher<sup>3</sup>, NetworkModel, StochasticDistractionModel, RampMeteringDemo, OtsAnimationPanel</td><td>yes</td></tr>

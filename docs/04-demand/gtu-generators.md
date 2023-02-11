@@ -1,6 +1,6 @@
 # GTU generators
 
-In principle any object in simulation can create GTUs on the network, and a few pre-defined generators are available in OTS. Here only one such generator is discussed as is it the most used generator, and as it is general purpose and modular. This generator is `LaneBasedGTUGenerator`. It has the following components:
+In principle any object in simulation can create GTUs on the network, and a few pre-defined generators are available in OTS. Here only one such generator is discussed as is it the most used generator, and as it is general purpose and modular. This generator is `LaneBasedGtuGenerator`. It has the following components:
 
 * _Inter-arrival time generator_. Draws (random) headways. This is explained in section [Inter-arrival time generator](/traffic-demand-and-vehicle-generation/inter-arrival-time-generator).
 * _GTU characteristics generator_. Draws (random) characteristics based on which the next GTU is created. This includes all GTU properties such as GTU type, length, tactical planner, parameters, etc. This is explained in section [GTU characteristics generator](/traffic-demand-and-vehicle-generation/gtu-characteristics-generator).
@@ -17,8 +17,8 @@ In principle any object in simulation can create GTUs on the network, and a few 
 &lfloor; ID generator
 </pre>
 
-The `LaneBasedGTUGenerator` has three methods that define a few simulation choices. These are listed below, and further explained in section [Options for GTU generation](/traffic-demand-and-vehicle-generation/traffic-from-an-origin-destination-matrix#options-for-gtu-generation).
+The `LaneBasedGtuGenerator` has three methods that define a few simulation choices. These are listed below, and further explained in section [Options for GTU generation](/traffic-demand-and-vehicle-generation/traffic-from-an-origin-destination-matrix#options-for-gtu-generation).
 
 * `setNoLcDistance(Length)` to set the distance over which GTUs may not change lane after the generator.
 * `setInstantaneousLaneChange(boolean)` to use instantaneous lane changes or not.
-* `setErrorHandler(GTUErrorHandler)` to set the handler of GTU errors.
+* `setErrorHandler(GtuErrorHandler)` to set the handler of GTU errors.
