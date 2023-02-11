@@ -399,7 +399,7 @@ public class LaneBasedGtuTest implements UNITS
             Speed maximumSpeed = new Speed(200, KM_PER_HOUR);
             Parameters parameters = DefaultTestParameters.create();
 
-            LaneBasedGtu car = new LaneBasedGtu("Car" + this.idGenerator.nextId(), carType, new Length(4, METER),
+            LaneBasedGtu car = new LaneBasedGtu("Car" + this.idGenerator.get(), carType, new Length(4, METER),
                     new Length(1.8, METER), maximumSpeed, Length.instantiateSI(2.0), network);
             LaneBasedStrategicalPlanner strategicalPlanner =
                     new LaneBasedStrategicalRoutePlanner(new LaneBasedCfLcTacticalPlanner(fam, laneChangeModel, car), car);

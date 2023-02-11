@@ -7,12 +7,14 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Link;
@@ -21,6 +23,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.RoadPosition.BySpeed;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.RoadPosition.ByValue;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
@@ -39,37 +42,26 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public final class GeneratorPositions
+public interface GeneratorPositions
 {
 
-    /** Underlying object representing the zone. */
-    private final GeneratorZonePosition position;
-
-    /** Stream for random numbers. */
-    private final StreamInterface stream;
-
-    /** Set of all positions. */
-    private final Set<GeneratorLanePosition> allPositions = new LinkedHashSet<>();
+    /**
+     * Draw a new position to generate a GTU.
+     * @param gtuType GtuType; GTU type.
+     * @param characteristics LaneBasedGtuCharacteristics; characteristics of the generated GTU.
+     * @param unplaced Map&lt;CrossSectionLink, Map&lt;Integer, Integer&gt;&gt;; number of unplaced GTUs per lane, counting from
+     *            the right and starting at 1.
+     * @return GeneratorLanePosition; new position to generate a GTU.
+     * @throws GtuException; when the underlying structure is inconsistent for drawing
+     */
+    GeneratorLanePosition draw(GtuType gtuType, LaneBasedGtuCharacteristics characteristics,
+            Map<CrossSectionLink, Map<Integer, Integer>> unplaced) throws GtuException;
 
     /**
-     * Constructor. Private to facilitate easier creation methods using static factories, and to hide underlying classes.
-     * @param position GeneratorZonePosition; underlying object representing the zone
-     * @param biases LaneBiases; lane biases for GTU types
-     * @param stream StreamInterface; stream for random numbers
+     * Returns all underlying positions.
+     * @return all underlying positions.
      */
-    @SuppressWarnings("synthetic-access")
-    private GeneratorPositions(final GeneratorZonePosition position, final LaneBiases biases, final StreamInterface stream)
-    {
-        this.position = position;
-        this.stream = stream;
-        for (GeneratorLinkPosition linkPosition : position.positions)
-        {
-            for (GeneratorLanePosition lanePosition : linkPosition.positions)
-            {
-                this.allPositions.add(lanePosition);
-            }
-        }
-    }
+    Set<GeneratorLanePosition> getAllPositions();
 
     /**
      * Create a GeneratorPositions object to draw positions from. The given positions are grouped per link. Lanes are drawn
@@ -78,7 +70,7 @@ public final class GeneratorPositions
      * @param stream StreamInterface; stream for random numbers
      * @return GeneratorPositions; object to draw positions from
      */
-    public static GeneratorPositions create(final Set<LanePosition> positions, final StreamInterface stream)
+    static GeneratorPositions create(final Set<LanePosition> positions, final StreamInterface stream)
     {
         return create(positions, stream, null, null, null);
     }
@@ -91,8 +83,7 @@ public final class GeneratorPositions
      * @param biases LaneBiases; lane biases for GTU types
      * @return GeneratorPositions; object to draw positions from
      */
-    public static GeneratorPositions create(final Set<LanePosition> positions, final StreamInterface stream,
-            final LaneBiases biases)
+    static GeneratorPositions create(final Set<LanePosition> positions, final StreamInterface stream, final LaneBiases biases)
     {
         return create(positions, stream, biases, null, null);
     }
@@ -106,7 +97,7 @@ public final class GeneratorPositions
      * @param viaNodes Map&lt;CrossSectionLink, Node&gt;; nodes connectors feed to for each link where GTU's will be generated
      * @return GeneratorPositions; object to draw positions from
      */
-    public static GeneratorPositions create(final Set<LanePosition> positions, final StreamInterface stream,
+    static GeneratorPositions create(final Set<LanePosition> positions, final StreamInterface stream,
             final Map<CrossSectionLink, Double> linkWeights, final Map<CrossSectionLink, Node> viaNodes)
     {
         return create(positions, stream, null, linkWeights, viaNodes);
@@ -121,7 +112,7 @@ public final class GeneratorPositions
      * @param viaNodes Map&lt;CrossSectionLink, Node&gt;; nodes connectors feed to for each link where GTU's will be generated
      * @return GeneratorPositions; object to draw positions from
      */
-    public static GeneratorPositions create(final Set<LanePosition> positions, final StreamInterface stream,
+    static GeneratorPositions create(final Set<LanePosition> positions, final StreamInterface stream,
             final LaneBiases laneBiases, final Map<CrossSectionLink, Double> linkWeights,
             final Map<CrossSectionLink, Node> viaNodes)
     {
@@ -135,6 +126,7 @@ public final class GeneratorPositions
 
         // create list of GeneratorLinkPositions
         List<GeneratorLinkPosition> linkPositions = new ArrayList<>();
+        Set<GeneratorLanePosition> allLanePositions = new LinkedHashSet<>();
         for (Link splitLink : linkSplit.keySet())
         {
             List<Lane> lanes = ((CrossSectionLink) splitLink).getLanes();
@@ -159,6 +151,7 @@ public final class GeneratorPositions
                 lanePositions.add(new GeneratorLanePosition(lanes.indexOf(lanePosition.getLane()) + 1, set,
                         (CrossSectionLink) splitLink));
             }
+            allLanePositions.addAll(lanePositions);
             // create the GeneratorLinkPosition
             if (linkWeights == null)
             {
@@ -175,61 +168,28 @@ public final class GeneratorPositions
         }
 
         // create the GeneratorZonePosition
-        return new GeneratorPositions(new GeneratorZonePosition(linkPositions), laneBiases, stream);
-
-    }
-
-    /**
-     * Draw a new position to generate a GTU. The link is drawn by giving each link a weight equal to the number of accessible
-     * lanes for the GTU type. Next, a lane is drawn using (optionally biased) weights.
-     * @param gtuType GtuType; GTU type
-     * @param destination Node; destination node
-     * @param route Route; route, may be {@code null}
-     * @return GeneratorLanePosition; new position to generate a GTU
-     */
-    public GeneratorLinkPosition draw(final GtuType gtuType, final Node destination, final Route route)
-    {
-        return this.position.draw(gtuType, this.stream, destination, route);
-    }
-
-    /**
-     * Returns all underlying positions.
-     * @return all underlying positions
-     */
-    public Set<GeneratorLanePosition> getAllPositions()
-    {
-        return this.allPositions;
-    }
-
-    /**
-     * Returns the speed limit for the given GTU type, prior to the GTU position being determined.
-     * @param gtuType GtuType; GTU type
-     * @return speed limit for the given GTU type, prior to the GTU position being determined
-     */
-    public Speed speedLimit(final GtuType gtuType)
-    {
-        Speed speedLimit = null;
-        for (GeneratorLanePosition pos : this.allPositions)
+        GeneratorZonePosition position = new GeneratorZonePosition(linkPositions);
+        return new GeneratorPositions()
         {
-            for (LanePosition lane : pos.getPosition())
+            /** {@inheritDoc} */
+            @Override
+            public GeneratorLanePosition draw(final GtuType gtuType, final LaneBasedGtuCharacteristics characteristics,
+                    final Map<CrossSectionLink, Map<Integer, Integer>> unplaced) throws GtuException
             {
-                try
-                {
-                    Speed limit = lane.getLane().getSpeedLimit(gtuType);
-                    if (speedLimit == null || limit.lt(speedLimit))
-                    {
-                        speedLimit = limit;
-                    }
-                }
-                catch (NetworkException exception)
-                {
-                    // ignore
-                }
+                GeneratorLinkPosition linkPosition =
+                        position.draw(gtuType, stream, characteristics.getDestination(), characteristics.getRoute());
+                Speed desiredSpeed = characteristics.getStrategicalPlannerFactory().peekDesiredSpeed(gtuType,
+                        linkPosition.speedLimit(gtuType), characteristics.getMaximumSpeed());
+                return linkPosition.draw(gtuType, unplaced.get(linkPosition.getLink()), desiredSpeed);
             }
-        }
-        Throw.when(speedLimit == null, IllegalStateException.class, "No speed limit could be determined for GtuType %s.",
-                gtuType);
-        return speedLimit;
+
+            /** {@inheritDoc} */
+            @Override
+            public Set<GeneratorLanePosition> getAllPositions()
+            {
+                return allLanePositions;
+            }
+        };
     }
 
     /**
@@ -243,7 +203,7 @@ public final class GeneratorPositions
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public static final class GeneratorLanePosition
+    final class GeneratorLanePosition
     {
 
         /** Lane number, where 1 is the right-most lane. */
@@ -314,6 +274,34 @@ public final class GeneratorPositions
 
         /** {@inheritDoc} */
         @Override
+        public int hashCode()
+        {
+            return Objects.hash(this.laneNumber, this.link, this.position);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean equals(final Object obj)
+        {
+            if (this == obj)
+            {
+                return true;
+            }
+            if (obj == null)
+            {
+                return false;
+            }
+            if (getClass() != obj.getClass())
+            {
+                return false;
+            }
+            GeneratorLanePosition other = (GeneratorLanePosition) obj;
+            return this.laneNumber == other.laneNumber && Objects.equals(this.link, other.link)
+                    && Objects.equals(this.position, other.position);
+        }
+
+        /** {@inheritDoc} */
+        @Override
         public String toString()
         {
             return "GeneratorLanePosition [laneNumber=" + this.laneNumber + ", position=" + this.position + ", link="
@@ -333,7 +321,7 @@ public final class GeneratorPositions
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public static final class GeneratorLinkPosition
+    final class GeneratorLinkPosition
     {
 
         /** Contained lanes. */
@@ -537,7 +525,7 @@ public final class GeneratorPositions
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    private static final class GeneratorZonePosition
+    final class GeneratorZonePosition
     {
 
         /** Contained links. */
@@ -627,7 +615,7 @@ public final class GeneratorPositions
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public static final class LaneBiases
+    final class LaneBiases
     {
 
         /** Biases per GTU type. */
@@ -687,7 +675,7 @@ public final class GeneratorPositions
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public static final class LaneBias
+    final class LaneBias
     {
 
         /** No bias. */

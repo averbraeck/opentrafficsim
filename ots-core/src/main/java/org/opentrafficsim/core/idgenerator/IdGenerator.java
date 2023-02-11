@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.idgenerator;
 
 import java.io.Serializable;
+import java.util.function.Supplier;
 
 /**
  * Generate names for any kind of object.
@@ -10,7 +11,7 @@ import java.io.Serializable;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class IdGenerator implements Serializable
+public class IdGenerator implements Serializable, Supplier<String>
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -34,7 +35,8 @@ public class IdGenerator implements Serializable
      * Generate an id.
      * @return String; the generated id
      */
-    public final synchronized String nextId()
+    @Override
+    public final synchronized String get()
     {
         long number;
         synchronized (this)

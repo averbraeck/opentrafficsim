@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import javax.naming.NamingException;
 
@@ -39,10 +40,8 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuGenerator;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.GeneratorLanePosition;
-import org.opentrafficsim.road.gtu.generator.GeneratorPositions.GeneratorLinkPosition;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -100,7 +99,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
     /** Retry interval for checking if a GTU can be placed. */
     private Duration reTryInterval = new Duration(0.1, DurationUnit.SI);
 
-    /** Location and initial direction provider for all generated GTUs. */
+    /** Location provider for all generated GTUs. */
     private final GeneratorPositions generatorPositions;
 
     /** Network. */
@@ -113,7 +112,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
     private final RoomChecker roomChecker;
 
     /** ID generator. */
-    private final IdGenerator idGenerator;
+    private final Supplier<String> idGenerator;
 
     /** Initial distance over which lane changes shouldn't be performed. */
     private Length noLaneChangeDistance = null;
@@ -137,7 +136,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
      * @param network OTSRoadNetwork; the OTS network that owns the generated GTUs
      * @param simulator OTSSimulatorInterface; simulator
      * @param roomChecker RoomChecker; the way that this generator checks that there is sufficient room to place a new GTU
-     * @param idGenerator IdGenerator; id generator
+     * @param idGenerator Supplier&lt;String&gt;; id generator
      * @throws SimRuntimeException when <cite>startTime</cite> lies before the current simulation time
      * @throws ProbabilityException pe
      * @throws ParameterException if drawing from the interarrival generator fails
@@ -147,7 +146,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
     public LaneBasedGtuGenerator(final String id, final Generator<Duration> interarrivelTimeGenerator,
             final LaneBasedGtuCharacteristicsGenerator laneBasedGtuCharacteristicsGenerator,
             final GeneratorPositions generatorPositions, final OtsRoadNetwork network, final OtsSimulatorInterface simulator,
-            final RoomChecker roomChecker, final IdGenerator idGenerator)
+            final RoomChecker roomChecker, final Supplier<String> idGenerator)
             throws SimRuntimeException, ProbabilityException, ParameterException, NetworkException
     {
         this.id = id;
@@ -223,11 +222,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
                 unplaced.put(link, linkMap);
             }
             // position draw
-            GeneratorLinkPosition linkPosition =
-                    this.generatorPositions.draw(gtuType, characteristics.getDestination(), characteristics.getRoute());
-            Speed desiredSpeed = characteristics.getStrategicalPlannerFactory().peekDesiredSpeed(gtuType,
-                    linkPosition.speedLimit(gtuType), characteristics.getMaximumSpeed());
-            GeneratorLanePosition lanePosition = linkPosition.draw(gtuType, unplaced.get(linkPosition.getLink()), desiredSpeed);
+            GeneratorLanePosition lanePosition = this.generatorPositions.draw(gtuType, characteristics, unplaced);
 
             // skip if disabled at this lane-direction
             Set<Lane> lanes = new LinkedHashSet<>();
@@ -380,7 +375,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
     public final void placeGtu(final LaneBasedGtuCharacteristics characteristics, final Set<LanePosition> position,
             final Speed speed) throws NamingException, GtuException, NetworkException, SimRuntimeException, OtsGeometryException
     {
-        String gtuId = this.idGenerator.nextId();
+        String gtuId = this.idGenerator.get();
         LaneBasedGtu gtu = new LaneBasedGtu(gtuId, characteristics.getGtuType(), characteristics.getLength(),
                 characteristics.getWidth(), characteristics.getMaximumSpeed(), characteristics.getFront(), this.network);
         gtu.setMaximumAcceleration(characteristics.getMaximumAcceleration());
@@ -433,7 +428,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
     @Override
     public final String toString()
     {
-        return "LaneBasedGtuGenerator " + this.id + " on " + this.generatorPositions;
+        return "LaneBasedGtuGenerator " + this.id + " on " + this.generatorPositions.getAllPositions();
     }
 
     /**
@@ -489,7 +484,6 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
     {
         this.disabled = new LinkedHashSet<>();
     }
-
 
     /** {@inheritDoc} */
     @Override
@@ -552,7 +546,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
         }
         return 0;
     }
-    
+
     /**
      * Interface for class that checks that there is sufficient room for a proposed new GTU and returns the maximum safe speed
      * and position for the proposed new GTU.

@@ -1,7 +1,6 @@
 package org.opentrafficsim.demo.conflict;
 
 import java.awt.Dimension;
-import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
 
@@ -16,10 +15,8 @@ import org.djutils.io.URLResource;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.demo.conflict.TJunctionDemo.TJunctionModel;
 import org.opentrafficsim.draw.core.OtsDrawingException;
-import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;

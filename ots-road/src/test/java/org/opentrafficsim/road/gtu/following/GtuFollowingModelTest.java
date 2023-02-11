@@ -229,7 +229,7 @@ public class GtuFollowingModelTest implements UNITS
         Map<Lane, Length> initialLongitudinalPositionsOverlapping = new LinkedHashMap<>();
         Length ahead = new Length(1, METER);
         initialLongitudinalPositionsOverlapping.put(lane, initialPosition.plus(ahead));
-        LaneBasedGtu gtu1m = new LaneBasedGtu("100100" + this.gtuIdGenerator.nextId(), carType, length, width, maxSpeed,
+        LaneBasedGtu gtu1m = new LaneBasedGtu("100100" + this.gtuIdGenerator.get(), carType, length, width, maxSpeed,
                 length.times(0.5), network);
         strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(new LaneBasedGtuFollowingTacticalPlanner(gtuFollowingModel, gtu1m), gtu1m);
