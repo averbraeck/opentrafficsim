@@ -48,7 +48,7 @@ Note that the units are not given in the file. Those are defined in the column d
 
 <pre>
 id,description,className,unit
-injections,test injections,org.djutils.data.Table,
+injections,test injections,org.djutils.data.ListTable,
 time,injection time,org.djunits.value.vdouble.scalar.Duration,s
 id,GTU id,java.lang.String,
 gtuType,GTU type,java.lang.String,

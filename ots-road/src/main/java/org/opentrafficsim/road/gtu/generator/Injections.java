@@ -165,6 +165,12 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
     /** All lane positions, returned as {@code GeneratorPositions}. */
     private Set<GeneratorLanePosition> allLanePositions;
 
+    /** Cached characteristics generator, to always return the same. */
+    private LaneBasedGtuCharacteristicsGenerator characteristicsGenerator;
+
+    /** Boolean to check inter-arrival time and characteristics drawing consistency. */
+    private boolean readyForCharacteristicsDraw = false;
+
     /**
      * Constructor. Depending on what information is provided in the injections table, some arguments may or should not be
      * {@code null}. In particular:
@@ -267,6 +273,7 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
                 case MAX_DECELERATION_COLUMN:
                     needClass = Acceleration.class;
                     needStrategicalPlannerFactory = true;
+                    break;
                 default:
                     Logger.info("Column " + entry.getKey() + " for GTU injection not supported. It is ignored.");
                     needClass = null;
@@ -341,6 +348,7 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
                 || this.columnNumbers.containsKey(LINK_COLUMN))
         {
             // only partial information is provided (if none, we assume the user intends to use an external fixed position)
+            // as the user may still use another source for generator positions, we do not throw an exception
             Logger.info("For injections to be used as GeneratorPositions, define a link, lane and position (on lane) column.");
         }
     }
@@ -358,13 +366,14 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
 
     /** {@inheritDoc} */
     @Override
-    public Duration draw() throws ProbabilityException, ParameterException
+    public synchronized Duration draw() throws ProbabilityException, ParameterException
     {
         if (!this.characteristicsIterator.hasNext())
         {
             return null; // stops LaneBasedGtuGenerator
         }
         this.characteristicsRow = this.characteristicsIterator.next();
+        this.readyForCharacteristicsDraw = true;
         Duration t = (Duration) getCharacteristic(TIME_COLUMN);
         Throw.when(t.lt(this.previousArrival), IllegalStateException.class, "Arrival times in injection not increasing.");
         Duration interArrivalTime = t.minus(this.previousArrival);
@@ -379,63 +388,79 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
      */
     public LaneBasedGtuCharacteristicsGenerator asLaneBasedGtuCharacteristicsGenerator()
     {
-        return new LaneBasedGtuCharacteristicsGenerator()
+        if (this.characteristicsGenerator == null)
         {
-            /** Default characteristics, generated as needed. */
-            private GtuCharacteristics defaultCharacteristics;
+            Throw.when(!this.columnNumbers.containsKey(GTU_TYPE_COLUMN), IllegalStateException.class,
+                    "A GTU type column is required for generation of characteristics.");
 
-            /** {@inheritDoc} */
-            @Override
-            public LaneBasedGtuCharacteristics draw() throws ProbabilityException, ParameterException, GtuException
+            this.characteristicsGenerator = new LaneBasedGtuCharacteristicsGenerator()
             {
-                GtuType gtuType = Injections.this.gtuTypes.get((String) getCharacteristic(GTU_TYPE_COLUMN));
+                /** Default characteristics, generated as needed. */
+                private GtuCharacteristics defaultCharacteristics;
 
-                Length length = (Length) assureCharacteristic(LENGTH_COLUMN, gtuType, (g) -> g.getLength());
-                Length width = (Length) assureCharacteristic(WIDTH_COLUMN, gtuType, (g) -> g.getWidth());
-                Speed maxSpeed = (Speed) assureCharacteristic(MAX_SPEED_COLUMN, gtuType, (g) -> g.getMaximumSpeed());
-                Acceleration maxAcceleration = (Acceleration) assureCharacteristic(MAX_ACCELERATION_COLUMN, gtuType,
-                        (g) -> g.getMaximumAcceleration());
-                Acceleration maxDeceleration = (Acceleration) assureCharacteristic(MAX_DECELERATION_COLUMN, gtuType,
-                        (g) -> g.getMaximumDeceleration());
-                this.defaultCharacteristics = null; // reset for next draw
-                Length front = Injections.this.columnNumbers.containsKey(FRONT_COLUMN)
-                        ? (Length) getCharacteristic(FRONT_COLUMN) : length.times(0.75);
-                GtuCharacteristics characteristics =
-                        new GtuCharacteristics(gtuType, length, width, maxSpeed, maxAcceleration, maxDeceleration, front);
-
-                Route route = Injections.this.columnNumbers.containsKey(ROUTE_COLUMN)
-                        ? (Route) Injections.this.network.getRoute((String) getCharacteristic(ROUTE_COLUMN)) : null;
-                Node origin = Injections.this.columnNumbers.containsKey(ORIGIN_COLUMN)
-                        ? (Node) Injections.this.network.getNode((String) getCharacteristic(ORIGIN_COLUMN)) : null;
-                Node destination = Injections.this.columnNumbers.containsKey(DESTINATION_COLUMN)
-                        ? (Node) Injections.this.network.getNode((String) getCharacteristic(DESTINATION_COLUMN)) : null;
-                return new LaneBasedGtuCharacteristics(characteristics, Injections.this.strategicalPlannerFactory, route,
-                        origin, destination, VehicleModel.MINMAX);
-            }
-
-            /**
-             * Tries to obtain a column value. If it is not provided, takes the value from generated default characteristics.
-             * @param column String; characteristic column name.
-             * @param gtuType GtuType; GTU type of the GTU to be generated.
-             * @param supplier Function&lt;GtuCharacteristics, ?&gt;; takes value from default characteristics.
-             * @return Object; object value for the characteristic.
-             * @throws GtuException; if there are no default characteristics for the GTU type, but these are required.
-             */
-            private Object assureCharacteristic(final String column, final GtuType gtuType,
-                    final Function<GtuCharacteristics, ?> supplier) throws GtuException
-            {
-                if (Injections.this.columnNumbers.containsKey(column))
+                /** {@inheritDoc} */
+                @Override
+                public LaneBasedGtuCharacteristics draw() throws ProbabilityException, ParameterException, GtuException
                 {
-                    return getCharacteristic(column);
+                    synchronized (Injections.this)
+                    {
+                        Throw.when(Injections.this.characteristicsRow == null, IllegalStateException.class,
+                                "Must draw inter-arrival time before drawing GTU characteristics.");
+                        Throw.when(!Injections.this.readyForCharacteristicsDraw, IllegalStateException.class,
+                                "Should not draw GTU characteristics again before inter-arrival time was drawn in between.");
+                        Injections.this.readyForCharacteristicsDraw = false;
+                        GtuType gtuType = Injections.this.gtuTypes.get((String) getCharacteristic(GTU_TYPE_COLUMN));
+
+                        Length length = (Length) assureCharacteristic(LENGTH_COLUMN, gtuType, (g) -> g.getLength());
+                        Length width = (Length) assureCharacteristic(WIDTH_COLUMN, gtuType, (g) -> g.getWidth());
+                        Speed maxSpeed = (Speed) assureCharacteristic(MAX_SPEED_COLUMN, gtuType, (g) -> g.getMaximumSpeed());
+                        Acceleration maxAcceleration = (Acceleration) assureCharacteristic(MAX_ACCELERATION_COLUMN, gtuType,
+                                (g) -> g.getMaximumAcceleration());
+                        Acceleration maxDeceleration = (Acceleration) assureCharacteristic(MAX_DECELERATION_COLUMN, gtuType,
+                                (g) -> g.getMaximumDeceleration());
+                        this.defaultCharacteristics = null; // reset for next draw
+                        Length front = Injections.this.columnNumbers.containsKey(FRONT_COLUMN)
+                                ? (Length) getCharacteristic(FRONT_COLUMN) : length.times(0.75);
+                        GtuCharacteristics characteristics = new GtuCharacteristics(gtuType, length, width, maxSpeed,
+                                maxAcceleration, maxDeceleration, front);
+
+                        Route route = Injections.this.columnNumbers.containsKey(ROUTE_COLUMN)
+                                ? (Route) Injections.this.network.getRoute((String) getCharacteristic(ROUTE_COLUMN)) : null;
+                        Node origin = Injections.this.columnNumbers.containsKey(ORIGIN_COLUMN)
+                                ? (Node) Injections.this.network.getNode((String) getCharacteristic(ORIGIN_COLUMN)) : null;
+                        Node destination = Injections.this.columnNumbers.containsKey(DESTINATION_COLUMN)
+                                ? (Node) Injections.this.network.getNode((String) getCharacteristic(DESTINATION_COLUMN)) : null;
+                        return new LaneBasedGtuCharacteristics(characteristics, Injections.this.strategicalPlannerFactory,
+                                route, origin, destination, VehicleModel.MINMAX);
+                    }
                 }
-                if (this.defaultCharacteristics == null)
+
+                /**
+                 * Tries to obtain a column value. If it is not provided, takes the value from generated default
+                 * characteristics.
+                 * @param column String; characteristic column name.
+                 * @param gtuType GtuType; GTU type of the GTU to be generated.
+                 * @param supplier Function&lt;GtuCharacteristics, ?&gt;; takes value from default characteristics.
+                 * @return Object; object value for the characteristic.
+                 * @throws GtuException; if there are no default characteristics for the GTU type, but these are required.
+                 */
+                private Object assureCharacteristic(final String column, final GtuType gtuType,
+                        final Function<GtuCharacteristics, ?> supplier) throws GtuException
                 {
-                    this.defaultCharacteristics =
-                            GtuType.defaultCharacteristics(gtuType, Injections.this.network, Injections.this.stream);
+                    if (Injections.this.columnNumbers.containsKey(column))
+                    {
+                        return getCharacteristic(column);
+                    }
+                    if (this.defaultCharacteristics == null)
+                    {
+                        this.defaultCharacteristics =
+                                GtuType.defaultCharacteristics(gtuType, Injections.this.network, Injections.this.stream);
+                    }
+                    return supplier.apply(this.defaultCharacteristics);
                 }
-                return supplier.apply(this.defaultCharacteristics);
-            }
-        };
+            };
+        }
+        return this.characteristicsGenerator;
     }
 
     /** {@inheritDoc} */
