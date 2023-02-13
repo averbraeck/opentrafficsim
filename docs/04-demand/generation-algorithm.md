@@ -6,14 +6,14 @@ The algorithm contains the following steps.
 * At the same time a position is drawn using the position component. 
 * The characteristics for the GTU are added to a queue. Each position the GTU generator uses, has a separate queue. If there is only 1 GTU in a queue, an attempt to place it on the network is undertaken.
 * Whether a GTU can be placed is determined with the room checker, which not only determines whether the GTU can be placed, but also at what speed and at what exact location (near the generation position). An ID is generated if the GTU can be placed.
-* If a GTU cannot be placed, it remains in the queue. So long as the queue is not empty, another placement attempt for the first GTU in the queue is made every 0.1s. GTUs that cannot be placed are not shifted to another position. Rather, drawing a position depends on queue lengths such that traffic automatically distributes over the available positions. This is further explained in section [Positions](/traffic-demand-and-vehicle-generation/positions).
+* If a GTU cannot be placed, it remains in the queue. So long as the queue is not empty, another placement attempt for the first GTU in the queue is made every 0.1s. GTUs that cannot be placed are not shifted to another position. Rather, drawing a position depends on queue lengths such that traffic automatically distributes over the available positions. This is further explained in section [Positions](positions.md).
 
 From this description it follows that GTU generation is highly flexible, as many aspects are delegated to interchangeable components.
 
 
 ## Generating platoons
 
-A first approach to generate platoons is to use Markov chains as described in section [Markov chain for GTU types](/traffic-demand-and-vehicle-generation/traffic-from-an-origin-destination-matrix#markov-chain-for-gtu-types). With high correlation, GTUs of a specific type are likely to follow one another. But there is no guarantee over platoon lengths or time between platoons.
+A first approach to generate platoons is to use Markov chains as described in section [Markov chain for GTU types](traffic-od.md#markov-chain-for-gtu-types). With high correlation, GTUs of a specific type are likely to follow one another. But there is no guarantee over platoon lengths or time between platoons.
 
 To gain control of vehicle generation regarding platoon lengths the class Platoons can be used. This occurs in five steps per position where such platoons are generated:
 

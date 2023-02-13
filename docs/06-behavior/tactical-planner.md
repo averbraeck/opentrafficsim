@@ -47,7 +47,7 @@ To create tactical plans the utilities `(Lane)OperationalPlanBuilder` can be use
 
 ## Perception
 
-Perception, which is discussed in detail in [the previous chapter](/perception), is positioned under the tactical planner. This is because the tactical planner is the most likely component where information from perception is required. Within the logic of the tactical planner the method `getPerception()` can be used to retrieve information from it, or to forward the perception to any sub-routine.
+Perception, which is discussed in detail in [the previous chapter](../05-perception/introduction.md), is positioned under the tactical planner. This is because the tactical planner is the most likely component where information from perception is required. Within the logic of the tactical planner the method `getPerception()` can be used to retrieve information from it, or to forward the perception to any sub-routine.
 
 
 ## Modular utilities
@@ -86,7 +86,7 @@ Note that the invoking class does not need any information from the information 
 
 ## Car-following model
 
-For lane-based GTUs a car-following model is mandatory. Its main purpose is to translate parameters, speed information and information regarding the leaders in to an acceleration. This method may be used by the tactical planner for many reasons, such as following the leader, gap-acceptance and stopping for a traffic light. The car-following model also needs to supply a desired headway and a desired speed. This is not only useful for the inner-workings, but the vehicle generator also needs to peek desired headway and speed as discussed in the [section on peeking](/traffic-demand-and-vehicle-generation/gtu-characteristics-generator#peeking-for-gtu-generation). Desired headway and desired speed may be determined by sub-modules. To this end there is an interface `DesiredHeadwayModel` and an interface `DesiredSpeedModel`. The interface `CarFollowingModel` extends both interfaces, but whether the implementation actually uses sub-models to provide this information, is up to the implementation. 
+For lane-based GTUs a car-following model is mandatory. Its main purpose is to translate parameters, speed information and information regarding the leaders in to an acceleration. This method may be used by the tactical planner for many reasons, such as following the leader, gap-acceptance and stopping for a traffic light. The car-following model also needs to supply a desired headway and a desired speed. This is not only useful for the inner-workings, but the vehicle generator also needs to peek desired headway and speed as discussed in the [section on peeking](../04-demand/gtu-characteristics#peeking-for-gtu-generation). Desired headway and desired speed may be determined by sub-modules. To this end there is an interface `DesiredHeadwayModel` and an interface `DesiredSpeedModel`. The interface `CarFollowingModel` extends both interfaces, but whether the implementation actually uses sub-models to provide this information, is up to the implementation. 
 
 <pre>
 Lane-based tactical planner
@@ -101,7 +101,7 @@ Lane-based tactical planner
 
 The class `AbstractCarFollowingModel` provides a skeleton implementation with sub-models for the desired headway and speed. Furthermore, it gathers the desired headway and speed and provides this to a lower-level method to determine acceleration that sub-classes should implement.
 
-The default car-following model is the [Intelligent Driver Model+ (IDM+)](/references#reference-schakel-idm-plus). It is based on the [IDM](/references#reference-treiber-idm), and the common aspects are defined in `AbstractIDM`. Car-following models may be defined not to have sub-models for the desired headway and speed, by implementing `CarFollowingModel` directly. 
+The default car-following model is the Intelligent Driver Model+ (IDM+) ([Schakel et al., 2010](../10-references/references.md)). It is based on the IDM ([Treiber et al., 2000](../10-references/references.md)), and the common aspects are defined in `AbstractIDM`. Car-following models may be defined not to have sub-models for the desired headway and speed, by implementing `CarFollowingModel` directly. 
 
 <pre>
 Car-following model

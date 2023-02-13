@@ -27,7 +27,7 @@ GTUs are of a given GTUType, such as car, pedestrian, truck, etc. Rules, such as
   &lfloor; Train
 </pre>
 
-The next sections describe how the hierarchical approach of Michon [2] is applied in OTS regarding the strategical, tactical and operational level. The model components at these levels are related as is depicted in Figure 2.1.
+The next sections describe how the hierarchical approach of [Michon, 1985](../10-references/references.md) is applied in OTS regarding the strategical, tactical and operational level. The model components at these levels are related as is depicted in Figure 2.1.
 
 ![](../images/OTS_Figure_2.1.png)
 Figure 2.1: Relation between high-level model components.

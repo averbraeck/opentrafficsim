@@ -2,7 +2,7 @@
 
 The lane structure is a grid representation of the road network that facilitates perception in lane-based simulations. The grid representation simplifies the OTS network representation. The lane structure is made up out of _lane structure records_. Each lane structure record represents a lane, i.e. a cell in the grid. The records are connected laterally and longitudinally, having possibly multiple upstream and downstream connected records in case of merges and splits.
 
-The lane structure functions as a limited scope that a driver considers. It spans a given range upstream and downstream as can be seen in Figure 3, and is the world as a driver knows it. It is dynamically built and demolished at the upstream and downstream edges as the GTU moves, and is completely rebuilt if the route changes. It has methods to obtain objects on the network: `getDownstreamObjects(…)`, `getDownstreamObjectsOnRoute(…)` and `getUpstreamObjects(…)`. The lane structure is defined with a look-ahead distance, within which the objects are given.
+The lane structure functions as a limited scope that a driver considers. It spans a given range upstream and downstream as can be seen in Figure 5.1, and is the world as a driver knows it. It is dynamically built and demolished at the upstream and downstream edges as the GTU moves, and is completely rebuilt if the route changes. It has methods to obtain objects on the network: `getDownstreamObjects(…)`, `getDownstreamObjectsOnRoute(…)` and `getUpstreamObjects(…)`. The lane structure is defined with a look-ahead distance, within which the objects are given.
 
 ![](../images/OTS_Figure_5.1.png)
 _Figure 5.1: Lane-structure example._

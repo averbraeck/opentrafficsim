@@ -39,51 +39,12 @@ If you need to rename a class, property or method, you should do this via refact
 When debugging in OTS one often has to deal with a particular GTU creating an exception after some time. The static utility `Break` has several methods that help you define when to trigger a breakpoint. The breakpoint should be set in the method `Break.trigger()`. A method is available to break on a GTU or on perception after a given time. Depending on available context, a combination of `onSuper()` and `onSub()` can be used, for example if at the `onSub()` no GTU or perception is available.
 
 
-## How to create a local java project
-
-After the necessary OTS projects have been imported in Eclipse, additional development should be done in a separate project (existing projects should stay synchronized with the repository). In this example a project 'ots-local' will be added.
-
-1. Go to "File > New > Project..." (with dots).
-2. Browse to "Maven > Maven Project".
-3. Check "Create a simple project (skip archetype selection)".
-4. Click "Next >".
-5. Provide the following information:
-    1. Artifact / Group Id: opentrafficsim
-    2. Artifact / Artifact Id: ots-local \[or some other id ots-XXX]
-    3. Artifact / Name: OTS Local \[or some other readable name]
-    4. Artifact / Description: \[a short description of the project]
-    5. Parent Project / Group Id: opentrafficsim
-    6. Parent Project / Artifact Id: ots
-    7. Parent Project / Version: \[see version in pom.xml file of project 'ots', this needs to be updated when newer ots versions are imported]
-6. Click 'Finish'.
-
-Open the file 'pom.xml' in the new project. The following two lines can be removed:
-
-```xml
-<groupId>opentrafficsim</groupId> <!--not the line under <parent>-->
-
-<version>0.0.1-SNAPSHOT</version>
-```
-
-Next you can add projects that the local project depends on. Typically this will be ots-road. All projects that ots-road depends on are automatically coupled once the dependency to ots-road is defined. Add the following to your pom.xml to achieve this.
-
-```xml
-  <dependencies>
-    <dependency>
-      <groupId>opentrafficsim</groupId>
-      <artifactId>ots-road</artifactId>
-    </dependency>
-  </dependencies>
-```
-After this code in the new project can be created that uses and extends OTS.
-
-
 ## How to find your way through the code
 
 The functionality of OTS is scattered throughout several projects, each containing various packages. Classes within a package are usually closely related. But in OTS many package built forth based on similar packages in more fundamental projects. For example the package `org.opentrafficsim.road.gtu.lane` in `ots-road` is based on `org.opentrafficsim.core.gtu` in the `ots-core` project. Furthermore the modular setup of OTS spreads functionality across classes. Typically there is a place where an interface is used, the interface itself, an abstract implementation of the interface, and several implementations. Consequently it is not straightforward to browse through the code of OTS to become familiar with the inner-workings. Below are some tips to better navigate the structural relations in order to quickly arrive at the code block of interest, i.e. code that actually performs an operation that needs to be understood.
 
 #### 1. Open declaration, open type hierarchy and open call hierarchy.
-These operations as discussed in tutorial [Eclipse and development tips](/tutorials/development#eclipse-and-development-tips) and are quickly found in the context menu of the Eclipse editor, or by using keyboard shortcuts. Open declaration brings you to the class or variable that you highlight in the editor. If you see a class being used, but do not have a good comprehension of what the class is, a quick look at the class may provide the understanding required to understand an algorithm using it. The type hierarchy gives you a tree of class inheritance. This is a good tool to understand what a class is based on. And for example whether there is an abstract layer performing parts of the functionality. Finally the call hierarchy helps in understanding how classes interact. It can for example tell you whether a certain method is or is not used by GTUs, or by lane-based objects, etc.
+These operations as discussed in tutorial [Eclipse and development tips](#eclipse-and-development-tips) and are quickly found in the context menu of the Eclipse editor, or by using keyboard shortcuts. Open declaration brings you to the class or variable that you highlight in the editor. If you see a class being used, but do not have a good comprehension of what the class is, a quick look at the class may provide the understanding required to understand an algorithm using it. The type hierarchy gives you a tree of class inheritance. This is a good tool to understand what a class is based on. And for example whether there is an abstract layer performing parts of the functionality. Finally the call hierarchy helps in understanding how classes interact. It can for example tell you whether a certain method is or is not used by GTUs, or by lane-based objects, etc.
 
 #### 2. Parent declaration.
 By clicking on the up arrow next to a line that defines an overriding method, you jump to the parent implementation or the method declaration in an interface. It provides a quick glance in to the functionality that is overridden, or that is invoked using the super keyword.
@@ -194,7 +155,7 @@ _Is the property of a type from the Collections Framework (e.g. `Set`, `List`, `
 For collection framework types one only needs to add `Historical` in front of the type. For example a `Set<E>` becomes `HistoricalSet<E>`. All methods of the original class are also implemented by the historical class. To obtain a historical state of the collection, a getter method with `Time` input should be added, which calls `get(Time)` on the property.
 
 _Is the property of any other type?_<br/>
-For these cases one first has to consider whether individual properties of the property object may need to be historical, rather than the object as a whole. If the object itself can better be made historical a new implementation of `AbstractHistorical` is required. In case the property type class already has a super class, the property type class will need to implement `HistoryManager.HistoricalElement` in order to interact with the `HistoryManager`, and manage its own history and interaction with the `HistoryManager`. The reader is referred to section [Historical complex objects](/perception/historical-information#historical-complex-objects) for a baseline understanding of events as used in `AbstractHistorical`. The functionality that should be created is that the state of the property at any given time in the past can be provided (limited in duration by a `HistoryManager`). To this end an implementation can keep the current object, make a copy of it, and reverse all applicable events on the copy. Thus, such events should have sufficient information such that they can (or can be used to) reverse the mutation. To obtain applicable events `AbstractHistorical` has some utility methods for sub-classes, such as `getEvents(Time)` which returns an ordered list of events between the provided `Time` and the current time in reversed order.
+For these cases one first has to consider whether individual properties of the property object may need to be historical, rather than the object as a whole. If the object itself can better be made historical a new implementation of `AbstractHistorical` is required. In case the property type class already has a super class, the property type class will need to implement `HistoryManager.HistoricalElement` in order to interact with the `HistoryManager`, and manage its own history and interaction with the `HistoryManager`. The reader is referred to section [Historical complex objects](../05-perception/historical.md#historical-complex-objects) for a baseline understanding of events as used in `AbstractHistorical`. The functionality that should be created is that the state of the property at any given time in the past can be provided (limited in duration by a `HistoryManager`). To this end an implementation can keep the current object, make a copy of it, and reverse all applicable events on the copy. Thus, such events should have sufficient information such that they can (or can be used to) reverse the mutation. To obtain applicable events `AbstractHistorical` has some utility methods for sub-classes, such as `getEvents(Time)` which returns an ordered list of events between the provided `Time` and the current time in reversed order.
 
 As an example let’s assume we have a class for a 2-dimensional double (`double[][]`) matrix with history called `HistoricalMatrix`. It extends `AbstractHistorical` and is coupled with an event class called `EventMatrix`. Below the class is shown with a property of the current state of the matrix `double[][]`, a constructor coupling it with a `HistoryManager`, and the method `getMatrix()` which returns a safe copy of the current state.
 

@@ -41,7 +41,7 @@ _Table 4.1: Overview of options for the utility to create GTU generators from an
     <tr><td><code>GTU_TYPE</code></td><td><code>LaneBasedGtuCharacteristicsGeneratorOd</code></td><td><code>null</code></td><td>Determines the GTU characteristics as explained in section <a href="#gtu-characteristics">GTU characteristics</a>.</td></tr>
     <tr><td><code>ROOM_CHECKER</code></td><td><code>RoomChecker</code></td><td><code>CfBaRoomChecker</code></td><td>Determines if a GTU can be generated.</td></tr>
     <tr><td><code>MARKOV</code>*</td><td><code>MarkovCorrelation</code></td><td><code>null</code></td><td>Grouping of GTU types generated as explained in section <a href="#markov-chain-for-gtu-types">Markov chain for GTU types</a>.</td></tr>
-    <tr><td><code>LANE_BIAS</code></td><td><code>LaneBiases</code></td><td><code>TRUCK_RIGHT</code>, and <code>WEAK_LEFT</code> for others</td><td>Lateral lane bias as discussed in section <a href="positions#lane-biases">Lane biases</a>.</td></tr>
+    <tr><td><code>LANE_BIAS</code></td><td><code>LaneBiases</code></td><td><code>TRUCK_RIGHT</code>, and <code>WEAK_LEFT</code> for others</td><td>Lateral lane bias as discussed in section <a href="positions.md#lane-biases">Lane biases</a>.</td></tr>
     <tr><td><code>NO_LC_DIST</code></td><td><code>Length</code></td><td><code>null</code></td><td>Distance after generation during which GTUs may not change lane.</td></tr>
     <tr><td><code>INSTANT_LC</code></td><td><code>Boolean</code></td><td><code>false</code></td><td>Instant lane changes.</td></tr>
     <tr><td><code>ERROR_HANDLER</code></td><td><code>GtuErrorHandler</code></td><td><code>GtuErrorHandler.THROW</code></td><td>How to handle GTU errors.</td></tr>
@@ -78,7 +78,7 @@ The default implementation is `DefaultLaneBasedGtuCharacteristicsGeneratorOd`, w
 * A strategical planner is created with the help of a provided `LaneBasedStrategicalPlannerFactory`.
 * If a vehicle mode factory is given, it is used to generate a vehicle model. Otherwise `VehicleModel.MINMAX` is used by default.
 
-By default the `GTU_TYPE` option has a `null`, without templates. In section [How to set up model factories when using an OD matrix](/tutorials/simulation-setup#how-to-set-up-model-factories-when-using-an-od-matrix) a tutorial is available that gives some examples on how to use `DefaultLaneBasedGtuCharacteristicsGeneratorOd` or how to implement `LaneBasedGtuCharacteristicsGeneratorOd`.
+By default the `GTU_TYPE` option has a `null`, without templates. In section [How to set up model factories when using an OD matrix](../08-tutorials/simulation-setup.md#how-to-set-up-model-factories-when-using-an-od-matrix) a tutorial is available that gives some examples on how to use `DefaultLaneBasedGtuCharacteristicsGeneratorOd` or how to implement `LaneBasedGtuCharacteristicsGeneratorOd`.
 
 ## Markov chain for GTU types
 

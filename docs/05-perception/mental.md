@@ -14,7 +14,7 @@ Note that as `Mental` only determines parameter values, it does not force these 
 
 ## Fuller
 
-One implementation of `Mental` is `Fuller`, which follows the theory of [Fuller](/references#reference-fuller). This theory states that drivers have a balance between task-demand, and task-capability. If these are not in balance (driving is too demanding or too boring), drivers show behavioral adaptations. For instance, when driving is too demanding, the desired headway may be increased.
+One implementation of `Mental` is `Fuller`, which follows the theory of [Fuller (2000)](../10-references/references.md). This theory states that drivers have a balance between task-demand, and task-capability. If these are not in balance (driving is too demanding or too boring), drivers show behavioral adaptations. For instance, when driving is too demanding, the desired headway may be increased.
 
 <pre>
 GTU

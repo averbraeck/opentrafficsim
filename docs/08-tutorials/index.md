@@ -7,13 +7,12 @@ This chapter provides tutorials for specific usages and extensions of OTS. Secti
 [How to set up a simulation](simulation-setup.md#how-to-set-up-a-simulation)<br>
 [How to create an OD matrix and add demand data](simulation-setup.md#how-to-create-an-od-matrix-and-add-demand-data)<br>
 [How to set up model factories when using an OD matrix](simulation-setup.md#how-to-set-up-model-factories-when-using-an-od-matrix)<br>
-[How to set up bus traffic](/tutorials/simulation-setup.md#how-to-set-up-bus-traffic)
+[How to set up bus traffic](simulation-setup.md#how-to-set-up-bus-traffic)
 
 
 ## Development
 
 [Eclipse and development tips](development.md#eclipse-and-development-tips)<br>
-[How to create a local java project](development.md#how-to-create-a-local-java-project)<br>
 [How to find your way through the code](development.md#how-to-find-your-way-through-the-code)<br>
 [How to profile code performance](development.md#how-to-profile-code-performance)<br>
 [How to create a JUnit test](development.md#how-to-create-a-junit-test)<br>

@@ -1,6 +1,6 @@
 # Lane change Model with Relaxation and Sychronization
 
-The default tactical planner is the [Lane change Model with Relaxation and Synchronization (LMRS)](/references#reference-schakel-lmrs). This section discusses what modules it uses and how it can be extended.
+The default tactical planner is the Lane change Model with Relaxation and Synchronization (LMRS) ([Schakel et al., 2012](../10-references/references.md)). This section discusses what modules it uses and how it can be extended.
 
 
 ## Lane change incentives

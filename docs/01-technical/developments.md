@@ -39,7 +39,7 @@ The information that is given to the tactical planner comes from perception. Her
 1. `Mental` module added, with an implementation of Fuller's task-interface model.
 2. Different tasks that take any information from perception or the model itself.
 3. Different behavioral adaptations that may affect any part or parameter in the model.
-4. Different task managers, including simple summation of tasks, or implementing the concept of [anticipation reliance (Calvert et al., 2020)](../10-references/references.md).
+4. Different task managers, including simple summation of tasks, or implementing the concept of anticipation reliance ([Calvert et al., 2020](../10-references/references.md)).
 
 On top of this, there are many classes added for the visualization of these internal mechanisms, as well as to provide information on this for trajectory sampling. Consequently the simulation functionality for certain modelling concepts is distributed among various projects and packages in OTS. On top of that, parts of this functionality do not comply with coding standards. For example, the `LMRSFactory` is defined by 9 different inputs, and certain methods are quite long, which is all relatively incomprehensible. These are signs of a need for a better structure. The particular challenge here is the integrated nature of all components. For example a behavioral adaptation may be influenced by anything (what is task demanding) and may influence anything (that will alleviate the task demand). A highly adaptable and exposed structure is required.
 
