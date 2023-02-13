@@ -1,0 +1,53 @@
+@startuml
+
+interface Network {
+    + {static} OBJECT_ADD_EVENT
+    + {static} NONLOCATED_OBJECT_ADD_EVENT
+	+ addObject(LocatedObject object)
+	+ addNonLocatedObject(NonLocatedObject object)
+}
+
+abstract class Renderable2D {}
+Renderable2D o-- Locatable: draws >
+
+interface Locatable {}
+
+interface LocatedObject extends Locatable {}
+LocatedObject --o Network 
+
+interface Detector extends LocatedObject {}
+
+class TrafficLightDetector extends Detector {}
+
+abstract class LaneDetector implements Detector {}
+
+class StartEndDetector extends LaneDetector {}
+StartEndDetector --* TrafficLightDetector: < has
+
+class LoopDetector extends LaneDetector {}
+
+interface NonLocatedObject {}
+NonLocatedObject --o Network 
+
+interface GtuGenerator extends NonLocatedObject {
+    + Set<GtuGeneratorPosition> getPositions()
+}
+
+interface GtuGeneratorPosition extends Locatable {}
+GtuGeneratorPosition --* GtuGenerator: < has
+
+class LaneBasedGtuGenerator implements GtuGenerator {}
+
+class DefaultAnimationFactory
+DefaultAnimationFactory -- Network: listens to >
+DefaultAnimationFactory -- StartEndDetector: ignores >
+
+class TrafficLightDetectorAnimation extends Renderable2D
+TrafficLightDetectorAnimation --o DefaultAnimationFactory
+TrafficLightDetectorAnimation o-- TrafficLightDetector
+
+class GtuGeneratorPositionAnimation extends Renderable2D
+GtuGeneratorPositionAnimation --o DefaultAnimationFactory
+GtuGeneratorPositionAnimation o-- GtuGeneratorPosition
+
+@enduml

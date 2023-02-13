@@ -341,7 +341,7 @@ public class DefaultAnimationFactory implements EventListener
      * Draw non-located objects.
      * @param object NonLocatedObject; the object to draw.
      */
-    private void animateNonLocatedObject(final NonLocatedObject object)
+    protected void animateNonLocatedObject(final NonLocatedObject object)
     {
         try
         {
