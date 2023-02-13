@@ -6,7 +6,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.gtu.GtuException;
 
 /**
  * Store one position and lane of a GTU.
@@ -16,6 +15,7 @@ import org.opentrafficsim.core.gtu.GtuException;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 public class LanePosition implements Serializable
 {

@@ -3,8 +3,11 @@ package org.opentrafficsim.trafficcontrol;
 import org.djutils.event.EventListener;
 import org.djutils.event.EventProducer;
 import org.djutils.event.EventType;
+import org.djutils.metadata.MetaData;
+import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.object.NonLocatedObject;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 
 /**
  * Interface for traffic light controllers.
@@ -47,45 +50,66 @@ public interface TrafficController extends EventProducer, EventListener, NonLoca
      * The <b>timed</b> event type for pub/sub that a newly created traffic controller emits. <br>
      * Payload: Object[] { String trafficControllerId, String initialState }
      */
-    EventType TRAFFICCONTROL_CONTROLLER_CREATED = new EventType("TRAFFICCONTROL.CONTROLLER_CREATED");
+    EventType TRAFFICCONTROL_CONTROLLER_CREATED = new EventType("TRAFFICCONTROL.CONTROLLER_CREATED",
+            new MetaData("Controller created", "Controller id, initial state",
+                    new ObjectDescriptor("Controller id", "Id of the controller", String.class),
+                    new ObjectDescriptor("Initial state", "Initial state", String.class)));
 
     /**
      * The <b>timed</b> event type for pub/sub that a traffic controller emits when it begins the computations to determine its
      * response to the current input (detector states).<br>
      * Payload: Object[] { String trafficControllerId }
      */
-    EventType TRAFFICCONTROL_CONTROLLER_EVALUATING = new EventType("TRAFFICCONTROL.CONTROLLER_EVALUATING");
+    EventType TRAFFICCONTROL_CONTROLLER_EVALUATING =
+            new EventType("TRAFFICCONTROL.CONTROLLER_EVALUATING", new MetaData("Controller eveluating", "Controller id",
+                    new ObjectDescriptor("Controller id", "Id of the controller", String.class)));
 
     /**
      * The <b>timed</b> event type for pub/sub that a traffic controller uses to convey warnings.<br>
      * Payload: Object[] { String trafficControllerId, String message }
      */
-    EventType TRAFFICCONTROL_CONTROLLER_WARNING = new EventType("TRAFFICCONTROL.CONTROLLER_WARNING");
+    EventType TRAFFICCONTROL_CONTROLLER_WARNING = new EventType("TRAFFICCONTROL.CONTROLLER_WARNING",
+            new MetaData("Controller warning", "Controller id, warning message",
+                    new ObjectDescriptor("Controller id", "Id of the controller", String.class),
+                    new ObjectDescriptor("Message", "Message", String.class)));
 
     /**
      * The <b>timed</b> event for pub/sub emitted by a traffic control machine when it changes state (STARTING_UP, RUNNING,
      * SHUTTING_DOWN, OFF, etc. The exact set of states may vary depending on the type of traffic control machine. <br>
      * Payload: Object[] { String trafficControllerId, String oldState, String newState }
      */
-    EventType TRAFFICCONTROL_STATE_CHANGED = new EventType("TRAFFIC_CONTROL.STATE_CHANGED");
+    EventType TRAFFICCONTROL_STATE_CHANGED = new EventType("TRAFFIC_CONTROL.STATE_CHANGED",
+            new MetaData("Controller state changed", "Controller id, old state, new state",
+                    new ObjectDescriptor("Controller id", "Id of the controller", String.class),
+                    new ObjectDescriptor("Old state", "Old state", String.class),
+                    new ObjectDescriptor("New state", "New state", String.class)));
 
     /**
      * The <b>timed</b>event that is fired by a traffic control program when a traffic light must change state. <br>
-     * Payload: Object[] { String trafficControllerId, Integer stream, TrafficLightColor newColor }
+     * Payload: Object[] { String trafficControllerId, Short stream, TrafficLightColor newColor }
      */
-    EventType TRAFFIC_LIGHT_CHANGED = new EventType("TrafficLightChanged");
+    EventType TRAFFIC_LIGHT_CHANGED = new EventType("TrafficLightChanged",
+            new MetaData("Controller state changed", "Controller id, old state, new state",
+                    new ObjectDescriptor("Controller id", "Id of the controller", String.class),
+                    new ObjectDescriptor("Stream", "Stream number", Short.class),
+                    new ObjectDescriptor("Light color", "New traffic light color", TrafficLightColor.class)));
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the creation of a traffic control program variable. <br>
      * Listeners to this event can send <code>TRAFFICCONTROL_SET_TRACE</code> messages to set the tracing level of a
      * variable.<br>
-     * Payload: Object[] {String trafficControllerId, String variableId, Integer trafficStream, Double initialValue}
+     * Payload: Object[] {String trafficControllerId, String variableId, Short trafficStream, Double initialValue}
      */
-    EventType TRAFFICCONTROL_VARIABLE_CREATED = new EventType("TRAFFICCONTROL.VARIABLE_CREATED");
+    EventType TRAFFICCONTROL_VARIABLE_CREATED = new EventType("TRAFFICCONTROL.VARIABLE_CREATED",
+            new MetaData("Controller state changed", "Controller id, old state, new state",
+                    new ObjectDescriptor("Controller id", "Id of the controller", String.class),
+                    new ObjectDescriptor("Variable id", "Id of the variable", String.class),
+                    new ObjectDescriptor("Stream", "Stream number", Short.class),
+                    new ObjectDescriptor("Initial value", "Initial value", Double.class)));
 
     /**
      * The <b>timed</b> event type that instruct a traffic controller to change the tracing level of a variable. <br>
-     * Payload: Object[] { String trafficControllerId, String variableId, Integer trafficStream, Boolean trace } <br>
+     * Payload: Object[] { String trafficControllerId, String variableId, Short trafficStream, Boolean trace } <br>
      * Remark 1: an empty string for the variableId sets or clears tracing for all variables associated with the traffic stream.
      * <br>
      * Remark 2: The stream number <code>NO_STREAM</code> selects variable(s) that are not associated with a particular traffic
@@ -94,17 +118,29 @@ public interface TrafficController extends EventProducer, EventListener, NonLoca
      * <code>TRAFFICCONTROL_TRACED_VARIABLE_UPDATED</code> events sent to <b>all</b> listeners; i.e. it is not possible to
      * affect tracing on a per listener basis.
      */
-    EventType TRAFFICCONTROL_SET_TRACING = new EventType("TRAFFICCONTROL.SET_TRACING");
+    EventType TRAFFICCONTROL_SET_TRACING = new EventType("TRAFFICCONTROL.SET_TRACING",
+            new MetaData("Controller state changed", "Controller id, old state, new state",
+                    new ObjectDescriptor("Controller id", "Id of the controller", String.class),
+                    new ObjectDescriptor("Variable id", "Id of the variable", String.class),
+                    new ObjectDescriptor("Stream", "Stream number", Short.class),
+                    new ObjectDescriptor("Trace", "Trace", Boolean.class)));
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the update of a traced control program variable. <br>
-     * Payload: Object[] {String trafficControllerId, String variableId, Integer trafficStream, Double oldValue, Double
+     * Payload: Object[] {String trafficControllerId, String variableId, Short trafficStream, Double oldValue, Double
      * newValue, String expressionOrDescription} <br>
      * Remark 1: for variable that are not associated with a particular traffic stream, the trafficStream value shall be
      * <code>NO_STREAM</code> <br>
      * Remark 2: if the variable is a timer that has just been initialized; newValue will reflect the duration in seconds
      */
-    EventType TRAFFICCONTROL_TRACED_VARIABLE_UPDATED = new EventType("TRAFFICCONTROL.VARIABLE_UPDATED");
+    EventType TRAFFICCONTROL_TRACED_VARIABLE_UPDATED = new EventType("TRAFFICCONTROL.VARIABLE_UPDATED",
+            new MetaData("Controller state changed", "Controller id, old state, new state",
+                    new ObjectDescriptor("Controller id", "Id of the controller", String.class),
+                    new ObjectDescriptor("Variable id", "Id of the variable", String.class),
+                    new ObjectDescriptor("Stream", "Stream number", Short.class),
+                    new ObjectDescriptor("Old value", "Old value", Double.class),
+                    new ObjectDescriptor("New value", "New value", Double.class),
+                    new ObjectDescriptor("Expression", "Expression or description", String.class)));
 
     /**
      * The <b>timed</b> event for pub/sub emitted by a traffic control machine when it changes to another conflict group. <br>
@@ -117,6 +153,10 @@ public interface TrafficController extends EventProducer, EventListener, NonLoca
      * Remark 4: Some traffic control systems may not operate in a conflict group by conflict group fashion and therefore not
      * emit these events.
      */
-    EventType TRAFFICCONTROL_CONFLICT_GROUP_CHANGED = new EventType("TRAFFICCONTROL.CONFLICT_GROUP_CHANGED");
+    EventType TRAFFICCONTROL_CONFLICT_GROUP_CHANGED = new EventType("TRAFFICCONTROL.CONFLICT_GROUP_CHANGED",
+            new MetaData("Controller state changed", "Controller id, old state, new state",
+                    new ObjectDescriptor("Controller id", "Id of the controller", String.class),
+                    new ObjectDescriptor("Old stream", "Old conflict group stream", String.class),
+                    new ObjectDescriptor("New stream", "New conflict group stream", String.class)));
 
 }

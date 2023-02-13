@@ -6,6 +6,8 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
+import org.djutils.metadata.MetaData;
+import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
@@ -48,7 +50,12 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
      * The <b>timed</b> event type for pub/sub indicating the triggering of a Detector on a lane. <br>
      * Payload: Object[] {String detectorId, Detector detector, LaneBasedGtu gtu, RelativePosition.TYPE relativePosition}
      */
-    public static final EventType DETECTOR_TRIGGER_EVENT = new EventType("DETECTOR.TRIGGER");
+    public static final EventType DETECTOR_TRIGGER_EVENT = new EventType("DETECTOR.TRIGGER",
+            new MetaData("Detector trigger", "Detector is triggered",
+                    new ObjectDescriptor("Detector id", "Id of the detector", String.class),
+                    new ObjectDescriptor("Detector", "Detector itself", Detector.class),
+                    new ObjectDescriptor("GTU", "Triggering GTU", LaneBasedGtu.class),
+                    new ObjectDescriptor("Position", "Relative GTU position that triggered", RelativePosition.TYPE.class)));
 
     /** Default elevation of a detector; if the lane is not at elevation 0; this value is probably far off. */
     public static final Length DEFAULT_DETECTOR_ELEVATION = new Length(0.1, LengthUnit.METER);

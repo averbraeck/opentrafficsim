@@ -27,6 +27,8 @@ import org.djutils.draw.point.Point;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
+import org.djutils.metadata.MetaData;
+import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -65,6 +67,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * <p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 public class LaneBasedGtuGenerator extends LocalEventProducer implements Serializable, Identifiable, GtuGenerator
 {
@@ -72,9 +75,10 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
     private static final long serialVersionUID = 20160000L;
 
     /**
-     * Event of a generated GTU. Payload: LaneBasedIndividualGTU
+     * Event of a generated GTU. Payload: LaneBasedGtu
      */
-    public static final EventType GTU_GENERATED_EVENT = new EventType("GENERATOR.GTU_GENERATED");
+    public static final EventType GTU_GENERATED_EVENT = new EventType("GENERATOR.GTU_GENERATED", new MetaData("GTU generated",
+            "GTU was generated", new ObjectDescriptor("GTU", "The GTU itself", LaneBasedGtu.class)));
 
     /** FIFO for templates that have not been generated yet due to insufficient room/headway, per position, and per link. */
     private final Map<CrossSectionLink,
@@ -161,7 +165,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
         Duration headway = this.interarrivelTimeGenerator.draw();
         if (headway != null) // otherwise no demand at all
         {
-            simulator.scheduleEventRel(headway, this, this, "generateCharacteristics", new Object[] {});
+            simulator.scheduleEventRel(headway, this, "generateCharacteristics", new Object[] {});
         }
         this.network.addNonLocatedObject(this);
     }
@@ -239,7 +243,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
         Duration headway = this.interarrivelTimeGenerator.draw();
         if (headway != null)
         {
-            this.simulator.scheduleEventRel(headway, this, this, "generateCharacteristics", new Object[] {});
+            this.simulator.scheduleEventRel(headway, this, "generateCharacteristics", new Object[] {});
         }
     }
 
@@ -289,12 +293,12 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
             placeGtu(characteristics, placement.getPosition(), placement.getSpeed());
             if (queue.size() > 0)
             {
-                this.simulator.scheduleEventNow(this, this, "tryToPlaceGTU", new Object[] {position});
+                this.simulator.scheduleEventNow(this, "tryToPlaceGTU", new Object[] {position});
             }
         }
         else if (queue.size() > 0)
         {
-            this.simulator.scheduleEventRel(this.reTryInterval, this, this, "tryToPlaceGTU", new Object[] {position});
+            this.simulator.scheduleEventRel(this.reTryInterval, this, "tryToPlaceGTU", new Object[] {position});
         }
     }
 
@@ -357,7 +361,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
         queue.add(new TimeStampedObject<>(characteristics, this.simulator.getSimulatorAbsTime()));
         if (queue.size() == 1)
         {
-            this.simulator.scheduleEventNow(this, this, "tryToPlaceGTU", new Object[] {lanePosition});
+            this.simulator.scheduleEventNow(this, "tryToPlaceGTU", new Object[] {lanePosition});
         }
     }
 

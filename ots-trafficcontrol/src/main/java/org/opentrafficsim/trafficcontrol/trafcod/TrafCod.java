@@ -215,9 +215,9 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
         }
         // Schedule the consistency check (don't call it directly) to allow interested parties to subscribe before the
         // consistency check is performed
-        this.simulator.scheduleEventRel(Duration.ZERO, this, this, "checkConsistency", null);
+        this.simulator.scheduleEventRel(Duration.ZERO, this, "checkConsistency", null);
         // The first rule evaluation should occur at t=0.1s
-        this.simulator.scheduleEventRel(EVALUATION_INTERVAL, this, this, "evalExprs", null);
+        this.simulator.scheduleEventRel(EVALUATION_INTERVAL, this, "evalExprs", null);
     }
 
     /**
@@ -745,7 +745,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
             fireTimedEvent(TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING,
                     new Object[] {getId(), warningMessage.toString()}, this.simulator.getSimulatorTime());
         }
-        this.simulator.scheduleEventRel(EVALUATION_INTERVAL, this, this, "evalExprs", null);
+        this.simulator.scheduleEventRel(EVALUATION_INTERVAL, this, "evalExprs", null);
     }
 
     /**
@@ -874,8 +874,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
             result = destination.setValue(resultValue, this.currentTime10, new CausePrinter(rule), this);
             if (destination.isOutput())
             {
-                fireTimedEvent(TRAFFIC_LIGHT_CHANGED,
-                        new Object[] {getId(), Integer.valueOf(destination.getStream()), destination.getColor()},
+                fireTimedEvent(TRAFFIC_LIGHT_CHANGED, new Object[] {getId(), destination.getStream(), destination.getColor()},
                         getSimulator().getSimulatorAbsTime());
             }
             if (destination.isConflictGroup() && resultValue != 0)

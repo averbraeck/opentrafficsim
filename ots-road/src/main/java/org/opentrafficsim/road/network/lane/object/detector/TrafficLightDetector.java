@@ -14,6 +14,8 @@ import org.djutils.event.EventListener;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
+import org.djutils.metadata.MetaData;
+import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
@@ -79,19 +81,30 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the triggering of the entry of a NonDirectionalOccupancyDetector. <br>
-     * Payload: Object[] {String detectorId, NonDirectionalOccupancyDetector detector, LaneBasedGtu gtu, RelativePosition.TYPE
+     * Payload: Object[] {String detectorId, TrafficLightDetector detector, LaneBasedGtu gtu, RelativePosition.TYPE
      * relativePosition}
      */
     public static final EventType TRAFFIC_LIGHT_DETECTOR_TRIGGER_ENTRY_EVENT =
-            new EventType("TRAFFICLIGHTDETECTOR.TRIGGER.ENTRY");
+            new EventType("TRAFFICLIGHTDETECTOR.TRIGGER.ENTRY",
+                    new MetaData("Traffic light detector entty", "Traffic light detector was entered",
+                            new ObjectDescriptor("Detector id", "Traffic light detector id", String.class))); /*-,
+                            new ObjectDescriptor("Detector", "The detector itself", TrafficLightDetector.class),
+                            new ObjectDescriptor("GTU", "The lane-based GTU", LaneBasedGtu.class), new ObjectDescriptor(
+                                    "Relative position", "GTU triggering relative position", RelativePosition.TYPE.class)));*/
+
+    // TODO: when these two events are fired, only the detector id is given
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the triggering of the exit of an NonDirectionalOccupancyDetector. <br>
-     * Payload: Object[] {String detectorId, NonDirectionalOccupancyDetector detector, LaneBasedGtu gtu, RelativePosition.TYPE
+     * Payload: Object[] {String detectorId, TrafficLightDetector detector, LaneBasedGtu gtu, RelativePosition.TYPE
      * relativePosition}
      */
-    public static final EventType TRAFFIC_LIGHT_DETECTOR_TRIGGER_EXIT_EVENT =
-            new EventType("TRAFFICLIGHTDETECTOR.TRIGGER.EXIT");
+    public static final EventType TRAFFIC_LIGHT_DETECTOR_TRIGGER_EXIT_EVENT = new EventType("TRAFFICLIGHTDETECTOR.TRIGGER.EXIT",
+            new MetaData("Traffic light detector exit", "Traffic light detector was exited",
+                    new ObjectDescriptor("Detector id", "Traffic light detector id", String.class))); /*-,
+                    new ObjectDescriptor("Detector", "The detector itself", TrafficLightDetector.class),
+                    new ObjectDescriptor("GTU", "The lane-based GTU", LaneBasedGtu.class), new ObjectDescriptor(
+                            "Relative position", "GTU triggering relative position", RelativePosition.TYPE.class)));*/
 
     /**
      * Construct a new traffic light detector.<br>

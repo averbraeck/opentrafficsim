@@ -890,7 +890,7 @@ public class LaneBasedGtu extends Gtu
                 if (pos.gt(lane.getLength()))
                 {
                     pos = position(lane, getRear());
-                    this.pendingLeaveTrigger = getSimulator().scheduleEventNow(this, this, "leaveCrossSection", null);
+                    this.pendingLeaveTrigger = getSimulator().scheduleEventNow(this, "leaveCrossSection", null);
                     getSimulator().getLogger().always().info("Forcing leave for GTU {} on lane {}", getId(), lane.getFullId());
                 }
             }

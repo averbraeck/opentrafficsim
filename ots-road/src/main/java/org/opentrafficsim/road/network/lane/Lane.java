@@ -23,6 +23,8 @@ import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
+import org.djutils.metadata.MetaData;
+import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.HierarchicallyTyped;
 import org.opentrafficsim.core.SpatialObject;
@@ -41,6 +43,7 @@ import org.opentrafficsim.core.perception.collections.HistoricalList;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.detector.DestinationDetector;
+import org.opentrafficsim.road.network.lane.object.detector.Detector;
 import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 
@@ -135,42 +138,58 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the lane. <br>
      * Payload: Object[] {String gtuId, int count_after_addition, String laneId, String linkId}
      */
-    public static final EventType GTU_ADD_EVENT = new EventType("LANE.GTU.ADD");
-    // public static final EventType GTU_ADD_EVENT = new EventType("LANE.GTU.ADD",
-    // new MetaData("GTU added to lane", "GTU added",
-    // new ObjectDescriptor[] { new ObjectDescriptor("Id of newly added GTU", "GTU id", String.class),
-    // new ObjectDescriptor("New number of GTUs in lane", "GTU count", Integer.class) }));
+    public static final EventType GTU_ADD_EVENT = new EventType("LANE.GTU.ADD",
+            new MetaData("Lane GTU add", "GTU id, number of GTUs after addition, lane id, link id",
+                    new ObjectDescriptor("GTU id", "Id of GTU", String.class),
+                    new ObjectDescriptor("GTU count", "New number of GTUs on lane", Integer.class),
+                    new ObjectDescriptor("Lane id", "Id of the lane", String.class),
+                    new ObjectDescriptor("Link id", "Id of the link", String.class)));
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the removal of a GTU from the lane. <br>
      * Payload: Object[] {String gtuId, LaneBasedGtu gtu, int count_after_removal, Length position, String laneId, String
      * linkId}
      */
-    public static final EventType GTU_REMOVE_EVENT = new EventType("LANE.GTU.REMOVE");
+    public static final EventType GTU_REMOVE_EVENT = new EventType("LANE.GTU.REMOVE",
+            new MetaData("Lane GTU remove", "GTU id, gtu, number of GTUs after removal, position, lane id, link id",
+                    new ObjectDescriptor("GTU id", "Id of GTU", String.class),
+                    new ObjectDescriptor("GTU", "The GTU itself", LaneBasedGtu.class),
+                    new ObjectDescriptor("GTU count", "New number of GTUs on lane", Integer.class),
+                    new ObjectDescriptor("Position", "Last position of GTU on the lane", Length.class),
+                    new ObjectDescriptor("Lane id", "Id of the lane", String.class),
+                    new ObjectDescriptor("Link id", "Id of the link", String.class)));
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the addition of a Detector to the lane. <br>
      * Payload: Object[] {String detectorId, Detector detector}
      */
-    public static final EventType DETECTOR_ADD_EVENT = new EventType("LANE.DETECTOR.ADD");
+    public static final EventType DETECTOR_ADD_EVENT = new EventType("LANE.DETECTOR.ADD",
+            new MetaData("Lane detector add", "Detector id, detector",
+                    new ObjectDescriptor("detector id", "id of detector", String.class),
+                    new ObjectDescriptor("detector", "detector itself", Detector.class)));
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the removal of a Detector from the lane. <br>
      * Payload: Object[] {String detectorId, Detector detector}
      */
-    public static final EventType DETECTOR_REMOVE_EVENT = new EventType("LANE.DETECTOR.REMOVE");
+    public static final EventType DETECTOR_REMOVE_EVENT = new EventType("LANE.DETECTOR.REMOVE",
+            new MetaData("Lane detector remove", "Detector id, detector",
+                    new ObjectDescriptor("detector id", "id of detector", String.class),
+                    new ObjectDescriptor("detector", "detector itself", Detector.class)));
 
     /**
      * The event type for pub/sub indicating the addition of a LaneBasedObject to the lane. <br>
      * Payload: Object[] {LaneBasedObject laneBasedObject}
      */
-    public static final EventType OBJECT_ADD_EVENT = new EventType("LANE.OBJECT.ADD");
+    public static final EventType OBJECT_ADD_EVENT = new EventType("LANE.OBJECT.ADD", new MetaData("Lane object add", "Object",
+            new ObjectDescriptor("GTU", "The lane-based GTU", LaneBasedObject.class)));
 
     /**
      * The event type for pub/sub indicating the removal of a LaneBasedObject from the lane. <br>
      * Payload: Object[] {LaneBasedObject laneBasedObject}
      */
-    public static final EventType OBJECT_REMOVE_EVENT = new EventType("LANE.OBJECT.REMOVE");
+    public static final EventType OBJECT_REMOVE_EVENT = new EventType("LANE.OBJECT.REMOVE", new MetaData("Lane object remove",
+            "Object", new ObjectDescriptor("GTU", "The lane-based GTU", LaneBasedObject.class)));
 
     /**
      * Construct a new Lane.
@@ -453,7 +472,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param gtuType GtuType; the GTU type to provide the detectors for
      * @return List&lt;Detector&gt;; list of the detectors in the specified range. This is a defensive copy.
      */
-    public final List<LaneDetector> getDetectors(final Length minimumPosition, final Length maximumPosition, final GtuType gtuType)
+    public final List<LaneDetector> getDetectors(final Length minimumPosition, final Length maximumPosition,
+            final GtuType gtuType)
     {
         List<LaneDetector> detectorList = new ArrayList<>(1);
         for (List<LaneDetector> dets : this.detectors.values())

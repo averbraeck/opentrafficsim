@@ -318,7 +318,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
         SimEventInterface<Duration> simEvent;
         try
         {
-            simEvent = this.simulator.scheduleEventRel(inTime, this, this, "notifySample", new Object[] {gtu, lane});
+            simEvent = this.simulator.scheduleEventRel(inTime, this, "notifySample", new Object[] {gtu, lane});
         }
         catch (SimRuntimeException exception)
         {

@@ -73,7 +73,7 @@ public class HistoryManagerDevs extends HistoryManager implements EventListener
         }
         try
         {
-            this.simulator.scheduleEventRel(this.cleanUpInterval, this, this, "cleanUpHistory", this.none);
+            this.simulator.scheduleEventRel(this.cleanUpInterval, this, "cleanUpHistory", this.none);
         }
         catch (SimRuntimeException exception)
         {

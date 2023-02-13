@@ -90,21 +90,21 @@ public class TJunctionModel extends AbstractOtsModel
             case RED:
             {
                 trafficLight.setTrafficLightColor(TrafficLightColor.GREEN);
-                this.simulator.scheduleEventRel(new Duration(30.0, DurationUnit.SECOND), this, this, "changePhase",
+                this.simulator.scheduleEventRel(new Duration(30.0, DurationUnit.SECOND), this, "changePhase",
                         new Object[] {trafficLight});
                 break;
             }
             case YELLOW:
             {
                 trafficLight.setTrafficLightColor(TrafficLightColor.RED);
-                this.simulator.scheduleEventRel(new Duration(56.0, DurationUnit.SECOND), this, this, "changePhase",
+                this.simulator.scheduleEventRel(new Duration(56.0, DurationUnit.SECOND), this, "changePhase",
                         new Object[] {trafficLight});
                 break;
             }
             case GREEN:
             {
                 trafficLight.setTrafficLightColor(TrafficLightColor.YELLOW);
-                this.simulator.scheduleEventRel(new Duration(4.0, DurationUnit.SECOND), this, this, "changePhase",
+                this.simulator.scheduleEventRel(new Duration(4.0, DurationUnit.SECOND), this, "changePhase",
                         new Object[] {trafficLight});
                 break;
             }

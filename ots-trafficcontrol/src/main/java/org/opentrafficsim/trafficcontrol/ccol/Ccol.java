@@ -112,7 +112,7 @@ public class Ccol extends LocalEventProducer implements ActuatedTrafficControlle
         {
             e.printStackTrace();
         }
-        this.simulator.scheduleEventRel(Duration.ZERO, this, this, "step", null);
+        this.simulator.scheduleEventRel(Duration.ZERO, this, "step", null);
         this.simulator.addListener(this, ReplicationInterface.END_REPLICATION_EVENT);
     }
 
@@ -179,7 +179,7 @@ public class Ccol extends LocalEventProducer implements ActuatedTrafficControlle
             exception.printStackTrace();
         }
         // Schedule the next step.
-        this.simulator.scheduleEventRel(EVALUATION_INTERVAL, this, this, "step", null);
+        this.simulator.scheduleEventRel(EVALUATION_INTERVAL, this, "step", null);
     }
 
     /** {@inheritDoc} */

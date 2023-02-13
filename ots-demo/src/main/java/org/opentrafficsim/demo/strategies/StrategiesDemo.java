@@ -438,8 +438,9 @@ public class StrategiesDemo extends AbstractSimulationScript
                 this.queue.clear();
             }
         }
-        Try.execute(() -> getSimulator().scheduleEventRel(Duration.instantiateSI(0.5), this, this, "checkVehicleNumber",
-                new Object[] {}), "");
+        Try.execute(
+                () -> getSimulator().scheduleEventRel(Duration.instantiateSI(0.5), this, "checkVehicleNumber", new Object[] {}),
+                "");
     }
 
     /** Lane change listener. */
@@ -608,7 +609,7 @@ public class StrategiesDemo extends AbstractSimulationScript
         }
 
         this.nextGtuType = this.stream.nextDouble() < this.truckFraction ? DefaultsNl.TRUCK : DefaultsNl.CAR;
-        sim.scheduleEventNow(this, this, "checkVehicleNumber", new Object[] {});
+        sim.scheduleEventNow(this, "checkVehicleNumber", new Object[] {});
 
         return network;
     }

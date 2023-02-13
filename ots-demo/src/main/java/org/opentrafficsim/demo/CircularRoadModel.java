@@ -170,7 +170,7 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
             }
 
             tv.sample(this.simulator.getSimulatorTime().toString(), state.toString());
-            this.simulator.scheduleEventRel(new Duration(1, DurationUnit.SECOND), this, this, "sample", new Object[] {tv});
+            this.simulator.scheduleEventRel(new Duration(1, DurationUnit.SECOND), this, "sample", new Object[] {tv});
         }
         catch (IOException e)
         {

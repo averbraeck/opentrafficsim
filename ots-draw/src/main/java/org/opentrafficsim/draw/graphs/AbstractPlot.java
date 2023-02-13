@@ -14,6 +14,8 @@ import java.util.UUID;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventType;
+import org.djutils.metadata.MetaData;
+import org.djutils.metadata.ObjectDescriptor;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
@@ -46,13 +48,15 @@ public abstract class AbstractPlot implements Identifiable, Dataset
      * The (regular, not timed) event type for pub/sub indicating the addition of a graph. Not used internally.<br>
      * Payload: String graph caption (not an array, just a String)
      */
-    public static final EventType GRAPH_ADD_EVENT = new EventType("GRAPH.ADD");
+    public static final EventType GRAPH_ADD_EVENT = new EventType("GRAPH.ADD",
+            new MetaData("Graph add", "Graph added", new ObjectDescriptor("Graph id", "Id of the graph", String.class)));
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the removal of a graph. Not used internally.<br>
      * Payload: String Graph caption (not an array, just a String)
      */
-    public static final EventType GRAPH_REMOVE_EVENT = new EventType("GRAPH.REMOVE");
+    public static final EventType GRAPH_REMOVE_EVENT = new EventType("GRAPH.REMOVE",
+            new MetaData("Graph remove", "Graph removed", new ObjectDescriptor("Graph id", "Id of the graph", String.class)));
 
     /** Initial upper bound for the time scale. */
     public static final Time DEFAULT_INITIAL_UPPER_TIME_BOUND = Time.instantiateSI(300.0);

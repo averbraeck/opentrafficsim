@@ -207,7 +207,7 @@ public class DefaultAnimationFactory implements EventListener
             {
                 // schedule the addition of the GTU to prevent it from not having an operational plan
                 LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU((String) event.getContent());
-                this.simulator.scheduleEventNow(this, this, "animateGTU", new Object[] {gtu});
+                this.simulator.scheduleEventNow(this, "animateGTU", new Object[] {gtu});
             }
             else if (event.getType().equals(Network.GTU_REMOVE_EVENT))
             {

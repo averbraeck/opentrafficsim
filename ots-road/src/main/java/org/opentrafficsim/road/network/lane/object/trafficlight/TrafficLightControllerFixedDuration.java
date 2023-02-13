@@ -63,7 +63,7 @@ public class TrafficLightControllerFixedDuration implements TrafficLightControll
         this.simulator = simulator;
         try
         {
-            this.simulator.scheduleEventNow(this, this, "changePhase", null);
+            this.simulator.scheduleEventNow(this, "changePhase", null);
         }
         catch (SimRuntimeException exception)
         {
@@ -86,7 +86,7 @@ public class TrafficLightControllerFixedDuration implements TrafficLightControll
                     trafficLight.setTrafficLightColor(TrafficLightColor.YELLOW);
                 }
                 this.currentColor = TrafficLightColor.YELLOW;
-                this.simulator.scheduleEventRel(this.yellowDurations.get(this.currentPhase), this, this, "changePhase", null);
+                this.simulator.scheduleEventRel(this.yellowDurations.get(this.currentPhase), this, "changePhase", null);
                 return;
             }
             else if (this.currentColor.isYellow())
@@ -107,7 +107,7 @@ public class TrafficLightControllerFixedDuration implements TrafficLightControll
                 }
                 this.currentPhase = nextPhase;
                 this.currentColor = TrafficLightColor.GREEN;
-                this.simulator.scheduleEventRel(this.greenDurations.get(this.currentPhase), this, this, "changePhase", null);
+                this.simulator.scheduleEventRel(this.greenDurations.get(this.currentPhase), this, "changePhase", null);
             }
         }
         catch (SimRuntimeException exception)

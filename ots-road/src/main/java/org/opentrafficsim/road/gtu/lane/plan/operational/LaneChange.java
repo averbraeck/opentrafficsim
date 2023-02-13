@@ -377,7 +377,7 @@ public class LaneChange implements Serializable
         {
             try
             {
-                gtu.getSimulator().scheduleEventNow(gtu, BUILDER, "scheduleLaneChangeFinalization",
+                gtu.getSimulator().scheduleEventNow(BUILDER, "scheduleLaneChangeFinalization",
                         new Object[] {gtu, Length.min(planDistance, path.getLength()), laneChangeDirection});
             }
             catch (SimRuntimeException exception)

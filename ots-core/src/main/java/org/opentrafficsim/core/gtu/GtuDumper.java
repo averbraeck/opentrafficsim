@@ -41,7 +41,7 @@ public class GtuDumper
                         Math.toDegrees(dp.getRotZ()), gtu.getSpeed());
             }
             pw.close();
-            this.simulator.scheduleEventRel(this.interval, this, this, "dump", new Object[] {});
+            this.simulator.scheduleEventRel(this.interval, this, "dump", new Object[] {});
         }
         catch (Exception e)
         {

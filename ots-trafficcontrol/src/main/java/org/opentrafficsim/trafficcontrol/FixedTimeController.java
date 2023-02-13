@@ -1,6 +1,5 @@
 package org.opentrafficsim.trafficcontrol;
 
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -113,7 +112,6 @@ public class FixedTimeController extends AbstractTrafficController
             List<SignalGroup> sgList = signalGroupsOfTrafficLight.get(trafficLightId);
             if (sgList.size() > 1)
             {
-                // System.out.println("Signal " + trafficLightId + " is used in multiple signal groups");
                 // Check for overlapping or adjacent green phases
                 List<Flank> flanks = new ArrayList<>();
                 for (SignalGroup sg : sgList)
@@ -136,13 +134,6 @@ public class FixedTimeController extends AbstractTrafficController
                     flanks.add(new Flank(sgOffset % this.cycleTime.si, TrafficLightColor.RED));
                 }
                 Collections.sort(flanks);
-                /*-
-                System.out.println("Collected " + flanks.size() + " flanks:");
-                for (Flank flank : flanks)
-                {
-                    System.out.println(flank);
-                }
-                */
                 boolean combined = false;
                 int greenCount = 0;
                 for (int index = 0; index < flanks.size(); index++)
@@ -180,13 +171,6 @@ public class FixedTimeController extends AbstractTrafficController
                         }
                     }
                 }
-                /*-
-                System.out.println("Reduced " + flanks.size() + " flanks:");
-                for (Flank flank : flanks)
-                {
-                    System.out.println(flank);
-                }
-                */
                 if (combined)
                 {
                     // Traffic light has adjacent or overlapping green realizations.
@@ -209,15 +193,8 @@ public class FixedTimeController extends AbstractTrafficController
                         {
                             SignalGroup newSignalGroup = new SignalGroup(sg.getId(), trafficLightIds, sg.getOffset(),
                                     sg.getPreGreen(), sg.getGreen(), sg.getYellow());
-                            // System.out.println("reduced signal group " + newSignalGroup);
                             this.signalGroups.add(newSignalGroup);
                         }
-                        /*-
-                        else
-                        {
-                            System.out.println("Signal group became empty");
-                        }
-                        */
                     }
                     // Create new signal group(s) for each green realization of the traffic light
                     Duration sgOffset = null;
@@ -249,7 +226,6 @@ public class FixedTimeController extends AbstractTrafficController
                             SignalGroup newSignalGroup = new SignalGroup(newSignalGroupName + "_" + nextNumber, trafficLightIds,
                                     sgOffset, preGreen, green, yellow);
                             this.signalGroups.add(newSignalGroup);
-                            // System.out.println("Created signal group " + newSignalGroup);
                         }
                         cumulativeOffset = flank.getOffset();
                     }
@@ -457,7 +433,6 @@ public class FixedTimeController extends AbstractTrafficController
                         + "\" in fixed time controller could not be found in network " + network.getId() + ".");
                 this.trafficLights.add(trafficLight);
             }
-            // System.out.println("Starting up " + this);
             Duration inCycleTime = Duration.ZERO.minus(totalOffset);
             while (inCycleTime.si < 0)
             {
@@ -488,9 +463,8 @@ public class FixedTimeController extends AbstractTrafficController
             {
                 throw new SimRuntimeException("Cannot determine initial state of signal group " + this);
             }
-            // System.out.println("Initial color is " + this.currentColor + " next flank after " + duration);
             setTrafficLights(this.currentColor);
-            this.simulator.scheduleEventRel(duration, this, this, "updateColors", null);
+            this.simulator.scheduleEventRel(duration, this, "updateColors", null);
         }
 
         /**
@@ -528,7 +502,7 @@ public class FixedTimeController extends AbstractTrafficController
                     }
                 }
                 setTrafficLights(color);
-                this.simulator.scheduleEventRel(duration, this, this, "updateColors", null);
+                this.simulator.scheduleEventRel(duration, this, "updateColors", null);
             }
             catch (SimRuntimeException exception)
             {

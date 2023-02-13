@@ -3,9 +3,12 @@ package org.opentrafficsim.road.network.lane.object.detector;
 import java.io.Serializable;
 
 import org.djutils.event.EventType;
+import org.djutils.metadata.MetaData;
+import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 /**
@@ -49,13 +52,23 @@ public interface DirectionalOccupancyDetector extends Serializable, Identifiable
      * The <b>timed</b> event type for pub/sub indicating the triggering of the entry of an OccupancyDetector. <br>
      * Payload: Object[] {String detectorId, Detector detector, LaneBasedGtu gtu, RelativePosition.TYPE relativePosition}
      */
-    EventType DIRECTIONAL_OCCUPANCY_DETECTOR_TRIGGER_ENTRY_EVENT = new EventType("DIRECTIONALOCCUPANCYDETECTOR.TRIGGER.ENTRY");
+    EventType DIRECTIONAL_OCCUPANCY_DETECTOR_TRIGGER_ENTRY_EVENT = new EventType("DIRECTIONALOCCUPANCYDETECTOR.TRIGGER.ENTRY",
+            new MetaData("Occupancy detector trigger", "Occupancy detector is triggered",
+                    new ObjectDescriptor("Detector id", "Id of the detector", String.class),
+                    new ObjectDescriptor("Detector", "Detector itself", Detector.class),
+                    new ObjectDescriptor("GTU", "Triggering GTU", LaneBasedGtu.class),
+                    new ObjectDescriptor("Position", "Relative GTU position that triggered", RelativePosition.TYPE.class)));
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the triggering of the exit of an OccupancyDetector. <br>
      * Payload: Object[] {String detectorId, Detector detector, LaneBasedGtu gtu, RelativePosition.TYPE relativePosition}
      */
-    EventType DIRECTIONAL_OCCUPANCY_DETECTOR_TRIGGER_EXIT_EVENT = new EventType("DIRECTIONALOCCUPANCYDETECTOR.TRIGGER.EXIT");
+    EventType DIRECTIONAL_OCCUPANCY_DETECTOR_TRIGGER_EXIT_EVENT = new EventType("DIRECTIONALOCCUPANCYDETECTOR.TRIGGER.EXIT",
+            new MetaData("Occupancy detector trigger", "Occupancy detector is triggered",
+                    new ObjectDescriptor("Detector id", "Id of the detector", String.class),
+                    new ObjectDescriptor("Detector", "Detector itself", Detector.class),
+                    new ObjectDescriptor("GTU", "Triggering GTU", LaneBasedGtu.class),
+                    new ObjectDescriptor("Position", "Relative GTU position that triggered", RelativePosition.TYPE.class)));
 
     // TODO enforce clone method
 
