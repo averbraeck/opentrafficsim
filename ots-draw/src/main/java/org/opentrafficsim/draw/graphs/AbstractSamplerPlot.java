@@ -44,7 +44,7 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
      * Constructor.
      * @param caption String; caption
      * @param updateInterval Duration; regular update interval (simulation time)
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param samplerData SamplerData&lt;?&gt;; sampler data
      * @param path GraphPath&lt;? extends LaneData&gt;; path
      * @param delay Duration; amount of time that chart runs behind simulation to prevent gaps in the charted data

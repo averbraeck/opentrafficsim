@@ -174,9 +174,9 @@ public class MultiThumbSlider<T> extends JComponent
     }
 
     @SuppressWarnings({"unchecked", "javadoc"})
-    public MultiThumbSliderUI<T> getUI()
+    public MultiThumbSliderUi<T> getUI()
     {
-        return (MultiThumbSliderUI<T>) this.ui;
+        return (MultiThumbSliderUi<T>) this.ui;
     }
 
     @Override
@@ -207,7 +207,7 @@ public class MultiThumbSlider<T> extends JComponent
                 Class<?>[] types = constructors[a].getParameterTypes();
                 if (types.length == 1 && types[0].equals(MultiThumbSlider.class))
                 {
-                    MultiThumbSliderUI<T> ui = (MultiThumbSliderUI<T>) constructors[a].newInstance(new Object[] {this});
+                    MultiThumbSliderUi<T> ui = (MultiThumbSliderUi<T>) constructors[a].newInstance(new Object[] {this});
                     setUI(ui);
                     return;
                 }
@@ -228,7 +228,7 @@ public class MultiThumbSlider<T> extends JComponent
     /**
      * @param ui slider
      */
-    public void setUI(MultiThumbSliderUI<T> ui)
+    public void setUI(MultiThumbSliderUi<T> ui)
     {
         super.setUI((ComponentUI) ui);
     }

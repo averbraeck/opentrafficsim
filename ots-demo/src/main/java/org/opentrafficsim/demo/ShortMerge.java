@@ -145,7 +145,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
     /**
      * Create a ShortMerge Swing application.
      * @param title String; the title of the Frame
-     * @param panel OTSAnimationPanel; the tabbed panel to display
+     * @param panel OtsAnimationPanel; the tabbed panel to display
      * @param model ShortMergeModel; the model
      * @throws OtsDrawingException on animation error
      */
@@ -216,7 +216,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         private OtsRoadNetwork network;
 
         /**
-         * @param simulator OTSSimulatorInterface; the simulator
+         * @param simulator OtsSimulatorInterface; the simulator
          */
         public ShortMergeModel(final OtsSimulatorInterface simulator)
         {
@@ -224,7 +224,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         }
 
         /**
-         * @param network OTSRoadNetwork; set network.
+         * @param network OtsRoadNetwork; set network.
          */
         public void setNetwork(final OtsRoadNetwork network)
         {
@@ -472,7 +472,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         private final Frequency demand;
 
         /**
-         * @param simulator OTSSimulatorInterface; the simulator
+         * @param simulator OtsSimulatorInterface; the simulator
          * @param demand Frequency; demand
          */
         HeadwayGenerator(final OtsSimulatorInterface simulator, final Frequency demand)

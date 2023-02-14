@@ -24,7 +24,7 @@ public class MultiLaneBasedMoveChecker extends AbstractLaneBasedMoveChecker
 
     /**
      * Constructor.
-     * @param network OTSNetwork; network
+     * @param network OtsNetwork; network
      */
     public MultiLaneBasedMoveChecker(final OtsNetwork network)
     {
@@ -33,7 +33,7 @@ public class MultiLaneBasedMoveChecker extends AbstractLaneBasedMoveChecker
 
     /**
      * Constructor.
-     * @param network OTSNetwork; network
+     * @param network OtsNetwork; network
      * @param checkers AbstractLaneBasedMoveChecker...; checkers
      */
     public MultiLaneBasedMoveChecker(final OtsNetwork network, final AbstractLaneBasedMoveChecker... checkers)

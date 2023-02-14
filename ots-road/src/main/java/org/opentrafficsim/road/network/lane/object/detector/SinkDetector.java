@@ -25,7 +25,7 @@ public class SinkDetector extends LaneDetector
     /**
      * @param lane Lane; the lane that triggers the deletion of the GTU.
      * @param position Length; the position of the detector
-     * @param simulator OTSSimulatorInterface; the simulator to enable animation.
+     * @param simulator OtsSimulatorInterface; the simulator to enable animation.
      * @param detectorType DetectorType; detector type.
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */

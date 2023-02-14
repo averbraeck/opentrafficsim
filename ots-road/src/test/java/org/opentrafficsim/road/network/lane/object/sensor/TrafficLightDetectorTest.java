@@ -29,7 +29,7 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -91,7 +91,7 @@ public class TrafficLightDetectorTest implements EventListener
         for (int nodeNumber = 0; nodeNumber <= lengths.length; nodeNumber++)
         {
             OtsRoadNode node =
-                    new OtsRoadNode(network, "node" + nodeNumber, new OtsPoint3D(cumulativeLength, 0, 0), Direction.ZERO);
+                    new OtsRoadNode(network, "node" + nodeNumber, new OtsPoint3d(cumulativeLength, 0, 0), Direction.ZERO);
             if (null != prevNode)
             {
                 OtsRoadNode fromNode = prevNode;
@@ -118,7 +118,7 @@ public class TrafficLightDetectorTest implements EventListener
      * Figure out on which lane and at which position we are when we're a given distance from the origin.
      * @param lanes Lane[]; the sequence of lanes
      * @param position Length; the distance
-     * @return DirectedLanePosition
+     * @return LanePosition
      * @throws GtuException should not happen; if it does; the test has failed
      */
     private LanePosition findLaneAndPosition(final Lane[] lanes, final Length position) throws GtuException

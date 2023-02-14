@@ -71,7 +71,7 @@ public class OtsSwingApplication<T extends OtsModelInterface> extends JFrame
     private Appearance appearance = Appearance.GRAY;
 
     /**
-     * Wrap an OTSModel in a JFrame. Uses a default GTU colorer.
+     * Wrap an OtsModel in a JFrame. Uses a default GTU colorer.
      * @param model T; the model that will be shown in the JFrame
      * @param panel JPanel; this should be the JPanel of the simulation
      */

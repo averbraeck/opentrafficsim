@@ -55,7 +55,7 @@ public class FixedTimeController extends AbstractTrafficController
     /**
      * Constructor for fixed time traffic controller.
      * @param id String; id
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param network Network; network
      * @param offset Duration; off set from simulation start time
      * @param cycleTime Duration; cycle time
@@ -238,7 +238,7 @@ public class FixedTimeController extends AbstractTrafficController
 
     /**
      * Initiates all traffic control events.
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param network Network; network
      * @throws SimRuntimeException when traffic light does not exist in the network
      */
@@ -402,7 +402,7 @@ public class FixedTimeController extends AbstractTrafficController
          * first transitions.
          * @param controllerOffset Duration;
          * @param cycleTime Duration;
-         * @param theSimulator OTSSimulatorInterface;
+         * @param theSimulator OtsSimulatorInterface;
          * @param network Network;
          * @throws SimRuntimeException when traffic light does not exist in the network
          */

@@ -54,7 +54,7 @@ public class SplitFraction
      * @param node Node; node
      * @param interpolation Interpolation; interpolation
      * @param random StreamInterface; random stream
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      */
     public SplitFraction(final Node node, final Interpolation interpolation, final StreamInterface random,
             final OtsSimulatorInterface simulator)

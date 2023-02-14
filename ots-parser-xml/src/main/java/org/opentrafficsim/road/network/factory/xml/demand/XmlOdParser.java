@@ -36,7 +36,7 @@ import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
 import org.opentrafficsim.road.od.Categorization;
 import org.opentrafficsim.road.od.Category;
 import org.opentrafficsim.road.od.Interpolation;
-import org.opentrafficsim.road.od.ODMatrix;
+import org.opentrafficsim.road.od.OdMatrix;
 import org.opentrafficsim.road.od.OdApplier;
 import org.opentrafficsim.road.od.OdOptions;
 import org.w3c.dom.Document;
@@ -93,8 +93,8 @@ public class XmlOdParser implements Serializable
 
     /**
      * Constructor.
-     * @param simulator OTSSimulatorInterface; simulator
-     * @param network OTSRoadNetwork; network
+     * @param simulator OtsSimulatorInterface; simulator
+     * @param network OtsRoadNetwork; network
      * @param gtuTypes Set&lt;GtuType&gt;; set of GTU types
      * @param detectorType DetectorType; detector type.
      */
@@ -200,7 +200,7 @@ public class XmlOdParser implements Serializable
      * @param odOptions ODOptions; options
      * @throws XmlParserException if the ODApplier fails
      */
-    private void applyOD(final ODMatrix od, final OdOptions odOptions) throws XmlParserException
+    private void applyOD(final OdMatrix od, final OdOptions odOptions) throws XmlParserException
     {
         try
         {
@@ -218,7 +218,7 @@ public class XmlOdParser implements Serializable
      * @return ODMatrix; OD matrix
      * @throws XmlParserException if URL cannot be parsed
      */
-    public final ODMatrix build(final URL url) throws XmlParserException
+    public final OdMatrix build(final URL url) throws XmlParserException
     {
         try
         {
@@ -236,7 +236,7 @@ public class XmlOdParser implements Serializable
      * @return ODMatrix; OD matrix
      * @throws XmlParserException if stream cannot be parsed
      */
-    public final ODMatrix build(final InputStream stream) throws XmlParserException
+    public final OdMatrix build(final InputStream stream) throws XmlParserException
     {
         try
         {
@@ -257,7 +257,7 @@ public class XmlOdParser implements Serializable
      * @return ODMatrix; OD matrix
      * @throws XmlParserException if stream cannot be parsed
      */
-    public final ODMatrix build(final Node xmlNode) throws XmlParserException
+    public final OdMatrix build(final Node xmlNode) throws XmlParserException
     {
         Throw.when(!xmlNode.getNodeName().equals("OD"), XmlParserException.class,
                 "OD should be parsed from a node OD, found %s instead.", xmlNode.getNodeName());
@@ -338,8 +338,8 @@ public class XmlOdParser implements Serializable
                 }
             }
         }
-        ODMatrix odMatrix =
-                new ODMatrix(name, origins, destinations, this.categorization, this.globalTime, this.globalInterpolation);
+        OdMatrix odMatrix =
+                new OdMatrix(name, origins, destinations, this.categorization, this.globalTime, this.globalInterpolation);
 
         // add demand
         for (org.opentrafficsim.core.network.Node origin : origins)

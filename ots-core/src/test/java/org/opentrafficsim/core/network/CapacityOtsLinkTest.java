@@ -7,8 +7,8 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.junit.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.mock.MockSimulator;
 
 /**
@@ -31,13 +31,13 @@ public class CapacityOtsLinkTest
     @Test
     public final void constructorTest() throws NetworkException, OtsGeometryException
     {
-        OtsPoint3D fromPoint = new OtsPoint3D(100, 200, 300);
-        OtsPoint3D toPoint = new OtsPoint3D(1000, 2000, 330);
+        OtsPoint3d fromPoint = new OtsPoint3d(100, 200, 300);
+        OtsPoint3d toPoint = new OtsPoint3d(1000, 2000, 330);
         OtsNetwork network = new OtsNetwork("testNetworkForCapacityOTSLink", MockSimulator.createMock());
         Node fromNode = new OtsNode(network, "startNode", fromPoint);
         Node toNode = new OtsNode(network, "endNode", toPoint);
         LinkType linkType = DefaultsNl.ROAD;
-        OtsLine3D designLine = new OtsLine3D(fromPoint, toPoint);
+        OtsLine3d designLine = new OtsLine3d(fromPoint, toPoint);
         Frequency initialCapacity = new Frequency(1234, FrequencyUnit.PER_HOUR);
         Frequency finalCapacity = new Frequency(1234, FrequencyUnit.PER_HOUR);
         CapacityOtsLink link = new CapacityOtsLink(network, "link", fromNode, toNode, linkType, designLine, initialCapacity);

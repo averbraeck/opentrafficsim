@@ -3,7 +3,7 @@ package org.opentrafficsim.road.network.lane.object;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.object.StaticObject;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -44,12 +44,12 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
      *            on the lane
      * @param longitudinalPosition Length; The position (between 0.0 and the length of the Lane) of the sensor on the design
      *            line of the lane
-     * @param geometry OTSLine3D; the geometry of the object, which provides its location and bounds as well
+     * @param geometry OtsLine3d; the geometry of the object, which provides its location and bounds as well
      * @param height Length; the height of the object, in case it is a 3D object
      * @throws NetworkException when the position on the lane is out of bounds
      */
     protected AbstractLaneBasedObject(final String id, final Lane lane, final Length longitudinalPosition,
-            final OtsLine3D geometry, final Length height) throws NetworkException
+            final OtsLine3d geometry, final Length height) throws NetworkException
     {
         super(id, geometry, height);
 
@@ -70,11 +70,11 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
      * @param lane Lane; The lane for which this is a sensor
      * @param longitudinalPosition Length; The position (between 0.0 and the length of the Lane) of the sensor on the design
      *            line of the lane
-     * @param geometry OTSLine3D; the geometry of the object, which provides its location and bounds as well
+     * @param geometry OtsLine3d; the geometry of the object, which provides its location and bounds as well
      * @throws NetworkException when the position on the lane is out of bounds
      */
     protected AbstractLaneBasedObject(final String id, final Lane lane, final Length longitudinalPosition,
-            final OtsLine3D geometry) throws NetworkException
+            final OtsLine3d geometry) throws NetworkException
     {
         this(id, lane, longitudinalPosition, geometry, Length.ZERO);
     }

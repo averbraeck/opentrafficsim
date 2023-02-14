@@ -128,7 +128,7 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGtu, 
     /**
      * Helper method for default chooseLaneAtSplit implementation that returns the distance from this lane onwards where the
      * route can be followed.
-     * @param lane LaneDirection; lane and direction
+     * @param lane Lane; lane and direction
      * @param distance Length; distance so far
      * @param route Route; route
      * @param maxDistance Length; max search distance

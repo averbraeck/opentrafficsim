@@ -93,7 +93,7 @@ public abstract class Platoons<T>
 
     /**
      * Constructor.
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param position Set&lt;Lane&gt;; position
      */
     private Platoons(final OtsSimulatorInterface simulator, final Set<Lane> position)
@@ -105,7 +105,7 @@ public abstract class Platoons<T>
     /**
      * Creates a {@code Platoon&lt;Category&gt;} instance for platoons.
      * @param characteristics GtuCharacteristicsGeneratorOD; characteristics generator
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param stream StreamInterface; random number stream
      * @param position Set&lt;Lane&gt;; position
      * @return Platoons&lt;Category&gt;; platoons based on OD
@@ -136,7 +136,7 @@ public abstract class Platoons<T>
     /**
      * Creates a {@code Platoon&lt;GtuType&gt;} instance for platoons.
      * @param characteristics LaneBasedGtuCharacteristicsGenerator; characteristics generator
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param stream StreamInterface; random number stream
      * @param position Set&lt;Lane&gt;; position
      * @return Platoons&lt;GtuType&gt;; platoons based on OD

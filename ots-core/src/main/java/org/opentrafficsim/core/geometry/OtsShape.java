@@ -20,7 +20,7 @@ import org.locationtech.jts.geom.LineString;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class OtsShape extends OtsLine3D
+public class OtsShape extends OtsLine3d
 {
     /** */
     private static final long serialVersionUID = 20160331;
@@ -29,19 +29,19 @@ public class OtsShape extends OtsLine3D
     private Path2D shape = null;
 
     /**
-     * Construct a new OTSShape (closed shape).
-     * @param points OTSPoint3D...; the array of points to construct this OTSLine3D from.
+     * Construct a new OtsShape (closed shape).
+     * @param points OtsPoint3d...; the array of points to construct this OtsLine3d from.
      * @throws OtsGeometryException when the provided points do not constitute a valid line (too few points or identical
      *             adjacent points)
      */
-    public OtsShape(final OtsPoint3D... points) throws OtsGeometryException
+    public OtsShape(final OtsPoint3d... points) throws OtsGeometryException
     {
         super(points);
     }
 
     /**
-     * Construct a new OTSShape (closed shape) from an array of Coordinate.
-     * @param coordinates Coordinate[]; the array of coordinates to construct this OTSLine3D from
+     * Construct a new OtsShape (closed shape) from an array of Coordinate.
+     * @param coordinates Coordinate[]; the array of coordinates to construct this OtsLine3d from
      * @throws OtsGeometryException when the provided points do not constitute a valid line (too few points or identical
      *             adjacent points)
      */
@@ -51,8 +51,8 @@ public class OtsShape extends OtsLine3D
     }
 
     /**
-     * Construct a new OTSShape (closed shape) from a LineString.
-     * @param lineString LineString; the lineString to construct this OTSLine3D from.
+     * Construct a new OtsShape (closed shape) from a LineString.
+     * @param lineString LineString; the lineString to construct this OtsLine3d from.
      * @throws OtsGeometryException when the provided LineString does not constitute a valid line (too few points or identical
      *             adjacent points)
      */
@@ -62,8 +62,8 @@ public class OtsShape extends OtsLine3D
     }
 
     /**
-     * Construct a new OTSShape (closed shape) from a Geometry.
-     * @param geometry Geometry; the geometry to construct this OTSLine3D from
+     * Construct a new OtsShape (closed shape) from a Geometry.
+     * @param geometry Geometry; the geometry to construct this OtsLine3d from
      * @throws OtsGeometryException when the provided Geometry do not constitute a valid line (too few points or identical
      *             adjacent points)
      */
@@ -73,19 +73,19 @@ public class OtsShape extends OtsLine3D
     }
 
     /**
-     * Construct a new OTSShape (closed shape) from a List&lt;OTSPoint3D&gt;.
-     * @param pointList List&lt;OTSPoint3D&gt;; the list of points to construct this OTSLine3D from.
+     * Construct a new OtsShape (closed shape) from a List&lt;OtsPoint3d&gt;.
+     * @param pointList List&lt;OtsPoint3d&gt;; the list of points to construct this OtsLine3d from.
      * @throws OtsGeometryException when the provided points do not constitute a valid line (too few points or identical
      *             adjacent points)
      */
-    public OtsShape(final List<OtsPoint3D> pointList) throws OtsGeometryException
+    public OtsShape(final List<OtsPoint3d> pointList) throws OtsGeometryException
     {
         super(pointList);
     }
 
     /**
-     * Construct a new OTSShape (closed shape) from a Path2D.
-     * @param path Path2D; the Path2D to construct this OTSLine3D from.
+     * Construct a new OtsShape (closed shape) from a Path2D.
+     * @param path Path2D; the Path2D to construct this OtsLine3d from.
      * @throws OtsGeometryException when the provided points do not constitute a valid line (too few points or identical
      *             adjacent points)
      */
@@ -121,20 +121,20 @@ public class OtsShape extends OtsLine3D
     }
 
     /**
-     * @param point OTSPoint3D; the point to check if it is inside the shape
+     * @param point OtsPoint3d; the point to check if it is inside the shape
      * @return whether the point is inside the shape
      */
-    public final synchronized boolean contains(final OtsPoint3D point)
+    public final synchronized boolean contains(final OtsPoint3d point)
     {
         return getShape().contains(point.x, point.y);
     }
 
     /**
-     * Check if this OTSShape completely covers a rectangular region.
+     * Check if this OtsShape completely covers a rectangular region.
      * @param rectangle Rectangle2D; the rectangular region
-     * @return boolean; true if this OTSShape completely covers the region; false otherwise (or when the implementation of
+     * @return boolean; true if this OtsShape completely covers the region; false otherwise (or when the implementation of
      *         java.awt.geom.Path2D.contains found it prohibitively expensive to decide. Let us hope that this cannot happen
-     *         with OTSShape objects. Peter has been unable to find out when this might happen.
+     *         with OtsShape objects. Peter has been unable to find out when this might happen.
      */
     public final synchronized boolean contains(final Rectangle2D rectangle)
     {
@@ -142,7 +142,7 @@ public class OtsShape extends OtsLine3D
     }
 
     /**
-     * @param otsShape OTSShape; the shape to test the intersection with
+     * @param otsShape OtsShape; the shape to test the intersection with
      * @return whether the shapes intersect or whether one shape contains the other
      */
     public final synchronized boolean intersects(final OtsShape otsShape)
@@ -154,7 +154,7 @@ public class OtsShape extends OtsLine3D
         }
 
         // step 2: quick check to see if any of the points of shape 1 is in shape 2
-        for (OtsPoint3D p : getPoints())
+        for (OtsPoint3d p : getPoints())
         {
             if (otsShape.contains(p))
             {
@@ -163,7 +163,7 @@ public class OtsShape extends OtsLine3D
         }
 
         // step 3: quick check to see if any of the points of shape 2 is in shape 1
-        for (OtsPoint3D p : otsShape.getPoints())
+        for (OtsPoint3d p : otsShape.getPoints())
         {
             if (contains(p))
             {
@@ -175,7 +175,7 @@ public class OtsShape extends OtsLine3D
         Point2D prevPoint = getPoints()[this.size() - 1].getPoint2D();
         // for (int i = 0; i < getPoints().length - 1; i++)
         // {
-        for (OtsPoint3D point : this.getPoints())
+        for (OtsPoint3d point : this.getPoints())
         {
             Point2D nextPoint = point.getPoint2D();
             Line2D.Double line1 = new Line2D.Double(prevPoint, nextPoint);
@@ -183,7 +183,7 @@ public class OtsShape extends OtsLine3D
             // for (int j = 0; j < otsShape.getPoints().length - 1; j++)
             // {
             Point2D otherPrevPoint = otsShape.getPoints()[otsShape.size() - 1].getPoint2D();
-            for (OtsPoint3D otherPoint : otsShape.getPoints())
+            for (OtsPoint3d otherPoint : otsShape.getPoints())
             {
                 Point2D otherNextPoint = otherPoint.getPoint2D();
                 // Line2D.Double line2 =
@@ -243,29 +243,29 @@ public class OtsShape extends OtsLine3D
     }
 
     /**
-     * Create an OTSLine3D, while cleaning repeating successive points.
-     * @param points OTSPoint3D[]; the coordinates of the line as OTSPoint3D
+     * Create an OtsLine3d, while cleaning repeating successive points.
+     * @param points OtsPoint3d[]; the coordinates of the line as OtsPoint3d
      * @return the line
      * @throws OtsGeometryException when number of points &lt; 2
      */
-    public static OtsShape createAndCleanOTSShape(final OtsPoint3D[] points) throws OtsGeometryException
+    public static OtsShape createAndCleanOtsShape(final OtsPoint3d[] points) throws OtsGeometryException
     {
         if (points.length < 2)
         {
             throw new OtsGeometryException(
-                    "Degenerate OTSLine3D; has " + points.length + " point" + (points.length != 1 ? "s" : ""));
+                    "Degenerate OtsLine3d; has " + points.length + " point" + (points.length != 1 ? "s" : ""));
         }
-        return createAndCleanOTSShape(new ArrayList<>(Arrays.asList(points)));
+        return createAndCleanOtsShape(new ArrayList<>(Arrays.asList(points)));
     }
 
     /**
-     * Create an OTSLine3D, while cleaning repeating successive points.
-     * @param pointList List&lt;OTSPoint3D&gt;; list of the coordinates of the line as OTSPoint3D; any duplicate points in this
+     * Create an OtsLine3d, while cleaning repeating successive points.
+     * @param pointList List&lt;OtsPoint3d&gt;; list of the coordinates of the line as OtsPoint3d; any duplicate points in this
      *            list are removed (this method may modify the provided list)
-     * @return OTSLine3D; the line
+     * @return OtsLine3d; the line
      * @throws OtsGeometryException when number of non-equal points &lt; 2
      */
-    public static OtsShape createAndCleanOTSShape(final List<OtsPoint3D> pointList) throws OtsGeometryException
+    public static OtsShape createAndCleanOtsShape(final List<OtsPoint3d> pointList) throws OtsGeometryException
     {
         // clean successive equal points
         int i = 1;
@@ -290,12 +290,12 @@ public class OtsShape extends OtsLine3D
      */
     public static void main(final String[] args) throws OtsGeometryException
     {
-        OtsShape s1 = new OtsShape(new OtsPoint3D(0, 0), new OtsPoint3D(10, 0), new OtsPoint3D(10, 10), new OtsPoint3D(0, 10));
-        OtsShape s2 = new OtsShape(new OtsPoint3D(5, 5), new OtsPoint3D(15, 5), new OtsPoint3D(15, 15), new OtsPoint3D(5, 15));
+        OtsShape s1 = new OtsShape(new OtsPoint3d(0, 0), new OtsPoint3d(10, 0), new OtsPoint3d(10, 10), new OtsPoint3d(0, 10));
+        OtsShape s2 = new OtsShape(new OtsPoint3d(5, 5), new OtsPoint3d(15, 5), new OtsPoint3d(15, 15), new OtsPoint3d(5, 15));
         System.out.println("s1.intersect(s2): " + s1.intersects(s2));
         System.out.println("s1.intersect(s1): " + s1.intersects(s1));
         OtsShape s3 =
-                new OtsShape(new OtsPoint3D(25, 25), new OtsPoint3D(35, 25), new OtsPoint3D(35, 35), new OtsPoint3D(25, 35));
+                new OtsShape(new OtsPoint3d(25, 25), new OtsPoint3d(35, 25), new OtsPoint3d(35, 35), new OtsPoint3d(25, 35));
         System.out.println("s1.intersect(s3): " + s1.intersects(s3));
     }
 
@@ -303,6 +303,6 @@ public class OtsShape extends OtsLine3D
     @Override
     public final String toString()
     {
-        return "OTSShape [shape=" + super.toString() + "]";
+        return "OtsShape [shape=" + super.toString() + "]";
     }
 }

@@ -42,7 +42,7 @@ public class OtsReplication extends SingleReplication<Duration>
     /**
      * Returns the history manager. If none was set, one is created coupled to the simulator using 0s of history and 10s
      * clean-up time.
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @return HistoryManager; history manager
      */
     public HistoryManager getHistoryManager(final OtsSimulatorInterface simulator)

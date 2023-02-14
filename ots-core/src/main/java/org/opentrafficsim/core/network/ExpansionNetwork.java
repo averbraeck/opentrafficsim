@@ -72,7 +72,7 @@ public abstract class ExpansionNetwork extends OtsNetwork
 
     /**
      * @param id String; the network id.
-     * @param simulator OTSSimulatorInterface; the DSOL simulator engine
+     * @param simulator OtsSimulatorInterface; the DSOL simulator engine
      */
     public ExpansionNetwork(final String id, final OtsSimulatorInterface simulator)
     {

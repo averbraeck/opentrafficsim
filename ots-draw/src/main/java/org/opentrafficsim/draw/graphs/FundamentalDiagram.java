@@ -93,7 +93,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
      * @param caption String; caption
      * @param domainQuantity Quantity; initial quantity on the domain axis
      * @param rangeQuantity Quantity; initial quantity on the range axis
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param source FdSource; source providing the data
      * @param fdLine fundamental diagram line, may be {@code null}
      */

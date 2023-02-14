@@ -28,7 +28,7 @@ public class OtsSimulator extends DEVSSimulator<Duration> implements OtsSimulato
     private int lastReplication = 0;
 
     /**
-     * Construct an OTSSimulator.
+     * Construct an OtsSimulator.
      * @param simulatorId the id of the simulator to use in remote communication
      */
     public OtsSimulator(final Serializable simulatorId)
@@ -72,7 +72,7 @@ public class OtsSimulator extends DEVSSimulator<Duration> implements OtsSimulato
     @Override
     public String toString()
     {
-        return "OTSSimulator [lastReplication=" + this.lastReplication + "]";
+        return "OtsSimulator [lastReplication=" + this.lastReplication + "]";
     }
 
 }

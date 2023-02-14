@@ -43,7 +43,7 @@ public class OtsReplicationTest
         Duration warmupPeriod = new Duration(200, DurationUnit.SECOND);
         Duration runLength = new Duration(500, DurationUnit.SECOND);
         OtsSimulatorInterface simulator = new OtsSimulator("Simulator for OTSReplicationTest");
-        OTSModel model = new OTSModel(simulator);
+        OtsModel model = new OtsModel(simulator);
         OtsReplication replication = new OtsReplication(id, startTime, warmupPeriod, runLength);
         assertEquals("startTime can be retrieved", startTime, replication.getStartTimeAbs());
         assertEquals("warmupPeriod can be retrieved", warmupPeriod, replication.getWarmupPeriod());
@@ -66,27 +66,27 @@ public class OtsReplicationTest
     /**
      * OTS model for testing.
      */
-    static class OTSModel extends AbstractOtsModel
+    static class OtsModel extends AbstractOtsModel
     {
         /** ... */
         private static final long serialVersionUID = 1L;
 
         /**
-         * Construct the instrumented OTSModel.
+         * Construct the instrumented OtsModel.
          * @param simulator the simulator
          * @param shortName the short name of the model
          * @param description the description of the model
          */
-        OTSModel(final OtsSimulatorInterface simulator, final String shortName, final String description)
+        OtsModel(final OtsSimulatorInterface simulator, final String shortName, final String description)
         {
             super(simulator, shortName, description);
         }
 
         /**
-         * Construct the instrumented OTSModel.
+         * Construct the instrumented OtsModel.
          * @param simulator the simulator
          */
-        OTSModel(final OtsSimulatorInterface simulator)
+        OtsModel(final OtsSimulatorInterface simulator)
         {
             super(simulator);
         }

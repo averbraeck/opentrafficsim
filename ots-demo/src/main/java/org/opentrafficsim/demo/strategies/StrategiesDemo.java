@@ -46,8 +46,8 @@ import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -455,7 +455,7 @@ public class StrategiesDemo extends AbstractSimulationScript
         /**
          * Constructor.
          * @param label JLabel; label
-         * @param network OTSRoadNetwork; network
+         * @param network OtsRoadNetwork; network
          */
         @SuppressWarnings("synthetic-access")
         KmplcListener(final JLabel label, final OtsRoadNetwork network)
@@ -510,28 +510,28 @@ public class StrategiesDemo extends AbstractSimulationScript
         double radius = 150;
         Speed speedLimit = new Speed(120.0, SpeedUnit.KM_PER_HOUR);
         OtsRoadNode nodeA =
-                new OtsRoadNode(network, "A", new OtsPoint3D(-radius, 0, 0), new Direction(270, DirectionUnit.EAST_DEGREE));
+                new OtsRoadNode(network, "A", new OtsPoint3d(-radius, 0, 0), new Direction(270, DirectionUnit.EAST_DEGREE));
         OtsRoadNode nodeB =
-                new OtsRoadNode(network, "B", new OtsPoint3D(radius, 0, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
+                new OtsRoadNode(network, "B", new OtsPoint3d(radius, 0, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
 
-        OtsPoint3D[] coordsHalf1 = new OtsPoint3D[127];
+        OtsPoint3d[] coordsHalf1 = new OtsPoint3d[127];
         for (int i = 0; i < coordsHalf1.length; i++)
         {
             double angle = Math.PI * (i) / (coordsHalf1.length - 1);
-            coordsHalf1[i] = new OtsPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
+            coordsHalf1[i] = new OtsPoint3d(radius * Math.cos(angle), radius * Math.sin(angle), 0);
         }
         List<Lane> lanes1 = new LaneFactory(network, nodeB, nodeA, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPLEFT,
-                DefaultsNl.VEHICLE, new OtsLine3D(coordsHalf1))
+                DefaultsNl.VEHICLE, new OtsLine3d(coordsHalf1))
                         .leftToRight(0.0, Length.instantiateSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit).addLanes(Type.DASHED)
                         .getLanes();
-        OtsPoint3D[] coordsHalf2 = new OtsPoint3D[127];
+        OtsPoint3d[] coordsHalf2 = new OtsPoint3d[127];
         for (int i = 0; i < coordsHalf2.length; i++)
         {
             double angle = Math.PI + Math.PI * (i) / (coordsHalf2.length - 1);
-            coordsHalf2[i] = new OtsPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
+            coordsHalf2[i] = new OtsPoint3d(radius * Math.cos(angle), radius * Math.sin(angle), 0);
         }
         List<Lane> lanes2 = new LaneFactory(network, nodeA, nodeB, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPLEFT,
-                DefaultsNl.VEHICLE, new OtsLine3D(coordsHalf2))
+                DefaultsNl.VEHICLE, new OtsLine3d(coordsHalf2))
                         .leftToRight(0.0, Length.instantiateSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit).addLanes(Type.DASHED)
                         .getLanes();
 
@@ -620,7 +620,7 @@ public class StrategiesDemo extends AbstractSimulationScript
      * @param pos Length; position
      * @param gtuType GtuType; GTU type
      * @param initialSpeed Speed; initial speed
-     * @param net OTSRoadNetwork; network
+     * @param net OtsRoadNetwork; network
      * @throws NamingException on exception
      * @throws GtuException on exception
      * @throws NetworkException on exception

@@ -9,7 +9,7 @@ import org.djutils.draw.point.OrientedPoint3d;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.OtsNetwork;
 import org.sim0mq.Sim0MQException;
@@ -85,7 +85,7 @@ public class GtuTransceiver extends AbstractEventTransceiver
         }
         OrientedPoint3d gtuPosition = (OrientedPoint3d) gtu.getLocation();
         return new Object[] {gtu.getId(), gtu.getType().getId(),
-                new OtsPoint3D(gtuPosition).doubleVector(PositionUnit.METER),
+                new OtsPoint3d(gtuPosition).doubleVector(PositionUnit.METER),
                 new Direction(gtuPosition.getDirZ(), DirectionUnit.EAST_DEGREE), gtu.getSpeed(), gtu.getAcceleration()};
     }
 

@@ -5,8 +5,8 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.object.LocatedObject;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -48,18 +48,18 @@ public interface LaneBasedObject extends LocatedObject
      * @param position Length; The length of the object in the longitudinal direction, on the center line of the lane
      * @return a geometry perpendicular to the center line that describes the sensor
      */
-    static OtsLine3D makeGeometry(final Lane lane, final Length position)
+    static OtsLine3d makeGeometry(final Lane lane, final Length position)
     {
         Throw.whenNull(lane, "lane is null");
         Throw.whenNull(position, "position is null");
         DirectedPoint sp = lane.getCenterLine().getLocationExtended(position);
         double w45 = 0.45 * lane.getWidth(position).si;
         double a = sp.getRotZ() + Math.PI / 2.0;
-        OtsPoint3D p1 = new OtsPoint3D(sp.x + w45 * Math.cos(a), sp.y - w45 * Math.sin(a), sp.z + 0.0001);
-        OtsPoint3D p2 = new OtsPoint3D(sp.x - w45 * Math.cos(a), sp.y + w45 * Math.sin(a), sp.z + 0.0001);
+        OtsPoint3d p1 = new OtsPoint3d(sp.x + w45 * Math.cos(a), sp.y - w45 * Math.sin(a), sp.z + 0.0001);
+        OtsPoint3d p2 = new OtsPoint3d(sp.x - w45 * Math.cos(a), sp.y + w45 * Math.sin(a), sp.z + 0.0001);
         try
         {
-            return new OtsLine3D(p1, p2);
+            return new OtsLine3d(p1, p2);
         }
         catch (OtsGeometryException exception)
         {

@@ -283,7 +283,7 @@ public final class PublisherDemo
         {
             try
             {
-                new Sim0MQPublisher(this.zContext, "publisherControl", "publisherOutput");
+                new Sim0mqPublisher(this.zContext, "publisherControl", "publisherOutput");
             }
             catch (SimRuntimeException e)
             {

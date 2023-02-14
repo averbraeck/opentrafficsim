@@ -29,7 +29,7 @@ public class Distraction extends AbstractLaneBasedObject
      * @param id String; id
      * @param lane Lane; lane
      * @param longitudinalPosition Length; longitudinal position
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param profile DistractionProfile; distraction profile
      * @throws NetworkException on network exception
      */

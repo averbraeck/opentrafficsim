@@ -432,7 +432,7 @@ public class TestFixedTimeController
 
     /**
      * Check that the current state of a fixed time traffic light controller matches the design.
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator OtsSimulatorInterface; the simulator
      * @param ftc FixedTimeController; the fixed time traffic light controller
      * @param stopSimulatorOnError boolean; if true; stop the simulator on error; if false; execute the failing assert on error
      */
@@ -498,8 +498,8 @@ public class TestFixedTimeController
     }
 
     /**
-     * Create a mocked OTSModelInterface.
-     * @return OTSModelInterface
+     * Create a mocked OtsModelInterface.
+     * @return OtsModelInterface
      */
     public OtsModelInterface createModelMock()
     {

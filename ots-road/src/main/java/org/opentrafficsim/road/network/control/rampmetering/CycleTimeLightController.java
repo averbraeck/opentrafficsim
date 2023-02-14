@@ -58,7 +58,7 @@ public class CycleTimeLightController implements RampMeteringLightController
     private Map<TrafficLight, SimEventInterface<Duration>> greenEvents = new LinkedHashMap<>();
 
     /**
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param trafficLights List&lt;TrafficLight&gt;; traffic lights
      * @param detectorType DetectorType; detector type.
      */

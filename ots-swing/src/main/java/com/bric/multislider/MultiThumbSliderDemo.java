@@ -22,7 +22,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.bric.multislider.MultiThumbSlider.Collision;
-import com.bric.multislider.MultiThumbSliderUI.Thumb;
+import com.bric.multislider.MultiThumbSliderUi.Thumb;
 
 @SuppressWarnings("javadoc")
 public class MultiThumbSliderDemo extends JPanel
@@ -50,7 +50,7 @@ public class MultiThumbSliderDemo extends JPanel
 
     JComboBox<Class> uiComboBox = new JComboBox<Class>();
 
-    JComboBox<DefaultMultiThumbSliderUI.Thumb> thumbComboBox = new JComboBox<DefaultMultiThumbSliderUI.Thumb>();
+    JComboBox<DefaultMultiThumbSliderUi.Thumb> thumbComboBox = new JComboBox<DefaultMultiThumbSliderUi.Thumb>();
 
     JRadioButton overlapOnButton = new JRadioButton("On");
 
@@ -223,7 +223,7 @@ public class MultiThumbSliderDemo extends JPanel
             {
                 for (MultiThumbSlider<?> s : MultiThumbSliderDemo.this.sliders)
                 {
-                    s.putClientProperty(MultiThumbSliderUI.THUMB_SHAPE_PROPERTY,
+                    s.putClientProperty(MultiThumbSliderUi.THUMB_SHAPE_PROPERTY,
                             (Thumb) MultiThumbSliderDemo.this.thumbComboBox.getSelectedItem());
                 }
             }
@@ -266,7 +266,7 @@ public class MultiThumbSliderDemo extends JPanel
                     {
                         Class t = (Class) MultiThumbSliderDemo.this.uiComboBox.getSelectedItem();
                         Constructor constructor = t.getConstructor(new Class[] {MultiThumbSlider.class});
-                        s.setUI((MultiThumbSliderUI) constructor.newInstance(new Object[] {s}));
+                        s.setUI((MultiThumbSliderUi) constructor.newInstance(new Object[] {s}));
                     }
                     Window w = SwingUtilities.getWindowAncestor(MultiThumbSliderDemo.this);
                     if (w != null)
@@ -278,8 +278,8 @@ public class MultiThumbSliderDemo extends JPanel
                 }
             }
         });
-        this.uiComboBox.addItem(AquaMultiThumbSliderUI.class);
-        this.uiComboBox.addItem(DefaultMultiThumbSliderUI.class);
+        this.uiComboBox.addItem(AquaMultiThumbSliderUi.class);
+        this.uiComboBox.addItem(DefaultMultiThumbSliderUi.class);
         this.uiComboBox.addItem(VistaMultiThumbSliderUI.class);
 
     }

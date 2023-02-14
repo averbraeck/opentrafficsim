@@ -25,7 +25,7 @@ public class SimpleTrafficLight extends AbstractTrafficLight
      * @param id String; traffic light id
      * @param lane Lane; lane where the traffic light is located
      * @param longitudinalPosition Length; position of the traffic light on the lane, in the design direction
-     * @param simulator OTSSimulatorInterface; the simulator for animation and timed events
+     * @param simulator OtsSimulatorInterface; the simulator for animation and timed events
      * @throws NetworkException on failure to place the object
      */
     public SimpleTrafficLight(final String id, final Lane lane, final Length longitudinalPosition,

@@ -21,8 +21,8 @@ import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
@@ -95,7 +95,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
             final Time startTime, final Speed startSpeed, final Speed endSpeed, final Acceleration maxAcceleration,
             final Acceleration maxDeceleration) throws OperationalPlanException, OtsGeometryException
     {
-        OtsLine3D path = createPathAlongCenterLine(gtu, distance);
+        OtsLine3d path = createPathAlongCenterLine(gtu, distance);
         Segment segment;
         if (startSpeed.eq(endSpeed))
         {
@@ -175,7 +175,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
             final Time startTime, final Speed startSpeed, final Speed endSpeed, final Acceleration acceleration,
             final Acceleration deceleration) throws OperationalPlanException, OtsGeometryException
     {
-        OtsLine3D path = createPathAlongCenterLine(gtu, distance);
+        OtsLine3d path = createPathAlongCenterLine(gtu, distance);
         ArrayList<Segment> segmentList = new ArrayList<>();
         if (startSpeed.eq(endSpeed))
         {
@@ -222,7 +222,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                         if (endSpeed.si == 0.0)
                         {
                             // if endSpeed == 0, we cannot reach the end of the path. Therefore, build a partial path.
-                            OtsLine3D partialPath = path.truncate(x.si);
+                            OtsLine3d partialPath = path.truncate(x.si);
                             segmentList.add(new OperationalPlan.AccelerationSegment(t, deceleration));
                             return new LaneBasedOperationalPlan(gtu, partialPath, startTime, startSpeed, segmentList, false);
                         }
@@ -275,7 +275,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
         {
             return new LaneBasedOperationalPlan(gtu, gtu.getLocation(), startTime, timeStep, deviative);
         }
-        OtsLine3D path = createPathAlongCenterLine(gtu, distance);
+        OtsLine3d path = createPathAlongCenterLine(gtu, distance);
         return new LaneBasedOperationalPlan(gtu, path, startTime, startSpeed, segmentList, deviative);
     }
 
@@ -283,30 +283,12 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      * Creates a path along lane center lines.
      * @param gtu LaneBasedGtu; gtu
      * @param distance Length; minimum distance
-     * @return OTSLine3D; path along lane center lines
-     * @throws OtsGeometryException when any of the OTSLine3D operations fails
+     * @return OtsLine3d; path along lane center lines
+     * @throws OtsGeometryException when any of the OtsLine3d operations fails
      */
-    public static OtsLine3D createPathAlongCenterLine(final LaneBasedGtu gtu, final Length distance) throws OtsGeometryException
+    public static OtsLine3d createPathAlongCenterLine(final LaneBasedGtu gtu, final Length distance) throws OtsGeometryException
     {
-        // if (gtu.getId().equals("1669") && gtu.getSimulator().getSimulatorTime().si >= 2508.9)
-        // {
-        // System.out.println("processing gtu " + gtu);
-        // try
-        // {
-        // for (Lane l : gtu.fractionalPositions(RelativePosition.REFERENCE_POSITION).keySet())
-        // {
-        // System.out.println("fractional position on lane " + l + ": "
-        // + gtu.fractionalPositions(RelativePosition.REFERENCE_POSITION).get(l));
-        // }
-        // System.out.println("reference position is " + gtu.getReferencePosition());
-        // System.out.println("operational plan path is " + gtu.getOperationalPlan().getPath());
-        // }
-        // catch (GTUException e)
-        // {
-        // e.printStackTrace();
-        // }
-        // }
-        OtsLine3D path = null;
+        OtsLine3d path = null;
         try
         {
             LanePosition ref = gtu.getReferencePosition();
@@ -325,7 +307,6 @@ public final class LaneOperationalPlanBuilder // class package private for sched
             Lane prevFrom = null;
             Lane from = ref.getLane();
             int n = 1;
-            boolean alternativeTried = false;
             while (path == null || path.getLength().si < distance.si + n * Lane.MARGIN.si)
             {
                 n++;
@@ -346,62 +327,11 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                         {
                             // just add some length so the GTU is happy to go to the sink
                             DirectedPoint end = path.getLocationExtendedSI(distance.si + n * Lane.MARGIN.si);
-                            List<OtsPoint3D> points = new ArrayList<>(Arrays.asList(path.getPoints()));
-                            points.add(new OtsPoint3D(end));
-                            return new OtsLine3D(points);
+                            List<OtsPoint3d> points = new ArrayList<>(Arrays.asList(path.getPoints()));
+                            points.add(new OtsPoint3d(end));
+                            return new OtsLine3d(points);
                         }
                     }
-                    // START CLEVER
-                    /*-
-                    if (!alternativeTried)
-                    {
-                        for (Lane l : gtu.fractionalPositions(RelativePosition.REFERENCE_POSITION).keySet())
-                        {
-                            if (ref.getLane().equals(l))
-                            {
-                                continue;
-                            }
-                            CategoryLogger.always().warn("GTU {} dead end on {}; but reference position is on {}; trying that",
-                                    gtu.getId(), ref, l);
-                            // Figure out the driving direction and position on Lane l
-                            // For now assume that lane l and ref are lanes on the same parent link. If not, chaos may occur
-                            if (!l.getParentLink().equals(ref.getLane().getParentLink()))
-                            {
-                                CategoryLogger.always()
-                                        .error("Assumption that l and ref.getLane are on same Link does not hold");
-                            }
-                            from = new LaneDirection(l, ref.getGtuDirection());
-                            if (ref.getGtuDirection().isPlus() && f < 1.0)
-                            {
-                                if (f >= 0.0)
-                                {
-                                    path = l.getCenterLine().extractFractional(f, 1.0);
-                                }
-                                else
-                                {
-                                    path = l.getCenterLine().extractFractional(0.0, 1.0);
-                                }
-                            }
-                            else if (ref.getGtuDirection().isMinus() && f > 0.0)
-                            {
-                                if (f <= 1.0)
-                                {
-                                    path = l.getCenterLine().extractFractional(0.0, f).reverse();
-                                }
-                                else
-                                {
-                                    path = l.getCenterLine().extractFractional(0.0, 1.0).reverse();
-                                }
-                            }
-                            alternativeTried = true;
-                        }
-                        if (null != from)
-                        {
-                            continue;
-                        }
-                    }
-                    */
-                    // END CLEVER
                     CategoryLogger.always().error("GTU {} has nowhere to go and no sink detector either", gtu);
                     // gtu.getReferencePosition(); // CLEVER
                     gtu.destroy();
@@ -413,7 +343,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                 }
                 else
                 {
-                    path = OtsLine3D.concatenate(Lane.MARGIN.si, path, from.getCenterLine());
+                    path = OtsLine3d.concatenate(Lane.MARGIN.si, path, from.getCenterLine());
                 }
             }
         }
@@ -487,7 +417,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
             Throw.when(from == null, RuntimeException.class, "From lane could not be determined during lane change.");
 
             // get path and make plan
-            OtsLine3D path = laneChange.getPath(timeStep, gtu, from, startPosition, planDistance, direction);
+            OtsLine3d path = laneChange.getPath(timeStep, gtu, from, startPosition, planDistance, direction);
             LaneBasedOperationalPlan plan = new LaneBasedOperationalPlan(gtu, path, startTime, startSpeed, segmentList, true);
             return plan;
         }

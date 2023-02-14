@@ -30,7 +30,7 @@ public class CrossSectionElementTransceiver extends AbstractTransceiver
 
     /**
      * Construct a new CrossSectionElementTransceiver for an OTS network.
-     * @param network OTSNetwork; the OTS network
+     * @param network OtsNetwork; the OTS network
      */
     public CrossSectionElementTransceiver(final OtsNetwork network)
     {

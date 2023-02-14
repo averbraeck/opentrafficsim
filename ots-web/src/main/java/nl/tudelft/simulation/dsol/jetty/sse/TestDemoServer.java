@@ -64,7 +64,7 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterString;
  */
 public class TestDemoServer
 {
-    /** the map of sessionIds to OTSModelInterface that handles the animation and updates for the started model. */
+    /** the map of sessionIds to OtsModelInterface that handles the animation and updates for the started model. */
     final Map<String, OtsModelInterface> sessionModelMap = new LinkedHashMap<>();
 
     /** the map of sessionIds to OTSWebModel that handles the animation and updates for the started model. */

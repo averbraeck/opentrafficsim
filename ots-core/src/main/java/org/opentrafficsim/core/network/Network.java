@@ -34,7 +34,7 @@ public interface Network extends EventProducer, Identifiable
 
     /**
      * Return the simulator.
-     * @return OTSSimulatorInterface; the simulator
+     * @return OtsSimulatorInterface; the simulator
      */
     OtsSimulatorInterface getSimulator();
 

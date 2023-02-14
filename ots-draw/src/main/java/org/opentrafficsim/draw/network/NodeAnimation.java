@@ -47,7 +47,7 @@ public class NodeAnimation extends Renderable2D<NodeAnimation.ElevatedNode>
 
     /**
      * @param node Node; n
-     * @param simulator OTSSimulatorInterface; s
+     * @param simulator OtsSimulatorInterface; s
      * @throws NamingException when animation context cannot be found.
      * @throws RemoteException on communication failure
      */
@@ -168,7 +168,7 @@ public class NodeAnimation extends Renderable2D<NodeAnimation.ElevatedNode>
          * @param dy float; the vertical movement of the text, in meters
          * @param textPlacement TextAlignment; where to place the text
          * @param color Color; the color of the text
-         * @param simulator OTSSimulatorInterface; the simulator
+         * @param simulator OtsSimulatorInterface; the simulator
          * @param scaleDependentRendering ScaleDependendentRendering; size limiter for text animation
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found

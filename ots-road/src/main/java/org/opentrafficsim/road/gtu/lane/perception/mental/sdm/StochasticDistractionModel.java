@@ -59,8 +59,8 @@ public class StochasticDistractionModel implements EventListener
      * Constructor. This model will react to GTU's being created in simulation and apply distractions.
      * @param allowMultiTasking boolean; whether to allow multi-tasking
      * @param distractions List&lt;Distraction&gt;; list of distractions
-     * @param simulator OTSSimulatorInterface; simulator
-     * @param network OTSRoadNetwork; network
+     * @param simulator OtsSimulatorInterface; simulator
+     * @param network OtsRoadNetwork; network
      */
     public StochasticDistractionModel(final boolean allowMultiTasking, final List<Distraction> distractions,
             final OtsSimulatorInterface simulator, final OtsRoadNetwork network)

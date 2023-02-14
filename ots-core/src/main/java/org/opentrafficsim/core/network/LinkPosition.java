@@ -111,7 +111,7 @@ public class LinkPosition implements Serializable
     @Override
     public String toString()
     {
-        return "DirectedLinkPosition [link=" + this.link + ", fractionalLongitudinalPosition="
+        return "LinkPosition [link=" + this.link + ", fractionalLongitudinalPosition="
                 + this.fractionalLongitudinalPosition + "]";
     }
 

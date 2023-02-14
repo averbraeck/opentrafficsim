@@ -359,7 +359,7 @@ public class LoopDetector extends LaneDetector
      * @param id String; detector id
      * @param lane Lane; lane
      * @param longitudinalPosition Length; position
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param detectorType DetectorType; detector type.
      * @throws NetworkException on network exception
      */
@@ -376,7 +376,7 @@ public class LoopDetector extends LaneDetector
      * @param lane Lane; lane
      * @param longitudinalPosition Length; position
      * @param length Length; length
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param aggregation Duration; aggregation period
      * @param measurements DetectorMeasurement&lt;?, ?&gt;...; measurements to obtain
      * @param detectorType DetectorType; detector type.
@@ -412,7 +412,7 @@ public class LoopDetector extends LaneDetector
              * @param idRear String; id
              * @param laneRear Lane; lane
              * @param longitudinalPositionRear Length; position
-             * @param simulatorRear OTSSimulatorInterface; simulator
+             * @param simulatorRear OtsSimulatorInterface; simulator
              * @param detectorType DetectorType; detector type.
              * @throws NetworkException on network exception
              */

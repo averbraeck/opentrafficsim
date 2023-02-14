@@ -32,14 +32,14 @@ import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
 import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeAnimator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.dsol.web.animation.D2.HtmlAnimationPanel;
-import nl.tudelft.simulation.dsol.web.animation.D2.HtmlGridPanel;
-import nl.tudelft.simulation.dsol.web.animation.D2.ToggleButtonInfo;
+import nl.tudelft.simulation.dsol.web.animation.d2.HtmlAnimationPanel;
+import nl.tudelft.simulation.dsol.web.animation.d2.HtmlGridPanel;
+import nl.tudelft.simulation.dsol.web.animation.d2.ToggleButtonInfo;
 import nl.tudelft.simulation.introspection.Property;
 import nl.tudelft.simulation.introspection.beans.BeanIntrospector;
 
 /**
- * OTSWebModel.java.
+ * OtsWebModel.java.
  * <p>
  * Copyright (c) 2003-2022 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/v2/license.html">OpenTrafficSim License</a>.
@@ -71,7 +71,7 @@ public class OtsWebModel implements EventListener
 
     /**
      * @param title String; the title for the model window
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator OtsSimulatorInterface; the simulator
      * @throws Exception in case jetty crashes
      */
     public OtsWebModel(final String title, final OtsSimulatorInterface simulator) throws Exception

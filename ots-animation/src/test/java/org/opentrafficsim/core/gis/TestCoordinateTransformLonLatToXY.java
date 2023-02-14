@@ -20,7 +20,7 @@ public class TestCoordinateTransformLonLatToXY
     {
         // double latCenter = 37.419933552777, lonCenter = -122.05752616111;
         double latCenter = 37.40897623275873, lonCenter = -122.0246091728831;
-        CoordinateTransform latLonToXY = new CoordinateTransformLonLatToXY(lonCenter, latCenter);
+        CoordinateTransform latLonToXY = new CoordinateTransformLonLatToXy(lonCenter, latCenter);
         // double[] xy = latLonToXY.doubleTransform(37.419933552777, -122.05752616111); // Moffett
         double[] xy = latLonToXY.doubleTransform(-122.0246091728831, 37.40897623275873);
         System.out.println(xy[0] + ", " + xy[1]);

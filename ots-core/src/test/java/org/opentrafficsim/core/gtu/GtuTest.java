@@ -331,7 +331,7 @@ public class GtuTest
         /**
          * @param id String; id of the new GTU
          * @param gtuType GtuType; type of the new GTU
-         * @param simulator OTSSimulatorInterface; simulator that controls the new GTU
+         * @param simulator OtsSimulatorInterface; simulator that controls the new GTU
          * @param perceivableContext PerceivableContext; the perceivable context of the new GTU
          * @throws SimRuntimeException when something goes wrong in the scheduling of the first move event
          * @throws GtuException when something goes wrong during GTU instantiation

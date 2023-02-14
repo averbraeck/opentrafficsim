@@ -126,10 +126,10 @@ JUnit has many more checks available. These are made accessible in the test code
     import org.junit.Test;
 ```
 
-In some cases it can be a hassle to setup interdependent objects just to test a single method. For example, if you want to test functionality of a utility that creates GTU generators from an OD matrix, it is required to have a network, a simulator, etc. Instead of setting this up one can also mock the functionality. For this [Mockito](https://site.mockito.org/) is used. The code below mocks an object of type `OTSSimulatorInterface` in a test class `JUnitTest'. The mocked implementation is defined to return two values for two methods. The method `getSimulatorTime()` will return the result from the created `Answer<Time>` which dynamically accesses the value `JUnitTest.this.time`, and the method `getReplication()` will return the current value of `this.replication` (which is separately set).
+In some cases it can be a hassle to setup interdependent objects just to test a single method. For example, if you want to test functionality of a utility that creates GTU generators from an OD matrix, it is required to have a network, a simulator, etc. Instead of setting this up one can also mock the functionality. For this [Mockito](https://site.mockito.org/) is used. The code below mocks an object of type `OtsSimulatorInterface` in a test class `JUnitTest'. The mocked implementation is defined to return two values for two methods. The method `getSimulatorTime()` will return the result from the created `Answer<Time>` which dynamically accesses the value `JUnitTest.this.time`, and the method `getReplication()` will return the current value of `this.replication` (which is separately set).
 
 ```java
-    OTSSimulatorInterface simulatorMock = Mockito.mock(OTSSimulatorInterface.class);
+    OtsSimulatorInterface simulatorMock = Mockito.mock(OtsSimulatorInterface.class);
     Answer<Time> answerTime = new Answer<Time>()
     {
         @SuppressWarnings("synthetic-access")

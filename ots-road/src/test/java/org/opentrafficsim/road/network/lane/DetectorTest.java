@@ -19,7 +19,7 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -55,16 +55,16 @@ public class DetectorTest implements UNITS
     @Test
     public final void sensorTest() throws Exception
     {
-        // We need a simulator, but for that we first need something that implements OTSModelInterface
+        // We need a simulator, but for that we first need something that implements OtsModelInterface
         OtsSimulatorInterface simulator = new OtsSimulator("SensorTest");
         OtsModelInterface model = new DummyModelForSensorTest(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         OtsRoadNetwork network = new OtsRoadNetwork("sensor test network", simulator);
         // Now we need a set of Lanes
         // To create Lanes we need Nodes and a LaneType
-        OtsRoadNode nodeAFrom = new OtsRoadNode(network, "AFrom", new OtsPoint3D(0, 0, 0), Direction.ZERO);
-        OtsRoadNode nodeATo = new OtsRoadNode(network, "ATo", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
-        OtsRoadNode nodeBTo = new OtsRoadNode(network, "BTo", new OtsPoint3D(20000, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeAFrom = new OtsRoadNode(network, "AFrom", new OtsPoint3d(0, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeATo = new OtsRoadNode(network, "ATo", new OtsPoint3d(1000, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeBTo = new OtsRoadNode(network, "BTo", new OtsPoint3d(20000, 0, 0), Direction.ZERO);
         // so car won't run off lane B in 100 s.
         GtuType gtuType = DefaultsNl.CAR;
         LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
@@ -178,7 +178,7 @@ class TriggerDetector extends LaneDetector
 }
 
 /**
- * Dummy OTSModelInterface.
+ * Dummy OtsModelInterface.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.

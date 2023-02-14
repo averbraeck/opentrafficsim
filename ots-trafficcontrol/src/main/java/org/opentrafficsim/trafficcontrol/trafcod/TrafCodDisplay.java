@@ -24,7 +24,7 @@ import org.djutils.event.LocalEventProducer;
 import org.djutils.event.reference.ReferenceType;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -368,7 +368,7 @@ class TrafficLightImage extends LocalEventProducer implements TrafficLight, Traf
 
     /** {@inheritDoc} */
     @Override
-    public OtsLine3D getGeometry()
+    public OtsLine3d getGeometry()
     {
         return null;
     }

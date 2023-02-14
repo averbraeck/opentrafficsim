@@ -22,7 +22,7 @@ public class GeometryTest
     @Test
     public final void geometryTest()
     {
-        OtsPoint3D p0 = new OtsPoint3D(1.2, 2.3, 3.4);
+        OtsPoint3d p0 = new OtsPoint3d(1.2, 2.3, 3.4);
         String prefix = "Prefix";
         String result = OtsGeometryUtil.printCoordinate(prefix, p0);
         assertTrue("output starts with prefix", result.startsWith(prefix));

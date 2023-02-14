@@ -39,7 +39,7 @@ public class StaticObjectAnimation extends Renderable2D<StaticObject> implements
 
     /**
      * @param source StaticObject; Static Object
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param width float; width of the contour line to draw
      * @param color Color; color of the contour line / fill
      * @param fill boolean; fill internal or not

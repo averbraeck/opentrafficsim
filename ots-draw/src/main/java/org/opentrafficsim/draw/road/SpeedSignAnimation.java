@@ -41,7 +41,7 @@ public class SpeedSignAnimation extends Renderable2D<SpeedSign> implements Seria
 
     /**
      * @param source SpeedSign; speed sign
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @throws NamingException ne
      * @throws RemoteException on communication failure
      */

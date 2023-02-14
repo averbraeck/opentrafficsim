@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
 
 /**
  * Store one position and lane of a GTU.
@@ -29,7 +29,7 @@ public class LanePosition implements Serializable
     private final Length position;
 
     /**
-     * Construct a new DirectedLanePosition.
+     * Construct a new LanePosition.
      * @param lane Lane; the lane for the position
      * @param position Length; the position on the lane, relative to the cross section link (design line) line, or against it
      */
@@ -66,7 +66,7 @@ public class LanePosition implements Serializable
     public final DirectedPoint getLocation()
     {
         // double fraction = this.position.si / this.lane.getParentLink().getLength().si;
-        OtsLine3D centerLine = this.lane.getCenterLine();
+        OtsLine3d centerLine = this.lane.getCenterLine();
         double centerLineLength = centerLine.getLengthSI();
         double fraction = this.position.si / centerLineLength;
         return centerLine.getLocationFractionExtended(fraction);
@@ -116,7 +116,7 @@ public class LanePosition implements Serializable
     @Override
     public final String toString()
     {
-        return "DirectedLanePosition [lane=" + this.lane + ", position=" + this.position + "]";
+        return "LanePosition [lane=" + this.lane + ", position=" + this.position + "]";
     }
 
 }

@@ -40,7 +40,7 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLight>
     /**
      * Construct the DefaultCarAnimation for a LaneBlock (road block).
      * @param trafficLight TrafficLight; the CSEBlock to draw
-     * @param simulator OTSSimulatorInterface; the simulator to schedule on
+     * @param simulator OtsSimulatorInterface; the simulator to schedule on
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
@@ -132,7 +132,7 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLight>
          * @param dy float; the vertical movement of the text, in meters
          * @param textPlacement TextAlignment; where to place the text
          * @param color Color; the color of the text
-         * @param simulator OTSSimulatorInterface; the simulator
+         * @param simulator OtsSimulatorInterface; the simulator
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */

@@ -24,7 +24,7 @@ public class ContourPlotFlow extends AbstractContourPlot<Frequency>
     /**
      * Constructor.
      * @param caption String; caption
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param dataPool ContourDataSource; data pool
      */
     public ContourPlotFlow(final String caption, final OtsSimulatorInterface simulator, final ContourDataSource dataPool)

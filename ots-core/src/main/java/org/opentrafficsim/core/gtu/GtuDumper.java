@@ -65,7 +65,7 @@ public class GtuDumper
      * Construct a new GTUDumper.
      * @param firstDumpTime Time; the time of the first dump
      * @param interval Duration; the interval until each subsequent dump
-     * @param network OTSNetwork; the network (that will contain the GTUs to dump)
+     * @param network OtsNetwork; the network (that will contain the GTUs to dump)
      * @param fileNamePrefix String; directory and first part if the file names; the simulation time of the dump will be
      *            appended to the file name. The file type will be .txt
      * @throws SimRuntimeException when scheduling the first dump time fails

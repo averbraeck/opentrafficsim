@@ -26,7 +26,7 @@ public abstract class AbstractIdTransceiver extends AbstractTransceiver
 
     /**
      * Construct a GtuIdTransceiver.
-     * @param network OTSNetwork; the OTS network
+     * @param network OtsNetwork; the OTS network
      * @param id String; name of the IdTransceiver
      */
     public AbstractIdTransceiver(final OtsNetwork network, final String id)
@@ -68,7 +68,7 @@ public abstract class AbstractIdTransceiver extends AbstractTransceiver
 
     /**
      * Retrieve the network.
-     * @return OTSNetwork; the network
+     * @return OtsNetwork; the network
      */
     final OtsNetwork getNetwork()
     {

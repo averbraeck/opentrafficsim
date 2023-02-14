@@ -21,12 +21,12 @@ public final class OtsGeometryUtil
     }
 
     /**
-     * Print one OTSPoint3D on the console.
+     * Print one OtsPoint3d on the console.
      * @param prefix String; text to put before the output
-     * @param point OTSPoint3D; the coordinate to print
+     * @param point OtsPoint3d; the coordinate to print
      * @return String
      */
-    public static String printCoordinate(final String prefix, final OtsPoint3D point)
+    public static String printCoordinate(final String prefix, final OtsPoint3d point)
     {
         return String.format(Locale.US, "%s %8.3f,%8.3f   ", prefix, point.x, point.y);
     }
@@ -34,23 +34,23 @@ public final class OtsGeometryUtil
     /**
      * Build a string description from an array of coordinates.
      * @param prefix String; text to put before the coordinates
-     * @param coordinates OTSPoint3D[]; the points to print
+     * @param coordinates OtsPoint3d[]; the points to print
      * @param separator String; prepended to each coordinate
      * @return String; description of the array of coordinates
      */
-    public static String printCoordinates(final String prefix, final OtsPoint3D[] coordinates, final String separator)
+    public static String printCoordinates(final String prefix, final OtsPoint3d[] coordinates, final String separator)
     {
         return printCoordinates(prefix + "(" + coordinates.length + " pts)", coordinates, 0, coordinates.length, separator);
     }
 
     /**
-     * Build a string description from an OTSLine3D.
+     * Build a string description from an OtsLine3d.
      * @param prefix String; text to put before the coordinates
-     * @param line OTSLine3D; the line for which to print the points
+     * @param line OtsLine3d; the line for which to print the points
      * @param separator String; prepended to each coordinate
-     * @return String; description of the OTSLine3D
+     * @return String; description of the OtsLine3d
      */
-    public static String printCoordinates(final String prefix, final OtsLine3D line, final String separator)
+    public static String printCoordinates(final String prefix, final OtsLine3d line, final String separator)
     {
         return printCoordinates(prefix + "(" + line.size() + " pts)", line.getPoints(), 0, line.size(), separator);
     }
@@ -58,13 +58,13 @@ public final class OtsGeometryUtil
     /**
      * Built a string description from part of an array of coordinates.
      * @param prefix String; text to put before the output
-     * @param points OTSPoint3D[]; the coordinates to print
+     * @param points OtsPoint3d[]; the coordinates to print
      * @param fromIndex int; index of the first coordinate to print
      * @param toIndex int; one higher than the index of the last coordinate to print
      * @param separator String; prepended to each coordinate
      * @return String; description of the selected part of the array of coordinates
      */
-    public static String printCoordinates(final String prefix, final OtsPoint3D[] points, final int fromIndex,
+    public static String printCoordinates(final String prefix, final OtsPoint3d[] points, final int fromIndex,
             final int toIndex, final String separator)
     {
         StringBuilder result = new StringBuilder();

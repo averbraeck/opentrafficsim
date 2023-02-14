@@ -38,8 +38,8 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -57,7 +57,7 @@ import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.od.Categorization;
 import org.opentrafficsim.road.od.Category;
 import org.opentrafficsim.road.od.Interpolation;
-import org.opentrafficsim.road.od.ODMatrix;
+import org.opentrafficsim.road.od.OdMatrix;
 import org.opentrafficsim.road.od.OdApplier;
 import org.opentrafficsim.road.od.OdOptions;
 import org.opentrafficsim.road.od.OdApplier.GeneratorObjects;
@@ -171,12 +171,12 @@ public class OdApplierTest
     private void makeNetwork() throws NetworkException, OtsGeometryException
     {
         this.network = new OtsRoadNetwork("ODApplierExample", this.simulator);
-        OtsPoint3D pointA = new OtsPoint3D(0, 0, 0);
-        OtsPoint3D pointB = new OtsPoint3D(1000, 0, 0);
+        OtsPoint3d pointA = new OtsPoint3d(0, 0, 0);
+        OtsPoint3d pointB = new OtsPoint3d(1000, 0, 0);
         OtsRoadNode nodeA = new OtsRoadNode(this.network, "A", pointA, Direction.ZERO);
         OtsRoadNode nodeB = new OtsRoadNode(this.network, "B", pointB, Direction.ZERO);
         CrossSectionLink linkAB = new CrossSectionLink(this.network, "AB", nodeA, nodeB, DefaultsNl.ROAD,
-                new OtsLine3D(pointA, pointB), LaneKeepingPolicy.KEEPRIGHT);
+                new OtsLine3d(pointA, pointB), LaneKeepingPolicy.KEEPRIGHT);
         this.lanes.put("lane1",
                 new Lane(linkAB, "lane1", Length.instantiateSI(1.75), Length.instantiateSI(1.75), Length.instantiateSI(3.5),
                         Length.instantiateSI(3.5), DefaultsRoadNl.HIGHWAY,
@@ -251,7 +251,7 @@ public class OdApplierTest
         OdOptions odOptions = new OdOptions().set(OdOptions.HEADWAY_DIST, HeadwayDistribution.CONSTANT);
 
         // Stepwise interpolation with constant headways tests
-        ODMatrix od = getOD(new double[] {100, 200, 300, 400, 500, 600}, new double[] {1000, 2000, 0, 0, 2000, 0},
+        OdMatrix od = getOD(new double[] {100, 200, 300, 400, 500, 600}, new double[] {1000, 2000, 0, 0, 2000, 0},
                 Interpolation.STEPWISE, nodeA, nodeB, lane1, lane2);
         Map<String, GeneratorObjects> generatorObjects =
                 OdApplier.applyOD(this.network, od, odOptions, DefaultsRoadNl.ROAD_USERS);
@@ -395,7 +395,7 @@ public class OdApplierTest
      * @throws ValueRuntimeException on exception
      * @throws NetworkException on exception
      */
-    private ODMatrix getOD(final double[] timeVec, final double[] demandVec, final Interpolation interpolation,
+    private OdMatrix getOD(final double[] timeVec, final double[] demandVec, final Interpolation interpolation,
             final Node nodeA, final Node nodeB, final Lane lane1, final Lane lane2)
             throws ValueRuntimeException, NetworkException
     {
@@ -405,7 +405,7 @@ public class OdApplierTest
         List<Node> destinations = new ArrayList<>();
         destinations.add(nodeB);
         TimeVector timeVector = DoubleVector.instantiate(timeVec, TimeUnit.DEFAULT, StorageType.DENSE);
-        ODMatrix od = new ODMatrix("ODExample", origins, destinations, categorization, timeVector, interpolation);
+        OdMatrix od = new OdMatrix("ODExample", origins, destinations, categorization, timeVector, interpolation);
         FrequencyVector demand = DoubleVector.instantiate(demandVec, FrequencyUnit.PER_HOUR, StorageType.DENSE);
         GtuType gtuType = DefaultsNl.CAR;
         Route route = new Route("AB", gtuType).addNode(nodeA).addNode(nodeB);
@@ -508,7 +508,7 @@ public class OdApplierTest
         Lane lane1 = this.lanes.get("lane1");
         Lane lane2 = this.lanes.get("lane2");
         OdOptions odOptions = new OdOptions().set(OdOptions.HEADWAY_DIST, HeadwayDistribution.CONSTANT);
-        ODMatrix od = getOD(new double[] {0, 100, 200}, new double[] {1000, 1500, 0}, Interpolation.LINEAR, nodeA, nodeB, lane1,
+        OdMatrix od = getOD(new double[] {0, 100, 200}, new double[] {1000, 1500, 0}, Interpolation.LINEAR, nodeA, nodeB, lane1,
                 lane2);
         Map<String, GeneratorObjects> generatorObjects =
                 OdApplier.applyOD(this.network, od, odOptions, DefaultsRoadNl.ROAD_USERS);

@@ -90,7 +90,7 @@ public class DefaultAnimationFactory implements EventListener
     /**
      * Creates animations for nodes, links and lanes. The class will subscribe to the network and listen to changes, so the
      * adding and removing of GTUs and Objects is animated correctly.
-     * @param network OTSNetwork; the network
+     * @param network OtsNetwork; the network
      * @param gtuColorer GtuColorer; GTU colorer
      * @param animateNetwork boolean; whether to animate the current network objects
      * @throws OtsDrawingException on drawing error
@@ -171,8 +171,8 @@ public class DefaultAnimationFactory implements EventListener
     /**
      * Creates animations for nodes, links, lanes and GTUs. This can be used if the network is not read from XML. The class will
      * subscribe to the network and listen to changes, so the adding and removing of GTUs and Objects is animated correctly.
-     * @param network OTSNetwork; the network
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param network OtsNetwork; the network
+     * @param simulator OtsSimulatorInterface; the simulator
      * @param gtuColorer GtuColorer; GTU colorer
      * @return the DefaultAnimationFactory
      * @throws OtsDrawingException on drawing error
@@ -186,7 +186,7 @@ public class DefaultAnimationFactory implements EventListener
     /**
      * Creates animations for nodes, links, lanes and GTUs. This can be used if the network is read from XML. The class will
      * subscribe to the network and listen to changes, so the adding and removing of GTUs and Objects is animated correctly.
-     * @param network OTSNetwork; the network
+     * @param network OtsNetwork; the network
      * @param gtuColorer GtuColorer; GTU colorer
      * @return the DefaultAnimationFactory
      * @throws OtsDrawingException on drawing error

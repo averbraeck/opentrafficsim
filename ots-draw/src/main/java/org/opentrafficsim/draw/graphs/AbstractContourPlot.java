@@ -31,7 +31,7 @@ import org.opentrafficsim.draw.graphs.ContourDataSource.Dimension;
  * @param <Z> z-value type
  */
 public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamplerPlot
-        implements XYInterpolatedDataset, ActionListener
+        implements XyInterpolatedDataset, ActionListener
 {
 
     /** Color scale for the graph. */
@@ -50,12 +50,12 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
     private final ContourDataSource dataPool;
 
     /** Block renderer in chart. */
-    private XYInterpolatedBlockRenderer blockRenderer = null;
+    private XyInterpolatedBlockRenderer blockRenderer = null;
 
     /**
      * Constructor with specified paint scale.
      * @param caption String; caption
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param dataPool ContourDataSource; data pool
      * @param paintScale BoundsPaintScale; paint scale
      * @param legendStep Z; increment between color legend entries
@@ -73,7 +73,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
         this.legendStep = legendStep;
         this.legendFormat = legendFormat;
         this.valueFormat = valueFormat;
-        this.blockRenderer = new XYInterpolatedBlockRenderer(this);
+        this.blockRenderer = new XyInterpolatedBlockRenderer(this);
         this.blockRenderer.setPaintScale(this.paintScale);
         this.blockRenderer.setBlockHeight(dataPool.getGranularity(Dimension.DISTANCE));
         this.blockRenderer.setBlockWidth(dataPool.getGranularity(Dimension.TIME));
@@ -83,7 +83,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
     /**
      * Constructor with default paint scale.
      * @param caption String; caption
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param dataPool ContourDataSource; data pool
      * @param legendStep Z; increment between color legend entries
      * @param legendFormat String; format string for the captions in the color legend
@@ -343,7 +343,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      * Returns the block renderer.
      * @return block renderer
      */
-    public XYInterpolatedBlockRenderer getBlockRenderer()
+    public XyInterpolatedBlockRenderer getBlockRenderer()
     {
         return this.blockRenderer;
     }

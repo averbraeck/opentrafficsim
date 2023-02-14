@@ -137,8 +137,8 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
      * @param laneBasedGtuCharacteristicsGenerator LaneBasedGtuCharacteristicsGenerator; generator of the characteristics of
      *            each GTU
      * @param generatorPositions GeneratorPositions; location and initial direction provider for all generated GTUs
-     * @param network OTSRoadNetwork; the OTS network that owns the generated GTUs
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param network OtsRoadNetwork; the OTS network that owns the generated GTUs
+     * @param simulator OtsSimulatorInterface; simulator
      * @param roomChecker RoomChecker; the way that this generator checks that there is sufficient room to place a new GTU
      * @param idGenerator Supplier&lt;String&gt;; id generator
      * @throws SimRuntimeException when <cite>startTime</cite> lies before the current simulation time
@@ -368,7 +368,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
     /**
      * Places a GTU, regardless of whether it has room. The user of this method should verify this is the case.
      * @param characteristics LaneBasedGtuCharacteristics; characteristics
-     * @param position Set&lt;DirectedLanePosition&gt;; position
+     * @param position Set&lt;LanePosition&gt;; position
      * @param speed Speed; speed
      * @throws NamingException on exception
      * @throws GtuException on exception
@@ -564,7 +564,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
          * @param leaders SortedSet&lt;HeadwayGtu&gt;; leaders, usually 1, possibly more after a branch
          * @param characteristics LaneBasedGtuCharacteristics; characteristics of the proposed new GTU
          * @param since Duration; time since the GTU wanted to arrive
-         * @param initialPosition Set&lt;DirectedLanePosition&gt;; initial position
+         * @param initialPosition Set&lt;LanePosition&gt;; initial position
          * @return Speed; maximum safe speed, or null if a GTU with the specified characteristics cannot be placed at the
          *         current time
          * @throws NetworkException this method may throw a NetworkException if it encounters an error in the network structure
@@ -609,7 +609,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
         /**
          * Constructor.
          * @param speed Speed; speed
-         * @param position Set&lt;DirectedLanePosition&gt;; position
+         * @param position Set&lt;LanePosition&gt;; position
          */
         public Placement(final Speed speed, final Set<LanePosition> position)
         {
@@ -639,7 +639,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
 
         /**
          * Returns the position.
-         * @return Set&lt;DirectedLanePosition&gt;; position
+         * @return Set&lt;LanePosition&gt;; position
          */
         public Set<LanePosition> getPosition()
         {

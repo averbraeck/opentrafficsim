@@ -13,7 +13,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
 
 /**
- * History manager that uses an {@code OTSSimulatorInterface}.
+ * History manager that uses an {@code OtsSimulatorInterface}.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -41,7 +41,7 @@ public class HistoryManagerDevs extends HistoryManager implements EventListener
 
     /**
      * Constructor.
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param history Duration; time over which history is guaranteed
      * @param cleanUpInterval Duration; clean-up interval
      */

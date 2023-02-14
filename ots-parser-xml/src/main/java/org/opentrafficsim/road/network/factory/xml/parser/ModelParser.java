@@ -340,7 +340,7 @@ public class ModelParser
 
     /**
      * Creates strategical planner factories for models.
-     * @param otsNetwork OTSRoadNetwork; network
+     * @param otsNetwork OtsRoadNetwork; network
      * @param models List&lt;MODEL&gt;; models
      * @param inputParameters InputParameters; input parameters
      * @param parameterTypes Map&lt;String, ParameterType&lt;?&gt;&gt;; parameter types

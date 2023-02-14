@@ -69,7 +69,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
     /**
      * Constructor which uses the operational plan updates of GTU's as sampling interval.
-     * @param network OTSRoadNetwork; the network
+     * @param network OtsRoadNetwork; the network
      * @throws NullPointerException if the simulator is {@code null}
      */
     public RoadSampler(final OtsRoadNetwork network)
@@ -81,7 +81,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
      * Constructor which uses the operational plan updates of GTU's as sampling interval.
      * @param extendedDataTypes Set&lt;ExtendedDataType&lt;?, ?, ?, GtuData&gt;&gt;; extended data types
      * @param filterDataTypes Set&lt;FilterDataType&lt;?&gt;&gt;; filter data types
-     * @param network OTSRoadNetwork; the network
+     * @param network OtsRoadNetwork; the network
      * @throws NullPointerException if the simulator is {@code null}
      */
     public RoadSampler(final Set<ExtendedDataType<?, ?, ?, GtuDataRoad>> extendedDataTypes,
@@ -96,7 +96,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
     /**
      * Constructor which uses the given frequency to determine the sampling interval.
-     * @param network OTSRoadNetwork; the network
+     * @param network OtsRoadNetwork; the network
      * @param frequency Frequency; sampling frequency
      * @throws NullPointerException if an input is {@code null}
      * @throws IllegalArgumentException if frequency is negative or zero
@@ -110,7 +110,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
      * Constructor which uses the given frequency to determine the sampling interval.
      * @param extendedDataTypes Set&lt;ExtendedDataType&lt;?, ?, ?, GtuData&gt;&gt;; extended data types
      * @param filterDataTypes Set&lt;FilterDataType&lt;?&gt;&gt;; filter data types
-     * @param network OTSRoadNetwork; the network
+     * @param network OtsRoadNetwork; the network
      * @param frequency Frequency; sampling frequency
      * @throws NullPointerException if an input is {@code null}
      * @throws IllegalArgumentException if frequency is negative or zero
@@ -434,7 +434,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
     /**
      * Returns a factory to create a sampler.
-     * @param network OTSRoadNetwork; network
+     * @param network OtsRoadNetwork; network
      * @return Factory; factory to create a sampler
      */
     public static Factory build(final OtsRoadNetwork network)
@@ -460,7 +460,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
         /**
          * Constructor.
-         * @param network OTSRoadNetwork; network
+         * @param network OtsRoadNetwork; network
          */
         Factory(final OtsRoadNetwork network)
         {

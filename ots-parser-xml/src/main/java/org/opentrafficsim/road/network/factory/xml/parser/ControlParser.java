@@ -63,8 +63,8 @@ public final class ControlParser
 
     /**
      * Creates control objects.
-     * @param otsNetwork OTSRoadNetwork; network
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param otsNetwork OtsRoadNetwork; network
+     * @param simulator OtsSimulatorInterface; simulator
      * @param controls List&lt;CONTROL&gt;; control objects
      * @param definitions Definitions; type definitions.
      * @throws NetworkException when sensors could not be added to the network

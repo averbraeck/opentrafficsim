@@ -20,8 +20,8 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Connector;
@@ -78,7 +78,7 @@ public final class NetworkParser
 
     /**
      * Parse the Nodes.
-     * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
      * @param network NETWORK; the NETWORK tag
      * @param nodeDirections Map&lt;String,Direction&gt;; a map of the node ids and their default directions
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
@@ -89,7 +89,7 @@ public final class NetworkParser
         for (NODE xmlNode : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), NODE.class))
         {
             new OtsRoadNode(otsNetwork, xmlNode.getID(),
-                    new OtsPoint3D(xmlNode.getCOORDINATE().x, xmlNode.getCOORDINATE().y, xmlNode.getCOORDINATE().z),
+                    new OtsPoint3d(xmlNode.getCOORDINATE().x, xmlNode.getCOORDINATE().y, xmlNode.getCOORDINATE().z),
                     nodeDirections.get(xmlNode.getID()));
         }
     }
@@ -97,7 +97,7 @@ public final class NetworkParser
     /**
      * Calculate the default angles of the Nodes, in case they have not been set. This is based on the STRAIGHT LINK elements in
      * the XML file.
-     * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
      * @param network NETWORK; the NETWORK tag
      * @return a map of nodes and their default direction
      */
@@ -145,11 +145,11 @@ public final class NetworkParser
 
     /**
      * Build the links with the correct design line.
-     * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
      * @param definitions Definitions; parsed definitions.
      * @param network NETWORK; the NETWORK tag
      * @param nodeDirections Map&lt;String,Direction&gt;; a map of the node ids and their default directions
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator OtsSimulatorInterface; the simulator
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      * @throws OtsGeometryException when the design line is invalid
      */
@@ -186,13 +186,13 @@ public final class NetworkParser
                     nodeDirections.containsKey(startNode.getId()) ? nodeDirections.get(startNode.getId()).getSI() : 0.0;
             double endDirection =
                     nodeDirections.containsKey(endNode.getId()) ? nodeDirections.get(endNode.getId()).getSI() : 0.0;
-            OtsPoint3D startPoint = new OtsPoint3D(startNode.getPoint());
-            OtsPoint3D endPoint = new OtsPoint3D(endNode.getPoint());
-            OtsPoint3D[] coordinates = null;
+            OtsPoint3d startPoint = new OtsPoint3d(startNode.getPoint());
+            OtsPoint3d endPoint = new OtsPoint3d(endNode.getPoint());
+            OtsPoint3d[] coordinates = null;
 
             if (xmlLink.getSTRAIGHT() != null)
             {
-                coordinates = new OtsPoint3D[2];
+                coordinates = new OtsPoint3d[2];
                 coordinates[0] = startPoint;
                 coordinates[1] = endPoint;
             }
@@ -200,12 +200,12 @@ public final class NetworkParser
             else if (xmlLink.getPOLYLINE() != null)
             {
                 int intermediatePoints = xmlLink.getPOLYLINE().getCOORDINATE().size();
-                coordinates = new OtsPoint3D[intermediatePoints + 2];
+                coordinates = new OtsPoint3d[intermediatePoints + 2];
                 coordinates[0] = startPoint;
                 coordinates[intermediatePoints + 1] = endPoint;
                 for (int p = 0; p < intermediatePoints; p++)
                 {
-                    coordinates[p + 1] = new OtsPoint3D(xmlLink.getPOLYLINE().getCOORDINATE().get(p));
+                    coordinates[p + 1] = new OtsPoint3d(xmlLink.getPOLYLINE().getCOORDINATE().get(p));
                 }
 
             }
@@ -223,9 +223,9 @@ public final class NetworkParser
                 {
                     offsetEnd = xmlLink.getOFFSETEND().si;
                 }
-                List<OtsPoint3D> centerList = OtsPoint3D.circleIntersections(startNode.getPoint(), radiusSI + offsetStart,
+                List<OtsPoint3d> centerList = OtsPoint3d.circleIntersections(startNode.getPoint(), radiusSI + offsetStart,
                         endNode.getPoint(), radiusSI + offsetEnd);
-                OtsPoint3D center =
+                OtsPoint3d center =
                         (xmlLink.getARC().getDIRECTION().equals(ArcDirection.RIGHT)) ? centerList.get(0) : centerList.get(1);
 
                 // calculate start angle and end angle
@@ -243,10 +243,10 @@ public final class NetworkParser
                 }
 
                 int numSegments = xmlLink.getARC().getNUMSEGMENTS().intValue();
-                coordinates = new OtsPoint3D[numSegments];
-                coordinates[0] = new OtsPoint3D(startNode.getPoint().x + Math.cos(sa) * offsetStart,
+                coordinates = new OtsPoint3d[numSegments];
+                coordinates[0] = new OtsPoint3d(startNode.getPoint().x + Math.cos(sa) * offsetStart,
                         startNode.getPoint().y + Math.sin(sa) * offsetStart, startNode.getPoint().z);
-                coordinates[coordinates.length - 1] = new OtsPoint3D(endNode.getPoint().x + Math.cos(ea) * offsetEnd,
+                coordinates[coordinates.length - 1] = new OtsPoint3d(endNode.getPoint().x + Math.cos(ea) * offsetEnd,
                         endNode.getPoint().y + Math.sin(ea) * offsetEnd, endNode.getPoint().z);
                 double angleStep = Math.abs((ea - sa)) / numSegments;
                 double slopeStep = (endNode.getPoint().z - startNode.getPoint().z) / numSegments;
@@ -256,7 +256,7 @@ public final class NetworkParser
                     for (int p = 1; p < numSegments - 1; p++)
                     {
                         double dRad = offsetStart + (offsetEnd - offsetStart) * p / numSegments;
-                        coordinates[p] = new OtsPoint3D(center.x + (radiusSI + dRad) * Math.cos(sa - angleStep * p),
+                        coordinates[p] = new OtsPoint3d(center.x + (radiusSI + dRad) * Math.cos(sa - angleStep * p),
                                 center.y + (radiusSI + dRad) * Math.sin(sa - angleStep * p),
                                 startNode.getPoint().z + slopeStep * p);
                     }
@@ -266,7 +266,7 @@ public final class NetworkParser
                     for (int p = 1; p < numSegments - 1; p++)
                     {
                         double dRad = offsetStart + (offsetEnd - offsetStart) * p / numSegments;
-                        coordinates[p] = new OtsPoint3D(center.x + (radiusSI + dRad) * Math.cos(sa + angleStep * p),
+                        coordinates[p] = new OtsPoint3d(center.x + (radiusSI + dRad) * Math.cos(sa + angleStep * p),
                                 center.y + (radiusSI + dRad) * Math.sin(sa + angleStep * p),
                                 startNode.getPoint().z + slopeStep * p);
                     }
@@ -305,7 +305,7 @@ public final class NetworkParser
                         + " has no filled straight, arc, bezier, polyline, or clothoid definition");
             }
 
-            OtsLine3D designLine = OtsLine3D.createAndCleanOTSLine3D(coordinates);
+            OtsLine3d designLine = OtsLine3d.createAndCleanOtsLine3d(coordinates);
 
             // TODO: Directionality has to be added later when the lanes and their direction are known.
             LaneKeepingPolicy laneKeepingPolicy = LaneKeepingPolicy.valueOf(xmlLink.getLANEKEEPING().name());
@@ -323,10 +323,10 @@ public final class NetworkParser
 
     /**
      * Build the links with the correct design line.
-     * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
      * @param definitions Definitions; parsed definitions.
      * @param network NETWORK; the NETWORK tag
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator OtsSimulatorInterface; the simulator
      * @param roadLayoutMap the map of the tags of the predefined ROADLAYOUT tags in DEFINITIONS
      * @param linkTypeSpeedLimitMap map of speed limits per link type
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies

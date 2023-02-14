@@ -46,7 +46,7 @@ public final class AnimationToggles
 
     /**
      * Set all animation on, and create the toggles on the left hand side.
-     * @param panel OTSAnimationPanel; the WrappableAnimation.
+     * @param panel OtsAnimationPanel; the WrappableAnimation.
      */
     public static void setTextAnimationTogglesFull(final OtsAnimationPanel panel)
     {
@@ -75,7 +75,7 @@ public final class AnimationToggles
 
     /**
      * Set the most common animation on, and create the toggles on the left hand side.
-     * @param panel OTSAnimationPanel; the WrappableAnimation.
+     * @param panel OtsAnimationPanel; the WrappableAnimation.
      */
     public static void setTextAnimationTogglesStandard(final OtsAnimationPanel panel)
     {
@@ -104,7 +104,7 @@ public final class AnimationToggles
 
     /**
      * Set all animation on, and create the toggles on the left hand side.
-     * @param panel OTSAnimationPanel; the WrappableAnimation.
+     * @param panel OtsAnimationPanel; the WrappableAnimation.
      */
     public static void setIconAnimationTogglesFull(final OtsAnimationPanel panel)
     {
@@ -147,7 +147,7 @@ public final class AnimationToggles
 
     /**
      * Set the most common animation on, and create the toggles on the left hand side.
-     * @param panel OTSAnimationPanel; the WrappableAnimation.
+     * @param panel OtsAnimationPanel; the WrappableAnimation.
      */
     public static void setIconAnimationTogglesStandard(final OtsAnimationPanel panel)
     {
@@ -190,7 +190,7 @@ public final class AnimationToggles
 
     /**
      * Set a class to be shown in the animation to true.
-     * @param panel OTSAnimationPanel; the OTSAnimationPanel where the animation of a class has to be switched off
+     * @param panel OtsAnimationPanel; the OtsAnimationPanel where the animation of a class has to be switched off
      * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the animation has to be shown.
      */
     public static void showAnimationClass(final OtsAnimationPanel panel, final Class<? extends Locatable> locatableClass)
@@ -201,7 +201,7 @@ public final class AnimationToggles
 
     /**
      * Set a class to be shown in the animation to false.
-     * @param panel OTSAnimationPanel; the OTSAnimationPanel where the animation of a class has to be switched off
+     * @param panel OtsAnimationPanel; the OtsAnimationPanel where the animation of a class has to be switched off
      * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the animation has to be shown.
      */
     public static void hideAnimationClass(final OtsAnimationPanel panel, final Class<? extends Locatable> locatableClass)
@@ -212,7 +212,7 @@ public final class AnimationToggles
 
     /**
      * Set all animation on, and create the toggles on the left hand side.
-     * @param panel OTSAnimationPanel; the WrappableAnimation.
+     * @param panel OtsAnimationPanel; the WrappableAnimation.
      */
     public static void showAnimationFull(final OtsAnimationPanel panel)
     {
@@ -240,7 +240,7 @@ public final class AnimationToggles
 
     /**
      * Set the most common animation on, and create the toggles on the left hand side.
-     * @param panel OTSAnimationPanel; the WrappableAnimation.
+     * @param panel OtsAnimationPanel; the WrappableAnimation.
      */
     public static void showAnimationStandard(final OtsAnimationPanel panel)
     {

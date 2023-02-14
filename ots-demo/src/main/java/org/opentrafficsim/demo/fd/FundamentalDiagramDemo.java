@@ -47,7 +47,7 @@ import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuErrorHandler;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -210,9 +210,9 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         GtuType.registerTemplateSupplier(car, Defaults.NL);
         GtuType.registerTemplateSupplier(truck, Defaults.NL);
 
-        OtsRoadNode nodeA = new OtsRoadNode(network, "Origin", new OtsPoint3D(0.0, 0.0), Direction.ZERO);
-        OtsRoadNode nodeB = new OtsRoadNode(network, "Lane-drop", new OtsPoint3D(1500.0, 0.0), Direction.ZERO);
-        OtsRoadNode nodeC = new OtsRoadNode(network, "Destination", new OtsPoint3D(2500.0, 0.0), Direction.ZERO);
+        OtsRoadNode nodeA = new OtsRoadNode(network, "Origin", new OtsPoint3d(0.0, 0.0), Direction.ZERO);
+        OtsRoadNode nodeB = new OtsRoadNode(network, "Lane-drop", new OtsPoint3d(1500.0, 0.0), Direction.ZERO);
+        OtsRoadNode nodeC = new OtsRoadNode(network, "Destination", new OtsPoint3d(2500.0, 0.0), Direction.ZERO);
 
         LinkType linkType = DefaultsNl.FREEWAY;
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;

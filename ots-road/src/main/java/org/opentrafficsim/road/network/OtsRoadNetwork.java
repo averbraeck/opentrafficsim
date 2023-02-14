@@ -30,7 +30,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 
 /**
- * OTSRoadNetwork adds a number of methods to the Network class that are specific for roads, such as the LaneTypes.
+ * OtsRoadNetwork adds a number of methods to the Network class that are specific for roads, such as the LaneTypes.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -61,7 +61,7 @@ public class OtsRoadNetwork extends OtsNetwork implements RoadNetwork
     /**
      * Construction of an empty network.
      * @param id String; the network id.
-     * @param simulator OTSSimulatorInterface; the DSOL simulator engine
+     * @param simulator OtsSimulatorInterface; the DSOL simulator engine
      */
     public OtsRoadNetwork(final String id, final OtsSimulatorInterface simulator)
     {

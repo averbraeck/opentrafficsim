@@ -6,8 +6,8 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 
 /**
  * Build various operational plans and print them.
@@ -36,7 +36,7 @@ public final class OperationalPlanDemo
      */
     public static void main(final String[] args) throws OperationalPlanException, OtsGeometryException
     {
-        OtsLine3D path1 = new OtsLine3D(new OtsPoint3D[] {new OtsPoint3D(0.0, 0.0), new OtsPoint3D(100.0, 0.0)});
+        OtsLine3d path1 = new OtsLine3d(new OtsPoint3d[] {new OtsPoint3d(0.0, 0.0), new OtsPoint3d(100.0, 0.0)});
 
         // go from 0 to 10 m/s over entire distance. This should take 20 sec with a=0.5 m/s2.
         OperationalPlan plan1 = OperationalPlanBuilder.buildGradualAccelerationPlan(null, path1, Time.ZERO, Speed.ZERO,

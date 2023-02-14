@@ -44,7 +44,7 @@ public class SequentialFixedAccelerationModel extends AbstractGtuFollowingModelM
 
     /**
      * Construct a SequentialFixedAccelerationModel with empty list of FixedAccelerationModel steps.
-     * @param simulator OTSSimulatorInterface; the simulator (needed to obtain the current simulation time)
+     * @param simulator OtsSimulatorInterface; the simulator (needed to obtain the current simulation time)
      * @param maximumSafeDeceleration Acceleration; specified maximum safe deceleration
      */
     public SequentialFixedAccelerationModel(final OtsSimulatorInterface simulator, final Acceleration maximumSafeDeceleration)
@@ -55,7 +55,7 @@ public class SequentialFixedAccelerationModel extends AbstractGtuFollowingModelM
 
     /**
      * Construct a SequentialFixedAccelerationModel and load it with a list of FixedAccelerationModel steps.
-     * @param simulator OTSSimulatorInterface; the simulator (needed to obtain the current simulation time)
+     * @param simulator OtsSimulatorInterface; the simulator (needed to obtain the current simulation time)
      * @param maximumSafeDeceleration Acceleration; specified maximum safe deceleration
      * @param steps Set&lt;FixedAccelerationModel&gt;; the list of FixedAccelerationModel steps.
      */

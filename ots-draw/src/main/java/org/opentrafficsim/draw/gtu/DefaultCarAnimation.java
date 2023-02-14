@@ -77,7 +77,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGtu> implements R
     /**
      * Construct the DefaultCarAnimation for a LaneBasedIndividualCar.
      * @param gtu LaneBasedGtu; the Car to draw
-     * @param simulator OTSSimulatorInterface; the simulator to schedule on
+     * @param simulator OtsSimulatorInterface; the simulator to schedule on
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
@@ -90,7 +90,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGtu> implements R
     /**
      * Construct the DefaultCarAnimation for a LaneBasedIndividualCar.
      * @param gtu LaneBasedGtu; the Car to draw
-     * @param simulator OTSSimulatorInterface; the simulator to schedule on
+     * @param simulator OtsSimulatorInterface; the simulator to schedule on
      * @param gtuColorer GtuColorer; the GtuColorer that determines what fill color to use
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
@@ -288,7 +288,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGtu> implements R
          * @param dy float; the vertical movement of the text, in meters
          * @param textAlignment TextAlignment; where to place the text
          * @param color Color; the color of the text
-         * @param simulator OTSSimulatorInterface; the simulator
+         * @param simulator OtsSimulatorInterface; the simulator
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
@@ -306,7 +306,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGtu> implements R
          * @param dy float; the vertical movement of the text, in meters
          * @param textAlignment TextAlignment; where to place the text
          * @param color Color; the color of the text
-         * @param simulator OTSSimulatorInterface; the simulator
+         * @param simulator OtsSimulatorInterface; the simulator
          * @param background TextAnimation.ContrastToBackground; connection to retrieve the current background color
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found

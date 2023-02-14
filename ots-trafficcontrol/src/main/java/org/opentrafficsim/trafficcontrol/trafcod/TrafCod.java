@@ -147,7 +147,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
      * Construct a new TrafCOD traffic light controller.
      * @param controllerName String; name of this TrafCOD traffic light controller
      * @param trafCodURL URL; the URL of the TrafCOD rules
-     * @param simulator OTSSimulatorInterface; the simulation engine
+     * @param simulator OtsSimulatorInterface; the simulation engine
      * @param display Container; if non-null, a controller display is constructed and shown in the supplied container
      * @param displayBackground BufferedImage; background for controller display image
      * @param displayObjectLocations List&lt;String&gt;; list of sensors and traffic lights and their locations on the
@@ -167,7 +167,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
      * Construct a new TrafCOD traffic light controller.
      * @param controllerName String; name of this TrafCOD traffic light controller
      * @param trafCODRules List&lt;String&gt;; the TrafCOD rules
-     * @param simulator OTSSimulatorInterface; the simulation engine
+     * @param simulator OtsSimulatorInterface; the simulation engine
      * @param displayBackground BufferedImage; background for controller display image
      * @param displayObjectLocations List&lt;String&gt;; list of sensors and traffic lights and their locations on the
      *            <code>displayBackGround</code>
@@ -397,7 +397,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
 
     /**
      * Check the consistency of the traffic control program and perform initializations that require a completely built network.
-     * @throws SimRuntimeException when the simulation model is not an OTSModelInterface
+     * @throws SimRuntimeException when the simulation model is not an OtsModelInterface
      * @throws TrafficControlException when a required traffic light or sensor is not present in the network
      */
     public void checkConsistency() throws SimRuntimeException, TrafficControlException
@@ -436,7 +436,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
         }
         catch (ClassCastException e)
         {
-            throw new SimRuntimeException("Model is not an OTSModelInterface");
+            throw new SimRuntimeException("Model is not an OtsModelInterface");
         }
         ImmutableCollection<TrafficLight> trafficLights = network.getObjectMap(TrafficLight.class).values();
         Map<String, List<TrafficLight>> trafficLightMap = new LinkedHashMap<>();

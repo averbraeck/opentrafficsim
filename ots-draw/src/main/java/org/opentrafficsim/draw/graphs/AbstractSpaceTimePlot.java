@@ -39,7 +39,7 @@ public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
      * Constructor.
      * @param caption String; caption
      * @param updateInterval Duration; regular update interval (simulation time)
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param delay Duration; amount of time that chart runs behind simulation to prevent gaps in the charted data
      * @param initialEnd Time; initial end time of plots, will be expanded if simulation time exceeds it
      */

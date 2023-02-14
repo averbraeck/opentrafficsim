@@ -492,7 +492,7 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
      * @param leaders SortedSet&lt;HeadwayGtu&gt;; leaders, usually 1, possibly more after a branch
      * @param characteristics LaneBasedGtuCharacteristics; characteristics of the proposed new GTU
      * @param since Duration; time since the GTU wanted to arrive
-     * @param initialPosition Set&lt;DirectedLanePosition&gt;; initial position
+     * @param initialPosition Set&lt;LanePosition&gt;; initial position
      * @return Speed; maximum safe speed, or null if a GTU with the specified characteristics cannot be placed at the current
      *         time
      * @throws NetworkException this method may throw a NetworkException if it encounters an error in the network structure

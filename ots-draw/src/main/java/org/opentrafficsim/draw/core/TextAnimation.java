@@ -92,7 +92,7 @@ public abstract class TextAnimation implements Locatable, Serializable
      * @param fontSize float; the size of the font; default = 2.0 (meters)
      * @param minFontSize float; minimum font size resulting from scaling
      * @param maxFontSize float; maximum font size resulting from scaling
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator OtsSimulatorInterface; the simulator
      * @param background ContrastToBackground; allows querying the background color and adaptation of the actual color of the
      *            text to ensure contrast
      * @param scaleDependentRendering ScaleDependentRendering; suppress rendering when font scale is too small
@@ -137,7 +137,7 @@ public abstract class TextAnimation implements Locatable, Serializable
      * @param fontSize float; the size of the font; default = 2.0 (meters)
      * @param minFontSize float; minimum font size resulting from scaling
      * @param maxFontSize float; maximum font size resulting from scaling
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator OtsSimulatorInterface; the simulator
      * @param scaleDependentRendering ScaleDependentRendering; render text only when bigger than minimum scale
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException when remote context cannot be found
@@ -159,7 +159,7 @@ public abstract class TextAnimation implements Locatable, Serializable
      * @param dy float; the vertical movement of the text, in meters
      * @param textAlignment TextAlignment; where to place the text
      * @param color Color; the color of the text
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator OtsSimulatorInterface; the simulator
      * @param scaleDependentRendering ScaleDependentRendering; render text only when bigger than minimum scale
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException when remote context cannot be found
@@ -461,7 +461,7 @@ public abstract class TextAnimation implements Locatable, Serializable
         /**
          * Construct a new AnimationImpl.
          * @param source Locatable; the source
-         * @param simulator OTSSimulatorInterface; the simulator
+         * @param simulator OtsSimulatorInterface; the simulator
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException when remote context cannot be found
          */

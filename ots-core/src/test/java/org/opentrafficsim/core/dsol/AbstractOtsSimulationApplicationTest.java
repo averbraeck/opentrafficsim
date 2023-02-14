@@ -3,7 +3,7 @@ package org.opentrafficsim.core.dsol;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.opentrafficsim.core.dsol.AbstractOtsModelTest.OTSModel;
+import org.opentrafficsim.core.dsol.AbstractOtsModelTest.OtsModel;
 
 /**
  * Test the OTSReplication class.
@@ -17,31 +17,31 @@ public class AbstractOtsSimulationApplicationTest
 {
 
     /**
-     * Test the AbstractOTSSimulationApplication class.
+     * Test the AbstractOtsSimulationApplication class.
      */
     @Test
-    public void abstractOTSSimulationApplicationTest()
+    public void abstractOtsSimulationApplicationTest()
     {
-        OtsSimulatorInterface simulator = new OtsSimulator("Simulator for AbstractOTSSimulationApplicationlTest");
-        OTSModel model = new OTSModel(simulator);
-        OTSSimulationApplication otsSimulationApplication = new OTSSimulationApplication(model);
+        OtsSimulatorInterface simulator = new OtsSimulator("Simulator for AbstractOtsSimulationApplicationlTest");
+        OtsModel model = new OtsModel(simulator);
+        OtsSimulationApplication otsSimulationApplication = new OtsSimulationApplication(model);
         assertEquals("model can be retrieved", model, otsSimulationApplication.getModel());
     }
 
     /**
      * Instrumented class for testing.
      */
-    static class OTSSimulationApplication extends AbstractOtsSimulationApplication
+    static class OtsSimulationApplication extends AbstractOtsSimulationApplication
     {
 
         /** ... */
         private static final long serialVersionUID = 1L;
 
         /**
-         * Construct a OTSSimulationApplication object.
-         * @param model OTSModelInterface; the model
+         * Construct a OtsSimulationApplication object.
+         * @param model OtsModelInterface; the model
          */
-        OTSSimulationApplication(final OtsModelInterface model)
+        OtsSimulationApplication(final OtsModelInterface model)
         {
             super(model);
         }

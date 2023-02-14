@@ -17,7 +17,7 @@ import nl.tudelft.simulation.naming.context.ContextInterface;
 import nl.tudelft.simulation.naming.context.util.ContextUtil;
 
 /**
- * OTSNetworkAnimationUtils can make a deep clone of a network, including animation, and can destroy the animation.
+ * OtsNetworkAnimationUtils can make a deep clone of a network, including animation, and can destroy the animation.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -34,8 +34,8 @@ public final class OtsNetworkAnimationUtils
 
     /**
      * Remove all objects and animation in the network.
-     * @param network OTSNetwork; the network to destroy
-     * @param simulator OTSSimulatorInterface; the simulator of the old network
+     * @param network OtsNetwork; the network to destroy
+     * @param simulator OtsSimulatorInterface; the simulator of the old network
      */
     @SuppressWarnings("checkstyle:designforextension")
     public static void destroy(final OtsNetwork network, final OtsSimulatorInterface simulator)
@@ -75,7 +75,7 @@ public final class OtsNetworkAnimationUtils
     /**
      * Remove all animation objects of the given class.
      * @param clazz Class&lt;?&gt;; the class to remove the animation objects for
-     * @param oldSimulator OTSSimulatorInterface; the old simulator
+     * @param oldSimulator OtsSimulatorInterface; the old simulator
      */
     @SuppressWarnings("checkstyle:designforextension")
     public static void removeAnimation(final Class<?> clazz, final OtsSimulatorInterface oldSimulator)

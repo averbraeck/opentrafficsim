@@ -66,7 +66,7 @@ public class OtsAnimator extends DEVSRealTimeAnimator<Duration> implements OtsAn
      * @param warmupPeriod Duration; the warm up period of the simulation (use new Duration(0, SECOND) if you don't know what
      *            this is)
      * @param runLength Duration; the duration of the simulation
-     * @param model OTSModelInterface; the simulation to execute
+     * @param model OtsModelInterface; the simulation to execute
      * @param streams Map&lt;String, StreamInterface&gt;; streams
      * @throws SimRuntimeException when e.g., warmupPeriod is larger than runLength
      * @throws NamingException when the context for the replication cannot be created

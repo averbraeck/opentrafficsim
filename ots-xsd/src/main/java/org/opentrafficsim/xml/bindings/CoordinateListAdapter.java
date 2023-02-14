@@ -9,7 +9,7 @@ import org.opentrafficsim.xml.bindings.types.Point3dList;
 
 /**
  * CoordinateListAdapter converts between the XML String for a list of coordinates and a List of Point3d coordinates. Because
- * the ots-xsd project is not dependent on ots-core, Point3d is chosen instead of OTSPoint3D to store the (x, y, z) information.
+ * the ots-xsd project is not dependent on ots-core, Point3d is chosen instead of OtsPoint3d to store the (x, y, z) information.
  * The marshal function returns 2D-coordinates for points where the z-value is zero. Spaces are not allowed in the textual
  * representation of the list.
  * <p>

@@ -25,7 +25,7 @@ public interface OtsSimulatorInterface extends DEVSSimulatorInterface<Duration>,
 {
     /**
      * Initialize a simulation engine without animation; the easy way. PauseOnError is set to true;
-     * @param model OTSModelInterface; the simulation to execute
+     * @param model OtsModelInterface; the simulation to execute
      * @param replication OTSReplication; the replication with the run control parameters
      * @throws SimRuntimeException when e.g., warmupPeriod is larger than runLength
      */
@@ -37,7 +37,7 @@ public interface OtsSimulatorInterface extends DEVSSimulatorInterface<Duration>,
      * @param warmupPeriod Duration; the warm up period of the simulation (use new Duration(0, SECOND) if you don't know what
      *            this is)
      * @param runLength Duration; the duration of the simulation
-     * @param model OTSModelInterface; the simulation to execute
+     * @param model OtsModelInterface; the simulation to execute
      * @throws SimRuntimeException when e.g., warmupPeriod is larger than runLength
      * @throws NamingException when the context for the replication cannot be created
      */
@@ -51,7 +51,7 @@ public interface OtsSimulatorInterface extends DEVSSimulatorInterface<Duration>,
      * @param warmupPeriod Duration; the warm up period of the simulation (use new Duration(0, SECOND) if you don't know what
      *            this is)
      * @param runLength Duration; the duration of the simulation
-     * @param model OTSModelInterface; the simulation to execute
+     * @param model OtsModelInterface; the simulation to execute
      * @param replicationNr int; the replication number
      * @throws SimRuntimeException when e.g., warmupPeriod is larger than runLength
      * @throws NamingException when context for the animation cannot be created

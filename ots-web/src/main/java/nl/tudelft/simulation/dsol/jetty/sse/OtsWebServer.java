@@ -39,9 +39,9 @@ import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
 import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeAnimator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.dsol.web.animation.D2.HtmlAnimationPanel;
-import nl.tudelft.simulation.dsol.web.animation.D2.HtmlGridPanel;
-import nl.tudelft.simulation.dsol.web.animation.D2.ToggleButtonInfo;
+import nl.tudelft.simulation.dsol.web.animation.d2.HtmlAnimationPanel;
+import nl.tudelft.simulation.dsol.web.animation.d2.HtmlGridPanel;
+import nl.tudelft.simulation.dsol.web.animation.d2.ToggleButtonInfo;
 import nl.tudelft.simulation.introspection.Property;
 import nl.tudelft.simulation.introspection.beans.BeanIntrospector;
 
@@ -69,7 +69,7 @@ public abstract class OtsWebServer implements EventListener
 
     /**
      * @param title String; the title for the model window
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator OtsSimulatorInterface; the simulator
      * @param extent Bounds2d; the extent to use for the graphics (min/max coordinates)
      * @throws Exception in case jetty crashes
      */
@@ -259,7 +259,7 @@ public abstract class OtsWebServer implements EventListener
 
         /**
          * Create the handler for Servlet requests.
-         * @param webServer OTSWebServer; web server for callback of actions
+         * @param webServer OtsWebServer; web server for callback of actions
          */
         public XHRHandler(final OtsWebServer webServer)
         {

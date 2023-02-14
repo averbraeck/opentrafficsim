@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
@@ -33,9 +33,9 @@ public class RouteGeneratorTest
         TODO THE ROUTE CLASSES HAVE CHANGED SO THE TESTS HAVE TO BE ADAPTED
          
         List<Node> nodes = new ArrayList<Node>();
-        nodes.add(new OTSNode("n1", new OTSPoint3D(0, 0, 0)));
-        nodes.add(new OTSNode("n2", new OTSPoint3D(1000, 0, 0)));
-        nodes.add(new OTSNode("n3", new OTSPoint3D(1000, 1000, 0)));
+        nodes.add(new OtsNode("n1", new OtsPoint3d(0, 0, 0)));
+        nodes.add(new OtsNode("n2", new OtsPoint3d(1000, 0, 0)));
+        nodes.add(new OtsNode("n3", new OtsPoint3d(1000, 1000, 0)));
         FixedRouteGenerator frg = new FixedRouteGenerator(nodes);
         assertNotNull("The new FixedRouteGenerator should not be null", frg);
         Route r1 = frg.generateRoute();
@@ -146,10 +146,10 @@ public class RouteGeneratorTest
     private FixedRouteGenerator createRouteGenerator(final Network network, final String endNodeName) throws NetworkException
     {
         List<Node> nodes = new ArrayList<Node>();
-        nodes.add(new OtsNode(network, "n1", new OtsPoint3D(0, 0, 0)));
-        nodes.add(new OtsNode(network, "n2", new OtsPoint3D(1000, 0, 0)));
-        nodes.add(new OtsNode(network, "n3", new OtsPoint3D(1000, 1000, 0)));
-        nodes.add(new OtsNode(network, endNodeName, new OtsPoint3D(2000, 1000, 0)));
+        nodes.add(new OtsNode(network, "n1", new OtsPoint3d(0, 0, 0)));
+        nodes.add(new OtsNode(network, "n2", new OtsPoint3d(1000, 0, 0)));
+        nodes.add(new OtsNode(network, "n3", new OtsPoint3d(1000, 1000, 0)));
+        nodes.add(new OtsNode(network, endNodeName, new OtsPoint3d(2000, 1000, 0)));
         return new FixedRouteGenerator(new Route("fixed route", DefaultsNl.VEHICLE, nodes));
     }
 }

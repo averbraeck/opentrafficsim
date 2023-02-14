@@ -79,7 +79,7 @@ public final class GeneratorSinkParser
 
     /**
      * Parse the ROUTE tags.
-     * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
      * @param definitions Definitions; parsed definitions
      * @param demand NETWORKDEMAND; the NETWORKDEMAND tag
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
@@ -107,7 +107,7 @@ public final class GeneratorSinkParser
 
     /**
      * Parse the SHORTESTROUTE tags.
-     * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
      * @param definitions Definitions; parsed definitions
      * @param demand NETWORKDEMAND; the NETWORKDEMAND tag
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
@@ -156,7 +156,7 @@ public final class GeneratorSinkParser
 
     /**
      * Parse the ROUTEMIX tags.
-     * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
      * @param demand NETWORKDEMAND; the NETWORKDEMAND tag
      * @return id-based Map of routemix objects as FrequencyAndObject lists
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
@@ -186,7 +186,7 @@ public final class GeneratorSinkParser
 
     /**
      * Parse the SHORTESTROUTEMIX tags.
-     * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
      * @param demand NETWORKDEMAND; the NETWORKDEMAND tag
      * @return id-based Map of routemix objects as FrequencyAndObject lists
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
@@ -216,7 +216,7 @@ public final class GeneratorSinkParser
 
     /**
      * Parse the Generators.
-     * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
      * @param definitions Definitions; parsed definitions
      * @param demand NETWORK; the NETWORK tag
      * @param gtuTemplates GGTUTEMPLATE tags
@@ -378,9 +378,9 @@ public final class GeneratorSinkParser
 
     /**
      * Parse the Sinks.
-     * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
      * @param demand NETWORK; the NETWORK tag
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator OtsSimulatorInterface; the simulator
      * @param definitions Definitions; type definitions.
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */

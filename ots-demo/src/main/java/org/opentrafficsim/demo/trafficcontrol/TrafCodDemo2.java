@@ -57,7 +57,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCODModel>
     /**
      * Create a Trafcod demo.
      * @param title String; the title of the Frame
-     * @param panel OTSAnimationPanel; the tabbed panel to display
+     * @param panel OtsAnimationPanel; the tabbed panel to display
      * @param model TrafCODModel; the model
      * @throws OtsDrawingException on animation error
      */
@@ -170,7 +170,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCODModel>
         private final String xml;
 
         /**
-         * @param simulator OTSSimulatorInterface; the simulator
+         * @param simulator OtsSimulatorInterface; the simulator
          * @param shortName String; name of the model
          * @param description String; description of the model
          * @param xml String; the XML string
@@ -189,7 +189,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCODModel>
             try
             {
                 this.network = new OtsRoadNetwork(getShortName(), getSimulator());
-                OTS ots = XmlNetworkLaneParser.parseXML(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)));
+                OTS ots = XmlNetworkLaneParser.parseXml(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)));
                 XmlNetworkLaneParser.build(ots, this.network, false);
             }
             catch (Exception exception)

@@ -85,7 +85,7 @@ In this tutorial an example is shown for a speed sign animation. The class struc
     
         private static final double EDGE = 1.3;
     
-        public SpeedSignAnimation(final SpeedSign source, final OTSSimulatorInterface simulator)
+        public SpeedSignAnimation(final SpeedSign source, final OtsSimulatorInterface simulator)
         {
             super(source, simulator);
             setRotate(false);

@@ -10,8 +10,8 @@ import org.djutils.exceptions.Try;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OtsLink;
@@ -46,10 +46,10 @@ public class CrossSectionLink extends OtsLink implements Serializable
     private Priority priority = Priority.NONE;
 
     /** Line over which GTUs enter or leave the link at the start node. */
-    private OtsLine3D startLine;
+    private OtsLine3d startLine;
 
     /** Line over which GTUs enter or leave the link at the end node. */
-    private OtsLine3D endLine;
+    private OtsLine3d endLine;
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the addition of a Lane to a CrossSectionLink. <br>
@@ -77,19 +77,19 @@ public class CrossSectionLink extends OtsLink implements Serializable
 
     /**
      * Construction of a cross section link.
-     * @param network OTSRoadNetwork; the network
+     * @param network OtsRoadNetwork; the network
      * @param id String; the link id.
-     * @param startNode OTSRoadNode; the start node (directional).
-     * @param endNode OTSRoadNode; the end node (directional).
+     * @param startNode OtsRoaNode; the start node (directional).
+     * @param endNode OtsRoaNode; the end node (directional).
      * @param linkType LinkType; the link type
-     * @param designLine OTSLine3D; the design line of the Link
+     * @param designLine OtsLine3d; the design line of the Link
      * @param laneKeepingPolicy LaneKeepingPolicy; the policy to generally keep left, keep right, or keep lane
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public CrossSectionLink(final OtsRoadNetwork network, final String id, final OtsRoadNode startNode,
-            final OtsRoadNode endNode, final LinkType linkType, final OtsLine3D designLine,
+            final OtsRoadNode endNode, final LinkType linkType, final OtsLine3d designLine,
             final LaneKeepingPolicy laneKeepingPolicy) throws NetworkException
     {
         super(network, id, startNode, endNode, linkType, designLine);
@@ -181,9 +181,9 @@ public class CrossSectionLink extends OtsLink implements Serializable
 
     /**
      * Returns the line over which GTUs enter and leave the link at the start node.
-     * @return OTSLine3D; line over which GTUs enter and leave the link at the start node
+     * @return OtsLine3d; line over which GTUs enter and leave the link at the start node
      */
-    public OtsLine3D getStartLine()
+    public OtsLine3d getStartLine()
     {
         if (this.startLine == null)
         {
@@ -203,22 +203,22 @@ public class CrossSectionLink extends OtsLink implements Serializable
                     right = lane.getDesignLineOffsetAtBegin().si - half;
                 }
             }
-            OtsPoint3D start = getStartNode().getPoint();
+            OtsPoint3d start = getStartNode().getPoint();
             double heading = getStartNode().getHeading() + .5 * Math.PI;
             double cosHeading = Math.cos(heading);
             double sinHeading = Math.sin(heading);
-            OtsPoint3D leftPoint = new OtsPoint3D(start.x + cosHeading * left, start.y + sinHeading * left);
-            OtsPoint3D rightPoint = new OtsPoint3D(start.x - cosHeading * right, start.y - sinHeading * right);
-            this.startLine = Try.assign(() -> new OtsLine3D(leftPoint, rightPoint), "Invalid startline on CrossSectionLink.");
+            OtsPoint3d leftPoint = new OtsPoint3d(start.x + cosHeading * left, start.y + sinHeading * left);
+            OtsPoint3d rightPoint = new OtsPoint3d(start.x - cosHeading * right, start.y - sinHeading * right);
+            this.startLine = Try.assign(() -> new OtsLine3d(leftPoint, rightPoint), "Invalid startline on CrossSectionLink.");
         }
         return this.startLine;
     }
 
     /**
      * Returns the line over which GTUs enter and leave the link at the end node.
-     * @return OTSLine3D; line over which GTUs enter and leave the link at the end node
+     * @return OtsLine3d; line over which GTUs enter and leave the link at the end node
      */
-    public OtsLine3D getEndLine()
+    public OtsLine3d getEndLine()
     {
         if (this.endLine == null)
         {
@@ -238,14 +238,14 @@ public class CrossSectionLink extends OtsLink implements Serializable
                     right = lane.getDesignLineOffsetAtEnd().si - half;
                 }
             }
-            OtsPoint3D start = getEndNode().getPoint();
+            OtsPoint3d start = getEndNode().getPoint();
             DirectedPoint p = Try.assign(() -> getEndNode().getLocation(), "Unexpected remote exception.");
             double heading = p.getRotZ() + .5 * Math.PI;
             double cosHeading = Math.cos(heading);
             double sinHeading = Math.sin(heading);
-            OtsPoint3D leftPoint = new OtsPoint3D(start.x + cosHeading * left, start.y + sinHeading * left);
-            OtsPoint3D rightPoint = new OtsPoint3D(start.x + cosHeading * right, start.y + sinHeading * right);
-            this.endLine = Try.assign(() -> new OtsLine3D(leftPoint, rightPoint), "Invalid endline on CrossSectionLink.");
+            OtsPoint3d leftPoint = new OtsPoint3d(start.x + cosHeading * left, start.y + sinHeading * left);
+            OtsPoint3d rightPoint = new OtsPoint3d(start.x + cosHeading * right, start.y + sinHeading * right);
+            this.endLine = Try.assign(() -> new OtsLine3d(leftPoint, rightPoint), "Invalid endline on CrossSectionLink.");
         }
         return this.endLine;
     }

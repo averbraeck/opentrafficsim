@@ -9,7 +9,7 @@ import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -31,17 +31,17 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, S
     private final String id;
 
     /** The top-level 2D outline of the object. */
-    private final OtsLine3D geometry;
+    private final OtsLine3d geometry;
 
     /** The height of the object. */
     private final Length height;
 
     /**
      * @param id String; the id
-     * @param geometry OTSLine3D; the top-level 2D outline of the object
+     * @param geometry OtsLine3d; the top-level 2D outline of the object
      * @param height Length; the height of the object
      */
-    protected StaticObject(final String id, final OtsLine3D geometry, final Length height)
+    protected StaticObject(final String id, final OtsLine3d geometry, final Length height)
     {
         Throw.whenNull(id, "object id cannot be null");
         Throw.whenNull(geometry, "geometry cannot be null");
@@ -60,7 +60,7 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, S
     protected void init() throws NetworkException
     {
         // notify the potential animation of the existence of a StaticObject
-        // These next events are fired by the OTSNetwork when the object is registered in the Network.
+        // These next events are fired by the OtsNetwork when the object is registered in the Network.
         // fireTimedEvent(Network.OBJECT_ADD_EVENT, this.id);
         // fireTimedEvent(Network.ANIMATION_OBJECT_ADD_EVENT, this);
     }
@@ -68,12 +68,12 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, S
     /**
      * Make a static object and carry out the initialization after it has been fully created.
      * @param id String; the id
-     * @param geometry OTSLine3D; the top-level 2D outline of the object
+     * @param geometry OtsLine3d; the top-level 2D outline of the object
      * @param height Length; the height of the object
      * @return the static object
      * @throws NetworkException e.g. on error registering the object in the network
      */
-    public static StaticObject create(final String id, final OtsLine3D geometry, final Length height) throws NetworkException
+    public static StaticObject create(final String id, final OtsLine3d geometry, final Length height) throws NetworkException
     {
         StaticObject staticObject = new StaticObject(id, geometry, height);
         staticObject.init();
@@ -83,18 +83,18 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, S
     /**
      * Make a static object with zero height and carry out the initialization after it has been fully created.
      * @param id String; the id
-     * @param geometry OTSLine3D; the top-level 2D outline of the object
+     * @param geometry OtsLine3d; the top-level 2D outline of the object
      * @return the static object
      * @throws NetworkException e.g. on error registering the object in the network
      */
-    public static StaticObject create(final String id, final OtsLine3D geometry) throws NetworkException
+    public static StaticObject create(final String id, final OtsLine3d geometry) throws NetworkException
     {
         return create(id, geometry, Length.ZERO);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final OtsLine3D getGeometry()
+    public final OtsLine3d getGeometry()
     {
         return this.geometry;
     }
@@ -142,7 +142,7 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, S
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "StaticObject3D [geometry=" + getGeometry() + ", height=" + this.height + "]";
+        return "StaticObject [geometry=" + getGeometry() + ", height=" + this.height + "]";
     }
 
 }

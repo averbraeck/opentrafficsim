@@ -49,7 +49,7 @@ public final class GraphLaneUtil
     /**
      * Creates a path starting at the provided lane and moving downstream until a dead-end, split, or loop.
      * @param name String; path name
-     * @param first LaneDirection; first lane
+     * @param first Lane; first lane
      * @return GraphPath&lt;LaneDataRoad&gt; path
      * @throws NetworkException when the lane does not have any set speed limit
      */
@@ -82,7 +82,7 @@ public final class GraphLaneUtil
      * Creates a path starting at the provided lanes and moving downstream for as long as no lane finds a loop (on to any of the
      * lanes) and there's a unique link all lanes have downstream. The length and speed limit are taken from the first lane.
      * @param names List&lt;String&gt;; lane names
-     * @param first List&lt;LaneDirection&gt;; first lanes
+     * @param first List&lt;Lane&gt;; first lanes
      * @return GraphPath&lt;LaneDataRoad&gt; path
      * @throws NetworkException when a lane does not have any set speed limit
      */
@@ -186,7 +186,7 @@ public final class GraphLaneUtil
     /**
      * Creates a single-lane path.
      * @param name String; name
-     * @param lane LaneDirection; lane
+     * @param lane Lane; lane
      * @return GraphPath&lt;LaneDataRoad&gt; path
      * @throws NetworkException when a lane does not have any set speed limit
      */
@@ -203,7 +203,7 @@ public final class GraphLaneUtil
     /**
      * Creates a cross section at the provided lane and position.
      * @param name String; name
-     * @param lanePosition DirectedLanePosition; lane position
+     * @param lanePosition LanePosition; lane position
      * @return GraphCrossSection&lt;LaneDataRoad&gt; cross section
      * @throws NetworkException when the lane does not have any set speed limit
      */
@@ -225,7 +225,7 @@ public final class GraphLaneUtil
     /**
      * Creates a cross section at the provided link and position.
      * @param names List&lt;String&gt;; lane names
-     * @param linkPosition DirectedLinkPosition; link position
+     * @param linkPosition LinkPosition; link position
      * @return GraphCrossSection&lt;LaneDataRoad&gt; cross section
      * @throws NetworkException when a lane does not have any set speed limit
      */

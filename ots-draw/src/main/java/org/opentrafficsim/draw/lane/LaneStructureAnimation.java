@@ -14,8 +14,8 @@ import javax.naming.NamingException;
 
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
 import org.opentrafficsim.road.gtu.lane.perception.RollingLaneStructure;
@@ -90,11 +90,11 @@ public class LaneStructureAnimation extends Renderable2D<LaneStructureLocatable>
                         : getSource().getRollingLaneStructure().animationAccess.getUpstreamEdge().contains(lsr) ? Color.MAGENTA
                                 : getSource().getRollingLaneStructure().animationAccess.getDownstreamEdge().contains(lsr)
                                         ? Color.GREEN : Color.CYAN);
-        OtsLine3D line = Try.assign(() -> lsr.getLane().getCenterLine().extractFractional(0.1, 0.9),
+        OtsLine3d line = Try.assign(() -> lsr.getLane().getCenterLine().extractFractional(0.1, 0.9),
                 "Exception while painting LaneStructures");
         Path2D.Double path = new Path2D.Double();
         boolean start = true;
-        for (OtsPoint3D point : line.getPoints())
+        for (OtsPoint3d point : line.getPoints())
         {
             if (start)
             {

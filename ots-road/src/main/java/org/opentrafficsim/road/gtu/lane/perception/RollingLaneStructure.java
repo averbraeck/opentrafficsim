@@ -181,7 +181,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
 
     /**
      * Updates the underlying structure shifting the root position to the input.
-     * @param pos DirectedLanePosition; current position of the GTU
+     * @param pos LanePosition; current position of the GTU
      * @param route Route; current route of the GTU
      * @param gtuType GtuType; GTU type
      * @throws GtuException on a problem while updating the structure

@@ -26,15 +26,15 @@ public final class IntersectionProblem
      */
     public static void main(final String[] args) throws OtsGeometryException
     {
-        final OtsLine3D lineA = new OtsLine3D(new OtsPoint3D(426330.98352154676, 4581381.654110057),
-                new OtsPoint3D(426330.99232492544, 4581381.6609363835));
-        // final OTSLine3D lineB =
-        // new OTSLine3D(new OTSPoint3D(426330.9891418501, 4581381.65846816), new OTSPoint3D(426330.3763622642,
+        final OtsLine3d lineA = new OtsLine3d(new OtsPoint3d(426330.98352154676, 4581381.654110057),
+                new OtsPoint3d(426330.99232492544, 4581381.6609363835));
+        // final OtsLine3d lineB =
+        // new OtsLine3d(new OtsPoint3d(426330.9891418501, 4581381.65846816), new OtsPoint3d(426330.3763622642,
         // 4581382.44872203));
-        final OtsLine3D lineB = new OtsLine3D(new OtsPoint3D(426330.98915, 4581381.65846816),
-                new OtsPoint3D(426330.3763622642, 4581382.44872203));
-        OtsPoint3D intersection =
-                OtsPoint3D.intersectionOfLines(lineA.getFirst(), lineA.getLast(), lineB.getFirst(), lineB.getLast());
+        final OtsLine3d lineB = new OtsLine3d(new OtsPoint3d(426330.98915, 4581381.65846816),
+                new OtsPoint3d(426330.3763622642, 4581382.44872203));
+        OtsPoint3d intersection =
+                OtsPoint3d.intersectionOfLines(lineA.getFirst(), lineA.getLast(), lineB.getFirst(), lineB.getLast());
         System.out.println(
                 "Determinant values are " + (lineA.getFirst().x - lineA.getLast().x) * (lineB.getFirst().y - lineB.getLast().y)
                         + " - " + (lineA.getFirst().y - lineA.getLast().y) * (lineB.getFirst().x - lineB.getLast().x));
@@ -45,7 +45,7 @@ public final class IntersectionProblem
         System.out.println("intersection of " + lineA + " and " + lineB + " is at (" + intersection.x + "," + intersection.y
                 + "," + intersection.z + ")");
         intersection =
-                OtsPoint3D.intersectionOfLineSegments(lineA.getFirst(), lineA.getLast(), lineB.getFirst(), lineB.getLast());
+                OtsPoint3d.intersectionOfLineSegments(lineA.getFirst(), lineA.getLast(), lineB.getFirst(), lineB.getLast());
         System.out.println("intersection of " + lineA + " and " + lineB + " is at (" + intersection.x + "," + intersection.y
                 + "," + intersection.z + ")");
     }

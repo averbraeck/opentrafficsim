@@ -29,7 +29,7 @@ public class AccelerationChecker extends AbstractLaneBasedMoveChecker
 
     /**
      * Constructor.
-     * @param network OTSNetwork; network
+     * @param network OtsNetwork; network
      */
     public AccelerationChecker(final OtsNetwork network)
     {
@@ -38,7 +38,7 @@ public class AccelerationChecker extends AbstractLaneBasedMoveChecker
 
     /**
      * Constructor.
-     * @param network OTSNetwork; network
+     * @param network OtsNetwork; network
      * @param min Acceleration; minimum allowable acceleration
      * @param max Acceleration; maximum allowable acceleration
      * @param minSpeed Speed; speed above which acceleration should be checked

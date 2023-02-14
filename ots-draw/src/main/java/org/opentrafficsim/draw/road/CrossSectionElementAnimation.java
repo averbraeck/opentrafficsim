@@ -31,7 +31,7 @@ public class CrossSectionElementAnimation extends Renderable2D<CrossSectionEleme
 
     /**
      * @param source CrossSectionElement; cross section element
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param color Color; the color to draw the shoulder with
      * @throws NamingException ne
      * @throws RemoteException on communication failure

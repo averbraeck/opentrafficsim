@@ -285,7 +285,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
     }
 
     /**
-     * Dummy OTSModelInterface.
+     * Dummy OtsModelInterface.
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>

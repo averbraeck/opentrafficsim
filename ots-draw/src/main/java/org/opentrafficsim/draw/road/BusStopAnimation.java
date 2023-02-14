@@ -38,7 +38,7 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStop> implements 
 
     /**
      * @param source BusStop; source
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException when remote context cannot be found
      */
@@ -96,7 +96,7 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStop> implements 
          * @param dy float; the vertical movement of the text, in meters
          * @param textPlacement TextAlignment; where to place the text
          * @param color Color; the color of the text
-         * @param simulator OTSSimulatorInterface; the simulator
+         * @param simulator OtsSimulatorInterface; the simulator
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */

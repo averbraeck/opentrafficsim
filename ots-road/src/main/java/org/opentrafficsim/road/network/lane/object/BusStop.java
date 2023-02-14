@@ -52,7 +52,7 @@ public class BusStop extends AbstractLaneBasedObject
      * @param lane Lane; lane
      * @param longitudinalPosition Length; position
      * @param name String; name of stop
-     * @param simulator OTSSimulatorInterface; the simulator to schedule on
+     * @param simulator OtsSimulatorInterface; the simulator to schedule on
      * @param busType GtuType; bus type.
      * @throws NetworkException when the position on the lane is out of bounds
      */

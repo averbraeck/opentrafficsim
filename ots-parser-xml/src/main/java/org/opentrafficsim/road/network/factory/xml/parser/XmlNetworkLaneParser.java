@@ -91,7 +91,7 @@ public final class XmlNetworkLaneParser implements Serializable
     /**
      * Parse the XML file and build the network.
      * @param filename String; the name of the file to parse
-     * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
      * @param buildConflicts boolean; whether to build conflicts or not
      * @return the network that contains the parsed objects
      * @throws JAXBException when the parsing fails
@@ -120,7 +120,7 @@ public final class XmlNetworkLaneParser implements Serializable
     /**
      * Parse the XML input stream and build the network.
      * @param xmlStream InputStream; the xml input stream
-     * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
      * @param buildConflicts boolean; whether to build conflicts or not
      * @return the experiment based on the information in the RUN tag
      * @throws JAXBException when the parsing fails
@@ -141,7 +141,7 @@ public final class XmlNetworkLaneParser implements Serializable
             XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GtuException,
             MalformedURLException, IOException, TrafficControlException
     {
-        return build(parseXML(xmlStream), otsNetwork, buildConflicts);
+        return build(parseXml(xmlStream), otsNetwork, buildConflicts);
     }
 
     /**
@@ -153,9 +153,9 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws SAXException on error creating SAX parser
      * @throws IOException if the URL does not exist
      */
-    public static OTS parseXML(final URL xmlURL) throws JAXBException, SAXException, ParserConfigurationException, IOException
+    public static OTS parseXml(final URL xmlURL) throws JAXBException, SAXException, ParserConfigurationException, IOException
     {
-        return parseXML(xmlURL.openStream());
+        return parseXml(xmlURL.openStream());
     }
 
     /**
@@ -166,7 +166,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws ParserConfigurationException on error with parser configuration
      * @throws SAXException on error creating SAX parser
      */
-    public static OTS parseXML(final InputStream xmlStream) throws JAXBException, SAXException, ParserConfigurationException
+    public static OTS parseXml(final InputStream xmlStream) throws JAXBException, SAXException, ParserConfigurationException
     {
         JAXBContext jc = JAXBContext.newInstance(OTS.class);
         Unmarshaller unmarshaller = jc.createUnmarshaller();
@@ -182,7 +182,7 @@ public final class XmlNetworkLaneParser implements Serializable
     /**
      * Parse the XML file and build the network.
      * @param xmlURL URL; the URL for the xml input file
-     * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
      * @param buildConflicts boolean; whether to build conflicts or not
      * @return the experiment based on the information in the RUN tag
      * @throws JAXBException when the parsing fails
@@ -203,13 +203,13 @@ public final class XmlNetworkLaneParser implements Serializable
             XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GtuException,
             MalformedURLException, IOException, TrafficControlException
     {
-        return build(parseXML(xmlURL), otsNetwork, buildConflicts);
+        return build(parseXml(xmlURL), otsNetwork, buildConflicts);
     }
 
     /**
      * Build the network from an OTS object (probably constructed by parsing an OTS XML file; e.g. the parseXML method).
      * @param ots OTS; the OTS object
-     * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
      * @param buildConflicts boolean; whether to build conflicts or not
      * @return the experiment based on the information in the RUN tag
      * @throws JAXBException when the parsing fails

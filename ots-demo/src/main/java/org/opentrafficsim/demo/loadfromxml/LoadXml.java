@@ -64,8 +64,8 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
     private static final long serialVersionUID = 20170421L;
 
     /**
-     * @param model OTSModelInterface; the model
-     * @param animationPanel OTSAnimationPanel; the animation panel
+     * @param model OtsModelInterface; the model
+     * @param animationPanel OtsAnimationPanel; the animation panel
      * @throws OtsDrawingException on drawing error
      */
     public LoadXml(final OtsModelInterface model, final OtsAnimationPanel animationPanel) throws OtsDrawingException
@@ -134,7 +134,7 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
         try
         {
             OtsAnimator simulator = new OtsAnimator("LoadXML");
-            XMLModel xmlModel = new XMLModel(simulator, "XML model", "Model built from XML file " + fileName, xml);
+            XmlModel xmlModel = new XmlModel(simulator, "XML model", "Model built from XML file " + fileName, xml);
             Map<String, StreamInterface> map = new LinkedHashMap<>();
             // TODO: This seed is Aimsun specific.
             map.put("generation", new MersenneTwister(6L));
@@ -155,7 +155,7 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
     /**
      * The Model.
      */
-    static class XMLModel extends AbstractOtsModel
+    static class XmlModel extends AbstractOtsModel
     {
         /** */
         private static final long serialVersionUID = 20170421L;
@@ -167,12 +167,12 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
         private final String xml;
 
         /**
-         * @param simulator OTSSimulatorInterface; the simulator
+         * @param simulator OtsSimulatorInterface; the simulator
          * @param shortName String; name of the model
          * @param description String; description of the model
          * @param xml String; the XML string
          */
-        XMLModel(final OtsSimulatorInterface simulator, final String shortName, final String description, final String xml)
+        XmlModel(final OtsSimulatorInterface simulator, final String shortName, final String description, final String xml)
         {
             super(simulator, shortName, description);
             this.xml = xml;

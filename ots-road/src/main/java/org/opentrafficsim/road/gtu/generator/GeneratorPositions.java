@@ -66,7 +66,7 @@ public interface GeneratorPositions
     /**
      * Create a GeneratorPositions object to draw positions from. The given positions are grouped per link. Lanes are drawn
      * without bias. Each link receives a weight equal to the number of lanes.
-     * @param positions Set&lt;DirectedLanePosition&gt;; all considered positions, each lane is considered separately
+     * @param positions Set&lt;LanePosition&gt;; all considered positions, each lane is considered separately
      * @param stream StreamInterface; stream for random numbers
      * @return GeneratorPositions; object to draw positions from
      */
@@ -78,7 +78,7 @@ public interface GeneratorPositions
     /**
      * Create a GeneratorPositions object to draw positions from. The given positions are grouped per link. Each link receives a
      * weight equal to the number of lanes.
-     * @param positions Set&lt;DirectedLanePosition&gt;; all considered positions, each lane is considered separately
+     * @param positions Set&lt;LanePosition&gt;; all considered positions, each lane is considered separately
      * @param stream StreamInterface; stream for random numbers
      * @param biases LaneBiases; lane biases for GTU types
      * @return GeneratorPositions; object to draw positions from
@@ -91,7 +91,7 @@ public interface GeneratorPositions
     /**
      * Create a GeneratorPositions object to draw positions from. The given positions are grouped per link. Lanes are drawn
      * without bias.
-     * @param positions Set&lt;DirectedLanePosition&gt;; all considered positions, each lane is considered separately
+     * @param positions Set&lt;LanePosition&gt;; all considered positions, each lane is considered separately
      * @param stream StreamInterface; stream for random numbers
      * @param linkWeights Map&lt;CrossSectionLink, Double&gt;; weight per link direction
      * @param viaNodes Map&lt;CrossSectionLink, Node&gt;; nodes connectors feed to for each link where GTU's will be generated
@@ -105,7 +105,7 @@ public interface GeneratorPositions
 
     /**
      * Create a GeneratorPositions object to draw positions from. The given positions are grouped per link.
-     * @param positions Set&lt;DirectedLanePosition&gt;; all considered positions, each lane is considered separately
+     * @param positions Set&lt;LanePosition&gt;; all considered positions, each lane is considered separately
      * @param stream StreamInterface; stream for random numbers
      * @param laneBiases LaneBiases; lane biases for GTU types
      * @param linkWeights Map&lt;CrossSectionLink, Double&gt;; weight per link
@@ -218,7 +218,7 @@ public interface GeneratorPositions
         /**
          * Constructor.
          * @param laneNumber int; lane number, where 1 is the right-most lane
-         * @param position Set&lt;DirectedLanePosition&gt;; position set, representing a single GTU position on the network
+         * @param position Set&lt;LanePosition&gt;; position set, representing a single GTU position on the network
          * @param link CrossSectionLink; link
          */
         GeneratorLanePosition(final int laneNumber, final Set<LanePosition> position, final CrossSectionLink link)
@@ -256,7 +256,7 @@ public interface GeneratorPositions
 
         /**
          * Returns the contained position set, representing a single GTU position on the network.
-         * @return Set&lt;DirectedLanePosition&gt;; contained position set, representing a single GTU position on the network
+         * @return Set&lt;LanePosition&gt;; contained position set, representing a single GTU position on the network
          */
         Set<LanePosition> getPosition()
         {

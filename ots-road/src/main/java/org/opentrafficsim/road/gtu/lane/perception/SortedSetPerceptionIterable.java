@@ -33,7 +33,7 @@ public class SortedSetPerceptionIterable<H extends Headway> extends TreeSet<H> i
 
     /**
      * Constructor.
-     * @param otsNetwork OTSRoadNetwork; network to obtain LaneBasedGtu
+     * @param otsNetwork OtsRoadNetwork; network to obtain LaneBasedGtu
      */
     public SortedSetPerceptionIterable(final OtsRoadNetwork otsNetwork)
     {

@@ -30,7 +30,7 @@ public final class OtsRoadNetworkUtils
 
     /**
      * Make a copy of the network, without GTUs and listeners.
-     * @param network OTSRoadNetwork; the network to copy
+     * @param network OtsRoadNetwork; the network to copy
      * @return a copy of the network
      */
     public static OtsRoadNetwork copy(final OtsRoadNetwork network)
@@ -41,7 +41,7 @@ public final class OtsRoadNetworkUtils
 
     /**
      * Create an xml-version of the network.
-     * @param network OTSRoadNetwork; the network to create an xml-version from
+     * @param network OtsRoadNetwork; the network to create an xml-version from
      * @return an xml-string with the network
      */
     public static String toXml(final OtsRoadNetwork network)
@@ -57,7 +57,7 @@ public final class OtsRoadNetworkUtils
 
     /**
      * Create an xml-version of the network.
-     * @param network OTSRoadNetwork; the network to create an xml-version from
+     * @param network OtsRoadNetwork; the network to create an xml-version from
      * @param out OutputStream; the stream to write the xml-string with the network to
      */
     public static void toXml(final OtsRoadNetwork network, final OutputStream out)
@@ -68,7 +68,7 @@ public final class OtsRoadNetworkUtils
 
     /**
      * Create an xml-version of the network.
-     * @param network OTSRoadNetwork; the network to create an xml-version from
+     * @param network OtsRoadNetwork; the network to create an xml-version from
      * @param writer Writer; the writer to write the xml-string with the network to
      */
     public static void toXml(final OtsRoadNetwork network, final Writer writer)

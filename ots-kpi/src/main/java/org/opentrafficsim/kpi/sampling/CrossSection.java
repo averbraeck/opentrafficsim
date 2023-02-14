@@ -32,7 +32,7 @@ public class CrossSection implements Serializable
 
     /**
      * Constructor with set of lane positions.
-     * @param lanePositions Set&lt;KpiDirectedLanePosition&gt;; set of lane locations
+     * @param lanePositions Set&lt;LanePosition&gt;; set of lane locations
      */
     public CrossSection(final Set<LanePosition> lanePositions)
     {

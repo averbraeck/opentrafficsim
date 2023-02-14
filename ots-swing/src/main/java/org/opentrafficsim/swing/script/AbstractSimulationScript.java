@@ -270,7 +270,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
 
     /**
      * Returns the simulator.
-     * @return OTSSimulatorInterface; simulator
+     * @return OtsSimulatorInterface; simulator
      */
     public final OtsSimulatorInterface getSimulator()
     {
@@ -279,7 +279,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
 
     /**
      * Returns the network.
-     * @return OTSNetwork; network
+     * @return OtsNetwork; network
      */
     public final OtsRoadNetwork getNetwork()
     {
@@ -290,7 +290,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
 
     /**
      * Creates animations for nodes, links and lanes. This can be used if the network is not read from XML.
-     * @param net OTSNetwork; network
+     * @param net OtsNetwork; network
      */
     protected void animateNetwork(final OtsNetwork net)
     {
@@ -306,8 +306,8 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
 
     /**
      * Adds tabs to the animation. May be overridden.
-     * @param sim OTSSimulatorInterface; simulator
-     * @param animation OTSSimulationApplication&lt;?&gt;; animation to add tabs to
+     * @param sim OtsSimulatorInterface; simulator
+     * @param animation OtsSimulationApplication&lt;?&gt;; animation to add tabs to
      */
     protected void addTabs(final OtsSimulatorInterface sim, final OtsSimulationApplication<?> animation)
     {
@@ -324,8 +324,8 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
 
     /**
      * Method that is called when the animation has been created, to add components for a demo.
-     * @param animationPanel OTSAnimationPanel; animation panel
-     * @param net OTSNetwork; network
+     * @param animationPanel OtsAnimationPanel; animation panel
+     * @param net OtsNetwork; network
      */
     protected void setupDemo(final OtsAnimationPanel animationPanel, final OtsRoadNetwork net)
     {
@@ -334,7 +334,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
 
     /**
      * Sets the animation toggles. May be overridden.
-     * @param animation OTSAnimationPanel; animation to set the toggle on
+     * @param animation OtsAnimationPanel; animation to set the toggle on
      */
     protected void setAnimationToggles(final OtsAnimationPanel animation)
     {
@@ -346,8 +346,8 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
     /**
      * Sets up the simulation based on provided properties. Properties can be obtained with {@code getProperty()}. Setting up a
      * simulation should at least create a network and some demand. Additionally this may setup traffic control, sampling, etc.
-     * @param sim OTSSimulatorInterface; simulator
-     * @return OTSNetwork; network
+     * @param sim OtsSimulatorInterface; simulator
+     * @return OtsNetwork; network
      * @throws Exception on any exception
      */
     protected abstract OtsRoadNetwork setupSimulation(OtsSimulatorInterface sim) throws Exception;
@@ -371,7 +371,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
         private static final long serialVersionUID = 20180409L;
 
         /**
-         * @param simulator OTSSimulatorInterface; the simulator
+         * @param simulator OtsSimulatorInterface; the simulator
          */
         @SuppressWarnings("synthetic-access")
         ScriptModel(final OtsSimulatorInterface simulator)

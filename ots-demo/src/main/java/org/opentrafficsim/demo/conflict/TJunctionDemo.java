@@ -47,7 +47,7 @@ public class TJunctionDemo extends OtsSimulationApplication<TJunctionModel>
     /**
      * Create a T-Junction demo.
      * @param title String; the title of the Frame
-     * @param panel OTSAnimationPanel; the tabbed panel to display
+     * @param panel OtsAnimationPanel; the tabbed panel to display
      * @param model TJunctionModel; the model
      * @throws OtsDrawingException on animation error
      */
@@ -101,7 +101,7 @@ public class TJunctionDemo extends OtsSimulationApplication<TJunctionModel>
         private OtsRoadNetwork network;
 
         /**
-         * @param simulator OTSSimulatorInterface; the simulator for this model
+         * @param simulator OtsSimulatorInterface; the simulator for this model
          */
         public TJunctionModel(final OtsSimulatorInterface simulator)
         {

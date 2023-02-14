@@ -20,8 +20,8 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
@@ -77,7 +77,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
     private final DirectedPoint location;
 
     /** Geometry of the detector. */
-    private final OtsLine3D geometry;
+    private final OtsLine3d geometry;
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the triggering of the entry of a NonDirectionalOccupancyDetector. <br>
@@ -117,7 +117,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
      * @param intermediateLanes List&lt;Lane&gt;; list of intermediate lanes
      * @param entryPosition TYPE; the position on the GTUs that trigger the entry events
      * @param exitPosition TYPE; the position on the GTUs that trigger the exit events
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator OtsSimulatorInterface; the simulator
      * @param detectorType DetectorType; detector type.
      * @throws NetworkException when the network is inconsistent.
      */
@@ -148,38 +148,38 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
         }
         try
         {
-            OtsLine3D path;
+            OtsLine3d path;
             if (this.lanes.size() == 1)
             {
                 path = laneA.getCenterLine().extract(positionA, positionB);
             }
             else
             {
-                List<OtsPoint3D> pathPoints = new ArrayList<>();
+                List<OtsPoint3d> pathPoints = new ArrayList<>();
                 pathPoints.addAll(Arrays.asList(laneA.getCenterLine().extract(positionA, laneA.getLength()).getPoints()));
                 for (Lane intermediateLane : intermediateLanes)
                 {
                     pathPoints.addAll(Arrays.asList(intermediateLane.getCenterLine().getPoints()));
                 }
                 pathPoints.addAll(Arrays.asList(laneB.getCenterLine().extract(Length.ZERO, positionB).getPoints()));
-                path = OtsLine3D.createAndCleanOTSLine3D(pathPoints);
+                path = OtsLine3d.createAndCleanOtsLine3d(pathPoints);
             }
-            OtsLine3D left = path.offsetLine(0.5);
-            OtsLine3D right = path.offsetLine(-0.5);
+            OtsLine3d left = path.offsetLine(0.5);
+            OtsLine3d right = path.offsetLine(-0.5);
             this.location = path.getLocation();
             double dx = this.location.x;
             double dy = this.location.y;
-            List<OtsPoint3D> geometryPoints = new ArrayList<>();
-            geometryPoints.add(new OtsPoint3D(right.get(0).x - dx, right.get(0).y - dy));
-            for (OtsPoint3D p : left.getPoints())
+            List<OtsPoint3d> geometryPoints = new ArrayList<>();
+            geometryPoints.add(new OtsPoint3d(right.get(0).x - dx, right.get(0).y - dy));
+            for (OtsPoint3d p : left.getPoints())
             {
-                geometryPoints.add(new OtsPoint3D(p.x - dx, p.y - dy));
+                geometryPoints.add(new OtsPoint3d(p.x - dx, p.y - dy));
             }
-            for (OtsPoint3D p : right.reverse().getPoints())
+            for (OtsPoint3d p : right.reverse().getPoints())
             {
-                geometryPoints.add(new OtsPoint3D(p.x - dx, p.y - dy));
+                geometryPoints.add(new OtsPoint3d(p.x - dx, p.y - dy));
             }
-            this.geometry = new OtsLine3D(geometryPoints);
+            this.geometry = new OtsLine3d(geometryPoints);
         }
         catch (OtsGeometryException exception)
         {
@@ -434,7 +434,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
 
     /** {@inheritDoc} */
     @Override
-    public OtsLine3D getGeometry()
+    public OtsLine3d getGeometry()
     {
         return this.geometry;
     }
@@ -490,7 +490,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
          * @param lane Lane; the lane of the new StartEndDetector
          * @param longitudinalPosition Length; the longitudinal position of the new StartEndDetector
          * @param positionType TYPE; the position on the GTUs that triggers the new StartEndDetector
-         * @param simulator OTSSimulatorInterface; the simulator engine
+         * @param simulator OtsSimulatorInterface; the simulator engine
          * @param detectorType DetectorType; detector type.
          * @throws NetworkException when the network is inconsistent
          */

@@ -41,7 +41,7 @@ public class SimulatorStateTransceiver extends AbstractTransceiver
 
     /**
      * Construct a new SimulatorStateTransceiver.
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator OtsSimulatorInterface; the simulator
      * @throws RemoteException on network error
      */
     public SimulatorStateTransceiver(final OtsSimulatorInterface simulator) throws RemoteException
@@ -121,7 +121,7 @@ class EventMultiplexer extends LocalEventProducer implements EventListener
     private static final long serialVersionUID = 20200618L;
 
     /**
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator OtsSimulatorInterface; the simulator
      * @throws RemoteException on network error
      */
     EventMultiplexer(final OtsSimulatorInterface simulator) throws RemoteException

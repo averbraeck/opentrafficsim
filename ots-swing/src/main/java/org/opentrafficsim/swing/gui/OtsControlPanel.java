@@ -113,9 +113,9 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
 
     /**
      * Decorate a SimpleSimulator with a different set of control buttons.
-     * @param simulator OTSSimulatorInterface; the simulator
-     * @param model OTSModelInterface; if non-null, the restart button should work
-     * @param otsAnimationPanel OTSAnimationPanel; the OTS animation panel
+     * @param simulator OtsSimulatorInterface; the simulator
+     * @param model OtsModelInterface; if non-null, the restart button should work
+     * @param otsAnimationPanel OtsAnimationPanel; the OTS animation panel
      * @throws RemoteException when simulator cannot be accessed for listener attachment
      */
     public OtsControlPanel(final OtsSimulatorInterface simulator, final OtsModelInterface model,
@@ -194,7 +194,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
 
     /**
      * Provide access to the search panel.
-     * @return OTSSearchPanel; the OTS search panel
+     * @return OtsSearchPanel; the OTS search panel
      */
     public OtsSearchPanel getOtsSearchPanel()
     {
@@ -324,14 +324,14 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         new DisposeOnCloseThread(this).start();
     }
 
-    /** Install the dispose on close when the OTSControlPanel is registered as part of a frame. */
+    /** Install the dispose on close when the OtsControlPanel is registered as part of a frame. */
     protected class DisposeOnCloseThread extends Thread
     {
         /** The current container. */
         private OtsControlPanel panel;
 
         /**
-         * @param panel OTSControlPanel; the OTSControlpanel container.
+         * @param panel OtsControlPanel; the OTSControlpanel container.
          */
         public DisposeOnCloseThread(final OtsControlPanel panel)
         {
@@ -558,7 +558,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
      */
     public final void autoPauseSimulator()
     {
-        // System.out.println("OTSControlPanel.autoPauseSimulator entered");
+        // System.out.println("OtsControlPanel.autoPauseSimulator entered");
         if (getSimulator().isStartingOrRunning())
         {
             try
@@ -632,7 +632,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 }
             }
         }
-        // System.out.println("OTSControlPanel.autoPauseSimulator finished");
+        // System.out.println("OtsControlPanel.autoPauseSimulator finished");
     }
 
     /** {@inheritDoc} */
@@ -1184,7 +1184,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 || event.getType().equals(SimulatorInterface.STOP_EVENT)
                 || event.getType().equals(DEVSRealTimeAnimator.CHANGE_SPEED_FACTOR_EVENT))
         {
-            // System.out.println("OTSControlPanel receive event " + event);
+            // System.out.println("OtsControlPanel receive event " + event);
             if (event.getType().equals(DEVSRealTimeAnimator.CHANGE_SPEED_FACTOR_EVENT))
             {
                 this.timeWarpPanel.setSpeedFactor((Double) event.getContent());
@@ -1197,7 +1197,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
     @Override
     public final String toString()
     {
-        return "OTSControlPanel [simulatorTime=" + this.simulator.getSimulatorTime() + ", timeWarp="
+        return "OtsControlPanel [simulatorTime=" + this.simulator.getSimulatorTime() + ", timeWarp="
                 + this.timeWarpPanel.getFactor() + ", stopAtEvent=" + this.stopAtEvent + "]";
     }
 

@@ -9,9 +9,9 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsLine3D.FractionalFallback;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine3d.FractionalFallback;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -41,7 +41,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
     /**
      * Construct an operational plan with or without a lane change.
      * @param gtu LaneBasedGtu; the GTU for debugging purposes
-     * @param path OTSLine3D; the path to follow from a certain time till a certain time. The path should have &lt;i&gt;at
+     * @param path OtsLine3d; the path to follow from a certain time till a certain time. The path should have &lt;i&gt;at
      *            least&lt;/i&gt; the length
      * @param startTime Time; the absolute start time when we start executing the path
      * @param startSpeed Speed; the GTU speed when we start executing the path
@@ -51,7 +51,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
      * @throws OperationalPlanException when the path is too short for the operation
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public LaneBasedOperationalPlan(final LaneBasedGtu gtu, final OtsLine3D path, final Time startTime, final Speed startSpeed,
+    public LaneBasedOperationalPlan(final LaneBasedGtu gtu, final OtsLine3d path, final Time startTime, final Speed startSpeed,
             final List<Segment> operationalPlanSegmentList, final boolean deviative) throws OperationalPlanException
     {
         super(gtu, path, startTime, startSpeed, operationalPlanSegmentList);
@@ -104,7 +104,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
 
     /**
      * Helper method to get rotation at start or end of lane.
-     * @param lane LaneDirection; lane
+     * @param lane Lane; lane
      * @param start boolean; start (or end)
      * @return rotation at start or end of lane
      */
@@ -163,11 +163,11 @@ public class LaneBasedOperationalPlan extends OperationalPlan
                     try
                     {
                         // compose gap line
-                        OtsPoint3D last = lane.getCenterLine().getLast();
-                        OtsPoint3D first = nextLane.getCenterLine().get(0);
+                        OtsPoint3d last = lane.getCenterLine().getLast();
+                        OtsPoint3d first = nextLane.getCenterLine().get(0);
                         if (!(last).equals(first))
                         {
-                            OtsLine3D gap = new OtsLine3D(last, first);
+                            OtsLine3d gap = new OtsLine3d(last, first);
                             double fGap = gap.projectFractional(null, null, point.x, point.y, FractionalFallback.NaN);
                             if (!Double.isNaN(fGap))
                             {

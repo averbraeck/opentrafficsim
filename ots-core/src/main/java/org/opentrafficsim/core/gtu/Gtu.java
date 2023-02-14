@@ -42,8 +42,8 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.geometry.OtsShape;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
@@ -180,7 +180,7 @@ public class Gtu extends LocalEventProducer
     /**
      * @param id String; the id of the GTU
      * @param gtuType GtuType; the type of GTU, e.g. TruckType, CarType, BusType
-     * @param simulator OTSSimulatorInterface; the simulator to schedule plan changes on
+     * @param simulator OtsSimulatorInterface; the simulator to schedule plan changes on
      * @param perceivableContext PerceivableContext; the perceivable context in which this GTU will be registered
      * @param length Length; the maximum length of the GTU (parallel with driving direction)
      * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
@@ -342,7 +342,7 @@ public class Gtu extends LocalEventProducer
     {
         DirectedPoint location = getLocation();
         fireTimedEvent(Gtu.DESTROY_EVENT,
-                new Object[] {getId(), new OtsPoint3D(location).doubleVector(PositionUnit.METER),
+                new Object[] {getId(), new OtsPoint3d(location).doubleVector(PositionUnit.METER),
                         new Direction(location.getZ(), DirectionUnit.EAST_RADIAN), getOdometer()},
                 this.simulator.getSimulatorTime());
 
@@ -437,7 +437,7 @@ public class Gtu extends LocalEventProducer
             }
             this.simulator.scheduleEvent(this.nextMoveEvent);
             fireTimedEvent(Gtu.MOVE_EVENT,
-                    new Object[] {getId(), new OtsPoint3D(fromLocation).doubleVector(PositionUnit.METER),
+                    new Object[] {getId(), new OtsPoint3d(fromLocation).doubleVector(PositionUnit.METER),
                             new Direction(fromLocation.getZ(), DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
                             getOdometer()},
                     this.simulator.getSimulatorTime());
@@ -809,8 +809,8 @@ public class Gtu extends LocalEventProducer
             {
                 double w = getWidth().si;
                 double l = getLength().si;
-                this.shape = new OtsShape(new OtsPoint3D(-0.5 * l, -0.5 * w, 0.0), new OtsPoint3D(-0.5 * l, 0.5 * w, 0.0),
-                        new OtsPoint3D(0.5 * l, 0.5 * w, 0.0), new OtsPoint3D(0.5 * l, -0.5 * w, 0.0));
+                this.shape = new OtsShape(new OtsPoint3d(-0.5 * l, -0.5 * w, 0.0), new OtsPoint3d(-0.5 * l, 0.5 * w, 0.0),
+                        new OtsPoint3d(0.5 * l, 0.5 * w, 0.0), new OtsPoint3d(0.5 * l, -0.5 * w, 0.0));
             }
             OtsShape s = transformShape(this.shape, this.operationalPlan.get(time).getLocation(time));
             System.out.println("gtu " + getId() + ", shape(t)=" + s);
@@ -834,18 +834,18 @@ public class Gtu extends LocalEventProducer
         try
         {
             // TODO: the actual contour of the GTU has to be moved over the path
-            OtsLine3D path = this.operationalPlan.get().getPath();
+            OtsLine3d path = this.operationalPlan.get().getPath();
             // part of the Gtu length has to be added before the start and after the end of the path.
             // we assume the reference point is within the contour of the Gtu.
             double rear = Math.max(0.0, getReference().getDx().si - getRear().getDx().si);
             double front = path.getLengthSI() + Math.max(0.0, getFront().getDx().si - getReference().getDx().si);
             DirectedPoint p0 = path.getLocationExtendedSI(-rear);
             DirectedPoint pn = path.getLocationExtendedSI(front);
-            List<OtsPoint3D> pList = new ArrayList<>(Arrays.asList(path.getPoints()));
-            pList.add(0, new OtsPoint3D(p0));
-            pList.add(new OtsPoint3D(pn));
-            OtsLine3D extendedPath = new OtsLine3D(pList);
-            List<OtsPoint3D> swath = new ArrayList<>();
+            List<OtsPoint3d> pList = new ArrayList<>(Arrays.asList(path.getPoints()));
+            pList.add(0, new OtsPoint3d(p0));
+            pList.add(new OtsPoint3d(pn));
+            OtsLine3d extendedPath = new OtsLine3d(pList);
+            List<OtsPoint3d> swath = new ArrayList<>();
             swath.addAll(Arrays.asList(extendedPath.offsetLine(getWidth().si / 2.0).getPoints()));
             swath.addAll(Arrays.asList(extendedPath.offsetLine(-getWidth().si / 2.0).reverse().getPoints()));
             OtsShape s = new OtsShape(swath);

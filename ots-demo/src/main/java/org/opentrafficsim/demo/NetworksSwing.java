@@ -58,7 +58,7 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
     /**
      * Create a Networks Swing application.
      * @param title String; the title of the Frame
-     * @param panel OTSAnimationPanel; the tabbed panel to display
+     * @param panel OtsAnimationPanel; the tabbed panel to display
      * @param model NetworksModel; the model
      * @throws OtsDrawingException on animation error
      */
@@ -121,7 +121,7 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
 
     /**
      * Add the statistics tabs.
-     * @param simulator OTSSimulatorInterface; the simulator on which sampling can be scheduled
+     * @param simulator OtsSimulatorInterface; the simulator on which sampling can be scheduled
      */
     protected final void addStatisticsTabs(final OtsSimulatorInterface simulator)
     {

@@ -31,7 +31,7 @@ public class ExponentialTask extends AbstractTask
      * @param initialTaskDemand double; initial level of task demand
      * @param finalTaskDemand double; final level of task demand
      * @param tau Duration; time scale at which task demand changes from the initial to the final value
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      */
     public ExponentialTask(final String id, final double initialTaskDemand, final double finalTaskDemand, final Duration tau,
             final OtsSimulatorInterface simulator)

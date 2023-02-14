@@ -76,7 +76,7 @@ public class OtsNetwork extends LocalEventProducer implements Network, Perceivab
     /**
      * Construction of an empty network.
      * @param id String; the network id.
-     * @param simulator OTSSimulatorInterface; the DSOL simulator engine
+     * @param simulator OtsSimulatorInterface; the DSOL simulator engine
      */
     public OtsNetwork(final String id, final OtsSimulatorInterface simulator)
     {
@@ -899,7 +899,7 @@ public class OtsNetwork extends LocalEventProducer implements Network, Perceivab
     @Override
     public final String toString()
     {
-        return "OTSNetwork [id=" + this.id + ", nodeMapSize=" + this.nodeMap.size() + ", linkMapSize=" + this.linkMap.size()
+        return "OtsNetwork [id=" + this.id + ", nodeMapSize=" + this.nodeMap.size() + ", linkMapSize=" + this.linkMap.size()
                 + ", objectMapSize=" + this.objectMap.size() + ", routeMapSize=" + this.routeMap.size() + ", gtuMapSize="
                 + this.gtuMap.size() + "]";
     }

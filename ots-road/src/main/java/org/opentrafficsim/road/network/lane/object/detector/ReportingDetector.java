@@ -29,7 +29,7 @@ public class ReportingDetector extends LaneDetector
      * @param triggerPosition RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the detector
      * @param id String; the id of the new ReportingDetector
-     * @param simulator OTSSimulatorInterface; the simulator to enable animation
+     * @param simulator OtsSimulatorInterface; the simulator to enable animation
      * @param detectorType DetectorType; detector type.
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */

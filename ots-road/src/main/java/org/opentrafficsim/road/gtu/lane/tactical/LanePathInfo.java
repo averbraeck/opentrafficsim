@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -31,7 +31,7 @@ public class LanePathInfo implements Serializable
      * The path it the GTU keeps driving in the same lane, and follows the route if possible in the same lane. The path stops
      * when the lane or a continuation lane does not lead in the direction of the route provided by the strategical planner.
      */
-    private final OtsLine3D path;
+    private final OtsLine3d path;
 
     /**
      * The current lane on which the reference point of the GTU is registered (if the GTU is registered on multiple lanes with
@@ -48,7 +48,7 @@ public class LanePathInfo implements Serializable
     private final Length referencePosition;
 
     /**
-     * @param path OTSLine3D; the path it the GTU keeps driving in the same lane, and follows the route if possible in the same
+     * @param path OtsLine3d; the path it the GTU keeps driving in the same lane, and follows the route if possible in the same
      *            lane. The path stops when the lane or a continuation lane does not lead in the direction of the route provided
      *            by the strategical planner.
      * @param laneList List&lt;Lane&gt;; the current lane on which the reference point of the GTU is registered (if the GTU is
@@ -59,7 +59,7 @@ public class LanePathInfo implements Serializable
      * @param referencePosition Length; the start point on the first lane in the laneList. When this is a point that represents
      *            a GTU position, it should represent the reference point of the GTU.
      */
-    public LanePathInfo(final OtsLine3D path, final List<Lane> laneList, final Length referencePosition)
+    public LanePathInfo(final OtsLine3d path, final List<Lane> laneList, final Length referencePosition)
     {
         this.path = path;
         this.laneList = laneList;
@@ -71,7 +71,7 @@ public class LanePathInfo implements Serializable
      *         path stops when the lane or a continuation lane does not lead in the direction of the route provided by the
      *         strategical planner.
      */
-    public final OtsLine3D getPath()
+    public final OtsLine3d getPath()
     {
         return this.path;
     }

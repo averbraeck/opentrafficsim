@@ -38,8 +38,8 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -75,14 +75,14 @@ public class LaneTest implements UNITS
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         // First we need two Nodes
-        OtsRoadNode nodeFrom = new OtsRoadNode(network, "A", new OtsPoint3D(0, 0, 0), Direction.ZERO);
-        OtsRoadNode nodeTo = new OtsRoadNode(network, "B", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeFrom = new OtsRoadNode(network, "A", new OtsPoint3d(0, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeTo = new OtsRoadNode(network, "B", new OtsPoint3d(1000, 0, 0), Direction.ZERO);
         // Now we can make a Link
-        OtsPoint3D[] coordinates = new OtsPoint3D[2];
-        coordinates[0] = new OtsPoint3D(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
-        coordinates[1] = new OtsPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
+        OtsPoint3d[] coordinates = new OtsPoint3d[2];
+        coordinates[0] = new OtsPoint3d(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
+        coordinates[1] = new OtsPoint3d(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
         CrossSectionLink link = new CrossSectionLink(network, "A to B", nodeFrom, nodeTo, DefaultsNl.FREEWAY,
-                new OtsLine3D(coordinates), LaneKeepingPolicy.KEEPRIGHT);
+                new OtsLine3d(coordinates), LaneKeepingPolicy.KEEPRIGHT);
         Length startLateralPos = new Length(2, METER);
         Length endLateralPos = new Length(5, METER);
         Length startWidth = new Length(3, METER);
@@ -140,12 +140,12 @@ public class LaneTest implements UNITS
 
         // Harder case; create a Link with form points along the way
         // System.out.println("Constructing Link and Lane with one form point");
-        coordinates = new OtsPoint3D[3];
-        coordinates[0] = new OtsPoint3D(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
-        coordinates[1] = new OtsPoint3D(200, 100);
-        coordinates[2] = new OtsPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
+        coordinates = new OtsPoint3d[3];
+        coordinates[0] = new OtsPoint3d(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
+        coordinates[1] = new OtsPoint3d(200, 100);
+        coordinates[2] = new OtsPoint3d(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
         link = new CrossSectionLink(network, "A to B with Kink", nodeFrom, nodeTo, DefaultsNl.FREEWAY,
-                new OtsLine3D(coordinates), LaneKeepingPolicy.KEEPRIGHT);
+                new OtsLine3d(coordinates), LaneKeepingPolicy.KEEPRIGHT);
         // FIXME what overtaking conditions do we want to test in this unit test?
         lane = new Lane(link, "lane.1", startLateralPos, endLateralPos, startWidth, endWidth, laneType, speedMap, false);
         // Verify the easy bits
@@ -553,8 +553,8 @@ public class LaneTest implements UNITS
     @Test
     public final void lateralOffsetTest() throws NetworkException, SimRuntimeException, NamingException, OtsGeometryException
     {
-        OtsPoint3D from = new OtsPoint3D(10, 10, 0);
-        OtsPoint3D to = new OtsPoint3D(1010, 10, 0);
+        OtsPoint3d from = new OtsPoint3d(10, 10, 0);
+        OtsPoint3d to = new OtsPoint3d(1010, 10, 0);
         OtsSimulatorInterface simulator = new OtsSimulator("LaneTest");
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
@@ -565,25 +565,25 @@ public class LaneTest implements UNITS
         speedMap.put(DefaultsNl.VEHICLE, new Speed(50, KM_PER_HOUR));
         OtsRoadNode start = new OtsRoadNode(network, "start", from, Direction.ZERO);
         OtsRoadNode end = new OtsRoadNode(network, "end", to, Direction.ZERO);
-        OtsPoint3D[] coordinates = new OtsPoint3D[2];
+        OtsPoint3d[] coordinates = new OtsPoint3d[2];
         coordinates[0] = start.getPoint();
         coordinates[1] = end.getPoint();
-        OtsLine3D line = new OtsLine3D(coordinates);
+        OtsLine3d line = new OtsLine3d(coordinates);
         CrossSectionLink link =
                 new CrossSectionLink(network, "A to B", start, end, DefaultsNl.ROAD, line, LaneKeepingPolicy.KEEPRIGHT);
         Length offsetAtStart = Length.instantiateSI(5);
         Length offsetAtEnd = Length.instantiateSI(15);
         Length width = Length.instantiateSI(4);
         Lane lane = new Lane(link, "lane", offsetAtStart, offsetAtEnd, width, width, laneType, speedMap, true);
-        OtsLine3D laneCenterLine = lane.getCenterLine();
+        OtsLine3d laneCenterLine = lane.getCenterLine();
         // System.out.println("Center line is " + laneCenterLine);
-        OtsPoint3D[] points = laneCenterLine.getPoints();
+        OtsPoint3d[] points = laneCenterLine.getPoints();
         double prev = offsetAtStart.si + from.y;
         double prevRatio = 0;
         double prevDirection = 0;
         for (int i = 0; i < points.length; i++)
         {
-            OtsPoint3D p = points[i];
+            OtsPoint3d p = points[i];
             double relativeLength = p.x - from.x;
             double ratio = relativeLength / (to.x - from.x);
             double actualOffset = p.y;
@@ -600,7 +600,7 @@ public class LaneTest implements UNITS
             assertTrue("delta must be nonnegative", delta >= 0);
             if (i > 0)
             {
-                OtsPoint3D prevPoint = points[i - 1];
+                OtsPoint3d prevPoint = points[i - 1];
                 double direction = Math.atan2(p.y - prevPoint.y, p.x - prevPoint.x);
                 // System.out.println(String.format("p=%30s: ratio=%7.5f, direction=%10.7f", p, ratio, direction));
                 assertTrue("Direction of lane center line is > 0", direction > 0);
@@ -645,16 +645,16 @@ public class LaneTest implements UNITS
                     Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
                     speedMap.put(DefaultsNl.VEHICLE, new Speed(50, KM_PER_HOUR));
                     OtsRoadNode start =
-                            new OtsRoadNode(network, "start", new OtsPoint3D(xStart, yStart), Direction.instantiateSI(angle));
+                            new OtsRoadNode(network, "start", new OtsPoint3d(xStart, yStart), Direction.instantiateSI(angle));
                     double linkLength = 1000;
                     double xEnd = xStart + linkLength * Math.cos(angle);
                     double yEnd = yStart + linkLength * Math.sin(angle);
                     OtsRoadNode end =
-                            new OtsRoadNode(network, "end", new OtsPoint3D(xEnd, yEnd), Direction.instantiateSI(angle));
-                    OtsPoint3D[] coordinates = new OtsPoint3D[2];
+                            new OtsRoadNode(network, "end", new OtsPoint3d(xEnd, yEnd), Direction.instantiateSI(angle));
+                    OtsPoint3d[] coordinates = new OtsPoint3d[2];
                     coordinates[0] = start.getPoint();
                     coordinates[1] = end.getPoint();
-                    OtsLine3D line = new OtsLine3D(coordinates);
+                    OtsLine3d line = new OtsLine3d(coordinates);
                     CrossSectionLink link = new CrossSectionLink(network, "A to B", start, end, DefaultsNl.ROAD, line,
                             LaneKeepingPolicy.KEEPRIGHT);
                     final int[] lateralOffsets = {-10, -3, -1, 0, 1, 3, 10};
@@ -792,7 +792,7 @@ public class LaneTest implements UNITS
      * Algorithm of W. Randolph Franklin http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html, found via
      * stackoverflow.com: https://stackoverflow.com/questions/217578/point-in-polygon-aka-hit-test.
      * @param point Coordinate; the point
-     * @param polygon OTSPoint3D[]; the polygon (last coordinate is allowed to be identical to the first, but his is not a
+     * @param polygon OtsPoint3d[]; the polygon (last coordinate is allowed to be identical to the first, but his is not a
      *            requirement)
      * @return boolean; true if the point is inside the polygon; false if it is outside the polygon; if the point lies <b>on</b>
      *         an vertex or edge of the polygon the result is (of course) undefined

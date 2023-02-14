@@ -440,7 +440,7 @@ public class Sim0MQPublisherTest
         @Override
         public void run()
         {
-            new Sim0MQPublisher(this.zContext, "publisherControl", "publisherOutput");
+            new Sim0mqPublisher(this.zContext, "publisherControl", "publisherOutput");
             System.out.println("Publisher thread exits");
         }
 

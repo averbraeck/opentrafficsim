@@ -50,8 +50,8 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
     private final JCheckBox trackObject;
 
     /**
-     * Construct a new OTSSearchPanel.
-     * @param otsAnimationPanel OTSAnimationPanel; the animation panel
+     * Construct a new OtsSearchPanel.
+     * @param otsAnimationPanel OtsAnimationPanel; the animation panel
      */
     public OtsSearchPanel(final OtsAnimationPanel otsAnimationPanel)
     {
@@ -219,7 +219,7 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
 
         /**
          * Lookup an object of type T in an OTS network.
-         * @param network OTSNetwork; the OTS network
+         * @param network OtsNetwork; the OTS network
          * @param id String; id of the object to return
          * @return T; the object in the network of the correct type and matching id, or null if no matching object was found.
          */

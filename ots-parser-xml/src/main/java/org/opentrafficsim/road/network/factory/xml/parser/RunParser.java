@@ -37,7 +37,7 @@ public final class RunParser
      * @param run RUN; the RUN tag
      * @param networkId String; id of the network or the model
      * @param streamInformation StreamSeedInformation; the stream information that will be passed to the model
-     * @param simulator OTSSimulatorInterface; the simulator to defined the experiment for
+     * @param simulator OtsSimulatorInterface; the simulator to defined the experiment for
      * @return experiment on the basis of the information in the RUN tag
      * @throws XmlParserException on parsing error
      */
@@ -86,7 +86,7 @@ public final class RunParser
         }
 
         // TODO: do we want a real Time here or a Duration?
-        // If it should be a Time, create an OTSExperimentRunControl that can take a Time as first argument
+        // If it should be a Time, create an ExperimentRunControl that can take a Time as first argument
         ExperimentRunControl<Duration> runControl = new ExperimentRunControl<>("RunControl for " + networkId,
                 startTime.minus(Time.ZERO), warmupPeriod, runLength, numberReplications);
 

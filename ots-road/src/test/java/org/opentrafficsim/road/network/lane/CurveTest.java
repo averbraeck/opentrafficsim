@@ -16,8 +16,8 @@ import org.junit.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -63,17 +63,17 @@ public class CurveTest
         GtuType gtuType = DefaultsNl.CAR;
         LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
         Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
-        OtsRoadNode origin = new OtsRoadNode(network, "origin", new OtsPoint3D(10, 10, 0), Direction.ZERO);
-        OtsRoadNode curveStart = new OtsRoadNode(network, "curveStart", new OtsPoint3D(100, 10, 0), Direction.ZERO);
+        OtsRoadNode origin = new OtsRoadNode(network, "origin", new OtsPoint3d(10, 10, 0), Direction.ZERO);
+        OtsRoadNode curveStart = new OtsRoadNode(network, "curveStart", new OtsPoint3d(100, 10, 0), Direction.ZERO);
         OtsRoadNode curveEnd =
-                new OtsRoadNode(network, "curveEnd", new OtsPoint3D(150, 60, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
-        OtsRoadNode destination = new OtsRoadNode(network, "destination", new OtsPoint3D(150, 150, 0),
+                new OtsRoadNode(network, "curveEnd", new OtsPoint3d(150, 60, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
+        OtsRoadNode destination = new OtsRoadNode(network, "destination", new OtsPoint3d(150, 150, 0),
                 new Direction(90, DirectionUnit.EAST_DEGREE));
         Lane[] straight1 = LaneFactory.makeMultiLane(network, "straight1", origin, curveStart, null, laneCount, laneType,
                 speedLimit, simulator, DefaultsNl.VEHICLE);
         Lane[] straight2 = LaneFactory.makeMultiLane(network, "straight2", curveEnd, destination, null, laneCount, laneType,
                 speedLimit, simulator, DefaultsNl.VEHICLE);
-        OtsLine3D curveLine = LaneFactory.makeBezier(origin, curveStart, curveEnd, destination);
+        OtsLine3d curveLine = LaneFactory.makeBezier(origin, curveStart, curveEnd, destination);
         Lane[] curve = LaneFactory.makeMultiLane(network, "bezier", curveStart, curveEnd, curveLine.getPoints(), laneCount,
                 laneType, speedLimit, simulator, DefaultsNl.VEHICLE);
         Lane[][] laneSets = new Lane[][] {straight1, curve, straight2};
@@ -105,8 +105,8 @@ public class CurveTest
     }
 
     /**
-     * Print all scheduled events of an OTSSimulatorInterface.
-     * @param simulator OTSSimulatorInterface; the OTSSimulatorInterface
+     * Print all scheduled events of an OtsSimulatorInterface.
+     * @param simulator OtsSimulatorInterface; the OtsSimulatorInterface
      */
     public final void printEventList(final OtsSimulatorInterface simulator)
     {

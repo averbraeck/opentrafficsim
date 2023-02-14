@@ -13,8 +13,8 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.junit.Test;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.mock.MockSimulator;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
@@ -45,8 +45,8 @@ public class StaticObjectTest implements EventListener
     public void staticObjectTest() throws OtsGeometryException, NetworkException
     {
         String id = "id of static object";
-        OtsLine3D geometry = new OtsLine3D(new OtsPoint3D[] {new OtsPoint3D(0, 0, 0), new OtsPoint3D(1, 0, 0),
-                new OtsPoint3D(1, 1, 0), new OtsPoint3D(0, 1, 0)});
+        OtsLine3d geometry = new OtsLine3d(new OtsPoint3d[] {new OtsPoint3d(0, 0, 0), new OtsPoint3d(1, 0, 0),
+                new OtsPoint3d(1, 1, 0), new OtsPoint3d(0, 1, 0)});
         Length height = new Length(1, LengthUnit.METER);
         try
         {

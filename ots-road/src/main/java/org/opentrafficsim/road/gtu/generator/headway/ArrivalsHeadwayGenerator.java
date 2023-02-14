@@ -40,7 +40,7 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
 
     /**
      * @param arrivals Arrivals; arrivals
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param stream StreamInterface; random stream to draw headway
      * @param distribution HeadwayDistribution; random headway distribution
      */

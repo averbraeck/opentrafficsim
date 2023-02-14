@@ -3,7 +3,7 @@ package org.opentrafficsim.core.network;
 import org.opentrafficsim.core.gtu.Gtu;
 
 /**
- * OTSNetworkCloner makes a deep clone of a network.
+ * OtsNetworkCloner makes a deep clone of a network.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -20,7 +20,7 @@ public final class OtsNetworkUtils
 
     /**
      * Remove all objects and animation in the network.
-     * @param network OTSNetwork; the network to destroy
+     * @param network OtsNetwork; the network to destroy
      */
     public static void destroy(final OtsNetwork network)
     {

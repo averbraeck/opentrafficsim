@@ -21,8 +21,8 @@ import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
@@ -35,7 +35,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.od.Category;
-import org.opentrafficsim.road.od.ODMatrix;
+import org.opentrafficsim.road.od.OdMatrix;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -93,22 +93,22 @@ public class XmlOdParserTest
         this.gtuTypes.add(DefaultsNl.CAR);
         this.gtuTypes.add(DefaultsNl.TRUCK);
         // TODO verify that Direction.ZERO will not cause problems...
-        OtsRoadNode A = new OtsRoadNode(this.network, "A", new OtsPoint3D(0, 0, 0), Direction.ZERO);
-        OtsRoadNode B = new OtsRoadNode(this.network, "B", new OtsPoint3D(1, 0, 0), Direction.ZERO);
-        OtsRoadNode C = new OtsRoadNode(this.network, "C", new OtsPoint3D(0, 1, 0), Direction.ZERO);
+        OtsRoadNode A = new OtsRoadNode(this.network, "A", new OtsPoint3d(0, 0, 0), Direction.ZERO);
+        OtsRoadNode B = new OtsRoadNode(this.network, "B", new OtsPoint3d(1, 0, 0), Direction.ZERO);
+        OtsRoadNode C = new OtsRoadNode(this.network, "C", new OtsPoint3d(0, 1, 0), Direction.ZERO);
 
         CrossSectionLink AB = new CrossSectionLink(this.network, "AB", A, B, DefaultsNl.FREEWAY,
-                new OtsLine3D(A.getPoint(), B.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
+                new OtsLine3d(A.getPoint(), B.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
         CrossSectionLink AC = new CrossSectionLink(this.network, "AC", A, C, DefaultsNl.FREEWAY,
-                new OtsLine3D(A.getPoint(), C.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
+                new OtsLine3d(A.getPoint(), C.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
         CrossSectionLink BC = new CrossSectionLink(this.network, "BC", B, C, DefaultsNl.FREEWAY,
-                new OtsLine3D(B.getPoint(), C.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
+                new OtsLine3d(B.getPoint(), C.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
         CrossSectionLink BA = new CrossSectionLink(this.network, "BA", B, A, DefaultsNl.FREEWAY,
-                new OtsLine3D(B.getPoint(), A.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
+                new OtsLine3d(B.getPoint(), A.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
         CrossSectionLink CA = new CrossSectionLink(this.network, "CA", C, A, DefaultsNl.FREEWAY,
-                new OtsLine3D(A.getPoint(), C.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
+                new OtsLine3d(A.getPoint(), C.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
         CrossSectionLink CB = new CrossSectionLink(this.network, "CB", C, B, DefaultsNl.FREEWAY,
-                new OtsLine3D(C.getPoint(), B.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
+                new OtsLine3d(C.getPoint(), B.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
 
         GtuType gtuType = DefaultsNl.VEHICLE;
         this.network.addRoute(gtuType, new Route("AB", gtuType).addNode(A).addNode(B));
@@ -136,7 +136,7 @@ public class XmlOdParserTest
     public void ValidityTest() throws XmlParserException
     {
         StringBuilder xml;
-        ODMatrix od;
+        OdMatrix od;
 
         // WS chosen to default to LINEAR, so may have no global interpolation
         // xml = new StringBuilder();
@@ -341,7 +341,7 @@ public class XmlOdParserTest
     public void LevelTest() throws XmlParserException
     {
         StringBuilder xml;
-        ODMatrix od;
+        OdMatrix od;
 
         Node A = this.network.getNode("A");
         Node B = this.network.getNode("B");
@@ -472,7 +472,7 @@ public class XmlOdParserTest
      * @return InputStream
      * @throws XmlParserException on error
      */
-    private ODMatrix fromString(final String str) throws XmlParserException
+    private OdMatrix fromString(final String str) throws XmlParserException
     {
         this.parser = new XmlOdParser(this.simulator, this.network, this.gtuTypes, DefaultsRoadNl.ROAD_USERS);
         return this.parser.build(new ByteArrayInputStream(

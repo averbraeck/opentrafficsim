@@ -17,8 +17,8 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
@@ -78,11 +78,11 @@ public final class LaneFactory
     private Stripe firstStripe;
 
     /**
-     * @param network OTSRoadNetwork; network
-     * @param from OTSRoadNode; from node
-     * @param to OTSRoadNode; to node
+     * @param network OtsRoadNetwork; network
+     * @param from OtsRoaNode; from node
+     * @param to OtsRoaNode; to node
      * @param type LinkType; link type
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param policy LaneKeepingPolicy; lane keeping policy
      * @param gtuType GtuType; parent GTU type of relevant GTUs.
      * @throws OtsGeometryException if no valid line can be created
@@ -96,18 +96,18 @@ public final class LaneFactory
     }
 
     /**
-     * @param network OTSRoadNetwork; network
-     * @param from OTSRoadNode; from node
-     * @param to OTSRoadNode; to node
+     * @param network OtsRoadNetwork; network
+     * @param from OtsRoaNode; from node
+     * @param to OtsRoaNode; to node
      * @param type LinkType; link type
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param policy LaneKeepingPolicy; lane keeping policy
      * @param gtuType GtuType; parent GTU type of relevant GTUs.
-     * @param line OTSLine3D; line
+     * @param line OtsLine3d; line
      * @throws NetworkException if the link exists, or a node does not exist, in the network
      */
     public LaneFactory(final OtsRoadNetwork network, final OtsRoadNode from, final OtsRoadNode to, final LinkType type,
-            final OtsSimulatorInterface simulator, final LaneKeepingPolicy policy, final GtuType gtuType, final OtsLine3D line)
+            final OtsSimulatorInterface simulator, final LaneKeepingPolicy policy, final GtuType gtuType, final OtsLine3d line)
             throws NetworkException
     {
         this.link = new CrossSectionLink(network, from.getId() + to.getId(), from, to, type, line, policy);
@@ -117,12 +117,12 @@ public final class LaneFactory
     /**
      * Creates a line between two nodes. If the nodes and their directions are on a straight line, a straight line is created.
      * Otherwise a default Bezier curve is created.
-     * @param from OTSNode; from node
-     * @param to OTSNode; to node
-     * @return OTSLine3D; line
+     * @param from OtsNode; from node
+     * @param to OtsNode; to node
+     * @return OtsLine3d; line
      * @throws OtsGeometryException if no valid line can be created
      */
-    private static OtsLine3D makeLine(final OtsNode from, final OtsNode to) throws OtsGeometryException
+    private static OtsLine3d makeLine(final OtsNode from, final OtsNode to) throws OtsGeometryException
     {
         // Straight or bezier?
         double rotCrow = Math.atan2(to.getLocation().y - from.getLocation().y, to.getLocation().x - from.getLocation().x);
@@ -135,14 +135,14 @@ public final class LaneFactory
         {
             dRot -= 2.0 * Math.PI;
         }
-        OtsLine3D line;
+        OtsLine3d line;
         if (from.getLocation().getRotZ() != to.getLocation().getRotZ() || Math.abs(dRot) > BEZIER_MARGIN)
         {
             line = Bezier.cubic(from.getLocation(), to.getLocation());
         }
         else
         {
-            line = new OtsLine3D(from.getPoint(), to.getPoint());
+            line = new OtsLine3d(from.getPoint(), to.getPoint());
         }
         return line;
     }
@@ -352,21 +352,21 @@ public final class LaneFactory
      * Create a Link along intermediate coordinates from one Node to another.
      * @param network RoadNetwork; the network
      * @param name String; name of the new Link
-     * @param from OTSRoadNode; start Node of the new Link
-     * @param to OTSRoadNode; end Node of the new Link
-     * @param intermediatePoints OTSPoint3D[]; array of intermediate coordinates (may be null); the intermediate points may
+     * @param from OtsRoaNode; start Node of the new Link
+     * @param to OtsRoaNode; end Node of the new Link
+     * @param intermediatePoints OtsPoint3d[]; array of intermediate coordinates (may be null); the intermediate points may
      *            contain the coordinates of the from node and to node
-     * @param simulator OTSSimulatorInterface; the simulator for this network
+     * @param simulator OtsSimulatorInterface; the simulator for this network
      * @return Link; the newly constructed Link
      * @throws OtsGeometryException when the design line is degenerate (only one point or duplicate point)
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
     public static CrossSectionLink makeLink(final OtsRoadNetwork network, final String name, final OtsRoadNode from,
-            final OtsRoadNode to, final OtsPoint3D[] intermediatePoints, final OtsSimulatorInterface simulator)
+            final OtsRoadNode to, final OtsPoint3d[] intermediatePoints, final OtsSimulatorInterface simulator)
             throws OtsGeometryException, NetworkException
     {
-        List<OtsPoint3D> pointList =
+        List<OtsPoint3d> pointList =
                 intermediatePoints == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(intermediatePoints));
         if (pointList.size() == 0 || !from.getPoint().equals(pointList.get(0)))
         {
@@ -379,15 +379,15 @@ public final class LaneFactory
 
         /*-
         // see if an intermediate point needs to be created to the start of the link in the right direction
-        OTSPoint3D s1 = pointList.get(0);
-        OTSPoint3D s2 = pointList.get(1);
+        OtsPoint3d s1 = pointList.get(0);
+        OtsPoint3d s2 = pointList.get(1);
         double dy = s2.y - s1.y;
         double dx = s2.x - s1.x;
         double a = from.getLocation().getRotZ();
         if (Math.abs(a - Math.atan2(dy, dx)) > 1E-6)
         {
             double r = Math.min(1.0, Math.sqrt(dy * dy + dx * dx) / 4.0); 
-            OTSPoint3D extra = new OTSPoint3D(s1.x + r * Math.cos(a), s1.y + r * Math.sin(a), s1.z);
+            OtsPoint3d extra = new OtsPoint3d(s1.x + r * Math.cos(a), s1.y + r * Math.sin(a), s1.z);
             pointList.add(1, extra);
         }
         
@@ -400,12 +400,12 @@ public final class LaneFactory
         if (Math.abs(a - Math.atan2(dy, dx)) > 1E-6)
         {
             double r = Math.min(1.0, Math.sqrt(dy * dy + dx * dx) / 4.0); 
-            OTSPoint3D extra = new OTSPoint3D(s2.x + r * Math.cos(a), s2.y + r * Math.sin(a), s2.z);
+            OtsPoint3d extra = new OtsPoint3d(s2.x + r * Math.cos(a), s2.y + r * Math.sin(a), s2.z);
             pointList.add(pointList.size() - 2, extra);
         }
          */
 
-        OtsLine3D designLine = new OtsLine3D(pointList);
+        OtsLine3d designLine = new OtsLine3d(pointList);
         CrossSectionLink link =
                 new CrossSectionLink(network, name, from, to, DefaultsNl.ROAD, designLine, LaneKeepingPolicy.KEEPRIGHT);
         return link;
@@ -422,7 +422,7 @@ public final class LaneFactory
      *            the link
      * @param width Length; the width of the new Lane
      * @param speedLimit Speed; the speed limit on the new Lane
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator OtsSimulatorInterface; the simulator
      * @param gtuType GtuType; parent GTU type of relevant GTUs
      * @return Lane
      * @throws NetworkException on network inconsistency
@@ -442,13 +442,13 @@ public final class LaneFactory
      * Create a simple Lane.
      * @param network RoadNetwork; the network
      * @param name String; name of the Lane (and also of the Link that owns it)
-     * @param from OTSRoadNode; starting node of the new Lane
-     * @param to OTSRoadNode; ending node of the new Lane
-     * @param intermediatePoints OTSPoint3D[]; intermediate coordinates or null to create a straight road; the intermediate
+     * @param from OtsRoaNode; starting node of the new Lane
+     * @param to OtsRoaNode; ending node of the new Lane
+     * @param intermediatePoints OtsPoint3d[]; intermediate coordinates or null to create a straight road; the intermediate
      *            points may contain the coordinates of the from node and to node
      * @param laneType LaneType; type of the new Lane
      * @param speedLimit Speed; the speed limit on the new Lane
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator OtsSimulatorInterface; the simulator
      * @param gtuType GtuType; parent GTU type of relevant GTUs
      * @return Lane; the new Lane
      * @throws NetworkException on network inconsistency
@@ -456,7 +456,7 @@ public final class LaneFactory
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane makeLane(final OtsRoadNetwork network, final String name, final OtsRoadNode from, final OtsRoadNode to,
-            final OtsPoint3D[] intermediatePoints, final LaneType laneType, final Speed speedLimit,
+            final OtsPoint3d[] intermediatePoints, final LaneType laneType, final Speed speedLimit,
             final OtsSimulatorInterface simulator, final GtuType gtuType) throws NetworkException, OtsGeometryException
     {
         Length width = new Length(4.0, LengthUnit.METER);
@@ -471,16 +471,16 @@ public final class LaneFactory
      * method of the Lane.
      * @param network RoadNetwork; the network
      * @param name String; name of the Link
-     * @param from OTSNode; starting node of the new Lane
-     * @param to OTSNode; ending node of the new Lane
-     * @param intermediatePoints OTSPoint3D[]; intermediate coordinates or null to create a straight road; the intermediate
+     * @param from OtsNode; starting node of the new Lane
+     * @param to OtsNode; ending node of the new Lane
+     * @param intermediatePoints OtsPoint3d[]; intermediate coordinates or null to create a straight road; the intermediate
      *            points may contain the coordinates of the from node and to node
      * @param laneCount int; number of lanes in the road
      * @param laneOffsetAtStart int; extra offset from design line in lane widths at start of link
      * @param laneOffsetAtEnd int; extra offset from design line in lane widths at end of link
      * @param laneType LaneType; type of the new Lanes
      * @param speedLimit Speed; the speed limit on all lanes
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator OtsSimulatorInterface; the simulator
      * @param gtuType GtuType; parent GTU type of relevant GTUs
      * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws NetworkException on topological problems
@@ -488,7 +488,7 @@ public final class LaneFactory
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane[] makeMultiLane(final OtsRoadNetwork network, final String name, final OtsRoadNode from,
-            final OtsRoadNode to, final OtsPoint3D[] intermediatePoints, final int laneCount, final int laneOffsetAtStart,
+            final OtsRoadNode to, final OtsPoint3d[] intermediatePoints, final int laneCount, final int laneOffsetAtStart,
             final int laneOffsetAtEnd, final LaneType laneType, final Speed speedLimit, final OtsSimulatorInterface simulator,
             final GtuType gtuType) throws NetworkException, OtsGeometryException
     {
@@ -512,14 +512,14 @@ public final class LaneFactory
      * method of the Lane.
      * @param network RoadNetwork; the network
      * @param name String; name of the Link
-     * @param from OTSRoadNode; starting node of the new Lane
-     * @param to OTSRoadNode; ending node of the new Lane
-     * @param intermediatePoints OTSPoint3D[]; intermediate coordinates or null to create a straight road; the intermediate
+     * @param from OtsRoaNode; starting node of the new Lane
+     * @param to OtsRoaNode; ending node of the new Lane
+     * @param intermediatePoints OtsPoint3d[]; intermediate coordinates or null to create a straight road; the intermediate
      *            points may contain the coordinates of the from node and to node
      * @param laneCount int; number of lanes in the road
      * @param laneType LaneType; type of the new Lanes
      * @param speedLimit Speed; Speed the speed limit (applies to all generated lanes)
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator OtsSimulatorInterface; the simulator
      * @param gtuType GtuType; parent GTU type of relevant GTUs
      * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws NamingException when names cannot be registered for animation
@@ -528,7 +528,7 @@ public final class LaneFactory
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane[] makeMultiLane(final OtsRoadNetwork network, final String name, final OtsRoadNode from,
-            final OtsRoadNode to, final OtsPoint3D[] intermediatePoints, final int laneCount, final LaneType laneType,
+            final OtsRoadNode to, final OtsPoint3d[] intermediatePoints, final int laneCount, final LaneType laneType,
             final Speed speedLimit, final OtsSimulatorInterface simulator, final GtuType gtuType)
             throws NamingException, NetworkException, OtsGeometryException
     {
@@ -542,16 +542,16 @@ public final class LaneFactory
      * method of the Lane.
      * @param network RoadNetwork; the network
      * @param name String; name of the Link
-     * @param n1 OTSRoadNode; control node for the start direction
-     * @param n2 OTSRoadNode; starting node of the new Lane
-     * @param n3 OTSRoadNode; ending node of the new Lane
-     * @param n4 OTSRoadNode; control node for the end direction
+     * @param n1 OtsRoaNode; control node for the start direction
+     * @param n2 OtsRoaNode; starting node of the new Lane
+     * @param n3 OtsRoaNode; ending node of the new Lane
+     * @param n4 OtsRoaNode; control node for the end direction
      * @param laneCount int; number of lanes in the road
      * @param laneOffsetAtStart int; extra offset from design line in lane widths at start of link
      * @param laneOffsetAtEnd int; extra offset from design line in lane widths at end of link
      * @param laneType LaneType; type of the new Lanes
      * @param speedLimit Speed; the speed limit on all lanes
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator OtsSimulatorInterface; the simulator
      * @param gtuType GtuType; parent GTU type of relevant GTUs
      * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws NamingException when names cannot be registered for animation
@@ -564,7 +564,7 @@ public final class LaneFactory
             final int laneOffsetAtEnd, final LaneType laneType, final Speed speedLimit, final OtsSimulatorInterface simulator,
             final GtuType gtuType) throws NamingException, NetworkException, OtsGeometryException
     {
-        OtsLine3D bezier = makeBezier(n1, n2, n3, n4);
+        OtsLine3d bezier = makeBezier(n1, n2, n3, n4);
         final CrossSectionLink link = makeLink(network, name, n2, n3, bezier.getPoints(), simulator);
         Lane[] result = new Lane[laneCount];
         Length width = new Length(4.0, LengthUnit.METER);
@@ -580,20 +580,20 @@ public final class LaneFactory
     }
 
     /**
-     * @param n1 OTSNode; node 1
-     * @param n2 OTSNode; node 2
-     * @param n3 OTSNode; node 3
-     * @param n4 OTSNode; node 4
+     * @param n1 OtsNode; node 1
+     * @param n2 OtsNode; node 2
+     * @param n3 OtsNode; node 3
+     * @param n4 OtsNode; node 4
      * @return line between n2 and n3 with start-direction n1--&gt;n2 and end-direction n3--&gt;n4
      * @throws OtsGeometryException on failure of Bezier curve creation
      */
-    public static OtsLine3D makeBezier(final OtsNode n1, final OtsNode n2, final OtsNode n3, final OtsNode n4)
+    public static OtsLine3d makeBezier(final OtsNode n1, final OtsNode n2, final OtsNode n3, final OtsNode n4)
             throws OtsGeometryException
     {
-        OtsPoint3D p1 = n1.getPoint();
-        OtsPoint3D p2 = n2.getPoint();
-        OtsPoint3D p3 = n3.getPoint();
-        OtsPoint3D p4 = n4.getPoint();
+        OtsPoint3d p1 = n1.getPoint();
+        OtsPoint3d p2 = n2.getPoint();
+        OtsPoint3d p3 = n3.getPoint();
+        OtsPoint3d p4 = n4.getPoint();
         DirectedPoint dp1 = new DirectedPoint(p2.x, p2.y, p2.z, 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
         DirectedPoint dp2 = new DirectedPoint(p3.x, p3.y, p3.z, 0.0, 0.0, Math.atan2(p4.y - p3.y, p4.x - p3.x));
         return Bezier.cubic(dp1, dp2);

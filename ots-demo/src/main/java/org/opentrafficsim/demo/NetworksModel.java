@@ -32,7 +32,7 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -140,7 +140,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
     private DistContinuous headwayGenerator;
 
     /**
-     * @param simulator OTSSimulatorInterface; the simulator for this model
+     * @param simulator OtsSimulatorInterface; the simulator for this model
      */
     public NetworksModel(final OtsSimulatorInterface simulator)
     {
@@ -197,20 +197,20 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
             this.strategicalPlannerFactoryTrucks = new LaneBasedStrategicalRoutePlannerFactory(
                     new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()), params);
 
-            OtsPoint3D pFrom2a = new OtsPoint3D(0, -50, 0);
-            OtsPoint3D pFrom2b = new OtsPoint3D(490, -0.5, 0);
+            OtsPoint3d pFrom2a = new OtsPoint3d(0, -50, 0);
+            OtsPoint3d pFrom2b = new OtsPoint3d(490, -0.5, 0);
             Direction onrampDirection = pFrom2a.horizontalDirection(pFrom2b);
-            OtsRoadNode from = new OtsRoadNode(this.network, "From", new OtsPoint3D(0, 0, 0), Direction.ZERO);
-            OtsRoadNode end = new OtsRoadNode(this.network, "End", new OtsPoint3D(2000, 0, 0), Direction.ZERO);
+            OtsRoadNode from = new OtsRoadNode(this.network, "From", new OtsPoint3d(0, 0, 0), Direction.ZERO);
+            OtsRoadNode end = new OtsRoadNode(this.network, "End", new OtsPoint3d(2000, 0, 0), Direction.ZERO);
             OtsRoadNode from2a = new OtsRoadNode(this.network, "From2a", pFrom2a, onrampDirection);
             OtsRoadNode from2b = new OtsRoadNode(this.network, "From2b", pFrom2b, onrampDirection);
-            OtsRoadNode firstVia = new OtsRoadNode(this.network, "Via1", new OtsPoint3D(500, 0, 0), Direction.ZERO);
-            OtsPoint3D pEnd2a = new OtsPoint3D(1020, -0.5, 0);
-            OtsPoint3D pEnd2b = new OtsPoint3D(2000, -50, 0);
+            OtsRoadNode firstVia = new OtsRoadNode(this.network, "Via1", new OtsPoint3d(500, 0, 0), Direction.ZERO);
+            OtsPoint3d pEnd2a = new OtsPoint3d(1020, -0.5, 0);
+            OtsPoint3d pEnd2b = new OtsPoint3d(2000, -50, 0);
             Direction offrampDirection = pEnd2a.horizontalDirection(pEnd2b);
             OtsRoadNode end2a = new OtsRoadNode(this.network, "End2a", pEnd2a, offrampDirection);
             OtsRoadNode end2b = new OtsRoadNode(this.network, "End2b", pEnd2b, offrampDirection);
-            OtsRoadNode secondVia = new OtsRoadNode(this.network, "Via2", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
+            OtsRoadNode secondVia = new OtsRoadNode(this.network, "Via2", new OtsPoint3d(1000, 0, 0), Direction.ZERO);
 
             String networkType = getInputParameter("generic.network").toString();
             boolean merge = networkType.startsWith("M");
@@ -421,7 +421,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
      * @param widthDistribution ContinuousDistDoubleScalar.Rel&lt;Length,LengthUnit&gt;; distribution of the GTU width
      * @param maximumSpeedDistribution ContinuousDistDoubleScalar.Rel&lt;Speed,SpeedUnit&gt;; distribution of the GTU's maximum
      *            speed
-     * @param initialPositions Set&lt;DirectedLanePosition&gt;; initial position(s) of the GTU on the Lane(s)
+     * @param initialPositions Set&lt;LanePosition&gt;; initial position(s) of the GTU on the Lane(s)
      * @param strategicalPlannerFactory LaneBasedStrategicalPlannerFactory&lt;?&gt;; factory to generate the strategical planner
      *            for the GTU
      * @return template for a GTU
@@ -476,7 +476,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
         double endLinkLength = 50; // [m]
         double endX = to.getPoint().x + (endLinkLength / link.getLength().getSI()) * (to.getPoint().x - from.getPoint().x);
         double endY = to.getPoint().y + (endLinkLength / link.getLength().getSI()) * (to.getPoint().y - from.getPoint().y);
-        OtsRoadNode end = new OtsRoadNode(this.network, link.getId() + "END", new OtsPoint3D(endX, endY, to.getPoint().z),
+        OtsRoadNode end = new OtsRoadNode(this.network, link.getId() + "END", new OtsPoint3d(endX, endY, to.getPoint().z),
                 Direction.instantiateSI(Math.atan2(to.getPoint().y - from.getPoint().y, to.getPoint().x - from.getPoint().x)));
         CrossSectionLink endLink = LaneFactory.makeLink(this.network, link.getId() + "endLink", to, end, null, this.simulator);
         for (Lane lane : lanes)

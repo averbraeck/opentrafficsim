@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Measure the performance of the OTSShape intersection method.
+ * Measure the performance of the OtsShape intersection method.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -28,22 +28,22 @@ public final class TestIntersectionPerformance
     }
 
     /**
-     * Create and return an OTSShape.
-     * @param numVertices int; the number of vertices in the constructed OTSShape
-     * @param r double; double radius of the constructed OTSShape
-     * @param cX double; x-coordinate of the center of the constructed OTSShape
-     * @param cY double; y-coordinate of the center of the constructed OTSShape
-     * @return OTSShape
+     * Create and return an OtsShape.
+     * @param numVertices int; the number of vertices in the constructed OtsShape
+     * @param r double; double radius of the constructed OtsShape
+     * @param cX double; x-coordinate of the center of the constructed OtsShape
+     * @param cY double; y-coordinate of the center of the constructed OtsShape
+     * @return OtsShape
      * @throws OtsGeometryException when the number of vertices is less than two, or the radius is 0;
      */
     static OtsShape makeNGon(final int numVertices, final double r, final double cX, final double cY)
             throws OtsGeometryException
     {
-        OtsPoint3D[] points = new OtsPoint3D[numVertices];
+        OtsPoint3d[] points = new OtsPoint3d[numVertices];
         for (int i = 0; i < numVertices; i++)
         {
             double angle = 2 * Math.PI * i / numVertices;
-            points[i] = new OtsPoint3D(cX + r * Math.sin(angle), cY + r * Math.cos(angle));
+            points[i] = new OtsPoint3d(cX + r * Math.sin(angle), cY + r * Math.cos(angle));
         }
         return new OtsShape(points);
     }
@@ -72,7 +72,7 @@ public final class TestIntersectionPerformance
             double radius = 19;
             double dx = 6 * radius / desiredHitFraction / numShapes;
             Collection<OtsShape> shapes = new ArrayList<OtsShape>();
-            Ots2DSet ots2Dset = new Ots2DSet(new Rectangle2D.Double(-20, -20, dx * numShapes / 2 + 40, 4 * radius), 1);
+            Ots2dSet ots2Dset = new Ots2dSet(new Rectangle2D.Double(-20, -20, dx * numShapes / 2 + 40, 4 * radius), 1);
             for (int i = 0; i < numShapes; i++)
             {
                 OtsShape shape = makeNGon(numVertices, radius, i % (numShapes / 2) * dx, i > numShapes / 2 ? radius * 1.5 : 0);

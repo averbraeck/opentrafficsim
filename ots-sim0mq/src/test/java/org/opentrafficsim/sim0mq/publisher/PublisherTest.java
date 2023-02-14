@@ -207,7 +207,7 @@ public class PublisherTest implements OtsModelInterface
         private final String xml;
 
         /**
-         * @param simulator OTSSimulatorInterface; the simulator
+         * @param simulator OtsSimulatorInterface; the simulator
          * @param shortName String; the model name
          * @param description String; the model description
          * @param xml String; the XML description of the simulation model

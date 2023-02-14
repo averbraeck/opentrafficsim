@@ -8,7 +8,7 @@ import org.djutils.logger.CategoryLogger;
 
 /**
  * CoordinateAdapter converts between the XML String for a coordinate and a Point3d. Because the ots-xsd project is not
- * dependent on ots-core, Point3d is chosen instead of OTSPoint3D to store the (x, y, z) information. The marshal function
+ * dependent on ots-core, Point3d is chosen instead of OtsPoint3d to store the (x, y, z) information. The marshal function
  * returns a 2D-coordinate in case the z-value is zero.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>

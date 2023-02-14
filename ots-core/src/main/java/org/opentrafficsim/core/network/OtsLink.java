@@ -11,14 +11,14 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.core.geometry.OtsShape;
 import org.opentrafficsim.core.gtu.Gtu;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 
 /**
- * A standard implementation of a link between two OTSNodes.
+ * A standard implementation of a link between two OtsNodes.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -48,7 +48,7 @@ public class OtsLink extends LocalEventProducer implements Link, Serializable, L
     private final LinkType linkType;
 
     /** Design line of the link. */
-    private final OtsLine3D designLine;
+    private final OtsLine3d designLine;
 
     /** the shape. */
     private final OtsShape shape;
@@ -63,13 +63,13 @@ public class OtsLink extends LocalEventProducer implements Link, Serializable, L
      * @param startNode Node; start node (directional)
      * @param endNode Node; end node (directional)
      * @param linkType LinkType; Link type to indicate compatibility with GTU types
-     * @param designLine OTSLine3D; the OTSLine3D design line of the Link
+     * @param designLine OtsLine3d; the OtsLine3d design line of the Link
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public OtsLink(final Network network, final String id, final Node startNode, final Node endNode, final LinkType linkType,
-            final OtsLine3D designLine) throws NetworkException
+            final OtsLine3d designLine) throws NetworkException
     {
         Throw.whenNull(network, "network cannot be null");
         Throw.whenNull(id, "id cannot be null");
@@ -174,7 +174,7 @@ public class OtsLink extends LocalEventProducer implements Link, Serializable, L
 
     /** {@inheritDoc} */
     @Override
-    public final OtsLine3D getDesignLine()
+    public final OtsLine3d getDesignLine()
     {
         return this.designLine;
     }

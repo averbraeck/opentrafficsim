@@ -93,7 +93,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
 
     /**
      * Constructor.
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param caption String; caption
      * @param updateInterval Duration; regular update interval (simulation time)
      * @param delay Duration; amount of time that chart runs behind simulation to prevent gaps in the charted data
@@ -260,7 +260,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
 
     /**
      * Retrieve the simulator.
-     * @return OTSSimulatorInterface; the simulator
+     * @return OtsSimulatorInterface; the simulator
      */
     public OtsSimulatorInterface getSimulator()
     {

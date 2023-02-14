@@ -109,7 +109,7 @@ public final class OdApplier
      * <th>0.0m</th>
      * </tr>
      * </table>
-     * @param network OTSRoadNetwork; network
+     * @param network OtsRoadNetwork; network
      * @param od ODMatrix; OD matrix
      * @param odOptions ODOptions; options for vehicle generation
      * @param detectorType DetectorType; detector type.
@@ -118,7 +118,7 @@ public final class OdApplier
      * @throws SimRuntimeException if this method is called after simulation time 0
      */
     @SuppressWarnings("checkstyle:methodlength")
-    public static Map<String, GeneratorObjects> applyOD(final OtsRoadNetwork network, final ODMatrix od,
+    public static Map<String, GeneratorObjects> applyOD(final OtsRoadNetwork network, final OdMatrix od,
             final OdOptions odOptions, final DetectorType detectorType) throws ParameterException, SimRuntimeException
     {
         Throw.whenNull(network, "Network may not be null.");
@@ -228,7 +228,7 @@ public final class OdApplier
                 }
             }
 
-            // Step 2: gather DirectedLanePositions for each generator pertaining to each DemandNode<...>
+            // Step 2: gather LanePositions for each generator pertaining to each DemandNode<...>
             Map<DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>>, Set<LanePosition>> initialPositions =
                     new LinkedHashMap<>();
             Map<CrossSectionLink, Double> linkWeights = null;
@@ -280,14 +280,14 @@ public final class OdApplier
                                                 connector.getDemandWeight() / served);
                                         viaNodes.put((CrossSectionLink) connectedLink, connectedNode);
                                     }
-                                    setDirectedLanePosition((CrossSectionLink) connectedLink, connectedNode, positionSet);
+                                    setLanePosition((CrossSectionLink) connectedLink, connectedNode, positionSet);
                                 }
                             }
                         }
                     }
                     else if (link instanceof CrossSectionLink)
                     {
-                        setDirectedLanePosition((CrossSectionLink) link, origin, positionSet);
+                        setLanePosition((CrossSectionLink) link, origin, positionSet);
                     }
                 }
                 initialPositions.put(rootNode, positionSet);
@@ -411,7 +411,7 @@ public final class OdApplier
     /**
      * Create destination sensors at all lanes connected to a destination node. This method considers connectors too.
      * @param destination Node; destination node
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param detectorType DetectorType; detector type.
      */
     private static void createSensorsAtDestination(final Node destination, final OtsSimulatorInterface simulator,
@@ -433,7 +433,7 @@ public final class OdApplier
     /**
      * Create sensors at all lanes connected to this node. This method does not handle connectors.
      * @param destination Node; the destination node
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param detectorType DetectorType; detector type.
      */
     private static void createSensorsAtDestinationNode(final Node destination, final OtsSimulatorInterface simulator,
@@ -559,13 +559,13 @@ public final class OdApplier
     }
 
     /**
-     * Adds {@code DirectedLanePosition}s to the input set, for {@code Lane}s on the given link, starting at the given
+     * Adds {@code LanePosition}s to the input set, for {@code Lane}s on the given link, starting at the given
      * {@code Node}.
      * @param link CrossSectionLink; link with lanes to add positions for
      * @param node Node; node on the side where positions should be placed
-     * @param positionSet Set&lt;DirectedLanePosition&gt;; set to add position to
+     * @param positionSet Set&lt;LanePosition&gt;; set to add position to
      */
-    private static void setDirectedLanePosition(final CrossSectionLink link, final Node node,
+    private static void setLanePosition(final CrossSectionLink link, final Node node,
             final Set<LanePosition> positionSet)
     {
         for (Lane lane : link.getLanes())

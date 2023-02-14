@@ -9,7 +9,7 @@ import org.djunits.value.vdouble.vector.PositionVector;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OtsNetwork;
 import org.sim0mq.Sim0MQException;
@@ -34,7 +34,7 @@ public class NodeTransceiver extends AbstractTransceiver
 
     /**
      * Construct a new NodeTransceiver.
-     * @param network OTSNetwork; the network
+     * @param network OtsNetwork; the network
      * @param nodeIdSource NodeIdTransceiver; the transceiver that can produce all Node ids in the Network
      */
     public NodeTransceiver(final OtsNetwork network, final NodeIdTransceiver nodeIdSource)
@@ -69,7 +69,7 @@ public class NodeTransceiver extends AbstractTransceiver
             return null;
         }
         return new Object[] {node.getId(), node.getPoint().doubleVector(PositionUnit.METER),
-                OtsPoint3D.direction(node.getLocation(), DirectionUnit.EAST_RADIAN), node.getLinks().size()};
+                OtsPoint3d.direction(node.getLocation(), DirectionUnit.EAST_RADIAN), node.getLinks().size()};
     }
 
     /** {@inheritDoc} */

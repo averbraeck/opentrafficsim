@@ -57,7 +57,7 @@ import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
 import org.opentrafficsim.road.od.Categorization;
 import org.opentrafficsim.road.od.Category;
 import org.opentrafficsim.road.od.Interpolation;
-import org.opentrafficsim.road.od.ODMatrix;
+import org.opentrafficsim.road.od.OdMatrix;
 import org.opentrafficsim.road.od.OdApplier;
 import org.opentrafficsim.road.od.OdOptions;
 import org.opentrafficsim.road.od.OdApplier.GeneratorObjects;
@@ -98,7 +98,7 @@ public final class OdParser
 
     /**
      * Creates generators and returns OD matrices.
-     * @param otsNetwork OTSRoadNetwork; network
+     * @param otsNetwork OtsRoadNetwork; network
      * @param definitions Definitions; parsed definitions.
      * @param demands List&lt;NETWORKDEMAND&gt;; demand
      * @param gtuTemplates Map&lt;String, GTUTEMPLATE&gt;; GTU templates
@@ -260,8 +260,8 @@ public final class OdParser
                 double globalFactor = parsePositiveFactor(od.getGLOBALFACTOR());
 
                 // Create the OD matrix
-                ODMatrix odMatrix =
-                        new ODMatrix(id, origins, destinations, categorization, globalTimeVector, globalInterpolation);
+                OdMatrix odMatrix =
+                        new OdMatrix(id, origins, destinations, categorization, globalTimeVector, globalInterpolation);
 
                 // Add demand
                 MultiKeyMap<Set<DEMAND>> demandPerOD = new MultiKeyMap<>(Node.class, Node.class);
@@ -689,7 +689,7 @@ public final class OdParser
      * @param option Option&lt;T&gt;; option to set
      * @param value T; value to set the option to
      * @param options ODOPTIONSITEM; used to set the option on the right level (Link type, origin node, lane
-     * @param otsNetwork OTSRoadNetwork; to get the link type, origin node or lane from
+     * @param otsNetwork OtsRoadNetwork; to get the link type, origin node or lane from
      * @param definitions Definitions; parsed definitions.
      * @param <T> option value type
      */

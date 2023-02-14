@@ -34,9 +34,9 @@ import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsLine3D.FractionalFallback;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine3d.FractionalFallback;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -181,7 +181,7 @@ public class LaneBasedGtu extends Gtu
      * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
      * @param maximumSpeed Speed;the maximum speed of the GTU (in the driving direction)
      * @param front Length; front distance relative to the reference position
-     * @param network OTSRoadNetwork; the network that the GTU is initially registered in
+     * @param network OtsRoadNetwork; the network that the GTU is initially registered in
      * @throws GtuException when initial values are not correct
      */
     public LaneBasedGtu(final String id, final GtuType gtuType, final Length length, final Length width,
@@ -195,7 +195,7 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * @param strategicalPlanner LaneBasedStrategicalPlanner; the strategical planner (e.g., route determination) to use
-     * @param initialLongitudinalPositions Set&lt;DirectedLanePosition&gt;; the initial positions of the car on one or more
+     * @param initialLongitudinalPositions Set&lt;LanePosition&gt;; the initial positions of the car on one or more
      *            lanes with their directions
      * @param initialSpeed Speed; the initial speed of the car on the lane
      * @throws NetworkException when the GTU cannot be placed on the given lane
@@ -249,9 +249,9 @@ public class LaneBasedGtu extends Gtu
             }
             else
             {
-                OtsPoint3D p2 = new OtsPoint3D(initialLocation.x + 1E-6 * Math.cos(initialLocation.getRotZ()),
+                OtsPoint3d p2 = new OtsPoint3d(initialLocation.x + 1E-6 * Math.cos(initialLocation.getRotZ()),
                         initialLocation.y + 1E-6 * Math.sin(initialLocation.getRotZ()), initialLocation.z);
-                OtsLine3D path = new OtsLine3D(new OtsPoint3D(initialLocation), p2);
+                OtsLine3d path = new OtsLine3d(new OtsPoint3d(initialLocation), p2);
                 setOperationalPlan(OperationalPlanBuilder.buildConstantSpeedPlan(this, path, now, initialSpeed));
             }
         }
@@ -259,77 +259,6 @@ public class LaneBasedGtu extends Gtu
         {
             throw new RuntimeException("Initial operational plan could not be created.", e);
         }
-
-        // XXX: Added code AV 20220903
-        // Check if the gtu has been registered on all lanes where it resides
-        // Could not make the code work, so destroy the vehicles that are residing in multiple lanes...
-        /*-
-        for (DirectedLanePosition pos : new LinkedHashSet<DirectedLanePosition>(initialLongitudinalPositions)) // copy
-        {
-            DirectedLanePosition dlp = null;
-            DirectedLanePosition posRef = pos;
-            double fracFront = (posRef.getPosition().si + getFront().getDx().si) / posRef.getLane().getLength().si;
-            while (fracFront > 1.0) // only take DIR_PLUS into account for now
-            {
-                Set<Lane> nextLanes = posRef.getLane().nextLanes(getGtuType());
-                Throw.when(nextLanes.size() > 1, GTUException.class, "next lane for GTU %s: init has multiple choices", this);
-                Lane nextLane = nextLanes.keySet().iterator().next();
-                boolean alreadyPresent = false;
-                for (DirectedLanePosition pos2 : initialLongitudinalPositions)
-                {
-                    if (pos2.getLane().equals(nextLane))
-                    {
-                        alreadyPresent = true;
-                        dlp = pos2;
-                        break;
-                    }
-                }
-                if (!alreadyPresent)
-                {
-                    // calculate relative position for reference
-                    Length len2 = posRef.getPosition().minus(posRef.getLane().getLength());
-                    dlp = new DirectedLanePosition(nextLane, len2, GTUDirectionality.DIR_PLUS);
-                    initialLongitudinalPositions.add(dlp);
-                }
-                fracFront = 0.0; // TODO: Change this code for a full while loop for multiple lanes
-                posRef = dlp;
-            }
-            
-            dlp = null;
-            posRef = pos;
-            double fracRear = (posRef.getPosition().si - getRear().getDx().si) / posRef.getLane().getLength().si;
-            if (fracRear < 0.0) 
-            {
-                System.err.println("GTU " + toString() + " has been destroyed at init since it occupied multiple lanes");
-                this.destroy();
-            }
-            while (fracRear < 0.0) // only take DIR_PLUS into account for now
-            {
-                Set<Lane> prevLanes = posRef.getLane().prevLanes(getGtuType());
-                Throw.when(prevLanes.size() > 1, GTUException.class, "prev lane for GTU %s: init has multiple choices", this);
-                Lane prevLane = prevLanes.keySet().iterator().next();
-                boolean alreadyPresent = false;
-                for (DirectedLanePosition pos2 : initialLongitudinalPositions)
-                {
-                    if (pos2.getLane().equals(prevLane))
-                    {
-                        alreadyPresent = true;
-                        dlp = pos2;
-                        break;
-                    }
-                }
-                if (!alreadyPresent)
-                {
-                    // calculate relative position for reference
-                    Length len2 = prevLane.getLength().plus(posRef.getPosition());
-                    dlp = new DirectedLanePosition(prevLane, len2, GTUDirectionality.DIR_PLUS);
-                    initialLongitudinalPositions.add(dlp);
-                }
-                fracRear = 1.0; // TODO: change this code for a full while loop for multiple lanes
-                posRef = dlp;
-            }
-        }
-        */
 
         // register the GTU on the lanes
         List<LanePosition> inits = new ArrayList<>(); // need to sort them
@@ -393,7 +322,7 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Reinitializes the GTU on the network using the existing strategical planner and zero speed.
-     * @param initialLongitudinalPositions Set&lt;DirectedLanePosition&gt;; initial position
+     * @param initialLongitudinalPositions Set&lt;LanePosition&gt;; initial position
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GtuException when initial values are not correct
@@ -437,12 +366,12 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Enters lanes upstream and downstream of the new location after an instantaneous lane change.
-     * @param lane LaneDirection; considered lane
+     * @param lane Lane; considered lane
      * @param position Length; position to add GTU at
      * @param dir int; below 0 for upstream, above 0 for downstream, 0 for both<br>
-     *            TODO: the below 0 and above 0 is NOT what is tested
      * @throws GtuException on exception
      */
+    // TODO: the below 0 and above 0 is NOT what is tested
     private void enterLaneRecursive(final Lane lane, final Length position, final int dir) throws GtuException
     {
         List<Lane> lanes = new ArrayList<>();
@@ -672,8 +601,8 @@ public class LaneBasedGtu extends Gtu
             }
 
             fireTimedEvent(LaneBasedGtu.LANEBASED_MOVE_EVENT,
-                    new Object[] {getId(), new OtsPoint3D(fromLocation).doubleVector(PositionUnit.METER),
-                            OtsPoint3D.direction(fromLocation, DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
+                    new Object[] {getId(), new OtsPoint3d(fromLocation).doubleVector(PositionUnit.METER),
+                            OtsPoint3d.direction(fromLocation, DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
                             getTurnIndicatorStatus().name(), getOdometer(), dlp.getLane().getParentLink().getId(),
                             dlp.getLane().getId(), dlp.getPosition()},
                     getSimulator().getSimulatorTime());
@@ -741,7 +670,7 @@ public class LaneBasedGtu extends Gtu
         if (possiblyNearNextSection)
         {
             CrossSectionLink link = lastCrossSection.getLanes().get(0).getParentLink();
-            OtsLine3D enterLine = link.getEndLine();
+            OtsLine3d enterLine = link.getEndLine();
             Time enterTime = timeAtLine(enterLine, getFront());
             if (enterTime != null)
             {
@@ -880,7 +809,7 @@ public class LaneBasedGtu extends Gtu
         if (possiblyNearNextSection)
         {
             CrossSectionLink link = firstCrossSection.getLanes().get(0).getParentLink();
-            OtsLine3D leaveLine = link.getEndLine();
+            OtsLine3d leaveLine = link.getEndLine();
             Time leaveTime = timeAtLine(leaveLine, getRear());
             if (leaveTime == null)
             {
@@ -1047,31 +976,31 @@ public class LaneBasedGtu extends Gtu
     /**
      * Returns an estimation of when the relative position will reach the line. Returns {@code null} if this does not occur
      * during the current operational plan.
-     * @param line OTSLine3D; line, i.e. lateral line at link start or lateral entrance of sensor
+     * @param line OtsLine3d; line, i.e. lateral line at link start or lateral entrance of sensor
      * @param relativePosition RelativePosition; position to cross the line
      * @return estimation of when the relative position will reach the line, {@code null} if this does not occur during the
      *         current operational plan
      * @throws GtuException position error
      */
-    private Time timeAtLine(final OtsLine3D line, final RelativePosition relativePosition) throws GtuException
+    private Time timeAtLine(final OtsLine3d line, final RelativePosition relativePosition) throws GtuException
     {
         Throw.when(line.size() != 2, IllegalArgumentException.class, "Line to cross with path should have 2 points.");
-        OtsLine3D path = getOperationalPlan().getPath();
-        OtsPoint3D[] points;
+        OtsLine3d path = getOperationalPlan().getPath();
+        OtsPoint3d[] points;
         double adjust;
         if (relativePosition.getDx().gt0())
         {
             // as the position is downstream of the reference, we need to attach some distance at the end
-            points = new OtsPoint3D[path.size() + 1];
+            points = new OtsPoint3d[path.size() + 1];
             System.arraycopy(path.getPoints(), 0, points, 0, path.size());
-            points[path.size()] = new OtsPoint3D(path.getLocationExtendedSI(path.getLengthSI() + relativePosition.getDx().si));
+            points[path.size()] = new OtsPoint3d(path.getLocationExtendedSI(path.getLengthSI() + relativePosition.getDx().si));
             adjust = -relativePosition.getDx().si;
         }
         else if (relativePosition.getDx().lt0())
         {
-            points = new OtsPoint3D[path.size() + 1];
+            points = new OtsPoint3d[path.size() + 1];
             System.arraycopy(path.getPoints(), 0, points, 1, path.size());
-            points[0] = new OtsPoint3D(path.getLocationExtendedSI(relativePosition.getDx().si));
+            points[0] = new OtsPoint3d(path.getLocationExtendedSI(relativePosition.getDx().si));
             adjust = 0.0;
         }
         else
@@ -1084,10 +1013,10 @@ public class LaneBasedGtu extends Gtu
         double cumul = 0.0;
         for (int i = 0; i < points.length - 1; i++)
         {
-            OtsPoint3D intersect;
+            OtsPoint3d intersect;
             try
             {
-                intersect = OtsPoint3D.intersectionOfLineSegments(points[i], points[i + 1], line.get(0), line.get(1));
+                intersect = OtsPoint3d.intersectionOfLineSegments(points[i], points[i + 1], line.get(0), line.get(1));
             }
             catch (OtsGeometryException exception)
             {
@@ -1104,7 +1033,7 @@ public class LaneBasedGtu extends Gtu
                     // return getSimulator().getSimulatorAbsTime(); // this was a mistake...
                     // relative position already crossed the point, e.g. FRONT
                     // SKL 02-08-2023: if the nose did not trigger at and of last move by mm's and due to vehicle rotation
-                    // having been assumed straight, we should trigger it now. However, we should not double-trigger e.g. 
+                    // having been assumed straight, we should trigger it now. However, we should not double-trigger e.g.
                     // detectors. Let's return NaN to indicate this problem.
                     return Time.instantiateSI(Double.NaN);
                 }
@@ -1340,7 +1269,7 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Return the current Lane, position and directionality of the GTU.
-     * @return DirectedLanePosition; the current Lane, position and directionality of the GTU
+     * @return LanePosition; the current Lane, position and directionality of the GTU
      * @throws GtuException in case the reference position of the GTU cannot be found on the lanes in its current path
      */
     @SuppressWarnings("checkstyle:designforextension")
@@ -1519,16 +1448,16 @@ public class LaneBasedGtu extends Gtu
         {
             Lane referenceLane = dlp.getLane();
             fireTimedEvent(LaneBasedGtu.LANEBASED_DESTROY_EVENT,
-                    new Object[] {getId(), new OtsPoint3D(location).doubleVector(PositionUnit.METER),
-                            OtsPoint3D.direction(location, DirectionUnit.EAST_RADIAN), getOdometer(),
+                    new Object[] {getId(), new OtsPoint3d(location).doubleVector(PositionUnit.METER),
+                            OtsPoint3d.direction(location, DirectionUnit.EAST_RADIAN), getOdometer(),
                             referenceLane.getParentLink().getId(), referenceLane.getId(), dlp.getPosition()},
                     getSimulator().getSimulatorTime());
         }
         else
         {
             fireTimedEvent(LaneBasedGtu.LANEBASED_DESTROY_EVENT,
-                    new Object[] {getId(), new OtsPoint3D(location).doubleVector(PositionUnit.METER),
-                            OtsPoint3D.direction(location, DirectionUnit.EAST_RADIAN), getOdometer(), null, null, null},
+                    new Object[] {getId(), new OtsPoint3d(location).doubleVector(PositionUnit.METER),
+                            OtsPoint3d.direction(location, DirectionUnit.EAST_RADIAN), getOdometer(), null, null, null},
                     getSimulator().getSimulatorTime());
         }
         cancelAllEvents();
@@ -1826,7 +1755,7 @@ public class LaneBasedGtu extends Gtu
      * The lane-based event type for pub/sub indicating a move. <br>
      * Payload: [String gtuId, PositionVector currentPosition, Direction currentDirection, Speed speed, Acceleration
      * acceleration, TurnIndicatorStatus turnIndicatorStatus, Length odometer, Link id of referenceLane, Lane id of
-     * referenceLane, Length positionOnReferenceLane, GTUDirectionality direction]
+     * referenceLane, Length positionOnReferenceLane]
      */
     public static EventType LANEBASED_MOVE_EVENT = new EventType("LANEBASEDGTU.MOVE", new MetaData("Lane based GTU moved",
             "Lane based GTU moved",
@@ -1844,7 +1773,7 @@ public class LaneBasedGtu extends Gtu
     /**
      * The lane-based event type for pub/sub indicating destruction of the GTU. <br>
      * Payload: [String gtuId, PositionVector finalPosition, Direction finalDirection, Length finalOdometer, Link referenceLink,
-     * Lane referenceLane, Length positionOnReferenceLane, GTUDirectionality direction]
+     * Lane referenceLane, Length positionOnReferenceLane]
      */
     public static EventType LANEBASED_DESTROY_EVENT = new EventType("LANEBASEDGTU.DESTROY", new MetaData(
             "Lane based GTU destroyed", "Lane based GTU destroyed",
@@ -1881,7 +1810,7 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * The event type for pub/sub indicating that the GTU change lane. <br>
-     * Payload: [String gtuId, LateralDirectionality direction, DirectedLanePosition from]
+     * Payload: [String gtuId, LateralDirectionality direction, String fromLaneId, Length position]
      */
     public static EventType LANE_CHANGE_EVENT = new EventType("LANE.CHANGE",
             new MetaData("Lane based GTU changes lane", "Lane based GTU changes lane",

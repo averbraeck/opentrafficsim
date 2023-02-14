@@ -150,9 +150,9 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
      * @param extent Rectangle2D; bottom left corner, length and width of the area (world) to animate.
      * @param size Dimension; the size to be used for the animation.
      * @param simulator OTSAnimator; the simulator or animator of the model.
-     * @param otsModel OTSModelInterface; the builder and rebuilder of the simulation, based on properties.
+     * @param otsModel OtsModelInterface; the builder and rebuilder of the simulation, based on properties.
      * @param gtuColorer GtuColorer; the colorer to use for the GTUs.
-     * @param network OTSNetwork; network
+     * @param network OtsNetwork; network
      * @throws RemoteException when notification of the animation panel fails
      * @throws DSOLException when simulator does not implement AnimatorInterface
      */
@@ -690,14 +690,14 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         new DisposeOnCloseThread(this).start();
     }
 
-    /** Install the dispose on close when the OTSControlPanel is registered as part of a frame. */
+    /** Install the dispose on close when the OtsControlPanel is registered as part of a frame. */
     protected class DisposeOnCloseThread extends Thread
     {
         /** The current container. */
         private OtsAnimationPanel panel;
 
         /**
-         * @param panel OTSAnimationPanel; the OTSControlpanel container.
+         * @param panel OtsAnimationPanel; the OTSControlpanel container.
          */
         public DisposeOnCloseThread(final OtsAnimationPanel panel)
         {
@@ -736,7 +736,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         @Override
         public final String toString()
         {
-            return "DisposeOnCloseThread of OTSAnimationPanel [panel=" + this.panel + "]";
+            return "DisposeOnCloseThread of OtsAnimationPanel [panel=" + this.panel + "]";
         }
     }
 
@@ -843,7 +843,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         @Override
         public final String toString()
         {
-            return "UpdateTimer thread for OTSAnimationPanel";
+            return "UpdateTimer thread for OtsAnimationPanel";
         }
 
     }
@@ -876,7 +876,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
          * @param extent Rectangle2D; home extent
          * @param size Dimension; size
          * @param simulator SimulatorInterface&lt;?, ?, ?&gt;; simulator
-         * @param network OTSNetwork; network
+         * @param network OtsNetwork; network
          * @throws RemoteException on remote animation error
          * @throws DSOLException when simulator does not implement AnimatorInterface
          */

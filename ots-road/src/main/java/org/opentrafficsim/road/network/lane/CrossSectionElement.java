@@ -17,8 +17,8 @@ import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.geometry.OtsShape;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -57,7 +57,7 @@ public class CrossSectionElement extends LocalEventProducer implements Locatable
     protected final Length length;
 
     /** The center line of the element. Calculated once at the creation. */
-    private final OtsLine3D centerLine;
+    private final OtsLine3d centerLine;
 
     /** The contour of the element. Calculated once at the creation. */
     private final OtsShape contour;
@@ -110,7 +110,7 @@ public class CrossSectionElement extends LocalEventProducer implements Locatable
                 NetworkException.class, "CrossSectionElement %s for %s has a last slice with relativeLength is not equal "
                         + "to the length of the parent link",
                 id, parentLink);
-        OtsLine3D proposedCenterLine = null;
+        OtsLine3d proposedCenterLine = null;
         if (this.crossSectionSlices.size() <= 2)
         {
             proposedCenterLine = fixTightInnerCurve(new double[] {0.0, 1.0},
@@ -128,30 +128,30 @@ public class CrossSectionElement extends LocalEventProducer implements Locatable
             proposedCenterLine = fixTightInnerCurve(fractions, offsets);
         }
         // Make positions and directions of begin and end of CrossSection exact
-        List<OtsPoint3D> points = new ArrayList<OtsPoint3D>(Arrays.asList(proposedCenterLine.getPoints()));
+        List<OtsPoint3d> points = new ArrayList<OtsPoint3d>(Arrays.asList(proposedCenterLine.getPoints()));
         // Make position at begin exact
         DirectedPoint linkFrom = Try.assign(() -> parentLink.getStartNode().getLocation(), "Cannot happen");
         double fromDirection = linkFrom.getRotZ();
         points.remove(0);
-        points.add(0, new OtsPoint3D(linkFrom.x + getDesignLineOffsetAtBegin().getSI() * Math.cos(fromDirection + Math.PI / 2),
+        points.add(0, new OtsPoint3d(linkFrom.x + getDesignLineOffsetAtBegin().getSI() * Math.cos(fromDirection + Math.PI / 2),
                 linkFrom.y + getDesignLineOffsetAtBegin().getSI() * Math.sin(fromDirection + Math.PI / 2)));
         // Make position at end exact
         DirectedPoint linkTo = Try.assign(() -> parentLink.getEndNode().getLocation(), "Cannot happen");
         double toDirection = linkTo.getRotZ();
         points.remove(points.size() - 1);
-        points.add(new OtsPoint3D(linkTo.x + getDesignLineOffsetAtEnd().getSI() * Math.cos(toDirection + Math.PI / 2),
+        points.add(new OtsPoint3d(linkTo.x + getDesignLineOffsetAtEnd().getSI() * Math.cos(toDirection + Math.PI / 2),
                 linkTo.y + getDesignLineOffsetAtEnd().getSI() * Math.sin(toDirection + Math.PI / 2)));
         // Check direction at begin
         double direction = points.get(0).horizontalDirectionSI(points.get(1));
-        OtsPoint3D extraPointAfterStart = null;
+        OtsPoint3d extraPointAfterStart = null;
         if (Math.abs(direction - fromDirection) > MAXIMUMDIRECTIONERROR)
         {
             // Insert an extra point to ensure that the new CrossSectionElement starts off in the right direction
-            OtsPoint3D from = points.get(0);
-            OtsPoint3D next = points.get(1);
+            OtsPoint3d from = points.get(0);
+            OtsPoint3d next = points.get(1);
             double distance =
                     Math.min(from.horizontalDistanceSI(next) * FIXUPPOINTPROPORTION, crossSectionSlices.get(0).getWidth().si);
-            extraPointAfterStart = new OtsPoint3D(from.x + Math.cos(fromDirection) * distance,
+            extraPointAfterStart = new OtsPoint3d(from.x + Math.cos(fromDirection) * distance,
                     from.y + Math.sin(fromDirection) * distance, from.z + FIXUPPOINTPROPORTION * (next.z - from.z));
             // Do not insert it yet because that could cause a similar point near the end to be put at the wrong distance
         }
@@ -161,18 +161,18 @@ public class CrossSectionElement extends LocalEventProducer implements Locatable
         if (Math.abs(direction - toDirection) > MAXIMUMDIRECTIONERROR)
         {
             // Insert an extra point to ensure that the new CrossSectionElement ends in the right direction
-            OtsPoint3D to = points.get(pointCount - 1);
-            OtsPoint3D before = points.get(pointCount - 2);
+            OtsPoint3d to = points.get(pointCount - 1);
+            OtsPoint3d before = points.get(pointCount - 2);
             double distance = Math.min(before.horizontalDistanceSI(to) * FIXUPPOINTPROPORTION,
                     crossSectionSlices.get(Math.max(0, crossSectionSlices.size() - 2)).getWidth().si);
-            points.add(pointCount - 1, new OtsPoint3D(to.x - Math.cos(toDirection) * distance,
+            points.add(pointCount - 1, new OtsPoint3d(to.x - Math.cos(toDirection) * distance,
                     to.y - Math.sin(toDirection) * distance, to.z - FIXUPPOINTPROPORTION * (before.z - to.z)));
         }
         if (null != extraPointAfterStart)
         {
             points.add(1, extraPointAfterStart);
         }
-        this.centerLine = new OtsLine3D(points);
+        this.centerLine = new OtsLine3d(points);
         this.length = this.centerLine.getLength();
         this.contour = constructContour(this);
         this.parentLink.addCrossSectionElement(this);
@@ -241,12 +241,12 @@ public class CrossSectionElement extends LocalEventProducer implements Locatable
      * radius, and on the inside of the curve.
      * @param fractions double[]; length fractions of offsets
      * @param offsets double[]; offsets
-     * @return OTSPoint3D; center line
+     * @return OtsPoint3d; center line
      * @throws OtsGeometryException index out of bounds
      */
-    private OtsLine3D fixTightInnerCurve(final double[] fractions, final double[] offsets) throws OtsGeometryException
+    private OtsLine3d fixTightInnerCurve(final double[] fractions, final double[] offsets) throws OtsGeometryException
     {
-        OtsLine3D linkCenterLine = getParentLink().getDesignLine();
+        OtsLine3d linkCenterLine = getParentLink().getDesignLine();
         for (int i = 1; i < linkCenterLine.size() - 1; i++)
         {
             double fraction = linkCenterLine.getVertexFraction(i);
@@ -287,40 +287,40 @@ public class CrossSectionElement extends LocalEventProducer implements Locatable
         }
         if (this.crossSectionSlices.size() <= 2)
         {
-            OtsLine3D designLine = this.getParentLink().getDesignLine();
+            OtsLine3d designLine = this.getParentLink().getDesignLine();
             if (designLine.size() > 2)
             {
                 // TODO: this produces near-duplicate points on lane 925_J1.FORWARD1 in the Aimsun network
                 // hack: clean nearby points
-                OtsLine3D line =
+                OtsLine3d line =
                         designLine.offsetLine(getDesignLineOffsetAtBegin().getSI(), getDesignLineOffsetAtEnd().getSI());
-                List<OtsPoint3D> points = new ArrayList<>(Arrays.asList(line.getPoints()));
-                Iterator<OtsPoint3D> it = points.iterator();
-                OtsPoint3D prevPoint = null;
+                List<OtsPoint3d> points = new ArrayList<>(Arrays.asList(line.getPoints()));
+                Iterator<OtsPoint3d> it = points.iterator();
+                OtsPoint3d prevPoint = null;
                 while (it.hasNext())
                 {
-                    OtsPoint3D point = it.next();
+                    OtsPoint3d point = it.next();
                     if (prevPoint != null && prevPoint.distance(point).si < 1e-4)
                     {
                         it.remove();
                     }
                     prevPoint = point;
                 }
-                return new OtsLine3D(points);
+                return new OtsLine3d(points);
             }
             else
             {
                 DirectedPoint refStart = getParentLink().getStartNode().getLocation();
                 double startRot = refStart.getRotZ();
                 double startOffset = this.crossSectionSlices.get(0).getDesignLineOffset().si;
-                OtsPoint3D start = new OtsPoint3D(refStart.x - Math.sin(startRot) * startOffset,
+                OtsPoint3d start = new OtsPoint3d(refStart.x - Math.sin(startRot) * startOffset,
                         refStart.y + Math.cos(startRot) * startOffset, refStart.z);
                 DirectedPoint refEnd = getParentLink().getEndNode().getLocation();
                 double endRot = refEnd.getRotZ();
                 double endOffset = this.crossSectionSlices.get(this.crossSectionSlices.size() - 1).getDesignLineOffset().si;
-                OtsPoint3D end = new OtsPoint3D(refEnd.x - Math.sin(endRot) * endOffset,
+                OtsPoint3d end = new OtsPoint3d(refEnd.x - Math.sin(endRot) * endOffset,
                         refEnd.y + Math.cos(endRot) * endOffset, refEnd.z);
-                return new OtsLine3D(start, end);
+                return new OtsLine3d(start, end);
             }
         }
         else
@@ -506,16 +506,16 @@ public class CrossSectionElement extends LocalEventProducer implements Locatable
 
     /**
      * Retrieve the center line of this CrossSectionElement.
-     * @return OTSLine3D; the center line of this CrossSectionElement
+     * @return OtsLine3d; the center line of this CrossSectionElement
      */
-    public final OtsLine3D getCenterLine()
+    public final OtsLine3d getCenterLine()
     {
         return this.centerLine;
     }
 
     /**
      * Retrieve the contour of this CrossSectionElement.
-     * @return OTSShape; the contour of this CrossSectionElement
+     * @return OtsShape; the contour of this CrossSectionElement
      */
     public final OtsShape getContour()
     {
@@ -600,22 +600,22 @@ public class CrossSectionElement extends LocalEventProducer implements Locatable
      * Construct a buffer geometry by offsetting the linear geometry line with a distance and constructing a so-called "buffer"
      * around it.
      * @param cse CrossSectionElement; the cross section element to construct the contour for
-     * @return OTSShape; the geometry belonging to this CrossSectionElement.
+     * @return OtsShape; the geometry belonging to this CrossSectionElement.
      * @throws OtsGeometryException when construction of the geometry fails
      * @throws NetworkException when the resulting contour is degenerate (cannot happen; we hope)
      */
     public static OtsShape constructContour(final CrossSectionElement cse) throws OtsGeometryException, NetworkException
     {
-        OtsPoint3D[] result = null;
+        OtsPoint3d[] result = null;
 
         if (cse.crossSectionSlices.size() <= 2)
         {
-            OtsLine3D crossSectionDesignLine = cse.centerLine;
-            OtsLine3D rightBoundary =
+            OtsLine3d crossSectionDesignLine = cse.centerLine;
+            OtsLine3d rightBoundary =
                     crossSectionDesignLine.offsetLine(-cse.getBeginWidth().getSI() / 2, -cse.getEndWidth().getSI() / 2);
-            OtsLine3D leftBoundary =
+            OtsLine3d leftBoundary =
                     crossSectionDesignLine.offsetLine(cse.getBeginWidth().getSI() / 2, cse.getEndWidth().getSI() / 2);
-            result = new OtsPoint3D[rightBoundary.size() + leftBoundary.size() + 1];
+            result = new OtsPoint3d[rightBoundary.size() + leftBoundary.size() + 1];
             int resultIndex = 0;
             for (int index = 0; index < rightBoundary.size(); index++)
             {
@@ -629,8 +629,8 @@ public class CrossSectionElement extends LocalEventProducer implements Locatable
         }
         else
         {
-            List<OtsPoint3D> resultList = new ArrayList<>();
-            List<OtsPoint3D> rightBoundary = new ArrayList<>();
+            List<OtsPoint3d> resultList = new ArrayList<>();
+            List<OtsPoint3d> rightBoundary = new ArrayList<>();
             for (int i = 0; i < cse.crossSectionSlices.size() - 1; i++)
             {
                 double plLength = cse.getParentLink().getLength().si;
@@ -640,7 +640,7 @@ public class CrossSectionElement extends LocalEventProducer implements Locatable
                 double ew2 = cse.crossSectionSlices.get(i + 1).getWidth().si / 2.0;
                 double sf = cse.crossSectionSlices.get(i).getRelativeLength().si / plLength;
                 double ef = cse.crossSectionSlices.get(i + 1).getRelativeLength().si / plLength;
-                OtsLine3D crossSectionDesignLine =
+                OtsLine3d crossSectionDesignLine =
                         cse.getParentLink().getDesignLine().extractFractional(sf, ef).offsetLine(so, eo);
                 resultList.addAll(Arrays.asList(crossSectionDesignLine.offsetLine(-sw2, -ew2).getPoints()));
                 rightBoundary.addAll(Arrays.asList(crossSectionDesignLine.offsetLine(sw2, ew2).getPoints()));
@@ -651,9 +651,9 @@ public class CrossSectionElement extends LocalEventProducer implements Locatable
             }
             // close the contour (might not be needed)
             resultList.add(resultList.get(0));
-            result = resultList.toArray(new OtsPoint3D[] {});
+            result = resultList.toArray(new OtsPoint3d[] {});
         }
-        return OtsShape.createAndCleanOTSShape(result);
+        return OtsShape.createAndCleanOtsShape(result);
     }
 
     /** {@inheritDoc} */

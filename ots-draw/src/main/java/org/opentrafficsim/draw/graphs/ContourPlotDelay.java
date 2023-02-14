@@ -131,7 +131,7 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
      * Constructor. In case this plot is created live, the sampler of the sample data in the data source needs to have the
      * extended data type {@code ReferenceSpeed.INSTANCE} registered.
      * @param caption String; caption
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param dataPool ContourDataSource; data pool
      */
     public ContourPlotDelay(final String caption, final OtsSimulatorInterface simulator, final ContourDataSource dataPool)

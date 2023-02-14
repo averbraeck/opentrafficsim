@@ -18,7 +18,7 @@ public class LinkIdTransceiver extends AbstractIdTransceiver
 {
     /**
      * Construct a new LinkIdTransceiver.
-     * @param network OTSNetwork; the OTS network
+     * @param network OtsNetwork; the OTS network
      */
     public LinkIdTransceiver(final OtsNetwork network)
     {

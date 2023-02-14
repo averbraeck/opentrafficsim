@@ -26,7 +26,7 @@ public class HtmlGraphicsEnvironment extends GraphicsEnvironment
     HtmlDevice htmlDevice;
 
     /** the canvas to draw on. */
-    HtmlGraphics2D graphics2D;
+    HtmlGraphics2d graphics2D;
 
     /** the (dummy) configuration to use. */
     HtmlGraphicsConfiguration graphicsConfiguration;
@@ -37,7 +37,7 @@ public class HtmlGraphicsEnvironment extends GraphicsEnvironment
     public HtmlGraphicsEnvironment()
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLGraphicsEnvironment.<init>");
-        this.graphics2D = new HtmlGraphics2D();
+        this.graphics2D = new HtmlGraphics2d();
         this.graphicsConfiguration = new HtmlGraphicsConfiguration();
         this.htmlDevice = new HtmlDevice(this.graphicsConfiguration);
         this.graphicsConfiguration.setDevice(this.htmlDevice);

@@ -13,7 +13,7 @@ import org.opentrafficsim.core.SpatialObject;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
-import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.core.gtu.Gtu;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -48,7 +48,7 @@ public interface Link extends HierarchicallyTyped<LinkType, Link>, SpatialObject
     Node getEndNode();
 
     /** @return the design line. */
-    OtsLine3D getDesignLine();
+    OtsLine3d getDesignLine();
 
     /** @return the simulator. */
     OtsSimulatorInterface getSimulator();

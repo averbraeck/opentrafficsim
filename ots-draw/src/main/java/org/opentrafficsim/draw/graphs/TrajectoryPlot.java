@@ -96,7 +96,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
      * Constructor.
      * @param caption String; caption
      * @param updateInterval Duration; regular update interval (simulation time)
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param samplerData SamplerData&lt;?&gt;; sampler data
      * @param path GraphPath&lt;? extends LaneData&gt;; path
      */

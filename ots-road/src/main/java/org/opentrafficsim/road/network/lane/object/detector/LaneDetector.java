@@ -11,8 +11,8 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -68,15 +68,15 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
      *            line of the lane.
      * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the detector.
-     * @param simulator OTSSimulatorInterface; the simulator (needed to generate the animation).
-     * @param geometry OTSLine3D; the geometry of the object, which provides its location and bounds as well
+     * @param simulator OtsSimulatorInterface; the simulator (needed to generate the animation).
+     * @param geometry OtsLine3d; the geometry of the object, which provides its location and bounds as well
      * @param elevation Length; elevation of the detector
      * @param detectorType DetectorType; detector type.
      * @throws NetworkException when the position on the lane is out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneDetector(final String id, final Lane lane, final Length longitudinalPosition,
-            final RelativePosition.TYPE positionType, final OtsSimulatorInterface simulator, final OtsLine3D geometry,
+            final RelativePosition.TYPE positionType, final OtsSimulatorInterface simulator, final OtsLine3d geometry,
             final Length elevation, final DetectorType detectorType) throws NetworkException
     {
         super(id, lane, longitudinalPosition, geometry, elevation);
@@ -101,13 +101,13 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
      *            line of the lane.
      * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the detector.
-     * @param simulator OTSSimulatorInterface; the simulator (needed to generate the animation).
-     * @param geometry OTSLine3D; the geometry of the object, which provides its location and bounds as well
+     * @param simulator OtsSimulatorInterface; the simulator (needed to generate the animation).
+     * @param geometry OtsLine3d; the geometry of the object, which provides its location and bounds as well
      * @param detectorType DetectorType; detector type.
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public LaneDetector(final String id, final Lane lane, final Length longitudinalPosition,
-            final RelativePosition.TYPE positionType, final OtsSimulatorInterface simulator, final OtsLine3D geometry,
+            final RelativePosition.TYPE positionType, final OtsSimulatorInterface simulator, final OtsLine3d geometry,
             final DetectorType detectorType) throws NetworkException
     {
         this(id, lane, longitudinalPosition, positionType, simulator, geometry, LaneDetector.DEFAULT_DETECTOR_ELEVATION,
@@ -123,7 +123,7 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
      *            line of the lane
      * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the detector.
-     * @param simulator OTSSimulatorInterface; the simulator (needed to generate the animation).
+     * @param simulator OtsSimulatorInterface; the simulator (needed to generate the animation).
      * @param detectorType DetectorType; detector type.
      * @throws NetworkException when the position on the lane is out of bounds
      */
@@ -140,10 +140,10 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
      * @param lane Lane; the lane for which to make a perpendicular geometry
      * @param longitudinalPosition Length; the position on the lane
      * @param relativeWidth double; lane width to use
-     * @return an OTSLine3D that describes the line
+     * @return an OtsLine3d that describes the line
      * @throws NetworkException in case the detector point on the center line of the lane cannot be found
      */
-    protected static OtsLine3D makeGeometry(final Lane lane, final Length longitudinalPosition, final double relativeWidth)
+    protected static OtsLine3d makeGeometry(final Lane lane, final Length longitudinalPosition, final double relativeWidth)
             throws NetworkException
     {
         try
@@ -151,9 +151,9 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
             double w50 = lane.getWidth(longitudinalPosition).si * 0.5 * relativeWidth;
             DirectedPoint c = lane.getCenterLine().getLocation(longitudinalPosition);
             double a = c.getRotZ();
-            OtsPoint3D p1 = new OtsPoint3D(c.x + w50 * Math.cos(a + Math.PI / 2), c.y - w50 * Math.sin(a + Math.PI / 2), c.z);
-            OtsPoint3D p2 = new OtsPoint3D(c.x - w50 * Math.cos(a + Math.PI / 2), c.y + w50 * Math.sin(a + Math.PI / 2), c.z);
-            return new OtsLine3D(p1, p2);
+            OtsPoint3d p1 = new OtsPoint3d(c.x + w50 * Math.cos(a + Math.PI / 2), c.y - w50 * Math.sin(a + Math.PI / 2), c.z);
+            OtsPoint3d p2 = new OtsPoint3d(c.x - w50 * Math.cos(a + Math.PI / 2), c.y + w50 * Math.sin(a + Math.PI / 2), c.z);
+            return new OtsLine3d(p1, p2);
         }
         catch (OtsGeometryException exception)
         {

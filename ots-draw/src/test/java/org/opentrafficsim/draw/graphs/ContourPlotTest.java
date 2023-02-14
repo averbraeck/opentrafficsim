@@ -36,7 +36,7 @@ import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -102,8 +102,8 @@ public class ContourPlotTest implements UNITS
 
     /**
      * Create a network and a path for the tests.
-     * @param simulator OTSSimulatorInterface; the simulator
-     * @param network OTSRoadNetwork; the network
+     * @param simulator OtsSimulatorInterface; the simulator
+     * @param network OtsRoadNetwork; the network
      * @return GraphPath&lt;LaneData&gt;; the dummy path
      * @throws Exception when something goes wrong (should not happen)
      */
@@ -111,15 +111,15 @@ public class ContourPlotTest implements UNITS
             throws Exception
     {
         LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
-        OtsRoadNode b = new OtsRoadNode(network, "B", new OtsPoint3D(12345, 0, 0), Direction.ZERO);
+        OtsRoadNode b = new OtsRoadNode(network, "B", new OtsPoint3d(12345, 0, 0), Direction.ZERO);
         ArrayList<Lane> result = new ArrayList<Lane>();
         Lane[] lanes = LaneFactory.makeMultiLane(network, "AtoB",
-                new OtsRoadNode(network, "A", new OtsPoint3D(1234, 0, 0), Direction.ZERO), b, null, 1, laneType,
+                new OtsRoadNode(network, "A", new OtsPoint3d(1234, 0, 0), Direction.ZERO), b, null, 1, laneType,
                 new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
         result.add(lanes[0]);
         // Make a continuation lane to prevent errors when the operational plan exceeds the available remaining length
         lanes = LaneFactory.makeMultiLane(network, "BtoC", b,
-                new OtsRoadNode(network, "C", new OtsPoint3D(99999, 0, 0), Direction.ZERO), null, 1, laneType,
+                new OtsRoadNode(network, "C", new OtsPoint3d(99999, 0, 0), Direction.ZERO), null, 1, laneType,
                 new Speed(100, KM_PER_HOUR), null, DefaultsNl.VEHICLE);
         return GraphLaneUtil.createPath("AtoB", lanes[0]);
     }
@@ -287,7 +287,7 @@ public class ContourPlotTest implements UNITS
 
     /**
      * Test various properties of a ContourPlot that has no observed data added.
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator OtsSimulatorInterface; the simulator
      * @param cp AbstractContourPlot&lt;?&gt;; the ContourPlot to test
      * @param path GraphPath&lt;?&gt;; the path
      * @param expectedZValue double; the value that getZ and getZValue should return for a valid item when no car has passed

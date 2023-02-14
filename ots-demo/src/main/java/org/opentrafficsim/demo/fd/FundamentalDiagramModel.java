@@ -29,7 +29,7 @@ public class FundamentalDiagramModel extends AbstractOtsModel
     private OtsRoadNetwork network;
 
     /**
-     * @param simulator OTSSimulatorInterface; the simulator to use
+     * @param simulator OtsSimulatorInterface; the simulator to use
      */
     public FundamentalDiagramModel(final OtsSimulatorInterface simulator)
     {

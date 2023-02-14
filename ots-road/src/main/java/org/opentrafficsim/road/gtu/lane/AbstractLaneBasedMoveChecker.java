@@ -28,7 +28,7 @@ public abstract class AbstractLaneBasedMoveChecker implements EventListener
 
     /**
      * Constructor.
-     * @param network OTSNetwork; network
+     * @param network OtsNetwork; network
      */
     public AbstractLaneBasedMoveChecker(final OtsNetwork network)
     {

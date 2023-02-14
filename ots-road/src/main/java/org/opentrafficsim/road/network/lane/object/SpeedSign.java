@@ -41,7 +41,7 @@ public class SpeedSign extends AbstractLaneBasedObject
      * @param id String; the id of the new SpeedSign
      * @param lane Lane; Lane on/over which the SpeedSign is positioned
      * @param longitudinalPosition Length; the longitudinal position along the lane of the new SpeedSign
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator OtsSimulatorInterface; the simulator
      * @param speed Speed; the speed limit shown by the new SpeedSign
      * @param gtuType GtuType; GTU type that should obey the speed sign
      * @param startTimeOfDay Duration; start time-of-day

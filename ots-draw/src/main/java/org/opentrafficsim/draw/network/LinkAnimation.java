@@ -14,8 +14,8 @@ import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.draw.core.PaintLine;
@@ -49,7 +49,7 @@ public class LinkAnimation extends Renderable2D<Link> implements Renderable2DInt
 
     /**
      * @param link Link; Link
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param width float; width
      * @throws NamingException for problems with registering in context
      * @throws RemoteException on communication failure
@@ -70,7 +70,7 @@ public class LinkAnimation extends Renderable2D<Link> implements Renderable2DInt
         try
         {
             Color color = getSource().isConnector() ? Color.PINK.darker() : Color.BLUE;
-            OtsLine3D designLine = getSource().getDesignLine();
+            OtsLine3d designLine = getSource().getDesignLine();
             PaintLine.paintLine(graphics, color, this.width, getSource().getLocation(), designLine);
             // Accentuate the end points
             try
@@ -92,12 +92,12 @@ public class LinkAnimation extends Renderable2D<Link> implements Renderable2DInt
 
     /**
      * Draw end point on design line.
-     * @param endPoint OTSPoint3D; the end of the design line where a end point must be highlighted
-     * @param nextPoint OTSPoint3D; the point nearest <code>endPoint</code> (needed to figure out the direction of the design
+     * @param endPoint OtsPoint3d; the end of the design line where a end point must be highlighted
+     * @param nextPoint OtsPoint3d; the point nearest <code>endPoint</code> (needed to figure out the direction of the design
      *            line)
      * @param graphics Graphics2D; graphics content
      */
-    private void drawEndPoint(final OtsPoint3D endPoint, final OtsPoint3D nextPoint, final Graphics2D graphics)
+    private void drawEndPoint(final OtsPoint3d endPoint, final OtsPoint3d nextPoint, final Graphics2D graphics)
     {
         // End point marker is 2 times the width of the design line
         double dx = nextPoint.x - endPoint.x;
@@ -157,7 +157,7 @@ public class LinkAnimation extends Renderable2D<Link> implements Renderable2DInt
          * @param dy float; the vertical movement of the text, in meters
          * @param textPlacement TextAlignment; where to place the text
          * @param color Color; the color of the text
-         * @param simulator OTSSimulatorInterface; the simulator
+         * @param simulator OtsSimulatorInterface; the simulator
          * @param scaleDependentRendering ScaleDependentRendering; enables rendering in a scale dependent fashion
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found

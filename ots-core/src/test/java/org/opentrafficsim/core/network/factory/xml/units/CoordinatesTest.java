@@ -3,7 +3,7 @@ package org.opentrafficsim.core.network.factory.xml.units;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 
 /**
  * Test the Coordinates parser class.
@@ -24,7 +24,7 @@ public class CoordinatesTest
     @Test
     public final void testCoordinates()
     {
-        OtsPoint3D p = Coordinates.parseCoordinate("(1, 2, 3)");
+        OtsPoint3d p = Coordinates.parseCoordinate("(1, 2, 3)");
         assertEquals("x", 1, p.x, 0);
         assertEquals("y", 2, p.y, 0);
         assertEquals("z", 3, p.z, 0);
@@ -33,7 +33,7 @@ public class CoordinatesTest
         assertEquals("y", 2, p.y, 0);
         assertEquals("z", 0, p.z, 0);
 
-        OtsPoint3D[] points = Coordinates.parseCoordinates("(1, 2, 3)(4, 5, 6)");
+        OtsPoint3d[] points = Coordinates.parseCoordinates("(1, 2, 3)(4, 5, 6)");
         assertEquals("length is 2", 2, points.length);
         assertEquals("x", 1, points[0].x, 0);
         assertEquals("y", 2, points[0].y, 0);

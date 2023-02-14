@@ -24,8 +24,8 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -150,7 +150,7 @@ public class CarTest implements UNITS
     /**
      * @param network RoadNetwork; the network
      * @param laneType LaneType&lt;String&gt;; the type of the lane
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @return a lane of 1000 m long.
      * @throws NetworkException on network error
      * @throws OtsGeometryException when center line or contour of a link or lane cannot be generated
@@ -158,10 +158,10 @@ public class CarTest implements UNITS
     public static Lane makeLane(final OtsRoadNetwork network, final LaneType laneType, final OtsSimulatorInterface simulator)
             throws NetworkException, OtsGeometryException
     {
-        OtsRoadNode n1 = new OtsRoadNode(network, "n1", new OtsPoint3D(0, 0), Direction.ZERO);
-        OtsRoadNode n2 = new OtsRoadNode(network, "n2", new OtsPoint3D(100000.0, 0.0), Direction.ZERO);
-        OtsPoint3D[] coordinates = new OtsPoint3D[] {new OtsPoint3D(0.0, 0.0), new OtsPoint3D(100000.0, 0.0)};
-        CrossSectionLink link12 = new CrossSectionLink(network, "link12", n1, n2, DefaultsNl.ROAD, new OtsLine3D(coordinates),
+        OtsRoadNode n1 = new OtsRoadNode(network, "n1", new OtsPoint3d(0, 0), Direction.ZERO);
+        OtsRoadNode n2 = new OtsRoadNode(network, "n2", new OtsPoint3d(100000.0, 0.0), Direction.ZERO);
+        OtsPoint3d[] coordinates = new OtsPoint3d[] {new OtsPoint3d(0.0, 0.0), new OtsPoint3d(100000.0, 0.0)};
+        CrossSectionLink link12 = new CrossSectionLink(network, "link12", n1, n2, DefaultsNl.ROAD, new OtsLine3d(coordinates),
                 LaneKeepingPolicy.KEEPRIGHT);
         Length latPos = new Length(0.0, METER);
         Length width = new Length(4.0, METER);

@@ -28,7 +28,7 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
@@ -113,7 +113,7 @@ public class StraightModel extends AbstractOtsModel implements UNITS
     private Speed speedLimit = new Speed(120, KM_PER_HOUR);
 
     /**
-     * @param simulator OTSSimulatorInterface; the simulator for this model
+     * @param simulator OtsSimulatorInterface; the simulator for this model
      */
     public StraightModel(final OtsSimulatorInterface simulator)
     {
@@ -127,10 +127,10 @@ public class StraightModel extends AbstractOtsModel implements UNITS
     {
         try
         {
-            OtsRoadNode from = new OtsRoadNode(this.network, "From", new OtsPoint3D(0.0, 0, 0), Direction.ZERO);
+            OtsRoadNode from = new OtsRoadNode(this.network, "From", new OtsPoint3d(0.0, 0, 0), Direction.ZERO);
             OtsRoadNode to =
-                    new OtsRoadNode(this.network, "To", new OtsPoint3D(this.maximumDistance.getSI(), 0, 0), Direction.ZERO);
-            OtsRoadNode end = new OtsRoadNode(this.network, "End", new OtsPoint3D(this.maximumDistance.getSI() + 50.0, 0, 0),
+                    new OtsRoadNode(this.network, "To", new OtsPoint3d(this.maximumDistance.getSI(), 0, 0), Direction.ZERO);
+            OtsRoadNode end = new OtsRoadNode(this.network, "End", new OtsPoint3d(this.maximumDistance.getSI() + 50.0, 0, 0),
                     Direction.ZERO);
             LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
             this.lane = LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator,

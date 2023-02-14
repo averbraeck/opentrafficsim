@@ -12,7 +12,7 @@ import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.geometry.OtsShape;
 import org.opentrafficsim.core.gtu.GtuType;
 
@@ -41,7 +41,7 @@ public class OtsNode implements Node, Locatable, Serializable
     private final String id;
 
     /** The point. */
-    private final OtsPoint3D point;
+    private final OtsPoint3d point;
 
     /** the shape. */
     private final OtsShape shape;
@@ -67,10 +67,10 @@ public class OtsNode implements Node, Locatable, Serializable
      * Construction of a Node.
      * @param network Network; the network.
      * @param id String; the id of the Node.
-     * @param point OTSPoint3D; the point with usually an x and y setting.
+     * @param point OtsPoint3d; the point with usually an x and y setting.
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
-    public OtsNode(final Network network, final String id, final OtsPoint3D point) throws NetworkException
+    public OtsNode(final Network network, final String id, final OtsPoint3d point) throws NetworkException
     {
         this(network, id, point, Double.NaN);
     }
@@ -79,11 +79,11 @@ public class OtsNode implements Node, Locatable, Serializable
      * Construction of a Node.
      * @param network Network; the network.
      * @param id String; the id of the Node.
-     * @param point OTSPoint3D; the point with usually an x and y setting.
+     * @param point OtsPoint3d; the point with usually an x and y setting.
      * @param heading double; heading
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
-    public OtsNode(final Network network, final String id, final OtsPoint3D point, final double heading) throws NetworkException
+    public OtsNode(final Network network, final String id, final OtsPoint3d point, final double heading) throws NetworkException
     {
         Throw.whenNull(network, "network cannot be null");
         Throw.whenNull(id, "id cannot be null");
@@ -91,7 +91,7 @@ public class OtsNode implements Node, Locatable, Serializable
 
         this.network = network;
         this.id = id;
-        this.point = new OtsPoint3D(point.x, point.y, point.z);
+        this.point = new OtsPoint3d(point.x, point.y, point.z);
         this.heading = heading;
 
         double x = this.point.x;
@@ -99,8 +99,8 @@ public class OtsNode implements Node, Locatable, Serializable
         double z = this.point.z;
         try
         {
-            this.shape = new OtsShape(new OtsPoint3D(x - 0.5, y - 0.5, z), new OtsPoint3D(x - 0.5, y + 0.5, z),
-                    new OtsPoint3D(x + 0.5, y + 0.5, z), new OtsPoint3D(x + 0.5, y - 0.5, z));
+            this.shape = new OtsShape(new OtsPoint3d(x - 0.5, y - 0.5, z), new OtsPoint3d(x - 0.5, y + 0.5, z),
+                    new OtsPoint3d(x + 0.5, y + 0.5, z), new OtsPoint3d(x + 0.5, y - 0.5, z));
         }
         catch (OtsGeometryException exception)
         {
@@ -126,7 +126,7 @@ public class OtsNode implements Node, Locatable, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public OtsPoint3D getPoint()
+    public OtsPoint3d getPoint()
     {
         return this.point;
     }
@@ -391,7 +391,7 @@ public class OtsNode implements Node, Locatable, Serializable
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "OTSNode [id=" + this.id + ", point=" + this.point + "]";
+        return "OtsNode [id=" + this.id + ", point=" + this.point + "]";
     }
 
     /** {@inheritDoc} */

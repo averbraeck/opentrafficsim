@@ -27,7 +27,7 @@ public class LanePosition implements Serializable
     private final Length position;
 
     /**
-     * Construct a new KpiLanePosition.
+     * Construct a new LanePosition.
      * @param lane LaneData; the lane for the position
      * @param position Length; the position on the lane, relative to the cross section link (design line)
      */
@@ -101,7 +101,7 @@ public class LanePosition implements Serializable
     @Override
     public String toString()
     {
-        return "DirectedLanePosition [lane=" + this.lane + ", position=" + this.position + "]";
+        return "LanePosition [lane=" + this.lane + ", position=" + this.position + "]";
     }
 
 }

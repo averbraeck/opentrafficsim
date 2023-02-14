@@ -31,7 +31,7 @@ public class LaneGtuIdTransceiver extends AbstractTransceiver
 
     /**
      * Construct a GtuIdTransceiver.
-     * @param network OTSNetwork; the OTS network
+     * @param network OtsNetwork; the OTS network
      */
     public LaneGtuIdTransceiver(final OtsNetwork network)
     {

@@ -27,7 +27,7 @@ public class ContourPlotSpeed extends AbstractContourPlot<Speed>
     /**
      * Constructor.
      * @param caption String; caption
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param dataPool ContourDataSource; data pool
      */
     public ContourPlotSpeed(final String caption, final OtsSimulatorInterface simulator, final ContourDataSource dataPool)

@@ -22,7 +22,7 @@ import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
@@ -85,16 +85,16 @@ public class LaneChangeInfoTest
          */
 
         // Nodes
-        OtsRoadNode nodeA = new OtsRoadNode(network, "A", new OtsPoint3D(0, 0, 0), Direction.ZERO);
-        OtsRoadNode nodeB = new OtsRoadNode(network, "B", new OtsPoint3D(200, 0, 0), Direction.ZERO);
-        OtsRoadNode nodeC = new OtsRoadNode(network, "C", new OtsPoint3D(500, 0, 0), Direction.ZERO);
-        OtsRoadNode nodeD = new OtsRoadNode(network, "D", new OtsPoint3D(900, 0, 0), Direction.ZERO);
-        OtsRoadNode nodeE = new OtsRoadNode(network, "E", new OtsPoint3D(1400, 0, 0), Direction.ZERO);
-        OtsRoadNode nodeF = new OtsRoadNode(network, "F", new OtsPoint3D(2000, 0, 0), Direction.ZERO);
-        OtsRoadNode nodeF2 = new OtsRoadNode(network, "F2", new OtsPoint3D(2000, -3.5, 0), Direction.ZERO);
-        OtsRoadNode nodeG = new OtsRoadNode(network, "G", new OtsPoint3D(2700, 0, 0), Direction.ZERO);
-        OtsRoadNode nodeH = new OtsRoadNode(network, "H", new OtsPoint3D(3500, 0, 0), Direction.ZERO);
-        OtsRoadNode nodeH2 = new OtsRoadNode(network, "H2", new OtsPoint3D(3500, 3.5, 0), Direction.ZERO);
+        OtsRoadNode nodeA = new OtsRoadNode(network, "A", new OtsPoint3d(0, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeB = new OtsRoadNode(network, "B", new OtsPoint3d(200, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeC = new OtsRoadNode(network, "C", new OtsPoint3d(500, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeD = new OtsRoadNode(network, "D", new OtsPoint3d(900, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeE = new OtsRoadNode(network, "E", new OtsPoint3d(1400, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeF = new OtsRoadNode(network, "F", new OtsPoint3d(2000, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeF2 = new OtsRoadNode(network, "F2", new OtsPoint3d(2000, -3.5, 0), Direction.ZERO);
+        OtsRoadNode nodeG = new OtsRoadNode(network, "G", new OtsPoint3d(2700, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeH = new OtsRoadNode(network, "H", new OtsPoint3d(3500, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeH2 = new OtsRoadNode(network, "H2", new OtsPoint3d(3500, 3.5, 0), Direction.ZERO);
 
         // Lanes
         List<Lane> lanesAB = new LaneFactory(network, nodeA, nodeB, freeway, simulator, policy, DefaultsNl.VEHICLE)

@@ -36,7 +36,7 @@ public class ConflictAnimation extends AbstractLineAnimation<Conflict> implement
 
     /**
      * @param source Conflict; the conflict to draw
-     * @param simulator OTSSimulatorInterface; the simulator to schedule on
+     * @param simulator OtsSimulatorInterface; the simulator to schedule on
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */

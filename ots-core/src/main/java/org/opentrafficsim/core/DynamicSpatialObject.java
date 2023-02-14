@@ -4,7 +4,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.Transform2d;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.geometry.OtsShape;
 
 /**
@@ -44,13 +44,13 @@ public interface DynamicSpatialObject extends SpatialObject
         Transform2d transform = new Transform2d();
         transform.translate(p.x, p.y);
         transform.rotation(p.getRotZ());
-        OtsPoint3D[] points = new OtsPoint3D[shape.size()];
+        OtsPoint3d[] points = new OtsPoint3d[shape.size()];
         int i = 0;
-        for (OtsPoint3D sp : shape.getPoints())
+        for (OtsPoint3d sp : shape.getPoints())
         {
             double[] point = {sp.x, sp.y};
             double[] t = transform.transform(point);
-            points[i++] = new OtsPoint3D(t[0], t[1], sp.z);
+            points[i++] = new OtsPoint3d(t[0], t[1], sp.z);
         }
         return new OtsShape(points);
     }

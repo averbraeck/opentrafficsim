@@ -15,8 +15,8 @@ import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.mock.MockGtu;
 import org.opentrafficsim.core.mock.MockSimulator;
@@ -54,10 +54,10 @@ public class OtsLinkTest implements EventListener
     public final void testOTSLink() throws NetworkException, OtsGeometryException
     {
         OtsNetwork network = new OtsNetwork("OTSLinkTestNetwork", MockSimulator.createMock());
-        Node startNode = new OtsNode(network, "start", new OtsPoint3D(10, 20, 0));
-        Node endNode = new OtsNode(network, "end", new OtsPoint3D(1000, 2000, 10));
+        Node startNode = new OtsNode(network, "start", new OtsPoint3d(10, 20, 0));
+        Node endNode = new OtsNode(network, "end", new OtsPoint3d(1000, 2000, 10));
         LinkType linkType = new LinkType("myLinkType", DefaultsNl.ROAD);
-        OtsLine3D designLine = new OtsLine3D(startNode.getPoint(), endNode.getPoint());
+        OtsLine3d designLine = new OtsLine3d(startNode.getPoint(), endNode.getPoint());
         OtsLink link = new OtsLink(network, "link1", startNode, endNode, linkType, designLine);
         assertTrue("network contains the newly constructed link", network.containsLink(link));
         // directionalityMap is currently empty
@@ -127,8 +127,8 @@ public class OtsLinkTest implements EventListener
         // make a link with the same name in another network
         OtsNetwork otherNetwork = new OtsNetwork("other", MockSimulator.createMock());
         linkType = new LinkType("myLinkType4", DefaultsNl.ROAD);
-        otherLink = new OtsLink(otherNetwork, "link4", new OtsNode(otherNetwork, "start", new OtsPoint3D(10, 20, 0)),
-                new OtsNode(otherNetwork, "end", new OtsPoint3D(1000, 2000, 10)), linkType, designLine);
+        otherLink = new OtsLink(otherNetwork, "link4", new OtsNode(otherNetwork, "start", new OtsPoint3d(10, 20, 0)),
+                new OtsNode(otherNetwork, "end", new OtsPoint3d(1000, 2000, 10)), linkType, designLine);
         assertTrue("link is equal to extremely similar link with same id but different network", link.equals(otherLink));
     }
 

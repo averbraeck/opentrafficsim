@@ -31,7 +31,7 @@ public class SinkAnimation extends AbstractLineAnimation<SinkDetector> implement
     /**
      * Construct the Sink animation.
      * @param source SinkSensor; the Car to draw
-     * @param simulator OTSSimulatorInterface; the simulator to schedule on
+     * @param simulator OtsSimulatorInterface; the simulator to schedule on
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */

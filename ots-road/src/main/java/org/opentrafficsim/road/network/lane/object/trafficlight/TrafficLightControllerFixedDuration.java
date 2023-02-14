@@ -53,7 +53,7 @@ public class TrafficLightControllerFixedDuration implements TrafficLightControll
     /**
      * Create a fixed time controller.
      * @param id String; the controller id
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator OtsSimulatorInterface; the simulator
      * @throws TrafficLightException when scheduling of thhe start event fails
      */
     public TrafficLightControllerFixedDuration(final String id, final OtsSimulatorInterface simulator)

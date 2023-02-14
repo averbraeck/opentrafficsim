@@ -42,7 +42,7 @@ public class DetectorAnimation extends AbstractLineAnimation<LaneDetector> imple
     /**
      * Construct a DetectorAnimation.
      * @param detector Detector; the Sensor to draw
-     * @param simulator OTSSimulatorInterface; the simulator to schedule on
+     * @param simulator OtsSimulatorInterface; the simulator to schedule on
      * @param color Color; the display color of the detector
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
@@ -112,7 +112,7 @@ public class DetectorAnimation extends AbstractLineAnimation<LaneDetector> imple
          * @param dy float; the vertical movement of the text, in meters
          * @param textPlacement TextAlignment; where to place the text
          * @param color Color; the color of the text
-         * @param simulator OTSSimulatorInterface; the simulator
+         * @param simulator OtsSimulatorInterface; the simulator
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */

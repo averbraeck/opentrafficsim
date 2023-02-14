@@ -11,7 +11,7 @@ import javax.naming.NamingException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OtsLine3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.draw.core.PaintLine;
 import org.opentrafficsim.draw.core.PaintPolygons;
 import org.opentrafficsim.draw.core.TextAlignment;
@@ -45,7 +45,7 @@ public class LaneAnimation extends Renderable2D<Lane> implements Renderable2DInt
     /**
      * Animate a Lane.
      * @param lane Lane; the lane
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator OtsSimulatorInterface; the simulator
      * @param color Color; Color of the lane.
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
@@ -100,13 +100,13 @@ public class LaneAnimation extends Renderable2D<Lane> implements Renderable2DInt
     public static class CenterLine implements Locatable
     {
         /** The center line. */
-        private final OtsLine3D centerLine;
+        private final OtsLine3d centerLine;
 
         /**
          * Construct a new CenterLine.
-         * @param centerLine OTSLine3D; the center line of a lane
+         * @param centerLine OtsLine3d; the center line of a lane
          */
-        CenterLine(final OtsLine3D centerLine)
+        CenterLine(final OtsLine3d centerLine)
         {
             this.centerLine = centerLine;
         }
@@ -126,9 +126,9 @@ public class LaneAnimation extends Renderable2D<Lane> implements Renderable2DInt
 
         /**
          * Retrieve the center line.
-         * @return OTSLine3D; the center line
+         * @return OtsLine3d; the center line
          */
-        public OtsLine3D getCenterLine()
+        public OtsLine3d getCenterLine()
         {
             return this.centerLine;
         }
@@ -150,7 +150,7 @@ public class LaneAnimation extends Renderable2D<Lane> implements Renderable2DInt
         /**
          * Construct a new CenterLineAnimation.
          * @param centerLine CemterLine; the center line of a lane
-         * @param simulator OTSSimulatorInterface; the simulator
+         * @param simulator OtsSimulatorInterface; the simulator
          * @throws NamingException when the name of this object is not unique
          * @throws RemoteException when communication with a remote process fails
          */
@@ -191,7 +191,7 @@ public class LaneAnimation extends Renderable2D<Lane> implements Renderable2DInt
          * @param dy float; the vertical movement of the text, in meters
          * @param textPlacement TextAlignment; where to place the text
          * @param color Color; the color of the text
-         * @param simulator OTSSimulatorInterface; the simulator
+         * @param simulator OtsSimulatorInterface; the simulator
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */

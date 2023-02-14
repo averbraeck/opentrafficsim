@@ -21,7 +21,7 @@ import org.opentrafficsim.road.network.lane.object.detector.Detector;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.web.animation.D2.HtmlAnimationPanel;
+import nl.tudelft.simulation.dsol.web.animation.d2.HtmlAnimationPanel;
 
 /**
  * Set the default animation toggles for the HTML animation panel.
@@ -103,7 +103,7 @@ public final class WebAnimationToggles
 
     /**
      * Set a class to be shown in the animation to true.
-     * @param panel OTSAnimationPanel; the HTMLAnimationPanel where the animation of a class has to be switched off
+     * @param panel OtsAnimationPanel; the HTMLAnimationPanel where the animation of a class has to be switched off
      * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the animation has to be shown.
      */
     public final static void showAnimationClass(final HtmlAnimationPanel panel, final Class<? extends Locatable> locatableClass)
@@ -151,7 +151,7 @@ public final class WebAnimationToggles
 
     /**
      * Set the most common animation on, and create the toggles on the left hand side.
-     * @param panel OTSAnimationPanel; the WrappableAnimation.
+     * @param panel OtsAnimationPanel; the WrappableAnimation.
      */
     public static void showAnimationStandard(final HtmlAnimationPanel panel)
     {

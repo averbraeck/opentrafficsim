@@ -40,8 +40,8 @@ import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
@@ -319,12 +319,12 @@ public class TransceiverTest
                 lit.toString().startsWith("LinkIdTransceiver"));
 
         // Give the network two nodes and a link with a lane - A lot of code is required to create a lane :-(
-        OtsPoint3D node1Point = new OtsPoint3D(10, 20, 30);
+        OtsPoint3d node1Point = new OtsPoint3d(10, 20, 30);
         OtsRoadNode node1 = new OtsRoadNode(network, "node 1", node1Point, Direction.ZERO);
-        OtsRoadNode node2 = new OtsRoadNode(network, "node 2", new OtsPoint3D(110, 20, 30), Direction.ZERO);
+        OtsRoadNode node2 = new OtsRoadNode(network, "node 2", new OtsPoint3d(110, 20, 30), Direction.ZERO);
         LinkType roadLinkType = DefaultsNl.ROAD;
         CrossSectionLink link = new CrossSectionLink(network, "1 to 2", node1, node2, roadLinkType,
-                new OtsLine3D(node1.getPoint(), node2.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
+                new OtsLine3d(node1.getPoint(), node2.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
         LaneType laneType = DefaultsRoadNl.RESIDENTIAL_ROAD;
         OtsReplication replication = Mockito.mock(OtsReplication.class);
         HistoryManagerDevs hmd = Mockito.mock(HistoryManagerDevs.class);
@@ -625,7 +625,7 @@ class MyMockGTU
      * @param location DirectedPoint; the location of the mocked GTU
      * @param speed Speed; the speed of the mocked GTU
      * @param acceleration Acceleration; the acceleration of the mocked GTU
-     * @param simulator OTSSimulatorInterface; (mocked) simulator
+     * @param simulator OtsSimulatorInterface; (mocked) simulator
      * @throws RemoteException cannot happen ...
      */
     MyMockGTU(final String name, final GtuType gtuType, final DirectedPoint location, final Speed speed,

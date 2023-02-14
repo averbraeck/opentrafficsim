@@ -29,7 +29,7 @@
     
     <release version="1.04.03" date="2020-10-22" description="Enable Control Panel buttons">
       <action dev="averbraeck" type="update">
-        The OTSSimulationPanel and OTSAnimationPanel have a method to enable and disable the control buttons to start/stop
+        The OtsSimulationPanel and OtsAnimationPanel have a method to enable and disable the control buttons to start/stop
         a simulation / animation. By default, the buttons are now DISABLED to allow for set-up and initialization to complete
         before the user can interact with the simulation through the user interface. Therefore, ALL simulations have to 
         call simulationPanel or animationPanel.enableSimulationControlButtons() to enable the buttons. The AbstractSimulationScript
@@ -227,7 +227,7 @@
     
     <release version="1.02.01" date="2019-04-19" description="ots-xsd; GTUType, LinkType, LaneType in Defaults">
      <action dev="averbraeck" type="update">
-        EASTING replaces NORTHING in Scalar3D, Speed3D, Acceleration3D, Clothoid, AngleUnits.
+        EASTING replaces NORTHING in Scalar3d, Speed3D, Acceleration3D, Clothoid, AngleUnits.
       </action>
      <action dev="averbraeck" type="update">
         DSOL version 3.03.06 to allow for introspection of Maps and ImmutableCollections.
@@ -339,7 +339,7 @@
         to be provided as a result; they will be calculated and correspond to the actual lengths of what is drawn,
         not the theoretical lengths. An arc has a theoretical length that is different from the e.g., 32 or 64, segments
         from which it is created, and algorithms make false calculations based on the difference between the length of
-        OTSLine3D and the provided length of the link. Arcs, Bezier curves, clothoids, polylines and straight segments
+        OtsLine3d and the provided length of the link. Arcs, Bezier curves, clothoids, polylines and straight segments
         can have a slope. The correct length including the slope is calculated (note that this this differs from the length of
         the projection in the animation).
       </action>

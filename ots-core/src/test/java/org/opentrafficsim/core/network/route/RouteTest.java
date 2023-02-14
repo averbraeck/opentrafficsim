@@ -57,7 +57,7 @@ public class RouteTest
         assertEquals("lastVisitedNode should return null", null, route.lastVisitedNode());
         assertEquals("visitNextNode should return null", null, route.visitNextNode());
         assertEquals("nextNodeToVisit should return null", null, route.nextNodeToVisit());
-        OTSNode n1 = new OTSNode("N1", new OTSPoint3D(12, 34));
+        OtsNode n1 = new OtsNode("N1", new OtsPoint3d(12, 34));
         assertEquals("indexOf should return -1 for an empty Route", -1, route.indexOf(n1));
         try
         {
@@ -82,7 +82,7 @@ public class RouteTest
         assertEquals("Node 0 of route should be N1", n1, route.getNode(0));
         assertEquals("OriginNode should be N1", n1, route.originNode());
         assertEquals("indexOf N1 should return 0", 0, route.indexOf(n1));
-        OTSNode n2 = new OTSNode("N2", new OTSPoint3D(56, 78));
+        OtsNode n2 = new OtsNode("N2", new OtsPoint3d(56, 78));
         route.addNode(n2);
         assertEquals("Route should now contain two Nodes", 2, route.size());
         assertEquals("Node 0 of route should be N1", n1, route.getNode(0));
@@ -116,11 +116,11 @@ public class RouteTest
         assertEquals("nextNodeToVisit should be n2", n2, route.nextNodeToVisit());
         assertEquals("lastVisitedNode should return n1", n1, route.lastVisitedNode());
         // Currently insertion before the "current" node is allowed and increments the internal lastNode index.
-        OTSNode n0 = new OTSNode("n0", new OTSPoint3D(0, 0));
+        OtsNode n0 = new OtsNode("n0", new OtsPoint3d(0, 0));
         route.addNode(0, n0);
         assertEquals("size should now be 3", 3, route.size());
         assertEquals("nextNodeToVisit should still be n2", n2, route.nextNodeToVisit());
-        OTSNode n3 = new OTSNode("n3", new OTSPoint3D(0, 0));
+        OtsNode n3 = new OtsNode("n3", new OtsPoint3d(0, 0));
         route.addNode(n3);
         assertEquals("size should now be 4", 4, route.size());
         assertEquals("destinationNode should now be n3", n3, route.destinationNode());

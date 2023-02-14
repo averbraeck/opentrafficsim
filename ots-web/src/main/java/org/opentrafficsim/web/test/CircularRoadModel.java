@@ -18,7 +18,7 @@ import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -89,11 +89,11 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
     /** Truck parameters. */
     private Parameters parametersTruck;
 
-    /** The OTSRoadNetwork. */
+    /** The OtsRoadNetwork. */
     private final OtsRoadNetwork network;
 
     /**
-     * @param simulator OTSSimulatorInterface; the simulator for this model
+     * @param simulator OtsSimulatorInterface; the simulator for this model
      */
     public CircularRoadModel(final OtsSimulatorInterface simulator)
     {
@@ -174,24 +174,24 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
 
             GtuType gtuType = DefaultsNl.CAR;
             LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
-            OtsRoadNode start = new OtsRoadNode(this.network, "Start", new OtsPoint3D(radius, 0, 0),
+            OtsRoadNode start = new OtsRoadNode(this.network, "Start", new OtsPoint3d(radius, 0, 0),
                     new Direction(90, DirectionUnit.EAST_DEGREE));
-            OtsRoadNode halfway = new OtsRoadNode(this.network, "Halfway", new OtsPoint3D(-radius, 0, 0),
+            OtsRoadNode halfway = new OtsRoadNode(this.network, "Halfway", new OtsPoint3d(-radius, 0, 0),
                     new Direction(-90, DirectionUnit.EAST_DEGREE));
 
-            OtsPoint3D[] coordsHalf1 = new OtsPoint3D[127];
+            OtsPoint3d[] coordsHalf1 = new OtsPoint3d[127];
             for (int i = 0; i < coordsHalf1.length; i++)
             {
                 double angle = Math.PI * (1 + i) / (1 + coordsHalf1.length);
-                coordsHalf1[i] = new OtsPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
+                coordsHalf1[i] = new OtsPoint3d(radius * Math.cos(angle), radius * Math.sin(angle), 0);
             }
             Lane[] lanes1 = LaneFactory.makeMultiLane(this.network, "FirstHalf", start, halfway, coordsHalf1, laneCount,
                     laneType, this.speedLimit, this.simulator, DefaultsNl.VEHICLE);
-            OtsPoint3D[] coordsHalf2 = new OtsPoint3D[127];
+            OtsPoint3d[] coordsHalf2 = new OtsPoint3d[127];
             for (int i = 0; i < coordsHalf2.length; i++)
             {
                 double angle = Math.PI + Math.PI * (1 + i) / (1 + coordsHalf2.length);
-                coordsHalf2[i] = new OtsPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
+                coordsHalf2[i] = new OtsPoint3d(radius * Math.cos(angle), radius * Math.sin(angle), 0);
             }
             Lane[] lanes2 = LaneFactory.makeMultiLane(this.network, "SecondHalf", halfway, start, coordsHalf2, laneCount,
                     laneType, this.speedLimit, this.simulator, DefaultsNl.VEHICLE);
@@ -285,7 +285,7 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
 
     /**
      * Stop simulation and throw an Error.
-     * @param theSimulator OTSSimulatorInterface; the simulator
+     * @param theSimulator OtsSimulatorInterface; the simulator
      * @param errorMessage String; the error message
      */
     public void stopSimulator(final OtsSimulatorInterface theSimulator, final String errorMessage)

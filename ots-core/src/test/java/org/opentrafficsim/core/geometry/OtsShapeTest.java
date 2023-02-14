@@ -21,7 +21,7 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 
 /**
- * Test the OTSShape class.
+ * Test the OtsShape class.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -33,15 +33,15 @@ import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 public class OtsShapeTest
 {
     /**
-     * Test the OTSShape class.
+     * Test the OtsShape class.
      * @throws OtsGeometryException if this happens uncaught; this test has failed
      */
     @Test
-    public final void testOTSShape() throws OtsGeometryException
+    public final void testOtsShape() throws OtsGeometryException
     {
-        OtsPoint3D p1 = new OtsPoint3D(1, 2, 3);
-        OtsPoint3D p2 = new OtsPoint3D(10, 2, 3);
-        OtsPoint3D p3 = new OtsPoint3D(11, 22, 3);
+        OtsPoint3d p1 = new OtsPoint3d(1, 2, 3);
+        OtsPoint3d p2 = new OtsPoint3d(10, 2, 3);
+        OtsPoint3d p3 = new OtsPoint3d(11, 22, 3);
 
         OtsShape s = new OtsShape(p1, p2, p3);
         verifyShape(s, true, p1, p2, p3);
@@ -56,7 +56,7 @@ public class OtsShapeTest
         Geometry g = ls;
         s = new OtsShape(g);
         verifyShape(s, true, p1, p2, p3);
-        List<OtsPoint3D> list = new ArrayList<>();
+        List<OtsPoint3d> list = new ArrayList<>();
         list.add(p1);
         list.add(p2);
         list.add(p3);
@@ -92,15 +92,15 @@ public class OtsShapeTest
         assertTrue(pi.isDone());
         Path2D shape2 = s.getShape();
         assertEquals("repeated get returns same thing", shape, shape2);
-        OtsPoint3D insidePoint = new OtsPoint3D(5, 5, 5);
+        OtsPoint3d insidePoint = new OtsPoint3d(5, 5, 5);
         assertTrue("shape contains inSide point", s.contains(insidePoint));
-        OtsPoint3D outsidePoint = new OtsPoint3D(-1, -2, -3);
+        OtsPoint3d outsidePoint = new OtsPoint3d(-1, -2, -3);
         assertFalse("shape does not contains unrelated point", s.contains(outsidePoint));
-        outsidePoint = new OtsPoint3D(0, 5, 5);
+        outsidePoint = new OtsPoint3d(0, 5, 5);
         assertFalse("shape does not contains unrelated point", s.contains(outsidePoint));
-        outsidePoint = new OtsPoint3D(12, 5, 5);
+        outsidePoint = new OtsPoint3d(12, 5, 5);
         assertFalse("shape does not contains unrelated point", s.contains(outsidePoint));
-        outsidePoint = new OtsPoint3D(5, 30, 5);
+        outsidePoint = new OtsPoint3d(5, 30, 5);
         assertFalse("shape does not contains unrelated point", s.contains(outsidePoint));
         Rectangle2D inRect = new Rectangle2D.Double(5, 5, 1, 1);
         assertTrue("rectangle is inside shape", s.contains(inRect));
@@ -108,7 +108,7 @@ public class OtsShapeTest
         assertFalse("Rectangle is not fully inside shape", s.contains(partlyOutRect));
         partlyOutRect = new Rectangle2D.Double(5, 5, 1, 30);
         assertFalse("Rectangle is not fully inside shape", s.contains(partlyOutRect));
-        assertTrue("toString result contains class name", s.toString().contains("OTSShape"));
+        assertTrue("toString result contains class name", s.toString().contains("OtsShape"));
         path.closePath();
         OtsShape s2 = new OtsShape(path);
         // System.out.println("s: " + s);
@@ -125,7 +125,7 @@ public class OtsShapeTest
     }
 
     /**
-     * Test the intersects OTSShape method.
+     * Test the intersects OtsShape method.
      * @throws OtsGeometryException if that happens this test has failed
      */
     @Test
@@ -162,12 +162,12 @@ public class OtsShapeTest
             }
         }
         reference =
-                new OtsShape(new OtsPoint3D[] {new OtsPoint3D(0, 0, 0), new OtsPoint3D(10, 0, 0), new OtsPoint3D(10, 10, 0)});
+                new OtsShape(new OtsPoint3d[] {new OtsPoint3d(0, 0, 0), new OtsPoint3d(10, 0, 0), new OtsPoint3d(10, 10, 0)});
         // Make shapes that overlap along the X axis
         for (int dx = -20; dx <= 20; dx++)
         {
             OtsShape other = new OtsShape(
-                    new OtsPoint3D[] {new OtsPoint3D(dx, 0, 0), new OtsPoint3D(dx + 5, 0, 0), new OtsPoint3D(dx, -20, 0)});
+                    new OtsPoint3d[] {new OtsPoint3d(dx, 0, 0), new OtsPoint3d(dx + 5, 0, 0), new OtsPoint3d(dx, -20, 0)});
             boolean hit = dx >= -5 && dx <= 10;
             if (hit)
             {
@@ -182,7 +182,7 @@ public class OtsShapeTest
         for (int dy = -20; dy <= 20; dy++)
         {
             OtsShape other = new OtsShape(
-                    new OtsPoint3D[] {new OtsPoint3D(20, dy, 0), new OtsPoint3D(10, dy, 0), new OtsPoint3D(10, dy + 10, 0)});
+                    new OtsPoint3d[] {new OtsPoint3d(20, dy, 0), new OtsPoint3d(10, dy, 0), new OtsPoint3d(10, dy + 10, 0)});
             boolean hit = dy >= -10 && dy <= 10;
             if (hit)
             {
@@ -194,10 +194,10 @@ public class OtsShapeTest
             }
         }
         // Make vertical and horizontal box
-        OtsShape vertical = new OtsShape(new OtsPoint3D[] {new OtsPoint3D(-1, -10, 0), new OtsPoint3D(1, -10, 0),
-                new OtsPoint3D(1, 10, 0), new OtsPoint3D(-1, 10, 0), new OtsPoint3D(-1, -10, 0)});
-        OtsShape horizontal = new OtsShape(new OtsPoint3D[] {new OtsPoint3D(-10, -1, 0), new OtsPoint3D(10, -1, 0),
-                new OtsPoint3D(10, 1, 0), new OtsPoint3D(-10, 1, 0), new OtsPoint3D(-10, -1, 0)});
+        OtsShape vertical = new OtsShape(new OtsPoint3d[] {new OtsPoint3d(-1, -10, 0), new OtsPoint3d(1, -10, 0),
+                new OtsPoint3d(1, 10, 0), new OtsPoint3d(-1, 10, 0), new OtsPoint3d(-1, -10, 0)});
+        OtsShape horizontal = new OtsShape(new OtsPoint3d[] {new OtsPoint3d(-10, -1, 0), new OtsPoint3d(10, -1, 0),
+                new OtsPoint3d(10, 1, 0), new OtsPoint3d(-10, 1, 0), new OtsPoint3d(-10, -1, 0)});
         assertTrue("shapes hit", vertical.intersects(horizontal));
     }
 
@@ -210,7 +210,7 @@ public class OtsShapeTest
     {
         try
         {
-            OtsShape.createAndCleanOTSShape(new OtsPoint3D[] {});
+            OtsShape.createAndCleanOtsShape(new OtsPoint3d[] {});
             fail("empty array should have thrown an OTSGeometryException");
         }
         catch (OtsGeometryException oge)
@@ -219,7 +219,7 @@ public class OtsShapeTest
         }
         try
         {
-            OtsShape.createAndCleanOTSShape(new OtsPoint3D[] {new OtsPoint3D(1, 2, 3)});
+            OtsShape.createAndCleanOtsShape(new OtsPoint3d[] {new OtsPoint3d(1, 2, 3)});
             fail("array of one point should have thrown an OTSGeometryException");
         }
         catch (OtsGeometryException oge)
@@ -228,7 +228,7 @@ public class OtsShapeTest
         }
         try
         {
-            OtsShape.createAndCleanOTSShape(new OtsPoint3D[] {new OtsPoint3D(1, 2, 3), new OtsPoint3D(1, 2, 3)});
+            OtsShape.createAndCleanOtsShape(new OtsPoint3d[] {new OtsPoint3d(1, 2, 3), new OtsPoint3d(1, 2, 3)});
             fail("array of two identical points should have thrown an OTSGeometryException");
         }
         catch (OtsGeometryException oge)
@@ -237,8 +237,8 @@ public class OtsShapeTest
         }
         try
         {
-            OtsShape.createAndCleanOTSShape(
-                    new OtsPoint3D[] {new OtsPoint3D(1, 2, 3), new OtsPoint3D(1, 2, 3), new OtsPoint3D(1, 2, 3)});
+            OtsShape.createAndCleanOtsShape(
+                    new OtsPoint3d[] {new OtsPoint3d(1, 2, 3), new OtsPoint3d(1, 2, 3), new OtsPoint3d(1, 2, 3)});
             fail("array of three identical points should have thrown an OTSGeometryException");
         }
         catch (OtsGeometryException oge)
@@ -246,17 +246,17 @@ public class OtsShapeTest
             // Ignore expected exception
         }
         // FIXME: No geometry exception if thrown for two points that only differ in Z
-        OtsShape.createAndCleanOTSShape(new OtsPoint3D[] {new OtsPoint3D(1, 2, 3), new OtsPoint3D(1, 2, 1)});
-        OtsShape.createAndCleanOTSShape(
-                new OtsPoint3D[] {new OtsPoint3D(1, 2, 3), new OtsPoint3D(1, 3, 3), new OtsPoint3D(1, 2, 3)});
-        List<OtsPoint3D> points = new ArrayList<>();
-        points.add(new OtsPoint3D(1, 2, 3));
-        points.add(new OtsPoint3D(1, 2, 3));
-        points.add(new OtsPoint3D(1, 2, 3));
-        points.add(new OtsPoint3D(1, 2, 3));
+        OtsShape.createAndCleanOtsShape(new OtsPoint3d[] {new OtsPoint3d(1, 2, 3), new OtsPoint3d(1, 2, 1)});
+        OtsShape.createAndCleanOtsShape(
+                new OtsPoint3d[] {new OtsPoint3d(1, 2, 3), new OtsPoint3d(1, 3, 3), new OtsPoint3d(1, 2, 3)});
+        List<OtsPoint3d> points = new ArrayList<>();
+        points.add(new OtsPoint3d(1, 2, 3));
+        points.add(new OtsPoint3d(1, 2, 3));
+        points.add(new OtsPoint3d(1, 2, 3));
+        points.add(new OtsPoint3d(1, 2, 3));
         try
         {
-            OtsShape.createAndCleanOTSShape(points);
+            OtsShape.createAndCleanOtsShape(points);
             fail("list of four identical points should have thrown an OTSGeometryException");
         }
         catch (OtsGeometryException oge)
@@ -276,26 +276,26 @@ public class OtsShapeTest
      * @return List&lt;OTSPoin3D&gt;; the points that lie on a regular polygon
      * @throws OtsGeometryException if the number of points is too small or the radius is 0
      */
-    private List<OtsPoint3D> makePolygon(final double centerX, final double centerY, final double radius, final int size)
+    private List<OtsPoint3d> makePolygon(final double centerX, final double centerY, final double radius, final int size)
             throws OtsGeometryException
     {
-        List<OtsPoint3D> points = new ArrayList<>(size);
+        List<OtsPoint3d> points = new ArrayList<>(size);
         for (int i = 0; i < size; i++)
         {
             double angle = Math.PI * 2 * i / size;
-            points.add(new OtsPoint3D(centerX + radius * Math.cos(angle), centerY + radius * Math.sin(angle)));
+            points.add(new OtsPoint3d(centerX + radius * Math.cos(angle), centerY + radius * Math.sin(angle)));
         }
         return points;
     }
 
     /**
-     * Verify that an OTSShape contains exactly the given points in the given order.
-     * @param shape OTSShape; the shape to test
+     * Verify that an OtsShape contains exactly the given points in the given order.
+     * @param shape OtsShape; the shape to test
      * @param verifyZ boolean; if true; also check the Z coordinates; if false; check that all Z coordinates are 0
-     * @param points OTSPoint3D...; the points to expect
+     * @param points OtsPoint3d...; the points to expect
      * @throws OtsGeometryException if that happens; this test has failed
      */
-    private void verifyShape(final OtsShape shape, final boolean verifyZ, final OtsPoint3D... points)
+    private void verifyShape(final OtsShape shape, final boolean verifyZ, final OtsPoint3d... points)
             throws OtsGeometryException
     {
         assertEquals("shape contains correct number of points", shape.size(), points.length);

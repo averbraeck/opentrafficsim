@@ -1,7 +1,7 @@
 package org.opentrafficsim.base;
 
 /**
- * OTSRuntimeException is a generic runtime exception for the OTS project. Runtime exceptions do ot have to be declared in the
+ * OtsRuntimeException is a generic runtime exception for the OTS project. Runtime exceptions do ot have to be declared in the
  * header of the method or constructor. 
  * <p>
  * Copyright (c) 2022-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>

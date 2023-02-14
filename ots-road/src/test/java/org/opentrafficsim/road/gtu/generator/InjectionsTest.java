@@ -36,8 +36,8 @@ import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -193,10 +193,10 @@ public class InjectionsTest
         OtsSimulatorInterface simulator = new OtsSimulator("net");
         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ONE, Mockito.mock(OtsModelInterface.class));
         OtsRoadNetwork network = new OtsRoadNetwork("network", simulator);
-        OtsRoadNode nodeA = new OtsRoadNode(network, "A", new OtsPoint3D(0.0, 0.0, 0.0), Direction.ZERO);
-        OtsRoadNode nodeB = new OtsRoadNode(network, "B", new OtsPoint3D(100.0, 0.0, 0.0), Direction.ZERO);
+        OtsRoadNode nodeA = new OtsRoadNode(network, "A", new OtsPoint3d(0.0, 0.0, 0.0), Direction.ZERO);
+        OtsRoadNode nodeB = new OtsRoadNode(network, "B", new OtsPoint3d(100.0, 0.0, 0.0), Direction.ZERO);
         CrossSectionLink linkAB = new CrossSectionLink(network, "AB", nodeA, nodeB, DefaultsNl.FREEWAY,
-                new OtsLine3D(nodeA.getPoint(), nodeB.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
+                new OtsLine3d(nodeA.getPoint(), nodeB.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
         Length laneWidth = Length.instantiateSI(3.5);
         new Lane(linkAB, "Lane1", Length.ZERO, laneWidth, DefaultsRoadNl.FREEWAY, Collections.emptyMap());
         new Lane(linkAB, "Lane2", laneWidth, laneWidth, DefaultsRoadNl.FREEWAY, Collections.emptyMap());

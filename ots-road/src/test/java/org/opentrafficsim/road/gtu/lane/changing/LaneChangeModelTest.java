@@ -26,8 +26,8 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3D;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -82,12 +82,12 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
 
     /**
      * Create a Link.
-     * @param network OTSRoadNetwork; the network
+     * @param network OtsRoadNetwork; the network
      * @param name String; name of the new Link
-     * @param from OTSRoadNode; start node of the new Link
-     * @param to OTSRoadNode; end node of the new Link
+     * @param from OtsRoaNode; start node of the new Link
+     * @param to OtsRoaNode; end node of the new Link
      * @param width Length; the width of the new Link
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator OtsSimulatorInterface; the simulator
      * @return Link
      * @throws OtsGeometryException when coordinates cannot be calculated
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
@@ -99,9 +99,9 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
     {
         // TODO create a LinkAnimation if the simulator is compatible with that.
         // FIXME The current LinkAnimation is too bad to use...
-        OtsPoint3D[] coordinates = new OtsPoint3D[] {new OtsPoint3D(from.getPoint().x, from.getPoint().y, 0),
-                new OtsPoint3D(to.getPoint().x, to.getPoint().y, 0)};
-        OtsLine3D line = new OtsLine3D(coordinates);
+        OtsPoint3d[] coordinates = new OtsPoint3d[] {new OtsPoint3d(from.getPoint().x, from.getPoint().y, 0),
+                new OtsPoint3d(to.getPoint().x, to.getPoint().y, 0)};
+        OtsLine3d line = new OtsLine3d(coordinates);
         CrossSectionLink link =
                 new CrossSectionLink(network, name, from, to, DefaultsNl.ROAD, line, LaneKeepingPolicy.KEEPRIGHT);
         return link;
@@ -130,13 +130,13 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
 
     /**
      * Create a simple straight road with the specified number of Lanes.
-     * @param network OTSRoadNetwork; the network
+     * @param network OtsRoadNetwork; the network
      * @param name String; name of the Link
-     * @param from OTSRoadNode; starting node of the new Lane
-     * @param to OTSRoadNode; ending node of the new Lane
+     * @param from OtsRoaNode; starting node of the new Lane
+     * @param to OtsRoaNode; ending node of the new Lane
      * @param laneType LaneType&lt;String&gt;; the type of GTU that can use the lanes
      * @param laneCount int; number of lanes in the road
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator OtsSimulatorInterface; the simulator
      * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws Exception when something goes wrong (should not happen)
      */
@@ -169,8 +169,8 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
         int laneCount = 2;
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), this);
         Lane[] lanes = makeMultiLane(this.network, "Road with two lanes",
-                new OtsRoadNode(this.network, "From", new OtsPoint3D(0, 0, 0), Direction.ZERO),
-                new OtsRoadNode(this.network, "To", new OtsPoint3D(200, 0, 0), Direction.ZERO), laneType, laneCount,
+                new OtsRoadNode(this.network, "From", new OtsPoint3d(0, 0, 0), Direction.ZERO),
+                new OtsRoadNode(this.network, "To", new OtsPoint3d(200, 0, 0), Direction.ZERO), laneType, laneCount,
                 this.simulator);
 
         // Let's see if adjacent lanes are accessible

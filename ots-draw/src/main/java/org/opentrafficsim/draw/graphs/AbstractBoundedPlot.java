@@ -37,7 +37,7 @@ public abstract class AbstractBoundedPlot extends AbstractPlot
 
     /**
      * Constructor.
-     * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OtsSimulatorInterface; simulator
      * @param caption String; caption
      * @param updateInterval Duration; regular update interval (simulation time)
      * @param delay Duration; amount of time that chart runs behind simulation to prevent gaps in the charted data

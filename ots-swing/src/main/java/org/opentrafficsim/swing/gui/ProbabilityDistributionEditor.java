@@ -13,8 +13,8 @@ import javax.swing.SwingConstants;
 import org.djunits.locale.DefaultLocale;
 
 import com.bric.multislider.MultiThumbSlider;
-import com.bric.multislider.MultiThumbSliderUI;
-import com.bric.multislider.MultiThumbSliderUI.Thumb;
+import com.bric.multislider.MultiThumbSliderUi;
+import com.bric.multislider.MultiThumbSliderUi.Thumb;
 
 /**
  * Wrapper for Jeremy Wood's MultiThumbSlider.
@@ -60,7 +60,7 @@ public class ProbabilityDistributionEditor extends JPanel
         }
         this.slider = new MultiThumbSlider<String>(MultiThumbSlider.HORIZONTAL, initialValues, reducedNames);
         this.slider.setThumbOverlap(true);
-        this.slider.putClientProperty(MultiThumbSliderUI.THUMB_SHAPE_PROPERTY, Thumb.Hourglass);
+        this.slider.putClientProperty(MultiThumbSliderUi.THUMB_SHAPE_PROPERTY, Thumb.Hourglass);
         this.slider.setThumbOverlap(true);
         this.slider.setAutoAdding(false);
         this.slider.setPreferredSize(new Dimension(250, 50));

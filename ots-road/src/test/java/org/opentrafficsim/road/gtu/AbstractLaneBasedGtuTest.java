@@ -27,7 +27,7 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OtsPoint3D;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -74,21 +74,21 @@ public class AbstractLaneBasedGtuTest implements UNITS
         // This initialization code should probably be moved to a helper method that will be used in several tests.
         // First we need a set of Lanes
         // To create Lanes we need Nodes and a LaneType
-        // And a simulator, but for that we first need something that implements OTSModelInterface
+        // And a simulator, but for that we first need something that implements OtsModelInterface
         OtsSimulatorInterface simulator = new OtsSimulator("abstractLaneBasedGtuTest");
         OtsRoadNetwork network = new OtsRoadNetwork("lane base gtu test network", simulator);
         OtsModelInterface model = new DummyModel(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), model);
-        OtsRoadNode nodeAFrom = new OtsRoadNode(network, "AFrom", new OtsPoint3D(0, 0, 0), Direction.ZERO);
-        OtsRoadNode nodeATo = new OtsRoadNode(network, "ATo", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeAFrom = new OtsRoadNode(network, "AFrom", new OtsPoint3d(0, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeATo = new OtsRoadNode(network, "ATo", new OtsPoint3d(1000, 0, 0), Direction.ZERO);
         GtuType gtuType = DefaultsNl.CAR;
         LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
 
         Lane[] lanesGroupA = LaneFactory.makeMultiLane(network, "A", nodeAFrom, nodeATo, null, 3, laneType,
                 new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
         // A GTU can exist on several lanes at once; create another lane group to test that
-        OtsRoadNode nodeBFrom = new OtsRoadNode(network, "BFrom", new OtsPoint3D(10, 0, 0), Direction.ZERO);
-        OtsRoadNode nodeBTo = new OtsRoadNode(network, "BTo", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeBFrom = new OtsRoadNode(network, "BFrom", new OtsPoint3d(10, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeBTo = new OtsRoadNode(network, "BTo", new OtsPoint3d(1000, 0, 0), Direction.ZERO);
         Lane[] lanesGroupB = LaneFactory.makeMultiLane(network, "B", nodeBFrom, nodeBTo, null, 3, laneType,
                 new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
         Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(2);
@@ -344,8 +344,8 @@ public class AbstractLaneBasedGtuTest implements UNITS
             }
         }
         // A GTU can exist on several lanes at once; create another lane group to test that
-        OtsRoadNode nodeCFrom = new OtsRoadNode(network, "CFrom", new OtsPoint3D(10, 100, 0), Direction.ZERO);
-        OtsRoadNode nodeCTo = new OtsRoadNode(network, "CTo", new OtsPoint3D(1000, 0, 0), Direction.ZERO);
+        OtsRoadNode nodeCFrom = new OtsRoadNode(network, "CFrom", new OtsPoint3d(10, 100, 0), Direction.ZERO);
+        OtsRoadNode nodeCTo = new OtsRoadNode(network, "CTo", new OtsPoint3d(1000, 0, 0), Direction.ZERO);
         Lane[] lanesGroupC = LaneFactory.makeMultiLane(network, "C", nodeCFrom, nodeCTo, null, 3, laneType,
                 new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
         for (RelativePosition relativePosition : new RelativePosition[] {car.getFront(), car.getRear()})
@@ -386,7 +386,7 @@ public class AbstractLaneBasedGtuTest implements UNITS
 }
 
 /**
- * Dummy OTSModelInterface.
+ * Dummy OtsModelInterface.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
