@@ -795,7 +795,7 @@ public class OdMatrix implements Serializable, Identifiable
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "ODMatrix [" + this.id + ", " + this.origins.size() + " origins, " + this.destinations.size() + " destinations, "
+        return "OdMatrix [" + this.id + ", " + this.origins.size() + " origins, " + this.destinations.size() + " destinations, "
                 + this.categorization + " ]";
     }
 

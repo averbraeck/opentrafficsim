@@ -60,6 +60,6 @@
 
   <!-- Note: using factors and dynamic factors is fully flexible, which provides no guarantees as to a certain percentage of all 
     traffic being e.g. cars, whether factors add up to 1.0, etc. -->
-  <!-- It is not required to specify all Origin/Destination/Category combinations, what is not specified is assumed 0 by ODMatrix -->
+  <!-- It is not required to specify all Origin/Destination/Category combinations, what is not specified is assumed 0 by OdMatrix -->
 
 </OD>

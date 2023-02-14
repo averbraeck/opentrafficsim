@@ -368,7 +368,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
         odOptions.set(OdOptions.INSTANT_LC, true);
         odOptions.set(OdOptions.LANE_BIAS, new LaneBiases().addBias(car, LaneBias.WEAK_LEFT));
         odOptions.set(OdOptions.NO_LC_DIST, Length.instantiateSI(300));
-        OdApplier.applyOD(network, od, odOptions, DefaultsRoadNl.ROAD_USERS);
+        OdApplier.applyOd(network, od, odOptions, DefaultsRoadNl.ROAD_USERS);
 
         return network;
     }
@@ -471,7 +471,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
     }
 
     /**
-     * Strategical planner generator. This class can be used as input in {@code ODOptions} to generate the right models with
+     * Strategical planner generator. This class can be used as input in {@code OdOptions} to generate the right models with
      * different GTU types.
      */
     private class ControlledStrategicalPlannerGenerator implements LaneBasedGtuCharacteristicsGeneratorOd

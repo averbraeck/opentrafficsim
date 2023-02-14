@@ -254,7 +254,7 @@ public class OdApplierTest
         OdMatrix od = getOD(new double[] {100, 200, 300, 400, 500, 600}, new double[] {1000, 2000, 0, 0, 2000, 0},
                 Interpolation.STEPWISE, nodeA, nodeB, lane1, lane2);
         Map<String, GeneratorObjects> generatorObjects =
-                OdApplier.applyOD(this.network, od, odOptions, DefaultsRoadNl.ROAD_USERS);
+                OdApplier.applyOd(this.network, od, odOptions, DefaultsRoadNl.ROAD_USERS);
         assertEquals("Incorrect number of generator created or returned.", generatorObjects.size(), 2);
         for (String id : generatorObjects.keySet())
         {
@@ -290,7 +290,7 @@ public class OdApplierTest
         this.time = Time.ZERO;
         od = getOD(new double[] {100, 200, 300, 400, 500, 600}, new double[] {1000, 2000, 0, 0, 2000, 0}, Interpolation.LINEAR,
                 nodeA, nodeB, lane1, lane2);
-        generatorObjects = OdApplier.applyOD(this.network, od, odOptions, DefaultsRoadNl.ROAD_USERS);
+        generatorObjects = OdApplier.applyOd(this.network, od, odOptions, DefaultsRoadNl.ROAD_USERS);
         assertEquals("Incorrect number of generator created or returned.", generatorObjects.size(), 2);
         for (String id : generatorObjects.keySet())
         {
@@ -333,7 +333,7 @@ public class OdApplierTest
                     odOptions = new OdOptions().set(OdOptions.HEADWAY_DIST, headwayRandomization);
                     od = getOD(new double[] {1200, 2400, 3600, 4800, 6000, 7200}, new double[] {1000, 2000, 0, 0, 2000, 0},
                             interpolation, nodeA, nodeB, lane1, lane2);
-                    generatorObjects = OdApplier.applyOD(this.network, od, odOptions, DefaultsRoadNl.ROAD_USERS);
+                    generatorObjects = OdApplier.applyOd(this.network, od, odOptions, DefaultsRoadNl.ROAD_USERS);
                     assertEquals("Incorrect number of generators created or returned.", generatorObjects.size(), 2);
                     for (String id : generatorObjects.keySet())
                     {
@@ -511,7 +511,7 @@ public class OdApplierTest
         OdMatrix od = getOD(new double[] {0, 100, 200}, new double[] {1000, 1500, 0}, Interpolation.LINEAR, nodeA, nodeB, lane1,
                 lane2);
         Map<String, GeneratorObjects> generatorObjects =
-                OdApplier.applyOD(this.network, od, odOptions, DefaultsRoadNl.ROAD_USERS);
+                OdApplier.applyOd(this.network, od, odOptions, DefaultsRoadNl.ROAD_USERS);
         int nTot = 1000;
         int nCar = nTot / 2;
         int nTruck = nTot / 2;

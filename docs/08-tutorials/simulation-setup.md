@@ -107,7 +107,7 @@ And we use stepwise demand with half-hour periods.
 Now we can create the OD matrix, still without demand data.
 
 ```java
-    ODMatrix odMatrix = new ODMatrix("MyOD", origins, destinations, categorization, timeVector, interpolation);
+    OdMatrix odMatrix = new OdMatrix("MyOD", origins, destinations, categorization, timeVector, interpolation);
 ```
 
 To add demand we need categories. In our case these are not OD specific as we do not specify demand per lane or route. So we only need two categories for all demand.
@@ -168,7 +168,7 @@ B -> C | Category [[GTUType: TRUCK]] | [ 120.000000 150.000000 0.00000000] 1/h
 
 ## How to set up model factories when using an OD matrix
 
-When using an OD matrix, vehicle generation can bet set up using `ODApplier`. This utility uses an instance of `ODOptions` to define specifics of vehicle generation. One option is `ODOptions.GTU_TYPE` which has a value of type `GTUCharacteristicsGeneratorOD`. This tutorial covers some ways to define this. Section [GTU characteristics generator](../04-demand/gtu-characteristics.md) covers the structure for factories in a non-OD matrix context. The structure for characteristics within an OD matrix context is similar and discussed in section [GTU characteristics](../04-demand/traffic-od.md#gtu-characteristics). The difference is that the OD matrix defines the origin and the destination, and possibly the route and/or GTU type.
+When using an OD matrix, vehicle generation can bet set up using `ODApplier`. This utility uses an instance of `OdOptions` to define specifics of vehicle generation. One option is `OdOptions.GTU_TYPE` which has a value of type `GTUCharacteristicsGeneratorOD`. This tutorial covers some ways to define this. Section [GTU characteristics generator](../04-demand/gtu-characteristics.md) covers the structure for factories in a non-OD matrix context. The structure for characteristics within an OD matrix context is similar and discussed in section [GTU characteristics](../04-demand/traffic-od.md#gtu-characteristics). The difference is that the OD matrix defines the origin and the destination, and possibly the route and/or GTU type.
 
 In this tutorial the factories are defined in anonymous classes, as factories are often used in specifics contexts. For every model component this could however also be a separate class. Anonymous classes are an in-place manner to define extensions of classes, including extensions of interfaces and abstract classes. Below is example code where an instance of an anonymous extension of `GTUCharacteristicsGeneratorOD` is created. 
 

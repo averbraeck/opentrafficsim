@@ -433,7 +433,7 @@ public final class OdParser
                          * implementation of StrategicalPlannerFactorySupplierOD is created that responds to the GTU type, and
                          * selects a factory assigned to that GTU type within the context. Or, the default factory in the
                          * context is used. Or finally, a default LMRS. If no model factory is specified in the context (nor a
-                         * higher context), no option value is set and ODOptions itself returns a default LMRS factory.
+                         * higher context), no option value is set and OdOptions itself returns a default LMRS factory.
                          */
 
                         // GTU type (model)
@@ -593,7 +593,7 @@ public final class OdParser
                 // TODO: definitions.get(DetectorType.class, od.getDETECTORTYPE)
                 DetectorType detectorType = definitions.get(DetectorType.class, "ROAD_USERS");
                 Map<String, GeneratorObjects> output =
-                        Try.assign(() -> OdApplier.applyOD(otsNetwork, odMatrix, odOptions, detectorType),
+                        Try.assign(() -> OdApplier.applyOd(otsNetwork, odMatrix, odOptions, detectorType),
                                 XmlParserException.class, "Simulator time should be zero when parsing an OD.");
 
                 // Collect generators in output
@@ -685,7 +685,7 @@ public final class OdParser
 
     /**
      * Set option.
-     * @param odOptions ODOptions; OD options to set the option in
+     * @param odOptions OdOptions; OD options to set the option in
      * @param option Option&lt;T&gt;; option to set
      * @param value T; value to set the option to
      * @param options ODOPTIONSITEM; used to set the option on the right level (Link type, origin node, lane

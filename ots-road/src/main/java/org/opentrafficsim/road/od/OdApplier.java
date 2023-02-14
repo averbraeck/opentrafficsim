@@ -110,15 +110,15 @@ public final class OdApplier
      * </tr>
      * </table>
      * @param network OtsRoadNetwork; network
-     * @param od ODMatrix; OD matrix
-     * @param odOptions ODOptions; options for vehicle generation
+     * @param od OdMatrix; OD matrix
+     * @param odOptions OdOptions; options for vehicle generation
      * @param detectorType DetectorType; detector type.
      * @return Map&lt;String, GeneratorObjects&gt; map of generator id's and created generator objects mainly for testing
      * @throws ParameterException if a parameter is missing
      * @throws SimRuntimeException if this method is called after simulation time 0
      */
     @SuppressWarnings("checkstyle:methodlength")
-    public static Map<String, GeneratorObjects> applyOD(final OtsRoadNetwork network, final OdMatrix od,
+    public static Map<String, GeneratorObjects> applyOd(final OtsRoadNetwork network, final OdMatrix od,
             final OdOptions odOptions, final DetectorType detectorType) throws ParameterException, SimRuntimeException
     {
         Throw.whenNull(network, "Network may not be null.");
@@ -126,7 +126,7 @@ public final class OdApplier
         Throw.whenNull(odOptions, "OD options may not be null.");
         OtsSimulatorInterface simulator = network.getSimulator();
         Throw.when(!simulator.getSimulatorTime().eq0(), SimRuntimeException.class,
-                "Method ODApplier.applyOD() should be invoked at simulation time 0.");
+                "Method OdApplier.applyOd() should be invoked at simulation time 0.");
 
         // TODO sinks? white extension links?
         for (Node destination : od.getDestinations())
@@ -559,14 +559,12 @@ public final class OdApplier
     }
 
     /**
-     * Adds {@code LanePosition}s to the input set, for {@code Lane}s on the given link, starting at the given
-     * {@code Node}.
+     * Adds {@code LanePosition}s to the input set, for {@code Lane}s on the given link, starting at the given {@code Node}.
      * @param link CrossSectionLink; link with lanes to add positions for
      * @param node Node; node on the side where positions should be placed
      * @param positionSet Set&lt;LanePosition&gt;; set to add position to
      */
-    private static void setLanePosition(final CrossSectionLink link, final Node node,
-            final Set<LanePosition> positionSet)
+    private static void setLanePosition(final CrossSectionLink link, final Node node, final Set<LanePosition> positionSet)
     {
         for (Lane lane : link.getLanes())
         {

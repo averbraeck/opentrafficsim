@@ -137,7 +137,7 @@ public class XmlOdParser implements Serializable
     /**
      * Applies demand from URL using OD options.
      * @param url URL; URL to file
-     * @param odOptions ODOptions; OD options
+     * @param odOptions OdOptions; OD options
      * @throws XmlParserException if URL cannot be parsed
      */
     public void apply(final URL url, final OdOptions odOptions) throws XmlParserException
@@ -165,7 +165,7 @@ public class XmlOdParser implements Serializable
     /**
      * Applies demand from stream using OD options.
      * @param stream InputStream; stream
-     * @param odOptions ODOptions; OD options
+     * @param odOptions OdOptions; OD options
      * @throws XmlParserException if URL cannot be parsed
      */
     public final void apply(final InputStream stream, final OdOptions odOptions) throws XmlParserException
@@ -186,7 +186,7 @@ public class XmlOdParser implements Serializable
     /**
      * Applies demand from URL using OD options.
      * @param xmlNode Node; node
-     * @param odOptions ODOptions; OD options
+     * @param odOptions OdOptions; OD options
      * @throws XmlParserException if URL cannot be parsed
      */
     public void apply(final Node xmlNode, final OdOptions odOptions) throws XmlParserException
@@ -196,15 +196,15 @@ public class XmlOdParser implements Serializable
 
     /**
      * Applies the OD to the network.
-     * @param od ODMatrix; OD matrix
-     * @param odOptions ODOptions; options
+     * @param od OdMatrix; OD matrix
+     * @param odOptions OdOptions; options
      * @throws XmlParserException if the ODApplier fails
      */
     private void applyOD(final OdMatrix od, final OdOptions odOptions) throws XmlParserException
     {
         try
         {
-            OdApplier.applyOD(this.network, od, odOptions, this.detectorType);
+            OdApplier.applyOd(this.network, od, odOptions, this.detectorType);
         }
         catch (ParameterException | SimRuntimeException exception)
         {
@@ -215,7 +215,7 @@ public class XmlOdParser implements Serializable
     /**
      * Build demand from URL.
      * @param url URL; URL to file
-     * @return ODMatrix; OD matrix
+     * @return OdMatrix; OD matrix
      * @throws XmlParserException if URL cannot be parsed
      */
     public final OdMatrix build(final URL url) throws XmlParserException
@@ -233,7 +233,7 @@ public class XmlOdParser implements Serializable
     /**
      * Build demand from stream.
      * @param stream InputStream; stream
-     * @return ODMatrix; OD matrix
+     * @return OdMatrix; OD matrix
      * @throws XmlParserException if stream cannot be parsed
      */
     public final OdMatrix build(final InputStream stream) throws XmlParserException
@@ -254,7 +254,7 @@ public class XmlOdParser implements Serializable
     /**
      * Build demand from xml node.
      * @param xmlNode Node; node
-     * @return ODMatrix; OD matrix
+     * @return OdMatrix; OD matrix
      * @throws XmlParserException if stream cannot be parsed
      */
     public final OdMatrix build(final Node xmlNode) throws XmlParserException
