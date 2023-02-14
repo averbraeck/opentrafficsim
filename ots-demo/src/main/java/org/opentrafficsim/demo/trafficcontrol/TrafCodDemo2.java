@@ -26,7 +26,7 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.object.NonLocatedObject;
-import org.opentrafficsim.demo.trafficcontrol.TrafCodDemo2.TrafCODModel;
+import org.opentrafficsim.demo.trafficcontrol.TrafCodDemo2.TrafCodModel;
 import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
@@ -49,7 +49,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class TrafCodDemo2 extends OtsSimulationApplication<TrafCODModel>
+public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
 {
     /** */
     private static final long serialVersionUID = 20161118L;
@@ -61,7 +61,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCODModel>
      * @param model TrafCODModel; the model
      * @throws OtsDrawingException on animation error
      */
-    public TrafCodDemo2(final String title, final OtsAnimationPanel panel, final TrafCODModel model) throws OtsDrawingException
+    public TrafCodDemo2(final String title, final OtsAnimationPanel panel, final TrafCodModel model) throws OtsDrawingException
     {
         super(model, panel);
     }
@@ -105,7 +105,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCODModel>
             URL url = URLResource.getResource("/resources/TrafCODDemo2/TrafCODDemo2.xml");
             System.out.println("url is " + url);
             String xml = readStringFromURL(url);
-            final TrafCODModel trafcodModel = new TrafCODModel(simulator, "TrafCODModel", "TrafCOD demonstration Model", xml);
+            final TrafCodModel trafcodModel = new TrafCodModel(simulator, "TrafCODModel", "TrafCOD demonstration Model", xml);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), trafcodModel);
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(trafcodModel.getNetwork().getExtent(),
                     new Dimension(800, 600), simulator, trafcodModel, DEFAULT_COLORER, trafcodModel.getNetwork());
@@ -158,7 +158,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCODModel>
     /**
      * The simulation model.
      */
-    public static class TrafCODModel extends AbstractOtsModel implements EventListener
+    public static class TrafCodModel extends AbstractOtsModel implements EventListener
     {
         /** */
         private static final long serialVersionUID = 20161020L;
@@ -175,7 +175,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCODModel>
          * @param description String; description of the model
          * @param xml String; the XML string
          */
-        public TrafCODModel(final OtsSimulatorInterface simulator, final String shortName, final String description,
+        public TrafCodModel(final OtsSimulatorInterface simulator, final String shortName, final String description,
                 final String xml)
         {
             super(simulator, shortName, description);

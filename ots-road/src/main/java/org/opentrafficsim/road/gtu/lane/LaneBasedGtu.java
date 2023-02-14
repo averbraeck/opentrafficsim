@@ -1032,7 +1032,7 @@ public class LaneBasedGtu extends Gtu
                 {
                     // return getSimulator().getSimulatorAbsTime(); // this was a mistake...
                     // relative position already crossed the point, e.g. FRONT
-                    // SKL 02-08-2023: if the nose did not trigger at and of last move by mm's and due to vehicle rotation
+                    // SKL 08-02-2023: if the nose did not trigger at and of last move by mm's and due to vehicle rotation
                     // having been assumed straight, we should trigger it now. However, we should not double-trigger e.g.
                     // detectors. Let's return NaN to indicate this problem.
                     return Time.instantiateSI(Double.NaN);

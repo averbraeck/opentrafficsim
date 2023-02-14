@@ -12,23 +12,23 @@ In some cases it could be valuable during an `ADD` to register as a listener to 
 _Table 2.1: Overview of events in OTS._
 <table border="1" width="800px">
   <tr style="font-weight: bold"><td>Class</td><td>Event field</td><td>Listeners (excluding test code)</td><td>Used</td></tr>
-  <tr><td>Network</td><td>GTU_ADD_EVENT</td><td>DefaultAnimationFactory, NetworkAnimation<sup>1</sup>, AbstractLaneBasedMoveChecker, Publisher<sup>3</sup>, NetworkModel, StochasticDistractionModel, RampMeteringDemo, OtsAnimationPanel</td><td>yes</td></tr>
-  <tr><td></td><td>GTU_REMOVE_EVENT</td><td>DefaultAnimationFactory, NetworkAnimation<sup>1</sup>, AbstractLaneBasedMoveChecker, Publisher<sup>3</sup>, NetworkModel, StochasticDistractionModel, RampMeteringDemo, OtsAnimationPanel</td><td>yes</td></tr>
+  <tr><td>Network</td><td>GTU_ADD_EVENT</td><td>DefaultAnimationFactory, NetworkAnimation<sup>1</sup>, AbstractLaneBasedMoveChecker, Publisher<sup>2</sup>, NetworkModel, StochasticDistractionModel, RampMeteringDemo, OtsAnimationPanel</td><td>yes</td></tr>
+  <tr><td></td><td>GTU_REMOVE_EVENT</td><td>DefaultAnimationFactory, NetworkAnimation<sup>1</sup>, AbstractLaneBasedMoveChecker, Publisher<sup>2</sup>, NetworkModel, StochasticDistractionModel, RampMeteringDemo, OtsAnimationPanel</td><td>yes</td></tr>
   <tr><td></td><td>NONLOCATED_OBJECT_ADD_EVENT</td><td>NetworkAnimation<sup>1</sup></td><td>yes</td></tr>
   <tr><td></td><td>NONLOCATED_OBJECT_REMOVE_EVENT</td><td>NetworkAnimation<sup>1</sup></td><td>yes</td></tr>
-  <tr><td></td><td>LINK_ADD_EVENT</td><td>NetworkAnimation<sup>1</sup>, Publisher<sup>3</sup></td><td>yes</td></tr>
-  <tr><td></td><td>LINK_REMOVE_EVENT</td><td>NetworkAnimation<sup>1</sup>, Publisher<sup>3</sup></td><td>yes</td></tr>
-  <tr><td></td><td>NODE_ADD_EVENT</td><td>NetworkAnimation<sup>1</sup>, Publisher<sup>3</sup></td><td>yes</td></tr>
-  <tr><td></td><td>NODE_REMOVE_EVENT</td><td>NetworkAnimation<sup>1</sup>, Publisher<sup>3</sup></td><td>yes</td></tr>
+  <tr><td></td><td>LINK_ADD_EVENT</td><td>NetworkAnimation<sup>1</sup>, Publisher<sup>2</sup></td><td>yes</td></tr>
+  <tr><td></td><td>LINK_REMOVE_EVENT</td><td>NetworkAnimation<sup>1</sup>, Publisher<sup>2</sup></td><td>yes</td></tr>
+  <tr><td></td><td>NODE_ADD_EVENT</td><td>NetworkAnimation<sup>1</sup>, Publisher<sup>2</sup></td><td>yes</td></tr>
+  <tr><td></td><td>NODE_REMOVE_EVENT</td><td>NetworkAnimation<sup>1</sup>, Publisher<sup>2</sup></td><td>yes</td></tr>
   <tr><td></td><td>OBJECT_ADD_EVENT</td><td>DefaultAnimationFactory, NetworkAnimation<sup>1</sup></td><td>yes</td></tr>
   <tr><td></td><td>OBJECT_REMOVE_EVENT</td><td>DefaultAnimationFactory, NetworkAnimation<sup>1</sup></td><td>yes</td></tr>
   <tr><td></td><td>ROUTE_ADD_EVENT</td><td>NetworkAnimation<sup>1</sup></td><td>yes</td></tr>
   <tr><td></td><td>ROUTE_REMOVE_EVENT</td><td>NetworkAnimation<sup>1</sup></td><td>yes</td></tr>
-  <tr><td>Link</td><td>GTU_ADD_EVENT</td><td>Publisher<sup>3</sup></td><td>yes</td></tr>
-  <tr><td></td><td>GTU_REMOVE_EVENT</td><td>Publisher<sup>3</sup></td><td>yes</td></tr>
-  <tr><td>CrossSectionLink</td><td>LANE_ADD_EVENT</td><td>Publisher<sup>3</sup></td><td>yes</td></tr>
-  <tr><td></td><td>LANE_REMOVE_EVENT</td><td>Publisher<sup>3</sup></td><td>yes</td></tr>
-  <tr><td>Gtu</td><td>MOVE_EVENT</td><td>Publisher<sup>3</sup>, GtuTransceiver<sup>3</sup></td><td>yes</td></tr>
+  <tr><td>Link</td><td>GTU_ADD_EVENT</td><td>Publisher<sup>2</sup></td><td>yes</td></tr>
+  <tr><td></td><td>GTU_REMOVE_EVENT</td><td>Publisher<sup>2</sup></td><td>yes</td></tr>
+  <tr><td>CrossSectionLink</td><td>LANE_ADD_EVENT</td><td>Publisher<sup>2</sup></td><td>yes</td></tr>
+  <tr><td></td><td>LANE_REMOVE_EVENT</td><td>Publisher<sup>2</sup></td><td>yes</td></tr>
+  <tr><td>Gtu</td><td>MOVE_EVENT</td><td>Publisher<sup>2</sup>, GtuTransceiver<sup>2</sup></td><td>yes</td></tr>
   <tr><td></td><td>DESTROY_EVENT</td><td></td><td>no</td></tr>  
   <tr><td>LaneBasedGtu</td><td>LANEBASED_MOVE_EVENT</td><td>AbstractLaneBasedMoveChecker, RoadSampler</td><td>yes</td></tr>
   <tr><td></td><td>LANEBASED_DESTROY_EVENT</td><td></td><td>no</td></tr>
@@ -50,18 +50,17 @@ _Table 2.1: Overview of events in OTS._
   <tr><td>DirectionalOccupancyDetector</td><td>DIRECTIONAL_OCCUPANCY_DETECTOR_ TRIGGER_ENTRY_EVENT</td><td><i>not thrown</i></td><td>no</td></tr>
   <tr><td></td><td>DIRECTIONAL_OCCUPANCY_DETECTOR_ TRIGGER_EXIT_EVENT</td><td><i>not thrown</i></td><td>no</td></tr>
   <tr><td>TrafficController</td><td>TRAFFICCONTROL_CONTROLLER_CREATED</td><td></td><td>no</td></tr>
-  <tr><td></td><td>TRAFFICCONTROL_CONTROLLER_EVALUATING</td><td>TrafCODModel</td><td>yes</td></tr>
-  <tr><td></td><td>TRAFFICCONTROL_CONTROLLER_WARNING</td><td>TrafCODModel</td><td>yes</td></tr>
+  <tr><td></td><td>TRAFFICCONTROL_CONTROLLER_EVALUATING</td><td>TrafCodModel</td><td>yes</td></tr>
+  <tr><td></td><td>TRAFFICCONTROL_CONTROLLER_WARNING</td><td>TrafCodModel</td><td>yes</td></tr>
   <tr><td></td><td>TRAFFICCONTROL_STATE_CHANGED</td><td><i>not thrown</i></td><td>no</td></tr>
   <tr><td></td><td>TRAFFIC_LIGHT_CHANGED</td><td></td><td>no</td></tr>
   <tr><td></td><td>TRAFFICCONTROL_VARIABLE_CREATED</td><td></td><td>no</td></tr>
   <tr><td></td><td>TRAFFICCONTROL_SET_TRACING</td><td><i>not thrown</i>, TrafCod</td><td>yes</td></tr>
-  <tr><td></td><td>TRAFFICCONTROL_TRACED_VARIABLE_UPDATED</td><td>TrafCODModel</td><td>yes</td></tr>
-  <tr><td></td><td>TRAFFICCONTROL_CONFLICT_GROUP_CHANGED</td><td>TrafCODModel</td><td>yes</td></tr>
+  <tr><td></td><td>TRAFFICCONTROL_TRACED_VARIABLE_UPDATED</td><td>TrafCodModel</td><td>yes</td></tr>
+  <tr><td></td><td>TRAFFICCONTROL_CONFLICT_GROUP_CHANGED</td><td>TrafCodModel</td><td>yes</td></tr>
   <tr><td>TrafficLight</td><td>TRAFFICLIGHT_CHANGE_EVENT</td><td></td><td>no</td></tr>
   <tr><td>AbstractPlot</td><td>GRAPH_ADD_EVENT</td><td><i>not thrown</i></td><td>no</td></tr>
   <tr><td></td><td>GRAPH_REMOVE_EVENT</td><td><i>not thrown</i></td><td>no</td></tr>
 </table>
 <sup>1</sup>) Registers as listener, but does (effectively) nothing with it in `notify()`.<br>
-<sup>2</sup>) Should use `GtuGeneratorQueueAnimation`.<br>
-<sup>3</sup>) Part of `ots-sim0mq`.<br>
+<sup>2</sup>) Part of `ots-sim0mq`.<br>
