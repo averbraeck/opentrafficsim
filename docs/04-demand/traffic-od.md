@@ -46,7 +46,7 @@ _Table 4.1: Overview of options for the utility to create GTU generators from an
     <tr><td><code>INSTANT_LC</code></td><td><code>Boolean</code></td><td><code>false</code></td><td>Instant lane changes.</td></tr>
     <tr><td><code>ERROR_HANDLER</code></td><td><code>GtuErrorHandler</code></td><td><code>GtuErrorHandler.THROW</code></td><td>How to handle GTU errors.</td></tr>
 </table>
-*)  Advised to only use at origin level and for origins with 1 connecting link. Requires the OD categorization to include GTU type.
+*)  Advised to only use with an OD categorization that includes lanes. Requires the OD categorization to include GTU type.
 
 The `NO_LC_DIST` option is useful in scenarios with multiple-lane origin links with high demand. Lane changes at the start interfere with the GTU generation on other lanes. For instance, the generation of GTUs is delayed as another GTU just changed lane such that insufficient space is available. If the system boundary would not be there, that GTU would have likely not changed lane as the GTU to be generated is its potential nearby follower.
 
