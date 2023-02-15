@@ -24,10 +24,10 @@ nav:
     - Install ots for developers: 01-technical/installation-developers.md
     - Git branching and merging: 01-technical/branch-merge-developer.md
     - Install ots for modelers: 01-technical/installation-modelers.md
-    - '[&rarr;] OTS compile information': https://opentrafficsim.org/docs/latest
-    - '[&rarr;] ots-base Javadoc APIs': https://opentrafficsim.org/docs/latest/ots-base/apidocs
-    - '[&rarr;] ots-core Javadoc APIs': https://opentrafficsim.org/docs/latest/ots-core/apidocs
-    - '[&rarr;] ots-road Javadoc APIs': https://opentrafficsim.org/docs/latest/ots-road/apidocs
+    - '&rarr; OTS compile information': https://opentrafficsim.org/docs/latest
+    - '&rarr; ots-base Javadoc APIs': https://opentrafficsim.org/docs/latest/ots-base/apidocs
+    - '&rarr; ots-core Javadoc APIs': https://opentrafficsim.org/docs/latest/ots-core/apidocs
+    - '&rarr; ots-road Javadoc APIs': https://opentrafficsim.org/docs/latest/ots-road/apidocs
   - 2. Model structure:
     - GTU - Generalized Travel Unit: 02-model-structure/gtu.md
     - DSOL - event-based simulation: 02-model-structure/dsol.md
