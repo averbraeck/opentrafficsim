@@ -20,7 +20,7 @@ public class PhoneColorer implements GtuColorer
 
     static
     {
-        LEGEND.add(new LegendEntry(UNKNOWN, "Unknown", "Unkkown whether the driver is on the phone."));
+        LEGEND.add(new LegendEntry(UNKNOWN, "Unknown", "Unknown whether the driver is on the phone."));
         LEGEND.add(new LegendEntry(NO, "No", "Driver is not on the phone."));
         LEGEND.add(new LegendEntry(YES, "Yes", "Driver is on the phone."));
     }
