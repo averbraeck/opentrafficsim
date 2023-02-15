@@ -80,7 +80,7 @@ nav:
   - 10. References:
     - Reference list: 10-references/references.md
   - Appendices:
-    - A: Conflict areas: 99-appendices/conflict-areas.md
-    - B: Queue spillback: 99-appendices/queue-spillback.md
+    - A) Conflict areas: 99-appendices/conflict-areas.md
+    - B) Queue spillback: 99-appendices/queue-spillback.md
     
  
