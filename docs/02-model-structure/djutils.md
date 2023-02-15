@@ -59,18 +59,19 @@ Now, whenever a GTU enters or leaves the lane, the sampler will be notified by t
     {
         …
         fireTimedEvent(Lane.GTU_REMOVE_EVENT, 
-                new Object[] {gtu.getId(), gtu, this.gtuList.size(), position}, 
+                new Object[] {gtu.getId(), gtu, this.gtuList.size(), position,
+                getId(), getParentLink().getId()}, 
                 gtu.getSimulator().getSimulatorTime());
         …
     }
 ```
 
-The sampler has registered itself as a listener and will be notified. To process the events, the sampler has the following code. We leave out the details, but clearly this allows the sampler to respond to the GTU being on the lane. And in fact for as long as the GTU is on the lane, the sampler registers itself as a listener for the GTU’s `LaneBasedGTU.LANEBASED_MOVE_EVENT` event, using `addListener(…)` and `removeListener(…)` on the GTU. This means that every movement step of each GTU on the lane on which data sampling was started, is recorded. (The sampler can also operate using its own sampling frequency. In that case, subscribing to the GTU move events is not done. Instead, the sampler maintains a list of GTUs that are being sampled and schedules a sampling event in the simulator event queue.)
+The sampler has registered itself as a listener and will be notified. To process the events, the sampler has the following code. We leave out the details, but clearly this allows the sampler to respond to the GTU being on the lane. And in fact for as long as the GTU is on the lane, the sampler registers itself as a listener for the GTU’s `LaneBasedGtu.LANEBASED_MOVE_EVENT` event, using `addListener(…)` and `removeListener(…)` on the GTU. This means that every movement step of each GTU on the lane on which data sampling was started, is recorded. (The sampler can also operate using its own sampling frequency. In that case, subscribing to the GTU move events is not done. Instead, the sampler maintains a list of GTUs that are being sampled and schedules a sampling event in the simulator event queue.)
 
 ```java
     public final void notify(final Event event) throws RemoteException
     {
-        if (event.getType().equals(LaneBasedGTU.LANEBASED_MOVE_EVENT))
+        if (event.getType().equals(LaneBasedGtu.LANEBASED_MOVE_EVENT))
         {
             …
         }
@@ -83,7 +84,7 @@ The sampler has registered itself as a listener and will be notified. To process
         else if (event.getType().equals(Lane.GTU_REMOVE_EVENT))
         {
             …
-            gtu.removeListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT);
+            gtu.removeListener(this, LaneBasedGtu.LANEBASED_MOVE_EVENT);
             …
         }
     }

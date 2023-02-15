@@ -37,48 +37,47 @@ Command line arguments are used to set values of properties of `AbstractSimulati
 The autorun parameter triggers animation when false. These, and other, parameters can be determined with the command line arguments. The example `SimpleSimulation` has to implement one more method to actually define the simulation content. This is given below for a simple network of two nodes and one link with two lanes. An alternative to this is to use the XML parser to read an XML file and create a network including animation from it.
 
 ```java
-    protected RoadNetwork setupSimulation(final OtsSimulatorInterface sim, final StreamInformation streamInformation)
-            throws NullPointerException, DrawRuntimeException, NetworkException
+    protected OtsRoadNetwork setupSimulation(final OtsSimulatorInterface sim)
+            throws NullPointerException, DrawRuntimeException, NetworkException, OtsGeometryException
     {
-        RoadNetwork network = new RoadNetwork("Simple network", sim);
-        RoadNetworkDefaults.registerDefaults(network);
-        Point3d pointA = new Point3d(0, 0, 0);
-        Point3d pointB = new Point3d(500, 0, 0);
-        Node nodeA = new Node(network, "A", pointA, 0.0);
-        Node nodeB = new Node(network, "B", pointB, 0.0);
-        GtuType car = network.getGtuType(GtuType.DEFAULTS.CAR);
-        LinkType freewayLink = network.getLinkType(LinkType.DEFAULTS.FREEWAY);
-        LaneType freewayLane = network.getLaneType(LaneType.DEFAULTS.FREEWAY);
-        CrossSectionLink link = new CrossSectionLink(network, "AB", nodeA, nodeB, freewayLink, new PolyLine3d(pointA, pointB),
+        OtsRoadNetwork network = new OtsRoadNetwork("Simple network", sim);
+        OtsPoint3d pointA = new OtsPoint3d(0, 0, 0);
+        OtsPoint3d pointB = new OtsPoint3d(500, 0, 0);
+        OtsRoadNode nodeA = new OtsRoadNode(network, "A", pointA, Direction.ZERO);
+        OtsRoadNode nodeB = new OtsRoadNode(network, "B", pointB, Direction.ZERO);
+        GtuType car = DefaultsNl.CAR;
+        GtuType.registerTemplateSupplier(car, Defaults.NL);
+        LinkType freewayLink = DefaultsNl.FREEWAY;
+        LaneType freewayLane = DefaultsRoadNl.FREEWAY;
+        CrossSectionLink link = new CrossSectionLink(network, "AB", nodeA, nodeB, freewayLink, new OtsLine3d(pointA, pointB),
                 LaneKeepingPolicy.KEEPRIGHT);
         new Lane(link, "Left", Length.instantiateSI(1.75), Length.instantiateSI(3.5), freewayLane,
-                new Speed(120, SpeedUnit.KM_PER_HOUR));
+                Map.of(car, new Speed(120, SpeedUnit.KM_PER_HOUR)));
         new Lane(link, "Right", Length.instantiateSI(-1.75), Length.instantiateSI(3.5), freewayLane,
-                new Speed(120, SpeedUnit.KM_PER_HOUR));
-        new Stripe(link, Length.instantiateSI(3.5), Length.instantiateSI(3.5), Length.instantiateSI(0.2));
-        new Stripe(link, Length.instantiateSI(-3.5), Length.instantiateSI(-3.5), Length.instantiateSI(0.2));
-        Stripe stripe = new Stripe(link, Length.instantiateSI(0.0), Length.instantiateSI(0.0), Length.instantiateSI(0.2));
-        stripe.addPermeability(car, Type.DASHED);
+                Map.of(car, new Speed(120, SpeedUnit.KM_PER_HOUR)));
+        new Stripe(Type.SOLID, link, Length.instantiateSI(3.5), Length.instantiateSI(0.2));
+        new Stripe(Type.DASHED, link, Length.instantiateSI(0.0), Length.instantiateSI(0.2));
+        new Stripe(Type.SOLID, link, Length.instantiateSI(-3.5), Length.instantiateSI(0.2));
         return network;
     }
 ```
 
-With this in place the simulation can run, but without traffic. The next tutorial deals with creating an OD matrix. To apply the OD on the network one can use `ODApplier` within the `setupSimulation(…)` method. Section [How to set up model factores when using an OD matrix](#how-to-set-up-model-factories-when-using-an-od-matrix) gives a tutorial on how to setup up model factories when using `ODApplier`. This method has the task to set everything up that is required for the simulation. This includes for example a `RoadSampler`, `Detector`s, or some dedicated data collection.
+With this in place the simulation can run, but without traffic. The next tutorial deals with creating an OD matrix. To apply the OD on the network one can use `OdApplier` within the `setupSimulation(…)` method. Section [How to set up model factories when using an OD matrix](#how-to-set-up-model-factories-when-using-an-od-matrix) gives a tutorial on how to setup up model factories when using `OdApplier`. This method has the task to set everything up that is required for the simulation. This includes for example a `RoadSampler`, `Detector`s, or some dedicated data collection.
 
 Some elements of simulation can be specified by overriding methods of `AbstractSimulationScript`. These methods are:
 
-* `addAnimationToggles(…)`; defines the buttons on the left side of the animation screen
+* `animateNetwork(…)`; 
 * `addTabs(…)`; adds taps for additional visualization, e.g. time-space plots, next to the only default tap named ‘animation’.
-* `setDefaultProperties(…)`; can use setProperty(…) to set default property values.
 * `onSimulationEnd()`; a trigger that is called on the simulation end, can for example be used to save gathered data.
 * `setupDemo(…)`; intended to optionally add elements to the demo panel on the right side of the animation screen (which is hidden by default).
+* `setAnimationToggles(…)`; defines the buttons on the left side of the animation screen.
 
-The default implementations of these methods are empty, except for `addAnimationToggles(…)` which adds a default set of animation toggles.
+The default implementations of these methods are empty, except for `animateNetwork(…)` which uses `DefaultAnimationFactory`, and `setAnimationToggles(…)` which sets a default set of animation toggles.
 
 
 ## How to create an OD matrix and add demand data
 
-This section explains how an OD matrix can be created using code. Section 3.1 explains OD matrices in OTS. We first create a list of origins (nodes A and B) and destinations (nodes B and C).
+This section explains how an OD matrix can be created using code. Section [Origin-destination matrix](../04-demand/od-matrix.md) explains OD matrices in OTS. We first create a list of origins (nodes A and B) and destinations (nodes B and C).
 
 ```java
     List<Node> origins = new ArrayList<>();
@@ -113,8 +112,8 @@ Now we can create the OD matrix, still without demand data.
 To add demand we need categories. In our case these are not OD specific as we do not specify demand per lane or route. So we only need two categories for all demand.
 
 ```java
-    Category carCategory = new Category(categorization, network.getGtuType(GtuType.DEFAULTS.CAR));
-    Category truckCategory = new Category(categorization, network.getGtuType(GtuType.DEFAULTS.TRUCK));
+    Category carCategory = new Category(categorization, DefaultsNl.CAR);
+    Category truckCategory = new Category(categorization, DefaultsNl.TRUCK);
 ```
 
 Demand for cars from A to B follows the matrix time periods and interpolation. We have half an hour with 1000&nbsp;veh/h, and another with 2000&nbsp;veh/h. The third demand value is not used with stepwise demand.
@@ -156,28 +155,28 @@ Demand can also be specified in number of trips per time period, rather than a f
 The command `odMatrix.print()` will output the following. As we can see, trips have internally been transformed into frequencies.
 
 <pre>
-A -> B | Category [[GTUType: CAR]] | [ 1000,00000 2000,00000 0,00000000] 1/h
-A -> B | Category [[GTUType: TRUCK]] | [ 100.000000 150.000000] 1/h
-A -> C | Category [[GTUType: CAR]] | [ 600.000000 800.000000 0.00000000] 1/h
-A -> C | Category [[GTUType: TRUCK]] | [ 100.000000 0.00000000] 1/h
+A -> B | [GtuType: CAR] | [ 1000.00000 2000.00000 0.00000000] /h
+A -> B | [GtuType: TRUCK] | [ 100.000000 150.000000] /h
+A -> C | [GtuType: CAR] | [ 600.000000 800.000000 0.00000000] /h
+A -> C | [GtuType: TRUCK] | [ 100.000000 0.00000000] /h
 B -> B | -no data-
-B -> C | Category [[GTUType: CAR]] | [ 1080.00000 1350.00000 0.00000000] 1/h
-B -> C | Category [[GTUType: TRUCK]] | [ 120.000000 150.000000 0.00000000] 1/h
+B -> C | [GtuType: CAR] | [ 1080.00000 1350.00000 0.00000000] /h
+B -> C | [GtuType: TRUCK] | [ 120.000000 150.000000 0.00000000] /h
 </pre>
 
 
 ## How to set up model factories when using an OD matrix
 
-When using an OD matrix, vehicle generation can bet set up using `ODApplier`. This utility uses an instance of `OdOptions` to define specifics of vehicle generation. One option is `OdOptions.GTU_TYPE` which has a value of type `GTUCharacteristicsGeneratorOD`. This tutorial covers some ways to define this. Section [GTU characteristics generator](../04-demand/gtu-characteristics.md) covers the structure for factories in a non-OD matrix context. The structure for characteristics within an OD matrix context is similar and discussed in section [GTU characteristics](../04-demand/traffic-od.md#gtu-characteristics). The difference is that the OD matrix defines the origin and the destination, and possibly the route and/or GTU type.
+When using an OD matrix, vehicle generation can bet set up using `OdApplier`. This utility uses an instance of `OdOptions` to define specifics of vehicle generation. One option is `OdOptions.GTU_TYPE` which has a value of type `LaneBasedGtuCharacteristicsGeneratorOd`. This tutorial covers some ways to define this. Section [GTU characteristics generator](../04-demand/gtu-characteristics.md) covers the structure for factories in a non-OD matrix context. The structure for characteristics within an OD matrix context is similar and discussed in section [GTU characteristics](../04-demand/traffic-od.md#gtu-characteristics). The difference is that the OD matrix defines the origin and the destination, and possibly the route and/or GTU type.
 
-In this tutorial the factories are defined in anonymous classes, as factories are often used in specifics contexts. For every model component this could however also be a separate class. Anonymous classes are an in-place manner to define extensions of classes, including extensions of interfaces and abstract classes. Below is example code where an instance of an anonymous extension of `GTUCharacteristicsGeneratorOD` is created. 
+In this tutorial the factories are defined in anonymous classes, as factories are often used in specifics contexts. For every model component this could however also be a separate class. Anonymous classes are an in-place manner to define extensions of classes, including extensions of interfaces and abstract classes. Below is example code where an instance of an anonymous extension of `LaneBasedGtuCharacteristicsGeneratorOd` is created. 
 
 ```java
-    GTUCharacteristicsGeneratorOD factory = new GTUCharacteristicsGeneratorOD()
+    LaneBasedGtuCharacteristicsGeneratorOd characteristicsGenerator = new LaneBasedGtuCharacteristicsGeneratorOd()
     {
         @Override
-        public LaneBasedGTUCharacteristics draw(final NodeInterface origin, final NodeInterface destination,
-                                                final Category category, final StreamInterface randomStream) throws GtuException
+        public LaneBasedGtuCharacteristics draw(final Node origin, final Node destination, final Category category,
+                final StreamInterface randomStream) throws GtuException
         {
             // implementation code
         }
@@ -189,53 +188,64 @@ Let us assume that for this simulation the GTU type and route are defined in the
 ```java
     GtuType gtuType = category.get(GtuType.class);
     Route route = category.get(Route.class);
-    GtuCharacteristics gtuCharacteristics = DefaultsNL.defaultCharacteristics(gtuType, origin.getNetwork(),randomStream);
+    GtuCharacteristics gtuCharacteristics = GtuType.defaultCharacteristics(gtuType, origin.getNetwork(), randomStream);
     VehicleModel vehicleModel = VehicleModel.NONE;
 ```
 
-What remains to be defined is a `LaneBasedStrategicalPlannerFactory`. Defining components bottom up the following code uses some standard components.
+What remains to be defined is a `LaneBasedStrategicalPlannerFactory`. Defining components bottom up the following code uses some standard components. Note that the strategical planner factory can be defined once, for example as a property of the anonymous class, rather that for every call to the `draw()` method.
 
 ```java
-    CarFollowingModelFactory<?> carFollowing = new IDMPlusFactory(randomStream);
-    PerceptionFactory perception = new DefaultLMRSPerceptionFactory();
-    LaneBasedTacticalPlannerFactory<?> tactical = new LMRSFactory(carFollowing, perception);
+    CarFollowingModelFactory<?> carFollowing = new IdmPlusFactory(randomStream);
+    PerceptionFactory perception = new DefaultLmrsPerceptionFactory();
+    LaneBasedTacticalPlannerFactory<?> tactical = new LmrsFactory(carFollowing, perception);
     LaneBasedStrategicalPlannerFactory<?> strategical = new LaneBasedStrategicalRoutePlannerFactory(tactical);
 ```
 
 Finally all defined aspects of the characteristics can be returned.
 
 ```java
-    return new LaneBasedGTUCharacteristics(gtuCharacteristics, strategical, route, origin, destination, vehicleModel);
+    return new LaneBasedGtuCharacteristics(gtuCharacteristics, strategical, route, origin, destination, vehicleModel);
 ```
 
 Setup code like this is usually more elaborate as more specific, non-default characteristics are used. Extensions to this approach could be:
 
-* The GTU type and route may not be defined in the OD, but instead be drawn from a distribution or be derived by generators, or specifically for the route by a `RouteSupplierOD`. (The route can be determined in different places. Assuming `DefaultGTUCharacteristicsGeneratorOD` is used, if the OD matrix defines a route, it is used. Otherwise if a `RouteGeneratorOD` is specified in `DefaultGTUCharacteristicsGeneratorOD`, that is used to determine a route when a GTU is generated. A `LaneBasedStrategicalRoutePlannerFactory` can also be assigned a `RouteGeneratorOD` in its constructor. It will be forwarded to all strategical planner instances it creates. It is used whenever the route turns out to be `null`, including ‘en-route’. For clarity it is preferred to prevent redundancy, i.e. it is advised to determine routes at one place, and rely on exception to be notified when routes are not properly defined.)
+* The GTU type and route may not be defined in the OD, but instead be drawn from a distribution or be derived by generators, or specifically for the route by a `RouteGenerator`. (The route can be determined in different places. If the OD matrix defines a route, it is used. A `LaneBasedStrategicalRoutePlannerFactory` can also be assigned a `RouteGenerator` in its constructor. It will be forwarded to all strategical planner instances it creates. It is used whenever the route turns out to be `null`, including ‘en-route’. For clarity it is preferred to prevent redundancy, i.e. it is advised to determine routes at one place, and rely on an exception to be thrown when routes are not properly defined.)
 * The GTU dimensions and maximum speed may be drawn from non-default distributions.
 * The vehicle model may be determined by a factory, varying e.g. vehicle mass.
 * The car-following factory could use lower-level factories for desired headway and desired speed models.
 * A perception factory may be required which includes specific perception categories in the perception.
 * The LMRS factory can be specified with many more choices.
 
-Another way to go about this process is to use `DefaultGTUCharacteristicsGeneratorOD`, which is discussed in section [GTU characteristics](../04-demand/traffic-od.md#gtu-characteristics). It can be created by setting several optional elements. Due to the large number of elements a factory is used to create an instance. For example the line creates a `DefaultGTUCharacteristicsGeneratorOD` without any element set. Besides the `create()` method, the `Factory` has many methods to set the elements. These methods allow method chaining, i.e. `Factory().setX(…).setY(…).setZ(…).create()`.
+Another way to go about this process is to use `DefaultLaneBasedGtuCharacteristicsGeneratorOd`, which is discussed in section [GTU characteristics](../04-demand/traffic-od.md#gtu-characteristics). It can be created by setting several optional elements with a factory. For example the lines below create a `DefaultLaneBasedGtuCharacteristicsGeneratorOd` with only a default LMRS model set. Besides the `create()` method, the `Factory` has many methods to set the elements. These methods allow method chaining, i.e. `Factory().setX(…).setY(…).setZ(…).create()`.
 
 ```java
-    GTUCharacteristicsGeneratorOD factory = new DefaultGTUCharacteristicsGeneratorOD.Factory().create();
+    LaneBasedStrategicalRoutePlannerFactory lmrs = DefaultLaneBasedGtuCharacteristicsGeneratorOd.defaultLmrs(randomStream);
+    DefaultLaneBasedGtuCharacteristicsGeneratorOd generator = new DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory(lmrs).create();
 ```
 
-For clarity the rest of the example code does not use method chaining. It should be noted that the following code uses a variable `randomStream` and `network`. The context, however, is any method that sets up a simulation, and not `GTUCharacteristicsGeneratorOD.draw(…)` as presented before. Nonetheless they are likely the same stream of random numbers and network used for vehicle generation, being passed on from one context to another. It should also be noted that the example code sets many standard elements, which are equal to the default elements that are used when a particular element is not specified. This is  for the sake of illustration. First, let us create the `Factory`, set a default (shortest path) route supplier and acquire the GTU types.
+For clarity the rest of the example code does not use method chaining. It should be noted that the following code uses a variable `randomStream`. The context, however, is any method that sets up a simulation, and not `LaneBasedGtuCharacteristicsGeneratorOd.draw(…)` as presented before. Nonetheless it is likely the same stream of random numbers used for vehicle generation, being passed on from one context to another. It should also be noted that the example code sets many standard elements, which are equal to the default elements that are used when a particular element is not specified. This is for the sake of illustration. First, let us define the GTU types.
 
 ```java
-    Factory factoryOD = new DefaultGTUCharacteristicsGeneratorOD.Factory();
-    factoryOD.setRouteSupplier(RouteGeneratorOD.getDefaultRouteSupplier(myRandomStream));
-    GtuType car = network.getGtuType(GtuType.DEFAULTS.CAR);
-    GtuType truck = network.getGtuType(GtuType.DEFAULTS.TRUCK);
+    GtuType car = DefaultsNl.CAR;
+    GtuType truck = DefaultsNl.TRUCK;
+```
+
+Next, factories for model components are set up similar to how this was done before. A `ParameterFactory` is included to set a different acceleration value for trucks. The highest level factory (strategical) is used on the GTU characteristics generator factory. Note that this is a simple case. Depending on the GTU type, and possibly the origin or destination, the strategical planner factory may return various models, possibly based on a set of delegate strategical planner factories.
+
+```java
+    CarFollowingModelFactory<?> carFollowing = new IdmPlusFactory(randomStream);
+    PerceptionFactory perception = new DefaultLmrsPerceptionFactory();
+    LmrsFactory tactical = new LmrsFactory(carFollowing, perception);
+    ParameterFactoryByType params = new ParameterFactoryByType();
+    params.addParameter(truck, ParameterTypes.A, Acceleration.instantiateSI(0.8));
+    LaneBasedStrategicalPlannerFactory<?> strategical = new LaneBasedStrategicalRoutePlannerFactory(tactical, params);
+    Factory factoryOD = new DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory(strategical);
 ```
 
 Next, we create and set a distribution such that 90% of the GTUs are cars, and the rest trucks.
 
 ```java
-    Distribution<GtuType> gtuTypeGenerator = new Distribution<>(myRandomStream);
+    Distribution<GtuType> gtuTypeGenerator = new Distribution<>(randomStream);
     gtuTypeGenerator.add(new FrequencyAndObject<>(0.9, car));
     gtuTypeGenerator.add(new FrequencyAndObject<>(0.1, truck));
     factoryOD.setGtuTypeGenerator(gtuTypeGenerator);
@@ -244,19 +254,20 @@ Next, we create and set a distribution such that 90% of the GTUs are cars, and t
 Suppose we want non-default dimensions for cars, but for trucks the defaults are ok. For this we supply a template for cars.
 
 ```java
-    Set<TemplateGtuType> templates = new LinkedHashSet<>();
-    templates.add(new TemplateGTUType(car, 
+    Set<GtuTemplate> templates = new LinkedHashSet<>();
+    templates.add(new GtuTemplate(car,
             new ConstantGenerator<>(Length.instantiateSI(4.5)),
             new ConstantGenerator<>(Length.instantiateSI(1.9)), 
             new ConstantGenerator<>(Speed.instantiateSI(50))));
     factoryOD.setTemplates(templates);
+    GtuType.registerTemplateSupplier(truck, Defaults.NL);
 ```
 
 As vehicle model we require, in this case, the mass to be known and distributed. Hence, two distributions are created and used in an anonymous vehicle model factory. Note that the implementation returns a value from either distribution based on the input GTU type.
 
 ```java
-    DistContinuousMass carMass = new DistContinuousMass(new DistUniform(myRandomStream, 500, 1500));
-    DistContinuousMass truckMass = new DistContinuousMass(new DistUniform(myRandomStream, 800, 10000));
+    DistContinuousMass carMass = new DistContinuousMass(new DistUniform(randomStream, 500, 1500));
+    DistContinuousMass truckMass = new DistContinuousMass(new DistUniform(randomStream, 800, 10000));
     factoryOD.setVehicleModelGenerator(new VehicleModelFactory()
     {
         @Override
@@ -269,27 +280,13 @@ As vehicle model we require, in this case, the mass to be known and distributed.
     });
 ```
 
-Finally, factories for model components are set up similar to how this was done before. A `ParameterFactory` is included to set a different acceleration value for trucks. The highest level factory (strategical) is return from the anonymous factory. Note that this is a very simple case. Depending on the GTU type, and possibly the origin or destination, different strategical factories may need to be returned.
+Finally, lets create the GTU characteristics generator.
 
 ```java
-    CarFollowingModelFactory<?> carFollowing = new IDMPlusFactory(myRandomStream);
-    PerceptionFactory perception = new DefaultLMRSPerceptionFactory();
-    LMRSFactory tactical = new LMRSFactory(carFollowing, perception);
-    ParameterFactoryByType params = new ParameterFactoryByType();
-    params.addParameter(truck, ParameterTypes.A, Acceleration.instantiateSI(0.8));
-    LaneBasedStrategicalPlannerFactory<?> strategical = new LaneBasedStrategicalRoutePlannerFactory(tactical, params);
-    factoryOD.setFactorySupplier(new StrategicalPlannerFactorySupplierOD()
-    {
-        @Override
-        public LaneBasedStrategicalPlannerFactory<?> getFactory(final NodeInterface origin, final NodeInterface destination, 
-                final Category category, final StreamInterface randomStream) throws GtuException
-        {
-            return strategical;
-        }
-    });
+    DefaultLaneBasedGtuCharacteristicsGeneratorOd generator = factoryOD.create();
 ```
 
-This concludes the example code. It is recommended to use `DefaultGTUCharacteristicsGeneratorOD` when possible. It is very flexible and requires the user to only specify what is non-default. Before creating the set up code, the user should be aware of the model structure of the components to use. OTS only enforces the use of a strategical factory at the highest level. What lower levels are used is entirely up to specific implementations, ranging from tactical planners, including perception, to desired speed and headway models.
+This concludes the example code. It is recommended to use `DefaultLaneBasedGtuCharacteristicsGeneratorOd` when possible. It is very flexible and requires the user to only specify what is non-default. Before creating the set up code, the user should be aware of the model structure of the components to use. OTS only enforces the use of a strategical factory at the highest level. What lower levels are used is entirely up to specific implementations, ranging from tactical planners, including perception, to desired speed and headway models.
 
 
 ## How to set up bus traffic

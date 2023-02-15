@@ -1,6 +1,6 @@
 # Tactical planner
 
-A tactical planner governs the short-term movement of the GTU by determining an operational plan. To understand when the tactical planner is requested to provide an operational plan, such events are now explained. Upon the creation of a GTU a call to `AbstractGTU.move(…)` takes place. This method then repeatedly schedules itself at any (ir)regular interval. The method requests a tactical planner from the strategical planner, and an operational plan from the tactical planner using the below method. 
+A tactical planner governs the short-term movement of the GTU by determining an operational plan. To understand when the tactical planner is requested to provide an operational plan, such events are now explained. Upon the creation of a GTU a call to `Gtu.move(…)` takes place. This method then repeatedly schedules itself at any (ir)regular interval. The method requests a tactical planner from the strategical planner, and an operational plan from the tactical planner using the below method. 
 
 ```java
     OperationalPlan generateOperationalPlan(Time startTime, 

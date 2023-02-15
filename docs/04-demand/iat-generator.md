@@ -3,7 +3,7 @@
 Functionally this is a simple component, that implements`Generator<Duration>`, which only defines a single `draw()` method to return headways. Internally, this has to implement a demand pattern. A simple instance would for example always return a specific value, meaning constant demand and a uniform arrival pattern. 
 
 ```java
-    Generator<Duration> const = new ConstantGenerator<>(Duration.createSI(2.0));
+    Generator<Duration> const = new ConstantGenerator<>(Duration.instantiateSI(2.0));
 ```
 
 But generally, demand is dynamic, and arrivals may be assumed not to be uniform.

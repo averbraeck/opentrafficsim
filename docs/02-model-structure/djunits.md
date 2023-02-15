@@ -28,7 +28,7 @@ There is a downside to using DJUNITS, which is that code can run a bit slower th
 ```java
     public Length move(final Speed v, final Duration t, final Acceleration a)
     {
-        return v.multiplyBy(t).plus(a.multiplyBy(.5).multiplyBy(t).multiplyBy(t));
+        return v.times(t).plus(a.times(.5).times(t).times(t));
     }
 ```
 

@@ -10,15 +10,14 @@ Parameters quantify movement of GTUs and can be obtained from the GTU using `get
 In actual usage the java generics disappear.
 
 ```java
-    parameters.setParameter(ParameterTypes.A, Acceleration.createSI(1.4));
+    parameters.setParameter(ParameterTypes.A, Acceleration.instantiateSI(1.4));
     Acceleration a = parameters.getParameter(ParameterTypes.A);
 ```
 
 Here we see `ParameterTypes.A` being used, which is the maximum car-following acceleration. It is possible to set a parameter value tentatively, for example as one applies a temporary different context on the own GTU (e.g. applying the car-following model on a traffic light, where larger decelerations are accepted), or when assessing behavior of surrounding GTUs (e.g. setting the desired headway of a surrounding GTU to a short value for evaluation of a gap when urgently changing lane). After such cases, the parameter value may be set back to the previous value, whatever it was. This can be achieved with the following two method calls. (The reason that `setParameter()` does not remember the previous value is efficiency.) If the reset is not called, the tentative value becomes permanent (until it is set again).
 
 ```java
-    parameters.setParameterResettable(ParameterTypes.B, 
-        Acceleration.createSI(3.5));
+    parameters.setParameterResettable(ParameterTypes.B, Acceleration.instantiateSI(3.5));
     parameters.resetParameter(ParameterTypes.B);
 ```
 
@@ -31,10 +30,8 @@ A number of frequently used parameters is defined in static fields of the `Param
     {
         protected static final ParameterTypeAcceleration A = ParameterTypes.A;
 
-        public static final ParameterTypeDouble DELTA = 
-            new ParameterTypeDouble("delta", 
-            "Acceleration flattening exponent towards desired speed.", 4.0,     
-            ConstraintInterface.POSITIVE);
+        public static final ParameterTypeDouble DELTA = new ParameterTypeDouble("delta",
+            "Acceleration flattening exponent towards desired speed", 4.0, ConstraintInterface.POSITIVE);
     }
 ```
 
@@ -48,7 +45,7 @@ Using constraints on parameter values is a simple way to assure that models beha
 The first is to provide a `Constraint<T>` in any of the constructors. This is an interface that simply has an `accept(T)` method, and can be implemented to form any constraint that is self-contained (i.e. not dependent on other parameter values). The following constraints are readily available.
 
 * `NumericConstraint`; an `enum` with several frequently applicable constraints for any parameter type that extends `Number`, including DJUNIT types. 
-* `SingleBound`; has static methods to create bounds for any parameter type that extends `Number`, including `lowerInculsive(…)`, `lowerExclusive(…)`, `upperInclusive(…)` and `upperExclusive(…)`.
+* `SingleBound`; has static methods to create bounds for any parameter type that extends `Number`, including `lowerInclusive(…)`, `lowerExclusive(…)`, `upperInclusive(…)` and `upperExclusive(…)`.
 * `DualBound`; has static methods to create dual-bounds for any parameter type that extends `Number`, including `closed(…)`, `open(…)`, `leftOpenRightClosed(…)` and `leftClosedRightOpen(…)`.
 * `CollectionConstraint`; constraint that checks whether the value is any from a pre-defined collection.
 * `SubCollectionConstraint`; constraints that checks for parameter types with (extensions of) `Collection` value types, whether the value (a collection) is a subset of a pre-defined collection.

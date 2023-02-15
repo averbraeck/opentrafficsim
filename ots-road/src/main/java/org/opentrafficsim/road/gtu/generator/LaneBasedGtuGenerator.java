@@ -240,11 +240,13 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
             }
 
         }
+        // @docs/02-model-structure/dsol.md#event-based-simulation
         Duration headway = this.interarrivelTimeGenerator.draw();
         if (headway != null)
         {
             this.simulator.scheduleEventRel(headway, this, "generateCharacteristics", new Object[] {});
         }
+        // @end
     }
 
     /**
@@ -296,10 +298,12 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
                 this.simulator.scheduleEventNow(this, "tryToPlaceGTU", new Object[] {position});
             }
         }
+        // @docs/02-model-structure/dsol.md#event-based-simulation (without the 'else')
         else if (queue.size() > 0)
         {
             this.simulator.scheduleEventRel(this.reTryInterval, this, "tryToPlaceGTU", new Object[] {position});
         }
+        // @end
     }
 
     /**
@@ -359,10 +363,12 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
         }
         Queue<TimeStampedObject<LaneBasedGtuCharacteristics>> queue = linkMap.get(lanePosition);
         queue.add(new TimeStampedObject<>(characteristics, this.simulator.getSimulatorAbsTime()));
+        // @docs/02-model-structure/dsol.md#event-based-simulation
         if (queue.size() == 1)
         {
             this.simulator.scheduleEventNow(this, "tryToPlaceGTU", new Object[] {lanePosition});
         }
+        // @end
     }
 
     /**

@@ -801,7 +801,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      *         a lane change operation)
      * @throws GtuException when the fractionalPosition is outside the range 0..1, or the GTU is already registered on this Lane
      */
-    public final int addGTU(final LaneBasedGtu gtu, final double fractionalPosition) throws GtuException
+    // @docs/02-model-structure/djutils.md#event-producers-and-listeners
+    public final int addGtu(final LaneBasedGtu gtu, final double fractionalPosition) throws GtuException
     {
         int index;
         // check if we are the first
@@ -829,8 +830,10 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             }
             this.gtuList.add(index, gtu);
         }
+        // @docs/02-model-structure/djutils.md#event-producers-and-listeners
         fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] {gtu.getId(), this.gtuList.size(), getId(), getParentLink().getId()},
                 gtu.getSimulator().getSimulatorTime());
+        // @end
         getParentLink().addGTU(gtu);
         return index;
     }
@@ -843,9 +846,9 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      *         a lane change operation)
      * @throws GtuException when longitudinalPosition is negative or exceeds the length of this Lane
      */
-    public final int addGTU(final LaneBasedGtu gtu, final Length longitudinalPosition) throws GtuException
+    public final int addGtu(final LaneBasedGtu gtu, final Length longitudinalPosition) throws GtuException
     {
-        return addGTU(gtu, longitudinalPosition.getSI() / getLength().getSI());
+        return addGtu(gtu, longitudinalPosition.getSI() / getLength().getSI());
     }
 
     /**
@@ -854,14 +857,17 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param removeFromParentLink boolean; when the GTU leaves the last lane of the parentLink of this Lane
      * @param position Length; last position of the GTU
      */
-    public final void removeGTU(final LaneBasedGtu gtu, final boolean removeFromParentLink, final Length position)
+    // @docs/02-model-structure/djutils.md#event-producers-and-listeners
+    public final void removeGtu(final LaneBasedGtu gtu, final boolean removeFromParentLink, final Length position)
     {
         boolean contained = this.gtuList.remove(gtu);
         if (contained)
         {
+            // @docs/02-model-structure/djutils.md#event-producers-and-listeners
             fireTimedEvent(Lane.GTU_REMOVE_EVENT,
                     new Object[] {gtu.getId(), gtu, this.gtuList.size(), position, getId(), getParentLink().getId()},
                     gtu.getSimulator().getSimulatorTime());
+            // @end
         }
         if (removeFromParentLink)
         {

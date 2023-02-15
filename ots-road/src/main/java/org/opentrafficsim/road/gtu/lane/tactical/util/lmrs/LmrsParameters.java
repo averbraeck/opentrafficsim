@@ -24,6 +24,7 @@ public interface LmrsParameters
 {
 
     /** Free lane change desire threshold. */
+    // @docs/06-behavior/parameters.md
     ParameterTypeDouble DFREE =
             new ParameterTypeDouble("dFree", "Free lane change desire threshold", 0.365, ConstraintInterface.UNITINTERVAL)
             {
@@ -34,9 +35,11 @@ public interface LmrsParameters
                 @Override
                 public void check(final Double value, final Parameters params) throws ParameterException
                 {
+                    // @docs/06-behavior/parameters.md
                     Double dSync = params.getParameterOrNull(DSYNC);
                     Throw.when(dSync != null && value >= dSync, ParameterException.class,
                             "Value of dFree is above or equal to dSync.");
+                    // @end
                     Double dCoop = params.getParameterOrNull(DCOOP);
                     Throw.when(dCoop != null && value >= dCoop, ParameterException.class,
                             "Value of dFree is above or equal to dCoop.");
@@ -44,6 +47,7 @@ public interface LmrsParameters
             };
 
     /** Synchronized lane change desire threshold. */
+    // @docs/06-behavior/parameters.md
     ParameterTypeDouble DSYNC = new ParameterTypeDouble("dSync", "Synchronized lane change desire threshold", 0.577,
             ConstraintInterface.UNITINTERVAL)
     {
@@ -54,8 +58,10 @@ public interface LmrsParameters
         @Override
         public void check(final Double value, final Parameters params) throws ParameterException
         {
+            // @docs/06-behavior/parameters.md
             Double dFree = params.getParameterOrNull(DFREE);
             Throw.when(dFree != null && value <= dFree, ParameterException.class, "Value of dSync is below or equal to dFree.");
+            // @end
             Double dCoop = params.getParameterOrNull(DCOOP);
             Throw.when(dCoop != null && value >= dCoop, ParameterException.class, "Value of dSync is above or equal to dCoop.");
         }

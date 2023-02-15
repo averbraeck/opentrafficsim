@@ -14,11 +14,11 @@ Performance indicators as calculated based on trajectories are extensions of `Ab
 The reporting code obtains the trajectory groups of a query, and forwards these to an indicator. (The indicator also receives the query so that calculated values can internally be stored per unique input to prevent recalculating the same value. This is especially useful if some indicators are derived using other indicators. The indicator thus has all information to derive the trajectory groups. It is still given as separate input by the reporting code as calculating the applicable trajectory groups is expensive, and should only be done once for multiple indicators based on the same query.) The indicator calculates the value over the provided trajectory groups. As an example, the code below calculates the value for `MeanTripLength`. It loops all trajectory groups and trajectories to sum the total travelled distance. As one GTU is likely to have multiple `Trajectory`’s (due to lane changes and different sections), the total travelled distance is divided by the number of unique GTU ids encountered (not the total number of `Trajectory`’s).
 
 ```java
-    protected Length calculate(…, final List<TrajectoryGroup> trajectoryGroups)
+    protected <G extends GtuData> Length calculate(…, final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         Length sum = Length.ZERO;
-        Set<String> gtuIds = new HashSet<>();
-        for (TrajectoryGroup trajectoryGroup : trajectoryGroups)
+        Set<String> gtuIds = new LinkedHashSet<>();
+        for (TrajectoryGroup<?> trajectoryGroup : trajectoryGroups)
         {
             for (Trajectory<?> trajectory : trajectoryGroup.getTrajectories())
             {
@@ -26,20 +26,19 @@ The reporting code obtains the trajectory groups of a query, and forwards these 
                 gtuIds.add(trajectory.getGtuId());
             }
         }
-        return sum.divideBy(gtuIds.size());
+        return sum.divide(gtuIds.size());
     }
 ```
 
 Indicators can also use other indicators. For instance, the code below uses total travel time from an indicator which was given to the class in the constructor. Mean density is calculated by dividing total travel time by the total space-time area.
 
 ```java
-    protected LinearDensity calculate(…, final Time startTime, final Time endTime, 
-        final List<TrajectoryGroup> trajectoryGroups)
+    protected <G extends GtuData> LinearDensity calculate(…, final Time startTime, final Time endTime,
+        final List<TrajectoryGroup<G>> trajectoryGroups)
     {
-        double ttt = this.travelTime.getValue(
-            query, startTime, endTime, trajectoryGroups).si;
+        double ttt = this.travelTime.getValue(query, startTime, endTime, trajectoryGroups).si;
         double area = 0;
-        for (TrajectoryGroup trajectoryGroup : trajectoryGroups)
+        for (TrajectoryGroup<?> trajectoryGroup : trajectoryGroups)
         {
             area += trajectoryGroup.getLength().si * (endTime.si - startTime.si);
         }

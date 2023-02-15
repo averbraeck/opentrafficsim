@@ -60,14 +60,12 @@ The utility prepares a GTU characteristics generator for the GTU generators, of 
 <pre>
 Lane-based GTU generator
 &lfloor; GTU characteristics generator
-  &lfloor; GTU characteristics generator OD wrapper
-    &lfloor; <b>GTU characteristics generator OD</b>
-      &lfloor; <i>DefaultGTUCharacteristicsGeneratorOD</i>
-        &lfloor; <i>GTU type generator</i>
-        &lfloor; <i>Templates {TemplateGTUType}</i>
-        &lfloor; <i>Route generator</i>
-        &lfloor; <i>Strategical planner factory supplier OD</i>
-        &lfloor; <i>Vehicle model factory</i>
+  &lfloor; <b>GTU characteristics generator OD</b>
+    &lfloor; <i>DefaultLaneBasedGtuCharacteristicsGeneratorOd</i>
+      &lfloor; <i>GTU type generator</i>
+      &lfloor; <i>Templates {TemplateGTUType}</i>
+      &lfloor; <i>Strategical planner factory</i>
+      &lfloor; <i>Vehicle model factory</i>
 </pre>
 
 The default implementation is `DefaultLaneBasedGtuCharacteristicsGeneratorOd`, which does the following:
@@ -195,9 +193,9 @@ With the 2x2 group maintaining the internal steady-state of 75%-25%, all earlier
 Concluding, complex transition matrices including correlations between GTU types can be created solely by defining correlations for individual GTU types, capturing correlations between GTU types only by grouping. The full example is created with the following code. Note that `GTUType.CAR` is not added, as states with 0 correlation are automatically implied when a new state is determined.
 
 ```java
-    MarkovCorrelation<GTUType, Frequency> markov = new MarkovCorrelation<>();
-    GTUType truck = DefaultsNl.TRUCK;
-    GTUType caccTruck = new GTUType("caccTruck", truck);
+    MarkovCorrelation<GtuType, Frequency> markov = new MarkovCorrelation<>();
+    GtuType truck = DefaultsNl.TRUCK;
+    GtuType caccTruck = new GtuType("caccTruck", truck);
     markov.addState(truck, 0.4);
     markov.addState(truck, caccTruck, 0.64);
 ```

@@ -79,7 +79,7 @@ public interface VehicleModel
     }
 
     /**
-     * Defines (fixed) mass and moment of inertia about z-axis.
+     * Defines (fixed) mass and moment of inertia about z-axis. Acceleration is limited using {@code VehicleModel.MINMAX}.
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>

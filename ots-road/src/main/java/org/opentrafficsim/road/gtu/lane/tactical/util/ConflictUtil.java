@@ -136,6 +136,7 @@ public final class ConflictUtil
      * @throws ParameterException if a parameter is not defined or out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
+    // @docs/06-behavior/tactical-planner/#modular-utilities (..., final ConflictPlans conflictPlans, ...)
     public static Acceleration approachConflicts(final Parameters parameters, final Iterable<HeadwayConflict> conflicts,
             final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders, final CarFollowingModel carFollowingModel,
             final Length vehicleLength, final Length vehicleWidth, final Speed speed, final Acceleration acceleration,

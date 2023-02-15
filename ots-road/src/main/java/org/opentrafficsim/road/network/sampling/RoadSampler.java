@@ -168,8 +168,10 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
     public final void initRecording(final LaneDataRoad lane)
     {
         Lane roadLane = lane.getLane();
+        // @docs/02-model-structure/djutils.md#event-producers-and-listeners
         roadLane.addListener(this, Lane.GTU_ADD_EVENT, ReferenceType.WEAK);
         roadLane.addListener(this, Lane.GTU_REMOVE_EVENT, ReferenceType.WEAK);
+        // @end
         int count = 1;
         for (LaneBasedGtu gtu : roadLane.getGtuList())
         {
@@ -199,6 +201,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
     /** {@inheritDoc} */
     @Override
+    // @docs/02-model-structure/djutils.md#event-producers-and-listeners (if-structure + add/removeListener(...))
     public final void notify(final Event event) throws RemoteException
     {
         if (event.getType().equals(LaneBasedGtu.LANEBASED_MOVE_EVENT))

@@ -372,7 +372,7 @@ public class TransceiverTest
         assertEquals("Existing link and lane should have sent empty array", 0, result.length);
 
         // Put one of the GTUs on the lane
-        lane.addGTU(gtu1, 0.3);
+        lane.addGtu(gtu1, 0.3);
 
         this.lastAckNack = null;
         result = linkgit.get(new Object[] {"1 to 2"}, storeLastResult);

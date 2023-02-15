@@ -43,20 +43,20 @@ The following list defines some checks that code has to meet in order to be elig
 
 Java generics can initially seem hard and unwieldly, especially when classes are defined with multiple type arguments, which itself may also have type arguments. Generics however provides excellent ways in which code can be made as generic and re-usable as possible. Therefore, it is applied often in OTS and can be found in much of the source code. Hence, some understanding of generics is favorable. Note however that in case of good design, java generics are present in highly flexible low-level classes, while higher level classes that users mostly interact with hide much of the generics involved. This section is not meant to introduce the concept of java generics. Information to learn about java generics can easily be found elsewhere. Here a basic understanding of java generics is assumed, to further explain some design patterns with java generics as used in OTS.
 
-Below is an example of _recursive generics_, where `HierarchicalType` has type parameter `T`, which is defined to be a subclass of `HierarchicalType` itself. This pattern is useful when a subclass implementation needs to accept or return objects of its own type, while we want to define the functionality only once. For instance, we have `GTUType` which is a subclass of `HierarchicalType`. Without re-specifying the `getParent()` method, it is guaranteed that for a `GTUType`, it will return a `GTUType`. This holds for any subclass, and the pattern allows us to define the functionality once.
+Below is an example of _recursive generics_, where `HierarchicalType` has type parameter `T`, which is defined to be a subclass of `HierarchicalType` itself. This pattern is useful when a subclass implementation needs to accept or return objects of its own type, while we want to define the functionality only once. For instance, we have `GtuType` which is a subclass of `HierarchicalType`. Without re-specifying the `getParent()` method, it is guaranteed that for a `GtuType`, it will return a `GtuType`. This holds for any subclass, and the pattern allows us to define the functionality once.
 
 ```java
     public abstract class HierarchicalType<T extends HierarchicalType<T>> 
         extends Type<T>
     {
-        private final T parent;
+        private T parent;
         public final T getParent()
         {
             return this.parent;
         }
     }
 
-    public final class GTUType extends HierarchicalType<GTUType>
+    public final class GtuType extends HierarchicalType<GtuType>
     {
     }
 ```
@@ -72,9 +72,9 @@ The next example shows how one object can house multiple objects of the same cla
         {
             this.parameters.put(parameterType, value);
         }
+        @SuppressWarnings("unchecked")
         public <T> T getParameter(final ParameterType<T> parameterType)
         {
-            @SuppressWarnings("unchecked")
             return (T) this.parameters.get(parameterType);
         }
     }
@@ -85,7 +85,7 @@ Next, we give an example of _super_ generics, which are often considered vague, 
 ```java
     public class ParameterTypeLength extends ParameterTypeNumeric<Length>
     {    
-        private final Constraint<? super Length>
+        private Constraint<? super Length>
     }
 ```
 
@@ -104,11 +104,11 @@ Next, we show an example using quite some type arguments, to show that although 
 At the beginning of this section it was mentioned that good design should hide much of the underlying java generics being used in lower level classes. Though this is true, it doesn’t excuse the developer of low-level functionality from using comprehensive java generics. As an example of how comprehensive java generics can be hidden, consider the class `Length`. Below the definition of its comprehensive super class is shown. Users of `Length` have to define _no type argument_, but lower level classes make sure that correct calculations are made (e.g. adding `Length` and not `Speed`) and only units pertaining to the length quantity are used.
 
 ```java
-    public class Length extends AbstractDoubleScalarRel<LengthUnit, Length>
-
-    public abstract class AbstractDoubleScalarRel<U extends Unit<U>, 
-        R extends AbstractDoubleScalarRel<U, R>>
-        extends AbstractDoubleScalar<U, R>
+    public interface PerceptionCollectable<H extends Headway, U> extends PerceptionIterable<H>
+    {
+        <C, I> C collect(Supplier<I> identity, PerceptionAccumulator<? super U, I> accumulator,
+                PerceptionFinalizer<C, I> finalizer);
+    }
 ```
 
 These are just a few examples of how java generics is used in OTS. If done well, it’s only a ‘relative headache’ at one location, while providing high flexibility, reusability and cleaner and more intuitive code elsewhere.

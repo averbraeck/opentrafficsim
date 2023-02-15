@@ -18,7 +18,7 @@ public class MultiConstraint<T> implements Constraint<T>
 {
 
     /** Set of constraints. */
-    private final Set<Constraint<T>> constraints;
+    private final Set<Constraint<? super T>> constraints;
 
     /** Message of the latest failed constrained. */
     private String failedConstraintMessage = null;
@@ -28,15 +28,15 @@ public class MultiConstraint<T> implements Constraint<T>
 
     /**
      * Creates a {@code MultiConstraint} from given constraints.
-     * @param constraints Constraint&lt;T&gt;...; constraints
+     * @param constraints Constraint&lt;? super T&gt;...; constraints
      * @param <T> value type
      * @return {@code MultiConstraint}
      */
     @SafeVarargs
-    public static final <T> MultiConstraint<T> create(final Constraint<T>... constraints)
+    public static final <T> MultiConstraint<T> create(final Constraint<? super T>... constraints)
     {
-        Set<Constraint<T>> set = new LinkedHashSet<>();
-        for (Constraint<T> constraint : constraints)
+        Set<Constraint<? super T>> set = new LinkedHashSet<>();
+        for (Constraint<? super T> constraint : constraints)
         {
             set.add(constraint);
         }
@@ -45,9 +45,9 @@ public class MultiConstraint<T> implements Constraint<T>
 
     /**
      * Constructor.
-     * @param constraints Set&lt;Constraint&lt;T&gt;&gt;; constraints
+     * @param constraints Set&lt;Constraint&lt;? super T&gt;&gt;; constraints
      */
-    public MultiConstraint(final Set<Constraint<T>> constraints)
+    public MultiConstraint(final Set<Constraint<? super T>> constraints)
     {
         this.constraints = constraints;
         this.stringRepresentation = String.format("MultiConstraint [contains %d constraints]", this.constraints.size());
@@ -57,7 +57,7 @@ public class MultiConstraint<T> implements Constraint<T>
     @Override
     public boolean accept(final T value)
     {
-        for (Constraint<T> constraint : this.constraints)
+        for (Constraint<? super T> constraint : this.constraints)
         {
             if (!constraint.accept(value))
             {

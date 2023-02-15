@@ -26,6 +26,7 @@ public class MeanTripLength extends AbstractIndicator<Length>
 
     /** {@inheritDoc} */
     @Override
+    // @docs/07-output/indicators.md
     protected <G extends GtuData> Length calculate(final Query<G, ?> query, final Time startTime, final Time endTime,
             final List<TrajectoryGroup<G>> trajectoryGroups)
     {

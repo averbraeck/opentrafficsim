@@ -20,6 +20,7 @@ public interface Parameters
      * @param <T> Class of value.
      * @throws ParameterException If the value does not comply with value type constraints.
      */
+    // @docs/06-behavior/parameters.md (without throws)
     <T> void setParameter(ParameterType<T> parameterType, T value) throws ParameterException;
 
     /**
@@ -45,6 +46,7 @@ public interface Parameters
      * @return T; parameter of the requested type if it exists
      * @throws ParameterException If the parameter was never set.
      */
+    // @docs/06-behavior/parameters.md (without throws)
     <T> T getParameter(ParameterType<T> parameterType) throws ParameterException;
 
     /**

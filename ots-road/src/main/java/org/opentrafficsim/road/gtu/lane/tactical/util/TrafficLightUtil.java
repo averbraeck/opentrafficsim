@@ -88,6 +88,7 @@ public final class TrafficLightUtil
      * @throws NullPointerException if any input is null
      * @throws IllegalArgumentException if the traffic light is not downstream
      */
+    // @docs/06-behavior/tactical-planner/#modular-utilities
     public static Acceleration respondToTrafficLight(final Parameters parameters, final HeadwayTrafficLight headwayTrafficLight,
             final CarFollowingModel carFollowingModel, final Speed speed, final SpeedLimitInfo speedLimitInfo)
             throws ParameterException

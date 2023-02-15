@@ -282,7 +282,7 @@ public class LaneBasedGtu extends Gtu
         for (LanePosition directedLanePosition : initialLongitudinalPositions)
         {
             Lane lane = directedLanePosition.getLane();
-            lane.addGTU(this, directedLanePosition.getPosition()); // enter lane part 2
+            lane.addGtu(this, directedLanePosition.getPosition()); // enter lane part 2
         }
 
         // initiate the actual move
@@ -313,7 +313,7 @@ public class LaneBasedGtu extends Gtu
             {
                 // GTU should be on this lane as we loop the registration
                 Length pos = Try.assign(() -> position(lane, getReference()), "Unexpected exception.");
-                lane.removeGTU(this, removeFromParentLink, pos);
+                lane.removeGtu(this, removeFromParentLink, pos);
                 removeFromParentLink = false;
             }
         }
@@ -378,7 +378,7 @@ public class LaneBasedGtu extends Gtu
         lanes.add(lane);
         int index = dir > 0 ? this.crossSections.size() : 0;
         this.crossSections.add(index, new CrossSection(lanes));
-        lane.addGTU(this, position);
+        lane.addGtu(this, position);
 
         // upstream
         if (dir < 1)
@@ -485,7 +485,7 @@ public class LaneBasedGtu extends Gtu
         this.crossSections.addAll(newLanes);
         for (Entry<Lane, Double> entry : addToLanes.entrySet())
         {
-            entry.getKey().addGTU(this, entry.getValue());
+            entry.getKey().addGtu(this, entry.getValue());
         }
         this.referenceLaneIndex = 1 - index;
     }
@@ -512,7 +512,7 @@ public class LaneBasedGtu extends Gtu
                     fromLane = lane;
                     fromPosition = pos;
                 }
-                lane.removeGTU(this, false, pos);
+                lane.removeGtu(this, false, pos);
             }
             List<Lane> remainingLane = new ArrayList<>();
             remainingLane.add(crossSection.getLanes().get(1 - this.referenceLaneIndex));
@@ -750,7 +750,7 @@ public class LaneBasedGtu extends Gtu
         this.crossSections.add(new CrossSection(nextLanes));
         for (Lane lane : nextLanes)
         {
-            lane.addGTU(this, 0.0);
+            lane.addGtu(this, 0.0);
         }
         this.pendingEnterTrigger = null;
         scheduleEnterEvent();
@@ -858,7 +858,7 @@ public class LaneBasedGtu extends Gtu
             Lane lane = lanes.get(i);
             if (lane != null)
             {
-                lane.removeGTU(this, i == lanes.size() - 1, position(lane, getReference()));
+                lane.removeGtu(this, i == lanes.size() - 1, position(lane, getReference()));
             }
         }
         this.crossSections.remove(0);
@@ -1439,7 +1439,7 @@ public class LaneBasedGtu extends Gtu
                         // TODO: logger notification
                         throw new RuntimeException(exception);
                     }
-                    lane.removeGTU(this, removeFromParentLink, position);
+                    lane.removeGtu(this, removeFromParentLink, position);
                     removeFromParentLink = false;
                 }
             }

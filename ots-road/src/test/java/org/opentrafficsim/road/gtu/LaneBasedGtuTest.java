@@ -336,7 +336,7 @@ public class LaneBasedGtuTest implements UNITS
                 assertTrue("car was not found in rightParallel", foundCar);
                 for (LanePosition pos : carPositions)
                 {
-                    pos.getLane().removeGTU(car, true, pos.getPosition());
+                    pos.getLane().removeGtu(car, true, pos.getPosition());
                 }
             }
         }

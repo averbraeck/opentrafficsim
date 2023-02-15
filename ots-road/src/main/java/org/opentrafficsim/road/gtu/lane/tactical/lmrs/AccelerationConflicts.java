@@ -38,6 +38,7 @@ public class AccelerationConflicts implements AccelerationIncentive, Blockable
 {
 
     /** Set of yield plans at conflicts with priority. Remembering for static model. */
+    // @docs/06-behavior/tactical-planner/#modular-utilities
     private final ConflictPlans yieldPlans = new ConflictPlans();
 
     /** {@inheritDoc} */
@@ -56,10 +57,10 @@ public class AccelerationConflicts implements AccelerationIncentive, Blockable
                 perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane);
         if (!lane.isCurrent())
         {
-            conflicts = new FilteredIterable<>(conflicts, (
-                    conflict
-            ) ->
-            { return conflict.getDistance().gt(mergeDistance); });
+            conflicts = new FilteredIterable<>(conflicts, (conflict) ->
+            {
+                return conflict.getDistance().gt(mergeDistance);
+            });
         }
         conflicts = onRoute(conflicts, gtu);
         Acceleration a = ConflictUtil.approachConflicts(params, conflicts, leaders, carFollowingModel, length, width, speed,

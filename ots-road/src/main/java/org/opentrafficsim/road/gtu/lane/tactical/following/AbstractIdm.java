@@ -27,10 +27,12 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
+//@docs/06-behavior/parameters.md
 public abstract class AbstractIdm extends AbstractCarFollowingModel
 {
 
     /** Acceleration parameter type. */
+    // @docs/06-behavior/parameters.md
     protected static final ParameterTypeAcceleration A = ParameterTypes.A;
 
     /** Comfortable deceleration parameter type. */
@@ -49,6 +51,7 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
     protected static final ParameterTypeDouble FSPEED = ParameterTypes.FSPEED;
 
     /** Acceleration flattening. */
+    // @docs/06-behavior/parameters.md
     public static final ParameterTypeDouble DELTA = new ParameterTypeDouble("delta",
             "Acceleration flattening exponent towards desired speed", 4.0, ConstraintInterface.POSITIVE);
 

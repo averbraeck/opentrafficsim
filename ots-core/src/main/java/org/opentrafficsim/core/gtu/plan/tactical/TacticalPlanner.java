@@ -59,6 +59,7 @@ public interface TacticalPlanner<G extends Gtu, P extends Perception<G>>
      * @throws NetworkException when there is a problem with the network on which the GTU is driving
      * @throws ParameterException when there is a problem with a parameter
      */
+    // @docs/06-behavior/tactical-planner.md
     OperationalPlan generateOperationalPlan(Time startTime, DirectedPoint locationAtStartTime)
             throws OperationalPlanException, GtuException, NetworkException, ParameterException;
 

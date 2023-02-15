@@ -24,37 +24,28 @@ The event based engine is provided by DSOL in a simulator which has an internal 
 </pre>
  
 How this can be used to keep objects active in simulation is explained with a GTU generator.
-When a `LaneBasedGTUGenerator` is created, it registers an event in the simulator to draw characteristics for the next GTU.
-
-```java
-    simulator.scheduleEventRel(this.interarrivelTimeGenerator.draw(), this, this, 
-            "generateCharacteristics", new Object[] {});
-```
-
-Time of the event will be an inter arrival time of GTUs, relative to ‘now’. Both the source and the target are the generator itself, and the method that should be invoked is `generateCharacteristics()`. As this method has no input, an empty object array is given with the event as input. To make sure more than one GTU is created, the `generateCharacteristics()` method also schedules itself repeatedly.
+When a `LaneBasedGtuGenerator` is created, it registers an event in the simulator to draw characteristics for the next GTU.
 
 ```java
     Duration headway = this.interarrivelTimeGenerator.draw();
     if (headway != null)
     {
-        this.simulator.scheduleEventRel(headway, this, this, 
-                "generateCharacteristics", new Object[] {});
+        this.simulator.scheduleEventRel(headway, this, "generateCharacteristics", new Object[] {});
     }
 ```
 
-This initialization and repeated scheduling ensures that characteristics for a GTU are generated whenever a new GTU arrives in the simulation. If no headway is returned (`null`), demand is over and the repeated scheduling stops.
+Time of the event will be an inter-arrival time of GTUs, relative to ‘now’. The target is the generator itself, and the method that should be invoked is `generateCharacteristics()`. As this method has no input, an empty object array is given with the event as input. To make sure more than one GTU is created, the `generateCharacteristics()` method also schedules itself repeatedly. This initialization and repeated scheduling ensures that characteristics for a GTU are generated whenever a new GTU arrives in the simulation. If no headway is returned (`null`), demand is over and the repeated scheduling stops.
 
-The generator has a separate chain of events to actually place the GTUs on the network. It is started inside `generateCharacteristics()` whenever it results in exactly one GTU in the queue. This holds for the first GTU, but also for any GTU that is created after the queue was depleted as all GTUs could be placed on the network. This event chain invokes the method `tryToPlaceGTU(…)`, which has a `GeneratorLanePosition` as input such that it is known where the GTU should be placed on the network. The position is added to the event in the input array. 
+The generator has a separate chain of events to actually place the GTUs on the network. It is started inside `queueGtu` invoked by `generateCharacteristics()` whenever it results in exactly one GTU in the queue. This holds for the first GTU, but also for any GTU that is created after the queue was depleted as all GTUs could be placed on the network. This event chain invokes the method `tryToPlaceGtu(…)`, which has a `GeneratorLanePosition` as input such that it is known where the GTU should be placed on the network. The position is added to the event in the input array. 
 
 ```java
     if (queue.size() == 1)
     {
-        this.simulator.scheduleEventNow(this, this, "tryToPlaceGTU", 
-                new Object[] { lanePosition });
+        this.simulator.scheduleEventNow(this, "tryToPlaceGtu", new Object[] {lanePosition});
     }
 ```
 
-The method `tryToPlaceGTU(…)` attempts to place the GTU on the network. If successful, the GTU is removed from the queue. If other GTUs remain in the queue, an event for them is scheduled at `this.reTryInterval`, i.e. 0.1s, relative to ‘now’. If the queue is empty, the method `generateCharacteristics()` will restart the event chain to place GTUs on the network as soon as the next GTU arrives. (This is a slight simplification. If a GTU is successfully placed and other GTUs remain in the queue, the event is scheduled at the same time for the next GTU. If a GTU cannot be placed, it is scheduled in `this.reTryInterval`).
+The method `tryToPlaceGtu(…)` attempts to place the GTU on the network. If successful, the GTU is removed from the queue. If other GTUs remain in the queue, an event for them is scheduled at `this.reTryInterval`, i.e. 0.1s, relative to ‘now’. If the queue is empty, the method `generateCharacteristics()` will restart the event chain to place GTUs on the network as soon as the next GTU arrives. (This is a slight simplification. If a GTU is successfully placed and other GTUs remain in the queue, the event is scheduled at the same time for the next GTU. If a GTU cannot be placed, it is scheduled in `this.reTryInterval`).
 
 ```java
     if (queue.size() > 0)
