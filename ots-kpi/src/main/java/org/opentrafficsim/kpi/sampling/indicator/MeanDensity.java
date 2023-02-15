@@ -35,6 +35,7 @@ public class MeanDensity extends AbstractIndicator<LinearDensity>
 
     /** {@inheritDoc} */
     @Override
+    // @docs/07-output/indicators.md
     protected <G extends GtuData> LinearDensity calculate(final Query<G, ?> query, final Time startTime,
             final Time endTime, final List<TrajectoryGroup<G>> trajectoryGroups)
     {
