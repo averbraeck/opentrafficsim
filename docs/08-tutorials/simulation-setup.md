@@ -66,13 +66,13 @@ With this in place the simulation can run, but without traffic. The next tutoria
 
 Some elements of simulation can be specified by overriding methods of `AbstractSimulationScript`. These methods are:
 
-* `animateNetwork(…)`; 
+* `animateNetwork(…)`; defines what animations are used for the various types of objects.
 * `addTabs(…)`; adds taps for additional visualization, e.g. time-space plots, next to the only default tap named ‘animation’.
 * `onSimulationEnd()`; a trigger that is called on the simulation end, can for example be used to save gathered data.
 * `setupDemo(…)`; intended to optionally add elements to the demo panel on the right side of the animation screen (which is hidden by default).
 * `setAnimationToggles(…)`; defines the buttons on the left side of the animation screen.
 
-The default implementations of these methods are empty, except for `animateNetwork(…)` which uses `DefaultAnimationFactory`, and `setAnimationToggles(…)` which sets a default set of animation toggles.
+The default implementations of these methods are empty, except for `animateNetwork(…)` which uses `DefaultAnimationFactory`, and `setAnimationToggles(…)` which sets a default set of animation toggles. In order to animate objects that appear during simulation, `DefaultAnimationFactory` registers itself as a listener to the appropriate events using the [event producers and listeners system](../02-model-structure/djutils.md#event-producers-and-listeners).
 
 
 ## How to create an OD matrix and add demand data
