@@ -15,7 +15,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 // Note: there is also a SpeedSignAnimation in ots-draw. This class simply exists to notify required changes in the manual code.
 
-// @/08-tutorials/visualization.md#how-to-add-an-animation
+// @docs/08-tutorials/visualization.md#how-to-add-an-animation
 public class SpeedSignAnimation extends Renderable2D<SpeedSign>
 {
     private static final double RADIUS = 1.6;
@@ -28,7 +28,7 @@ public class SpeedSignAnimation extends Renderable2D<SpeedSign>
         setRotate(false);
     }
     
-    // @/08-tutorials/visualization.md#how-to-add-an-animation
+    // @docs/08-tutorials/visualization.md#how-to-add-an-animation
     @Override
     public final void paint(final Graphics2D g, final ImageObserver arg1)
     {

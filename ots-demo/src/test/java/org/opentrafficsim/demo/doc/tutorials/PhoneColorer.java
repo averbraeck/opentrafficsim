@@ -7,7 +7,7 @@ import java.util.List;
 import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.gtu.Gtu;
 
-// @/08-tutorials/visualization.md#how-to-add-a-gtu-colorer
+// @docs/08-tutorials/visualization.md#how-to-add-a-gtu-colorer
 public class PhoneColorer implements GtuColorer
 {
     private final static Color UNKNOWN = Color.WHITE;
@@ -31,7 +31,7 @@ public class PhoneColorer implements GtuColorer
         return LEGEND;
     }
 
-    // @/08-tutorials/visualization.md#how-to-add-a-gtu-colorer
+    // @docs/08-tutorials/visualization.md#how-to-add-a-gtu-colorer
     @Override
     public Color getColor(final Gtu gtu)
     {
@@ -42,14 +42,14 @@ public class PhoneColorer implements GtuColorer
         return UNKNOWN;
     }
     
-    // @/08-tutorials/visualization.md#how-to-add-a-gtu-colorer
+    // @docs/08-tutorials/visualization.md#how-to-add-a-gtu-colorer
     @Override
     public String toString()
     {
         return "Phone";
     }
     
-    // @/08-tutorials/visualization.md#how-to-add-a-gtu-colorer
+    // @docs/08-tutorials/visualization.md#how-to-add-a-gtu-colorer
     public interface PhonePlanner
     {
         public boolean isOnThePhone();

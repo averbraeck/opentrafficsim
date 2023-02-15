@@ -30,7 +30,7 @@ import org.opentrafficsim.swing.script.AbstractSimulationScript;
 
 import picocli.CommandLine.Option;
 
-// @/08-tutorials/simulation-setup.md#how-to-set-up-a-simulation
+// @docs/08-tutorials/simulation-setup.md#how-to-set-up-a-simulation
 public class SimpleSimulation extends AbstractSimulationScript
 {
 
@@ -49,7 +49,7 @@ public class SimpleSimulation extends AbstractSimulationScript
         simpleSimulation.start();
     }
 
-    // @/08-tutorials/simulation-setup.md#how-to-set-up-a-simulation
+    // @docs/08-tutorials/simulation-setup.md#how-to-set-up-a-simulation
     @Override
     protected OtsRoadNetwork setupSimulation(final OtsSimulatorInterface sim)
             throws NullPointerException, DrawRuntimeException, NetworkException, OtsGeometryException
