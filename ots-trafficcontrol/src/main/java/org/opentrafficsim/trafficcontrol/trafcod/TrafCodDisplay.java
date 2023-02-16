@@ -16,18 +16,10 @@ import java.util.Set;
 import javax.swing.JPanel;
 import javax.swing.ToolTipManager;
 
-import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
-import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
-import org.djutils.event.reference.ReferenceType;
-import org.opentrafficsim.core.geometry.Bounds;
-import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 
 /**
@@ -289,9 +281,8 @@ class DetectorImage implements TrafCODObject, EventListener
 
 /**
  * Draws a traffic light. <br>
- * The implementation of TrafficLight only implements setTrafficLightColor. All other methods are dummies.
  */
-class TrafficLightImage extends LocalEventProducer implements TrafficLight, TrafCODObject
+class TrafficLightImage extends LocalEventProducer implements TrafCODObject
 {
     /** ... */
     private static final long serialVersionUID = 20200313L;
@@ -338,128 +329,10 @@ class TrafficLightImage extends LocalEventProducer implements TrafficLight, Traf
         return this.description;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public DirectedPoint getLocation()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Bounds getBounds()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Lane getLane()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Length getLongitudinalPosition()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public OtsLine3d getGeometry()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Length getHeight()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getId()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getFullId()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean addListener(final EventListener listener, final EventType eventType, final ReferenceType referenceType)
-    {
-        return false;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean addListener(final EventListener listener, final EventType eventType, final int position)
-    {
-        return false;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean addListener(final EventListener listener, final EventType eventType, final int position,
-            final ReferenceType referenceType)
-    {
-        return false;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean addListener(final EventListener listener, final EventType eventType)
-    {
-        return false;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean hasListeners()
-    {
-        return false;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int numberOfListeners(final EventType eventType)
-    {
-        return 0;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Set<EventType> getEventTypesWithListeners()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean removeListener(final EventListener listener, final EventType eventType)
-    {
-        return false;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public TrafficLightColor getTrafficLightColor()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
+    /**
+     * Sets the traffic light color.
+     * @param trafficLightColor TrafficLightColor; traffic light color.
+     */
     public void setTrafficLightColor(final TrafficLightColor trafficLightColor)
     {
         this.color = trafficLightColor;

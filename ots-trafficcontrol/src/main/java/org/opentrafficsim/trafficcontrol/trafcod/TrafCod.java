@@ -593,7 +593,8 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
                 {
                     if (v.isOutput() && v.getStream() == streamNumber)
                     {
-                        v.addOutput(tli);
+                        // TODO: coupling between traffic light and tli via pub/sub, not as direct output of control
+                        //v.addOutput(tli);
                     }
                 }
             }
@@ -2080,7 +2081,7 @@ class Variable implements EventListener
     /** Source of end rule. */
     private String endSource;
 
-    /** The traffic light (only set if this Variable is an output(. */
+    /** The traffic light (only set if this Variable is an output). */
     private Set<TrafficLight> trafficLights;
 
     /** Letters that are used to distinguish conflict groups in the MRx variables. */

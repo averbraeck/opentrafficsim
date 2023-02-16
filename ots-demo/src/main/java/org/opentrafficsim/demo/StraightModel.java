@@ -55,7 +55,7 @@ import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
-import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -95,7 +95,7 @@ public class StraightModel extends AbstractOtsModel implements UNITS
     private double carProbability;
 
     /** The blocking, implemented as a traffic light. */
-    private SimpleTrafficLight block = null;
+    private TrafficLight block = null;
 
     /** Maximum distance. */
     private Length maximumDistance = new Length(5000, METER);
@@ -181,7 +181,7 @@ public class StraightModel extends AbstractOtsModel implements UNITS
                     roomChecker, idGenerator);
             // End generation
 
-            this.block = new SimpleTrafficLight(this.lane.getId() + "_TL", this.lane,
+            this.block = new TrafficLight(this.lane.getId() + "_TL", this.lane,
                     new Length(new Length(4000.0, LengthUnit.METER)), this.simulator);
             this.block.setTrafficLightColor(TrafficLightColor.GREEN);
             // Create a block at t = 5 minutes

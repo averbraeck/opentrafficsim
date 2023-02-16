@@ -22,7 +22,7 @@ import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
-import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
@@ -126,8 +126,8 @@ public class TJunctionDemo extends OtsSimulationApplication<TJunctionModel>
 
                 // add trafficlight after
                 Lane lane = ((CrossSectionLink) this.network.getLink("ECE")).getLanes().get(0);
-                SimpleTrafficLight trafficLight =
-                        new SimpleTrafficLight("light", lane, new Length(50.0, LengthUnit.SI), this.simulator);
+                TrafficLight trafficLight =
+                        new TrafficLight("light", lane, new Length(50.0, LengthUnit.SI), this.simulator);
 
                 trafficLight.setTrafficLightColor(TrafficLightColor.RED);
                 changePhase(trafficLight);
@@ -144,7 +144,7 @@ public class TJunctionDemo extends OtsSimulationApplication<TJunctionModel>
          * @param trafficLight SimpleTrafficLight; traffic light
          * @throws SimRuntimeException scheduling error
          */
-        private void changePhase(final SimpleTrafficLight trafficLight) throws SimRuntimeException
+        private void changePhase(final TrafficLight trafficLight) throws SimRuntimeException
         {
             switch (trafficLight.getTrafficLightColor())
             {

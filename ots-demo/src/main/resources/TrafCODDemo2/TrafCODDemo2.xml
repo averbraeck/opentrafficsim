@@ -258,11 +258,11 @@
       <STRAIGHT />
       <DEFINEDLAYOUT>r1</DEFINEDLAYOUT>
       <TRAFFICLIGHT LANE="FORWARD3"
-        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="10" POSITION="END-0.00m" />
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" ID="10" POSITION="END-0.00m" />
       <TRAFFICLIGHT LANE="FORWARD2"
-        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="11" POSITION="END-0.00m" />
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" ID="11" POSITION="END-0.00m" />
       <TRAFFICLIGHT LANE="FORWARD1"
-        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="12" POSITION="END-0.00m" />
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" ID="12" POSITION="END-0.00m" />
     </LINK>
 
     <LINK ID="EE1" NODESTART="E" NODEEND="E1" TYPE="STREET">
@@ -279,11 +279,11 @@
       <STRAIGHT />
       <DEFINEDLAYOUT>r1</DEFINEDLAYOUT>
       <TRAFFICLIGHT LANE="FORWARD3"
-        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="01" POSITION="END-0.00m" />
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" ID="01" POSITION="END-0.00m" />
       <TRAFFICLIGHT LANE="FORWARD2"
-        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="02" POSITION="END-0.00m" />
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" ID="02" POSITION="END-0.00m" />
       <TRAFFICLIGHT LANE="FORWARD1"
-        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="03" POSITION="END-0.00m" />
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" ID="03" POSITION="END-0.00m" />
     </LINK>
 
     <LINK ID="SS1" NODESTART="S" NODEEND="S1" TYPE="STREET">
@@ -300,11 +300,11 @@
       <STRAIGHT />
       <DEFINEDLAYOUT>r1</DEFINEDLAYOUT>
       <TRAFFICLIGHT LANE="FORWARD3"
-        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="04" POSITION="END-0.00m" />
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" ID="04" POSITION="END-0.00m" />
       <TRAFFICLIGHT LANE="FORWARD2"
-        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="05" POSITION="END-0.00m" />
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" ID="05" POSITION="END-0.00m" />
       <TRAFFICLIGHT LANE="FORWARD1"
-        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="06" POSITION="END-0.00m" />
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" ID="06" POSITION="END-0.00m" />
     </LINK>
 
     <LINK ID="WW1" NODESTART="W" NODEEND="W1" TYPE="STREET">
@@ -321,11 +321,11 @@
       <STRAIGHT />
       <DEFINEDLAYOUT>r1</DEFINEDLAYOUT>
       <TRAFFICLIGHT LANE="FORWARD3"
-        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="07" POSITION="END-0.00m" />
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" ID="07" POSITION="END-0.00m" />
       <TRAFFICLIGHT LANE="FORWARD2"
-        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="08" POSITION="END-0.00m" />
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" ID="08" POSITION="END-0.00m" />
       <TRAFFICLIGHT LANE="FORWARD1"
-        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="09" POSITION="END-0.00m" />
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" ID="09" POSITION="END-0.00m" />
     </LINK>
 
     <LINK ID="ECNC" NODESTART="EC" NODEEND="NCO" TYPE="STREET" OFFSETSTART="-3.3m" OFFSETEND="0m">

@@ -25,7 +25,7 @@ import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
@@ -125,7 +125,7 @@ public class TurboRoundaboutDemo extends OtsSimulationApplication<TurboRoundabou
                 // add trafficlights
                 for (Lane lane : ((CrossSectionLink) this.network.getLink("SEXITS2")).getLanes())
                 {
-                    SimpleTrafficLight trafficLight = new SimpleTrafficLight("light" + lane.getId(), lane,
+                    TrafficLight trafficLight = new TrafficLight("light" + lane.getId(), lane,
                             new Length(150.0, LengthUnit.SI), this.simulator);
                     trafficLight.setTrafficLightColor(TrafficLightColor.RED);
                     changePhase(trafficLight);
@@ -161,7 +161,7 @@ public class TurboRoundaboutDemo extends OtsSimulationApplication<TurboRoundabou
          * @param trafficLight SimpleTrafficLight; traffic light
          * @throws SimRuntimeException scheduling error
          */
-        private void changePhase(final SimpleTrafficLight trafficLight) throws SimRuntimeException
+        private void changePhase(final TrafficLight trafficLight) throws SimRuntimeException
         {
             switch (trafficLight.getTrafficLightColor())
             {

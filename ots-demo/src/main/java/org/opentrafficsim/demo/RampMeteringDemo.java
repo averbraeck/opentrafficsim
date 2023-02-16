@@ -120,7 +120,7 @@ import org.opentrafficsim.road.network.lane.Stripe.Type;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.object.detector.LoopDetector;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
-import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
@@ -330,7 +330,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
         if (this.rampMetering)
         {
             // traffic light
-            TrafficLight light = new SimpleTrafficLight("light", lanesEF.get(0), lanesEF.get(0).getLength(), sim);
+            TrafficLight light = new TrafficLight("light", lanesEF.get(0), lanesEF.get(0).getLength(), sim);
             List<TrafficLight> lightList = new ArrayList<>();
             lightList.add(light);
             // ramp metering
