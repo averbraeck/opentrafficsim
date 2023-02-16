@@ -26,7 +26,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightException;
+import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 
 /**
@@ -109,9 +109,9 @@ public class Diagram
     /**
      * Construct a new diagram.
      * @param streams Set&lt;Short&gt;; the streams (numbered according to the Dutch standard) that cross the intersection.
-     * @throws TrafficLightException when a route is invalid
+     * @throws TrafficControlException when a route is invalid
      */
-    public Diagram(final Set<Short> streams) throws TrafficLightException
+    public Diagram(final Set<Short> streams) throws TrafficControlException
     {
         this.streams = new ArrayList<Short>(streams); // make a deep copy and sort by stream number
         this.streams.sort(new Comparator<Short>()
@@ -430,12 +430,12 @@ public class Diagram
          * @throws TrafficLightException when an IF or ELSE_IF has an invalid streamCondition, or when an ELSE or END_IF has a
          *             valid streamCOndition
          */
-        RouteStep(final int x, final int y, final Command command) throws TrafficLightException
+        RouteStep(final int x, final int y, final Command command) throws TrafficControlException
         {
             Throw.when(
                     Command.STOP_LINE != command && Command.NO_OP != command && Command.ICON != command
                             && Command.STOP_LINE_AND_ICON != command,
-                    TrafficLightException.class,
+                    TrafficControlException.class,
                     "X and Y should only be provided with a NO_OP, STOP_LINE, ICON, or STOP_LINE_AND_ICON command; not with "
                             + command);
             this.x = x;
@@ -448,17 +448,17 @@ public class Diagram
          * Construct a RouteStep with a command condition.
          * @param command Command; an IF, ELSE, ENDIF, or ELSE_IF command
          * @param streamCondition int; the stream that must exist for the condition to be true
-         * @throws TrafficLightException when an IF or ELSE_IF has an invalid streamCondition, or when an ELSE or END_IF has a
+         * @throws TrafficControlException when an IF or ELSE_IF has an invalid streamCondition, or when an ELSE or END_IF has a
          *             valid streamCOndition
          */
-        RouteStep(final Command command, final int streamCondition) throws TrafficLightException
+        RouteStep(final Command command, final int streamCondition) throws TrafficControlException
         {
-            Throw.when(Command.IF != command && Command.ELSE_IF != command, TrafficLightException.class,
+            Throw.when(Command.IF != command && Command.ELSE_IF != command, TrafficControlException.class,
                     "RouteStep constructor with stream condition must use command IF or ELSE_IF");
             this.x = TrafficController.NO_STREAM;
             this.y = TrafficController.NO_STREAM;
             this.command = command;
-            Throw.when(streamCondition == TrafficController.NO_STREAM, TrafficLightException.class,
+            Throw.when(streamCondition == TrafficController.NO_STREAM, TrafficControlException.class,
                     "IF or ELSE_IF need a valid traffic stream number");
             this.streamCondition = streamCondition;
         }
@@ -466,11 +466,11 @@ public class Diagram
         /**
          * Construct a RouteStep for ELSE or END_IF command.
          * @param command Command; either <code>Command.ELSE</code> or <code>Command.END_IF</code>
-         * @throws TrafficLightException when the Command is not ELSE or END_IF
+         * @throws TrafficControlException when the Command is not ELSE or END_IF
          */
-        RouteStep(final Command command) throws TrafficLightException
+        RouteStep(final Command command) throws TrafficControlException
         {
-            Throw.when(Command.ELSE != command && Command.END_IF != command, TrafficLightException.class,
+            Throw.when(Command.ELSE != command && Command.END_IF != command, TrafficControlException.class,
                     "RouteStep constructor with single command parameter requires ELSE or END_IF command");
             this.x = TrafficController.NO_STREAM;
             this.y = TrafficController.NO_STREAM;
@@ -601,7 +601,7 @@ public class Diagram
      * @return XYPair[]; an array of XY pairs describing the route through the intersection
      * @throws TrafficLightException when the route contains commands other than NO_OP and STOP_LINE
      */
-    private XYPair[] rotateRoute(final int quadrant, final RouteStep... steps) throws TrafficLightException
+    private XYPair[] rotateRoute(final int quadrant, final RouteStep... steps) throws TrafficControlException
     {
         List<XYPair> route = new ArrayList<>();
         boolean on = true;
@@ -621,7 +621,7 @@ public class Diagram
                     break;
 
                 default:
-                    throw new TrafficLightException("Bad command in rotateRoute: " + step.getCommand());
+                    throw new TrafficControlException("Bad command in rotateRoute: " + step.getCommand());
 
             }
         }
@@ -632,9 +632,9 @@ public class Diagram
      * Construct a route through the intersection.
      * @param steps RouteStep...; the steps of the route description
      * @return RouteStep[]; the route through the intersection
-     * @throws TrafficLightException when something is very wrong
+     * @throws TrafficControlException when something is very wrong
      */
-    private RouteStep[] assembleRoute(final RouteStep... steps) throws TrafficLightException
+    private RouteStep[] assembleRoute(final RouteStep... steps) throws TrafficControlException
     {
         List<RouteStep> result = new ArrayList<>();
         RouteStep step;
@@ -650,9 +650,9 @@ public class Diagram
      * @param pointNo int; the rank of the requested step
      * @param steps RouteStep...; RouteStep... the steps
      * @return RouteStep; the Nth step in the route or null if the route does not have <code>pointNo</code> steps
-     * @throws TrafficLightException when the command in a routestep is not recognized
+     * @throws TrafficControlException when the command in a routestep is not recognized
      */
-    private RouteStep routePoint(final int pointNo, final RouteStep... steps) throws TrafficLightException
+    private RouteStep routePoint(final int pointNo, final RouteStep... steps) throws TrafficControlException
     {
         boolean active = true;
         boolean beenActive = false;
@@ -704,7 +704,7 @@ public class Diagram
                     break;
 
                 default:
-                    throw new TrafficLightException("Bad switch: " + routeStep);
+                    throw new TrafficControlException("Bad switch: " + routeStep);
 
             }
         }
@@ -903,7 +903,7 @@ public class Diagram
             Diagram diagram = new Diagram(streamList);
             testPanel.add(new JLabel(new ImageIcon(diagram.render())));
         }
-        catch (TrafficLightException exception)
+        catch (TrafficControlException exception)
         {
             exception.printStackTrace();
         }
