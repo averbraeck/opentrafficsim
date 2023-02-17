@@ -33,6 +33,7 @@
     <module>ots-xsd</module>
     <module>ots-parser-xml</module>
     <module>ots-demo</module>
+    <module>ots-editor</module>
   </modules>
 
   <properties>
@@ -58,6 +59,7 @@
     <xstream.version>1.4.19</xstream.version>
     <jaxb.version>2.3.1</jaxb.version>
     <javax.annotation.version>1.3.2</javax.annotation.version>
+    <treetable.version>0.0.2</treetable.version>
 
     <junit.version>4.13.2</junit.version>
     <mockito.version>4.7.0</mockito.version>
@@ -370,6 +372,12 @@
         <groupId>org.glassfish.jaxb</groupId>
         <artifactId>jaxb-runtime</artifactId>
         <version>${jaxb.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>de.javagl</groupId>
+        <artifactId>treetable</artifactId>
+        <version>${treetable.version}</version>
       </dependency>
 
     </dependencies>
