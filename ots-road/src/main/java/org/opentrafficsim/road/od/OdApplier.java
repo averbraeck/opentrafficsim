@@ -109,6 +109,12 @@ public final class OdApplier
      * <th>0.0m</th>
      * </tr>
      * </table>
+     * If the GTU generation is lane-based (i.e. {@code Lane} in the {@code Categorization}) this method creates a
+     * {@code LaneBasedGtuGenerator} per lane. It will have a single source of demand data, specifying demand towards all
+     * relevant destinations, and with a unique {@code MarkovChain} for the GTU type if {@code MarkovCorrelation} is defined.
+     * For zone GTU generation one {@code LaneBasedGtuGenerator} is created, with one single source of demand data, specifying
+     * demand towards all destinations. A single {@code MarkovChain} may be used. Traffic is distributed over possible
+     * {@code Connectors} based on their link-weight, or the number of lanes of the connected links if no weight is given.
      * @param network OtsRoadNetwork; network
      * @param od OdMatrix; OD matrix
      * @param odOptions OdOptions; options for vehicle generation
@@ -134,253 +140,329 @@ public final class OdApplier
             createSensorsAtDestination(destination, simulator, detectorType);
         }
 
-        final Categorization categorization = od.getCategorization();
-        final boolean laneBased = categorization.entails(Lane.class);
-        boolean markovian = od.getCategorization().entails(GtuType.class);
-
         // TODO clean up stream acquiring code after task OTS-315 has been completed
         StreamInterface stream = getStream(simulator);
 
+        boolean laneBased = od.getCategorization().entails(Lane.class);
         Map<String, GeneratorObjects> output = new LinkedHashMap<>();
         for (Node origin : od.getOrigins())
         {
-            // Step 1: create DemandNode trees, starting with a root for each vehicle generator
-            DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> rootNode = null; // root node for each generator
-            /**
-             * Depending on whether the categorization is lane based or not, we either have 1 root per origin, or we have 1 root
-             * per lane (i.e. 1 generator at an origin putting traffic on multiple lanes, or N generators per origin, each
-             * generating traffic on 1 lane). In order to know to which root node the sub nodes belong in a loop, we store root
-             * nodes by lane. Effectively, the map functions as an artificial branching of demand before the origin node, only
-             * used if the categorization contains lanes. For non-lane based demand, the root node and destination node created
-             * in the outer loop can simply be used.
-             */
             Map<Lane, DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>>> originNodePerLane = new LinkedHashMap<>();
-            MarkovChain markovChain = null;
-            if (!laneBased)
-            {
-                rootNode = new DemandNode<>(origin, stream, null);
-                LinkType linkType = getLinkTypeFromNode(origin);
-                if (markovian)
-                {
-                    MarkovCorrelation<GtuType, Frequency> correlation = odOptions.get(OdOptions.MARKOV, null, origin, linkType);
-                    if (correlation != null)
-                    {
-                        Throw.when(!od.getCategorization().entails(GtuType.class), IllegalArgumentException.class,
-                                "Markov correlation can only be used on OD categorization entailing GTU type.");
-                        markovChain = new MarkovChain(correlation);
-                    }
-                }
-            }
-            for (Node destination : od.getDestinations())
-            {
-                Set<Category> categories = od.getCategories(origin, destination);
-                if (!categories.isEmpty())
-                {
-                    DemandNode<Node, DemandNode<Category, ?>> destinationNode = null;
-                    if (!laneBased)
-                    {
-                        destinationNode = new DemandNode<>(destination, stream, markovChain);
-                        rootNode.addChild(destinationNode);
-                    }
-                    for (Category category : categories)
-                    {
-                        if (laneBased)
-                        {
-                            // obtain or create root and destination nodes
-                            Lane lane = category.get(Lane.class);
-                            rootNode = originNodePerLane.get(lane);
-                            if (rootNode == null)
-                            {
-                                rootNode = new DemandNode<>(origin, stream, null);
-                                originNodePerLane.put(lane, rootNode);
-                            }
-                            destinationNode = rootNode.getChild(destination);
-                            if (destinationNode == null)
-                            {
-                                markovChain = null;
-                                if (markovian)
-                                {
-                                    MarkovCorrelation<GtuType, Frequency> correlation =
-                                            odOptions.get(OdOptions.MARKOV, lane, origin, lane.getParentLink().getType());
-                                    if (correlation != null)
-                                    {
-                                        Throw.when(!od.getCategorization().entails(GtuType.class),
-                                                IllegalArgumentException.class,
-                                                "Markov correlation can only be used on OD categorization entailing GTU type.");
-                                        markovChain = new MarkovChain(correlation); // 1 for each generator
-                                    }
-                                }
-                                destinationNode = new DemandNode<>(destination, stream, markovChain);
-                                rootNode.addChild(destinationNode);
-                            }
-                        }
-                        DemandNode<Category, ?> categoryNode =
-                                new DemandNode<>(category, od.getDemandPattern(origin, destination, category));
-                        if (markovian)
-                        {
-                            destinationNode.addLeaf(categoryNode, category.get(GtuType.class));
-                        }
-                        else
-                        {
-                            destinationNode.addChild(categoryNode);
-                        }
-                    }
-                }
-            }
-
-            // Step 2: gather LanePositions for each generator pertaining to each DemandNode<...>
+            DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> originNodeZone =
+                    buildDemandNodeTree(od, odOptions, stream, origin, originNodePerLane);
             Map<DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>>, Set<LanePosition>> initialPositions =
                     new LinkedHashMap<>();
-            Map<CrossSectionLink, Double> linkWeights = null;
-            Map<CrossSectionLink, Node> viaNodes = null;
+            Map<CrossSectionLink, Double> linkWeights = new LinkedHashMap<>();
+            Map<CrossSectionLink, Node> viaNodes = new LinkedHashMap<>();
             if (laneBased)
             {
-                for (Lane lane : originNodePerLane.keySet())
-                {
-                    DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> demandNode = originNodePerLane.get(lane);
-                    Set<LanePosition> initialPosition = new LinkedHashSet<>();
-                    initialPosition.add(lane.getParentLink().getStartNode().equals(demandNode.getObject())
-                            ? new LanePosition(lane, Length.ZERO) : new LanePosition(lane, lane.getLength()));
-                    initialPositions.put(demandNode, initialPosition);
-                }
+                gatherPositionsLaneBased(originNodePerLane, initialPositions);
             }
             else
             {
-                Set<LanePosition> positionSet = new LinkedHashSet<>();
-                for (Link link : origin.getLinks())
-                {
-                    if (link instanceof Connector)
-                    {
-                        Connector connector = (Connector) link;
-                        if (connector.getStartNode().equals(origin))
-                        {
-                            Node connectedNode = connector.getEndNode();
-                            // count number of served links
-                            int served = 0;
-                            for (Link connectedLink : connectedNode.getLinks())
-                            {
-                                if (connectedLink instanceof CrossSectionLink)
-                                {
-                                    served++;
-                                }
-                            }
-                            for (Link connectedLink : connectedNode.getLinks())
-                            {
-                                if (connectedLink instanceof CrossSectionLink)
-                                {
-                                    if (connector.getDemandWeight() > 0.0)
-                                    {
-                                        if (linkWeights == null)
-                                        {
-                                            linkWeights = new LinkedHashMap<>();
-                                            viaNodes = new LinkedHashMap<>();
-                                        }
-                                        // store weight under connected link, as this
-                                        linkWeights.put(((CrossSectionLink) connectedLink),
-                                                connector.getDemandWeight() / served);
-                                        viaNodes.put((CrossSectionLink) connectedLink, connectedNode);
-                                    }
-                                    setLanePosition((CrossSectionLink) connectedLink, connectedNode, positionSet);
-                                }
-                            }
-                        }
-                    }
-                    else if (link instanceof CrossSectionLink)
-                    {
-                        setLanePosition((CrossSectionLink) link, origin, positionSet);
-                    }
-                }
-                initialPositions.put(rootNode, positionSet);
+                initialPositions.put(originNodeZone, gatherPositionsZone(origin, linkWeights, viaNodes));
             }
-
-            // Step 3: create generator(s)
-            initialPositions = sortByValue(initialPositions); // sorts by lateral position at link start
-            Map<Node, Integer> originGeneratorCounts = new LinkedHashMap<>();
-            for (DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root : initialPositions.keySet())
+            if (linkWeights.isEmpty())
             {
-                Set<LanePosition> initialPosition = initialPositions.get(root);
-                // id
-                Node o = root.getObject();
-                String id = o.getId();
-                if (laneBased)
-                {
-                    Integer count = originGeneratorCounts.get(o);
-                    if (count == null)
-                    {
-                        count = 0;
-                    }
-                    count++;
-                    id += count;
-                    originGeneratorCounts.put(o, count);
-                }
-                // functional generation elements
-                Lane lane;
-                LinkType linkType;
-                if (laneBased)
-                {
-                    lane = initialPosition.iterator().next().getLane();
-                    linkType = lane.getParentLink().getType();
-                }
-                else
-                {
-                    lane = null;
-                    linkType = getLinkTypeFromNode(o);
-                }
-                HeadwayDistribution randomization = odOptions.get(OdOptions.HEADWAY_DIST, lane, o, linkType);
-                ArrivalsHeadwayGenerator headwayGenerator =
-                        new ArrivalsHeadwayGenerator(root, simulator, stream, randomization);
-                LaneBasedGtuCharacteristicsGeneratorOd characteristicsGeneratorOd =
-                        odOptions.get(OdOptions.GTU_TYPE, lane, o, linkType);
-                LaneBasedGtuCharacteristicsGenerator characteristicsGenerator = new LaneBasedGtuCharacteristicsGenerator()
-                {
-                    /** {@inheritDoc} */
-                    @Override
-                    public LaneBasedGtuCharacteristics draw() throws ProbabilityException, ParameterException, GtuException
-                    {
-                        Time time = simulator.getSimulatorAbsTime();
-                        Node origin = root.getObject();
-                        DemandNode<Node, DemandNode<Category, ?>> destinationNode = root.draw(time);
-                        Node destination = destinationNode.getObject();
-                        Category category = destinationNode.draw(time).getObject();
-                        return characteristicsGeneratorOd.draw(origin, destination, category, stream);
-                    }
-                };
+                linkWeights = null;
+                viaNodes = null;
+            }
+            initialPositions = sortByValue(initialPositions); // sorts by lateral position at link start
+            createGenerators(network, odOptions, simulator, laneBased, stream, output, initialPositions, linkWeights, viaNodes);
+        }
+        return output;
+    }
 
-                RoomChecker roomChecker = odOptions.get(OdOptions.ROOM_CHECKER, lane, o, linkType);
-                IdGenerator idGenerator = odOptions.get(OdOptions.GTU_ID, lane, o, linkType);
-                LaneBiases biases = odOptions.get(OdOptions.LANE_BIAS, lane, o, linkType);
-                // and finally, the generator
-                try
+    /**
+     * Builds nested demand node structure (i.e. tree) for demand and GTU characteristics generation. If
+     * {@code MarkovCorrelation} is specified, in case of zone GTU generation, a single {@code MarkovChain} is used for the
+     * selection of GTU type and the relevant lane. In case of lane-based GTU generation, one {@code MarkovChain} is used for
+     * each lane, even when multiple {@code Category}'s contain the same lane. This method loops over all destinations for the
+     * given origin, and then over all categories. For lane-based GTU generation, at that level the appropriate origin node is
+     * taken from the input map, or it is created in to it, and the destination demand-node coupled to that for the looped
+     * destination is obtained or created, with possible {@code MarkovChain}. For zone GTU generation, the looping is a more
+     * straight-forward creation of nodes from origin, and for destination and category. The result of lane-based GTU generation
+     * is given in the input map, for zone GTU generation the single origin demand node is returned by the method.
+     * @param od OdMatrix; OD matrix.
+     * @param odOptions OdOptions; OD options.
+     * @param stream StreamInterface; random number stream.
+     * @param origin Node; origin node.
+     * @param originNodePerLane Map&lt;Lane, DemandNode&lt;Node, DemandNode&lt;Node, DemandNode&lt;Category, ?&gt;&gt;&gt;&gt;;
+     *            map of origin demand node per lane, populated for lane-based GTU generation.
+     * @return DemandNode&lt;Node, DemandNode&lt;Node, DemandNode&lt;Category, ?&gt;&gt;&gt;; demand node structure for the
+     *         entire generator in case of zone GTU generation.
+     */
+    private static DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> buildDemandNodeTree(final OdMatrix od,
+            final OdOptions odOptions, final StreamInterface stream, final Node origin,
+            final Map<Lane, DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>>> originNodePerLane)
+    {
+        boolean laneBased = od.getCategorization().entails(Lane.class);
+        boolean markovian = od.getCategorization().entails(GtuType.class);
+        DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> demandNode = null; // for each generator, flexibly used
+        MarkovChain markovChain = null;
+        if (!laneBased)
+        {
+            demandNode = new DemandNode<>(origin, stream, null);
+            LinkType linkType = getLinkTypeFromNode(origin);
+            if (markovian)
+            {
+                MarkovCorrelation<GtuType, Frequency> correlation = odOptions.get(OdOptions.MARKOV, null, origin, linkType);
+                if (correlation != null)
                 {
-                    LaneBasedGtuGenerator generator = new LaneBasedGtuGenerator(id, headwayGenerator, characteristicsGenerator,
-                            GeneratorPositions.create(initialPosition, stream, biases, linkWeights, viaNodes), network,
-                            simulator, roomChecker, idGenerator);
-                    generator.setNoLaneChangeDistance(odOptions.get(OdOptions.NO_LC_DIST, lane, o, linkType));
-                    generator.setInstantaneousLaneChange(odOptions.get(OdOptions.INSTANT_LC, lane, o, linkType));
-                    generator.setErrorHandler(odOptions.get(OdOptions.ERROR_HANDLER, lane, o, linkType));
-                    output.put(id, new GeneratorObjects(generator, headwayGenerator, characteristicsGenerator));
-                }
-                catch (SimRuntimeException exception)
-                {
-                    // should not happen, we check that time is 0
-                    simulator.getLogger().always().error(exception);
-                    throw new RuntimeException(exception);
-                }
-                catch (ProbabilityException exception)
-                {
-                    // should not happen, as we define probabilities in the headwayGenerator
-                    simulator.getLogger().always().error(exception);
-                    throw new RuntimeException(exception);
-                }
-                catch (NetworkException exception)
-                {
-                    // should not happen, as unique ids are guaranteed by UUID
-                    simulator.getLogger().always().error(exception);
-                    throw new RuntimeException(exception);
+                    Throw.when(!od.getCategorization().entails(GtuType.class), IllegalArgumentException.class,
+                            "Markov correlation can only be used on OD categorization entailing GTU type.");
+                    markovChain = new MarkovChain(correlation);
                 }
             }
         }
-        return output;
+        for (Node destination : od.getDestinations())
+        {
+            Set<Category> categories = od.getCategories(origin, destination);
+            if (!categories.isEmpty())
+            {
+                DemandNode<Node, DemandNode<Category, ?>> destinationNode = null;
+                if (!laneBased)
+                {
+                    destinationNode = new DemandNode<>(destination, stream, markovChain);
+                    demandNode.addChild(destinationNode);
+                }
+                for (Category category : categories)
+                {
+                    if (laneBased)
+                    {
+                        // obtain or create root and destination nodes
+                        Lane lane = category.get(Lane.class);
+                        demandNode = originNodePerLane.get(lane);
+                        if (demandNode == null)
+                        {
+                            demandNode = new DemandNode<>(origin, stream, null);
+                            originNodePerLane.put(lane, demandNode);
+                        }
+                        destinationNode = demandNode.getChild(destination);
+                        if (destinationNode == null)
+                        {
+                            markovChain = null;
+                            if (markovian)
+                            {
+                                MarkovCorrelation<GtuType, Frequency> correlation =
+                                        odOptions.get(OdOptions.MARKOV, lane, origin, lane.getParentLink().getType());
+                                if (correlation != null)
+                                {
+                                    Throw.when(!od.getCategorization().entails(GtuType.class), IllegalArgumentException.class,
+                                            "Markov correlation can only be used on OD categorization entailing GTU type.");
+                                    markovChain = new MarkovChain(correlation); // 1 for each generator per lane
+                                }
+                            }
+                            destinationNode = new DemandNode<>(destination, stream, markovChain);
+                            demandNode.addChild(destinationNode);
+                        }
+                    }
+                    DemandNode<Category, ?> categoryNode =
+                            new DemandNode<>(category, od.getDemandPattern(origin, destination, category));
+                    if (markovian)
+                    {
+                        destinationNode.addLeaf(categoryNode, category.get(GtuType.class));
+                    }
+                    else
+                    {
+                        destinationNode.addChild(categoryNode);
+                    }
+                }
+            }
+        }
+        return demandNode;
+    }
+
+    /**
+     * Returns a set of positions for GTU generation from each lane defined in demand. Stores the positions with the coupled
+     * demand node.
+     * @param originNodePerLane Map&lt;Lane, DemandNode&lt;Node, DemandNode&lt;Node, DemandNode&lt;Category, ?&gt;&gt;&gt;&gt;;
+     *            map with a demand node per lane.
+     * @param initialPositions Map&lt;DemandNode&lt;Node, DemandNode&lt;Node, DemandNode&lt;Category, ?&gt;&gt;&gt;,
+     *            Set&lt;LanePosition&gt;&gt;; map with positions per demand node.
+     */
+    private static void gatherPositionsLaneBased(
+            final Map<Lane, DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>>> originNodePerLane,
+            final Map<DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>>, Set<LanePosition>> initialPositions)
+    {
+        for (Lane lane : originNodePerLane.keySet())
+        {
+            DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> demandNode = originNodePerLane.get(lane);
+            Set<LanePosition> initialPosition = new LinkedHashSet<>();
+            initialPosition.add(lane.getParentLink().getStartNode().equals(demandNode.getObject())
+                    ? new LanePosition(lane, Length.ZERO) : new LanePosition(lane, lane.getLength()));
+            initialPositions.put(demandNode, initialPosition);
+        }
+    }
+
+    /**
+     * Returns a set of positions for GTU generation from a zone. All links connected to the origin node are considered. In case
+     * a link is a {@code Connector}, a link weight and via-node over that link are stored in the provided maps, for later use
+     * in constructing weighted generator positions. For each {@code CrossSectionLink} attached to the via-node, or to the first
+     * link if there was no {@code Connector}, positions are generated.
+     * @param origin Node; origin node for the zone.
+     * @param linkWeights Map&lt;CrossSectionLink, Double&gt;; link weight map to place link weights in.
+     * @param viaNodes Map&lt;CrossSectionLink, Node&gt;; via node map to place via nodes in.
+     * @return Set&lt;LanePosition&gt;; gathered lane positions.
+     */
+    private static Set<LanePosition> gatherPositionsZone(final Node origin, final Map<CrossSectionLink, Double> linkWeights,
+            final Map<CrossSectionLink, Node> viaNodes)
+    {
+        Set<LanePosition> positionSet = new LinkedHashSet<>();
+        for (Link link : origin.getLinks())
+        {
+            if (link instanceof Connector)
+            {
+                Connector connector = (Connector) link;
+                if (connector.getStartNode().equals(origin))
+                {
+                    Node connectedNode = connector.getEndNode();
+                    // count number of served links
+                    int served = 0;
+                    for (Link connectedLink : connectedNode.getLinks())
+                    {
+                        if (connectedLink instanceof CrossSectionLink)
+                        {
+                            served++;
+                        }
+                    }
+                    for (Link connectedLink : connectedNode.getLinks())
+                    {
+                        if (connectedLink instanceof CrossSectionLink)
+                        {
+                            if (connector.getDemandWeight() > 0.0)
+                            {
+                                // store weight under connected link, as this
+                                linkWeights.put(((CrossSectionLink) connectedLink), connector.getDemandWeight() / served);
+                            }
+                            else
+                            {
+                                // negative weight results in number of lanes being used
+                                linkWeights.put(((CrossSectionLink) connectedLink), -1.0);
+                            }
+                            viaNodes.put((CrossSectionLink) connectedLink, connectedNode);
+                            setLanePosition((CrossSectionLink) connectedLink, connectedNode, positionSet);
+                        }
+                    }
+                }
+            }
+            else if (link instanceof CrossSectionLink)
+            {
+                setLanePosition((CrossSectionLink) link, origin, positionSet);
+            }
+        }
+        return positionSet;
+    }
+
+    /**
+     * Creates GTU generators. For lane-based GTU generation (i.e. {@code Lane} in the {@code Categorization}), the generators
+     * will obtain an ID with the node id plus a counter. For this the initial positions need to be sorted. The link weights and
+     * via nodes should be {@code null} for lane-based GTU generation. Furthermore, the lane is then used to obtain OD option
+     * values possibly specified at the lane level. Other than that, for either lane-based or zone GTU generation, a
+     * {@code LaneBasedGtuGenerator} is created for each initial position given.
+     * @param network OtsRoadNetwork; network.
+     * @param odOptions OdOptions; od options.
+     * @param simulator OtsSimulatorInterface; simulator.
+     * @param laneBased boolean; lane in category.
+     * @param stream StreamInterface; random number stream.
+     * @param output Map&lt;String, GeneratorObjects&gt;; map that output elements will be stored in.
+     * @param initialPositions Map&lt;DemandNode&lt;Node, DemandNode&lt;Node, DemandNode&lt;Category, ?&gt;&gt;&gt;,
+     *            Set&lt;LanePosition&gt;&gt;; sorted initial positions.
+     * @param linkWeights Map&lt;CrossSectionLink, Double&gt;; weights per link, may be {@code null}.
+     * @param viaNodes Map&lt;CrossSectionLink, Node&gt;; nodes to select from for zone, may be {@code null}.
+     * @throws ParameterException if drawing from the inter-arrival generator fails
+     */
+    @SuppressWarnings("checkstyle:parameternumber")
+    private static void createGenerators(final OtsRoadNetwork network, final OdOptions odOptions,
+            final OtsSimulatorInterface simulator, final boolean laneBased, final StreamInterface stream,
+            final Map<String, GeneratorObjects> output,
+            final Map<DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>>, Set<LanePosition>> initialPositions,
+            final Map<CrossSectionLink, Double> linkWeights, final Map<CrossSectionLink, Node> viaNodes)
+            throws ParameterException
+    {
+        Map<Node, Integer> laneGeneratorCounterForUniqueId = new LinkedHashMap<>();
+        for (DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root : initialPositions.keySet())
+        {
+            Set<LanePosition> initialPosition = initialPositions.get(root);
+            // id
+            Node o = root.getObject();
+            String id = o.getId();
+            if (laneBased)
+            {
+                Integer count = laneGeneratorCounterForUniqueId.get(o);
+                if (count == null)
+                {
+                    count = 0;
+                }
+                count++;
+                id += count;
+                laneGeneratorCounterForUniqueId.put(o, count);
+            }
+            // functional generation elements
+            Lane lane;
+            LinkType linkType;
+            if (laneBased)
+            {
+                lane = initialPosition.iterator().next().getLane();
+                linkType = lane.getParentLink().getType();
+            }
+            else
+            {
+                lane = null;
+                linkType = getLinkTypeFromNode(o);
+            }
+            HeadwayDistribution randomization = odOptions.get(OdOptions.HEADWAY_DIST, lane, o, linkType);
+            ArrivalsHeadwayGenerator headwayGenerator = new ArrivalsHeadwayGenerator(root, simulator, stream, randomization);
+            LaneBasedGtuCharacteristicsGeneratorOd characteristicsGeneratorOd =
+                    odOptions.get(OdOptions.GTU_TYPE, lane, o, linkType);
+            LaneBasedGtuCharacteristicsGenerator characteristicsGenerator = new LaneBasedGtuCharacteristicsGenerator()
+            {
+                /** {@inheritDoc} */
+                @Override
+                public LaneBasedGtuCharacteristics draw() throws ProbabilityException, ParameterException, GtuException
+                {
+                    Time time = simulator.getSimulatorAbsTime();
+                    Node origin = root.getObject();
+                    DemandNode<Node, DemandNode<Category, ?>> destinationNode = root.draw(time);
+                    Node destination = destinationNode.getObject();
+                    Category category = destinationNode.draw(time).getObject();
+                    return characteristicsGeneratorOd.draw(origin, destination, category, stream);
+                }
+            };
+
+            RoomChecker roomChecker = odOptions.get(OdOptions.ROOM_CHECKER, lane, o, linkType);
+            IdGenerator idGenerator = odOptions.get(OdOptions.GTU_ID, lane, o, linkType);
+            LaneBiases biases = odOptions.get(OdOptions.LANE_BIAS, lane, o, linkType);
+            // and finally, the generator
+            try
+            {
+                LaneBasedGtuGenerator generator = new LaneBasedGtuGenerator(id, headwayGenerator, characteristicsGenerator,
+                        GeneratorPositions.create(initialPosition, stream, biases, linkWeights, viaNodes), network, simulator,
+                        roomChecker, idGenerator);
+                generator.setNoLaneChangeDistance(odOptions.get(OdOptions.NO_LC_DIST, lane, o, linkType));
+                generator.setInstantaneousLaneChange(odOptions.get(OdOptions.INSTANT_LC, lane, o, linkType));
+                generator.setErrorHandler(odOptions.get(OdOptions.ERROR_HANDLER, lane, o, linkType));
+                output.put(id, new GeneratorObjects(generator, headwayGenerator, characteristicsGenerator));
+            }
+            catch (SimRuntimeException exception)
+            {
+                // should not happen, we check that time is 0
+                simulator.getLogger().always().error(exception);
+                throw new RuntimeException(exception);
+            }
+            catch (ProbabilityException exception)
+            {
+                // should not happen, as we define probabilities in the headwayGenerator
+                simulator.getLogger().always().error(exception);
+                throw new RuntimeException(exception);
+            }
+            catch (NetworkException exception)
+            {
+                // should not happen, as unique ids are guaranteed by UUID
+                simulator.getLogger().always().error(exception);
+                throw new RuntimeException(exception);
+            }
+        }
     }
 
     /**
