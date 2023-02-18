@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.factory.xml.parser;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -60,6 +61,7 @@ import org.opentrafficsim.xml.generated.OTS;
 import org.opentrafficsim.xml.generated.ROADLAYOUT;
 import org.opentrafficsim.xml.generated.SCENARIO;
 import org.pmw.tinylog.Level;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -175,6 +177,7 @@ public final class XmlNetworkLaneParser implements Serializable
         spf.setNamespaceAware(true);
         spf.setValidating(false);
         XMLReader xmlReader = spf.newSAXParser().getXMLReader();
+        xmlReader.setEntityResolver(new DefaultsResolver());
         SAXSource saxSource = new SAXSource(xmlReader, new InputSource(xmlStream));
         return (OTS) unmarshaller.unmarshal(saxSource);
     }
@@ -242,7 +245,7 @@ public final class XmlNetworkLaneParser implements Serializable
         Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap = new LinkedHashMap<>();
         Definitions definitions = DefinitionsParser.parseDefinitions(ots.getDEFINITIONS(), true, roadLayoutMap, gtuTemplates,
                 streamInformation, linkTypeSpeedLimitMap);
-        
+
         // TODO: remove this, we need a default_detectortypes.xml
         definitions.add(DetectorType.class, DefaultsRoadNl.ROAD_USERS);
         definitions.add(DetectorType.class, DefaultsRoadNl.VEHICLES);
@@ -384,6 +387,36 @@ public final class XmlNetworkLaneParser implements Serializable
         ControlParser.parseControl(otsNetwork, otsNetwork.getSimulator(), controls, definitions);
 
         return runControl;
+    }
+
+    /**
+     * DefaultsResolver takes care of locating the defaults include files at the right place.
+     * <p>
+     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     */
+    static class DefaultsResolver implements EntityResolver
+    {
+        /** {@inheritDoc} */
+        @Override
+        public InputSource resolveEntity(final String publicId, final String systemId)
+        {
+            if (systemId.contains("defaults/"))
+            {
+                String location = "/resources/xsd/defaults" + systemId.substring(systemId.lastIndexOf('/'));
+                InputStream stream = URLResource.getResourceAsStream(location);
+                return new InputSource(stream);
+            }
+            else
+            {
+                return new InputSource(URLResource.getResourceAsStream(systemId));
+            }
+        }
     }
 
     /**
