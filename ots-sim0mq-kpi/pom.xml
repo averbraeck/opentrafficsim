@@ -28,6 +28,16 @@
       <groupId>org.opentrafficsim</groupId>
       <artifactId>ots-kpi</artifactId>
     </dependency>
-    
+
+    <dependency>
+      <groupId>org.djutils</groupId>
+      <artifactId>djutils</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.djutils</groupId>
+      <artifactId>djutils-draw</artifactId>
+    </dependency>
+
   </dependencies>
 </project>
