@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <LINKTYPES xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions.xsd
-  http://www.opentrafficsim.org/ots https://opentrafficsim.org/docs/xsd/1.03.00/ots-definitions.xsd">
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions.xsd">
   
   <!-- 
     GTUCompatibility<LinkType> compatibility = new GTUCompatibility<>((LinkType) null); 

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PARAMETERS xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-model.xsd
-  http://www.opentrafficsim.org/ots https://opentrafficsim.org/docs/xsd/1.03.00/ots-model.xsd">
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-model.xsd">
 
   <!-- Most common parameters, for LMRS and other models -->
   <DURATION ID="dt" DESCRIPTION="Fixed model time step" FIELD="org.opentrafficsim.base.parameters.ParameterTypes.DT" />
