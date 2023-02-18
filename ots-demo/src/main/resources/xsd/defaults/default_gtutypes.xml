@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GTUTYPES xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions.xsd">
+
+<!--
+        ROAD_USER = new GTUType("ROAD_USER", null);
+        WATERWAY_USER = new GTUType("WATERWAY_USER", null);
+        RAILWAY_USER = new GTUType("RAILWAY_USER", null);
+
+        SHIP = new GTUType("SHIP", WATERWAY_USER);
+        TRAIN = new GTUType("TRAIN", RAILWAY_USER);
+        PEDESTRIAN = new GTUType("PEDESTRIAN", ROAD_USER);
+        BICYCLE = new GTUType("BICYCLE", ROAD_USER);
+        MOPED = new GTUType("MOPED", BICYCLE);
+
+        VEHICLE = new GTUType("VEHICLE", ROAD_USER);
+        EMERGENCY_VEHICLE = new GTUType("EMERGENCY_VEHICLE", VEHICLE);
+        CAR = new GTUType("CAR", VEHICLE);
+        VAN = new GTUType("VAN", VEHICLE);
+        BUS = new GTUType("BUS", VEHICLE);
+        TRUCK = new GTUType("TRUCK", VEHICLE);
+        SCHEDULED_BUS = new GTUType("SCHEDULED BUS", BUS); 
+ -->
+
+	<GTUTYPE ID="NONE" DEFAULT="true" />
+
+	<GTUTYPE ID="ROAD_USER" DEFAULT="true" />
+	<GTUTYPE ID="WATERWAY_USER" DEFAULT="true" />
+	<GTUTYPE ID="RAILWAY_USER" DEFAULT="true" />
+
+	<GTUTYPE ID="SHIP" PARENT="WATERWAY_USER" DEFAULT="true" />
+	<GTUTYPE ID="TRAIN" PARENT="RAILWAY_USER" DEFAULT="true" />
+	<GTUTYPE ID="PEDESTRIAN" PARENT="ROAD_USER" DEFAULT="true" />
+	<GTUTYPE ID="BICYCLE" PARENT="ROAD_USER" DEFAULT="true" />
+	<GTUTYPE ID="MOPED" PARENT="BICYCLE" DEFAULT="true" />
+
+	<GTUTYPE ID="VEHICLE" PARENT="ROAD_USER" DEFAULT="true" />
+	<GTUTYPE ID="EMERGENCY_VEHICLE" PARENT="VEHICLE" DEFAULT="true" />
+	<GTUTYPE ID="CAR" PARENT="VEHICLE" DEFAULT="true" />
+	<GTUTYPE ID="VAN" PARENT="VEHICLE" DEFAULT="true" />
+	<GTUTYPE ID="BUS" PARENT="VEHICLE" DEFAULT="true" />
+	<GTUTYPE ID="TRUCK" PARENT="VEHICLE" DEFAULT="true" />
+	<GTUTYPE ID="SCHEDULED_BUS" PARENT="BUS" DEFAULT="true" />
+
+</GTUTYPES>

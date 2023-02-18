@@ -5,9 +5,9 @@
   elementFormDefault="qualified">
 
   <!-- http://www.w3.org/2009/01/xml.xsd -->
-  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../ref/xml.xsd" />
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="ref/xml.xsd" />
   <!-- http://www.w3.org/2001/xinclude.xsd -->
-  <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="../ref/xinclude.xsd" />
+  <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="ref/xinclude.xsd" />
 
   <xsd:include schemaLocation="ots-definitions.xsd" />
   <xsd:include schemaLocation="ots-control.xsd" />
@@ -115,6 +115,7 @@
       <xsd:attribute name="LANEKEEPING" type="LANEKEEPINGTYPE" use="optional" default="KEEPRIGHT" />
       <xsd:attribute name="PRIORITY" type="PRIORITYTYPE" use="optional" />
       <xsd:attribute name="FIXGRADUALOFFSET" type="xsd:boolean" use="optional" default="false" />
+      <xsd:attribute name="CONFLICTID" type="xsd:string" use="optional" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
