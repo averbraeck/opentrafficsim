@@ -12,6 +12,43 @@
   <name>OTS Road parser for XML files</name>
   <description>OTS Road parser for XML files</description>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.jvnet.jaxb2.maven2</groupId>
+        <artifactId>maven-jaxb2-plugin</artifactId>
+        <version>${maven-jaxb2.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <schemaDirectory>src/main/resources/xsd/${xsd.version}</schemaDirectory>
+          <generateDirectory>src/main/java</generateDirectory>
+          <generatePackage>org.opentrafficsim.xml.generated</generatePackage>
+          <markGenerated>true</markGenerated>
+          <cleanPackageDirectories>true</cleanPackageDirectories>
+          <!--  Next one appears to fix Peter's mojo problem  -->
+          <scanDependenciesForBindings>false</scanDependenciesForBindings>
+          <strict>false</strict>
+          <specVersion>2.3</specVersion>
+          <verbose>true</verbose>
+          <extension>true</extension>
+          <bindingDirectory>src/main/resources/xsd/${xsd.version}</bindingDirectory>
+          <bindingIncludes>
+            <bindingInclude>bindings.xml</bindingInclude>
+          </bindingIncludes>
+          <schemaIncludes>
+            <schemaInclude>*.xsd</schemaInclude>
+          </schemaIncludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
   <dependencies>
 
     <dependency>
@@ -35,10 +72,30 @@
     </dependency>
 
     <dependency>
-      <groupId>org.opentrafficsim</groupId>
-      <artifactId>ots-xsd</artifactId>
+      <groupId>org.djunits</groupId>
+      <artifactId>djunits</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.djutils</groupId>
+      <artifactId>djutils</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.djutils</groupId>
+      <artifactId>djutils-draw</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+    </dependency>
+    
   </dependencies>
 
 </project>
