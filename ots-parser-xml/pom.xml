@@ -26,7 +26,7 @@
           </execution>
         </executions>
         <configuration>
-          <schemaDirectory>src/main/resources/xsd/${xsd.version}</schemaDirectory>
+          <schemaDirectory>src/main/resources/xsd</schemaDirectory>
           <generateDirectory>src/main/java</generateDirectory>
           <generatePackage>org.opentrafficsim.xml.generated</generatePackage>
           <markGenerated>true</markGenerated>
@@ -37,7 +37,7 @@
           <specVersion>2.3</specVersion>
           <verbose>true</verbose>
           <extension>true</extension>
-          <bindingDirectory>src/main/resources/xsd/${xsd.version}</bindingDirectory>
+          <bindingDirectory>src/main/resources/xsd</bindingDirectory>
           <bindingIncludes>
             <bindingInclude>bindings.xml</bindingInclude>
           </bindingIncludes>

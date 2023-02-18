@@ -5,9 +5,9 @@
   elementFormDefault="qualified">
 
   <!-- http://www.w3.org/2009/01/xml.xsd -->
-  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../ref/xml.xsd" />
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="ref/xml.xsd" />
   <!-- http://www.w3.org/2001/xinclude.xsd -->
-  <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="../ref/xinclude.xsd" />
+  <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="ref/xinclude.xsd" />
 
   <xsd:include schemaLocation="ots-definitions.xsd" />
   <xsd:include schemaLocation="ots-network.xsd" />
