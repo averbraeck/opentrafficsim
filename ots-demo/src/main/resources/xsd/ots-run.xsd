@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
-  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots"
+  xmlns:ots="http://www.opentrafficsim.org/ots" 
   xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   elementFormDefault="qualified">
 
@@ -28,7 +28,7 @@
   <xsd:element name="RANDOMSTREAMS">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element ref="RANDOMSTREAM" minOccurs="1" maxOccurs="unbounded" />
+        <xsd:element ref="ots:RANDOMSTREAM" minOccurs="1" maxOccurs="unbounded" />
       </xsd:sequence>
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
@@ -37,11 +37,11 @@
   <xsd:element name="RUN">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="STARTTIME" type="TIMETYPE" minOccurs="0" default="0s" />
-        <xsd:element name="WARMUPPERIOD" type="DURATIONTYPE" minOccurs="0" default="0s" />
-        <xsd:element name="RUNLENGTH" type="DURATIONTYPE" minOccurs="1" />
+        <xsd:element name="STARTTIME" type="ots:TIMETYPE" minOccurs="0" default="0s" />
+        <xsd:element name="WARMUPPERIOD" type="ots:DURATIONTYPE" minOccurs="0" default="0s" />
+        <xsd:element name="RUNLENGTH" type="ots:DURATIONTYPE" minOccurs="1" />
         <xsd:element name="NUMBERREPLICATIONS" type="xsd:unsignedInt" minOccurs="0" default="1" />
-        <xsd:element ref="RANDOMSTREAMS" minOccurs="0" maxOccurs="1" />
+        <xsd:element ref="ots:RANDOMSTREAMS" minOccurs="0" maxOccurs="1" />
       </xsd:sequence>
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>

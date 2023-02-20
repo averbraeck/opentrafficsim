@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
-  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots"
+  xmlns:ots="http://www.opentrafficsim.org/ots" 
   xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   elementFormDefault="qualified">
 
@@ -17,30 +17,30 @@
         <xsd:element name="INPUTPARAMETERS" minOccurs="0" maxOccurs="1">
           <xsd:complexType>
             <xsd:choice minOccurs="1" maxOccurs="unbounded">
-              <xsd:element name="ACCELERATION" type="PARAMETERACCELERATION" />
-              <xsd:element name="ACCELERATIONDIST" type="PARAMETERACCELERATIONDIST" />
-              <xsd:element name="BOOLEAN" type="PARAMETERBOOLEAN" />
-              <xsd:element name="CLASS" type="PARAMETERCLASS" />
-              <xsd:element name="DOUBLE" type="PARAMETERDOUBLE" />
-              <xsd:element name="DOUBLEDIST" type="PARAMETERDOUBLEDIST" />
-              <xsd:element name="DURATION" type="PARAMETERDURATION" />
-              <xsd:element name="DURATIONDIST" type="PARAMETERDURATIONDIST" />
-              <xsd:element name="FLOAT" type="PARAMETERFLOAT" />
-              <xsd:element name="FLOATDIST" type="PARAMETERFLOATDIST" />
-              <xsd:element name="FRACTION" type="PARAMETERFRACTION" />
-              <xsd:element name="FREQUENCY" type="PARAMETERFREQUENCY" />
-              <xsd:element name="FREQUENCYDIST" type="PARAMETERFREQUENCYDIST" />
-              <xsd:element name="INTEGER" type="PARAMETERINTEGER" />
-              <xsd:element name="INTEGERDIST" type="PARAMETERINTEGERDIST" />
-              <xsd:element name="LENGTH" type="PARAMETERLENGTH" />
-              <xsd:element name="LENGTHDIST" type="PARAMETERLENGTHDIST" />
-              <xsd:element name="LINEARDENSITY" type="PARAMETERLINEARDENSITY" />
-              <xsd:element name="LINEARDENSITYDIST" type="PARAMETERLINEARDENSITYDIST" />
-              <xsd:element name="LONG" type="PARAMETERLONG" />
-              <xsd:element name="LONGDIST" type="PARAMETERLONGDIST" />
-              <xsd:element name="SPEED" type="PARAMETERSPEED" />
-              <xsd:element name="SPEEDDIST" type="PARAMETERSPEEDDIST" />
-              <xsd:element name="STRING" type="PARAMETERSTRING" />
+              <xsd:element name="ACCELERATION" type="ots:PARAMETERACCELERATION" />
+              <xsd:element name="ACCELERATIONDIST" type="ots:PARAMETERACCELERATIONDIST" />
+              <xsd:element name="BOOLEAN" type="ots:PARAMETERBOOLEAN" />
+              <xsd:element name="CLASS" type="ots:PARAMETERCLASS" />
+              <xsd:element name="DOUBLE" type="ots:PARAMETERDOUBLE" />
+              <xsd:element name="DOUBLEDIST" type="ots:PARAMETERDOUBLEDIST" />
+              <xsd:element name="DURATION" type="ots:PARAMETERDURATION" />
+              <xsd:element name="DURATIONDIST" type="ots:PARAMETERDURATIONDIST" />
+              <xsd:element name="FLOAT" type="ots:PARAMETERFLOAT" />
+              <xsd:element name="FLOATDIST" type="ots:PARAMETERFLOATDIST" />
+              <xsd:element name="FRACTION" type="ots:PARAMETERFRACTION" />
+              <xsd:element name="FREQUENCY" type="ots:PARAMETERFREQUENCY" />
+              <xsd:element name="FREQUENCYDIST" type="ots:PARAMETERFREQUENCYDIST" />
+              <xsd:element name="INTEGER" type="ots:PARAMETERINTEGER" />
+              <xsd:element name="INTEGERDIST" type="ots:PARAMETERINTEGERDIST" />
+              <xsd:element name="LENGTH" type="ots:PARAMETERLENGTH" />
+              <xsd:element name="LENGTHDIST" type="ots:PARAMETERLENGTHDIST" />
+              <xsd:element name="LINEARDENSITY" type="ots:PARAMETERLINEARDENSITY" />
+              <xsd:element name="LINEARDENSITYDIST" type="ots:PARAMETERLINEARDENSITYDIST" />
+              <xsd:element name="LONG" type="ots:PARAMETERLONG" />
+              <xsd:element name="LONGDIST" type="ots:PARAMETERLONGDIST" />
+              <xsd:element name="SPEED" type="ots:PARAMETERSPEED" />
+              <xsd:element name="SPEEDDIST" type="ots:PARAMETERSPEEDDIST" />
+              <xsd:element name="STRING" type="ots:PARAMETERSTRING" />
             </xsd:choice>
           </xsd:complexType>
         </xsd:element>
@@ -57,7 +57,7 @@
           </xsd:complexType>
         </xsd:element>
 
-        <xsd:element name="MODELIDREFERRAL" type="MODELIDREFERRALTYPE" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element name="MODELIDREFERRAL" type="ots:MODELIDREFERRALTYPE" minOccurs="0" maxOccurs="unbounded" />
 
       </xsd:sequence>
       <xsd:attribute name="ID" type="xsd:string" />

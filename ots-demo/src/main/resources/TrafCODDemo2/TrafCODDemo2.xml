@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<OTS xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<OTS  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../../ots-xsd/src/main/resources/xsd/1.03.00/ots.xsd"
   xmlns:xi="http://www.w3.org/2001/XInclude">
 
