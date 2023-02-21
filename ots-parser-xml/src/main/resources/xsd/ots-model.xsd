@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
-  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:ots="http://www.opentrafficsim.org/ots"  xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform" elementFormDefault="qualified">
 
   <!-- http://www.w3.org/2009/01/xml.xsd -->
@@ -13,26 +13,26 @@
   <!-- TODO: parts of a model depending on GTU type, or with a distribution (e.g. 25% overestimates, 75% underestimates). -->
   <!-- TODO: differences based on scenario -->
 
-  <xsd:element name="MODEL" type="MODELTYPE" />
+  <xsd:element name="MODEL" type="ots:MODELTYPE" />
 
   <xsd:element name="PARAMETERS">
     <xsd:complexType>
       <xsd:sequence>
         <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="STRING" type="PARAMETERTYPESTRING" />
-          <xsd:element name="ACCELERATION" type="PARAMETERTYPEACCELERATION" />
-          <xsd:element name="BOOLEAN" type="PARAMETERTYPEBOOLEAN" />
-          <xsd:element name="CLASS" type="PARAMETERTYPECLASS" />
-          <xsd:element name="DOUBLE" type="PARAMETERTYPEDOUBLE" />
-          <!-- xsd:element name="FLOAT" type="PARAMETERTYPEFLOAT" />
-          <xsd:element name="LONG" type="PARAMETERTYPELONG" / -->
-          <xsd:element name="DURATION" type="PARAMETERTYPEDURATION" />
-          <xsd:element name="FRACTION" type="PARAMETERTYPEFRACTION" />
-          <xsd:element name="FREQUENCY" type="PARAMETERTYPEFREQUENCY" />
-          <xsd:element name="INTEGER" type="PARAMETERTYPEINTEGER" />
-          <xsd:element name="LENGTH" type="PARAMETERTYPELENGTH" />
-          <xsd:element name="LINEARDENSITY" type="PARAMETERTYPELINEARDENSITY" />
-          <xsd:element name="SPEED" type="PARAMETERTYPESPEED" />
+          <xsd:element name="STRING" type="ots:PARAMETERTYPESTRING" />
+          <xsd:element name="ACCELERATION" type="ots:PARAMETERTYPEACCELERATION" />
+          <xsd:element name="BOOLEAN" type="ots:PARAMETERTYPEBOOLEAN" />
+          <xsd:element name="CLASS" type="ots:PARAMETERTYPECLASS" />
+          <xsd:element name="DOUBLE" type="ots:PARAMETERTYPEDOUBLE" />
+          <!-- xsd:element name="FLOAT" type="ots:PARAMETERTYPEFLOAT" />
+          <xsd:element name="LONG" type="ots:PARAMETERTYPELONG" / -->
+          <xsd:element name="DURATION" type="ots:PARAMETERTYPEDURATION" />
+          <xsd:element name="FRACTION" type="ots:PARAMETERTYPEFRACTION" />
+          <xsd:element name="FREQUENCY" type="ots:PARAMETERTYPEFREQUENCY" />
+          <xsd:element name="INTEGER" type="ots:PARAMETERTYPEINTEGER" />
+          <xsd:element name="LENGTH" type="ots:PARAMETERTYPELENGTH" />
+          <xsd:element name="LINEARDENSITY" type="ots:PARAMETERTYPELINEARDENSITY" />
+          <xsd:element name="SPEED" type="ots:PARAMETERTYPESPEED" />
         </xsd:choice>
       </xsd:sequence>
     </xsd:complexType>
@@ -47,7 +47,7 @@
             <xsd:element name="STRING">
               <xsd:complexType>
                 <xsd:complexContent>
-                  <xsd:extension base="PARAMETERSTRING">
+                  <xsd:extension base="ots:PARAMETERSTRING">
                     <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
                   </xsd:extension>
                 </xsd:complexContent>
@@ -56,7 +56,7 @@
             <xsd:element name="ACCELERATION">
               <xsd:complexType>
                 <xsd:complexContent>
-                  <xsd:extension base="PARAMETERACCELERATION">
+                  <xsd:extension base="ots:PARAMETERACCELERATION">
                     <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
                   </xsd:extension>
                 </xsd:complexContent>
@@ -65,7 +65,7 @@
             <xsd:element name="ACCELERATIONDIST">
               <xsd:complexType>
                 <xsd:complexContent>
-                  <xsd:extension base="PARAMETERACCELERATIONDIST">
+                  <xsd:extension base="ots:PARAMETERACCELERATIONDIST">
                     <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
                   </xsd:extension>
                 </xsd:complexContent>
@@ -74,7 +74,7 @@
             <xsd:element name="BOOLEAN">
               <xsd:complexType>
                 <xsd:complexContent>
-                  <xsd:extension base="PARAMETERBOOLEAN">
+                  <xsd:extension base="ots:PARAMETERBOOLEAN">
                     <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
                   </xsd:extension>
                 </xsd:complexContent>
@@ -83,7 +83,7 @@
             <xsd:element name="CLASS">
               <xsd:complexType>
                 <xsd:complexContent>
-                  <xsd:extension base="PARAMETERCLASS">
+                  <xsd:extension base="ots:PARAMETERCLASS">
                     <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
                   </xsd:extension>
                 </xsd:complexContent>
@@ -92,7 +92,7 @@
             <xsd:element name="DOUBLE">
               <xsd:complexType>
                 <xsd:complexContent>
-                  <xsd:extension base="PARAMETERDOUBLE">
+                  <xsd:extension base="ots:PARAMETERDOUBLE">
                     <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
                   </xsd:extension>
                 </xsd:complexContent>
@@ -101,7 +101,7 @@
             <xsd:element name="DOUBLEDIST">
               <xsd:complexType>
                 <xsd:complexContent>
-                  <xsd:extension base="PARAMETERDOUBLEDIST">
+                  <xsd:extension base="ots:PARAMETERDOUBLEDIST">
                     <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
                   </xsd:extension>
                 </xsd:complexContent>
@@ -110,7 +110,7 @@
             <xsd:element name="DURATION">
               <xsd:complexType>
                 <xsd:complexContent>
-                  <xsd:extension base="PARAMETERDURATION">
+                  <xsd:extension base="ots:PARAMETERDURATION">
                     <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
                   </xsd:extension>
                 </xsd:complexContent>
@@ -119,7 +119,7 @@
             <xsd:element name="DURATIONDIST">
               <xsd:complexType>
                 <xsd:complexContent>
-                  <xsd:extension base="PARAMETERDURATIONDIST">
+                  <xsd:extension base="ots:PARAMETERDURATIONDIST">
                     <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
                   </xsd:extension>
                 </xsd:complexContent>
@@ -128,7 +128,7 @@
             <xsd:element name="FRACTION">
               <xsd:complexType>
                 <xsd:complexContent>
-                  <xsd:extension base="PARAMETERFRACTION">
+                  <xsd:extension base="ots:PARAMETERFRACTION">
                     <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
                   </xsd:extension>
                 </xsd:complexContent>
@@ -137,7 +137,7 @@
             <xsd:element name="FREQUENCY">
               <xsd:complexType>
                 <xsd:complexContent>
-                  <xsd:extension base="PARAMETERFREQUENCY">
+                  <xsd:extension base="ots:PARAMETERFREQUENCY">
                     <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
                   </xsd:extension>
                 </xsd:complexContent>
@@ -146,7 +146,7 @@
             <xsd:element name="FREQUENCYDIST">
               <xsd:complexType>
                 <xsd:complexContent>
-                  <xsd:extension base="PARAMETERFREQUENCYDIST">
+                  <xsd:extension base="ots:PARAMETERFREQUENCYDIST">
                     <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
                   </xsd:extension>
                 </xsd:complexContent>
@@ -155,7 +155,7 @@
             <xsd:element name="INTEGER">
               <xsd:complexType>
                 <xsd:complexContent>
-                  <xsd:extension base="PARAMETERINTEGER">
+                  <xsd:extension base="ots:PARAMETERINTEGER">
                     <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
                   </xsd:extension>
                 </xsd:complexContent>
@@ -164,7 +164,7 @@
             <xsd:element name="INTEGERDIST">
               <xsd:complexType>
                 <xsd:complexContent>
-                  <xsd:extension base="PARAMETERINTEGERDIST">
+                  <xsd:extension base="ots:PARAMETERINTEGERDIST">
                     <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
                   </xsd:extension>
                 </xsd:complexContent>
@@ -173,7 +173,7 @@
             <xsd:element name="LENGTH">
               <xsd:complexType>
                 <xsd:complexContent>
-                  <xsd:extension base="PARAMETERLENGTH">
+                  <xsd:extension base="ots:PARAMETERLENGTH">
                     <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
                   </xsd:extension>
                 </xsd:complexContent>
@@ -182,7 +182,7 @@
             <xsd:element name="LENGTHDIST">
               <xsd:complexType>
                 <xsd:complexContent>
-                  <xsd:extension base="PARAMETERLENGTHDIST">
+                  <xsd:extension base="ots:PARAMETERLENGTHDIST">
                     <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
                   </xsd:extension>
                 </xsd:complexContent>
@@ -191,7 +191,7 @@
             <xsd:element name="LINEARDENSITY">
               <xsd:complexType>
                 <xsd:complexContent>
-                  <xsd:extension base="PARAMETERLINEARDENSITY">
+                  <xsd:extension base="ots:PARAMETERLINEARDENSITY">
                     <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
                   </xsd:extension>
                 </xsd:complexContent>
@@ -200,7 +200,7 @@
             <xsd:element name="LINEARDENSITYDIST">
               <xsd:complexType>
                 <xsd:complexContent>
-                  <xsd:extension base="PARAMETERLINEARDENSITYDIST">
+                  <xsd:extension base="ots:PARAMETERLINEARDENSITYDIST">
                     <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
                   </xsd:extension>
                 </xsd:complexContent>
@@ -209,7 +209,7 @@
             <xsd:element name="SPEED">
               <xsd:complexType>
                 <xsd:complexContent>
-                  <xsd:extension base="PARAMETERSPEED">
+                  <xsd:extension base="ots:PARAMETERSPEED">
                     <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
                   </xsd:extension>
                 </xsd:complexContent>
@@ -218,7 +218,7 @@
             <xsd:element name="SPEEDDIST">
               <xsd:complexType>
                 <xsd:complexContent>
-                  <xsd:extension base="PARAMETERSPEEDDIST">
+                  <xsd:extension base="ots:PARAMETERSPEEDDIST">
                     <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
                   </xsd:extension>
                 </xsd:complexContent>
@@ -258,7 +258,7 @@
                 <xsd:sequence>
 
                   <!-- Car-following model -->
-                  <xsd:element name="CARFOLLOWINGMODEL" type="CARFOLLOWINGMODELTYPE" minOccurs="0" />
+                  <xsd:element name="CARFOLLOWINGMODEL" type="ots:CARFOLLOWINGMODELTYPE" minOccurs="0" />
 
                   <!-- Basic behavioral components -->
                   <xsd:element name="SYNCHRONIZATION" minOccurs="0" default="PASSIVE">
@@ -335,7 +335,7 @@
                           </xsd:annotation>
                           <xsd:complexType>
                             <xsd:simpleContent>
-                              <xsd:restriction base="CLASSATTRIBUTETYPE">
+                              <xsd:restriction base="ots:CLASSATTRIBUTETYPE">
                                 <xsd:pattern value="CLASS|ROUTE|GETINLANE|BUSSTOP" />
                               </xsd:restriction>
                             </xsd:simpleContent>
@@ -360,7 +360,7 @@
                           </xsd:annotation>
                           <xsd:complexType>
                             <xsd:simpleContent>
-                              <xsd:restriction base="CLASSATTRIBUTETYPE">
+                              <xsd:restriction base="ots:CLASSATTRIBUTETYPE">
                                 <xsd:pattern value="CLASS|KEEP|SPEEDWITHCOURTESY|COURTESY|SOCIOSPEED|STAYRIGHT" />
                               </xsd:restriction>
                             </xsd:simpleContent>
@@ -385,7 +385,7 @@
                           </xsd:annotation>
                           <xsd:complexType>
                             <xsd:simpleContent>
-                              <xsd:restriction base="CLASSATTRIBUTETYPE">
+                              <xsd:restriction base="ots:CLASSATTRIBUTETYPE">
                                 <xsd:pattern value="BUSSTOP|CONFLICTS|SPEEDLIMITTRANSITION|TRAFFICLIGHTS|NORIGHTOVERTAKE" />
                               </xsd:restriction>
                             </xsd:simpleContent>
@@ -396,7 +396,7 @@
                   </xsd:element>
 
                   <!-- Perception -->
-                  <xsd:element name="PERCEPTION" type="PERCEPTIONTYPE" minOccurs="0" />
+                  <xsd:element name="PERCEPTION" type="ots:PERCEPTIONTYPE" minOccurs="0" />
 
                 </xsd:sequence>
               </xsd:complexType>
@@ -418,10 +418,10 @@
     <xsd:choice>
 
       <!-- IDM -->
-      <xsd:element name="IDM" type="CARFOLLOWINGMODELHEADWAYSPEEDTYPE" />
+      <xsd:element name="IDM" type="ots:CARFOLLOWINGMODELHEADWAYSPEEDTYPE" />
 
       <!-- IDM+ -->
-      <xsd:element name="IDMPLUS" type="CARFOLLOWINGMODELHEADWAYSPEEDTYPE" />
+      <xsd:element name="IDMPLUS" type="ots:CARFOLLOWINGMODELHEADWAYSPEEDTYPE" />
 
       <!-- Other car-following models here -->
 
@@ -434,18 +434,18 @@
         <xsd:complexType>
           <xsd:choice>
             <xsd:element name="IDM" />
-            <xsd:element name="CLASS" type="CLASSNAMETYPE" />
+            <xsd:element name="CLASS" type="ots:CLASSNAMETYPE" />
           </xsd:choice>
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="DESIREDSPEEDMODEL" type="DESIREDSPEEDMODELTYPE" minOccurs="0" />
+      <xsd:element name="DESIREDSPEEDMODEL" type="ots:DESIREDSPEEDMODELTYPE" minOccurs="0" />
     </xsd:sequence>
   </xsd:complexType>
 
   <xsd:complexType name="DESIREDSPEEDMODELTYPE">
     <xsd:choice>
       <xsd:element name="IDM" />
-      <xsd:element name="SOCIO" type="DESIREDSPEEDMODELTYPE">
+      <xsd:element name="SOCIO" type="ots:DESIREDSPEEDMODELTYPE">
         <xsd:annotation>
           <xsd:documentation source="description">
             SOCIO wraps another desired speed model and adapts it with social
@@ -453,7 +453,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="CLASS" type="CLASSNAMETYPE" />
+      <xsd:element name="CLASS" type="ots:CLASSNAMETYPE" />
     </xsd:choice>
   </xsd:complexType>
 
@@ -472,7 +472,7 @@
         </xsd:annotation>
         <xsd:complexType>
           <xsd:simpleContent>
-            <xsd:restriction base="CLASSATTRIBUTETYPE">
+            <xsd:restriction base="ots:CLASSATTRIBUTETYPE">
               <xsd:pattern value="CLASS|EGO|BUSSTOP|INFRASTRUCTURE|INTERSECTION|NEIGHBORS|TRAFFIC" />
             </xsd:restriction>
           </xsd:simpleContent>
@@ -533,7 +533,7 @@
             <xsd:element name="FULLER">
               <xsd:complexType>
                 <xsd:sequence>
-                  <xsd:element name="TASK" type="CLASSNAMETYPE" minOccurs="0" maxOccurs="unbounded">
+                  <xsd:element name="TASK" type="ots:CLASSNAMETYPE" minOccurs="0" maxOccurs="unbounded">
                     <xsd:annotation>
                       <xsd:documentation source="description">
                         Implementations of Task with constructor without input.
@@ -551,7 +551,7 @@
                     </xsd:annotation>
                     <xsd:complexType>
                       <xsd:simpleContent>
-                        <xsd:restriction base="CLASSATTRIBUTETYPE">
+                        <xsd:restriction base="ots:CLASSATTRIBUTETYPE">
                           <xsd:pattern value="CLASS|SITUATIONALAWARENESS|HEADWAY|SPEED" />
                         </xsd:restriction>
                       </xsd:simpleContent>
@@ -591,7 +591,7 @@
   <xsd:complexType name="CLASSATTRIBUTETYPE">
     <xsd:simpleContent>
       <xsd:extension base="xsd:string">
-        <xsd:attribute name="CLASS" type="CLASSNAMETYPE" use="optional" />
+        <xsd:attribute name="CLASS" type="ots:CLASSNAMETYPE" use="optional" />
       </xsd:extension>
     </xsd:simpleContent>
   </xsd:complexType>

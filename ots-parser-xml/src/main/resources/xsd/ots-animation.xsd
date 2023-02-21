@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
-  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots"
+  xmlns:ots="http://www.opentrafficsim.org/ots" 
   xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   elementFormDefault="qualified">
 
@@ -13,7 +13,7 @@
 
   <xsd:complexType name="GTUCOLORERTYPE">
     <xsd:sequence>
-      <xsd:element name="PARAMETER" type="PARAMETERTYPE" minOccurs="0" maxOccurs="unbounded" />
+      <xsd:element name="PARAMETER" type="ots:PARAMETERTYPE" minOccurs="0" maxOccurs="unbounded" />
     </xsd:sequence>
     <xsd:attribute name="ID" default="DEFAULT" use="optional">
       <xsd:simpleType>
@@ -23,13 +23,13 @@
         </xsd:restriction>
       </xsd:simpleType>
     </xsd:attribute>
-    <xsd:attribute name="CLASS" type="CLASSNAMETYPE" use="optional" />
+    <xsd:attribute name="CLASS" type="ots:CLASSNAMETYPE" use="optional" />
   </xsd:complexType>
 
   <xsd:element name="GTUCOLORERS">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="GTUCOLORER" type="GTUCOLORERTYPE" minOccurs="1" maxOccurs="unbounded" />
+        <xsd:element name="GTUCOLORER" type="ots:GTUCOLORERTYPE" minOccurs="1" maxOccurs="unbounded" />
       </xsd:sequence>
     </xsd:complexType>
   </xsd:element>
@@ -65,28 +65,28 @@
     <xsd:sequence>
       <xsd:element name="LINK" minOccurs="0" maxOccurs="1">
         <xsd:complexType>
-          <xsd:attribute name="COLOR" type="COLORTYPE" use="required" />
-          <xsd:attribute name="WIDTH" type="POSITIVELENGTHTYPE" use="optional" />
+          <xsd:attribute name="COLOR" type="ots:COLORTYPE" use="required" />
+          <xsd:attribute name="WIDTH" type="ots:POSITIVELENGTHTYPE" use="optional" />
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="LANE" minOccurs="0" maxOccurs="1">
         <xsd:complexType>
-          <xsd:attribute name="COLOR" type="COLORTYPE" use="required" />
+          <xsd:attribute name="COLOR" type="ots:COLORTYPE" use="required" />
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="STRIPE" minOccurs="0" maxOccurs="1">
         <xsd:complexType>
-          <xsd:attribute name="COLOR" type="COLORTYPE" use="required" />
+          <xsd:attribute name="COLOR" type="ots:COLORTYPE" use="required" />
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="SHOULDER" minOccurs="0" maxOccurs="1">
         <xsd:complexType>
-          <xsd:attribute name="COLOR" type="COLORTYPE" use="required" />
+          <xsd:attribute name="COLOR" type="ots:COLORTYPE" use="required" />
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="NOTRAFFICLANE" minOccurs="0" maxOccurs="1">
         <xsd:complexType>
-          <xsd:attribute name="COLOR" type="COLORTYPE" use="required" />
+          <xsd:attribute name="COLOR" type="ots:COLORTYPE" use="required" />
         </xsd:complexType>
       </xsd:element>
     </xsd:sequence>
@@ -94,12 +94,12 @@
 
   <xsd:complexType name="LINKTYPEANIMATIONTYPE">
     <xsd:attribute name="ID" type="xsd:string" use="required" />
-    <xsd:attribute name="COLOR" type="COLORTYPE" use="required" />
+    <xsd:attribute name="COLOR" type="ots:COLORTYPE" use="required" />
   </xsd:complexType>
 
   <xsd:complexType name="LANETYPEANIMATIONTYPE">
     <xsd:attribute name="ID" type="xsd:string" use="required" />
-    <xsd:attribute name="COLOR" type="COLORTYPE" use="required" />
+    <xsd:attribute name="COLOR" type="ots:COLORTYPE" use="required" />
   </xsd:complexType>
 
   <xsd:complexType name="ROADLAYOUTANIMATIONTYPE">
@@ -107,25 +107,25 @@
       <xsd:element name="SHOULDER">
         <xsd:complexType>
           <xsd:attribute name="ID" type="xsd:string" use="required" />
-          <xsd:attribute name="COLOR" type="COLORTYPE" use="required" />
+          <xsd:attribute name="COLOR" type="ots:COLORTYPE" use="required" />
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="LANE">
         <xsd:complexType>
           <xsd:attribute name="ID" type="xsd:string" use="required" />
-          <xsd:attribute name="COLOR" type="COLORTYPE" use="required" />
+          <xsd:attribute name="COLOR" type="ots:COLORTYPE" use="required" />
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="STRIPE">
         <xsd:complexType>
           <xsd:attribute name="ID" type="xsd:string" use="required" />
-          <xsd:attribute name="COLOR" type="COLORTYPE" use="required" />
+          <xsd:attribute name="COLOR" type="ots:COLORTYPE" use="required" />
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="NOTRAFFICLANE">
         <xsd:complexType>
           <xsd:attribute name="ID" type="xsd:string" use="required" />
-          <xsd:attribute name="COLOR" type="COLORTYPE" use="required" />
+          <xsd:attribute name="COLOR" type="ots:COLORTYPE" use="required" />
         </xsd:complexType>
       </xsd:element>
     </xsd:choice>
@@ -137,31 +137,31 @@
       <xsd:element name="SHOULDER">
         <xsd:complexType>
           <xsd:attribute name="ID" type="xsd:string" use="required" />
-          <xsd:attribute name="COLOR" type="COLORTYPE" use="required" />
+          <xsd:attribute name="COLOR" type="ots:COLORTYPE" use="required" />
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="LANE">
         <xsd:complexType>
           <xsd:attribute name="ID" type="xsd:string" use="required" />
-          <xsd:attribute name="COLOR" type="COLORTYPE" use="required" />
+          <xsd:attribute name="COLOR" type="ots:COLORTYPE" use="required" />
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="STRIPE">
         <xsd:complexType>
           <xsd:attribute name="ID" type="xsd:string" use="required" />
-          <xsd:attribute name="COLOR" type="COLORTYPE" use="required" />
+          <xsd:attribute name="COLOR" type="ots:COLORTYPE" use="required" />
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="NOTRAFFICLANE">
         <xsd:complexType>
           <xsd:attribute name="ID" type="xsd:string" use="required" />
-          <xsd:attribute name="COLOR" type="COLORTYPE" use="required" />
+          <xsd:attribute name="COLOR" type="ots:COLORTYPE" use="required" />
         </xsd:complexType>
       </xsd:element>
     </xsd:choice>
     <xsd:attribute name="ID" type="xsd:string" use="required" />
-    <xsd:attribute name="COLOR" type="COLORTYPE" use="optional" />
-    <xsd:attribute name="WIDTH" type="POSITIVELENGTHTYPE" use="optional" />
+    <xsd:attribute name="COLOR" type="ots:COLORTYPE" use="optional" />
+    <xsd:attribute name="WIDTH" type="ots:POSITIVELENGTHTYPE" use="optional" />
   </xsd:complexType>
 
   <xsd:complexType name="LAYERTOGGLETYPE">
@@ -178,13 +178,13 @@
   <xsd:element name="ANIMATION">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element ref="GTUCOLORERS" minOccurs="0" maxOccurs="1" />
-        <xsd:element name="DEFAULTS" type="DEFAULTANIMATIONTYPE" minOccurs="0" maxOccurs="1" />
-        <xsd:element name="LINKTYPE" type="LINKTYPEANIMATIONTYPE" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element name="LANETYPE" type="LANETYPEANIMATIONTYPE" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element name="ROADLAYOUT" type="ROADLAYOUTANIMATIONTYPE" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element name="LINK" type="LINKANIMATIONTYPE" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element name="LAYER" type="LAYERTOGGLETYPE" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="ots:GTUCOLORERS" minOccurs="0" maxOccurs="1" />
+        <xsd:element name="DEFAULTS" type="ots:DEFAULTANIMATIONTYPE" minOccurs="0" maxOccurs="1" />
+        <xsd:element name="LINKTYPE" type="ots:LINKTYPEANIMATIONTYPE" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element name="LANETYPE" type="ots:LANETYPEANIMATIONTYPE" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element name="ROADLAYOUT" type="ots:ROADLAYOUTANIMATIONTYPE" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element name="LINK" type="ots:LINKANIMATIONTYPE" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element name="LAYER" type="ots:LAYERTOGGLETYPE" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
     </xsd:complexType>
   </xsd:element>

@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<GTUTYPES xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions.xsd">
+<ots:GTUTYPES xmlns:ots="http://www.opentrafficsim.org/ots" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions.xsd">
 
 <!--
         ROAD_USER = new GTUType("ROAD_USER", null);
@@ -22,24 +22,24 @@
         SCHEDULED_BUS = new GTUType("SCHEDULED BUS", BUS); 
  -->
 
-	<GTUTYPE ID="NONE" DEFAULT="true" />
+	<ots:GTUTYPE ID="NONE" DEFAULT="true" />
 
-	<GTUTYPE ID="ROAD_USER" DEFAULT="true" />
-	<GTUTYPE ID="WATERWAY_USER" DEFAULT="true" />
-	<GTUTYPE ID="RAILWAY_USER" DEFAULT="true" />
+	<ots:GTUTYPE ID="ROAD_USER" DEFAULT="true" />
+	<ots:GTUTYPE ID="WATERWAY_USER" DEFAULT="true" />
+	<ots:GTUTYPE ID="RAILWAY_USER" DEFAULT="true" />
 
-	<GTUTYPE ID="SHIP" PARENT="WATERWAY_USER" DEFAULT="true" />
-	<GTUTYPE ID="TRAIN" PARENT="RAILWAY_USER" DEFAULT="true" />
-	<GTUTYPE ID="PEDESTRIAN" PARENT="ROAD_USER" DEFAULT="true" />
-	<GTUTYPE ID="BICYCLE" PARENT="ROAD_USER" DEFAULT="true" />
-	<GTUTYPE ID="MOPED" PARENT="BICYCLE" DEFAULT="true" />
+	<ots:GTUTYPE ID="SHIP" PARENT="WATERWAY_USER" DEFAULT="true" />
+	<ots:GTUTYPE ID="TRAIN" PARENT="RAILWAY_USER" DEFAULT="true" />
+	<ots:GTUTYPE ID="PEDESTRIAN" PARENT="ROAD_USER" DEFAULT="true" />
+	<ots:GTUTYPE ID="BICYCLE" PARENT="ROAD_USER" DEFAULT="true" />
+	<ots:GTUTYPE ID="MOPED" PARENT="BICYCLE" DEFAULT="true" />
 
-	<GTUTYPE ID="VEHICLE" PARENT="ROAD_USER" DEFAULT="true" />
-	<GTUTYPE ID="EMERGENCY_VEHICLE" PARENT="VEHICLE" DEFAULT="true" />
-	<GTUTYPE ID="CAR" PARENT="VEHICLE" DEFAULT="true" />
-	<GTUTYPE ID="VAN" PARENT="VEHICLE" DEFAULT="true" />
-	<GTUTYPE ID="BUS" PARENT="VEHICLE" DEFAULT="true" />
-	<GTUTYPE ID="TRUCK" PARENT="VEHICLE" DEFAULT="true" />
-	<GTUTYPE ID="SCHEDULED_BUS" PARENT="BUS" DEFAULT="true" />
+	<ots:GTUTYPE ID="VEHICLE" PARENT="ROAD_USER" DEFAULT="true" />
+	<ots:GTUTYPE ID="EMERGENCY_VEHICLE" PARENT="VEHICLE" DEFAULT="true" />
+	<ots:GTUTYPE ID="CAR" PARENT="VEHICLE" DEFAULT="true" />
+	<ots:GTUTYPE ID="VAN" PARENT="VEHICLE" DEFAULT="true" />
+	<ots:GTUTYPE ID="BUS" PARENT="VEHICLE" DEFAULT="true" />
+	<ots:GTUTYPE ID="TRUCK" PARENT="VEHICLE" DEFAULT="true" />
+	<ots:GTUTYPE ID="SCHEDULED_BUS" PARENT="BUS" DEFAULT="true" />
 
-</GTUTYPES>
+</ots:GTUTYPES>

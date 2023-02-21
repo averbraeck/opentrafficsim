@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
-  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots"
-  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+  targetNamespace="http://www.opentrafficsim.org/ots"
+  xmlns:ots="http://www.opentrafficsim.org/ots" 
+  xmlns:xi="http://www.w3.org/2001/XInclude" 
   elementFormDefault="qualified">
 
   <!-- http://www.w3.org/2009/01/xml.xsd -->
   <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="ref/xml.xsd" />
-  <!-- http://www.w3.org/2001/xinclude.xsd -->
-  <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="ref/xinclude.xsd" />
 
   <xsd:include schemaLocation="ots-definitions.xsd" />
   <xsd:include schemaLocation="ots-network.xsd" />
@@ -21,14 +20,14 @@
   <xsd:element name="OTS">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element ref="DEFINITIONS" minOccurs="1" maxOccurs="1" />
-        <xsd:element ref="NETWORK" minOccurs="1" maxOccurs="1" />
-        <xsd:element ref="NETWORKDEMAND" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element ref="CONTROL" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element ref="MODEL" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element ref="SCENARIO" minOccurs="1" maxOccurs="unbounded" />
-        <xsd:element ref="RUN" minOccurs="1" maxOccurs="1" />
-        <xsd:element ref="ANIMATION" minOccurs="0" maxOccurs="1" />
+        <xsd:element ref="ots:DEFINITIONS" minOccurs="1" maxOccurs="1" />
+        <xsd:element ref="ots:NETWORK" minOccurs="1" maxOccurs="1" />
+        <xsd:element ref="ots:NETWORKDEMAND" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="ots:CONTROL" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="ots:MODEL" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="ots:SCENARIO" minOccurs="1" maxOccurs="unbounded" />
+        <xsd:element ref="ots:RUN" minOccurs="1" maxOccurs="1" />
+        <xsd:element ref="ots:ANIMATION" minOccurs="0" maxOccurs="1" />
       </xsd:sequence>
       <xsd:attribute ref="xml:base" />
       <xsd:attribute ref="xml:space" use="optional" default="preserve" />
@@ -262,14 +261,14 @@
 
     <!-- LINK.DEFINEDROADLAYOUT defined by ROADLAYOUT.ID -->
 
-    <xsd:keyref name="definedroadlayoutRoadLayoutIdRef" refer="roadLayoutKey">
+    <xsd:keyref name="definedroadlayoutRoadLayoutIdRef" refer="ots:roadLayoutKey">
       <xsd:selector xpath=".//ots:NETWORK/ots:LINK" />
       <xsd:field xpath="ots:DEFINEDLAYOUT" />
     </xsd:keyref>
     
     <!-- LINK.TYPE defined by LINKTYPE.ID -->
 
-    <xsd:keyref name="linkTypeIdRef" refer="linkTypeKey">
+    <xsd:keyref name="linkTypeIdRef" refer="ots:linkTypeKey">
       <xsd:selector xpath=".//ots:NETWORK/ots:LINK" />
       <xsd:field xpath="@TYPE" />
     </xsd:keyref>
