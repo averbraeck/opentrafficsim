@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ots:OTS xmlns:ots="http://www.opentrafficsim.org/ots" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opentrafficsim.org/ots ../xsd/ots.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../xsd/ots-nocheck.xsd"
 	xmlns:xi="http://www.w3.org/2001/XInclude">
 
 	<ots:DEFINITIONS>
