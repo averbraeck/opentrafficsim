@@ -1,5 +1,11 @@
 @startuml
 
+note right of DefaultAnimationFactory
+	 Not all relations 
+	shown are formal
+	  UML relations.
+end note
+
 interface Network {
     + {static} OBJECT_ADD_EVENT
     + {static} NONLOCATED_OBJECT_ADD_EVENT
