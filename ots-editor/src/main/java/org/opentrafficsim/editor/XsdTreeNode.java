@@ -1575,7 +1575,7 @@ public class XsdTreeNode implements Serializable
         {
             return "include";
         }
-        return getNodeString().toLowerCase().replace("ots:", "");
+        return getNodeString().toLowerCase();
     }
 
     /**

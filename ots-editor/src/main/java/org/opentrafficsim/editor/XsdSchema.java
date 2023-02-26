@@ -193,7 +193,7 @@ public class XsdSchema
 
         if (node.getNodeName().equals("xsd:extension"))
         {
-            String base = getAttribute(node, "base");
+            String base = getAttribute(node, "base").replace("ots:", "");
             if (!base.startsWith("xsd:"))
             {
                 Node baseNode = getType(base);
@@ -239,6 +239,7 @@ public class XsdSchema
             String ref = getAttribute(node, "ref");
             if (ref != null)
             {
+                ref = ref.replace("ots:", "");
                 nextNode = getElement(ref);
                 /*
                  * There might be more exotic referring situations than this one. Here, we have an <xsd:element ref="MODEL">
@@ -401,6 +402,7 @@ public class XsdSchema
         String type = getAttribute(node, "type");
         if (type != null && !type.startsWith("xsd:"))
         {
+            type = type.replace("ots:", "");
             this.referredTypes.computeIfAbsent(type, (key) -> new LinkedHashSet<>())
                     .add(path.isEmpty() ? getAttribute(node, "name") : path + "." + getAttribute(node, "name"));
             Node referred = getType(type);
@@ -426,7 +428,7 @@ public class XsdSchema
      */
     private void ref(final String path, final Node node)
     {
-        String ref = getAttribute(node, "ref");
+        String ref = getAttribute(node, "ref").replace("ots:", "");
         if (ref.equals("xi:include"))
         {
             return;
