@@ -16,6 +16,7 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
@@ -98,6 +99,15 @@ public class OtsSwingApplication<T extends OtsModelInterface> extends JFrame
         //////////////////////
         ///// Appearance /////
         //////////////////////
+        
+        try
+        {
+            setIconImage(ImageIO.read(Resource.getResourceAsStream("/OTS_merge.png")));
+        }
+        catch (IOException io)
+        {
+            // accept no icon set
+        }
 
         // Listener to write frame properties on frame close
         String sep = System.getProperty("file.separator");
