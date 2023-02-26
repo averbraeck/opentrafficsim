@@ -1,5 +1,7 @@
 package org.opentrafficsim.editor;
 
+import javax.swing.SwingUtilities;
+
 import org.w3c.dom.Document;
 
 import de.javagl.treetable.AbstractTreeTableModel;
@@ -13,38 +15,62 @@ import de.javagl.treetable.TreeTableModel;
 public class XsdTreeTableModel extends AbstractTreeTableModel
 {
 
+    /** Column names. */
     private static final String[] COLUMN_NAMES = new String[] {"Item", "Id", "Value", "#"};
 
-    private static final int[] MIN_COLUMN_WIDTHS = new int[] {100, 50, 50, 50};
+    /** Minimum column widths. */
+    private static final int[] MIN_COLUMN_WIDTHS = new int[] {100, 50, 50, 30};
 
-    private static final int[] PREFERRED_COLUMN_WIDTHS = new int[] {500, 150, 150, 50};
+    /** Preferred column widths. */
+    private static final int[] PREFERRED_COLUMN_WIDTHS = new int[] {600, 100, 100, 30};
 
+    /** Column classes. */
     private static final Class<?>[] COLUMN_CLASSES =
-            new Class<?>[] {TreeTableModel.class, String.class, Object.class, String.class};
+            new Class<?>[] {TreeTableModel.class, String.class, String.class, String.class};
 
-    protected XsdTreeTableModel(final Document root)
+    /** Tree table, so it can be updated visually when a value has changed. */
+    private JTreeTable treeTable;
+
+    /**
+     * Constructor.
+     * @param document Document; XSD document.
+     */
+    protected XsdTreeTableModel(final Document document)
     {
-        super(new XsdTreeNode(null, root));
+        super(document == null ? null : new XsdTreeNodeRoot(document));
+    }
+    
+    /**
+     * Sets the tree table.
+     * @param treeTable JTreeTable; tree table.
+     */
+    public void setTreeTable(final JTreeTable treeTable)
+    {
+        this.treeTable = treeTable;
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getColumnCount()
     {
         return COLUMN_CLASSES.length;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getColumnName(final int column)
     {
         return COLUMN_NAMES[column];
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<?> getColumnClass(final int column)
     {
         return COLUMN_CLASSES[column];
     }
 
+    /** {@inheritDoc} */
     @Override
     public Object getValueAt(final Object node, final int column)
     {
@@ -54,39 +80,68 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
         }
         if (column == 1)
         {
-            return ((XsdTreeNode) node).getId();
+            if (((XsdTreeNode) node).isIdentifiable())
+            {
+                return ((XsdTreeNode) node).getId();
+            }
+            return "";
         }
         else if (column == 2)
         {
-            return ((XsdTreeNode) node).getValue();
+            if (((XsdTreeNode) node).isEditable())
+            {
+                return ((XsdTreeNode) node).getValue();
+            }
+            return "";
         }
-        // TODO: column 3 with 1, 0..1, 0..inf, 1..inf, etc.
-        return "dummy value";
+        return occurs(((XsdTreeNode) node).minOccurs(), ((XsdTreeNode) node).maxOccurs());
     }
 
+    /**
+     * Creates a string to display minOccurs and maxOccurs.
+     * @param minOccurs int; minOccurs.
+     * @param maxOccurs int; maxOccurs.
+     * @return String; string to display minOccurs and maxOccurs.
+     */
+    public String occurs(final int minOccurs, final int maxOccurs)
+    {
+        if (minOccurs == maxOccurs)
+        {
+            return Integer.toString(minOccurs);
+        }
+        return Integer.valueOf(minOccurs) + ".." + (maxOccurs == -1 ? "∞" : Integer.valueOf(maxOccurs));
+    }
+
+    /** {@inheritDoc} */
     @Override
     public Object getChild(final Object parent, final int index)
     {
         return ((XsdTreeNode) parent).getChild(index);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getChildCount(final Object parent)
     {
         return ((XsdTreeNode) parent).getChildCount();
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isCellEditable(final Object node, final int column)
     {
-        System.out.println("Node editable? " + node);
         if (column == 0)
         {
             return true; // required for tree in column 0
         }
+        if (column == 1)
+        {
+            return ((XsdTreeNode) node).isIdentifiable();
+        }
         return ((XsdTreeNode) node).isEditable() && column == 2;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void setValueAt(final Object aValue, final Object node, final int column)
     {
@@ -98,8 +153,14 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
         {
             ((XsdTreeNode) node).setValue(aValue.toString());
         }
+        // invoking directly results in a NullPointerException when clicking on the table during editing of a value in the table
+        SwingUtilities.invokeLater(() -> this.treeTable.updateUI());
     }
 
+    /**
+     * Apply the column widths to a newly created tree table.
+     * @param treeTable JTreeTable; tree table.
+     */
     public static void applyColumnWidth(final JTreeTable treeTable)
     {
         for (int i = 0; i < treeTable.getColumnCount(); i++)

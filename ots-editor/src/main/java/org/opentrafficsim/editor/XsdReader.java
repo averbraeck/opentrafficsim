@@ -15,9 +15,25 @@ import org.xml.sax.SAXException;
  * Reads XSD from URI. May be moved to other class. 
  * @author wjschakel
  */
-public class XsdReader
+public final class XsdReader
 {
+    
+    /**
+     * Private constructor.
+     */
+    private XsdReader()
+    {
+        
+    }
 
+    /**
+     * Opens an XSD file.
+     * @param file URI; file.
+     * @return Document; document, i.e. the root of the XSD file.
+     * @throws SAXException exception
+     * @throws IOException exception
+     * @throws ParserConfigurationException exception
+     */
     static Document open(final URI file) throws SAXException, IOException, ParserConfigurationException
     {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();

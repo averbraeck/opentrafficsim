@@ -6,58 +6,80 @@ import javax.swing.table.AbstractTableModel;
 import org.djutils.exceptions.Throw;
 import org.w3c.dom.Node;
 
+import de.javagl.treetable.JTreeTable;
+
 /**
- * Model for a {@code JTable} to display the attributes of a {@code XsdTreeNode}. 
+ * Model for a {@code JTable} to display the attributes of a {@code XsdTreeNode}.
  * @author wjschakel
  */
 public class XsdAttributesTableModel extends AbstractTableModel
 {
 
+    /** */
     private static final long serialVersionUID = 20230217L;
 
-    private static final String[] COLUMN_NAMES = new String[] {"Use", "Name", "Value"};
+    /** Column names. */
+    private static final String[] COLUMN_NAMES = new String[] {"Property", "Value", "Use"};
 
-    private static final int[] MIN_COLUMN_WIDTHS = new int[] {25, 50, 50};
+    /** Minimum column widths. */
+    private static final int[] MIN_COLUMN_WIDTHS = new int[] {50, 50, 30};
 
-    private static final int[] PREFERRED_COLUMN_WIDTHS = new int[] {50, 200, 200};
+    /** Preferred column widths. */
+    private static final int[] PREFERRED_COLUMN_WIDTHS = new int[] {200, 200, 30};
 
+    /** The node of which the attributes are displayed. */
     private final XsdTreeNode node;
+    
+    /** Tree table, so it can be updated visually when a value has changed. */
+    private final JTreeTable treeTable;
 
-    public XsdAttributesTableModel(final XsdTreeNode node)
+    /**
+     * Constructor.
+     * @param node XsdTreeNode; node of which the attributes are displayed.
+     * @param treeTable JTreeTable; tree table.
+     */
+    public XsdAttributesTableModel(final XsdTreeNode node, final JTreeTable treeTable)
     {
         this.node = node;
+        this.treeTable = treeTable;
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getRowCount()
     {
         return this.node == null ? 0 : this.node.attributeCount();
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getColumnCount()
     {
         return 3;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getColumnName(final int columnIndex)
     {
         return COLUMN_NAMES[columnIndex];
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<?> getColumnClass(final int columnIndex)
     {
         return String.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isCellEditable(final int rowIndex, final int columnIndex)
     {
-        return columnIndex == 2;
+        return columnIndex == 1;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Object getValueAt(final int rowIndex, final int columnIndex)
     {
@@ -65,24 +87,32 @@ public class XsdAttributesTableModel extends AbstractTableModel
         switch (columnIndex)
         {
             case 0:
-                return attribute.getAttributes().getNamedItem("use").getNodeValue().equals("required") ? "*" : null;
+                return XsdSchema.getAttribute(attribute, "name").toLowerCase();
             case 1:
-                return attribute.getAttributes().getNamedItem("name").getNodeValue();
-            case 2:
                 return this.node.getAttributeValue(rowIndex);
+            case 2:
+                String use = XsdSchema.getAttribute(attribute, "use");
+                return use != null && use.equals("required") ? "*" : "";
             default:
                 throw new IndexOutOfBoundsException();
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex)
     {
-        Throw.when(columnIndex != 2, IllegalStateException.class,
+        this.treeTable.updateUI();
+        Throw.when(columnIndex != 1, IllegalStateException.class,
                 "Attribute table model requested to set a value from a column that does not represent the attribute value.");
         this.node.setAttributeValue(rowIndex, aValue.toString());
+        this.fireTableCellUpdated(rowIndex, columnIndex);
     }
 
+    /**
+     * Apply the column widths to a newly created table.
+     * @param attributeTable JTable; table.
+     */
     public static void applyColumnWidth(final JTable attributeTable)
     {
         for (int i = 0; i < attributeTable.getColumnCount(); i++)
