@@ -130,11 +130,6 @@ public final class ValueValidator
                     return reportTypeNonCompliance(complexType, "type", value, schema);
                 }
                 Node simpleType = XsdSchema.getChild(node, "xsd:simpleType");
-                Node innerComplexType = XsdSchema.getChild(simpleType, "xsd:complexType");
-                if (innerComplexType != null)
-                {
-                    System.out.println("whoops");
-                }
                 return reportTypeNonCompliance(simpleType, "type", value, schema);
             case "xsd:attribute":
                 return reportTypeNonCompliance(XsdSchema.getChild(node, "xsd:simpleType"), "type", value, schema);
