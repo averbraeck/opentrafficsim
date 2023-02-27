@@ -55,10 +55,18 @@ public class StringCellRenderer extends JLabel implements TableCellRenderer
             XsdTreeNode node = (XsdTreeNode) this.treeTable.getValueAt(row, treeColumn);
             String message =
                     column == idColumn ? node.reportInvalidId() : (column == valueColumn ? node.reportInvalidValue() : null);
-            if (this.treeTable.isCellEditable(row, column) && message != null)
+            if (this.treeTable.isCellEditable(row, column))
             {
-                setToolTipText(AttributeCellRenderer.limitMessage(message));
-                setBackground(OtsEditor.INVALID_COLOR);
+                if (message != null)
+                {
+                    setToolTipText(AttributeCellRenderer.limitMessage(message));
+                    setBackground(OtsEditor.INVALID_COLOR);
+                }
+                else
+                {
+                    setToolTipText(value != null && (column == idColumn || column == valueColumn) ? value.toString() : null);
+                    setBackground(UIManager.getColor("Table.background"));
+                }
             }
             else
             {
