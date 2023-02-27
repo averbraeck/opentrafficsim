@@ -40,7 +40,8 @@ public class StringCellRenderer extends JLabel implements TableCellRenderer
     public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected,
             final boolean hasFocus, final int row, final int column)
     {
-        setText(value == null ? "" : value.toString());
+        String val = value == null ? "" : value.toString();
+        setText(val);
         setFont(table.getFont());
 
         if (isSelected)
@@ -59,12 +60,13 @@ public class StringCellRenderer extends JLabel implements TableCellRenderer
             {
                 if (message != null)
                 {
-                    setToolTipText(AttributeCellRenderer.limitMessage(message));
+                    setToolTipText(OtsEditor.limitTooltip(message));
                     setBackground(OtsEditor.INVALID_COLOR);
                 }
                 else
                 {
-                    setToolTipText(value != null && (column == idColumn || column == valueColumn) ? value.toString() : null);
+                    setToolTipText(OtsEditor
+                            .limitTooltip(!val.isBlank() && (column == idColumn || column == valueColumn) ? val : null));
                     setBackground(UIManager.getColor("Table.background"));
                 }
             }

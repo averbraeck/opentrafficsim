@@ -136,9 +136,9 @@ public class XsdSchema
         checkKeyrefs();
         checkUniques();
 
-        //allElements = new LinkedHashSet<>(this.elements.keySet());
-        //allElements.removeIf((key) -> !key.startsWith("OTS."));
-        //allElements.forEach((key) -> System.out.println(key));
+        // allElements = new LinkedHashSet<>(this.elements.keySet());
+        // allElements.removeIf((key) -> !key.startsWith("OTS."));
+        // allElements.forEach((key) -> System.out.println(key));
 
         System.out.println("Root found as '" + getAttribute(this.getRoot(), "name") + "'.");
         System.out.println("Read " + this.readFiles.size() + " files.");
@@ -779,6 +779,49 @@ public class XsdSchema
             }
         }
         return children;
+    }
+
+    /**
+     * Returns an annotation value. These are defined as below, for either xsd:appinfo or xsd:documentation. All space-like
+     * characters are replaced by blanks, and consecutive blanks are removed.
+     * 
+     * <pre>
+     * &lt;xsd:sequence&gt;
+     *   &lt;xsd:annotation&gt;
+     *     &lt;xsd:appinfo source="name"&gt;annotates the sequence&lt;/xsd:appinfo&gt;
+     *   &lt;/xsd:annotation&gt;
+     * &lt;/xsd:sequence&gt;
+     * </pre>
+     * 
+     * @param node Node; node, either xsd:element or xsd:attribute.
+     * @param element String; either "xsd:documentation" or "xsd:appinfo".
+     * @param source String; name that the source attribute of the annotation should have.
+     * @return String; annotation value, {@code null} if not found.
+     */
+    public static String getAnnotation(final Node node, final String element, final String source)
+    {
+        for (Node child : getChildren(node, "xsd:annotation"))
+        {
+            for (Node annotation : getChildren(child, element))
+            {
+                String appInfoSource = getAttribute(annotation, "source");
+                if (appInfoSource != null && appInfoSource.equals(source))
+                {
+                    StringBuilder str = new StringBuilder();
+                    for (int appIndex = 0; appIndex < annotation.getChildNodes().getLength(); appIndex++)
+                    {
+                        Node appInfo = annotation.getChildNodes().item(appIndex);
+                        if (appInfo.getNodeName().equals("#text"))
+                        {
+                            str.append(appInfo.getNodeValue());
+                        }
+                    }
+                    // tabs, line break, etc. to blanks, then remove consecutive blanks, then trailing/leading blanks
+                    return str.toString().replaceAll("\\s", " ").replaceAll("\\s{2,}", " ").trim();
+                }
+            }
+        }
+        return null;
     }
 
     /**

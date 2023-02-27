@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.djutils.exceptions.Throw;
 import org.w3c.dom.Node;
 
 /**
@@ -81,7 +80,7 @@ public final class ValueValidator
     /**
      * Report first encountered problem in validating the value by a type.
      * @param node Node; type node.
-     * @param attribute String; "type" on normal calls, "base" on recursive calls for extended types.
+     * @param attribute String; "type" on normal calls, "base" on recursive calls.
      * @param value String; value.
      * @param schema XsdSchema; schema for type retrieval.
      * @return String; first encountered problem in validating the value by a type, {@code null} if there is no problem.
@@ -93,72 +92,57 @@ public final class ValueValidator
         boolean isNativeType = type != null && type.startsWith("xsd:");
         if (isNativeType)
         {
-            return reportNativeTypeNonCompliance(type, value);
+            String report = reportNativeTypeNonCompliance(type, value);
+            if (report != null || !node.getNodeName().equals("xsd:restriction"))
+            {
+                return report;
+            }
+        }
+        if (type != null && !isNativeType)
+        {
+            String report = reportTypeNonCompliance(schema.getType(type), "base", value, schema);
+            if (report != null)
+            {
+                return report;
+            }
+            if (!node.getNodeName().equals("xsd:restriction"))
+            {
+                return null;
+            }
         }
 
-        Node simpleType;
-        if (node.getNodeName().equals("xsd:attribute"))
+        switch (node.getNodeName())
         {
-            simpleType = schema.getType(type.replace("ots:", ""));
-        }
-        else if (node.getNodeName().equals("xsd:element"))
-        {
-            simpleType = XsdSchema.getChild(node, "xsd:simpleType");
-            if (simpleType == null)
-            {
-                Node complexType = XsdSchema.getChild(node, "xsd:complexType");
-                Node simpleContent = XsdSchema.getChild(complexType, "xsd:simpleContent");
+            case "xsd:complexType":
+                Node simpleContent = XsdSchema.getChild(node, "xsd:simpleContent");
                 Node extension = XsdSchema.getChild(simpleContent, "xsd:extension");
-                return reportTypeNonCompliance(extension, "base", value, schema);
-            }
-        }
-        else
-        {
-            Throw.when(!node.getNodeName().equals("xsd:simpleType"), RuntimeException.class,
-                    "Unable to validate type of node %s.", node);
-            simpleType = node;
-        }
-
-        // TODO: need to check the base <xsd:restriction base="base">? With a pattern or enumeration there might be no point.
-        Node restriction = XsdSchema.getChild(simpleType, "xsd:restriction");
-        if (restriction != null)
-        {
-            Node pattern = XsdSchema.getChild(restriction, "xsd:pattern");
-            if (pattern != null)
-            {
-                String patternString = XsdSchema.getAttribute(pattern, "value");
-                try
+                if (extension != null)
                 {
-                    if (!Pattern.matches(patternString, value))
-                    {
-                        return "Value does not match pattern " + patternString;
-                    }
+                    return reportTypeNonCompliance(extension, "base", value, schema);
                 }
-                catch (PatternSyntaxException exception)
+                return reportTypeNonCompliance(XsdSchema.getChild(simpleContent, "xsd:restriction"), "base", value, schema);
+            case "xsd:simpleType":
+                return reportTypeNonCompliance(XsdSchema.getChild(node, "xsd:restriction"), "base", value, schema);
+            case "xsd:element":
+                Node complexType = XsdSchema.getChild(node, "xsd:complexType");
+                if (complexType != null)
                 {
-                    if (!suppressError.contains(patternString))
-                    {
-                        System.err.println("Could not validate value by pattern due to a PatternSyntaxException."
-                                + " This means the pattern is not valid.");
-                        System.err.println(exception.getMessage());
-                        suppressError.add(patternString);
-                    }
+                    return reportTypeNonCompliance(complexType, "type", value, schema);
                 }
-            }
-            List<Node> enumerations = XsdSchema.getChildren(restriction, "xsd:enumeration");
-            List<String> options = new ArrayList<>();
-            for (Node enumeration : enumerations)
-            {
-                options.add(XsdSchema.getAttribute(enumeration, "value"));
-            }
-            if (!options.isEmpty() && !options.contains(value))
-            {
-                String arrayString = options.toString();
-                return "Must be any of " + arrayString.substring(1, arrayString.length() - 1) + ".";
-            }
+                Node simpleType = XsdSchema.getChild(node, "xsd:simpleType");
+                Node innerComplexType = XsdSchema.getChild(simpleType, "xsd:complexType");
+                if (innerComplexType != null)
+                {
+                    System.out.println("whoops");
+                }
+                return reportTypeNonCompliance(simpleType, "type", value, schema);
+            case "xsd:attribute":
+                return reportTypeNonCompliance(XsdSchema.getChild(node, "xsd:simpleType"), "type", value, schema);
+            case "xsd:restriction":
+                return reportRestrictionNonCompliance(node, value);
+            default:
+                throw new RuntimeException("Unable to validate " + node.getNodeName() + ".");
         }
-
-        return null;
     }
 
     /**
@@ -169,6 +153,7 @@ public final class ValueValidator
      */
     private static String reportNativeTypeNonCompliance(final String type, final String value)
     {
+        String valueType = "number";
         try
         {
             switch (type)
@@ -187,13 +172,19 @@ public final class ValueValidator
                 case "xsd:float": // 32-bit
                     Float.valueOf(value); // might throw NumberFormatException
                     return null;
+                case "xsd:decimal":
+                    Double.valueOf(value); // might throw NumberFormatException
+                    return null;
                 case "xsd:int": // 32-bit signed
+                    valueType = "integer";
                     Integer.valueOf(value); // might throw NumberFormatException
                     return null;
                 case "xsd:long": // 64-bit signed
+                    valueType = "integer";
                     Long.valueOf(value); // might throw NumberFormatException
                     return null;
                 case "xsd:unsignedInt": // 32-bits, i.e. max is 2^32 - 1 = 4294967295
+                    valueType = "integer";
                     long val = Long.valueOf(value); // might throw NumberFormatException
                     if (val < 0)
                     {
@@ -203,6 +194,17 @@ public final class ValueValidator
                     {
                         return "Integer value must be at most 4294967295.";
                     }
+                    return null;
+                case "xsd:positiveInteger": // arbitrary length
+                    valueType = "integer";
+                    if (Long.valueOf(value) < 0) // might throw NumberFormatException
+                    {
+                        return "Integer value must be a positive integer.";
+                    }
+                    return null;
+                case "xsd:integer": // arbitrary length
+                    valueType = "integer";
+                    Long.valueOf(value); // might throw NumberFormatException
                     return null;
                 case "xsd:anyURI": // RFC2396 compliant, just as URI in java
                     try
@@ -215,7 +217,15 @@ public final class ValueValidator
                     }
                     return null;
                 default:
-                    Throw.when(!type.startsWith("ots:"), RuntimeException.class, "Type " + type + " cannot be validated.");
+                    if (!type.startsWith("ots:"))
+                    {
+                        String message = "Type " + type + " cannot be validated.";
+                        if (!suppressError.contains(message))
+                        {
+                            System.err.println(message);
+                            suppressError.add(message);
+                        }
+                    }
                     return null;
             }
         }
@@ -224,10 +234,90 @@ public final class ValueValidator
             if (type.length() > 5)
             {
                 String t = type.replace("xsd:", "");
-                return t.substring(0, 1).toUpperCase() + t.substring(1) + " value must be a valid number.";
+                return t.substring(0, 1).toUpperCase() + t.substring(1) + " value must be a valid " + valueType + ".";
             }
-            return type + " value must be a valid number.";
+            return type + " value must be a valid " + valueType + ".";
         }
+    }
+    
+    /**
+     * Report first encountered problem in validating the value by a restriction.
+     * @param node Node; node, must be an xsd:restriction.
+     * @param value String; value.
+     * @return String; first encountered problem in validating the value by a restriction.
+     */
+    private static String reportRestrictionNonCompliance(final Node node, final String value)
+    {
+        Node pattern = XsdSchema.getChild(node, "xsd:pattern");
+        if (pattern != null)
+        {
+            String patternString = XsdSchema.getAttribute(pattern, "value");
+            try
+            {
+                if (!Pattern.matches(patternString, value))
+                {
+                    return "Value does not match pattern " + patternString;
+                }
+            }
+            catch (PatternSyntaxException exception)
+            {
+                if (!suppressError.contains(patternString))
+                {
+                    System.err.println("Could not validate value by pattern due to a PatternSyntaxException."
+                            + " This means the pattern is not valid.");
+                    System.err.println(exception.getMessage());
+                    suppressError.add(patternString);
+                }
+            }
+        }
+        List<Node> enumerations = XsdSchema.getChildren(node, "xsd:enumeration");
+        List<String> options = new ArrayList<>();
+        for (Node enumeration : enumerations)
+        {
+            options.add(XsdSchema.getAttribute(enumeration, "value"));
+        }
+        if (!options.isEmpty() && !options.contains(value))
+        {
+            String arrayString = options.toString();
+            return "Must be any of " + arrayString.substring(1, arrayString.length() - 1) + ".";
+        }
+        Node minInclusive = XsdSchema.getChild(node, "xsd:minInclusive");
+        if (minInclusive != null)
+        {
+            String val = XsdSchema.getAttribute(minInclusive, "value");
+            if (Double.valueOf(value) < Double.valueOf(val))
+            {
+                return "Value must be above or equal to " + val + ".";
+            }
+        }
+        Node minExclusive = XsdSchema.getChild(node, "xsd:minExclusive");
+        if (minExclusive != null)
+        {
+            String val = XsdSchema.getAttribute(minExclusive, "value");
+            if (Double.valueOf(value) <= Double.valueOf(val))
+            {
+                return "Value must be above " + val + ".";
+            }
+        }
+        Node maxInclusive = XsdSchema.getChild(node, "xsd:maxInclusive");
+        if (maxInclusive != null)
+        {
+            String val = XsdSchema.getAttribute(maxInclusive, "value");
+            if (Double.valueOf(value) > Double.valueOf(val))
+            {
+                return "Value must be below or equal to " + val + ".";
+            }
+        }
+        Node maxExclusive = XsdSchema.getChild(node, "xsd:maxExclusive");
+        if (maxExclusive != null)
+        {
+            String val = XsdSchema.getAttribute(maxExclusive, "value");
+            if (Double.valueOf(value) >= Double.valueOf(val))
+            {
+                return "Value must be below " + val + ".";
+            }
+        }
+        return null;
     }
 
 }

@@ -19,17 +19,17 @@ public class XsdAttributesTableModel extends AbstractTableModel
     private static final long serialVersionUID = 20230217L;
 
     /** Column names. */
-    private static final String[] COLUMN_NAMES = new String[] {"Property", "Value", "Use"};
+    private static final String[] COLUMN_NAMES = new String[] {"Property", "Value", "Use", ""};
 
     /** Minimum column widths. */
-    private static final int[] MIN_COLUMN_WIDTHS = new int[] {50, 50, 30};
+    private static final int[] MIN_COLUMN_WIDTHS = new int[] {50, 50, 30, 20};
 
     /** Preferred column widths. */
-    private static final int[] PREFERRED_COLUMN_WIDTHS = new int[] {200, 200, 30};
+    private static final int[] PREFERRED_COLUMN_WIDTHS = new int[] {400, 400, 30, 20};
 
     /** The node of which the attributes are displayed. */
     private final XsdTreeNode node;
-    
+
     /** Tree table, so it can be updated visually when a value has changed. */
     private final JTreeTable treeTable;
 
@@ -55,7 +55,7 @@ public class XsdAttributesTableModel extends AbstractTableModel
     @Override
     public int getColumnCount()
     {
-        return 3;
+        return COLUMN_NAMES.length;
     }
 
     /** {@inheritDoc} */
@@ -93,6 +93,8 @@ public class XsdAttributesTableModel extends AbstractTableModel
             case 2:
                 String use = XsdSchema.getAttribute(attribute, "use");
                 return use != null && use.equals("required") ? "*" : "";
+            case 3:
+                return XsdSchema.getAnnotation(attribute, "xsd:documentation", "description") != null ? "i" : null;
             default:
                 throw new IndexOutOfBoundsException();
         }
@@ -108,7 +110,7 @@ public class XsdAttributesTableModel extends AbstractTableModel
         this.node.setAttributeValue(rowIndex, aValue.toString());
         this.fireTableCellUpdated(rowIndex, columnIndex);
     }
-    
+
     /**
      * Returns the underlying node for which attributes are shown.
      * @return XsdTreeNode; underlying node for which attributes are shown.

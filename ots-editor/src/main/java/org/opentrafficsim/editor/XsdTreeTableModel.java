@@ -22,7 +22,7 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
     private static final int[] MIN_COLUMN_WIDTHS = new int[] {100, 50, 50, 30};
 
     /** Preferred column widths. */
-    private static final int[] PREFERRED_COLUMN_WIDTHS = new int[] {600, 100, 100, 30};
+    private static final int[] PREFERRED_COLUMN_WIDTHS = new int[] {600, 200, 200, 30};
 
     /** Column classes. */
     private static final Class<?>[] COLUMN_CLASSES =

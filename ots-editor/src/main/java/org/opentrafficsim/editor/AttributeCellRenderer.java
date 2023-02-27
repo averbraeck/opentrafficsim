@@ -1,8 +1,8 @@
 package org.opentrafficsim.editor;
 
-import java.awt.Color;
 import java.awt.Component;
 
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -22,16 +22,20 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
     /** */
     private static final long serialVersionUID = 20230226L;
 
-    /** Maximum length for tooltips. */
-    public static final int MAX_TOOLTIP_LENGTH = 96;
+    /** Empty border for re-use. */
+    private static final Border EMPTY_BORDER = new EmptyBorder(0, 0, 0, 0);
+
+    /** Info icon. */
+    private Icon infoIcon;
 
     /**
      * Constructor.
+     * @param infoIcon Icon; info icon.
      */
-    public AttributeCellRenderer()
+    public AttributeCellRenderer(final Icon infoIcon)
     {
         setOpaque(true);
-        setForeground(Color.BLACK);
+        this.infoIcon = infoIcon;
     }
 
     /** {@inheritDoc} */
@@ -39,19 +43,26 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
     public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected,
             final boolean hasFocus, final int row, final int column)
     {
-        setText(value == null ? "" : value.toString());
+        if (table.convertColumnIndexToModel(column) < 3)
+        {
+            setText(value == null ? "" : value.toString());
+        }
+        else
+        {
+            setText("");
+        }
         setFont(table.getFont());
         table.setGridColor(UIManager.getColor("Panel.background"));
-        setHorizontalAlignment(SwingConstants.RIGHT);
-        Border border;
+        Border border = EMPTY_BORDER;
         setToolTipText(null);
+        setIcon(null);
         if (table.convertColumnIndexToModel(column) == 1)
         {
             XsdTreeNode node = ((XsdAttributesTableModel) table.getModel()).getNode();
             String message = node.reportInvalidAttributeValue(row);
             if (message != null)
             {
-                setToolTipText(limitMessage(message));
+                setToolTipText(OtsEditor.limitTooltip(message));
                 setBackground(OtsEditor.INVALID_COLOR);
             }
             else
@@ -63,6 +74,10 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
         }
         else
         {
+            if (table.convertColumnIndexToModel(column) == 3 && value != null)
+            {
+                setIcon(this.infoIcon);
+            }
             if (isSelected)
             {
                 setBackground(UIManager.getColor("Table.selectionBackground"));
@@ -71,10 +86,9 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
             {
                 setBackground(UIManager.getColor("Panel.background"));
             }
-            border = new EmptyBorder(0, 0, 0, 0);
         }
         setBorder(border);
-        if (table.convertColumnIndexToModel(column) == 2)
+        if (table.convertColumnIndexToModel(column) > 1)
         {
             setHorizontalAlignment(SwingConstants.CENTER);
         }
@@ -83,21 +97,6 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
             setHorizontalAlignment(SwingConstants.LEFT);
         }
         return this;
-    }
-
-    /**
-     * Limits the length of a message. This is to prevent absurd tooltip texts based on really long patterns that should be
-     * matched.
-     * @param message String; message.
-     * @return String; possibly shortened message.
-     */
-    public static String limitMessage(final String message)
-    {
-        if (message.length() < MAX_TOOLTIP_LENGTH)
-        {
-            return message;
-        }
-        return message.substring(0, MAX_TOOLTIP_LENGTH - 3) + "...";
     }
 
 }

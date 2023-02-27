@@ -170,6 +170,12 @@ public class XsdTreeNode implements Serializable
     /** A consumer can be set externally and will receive this node when its menu item is selected. */
     private Map<String, Consumer<XsdTreeNode>> consumers = new LinkedHashMap<>();
 
+    /** Specificity of the current description. This value is pointless once the most specific ddescription was found. */
+    private int descriptionSpecificity;
+
+    /** The description, may be {@code null}. */
+    private String description;
+
     /**
      * Constructor for root node, based on a document. Note: {@code XsdTreeNodeRoot} should be used for the root. The document
      * is forwarded to an {@code XsdSchema} that will be available to all nodes in the tree.
@@ -876,7 +882,7 @@ public class XsdTreeNode implements Serializable
 
     /**
      * Finds all attributes that meet the following structure. If the attribute also specifies a {@code default}, it is also
-     * stored.
+     * stored. Finds the most specific description along the way.
      *
      * <pre>
      * &lt;xsd:element ...&gt;
@@ -890,7 +896,7 @@ public class XsdTreeNode implements Serializable
      * &lt;/xsd:element&gt;
      * </pre>
      */
-    private synchronized void assureAttributes()
+    private synchronized void assureAttributesAndDescription()
     {
         if (this.attributeNodes != null)
         {
@@ -898,24 +904,36 @@ public class XsdTreeNode implements Serializable
         }
         this.attributeNodes = new ArrayList<>();
         this.attributeValues = new ArrayList<>();
-        if (!this.active)
+        if (this.referringXsdNode != null)
         {
-            return;
+            this.description = XsdSchema.getAnnotation(this.referringXsdNode, "xsd:documentation", "description");
         }
+        if (this.description == null)
+        {
+            this.description = XsdSchema.getAnnotation(this.xsdNode, "xsd:documentation", "description");
+        }
+        this.descriptionSpecificity = this.description != null ? 0 : Integer.MIN_VALUE;
         Node complexType = this.xsdNode.getNodeName().equals("xsd:complexType") ? this.xsdNode
                 : XsdSchema.getChild(this.xsdNode, "xsd:complexType");
         if (complexType != null && this.xsdNode.hasChildNodes())
         {
-            findAttributes(complexType);
+            findAttributes(complexType, -1);
         }
     }
 
     /**
      * Finds attributes in a nested way, looking up base types.
      * @param node Node; node.
+     * @param specificity int; specificity of type, reflects layers, used to find the most specific description.
      */
-    private void findAttributes(final Node node)
+    private void findAttributes(final Node node, final int specificity)
     {
+        String descript = XsdSchema.getAnnotation(node, "xsd:documentation", "description");
+        if (descript != null && this.descriptionSpecificity < specificity)
+        {
+            this.descriptionSpecificity = specificity;
+            this.description = descript;
+        }
         for (int childIndex = 0; childIndex < node.getChildNodes().getLength(); childIndex++)
         {
             Node child = node.getChildNodes().item(childIndex);
@@ -929,12 +947,22 @@ public class XsdTreeNode implements Serializable
                 Node extension = XsdSchema.getChild(child, "xsd:extension");
                 if (extension != null)
                 {
-                    findAttributes(extension);
+                    findAttributes(extension, specificity - 1);
                     String base = XsdSchema.getAttribute(extension, "base");
                     Node baseNode = this.schema.getType(base);
                     if (baseNode != null)
                     {
-                        findAttributes(baseNode);
+                        findAttributes(baseNode, specificity - 2);
+                    }
+                }
+                Node restriction = XsdSchema.getChild(child, "xsd:restriction");
+                if (restriction != null)
+                {
+                    String base = XsdSchema.getAttribute(restriction, "base");
+                    Node baseNode = this.schema.getType(base);
+                    if (baseNode != null)
+                    {
+                        findAttributes(baseNode, specificity - 2);
                     }
                 }
             }
@@ -951,7 +979,7 @@ public class XsdTreeNode implements Serializable
         {
             return 0;
         }
-        assureAttributes();
+        assureAttributesAndDescription();
         return this.attributeNodes.size();
     }
 
@@ -962,7 +990,7 @@ public class XsdTreeNode implements Serializable
      */
     public Node getAttributeNode(final int index)
     {
-        assureAttributes();
+        assureAttributesAndDescription();
         return this.attributeNodes.get(index);
     }
 
@@ -974,7 +1002,7 @@ public class XsdTreeNode implements Serializable
     @SuppressWarnings("checkstyle:hiddenfield")
     public void setAttributeValue(final int index, final String value)
     {
-        assureAttributes();
+        assureAttributesAndDescription();
         this.attributeValues.set(index, value);
     }
 
@@ -985,7 +1013,7 @@ public class XsdTreeNode implements Serializable
      */
     public String getAttributeValue(final int index)
     {
-        assureAttributes();
+        assureAttributesAndDescription();
         Throw.when(index < 0 || index >= this.attributeCount(), IndexOutOfBoundsException.class, "Index out of bounds.");
         return this.attributeValues.get(index);
     }
@@ -998,7 +1026,7 @@ public class XsdTreeNode implements Serializable
      */
     public String getAttributeValue(final String attribute)
     {
-        assureAttributes();
+        assureAttributesAndDescription();
         for (int index = 0; index < this.attributeCount(); index++)
         {
             Node attr = this.attributeNodes.get(index);
@@ -1067,7 +1095,7 @@ public class XsdTreeNode implements Serializable
                 this.isIdentifiable = null;
                 this.isEditable = null;
                 assureChildren();
-                assureAttributes();
+                assureAttributesAndDescription();
                 if (this.choice != null && this.choice.selected.equals(this))
                 {
                     this.choice.active = true;
@@ -1095,7 +1123,7 @@ public class XsdTreeNode implements Serializable
         }
         if (this.isIdentifiable == null)
         {
-            assureAttributes();
+            assureAttributesAndDescription();
             for (int index = 0; index < this.attributeCount(); index++)
             {
                 Node node = this.attributeNodes.get(index);
@@ -1565,6 +1593,16 @@ public class XsdTreeNode implements Serializable
     }
 
     /**
+     * Returns the description of this node.
+     * @return String; description of this node, {@code null} if there is none.
+     */
+    public String getDescription()
+    {
+        assureAttributesAndDescription();
+        return this.description;
+    }
+
+    /**
      * Returns the menu items for which this node has consumers.
      * @return Set&lt;String&gt;; menu items for which this node has consumers.
      */
@@ -1599,7 +1637,8 @@ public class XsdTreeNode implements Serializable
         {
             // this name may appear as an option for an xsd:choice
             StringBuilder stringBuilder = new StringBuilder();
-            String annotation = getAnnotation("xsd:appinfo", "name");
+            Node relevantNode = this.referringXsdNode == null ? this.xsdNode : this.referringXsdNode;
+            String annotation = XsdSchema.getAnnotation(relevantNode, "xsd:appinfo", "name");
             if (annotation != null)
             {
                 stringBuilder.append(annotation).append("...");
@@ -1666,48 +1705,6 @@ public class XsdTreeNode implements Serializable
             string = string + " (" + this.stringFunction.apply(this) + ")";
         }
         return string;
-    }
-
-    /**
-     * Returns an annotation value. These are defined as below, for either xsd:appinfo or xsd:documentation.
-     * 
-     * <pre>
-     * &lt;xsd:sequence&gt;
-     *   &lt;xsd:annotation&gt;
-     *     &lt;xsd:appinfo source="name"&gt;annotates the sequence&lt;/xsd:appinfo&gt;
-     *   &lt;/xsd:annotation&gt;
-     * &lt;/xsd:sequence&gt;
-     * </pre>
-     * 
-     * @param element String; either "xsd:documentation" or "xsd:appinfo".
-     * @param source String; name that the source attribute of the annotation should have.
-     * @return String; annotation value, {@code null} if not found.
-     */
-    private String getAnnotation(final String element, final String source)
-    {
-        Node relevantNode = this.referringXsdNode == null ? this.xsdNode : this.referringXsdNode;
-        for (Node child : XsdSchema.getChildren(relevantNode, "xsd:annotation"))
-        {
-            for (Node annotation : XsdSchema.getChildren(child, element))
-            {
-                String appInfoSource = XsdSchema.getAttribute(annotation, "source");
-                if (appInfoSource != null && appInfoSource.equals(source))
-                {
-                    StringBuilder str = new StringBuilder();
-                    for (int appIndex = 0; appIndex < annotation.getChildNodes().getLength(); appIndex++)
-                    {
-                        Node appInfo = annotation.getChildNodes().item(appIndex);
-                        if (appInfo.getNodeName().equals("#text"))
-                        {
-                            str.append(appInfo.getNodeValue());
-                        }
-                    }
-                    // tabs, line break, etc. to blanks, then remove consecutive blanks, then trailing/leading blanks
-                    return str.toString().replaceAll("\\s", " ").replaceAll("\\s{2,}", " ").trim();
-                }
-            }
-        }
-        return null;
     }
 
     /**

@@ -104,16 +104,16 @@ public final class IconWriter
         g.fillOval(4, 0, 8, 8);
         g.fillRect(4, 4, 8, 8);
         g.fillOval(4, 8, 8, 8);
-        g.setColor(new Color(222, 0, 0));
+        g.setColor(new Color(160, 0, 160));
         g.fillOval(6, 2, 4, 4);
-        g.setColor(new Color(222, 222, 0));
+        g.setColor(new Color(160, 160, 0));
         g.fillOval(6, 6, 4, 4);
-        g.setColor(new Color(0, 222, 0));
+        g.setColor(new Color(0, 160, 160));
         g.fillOval(6, 10, 4, 4);
         image = next(image, "OTS_control.png");
         g = getGraphics(image);
 
-        g.setColor(new Color(0, 160, 0));
+        g.setColor(new Color(0, 128, 160));
         g.fillRect(0, 2, 16, 11);
         g.setColor(Color.GRAY);
         g.fillPolygon(new int[] {0, 16, 13, 3}, new int[] {14, 14, 2, 2}, 4);
