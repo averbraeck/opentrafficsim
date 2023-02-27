@@ -13,7 +13,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.TableCellRenderer;
 
 /**
- * Renderer for cells in the attributes table. 
+ * Renderer for cells in the attributes table.
  * @author wjschakel
  */
 public class AttributeCellRenderer extends JLabel implements TableCellRenderer
@@ -21,6 +21,9 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
 
     /** */
     private static final long serialVersionUID = 20230226L;
+
+    /** Maximum length for tooltips. */
+    public static final int MAX_TOOLTIP_LENGTH = 96;
 
     /**
      * Constructor.
@@ -30,7 +33,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
         setOpaque(true);
         setForeground(Color.BLACK);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected,
@@ -41,9 +44,21 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
         table.setGridColor(UIManager.getColor("Panel.background"));
         setHorizontalAlignment(SwingConstants.RIGHT);
         Border border;
+        setToolTipText(null);
         if (table.convertColumnIndexToModel(column) == 1)
         {
-            setBackground(UIManager.getColor("Table.background"));
+            XsdTreeNode node = ((XsdAttributesTableModel) table.getModel()).getNode();
+            String message = node.reportInvalidAttributeValue(row);
+            if (message != null)
+            {
+                setToolTipText(limitMessage(message));
+                setBackground(OtsEditor.INVALID_COLOR);
+            }
+            else
+            {
+                setToolTipText(null);
+                setBackground(UIManager.getColor("Table.background"));
+            }
             border = new LineBorder(UIManager.getColor("Table.gridColor"));
         }
         else
@@ -68,6 +83,21 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
             setHorizontalAlignment(SwingConstants.LEFT);
         }
         return this;
+    }
+
+    /**
+     * Limits the length of a message. This is to prevent absurd tooltip texts based on really long patterns that should be
+     * matched.
+     * @param message String; message.
+     * @return String; possibly shortened message.
+     */
+    public static String limitMessage(final String message)
+    {
+        if (message.length() < MAX_TOOLTIP_LENGTH)
+        {
+            return message;
+        }
+        return message.substring(0, MAX_TOOLTIP_LENGTH - 3) + "...";
     }
 
 }

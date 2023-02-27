@@ -1198,7 +1198,7 @@ public class XsdTreeNode implements Serializable
      */
     public boolean isAddable()
     {
-        return this.maxOccurs == -1 || siblingPositions().size() < this.maxOccurs;
+        return this.maxOccurs == -1 || (this.parent != null && siblingPositions().size() < this.maxOccurs);
     }
 
     /**
@@ -1469,14 +1469,69 @@ public class XsdTreeNode implements Serializable
     }
 
     /**
-     * Returns whether the node is valid. This means all required values are supplied, and all supplied values comply to their
-     * respective types.
+     * Returns whether the node, and all its children recursively, is valid. This means all required values are supplied, and
+     * all supplied values comply to their respective types and constraints.
      * @return boolean; whether the node is valid.
      */
     public boolean isValid()
     {
-        // TODO: implement.
+        if (!this.active)
+        {
+            return true;
+        }
+        if (reportInvalidValue() != null)
+        {
+            return false;
+        }
+        for (int index = 0; index < attributeCount(); index++)
+        {
+            if (reportInvalidAttributeValue(index) != null)
+            {
+                return false;
+            }
+        }
+        // TODO: check whether node should have children if there are none; can we do this without already exploding the tree?
+        if (this.children != null)
+        {
+            for (XsdTreeNode child : this.children)
+            {
+                if (!child.isValid())
+                {
+                    return false;
+                }
+            }
+        }
         return true;
+    }
+
+    /**
+     * Returns a message why the id is invalid, or {@code null} if it is valid. This should only be used to determine a GUI
+     * indication on an invalid ID. For other cases processing the attributes includes the ID.
+     * @return String; message why the id is invalid, or {@code null} if it is valid.
+     */
+    public String reportInvalidId()
+    {
+        return isIdentifiable() ? ValueValidator.reportInvalidAttributeValue(getAttributeNode(this.idIndex),
+                getAttributeValue(this.idIndex), this.schema) : null;
+    }
+
+    /**
+     * Returns a message why the value is invalid, or {@code null} if it is valid.
+     * @return String; message why the value is invalid, or {@code null} if it is valid.
+     */
+    public String reportInvalidValue()
+    {
+        return isEditable() ? ValueValidator.reportInvalidValue(this.xsdNode, this.value, this.schema) : null;
+    }
+
+    /**
+     * Returns a message why the attribute value is invalid, or {@code null} if it is valid.
+     * @param index int; index of the attribute.
+     * @return String; message why the attribute value is invalid, or {@code null} if it is valid.
+     */
+    public String reportInvalidAttributeValue(final int index)
+    {
+        return ValueValidator.reportInvalidAttributeValue(getAttributeNode(index), getAttributeValue(index), this.schema);
     }
 
     // ====== Interaction with visualization ======

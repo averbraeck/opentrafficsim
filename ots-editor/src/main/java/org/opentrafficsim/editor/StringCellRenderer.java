@@ -49,8 +49,22 @@ public class StringCellRenderer extends JLabel implements TableCellRenderer
         }
         else
         {
-            // TODO: indicate inconsistent cells using OtsEditor.INVALID_COLOR as background (e.g. mandatory field not given)
-            setBackground(UIManager.getColor("Table.background"));
+            int treeColumn = this.treeTable.convertColumnIndexToView(0); // columns may have been moved in view
+            int idColumn = this.treeTable.convertColumnIndexToView(1);
+            int valueColumn = this.treeTable.convertColumnIndexToView(2);
+            XsdTreeNode node = (XsdTreeNode) this.treeTable.getValueAt(row, treeColumn);
+            String message =
+                    column == idColumn ? node.reportInvalidId() : (column == valueColumn ? node.reportInvalidValue() : null);
+            if (this.treeTable.isCellEditable(row, column) && message != null)
+            {
+                setToolTipText(AttributeCellRenderer.limitMessage(message));
+                setBackground(OtsEditor.INVALID_COLOR);
+            }
+            else
+            {
+                setToolTipText(null);
+                setBackground(UIManager.getColor("Table.background"));
+            }
         }
 
         Border border;

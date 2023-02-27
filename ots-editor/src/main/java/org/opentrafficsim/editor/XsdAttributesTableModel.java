@@ -108,6 +108,15 @@ public class XsdAttributesTableModel extends AbstractTableModel
         this.node.setAttributeValue(rowIndex, aValue.toString());
         this.fireTableCellUpdated(rowIndex, columnIndex);
     }
+    
+    /**
+     * Returns the underlying node for which attributes are shown.
+     * @return XsdTreeNode; underlying node for which attributes are shown.
+     */
+    public XsdTreeNode getNode()
+    {
+        return this.node;
+    }
 
     /**
      * Apply the column widths to a newly created table.
