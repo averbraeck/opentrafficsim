@@ -151,6 +151,10 @@ public final class ValueValidator
                 return reportTypeNonCompliance(XsdSchema.getChild(node, "xsd:restriction"), "base", value, schema,
                         restrictions);
             case "xsd:element":
+                if (node.getChildNodes().getLength() == 0)
+                {
+                    return null;
+                }
                 Node complexType = XsdSchema.getChild(node, "xsd:complexType");
                 if (complexType != null)
                 {
