@@ -16,12 +16,15 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
-import javax.swing.ButtonGroup;
+import javax.swing.DefaultCellEditor;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -30,13 +33,13 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
-import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -60,6 +63,7 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.editor.XsdTreeNode.GroupPosition;
 import org.opentrafficsim.swing.gui.Resource;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import de.javagl.treetable.JTreeTable;
 
@@ -206,7 +210,7 @@ public class OtsEditor extends JFrame implements EventProducer
         this.rightSplitPane.setTopComponent(new JScrollPane(this.treeTable));
 
         // attributes table
-        XsdAttributesTableModel tableModel = new XsdAttributesTableModel(null, this.treeTable);
+        AttributesTableModel tableModel = new AttributesTableModel(null, this.treeTable);
         DefaultTableColumnModel columns = new DefaultTableColumnModel();
         TableColumn column1 = new TableColumn(0); // may add TableCellRenderer/TableCellEditor here
         column1.setHeaderValue(tableModel.getColumnName(0));
@@ -222,27 +226,9 @@ public class OtsEditor extends JFrame implements EventProducer
         columns.addColumn(column4);
         this.attributesTable = new JTable(tableModel, columns);
         this.attributesTable.setDefaultRenderer(String.class, new AttributeCellRenderer(infoIcon));
-        this.attributesTable.addMouseListener(new MouseAdapter()
-        {
-            /** {@inheritDoc} */
-            @Override
-            public void mouseClicked(final MouseEvent e)
-            {
-                int col = OtsEditor.this.attributesTable.columnAtPoint(e.getPoint());
-                if (OtsEditor.this.attributesTable.convertColumnIndexToModel(col) == 3)
-                {
-                    int row = OtsEditor.this.attributesTable.rowAtPoint(e.getPoint());
-                    if (OtsEditor.this.attributesTable.getModel().getValueAt(row, col) != null)
-                    {
-                        XsdTreeNode node = ((XsdAttributesTableModel) OtsEditor.this.attributesTable.getModel()).getNode();
-                        String description =
-                                XsdSchema.getAnnotation(node.getAttributeNode(row), "xsd:documentation", "description");
-                        showDescription(description);
-                    }
-                }
-            }
-        });
-        XsdAttributesTableModel.applyColumnWidth(this.attributesTable);
+        ((DefaultCellEditor) this.attributesTable.getDefaultEditor(String.class)).setClickCountToStart(1);
+        this.attributesTable.addMouseListener(new AttributesMouseListener());
+        AttributesTableModel.applyColumnWidth(this.attributesTable);
         this.rightSplitPane.setBottomComponent(new JScrollPane(this.attributesTable));
 
         // appear to the user
@@ -263,6 +249,7 @@ public class OtsEditor extends JFrame implements EventProducer
         this.treeTable = new JTreeTable(treeModel);
         treeModel.setTreeTable(this.treeTable);
         this.treeTable.setDefaultRenderer(String.class, new StringCellRenderer(this.treeTable));
+        ((DefaultCellEditor) this.treeTable.getDefaultEditor(String.class)).setClickCountToStart(1);
         XsdTreeTableModel.applyColumnWidth(this.treeTable);
 
         // throws selection events and updates the attributes table
@@ -282,7 +269,7 @@ public class OtsEditor extends JFrame implements EventProducer
                     {
                         OtsEditor.this.attributesTable.editingCanceled(null);
                     }
-                    OtsEditor.this.attributesTable.setModel(new XsdAttributesTableModel(node, OtsEditor.this.treeTable));
+                    OtsEditor.this.attributesTable.setModel(new AttributesTableModel(node, OtsEditor.this.treeTable));
                     try
                     {
                         fireEvent(SELECTION_CHANGED, node);
@@ -294,7 +281,7 @@ public class OtsEditor extends JFrame implements EventProducer
                 }
                 else
                 {
-                    OtsEditor.this.attributesTable.setModel(new XsdAttributesTableModel(null, OtsEditor.this.treeTable));
+                    OtsEditor.this.attributesTable.setModel(new AttributesTableModel(null, OtsEditor.this.treeTable));
                 }
             }
         });
@@ -360,7 +347,7 @@ public class OtsEditor extends JFrame implements EventProducer
                             TreePath path = OtsEditor.this.treeTable.getTree().getSelectionPath();
                             if (path != null) // can be null if last node was removed causing no effective selection
                             {
-                                OtsEditor.this.attributesTable.setModel(new XsdAttributesTableModel(
+                                OtsEditor.this.attributesTable.setModel(new AttributesTableModel(
                                         (XsdTreeNode) path.getLastPathComponent(), OtsEditor.this.treeTable));
                             }
                         }
@@ -596,6 +583,16 @@ public class OtsEditor extends JFrame implements EventProducer
     }
 
     /**
+     * Shows a description in a modal pane.
+     * @param description String; description.
+     */
+    public void showDescription(final String description)
+    {
+        JOptionPane.showMessageDialog(OtsEditor.this,
+                "<html><body><p style='width: 400px;'>" + description + "</p></body></html>");
+    }
+
+    /**
      * Limits the length of a tooltip message. This is to prevent absurd tooltip texts based on really long patterns that should
      * be matched. Will return {@code null} if the input is {@code null}.
      * @param message String; tooltip message, may be {@code null}.
@@ -615,13 +612,103 @@ public class OtsEditor extends JFrame implements EventProducer
     }
 
     /**
-     * Shows a description in a modal pane.
-     * @param description String; description.
+     * Returns a list of options derived from a list of restrictions (xsd:restriction).
+     * @param restrictions List&lt;Node&gt;; list of restrictions.
+     * @return List&lt;String&gt;; list of options.
      */
-    public void showDescription(final String description)
+    private static List<String> getOptionsFromRestrictions(final List<Node> restrictions)
     {
-        JOptionPane.showMessageDialog(OtsEditor.this,
-                "<html><body><p style='width: 400px;'>" + description + "</p></body></html>");
+        List<String> options = new ArrayList<>();
+        for (Node restriction : restrictions)
+        {
+            List<Node> enumerations = XsdSchema.getChildren(restriction, "xsd:enumeration");
+            for (Node enumeration : enumerations)
+            {
+                options.add(XsdSchema.getAttribute(enumeration, "value"));
+            }
+            // TODO: This is temporary, xsd:sequence should be used for regular option selection.
+            Node pattern = XsdSchema.getChild(restriction, "xsd:pattern");
+            if (pattern != null)
+            {
+                String patt = XsdSchema.getAttribute(pattern, "value");
+                if (Pattern.matches("([A-Z]*\\|)*[A-Z]+", patt))
+                {
+                    String[] values = patt.split("\\|");
+                    for (String value : values)
+                    {
+                        options.add(value);
+                    }
+                }
+            }
+        }
+        return options;
+    }
+
+    /**
+     * Listener to the mouse for the attributes table.
+     * @author wjschakel
+     */
+    private final class AttributesMouseListener extends MouseAdapter
+    {
+        /** {@inheritDoc} */
+        @Override
+        public void mouseClicked(final MouseEvent e)
+        {
+            // makes description appear when information icon was clicked
+            int col = OtsEditor.this.attributesTable.columnAtPoint(e.getPoint());
+            if (OtsEditor.this.attributesTable.convertColumnIndexToModel(col) == 3)
+            {
+                int row = OtsEditor.this.attributesTable.rowAtPoint(e.getPoint());
+                if (OtsEditor.this.attributesTable.getModel().getValueAt(row, col) != null)
+                {
+                    XsdTreeNode node = ((AttributesTableModel) OtsEditor.this.attributesTable.getModel()).getNode();
+                    String description =
+                            XsdSchema.getAnnotation(node.getAttributeNode(row), "xsd:documentation", "description");
+                    showDescription(description);
+                }
+            }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void mousePressed(final MouseEvent e)
+        {
+            // shows popup for attributes with a selection of allowable values (xsd:enumeration, xsd:keyref)
+            int col = OtsEditor.this.attributesTable.columnAtPoint(e.getPoint());
+            if (OtsEditor.this.attributesTable.convertColumnIndexToModel(col) == 1)
+            {
+                int row = OtsEditor.this.attributesTable.rowAtPoint(e.getPoint());
+                XsdTreeNode node = ((AttributesTableModel) OtsEditor.this.attributesTable.getModel()).getNode();
+                List<Node> restrictions = node.getAttributeRestrictions(row);
+                List<String> options = getOptionsFromRestrictions(restrictions);
+                if (options.isEmpty())
+                {
+                    return;
+                }
+                JPopupMenu popup = new JPopupMenu();
+                for (String option : options)
+                {
+                    JMenuItem item = new JMenuItem(option.toLowerCase());
+                    item.addActionListener(new ActionListener()
+                    {
+                        /** {@inheritDoc} */
+                        @Override
+                        public void actionPerformed(final ActionEvent e)
+                        {
+                            OtsEditor.this.attributesTable.editingCanceled(null);
+                            node.setAttributeValue(row, option);
+                            OtsEditor.this.treeTable.updateUI();
+                        }
+                    });
+                    item.setFont(OtsEditor.this.attributesTable.getFont());
+                    popup.add(item);
+                }
+                preparePopupRemoval(popup);
+                Rectangle rectangle = OtsEditor.this.attributesTable.getCellRect(row, col, true);
+                OtsEditor.this.attributesTable.setComponentPopupMenu(popup);
+                popup.show(OtsEditor.this.attributesTable, (int) rectangle.getMinX(), (int) rectangle.getMaxY() - 1);
+            }
+        }
     }
 
     /**
@@ -777,11 +864,79 @@ public class OtsEditor extends JFrame implements EventProducer
     {
         /** {@inheritDoc} */
         @Override
+        public void mousePressed(final MouseEvent e)
+        {
+            if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1)
+            {
+                // show value options popup
+                int row = OtsEditor.this.treeTable.rowAtPoint(e.getPoint());
+                int treeCol = OtsEditor.this.treeTable.convertColumnIndexToView(0); // columns may have been moved in view
+                XsdTreeNode treeNode = (XsdTreeNode) OtsEditor.this.treeTable.getValueAt(row, treeCol);
+                int col = OtsEditor.this.treeTable.columnAtPoint(e.getPoint());
+                if (OtsEditor.this.treeTable.isCellEditable(row, col))
+                {
+                    if (OtsEditor.this.treeTable.convertColumnIndexToModel(col) == 2)
+                    {
+                        List<String> options = getOptionsFromRestrictions(treeNode.getValueRestrictions());
+                        if (!options.isEmpty())
+                        {
+                            JPopupMenu popup = new JPopupMenu();
+                            for (String option : options)
+                            {
+                                JMenuItem item = new JMenuItem(option.toLowerCase());
+                                item.addActionListener(new ActionListener()
+                                {
+                                    /** {@inheritDoc} */
+                                    @Override
+                                    public void actionPerformed(final ActionEvent e)
+                                    {
+                                        OtsEditor.this.treeTable.editingCanceled(null);
+                                        treeNode.setValue(option);
+                                        OtsEditor.this.treeTable.updateUI();
+                                    }
+                                });
+                                item.setFont(OtsEditor.this.treeTable.getFont());
+                                popup.add(item);
+                            }
+                            preparePopupRemoval(popup);
+                            Rectangle rectangle = OtsEditor.this.treeTable.getCellRect(row, col, true);
+                            SwingUtilities.invokeLater(new Runnable() // JTreeTable removes the popup with editable cells
+                            {
+                                /** {@inheritDoc} */
+                                @Override
+                                public void run()
+                                {
+                                    OtsEditor.this.treeTable.setComponentPopupMenu(popup);
+                                    popup.show(OtsEditor.this.treeTable, (int) rectangle.getMinX(),
+                                            (int) rectangle.getMaxY() - 1);
+                                }
+
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
+        /** {@inheritDoc} */
+        @Override
         public void mouseClicked(final MouseEvent e)
         {
             // show choice popup
-            if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1)
+            if (e.getButton() == MouseEvent.BUTTON1)
             {
+                if (e.getClickCount() > 1 && OtsEditor.this.treeTable.columnAtPoint(e.getPoint()) == 0)
+                {
+                    int row = OtsEditor.this.treeTable.rowAtPoint(e.getPoint());
+                    int col = OtsEditor.this.treeTable.convertColumnIndexToView(0); // columns may have been moved in view
+                    XsdTreeNode treeNode = (XsdTreeNode) OtsEditor.this.treeTable.getValueAt(row, col);
+                    if (!treeNode.isActive())
+                    {
+                        treeNode.setActive();
+                        OtsEditor.this.treeTable.updateUI();
+                    }
+                    return;
+                }
                 int row = OtsEditor.this.treeTable.rowAtPoint(e.getPoint());
                 int treeCol = OtsEditor.this.treeTable.convertColumnIndexToView(0); // columns may have been moved in view
                 XsdTreeNode treeNode = (XsdTreeNode) OtsEditor.this.treeTable.getValueAt(row, treeCol);
@@ -796,27 +951,24 @@ public class OtsEditor extends JFrame implements EventProducer
                 {
 
                     JPopupMenu popup = new JPopupMenu();
-                    ButtonGroup group = new ButtonGroup();
                     boolean firstEntry = true;
                     for (XsdOption option : treeNode.getOptions())
                     {
                         if (option.isFirstInGroup())
                         {
-                            group = new ButtonGroup();
                             if (!firstEntry)
                             {
                                 popup.add(new JSeparator());
                             }
                         }
                         firstEntry = false;
-                        JRadioButtonMenuItem button =
-                                new JRadioButtonMenuItem(option.getOptionNode().getShortString(), option.isSelected());
+                        JMenuItem button = new JMenuItem(option.getOptionNode().getShortString());
                         if (!option.isSelected())
                         {
                             button.addActionListener(new ChoiceListener(option.getChoice(), option.getOptionNode(),
                                     row - option.getShiftToTopOfOption()));
                         }
-                        group.add(button);
+                        button.setFont(OtsEditor.this.treeTable.getFont());
                         popup.add(button);
                         firstEntry = false;
                     }
@@ -837,21 +989,6 @@ public class OtsEditor extends JFrame implements EventProducer
                 {
                     OtsEditor.this.treeTable.setRowSelectionInterval(row, row);
                     createRightClickPopup(e, treeNode);
-                }
-            }
-            // activate node
-            else if (e.getClickCount() == 2)
-            {
-                if (OtsEditor.this.treeTable.columnAtPoint(e.getPoint()) == 0)
-                {
-                    int row = OtsEditor.this.treeTable.rowAtPoint(e.getPoint());
-                    int col = OtsEditor.this.treeTable.convertColumnIndexToView(0); // columns may have been moved in view
-                    XsdTreeNode treeNode = (XsdTreeNode) OtsEditor.this.treeTable.getValueAt(row, col);
-                    if (!treeNode.isActive())
-                    {
-                        treeNode.setActive();
-                        OtsEditor.this.treeTable.updateUI();
-                    }
                 }
             }
         }
@@ -881,6 +1018,7 @@ public class OtsEditor extends JFrame implements EventProducer
                             treeNode.consume(menuItem);
                         }
                     });
+                    item.setFont(OtsEditor.this.treeTable.getFont());
                     popup.add(item);
                     anyAdded = true;
                 }
@@ -897,118 +1035,138 @@ public class OtsEditor extends JFrame implements EventProducer
                         showDescription(treeNode.getDescription());
                     }
                 });
+                item.setFont(OtsEditor.this.treeTable.getFont());
                 popup.add(item);
                 anyAdded = true;
             }
 
             if (treeNode.isActive())
             {
-                boolean separatorNeeded = anyAdded;
-                boolean groupAdded = false;
-
-                if (treeNode.isAddable())
-                {
-                    if (separatorNeeded)
-                    {
-                        separatorNeeded = false;
-                        popup.add(new JSeparator());
-                    }
-                    JMenuItem add = new JMenuItem("Add");
-                    add.addActionListener(new ActionListener()
-                    {
-                        /** {@inheritDoc} */
-                        @Override
-                        public void actionPerformed(final ActionEvent e)
-                        {
-                            treeNode.add();
-                            OtsEditor.this.treeTable.updateUI();
-                        }
-                    });
-                    popup.add(add);
-                    anyAdded = true;
-                    groupAdded = true;
-                }
-                if (treeNode.isRemovable())
-                {
-                    if (separatorNeeded)
-                    {
-                        separatorNeeded = false;
-                        popup.add(new JSeparator());
-                    }
-                    JMenuItem del = new JMenuItem("Remove");
-                    del.addActionListener(new ActionListener()
-                    {
-                        /** {@inheritDoc} */
-                        @Override
-                        public void actionPerformed(final ActionEvent e)
-                        {
-                            if (confirmNodeRemoval(OtsEditor.this, treeNode))
-                            {
-                                int selected = OtsEditor.this.treeTable.getTree().getLeadSelectionRow();
-                                treeNode.remove();
-                                OtsEditor.this.treeTable.updateUI();
-                                OtsEditor.this.treeTable.getSelectionModel().setSelectionInterval(selected, selected);
-
-                            }
-                        }
-                    });
-                    popup.add(del);
-                    anyAdded = true;
-                    groupAdded = true;
-                }
-
-                separatorNeeded = groupAdded;
-
-                if (treeNode.canMoveUp())
-                {
-                    if (separatorNeeded)
-                    {
-                        separatorNeeded = false;
-                        popup.add(new JSeparator());
-                    }
-                    JMenuItem add = new JMenuItem("Move up");
-                    add.addActionListener(new ActionListener()
-                    {
-                        /** {@inheritDoc} */
-                        @Override
-                        public void actionPerformed(final ActionEvent e)
-                        {
-                            treeNode.move(-1);
-                            OtsEditor.this.treeTable.updateUI();
-                        }
-                    });
-                    popup.add(add);
-                    anyAdded = true;
-                }
-                if (treeNode.canMoveDown())
-                {
-                    if (separatorNeeded)
-                    {
-                        separatorNeeded = false;
-                        popup.add(new JSeparator());
-                    }
-                    JMenuItem add = new JMenuItem("Move down");
-                    add.addActionListener(new ActionListener()
-                    {
-                        /** {@inheritDoc} */
-                        @Override
-                        public void actionPerformed(final ActionEvent e)
-                        {
-                            treeNode.move(1);
-                            OtsEditor.this.treeTable.updateUI();
-                        }
-                    });
-                    popup.add(add);
-                    anyAdded = true;
-                }
+                anyAdded = addDefaultActions(treeNode, popup, anyAdded);
             }
 
             if (anyAdded)
             {
                 preparePopupRemoval(popup);
+                popup.setFont(OtsEditor.this.treeTable.getFont());
                 OtsEditor.this.treeTable.setComponentPopupMenu(popup);
                 popup.show(OtsEditor.this.treeTable, e.getX(), e.getY());
             }
+        }
+
+        /**
+         * Adds default menu actions Add, Remove, Move up, and Move down, for each when appropriate.
+         * @param treeNode XsdTreeNode; node.
+         * @param popup JPopupMenu; popup menu.
+         * @param added boolean; whether any menu items were added before (which requires a separator).
+         * @return boolean; whether any items were added, going in to this method, or during the method.
+         */
+        private boolean addDefaultActions(final XsdTreeNode treeNode, final JPopupMenu popup, final boolean added)
+        {
+            boolean anyAdded = added;
+            boolean separatorNeeded = anyAdded;
+            boolean groupAdded = false;
+
+            if (treeNode.isAddable())
+            {
+                if (separatorNeeded)
+                {
+                    separatorNeeded = false;
+                    popup.add(new JSeparator());
+                }
+                JMenuItem item = new JMenuItem("Add");
+                item.addActionListener(new ActionListener()
+                {
+                    /** {@inheritDoc} */
+                    @Override
+                    public void actionPerformed(final ActionEvent e)
+                    {
+                        treeNode.add();
+                        OtsEditor.this.treeTable.updateUI();
+                    }
+                });
+                item.setFont(OtsEditor.this.treeTable.getFont());
+                popup.add(item);
+                anyAdded = true;
+                groupAdded = true;
+            }
+            if (treeNode.isRemovable())
+            {
+                if (separatorNeeded)
+                {
+                    separatorNeeded = false;
+                    popup.add(new JSeparator());
+                }
+                JMenuItem item = new JMenuItem("Remove");
+                item.addActionListener(new ActionListener()
+                {
+                    /** {@inheritDoc} */
+                    @Override
+                    public void actionPerformed(final ActionEvent e)
+                    {
+                        if (confirmNodeRemoval(OtsEditor.this, treeNode))
+                        {
+                            int selected = OtsEditor.this.treeTable.getTree().getLeadSelectionRow();
+                            treeNode.remove();
+                            OtsEditor.this.treeTable.updateUI();
+                            OtsEditor.this.treeTable.getSelectionModel().setSelectionInterval(selected, selected);
+
+                        }
+                    }
+                });
+                item.setFont(OtsEditor.this.treeTable.getFont());
+                popup.add(item);
+                anyAdded = true;
+                groupAdded = true;
+            }
+
+            separatorNeeded = groupAdded;
+
+            if (treeNode.canMoveUp())
+            {
+                if (separatorNeeded)
+                {
+                    separatorNeeded = false;
+                    popup.add(new JSeparator());
+                }
+                JMenuItem item = new JMenuItem("Move up");
+                item.addActionListener(new ActionListener()
+                {
+                    /** {@inheritDoc} */
+                    @Override
+                    public void actionPerformed(final ActionEvent e)
+                    {
+                        treeNode.move(-1);
+                        OtsEditor.this.treeTable.updateUI();
+                    }
+                });
+                item.setFont(OtsEditor.this.treeTable.getFont());
+                popup.add(item);
+                anyAdded = true;
+            }
+            if (treeNode.canMoveDown())
+            {
+                if (separatorNeeded)
+                {
+                    separatorNeeded = false;
+                    popup.add(new JSeparator());
+                }
+                JMenuItem item = new JMenuItem("Move down");
+                item.addActionListener(new ActionListener()
+                {
+                    /** {@inheritDoc} */
+                    @Override
+                    public void actionPerformed(final ActionEvent e)
+                    {
+                        treeNode.move(1);
+                        OtsEditor.this.treeTable.updateUI();
+                    }
+                });
+                item.setFont(OtsEditor.this.treeTable.getFont());
+                popup.add(item);
+                anyAdded = true;
+            }
+            return anyAdded;
         }
     }
 
@@ -1046,7 +1204,7 @@ public class OtsEditor extends JFrame implements EventProducer
             this.choiceNode.setOption(this.option);
             OtsEditor.this.treeTable.setRowSelectionInterval(this.reselectionRow, this.reselectionRow);
             OtsEditor.this.treeTable.updateUI();
-            OtsEditor.this.attributesTable.setModel(new XsdAttributesTableModel(this.option, OtsEditor.this.treeTable));
+            OtsEditor.this.attributesTable.setModel(new AttributesTableModel(this.option, OtsEditor.this.treeTable));
         }
     }
 

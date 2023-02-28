@@ -58,7 +58,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
         setIcon(null);
         if (table.convertColumnIndexToModel(column) == 1)
         {
-            XsdTreeNode node = ((XsdAttributesTableModel) table.getModel()).getNode();
+            XsdTreeNode node = ((AttributesTableModel) table.getModel()).getNode();
             String message = node.reportInvalidAttributeValue(row);
             if (message != null)
             {

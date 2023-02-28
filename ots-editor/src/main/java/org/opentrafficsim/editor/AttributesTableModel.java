@@ -12,7 +12,7 @@ import de.javagl.treetable.JTreeTable;
  * Model for a {@code JTable} to display the attributes of a {@code XsdTreeNode}.
  * @author wjschakel
  */
-public class XsdAttributesTableModel extends AbstractTableModel
+public class AttributesTableModel extends AbstractTableModel
 {
 
     /** */
@@ -38,7 +38,7 @@ public class XsdAttributesTableModel extends AbstractTableModel
      * @param node XsdTreeNode; node of which the attributes are displayed.
      * @param treeTable JTreeTable; tree table.
      */
-    public XsdAttributesTableModel(final XsdTreeNode node, final JTreeTable treeTable)
+    public AttributesTableModel(final XsdTreeNode node, final JTreeTable treeTable)
     {
         this.node = node;
         this.treeTable = treeTable;

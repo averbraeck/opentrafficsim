@@ -1562,6 +1562,25 @@ public class XsdTreeNode implements Serializable
         return ValueValidator.reportInvalidAttributeValue(getAttributeNode(index), getAttributeValue(index), this.schema);
     }
 
+    /**
+     * Returns all restrictions for the value.
+     * @return List&lt;Node&gt;; list of xsd:restriction nodes applicable to the value.
+     */
+    public List<Node> getValueRestrictions()
+    {
+        return ValueValidator.getRestrictions(this.xsdNode, this.schema);
+    }
+    
+    /**
+     * Returns all restrictions for the given attribute.
+     * @param index int; attribute number.
+     * @return List&lt;Node&gt;; list of xsd:restriction nodes applicable to the attribute.
+     */
+    public List<Node> getAttributeRestrictions(final int index)
+    {
+        return ValueValidator.getRestrictions(this.attributeNodes.get(index), this.schema);
+    }
+    
     // ====== Interaction with visualization ======
 
     /**
