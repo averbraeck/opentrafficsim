@@ -368,8 +368,9 @@ public class OtsEditor extends JFrame implements EventProducer
      * Adds a listener to a popup to remove the popop from the JTreeTable when the popup becomes invisible. This makes sure that
      * a right-clicks on another location that should show a different popup, is not overruled by the popup of a previous click.
      * @param popup JPopupMenu; popup menu.
+     * @param component JComponent; component from which the menu will be removed.
      */
-    private void preparePopupRemoval(final JPopupMenu popup)
+    private void preparePopupRemoval(final JPopupMenu popup, final JComponent component)
     {
         popup.addPopupMenuListener(new PopupMenuListener()
         {
@@ -383,7 +384,7 @@ public class OtsEditor extends JFrame implements EventProducer
             @Override
             public void popupMenuWillBecomeInvisible(final PopupMenuEvent e)
             {
-                OtsEditor.this.treeTable.setComponentPopupMenu(null);
+                component.setComponentPopupMenu(null);
                 OtsEditor.this.choiceNode = null;
             }
 
@@ -703,7 +704,7 @@ public class OtsEditor extends JFrame implements EventProducer
                     item.setFont(OtsEditor.this.attributesTable.getFont());
                     popup.add(item);
                 }
-                preparePopupRemoval(popup);
+                preparePopupRemoval(popup, OtsEditor.this.attributesTable);
                 Rectangle rectangle = OtsEditor.this.attributesTable.getCellRect(row, col, true);
                 OtsEditor.this.attributesTable.setComponentPopupMenu(popup);
                 popup.show(OtsEditor.this.attributesTable, (int) rectangle.getMinX(), (int) rectangle.getMaxY() - 1);
@@ -898,7 +899,7 @@ public class OtsEditor extends JFrame implements EventProducer
                                 item.setFont(OtsEditor.this.treeTable.getFont());
                                 popup.add(item);
                             }
-                            preparePopupRemoval(popup);
+                            preparePopupRemoval(popup, OtsEditor.this.treeTable);
                             Rectangle rectangle = OtsEditor.this.treeTable.getCellRect(row, col, true);
                             SwingUtilities.invokeLater(new Runnable() // JTreeTable removes the popup with editable cells
                             {
@@ -972,7 +973,7 @@ public class OtsEditor extends JFrame implements EventProducer
                         popup.add(button);
                         firstEntry = false;
                     }
-                    preparePopupRemoval(popup);
+                    preparePopupRemoval(popup, OtsEditor.this.treeTable);
                     OtsEditor.this.treeTable.setComponentPopupMenu(popup);
                     OtsEditor.this.choiceNode = treeNode;
                     popup.show(OtsEditor.this.treeTable, (int) labelPortion.getMinX(), (int) labelPortion.getMaxY() - 1);
@@ -1047,7 +1048,7 @@ public class OtsEditor extends JFrame implements EventProducer
 
             if (anyAdded)
             {
-                preparePopupRemoval(popup);
+                preparePopupRemoval(popup, OtsEditor.this.treeTable);
                 popup.setFont(OtsEditor.this.treeTable.getFont());
                 OtsEditor.this.treeTable.setComponentPopupMenu(popup);
                 popup.show(OtsEditor.this.treeTable, e.getX(), e.getY());
