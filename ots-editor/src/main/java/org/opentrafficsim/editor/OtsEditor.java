@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -512,6 +514,172 @@ public class OtsEditor extends JFrame implements EventProducer
     }
 
     /**
+     * Requests the user to confirm the deletion of a node. The default button is "Ok". The window popping up is considered
+     * sufficient warning, and in this way a speedy succession of "del" and "enter" may delete a consecutive range of nodes to
+     * be deleted.
+     * @param editor OtsEditor; the editor window.
+     * @param node XsdTreeNode; node.
+     * @return boolean; {@code true} if the user confirms node removal.
+     */
+    private boolean confirmNodeRemoval(final OtsEditor editor, final XsdTreeNode node)
+    {
+        return JOptionPane.showConfirmDialog(editor, "Remove `" + node + "`?", "Remove?", JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE, this.questionIcon) == JOptionPane.OK_OPTION;
+    }
+
+    /**
+     * Shows a description in a modal pane.
+     * @param description String; description.
+     */
+    public void showDescription(final String description)
+    {
+        JOptionPane.showMessageDialog(OtsEditor.this,
+                "<html><body><p style='width: 400px;'>" + description + "</p></body></html>");
+    }
+
+    /**
+     * Places a popup with options under the cell that is being clicked in a table. The popup will show items relevant to what
+     * is being typed in the cell. The maximum number of items shown is limited to {@code MAX_DROPDOWN_ITEMS}.
+     * @param allOptions List&lt;String&gt;; list of all options, will be filtered when typing.
+     * @param table JTable; table, will be either the tree table or the attributes table.
+     * @param action Consumer&lt;String&gt;; action to perform based on the option in the popup that was selected.
+     */
+    private void optionsPopup(final List<String> allOptions, final JTable table, final Consumer<String> action)
+    {
+        // initially no filtering on current value; this allows a quick reset to possible values
+        List<String> options = filterOptions(allOptions, "");
+        if (options.isEmpty())
+        {
+            return;
+        }
+        JPopupMenu popup = new JPopupMenu();
+        int index = 0;
+        for (String option : options)
+        {
+            JMenuItem item = new JMenuItem(option);
+            item.setVisible(index++ < MAX_DROPDOWN_ITEMS);
+            // item.addActionListener(actionSupplier.apply(option));
+            item.addActionListener(new ActionListener()
+            {
+                /** {@inheritDoc} */
+                @Override
+                public void actionPerformed(final ActionEvent e)
+                {
+                    table.editingCanceled(null);
+                    action.accept(option);
+                    OtsEditor.this.treeTable.updateUI();
+                }
+            });
+            item.setFont(table.getFont());
+            popup.add(item);
+        }
+        preparePopupRemoval(popup, table);
+        // invoke later because JTreeTable removes the popup with editable cells and it may take previous editable field
+        SwingUtilities.invokeLater(new Runnable()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public void run()
+            {
+                JTextField field = (JTextField) ((DefaultCellEditor) table.getDefaultEditor(String.class)).getComponent();
+                table.setComponentPopupMenu(popup);
+                popup.pack();
+                popup.setInvoker(table);
+                popup.setVisible(true);
+                field.requestFocus();
+                Rectangle rectangle = field.getBounds();
+                placePopup(popup, rectangle, table);
+                field.addKeyListener(new KeyAdapter()
+                {
+                    /** {@inheritDoc} */
+                    @Override
+                    public void keyTyped(final KeyEvent e)
+                    {
+                        // invoke later to include this current typed key in the result
+                        SwingUtilities.invokeLater(new Runnable()
+                        {
+                            /** {@inheritDoc} */
+                            @Override
+                            public void run()
+                            {
+                                String currentValue = field.getText();
+                                List<String> options = filterOptions(allOptions, currentValue);
+                                int index = 0;
+                                for (Component component : popup.getComponents())
+                                {
+                                    JMenuItem item = (JMenuItem) component;
+                                    boolean visible = item.getText().equals(currentValue)
+                                            || index < MAX_DROPDOWN_ITEMS && options.contains(item.getText());
+                                    item.setVisible(visible);
+                                    if (visible)
+                                    {
+                                        index++;
+                                    }
+                                }
+                                // if no items left, show what was typed as a single item
+                                // it will be hidden later if we are in the scope of the options, or another current value
+                                if (index == 0)
+                                {
+                                    JMenuItem item = new JMenuItem(currentValue);
+                                    // item.addActionListener(actionSupplier.apply(currentValue));
+                                    item.addActionListener(new ActionListener()
+                                    {
+                                        /** {@inheritDoc} */
+                                        @Override
+                                        public void actionPerformed(final ActionEvent e)
+                                        {
+                                            table.editingCanceled(null);
+                                            action.accept(currentValue);
+                                            OtsEditor.this.treeTable.updateUI();
+                                        }
+                                    });
+                                    item.setFont(table.getFont());
+                                    popup.add(item);
+                                }
+                                popup.pack();
+                                placePopup(popup, rectangle, table);
+                            }
+                        });
+                    }
+                });
+                field.addActionListener(new ActionListener()
+                {
+                    /** {@inheritDoc} */
+                    @Override
+                    public void actionPerformed(final ActionEvent e)
+                    {
+                        popup.setVisible(false);
+                        table.setComponentPopupMenu(null);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Places a popup either below or above a given rectangle, based on surrounding space in the window.
+     * @param popup JPopupMenu; popup.
+     * @param rectangle Rectangle; rectangle of cell being edited, relative to the parent component.
+     * @param parent JComponent; component containing the cell.
+     */
+    private void placePopup(final JPopupMenu popup, final Rectangle rectangle, final JComponent parent)
+    {
+        Point pAttributes = parent.getLocationOnScreen();
+        // cannot use screen size in case of multiple monitors, so we keep the popup on the JFrame rather than the window
+        Dimension windowSize = OtsEditor.this.getSize();
+        Point pWindow = OtsEditor.this.getLocationOnScreen();
+        if (pAttributes.y + (int) rectangle.getMaxY() + popup.getBounds().getHeight() > windowSize.height + pWindow.y - 1)
+        {
+            popup.setLocation(pAttributes.x + (int) rectangle.getMinX(),
+                    pAttributes.y + (int) rectangle.getMinY() - 1 - (int) popup.getBounds().getHeight());
+        }
+        else
+        {
+            popup.setLocation(pAttributes.x + (int) rectangle.getMinX(), pAttributes.y + (int) rectangle.getMaxY() - 1);
+        }
+    }
+
+    /**
      * Temporary stub to create map pane.
      * @return JComponent; component.
      */
@@ -572,30 +740,6 @@ public class OtsEditor extends JFrame implements EventProducer
     }
 
     /**
-     * Requests the user to confirm the deletion of a node. The default button is "Ok". The window popping up is considered
-     * sufficient warning, and in this way a speedy succession of "del" and "enter" may delete a consecutive range of nodes to
-     * be deleted.
-     * @param editor OtsEditor; the editor window.
-     * @param node XsdTreeNode; node.
-     * @return boolean; {@code true} if the user confirms node removal.
-     */
-    private boolean confirmNodeRemoval(final OtsEditor editor, final XsdTreeNode node)
-    {
-        return JOptionPane.showConfirmDialog(editor, "Remove `" + node + "`?", "Remove?", JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE, this.questionIcon) == JOptionPane.OK_OPTION;
-    }
-
-    /**
-     * Shows a description in a modal pane.
-     * @param description String; description.
-     */
-    public void showDescription(final String description)
-    {
-        JOptionPane.showMessageDialog(OtsEditor.this,
-                "<html><body><p style='width: 400px;'>" + description + "</p></body></html>");
-    }
-
-    /**
      * Limits the length of a tooltip message. This is to prevent absurd tooltip texts based on really long patterns that should
      * be matched. Will return {@code null} if the input is {@code null}.
      * @param message String; tooltip message, may be {@code null}.
@@ -623,7 +767,7 @@ public class OtsEditor extends JFrame implements EventProducer
     private static List<String> filterOptions(final List<String> options, final String currentValue)
     {
         return options.stream().filter((val) -> currentValue == null || currentValue.isBlank() || val.startsWith(currentValue))
-                .distinct().sorted().limit(MAX_DROPDOWN_ITEMS).collect(Collectors.toList());
+                .distinct().sorted().collect(Collectors.toList());
     }
 
     /**
@@ -662,37 +806,8 @@ public class OtsEditor extends JFrame implements EventProducer
                 int row = OtsEditor.this.attributesTable.rowAtPoint(e.getPoint());
                 XsdTreeNode node = ((AttributesTableModel) OtsEditor.this.attributesTable.getModel()).getNode();
                 List<String> allOptions = node.getAttributeRestrictions(row);
-                List<String> options = filterOptions(allOptions, ""); // node.getAttributeValue(row));
-                if (options.isEmpty())
-                {
-                    return;
-                }
-                JPopupMenu popup = new JPopupMenu();
-                for (String option : options)
-                {
-                    JMenuItem item = new JMenuItem(option);
-                    item.addActionListener(new ActionListener()
-                    {
-                        /** {@inheritDoc} */
-                        @Override
-                        public void actionPerformed(final ActionEvent e)
-                        {
-                            OtsEditor.this.attributesTable.editingCanceled(null);
-                            node.setAttributeValue(row, option);
-                            OtsEditor.this.treeTable.updateUI();
-                        }
-                    });
-                    item.setFont(OtsEditor.this.attributesTable.getFont());
-                    popup.add(item);
-                }
-                preparePopupRemoval(popup, OtsEditor.this.attributesTable);
-                Rectangle rectangle = OtsEditor.this.attributesTable.getCellRect(row, col, true);
-                OtsEditor.this.attributesTable.setComponentPopupMenu(popup);
-                popup.show(OtsEditor.this.attributesTable, (int) rectangle.getMinX(), (int) rectangle.getMaxY() - 1);
-                JTextField field =
-                        (JTextField) ((DefaultCellEditor) OtsEditor.this.attributesTable.getDefaultEditor(String.class))
-                                .getComponent();
-                field.requestFocus();
+                JTable table = OtsEditor.this.attributesTable;
+                optionsPopup(allOptions, table, (t) -> node.setAttributeValue(row, t));
             }
         }
     }
@@ -863,42 +978,8 @@ public class OtsEditor extends JFrame implements EventProducer
                 {
                     if (OtsEditor.this.treeTable.convertColumnIndexToModel(col) == 2)
                     {
-                        List<String> options = filterOptions(treeNode.getValueRestrictions(), ""); // , treeNode.getValue());
-                        if (!options.isEmpty())
-                        {
-                            JPopupMenu popup = new JPopupMenu();
-                            for (String option : options)
-                            {
-                                JMenuItem item = new JMenuItem(option);
-                                item.addActionListener(new ActionListener()
-                                {
-                                    /** {@inheritDoc} */
-                                    @Override
-                                    public void actionPerformed(final ActionEvent e)
-                                    {
-                                        OtsEditor.this.treeTable.editingCanceled(null);
-                                        treeNode.setValue(option);
-                                        OtsEditor.this.treeTable.updateUI();
-                                    }
-                                });
-                                item.setFont(OtsEditor.this.treeTable.getFont());
-                                popup.add(item);
-                            }
-                            preparePopupRemoval(popup, OtsEditor.this.treeTable);
-                            Rectangle rectangle = OtsEditor.this.treeTable.getCellRect(row, col, true);
-                            SwingUtilities.invokeLater(new Runnable() // JTreeTable removes the popup with editable cells
-                            {
-                                /** {@inheritDoc} */
-                                @Override
-                                public void run()
-                                {
-                                    OtsEditor.this.treeTable.setComponentPopupMenu(popup);
-                                    popup.show(OtsEditor.this.treeTable, (int) rectangle.getMinX(),
-                                            (int) rectangle.getMaxY() - 1);
-                                }
-
-                            });
-                        }
+                        List<String> allOptions = treeNode.getValueRestrictions();
+                        optionsPopup(allOptions, OtsEditor.this.treeTable, (t) -> treeNode.setValue(t));
                     }
                 }
             }
