@@ -153,11 +153,13 @@ public class XsdTreeNodeRoot extends XsdTreeNode implements EventProducer
     }
 
     /**
-     * Validator for both xsd:key and xsd:keyref. Functionality is almost completely the same. They register with the right
-     * nodes in the same way. If no {@code KeyValidator} is given in the constructor, the instance will behave as a xsd:key;
-     * maintaining a list of nodes (fed by an external listener) and validating against field uniqueness over those nodes. If
-     * another {@code KeyValidator} is given in the constructor, the instance will behave as a xsd:keyref and validate that the
-     * field value is within the given {@code KeyValidator}.
+     * Validator for xsd:key, xsd:keyref and xsd:unique. Functionality is very similar, with all allowing to define multiple
+     * fields. They register with the right nodes in the same way. If no {@code KeyValidator} is given in the constructor, the
+     * instance will behave as an xsd:key or xsd:unique. These check a range of values for uniqueness and officially only differ
+     * in whether all values need to be present. Here this is ignored and they are treated the same. This class will maintain a
+     * list of nodes (fed by an external listener) and validate against field uniqueness over those nodes. If another
+     * {@code KeyValidator} is given in the constructor, the instance will behave as a xsd:keyref and validate that the field
+     * values are, as a set, within the given {@code KeyValidator}.
      * @author wjschakel
      */
     private static class KeyValidator implements ValueValidator
