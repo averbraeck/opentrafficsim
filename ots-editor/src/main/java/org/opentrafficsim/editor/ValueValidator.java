@@ -12,22 +12,30 @@ import java.util.regex.PatternSyntaxException;
 import org.w3c.dom.Node;
 
 /**
- * Utility class to validate values using XSD nodes and an XSD schema.
+ * Interface for validation for xsd:key, xsd:keyRef and xsd:unique, and utility class to validate values using XSD nodes and an
+ * XSD schema.
  * @author wjschakel
  */
-public final class ValueValidator
+public interface ValueValidator
 {
 
     /** Set to store tags for which an error has been printed, to prevent repeated printing on repeated validation. */
-    private static Set<String> suppressError = new LinkedHashSet<>();
+    Set<String> SUPPRESS_ERRORS = new LinkedHashSet<>();
 
     /**
-     * Private constructor.
+     * Returns message why a value is invalid, or {@code null} if the value is valid.
+     * @param node XsdTreeNode; supplied to verify with context, e.g. value combinations.
+     * @return String; message why a value is invalid, or {@code null} if the value is valid.
      */
-    private ValueValidator()
-    {
-
-    }
+    String validate(XsdTreeNode node);
+    
+    /**
+     * Returns the options that a validator leaves, typically an xsd:keyref returning defined values under the reference.
+     * @param node XsdTreeNode; node that is in the appropriate context.
+     * @param field String; field, attribute or child element, for which to obtain the options.
+     * @return List&lt;String&gt;; options, {@code null} if this is not an xsd:keyref restriction.
+     */
+    List<String> getOptions(XsdTreeNode node, String field);
 
     /**
      * Report first encountered problem in validating the value of the node.
@@ -36,7 +44,7 @@ public final class ValueValidator
      * @param schema XsdSchema; schema for type retrieval.
      * @return String; first encountered problem in validating the value of the node, {@code null} if there is no problem.
      */
-    public static String reportInvalidValue(final Node xsdNode, final String value, final XsdSchema schema)
+    static String reportInvalidValue(final Node xsdNode, final String value, final XsdSchema schema)
     {
         if (xsdNode.equals(XiIncludeNode.XI_INCLUDE))
         {
@@ -63,7 +71,7 @@ public final class ValueValidator
      * @param schema XsdSchema; schema for type retrieval.
      * @return String; first encountered problem in validating the attribute value, {@code null} if there is no problem.
      */
-    public static String reportInvalidAttributeValue(final Node xsdNode, final String value, final XsdSchema schema)
+    static String reportInvalidAttributeValue(final Node xsdNode, final String value, final XsdSchema schema)
     {
         String use = XsdSchema.getAttribute(xsdNode, "use");
         if ("required".equals(use) && (value == null || value.isBlank()))
@@ -83,7 +91,7 @@ public final class ValueValidator
      * @param schema XsdSchema; schema.
      * @return List&lt;Node&gt;; list of xsd:restriction nodes applicable to the input node.
      */
-    public static List<Node> getRestrictions(final Node xsdNode, final XsdSchema schema)
+    static List<Node> getRestrictions(final Node xsdNode, final XsdSchema schema)
     {
         List<Node> restrictions = new ArrayList<>();
         reportTypeNonCompliance(xsdNode, "type", null, schema, restrictions);
@@ -91,7 +99,7 @@ public final class ValueValidator
     }
 
     /**
-     * Report first encountered problem in validating the value by a type, or when {@code value = null} scans all restrictions 
+     * Report first encountered problem in validating the value by a type, or when {@code value = null} scans all restrictions
      * and places them in the input list.
      * @param node Node; type node.
      * @param attribute String; "type" on normal calls, "base" on recursive calls.
@@ -251,10 +259,10 @@ public final class ValueValidator
                     if (!type.startsWith("ots:"))
                     {
                         String message = "Type " + type + " cannot be validated.";
-                        if (!suppressError.contains(message))
+                        if (!SUPPRESS_ERRORS.contains(message))
                         {
                             System.err.println(message);
-                            suppressError.add(message);
+                            SUPPRESS_ERRORS.add(message);
                         }
                     }
                     return null;
@@ -292,12 +300,12 @@ public final class ValueValidator
             }
             catch (PatternSyntaxException exception)
             {
-                if (!suppressError.contains(patternString))
+                if (!SUPPRESS_ERRORS.contains(patternString))
                 {
                     System.err.println("Could not validate value by pattern due to a PatternSyntaxException."
                             + " This means the pattern is not valid.");
                     System.err.println(exception.getMessage());
-                    suppressError.add(patternString);
+                    SUPPRESS_ERRORS.add(patternString);
                 }
             }
         }

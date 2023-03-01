@@ -12,6 +12,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
@@ -19,7 +21,6 @@ import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 /**
@@ -176,17 +177,23 @@ public class XsdTreeNode implements Serializable
     /** The description, may be {@code null}. */
     private String description;
 
+    /** Validators for the value. */
+    private Set<ValueValidator> valueValidators = new LinkedHashSet<>();
+
+    /** Validators for each attribute. */
+    private Map<String, Set<ValueValidator>> attributeValidators = new LinkedHashMap<>();
+
     /**
-     * Constructor for root node, based on a document. Note: {@code XsdTreeNodeRoot} should be used for the root. The document
-     * is forwarded to an {@code XsdSchema} that will be available to all nodes in the tree.
-     * @param document Document; XSD document.
+     * Constructor for root node, based on an {@code XsdSchema}. Note: {@code XsdTreeNodeRoot} should be used for the root. The
+     * {@code XsdSchema} that will be available to all nodes in the tree.
+     * @param schema XsdSchema; XSD schema.
      */
-    protected XsdTreeNode(final Document document)
+    protected XsdTreeNode(final XsdSchema schema)
     {
-        Throw.whenNull(document, "Document may not be null.");
+        Throw.whenNull(schema, "XsdSchema may not be null.");
         this.parent = null;
         this.hiddenNodes = new ImmutableArrayList<>(Collections.emptyList());
-        this.schema = new XsdSchema(document);
+        this.schema = schema;
         this.xsdNode = this.schema.getRoot();
         this.referringXsdNode = null;
         setOccurs();
@@ -421,7 +428,7 @@ public class XsdTreeNode implements Serializable
      * {@code Node}. In rare cases it is "xi:include".
      * @return String; name of this node, as appropriate in XML.
      */
-    private String getNodeString()
+    public String getNodeString()
     {
         Node node = this.referringXsdNode == null ? this.xsdNode : this.referringXsdNode;
         String ref = XsdSchema.getAttribute(node, "ref");
@@ -1027,25 +1034,51 @@ public class XsdTreeNode implements Serializable
     public String getAttributeValue(final String attribute)
     {
         assureAttributesAndDescription();
+        return this.attributeValues.get(getAttributeIndexByName(attribute));
+    }
+
+    /**
+     * Returns the index of the named attribute.
+     * @param attribute String; attribute name.
+     * @return int; index of the named attribute.
+     */
+    private int getAttributeIndexByName(final String attribute)
+    {
         for (int index = 0; index < this.attributeCount(); index++)
         {
             Node attr = this.attributeNodes.get(index);
             if (XsdSchema.getAttribute(attr, "name").equals(attribute))
             {
-                return this.attributeValues.get(index);
+                return index;
             }
         }
         throw new IllegalStateException("Attribute " + attribute + " is not in node " + getNodeString() + ".");
     }
 
+    /**
+     * Returns the name of the indexed attribute.
+     * @param index int; attribute index.
+     * @return String; name of the indexed attribute.
+     */
+    private String getAttributeNameByIndex(final int index)
+    {
+        String name = XsdSchema.getAttribute(this.attributeNodes.get(index), "name");
+        return name;
+    }
+
     // ====== Methods to expose to the GUI ======
 
     /**
-     * Returns whether the node is active. If not, it only exists to show the user what type of node may be created here.
+     * Returns whether the node is active. If not, it only exists to show the user what type of node may be created here, or as
+     * a choice option currently not chosen.
      * @return boolean; whether the node is active.
      */
     public boolean isActive()
     {
+        if (this.choice != null && !this.choice.selected.equals(this))
+        {
+            return false;
+        }
         return this.active;
     }
 
@@ -1533,14 +1566,32 @@ public class XsdTreeNode implements Serializable
     }
 
     /**
+     * Adds a validator for the value.
+     * @param validator ValueValidator; validator.
+     */
+    public void addValueValidator(final ValueValidator validator)
+    {
+        this.valueValidators.add(validator);
+    }
+
+    /**
+     * Adds a validator for the value of an attribute.
+     * @param attribute String; attribute name.
+     * @param validator ValueValidator; validator.
+     */
+    public void addAttributeValidator(final String attribute, final ValueValidator validator)
+    {
+        this.attributeValidators.computeIfAbsent(attribute, (key) -> new LinkedHashSet<>()).add(validator);
+    }
+
+    /**
      * Returns a message why the id is invalid, or {@code null} if it is valid. This should only be used to determine a GUI
      * indication on an invalid ID. For other cases processing the attributes includes the ID.
      * @return String; message why the id is invalid, or {@code null} if it is valid.
      */
     public String reportInvalidId()
     {
-        return isIdentifiable() ? ValueValidator.reportInvalidAttributeValue(getAttributeNode(this.idIndex),
-                getAttributeValue(this.idIndex), this.schema) : null;
+        return isIdentifiable() ? reportInvalidAttributeValue(getAttributeIndexByName("ID")) : null;
     }
 
     /**
@@ -1549,7 +1600,22 @@ public class XsdTreeNode implements Serializable
      */
     public String reportInvalidValue()
     {
-        return isEditable() ? ValueValidator.reportInvalidValue(this.xsdNode, this.value, this.schema) : null;
+        if (!isEditable())
+        {
+            return null;
+        }
+        if (this.value != null && !this.value.isBlank())
+        {
+            for (ValueValidator validator : this.valueValidators)
+            {
+                String message = validator.validate(this);
+                if (message != null)
+                {
+                    return message;
+                }
+            }
+        }
+        return ValueValidator.reportInvalidValue(this.xsdNode, this.value, this.schema);
     }
 
     /**
@@ -1559,28 +1625,112 @@ public class XsdTreeNode implements Serializable
      */
     public String reportInvalidAttributeValue(final int index)
     {
+        String attribute = XsdSchema.getAttribute(getAttributeNode(index), "name");
+        String val = this.attributeValues.get(index);
+        if (val != null && !val.isBlank())
+        {
+            for (ValueValidator validator : this.attributeValidators.computeIfAbsent(attribute, (key) -> new LinkedHashSet<>()))
+            {
+                String message = validator.validate(this);
+                if (message != null)
+                {
+                    return message;
+                }
+            }
+        }
         return ValueValidator.reportInvalidAttributeValue(getAttributeNode(index), getAttributeValue(index), this.schema);
     }
 
     /**
-     * Returns all restrictions for the value.
-     * @return List&lt;Node&gt;; list of xsd:restriction nodes applicable to the value.
+     * Returns all restrictions for the value. These are not sorted and may contain duplicates.
+     * @return List&lt;String&gt;; list of restrictions for the value.
      */
-    public List<Node> getValueRestrictions()
+    public List<String> getValueRestrictions()
     {
-        return ValueValidator.getRestrictions(this.xsdNode, this.schema);
+        List<String> valueOptions = getOptionsFromValidators(this.valueValidators);
+        if (!valueOptions.isEmpty())
+        {
+            return valueOptions;
+        }
+        return getOptionsFromRestrictions(ValueValidator.getRestrictions(this.xsdNode, this.schema));
     }
-    
+
     /**
-     * Returns all restrictions for the given attribute.
+     * Returns all restrictions for the given attribute. These are not sorted and may contain duplicates.
      * @param index int; attribute number.
-     * @return List&lt;Node&gt;; list of xsd:restriction nodes applicable to the attribute.
+     * @return List&lt;String&gt;; list of restrictions for the attribute.
      */
-    public List<Node> getAttributeRestrictions(final int index)
+    public List<String> getAttributeRestrictions(final int index)
     {
-        return ValueValidator.getRestrictions(this.attributeNodes.get(index), this.schema);
+        List<String> valueOptions = getOptionsFromValidators(
+                this.attributeValidators.computeIfAbsent(getAttributeNameByIndex(index), (key) -> new LinkedHashSet<>()));
+        if (!valueOptions.isEmpty())
+        {
+            return valueOptions;
+        }
+        return getOptionsFromRestrictions(ValueValidator.getRestrictions(this.attributeNodes.get(index), this.schema));
     }
-    
+
+    /**
+     * Returns options based on a set of validators.
+     * @param validators Set&lt;ValueValidator&gt;; validators.
+     * @return List&lt;String&gt;; list of options.
+     */
+    private List<String> getOptionsFromValidators(final Set<ValueValidator> validators)
+    {
+        List<String> combined = null;
+        for (ValueValidator validator : validators)
+        {
+            List<String> valueOptions = validator.getOptions(this, getNodeString());
+            if (valueOptions != null && combined != null)
+            {
+                combined = combined.stream().filter(valueOptions::contains).collect(Collectors.toList());
+            }
+            else if (valueOptions != null)
+            {
+                combined = valueOptions;
+            }
+        }
+        if (combined != null && !combined.isEmpty())
+        {
+            return combined;
+        }
+        return Collections.emptyList();
+    }
+
+    /**
+     * Returns a list of options derived from a list of restrictions (xsd:restriction).
+     * @param restrictions List&lt;Node&gt;; list of restrictions.
+     * @return List&lt;String&gt;; list of options.
+     */
+    private static List<String> getOptionsFromRestrictions(final List<Node> restrictions)
+    {
+        List<String> options = new ArrayList<>();
+        for (Node restriction : restrictions)
+        {
+            List<Node> enumerations = XsdSchema.getChildren(restriction, "xsd:enumeration");
+            for (Node enumeration : enumerations)
+            {
+                options.add(XsdSchema.getAttribute(enumeration, "value"));
+            }
+            // TODO: This is temporary, xsd:enumeration should be used for regular option selection.
+            Node pattern = XsdSchema.getChild(restriction, "xsd:pattern");
+            if (pattern != null)
+            {
+                String patt = XsdSchema.getAttribute(pattern, "value");
+                if (Pattern.matches("([A-Z]*\\|)*[A-Z]+", patt))
+                {
+                    String[] values = patt.split("\\|");
+                    for (String value : values)
+                    {
+                        options.add(value);
+                    }
+                }
+            }
+        }
+        return options;
+    }
+
     // ====== Interaction with visualization ======
 
     /**

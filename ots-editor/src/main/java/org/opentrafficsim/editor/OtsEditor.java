@@ -16,12 +16,11 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.swing.DefaultCellEditor;
@@ -38,6 +37,7 @@ import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -63,7 +63,6 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.editor.XsdTreeNode.GroupPosition;
 import org.opentrafficsim.swing.gui.Resource;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 
 import de.javagl.treetable.JTreeTable;
 
@@ -105,6 +104,9 @@ public class OtsEditor extends JFrame implements EventProducer
 
     /** Maximum length for tooltips. */
     public static final int MAX_TOOLTIP_LENGTH = 96;
+
+    /** Maximum number of items to show in a dropdown menu. */
+    public static final int MAX_DROPDOWN_ITEMS = 20;
 
     /** Map of listeners for {@code EventProducer}. */
     private final EventListenerMap listenerMap = new EventListenerMap();
@@ -365,7 +367,7 @@ public class OtsEditor extends JFrame implements EventProducer
     }
 
     /**
-     * Adds a listener to a popup to remove the popop from the JTreeTable when the popup becomes invisible. This makes sure that
+     * Adds a listener to a popup to remove the popop from the component when the popup becomes invisible. This makes sure that
      * a right-clicks on another location that should show a different popup, is not overruled by the popup of a previous click.
      * @param popup JPopupMenu; popup menu.
      * @param component JComponent; component from which the menu will be removed.
@@ -613,36 +615,15 @@ public class OtsEditor extends JFrame implements EventProducer
     }
 
     /**
-     * Returns a list of options derived from a list of restrictions (xsd:restriction).
-     * @param restrictions List&lt;Node&gt;; list of restrictions.
-     * @return List&lt;String&gt;; list of options.
+     * Filter options, leaving only those that start with the current value.
+     * @param options List&lt;String&gt;; options to filter.
+     * @param currentValue String; current value.
+     * @return List&lt;String&gt;; filtered options.
      */
-    private static List<String> getOptionsFromRestrictions(final List<Node> restrictions)
+    private static List<String> filterOptions(final List<String> options, final String currentValue)
     {
-        List<String> options = new ArrayList<>();
-        for (Node restriction : restrictions)
-        {
-            List<Node> enumerations = XsdSchema.getChildren(restriction, "xsd:enumeration");
-            for (Node enumeration : enumerations)
-            {
-                options.add(XsdSchema.getAttribute(enumeration, "value"));
-            }
-            // TODO: This is temporary, xsd:sequence should be used for regular option selection.
-            Node pattern = XsdSchema.getChild(restriction, "xsd:pattern");
-            if (pattern != null)
-            {
-                String patt = XsdSchema.getAttribute(pattern, "value");
-                if (Pattern.matches("([A-Z]*\\|)*[A-Z]+", patt))
-                {
-                    String[] values = patt.split("\\|");
-                    for (String value : values)
-                    {
-                        options.add(value);
-                    }
-                }
-            }
-        }
-        return options;
+        return options.stream().filter((val) -> currentValue == null || currentValue.isBlank() || val.startsWith(currentValue))
+                .distinct().sorted().limit(MAX_DROPDOWN_ITEMS).collect(Collectors.toList());
     }
 
     /**
@@ -674,14 +655,14 @@ public class OtsEditor extends JFrame implements EventProducer
         @Override
         public void mousePressed(final MouseEvent e)
         {
-            // shows popup for attributes with a selection of allowable values (xsd:enumeration, xsd:keyref)
+            // shows popup for attributes with a selection of allowable values (xsd:keyref, xsd:enumeration)
             int col = OtsEditor.this.attributesTable.columnAtPoint(e.getPoint());
             if (OtsEditor.this.attributesTable.convertColumnIndexToModel(col) == 1)
             {
                 int row = OtsEditor.this.attributesTable.rowAtPoint(e.getPoint());
                 XsdTreeNode node = ((AttributesTableModel) OtsEditor.this.attributesTable.getModel()).getNode();
-                List<Node> restrictions = node.getAttributeRestrictions(row);
-                List<String> options = getOptionsFromRestrictions(restrictions);
+                List<String> allOptions = node.getAttributeRestrictions(row);
+                List<String> options = filterOptions(allOptions, ""); // node.getAttributeValue(row));
                 if (options.isEmpty())
                 {
                     return;
@@ -689,7 +670,7 @@ public class OtsEditor extends JFrame implements EventProducer
                 JPopupMenu popup = new JPopupMenu();
                 for (String option : options)
                 {
-                    JMenuItem item = new JMenuItem(option.toLowerCase());
+                    JMenuItem item = new JMenuItem(option);
                     item.addActionListener(new ActionListener()
                     {
                         /** {@inheritDoc} */
@@ -708,6 +689,10 @@ public class OtsEditor extends JFrame implements EventProducer
                 Rectangle rectangle = OtsEditor.this.attributesTable.getCellRect(row, col, true);
                 OtsEditor.this.attributesTable.setComponentPopupMenu(popup);
                 popup.show(OtsEditor.this.attributesTable, (int) rectangle.getMinX(), (int) rectangle.getMaxY() - 1);
+                JTextField field =
+                        (JTextField) ((DefaultCellEditor) OtsEditor.this.attributesTable.getDefaultEditor(String.class))
+                                .getComponent();
+                field.requestFocus();
             }
         }
     }
@@ -878,13 +863,13 @@ public class OtsEditor extends JFrame implements EventProducer
                 {
                     if (OtsEditor.this.treeTable.convertColumnIndexToModel(col) == 2)
                     {
-                        List<String> options = getOptionsFromRestrictions(treeNode.getValueRestrictions());
+                        List<String> options = filterOptions(treeNode.getValueRestrictions(), ""); // , treeNode.getValue());
                         if (!options.isEmpty())
                         {
                             JPopupMenu popup = new JPopupMenu();
                             for (String option : options)
                             {
-                                JMenuItem item = new JMenuItem(option.toLowerCase());
+                                JMenuItem item = new JMenuItem(option);
                                 item.addActionListener(new ActionListener()
                                 {
                                     /** {@inheritDoc} */

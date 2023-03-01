@@ -41,6 +41,9 @@ public final class RunEditor
             throws IOException, SAXException, ParserConfigurationException, InterruptedException
     {
         OtsEditor editor = new OtsEditor();
+        
+        new GenericStringFunction(editor, "OTS.NETWORKDEMAND.GENERATOR", "LINK", "LANE");
+        
         EventListener nodeListener = new NodeListener(editor, new RouteEditor(editor));
         EventListener editorListener = new EventListener()
         {

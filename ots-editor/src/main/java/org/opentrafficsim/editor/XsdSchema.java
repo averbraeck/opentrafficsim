@@ -27,8 +27,6 @@ import org.xml.sax.SAXException;
 public class XsdSchema
 {
 
-    // TODO: in GUI, check element contents that have a pattern defined in their type, e.g. LENGTHTYPE with "[+-]?[0-9]*\ ..."
-
     /** Root OTS node. */
     private Node root;
 
@@ -59,9 +57,15 @@ public class XsdSchema
     /** Nodes xsd:key. */
     private final Map<String, Node> keys = new LinkedHashMap<>();
 
+    /** Paths where xsd:key are defined, same order as {@code keys}. */
+    private final Map<String, String> keysPath = new LinkedHashMap<>();
+    
     /** Nodes xsd:keyref. */
     private final Map<String, Node> keyrefs = new LinkedHashMap<>();
 
+    /** Paths where xsd:keyref are defined, same order as {@code keyrefs}. */
+    private final Map<String, String> keyrefsPath = new LinkedHashMap<>();
+    
     /** Nodes xsd:unique. */
     private final Map<String, Node> uniques = new LinkedHashMap<>();
 
@@ -289,9 +293,11 @@ public class XsdSchema
                     break;
                 case "xsd:key":
                     this.keys.put(getAttribute(child, "name"), child);
+                    this.keysPath.put(getAttribute(child, "name"), nextPath);
                     break;
                 case "xsd:keyref":
                     this.keyrefs.put(getAttribute(child, "name"), child);
+                    this.keyrefsPath.put(getAttribute(child, "name"), nextPath);
                     break;
                 case "xsd:unique":
                     this.uniques.put(getAttribute(child, "name"), child);
@@ -741,6 +747,69 @@ public class XsdSchema
         }
         return false;
     }
+    
+    /**
+     * Get the root node.
+     * @return Node; root node.
+     */
+    public Node getRoot()
+    {
+        return this.root;
+    }
+
+    /**
+     * Returns the node for the given path.
+     * @param path String; path.
+     * @return Node; type.
+     */
+    public Node getElement(final String path)
+    {
+        return this.elements.get(path.replace("ots:", ""));
+    }
+
+    /**
+     * Returns the type, as pointed to by base={base}.
+     * @param base String; type.
+     * @return String; type, as pointed to by base={base}.
+     */
+    public Node getType(final String base)
+    {
+        return this.types.get(base.replace("ots:", ""));
+    }
+    
+    /**
+     * Returns the xsd:key and the paths where they are defined.
+     * @return Map&lt;Node, String&gt;; xsd:key and the paths where they are defined.
+     */
+    public Map<Node, String> keys()
+    {
+        Map<Node, String> map = new LinkedHashMap<>();
+        this.keys.forEach((key, value) -> map.put(value, this.keysPath.get(key)));
+        return map;
+    }
+    
+    /**
+     * Returns the xsd:keyref and the paths where they are defined.
+     * @return Map&lt;Node, String&gt;; xsd:keyref and the paths where they are defined.
+     */
+    public Map<Node, String> keyrefs()
+    {
+        Map<Node, String> map = new LinkedHashMap<>();
+        this.keyrefs.forEach((key, value) -> map.put(value, this.keyrefsPath.get(key)));
+        return map;
+    }
+    
+    /**
+    /**
+     * Returns the xsd:unique and the paths where they are defined.
+     * @return Map&lt;Node, String&gt;; xsd:unique and the paths where they are defined.
+     */
+    public Map<Node, String> uniques()
+    {
+        Map<Node, String> map = new LinkedHashMap<>();
+        this.uniques.forEach((key, value) -> map.put(value, this.uniquesPath.get(key)));
+        return map;
+    }
 
     /**
      * Returns a child node of specified type. It should be a type of which there may be only one.
@@ -822,35 +891,6 @@ public class XsdSchema
             }
         }
         return null;
-    }
-
-    /**
-     * Get the root node.
-     * @return Node; root node.
-     */
-    public Node getRoot()
-    {
-        return this.root;
-    }
-
-    /**
-     * Returns the node for the given path.
-     * @param path String; path.
-     * @return Node; type.
-     */
-    public Node getElement(final String path)
-    {
-        return this.elements.get(path.replace("ots:", ""));
-    }
-
-    /**
-     * Returns the type, as pointed to by base={base}.
-     * @param base String; type.
-     * @return String; type, as pointed to by base={base}.
-     */
-    public Node getType(final String base)
-    {
-        return this.types.get(base.replace("ots:", ""));
     }
 
 }
