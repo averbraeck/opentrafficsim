@@ -90,6 +90,18 @@ public class FixedTimeController extends AbstractTrafficController
         this.cycleTime = cycleTime;
         this.offset = offset;
         this.signalGroups = new LinkedHashSet<>(signalGroups); // make a copy so we can modify it.
+        mergeGreenPhasesInNewSignalGroups();
+        // Schedule setup at time == 0 (when the network should be fully created and all traffic lights have been constructed)
+        simulator.scheduleEventAbsTime(Time.ZERO, this, "setup", new Object[] {simulator, network});
+    }
+
+    /**
+     * This method finds traffic lights that are present in multiple signal groups, extracts them from their existing groups,
+     * and places them in a new signal group that allows the traffic light to be green whenever any of the original signal
+     * groups did.
+     */
+    private void mergeGreenPhasesInNewSignalGroups()
+    {
         // Identify traffic lights that are present in more than one signal group
         Map<String, List<SignalGroup>> signalGroupsOfTrafficLight = new LinkedHashMap<>();
         for (SignalGroup sg : this.signalGroups)
@@ -232,8 +244,6 @@ public class FixedTimeController extends AbstractTrafficController
                 }
             }
         }
-        // Schedule setup at time == 0 (when the network should be fully created and all traffic lights have been constructed)
-        simulator.scheduleEventAbsTime(Time.ZERO, this, "setup", new Object[] {simulator, network});
     }
 
     /**
@@ -298,7 +308,7 @@ public class FixedTimeController extends AbstractTrafficController
     }
 
     /**
-     * Fixed time signal group.
+     * Fixed time signal group. A group of traffic lights who's colors change simultaneously.
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
@@ -642,7 +652,8 @@ public class FixedTimeController extends AbstractTrafficController
     }
 
     /**
-     * Storage of an offset within a cycle and the new traffic light color. Used to sort the flanks.
+     * Storage of an offset within a cycle and the new traffic light color. Used to sort the flanks. The term 'flank' refers to
+     * the 'side' of the shape of an electronic signal impulse.
      */
     class Flank implements Comparable<Flank>
     {
