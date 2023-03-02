@@ -17,10 +17,14 @@ import java.util.stream.Collectors;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
+import org.djutils.event.EventType;
+import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
+import org.djutils.metadata.MetaData;
+import org.djutils.metadata.ObjectDescriptor;
 import org.w3c.dom.Node;
 
 /**
@@ -65,11 +69,21 @@ import org.w3c.dom.Node;
  * a virtual layer not representing XML reading and writing.
  * @author wjschakel
  */
-public class XsdTreeNode implements Serializable
+public class XsdTreeNode extends LocalEventProducer implements Serializable
 {
 
     /** */
     private static final long serialVersionUID = 20230224L;
+
+    /** Event when a node value is changed. */
+    public static final EventType VALUE_CHANGED = new EventType("VALUECHANGED", new MetaData("Value changed",
+            "Value changed on node", new ObjectDescriptor("Node", "Node with changed value", XsdTreeNode.class)));
+
+    /** Event when an attribute value is changed. */
+    public static final EventType ATTRIBUTE_CHANGED = new EventType("ATTRIBUTECHANGED",
+            new MetaData("Attribute changed", "Attribute changed on node",
+                    new ObjectDescriptor("Node", "Node with changed attribute value", XsdTreeNode.class),
+                    new ObjectDescriptor("Attribute", "Name of the attribute", String.class)));
 
     /** Limit on displayed option name to avoid huge menu's. */
     private static final int MAX_OPTIONNAME_LENGTH = 64;
@@ -286,14 +300,7 @@ public class XsdTreeNode implements Serializable
                 option.choice = this;
             }
         }
-        try
-        {
-            ((XsdTreeNodeRoot) getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED, this);
-        }
-        catch (RemoteException exception)
-        {
-            throw new RuntimeException("Unexpected exception when throwing NOCE_CREATED event.");
-        }
+        ((XsdTreeNodeRoot) getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED, this);
     }
 
     /**
@@ -1009,8 +1016,20 @@ public class XsdTreeNode implements Serializable
     @SuppressWarnings("checkstyle:hiddenfield")
     public void setAttributeValue(final int index, final String value)
     {
+        setAttributeValue(getAttributeNameByIndex(index), value);
+    }
+
+    /**
+     * Sets an attribute value; directly for an {@code XsdAttributesTableModel}.
+     * @param name String; name of the attribute.
+     * @param value String; value of the attribute.
+     */
+    @SuppressWarnings("checkstyle:hiddenfield")
+    public void setAttributeValue(final String name, final String value)
+    {
         assureAttributesAndDescription();
-        this.attributeValues.set(index, value);
+        this.attributeValues.set(getAttributeIndexByName(name), value);
+        fireEvent(ATTRIBUTE_CHANGED, new Object[] {this, name});
     }
 
     /**
@@ -1179,7 +1198,7 @@ public class XsdTreeNode implements Serializable
     public void setId(final String id)
     {
         Throw.when(!isIdentifiable(), IllegalStateException.class, "Setting id on non-identifiable node.");
-        this.attributeValues.set(this.idIndex, id);
+        setAttributeValue(this.idIndex, id);
     }
 
     /**
@@ -1242,6 +1261,7 @@ public class XsdTreeNode implements Serializable
         Throw.when(!isEditable(), IllegalStateException.class,
                 "Node is not an xsd:simpleType or xsd:complexType with xsd:simpleContent, hence no value is allowed.");
         this.value = value;
+        fireEvent(new Event(VALUE_CHANGED, this));
     }
 
     /**
@@ -1389,14 +1409,7 @@ public class XsdTreeNode implements Serializable
         this.parent.children.remove(this);
         XsdTreeNodeRoot root = (XsdTreeNodeRoot) getPath().get(0); // can't get path later as we set parent to null
         this.parent = null;
-        try
-        {
-            root.fireEvent(XsdTreeNodeRoot.NODE_REMOVED, this);
-        }
-        catch (RemoteException exception)
-        {
-            throw new RuntimeException("Unexpected exception when throwing NODE_REMOVED event.");
-        }
+        root.fireEvent(XsdTreeNodeRoot.NODE_REMOVED, this);
     }
 
     /**
@@ -1730,6 +1743,16 @@ public class XsdTreeNode implements Serializable
         }
         return options;
     }
+    
+    /**
+     * Returns the base type of the attribute, e.g. xsd:double.
+     * @param index int; attribute index.
+     * @return String; base type of the attribute, e.g. xsd:double.
+     */
+    public String getAttributeBaseType(final int index)
+    {
+        return ValueValidator.getBaseType(this.attributeNodes.get(index), this.schema);
+    }
 
     // ====== Interaction with visualization ======
 
@@ -1820,7 +1843,8 @@ public class XsdTreeNode implements Serializable
                 assureChildren();
                 for (XsdTreeNode child : this.children)
                 {
-                    if (!coveredTypes.contains(child.getPathString()))
+                    if (!coveredTypes.contains(child.getPathString()) || child.xsdNode.getNodeName().equals("xsd:sequence")
+                            || child.xsdNode.getNodeName().equals("xsd:choice"))
                     {
                         stringBuilder.append(separator).append(child.getShortString());
                         separator = " | ";

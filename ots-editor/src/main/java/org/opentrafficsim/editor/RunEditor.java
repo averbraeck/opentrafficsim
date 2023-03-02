@@ -26,24 +26,24 @@ public final class RunEditor
      */
     private RunEditor()
     {
-        
+
     }
-    
+
     /**
      * Runs the editor.
      * @param args String[]; arguments.
      * @throws IOException exception
      * @throws SAXException exception
-     * @throws ParserConfigurationException exception 
+     * @throws ParserConfigurationException exception
      * @throws InterruptedException exception
      */
     public static void main(final String[] args)
             throws IOException, SAXException, ParserConfigurationException, InterruptedException
     {
         OtsEditor editor = new OtsEditor();
-        
+
         new GenericStringFunction(editor, "OTS.NETWORKDEMAND.GENERATOR", "LINK", "LANE");
-        
+
         EventListener nodeListener = new NodeListener(editor, new RouteEditor(editor));
         EventListener editorListener = new EventListener()
         {
@@ -126,7 +126,7 @@ public final class RunEditor
 
         /** Editor. */
         private OtsEditor editor;
-        
+
         /** Route editor. */
         private RouteEditor routeEditor;
 
@@ -188,7 +188,7 @@ public final class RunEditor
                         }
                     });
                 }
-
+                
                 // register editors
                 if (node.getPathString().equals("OTS.CONTROL.TRAFCOD.PROGRAM"))
                 {
@@ -229,10 +229,35 @@ public final class RunEditor
                         }
                     });
                 }
+
+                // register value listeners
+                if (node.getPathString().equals("OTS.NETWORK.LINK"))
+                {
+                    node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+                }
             }
             else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
             {
                 System.out.println("Removed: " + ((XsdTreeNode) event.getContent()).getPathString());
+            }
+            else if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED))
+            {
+
+                Object[] content = (Object[]) event.getContent();
+                String attribute = (String) content[1];
+
+                if (attribute.equals("NODESTART") || attribute.equals("NODEEND"))
+                {
+                    XsdTreeNode node = (XsdTreeNode) content[0];
+                    String nodeStart = node.getAttributeValue("NODESTART");
+                    String nodeEnd = node.getAttributeValue("NODEEND");
+                    String id = node.getAttributeValue("ID");
+                    if (nodeStart != null && !nodeStart.isBlank() && nodeEnd != null && !nodeEnd.isBlank()
+                            && (id == null || id.isBlank()))
+                    {
+                        node.setAttributeValue("ID", nodeStart + "-" + nodeEnd);
+                    }
+                }
             }
         }
     }

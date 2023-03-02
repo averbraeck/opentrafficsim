@@ -28,7 +28,7 @@ public interface ValueValidator
      * @return String; message why a value is invalid, or {@code null} if the value is valid.
      */
     String validate(XsdTreeNode node);
-    
+
     /**
      * Returns the options that a validator leaves, typically an xsd:keyref returning defined values under the reference.
      * @param node XsdTreeNode; node that is in the appropriate context.
@@ -61,7 +61,7 @@ public interface ValueValidator
         {
             return "Value is empty.";
         }
-        return reportTypeNonCompliance(xsdNode, "type", value, schema, new ArrayList<>());
+        return reportTypeNonCompliance(xsdNode, "type", value, schema, null, null);
     }
 
     /**
@@ -82,7 +82,7 @@ public interface ValueValidator
         {
             return null;
         }
-        return reportTypeNonCompliance(xsdNode, "type", value, schema, new ArrayList<>());
+        return reportTypeNonCompliance(xsdNode, "type", value, schema, null, null);
     }
 
     /**
@@ -94,22 +94,36 @@ public interface ValueValidator
     static List<Node> getRestrictions(final Node xsdNode, final XsdSchema schema)
     {
         List<Node> restrictions = new ArrayList<>();
-        reportTypeNonCompliance(xsdNode, "type", null, schema, restrictions);
+        reportTypeNonCompliance(xsdNode, "type", null, schema, restrictions, null);
         return restrictions;
+    }
+    
+    /**
+     * Returns the base type of the given node, e.g. xsd:double.
+     * @param xsdNode Node; node.
+     * @param schema XsdSchema; schema.
+     * @return String; base type of the given node, e.g. xsd:double.
+     */
+    static String getBaseType(final Node xsdNode, final XsdSchema schema)
+    {
+        List<String> baseType = new ArrayList<>();
+        reportTypeNonCompliance(xsdNode, "type", null, schema, null, baseType);
+        return baseType.get(0);
     }
 
     /**
-     * Report first encountered problem in validating the value by a type, or when {@code value = null} scans all restrictions
-     * and places them in the input list.
+     * Report first encountered problem in validating the value by a type, or when {@code value = null} scan all restrictions
+     * and places them in the input list, .
      * @param node Node; type node.
      * @param attribute String; "type" on normal calls, "base" on recursive calls.
      * @param value String; value.
      * @param schema XsdSchema; schema for type retrieval.
      * @param restrictions List&lt;Node&gt;; list that xsd:restriction nodes will be placed in to.
+     * @param baseType List&lt;String&gt;; may be filled with 1 base type, e.g. xsd:double.
      * @return String; first encountered problem in validating the value by a type, {@code null} if there is no problem.
      */
     private static String reportTypeNonCompliance(final Node node, final String attribute, final String value,
-            final XsdSchema schema, final List<Node> restrictions)
+            final XsdSchema schema, final List<Node> restrictions, final List<String> baseType)
     {
         String type = XsdSchema.getAttribute(node, attribute); // can request "base" on recursion
         boolean isNativeType = type != null && type.startsWith("xsd:");
@@ -117,6 +131,11 @@ public interface ValueValidator
         {
             if (value == null)
             {
+                if (baseType != null)
+                {
+                    baseType.add(type);
+                    return null;
+                }
                 if (!node.getNodeName().equals("xsd:restriction"))
                 {
                     return null;
@@ -133,7 +152,8 @@ public interface ValueValidator
         }
         if (type != null && !isNativeType)
         {
-            String report = reportTypeNonCompliance(schema.getType(type), "base", value, schema, restrictions);
+            String report =
+                    reportTypeNonCompliance(schema.getType(type), "base", value, schema, restrictions, baseType);
             if (value != null && report != null)
             {
                 return report;
@@ -151,13 +171,13 @@ public interface ValueValidator
                 Node extension = XsdSchema.getChild(simpleContent, "xsd:extension");
                 if (extension != null)
                 {
-                    return reportTypeNonCompliance(extension, "base", value, schema, restrictions);
+                    return reportTypeNonCompliance(extension, "base", value, schema, restrictions, baseType);
                 }
                 return reportTypeNonCompliance(XsdSchema.getChild(simpleContent, "xsd:restriction"), "base", value, schema,
-                        restrictions);
+                        restrictions, baseType);
             case "xsd:simpleType":
-                return reportTypeNonCompliance(XsdSchema.getChild(node, "xsd:restriction"), "base", value, schema,
-                        restrictions);
+                return reportTypeNonCompliance(XsdSchema.getChild(node, "xsd:restriction"), "base", value, schema, restrictions,
+                        baseType);
             case "xsd:element":
                 if (node.getChildNodes().getLength() == 0)
                 {
@@ -166,14 +186,15 @@ public interface ValueValidator
                 Node complexType = XsdSchema.getChild(node, "xsd:complexType");
                 if (complexType != null)
                 {
-                    return reportTypeNonCompliance(complexType, "type", value, schema, restrictions);
+                    return reportTypeNonCompliance(complexType, "type", value, schema, restrictions, baseType);
                 }
                 Node simpleType = XsdSchema.getChild(node, "xsd:simpleType");
-                return reportTypeNonCompliance(simpleType, "type", value, schema, restrictions);
+                return reportTypeNonCompliance(simpleType, "type", value, schema, restrictions, baseType);
             case "xsd:attribute":
-                return reportTypeNonCompliance(XsdSchema.getChild(node, "xsd:simpleType"), "type", value, schema, restrictions);
+                return reportTypeNonCompliance(XsdSchema.getChild(node, "xsd:simpleType"), "type", value, schema, restrictions,
+                        baseType);
             case "xsd:restriction":
-                if (value == null)
+                if (value == null && restrictions != null)
                 {
                     restrictions.add(node);
                     return null;

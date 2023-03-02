@@ -89,7 +89,8 @@ public class AttributesTableModel extends AbstractTableModel
             case 0:
                 return XsdSchema.getAttribute(attribute, "name").toLowerCase();
             case 1:
-                return this.node.getAttributeValue(rowIndex);
+                Object value = this.node.getAttributeValue(rowIndex);
+                return value;
             case 2:
                 String use = XsdSchema.getAttribute(attribute, "use");
                 return use != null && use.equals("required") ? "*" : "";

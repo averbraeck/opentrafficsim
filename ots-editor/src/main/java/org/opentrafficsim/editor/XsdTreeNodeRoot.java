@@ -12,8 +12,6 @@ import java.util.Set;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
-import org.djutils.event.EventListenerMap;
-import org.djutils.event.EventProducer;
 import org.djutils.event.EventType;
 import org.djutils.event.reference.ReferenceType;
 import org.djutils.metadata.MetaData;
@@ -30,7 +28,7 @@ import org.w3c.dom.Node;
  * This class also sets up a listener for all xsd:key, xsd:keyref and xsd:unique from the schema.
  * @author wjschakel
  */
-public class XsdTreeNodeRoot extends XsdTreeNode implements EventProducer
+public class XsdTreeNodeRoot extends XsdTreeNode
 {
 
     /** */
@@ -50,9 +48,6 @@ public class XsdTreeNodeRoot extends XsdTreeNode implements EventProducer
     public static final EventType NODE_REMOVED = new EventType("NODEREMOVEDD", new MetaData("Node removed", "Removed tree node",
             new ObjectDescriptor("Node removed", "Removed tree node", XsdTreeNode.class)));
 
-    /** Map with listeners. */
-    private final EventListenerMap eventMap = new EventListenerMap();
-
     /**
      * Constructor for root node, based on a schema.
      * @param schema XsdSchema; XSD Schema.
@@ -65,25 +60,25 @@ public class XsdTreeNodeRoot extends XsdTreeNode implements EventProducer
         setupXPathListeners(schema);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public EventListenerMap getEventListenerMap() throws RemoteException
-    {
-        return this.eventMap;
-    }
-
     /**
      * {@inheritDoc} Overridden to throw events on existing nodes to the listener.
      */
     @Override
     public boolean addListener(final EventListener listener, final EventType eventType, final int position,
-            final ReferenceType referenceType) throws RemoteException
+            final ReferenceType referenceType)
     {
         if (NODE_CREATED.equals(eventType))
         {
-            fireCreatedEventOnExistingNodes(this, listener);
+            try
+            {
+                fireCreatedEventOnExistingNodes(this, listener);
+            }
+            catch (RemoteException exception)
+            {
+                throw new RuntimeException("Unexpected remote exception in local context.", exception);
+            }
         }
-        return EventProducer.super.addListener(listener, eventType, position, referenceType);
+        return super.addListener(listener, eventType, position, referenceType);
     }
 
     /**

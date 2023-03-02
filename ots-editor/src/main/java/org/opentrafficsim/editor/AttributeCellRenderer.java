@@ -3,6 +3,7 @@ package org.opentrafficsim.editor;
 import java.awt.Component;
 
 import javax.swing.Icon;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -13,7 +14,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.TableCellRenderer;
 
 /**
- * Renderer for cells in the attributes table.
+ * Renderer for cells in the attributes table. Provides a {JCheckBox} for boolean-type attributes.
  * @author wjschakel
  */
 public class AttributeCellRenderer extends JLabel implements TableCellRenderer
@@ -28,6 +29,9 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
     /** Info icon. */
     private Icon infoIcon;
 
+    /** Checkbox to use for boolean types. */
+    private JCheckBox checkBox = new JCheckBox();
+
     /**
      * Constructor.
      * @param infoIcon Icon; info icon.
@@ -36,6 +40,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
     {
         setOpaque(true);
         this.infoIcon = infoIcon;
+        this.checkBox.setBorder(EMPTY_BORDER);
     }
 
     /** {@inheritDoc} */
@@ -43,6 +48,36 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
     public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected,
             final boolean hasFocus, final int row, final int column)
     {
+        XsdTreeNode node = null;
+        if (table.convertColumnIndexToModel(column) == 1)
+        {
+            node = ((AttributesTableModel) table.getModel()).getNode();
+            String baseType = node.getAttributeBaseType(row);
+            if ("xsd:boolean".equals(baseType))
+            {
+                String message = node.reportInvalidAttributeValue(row);
+                if (message != null)
+                {
+                    this.checkBox.setToolTipText(OtsEditor.limitTooltip(message));
+                    this.checkBox.setBackground(OtsEditor.INVALID_COLOR);
+                }
+                else
+                {
+                    this.checkBox.setToolTipText(null);
+                    if (isSelected)
+                    {
+                        this.checkBox.setBackground(UIManager.getColor("Table.selectionBackground"));
+                    }
+                    else
+                    {
+                        this.checkBox.setBackground(UIManager.getColor("Panel.background"));
+                    }
+                }
+                this.checkBox.setSelected(value != null && value.toString().equalsIgnoreCase("true"));
+                return this.checkBox;
+            }
+        }
+
         if (table.convertColumnIndexToModel(column) < 3)
         {
             setText(value == null ? "" : value.toString());
@@ -53,12 +88,9 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
         }
         setFont(table.getFont());
         table.setGridColor(UIManager.getColor("Panel.background"));
-        Border border = EMPTY_BORDER;
-        setToolTipText(null);
         setIcon(null);
         if (table.convertColumnIndexToModel(column) == 1)
         {
-            XsdTreeNode node = ((AttributesTableModel) table.getModel()).getNode();
             String message = node.reportInvalidAttributeValue(row);
             if (message != null)
             {
@@ -67,13 +99,15 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
             }
             else
             {
-                setToolTipText(value == null ? null : value.toString());
+                setToolTipText(value == null || value.toString().isBlank() ? null : value.toString());
                 setBackground(UIManager.getColor("Table.background"));
             }
-            border = new LineBorder(UIManager.getColor("Table.gridColor"));
+            setBorder(new LineBorder(UIManager.getColor("Table.gridColor")));
         }
         else
         {
+            setToolTipText(null);
+            setBorder(EMPTY_BORDER);
             if (table.convertColumnIndexToModel(column) == 3 && value != null)
             {
                 setIcon(this.infoIcon);
@@ -87,7 +121,6 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
                 setBackground(UIManager.getColor("Panel.background"));
             }
         }
-        setBorder(border);
         if (table.convertColumnIndexToModel(column) > 1)
         {
             setHorizontalAlignment(SwingConstants.CENTER);

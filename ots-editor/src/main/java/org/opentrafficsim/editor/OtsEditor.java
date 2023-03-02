@@ -105,10 +105,10 @@ public class OtsEditor extends JFrame implements EventProducer
     public static final Color INVALID_COLOR = new Color(255, 240, 240);
 
     /** Maximum length for tooltips. */
-    public static final int MAX_TOOLTIP_LENGTH = 96;
+    private static final int MAX_TOOLTIP_LENGTH = 96;
 
     /** Maximum number of items to show in a dropdown menu. */
-    public static final int MAX_DROPDOWN_ITEMS = 20;
+    private static final int MAX_DROPDOWN_ITEMS = 20;
 
     /** Map of listeners for {@code EventProducer}. */
     private final EventListenerMap listenerMap = new EventListenerMap();
@@ -230,7 +230,7 @@ public class OtsEditor extends JFrame implements EventProducer
         columns.addColumn(column4);
         this.attributesTable = new JTable(tableModel, columns);
         this.attributesTable.setDefaultRenderer(String.class, new AttributeCellRenderer(infoIcon));
-        ((DefaultCellEditor) this.attributesTable.getDefaultEditor(String.class)).setClickCountToStart(1);
+        this.attributesTable.setDefaultEditor(String.class, new AttributesCellEditor());
         this.attributesTable.addMouseListener(new AttributesMouseListener());
         AttributesTableModel.applyColumnWidth(this.attributesTable);
         this.rightSplitPane.setBottomComponent(new JScrollPane(this.attributesTable));
