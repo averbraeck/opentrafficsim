@@ -14,9 +14,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -109,6 +112,12 @@ public class OtsEditor extends JFrame implements EventProducer
 
     /** Maximum number of items to show in a dropdown menu. */
     private static final int MAX_DROPDOWN_ITEMS = 20;
+
+    /** Indent for first item shown in dropdown. */
+    private int dropdownIndent = 0;
+
+    /** All items eligible to be shown in a dropdown, i.e. they match the currently typed value. */
+    private List<String> dropdownOptions = new ArrayList<>();
 
     /** Map of listeners for {@code EventProducer}. */
     private final EventListenerMap listenerMap = new EventListenerMap();
@@ -548,6 +557,7 @@ public class OtsEditor extends JFrame implements EventProducer
     {
         // initially no filtering on current value; this allows a quick reset to possible values
         List<String> options = filterOptions(allOptions, "");
+        OtsEditor.this.dropdownOptions = options;
         if (options.isEmpty())
         {
             return;
@@ -558,7 +568,6 @@ public class OtsEditor extends JFrame implements EventProducer
         {
             JMenuItem item = new JMenuItem(option);
             item.setVisible(index++ < MAX_DROPDOWN_ITEMS);
-            // item.addActionListener(actionSupplier.apply(option));
             item.addActionListener(new ActionListener()
             {
                 /** {@inheritDoc} */
@@ -573,6 +582,24 @@ public class OtsEditor extends JFrame implements EventProducer
             item.setFont(table.getFont());
             popup.add(item);
         }
+        this.dropdownIndent = 0;
+        popup.addMouseWheelListener(new MouseWheelListener()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public void mouseWheelMoved(final MouseWheelEvent e)
+            {
+                OtsEditor.this.dropdownIndent += (e.getWheelRotation() * e.getScrollAmount());
+                OtsEditor.this.dropdownIndent = OtsEditor.this.dropdownIndent < 0 ? 0 : OtsEditor.this.dropdownIndent;
+                int maxIndent = OtsEditor.this.dropdownOptions.size() - MAX_DROPDOWN_ITEMS;
+                if (maxIndent > 0)
+                {
+                    OtsEditor.this.dropdownIndent =
+                            OtsEditor.this.dropdownIndent > maxIndent ? maxIndent : OtsEditor.this.dropdownIndent;
+                    showOptionsInScope(popup);
+                }
+            }
+        });
         preparePopupRemoval(popup, table);
         // invoke later because JTreeTable removes the popup with editable cells and it may take previous editable field
         SwingUtilities.invokeLater(new Runnable()
@@ -602,26 +629,15 @@ public class OtsEditor extends JFrame implements EventProducer
                             @Override
                             public void run()
                             {
+                                OtsEditor.this.dropdownIndent = 0;
                                 String currentValue = field.getText();
-                                List<String> options = filterOptions(allOptions, currentValue);
-                                int index = 0;
-                                for (Component component : popup.getComponents())
-                                {
-                                    JMenuItem item = (JMenuItem) component;
-                                    boolean visible = item.getText().equals(currentValue)
-                                            || index < MAX_DROPDOWN_ITEMS && options.contains(item.getText());
-                                    item.setVisible(visible);
-                                    if (visible)
-                                    {
-                                        index++;
-                                    }
-                                }
+                                OtsEditor.this.dropdownOptions = filterOptions(allOptions, currentValue);
+                                boolean anyVisible = showOptionsInScope(popup);
                                 // if no items left, show what was typed as a single item
                                 // it will be hidden later if we are in the scope of the options, or another current value
-                                if (index == 0)
+                                if (!anyVisible)
                                 {
                                     JMenuItem item = new JMenuItem(currentValue);
-                                    // item.addActionListener(actionSupplier.apply(currentValue));
                                     item.addActionListener(new ActionListener()
                                     {
                                         /** {@inheritDoc} */
@@ -654,6 +670,29 @@ public class OtsEditor extends JFrame implements EventProducer
                 });
             }
         });
+    }
+
+    /**
+     * Updates the options that are shown within an dropdown menu based on an indent from scrolling.
+     * @param popup JPopupMenu; dropdown menu.
+     * @return boolean; whether at least one item is visible.
+     */
+    private boolean showOptionsInScope(final JPopupMenu popup)
+    {
+        int optionIndex = 0;
+        for (Component component : popup.getComponents())
+        {
+            JMenuItem item = (JMenuItem) component;
+            boolean visible =
+                    optionIndex < MAX_DROPDOWN_ITEMS && this.dropdownOptions.indexOf(item.getText()) >= this.dropdownIndent;
+            item.setVisible(visible);
+            if (visible)
+            {
+                optionIndex++;
+            }
+        }
+        popup.pack();
+        return optionIndex > 0;
     }
 
     /**
