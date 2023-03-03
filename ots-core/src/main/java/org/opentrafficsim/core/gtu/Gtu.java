@@ -176,6 +176,9 @@ public class Gtu extends LocalEventProducer
 
     /** The maximum speed of the GTU (in the driving direction). */
     private final Speed maximumSpeed;
+    
+    /** Tags of the GTU, these are used for specific use cases of any sort. */
+    private final Map<String, String> tags = new LinkedHashMap<>();
 
     /**
      * @param id String; the id of the GTU
@@ -481,6 +484,26 @@ public class Gtu extends LocalEventProducer
     public final String getId()
     {
         return this.id;
+    }
+    
+    /**
+     * Sets a tag, these are used for specific use cases of any sort.
+     * @param tag String; name of the tag.
+     * @param value String; value of the tag.
+     */
+    public void setTag(final String tag, final String value)
+    {
+        this.tags.put(tag, value);
+    }
+    
+    /**
+     * Returns the value for the given tag, these are used for specific use cases of any sort.
+     * @param tag String; name of the tag.
+     * @return String; value of the tag, or {@code null} if it is not given to the GTU.
+     */
+    public String getTag(final String tag)
+    {
+        return this.tags.get(tag);
     }
 
     /** {@inheritDoc} */
