@@ -113,7 +113,7 @@ public interface ValueValidator
 
     /**
      * Report first encountered problem in validating the value by a type, or when {@code value = null} scan all restrictions
-     * and places them in the input list, .
+     * and place them in the input list, and/or find the base type and store it in the base type list.
      * @param node Node; type node.
      * @param attribute String; "type" on normal calls, "base" on recursive calls.
      * @param value String; value.

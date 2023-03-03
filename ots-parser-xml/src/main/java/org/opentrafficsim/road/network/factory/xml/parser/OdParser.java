@@ -430,10 +430,10 @@ public final class OdParser
                         /*
                          * The current 'options' is valid within a single context, i.e. global, link type, origin or lane. All
                          * option values are set in odOptions for that context, in the current loop. For the model factories an
-                         * implementation of StrategicalPlannerFactorySupplierOD is created that responds to the GTU type, and
-                         * selects a factory assigned to that GTU type within the context. Or, the default factory in the
-                         * context is used. Or finally, a default LMRS. If no model factory is specified in the context (nor a
-                         * higher context), no option value is set and OdOptions itself returns a default LMRS factory.
+                         * implementation of DefaultLaneBasedGtuCharacteristicsGeneratorOd is created that responds to the GTU
+                         * type, and selects a factory assigned to that GTU type within the context. Or, the default factory in
+                         * the context is used. Or finally, a default LMRS. If no model factory is specified in the context (nor
+                         * a higher context), no option value is set and OdOptions itself returns a default LMRS factory.
                          */
 
                         // GTU type (model)
