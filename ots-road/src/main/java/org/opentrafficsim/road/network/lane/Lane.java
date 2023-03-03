@@ -123,16 +123,16 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     private final MultiKeyMap<Set<Lane>> rightNeighbours = new MultiKeyMap<>(GtuType.class, Boolean.class);
 
     /**
-     * Next lane(s) following this lane that some GTU types can drive from or onto. Next is defined in the direction of the
-     * design line. Initially null so we can calculate and cache the first time the method is called.
+     * Next lane(s) following this lane that some GTU types can drive onto. Next is defined in the direction of the design line.
+     * Initially empty so we can calculate and cache the first time the method is called.
      */
-    private Map<GtuType, Set<Lane>> nextLanes = null;
+    private final Map<GtuType, Set<Lane>> nextLanes = new LinkedHashMap<>(1);
 
     /**
-     * Previous lane(s) preceding this lane that some GTU types can drive from or onto. Previous is defined relative to the
-     * direction of the design line. Initially null so we can calculate and cache the first time the method is called.
+     * Previous lane(s) preceding this lane that some GTU types can drive from. Previous is defined relative to the direction of
+     * the design line. Initially empty so we can calculate and cache the first time the method is called.
      */
-    private Map<GtuType, Set<Lane>> prevLanes = null;
+    private final Map<GtuType, Set<Lane>> prevLanes = new LinkedHashMap<>(1);
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the lane. <br>
@@ -1097,43 +1097,55 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     // TODO this should return something immutable
     public final Set<Lane> nextLanes(final GtuType gtuType)
     {
-        if (this.nextLanes == null)
-        {
-            this.nextLanes = new LinkedHashMap<>(1);
-        }
         if (!this.nextLanes.containsKey(gtuType))
         {
             // TODO determine if this should synchronize on this.nextLanes
             Set<Lane> laneSet = new LinkedHashSet<>(1);
             this.nextLanes.put(gtuType, laneSet);
-            // Construct (and cache) the result.
-            for (Link link : getParentLink().getEndNode().getLinks())
+            if (gtuType == null)
             {
-                if (!(link.equals(this.getParentLink())) && link instanceof CrossSectionLink)
+                // Construct (and cache) the result.
+                for (Link link : getParentLink().getEndNode().getLinks())
                 {
-                    for (CrossSectionElement cse : ((CrossSectionLink) link).getCrossSectionElementList())
+                    if (!(link.equals(this.getParentLink())) && link instanceof CrossSectionLink)
                     {
-                        if (cse instanceof Lane)
+                        for (CrossSectionElement cse : ((CrossSectionLink) link).getCrossSectionElementList())
                         {
-                            Lane lane = (Lane) cse;
-                            Length jumpToStart = this.getCenterLine().getLast().distance(lane.getCenterLine().getFirst());
-                            Length jumpToEnd = this.getCenterLine().getLast().distance(lane.getCenterLine().getLast());
-                            if (jumpToStart.lt(MARGIN) && jumpToStart.lt(jumpToEnd)
-                                    && link.getStartNode().equals(getParentLink().getEndNode()))
+                            if (cse instanceof Lane)
                             {
-                                // TODO And is it aligned with its next lane?
-                                if (gtuType == null || lane.getType().isCompatible(gtuType))
+                                Lane lane = (Lane) cse;
+                                Length jumpToStart = this.getCenterLine().getLast().distance(lane.getCenterLine().getFirst());
+                                Length jumpToEnd = this.getCenterLine().getLast().distance(lane.getCenterLine().getLast());
+                                if (jumpToStart.lt(MARGIN) && jumpToStart.lt(jumpToEnd)
+                                        && link.getStartNode().equals(getParentLink().getEndNode()))
                                 {
+                                    // TODO And is it aligned with its next lane?
                                     laneSet.add(lane);
                                 }
+                                // else: not a "connected" lane
                             }
-                            // else: not a "connected" lane
                         }
                     }
                 }
             }
+            else
+            {
+                nextLanes(null).stream().filter((lane) -> lane.getType().isCompatible(gtuType))
+                        .forEach((lane) -> laneSet.add(lane));
+            }
         }
         return this.nextLanes.get(gtuType);
+    }
+
+    /**
+     * Forces the next lanes to be as specified. For specific GTU types, a subset of these lanes is taken.
+     * @param lanes Set&lt;Lane&gt;; lanes to set as next lanes.
+     */
+    public void forceNextLanes(final Set<Lane> lanes)
+    {
+        Throw.whenNull(lanes, "Lanes should not be null. Use an empty set instead.");
+        this.nextLanes.clear();
+        this.nextLanes.put(null, lanes);
     }
 
     /**
@@ -1154,42 +1166,54 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     // TODO this should return something immutable
     public final Set<Lane> prevLanes(final GtuType gtuType)
     {
-        if (this.prevLanes == null)
-        {
-            this.prevLanes = new LinkedHashMap<>(1);
-        }
         if (!this.prevLanes.containsKey(gtuType))
         {
             Set<Lane> laneSet = new LinkedHashSet<>(1);
             this.prevLanes.put(gtuType, laneSet);
             // Construct (and cache) the result.
-            for (Link link : getParentLink().getStartNode().getLinks())
+            if (gtuType == null)
             {
-                if (!(link.equals(this.getParentLink())) && link instanceof CrossSectionLink)
+                for (Link link : getParentLink().getStartNode().getLinks())
                 {
-                    for (CrossSectionElement cse : ((CrossSectionLink) link).getCrossSectionElementList())
+                    if (!(link.equals(this.getParentLink())) && link instanceof CrossSectionLink)
                     {
-                        if (cse instanceof Lane)
+                        for (CrossSectionElement cse : ((CrossSectionLink) link).getCrossSectionElementList())
                         {
-                            Lane lane = (Lane) cse;
-                            Length jumpToStart = this.getCenterLine().getFirst().distance(lane.getCenterLine().getFirst());
-                            Length jumpToEnd = this.getCenterLine().getFirst().distance(lane.getCenterLine().getLast());
-                            if (jumpToEnd.lt(MARGIN) && jumpToEnd.lt(jumpToStart)
-                                    && link.getEndNode().equals(getParentLink().getStartNode()))
+                            if (cse instanceof Lane)
                             {
-                                // TODO And is it aligned with its next lane?
-                                if (gtuType == null || lane.getType().isCompatible(gtuType))
+                                Lane lane = (Lane) cse;
+                                Length jumpToStart = this.getCenterLine().getFirst().distance(lane.getCenterLine().getFirst());
+                                Length jumpToEnd = this.getCenterLine().getFirst().distance(lane.getCenterLine().getLast());
+                                if (jumpToEnd.lt(MARGIN) && jumpToEnd.lt(jumpToStart)
+                                        && link.getEndNode().equals(getParentLink().getStartNode()))
                                 {
+                                    // TODO And is it aligned with its next lane?
                                     laneSet.add(lane);
                                 }
+                                // else: not a "connected" lane
                             }
-                            // else: not a "connected" lane
                         }
                     }
                 }
             }
+            else
+            {
+                prevLanes(null).stream().filter((lane) -> lane.getType().isCompatible(gtuType))
+                        .forEach((lane) -> laneSet.add(lane));
+            }
         }
         return this.prevLanes.get(gtuType);
+    }
+
+    /**
+     * Forces the previous lanes to be as specified. For specific GTU types, a subset of these lanes is taken.
+     * @param lanes Set&lt;Lane&gt;; lanes to set as previous lanes.
+     */
+    public void forcePrevLanes(final Set<Lane> lanes)
+    {
+        Throw.whenNull(lanes, "Lanes should not be null. Use an empty set instead.");
+        this.prevLanes.clear();
+        this.prevLanes.put(null, lanes);
     }
 
     /**
