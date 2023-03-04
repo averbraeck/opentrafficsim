@@ -193,7 +193,7 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
      *            {@code null}.
      * @param stream StreamInterface; random number stream, may be {@code null}.
      * @param timeToCollision Duration; critical time-to-collision to allow GTU generation, may be {@code null}.
-     * @throws IllegalArgumentException; when the right arguments are not provided for the columns in the injection table.
+     * @throws IllegalArgumentException when the right arguments are not provided for the columns in the injection table.
      */
     public Injections(final Table table, final OtsNetwork network, final ImmutableMap<String, GtuType> gtuTypes,
             final LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory, final StreamInterface stream,
