@@ -16,6 +16,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.opentrafficsim</groupId>
+      <artifactId>ots-parser-xml</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>de.javagl</groupId>
       <artifactId>treetable</artifactId>
     </dependency>
