@@ -670,7 +670,7 @@ public class XsdSchema
      * Returns the attribute of a node. This is short for:
      * 
      * <pre>
-     * String value = node.hasAttributes() && node.getAttributes().getNamedItem(name) != null
+     * String value = node.hasAttributes() &amp;&amp; node.getAttributes().getNamedItem(name) != null
      *         ? node.getAttributes().getNamedItem(name).getNodeValue() : null;
      * </pre>
      * 
