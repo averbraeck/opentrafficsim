@@ -427,7 +427,7 @@ public class Diagram
          * @param x int; the X object at the end of this route step
          * @param y int; the Y object at the end of this route step
          * @param command Command; a STOP_LINE or NO_OP command
-         * @throws TrafficLightException when an IF or ELSE_IF has an invalid streamCondition, or when an ELSE or END_IF has a
+         * @throws TrafficControlException when an IF or ELSE_IF has an invalid streamCondition, or when an ELSE or END_IF has a
          *             valid streamCOndition
          */
         RouteStep(final int x, final int y, final Command command) throws TrafficControlException
