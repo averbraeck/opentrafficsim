@@ -1134,7 +1134,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
      * Extension of a DefaultFormatter that uses a regular expression. <br>
      * Derived from <a href="http://www.java2s.com/Tutorial/Java/0240__Swing/RegexFormatterwithaJFormattedTextField.htm">
      * http://www.java2s.com/Tutorial/Java/0240__Swing/RegexFormatterwithaJFormattedTextField.htm</a>
-     * <p>
+     * </p>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      */
     static class RegexFormatter extends DefaultFormatter

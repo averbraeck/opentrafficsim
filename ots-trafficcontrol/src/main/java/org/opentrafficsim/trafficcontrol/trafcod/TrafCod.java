@@ -1297,7 +1297,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
 
     /**
      * States of the rule parser.
-     * <p>
+     * </p>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      */
     enum ParserState
@@ -1316,7 +1316,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
 
     /**
      * Types of TrafCOD tokens.
-     * <p>
+     * </p>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      */
     enum Token
