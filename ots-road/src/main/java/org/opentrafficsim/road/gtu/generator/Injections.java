@@ -197,7 +197,7 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
      */
     public Injections(final Table table, final OtsNetwork network, final ImmutableMap<String, GtuType> gtuTypes,
             final LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory, final StreamInterface stream,
-            final Duration timeToCollision)
+            final Duration timeToCollision) throws IllegalArgumentException
     {
         Throw.whenNull(table, "Table may not be null.");
         this.idIterator = table.iterator();

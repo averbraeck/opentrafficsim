@@ -52,7 +52,7 @@ public interface GeneratorPositions
      * @param unplaced Map&lt;CrossSectionLink, Map&lt;Integer, Integer&gt;&gt;; number of unplaced GTUs per lane, counting from
      *            the right and starting at 1.
      * @return GeneratorLanePosition; new position to generate a GTU.
-     * @throws GtuException; when the underlying structure is inconsistent for drawing
+     * @throws GtuException when the underlying structure is inconsistent for drawing
      */
     GeneratorLanePosition draw(GtuType gtuType, LaneBasedGtuCharacteristics characteristics,
             Map<CrossSectionLink, Map<Integer, Integer>> unplaced) throws GtuException;

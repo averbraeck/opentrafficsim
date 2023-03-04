@@ -396,8 +396,8 @@ public class OtsRoadNetwork extends OtsNetwork implements RoadNetwork
 
     /**
      * A {@code SimpleDirectedWeightedGraph} to search over the lanes, where the weight of an edge (movement between lanes) is
-     * tailored to providing lane change information. The vertex type is {@code Identifiable} such that both {@Lane}'s and
-     * {@Node}'s can be used. The latter is required to find paths towards a destination node.<br>
+     * tailored to providing lane change information. The vertex type is {@code Identifiable} such that both {@code Lane}'s and
+     * {@code Node}'s can be used. The latter is required to find paths towards a destination node.<br>
      * <br>
      * Copyright (c) 2022-2023 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
      * See for project information <a href="https://djutils.org" target="_blank"> https://djutils.org</a>. The DJUTILS project
