@@ -39,19 +39,19 @@ import org.w3c.dom.Node;
  * 
  * <pre>
  *  xsd:element  v-. (lane)
- *      xsd:choice-'<-------------------.
- *       |> xsd:element (centeroffeset) |
- * option|> xsd:element (leftoffset)    |
- *       |> xsd:element (rightoffset)   | parentChoice
- *       '> xsd:sequence v-.            |
+ *      xsd:choice-'&lt;-------------------.
+ *       |&gt; xsd:element (centeroffeset) |
+ * option|&gt; xsd:element (leftoffset)    |
+ *       |&gt; xsd:element (rightoffset)   | parentChoice
+ *       '&gt; xsd:sequence v-.            |
  *              xsd:choice-'------------'
- *               |> xsd:element (centeroffesetstart)
- *         option|> xsd:element (leftoffsetstart)
- *               '> xsd:element (rightoffsetstart)
+ *               |&gt; xsd:element (centeroffesetstart)
+ *         option|&gt; xsd:element (leftoffsetstart)
+ *               '&gt; xsd:element (rightoffsetstart)
  *              xsd:choice
- *               |> xsd:element (centeroffesetend)
- *         option|> xsd:element (leftoffsetend)     {identical relations as 'start'}
- *               '> xsd:element (rightoffsetend)
+ *               |&gt; xsd:element (centeroffesetend)
+ *         option|&gt; xsd:element (leftoffsetend)     {identical relations as 'start'}
+ *               '&gt; xsd:element (rightoffsetend)
  * </pre>
  * 
  * Note that here each shown xsd:{} becomes an {@code XsdTreeNode}, but only the xsd:element's are ever shown in the tree.
