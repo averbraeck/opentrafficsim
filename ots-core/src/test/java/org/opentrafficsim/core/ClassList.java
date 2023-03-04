@@ -21,7 +21,7 @@ import java.util.zip.ZipFile;
  * that forum after 2006.
  * <p>
  * Copyright (c) 2006 by stoughto! TODO replace this by something that is provably free code.
- * <p>
+ * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */

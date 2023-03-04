@@ -10,7 +10,7 @@ import org.djutils.exceptions.Throw;
  * <p>
  * Copyright (c) 2019-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://djunits.org/docs/license.html">DJUNITS License</a>.
- * <p>
+ * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
 public abstract class UnitAdapter<S extends DoubleScalarInterface<?, S>> extends XmlAdapter<String, S>
