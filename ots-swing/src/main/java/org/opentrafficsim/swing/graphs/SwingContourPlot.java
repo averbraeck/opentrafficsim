@@ -17,15 +17,17 @@ import org.opentrafficsim.draw.graphs.ContourDataSource.Dimension;
 
 /**
  * Embed a ContourPlot in a Swing JPanel.
- * <P>
+ * <p>
+ * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 public class SwingContourPlot extends SwingSpaceTimePlot
 {
-
-    /**  */
+    /** */
     private static final long serialVersionUID = 20190823L;
 
     /** Map to set time granularity. */
@@ -53,8 +55,8 @@ public class SwingContourPlot extends SwingSpaceTimePlot
     @Override
     protected void addPopUpMenuItems(final JPopupMenu popupMenu)
     {
-        timeGranularityButtons = new LinkedHashMap<>();
-        spaceGranularityButtons = new LinkedHashMap<>();
+        this.timeGranularityButtons = new LinkedHashMap<>();
+        this.spaceGranularityButtons = new LinkedHashMap<>();
         super.addPopUpMenuItems(popupMenu);
         JMenu spaceGranularityMenu = buildMenu("Distance granularity", "%.0f m", 1000, "%.0f km", "setSpaceGranularity",
                 getPlot().getDataPool().getGranularities(Dimension.DISTANCE),
@@ -125,12 +127,12 @@ public class SwingContourPlot extends SwingSpaceTimePlot
                 {
                     if (command.equalsIgnoreCase("setSpaceGranularity"))
                     {
-                        double granularity = spaceGranularityButtons.get(actionEvent.getSource());
+                        double granularity = SwingContourPlot.this.spaceGranularityButtons.get(actionEvent.getSource());
                         getPlot().getDataPool().setGranularity(Dimension.DISTANCE, granularity);
                     }
                     else if (command.equalsIgnoreCase("setTimeGranularity"))
                     {
-                        double granularity = timeGranularityButtons.get(actionEvent.getSource());
+                        double granularity = SwingContourPlot.this.timeGranularityButtons.get(actionEvent.getSource());
                         getPlot().getDataPool().setGranularity(Dimension.TIME, granularity);
                     }
                     else
