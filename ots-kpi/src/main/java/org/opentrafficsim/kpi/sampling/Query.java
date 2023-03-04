@@ -300,7 +300,7 @@ public final class Query<G extends GtuData, L extends LaneData> implements Ident
 
     /**
      * Returns an iterator over the space-time regions.
-     * @return Iterator&lt;SpaceTimeRegion&lt? extends L&gt;&gt;; iterator over space-time regions, removal is not allowed
+     * @return Iterator&lt;SpaceTimeRegion&lt;? extends L&gt;&gt;; iterator over space-time regions, removal is not allowed
      */
     public Iterator<SpaceTimeRegion<? extends L>> getSpaceTimeIterator()
     {
