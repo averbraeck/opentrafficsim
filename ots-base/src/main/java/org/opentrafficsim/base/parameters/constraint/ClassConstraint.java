@@ -7,7 +7,7 @@ import java.util.LinkedHashSet;
  * Constraint that checks whether the value is any of a given collection of classes, where each class is a sub class of a given
  * type.
  * <p>
- * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>

@@ -16,7 +16,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * A GTU type is used to identify all sorts of properties and compatibilities for GTUs. For example, what lanes a GTU may drive
  * on, and what length of vehicle to get.
  * <p>
- * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
@@ -153,7 +153,7 @@ public final class GtuType extends HierarchicalType<GtuType, Gtu>
     /**
      * Defines the shape of a marker GTUs are drawn with when zoomed out.
      * <p>
-     * Copyright (c) 2022-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2022-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>

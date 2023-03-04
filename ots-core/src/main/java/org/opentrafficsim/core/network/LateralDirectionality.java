@@ -5,7 +5,7 @@ package org.opentrafficsim.core.network;
  * to the forward driving direction. RIGHT is the direction to the right of the longitudinal orientation of the GTU, relative to
  * the forward driving direction.
  * <p>
- * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$, initial version Oct 15, 2014 <br>

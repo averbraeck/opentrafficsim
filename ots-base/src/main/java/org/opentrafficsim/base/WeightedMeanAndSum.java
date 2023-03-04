@@ -12,7 +12,7 @@ import org.djutils.exceptions.Throw;
  * Utility to calculate a weighted mean and/or sum. This can be used as part of a process or loop with information being
  * accumulated in the object. This is even a memory friendly method as this class only stores 2 double values internally.
  * <p>
- * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>

@@ -31,7 +31,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * Line with OtsPoint3d points, a cached length indexed line, a cached length, and a cached centroid (all calculated on first
  * use).
  * <p>
- * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
@@ -1433,7 +1433,7 @@ public class OtsLine3d implements Locatable, Serializable // XXX: DJ
     /**
      * Fallback method for when fractional projection fails as the point is beyond the line or from numerical limitations.
      * <p>
-     * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>

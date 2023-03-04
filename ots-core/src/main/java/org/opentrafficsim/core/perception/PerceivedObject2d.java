@@ -11,7 +11,7 @@ import org.opentrafficsim.core.math.Speed3d;
  * Information about a perceived object, which can be a GTU, a road sign, a traffic light, or an obstacle. This interface works
  * with 2D locations to retrieve the information.
  * <p>
- * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>

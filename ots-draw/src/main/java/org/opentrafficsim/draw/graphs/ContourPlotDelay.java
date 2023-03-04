@@ -33,7 +33,7 @@ import org.opentrafficsim.road.network.sampling.data.ReferenceSpeed;
  * the cell, and the resulting value is in the same unit as t. So if D = 50/km, then measuring this state over 2km and during 3
  * hours gives 50 * 2 * 3 = 300h of delay.
  * <p>
- * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>

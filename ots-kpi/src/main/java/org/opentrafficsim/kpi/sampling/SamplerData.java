@@ -43,7 +43,7 @@ import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
  * guaranteed read-only class. Any type can obtain the lane directions and with those the coupled trajectory groups.
  * Trajectories can be added to these trajectory groups. Data can also be added to the trajectories themselves.
  * <p>
- * Copyright (c) 2020-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2020-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
@@ -265,7 +265,7 @@ public class SamplerData<G extends GtuData> extends Table
     /**
      * Iterator over the sampler data. It iterates over lanes, trajectories on a lane, and indices within the trajectory.
      * <p>
-     * Copyright (c) 2022-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2022-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
@@ -411,7 +411,7 @@ public class SamplerData<G extends GtuData> extends Table
     /**
      * Compression method.
      * <p>
-     * Copyright (c) 2022-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2022-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>

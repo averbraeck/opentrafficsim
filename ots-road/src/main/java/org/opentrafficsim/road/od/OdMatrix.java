@@ -32,7 +32,7 @@ import org.opentrafficsim.road.gtu.generator.headway.DemandPattern;
  * is possible, i.e. for origin O to destination D, <i>for lane L, for route R and for vehicle class C</i>, the demand at time T
  * is D. The further categorization is defined by an array of {@code Class}'s that define the categorization.
  * <p>
- * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>

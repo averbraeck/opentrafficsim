@@ -25,7 +25,7 @@ import nl.tudelft.simulation.language.d3.CartesianPoint;
  * An OtsPoint3d implements a 3D-coordinate for OTS. X, y and z are stored as doubles, but it is assumed that the scale is in SI
  * units, i.e. in meters. A distance between two points is therefore also in meters.
  * <p>
- * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
