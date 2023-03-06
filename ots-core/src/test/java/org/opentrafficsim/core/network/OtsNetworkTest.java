@@ -165,7 +165,7 @@ public class OtsNetworkTest implements EventListener
         assertEquals("other event count is 0", 0, this.otherEventCount);
         try
         {
-            new OtsLink(network, "link1", node1, node2, DefaultsNl.ROAD, new OtsLine3d(node1.getPoint(), node2.getPoint()));
+            new Link(network, "link1", node1, node2, DefaultsNl.ROAD, new OtsLine3d(node1.getPoint(), node2.getPoint()));
             fail("new OTSLink should have thrown an exception because node2 is not in network");
         }
         catch (NetworkException ne)
@@ -174,7 +174,7 @@ public class OtsNetworkTest implements EventListener
         }
         try
         {
-            new OtsLink(network, "link1", node2, node1, DefaultsNl.ROAD, new OtsLine3d(node2.getPoint(), node1.getPoint()));
+            new Link(network, "link1", node2, node1, DefaultsNl.ROAD, new OtsLine3d(node2.getPoint(), node1.getPoint()));
             fail("new OTSLink should have thrown an exception because node2 is not in network");
         }
         catch (NetworkException ne)
@@ -190,7 +190,7 @@ public class OtsNetworkTest implements EventListener
         assertEquals("GTU removed event count is 0", 0, this.gtuRemovedCount);
         assertEquals("other event count is 0", 0, this.otherEventCount);
         Link link1 =
-                new OtsLink(network, "link1", node1, node3, DefaultsNl.ROAD, new OtsLine3d(node1.getPoint(), node3.getPoint()));
+                new Link(network, "link1", node1, node3, DefaultsNl.ROAD, new OtsLine3d(node1.getPoint(), node3.getPoint()));
         assertEquals("LinkMap now contains 1 link", 1, network.getLinkMap().size());
         assertTrue("LinkMap contains link1", network.containsLink(link1));
         assertTrue("LinkMap.contain link with name link1", network.containsLink("link1"));
@@ -214,7 +214,7 @@ public class OtsNetworkTest implements EventListener
         assertEquals("link1 is the link connecting node named node1 to node named node3", link1,
                 network.getLink("node1", "node3"));
         Node node4 = new Node(otherNetwork, "node4", new OtsPoint3d(-2, -3, -4));
-        Link otherLink = new OtsLink(otherNetwork, "otherLink", node2, node4, DefaultsNl.ROAD,
+        Link otherLink = new Link(otherNetwork, "otherLink", node2, node4, DefaultsNl.ROAD,
                 new OtsLine3d(node2.getPoint(), node4.getPoint()));
         try
         {
@@ -241,7 +241,7 @@ public class OtsNetworkTest implements EventListener
         assertEquals("GTU add event count is 0", 0, this.gtuAddedCount);
         assertEquals("GTU removed event count is 0", 0, this.gtuRemovedCount);
         assertEquals("other event count is 0", 0, this.otherEventCount);
-        Link secondLink = new OtsLink(network, "reverseLink", node3, node1, DefaultsNl.ROAD,
+        Link secondLink = new Link(network, "reverseLink", node3, node1, DefaultsNl.ROAD,
                 new OtsLine3d(node3.getPoint(), node1.getPoint()));
         assertEquals("link add event count is 2", 2, this.linkAddedCount);
         assertEquals("link removed event count is 0", 0, this.linkRemovedCount);
@@ -413,7 +413,7 @@ public class OtsNetworkTest implements EventListener
         nodeList.add(node2);
         GtuType carType = new GtuType("car", DefaultsNl.CAR);
         GtuType bicycleType = new GtuType("bicycle", DefaultsNl.BICYCLE);
-        new OtsLink(network, "Link12", node1, node2, DefaultsNl.ROAD, new OtsLine3d(node1.getPoint(), node2.getPoint()));
+        new Link(network, "Link12", node1, node2, DefaultsNl.ROAD, new OtsLine3d(node1.getPoint(), node2.getPoint()));
         Route route1 = new Route("route1", carType, nodeList);
         Route route2 = new Route("route2", carType);
         Route route3 = new Route("route3", bicycleType);
@@ -693,7 +693,7 @@ public class OtsNetworkTest implements EventListener
         Node prevNode = nodes.get(maxNode - 1);
         for (Node node : nodes)
         {
-            new OtsLink(network, "from " + prevNode.getId() + " to " + node.getId(), prevNode, node, linkType,
+            new Link(network, "from " + prevNode.getId() + " to " + node.getId(), prevNode, node, linkType,
                     new OtsLine3d(prevNode.getPoint(), node.getPoint()));
             prevNode = node;
         }
@@ -788,20 +788,20 @@ public class OtsNetworkTest implements EventListener
                     Node up = network.getNode("Node " + (nodeNumber - 1));
                     String id = "Link " + (nodeNumber - 1) + "-" + nodeNumber;
                     OtsLine3d designLine = new OtsLine3d(up.getPoint(), node.getPoint());
-                    new OtsLink(network, id, up, node, DefaultsNl.RURAL, designLine);
+                    new Link(network, id, up, node, DefaultsNl.RURAL, designLine);
                     id = "Link " + nodeNumber + "-" + (nodeNumber - 1);
                     designLine = new OtsLine3d(node.getPoint(), up.getPoint());
-                    new OtsLink(network, id, node, up, DefaultsNl.RURAL, designLine);
+                    new Link(network, id, node, up, DefaultsNl.RURAL, designLine);
                 }
                 if (i > 0)
                 {
                     Node left = network.getNode("Node " + (nodeNumber - gridSize));
                     String id = "Link " + (nodeNumber - gridSize) + "-" + nodeNumber;
                     OtsLine3d designLine = new OtsLine3d(left.getPoint(), node.getPoint());
-                    new OtsLink(network, id, left, node, DefaultsNl.RURAL, designLine);
+                    new Link(network, id, left, node, DefaultsNl.RURAL, designLine);
                     id = "Link " + nodeNumber + "-" + (nodeNumber - gridSize);
                     designLine = new OtsLine3d(node.getPoint(), left.getPoint());
-                    new OtsLink(network, id, node, left, DefaultsNl.RURAL, designLine);
+                    new Link(network, id, node, left, DefaultsNl.RURAL, designLine);
                 }
 
                 nodeNumber++;

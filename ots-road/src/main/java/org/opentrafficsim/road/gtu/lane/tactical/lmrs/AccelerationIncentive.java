@@ -8,7 +8,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.core.network.OtsLink;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.FilteredIterable;
@@ -71,7 +71,7 @@ public interface AccelerationIncentive
                 {
                     return true; // when there is no route, we are always on it...
                 }
-                OtsLink link = t.getLane().getParentLink();
+                Link link = t.getLane().getParentLink();
                 if (route.contains(link.getStartNode()) && route.contains(link.getEndNode()))
                 {
                     return route.indexOf(link.getEndNode()) - route.indexOf(link.getStartNode()) == 1;

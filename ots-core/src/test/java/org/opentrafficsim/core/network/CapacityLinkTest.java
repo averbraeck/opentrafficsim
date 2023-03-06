@@ -12,7 +12,7 @@ import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.mock.MockSimulator;
 
 /**
- * Test the CapacityOTSLink class.
+ * Test the CapacityLinkTest class.
  * <p>
  * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -21,7 +21,7 @@ import org.opentrafficsim.core.mock.MockSimulator;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class CapacityOtsLinkTest
+public class CapacityLinkTest
 {
     /**
      * Test the constructor and all getters.
@@ -40,7 +40,7 @@ public class CapacityOtsLinkTest
         OtsLine3d designLine = new OtsLine3d(fromPoint, toPoint);
         Frequency initialCapacity = new Frequency(1234, FrequencyUnit.PER_HOUR);
         Frequency finalCapacity = new Frequency(1234, FrequencyUnit.PER_HOUR);
-        CapacityOtsLink link = new CapacityOtsLink(network, "link", fromNode, toNode, linkType, designLine, initialCapacity);
+        CapacityLink link = new CapacityLink(network, "link", fromNode, toNode, linkType, designLine, initialCapacity);
         assertTrue("from point matches", fromPoint.equals(link.getDesignLine().get(0)));
         assertTrue("to point matches", toPoint.equals(link.getDesignLine().get(1)));
         assertTrue("from node matches", fromNode.equals(link.getStartNode()));

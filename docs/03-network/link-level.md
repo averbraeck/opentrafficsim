@@ -1,6 +1,6 @@
 # Link level
 
-The network is represented as a directed graph, using links and nodes. These are defined in classes `OtsLink` and `Node`. The class `OtsNetwork` has a list of all links and nodes, as well as other objects in simulation and shortest-path utilities. Nodes are simply points with a direction and id, while links go from one node to another along some design line. The design line does not necessarily start or end in the node locations, allowing some lateral play to accommodate lanes on the micro level. Connections between links and nodes is by reference, and not (necessarily) spatially.
+The network is represented as a directed graph, using links and nodes. These are defined in classes `Link` and `Node`. The class `OtsNetwork` has a list of all links and nodes, as well as other objects in simulation and shortest-path utilities. Nodes are simply points with a direction and id, while links go from one node to another along some design line. The design line does not necessarily start or end in the node locations, allowing some lateral play to accommodate lanes on the micro level. Connections between links and nodes is by reference, and not (necessarily) spatially.
 
 <pre>
 <b>OTS Link</b>

@@ -43,7 +43,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OtsLink;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactory;
@@ -158,7 +158,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
     protected void setAnimationToggles()
     {
         AnimationToggles.setTextAnimationTogglesFull(getAnimationPanel());
-        getAnimationPanel().getAnimationPanel().toggleClass(OtsLink.class);
+        getAnimationPanel().getAnimationPanel().toggleClass(Link.class);
         getAnimationPanel().getAnimationPanel().toggleClass(Node.class);
         getAnimationPanel().getAnimationPanel().showClass(SpeedSign.class);
     }

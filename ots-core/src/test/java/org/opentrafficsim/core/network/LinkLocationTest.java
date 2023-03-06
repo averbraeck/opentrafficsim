@@ -40,12 +40,12 @@ public class LinkLocationTest
         Node toNode = new Node(network, "endNode", toPoint);
         LinkType linkType = DefaultsNl.ROAD;
         OtsLine3d designLine = new OtsLine3d(fromPoint, toPoint);
-        Link link = new OtsLink(network, "link", fromNode, toNode, linkType, designLine);
+        Link link = new Link(network, "link", fromNode, toNode, linkType, designLine);
         Length linkLength = link.getLength();
         // Create an unrelated link
         OtsPoint3d a = new OtsPoint3d(1, 2, 3);
         OtsPoint3d b = new OtsPoint3d(11, 12, 13);
-        Link otherLink = new OtsLink(network, "otherLink", new Node(network, "a", a), new Node(network, "b", b), linkType,
+        Link otherLink = new Link(network, "otherLink", new Node(network, "a", a), new Node(network, "b", b), linkType,
                 new OtsLine3d(a, b));
         for (int percentage = 0; percentage <= 100; percentage += 10)
         {

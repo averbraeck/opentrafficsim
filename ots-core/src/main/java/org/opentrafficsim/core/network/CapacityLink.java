@@ -12,7 +12,7 @@ import org.opentrafficsim.core.geometry.OtsLine3d;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class CapacityOtsLink extends OtsLink implements Capacity
+public class CapacityLink extends Link implements Capacity
 {
     /** */
     private static final long serialVersionUID = 20151108L;
@@ -33,7 +33,7 @@ public class CapacityOtsLink extends OtsLink implements Capacity
      *             or the end node of the link are not registered in the network.
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public CapacityOtsLink(final Network network, final String id, final Node startNode, final Node endNode,
+    public CapacityLink(final Network network, final String id, final Node startNode, final Node endNode,
             final LinkType linkType, final OtsLine3d designLine, final Frequency capacity) throws NetworkException
     {
         super(network, id, startNode, endNode, linkType, designLine);

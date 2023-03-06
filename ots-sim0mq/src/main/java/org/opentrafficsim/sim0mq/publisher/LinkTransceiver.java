@@ -6,7 +6,7 @@ import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.OtsLink;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.sim0mq.Sim0MQException;
@@ -73,7 +73,7 @@ public class LinkTransceiver extends AbstractTransceiver
             return null;
         }
         return new Object[] {link.getId(), link.getType().getId(), link.getStartNode().getId(), link.getEndNode().getId(),
-                link instanceof OtsLink ? ((OtsLink) link).getDesignLine().size() : 0, link.getGTUCount(),
+                link instanceof Link ? ((Link) link).getDesignLine().size() : 0, link.getGTUCount(),
                 link instanceof CrossSectionLink ? ((CrossSectionLink) link).getCrossSectionElementList().size() : 0};
     }
 

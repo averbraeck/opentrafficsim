@@ -14,7 +14,7 @@ import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OtsLink;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
@@ -28,7 +28,7 @@ import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class CrossSectionLink extends OtsLink implements Serializable
+public class CrossSectionLink extends Link implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20141015L;

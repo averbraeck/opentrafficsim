@@ -14,7 +14,7 @@ import org.opentrafficsim.core.geometry.OtsLine3d;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class Connector extends OtsLink
+public class Connector extends Link
 {
 
     /** */

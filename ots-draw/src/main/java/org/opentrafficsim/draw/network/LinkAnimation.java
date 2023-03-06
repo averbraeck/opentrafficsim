@@ -67,26 +67,19 @@ public class LinkAnimation extends Renderable2D<Link> implements Renderable2DInt
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
+        Color color = getSource().isConnector() ? Color.PINK.darker() : Color.BLUE;
+        OtsLine3d designLine = getSource().getDesignLine();
+        PaintLine.paintLine(graphics, color, this.width, getSource().getLocation(), designLine);
+        // Accentuate the end points
         try
         {
-            Color color = getSource().isConnector() ? Color.PINK.darker() : Color.BLUE;
-            OtsLine3d designLine = getSource().getDesignLine();
-            PaintLine.paintLine(graphics, color, this.width, getSource().getLocation(), designLine);
-            // Accentuate the end points
-            try
-            {
-                drawEndPoint(designLine.getFirst(), designLine.get(1), graphics);
-                drawEndPoint(designLine.getLast(), designLine.get(designLine.size() - 2), graphics);
-            }
-            catch (OtsGeometryException exception)
-            {
-                // Cannot happen
-                CategoryLogger.always().error(exception);
-            }
+            drawEndPoint(designLine.getFirst(), designLine.get(1), graphics);
+            drawEndPoint(designLine.getLast(), designLine.get(designLine.size() - 2), graphics);
         }
-        catch (RemoteException e)
+        catch (OtsGeometryException exception)
         {
-            CategoryLogger.always().warn(e);
+            // Cannot happen
+            CategoryLogger.always().error(exception);
         }
     }
 
@@ -106,17 +99,10 @@ public class LinkAnimation extends Renderable2D<Link> implements Renderable2DInt
         // scale dx, dy so that size is this.width
         dx *= this.width / length;
         dy *= this.width / length;
-        try
-        {
-            PolyLine3d line = new PolyLine3d(new Point3d(endPoint.x - dy, endPoint.y + dx, endPoint.z),
-                    new Point3d(endPoint.x + dy, endPoint.y - dx, endPoint.z));
-            PaintLine.paintLine(graphics, getSource().isConnector() ? Color.PINK.darker() : Color.BLUE, this.width / 30,
-                    getSource().getLocation(), line);
-        }
-        catch (RemoteException exception)
-        {
-            CategoryLogger.always().error(exception);
-        }
+        PolyLine3d line = new PolyLine3d(new Point3d(endPoint.x - dy, endPoint.y + dx, endPoint.z),
+                new Point3d(endPoint.x + dy, endPoint.y - dx, endPoint.z));
+        PaintLine.paintLine(graphics, getSource().isConnector() ? Color.PINK.darker() : Color.BLUE, this.width / 30,
+                getSource().getLocation(), line);
     }
 
     /** {@inheritDoc} */

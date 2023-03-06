@@ -3,7 +3,7 @@ package org.opentrafficsim.swing.gui;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuGenerator.GtuGeneratorPosition;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OtsLink;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation;
 import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation;
@@ -52,7 +52,7 @@ public final class AnimationToggles
     {
         panel.addToggleAnimationButtonText("Node", NodeAnimation.ElevatedNode.class, "Show/hide nodes", true);
         panel.addToggleAnimationButtonText("NodeId", NodeAnimation.Text.class, "Show/hide node Ids", false);
-        panel.addToggleAnimationButtonText("Link", OtsLink.class, "Show/hide links", true);
+        panel.addToggleAnimationButtonText("Link", Link.class, "Show/hide links", true);
         panel.addToggleAnimationButtonText("LinkId", LinkAnimation.Text.class, "Show/hide link Ids", false);
         panel.addToggleAnimationButtonText("Lane", Lane.class, "Show/hide lanes", true);
         panel.addToggleAnimationButtonText("LaneId", LaneAnimation.Text.class, "Show/hide lane Ids", false);
@@ -81,7 +81,7 @@ public final class AnimationToggles
     {
         panel.addToggleAnimationButtonText("Node", NodeAnimation.ElevatedNode.class, "Show/hide nodes", false);
         panel.addToggleAnimationButtonText("NodeId", NodeAnimation.Text.class, "Show/hide node Ids", false);
-        panel.addToggleAnimationButtonText("Link", OtsLink.class, "Show/hide links", false);
+        panel.addToggleAnimationButtonText("Link", Link.class, "Show/hide links", false);
         panel.addToggleAnimationButtonText("LinkId", LinkAnimation.Text.class, "Show/hide link Ids", false);
         panel.addToggleAnimationButtonText("Lane", Lane.class, "Show/hide lanes", true);
         panel.addToggleAnimationButtonText("LaneId", LaneAnimation.Text.class, "Show/hide lane Ids", false);
@@ -112,7 +112,7 @@ public final class AnimationToggles
                 true, false);
         panel.addToggleAnimationButtonIcon("NodeId", NodeAnimation.Text.class, "/icons/Id24.png", "Show/hide node Ids", false,
                 true);
-        panel.addToggleAnimationButtonIcon("Link", OtsLink.class, "/icons/Link24.png", "Show/hide links", true, false);
+        panel.addToggleAnimationButtonIcon("Link", Link.class, "/icons/Link24.png", "Show/hide links", true, false);
         panel.addToggleAnimationButtonIcon("LinkId", LinkAnimation.Text.class, "/icons/Id24.png", "Show/hide link Ids", false,
                 true);
         panel.addToggleAnimationButtonIcon("Lane", Lane.class, "/icons/Lane24.png", "Show/hide lanes", true, false);
@@ -155,7 +155,7 @@ public final class AnimationToggles
                 false, false);
         panel.addToggleAnimationButtonIcon("NodeId", NodeAnimation.Text.class, "/icons/Id24.png", "Show/hide node Ids", false,
                 true);
-        panel.addToggleAnimationButtonIcon("Link", OtsLink.class, "/icons/Link24.png", "Show/hide links", false, false);
+        panel.addToggleAnimationButtonIcon("Link", Link.class, "/icons/Link24.png", "Show/hide links", false, false);
         panel.addToggleAnimationButtonIcon("LinkId", LinkAnimation.Text.class, "/icons/Id24.png", "Show/hide link Ids", false,
                 true);
         panel.addToggleAnimationButtonIcon("Lane", Lane.class, "/icons/Lane24.png", "Show/hide lanes", true, false);
@@ -218,7 +218,7 @@ public final class AnimationToggles
     {
         showAnimationClass(panel, Node.class);
         hideAnimationClass(panel, NodeAnimation.Text.class);
-        showAnimationClass(panel, OtsLink.class);
+        showAnimationClass(panel, Link.class);
         hideAnimationClass(panel, LinkAnimation.Text.class);
         showAnimationClass(panel, Lane.class);
         hideAnimationClass(panel, LaneAnimation.Text.class);
@@ -246,7 +246,7 @@ public final class AnimationToggles
     {
         hideAnimationClass(panel, Node.class);
         hideAnimationClass(panel, NodeAnimation.Text.class);
-        hideAnimationClass(panel, OtsLink.class);
+        hideAnimationClass(panel, Link.class);
         hideAnimationClass(panel, LinkAnimation.Text.class);
         showAnimationClass(panel, Lane.class);
         hideAnimationClass(panel, LaneAnimation.Text.class);
