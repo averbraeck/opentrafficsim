@@ -20,7 +20,7 @@ import org.opentrafficsim.core.gtu.GtuException;
  * @param <P> perception type
  */
 public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Perception<G>>
-        extends Type<AbstractPerceptionCategory<G, P>> implements Serializable, PerceptionCategory<G, P>
+        implements Serializable, PerceptionCategory<G, P>, Type<AbstractPerceptionCategory<G, P>>
 {
 
     /** */

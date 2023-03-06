@@ -47,7 +47,7 @@ Below is an example of _recursive generics_, where `HierarchicalType` has type p
 
 ```java
     public abstract class HierarchicalType<T extends HierarchicalType<T>> 
-        extends Type<T>
+        implements Type<T>
     {
         private T parent;
         public final T getParent()

@@ -16,7 +16,7 @@ public class Generics
 {
 
     // @docs/02-model-structure/java.md#java-generics
-    public abstract class HierarchicalType<T extends HierarchicalType<T>> extends Type<T>
+    public abstract class HierarchicalType<T extends HierarchicalType<T>> implements Type<T>
     {
         private T parent;
 

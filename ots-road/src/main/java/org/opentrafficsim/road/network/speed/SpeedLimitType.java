@@ -16,7 +16,7 @@ import org.opentrafficsim.base.Type;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <T> Class of speed info that is linked to the speed limit type.
  */
-public class SpeedLimitType<T> extends Type<SpeedLimitType<T>> implements Serializable, Identifiable
+public class SpeedLimitType<T> implements Serializable, Identifiable, Type<SpeedLimitType<T>>
 {
 
     /** */

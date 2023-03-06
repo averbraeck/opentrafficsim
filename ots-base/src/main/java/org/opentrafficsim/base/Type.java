@@ -15,10 +15,8 @@ import java.io.Serializable;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <T> Class of type.
  */
-public abstract class Type<T extends Type<T>> implements Serializable
+public interface Type<T extends Type<T>> extends Serializable
 {
-    /** */
-    private static final long serialVersionUID = 20220928L;
 
     /**
      * Returns whether this type is the same type as the given type. Use this method to check for any kind of type (e.g.
@@ -29,7 +27,7 @@ public abstract class Type<T extends Type<T>> implements Serializable
      * @param type T; type instance to compare to
      * @return whether this type is the same type as the given type
      */
-    public final boolean isType(final T type)
+    default boolean isType(final T type)
     {
         return this.equals(type);
     }
