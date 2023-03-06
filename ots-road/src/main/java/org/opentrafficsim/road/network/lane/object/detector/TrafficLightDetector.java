@@ -26,7 +26,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OtsNetwork;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -68,7 +68,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
     private final Set<Lane> lanes = new LinkedHashSet<>();
 
     /** The OTS network. */
-    private final OtsNetwork network;
+    private final Network network;
 
     /** Type. */
     private final DetectorType type;

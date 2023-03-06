@@ -11,7 +11,7 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.core.network.OtsNetwork;
+import org.opentrafficsim.core.network.Network;
 import org.sim0mq.Sim0MQException;
 
 /**
@@ -27,7 +27,7 @@ import org.sim0mq.Sim0MQException;
 public class GtuTransceiver extends AbstractEventTransceiver
 {
     /** The network. */
-    private final OtsNetwork network;
+    private final Network network;
 
     /** Transceiver for the GTU ids. */
     private final TransceiverInterface gtuIdSource;
@@ -37,7 +37,7 @@ public class GtuTransceiver extends AbstractEventTransceiver
      * @param network Network; the Network
      * @param gtuIdSource GtuIdTransceiver; the transceiver that can produce all active GTU ids in the Network
      */
-    public GtuTransceiver(final OtsNetwork network, final GtuIdTransceiver gtuIdSource)
+    public GtuTransceiver(final Network network, final GtuIdTransceiver gtuIdSource)
     {
         super("GTU transceiver", new MetaData("GTU id", "GTU id",
                 new ObjectDescriptor[] {new ObjectDescriptor("GTU id", "GTU id", String.class)}), Gtu.MOVE_EVENT);

@@ -47,7 +47,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseDistribution;
 import org.opentrafficsim.road.network.factory.xml.utils.Transformer;
@@ -98,7 +98,7 @@ public final class OdParser
 
     /**
      * Creates generators and returns OD matrices.
-     * @param otsNetwork OtsRoadNetwork; network
+     * @param otsNetwork RoadNetwork; network
      * @param definitions Definitions; parsed definitions.
      * @param demands List&lt;NETWORKDEMAND&gt;; demand
      * @param gtuTemplates Map&lt;String, GTUTEMPLATE&gt;; GTU templates
@@ -109,7 +109,7 @@ public final class OdParser
      * @throws XmlParserException if the OD contains an inconsistency or error
      */
     @SuppressWarnings("checkstyle:methodlength")
-    public static List<LaneBasedGtuGenerator> parseDemand(final OtsRoadNetwork otsNetwork, final Definitions definitions,
+    public static List<LaneBasedGtuGenerator> parseDemand(final RoadNetwork otsNetwork, final Definitions definitions,
             final List<NETWORKDEMAND> demands, final Map<String, GTUTEMPLATE> gtuTemplates,
             final Map<String, LaneBasedStrategicalPlannerFactory<?>> factories, final Map<String, String> modelIdReferrals,
             final StreamInformation streamMap) throws XmlParserException
@@ -689,12 +689,12 @@ public final class OdParser
      * @param option Option&lt;T&gt;; option to set
      * @param value T; value to set the option to
      * @param options ODOPTIONSITEM; used to set the option on the right level (Link type, origin node, lane
-     * @param otsNetwork OtsRoadNetwork; to get the link type, origin node or lane from
+     * @param otsNetwork RoadNetwork; to get the link type, origin node or lane from
      * @param definitions Definitions; parsed definitions.
      * @param <T> option value type
      */
     private static <T> void setOption(final OdOptions odOptions, final Option<T> option, final T value,
-            final ODOPTIONSITEM options, final OtsRoadNetwork otsNetwork, final Definitions definitions)
+            final ODOPTIONSITEM options, final RoadNetwork otsNetwork, final Definitions definitions)
     {
         if (value != null)
         {

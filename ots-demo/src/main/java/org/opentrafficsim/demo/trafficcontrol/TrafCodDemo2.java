@@ -28,7 +28,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.object.NonLocatedObject;
 import org.opentrafficsim.demo.trafficcontrol.TrafCodDemo2.TrafCodModel;
 import org.opentrafficsim.draw.core.OtsDrawingException;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
@@ -164,7 +164,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
         private static final long serialVersionUID = 20161020L;
 
         /** The network. */
-        private OtsRoadNetwork network;
+        private RoadNetwork network;
 
         /** The XML. */
         private final String xml;
@@ -188,7 +188,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
         {
             try
             {
-                this.network = new OtsRoadNetwork(getShortName(), getSimulator());
+                this.network = new RoadNetwork(getShortName(), getSimulator());
                 OTS ots = XmlNetworkLaneParser.parseXml(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)));
                 XmlNetworkLaneParser.build(ots, this.network, false);
             }
@@ -200,7 +200,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
 
         /** {@inheritDoc} */
         @Override
-        public final OtsRoadNetwork getNetwork()
+        public final RoadNetwork getNetwork()
         {
             return this.network;
         }

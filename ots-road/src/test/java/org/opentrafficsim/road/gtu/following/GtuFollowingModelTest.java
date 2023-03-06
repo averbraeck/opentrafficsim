@@ -45,7 +45,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.IdmOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusOld;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlanner;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -73,7 +73,7 @@ public class GtuFollowingModelTest implements UNITS
     private void gtuFollowingModelTests(final GtuFollowingModelOld gtuFollowingModel) throws Exception
     {
         OtsSimulatorInterface simulator = new OtsSimulator("GtuFollowingModelTest");
-        OtsRoadNetwork network = new OtsRoadNetwork("gtu following test network", simulator);
+        RoadNetwork network = new RoadNetwork("gtu following test network", simulator);
         Model model = new Model(simulator, network);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
 
@@ -342,13 +342,13 @@ public class GtuFollowingModelTest implements UNITS
         private static final long serialVersionUID = 20141027L;
 
         /** */
-        private final OtsRoadNetwork network;
+        private final RoadNetwork network;
 
         /**
          * @param simulator the simulator to use
          * @param network the network
          */
-        public Model(final OtsSimulatorInterface simulator, final OtsRoadNetwork network)
+        public Model(final OtsSimulatorInterface simulator, final RoadNetwork network)
         {
             super(simulator);
             this.network = network;
@@ -363,7 +363,7 @@ public class GtuFollowingModelTest implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public final OtsRoadNetwork getNetwork()
+        public final RoadNetwork getNetwork()
         {
             return this.network;
         }

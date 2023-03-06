@@ -32,7 +32,7 @@ import org.opentrafficsim.draw.graphs.GraphPath;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.kpi.interfaces.LaneData;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.sampling.LaneDataRoad;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
@@ -75,7 +75,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
 
         // NetworkAnimation networkAnimation = new NetworkAnimation(model.getNetwork());
         // networkAnimation.addDrawingInfoClass(Lane.class, new DrawingInfoShape<>(Color.GRAY));
-        OtsRoadNetwork network = model.getNetwork();
+        RoadNetwork network = model.getNetwork();
         System.out.println(network.getLinkMap());
     }
 

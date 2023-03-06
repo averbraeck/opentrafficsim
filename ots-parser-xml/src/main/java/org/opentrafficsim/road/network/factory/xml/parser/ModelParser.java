@@ -95,7 +95,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseDistribution;
 import org.opentrafficsim.xml.generated.CARFOLLOWINGMODELHEADWAYSPEEDTYPE;
@@ -340,7 +340,7 @@ public class ModelParser
 
     /**
      * Creates strategical planner factories for models.
-     * @param otsNetwork OtsRoadNetwork; network
+     * @param otsNetwork RoadNetwork; network
      * @param models List&lt;MODEL&gt;; models
      * @param inputParameters InputParameters; input parameters
      * @param parameterTypes Map&lt;String, ParameterType&lt;?&gt;&gt;; parameter types
@@ -353,7 +353,7 @@ public class ModelParser
      * @throws XmlParserException unknown value, missing constructor, etc.
      */
     public static <U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>,
-            K> Map<String, LaneBasedStrategicalPlannerFactory<?>> parseModel(final OtsRoadNetwork otsNetwork,
+            K> Map<String, LaneBasedStrategicalPlannerFactory<?>> parseModel(final RoadNetwork otsNetwork,
                     final List<MODELTYPE> models, final InputParameters inputParameters,
                     final Map<String, ParameterType<?>> parameterTypes, final StreamInformation streamInformation,
                     final Map<String, ParameterFactory> parameterFactories) throws XmlParserException

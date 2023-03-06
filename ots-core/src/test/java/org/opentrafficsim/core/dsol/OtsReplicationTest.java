@@ -13,7 +13,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
-import org.opentrafficsim.core.network.OtsNetwork;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 
@@ -92,7 +92,7 @@ public class OtsReplicationTest
         }
 
         @Override
-        public OtsNetwork getNetwork()
+        public Network getNetwork()
         {
             return null;
         }

@@ -32,7 +32,7 @@ public class LinkTypeTest
     @SuppressWarnings({"unlikely-arg-type"})
     public final void testLinkType()
     {
-        OtsNetwork network = new OtsNetwork("test", new OtsSimulator("Simulator for LinkTypeTest"));
+        Network network = new Network("test", new OtsSimulator("Simulator for LinkTypeTest"));
         Try.testFail(() -> new LinkType(null, null), NullPointerException.class);
 
         GtuType carType = new GtuType("Car", DefaultsNl.VEHICLE);

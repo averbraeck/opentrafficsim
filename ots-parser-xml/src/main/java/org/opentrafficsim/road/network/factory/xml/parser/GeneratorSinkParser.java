@@ -39,7 +39,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFacto
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.Generators;
 import org.opentrafficsim.road.network.factory.xml.utils.Transformer;
@@ -79,13 +79,13 @@ public final class GeneratorSinkParser
 
     /**
      * Parse the ROUTE tags.
-     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
      * @param definitions Definitions; parsed definitions
      * @param demand NETWORKDEMAND; the NETWORKDEMAND tag
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseRoutes(final OtsRoadNetwork otsNetwork, final Definitions definitions, final NETWORKDEMAND demand)
+    static void parseRoutes(final RoadNetwork otsNetwork, final Definitions definitions, final NETWORKDEMAND demand)
             throws NetworkException
     {
         for (ROUTE routeTag : demand.getROUTE())
@@ -107,13 +107,13 @@ public final class GeneratorSinkParser
 
     /**
      * Parse the SHORTESTROUTE tags.
-     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
      * @param definitions Definitions; parsed definitions
      * @param demand NETWORKDEMAND; the NETWORKDEMAND tag
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseShortestRoutes(final OtsRoadNetwork otsNetwork, final Definitions definitions, final NETWORKDEMAND demand)
+    static void parseShortestRoutes(final RoadNetwork otsNetwork, final Definitions definitions, final NETWORKDEMAND demand)
             throws NetworkException
     {
         for (SHORTESTROUTE shortestRouteTag : demand.getSHORTESTROUTE())
@@ -156,13 +156,13 @@ public final class GeneratorSinkParser
 
     /**
      * Parse the ROUTEMIX tags.
-     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
      * @param demand NETWORKDEMAND; the NETWORKDEMAND tag
      * @return id-based Map of routemix objects as FrequencyAndObject lists
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static Map<String, List<FrequencyAndObject<Route>>> parseRouteMix(final OtsRoadNetwork otsNetwork,
+    static Map<String, List<FrequencyAndObject<Route>>> parseRouteMix(final RoadNetwork otsNetwork,
             final NETWORKDEMAND demand) throws NetworkException
     {
         Map<String, List<FrequencyAndObject<Route>>> routeMixMap = new LinkedHashMap<>();
@@ -186,13 +186,13 @@ public final class GeneratorSinkParser
 
     /**
      * Parse the SHORTESTROUTEMIX tags.
-     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
      * @param demand NETWORKDEMAND; the NETWORKDEMAND tag
      * @return id-based Map of routemix objects as FrequencyAndObject lists
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static Map<String, List<FrequencyAndObject<Route>>> parseShortestRouteMix(final OtsRoadNetwork otsNetwork,
+    static Map<String, List<FrequencyAndObject<Route>>> parseShortestRouteMix(final RoadNetwork otsNetwork,
             final NETWORKDEMAND demand) throws NetworkException
     {
         Map<String, List<FrequencyAndObject<Route>>> shortestRouteMixMap = new LinkedHashMap<>();
@@ -216,7 +216,7 @@ public final class GeneratorSinkParser
 
     /**
      * Parse the Generators.
-     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
      * @param definitions Definitions; parsed definitions
      * @param demand NETWORK; the NETWORK tag
      * @param gtuTemplates GGTUTEMPLATE tags
@@ -227,7 +227,7 @@ public final class GeneratorSinkParser
      * @throws XmlParserException when the objects cannot be inserted into the network due to inconsistencies
      */
     @SuppressWarnings("checkstyle:needbraces")
-    public static List<LaneBasedGtuGenerator> parseGenerators(final OtsRoadNetwork otsNetwork, final Definitions definitions,
+    public static List<LaneBasedGtuGenerator> parseGenerators(final RoadNetwork otsNetwork, final Definitions definitions,
             final NETWORKDEMAND demand, final Map<String, GTUTEMPLATE> gtuTemplates,
             final Map<String, List<FrequencyAndObject<Route>>> routeMixMap,
             final Map<String, List<FrequencyAndObject<Route>>> shortestRouteMixMap, final StreamInformation streamInformation)
@@ -378,13 +378,13 @@ public final class GeneratorSinkParser
 
     /**
      * Parse the Sinks.
-     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
      * @param demand NETWORK; the NETWORK tag
      * @param simulator OtsSimulatorInterface; the simulator
      * @param definitions Definitions; type definitions.
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
-    public static void parseSinks(final OtsRoadNetwork otsNetwork, final NETWORKDEMAND demand,
+    public static void parseSinks(final RoadNetwork otsNetwork, final NETWORKDEMAND demand,
             final OtsSimulatorInterface simulator, final Definitions definitions) throws NetworkException
     {
         for (SINK sinkTag : demand.getSINK())

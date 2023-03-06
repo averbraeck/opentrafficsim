@@ -30,7 +30,7 @@ import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OtsNetwork;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.perception.PerceivableContext;
 
@@ -69,7 +69,7 @@ public class GtuTest
         TestGtu firstGTU = null;
         TestGtu lastGTU = null;
         OtsSimulatorInterface simulator = new OtsSimulator("testAbstractGTU");
-        OtsNetwork perceivableContext = new OtsNetwork("network", simulator);
+        Network perceivableContext = new Network("network", simulator);
         GtuModel model = new GtuModel(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(9999, DurationUnit.SI), model);
         StrategicalPlanner strategicalPlanner = new StrategicalPlanner()
@@ -316,7 +316,7 @@ public class GtuTest
 
         /** {@inheritDoc} */
         @Override
-        public final OtsNetwork getNetwork()
+        public final Network getNetwork()
         {
             return null;
         }

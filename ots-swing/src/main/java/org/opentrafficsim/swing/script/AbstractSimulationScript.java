@@ -22,10 +22,10 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.network.OtsNetwork;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
@@ -67,7 +67,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
     private OtsSimulatorInterface simulator;
 
     /** The network. */
-    private OtsRoadNetwork network;
+    private RoadNetwork network;
 
     /** GTU colorer. */
     private GtuColorer gtuColorer = OtsSwingApplication.DEFAULT_COLORER;
@@ -279,9 +279,9 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
 
     /**
      * Returns the network.
-     * @return OtsNetwork; network
+     * @return Network; network
      */
-    public final OtsRoadNetwork getNetwork()
+    public final RoadNetwork getNetwork()
     {
         return AbstractSimulationScript.this.network;
     }
@@ -290,9 +290,9 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
 
     /**
      * Creates animations for nodes, links and lanes. This can be used if the network is not read from XML.
-     * @param net OtsNetwork; network
+     * @param net Network; network
      */
-    protected void animateNetwork(final OtsNetwork net)
+    protected void animateNetwork(final Network net)
     {
         try
         {
@@ -325,9 +325,9 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
     /**
      * Method that is called when the animation has been created, to add components for a demo.
      * @param animationPanel OtsAnimationPanel; animation panel
-     * @param net OtsNetwork; network
+     * @param net Network; network
      */
-    protected void setupDemo(final OtsAnimationPanel animationPanel, final OtsRoadNetwork net)
+    protected void setupDemo(final OtsAnimationPanel animationPanel, final RoadNetwork net)
     {
         //
     }
@@ -347,10 +347,10 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
      * Sets up the simulation based on provided properties. Properties can be obtained with {@code getProperty()}. Setting up a
      * simulation should at least create a network and some demand. Additionally this may setup traffic control, sampling, etc.
      * @param sim OtsSimulatorInterface; simulator
-     * @return OtsNetwork; network
+     * @return Network; network
      * @throws Exception on any exception
      */
-    protected abstract OtsRoadNetwork setupSimulation(OtsSimulatorInterface sim) throws Exception;
+    protected abstract RoadNetwork setupSimulation(OtsSimulatorInterface sim) throws Exception;
 
     // Nested classes
 
@@ -408,7 +408,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
         /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
-        public OtsRoadNetwork getNetwork()
+        public RoadNetwork getNetwork()
         {
             return AbstractSimulationScript.this.network;
         }

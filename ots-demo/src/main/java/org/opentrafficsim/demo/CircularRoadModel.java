@@ -37,7 +37,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
@@ -95,8 +95,8 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
     /** Truck parameters. */
     private Parameters parametersTruck;
 
-    /** The OtsRoadNetwork. */
-    private final OtsRoadNetwork network;
+    /** The RoadNetwork. */
+    private final RoadNetwork network;
 
     /**
      * @param simulator OtsSimulatorInterface; the simulator for this model
@@ -104,7 +104,7 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
     public CircularRoadModel(final OtsSimulatorInterface simulator)
     {
         super(simulator);
-        this.network = new OtsRoadNetwork("network", simulator);
+        this.network = new RoadNetwork("network", simulator);
         makeInputParameterMap();
     }
 
@@ -308,7 +308,7 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    public OtsRoadNetwork getNetwork()
+    public RoadNetwork getNetwork()
     {
         return this.network;
     }

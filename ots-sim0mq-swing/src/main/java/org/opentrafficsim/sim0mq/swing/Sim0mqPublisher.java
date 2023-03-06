@@ -37,10 +37,10 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OtsNetwork;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.object.NonLocatedObject;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
@@ -90,7 +90,7 @@ public final class Sim0mqPublisher
     private Sim0mqOtsModel model = null;
 
     /** The OTS road network. */
-    private OtsRoadNetwork network = null;
+    private RoadNetwork network = null;
 
     /** The OTS animation panel. */
     private OtsAnimationPanel animationPanel = null;
@@ -237,7 +237,7 @@ public final class Sim0mqPublisher
         try
         {
             OtsAnimator animator = new OtsAnimator("OTS Animator");
-            this.network = new OtsRoadNetwork("OTS model for Sim0MQPublisher", animator);
+            this.network = new RoadNetwork("OTS model for Sim0MQPublisher", animator);
             this.model = new Sim0mqOtsModel("Remotely controlled OTS model", this.network, xml);
             Map<String, StreamInterface> map = new LinkedHashMap<>();
             map.put("generation", new MersenneTwister(seed));
@@ -504,17 +504,17 @@ class Sim0mqOtsModel extends AbstractOtsModel
     private static final long serialVersionUID = 20170419L;
 
     /** The network. */
-    private final OtsRoadNetwork network;
+    private final RoadNetwork network;
 
     /** The XML. */
     private final String xml;
 
     /**
      * @param description String; the model description
-     * @param network OtsRoadNetwork; the network
+     * @param network RoadNetwork; the network
      * @param xml String; the XML description of the simulation model
      */
-    Sim0mqOtsModel(final String description, final OtsRoadNetwork network, final String xml)
+    Sim0mqOtsModel(final String description, final RoadNetwork network, final String xml)
     {
         super(network.getSimulator(), network.getId(), description);
         this.network = network;
@@ -546,7 +546,7 @@ class Sim0mqOtsModel extends AbstractOtsModel
 
     /** {@inheritDoc} */
     @Override
-    public OtsNetwork getNetwork()
+    public Network getNetwork()
     {
         return this.network;
     }

@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.Serializable;
 
 import org.junit.Test;
-import org.opentrafficsim.core.network.OtsNetwork;
+import org.opentrafficsim.core.network.Network;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -79,7 +79,7 @@ public class AbstractOtsModelTest
         }
 
         @Override
-        public OtsNetwork getNetwork()
+        public Network getNetwork()
         {
             return null;
         }

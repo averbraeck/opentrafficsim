@@ -65,7 +65,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public abstract class ExpansionNetwork extends OtsNetwork
+public abstract class ExpansionNetwork extends Network
 {
     /** */
     private static final long serialVersionUID = 20150104L;

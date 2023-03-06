@@ -40,7 +40,7 @@ public class NodeTest
     @Test
     public final void testNode() throws NetworkException, OtsGeometryException
     {
-        OtsNetwork network = new OtsNetwork("Node test network", MockSimulator.createMock());
+        Network network = new Network("Node test network", MockSimulator.createMock());
         OtsPoint3d point1 = new OtsPoint3d(20, 40, 60);
         Direction heading = Direction.instantiateSI(Math.toRadians(123));
         Node node1 = new Node(network, "node 1", point1, heading);
@@ -62,7 +62,7 @@ public class NodeTest
         assertTrue("Node 2 has heading NaN", Double.isNaN(node2.getHeading().si));
         // Create another node with name node 1 in another network
         OtsSimulatorInterface simulator = MockSimulator.createMock();
-        Network otherNetwork = new OtsNetwork("Node test network 2", simulator);
+        Network otherNetwork = new Network("Node test network 2", simulator);
         Node node3 = new Node(otherNetwork, "node 1", point1);
         assertTrue("Node 1 does match node 3 in other network", node1.equals(node3));
 
@@ -123,7 +123,7 @@ public class NodeTest
     public final void connectionTest() throws NetworkException, OtsGeometryException
     {
         OtsSimulatorInterface simulator = MockSimulator.createMock();
-        OtsNetwork network = new OtsNetwork("connection test network", simulator);
+        Network network = new Network("connection test network", simulator);
         Node node = new Node(network, "main", new OtsPoint3d(10, 100, 10));
         int maxNeighbor = 10;
         for (int i = 0; i < maxNeighbor; i++)
@@ -265,7 +265,7 @@ public class NodeTest
     public final void connectionSetTest() throws NetworkException, OtsGeometryException
     {
         OtsSimulatorInterface simulator = MockSimulator.createMock();
-        OtsNetwork network = new OtsNetwork("connectionSets test network", simulator);
+        Network network = new Network("connectionSets test network", simulator);
         Node node = new Node(network, "main", new OtsPoint3d(10, 100, 10));
         int maxNeighbor = 10;
         for (int i = 0; i < maxNeighbor; i++)

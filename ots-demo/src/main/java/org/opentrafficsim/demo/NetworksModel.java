@@ -37,9 +37,9 @@ import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
@@ -56,7 +56,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFacto
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -100,7 +100,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
     private static final long serialVersionUID = 20140815L;
 
     /** The network. */
-    private final OtsRoadNetwork network = new OtsRoadNetwork("network", getSimulator());
+    private final RoadNetwork network = new RoadNetwork("network", getSimulator());
 
     /** Strategical planner generator for cars. */
     private LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactoryCars = null;
@@ -511,7 +511,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
 
     /** {@inheritDoc} */
     @Override
-    public OtsRoadNetwork getNetwork()
+    public RoadNetwork getNetwork()
     {
         return this.network;
     }

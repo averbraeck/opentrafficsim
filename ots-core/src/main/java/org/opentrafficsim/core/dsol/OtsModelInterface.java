@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.dsol;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.opentrafficsim.core.network.OtsNetwork;
+import org.opentrafficsim.core.network.Network;
 
 import nl.tudelft.simulation.dsol.model.DSOLModel;
 
@@ -19,7 +19,7 @@ public interface OtsModelInterface extends DSOLModel<Duration, OtsSimulatorInter
      * Return the traffic network for the simulation.
      * @return the network.
      */
-    OtsNetwork getNetwork();
+    Network getNetwork();
 
     /**
      * Return a very short description of the simulation.

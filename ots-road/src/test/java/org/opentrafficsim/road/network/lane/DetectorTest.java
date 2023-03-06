@@ -31,7 +31,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGtuFollowingTacticalPl
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlanner;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
 
@@ -60,7 +60,7 @@ public class DetectorTest implements UNITS
         OtsSimulatorInterface simulator = new OtsSimulator("SensorTest");
         OtsModelInterface model = new DummyModelForSensorTest(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
-        OtsRoadNetwork network = new OtsRoadNetwork("sensor test network", simulator);
+        RoadNetwork network = new RoadNetwork("sensor test network", simulator);
         // Now we need a set of Lanes
         // To create Lanes we need Nodes and a LaneType
         Node nodeAFrom = new Node(network, "AFrom", new OtsPoint3d(0, 0, 0), Direction.ZERO);
@@ -105,7 +105,7 @@ public class DetectorTest implements UNITS
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =
         // new LaneBasedBehavioralCharacteristics(fas, null);
         LaneBasedGtu car = new LaneBasedGtu(carID, gtuType, carLength, carWidth, maximumSpeed, carLength.times(0.5),
-                (OtsRoadNetwork) network);
+                (RoadNetwork) network);
         LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(new LaneBasedGtuFollowingTacticalPlanner(fas, car), car);
         car.setParameters(parameters);
@@ -208,7 +208,7 @@ class DummyModelForSensorTest extends AbstractOtsModel
 
     /** {@inheritDoc} */
     @Override
-    public final OtsRoadNetwork getNetwork()
+    public final RoadNetwork getNetwork()
     {
         return null;
     }

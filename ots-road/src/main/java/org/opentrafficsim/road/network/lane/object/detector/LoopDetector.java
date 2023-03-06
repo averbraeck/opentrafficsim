@@ -33,7 +33,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -596,10 +596,10 @@ public class LoopDetector extends LaneDetector
 
     /**
      * Returns a Table with loop detector positions.
-     * @param network OtsRoadNetwork; network from which all detectors are found.
+     * @param network RoadNetwork; network from which all detectors are found.
      * @return Table; with loop detector positions.
      */
-    public static Table asTablePositions(final OtsRoadNetwork network)
+    public static Table asTablePositions(final RoadNetwork network)
     {
         Set<LoopDetector> detectors = getLoopDetectors(network);
         Collection<Column<?>> columns = new LinkedHashSet<>();
@@ -655,10 +655,10 @@ public class LoopDetector extends LaneDetector
 
     /**
      * Returns a Table with all periodic data, such as flow and speed per minute.
-     * @param network OtsRoadNetwork; network from which all detectors are found.
+     * @param network RoadNetwork; network from which all detectors are found.
      * @return Table; with all periodic data, such as flow and speed per minute.
      */
-    public static Table asTablePeriodicData(final OtsRoadNetwork network)
+    public static Table asTablePeriodicData(final RoadNetwork network)
     {
         Set<LoopDetector> detectors = getLoopDetectors(network);
         Set<LoopDetectorMeasurement<?, ?>> measurements = getMeasurements(detectors, true);
@@ -757,10 +757,10 @@ public class LoopDetector extends LaneDetector
 
     /**
      * Returns a Table with all non-periodic data, such as vehicle passage times or platoon counts.
-     * @param network OtsRoadNetwork; network from which all detectors are found.
+     * @param network RoadNetwork; network from which all detectors are found.
      * @return Table; with all non-periodic data, such as vehicle passage times or platoon counts.
      */
-    public static Table asTableNonPeriodicData(final OtsRoadNetwork network)
+    public static Table asTableNonPeriodicData(final RoadNetwork network)
     {
         Set<LoopDetector> detectors = getLoopDetectors(network);
         Set<LoopDetectorMeasurement<?, ?>> measurements = getMeasurements(detectors, false);
@@ -854,10 +854,10 @@ public class LoopDetector extends LaneDetector
 
     /**
      * Gathers all loop detectors from the network and puts them in a set sorted by loop detector id.
-     * @param network OtsRoadNetwork; network.
+     * @param network RoadNetwork; network.
      * @return Set&lt;LoopDetector&gt;; set of loop detector sorted by loop detector id.
      */
-    private static Set<LoopDetector> getLoopDetectors(final OtsRoadNetwork network)
+    private static Set<LoopDetector> getLoopDetectors(final RoadNetwork network)
     {
         Set<LoopDetector> detectors = new TreeSet<>(new Comparator<LoopDetector>()
         {

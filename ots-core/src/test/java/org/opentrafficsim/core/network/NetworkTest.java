@@ -37,7 +37,7 @@ import org.opentrafficsim.core.network.route.Route;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class OtsNetworkTest implements EventListener
+public class NetworkTest implements EventListener
 {
     /** ... */
     private static final long serialVersionUID = 1L;
@@ -64,16 +64,16 @@ public class OtsNetworkTest implements EventListener
     private int otherEventCount = 0;
 
     /**
-     * Test OtsNetwork class.
+     * Test Network class.
      * @throws NetworkException if that happens; this test has failed
      * @throws OtsGeometryException if that happens; this test has failed
      */
     @Test
-    public final void testOtsNetwork() throws NetworkException, OtsGeometryException
+    public final void testNetwork() throws NetworkException, OtsGeometryException
     {
-        String networkId = "testOtsNetwork";
+        String networkId = "testNetwork";
         OtsSimulatorInterface simulator = MockSimulator.createMock();
-        OtsNetwork network = new OtsNetwork(networkId, simulator);
+        Network network = new Network(networkId, simulator);
         assertTrue("Id must match", networkId.equals(network.getId()));
         network.addListener(this, Network.LINK_ADD_EVENT);
         network.addListener(this, Network.LINK_REMOVE_EVENT);
@@ -104,7 +104,7 @@ public class OtsNetworkTest implements EventListener
         assertEquals("Node can be retrieved by id", node1, network.getNode(node1.getId()));
         assertTrue("network contains a node with id node1", network.containsNode("node1"));
         // Create a node that is NOT in this network; to do that we must create another network
-        OtsNetwork otherNetwork = new OtsNetwork("other network", simulator);
+        Network otherNetwork = new Network("other network", simulator);
         Node node2 = new Node(otherNetwork, "node2", new OtsPoint3d(11, 12, 13));
         assertFalse("node2 is NOT in network", network.containsNode(node2));
         assertEquals("link add event count is 0", 0, this.linkAddedCount);
@@ -330,13 +330,13 @@ public class OtsNetworkTest implements EventListener
     }
 
     /**
-     * Test the getExtent method of OtsNetwork.
+     * Test the getExtent method of Network.
      * @throws NetworkException if that happens uncaught, this test has failed
      */
     @Test
     public final void testExtent() throws NetworkException
     {
-        OtsNetwork network = new OtsNetwork("test", MockSimulator.createMock());
+        Network network = new Network("test", MockSimulator.createMock());
         Rectangle2D extent = network.getExtent();
         assertEquals("extend left", -500, extent.getMinX(), 0);
         assertEquals("extend bottom", -500, extent.getMinY(), 0);
@@ -346,7 +346,7 @@ public class OtsNetworkTest implements EventListener
         // Add one node
         new Node(network, "node1", new OtsPoint3d(10, 20, 30));
         extent = network.getExtent();
-        double margin = Node.BOUNDINGRADIUS * (1.0 + OtsNetwork.EXTENT_MARGIN);
+        double margin = Node.BOUNDINGRADIUS * (1.0 + Network.EXTENT_MARGIN);
         assertEquals("extend left", 10 - margin, extent.getMinX(), 0.01);
         assertEquals("extend bottom", 20 - margin, extent.getMinY(), 0.01);
         assertEquals("extend right", 10 + margin, extent.getMaxX(), 0.01);
@@ -354,8 +354,8 @@ public class OtsNetworkTest implements EventListener
         // Add another node
         new Node(network, "node2", new OtsPoint3d(110, 220, 330));
         extent = network.getExtent();
-        double xMargin = (100 + 2 * Node.BOUNDINGRADIUS) * OtsNetwork.EXTENT_MARGIN / 2;
-        double yMargin = (200 + 2 * Node.BOUNDINGRADIUS) * OtsNetwork.EXTENT_MARGIN / 2;
+        double xMargin = (100 + 2 * Node.BOUNDINGRADIUS) * Network.EXTENT_MARGIN / 2;
+        double yMargin = (200 + 2 * Node.BOUNDINGRADIUS) * Network.EXTENT_MARGIN / 2;
         assertEquals("extend left", 10 - Node.BOUNDINGRADIUS - xMargin, extent.getMinX(), 0.01);
         assertEquals("extend bottom", 20 - Node.BOUNDINGRADIUS - yMargin, extent.getMinY(), 0.01);
         assertEquals("extend right", 110 + Node.BOUNDINGRADIUS + xMargin, extent.getMaxX(), 0.01);
@@ -405,7 +405,7 @@ public class OtsNetworkTest implements EventListener
     @Test
     public final void testRouteMap() throws NetworkException, OtsGeometryException
     {
-        OtsNetwork network = new OtsNetwork("Route map test network", MockSimulator.createMock());
+        Network network = new Network("Route map test network", MockSimulator.createMock());
         Node node1 = new Node(network, "node1", new OtsPoint3d(10, 20, 30));
         Node node2 = new Node(network, "node2", new OtsPoint3d(110, 20, 30));
         List<Node> nodeList = new ArrayList<>();
@@ -441,7 +441,7 @@ public class OtsNetworkTest implements EventListener
         {
             // Ignore expected exception
         }
-        Network otherNetwork = new OtsNetwork("other Route map test network", MockSimulator.createMock());
+        Network otherNetwork = new Network("other Route map test network", MockSimulator.createMock());
         Node badNode = new Node(otherNetwork, "nodeInOtherNetwork", new OtsPoint3d(100, 200, 0));
         List<Node> badNodeList = new ArrayList<>();
         badNodeList.add(node1);
@@ -499,7 +499,7 @@ public class OtsNetworkTest implements EventListener
     @Test
     public final void testShortestPathBiDirectional() throws NetworkException, OtsGeometryException
     {
-        OtsNetwork network = new OtsNetwork("shortest path test network", MockSimulator.createMock());
+        Network network = new Network("shortest path test network", MockSimulator.createMock());
         List<Node> nodes = createRingNodesAndLinks(network);
         int maxNode = nodes.size();
         for (int skip = 1; skip < maxNode / 2; skip++)
@@ -539,7 +539,7 @@ public class OtsNetworkTest implements EventListener
     @Test
     public final void testShortestPathClockWise() throws NetworkException, OtsGeometryException
     {
-        OtsNetwork network = new OtsNetwork("shortest path test network", MockSimulator.createMock());
+        Network network = new Network("shortest path test network", MockSimulator.createMock());
         List<Node> nodes = createRingNodesAndLinks(network);
         int maxNode = nodes.size();
         for (int skip = 1; skip < maxNode; skip++)
@@ -576,7 +576,7 @@ public class OtsNetworkTest implements EventListener
     @Test
     public final void testShortestPathWithIntermediateNodes() throws NetworkException, OtsGeometryException
     {
-        OtsNetwork network = new OtsNetwork("shortest path test network", MockSimulator.createMock());
+        Network network = new Network("shortest path test network", MockSimulator.createMock());
         List<Node> nodes = createRingNodesAndLinks(network, 5);
         int maxNode = nodes.size();
         for (int fromNodeIndex = 0; fromNodeIndex < maxNode; fromNodeIndex++)
@@ -655,25 +655,25 @@ public class OtsNetworkTest implements EventListener
 
     /**
      * Construct a ring of 10 nodes with links in clockwise fashion.
-     * @param network OtsNetwork; the network that will contain the nodes
+     * @param network Network; the network that will contain the nodes
      * @return List&lt;Node&gt;; the constructed nodes (in clockwise order)
      * @throws NetworkException if that happens uncaught; this test has failed
      * @throws OtsGeometryException if that happens uncaught; this test has failed
      */
-    private List<Node> createRingNodesAndLinks(final OtsNetwork network) throws NetworkException, OtsGeometryException
+    private List<Node> createRingNodesAndLinks(final Network network) throws NetworkException, OtsGeometryException
     {
         return createRingNodesAndLinks(network, 10);
     }
 
     /**
      * Construct a ring of nodes with links in clockwise fashion.
-     * @param network OtsNetwork; the network that will contain the nodes
+     * @param network Network; the network that will contain the nodes
      * @param maxNode int; number of nodes on the ring
      * @return List&lt;Node&gt;; the constructed nodes (in clockwise order)
      * @throws NetworkException if that happens uncaught; this test has failed
      * @throws OtsGeometryException if that happens uncaught; this test has failed
      */
-    private List<Node> createRingNodesAndLinks(final OtsNetwork network, final int maxNode)
+    private List<Node> createRingNodesAndLinks(final Network network, final int maxNode)
             throws NetworkException, OtsGeometryException
     {
         GtuCompatibility<LinkType> compatibility =
@@ -717,7 +717,7 @@ public class OtsNetworkTest implements EventListener
         int trials = 100;
         for (int i = 0; i < trials; i++)
         {
-            OtsNetwork network = new OtsNetwork("shortest path test network", MockSimulator.createMock());
+            Network network = new Network("shortest path test network", MockSimulator.createMock());
             Node[] od = randomTestNetwork(network, gridSize, sigma, sigmaLim);
             // this first call triggers the graph to be constructed, which should not be part of timing an algorithm
             if (showTime)

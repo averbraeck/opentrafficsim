@@ -40,7 +40,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlanner;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
@@ -73,7 +73,7 @@ public class CarTest implements UNITS
     {
         Time initialTime = new Time(0, TimeUnit.BASE_SECOND);
         OtsSimulatorInterface simulator = makeSimulator();
-        OtsRoadNetwork network = new OtsRoadNetwork("network", simulator);
+        RoadNetwork network = new RoadNetwork("network", simulator);
         GtuType gtuType = DefaultsNl.CAR;
         LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
         Lane lane = makeLane(network, laneType, simulator);
@@ -129,7 +129,7 @@ public class CarTest implements UNITS
      */
     public static LaneBasedGtu makeReferenceCar(final String id, final GtuType gtuType, final Lane lane,
             final Length initialPosition, final Speed initialSpeed, final GtuFollowingModelOld gtuFollowingModel,
-            final LaneChangeModel laneChangeModel, final OtsRoadNetwork network)
+            final LaneChangeModel laneChangeModel, final RoadNetwork network)
             throws NamingException, NetworkException, SimRuntimeException, GtuException, OtsGeometryException
     {
         Length length = new Length(5.0, METER);
@@ -155,7 +155,7 @@ public class CarTest implements UNITS
      * @throws NetworkException on network error
      * @throws OtsGeometryException when center line or contour of a link or lane cannot be generated
      */
-    public static Lane makeLane(final OtsRoadNetwork network, final LaneType laneType, final OtsSimulatorInterface simulator)
+    public static Lane makeLane(final RoadNetwork network, final LaneType laneType, final OtsSimulatorInterface simulator)
             throws NetworkException, OtsGeometryException
     {
         Node n1 = new Node(network, "n1", new OtsPoint3d(0, 0), Direction.ZERO);
@@ -192,7 +192,7 @@ public class CarTest implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public final OtsRoadNetwork getNetwork()
+        public final RoadNetwork getNetwork()
         {
             return null;
         }

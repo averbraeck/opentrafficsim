@@ -38,7 +38,7 @@ public class LinkLocationTest implements UNITS
     {
         // Preparations
         OtsSimulatorInterface simulator = MockSimulator.createMock();
-        OtsRoadNetwork network = new OtsRoadNetwork("link location test network", simulator);
+        RoadNetwork network = new RoadNetwork("link location test network", simulator);
         Node nodeFrom = new Node(network, "From", new OtsPoint3d(0, 0, 0), Direction.ZERO);
         Node nodeTo = new Node(network, "To", new OtsPoint3d(1000, 0, 0), Direction.ZERO);
         OtsLine3d line = new OtsLine3d(new OtsPoint3d[] {new OtsPoint3d(0, 0, 0), new OtsPoint3d(1000, 0, 0)});

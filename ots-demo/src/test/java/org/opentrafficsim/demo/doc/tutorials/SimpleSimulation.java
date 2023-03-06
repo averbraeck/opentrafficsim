@@ -19,7 +19,7 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -51,10 +51,10 @@ public class SimpleSimulation extends AbstractSimulationScript
 
     // @docs/08-tutorials/simulation-setup.md#how-to-set-up-a-simulation
     @Override
-    protected OtsRoadNetwork setupSimulation(final OtsSimulatorInterface sim)
+    protected RoadNetwork setupSimulation(final OtsSimulatorInterface sim)
             throws NullPointerException, DrawRuntimeException, NetworkException, OtsGeometryException
     {
-        OtsRoadNetwork network = new OtsRoadNetwork("Simple network", sim);
+        RoadNetwork network = new RoadNetwork("Simple network", sim);
         OtsPoint3d pointA = new OtsPoint3d(0, 0, 0);
         OtsPoint3d pointB = new OtsPoint3d(500, 0, 0);
         Node nodeA = new Node(network, "A", pointA, Direction.ZERO);

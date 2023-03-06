@@ -3,7 +3,7 @@ package org.opentrafficsim.road.gtu.lane;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.network.OtsNetwork;
+import org.opentrafficsim.core.network.Network;
 
 /**
  * Checks acceleration bounds.
@@ -29,21 +29,21 @@ public class AccelerationChecker extends AbstractLaneBasedMoveChecker
 
     /**
      * Constructor.
-     * @param network OtsNetwork; network
+     * @param network Network; network
      */
-    public AccelerationChecker(final OtsNetwork network)
+    public AccelerationChecker(final Network network)
     {
         this(network, Acceleration.instantiateSI(-10.0), Acceleration.instantiateSI(5), Speed.instantiateSI(2.5));
     }
 
     /**
      * Constructor.
-     * @param network OtsNetwork; network
+     * @param network Network; network
      * @param min Acceleration; minimum allowable acceleration
      * @param max Acceleration; maximum allowable acceleration
      * @param minSpeed Speed; speed above which acceleration should be checked
      */
-    public AccelerationChecker(final OtsNetwork network, final Acceleration min, final Acceleration max, final Speed minSpeed)
+    public AccelerationChecker(final Network network, final Acceleration min, final Acceleration max, final Speed minSpeed)
     {
         super(network);
         this.min = min;

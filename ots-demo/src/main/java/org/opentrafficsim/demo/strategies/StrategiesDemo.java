@@ -92,7 +92,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -198,7 +198,7 @@ public class StrategiesDemo extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected void setupDemo(final OtsAnimationPanel animation, final OtsRoadNetwork network)
+    protected void setupDemo(final OtsAnimationPanel animation, final RoadNetwork network)
     {
         // demo panel
         animation.createDemoPanel(DemoPanelPosition.RIGHT);
@@ -450,15 +450,15 @@ public class StrategiesDemo extends AbstractSimulationScript
         private final JLabel label;
 
         /** Network. */
-        private final OtsRoadNetwork network;
+        private final RoadNetwork network;
 
         /**
          * Constructor.
          * @param label JLabel; label
-         * @param network OtsRoadNetwork; network
+         * @param network RoadNetwork; network
          */
         @SuppressWarnings("synthetic-access")
-        KmplcListener(final JLabel label, final OtsRoadNetwork network)
+        KmplcListener(final JLabel label, final RoadNetwork network)
         {
             this.label = label;
             this.network = network;
@@ -494,9 +494,9 @@ public class StrategiesDemo extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected OtsRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
+    protected RoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
     {
-        OtsRoadNetwork network = new OtsRoadNetwork("Strategies demo", getSimulator());
+        RoadNetwork network = new RoadNetwork("Strategies demo", getSimulator());
 
         GtuType.registerTemplateSupplier(DefaultsNl.TRUCK, Defaults.NL);
         GtuType.registerTemplateSupplier(DefaultsNl.CAR, Defaults.NL);
@@ -620,7 +620,7 @@ public class StrategiesDemo extends AbstractSimulationScript
      * @param pos Length; position
      * @param gtuType GtuType; GTU type
      * @param initialSpeed Speed; initial speed
-     * @param net OtsRoadNetwork; network
+     * @param net RoadNetwork; network
      * @throws NamingException on exception
      * @throws GtuException on exception
      * @throws NetworkException on exception
@@ -628,7 +628,7 @@ public class StrategiesDemo extends AbstractSimulationScript
      * @throws OtsGeometryException on exception
      */
     public void createGtu(final Lane lane, final Length pos, final GtuType gtuType, final Speed initialSpeed,
-            final OtsRoadNetwork net)
+            final RoadNetwork net)
             throws NamingException, GtuException, NetworkException, SimRuntimeException, OtsGeometryException
     {
         GtuCharacteristics gtuCharacteristics = Try.assign(() -> GtuType.defaultCharacteristics(gtuType, net, this.stream),

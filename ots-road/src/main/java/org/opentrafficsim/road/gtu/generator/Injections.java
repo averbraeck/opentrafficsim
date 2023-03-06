@@ -35,7 +35,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OtsNetwork;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.Placement;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
@@ -124,7 +124,7 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
     public static final String FRONT_COLUMN = "front";
 
     /** Network. */
-    private final OtsNetwork network;
+    private final Network network;
 
     /** GTU types per their id. */
     private final ImmutableMap<String, GtuType> gtuTypes;
@@ -186,7 +186,7 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
      * </ul>
      * Time should be in increasing order. If length is provided, but no front, front will be 75% of the length.
      * @param table Table; table with at least a "time" column.
-     * @param network OtsNetwork; network, may be {@code null}.
+     * @param network Network; network, may be {@code null}.
      * @param gtuTypes ImmutableMap&lt;String, GtuType&gt;; GTU types, as obtained from {@code Definitions}, may be
      *            {@code null}.
      * @param strategicalPlannerFactory LaneBasedStrategicalPlannerFactory&lt;?&gt;; strategical planner factory, may be
@@ -195,7 +195,7 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
      * @param timeToCollision Duration; critical time-to-collision to allow GTU generation, may be {@code null}.
      * @throws IllegalArgumentException when the right arguments are not provided for the columns in the injection table.
      */
-    public Injections(final Table table, final OtsNetwork network, final ImmutableMap<String, GtuType> gtuTypes,
+    public Injections(final Table table, final Network network, final ImmutableMap<String, GtuType> gtuTypes,
             final LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory, final StreamInterface stream,
             final Duration timeToCollision) throws IllegalArgumentException
     {

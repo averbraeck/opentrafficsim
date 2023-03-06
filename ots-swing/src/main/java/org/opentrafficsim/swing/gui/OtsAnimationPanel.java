@@ -48,7 +48,6 @@ import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Network;
-import org.opentrafficsim.core.network.OtsNetwork;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
@@ -152,12 +151,12 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
      * @param simulator OTSAnimator; the simulator or animator of the model.
      * @param otsModel OtsModelInterface; the builder and rebuilder of the simulation, based on properties.
      * @param gtuColorer GtuColorer; the colorer to use for the GTUs.
-     * @param network OtsNetwork; network
+     * @param network Network; network
      * @throws RemoteException when notification of the animation panel fails
      * @throws DSOLException when simulator does not implement AnimatorInterface
      */
     public OtsAnimationPanel(final Rectangle2D extent, final Dimension size, final OtsAnimator simulator,
-            final OtsModelInterface otsModel, final GtuColorer gtuColorer, final OtsNetwork network)
+            final OtsModelInterface otsModel, final GtuColorer gtuColorer, final Network network)
             throws RemoteException, DSOLException
     {
         super(simulator, otsModel);
@@ -866,7 +865,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         private static final long serialVersionUID = 20180430L;
 
         /** Network. */
-        private final OtsNetwork network;
+        private final Network network;
 
         /** Last GTU that was followed. */
         private Gtu lastGtu;
@@ -876,12 +875,12 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
          * @param extent Rectangle2D; home extent
          * @param size Dimension; size
          * @param simulator SimulatorInterface&lt;?, ?, ?&gt;; simulator
-         * @param network OtsNetwork; network
+         * @param network Network; network
          * @throws RemoteException on remote animation error
          * @throws DSOLException when simulator does not implement AnimatorInterface
          */
         AutoAnimationPanel(final Rectangle2D extent, final Dimension size, final OtsSimulatorInterface simulator,
-                final OtsNetwork network) throws RemoteException, DSOLException
+                final Network network) throws RemoteException, DSOLException
         {
             super(new Bounds2d(extent.getMinX(), extent.getMaxX(), extent.getMinY(), extent.getMaxY()), simulator);
             this.network = network;

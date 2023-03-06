@@ -35,7 +35,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.mock.MockDevsSimulator;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.conflict.ConflictType;
@@ -73,7 +73,7 @@ public class ConflictTest implements EventListener
         Mockito.when(simulator.getReplication()).thenReturn(replication);
         Mockito.when(simulator.getSimulatorAbsTime()).thenReturn(Time.ZERO);
         Mockito.when(simulator.getSimulatorTime()).thenReturn(Duration.ZERO);
-        OtsRoadNetwork network = new OtsRoadNetwork("Network for conflict test", simulator);
+        RoadNetwork network = new RoadNetwork("Network for conflict test", simulator);
         LinkType linkType = DefaultsNl.ROAD;
         LaneType laneType = DefaultsRoadNl.ONE_WAY_LANE;
         OtsPoint3d pointAFrom = new OtsPoint3d(0, 0, 0);

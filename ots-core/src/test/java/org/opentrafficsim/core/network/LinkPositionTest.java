@@ -30,7 +30,7 @@ public class LinkPositionTest
     @Test
     public void linkPositionTest() throws NetworkException, OtsGeometryException
     {
-        OtsNetwork network = new OtsNetwork("test network for LinkPosition test", MockSimulator.createMock());
+        Network network = new Network("test network for LinkPosition test", MockSimulator.createMock());
         Node nodeA = new Node(network, "A", new OtsPoint3d(10, 10, 10));
         Node nodeB = new Node(network, "B", new OtsPoint3d(110, 10, 10));
         Link link = new Link(network, "A to B", nodeA, nodeB, DefaultsNl.ROAD,

@@ -83,7 +83,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -212,7 +212,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         private static final long serialVersionUID = 20170407L;
 
         /** The network. */
-        private OtsRoadNetwork network;
+        private RoadNetwork network;
 
         /**
          * @param simulator OtsSimulatorInterface; the simulator
@@ -223,9 +223,9 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         }
 
         /**
-         * @param network OtsRoadNetwork; set network.
+         * @param network RoadNetwork; set network.
          */
-        public void setNetwork(final OtsRoadNetwork network)
+        public void setNetwork(final RoadNetwork network)
         {
             this.network = network;
         }
@@ -237,7 +237,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             try
             {
                 URL xmlURL = URLResource.getResource("/resources/lmrs/" + NETWORK + ".xml");
-                this.network = new OtsRoadNetwork("ShortMerge", getSimulator());
+                this.network = new RoadNetwork("ShortMerge", getSimulator());
                 XmlNetworkLaneParser.build(xmlURL, this.network, false);
                 addGenerator();
 
@@ -250,7 +250,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
 
         /** {@inheritDoc} */
         @Override
-        public OtsRoadNetwork getNetwork()
+        public RoadNetwork getNetwork()
         {
             return this.network;
         }

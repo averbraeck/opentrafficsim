@@ -42,7 +42,7 @@ import org.opentrafficsim.road.gtu.generator.headway.Arrivals;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayDistribution;
 import org.opentrafficsim.road.gtu.generator.headway.DemandPattern;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
@@ -115,7 +115,7 @@ public final class OdApplier
      * For zone GTU generation one {@code LaneBasedGtuGenerator} is created, with one single source of demand data, specifying
      * demand towards all destinations. A single {@code MarkovChain} may be used. Traffic is distributed over possible
      * {@code Connectors} based on their link-weight, or the number of lanes of the connected links if no weight is given.
-     * @param network OtsRoadNetwork; network
+     * @param network RoadNetwork; network
      * @param od OdMatrix; OD matrix
      * @param odOptions OdOptions; options for vehicle generation
      * @param detectorType DetectorType; detector type.
@@ -124,7 +124,7 @@ public final class OdApplier
      * @throws SimRuntimeException if this method is called after simulation time 0
      */
     @SuppressWarnings("checkstyle:methodlength")
-    public static Map<String, GeneratorObjects> applyOd(final OtsRoadNetwork network, final OdMatrix od,
+    public static Map<String, GeneratorObjects> applyOd(final RoadNetwork network, final OdMatrix od,
             final OdOptions odOptions, final DetectorType detectorType) throws ParameterException, SimRuntimeException
     {
         Throw.whenNull(network, "Network may not be null.");
@@ -360,7 +360,7 @@ public final class OdApplier
      * via nodes should be {@code null} for lane-based GTU generation. Furthermore, the lane is then used to obtain OD option
      * values possibly specified at the lane level. Other than that, for either lane-based or zone GTU generation, a
      * {@code LaneBasedGtuGenerator} is created for each initial position given.
-     * @param network OtsRoadNetwork; network.
+     * @param network RoadNetwork; network.
      * @param odOptions OdOptions; od options.
      * @param simulator OtsSimulatorInterface; simulator.
      * @param laneBased boolean; lane in category.
@@ -373,7 +373,7 @@ public final class OdApplier
      * @throws ParameterException if drawing from the inter-arrival generator fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    private static void createGenerators(final OtsRoadNetwork network, final OdOptions odOptions,
+    private static void createGenerators(final RoadNetwork network, final OdOptions odOptions,
             final OtsSimulatorInterface simulator, final boolean laneBased, final StreamInterface stream,
             final Map<String, GeneratorObjects> output,
             final Map<DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>>, Set<LanePosition>> initialPositions,

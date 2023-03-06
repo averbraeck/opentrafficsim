@@ -23,7 +23,7 @@ import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -61,12 +61,12 @@ public final class ConflictBuilderParallel
 
     /**
      * Build conflicts on network.
-     * @param network OtsRoadNetwork; network
+     * @param network RoadNetwork; network
      * @param simulator OtsSimulatorInterface; simulator
      * @param widthGenerator WidthGenerator; width generator
      * @throws OtsGeometryException in case of geometry exception
      */
-    public static void buildConflicts(final OtsRoadNetwork network, final OtsSimulatorInterface simulator,
+    public static void buildConflicts(final RoadNetwork network, final OtsSimulatorInterface simulator,
             final WidthGenerator widthGenerator) throws OtsGeometryException
     {
         buildConflicts(network, simulator, widthGenerator, new LaneCombinationList(), new LaneCombinationList());
@@ -74,14 +74,14 @@ public final class ConflictBuilderParallel
 
     /**
      * Build conflicts on network.
-     * @param network OtsRoadNetwork; network
+     * @param network RoadNetwork; network
      * @param simulator OtsSimulatorInterface; simulator
      * @param widthGenerator WidthGenerator; width generator
      * @param ignoreList LaneCombinationList; lane combinations to ignore
      * @param permittedList LaneCombinationList; lane combinations that are permitted by traffic control
      * @throws OtsGeometryException in case of geometry exception
      */
-    public static void buildConflicts(final OtsRoadNetwork network, final OtsSimulatorInterface simulator,
+    public static void buildConflicts(final RoadNetwork network, final OtsSimulatorInterface simulator,
             final WidthGenerator widthGenerator, final LaneCombinationList ignoreList, final LaneCombinationList permittedList)
             throws OtsGeometryException
     {

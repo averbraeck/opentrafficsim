@@ -4,7 +4,7 @@ import java.io.OutputStream;
 import java.io.Writer;
 
 import org.djutils.event.EventProducer;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.object.detector.Detector;
 
 import com.thoughtworks.xstream.XStream;
@@ -19,35 +19,35 @@ import nl.tudelft.simulation.naming.context.JVMContext;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public final class OtsRoadNetworkUtils
+public final class RoadNetworkUtils
 {
 
     /** Do not instantiate. */
-    private OtsRoadNetworkUtils()
+    private RoadNetworkUtils()
     {
         // do not instantiate.
     }
 
     /**
      * Make a copy of the network, without GTUs and listeners.
-     * @param network OtsRoadNetwork; the network to copy
+     * @param network RoadNetwork; the network to copy
      * @return a copy of the network
      */
-    public static OtsRoadNetwork copy(final OtsRoadNetwork network)
+    public static RoadNetwork copy(final RoadNetwork network)
     {
         XStream xstream = new XStream();
-        return (OtsRoadNetwork) xstream.fromXML(toXml(network));
+        return (RoadNetwork) xstream.fromXML(toXml(network));
     }
 
     /**
      * Create an xml-version of the network.
-     * @param network OtsRoadNetwork; the network to create an xml-version from
+     * @param network RoadNetwork; the network to create an xml-version from
      * @return an xml-string with the network
      */
-    public static String toXml(final OtsRoadNetwork network)
+    public static String toXml(final RoadNetwork network)
     {
         XStream xstream = new XStream();
-        xstream.omitField(OtsRoadNetwork.class, "gtuMap"); // no GTUs
+        xstream.omitField(RoadNetwork.class, "gtuMap"); // no GTUs
         xstream.omitField(EventProducer.class, "listeners"); // no listeners
         xstream.omitField(JVMContext.class, "atomicName"); // no JVMContext
         xstream.omitField(JVMContext.class, "elements"); // no JVMContext
@@ -57,10 +57,10 @@ public final class OtsRoadNetworkUtils
 
     /**
      * Create an xml-version of the network.
-     * @param network OtsRoadNetwork; the network to create an xml-version from
+     * @param network RoadNetwork; the network to create an xml-version from
      * @param out OutputStream; the stream to write the xml-string with the network to
      */
-    public static void toXml(final OtsRoadNetwork network, final OutputStream out)
+    public static void toXml(final RoadNetwork network, final OutputStream out)
     {
         XStream xstream = new XStream();
         xstream.toXML(network, out);
@@ -68,10 +68,10 @@ public final class OtsRoadNetworkUtils
 
     /**
      * Create an xml-version of the network.
-     * @param network OtsRoadNetwork; the network to create an xml-version from
+     * @param network RoadNetwork; the network to create an xml-version from
      * @param writer Writer; the writer to write the xml-string with the network to
      */
-    public static void toXml(final OtsRoadNetwork network, final Writer writer)
+    public static void toXml(final RoadNetwork network, final Writer writer)
     {
         XStream xstream = new XStream();
         xstream.toXML(network, writer);

@@ -8,7 +8,7 @@ import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.OtsNetwork;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.sim0mq.Sim0MQException;
@@ -26,13 +26,13 @@ import org.sim0mq.Sim0MQException;
 public class CrossSectionElementTransceiver extends AbstractTransceiver
 {
     /** The OTS network. */
-    private final OtsNetwork network;
+    private final Network network;
 
     /**
      * Construct a new CrossSectionElementTransceiver for an OTS network.
-     * @param network OtsNetwork; the OTS network
+     * @param network Network; the OTS network
      */
-    public CrossSectionElementTransceiver(final OtsNetwork network)
+    public CrossSectionElementTransceiver(final Network network)
     {
         super("CrossSectionElement transceiver", new MetaData("Cross section element", "Cross section element",
                 new ObjectDescriptor[] {new ObjectDescriptor("Link id", "Link id", String.class),

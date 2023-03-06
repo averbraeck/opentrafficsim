@@ -17,9 +17,8 @@ import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuGenerator.GtuGeneratorPosition;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OtsNetwork;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.object.LocatedObject;
 import org.opentrafficsim.core.object.NonLocatedObject;
 import org.opentrafficsim.draw.core.OtsDrawingException;
@@ -69,7 +68,7 @@ public class DefaultAnimationFactory implements EventListener
     private static final long serialVersionUID = 20230129L;
 
     /** The network. */
-    private final OtsNetwork network;
+    private final Network network;
 
     /** The simulator. */
     private final OtsSimulatorInterface simulator;
@@ -90,12 +89,12 @@ public class DefaultAnimationFactory implements EventListener
     /**
      * Creates animations for nodes, links and lanes. The class will subscribe to the network and listen to changes, so the
      * adding and removing of GTUs and Objects is animated correctly.
-     * @param network OtsNetwork; the network
+     * @param network Network; the network
      * @param gtuColorer GtuColorer; GTU colorer
      * @param animateNetwork boolean; whether to animate the current network objects
      * @throws OtsDrawingException on drawing error
      */
-    protected DefaultAnimationFactory(final OtsNetwork network, final GtuColorer gtuColorer, final boolean animateNetwork)
+    protected DefaultAnimationFactory(final Network network, final GtuColorer gtuColorer, final boolean animateNetwork)
             throws OtsDrawingException
     {
         this.network = network;
@@ -171,13 +170,13 @@ public class DefaultAnimationFactory implements EventListener
     /**
      * Creates animations for nodes, links, lanes and GTUs. This can be used if the network is not read from XML. The class will
      * subscribe to the network and listen to changes, so the adding and removing of GTUs and Objects is animated correctly.
-     * @param network OtsNetwork; the network
+     * @param network Network; the network
      * @param simulator OtsSimulatorInterface; the simulator
      * @param gtuColorer GtuColorer; GTU colorer
      * @return the DefaultAnimationFactory
      * @throws OtsDrawingException on drawing error
      */
-    public static DefaultAnimationFactory animateNetwork(final OtsNetwork network, final OtsSimulatorInterface simulator,
+    public static DefaultAnimationFactory animateNetwork(final Network network, final OtsSimulatorInterface simulator,
             final GtuColorer gtuColorer) throws OtsDrawingException
     {
         return new DefaultAnimationFactory(network, gtuColorer, true);
@@ -186,12 +185,12 @@ public class DefaultAnimationFactory implements EventListener
     /**
      * Creates animations for nodes, links, lanes and GTUs. This can be used if the network is read from XML. The class will
      * subscribe to the network and listen to changes, so the adding and removing of GTUs and Objects is animated correctly.
-     * @param network OtsNetwork; the network
+     * @param network Network; the network
      * @param gtuColorer GtuColorer; GTU colorer
      * @return the DefaultAnimationFactory
      * @throws OtsDrawingException on drawing error
      */
-    public static DefaultAnimationFactory animateXmlNetwork(final OtsNetwork network, final GtuColorer gtuColorer)
+    public static DefaultAnimationFactory animateXmlNetwork(final Network network, final GtuColorer gtuColorer)
             throws OtsDrawingException
     {
         return new DefaultAnimationFactory(network, gtuColorer, false);

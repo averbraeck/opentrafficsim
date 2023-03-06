@@ -14,7 +14,7 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -38,7 +38,7 @@ public class TJunctionModel extends AbstractOtsModel
     private static final long serialVersionUID = 20161211L;
 
     /** The network. */
-    private OtsRoadNetwork network;
+    private RoadNetwork network;
 
     /**
      * @param simulator OtsSimulatorInterface; the simulator for this model
@@ -55,7 +55,7 @@ public class TJunctionModel extends AbstractOtsModel
         try
         {
             URL xmlURL = URLResource.getResource("/resources/xml/TJunction.xml");
-            this.network = new OtsRoadNetwork("TJunction", getSimulator());
+            this.network = new RoadNetwork("TJunction", getSimulator());
             XmlNetworkLaneParser.build(xmlURL, this.network, false);
 
             // add conflicts
@@ -117,7 +117,7 @@ public class TJunctionModel extends AbstractOtsModel
 
     /** {@inheritDoc} */
     @Override
-    public OtsRoadNetwork getNetwork()
+    public RoadNetwork getNetwork()
     {
         return this.network;
     }

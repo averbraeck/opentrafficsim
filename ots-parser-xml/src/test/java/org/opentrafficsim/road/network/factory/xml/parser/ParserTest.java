@@ -14,7 +14,7 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -43,7 +43,7 @@ public class ParserTest
         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), testModel);
         
         // test node
-        OtsRoadNetwork nw = testModel.getNetwork();
+        RoadNetwork nw = testModel.getNetwork();
         assertEquals(300.0, nw.getNode("BLE").getPoint().x, 0.0001);
         assertEquals(0.0, nw.getNode("BLE").getPoint().y, 0.0001);
         
@@ -64,7 +64,7 @@ public class ParserTest
         private static final long serialVersionUID = 20161211L;
 
         /** The network. */
-        private OtsRoadNetwork network;
+        private RoadNetwork network;
 
         /**
          * @param simulator OtsSimulatorInterface; the simulator for this model
@@ -81,7 +81,7 @@ public class ParserTest
             try
             {
                 URL xmlURL = URLResource.getResource("/resources/test-network.xml");
-                this.network = new OtsRoadNetwork("Test", getSimulator());
+                this.network = new RoadNetwork("Test", getSimulator());
                 XmlNetworkLaneParser.build(xmlURL, this.network, false);
             }
             catch (Exception exception)
@@ -92,7 +92,7 @@ public class ParserTest
 
         /** {@inheritDoc} */
         @Override
-        public OtsRoadNetwork getNetwork()
+        public RoadNetwork getNetwork()
         {
             return this.network;
         }

@@ -7,8 +7,8 @@ import java.util.Set;
 import javax.naming.NamingException;
 
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.network.OtsNetwork;
-import org.opentrafficsim.core.network.OtsNetworkUtils;
+import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.NetworkUtils;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
@@ -17,28 +17,28 @@ import nl.tudelft.simulation.naming.context.ContextInterface;
 import nl.tudelft.simulation.naming.context.util.ContextUtil;
 
 /**
- * OtsNetworkAnimationUtils can make a deep clone of a network, including animation, and can destroy the animation.
+ * NetworkAnimationUtils can make a deep clone of a network, including animation, and can destroy the animation.
  * <p>
  * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public final class OtsNetworkAnimationUtils
+public final class NetworkAnimationUtils
 {
     /** */
-    private OtsNetworkAnimationUtils()
+    private NetworkAnimationUtils()
     {
         // utility class
     }
 
     /**
      * Remove all objects and animation in the network.
-     * @param network OtsNetwork; the network to destroy
+     * @param network Network; the network to destroy
      * @param simulator OtsSimulatorInterface; the simulator of the old network
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public static void destroy(final OtsNetwork network, final OtsSimulatorInterface simulator)
+    public static void destroy(final Network network, final OtsSimulatorInterface simulator)
     {
         Set<Renderable2DInterface<?>> animationObjects = new LinkedHashSet<>();
         try
@@ -69,7 +69,7 @@ public final class OtsNetworkAnimationUtils
         }
 
         // destroy the network, GTUs, Routes, etc.
-        OtsNetworkUtils.destroy(network);
+        NetworkUtils.destroy(network);
     }
 
     /**

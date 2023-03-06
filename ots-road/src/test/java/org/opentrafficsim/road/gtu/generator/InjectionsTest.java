@@ -42,7 +42,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OtsNetwork;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.GeneratorLanePosition;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.Placement;
@@ -50,7 +50,7 @@ import org.opentrafficsim.road.gtu.generator.characteristics.DefaultLaneBasedGtu
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -192,7 +192,7 @@ public class InjectionsTest
         // -- network
         OtsSimulatorInterface simulator = new OtsSimulator("net");
         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ONE, Mockito.mock(OtsModelInterface.class));
-        OtsRoadNetwork network = new OtsRoadNetwork("network", simulator);
+        RoadNetwork network = new RoadNetwork("network", simulator);
         Node nodeA = new Node(network, "A", new OtsPoint3d(0.0, 0.0, 0.0), Direction.ZERO);
         Node nodeB = new Node(network, "B", new OtsPoint3d(100.0, 0.0, 0.0), Direction.ZERO);
         CrossSectionLink linkAB = new CrossSectionLink(network, "AB", nodeA, nodeB, DefaultsNl.FREEWAY,
@@ -269,7 +269,7 @@ public class InjectionsTest
     @SuppressWarnings("unchecked")
     private Injections mockInjections(final Column<?>... columns)
     {
-        return new Injections(new ListTable("id", "", Set.of(columns)), Mockito.mock(OtsNetwork.class),
+        return new Injections(new ListTable("id", "", Set.of(columns)), Mockito.mock(Network.class),
                 Mockito.mock(ImmutableMap.class), Mockito.mock(LaneBasedStrategicalPlannerFactory.class),
                 Mockito.mock(StreamInterface.class), Duration.ONE);
     }
@@ -277,10 +277,10 @@ public class InjectionsTest
     /**
      * Create Injections with Table and default other input.
      * @param table Table; table.
-     * @param network OtsNetwork; network.
+     * @param network Network; network.
      * @return Injections with Table input and with other input mocked.
      */
-    private Injections fullInjections(final Table table, final OtsNetwork network)
+    private Injections fullInjections(final Table table, final Network network)
     {
         StreamInterface stream = new MersenneTwister();
         ImmutableMap<String, GtuType> gtuTypes = new ImmutableLinkedHashMap<>(

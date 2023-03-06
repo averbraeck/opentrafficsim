@@ -49,7 +49,7 @@ import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharact
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuReal;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
@@ -107,7 +107,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
     private final GeneratorPositions generatorPositions;
 
     /** Network. */
-    private final OtsRoadNetwork network;
+    private final RoadNetwork network;
 
     /** Simulator. */
     private final OtsSimulatorInterface simulator;
@@ -137,7 +137,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
      * @param laneBasedGtuCharacteristicsGenerator LaneBasedGtuCharacteristicsGenerator; generator of the characteristics of
      *            each GTU
      * @param generatorPositions GeneratorPositions; location and initial direction provider for all generated GTUs
-     * @param network OtsRoadNetwork; the OTS network that owns the generated GTUs
+     * @param network RoadNetwork; the OTS network that owns the generated GTUs
      * @param simulator OtsSimulatorInterface; simulator
      * @param roomChecker RoomChecker; the way that this generator checks that there is sufficient room to place a new GTU
      * @param idGenerator Supplier&lt;String&gt;; id generator
@@ -149,7 +149,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
     @SuppressWarnings("parameternumber")
     public LaneBasedGtuGenerator(final String id, final Generator<Duration> interarrivelTimeGenerator,
             final LaneBasedGtuCharacteristicsGenerator laneBasedGtuCharacteristicsGenerator,
-            final GeneratorPositions generatorPositions, final OtsRoadNetwork network, final OtsSimulatorInterface simulator,
+            final GeneratorPositions generatorPositions, final RoadNetwork network, final OtsSimulatorInterface simulator,
             final RoomChecker roomChecker, final Supplier<String> idGenerator)
             throws SimRuntimeException, ProbabilityException, ParameterException, NetworkException
     {

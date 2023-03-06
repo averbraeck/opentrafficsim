@@ -44,7 +44,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.FixedLaneChange
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlanner;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -90,7 +90,7 @@ public class LaneBasedGtuTest implements UNITS
             fail("truckUpToLane must be >= truckFromLane");
         }
         OtsSimulatorInterface simulator = new OtsSimulator("leaderFollowerParallel");
-        OtsRoadNetwork network = new OtsRoadNetwork("leader follower parallel gtu test network", simulator);
+        RoadNetwork network = new RoadNetwork("leader follower parallel gtu test network", simulator);
 
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
@@ -365,7 +365,7 @@ public class LaneBasedGtuTest implements UNITS
         for (int a = 1; a >= -1; a--)
         {
             OtsSimulatorInterface simulator = new OtsSimulator("timeAtDistanceTest");
-            OtsRoadNetwork network = new OtsRoadNetwork("test", simulator);
+            RoadNetwork network = new RoadNetwork("test", simulator);
             // Create a car with constant acceleration
             Model model = new Model(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
@@ -530,7 +530,7 @@ public class LaneBasedGtuTest implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public final OtsRoadNetwork getNetwork()
+        public final RoadNetwork getNetwork()
         {
             return null;
         }

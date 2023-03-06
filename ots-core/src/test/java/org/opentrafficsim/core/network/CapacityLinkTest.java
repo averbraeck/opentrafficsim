@@ -33,7 +33,7 @@ public class CapacityLinkTest
     {
         OtsPoint3d fromPoint = new OtsPoint3d(100, 200, 300);
         OtsPoint3d toPoint = new OtsPoint3d(1000, 2000, 330);
-        OtsNetwork network = new OtsNetwork("testNetworkForCapacityOTSLink", MockSimulator.createMock());
+        Network network = new Network("testNetworkForCapacityOTSLink", MockSimulator.createMock());
         Node fromNode = new Node(network, "startNode", fromPoint);
         Node toNode = new Node(network, "endNode", toPoint);
         LinkType linkType = DefaultsNl.ROAD;

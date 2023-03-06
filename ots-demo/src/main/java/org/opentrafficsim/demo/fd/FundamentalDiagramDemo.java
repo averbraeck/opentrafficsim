@@ -89,7 +89,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFacto
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -201,10 +201,10 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected OtsRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
+    protected RoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
     {
         // Network
-        OtsRoadNetwork network = new OtsRoadNetwork("FD demo network", sim);
+        RoadNetwork network = new RoadNetwork("FD demo network", sim);
         GtuType car = DefaultsNl.CAR;
         GtuType truck = DefaultsNl.TRUCK;
         GtuType.registerTemplateSupplier(car, Defaults.NL);
@@ -308,7 +308,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected void setupDemo(final OtsAnimationPanel animationPanel, final OtsRoadNetwork net)
+    protected void setupDemo(final OtsAnimationPanel animationPanel, final RoadNetwork net)
     {
         this.fdLine.update();
 

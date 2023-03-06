@@ -65,7 +65,7 @@ public class LaneChangeInfoTest
         OtsModelInterface model = Mockito.mock(OtsModelInterface.class);
         OtsSimulatorInterface simulator = new OtsSimulator("Lane change info test");
         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600), model);
-        OtsRoadNetwork network = new OtsRoadNetwork("Lane change info test network", simulator);
+        RoadNetwork network = new RoadNetwork("Lane change info test network", simulator);
         GtuType car = DefaultsNl.CAR;
 
         LinkType freeway = DefaultsNl.FREEWAY;

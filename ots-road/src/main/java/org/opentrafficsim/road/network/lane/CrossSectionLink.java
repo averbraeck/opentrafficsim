@@ -15,7 +15,7 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 /**
@@ -77,10 +77,10 @@ public class CrossSectionLink extends Link implements Serializable
 
     /**
      * Construction of a cross section link.
-     * @param network OtsRoadNetwork; the network
+     * @param network RoadNetwork; the network
      * @param id String; the link id.
-     * @param startNode OtsRoaNode; the start node (directional).
-     * @param endNode OtsRoaNode; the end node (directional).
+     * @param startNode Node; the start node (directional).
+     * @param endNode Node; the end node (directional).
      * @param linkType LinkType; the link type
      * @param designLine OtsLine3d; the design line of the Link
      * @param laneKeepingPolicy LaneKeepingPolicy; the policy to generally keep left, keep right, or keep lane
@@ -88,7 +88,7 @@ public class CrossSectionLink extends Link implements Serializable
      *             or the end node of the link are not registered in the network.
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public CrossSectionLink(final OtsRoadNetwork network, final String id, final Node startNode,
+    public CrossSectionLink(final RoadNetwork network, final String id, final Node startNode,
             final Node endNode, final LinkType linkType, final OtsLine3d designLine,
             final LaneKeepingPolicy laneKeepingPolicy) throws NetworkException
     {
@@ -98,9 +98,9 @@ public class CrossSectionLink extends Link implements Serializable
 
     /** {@inheritDoc} */
     @Override
-    public OtsRoadNetwork getNetwork()
+    public RoadNetwork getNetwork()
     {
-        return (OtsRoadNetwork) super.getNetwork();
+        return (RoadNetwork) super.getNetwork();
     }
 
     /**

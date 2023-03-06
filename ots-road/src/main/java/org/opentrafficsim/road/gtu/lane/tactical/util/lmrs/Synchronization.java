@@ -42,7 +42,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
@@ -570,7 +570,7 @@ public interface Synchronization extends LmrsParameters
         try
         {
             out = new SortedSetPerceptionIterable<HeadwayGtu>(
-                    (OtsRoadNetwork) perception.getGtu().getReferencePosition().getLane().getParentLink().getNetwork());
+                    (RoadNetwork) perception.getGtu().getReferencePosition().getLane().getParentLink().getNetwork());
         }
         catch (GtuException exception)
         {

@@ -10,7 +10,7 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.network.OtsNetwork;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType.Correlation;
 
 /**

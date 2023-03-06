@@ -22,7 +22,7 @@ import org.junit.rules.TemporaryFolder;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.network.OtsNetwork;
+import org.opentrafficsim.core.network.Network;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.StreamInformation;
@@ -56,7 +56,7 @@ public class GtuDumperTest implements OtsModelInterface
     private GtuDumper gtuDumper;
 
     /** The network. */
-    private OtsNetwork network;
+    private Network network;
 
     /**
      * Test the GTUDumper class.
@@ -72,7 +72,7 @@ public class GtuDumperTest implements OtsModelInterface
         this.containerDir = this.testDir.newFolder("subfolder");
         // System.out.println("containerDir is " + this.containerDir);
         this.simulator = new OtsSimulator("Simulator for testing GTUDumper class");
-        this.network = new OtsNetwork("Network for testing GTUDumper class", this.simulator);
+        this.network = new Network("Network for testing GTUDumper class", this.simulator);
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this);
         this.simulator.scheduleEventAbsTime(new Time(40, TimeUnit.BASE_SECOND), this, "createGTU", new Object[] {});
         this.simulator.start();
@@ -158,7 +158,7 @@ public class GtuDumperTest implements OtsModelInterface
     }
 
     @Override
-    public final OtsNetwork getNetwork()
+    public final Network getNetwork()
     {
         return null;
     }
@@ -200,7 +200,7 @@ public class GtuDumperTest implements OtsModelInterface
     {
         this.containerDir = this.testDir.newFolder("subfolder");
         this.simulator = new OtsSimulator("Simulator for testing GTUDumper class");
-        this.network = new OtsNetwork("Network for testing GTUDumper class", this.simulator);
+        this.network = new Network("Network for testing GTUDumper class", this.simulator);
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this);
         try
         {

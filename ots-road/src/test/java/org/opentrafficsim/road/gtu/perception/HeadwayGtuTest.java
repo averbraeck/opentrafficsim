@@ -21,7 +21,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.gtu.lane.perception.headway.GtuStatus;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuSimple;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 
 /**
  * Test the HeadwayGtu class and the EnumType in the Headway interface.
@@ -36,7 +36,7 @@ import org.opentrafficsim.road.network.OtsRoadNetwork;
 public class HeadwayGtuTest
 {
     /** The network. */
-    private OtsRoadNetwork network = new OtsRoadNetwork("test network", new OtsSimulator("Simulator for HeadwayGtuTest"));
+    private RoadNetwork network = new RoadNetwork("test network", new OtsSimulator("Simulator for HeadwayGtuTest"));
 
     /**
      * Test the constructor and the getters.

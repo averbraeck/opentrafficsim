@@ -31,7 +31,7 @@ import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.draw.core.OtsDrawingException;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -161,7 +161,7 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
         private static final long serialVersionUID = 20170421L;
 
         /** The network. */
-        private OtsRoadNetwork network;
+        private RoadNetwork network;
 
         /** The XML. */
         private final String xml;
@@ -182,7 +182,7 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
         @Override
         public void constructModel() throws SimRuntimeException
         {
-            this.network = new OtsRoadNetwork(getShortName(), getSimulator());
+            this.network = new RoadNetwork(getShortName(), getSimulator());
             try
             {
                 XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,
@@ -217,7 +217,7 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
 
         /** {@inheritDoc} */
         @Override
-        public OtsRoadNetwork getNetwork()
+        public RoadNetwork getNetwork()
         {
             return this.network;
         }

@@ -46,7 +46,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlanner;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
@@ -82,7 +82,7 @@ public class TrafficLightDetectorTest implements EventListener
     private static Lane[] buildNetwork(final double[] lengths, final OtsSimulatorInterface simulator)
             throws NetworkException, NamingException, OtsGeometryException, SimRuntimeException
     {
-        OtsRoadNetwork network = new OtsRoadNetwork("network", simulator);
+        RoadNetwork network = new RoadNetwork("network", simulator);
         Node prevNode = null;
         Lane[] result = new Lane[lengths.length];
         LaneType laneType = DefaultsRoadNl.FREEWAY;
@@ -162,7 +162,7 @@ public class TrafficLightDetectorTest implements EventListener
                 Model model = new Model(simulator);
                 simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
                 Lane[] lanes = buildNetwork(lengthList, simulator);
-                OtsRoadNetwork network = (OtsRoadNetwork) lanes[0].getParentLink().getNetwork();
+                RoadNetwork network = (RoadNetwork) lanes[0].getParentLink().getNetwork();
                 Length a = new Length(100, LengthUnit.METER);
                 Length b = new Length(120, LengthUnit.METER);
                 LanePosition pA = findLaneAndPosition(lanes, a);
@@ -291,7 +291,7 @@ public class TrafficLightDetectorTest implements EventListener
 
         /** {@inheritDoc} */
         @Override
-        public final OtsRoadNetwork getNetwork()
+        public final RoadNetwork getNetwork()
         {
             return null;
         }

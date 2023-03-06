@@ -27,8 +27,8 @@ import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OtsNetwork;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
@@ -80,7 +80,7 @@ public class PublisherTest implements OtsModelInterface
             }
         };
         OtsSimulatorInterface simulator = new OtsSimulator("test simulator for PublisherTest");
-        OtsRoadNetwork network = new OtsRoadNetwork("test network for PublisherTest", simulator);
+        RoadNetwork network = new RoadNetwork("test network for PublisherTest", simulator);
         Publisher publisher = new Publisher(network);
         assertTrue("id of publisher contains id of network", publisher.getId().contains(network.getId()));
         TransceiverInterface transceiverInterface = publisher.getIdSource(0, storeLastResult);
@@ -146,7 +146,7 @@ public class PublisherTest implements OtsModelInterface
     }
 
     @Override
-    public final OtsNetwork getNetwork()
+    public final Network getNetwork()
     {
         return null;
     }
@@ -201,7 +201,7 @@ public class PublisherTest implements OtsModelInterface
         private static final long serialVersionUID = 20170419L;
 
         /** The network. */
-        private OtsRoadNetwork network;
+        private RoadNetwork network;
 
         /** The XML. */
         private final String xml;
@@ -229,7 +229,7 @@ public class PublisherTest implements OtsModelInterface
         @Override
         public void constructModel() throws SimRuntimeException
         {
-            this.network = new OtsRoadNetwork(getShortName(), getSimulator());
+            this.network = new RoadNetwork(getShortName(), getSimulator());
             try
             {
                 XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,
@@ -247,7 +247,7 @@ public class PublisherTest implements OtsModelInterface
 
         /** {@inheritDoc} */
         @Override
-        public OtsNetwork getNetwork()
+        public Network getNetwork()
         {
             return this.network;
         }

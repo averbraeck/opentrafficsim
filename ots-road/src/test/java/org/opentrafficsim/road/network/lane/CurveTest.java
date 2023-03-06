@@ -27,7 +27,7 @@ import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.FixedLaneChangeModel;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -60,7 +60,7 @@ public class CurveTest
     {
         final int laneCount = 1;
         OtsSimulatorInterface simulator = CarTest.makeSimulator();
-        OtsRoadNetwork network = new OtsRoadNetwork("curve test network", simulator);
+        RoadNetwork network = new RoadNetwork("curve test network", simulator);
         GtuType gtuType = DefaultsNl.CAR;
         LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
         Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
@@ -92,7 +92,7 @@ public class CurveTest
             }
             LaneBasedGtu car = CarTest.makeReferenceCar("car", gtuType, straight1[lane], initialPosition, speed,
                     new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI), new Duration(25, DurationUnit.SI)),
-                    new FixedLaneChangeModel(null), (OtsRoadNetwork) network);
+                    new FixedLaneChangeModel(null), (RoadNetwork) network);
             printEventList(simulator);
             System.out.println("STEP");
             simulator.step();

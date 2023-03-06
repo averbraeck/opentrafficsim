@@ -49,7 +49,7 @@ import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayDistribution;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -95,7 +95,7 @@ public class OdApplierTest
     private DSOLModel model;
 
     /** Network. */
-    private OtsRoadNetwork network;
+    private RoadNetwork network;
 
     /** History manager. */
     private HistoryManager historyManager;
@@ -169,7 +169,7 @@ public class OdApplierTest
      */
     private void makeNetwork() throws NetworkException, OtsGeometryException
     {
-        this.network = new OtsRoadNetwork("ODApplierExample", this.simulator);
+        this.network = new RoadNetwork("ODApplierExample", this.simulator);
         OtsPoint3d pointA = new OtsPoint3d(0, 0, 0);
         OtsPoint3d pointB = new OtsPoint3d(1000, 0, 0);
         Node nodeA = new Node(this.network, "A", pointA, Direction.ZERO);

@@ -35,7 +35,7 @@ public class SubscriptionHandler
     /** Transceiver to retrieve the data right now; e.g. GtuIdTransceiver. */
     private final TransceiverInterface listTransceiver;
 
-    /** Event producer for add, remove, or change events; e.g. the OtsNetwork. */
+    /** Event producer for add, remove, or change events; e.g. the Network. */
     private final LookupEventProducer eventProducerForAddRemoveOrChange;
 
     /** EventType to subscribe to in order to receive creation of added object events; e.g. NETWORK.GTU_ADD_EVENT. */

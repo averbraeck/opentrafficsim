@@ -37,7 +37,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusOld;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlanner;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -64,7 +64,7 @@ public class IdmPlusTest implements UNITS
         // Test 1. Check a car standing still with no leaders accelerates with maximum acceleration
         // cars have #10 and up
         OtsSimulatorInterface simulator = new OtsSimulator("IDMPlusTest");
-        OtsRoadNetwork network = new OtsRoadNetwork("IDMPlus test network", simulator);
+        RoadNetwork network = new RoadNetwork("IDMPlus test network", simulator);
         IDMPlusTestModel model = new IDMPlusTestModel(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         Length s0 = new Length(2, METER);
@@ -382,7 +382,7 @@ class IDMPlusTestModel extends AbstractOtsModel
 
     /** {@inheritDoc} */
     @Override
-    public OtsRoadNetwork getNetwork()
+    public RoadNetwork getNetwork()
     {
         return null;
     }

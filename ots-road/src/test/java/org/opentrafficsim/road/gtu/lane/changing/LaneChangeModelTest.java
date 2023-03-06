@@ -47,7 +47,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneMovementStep;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlanner;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
@@ -70,22 +70,22 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
     private static final long serialVersionUID = 20150313;
 
     /** The network. */
-    private OtsRoadNetwork network;
+    private RoadNetwork network;
 
     /**
      */
     public LaneChangeModelTest()
     {
         super(new OtsSimulator("LaneChangeModelTest"));
-        this.network = new OtsRoadNetwork("lane change model test network", getSimulator());
+        this.network = new RoadNetwork("lane change model test network", getSimulator());
     }
 
     /**
      * Create a Link.
-     * @param network OtsRoadNetwork; the network
+     * @param network RoadNetwork; the network
      * @param name String; name of the new Link
-     * @param from OtsRoaNode; start node of the new Link
-     * @param to OtsRoaNode; end node of the new Link
+     * @param from Node; start node of the new Link
+     * @param to Node; end node of the new Link
      * @param width Length; the width of the new Link
      * @param simulator OtsSimulatorInterface; the simulator
      * @return Link
@@ -93,7 +93,7 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network
      */
-    private static CrossSectionLink makeLink(final OtsRoadNetwork network, final String name, final Node from, final Node to,
+    private static CrossSectionLink makeLink(final RoadNetwork network, final String name, final Node from, final Node to,
             final Length width, final OtsSimulatorInterface simulator) throws OtsGeometryException, NetworkException
     {
         // TODO create a LinkAnimation if the simulator is compatible with that.
@@ -129,17 +129,17 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
 
     /**
      * Create a simple straight road with the specified number of Lanes.
-     * @param network OtsRoadNetwork; the network
+     * @param network RoadNetwork; the network
      * @param name String; name of the Link
-     * @param from OtsRoaNode; starting node of the new Lane
-     * @param to OtsRoaNode; ending node of the new Lane
+     * @param from Node; starting node of the new Lane
+     * @param to Node; ending node of the new Lane
      * @param laneType LaneType&lt;String&gt;; the type of GTU that can use the lanes
      * @param laneCount int; number of lanes in the road
      * @param simulator OtsSimulatorInterface; the simulator
      * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws Exception when something goes wrong (should not happen)
      */
-    public static Lane[] makeMultiLane(final OtsRoadNetwork network, final String name, final Node from, final Node to,
+    public static Lane[] makeMultiLane(final RoadNetwork network, final String name, final Node from, final Node to,
             final LaneType laneType, final int laneCount, final OtsSimulatorInterface simulator) throws Exception
     {
         Length width = new Length(laneCount * 4.0, METER);
@@ -306,7 +306,7 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    public final OtsRoadNetwork getNetwork()
+    public final RoadNetwork getNetwork()
     {
         return this.network;
     }

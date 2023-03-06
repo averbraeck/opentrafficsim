@@ -44,7 +44,7 @@ import org.opentrafficsim.core.parameters.ParameterFactory;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
@@ -92,7 +92,7 @@ public final class XmlNetworkLaneParser implements Serializable
     /**
      * Parse the XML file and build the network.
      * @param filename String; the name of the file to parse
-     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
      * @param buildConflicts boolean; whether to build conflicts or not
      * @return the network that contains the parsed objects
      * @throws JAXBException when the parsing fails
@@ -108,7 +108,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws IOException when construction of a traffic controller fails
      * @throws MalformedURLException when construction of a traffic controller fails
      */
-    public static OtsRoadNetwork build(final String filename, final OtsRoadNetwork otsNetwork, final boolean buildConflicts)
+    public static RoadNetwork build(final String filename, final RoadNetwork otsNetwork, final boolean buildConflicts)
             throws JAXBException, URISyntaxException, NetworkException, OtsGeometryException, XmlParserException, SAXException,
             ParserConfigurationException, SimRuntimeException, GtuException, MalformedURLException, IOException,
             TrafficControlException
@@ -121,7 +121,7 @@ public final class XmlNetworkLaneParser implements Serializable
     /**
      * Parse the XML input stream and build the network.
      * @param xmlStream InputStream; the xml input stream
-     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
      * @param buildConflicts boolean; whether to build conflicts or not
      * @return the experiment based on the information in the RUN tag
      * @throws JAXBException when the parsing fails
@@ -137,7 +137,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws IOException when construction of a traffic controller fails
      * @throws MalformedURLException when construction of a traffic controller fails
      */
-    public static ExperimentRunControl<Duration> build(final InputStream xmlStream, final OtsRoadNetwork otsNetwork,
+    public static ExperimentRunControl<Duration> build(final InputStream xmlStream, final RoadNetwork otsNetwork,
             final boolean buildConflicts) throws JAXBException, URISyntaxException, NetworkException, OtsGeometryException,
             XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GtuException,
             MalformedURLException, IOException, TrafficControlException
@@ -184,7 +184,7 @@ public final class XmlNetworkLaneParser implements Serializable
     /**
      * Parse the XML file and build the network.
      * @param xmlURL URL; the URL for the xml input file
-     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
      * @param buildConflicts boolean; whether to build conflicts or not
      * @return the experiment based on the information in the RUN tag
      * @throws JAXBException when the parsing fails
@@ -200,7 +200,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws IOException when construction of a traffic controller fails
      * @throws MalformedURLException when construction of a traffic controller fails
      */
-    public static ExperimentRunControl<Duration> build(final URL xmlURL, final OtsRoadNetwork otsNetwork,
+    public static ExperimentRunControl<Duration> build(final URL xmlURL, final RoadNetwork otsNetwork,
             final boolean buildConflicts) throws JAXBException, URISyntaxException, NetworkException, OtsGeometryException,
             XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GtuException,
             MalformedURLException, IOException, TrafficControlException
@@ -211,7 +211,7 @@ public final class XmlNetworkLaneParser implements Serializable
     /**
      * Build the network from an OTS object (probably constructed by parsing an OTS XML file; e.g. the parseXML method).
      * @param ots OTS; the OTS object
-     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
      * @param buildConflicts boolean; whether to build conflicts or not
      * @return the experiment based on the information in the RUN tag
      * @throws JAXBException when the parsing fails
@@ -227,7 +227,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws IOException when construction of a traffic controller fails
      * @throws MalformedURLException when construction of a traffic controller fails
      */
-    public static ExperimentRunControl<Duration> build(final OTS ots, final OtsRoadNetwork otsNetwork,
+    public static ExperimentRunControl<Duration> build(final OTS ots, final RoadNetwork otsNetwork,
             final boolean buildConflicts) throws JAXBException, URISyntaxException, NetworkException, OtsGeometryException,
             XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GtuException,
             MalformedURLException, IOException, TrafficControlException
@@ -425,7 +425,7 @@ public final class XmlNetworkLaneParser implements Serializable
     public static void main(final String[] args) throws Exception
     {
         OtsSimulatorInterface simulator = new OtsSimulator("XmlNetworkLaneParser");
-        build("/example.xml", new OtsRoadNetwork("", simulator), false);
+        build("/example.xml", new RoadNetwork("", simulator), false);
         System.exit(0);
     }
 }

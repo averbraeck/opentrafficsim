@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 
 /**
  * Simple class implementing a SortedSet. This is mainly for backwards compatibility. Methods that determine the elements 1-by-1
@@ -29,13 +29,13 @@ public class SortedSetPerceptionIterable<H extends Headway> extends TreeSet<H> i
     private static final long serialVersionUID = 20180219L;
 
     /** Network to obtain LaneBasedGtu. */
-    private final OtsRoadNetwork network;
+    private final RoadNetwork network;
 
     /**
      * Constructor.
-     * @param otsNetwork OtsRoadNetwork; network to obtain LaneBasedGtu
+     * @param otsNetwork RoadNetwork; network to obtain LaneBasedGtu
      */
-    public SortedSetPerceptionIterable(final OtsRoadNetwork otsNetwork)
+    public SortedSetPerceptionIterable(final RoadNetwork otsNetwork)
     {
         this.network = otsNetwork;
     }

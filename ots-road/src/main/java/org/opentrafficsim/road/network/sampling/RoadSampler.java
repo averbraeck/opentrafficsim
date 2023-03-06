@@ -26,7 +26,7 @@ import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
 import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -53,7 +53,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
     private final OtsSimulatorInterface simulator;
 
     /** Network. */
-    private final OtsRoadNetwork network;
+    private final RoadNetwork network;
 
     /** Sampling interval. */
     private final Duration samplingInterval;
@@ -69,10 +69,10 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
     /**
      * Constructor which uses the operational plan updates of GTU's as sampling interval.
-     * @param network OtsRoadNetwork; the network
+     * @param network RoadNetwork; the network
      * @throws NullPointerException if the simulator is {@code null}
      */
-    public RoadSampler(final OtsRoadNetwork network)
+    public RoadSampler(final RoadNetwork network)
     {
         this(new LinkedHashSet<>(), new LinkedHashSet<>(), network);
     }
@@ -81,11 +81,11 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
      * Constructor which uses the operational plan updates of GTU's as sampling interval.
      * @param extendedDataTypes Set&lt;ExtendedDataType&lt;?, ?, ?, GtuData&gt;&gt;; extended data types
      * @param filterDataTypes Set&lt;FilterDataType&lt;?&gt;&gt;; filter data types
-     * @param network OtsRoadNetwork; the network
+     * @param network RoadNetwork; the network
      * @throws NullPointerException if the simulator is {@code null}
      */
     public RoadSampler(final Set<ExtendedDataType<?, ?, ?, GtuDataRoad>> extendedDataTypes,
-            final Set<FilterDataType<?>> filterDataTypes, final OtsRoadNetwork network)
+            final Set<FilterDataType<?>> filterDataTypes, final RoadNetwork network)
     {
         super(extendedDataTypes, filterDataTypes);
         Throw.whenNull(network, "Network may not be null.");
@@ -96,12 +96,12 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
     /**
      * Constructor which uses the given frequency to determine the sampling interval.
-     * @param network OtsRoadNetwork; the network
+     * @param network RoadNetwork; the network
      * @param frequency Frequency; sampling frequency
      * @throws NullPointerException if an input is {@code null}
      * @throws IllegalArgumentException if frequency is negative or zero
      */
-    public RoadSampler(final OtsRoadNetwork network, final Frequency frequency)
+    public RoadSampler(final RoadNetwork network, final Frequency frequency)
     {
         this(new LinkedHashSet<>(), new LinkedHashSet<>(), network, frequency);
     }
@@ -110,13 +110,13 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
      * Constructor which uses the given frequency to determine the sampling interval.
      * @param extendedDataTypes Set&lt;ExtendedDataType&lt;?, ?, ?, GtuData&gt;&gt;; extended data types
      * @param filterDataTypes Set&lt;FilterDataType&lt;?&gt;&gt;; filter data types
-     * @param network OtsRoadNetwork; the network
+     * @param network RoadNetwork; the network
      * @param frequency Frequency; sampling frequency
      * @throws NullPointerException if an input is {@code null}
      * @throws IllegalArgumentException if frequency is negative or zero
      */
     public RoadSampler(final Set<ExtendedDataType<?, ?, ?, GtuDataRoad>> extendedDataTypes,
-            final Set<FilterDataType<?>> filterDataTypes, final OtsRoadNetwork network, final Frequency frequency)
+            final Set<FilterDataType<?>> filterDataTypes, final RoadNetwork network, final Frequency frequency)
     {
         super(extendedDataTypes, filterDataTypes);
         Throw.whenNull(network, "Network may not be null.");
@@ -437,10 +437,10 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
     /**
      * Returns a factory to create a sampler.
-     * @param network OtsRoadNetwork; network
+     * @param network RoadNetwork; network
      * @return Factory; factory to create a sampler
      */
-    public static Factory build(final OtsRoadNetwork network)
+    public static Factory build(final RoadNetwork network)
     {
         return new Factory(network);
     }
@@ -450,7 +450,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
     {
 
         /** Simulator. */
-        private final OtsRoadNetwork network;
+        private final RoadNetwork network;
 
         /** Registration of included extended data types. */
         private final Set<ExtendedDataType<?, ?, ?, GtuDataRoad>> extendedDataTypes = new LinkedHashSet<>();
@@ -463,9 +463,9 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
         /**
          * Constructor.
-         * @param network OtsRoadNetwork; network
+         * @param network RoadNetwork; network
          */
-        Factory(final OtsRoadNetwork network)
+        Factory(final RoadNetwork network)
         {
             this.network = network;
         }

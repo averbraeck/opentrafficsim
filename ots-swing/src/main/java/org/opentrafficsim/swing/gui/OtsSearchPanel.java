@@ -19,7 +19,7 @@ import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OtsNetwork;
+import org.opentrafficsim.core.network.Network;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 
@@ -62,21 +62,21 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
         ObjectKind<?>[] objectKinds = new ObjectKind[] {new ObjectKind<Gtu>("GTU")
         {
             @Override
-            Gtu searchNetwork(final OtsNetwork network, final String id)
+            Gtu searchNetwork(final Network network, final String id)
             {
                 return network.getGTU(id);
             }
         }, new ObjectKind<Node>("Node")
         {
             @Override
-            Node searchNetwork(final OtsNetwork network, final String id)
+            Node searchNetwork(final Network network, final String id)
             {
                 return network.getNode(id);
             }
         }, new ObjectKind<Link>("Link")
         {
             @Override
-            Link searchNetwork(final OtsNetwork network, final String id)
+            Link searchNetwork(final Network network, final String id)
             {
                 return network.getLink(id);
             }
@@ -219,11 +219,11 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
 
         /**
          * Lookup an object of type T in an OTS network.
-         * @param network OtsNetwork; the OTS network
+         * @param network Network; the OTS network
          * @param id String; id of the object to return
          * @return T; the object in the network of the correct type and matching id, or null if no matching object was found.
          */
-        abstract T searchNetwork(OtsNetwork network, String id);
+        abstract T searchNetwork(Network network, String id);
 
         /**
          * Produce the text that will appear in the combo box. This method should be overridden to implement localization.

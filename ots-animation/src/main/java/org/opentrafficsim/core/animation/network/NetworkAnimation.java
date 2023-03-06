@@ -10,6 +10,7 @@ import org.djutils.event.LocalEventProducer;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.animation.DrawingInfo;
 import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.Network;
 
 /**
  * NetworkAnimation stores the relations between drawable objects and their drawing info.

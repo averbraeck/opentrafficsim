@@ -7,7 +7,7 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.OtsNetwork;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.sim0mq.Sim0MQException;
 
@@ -24,17 +24,17 @@ import org.sim0mq.Sim0MQException;
 public class LinkTransceiver extends AbstractTransceiver
 {
     /** The OTS network. */
-    private final OtsNetwork network;
+    private final Network network;
 
     /** Transceiver for the GTU ids. */
     private final TransceiverInterface linkIdSource;
 
     /**
      * Construct a new LinkTransceiver.
-     * @param network OtsNetwork; the network
+     * @param network Network; the network
      * @param linkIdSource LinkIdTransceiver; the transceiver that can produce all Link ids in the Network
      */
-    public LinkTransceiver(final OtsNetwork network, final LinkIdTransceiver linkIdSource)
+    public LinkTransceiver(final Network network, final LinkIdTransceiver linkIdSource)
     {
         super("Link transceiver",
                 new MetaData("Link id", "Link id",

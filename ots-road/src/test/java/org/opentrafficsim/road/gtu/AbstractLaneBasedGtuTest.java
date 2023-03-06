@@ -43,7 +43,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.FixedLaneChange
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlanner;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
@@ -75,7 +75,7 @@ public class AbstractLaneBasedGtuTest implements UNITS
         // To create Lanes we need Nodes and a LaneType
         // And a simulator, but for that we first need something that implements OtsModelInterface
         OtsSimulatorInterface simulator = new OtsSimulator("abstractLaneBasedGtuTest");
-        OtsRoadNetwork network = new OtsRoadNetwork("lane base gtu test network", simulator);
+        RoadNetwork network = new RoadNetwork("lane base gtu test network", simulator);
         OtsModelInterface model = new DummyModel(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), model);
         Node nodeAFrom = new Node(network, "AFrom", new OtsPoint3d(0, 0, 0), Direction.ZERO);
@@ -414,7 +414,7 @@ class DummyModel extends AbstractOtsModel
 
     /** {@inheritDoc} */
     @Override
-    public final OtsRoadNetwork getNetwork()
+    public final RoadNetwork getNetwork()
     {
         return null;
     }

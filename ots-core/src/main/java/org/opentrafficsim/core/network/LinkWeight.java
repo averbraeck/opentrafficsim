@@ -107,7 +107,7 @@ public interface LinkWeight
     double getWeight(Link link);
 
     /**
-     * Return a heuristic for the A* algorithm. The default value is {@code null} in which case {@code OtsNetwork} will use a
+     * Return a heuristic for the A* algorithm. The default value is {@code null} in which case {@code Network} will use a
      * regular Dijkstra shortest path algorithm.
      * @return AStarAdmissibleHeuristic&lt;Node&gt;; heuristic for the A* algorithm, default is {@code null}.
      */

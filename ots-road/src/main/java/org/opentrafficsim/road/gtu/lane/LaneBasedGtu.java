@@ -63,7 +63,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneBasedOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -181,11 +181,11 @@ public class LaneBasedGtu extends Gtu
      * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
      * @param maximumSpeed Speed;the maximum speed of the GTU (in the driving direction)
      * @param front Length; front distance relative to the reference position
-     * @param network OtsRoadNetwork; the network that the GTU is initially registered in
+     * @param network RoadNetwork; the network that the GTU is initially registered in
      * @throws GtuException when initial values are not correct
      */
     public LaneBasedGtu(final String id, final GtuType gtuType, final Length length, final Length width,
-            final Speed maximumSpeed, final Length front, final OtsRoadNetwork network) throws GtuException
+            final Speed maximumSpeed, final Length front, final RoadNetwork network) throws GtuException
     {
         super(id, gtuType, network.getSimulator(), network, length, width, maximumSpeed, front, Length.ZERO);
         HistoryManager historyManager = network.getSimulator().getReplication().getHistoryManager(network.getSimulator());

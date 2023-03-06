@@ -28,7 +28,7 @@ import org.opentrafficsim.core.network.Connector;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.Cloner;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
@@ -78,12 +78,12 @@ public final class NetworkParser
 
     /**
      * Parse the Nodes.
-     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
      * @param network NETWORK; the NETWORK tag
      * @param nodeDirections Map&lt;String,Direction&gt;; a map of the node ids and their default directions
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
-    public static void parseNodes(final OtsRoadNetwork otsNetwork, final NETWORK network,
+    public static void parseNodes(final RoadNetwork otsNetwork, final NETWORK network,
             final Map<String, Direction> nodeDirections) throws NetworkException
     {
         for (NODE xmlNode : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), NODE.class))
@@ -97,11 +97,11 @@ public final class NetworkParser
     /**
      * Calculate the default angles of the Nodes, in case they have not been set. This is based on the STRAIGHT LINK elements in
      * the XML file.
-     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
      * @param network NETWORK; the NETWORK tag
      * @return a map of nodes and their default direction
      */
-    public static Map<String, Direction> calculateNodeAngles(final OtsRoadNetwork otsNetwork, final NETWORK network)
+    public static Map<String, Direction> calculateNodeAngles(final RoadNetwork otsNetwork, final NETWORK network)
     {
         Map<String, Direction> nodeDirections = new LinkedHashMap<>();
         Map<String, Point3d> points = new LinkedHashMap<>();
@@ -145,7 +145,7 @@ public final class NetworkParser
 
     /**
      * Build the links with the correct design line.
-     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
      * @param definitions Definitions; parsed definitions.
      * @param network NETWORK; the NETWORK tag
      * @param nodeDirections Map&lt;String,Direction&gt;; a map of the node ids and their default directions
@@ -153,7 +153,7 @@ public final class NetworkParser
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      * @throws OtsGeometryException when the design line is invalid
      */
-    static void parseLinks(final OtsRoadNetwork otsNetwork, final Definitions definitions, final NETWORK network,
+    static void parseLinks(final RoadNetwork otsNetwork, final Definitions definitions, final NETWORK network,
             final Map<String, Direction> nodeDirections, final OtsSimulatorInterface simulator)
             throws NetworkException, OtsGeometryException
     {
@@ -323,7 +323,7 @@ public final class NetworkParser
 
     /**
      * Build the links with the correct design line.
-     * @param otsNetwork OtsRoadNetwork; the network to insert the parsed objects in
+     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
      * @param definitions Definitions; parsed definitions.
      * @param network NETWORK; the NETWORK tag
      * @param simulator OtsSimulatorInterface; the simulator
@@ -335,7 +335,7 @@ public final class NetworkParser
      * @throws SimRuntimeException in case of simulation problems building the car generator
      * @throws GtuException when construction of the Strategical Planner failed
      */
-    static void applyRoadLayout(final OtsRoadNetwork otsNetwork, final Definitions definitions, final NETWORK network,
+    static void applyRoadLayout(final RoadNetwork otsNetwork, final Definitions definitions, final NETWORK network,
             final OtsSimulatorInterface simulator, final Map<String, ROADLAYOUT> roadLayoutMap,
             final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap)
             throws NetworkException, OtsGeometryException, XmlParserException, SimRuntimeException, GtuException

@@ -22,7 +22,7 @@ public class CapacityLink extends Link implements Capacity
 
     /**
      * Construct a new link.
-     * @param network OtsNetwork; the network.
+     * @param network Network; the network.
      * @param id String; the link id
      * @param startNode Node; start node (directional)
      * @param endNode Node; end node (directional)

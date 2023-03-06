@@ -48,7 +48,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFacto
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -89,7 +89,7 @@ public class StraightModel extends AbstractOtsModel implements UNITS
     private static final long serialVersionUID = 20140815L;
 
     /** The network. */
-    private final OtsRoadNetwork network = new OtsRoadNetwork("network", getSimulator());
+    private final RoadNetwork network = new RoadNetwork("network", getSimulator());
 
     /** The probability that the next generated GTU is a passenger car. */
     private double carProbability;
@@ -214,7 +214,7 @@ public class StraightModel extends AbstractOtsModel implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    public OtsRoadNetwork getNetwork()
+    public RoadNetwork getNetwork()
     {
         return this.network;
     }

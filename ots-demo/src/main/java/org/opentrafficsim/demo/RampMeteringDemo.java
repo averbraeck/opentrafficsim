@@ -57,9 +57,9 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
@@ -105,7 +105,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.control.rampmetering.CycleTimeLightController;
 import org.opentrafficsim.road.network.control.rampmetering.RampMetering;
 import org.opentrafficsim.road.network.control.rampmetering.RampMeteringLightController;
@@ -251,9 +251,9 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected OtsRoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
+    protected RoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
     {
-        OtsRoadNetwork network = new OtsRoadNetwork("RampMetering", sim);
+        RoadNetwork network = new RoadNetwork("RampMetering", sim);
         if (this.output)
         {
             network.addListener(this, Network.GTU_ADD_EVENT);

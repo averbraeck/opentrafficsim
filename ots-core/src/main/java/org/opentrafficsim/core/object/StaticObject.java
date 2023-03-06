@@ -60,7 +60,7 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, S
     protected void init() throws NetworkException
     {
         // notify the potential animation of the existence of a StaticObject
-        // These next events are fired by the OtsNetwork when the object is registered in the Network.
+        // These next events are fired by the Network when the object is registered in the Network.
         // fireTimedEvent(Network.OBJECT_ADD_EVENT, this.id);
         // fireTimedEvent(Network.ANIMATION_OBJECT_ADD_EVENT, this);
     }

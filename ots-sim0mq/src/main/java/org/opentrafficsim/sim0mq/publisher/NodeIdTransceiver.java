@@ -2,7 +2,7 @@ package org.opentrafficsim.sim0mq.publisher;
 
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OtsNetwork;
+import org.opentrafficsim.core.network.Network;
 
 /**
  * Transceiver for Node ids.
@@ -19,9 +19,9 @@ public class NodeIdTransceiver extends AbstractIdTransceiver
 {
     /**
      * Construct a new LinkIdTransceiver.
-     * @param network OtsNetwork; the OTS network
+     * @param network Network; the OTS network
      */
-    public NodeIdTransceiver(final OtsNetwork network)
+    public NodeIdTransceiver(final Network network)
     {
         super(network, "Node id transceiver");
     }

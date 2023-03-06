@@ -55,7 +55,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlanner;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
@@ -103,11 +103,11 @@ public class ContourPlotTest implements UNITS
     /**
      * Create a network and a path for the tests.
      * @param simulator OtsSimulatorInterface; the simulator
-     * @param network OtsRoadNetwork; the network
+     * @param network RoadNetwork; the network
      * @return GraphPath&lt;LaneData&gt;; the dummy path
      * @throws Exception when something goes wrong (should not happen)
      */
-    private GraphPath<LaneDataRoad> dummyPath(final OtsSimulatorInterface simulator, final OtsRoadNetwork network)
+    private GraphPath<LaneDataRoad> dummyPath(final OtsSimulatorInterface simulator, final RoadNetwork network)
             throws Exception
     {
         LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
@@ -197,7 +197,7 @@ public class ContourPlotTest implements UNITS
     {
         setUp();
         OtsSimulatorInterface simulator = this.mockedSimulator;
-        OtsRoadNetwork network = new OtsRoadNetwork("density contour test network", simulator);
+        RoadNetwork network = new RoadNetwork("density contour test network", simulator);
         GraphPath<LaneDataRoad> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(network);
         ContourDataSource dataPool = new ContourDataSource(sampler.getSamplerData(), path);
@@ -216,7 +216,7 @@ public class ContourPlotTest implements UNITS
     {
         setUp();
         OtsSimulatorInterface simulator = this.mockedSimulator;
-        OtsRoadNetwork network = new OtsRoadNetwork("flow contour test network", simulator);
+        RoadNetwork network = new RoadNetwork("flow contour test network", simulator);
         GraphPath<LaneDataRoad> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(network);
         ContourDataSource dataPool = new ContourDataSource(sampler.getSamplerData(), path);
@@ -235,7 +235,7 @@ public class ContourPlotTest implements UNITS
     {
         setUp();
         OtsSimulatorInterface simulator = this.mockedSimulator;
-        OtsRoadNetwork network = new OtsRoadNetwork("flow contour test network", simulator);
+        RoadNetwork network = new RoadNetwork("flow contour test network", simulator);
         GraphPath<LaneDataRoad> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(network);
         ContourDataSource dataPool = new ContourDataSource(sampler.getSamplerData(), path);
@@ -769,7 +769,7 @@ public class ContourPlotTest implements UNITS
      */
     private static LaneBasedGtu makeReferenceCar(final String id, final GtuType gtuType, final Lane lane,
             final Length initialPosition, final Speed initialSpeed, final OtsSimulatorInterface simulator,
-            final GtuFollowingModelOld gtuFollowingModel, final LaneChangeModel laneChangeModel, final OtsRoadNetwork network)
+            final GtuFollowingModelOld gtuFollowingModel, final LaneChangeModel laneChangeModel, final RoadNetwork network)
             throws NamingException, NetworkException, SimRuntimeException, GtuException, OtsGeometryException
     {
         // TODO: simulator argument can be remove, but this method is currently only used in code that is commented out

@@ -49,7 +49,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -122,7 +122,7 @@ public class TransceiverTest
         }
         OtsSimulatorInterface simulator = MockDevsSimulator.createMock();
 
-        OtsRoadNetwork network = new OtsRoadNetwork("test network for TransceiverTest", simulator);
+        RoadNetwork network = new RoadNetwork("test network for TransceiverTest", simulator);
         GtuIdTransceiver gtuIdTransceiver = new GtuIdTransceiver(network);
         assertEquals("getId returns correct id", "GTU id transceiver", gtuIdTransceiver.getId());
         assertEquals("address has 0 entries", 0, gtuIdTransceiver.getAddressFields().size());

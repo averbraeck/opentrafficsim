@@ -36,7 +36,7 @@ import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplat
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
-import org.opentrafficsim.road.network.OtsRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.LaneType;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -65,7 +65,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
     public final void constructorTest() throws Exception
     {
         OtsSimulatorInterface simulator = new OtsSimulator("LaneBasedTemplateGTUTypeTest");
-        OtsRoadNetwork network = new OtsRoadNetwork("TemplateGTU network", simulator);
+        RoadNetwork network = new RoadNetwork("TemplateGTU network", simulator);
         GtuType pcType = DefaultsNl.CAR;
         final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcLength =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 4), METER);
@@ -169,7 +169,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
     public final void compatibleLaneTypeTest() throws Exception
     {
         OtsSimulatorInterface simulator = new OtsSimulator("LaneBasedTemplateGTUTypeTest");
-        OtsRoadNetwork network = new OtsRoadNetwork("TemplateGTU network", simulator);
+        RoadNetwork network = new RoadNetwork("TemplateGTU network", simulator);
         // Create some TemplateGTUTypes
         GtuType pc = DefaultsNl.CAR;
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcLength =
@@ -315,7 +315,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public final OtsRoadNetwork getNetwork()
+        public final RoadNetwork getNetwork()
         {
             return null;
         }
