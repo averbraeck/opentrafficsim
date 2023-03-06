@@ -34,7 +34,6 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -46,6 +45,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -53,7 +53,6 @@ import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Type;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -320,8 +319,8 @@ public class TransceiverTest
 
         // Give the network two nodes and a link with a lane - A lot of code is required to create a lane :-(
         OtsPoint3d node1Point = new OtsPoint3d(10, 20, 30);
-        OtsRoadNode node1 = new OtsRoadNode(network, "node 1", node1Point, Direction.ZERO);
-        OtsRoadNode node2 = new OtsRoadNode(network, "node 2", new OtsPoint3d(110, 20, 30), Direction.ZERO);
+        Node node1 = new Node(network, "node 1", node1Point, Direction.ZERO);
+        Node node2 = new Node(network, "node 2", new OtsPoint3d(110, 20, 30), Direction.ZERO);
         LinkType roadLinkType = DefaultsNl.ROAD;
         CrossSectionLink link = new CrossSectionLink(network, "1 to 2", node1, node2, roadLinkType,
                 new OtsLine3d(node1.getPoint(), node2.getPoint()), LaneKeepingPolicy.KEEPRIGHT);

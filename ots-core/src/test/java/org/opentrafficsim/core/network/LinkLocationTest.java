@@ -36,8 +36,8 @@ public class LinkLocationTest
         OtsPoint3d fromPoint = new OtsPoint3d(100, 200, 300);
         OtsPoint3d toPoint = new OtsPoint3d(1000, 2000, 330);
         OtsNetwork network = new OtsNetwork("testNetworkForCapacityOTSLink", MockSimulator.createMock());
-        Node fromNode = new OtsNode(network, "startNode", fromPoint);
-        Node toNode = new OtsNode(network, "endNode", toPoint);
+        Node fromNode = new Node(network, "startNode", fromPoint);
+        Node toNode = new Node(network, "endNode", toPoint);
         LinkType linkType = DefaultsNl.ROAD;
         OtsLine3d designLine = new OtsLine3d(fromPoint, toPoint);
         Link link = new OtsLink(network, "link", fromNode, toNode, linkType, designLine);
@@ -45,7 +45,7 @@ public class LinkLocationTest
         // Create an unrelated link
         OtsPoint3d a = new OtsPoint3d(1, 2, 3);
         OtsPoint3d b = new OtsPoint3d(11, 12, 13);
-        Link otherLink = new OtsLink(network, "otherLink", new OtsNode(network, "a", a), new OtsNode(network, "b", b), linkType,
+        Link otherLink = new OtsLink(network, "otherLink", new Node(network, "a", a), new Node(network, "b", b), linkType,
                 new OtsLine3d(a, b));
         for (int percentage = 0; percentage <= 100; percentage += 10)
         {

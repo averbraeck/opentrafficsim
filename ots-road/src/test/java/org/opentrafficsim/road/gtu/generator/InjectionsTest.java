@@ -41,6 +41,7 @@ import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OtsNetwork;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.GeneratorLanePosition;
@@ -52,7 +53,6 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactor
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -193,8 +193,8 @@ public class InjectionsTest
         OtsSimulatorInterface simulator = new OtsSimulator("net");
         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ONE, Mockito.mock(OtsModelInterface.class));
         OtsRoadNetwork network = new OtsRoadNetwork("network", simulator);
-        OtsRoadNode nodeA = new OtsRoadNode(network, "A", new OtsPoint3d(0.0, 0.0, 0.0), Direction.ZERO);
-        OtsRoadNode nodeB = new OtsRoadNode(network, "B", new OtsPoint3d(100.0, 0.0, 0.0), Direction.ZERO);
+        Node nodeA = new Node(network, "A", new OtsPoint3d(0.0, 0.0, 0.0), Direction.ZERO);
+        Node nodeB = new Node(network, "B", new OtsPoint3d(100.0, 0.0, 0.0), Direction.ZERO);
         CrossSectionLink linkAB = new CrossSectionLink(network, "AB", nodeA, nodeB, DefaultsNl.FREEWAY,
                 new OtsLine3d(nodeA.getPoint(), nodeB.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
         Length laneWidth = Length.instantiateSI(3.5);
@@ -230,7 +230,7 @@ public class InjectionsTest
             assertEquals(i + 1.0, characteristics.getLength().si, 1e-9);
             GeneratorLanePosition p = full.draw(characteristics.getGtuType(), characteristics, Collections.emptyMap());
             assertEquals(lanes[laneIndex], p.getPosition().iterator().next().getLane().getId());
-            laneIndex = 1 - laneIndex; 
+            laneIndex = 1 - laneIndex;
             assertEquals((i + 1) * 10.0, p.getPosition().iterator().next().getPosition().si, 1e-9);
         }
         Try.testFail(() -> full.asLaneBasedGtuCharacteristicsGenerator().draw(), IllegalStateException.class); // consec. draw

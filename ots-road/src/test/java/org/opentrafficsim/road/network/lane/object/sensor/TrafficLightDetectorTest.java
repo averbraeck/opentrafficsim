@@ -35,6 +35,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -50,7 +51,6 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector;
 
@@ -83,19 +83,18 @@ public class TrafficLightDetectorTest implements EventListener
             throws NetworkException, NamingException, OtsGeometryException, SimRuntimeException
     {
         OtsRoadNetwork network = new OtsRoadNetwork("network", simulator);
-        OtsRoadNode prevNode = null;
+        Node prevNode = null;
         Lane[] result = new Lane[lengths.length];
         LaneType laneType = DefaultsRoadNl.FREEWAY;
         Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
         double cumulativeLength = 0;
         for (int nodeNumber = 0; nodeNumber <= lengths.length; nodeNumber++)
         {
-            OtsRoadNode node =
-                    new OtsRoadNode(network, "node" + nodeNumber, new OtsPoint3d(cumulativeLength, 0, 0), Direction.ZERO);
+            Node node = new Node(network, "node" + nodeNumber, new OtsPoint3d(cumulativeLength, 0, 0), Direction.ZERO);
             if (null != prevNode)
             {
-                OtsRoadNode fromNode = prevNode;
-                OtsRoadNode toNode = node;
+                Node fromNode = prevNode;
+                Node toNode = node;
                 int laneOffset = 0;
                 result[nodeNumber - 1] = LaneFactory.makeMultiLane(network, "Link" + nodeNumber, fromNode, toNode, null, 1,
                         laneOffset, laneOffset, laneType, speedLimit, simulator, DefaultsNl.VEHICLE)[0];

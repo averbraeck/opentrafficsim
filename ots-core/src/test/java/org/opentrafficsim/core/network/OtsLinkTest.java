@@ -54,8 +54,8 @@ public class OtsLinkTest implements EventListener
     public final void testOTSLink() throws NetworkException, OtsGeometryException
     {
         OtsNetwork network = new OtsNetwork("OTSLinkTestNetwork", MockSimulator.createMock());
-        Node startNode = new OtsNode(network, "start", new OtsPoint3d(10, 20, 0));
-        Node endNode = new OtsNode(network, "end", new OtsPoint3d(1000, 2000, 10));
+        Node startNode = new Node(network, "start", new OtsPoint3d(10, 20, 0));
+        Node endNode = new Node(network, "end", new OtsPoint3d(1000, 2000, 10));
         LinkType linkType = new LinkType("myLinkType", DefaultsNl.ROAD);
         OtsLine3d designLine = new OtsLine3d(startNode.getPoint(), endNode.getPoint());
         OtsLink link = new OtsLink(network, "link1", startNode, endNode, linkType, designLine);
@@ -127,8 +127,8 @@ public class OtsLinkTest implements EventListener
         // make a link with the same name in another network
         OtsNetwork otherNetwork = new OtsNetwork("other", MockSimulator.createMock());
         linkType = new LinkType("myLinkType4", DefaultsNl.ROAD);
-        otherLink = new OtsLink(otherNetwork, "link4", new OtsNode(otherNetwork, "start", new OtsPoint3d(10, 20, 0)),
-                new OtsNode(otherNetwork, "end", new OtsPoint3d(1000, 2000, 10)), linkType, designLine);
+        otherLink = new OtsLink(otherNetwork, "link4", new Node(otherNetwork, "start", new OtsPoint3d(10, 20, 0)),
+                new Node(otherNetwork, "end", new OtsPoint3d(1000, 2000, 10)), linkType, designLine);
         assertTrue("link is equal to extremely similar link with same id but different network", link.equals(otherLink));
     }
 

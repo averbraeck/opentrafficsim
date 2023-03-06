@@ -23,6 +23,7 @@ import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -62,9 +63,9 @@ public class DetectorTest implements UNITS
         OtsRoadNetwork network = new OtsRoadNetwork("sensor test network", simulator);
         // Now we need a set of Lanes
         // To create Lanes we need Nodes and a LaneType
-        OtsRoadNode nodeAFrom = new OtsRoadNode(network, "AFrom", new OtsPoint3d(0, 0, 0), Direction.ZERO);
-        OtsRoadNode nodeATo = new OtsRoadNode(network, "ATo", new OtsPoint3d(1000, 0, 0), Direction.ZERO);
-        OtsRoadNode nodeBTo = new OtsRoadNode(network, "BTo", new OtsPoint3d(20000, 0, 0), Direction.ZERO);
+        Node nodeAFrom = new Node(network, "AFrom", new OtsPoint3d(0, 0, 0), Direction.ZERO);
+        Node nodeATo = new Node(network, "ATo", new OtsPoint3d(1000, 0, 0), Direction.ZERO);
+        Node nodeBTo = new Node(network, "BTo", new OtsPoint3d(20000, 0, 0), Direction.ZERO);
         // so car won't run off lane B in 100 s.
         GtuType gtuType = DefaultsNl.CAR;
         LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;

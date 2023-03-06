@@ -30,6 +30,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -50,7 +51,6 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OtsRoadNode;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -98,19 +98,19 @@ public class LaneBasedGtuTest implements UNITS
         GtuType truckType = DefaultsNl.TRUCK;
         LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
         // Create a series of Nodes (some closely bunched together)
-        List<OtsRoadNode> nodes = new ArrayList<>();
+        List<Node> nodes = new ArrayList<>();
         int[] linkBoundaries = {0, 25, 50, 100, 101, 102, 103, 104, 105, 150, 175, 200};
         for (int xPos : linkBoundaries)
         {
-            nodes.add(new OtsRoadNode(network, "Node at " + xPos, new OtsPoint3d(xPos, 20, 0), Direction.ZERO));
+            nodes.add(new Node(network, "Node at " + xPos, new OtsPoint3d(xPos, 20, 0), Direction.ZERO));
         }
         // Now we can build a series of Links with Lanes on them
         ArrayList<CrossSectionLink> links = new ArrayList<CrossSectionLink>();
         final int laneCount = 5;
         for (int i = 1; i < nodes.size(); i++)
         {
-            OtsRoadNode fromNode = nodes.get(i - 1);
-            OtsRoadNode toNode = nodes.get(i);
+            Node fromNode = nodes.get(i - 1);
+            Node toNode = nodes.get(i);
             String linkName = fromNode.getId() + "-" + toNode.getId();
             Lane[] lanes = LaneFactory.makeMultiLane(network, linkName, fromNode, toNode, null, laneCount, laneType,
                     new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
@@ -384,8 +384,8 @@ public class LaneBasedGtuTest implements UNITS
             }
             GtuType carType = DefaultsNl.CAR;
             LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
-            OtsRoadNode fromNode = new OtsRoadNode(network, "Node A", new OtsPoint3d(0, 0, 0), Direction.ZERO);
-            OtsRoadNode toNode = new OtsRoadNode(network, "Node B", new OtsPoint3d(1000, 0, 0), Direction.ZERO);
+            Node fromNode = new Node(network, "Node A", new OtsPoint3d(0, 0, 0), Direction.ZERO);
+            Node toNode = new Node(network, "Node B", new OtsPoint3d(1000, 0, 0), Direction.ZERO);
             String linkName = "AB";
             Lane lane = LaneFactory.makeMultiLane(network, linkName, fromNode, toNode, null, 1, laneType,
                     new Speed(200, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE)[0];

@@ -27,6 +27,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Connector;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.Cloner;
@@ -37,7 +38,6 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Type;
@@ -88,7 +88,7 @@ public final class NetworkParser
     {
         for (NODE xmlNode : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), NODE.class))
         {
-            new OtsRoadNode(otsNetwork, xmlNode.getID(),
+            new Node(otsNetwork, xmlNode.getID(),
                     new OtsPoint3d(xmlNode.getCOORDINATE().x, xmlNode.getCOORDINATE().y, xmlNode.getCOORDINATE().z),
                     nodeDirections.get(xmlNode.getID()));
         }
@@ -159,13 +159,13 @@ public final class NetworkParser
     {
         for (CONNECTOR xmlConnector : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), CONNECTOR.class))
         {
-            OtsRoadNode startNode = (OtsRoadNode) otsNetwork.getNode(xmlConnector.getNODESTART());
+            Node startNode = (Node) otsNetwork.getNode(xmlConnector.getNODESTART());
             if (null == startNode)
             {
                 simulator.getLogger().always()
                         .debug("No start node (" + xmlConnector.getNODESTART() + ") for CONNECTOR " + xmlConnector.getID());
             }
-            OtsRoadNode endNode = (OtsRoadNode) otsNetwork.getNode(xmlConnector.getNODEEND());
+            Node endNode = (Node) otsNetwork.getNode(xmlConnector.getNODEEND());
             if (null == endNode)
             {
                 simulator.getLogger().always()
@@ -180,8 +180,8 @@ public final class NetworkParser
 
         for (LINK xmlLink : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), LINK.class))
         {
-            OtsRoadNode startNode = (OtsRoadNode) otsNetwork.getNode(xmlLink.getNODESTART());
-            OtsRoadNode endNode = (OtsRoadNode) otsNetwork.getNode(xmlLink.getNODEEND());
+            Node startNode = (Node) otsNetwork.getNode(xmlLink.getNODESTART());
+            Node endNode = (Node) otsNetwork.getNode(xmlLink.getNODEEND());
             double startDirection =
                     nodeDirections.containsKey(startNode.getId()) ? nodeDirections.get(startNode.getId()).getSI() : 0.0;
             double endDirection =

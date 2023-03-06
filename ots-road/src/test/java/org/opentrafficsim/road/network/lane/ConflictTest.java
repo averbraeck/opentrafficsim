@@ -31,6 +31,7 @@ import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.mock.MockDevsSimulator;
@@ -76,9 +77,9 @@ public class ConflictTest implements EventListener
         LinkType linkType = DefaultsNl.ROAD;
         LaneType laneType = DefaultsRoadNl.ONE_WAY_LANE;
         OtsPoint3d pointAFrom = new OtsPoint3d(0, 0, 0);
-        OtsRoadNode nodeAFrom = new OtsRoadNode(network, "A from", pointAFrom, Direction.ZERO);
+        Node nodeAFrom = new Node(network, "A from", pointAFrom, Direction.ZERO);
         OtsPoint3d pointATo = new OtsPoint3d(100, 0, 0);
-        OtsRoadNode nodeATo = new OtsRoadNode(network, "A to", pointATo, Direction.ZERO);
+        Node nodeATo = new Node(network, "A to", pointATo, Direction.ZERO);
         CrossSectionLink linkA = new CrossSectionLink(network, "Link A", nodeAFrom, nodeATo, linkType,
                 new OtsLine3d(pointAFrom, pointATo), LaneKeepingPolicy.KEEPRIGHT);
         Lane laneA = new Lane(linkA, "lane A", Length.ZERO, new Length(2, LengthUnit.METER), laneType,
@@ -89,8 +90,8 @@ public class ConflictTest implements EventListener
         OtsPoint3d pointBTo = new OtsPoint3d(60, 60, 0);
         Direction bDirection =
                 new Direction(Math.atan2(pointBTo.y - pointBFrom.y, pointBTo.x - pointBFrom.x), DirectionUnit.EAST_RADIAN);
-        OtsRoadNode nodeBFrom = new OtsRoadNode(network, "B from", pointBFrom, bDirection);
-        OtsRoadNode nodeBTo = new OtsRoadNode(network, "B to", pointBTo, bDirection);
+        Node nodeBFrom = new Node(network, "B from", pointBFrom, bDirection);
+        Node nodeBTo = new Node(network, "B to", pointBTo, bDirection);
         CrossSectionLink linkB = new CrossSectionLink(network, "Link B", nodeBFrom, nodeBTo, linkType,
                 new OtsLine3d(pointBFrom, pointBTo), LaneKeepingPolicy.KEEPRIGHT);
         Lane laneB = new Lane(linkB, "lane B", Length.ZERO, new Length(4, LengthUnit.METER), laneType,

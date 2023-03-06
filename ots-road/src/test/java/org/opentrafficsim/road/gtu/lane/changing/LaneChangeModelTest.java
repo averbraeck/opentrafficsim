@@ -32,6 +32,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -51,7 +52,6 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -93,9 +93,8 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network
      */
-    private static CrossSectionLink makeLink(final OtsRoadNetwork network, final String name, final OtsRoadNode from,
-            final OtsRoadNode to, final Length width, final OtsSimulatorInterface simulator)
-            throws OtsGeometryException, NetworkException
+    private static CrossSectionLink makeLink(final OtsRoadNetwork network, final String name, final Node from, final Node to,
+            final Length width, final OtsSimulatorInterface simulator) throws OtsGeometryException, NetworkException
     {
         // TODO create a LinkAnimation if the simulator is compatible with that.
         // FIXME The current LinkAnimation is too bad to use...
@@ -140,9 +139,8 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
      * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws Exception when something goes wrong (should not happen)
      */
-    public static Lane[] makeMultiLane(final OtsRoadNetwork network, final String name, final OtsRoadNode from,
-            final OtsRoadNode to, final LaneType laneType, final int laneCount, final OtsSimulatorInterface simulator)
-            throws Exception
+    public static Lane[] makeMultiLane(final OtsRoadNetwork network, final String name, final Node from, final Node to,
+            final LaneType laneType, final int laneCount, final OtsSimulatorInterface simulator) throws Exception
     {
         Length width = new Length(laneCount * 4.0, METER);
         final CrossSectionLink link = makeLink(network, name, from, to, width, simulator);
@@ -169,9 +167,8 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
         int laneCount = 2;
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), this);
         Lane[] lanes = makeMultiLane(this.network, "Road with two lanes",
-                new OtsRoadNode(this.network, "From", new OtsPoint3d(0, 0, 0), Direction.ZERO),
-                new OtsRoadNode(this.network, "To", new OtsPoint3d(200, 0, 0), Direction.ZERO), laneType, laneCount,
-                this.simulator);
+                new Node(this.network, "From", new OtsPoint3d(0, 0, 0), Direction.ZERO),
+                new Node(this.network, "To", new OtsPoint3d(200, 0, 0), Direction.ZERO), laneType, laneCount, this.simulator);
 
         // Let's see if adjacent lanes are accessible
         // lanes: | 0 : 1 : 2 | in case of three lanes

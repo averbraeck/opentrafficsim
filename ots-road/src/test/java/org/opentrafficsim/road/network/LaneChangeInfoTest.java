@@ -27,12 +27,12 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.Stripe.Type;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
@@ -85,16 +85,16 @@ public class LaneChangeInfoTest
          */
 
         // Nodes
-        OtsRoadNode nodeA = new OtsRoadNode(network, "A", new OtsPoint3d(0, 0, 0), Direction.ZERO);
-        OtsRoadNode nodeB = new OtsRoadNode(network, "B", new OtsPoint3d(200, 0, 0), Direction.ZERO);
-        OtsRoadNode nodeC = new OtsRoadNode(network, "C", new OtsPoint3d(500, 0, 0), Direction.ZERO);
-        OtsRoadNode nodeD = new OtsRoadNode(network, "D", new OtsPoint3d(900, 0, 0), Direction.ZERO);
-        OtsRoadNode nodeE = new OtsRoadNode(network, "E", new OtsPoint3d(1400, 0, 0), Direction.ZERO);
-        OtsRoadNode nodeF = new OtsRoadNode(network, "F", new OtsPoint3d(2000, 0, 0), Direction.ZERO);
-        OtsRoadNode nodeF2 = new OtsRoadNode(network, "F2", new OtsPoint3d(2000, -3.5, 0), Direction.ZERO);
-        OtsRoadNode nodeG = new OtsRoadNode(network, "G", new OtsPoint3d(2700, 0, 0), Direction.ZERO);
-        OtsRoadNode nodeH = new OtsRoadNode(network, "H", new OtsPoint3d(3500, 0, 0), Direction.ZERO);
-        OtsRoadNode nodeH2 = new OtsRoadNode(network, "H2", new OtsPoint3d(3500, 3.5, 0), Direction.ZERO);
+        Node nodeA = new Node(network, "A", new OtsPoint3d(0, 0, 0), Direction.ZERO);
+        Node nodeB = new Node(network, "B", new OtsPoint3d(200, 0, 0), Direction.ZERO);
+        Node nodeC = new Node(network, "C", new OtsPoint3d(500, 0, 0), Direction.ZERO);
+        Node nodeD = new Node(network, "D", new OtsPoint3d(900, 0, 0), Direction.ZERO);
+        Node nodeE = new Node(network, "E", new OtsPoint3d(1400, 0, 0), Direction.ZERO);
+        Node nodeF = new Node(network, "F", new OtsPoint3d(2000, 0, 0), Direction.ZERO);
+        Node nodeF2 = new Node(network, "F2", new OtsPoint3d(2000, -3.5, 0), Direction.ZERO);
+        Node nodeG = new Node(network, "G", new OtsPoint3d(2700, 0, 0), Direction.ZERO);
+        Node nodeH = new Node(network, "H", new OtsPoint3d(3500, 0, 0), Direction.ZERO);
+        Node nodeH2 = new Node(network, "H2", new OtsPoint3d(3500, 3.5, 0), Direction.ZERO);
 
         // Lanes
         List<Lane> lanesAB = new LaneFactory(network, nodeA, nodeB, freeway, simulator, policy, DefaultsNl.VEHICLE)
@@ -105,15 +105,13 @@ public class LaneChangeInfoTest
         List<Lane> lanesCD = new LaneFactory(network, nodeC, nodeD, freeway, simulator, policy, DefaultsNl.VEHICLE)
                 .leftToRight(3.0, laneWidth, freewayLane, speedLimit).addLanes(Type.LEFT, Type.DASHED).getLanes();
         List<Lane> lanesDE = new LaneFactory(network, nodeD, nodeE, freeway, simulator, policy, DefaultsNl.VEHICLE)
-                .leftToRight(3.0, laneWidth, freewayLane, speedLimit).addLanes(Type.LEFT, Type.DASHED, Type.RIGHT)
-                .getLanes();
+                .leftToRight(3.0, laneWidth, freewayLane, speedLimit).addLanes(Type.LEFT, Type.DASHED, Type.RIGHT).getLanes();
         List<Lane> lanesEF = new LaneFactory(network, nodeE, nodeF, freeway, simulator, policy, DefaultsNl.VEHICLE)
                 .leftToRight(3.0, laneWidth, freewayLane, speedLimit).addLanes(Type.DASHED, Type.DASHED).getLanes();
         List<Lane> lanesEF2 = new LaneFactory(network, nodeE, nodeF2, freeway, simulator, policy, DefaultsNl.VEHICLE)
                 .leftToRight(0.0, laneWidth, freewayLane, speedLimit).addLanes().getLanes();
         List<Lane> lanesFG = new LaneFactory(network, nodeF, nodeG, freeway, simulator, policy, DefaultsNl.VEHICLE)
-                .leftToRight(4.0, laneWidth, freewayLane, speedLimit).addLanes(Type.LEFT, Type.DASHED, Type.DASHED)
-                .getLanes();
+                .leftToRight(4.0, laneWidth, freewayLane, speedLimit).addLanes(Type.LEFT, Type.DASHED, Type.DASHED).getLanes();
         List<Lane> lanesGH = new LaneFactory(network, nodeG, nodeH, freeway, simulator, policy, DefaultsNl.VEHICLE)
                 .leftToRight(3.0, laneWidth, freewayLane, speedLimit).addLanes(Type.DASHED, Type.DASHED).getLanes();
         List<Lane> lanesGH2 = new LaneFactory(network, nodeG, nodeH2, freeway, simulator, policy, DefaultsNl.VEHICLE)

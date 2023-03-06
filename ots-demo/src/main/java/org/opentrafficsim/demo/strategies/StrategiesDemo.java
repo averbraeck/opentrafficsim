@@ -55,6 +55,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.colorer.DesiredHeadwayColorer;
@@ -96,7 +97,6 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
-import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.Stripe.Type;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
@@ -509,10 +509,10 @@ public class StrategiesDemo extends AbstractSimulationScript
 
         double radius = 150;
         Speed speedLimit = new Speed(120.0, SpeedUnit.KM_PER_HOUR);
-        OtsRoadNode nodeA =
-                new OtsRoadNode(network, "A", new OtsPoint3d(-radius, 0, 0), new Direction(270, DirectionUnit.EAST_DEGREE));
-        OtsRoadNode nodeB =
-                new OtsRoadNode(network, "B", new OtsPoint3d(radius, 0, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
+        Node nodeA =
+                new Node(network, "A", new OtsPoint3d(-radius, 0, 0), new Direction(270, DirectionUnit.EAST_DEGREE));
+        Node nodeB =
+                new Node(network, "B", new OtsPoint3d(radius, 0, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
 
         OtsPoint3d[] coordsHalf1 = new OtsPoint3d[127];
         for (int i = 0; i < coordsHalf1.length; i++)

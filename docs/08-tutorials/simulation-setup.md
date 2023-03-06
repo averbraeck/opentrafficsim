@@ -43,8 +43,8 @@ The autorun parameter triggers animation when false. These, and other, parameter
         OtsRoadNetwork network = new OtsRoadNetwork("Simple network", sim);
         OtsPoint3d pointA = new OtsPoint3d(0, 0, 0);
         OtsPoint3d pointB = new OtsPoint3d(500, 0, 0);
-        OtsRoadNode nodeA = new OtsRoadNode(network, "A", pointA, Direction.ZERO);
-        OtsRoadNode nodeB = new OtsRoadNode(network, "B", pointB, Direction.ZERO);
+        Node nodeA = new Node(network, "A", pointA, Direction.ZERO);
+        Node nodeB = new Node(network, "B", pointB, Direction.ZERO);
         GtuType car = DefaultsNl.CAR;
         GtuType.registerTemplateSupplier(car, Defaults.NL);
         LinkType freewayLink = DefaultsNl.FREEWAY;

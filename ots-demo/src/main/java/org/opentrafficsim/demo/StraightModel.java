@@ -32,6 +32,7 @@ import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
@@ -53,7 +54,6 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
@@ -127,10 +127,10 @@ public class StraightModel extends AbstractOtsModel implements UNITS
     {
         try
         {
-            OtsRoadNode from = new OtsRoadNode(this.network, "From", new OtsPoint3d(0.0, 0, 0), Direction.ZERO);
-            OtsRoadNode to =
-                    new OtsRoadNode(this.network, "To", new OtsPoint3d(this.maximumDistance.getSI(), 0, 0), Direction.ZERO);
-            OtsRoadNode end = new OtsRoadNode(this.network, "End", new OtsPoint3d(this.maximumDistance.getSI() + 50.0, 0, 0),
+            Node from = new Node(this.network, "From", new OtsPoint3d(0.0, 0, 0), Direction.ZERO);
+            Node to =
+                    new Node(this.network, "To", new OtsPoint3d(this.maximumDistance.getSI(), 0, 0), Direction.ZERO);
+            Node end = new Node(this.network, "End", new OtsPoint3d(this.maximumDistance.getSI() + 50.0, 0, 0),
                     Direction.ZERO);
             LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
             this.lane = LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator,

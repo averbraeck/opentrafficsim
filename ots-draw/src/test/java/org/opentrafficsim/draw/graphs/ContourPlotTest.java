@@ -40,6 +40,7 @@ import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.draw.graphs.GraphPath.Section;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.kpi.interfaces.LaneData;
@@ -59,7 +60,6 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.sampling.LaneDataRoad;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 
@@ -111,15 +111,15 @@ public class ContourPlotTest implements UNITS
             throws Exception
     {
         LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
-        OtsRoadNode b = new OtsRoadNode(network, "B", new OtsPoint3d(12345, 0, 0), Direction.ZERO);
+        Node b = new Node(network, "B", new OtsPoint3d(12345, 0, 0), Direction.ZERO);
         ArrayList<Lane> result = new ArrayList<Lane>();
-        Lane[] lanes = LaneFactory.makeMultiLane(network, "AtoB",
-                new OtsRoadNode(network, "A", new OtsPoint3d(1234, 0, 0), Direction.ZERO), b, null, 1, laneType,
-                new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
+        Lane[] lanes =
+                LaneFactory.makeMultiLane(network, "AtoB", new Node(network, "A", new OtsPoint3d(1234, 0, 0), Direction.ZERO),
+                        b, null, 1, laneType, new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
         result.add(lanes[0]);
         // Make a continuation lane to prevent errors when the operational plan exceeds the available remaining length
         lanes = LaneFactory.makeMultiLane(network, "BtoC", b,
-                new OtsRoadNode(network, "C", new OtsPoint3d(99999, 0, 0), Direction.ZERO), null, 1, laneType,
+                new Node(network, "C", new OtsPoint3d(99999, 0, 0), Direction.ZERO), null, 1, laneType,
                 new Speed(100, KM_PER_HOUR), null, DefaultsNl.VEHICLE);
         return GraphLaneUtil.createPath("AtoB", lanes[0]);
     }

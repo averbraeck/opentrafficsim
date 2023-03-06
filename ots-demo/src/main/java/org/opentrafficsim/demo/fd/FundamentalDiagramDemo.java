@@ -58,6 +58,7 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkPosition;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.parameters.ParameterFactory;
 import org.opentrafficsim.draw.graphs.FundamentalDiagram;
 import org.opentrafficsim.draw.graphs.FundamentalDiagram.FdLine;
@@ -94,7 +95,6 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.Stripe.Type;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
@@ -210,9 +210,9 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         GtuType.registerTemplateSupplier(car, Defaults.NL);
         GtuType.registerTemplateSupplier(truck, Defaults.NL);
 
-        OtsRoadNode nodeA = new OtsRoadNode(network, "Origin", new OtsPoint3d(0.0, 0.0), Direction.ZERO);
-        OtsRoadNode nodeB = new OtsRoadNode(network, "Lane-drop", new OtsPoint3d(1500.0, 0.0), Direction.ZERO);
-        OtsRoadNode nodeC = new OtsRoadNode(network, "Destination", new OtsPoint3d(2500.0, 0.0), Direction.ZERO);
+        Node nodeA = new Node(network, "Origin", new OtsPoint3d(0.0, 0.0), Direction.ZERO);
+        Node nodeB = new Node(network, "Lane-drop", new OtsPoint3d(1500.0, 0.0), Direction.ZERO);
+        Node nodeC = new Node(network, "Destination", new OtsPoint3d(2500.0, 0.0), Direction.ZERO);
 
         LinkType linkType = DefaultsNl.FREEWAY;
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;

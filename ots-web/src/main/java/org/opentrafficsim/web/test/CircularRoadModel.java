@@ -22,6 +22,7 @@ import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -36,7 +37,6 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OtsRoadNode;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDouble;
@@ -174,9 +174,9 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
 
             GtuType gtuType = DefaultsNl.CAR;
             LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
-            OtsRoadNode start = new OtsRoadNode(this.network, "Start", new OtsPoint3d(radius, 0, 0),
-                    new Direction(90, DirectionUnit.EAST_DEGREE));
-            OtsRoadNode halfway = new OtsRoadNode(this.network, "Halfway", new OtsPoint3d(-radius, 0, 0),
+            Node start =
+                    new Node(this.network, "Start", new OtsPoint3d(radius, 0, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
+            Node halfway = new Node(this.network, "Halfway", new OtsPoint3d(-radius, 0, 0),
                     new Direction(-90, DirectionUnit.EAST_DEGREE));
 
             OtsPoint3d[] coordsHalf1 = new OtsPoint3d[127];

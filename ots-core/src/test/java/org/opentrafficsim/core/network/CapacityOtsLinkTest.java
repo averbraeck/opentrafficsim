@@ -34,8 +34,8 @@ public class CapacityOtsLinkTest
         OtsPoint3d fromPoint = new OtsPoint3d(100, 200, 300);
         OtsPoint3d toPoint = new OtsPoint3d(1000, 2000, 330);
         OtsNetwork network = new OtsNetwork("testNetworkForCapacityOTSLink", MockSimulator.createMock());
-        Node fromNode = new OtsNode(network, "startNode", fromPoint);
-        Node toNode = new OtsNode(network, "endNode", toPoint);
+        Node fromNode = new Node(network, "startNode", fromPoint);
+        Node toNode = new Node(network, "endNode", toPoint);
         LinkType linkType = DefaultsNl.ROAD;
         OtsLine3d designLine = new OtsLine3d(fromPoint, toPoint);
         Frequency initialCapacity = new Frequency(1234, FrequencyUnit.PER_HOUR);

@@ -75,8 +75,8 @@ public class LaneTest implements UNITS
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         // First we need two Nodes
-        OtsRoadNode nodeFrom = new OtsRoadNode(network, "A", new OtsPoint3d(0, 0, 0), Direction.ZERO);
-        OtsRoadNode nodeTo = new OtsRoadNode(network, "B", new OtsPoint3d(1000, 0, 0), Direction.ZERO);
+        Node nodeFrom = new Node(network, "A", new OtsPoint3d(0, 0, 0), Direction.ZERO);
+        Node nodeTo = new Node(network, "B", new OtsPoint3d(1000, 0, 0), Direction.ZERO);
         // Now we can make a Link
         OtsPoint3d[] coordinates = new OtsPoint3d[2];
         coordinates[0] = new OtsPoint3d(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
@@ -563,8 +563,8 @@ public class LaneTest implements UNITS
         laneType.addCompatibleGtuType(DefaultsNl.VEHICLE);
         Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
         speedMap.put(DefaultsNl.VEHICLE, new Speed(50, KM_PER_HOUR));
-        OtsRoadNode start = new OtsRoadNode(network, "start", from, Direction.ZERO);
-        OtsRoadNode end = new OtsRoadNode(network, "end", to, Direction.ZERO);
+        Node start = new Node(network, "start", from, Direction.ZERO);
+        Node end = new Node(network, "end", to, Direction.ZERO);
         OtsPoint3d[] coordinates = new OtsPoint3d[2];
         coordinates[0] = start.getPoint();
         coordinates[1] = end.getPoint();
@@ -644,13 +644,13 @@ public class LaneTest implements UNITS
                     laneType.addCompatibleGtuType(DefaultsNl.VEHICLE);
                     Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
                     speedMap.put(DefaultsNl.VEHICLE, new Speed(50, KM_PER_HOUR));
-                    OtsRoadNode start =
-                            new OtsRoadNode(network, "start", new OtsPoint3d(xStart, yStart), Direction.instantiateSI(angle));
+                    Node start =
+                            new Node(network, "start", new OtsPoint3d(xStart, yStart), Direction.instantiateSI(angle));
                     double linkLength = 1000;
                     double xEnd = xStart + linkLength * Math.cos(angle);
                     double yEnd = yStart + linkLength * Math.sin(angle);
-                    OtsRoadNode end =
-                            new OtsRoadNode(network, "end", new OtsPoint3d(xEnd, yEnd), Direction.instantiateSI(angle));
+                    Node end =
+                            new Node(network, "end", new OtsPoint3d(xEnd, yEnd), Direction.instantiateSI(angle));
                     OtsPoint3d[] coordinates = new OtsPoint3d[2];
                     coordinates[0] = start.getPoint();
                     coordinates[1] = end.getPoint();

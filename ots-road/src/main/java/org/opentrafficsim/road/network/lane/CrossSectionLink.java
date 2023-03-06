@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.djutils.event.EventType;
-import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
@@ -14,6 +13,7 @@ import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OtsLink;
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -88,8 +88,8 @@ public class CrossSectionLink extends OtsLink implements Serializable
      *             or the end node of the link are not registered in the network.
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public CrossSectionLink(final OtsRoadNetwork network, final String id, final OtsRoadNode startNode,
-            final OtsRoadNode endNode, final LinkType linkType, final OtsLine3d designLine,
+    public CrossSectionLink(final OtsRoadNetwork network, final String id, final Node startNode,
+            final Node endNode, final LinkType linkType, final OtsLine3d designLine,
             final LaneKeepingPolicy laneKeepingPolicy) throws NetworkException
     {
         super(network, id, startNode, endNode, linkType, designLine);
@@ -204,7 +204,7 @@ public class CrossSectionLink extends OtsLink implements Serializable
                 }
             }
             OtsPoint3d start = getStartNode().getPoint();
-            double heading = getStartNode().getHeading() + .5 * Math.PI;
+            double heading = getStartNode().getHeading().si + .5 * Math.PI;
             double cosHeading = Math.cos(heading);
             double sinHeading = Math.sin(heading);
             OtsPoint3d leftPoint = new OtsPoint3d(start.x + cosHeading * left, start.y + sinHeading * left);

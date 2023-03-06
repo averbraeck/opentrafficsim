@@ -52,15 +52,14 @@ import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.He
 import org.opentrafficsim.road.network.OtsRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.od.Categorization;
 import org.opentrafficsim.road.od.Category;
 import org.opentrafficsim.road.od.Interpolation;
-import org.opentrafficsim.road.od.OdMatrix;
 import org.opentrafficsim.road.od.OdApplier;
-import org.opentrafficsim.road.od.OdOptions;
 import org.opentrafficsim.road.od.OdApplier.GeneratorObjects;
+import org.opentrafficsim.road.od.OdMatrix;
+import org.opentrafficsim.road.od.OdOptions;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.SingleReplication;
@@ -173,8 +172,8 @@ public class OdApplierTest
         this.network = new OtsRoadNetwork("ODApplierExample", this.simulator);
         OtsPoint3d pointA = new OtsPoint3d(0, 0, 0);
         OtsPoint3d pointB = new OtsPoint3d(1000, 0, 0);
-        OtsRoadNode nodeA = new OtsRoadNode(this.network, "A", pointA, Direction.ZERO);
-        OtsRoadNode nodeB = new OtsRoadNode(this.network, "B", pointB, Direction.ZERO);
+        Node nodeA = new Node(this.network, "A", pointA, Direction.ZERO);
+        Node nodeB = new Node(this.network, "B", pointB, Direction.ZERO);
         CrossSectionLink linkAB = new CrossSectionLink(this.network, "AB", nodeA, nodeB, DefaultsNl.ROAD,
                 new OtsLine3d(pointA, pointB), LaneKeepingPolicy.KEEPRIGHT);
         this.lanes.put("lane1",

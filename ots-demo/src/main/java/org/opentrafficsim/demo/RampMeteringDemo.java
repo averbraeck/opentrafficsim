@@ -114,21 +114,19 @@ import org.opentrafficsim.road.network.control.rampmetering.RwsSwitch;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Type;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.object.detector.LoopDetector;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 import org.opentrafficsim.road.od.Categorization;
 import org.opentrafficsim.road.od.Category;
 import org.opentrafficsim.road.od.Interpolation;
-import org.opentrafficsim.road.od.OdMatrix;
 import org.opentrafficsim.road.od.OdApplier;
+import org.opentrafficsim.road.od.OdMatrix;
 import org.opentrafficsim.road.od.OdOptions;
 import org.opentrafficsim.swing.script.AbstractSimulationScript;
 
@@ -278,12 +276,12 @@ public class RampMeteringDemo extends AbstractSimulationScript
         StreamInterface stream = sim.getModel().getStream("generation");
         this.parameterFactory.addParameter(ParameterTypes.FSPEED, new DistNormal(stream, 123.7 / 120.0, 12.0 / 1200));
 
-        OtsRoadNode nodeA = new OtsRoadNode(network, "A", new OtsPoint3d(0, 0), Direction.ZERO);
-        OtsRoadNode nodeB = new OtsRoadNode(network, "B", new OtsPoint3d(3000, 0), Direction.ZERO);
-        OtsRoadNode nodeC = new OtsRoadNode(network, "C", new OtsPoint3d(3250, 0), Direction.ZERO);
-        OtsRoadNode nodeD = new OtsRoadNode(network, "D", new OtsPoint3d(6000, 0), Direction.ZERO);
-        OtsRoadNode nodeE = new OtsRoadNode(network, "E", new OtsPoint3d(2000, -25), Direction.ZERO);
-        OtsRoadNode nodeF = new OtsRoadNode(network, "F", new OtsPoint3d(2750, 0.0), Direction.ZERO);
+        Node nodeA = new Node(network, "A", new OtsPoint3d(0, 0), Direction.ZERO);
+        Node nodeB = new Node(network, "B", new OtsPoint3d(3000, 0), Direction.ZERO);
+        Node nodeC = new Node(network, "C", new OtsPoint3d(3250, 0), Direction.ZERO);
+        Node nodeD = new Node(network, "D", new OtsPoint3d(6000, 0), Direction.ZERO);
+        Node nodeE = new Node(network, "E", new OtsPoint3d(2000, -25), Direction.ZERO);
+        Node nodeF = new Node(network, "F", new OtsPoint3d(2750, 0.0), Direction.ZERO);
 
         LinkType freeway = DefaultsNl.FREEWAY;
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;
@@ -341,10 +339,10 @@ public class RampMeteringDemo extends AbstractSimulationScript
         }
 
         // OD
-        List<OtsRoadNode> origins = new ArrayList<>();
+        List<Node> origins = new ArrayList<>();
         origins.add(nodeA);
         origins.add(nodeE);
-        List<OtsRoadNode> destinations = new ArrayList<>();
+        List<Node> destinations = new ArrayList<>();
         destinations.add(nodeD);
         Categorization categorization = new Categorization("cat", GtuType.class);// , Lane.class);
         Interpolation globalInterpolation = Interpolation.LINEAR;

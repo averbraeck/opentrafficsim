@@ -29,6 +29,7 @@ import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -44,7 +45,6 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -158,8 +158,8 @@ public class CarTest implements UNITS
     public static Lane makeLane(final OtsRoadNetwork network, final LaneType laneType, final OtsSimulatorInterface simulator)
             throws NetworkException, OtsGeometryException
     {
-        OtsRoadNode n1 = new OtsRoadNode(network, "n1", new OtsPoint3d(0, 0), Direction.ZERO);
-        OtsRoadNode n2 = new OtsRoadNode(network, "n2", new OtsPoint3d(100000.0, 0.0), Direction.ZERO);
+        Node n1 = new Node(network, "n1", new OtsPoint3d(0, 0), Direction.ZERO);
+        Node n2 = new Node(network, "n2", new OtsPoint3d(100000.0, 0.0), Direction.ZERO);
         OtsPoint3d[] coordinates = new OtsPoint3d[] {new OtsPoint3d(0.0, 0.0), new OtsPoint3d(100000.0, 0.0)};
         CrossSectionLink link12 = new CrossSectionLink(network, "link12", n1, n2, DefaultsNl.ROAD, new OtsLine3d(coordinates),
                 LaneKeepingPolicy.KEEPRIGHT);

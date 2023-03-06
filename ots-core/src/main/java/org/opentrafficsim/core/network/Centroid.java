@@ -14,7 +14,7 @@ import org.opentrafficsim.core.geometry.OtsPoint3d;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class Centroid extends OtsNode
+public class Centroid extends Node
 {
     /** */
     private static final long serialVersionUID = 20221117L;
@@ -29,20 +29,6 @@ public class Centroid extends OtsNode
     public Centroid(final Network network, final String id, final OtsPoint3d point) throws NetworkException
     {
         super(network, id, point);
-    }
-
-    /**
-     * Construction of a Centroid Node.
-     * @param network Network; the network.
-     * @param id String; the id of the Node.
-     * @param point OtsPoint3d; the point with usually an x and y setting.
-     * @param heading double; heading
-     * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
-     */
-    public Centroid(final Network network, final String id, final OtsPoint3d point, final double heading)
-            throws NetworkException
-    {
-        super(network, id, point, heading);
     }
 
     /** {@inheritDoc} */

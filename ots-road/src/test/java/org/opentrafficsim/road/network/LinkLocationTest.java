@@ -13,9 +13,9 @@ import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.network.LinkLocation;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.mock.MockSimulator;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 /**
@@ -39,8 +39,8 @@ public class LinkLocationTest implements UNITS
         // Preparations
         OtsSimulatorInterface simulator = MockSimulator.createMock();
         OtsRoadNetwork network = new OtsRoadNetwork("link location test network", simulator);
-        OtsRoadNode nodeFrom = new OtsRoadNode(network, "From", new OtsPoint3d(0, 0, 0), Direction.ZERO);
-        OtsRoadNode nodeTo = new OtsRoadNode(network, "To", new OtsPoint3d(1000, 0, 0), Direction.ZERO);
+        Node nodeFrom = new Node(network, "From", new OtsPoint3d(0, 0, 0), Direction.ZERO);
+        Node nodeTo = new Node(network, "To", new OtsPoint3d(1000, 0, 0), Direction.ZERO);
         OtsLine3d line = new OtsLine3d(new OtsPoint3d[] {new OtsPoint3d(0, 0, 0), new OtsPoint3d(1000, 0, 0)});
         CrossSectionLink link =
                 new CrossSectionLink(network, "Link", nodeFrom, nodeTo, DefaultsNl.ROAD, line, LaneKeepingPolicy.KEEPRIGHT);

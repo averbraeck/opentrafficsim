@@ -62,7 +62,6 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OtsRoadNode;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -200,17 +199,17 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
             OtsPoint3d pFrom2a = new OtsPoint3d(0, -50, 0);
             OtsPoint3d pFrom2b = new OtsPoint3d(490, -0.5, 0);
             Direction onrampDirection = pFrom2a.horizontalDirection(pFrom2b);
-            OtsRoadNode from = new OtsRoadNode(this.network, "From", new OtsPoint3d(0, 0, 0), Direction.ZERO);
-            OtsRoadNode end = new OtsRoadNode(this.network, "End", new OtsPoint3d(2000, 0, 0), Direction.ZERO);
-            OtsRoadNode from2a = new OtsRoadNode(this.network, "From2a", pFrom2a, onrampDirection);
-            OtsRoadNode from2b = new OtsRoadNode(this.network, "From2b", pFrom2b, onrampDirection);
-            OtsRoadNode firstVia = new OtsRoadNode(this.network, "Via1", new OtsPoint3d(500, 0, 0), Direction.ZERO);
+            Node from = new Node(this.network, "From", new OtsPoint3d(0, 0, 0), Direction.ZERO);
+            Node end = new Node(this.network, "End", new OtsPoint3d(2000, 0, 0), Direction.ZERO);
+            Node from2a = new Node(this.network, "From2a", pFrom2a, onrampDirection);
+            Node from2b = new Node(this.network, "From2b", pFrom2b, onrampDirection);
+            Node firstVia = new Node(this.network, "Via1", new OtsPoint3d(500, 0, 0), Direction.ZERO);
             OtsPoint3d pEnd2a = new OtsPoint3d(1020, -0.5, 0);
             OtsPoint3d pEnd2b = new OtsPoint3d(2000, -50, 0);
             Direction offrampDirection = pEnd2a.horizontalDirection(pEnd2b);
-            OtsRoadNode end2a = new OtsRoadNode(this.network, "End2a", pEnd2a, offrampDirection);
-            OtsRoadNode end2b = new OtsRoadNode(this.network, "End2b", pEnd2b, offrampDirection);
-            OtsRoadNode secondVia = new OtsRoadNode(this.network, "Via2", new OtsPoint3d(1000, 0, 0), Direction.ZERO);
+            Node end2a = new Node(this.network, "End2a", pEnd2a, offrampDirection);
+            Node end2b = new Node(this.network, "End2b", pEnd2b, offrampDirection);
+            Node secondVia = new Node(this.network, "Via2", new OtsPoint3d(1000, 0, 0), Direction.ZERO);
 
             String networkType = getInputParameter("generic.network").toString();
             boolean merge = networkType.startsWith("M");
@@ -471,12 +470,12 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
     private Lane[] setupSink(final Lane[] lanes, final LaneType laneType) throws NetworkException, OtsGeometryException
     {
         CrossSectionLink link = lanes[0].getParentLink();
-        OtsRoadNode to = (OtsRoadNode) link.getEndNode();
-        OtsRoadNode from = (OtsRoadNode) link.getStartNode();
+        Node to = (Node) link.getEndNode();
+        Node from = (Node) link.getStartNode();
         double endLinkLength = 50; // [m]
         double endX = to.getPoint().x + (endLinkLength / link.getLength().getSI()) * (to.getPoint().x - from.getPoint().x);
         double endY = to.getPoint().y + (endLinkLength / link.getLength().getSI()) * (to.getPoint().y - from.getPoint().y);
-        OtsRoadNode end = new OtsRoadNode(this.network, link.getId() + "END", new OtsPoint3d(endX, endY, to.getPoint().z),
+        Node end = new Node(this.network, link.getId() + "END", new OtsPoint3d(endX, endY, to.getPoint().z),
                 Direction.instantiateSI(Math.atan2(to.getPoint().y - from.getPoint().y, to.getPoint().x - from.getPoint().x)));
         CrossSectionLink endLink = LaneFactory.makeLink(this.network, link.getId() + "endLink", to, end, null, this.simulator);
         for (Lane lane : lanes)

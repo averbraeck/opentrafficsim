@@ -21,6 +21,7 @@ import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -63,12 +64,11 @@ public class CurveTest
         GtuType gtuType = DefaultsNl.CAR;
         LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
         Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
-        OtsRoadNode origin = new OtsRoadNode(network, "origin", new OtsPoint3d(10, 10, 0), Direction.ZERO);
-        OtsRoadNode curveStart = new OtsRoadNode(network, "curveStart", new OtsPoint3d(100, 10, 0), Direction.ZERO);
-        OtsRoadNode curveEnd =
-                new OtsRoadNode(network, "curveEnd", new OtsPoint3d(150, 60, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
-        OtsRoadNode destination = new OtsRoadNode(network, "destination", new OtsPoint3d(150, 150, 0),
-                new Direction(90, DirectionUnit.EAST_DEGREE));
+        Node origin = new Node(network, "origin", new OtsPoint3d(10, 10, 0), Direction.ZERO);
+        Node curveStart = new Node(network, "curveStart", new OtsPoint3d(100, 10, 0), Direction.ZERO);
+        Node curveEnd = new Node(network, "curveEnd", new OtsPoint3d(150, 60, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
+        Node destination =
+                new Node(network, "destination", new OtsPoint3d(150, 150, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
         Lane[] straight1 = LaneFactory.makeMultiLane(network, "straight1", origin, curveStart, null, laneCount, laneType,
                 speedLimit, simulator, DefaultsNl.VEHICLE);
         Lane[] straight2 = LaneFactory.makeMultiLane(network, "straight2", curveEnd, destination, null, laneCount, laneType,

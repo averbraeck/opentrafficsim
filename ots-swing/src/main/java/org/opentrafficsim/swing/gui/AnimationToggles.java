@@ -2,8 +2,8 @@ package org.opentrafficsim.swing.gui;
 
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuGenerator.GtuGeneratorPosition;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OtsLink;
-import org.opentrafficsim.core.network.OtsNode;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation;
 import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation;
@@ -216,7 +216,7 @@ public final class AnimationToggles
      */
     public static void showAnimationFull(final OtsAnimationPanel panel)
     {
-        showAnimationClass(panel, OtsNode.class);
+        showAnimationClass(panel, Node.class);
         hideAnimationClass(panel, NodeAnimation.Text.class);
         showAnimationClass(panel, OtsLink.class);
         hideAnimationClass(panel, LinkAnimation.Text.class);
@@ -244,7 +244,7 @@ public final class AnimationToggles
      */
     public static void showAnimationStandard(final OtsAnimationPanel panel)
     {
-        hideAnimationClass(panel, OtsNode.class);
+        hideAnimationClass(panel, Node.class);
         hideAnimationClass(panel, NodeAnimation.Text.class);
         hideAnimationClass(panel, OtsLink.class);
         hideAnimationClass(panel, LinkAnimation.Text.class);
