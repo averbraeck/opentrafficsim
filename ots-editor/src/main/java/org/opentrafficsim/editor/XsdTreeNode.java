@@ -34,39 +34,9 @@ import org.w3c.dom.Node;
  * <br>
  * This class is mostly straightforward in the sense that there are direct parent-child relations, and that changing an option
  * replaces a node. When an xsd:sequence is part of an xsd:choice, things become complex as the xsd:sequence is a single option.
- * In particular, the xsd:sequence may itself have xsd:choice's. In that case the notion of a {@code parentChoice} comes in to
- * play. The resulting structure will in that case be:
- * 
- * <pre>
- *  xsd:element  v-. (lane)
- *      xsd:choice-'&lt;-------------------.
- *       |&gt; xsd:element (centeroffeset) |
- * option|&gt; xsd:element (leftoffset)    |
- *       |&gt; xsd:element (rightoffset)   | parentChoice
- *       '&gt; xsd:sequence v-.            |
- *              xsd:choice-'------------'
- *               |&gt; xsd:element (centeroffesetstart)
- *         option|&gt; xsd:element (leftoffsetstart)
- *               '&gt; xsd:element (rightoffsetstart)
- *              xsd:choice
- *               |&gt; xsd:element (centeroffesetend)
- *         option|&gt; xsd:element (leftoffsetend)     {identical relations as 'start'}
- *               '&gt; xsd:element (rightoffsetend)
- * </pre>
- * 
- * Note that here each shown xsd:{} becomes an {@code XsdTreeNode}, but only the xsd:element's are ever shown in the tree.
- * Normally, xsd:sequence nodes do not result in an {@code XsdTreeNode}; their content is usually flattened with higher levels.
- * All sub-xsd:element's shown here have as a parent the highest xsd:element, and it's children are only the other
- * xsd:element's. But only when actively selected. When another option is chosen, nodes are exchanged at the highest level. The
- * option nodes under an xsd:choice however reference to the choice with the {@code choice} property. In this way they are aware
- * that they are an option, and should show different available options. The choice also self-references as such. Each node base
- * on an xsd:choice has all options under the {@code options} property, with the selected one stored under {@code selected}. As
- * the lowest elements in this diagram should also allow the user to select an option back at the higher level, the
- * {@code parentChoice} property of the lower xsd:choice node is required.<br>
- * <br>
- * If in the future we are faced with more deeply layered, or variously layered, structures, a simpler and more robust approach
- * is to let each xsd:sequence be a visible {@code XsdTreeNode}, possibly with choice and drop-down icon to match. This is then
- * a virtual layer not representing XML reading and writing.
+ * Therefore the xsd:sequence becomes a node visible in the tree, when it's an option under a choice. Furthermore, for each
+ * xsd:choice node an {@code XsdTreeNode} is created that is not visible in the tree. It stores all options
+ * {@code XsdTreeNode}'s and knows that option is selected. Only one options is ever in the list of children of the parent node.
  * @author wjschakel
  */
 public class XsdTreeNode extends LocalEventProducer implements Serializable
@@ -119,9 +89,6 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     // ====== Choice/Options ======
 
-    /** Choice node in case this choice is in a sequence of choices, where the sequence is an option in the parent choice. */
-    private XsdTreeNode parentChoice;
-
     /** Choice node, represents an xsd:choice of which 1 option is shown. All options are {@code XsdTreeNode}'s themselves. */
     private XsdTreeNode choice;
 
@@ -170,12 +137,6 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /** Stored simple value of the node. */
     private String value;
-
-    /**
-     * Position of this node in a group as it should be visualized to the user. This always involves a sequence in a choice,
-     * i.e. the group is one option.
-     */
-    private GroupPosition groupPosition;
 
     // ====== Interaction with visualization ======
 
@@ -277,29 +238,6 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         setOccurs();
         this.active = this.minOccurs > 0;
         this.pathString = buildPathLocation();
-        if (xsdNode.getNodeName().equals("xsd:choice"))
-        {
-            this.options = new ArrayList<>();
-            addChildren(xsdNode, parent, this.options, hiddenNodes, this.schema, false);
-            this.choice = this;
-            for (XsdTreeNode option : this.options)
-            {
-                option.minOccurs = this.minOccurs;
-                option.maxOccurs = this.maxOccurs;
-                if (this.minOccurs > 0)
-                {
-                    option.setActive();
-                }
-                if (option.xsdNode.getNodeName().equals("xsd:sequence"))
-                {
-                    option.children = new ArrayList<>();
-                    addChildren(option.xsdNode, parent, option.children, option.hiddenNodes, this.schema, false);
-                    option.children.forEach((child) -> child.parentChoice = this);
-                    setSequenceOrder(option.children);
-                }
-                option.choice = this;
-            }
-        }
         ((XsdTreeNodeRoot) getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED, this);
     }
 
@@ -325,25 +263,6 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         {
             fireCreatedEventOnExistingNodes(child, listener);
         }
-    }
-
-    /**
-     * Sets the {@code GroupPosition} for the nodes in the sequence.
-     * @param sequence List&lt;XsdTreeNode&gt;; sequence of nodes, part of one xsd:squence.
-     */
-    private static void setSequenceOrder(final List<XsdTreeNode> sequence)
-    {
-        if (sequence.size() == 1)
-        {
-            sequence.get(0).groupPosition = GroupPosition.SOLO;
-            return;
-        }
-        sequence.get(0).groupPosition = GroupPosition.FIRST;
-        for (int index = 1; index < sequence.size() - 1; index++)
-        {
-            sequence.get(index).groupPosition = GroupPosition.MIDDLE;
-        }
-        sequence.get(sequence.size() - 1).groupPosition = GroupPosition.LAST;
     }
 
     /**
@@ -413,7 +332,11 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         StringBuilder pathStr = new StringBuilder(((XsdTreeNode) path.get(0)).getNodeString());
         for (int i = 1; i < path.size(); i++)
         {
-            pathStr.append(".").append(((XsdTreeNode) path.get(i)).getNodeString());
+            String nodeString = ((XsdTreeNode) path.get(i)).getNodeString();
+            if (!nodeString.equals("xsd:sequence") || i == path.size() - 1)
+            {
+                pathStr.append(".").append(nodeString);
+            }
         }
         return pathStr.toString();
     }
@@ -454,81 +377,31 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     // ====== Choice/Options ======
 
     /**
-     * Returns whether this node is (part of) a choice, i.e. should show an option can be set here. This is true if it is
-     * directly an option, or as part of an xsd:sequence which is an option. In the latter case this is known through the
-     * {@code parentChoice} property.
+     * Returns whether this node is (part of) a choice, i.e. should show an option can be set here.
      * @return boolean; whether this node is (part of) a choice, i.e. should show an option can be set here.
      */
     public boolean isChoice()
     {
-        return this.choice != null || this.parentChoice != null;
+        return this.choice != null;
     }
 
     /**
-     * Returns a list of options. In case of a {@code parentChoice}, this will also contain the options relevant to that choice.
+     * Returns a list of options.
      * @return List&lt;XsdOption&gt;; list of options.
      */
     public List<XsdOption> getOptions()
     {
         List<XsdOption> out = new ArrayList<>();
         boolean first = true;
-        int shift = toTopOfOption();
         if (this.choice != null)
         {
             for (XsdTreeNode node : this.choice.options)
             {
-                out.add(new XsdOption(node, this.choice, first, node.equals(this.choice.selected), shift));
-                first = false;
-            }
-            if (this.choice.parentChoice != null)
-            {
-                first = true;
-                shift = this.choice.parentChoice.selected.children.indexOf(this.choice);
-                for (XsdTreeNode node : this.choice.parentChoice.options)
-                {
-                    out.add(new XsdOption(node, this.choice.parentChoice, first, node.equals(this.choice.parentChoice.selected),
-                            shift));
-                    first = false;
-                }
-            }
-        }
-        else if (this.parentChoice != null)
-        {
-            for (XsdTreeNode node : this.parentChoice.options)
-            {
-                out.add(new XsdOption(node, this.parentChoice, first, node.equals(this.parentChoice.selected), shift));
+                out.add(new XsdOption(node, this.choice, first, node.equals(this.choice.selected)));
                 first = false;
             }
         }
         return out;
-    }
-
-    /**
-     * Returns the shift towards the top of an xsd:sequence that is at the whole an option. If this node is not in a sequence, 0
-     * is returned.
-     * @return int; shift towards the top of an xsd:sequence that is at the whole an option.
-     */
-    private int toTopOfOption()
-    {
-        Throw.when(!isChoice(), IllegalStateException.class, "Setting option on node that is not (part of) a choice.");
-        XsdTreeNode relevantChoice = this.parentChoice == null ? this.choice : this.parentChoice;
-        int index = relevantChoice.options.indexOf(this);
-        if (index >= 0)
-        {
-            return 0; // option with single node
-        }
-        for (XsdTreeNode option : relevantChoice.options)
-        {
-            if (option.xsdNode.getNodeName().equals("xsd:sequence"))
-            {
-                index = option.children.indexOf(this);
-                if (index >= 0)
-                {
-                    return index;
-                }
-            }
-        }
-        return 0;
     }
 
     /**
@@ -542,39 +415,11 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 "Setting option on node that does not have this option.");
         this.choice.selected = node;
         int index = removeAnyFromParent();
-        if (node.xsdNode.getNodeName().equals("xsd:sequence"))
-        {
-            List<XsdTreeNode> added = new ArrayList<>();
-            for (XsdTreeNode child : node.children)
-            {
-                if (child.choice != null)
-                {
-                    this.parent.children.add(index, child.selected);
-                    added.add(child.selected);
-                }
-                else
-                {
-                    this.parent.children.add(index, child);
-                    added.add(child);
-                }
-                index++;
-            }
-            setSequenceOrder(added);
-        }
-        else
-        {
-            // 1-on-1 exchange, copy possible sequence location (or null)
-            this.parent.children.add(index, node);
-            node.groupPosition = this.choice.groupPosition;
-        }
+        this.parent.children.add(index, node);
     }
 
     /**
-     * Remove all option values from parent, and return appropriate index to insert newly chosen option. This is a deep
-     * procedure, considering all options, in the case of an xsd:sequence option those elements, and if those have options those
-     * too.<br>
-     * <br>
-     * Note: deeper structures are possible in XSD, but not used in OTS.
+     * Remove all option values from parent, and return appropriate index to insert newly chosen option.
      * @return int; insertion index for new options.
      */
     private int removeAnyFromParent()
@@ -588,30 +433,6 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         for (XsdTreeNode node : this.choice.options)
         {
-            if (node.xsdNode.getNodeName().equals("xsd:sequence"))
-            {
-                for (XsdTreeNode child : node.children)
-                {
-                    if (child.options != null)
-                    {
-                        for (XsdTreeNode childElement : child.options)
-                        {
-                            removeIndex = this.parent.children.indexOf(childElement);
-                            if (removeIndex >= 0)
-                            {
-                                insertIndex = resolveInsertion(insertIndex, removeIndex);
-                                this.parent.children.remove(removeIndex);
-                            }
-                        }
-                    }
-                    removeIndex = this.parent.children.indexOf(child);
-                    if (removeIndex >= 0)
-                    {
-                        insertIndex = resolveInsertion(insertIndex, removeIndex);
-                        this.parent.children.remove(removeIndex);
-                    }
-                }
-            }
             removeIndex = this.parent.children.indexOf(node);
             if (removeIndex >= 0)
             {
@@ -693,7 +514,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 getRelevantNodesWithChildren(this.xsdNode, new ImmutableArrayList<>(Collections.emptyList()), this.schema);
         for (Entry<Node, ImmutableList<Node>> entry : relevantNodes.entrySet())
         {
-            addChildren(entry.getKey(), this, this.children, entry.getValue(), this.schema, true);
+            addChildren(entry.getKey(), this, this.children, entry.getValue(), this.schema, true, -1);
         }
         for (int index = 0; index < this.children.size(); index++)
         {
@@ -765,16 +586,23 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * @param schema XsdSchema; schema to get types and referred elements from.
      * @param flattenSequence boolean; when true, treats an xsd:sequence child as an extension of the node. In the context of a
      *            choice this should remain separated.
+     * @param skip int; child index to skip, this is used when copying choice options from an option that is alreadt created.
      */
     private static void addChildren(final Node node, final XsdTreeNode parentNode, final List<XsdTreeNode> children,
-            final ImmutableList<Node> hiddenNodes, final XsdSchema schema, final boolean flattenSequence)
+            final ImmutableList<Node> hiddenNodes, final XsdSchema schema, final boolean flattenSequence, final int skip)
     {
+        int skipIndex = skip;
         for (int childIndex = 0; childIndex < node.getChildNodes().getLength(); childIndex++)
         {
             Node child = node.getChildNodes().item(childIndex);
             switch (child.getNodeName())
             {
                 case "xsd:element":
+                    if (children.size() == skipIndex)
+                    {
+                        skipIndex = -1;
+                        break;
+                    }
                     XsdTreeNode element;
                     String ref = XsdSchema.getAttribute(child, "ref");
                     String type = XsdSchema.getAttribute(child, "type");
@@ -802,9 +630,14 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                     children.add(element);
                     break;
                 case "xsd:sequence":
+                    if (children.size() == skipIndex)
+                    {
+                        skipIndex = -1;
+                        break;
+                    }
                     if (flattenSequence)
                     {
-                        addChildren(child, parentNode, children, append(hiddenNodes, node), schema, flattenSequence);
+                        addChildren(child, parentNode, children, append(hiddenNodes, node), schema, flattenSequence, -1);
                     }
                     else
                     {
@@ -813,7 +646,13 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                     }
                     break;
                 case "xsd:choice":
+                    if (children.size() == skipIndex)
+                    {
+                        skipIndex = -1;
+                        break;
+                    }
                     XsdTreeNode choice = new XsdTreeNode(parentNode, child, append(hiddenNodes, node));
+                    choice.createOptions();
                     /*
                      * We add the choice node, which is usually overwritten by the consecutive setting of an option. But not if
                      * this choice is part of a sequence, that is itself an option in a parentChoice. Then, the option is set at
@@ -824,6 +663,11 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                     choice.setOption(choice.options.get(0));
                     break;
                 case "xsd:extension":
+                    if (children.size() == skipIndex)
+                    {
+                        skipIndex = -1;
+                        break;
+                    }
                     children.add(new XsdTreeNode(parentNode, child, append(hiddenNodes, node)));
                     break;
                 case "xsd:attribute":
@@ -890,6 +734,28 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         Node typeNode = schema.getType(type);
         Throw.when(typeNode == null, RuntimeException.class, "Unable to load type for %s from XSD schema.", type);
         return typeNode;
+    }
+
+    /**
+     * Creates the option nodes as part of an xsd:choice node.
+     */
+    private void createOptions()
+    {
+        Throw.when(!this.xsdNode.getNodeName().equals("xsd:choice"), IllegalStateException.class,
+                "Can only add options for a node of type xsd:choice.");
+        this.options = new ArrayList<>();
+        addChildren(this.xsdNode, this.parent, this.options, this.hiddenNodes, this.schema, false, -1);
+        this.choice = this;
+        for (XsdTreeNode option : this.options)
+        {
+            option.minOccurs = this.minOccurs;
+            option.maxOccurs = this.maxOccurs;
+            if (this.minOccurs > 0)
+            {
+                option.setActive();
+            }
+            option.choice = this;
+        }
     }
 
     // ====== Attributes ======
@@ -1103,60 +969,31 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Sets this node to be active if it is not already. If this node is the selected node within a choice, it also activates
-     * all other options of the choice. If the node is a sequence within an option, all children are activated if they are
-     * themselves not a choice. If they are a choice, the selected node in the choice is activated (which itself will also
-     * activate the other options).
+     * all other options of the choice.
      */
     public void setActive()
     {
         if (!this.active)
         {
             this.active = true;
-            if (this.choice != null && this.choice.parentChoice != null)
-            {
-                for (XsdTreeNode siblingChoice : this.choice.parentChoice.selected.children)
-                {
-                    for (XsdTreeNode sibling : siblingChoice.options)
-                    {
-                        sibling.active = true;
-                    }
-                }
-            }
             if (this.deactivated)
             {
                 return; // deactivated from an active state in the past; all parts below are already in place
             }
-            if (this.xsdNode.getNodeName().equals("xsd:sequence") && this.choice != null)
+            this.children = null;
+            this.attributeNodes = null;
+            this.isIdentifiable = null;
+            this.isEditable = null;
+            assureChildren();
+            assureAttributesAndDescription();
+            if (this.choice != null && this.choice.selected.equals(this))
             {
-                for (XsdTreeNode child : this.children)
+                this.choice.active = true;
+                for (XsdTreeNode option : this.choice.options)
                 {
-                    if (!child.isChoice())
+                    if (!option.equals(this))
                     {
-                        child.setActive();
-                    }
-                    else
-                    {
-                        child.selected.setActive();
-                    }
-                }
-            }
-            else
-            {
-                this.children = null;
-                this.attributeNodes = null;
-                this.isIdentifiable = null;
-                this.isEditable = null;
-                assureChildren();
-                assureAttributesAndDescription();
-                if (this.choice != null && this.choice.selected.equals(this))
-                {
-                    this.choice.active = true;
-                    for (XsdTreeNode option : this.choice.options)
-                    {
-                        if (!option.equals(this))
-                        {
-                            option.setActive();
-                        }
+                        option.setActive();
                     }
                 }
             }
@@ -1284,53 +1121,101 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Adds a node of similar type next to this node under the parent. If the node is a choice, the same selected option will be
-     * set in the added node. In this way the user sees that node option copied. This method will also add the new node to a
-     * sequence under an {@code parentChoice} if it exists.
+     * set in the added node. In this way the user sees that node option copied.
+     * @return XsdTreeNode; added node.
      */
-    public void add()
+    public XsdTreeNode add()
     {
         if (this.choice != null)
         {
             int index = this.parent.children.indexOf(this) + 1;
             XsdTreeNode node = new XsdTreeNode(this.choice.parent, this.choice.xsdNode, this.choice.hiddenNodes,
                     this.choice.referringXsdNode);
+            node.createOptions();
             int indexSelected = this.choice.options.indexOf(this.choice.selected);
-            node.choice.setOption(node.options.get(indexSelected));
-            this.parent.children.remove(node.options.get(indexSelected)); // needs to be at the right index
-            this.parent.children.add(index, node.options.get(indexSelected));
+            XsdTreeNode selectedOption = node.options.get(indexSelected);
+            node.choice.setOption(selectedOption);
+            this.parent.children.remove(selectedOption); // needs to be at the right index
+            this.parent.children.add(index, selectedOption);
             node.options.get(indexSelected).setActive();
+            return selectedOption;
         }
         else
         {
             int index = this.parent.children.indexOf(this) + 1;
             XsdTreeNode node = new XsdTreeNode(this.parent, this.xsdNode, this.hiddenNodes, this.referringXsdNode);
-            if (this.parentChoice != null)
-            {
-                XsdTreeNode sequence = getContainingSequence();
-                int indexSequence = sequence.children.indexOf(this) + 1;
-                node.parentChoice = this.parentChoice;
-                sequence.children.add(indexSequence, node);
-                setSequenceOrder(sequence.children);
-            }
             this.parent.children.add(index, node);
             node.setActive();
+            return node;
         }
     }
 
     /**
-     * Returns the sequence node that contains this node, which is an option in a {@code parentChoice}.
-     * @return XsdTreeNode; sequence node that contains this node, which is an option in a {@code parentChoice}.
+     * Creates a full copy of this node, next to this node under the same parent.
      */
-    private XsdTreeNode getContainingSequence()
+    public void copy()
     {
-        for (XsdTreeNode option : this.parentChoice.options)
+        copy(this.parent);
+    }
+
+    /**
+     * Copies this node, but under the given parent node.
+     * @param newParent XsdTreeNode; parent node.
+     */
+    private void copy(final XsdTreeNode newParent)
+    {
+        // empty copy
+        int indexOfNode = this.parent.children.indexOf(this);
+        if (newParent.equals(this.parent))
         {
-            if (option.xsdNode.getNodeName().equals("xsd:sequence") && option.children.contains(this))
+            indexOfNode++; // its a copy so does not matter, but in case of exceptions it is clearer the copy is below 'this'
+        }
+        XsdTreeNode copyNode = new XsdTreeNode(newParent, this.xsdNode, this.hiddenNodes, this.referringXsdNode);
+        if (newParent.children == null)
+        {
+            newParent.children = new ArrayList<>();
+        }
+        newParent.children.add(indexOfNode, copyNode);
+        copyNode.parent = newParent;
+        copyNode.active = this.active;
+        copyNode.value = this.value;
+        // copy choice
+        if (this.choice != null)
+        {
+            XsdTreeNode choiceNode =
+                    new XsdTreeNode(newParent, this.choice.xsdNode, this.choice.hiddenNodes, this.choice.referringXsdNode);
+            choiceNode.choice = choiceNode;
+            // populate options, but skip the copyNode option that was created above, insert it afterwards
+            int selectedIndex = this.choice.options.indexOf(this);
+            choiceNode.options = new ArrayList<>();
+            addChildren(this.choice.xsdNode, newParent, choiceNode.options, this.choice.hiddenNodes, this.schema, false,
+                    selectedIndex);
+            choiceNode.options.add(selectedIndex, copyNode);
+            choiceNode.selected = choiceNode.options.get(selectedIndex);
+            for (int index = 0; index < choiceNode.options.size(); index++)
             {
-                return option;
+                XsdTreeNode option = choiceNode.options.get(index);
+                option.minOccurs = choiceNode.minOccurs;
+                option.maxOccurs = choiceNode.maxOccurs;
+                if (choiceNode.minOccurs > 0)
+                {
+                    option.setActive();
+                }
+                option.active = this.choice.options.get(index).active;
+                option.choice = choiceNode;
             }
         }
-        throw new IllegalStateException("Obtaining containing sequence for node not in any of its parentChoice's options.");
+        // copy attributes
+        copyNode.assureAttributesAndDescription();
+        for (int index = 0; index < attributeCount(); index++)
+        {
+            copyNode.attributeValues.set(index, this.attributeValues.get(index));
+        }
+        // copy children, recursive
+        for (int index = 0; index < getChildCount(); index++)
+        {
+            this.children.get(index).copy(copyNode);
+        }
     }
 
     /**
@@ -1373,17 +1258,6 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         {
             this.deactivated = true;
             this.active = false;
-            if (this.choice != null && this.choice.parentChoice != null)
-            {
-                for (XsdTreeNode siblingChoice : this.choice.parentChoice.selected.children)
-                {
-                    for (XsdTreeNode sibling : siblingChoice.options)
-                    {
-                        sibling.deactivated = true;
-                        sibling.active = false;
-                    }
-                }
-            }
             return;
         }
         if (this.ignoreRemove)
@@ -1399,12 +1273,6 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             {
                 child.remove();
             }
-        }
-        if (this.parentChoice != null)
-        {
-            XsdTreeNode sequence = getContainingSequence();
-            sequence.children.remove(this);
-            setSequenceOrder(sequence.children);
         }
         this.parent.children.remove(this);
         XsdTreeNodeRoot root = (XsdTreeNodeRoot) getPath().get(0); // can't get path later as we set parent to null
@@ -1491,14 +1359,6 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public void move(final int down)
     {
-        if (this.parentChoice != null)
-        {
-            XsdTreeNode sequence = getContainingSequence();
-            int index = sequence.children.indexOf(this);
-            sequence.children.remove(this);
-            sequence.children.add(index + down, this);
-            setSequenceOrder(sequence.children);
-        }
         int index = this.parent.children.indexOf(this);
         this.parent.children.remove(this);
         this.parent.children.add(index + down, this);
@@ -1531,15 +1391,6 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     public String getPathString()
     {
         return this.pathString;
-    }
-
-    /**
-     * Returns the position of this node in a group as it should be visualized to the user.
-     * @return GroupPosition; position of this node in a group as it should be visualized to the user.
-     */
-    public GroupPosition getGroupPosition()
-    {
-        return this.groupPosition;
     }
 
     /**
@@ -1743,7 +1594,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         return options;
     }
-    
+
     /**
      * Returns the base type of the attribute, e.g. xsd:double.
      * @param index int; attribute index.
@@ -1898,25 +1749,6 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             string = string + " (" + this.stringFunction.apply(this) + ")";
         }
         return string;
-    }
-
-    /**
-     * Location of a node in a group of nodes that should be visualized as a group to the user.
-     * @author wjschakel
-     */
-    public enum GroupPosition
-    {
-        /** First in a group of at least 2. */
-        FIRST,
-
-        /** Somewhere not at the end-points of a group of at least 3. */
-        MIDDLE,
-
-        /** Last in a group of at least 2. */
-        LAST,
-
-        /** Only member in a group. */
-        SOLO;
     }
 
 }

@@ -65,7 +65,6 @@ import org.djutils.event.EventProducer;
 import org.djutils.event.EventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
-import org.opentrafficsim.editor.XsdTreeNode.GroupPosition;
 import org.opentrafficsim.swing.gui.Resource;
 import org.w3c.dom.Document;
 
@@ -860,18 +859,6 @@ public class OtsEditor extends JFrame implements EventProducer
         /** */
         private static final long serialVersionUID = 20230221L;
 
-        /** Icon for nodes first in a group. */
-        private final Image groupFirst;
-
-        /** Icon for nodes not on the end-points in a group. */
-        private final Image groupMiddle;
-
-        /** Icon for nodes last in a group. */
-        private final Image groupLast;
-
-        /** Icon for nodes alone in a group. */
-        private final Image groupSolo;
-
         /** Image for nodes with a consumer, typically an editor. */
         private final Image consumer;
 
@@ -887,10 +874,6 @@ public class OtsEditor extends JFrame implements EventProducer
          */
         private XsdTreeCellRenderer() throws IOException
         {
-            this.groupFirst = ImageIO.read(Resource.getResourceAsStream("./OTS_group_first.png"));
-            this.groupMiddle = ImageIO.read(Resource.getResourceAsStream("./OTS_group_middle.png"));
-            this.groupLast = ImageIO.read(Resource.getResourceAsStream("./OTS_group_last.png"));
-            this.groupSolo = ImageIO.read(Resource.getResourceAsStream("./OTS_group_solo.png"));
             this.consumer = ImageIO.read(Resource.getResourceAsStream("./Application.png")).getScaledInstance(12, 12,
                     Image.SCALE_SMOOTH);
             this.description =
@@ -913,22 +896,6 @@ public class OtsEditor extends JFrame implements EventProducer
             if (customIcon != null)
             {
                 setIcon(customIcon);
-            }
-            if (GroupPosition.FIRST.equals(node.getGroupPosition()))
-            {
-                preAppend(this.groupFirst, true);
-            }
-            if (GroupPosition.MIDDLE.equals(node.getGroupPosition()))
-            {
-                preAppend(this.groupMiddle, true);
-            }
-            if (GroupPosition.LAST.equals(node.getGroupPosition()))
-            {
-                preAppend(this.groupLast, true);
-            }
-            if (GroupPosition.SOLO.equals(node.getGroupPosition()))
-            {
-                preAppend(this.groupSolo, true);
             }
             if (node.hasConsumer())
             {
@@ -1031,7 +998,8 @@ public class OtsEditor extends JFrame implements EventProducer
             // show choice popup
             if (e.getButton() == MouseEvent.BUTTON1)
             {
-                if (e.getClickCount() > 1 && OtsEditor.this.treeTable.columnAtPoint(e.getPoint()) == 0)
+                if (e.getClickCount() > 1 && OtsEditor.this.treeTable
+                        .convertColumnIndexToModel(OtsEditor.this.treeTable.columnAtPoint(e.getPoint())) == 0)
                 {
                     int row = OtsEditor.this.treeTable.rowAtPoint(e.getPoint());
                     int col = OtsEditor.this.treeTable.convertColumnIndexToView(0); // columns may have been moved in view
@@ -1055,7 +1023,6 @@ public class OtsEditor extends JFrame implements EventProducer
                 if (labelPortion != null && labelPortion.contains(e.getPoint()) && OtsEditor.this.mayPresentChoice
                         && treeNode.isChoice())
                 {
-
                     JPopupMenu popup = new JPopupMenu();
                     boolean firstEntry = true;
                     for (XsdOption option : treeNode.getOptions())
@@ -1071,8 +1038,7 @@ public class OtsEditor extends JFrame implements EventProducer
                         JMenuItem button = new JMenuItem(option.getOptionNode().getShortString());
                         if (!option.isSelected())
                         {
-                            button.addActionListener(new ChoiceListener(option.getChoice(), option.getOptionNode(),
-                                    row - option.getShiftToTopOfOption()));
+                            button.addActionListener(new ChoiceListener(option.getChoice(), option.getOptionNode(), row));
                         }
                         button.setFont(OtsEditor.this.treeTable.getFont());
                         popup.add(button);
@@ -1180,8 +1146,8 @@ public class OtsEditor extends JFrame implements EventProducer
                     separatorNeeded = false;
                     popup.add(new JSeparator());
                 }
-                JMenuItem item = new JMenuItem("Add");
-                item.addActionListener(new ActionListener()
+                JMenuItem add = new JMenuItem("Add");
+                add.addActionListener(new ActionListener()
                 {
                     /** {@inheritDoc} */
                     @Override
@@ -1191,8 +1157,21 @@ public class OtsEditor extends JFrame implements EventProducer
                         OtsEditor.this.treeTable.updateUI();
                     }
                 });
-                item.setFont(OtsEditor.this.treeTable.getFont());
-                popup.add(item);
+                add.setFont(OtsEditor.this.treeTable.getFont());
+                popup.add(add);
+                JMenuItem copy = new JMenuItem("Copy");
+                copy.addActionListener(new ActionListener()
+                {
+                    /** {@inheritDoc} */
+                    @Override
+                    public void actionPerformed(final ActionEvent e)
+                    {
+                        treeNode.copy();
+                        OtsEditor.this.treeTable.updateUI();
+                    }
+                });
+                copy.setFont(OtsEditor.this.treeTable.getFont());
+                popup.add(copy);
                 anyAdded = true;
                 groupAdded = true;
             }
@@ -1216,7 +1195,12 @@ public class OtsEditor extends JFrame implements EventProducer
                             treeNode.remove();
                             OtsEditor.this.treeTable.updateUI();
                             OtsEditor.this.treeTable.getSelectionModel().setSelectionInterval(selected, selected);
-
+                            int column = OtsEditor.this.treeTable.convertColumnIndexToView(0);
+                            if (OtsEditor.this.treeTable.getValueAt(selected, column).equals(treeNode))
+                            {
+                                OtsEditor.this.attributesTable
+                                        .setModel(new AttributesTableModel(null, OtsEditor.this.treeTable));
+                            }
                         }
                     }
                 });

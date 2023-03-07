@@ -296,7 +296,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
          */
         public void removeNode(final XsdTreeNode node)
         {
-            this.nodes.remove(node);
+            this.nodes.values().forEach((set) -> set.remove(node));
         }
 
         /**

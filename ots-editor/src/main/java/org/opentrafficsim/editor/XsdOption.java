@@ -19,26 +19,19 @@ public class XsdOption
     /** Whether this option is currently selected. */
     private final boolean selected;
 
-    /** The number of rows to move selection up from this node to return to the top. */
-    private final int shiftToTopOfOption;
-
     /**
      * Constructor.
      * @param optionNode XsdTreeNode; option node.
      * @param choice XsdTreeNode; choice node, the option node is one of its options.
      * @param firstInGroup boolean; whether this option is first in a group and a separator might be shown in a menu.
      * @param selected boolean; whether this option is currently selected.
-     * @param shiftToTopOfOption in; number of rows to move selection up from this node to return to the top. This is useful if
-     *            a sequence with multiple nodes is replaced by an option with fewer nodes.
      */
-    public XsdOption(final XsdTreeNode optionNode, final XsdTreeNode choice, final boolean firstInGroup, final boolean selected,
-            final int shiftToTopOfOption)
+    public XsdOption(final XsdTreeNode optionNode, final XsdTreeNode choice, final boolean firstInGroup, final boolean selected)
     {
         this.optionNode = optionNode;
         this.choice = choice;
         this.firstInGroup = firstInGroup;
         this.selected = selected;
-        this.shiftToTopOfOption = shiftToTopOfOption;
     }
 
     /**
@@ -75,15 +68,5 @@ public class XsdOption
     public boolean isSelected()
     {
         return this.selected;
-    }
-
-    /**
-     * Returns the number of rows to move selection up from this node to return to the top. This is useful if a sequence with
-     * multiple nodes is replaced by an option with fewer nodes.
-     * @return int; number of rows to move selection up from this node to return to the top.
-     */
-    public int getShiftToTopOfOption()
-    {
-        return this.shiftToTopOfOption;
     }
 }
