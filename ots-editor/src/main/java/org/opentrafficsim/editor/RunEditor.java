@@ -1,7 +1,8 @@
 package org.opentrafficsim.editor;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.time.LocalDateTime;
 import java.util.function.Consumer;
@@ -36,9 +37,10 @@ public final class RunEditor
      * @throws SAXException exception
      * @throws ParserConfigurationException exception
      * @throws InterruptedException exception
+     * @throws URISyntaxException exception
      */
     public static void main(final String[] args)
-            throws IOException, SAXException, ParserConfigurationException, InterruptedException
+            throws IOException, SAXException, ParserConfigurationException, InterruptedException, URISyntaxException
     {
         OtsEditor editor = new OtsEditor();
 
@@ -77,9 +79,8 @@ public final class RunEditor
         editor.addListener(editorListener, OtsEditor.SCHEMA_LOADED);
         editor.addListener(editorListener, OtsEditor.SELECTION_CHANGED);
 
-        // TODO: dynamic link to resource in ots-parser-xml
-        File file = new File("C:\\Users\\wjschakel\\git\\opentrafficsim\\ots-parser-xml\\src\\main\\resources\\xsd\\ots.xsd");
-        editor.setSchema(XsdReader.open(file.toURI()));
+        URL url = RunEditor.class.getResource("/resources/xsd/ots.xsd");
+        editor.setSchema(XsdReader.open(url.toURI()));
 
     }
 
