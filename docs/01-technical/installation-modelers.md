@@ -109,7 +109,7 @@ In the pom.xml file view, the dependency information has been encoded as XML -- 
 ```xml
   <dependencies>
     <dependency>
-      <groupId>org,opentrafficsim</groupId>
+      <groupId>org.opentrafficsim</groupId>
       <artifactId>ots-road</artifactId>
       <version>1.6.0</version>
     </dependency>
