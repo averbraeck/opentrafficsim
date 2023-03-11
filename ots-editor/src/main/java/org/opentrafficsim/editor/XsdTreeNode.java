@@ -419,6 +419,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         this.choice.selected = node;
         int index = removeAnyFromParent();
         this.parent.children.add(index, node);
+        ((XsdTreeNodeRoot) getPath().get(0)).fireEvent(XsdTreeNodeRoot.OPTION_CHANGED, node);
     }
 
     /**
@@ -981,6 +982,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             this.active = true;
             if (this.deactivated)
             {
+                ((XsdTreeNodeRoot) getPath().get(0))
+                        .fireEvent(new Event(XsdTreeNodeRoot.ACTIVATION_CHANGED, new Object[] {this, true}));
                 return; // deactivated from an active state in the past; all parts below are already in place
             }
             this.children = null;
@@ -1000,6 +1003,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                     }
                 }
             }
+            ((XsdTreeNodeRoot) getPath().get(0)).fireEvent(new Event(XsdTreeNodeRoot.OPTION_CHANGED, this, true));
         }
     }
 
@@ -1261,6 +1265,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         {
             this.deactivated = true;
             this.active = false;
+            ((XsdTreeNodeRoot) getPath().get(0))
+                    .fireEvent(new Event(XsdTreeNodeRoot.ACTIVATION_CHANGED, new Object[] {this, false}));
             return;
         }
         if (this.ignoreRemove)
@@ -1985,21 +1991,21 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         {
             for (XsdTreeNode option : this.choice.options)
             {
-                if (!option.equals(this)) // prevents infinite loop, re-calling isRelevantNode on self
+                if (option.xsdNode.getNodeName().equals("xsd:sequence"))
                 {
-                    if (option.xsdNode.getNodeName().equals("xsd:sequence"))
+                    option.active = true;
+                    option.assureChildren();
+                    for (XsdTreeNode child : option.children)
                     {
-                        option.active = true;
-                        option.assureChildren();
-                        for (XsdTreeNode child : option.children)
+                        boolean relevant = child.isRelevantNode(nameXml);
+                        if (relevant)
                         {
-                            boolean relevant = child.isRelevantNode(nameXml);
-                            if (relevant)
-                            {
-                                return relevant;
-                            }
+                            return relevant;
                         }
                     }
+                }
+                else if (!option.equals(this))
+                {
                     boolean relevant = option.isRelevantNode(nameXml);
                     if (relevant)
                     {

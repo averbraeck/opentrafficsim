@@ -47,6 +47,17 @@ public class XsdTreeNodeRoot extends XsdTreeNode
      */
     public static final EventType NODE_REMOVED = new EventType("NODEREMOVEDD", new MetaData("Node removed", "Removed tree node",
             new ObjectDescriptor("Node removed", "Removed tree node", XsdTreeNode.class)));
+    
+    /** Event when an option is changed. */
+    public static final EventType OPTION_CHANGED = new EventType("OPTIONCHANGED",
+            new MetaData("Option changed", "Option changed on node",
+                    new ObjectDescriptor("Node", "Newly selected option node", XsdTreeNode.class)));
+    
+    /** Event when an option is changed. */
+    public static final EventType ACTIVATION_CHANGED = new EventType("ACTIVATIONCHANGED",
+            new MetaData("Activation changed", "Activation changed on node",
+                    new ObjectDescriptor("Node", "Node with changed activation.", XsdTreeNode.class),
+                    new ObjectDescriptor("Activation", "New activation state.", Boolean.class)));
 
     /**
      * Constructor for root node, based on a schema.

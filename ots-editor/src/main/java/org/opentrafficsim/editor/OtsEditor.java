@@ -36,7 +36,6 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -51,17 +50,19 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.event.TreeWillExpandListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -77,6 +78,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
 import org.djutils.event.EventListenerMap;
 import org.djutils.event.EventProducer;
 import org.djutils.event.EventType;
@@ -166,9 +169,18 @@ public class OtsEditor extends JFrame implements EventProducer
 
     /** Icon for in question dialog. */
     private final ImageIcon questionIcon;
-    
+
     /** Root node of the XSD file. */
     private Document xsdDocument;
+
+    /** Last directory from which a file was loaded or in to which a file was saved. */
+    private String lastDirectory;
+
+    /** Last file that was loaded or saved. */
+    private String lastFile;
+
+    /** Whether there is unsaved content. */
+    private boolean unsavedChanges = false;
 
     /**
      * Constructor.
@@ -177,7 +189,6 @@ public class OtsEditor extends JFrame implements EventProducer
     public OtsEditor() throws IOException
     {
         setSize(1280, 720);
-        setTitle("OTS | The Open Traffic Simulator | Editor");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         // split panes
@@ -259,8 +270,26 @@ public class OtsEditor extends JFrame implements EventProducer
         column4.setHeaderValue(tableModel.getColumnName(3));
         columns.addColumn(column4);
         this.attributesTable = new JTable(tableModel, columns);
+        this.attributesTable.putClientProperty("terminateEditOnFocusLost", true);
         this.attributesTable.setDefaultRenderer(String.class, new AttributeCellRenderer(infoIcon));
-        this.attributesTable.setDefaultEditor(String.class, new AttributesCellEditor());
+        AttributesCellEditor editor = new AttributesCellEditor();
+        editor.addCellEditorListener(new CellEditorListener()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public void editingStopped(final ChangeEvent e)
+            {
+                setUnsavedChanges(true);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public void editingCanceled(final ChangeEvent e)
+            {
+                setUnsavedChanges(true);
+            }
+        });
+        this.attributesTable.setDefaultEditor(String.class, editor);
         this.attributesTable.addMouseListener(new AttributesMouseListener());
         AttributesTableModel.applyColumnWidth(this.attributesTable);
         this.rightSplitPane.setBottomComponent(new JScrollPane(this.attributesTable));
@@ -271,6 +300,7 @@ public class OtsEditor extends JFrame implements EventProducer
         JMenu fileMenu = new JMenu("File");
         menuBar.add(fileMenu);
         JMenuItem newFile = new JMenuItem("New");
+        newFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
         fileMenu.add(newFile);
         newFile.addActionListener(new ActionListener()
         {
@@ -278,28 +308,23 @@ public class OtsEditor extends JFrame implements EventProducer
             @Override
             public void actionPerformed(final ActionEvent e)
             {
-                try
-                {
-                    newFile();
-                }
-                catch (IOException exception)
-                {
-                    new RuntimeException("Unable to load a required resource.", exception);
-                }
+                newFile();
             }
         });
-        JMenuItem load = new JMenuItem("Load...");
-        fileMenu.add(load);
-        load.addActionListener(new ActionListener()
+        JMenuItem open = new JMenuItem("Open...");
+        open.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+        fileMenu.add(open);
+        open.addActionListener(new ActionListener()
         {
             /** {@inheritDoc} */
             @Override
             public void actionPerformed(final ActionEvent e)
             {
-                loadFile();
+                openFile();
             }
         });
-        JMenuItem save = new JMenuItem("Save...");
+        JMenuItem save = new JMenuItem("Save");
+        save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
         fileMenu.add(save);
         save.addActionListener(new ActionListener()
         {
@@ -310,11 +335,32 @@ public class OtsEditor extends JFrame implements EventProducer
                 saveFile();
             }
         });
+        JMenuItem saveAs = new JMenuItem("Save as...");
+        fileMenu.add(saveAs);
+        saveAs.addActionListener(new ActionListener()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public void actionPerformed(final ActionEvent e)
+            {
+                saveFileAs();
+            }
+        });
 
         // appear to the user
         setVisible(true);
         this.mainSplitPane.setDividerLocation(0.65);
         this.rightSplitPane.setDividerLocation(0.75);
+    }
+
+    /**
+     * Sets whether there are unsaved changes, resulting in a * in the window name, and confirmation pop-ups upon file changes. 
+     * @param unsavedChanges boolean; whether there are unsaved changes.
+     */
+    private void setUnsavedChanges(final boolean unsavedChanges)
+    {
+        this.unsavedChanges = unsavedChanges;
+        setTitle("OTS | The Open Traffic Simulator | Editor" + (unsavedChanges ? " *" : ""));
     }
 
     /**
@@ -326,19 +372,57 @@ public class OtsEditor extends JFrame implements EventProducer
     public void setSchema(final Document xsdDocument) throws IOException
     {
         this.xsdDocument = xsdDocument;
-        newFile();
+        initializeTree();
     }
-    
-    private void newFile() throws IOException
+
+    /**
+     * Asks for confirmation to discard unsaved changes, if any, and initializes the tree.
+     */
+    private void newFile()
+    {
+        if (confirmDiscardChanges())
+        {
+            try
+            {
+                initializeTree();
+            }
+            catch (IOException exception)
+            {
+                throw new RuntimeException("Unable to load new tree.", exception);
+            }
+        }
+    }
+
+    /**
+     * Initializes the tree based on the XSD schema.
+     * @throws IOException when a resource can not be loaded.
+     */
+    private void initializeTree() throws IOException
     {
         // tree table
         XsdTreeTableModel treeModel = new XsdTreeTableModel(this.xsdDocument);
         this.treeTable = new JTreeTable(treeModel);
+        this.treeTable.putClientProperty("terminateEditOnFocusLost", true);
         treeModel.setTreeTable(this.treeTable);
         this.treeTable.setDefaultRenderer(String.class, new StringCellRenderer(this.treeTable));
         ((DefaultCellEditor) this.treeTable.getDefaultEditor(String.class)).setClickCountToStart(1);
-        XsdTreeTableModel.applyColumnWidth(this.treeTable);
+        ((DefaultCellEditor) this.treeTable.getDefaultEditor(String.class)).addCellEditorListener(new CellEditorListener()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public void editingStopped(final ChangeEvent e)
+            {
+                setUnsavedChanges(true);
+            }
 
+            /** {@inheritDoc} */
+            @Override
+            public void editingCanceled(final ChangeEvent e)
+            {
+                setUnsavedChanges(true);
+            }
+        });
+        XsdTreeTableModel.applyColumnWidth(this.treeTable);
         // throws selection events and updates the attributes table
         this.treeTable.getTree().addTreeSelectionListener(new TreeSelectionListener()
         {
@@ -425,7 +509,7 @@ public class OtsEditor extends JFrame implements EventProducer
                             (XsdTreeNode) OtsEditor.this.treeTable.getTree().getSelectionPath().getLastPathComponent();
                     if (node.isRemovable())
                     {
-                        if (confirmNodeRemoval(OtsEditor.this, node))
+                        if (confirmNodeRemoval(node))
                         {
                             int selected = OtsEditor.this.treeTable.getSelectedRow();
                             node.remove();
@@ -448,7 +532,26 @@ public class OtsEditor extends JFrame implements EventProducer
         this.rightSplitPane.setTopComponent(new JScrollPane(this.treeTable));
         this.rightSplitPane.setDividerLocation(dividerLocation);
 
-        fireEvent(SCHEMA_LOADED, (XsdTreeNodeRoot) treeModel.getRoot());
+        XsdTreeNodeRoot root = (XsdTreeNodeRoot) treeModel.getRoot();
+        EventListener listener = new EventListener()
+        {
+            /** */
+            private static final long serialVersionUID = 20230311L;
+
+            /** {@inheritDoc} */
+            @Override
+            public void notify(final Event event) throws RemoteException
+            {
+                setUnsavedChanges(true);
+            }
+        };
+        root.addListener(listener, XsdTreeNodeRoot.NODE_CREATED);
+        root.addListener(listener, XsdTreeNodeRoot.NODE_REMOVED);
+        root.addListener(listener, XsdTreeNodeRoot.OPTION_CHANGED);
+        root.addListener(listener, XsdTreeNodeRoot.ACTIVATION_CHANGED);
+        fireEvent(SCHEMA_LOADED, root);
+        
+        setUnsavedChanges(false);
     }
 
     /**
@@ -600,14 +703,27 @@ public class OtsEditor extends JFrame implements EventProducer
      * Requests the user to confirm the deletion of a node. The default button is "Ok". The window popping up is considered
      * sufficient warning, and in this way a speedy succession of "del" and "enter" may delete a consecutive range of nodes to
      * be deleted.
-     * @param editor OtsEditor; the editor window.
      * @param node XsdTreeNode; node.
      * @return boolean; {@code true} if the user confirms node removal.
      */
-    private boolean confirmNodeRemoval(final OtsEditor editor, final XsdTreeNode node)
+    private boolean confirmNodeRemoval(final XsdTreeNode node)
     {
-        return JOptionPane.showConfirmDialog(editor, "Remove `" + node + "`?", "Remove?", JOptionPane.OK_CANCEL_OPTION,
+        return JOptionPane.showConfirmDialog(this, "Remove `" + node + "`?", "Remove?", JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE, this.questionIcon) == JOptionPane.OK_OPTION;
+    }
+
+    /**
+     * Shows a dialog in a modal pane to confirm discarding unsaved changes.
+     * @return boolean; whether unsaved changes can be discarded.
+     */
+    private boolean confirmDiscardChanges()
+    {
+        if (!this.unsavedChanges)
+        {
+            return true;
+        }
+        return JOptionPane.showConfirmDialog(this, "Discard unsaved changes?", "Discard unsaved changes?",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, this.questionIcon) == JOptionPane.OK_OPTION;
     }
 
     /**
@@ -791,11 +907,17 @@ public class OtsEditor extends JFrame implements EventProducer
             popup.setLocation(pAttributes.x + (int) rectangle.getMinX(), pAttributes.y + (int) rectangle.getMaxY() - 1);
         }
     }
-    
-    void loadFile()
+
+    /**
+     * Asks for confirmation to discard unsaved changes, if any, and show a dialog to open a file.
+     */
+    void openFile()
     {
+        if (!confirmDiscardChanges())
+        {
+            return;
+        }
         FileDialog fileDialog = new FileDialog(this, "Load XML", FileDialog.LOAD);
-        // fileDialog.setDirectory("C:\\");
         fileDialog.setFilenameFilter(new FilenameFilter()
         {
             /** {@inheritDoc} */
@@ -815,27 +937,42 @@ public class OtsEditor extends JFrame implements EventProducer
         {
             return;
         }
-        File file = new File(fileDialog.getDirectory() + File.separator + fileName);
-        
+        this.lastDirectory = fileDialog.getDirectory();
+        this.lastFile = fileName;
+        File file = new File(this.lastDirectory + this.lastFile);
         try
         {
             Document document = XsdReader.open(file.toURI());
-            newFile();
+            initializeTree();
             XsdTreeNodeRoot root = (XsdTreeNodeRoot) OtsEditor.this.treeTable.getTree().getModel().getRoot();
             root.loadXmlNodes(document.getFirstChild());
+            setUnsavedChanges(false);
         }
         catch (SAXException | IOException | ParserConfigurationException exception)
         {
-            exception.printStackTrace();
+            throw new RuntimeException("Unable to read XML file.", exception);
         }
     }
 
-    void saveFile()
+    /**
+     * Saves the file is a file name is known, otherwise forwards to {@code saveFileAs()}.
+     */
+    private void saveFile()
     {
-        // TODO: save as... with correct file already set
-        // TODO: remember last directory
+        if (this.lastFile == null)
+        {
+            saveFileAs();
+            return;
+        }
+        save();
+    }
+
+    /**
+     * Shows a dialog to define a file and saves in to it.
+     */
+    private void saveFileAs()
+    {
         FileDialog fileDialog = new FileDialog(this, "Save XML", FileDialog.SAVE);
-        // fileDialog.setDirectory("C:\\");
         fileDialog.setFile("*.xml");
         fileDialog.setFilenameFilter(new FilenameFilter()
         {
@@ -848,7 +985,6 @@ public class OtsEditor extends JFrame implements EventProducer
         });
         fileDialog.setVisible(true);
         String fileName = fileDialog.getFile();
-
         if (fileName == null)
         {
             return;
@@ -857,17 +993,26 @@ public class OtsEditor extends JFrame implements EventProducer
         {
             fileName = fileName + ".xml";
         }
+        this.lastDirectory = fileDialog.getDirectory();
+        this.lastFile = fileName;
+        save();
+    }
 
+    /**
+     * Performs the actual saving, either from {@code saveFile()} or {@code saveFileAs()}.
+     */
+    private void save()
+    {
         XsdTreeNodeRoot root = (XsdTreeNodeRoot) OtsEditor.this.treeTable.getTree().getModel().getRoot();
         try
         {
             DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Document document = docBuilder.newDocument();
             /*
-             * The following line omits the 'standalong="no"' in the header xml tag. But there will be no new-line after this
-             * header tag. It seems a java bug: https://bugs.openjdk.org/browse/JDK-8249867.
-             * Result: <?xml version="1.0" encoding="UTF-8"?><ots:OTS xmlns:ots="http://www.opentrafficsim.org/ots" ... etc.
-             * Other lines will be on a new line and indented.
+             * The following line omits the 'standalone="no"' in the header xml tag. But there will be no new-line after this
+             * header tag. It seems a java bug: https://bugs.openjdk.org/browse/JDK-8249867. Result: <?xml version="1.0"
+             * encoding="UTF-8"?><ots:OTS xmlns:ots="http://www.opentrafficsim.org/ots" ... etc. Other lines will be on a new
+             * line and indented.
              */
             document.setXmlStandalone(true);
             root.saveXmlNodes(document, document);
@@ -878,7 +1023,7 @@ public class OtsEditor extends JFrame implements EventProducer
                     "http://www.opentrafficsim.org/ots ../../../../../ots-parser-xml/src/main/resources/xsd/ots.xsd");
             xmlRoot.setAttribute("xmlns:xi", "http://www.w3.org/2001/XInclude");
 
-            File file = new File(fileDialog.getDirectory() + File.separator + fileName);
+            File file = new File(this.lastDirectory + this.lastFile);
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             StreamResult result = new StreamResult(fileOutputStream);
 
@@ -887,12 +1032,12 @@ public class OtsEditor extends JFrame implements EventProducer
             transformer.transform(new DOMSource(document), result);
 
             fileOutputStream.close();
+            setUnsavedChanges(false);
         }
         catch (ParserConfigurationException | TransformerException | IOException exception)
         {
-            exception.printStackTrace();
+            throw new RuntimeException("Unable to save file.", exception);
         }
-
     }
 
     /**
@@ -1367,7 +1512,7 @@ public class OtsEditor extends JFrame implements EventProducer
                     @Override
                     public void actionPerformed(final ActionEvent e)
                     {
-                        if (confirmNodeRemoval(OtsEditor.this, treeNode))
+                        if (confirmNodeRemoval(treeNode))
                         {
                             int selected = OtsEditor.this.treeTable.getTree().getLeadSelectionRow();
                             treeNode.remove();
