@@ -3,6 +3,7 @@ package org.opentrafficsim.editor;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FileDialog;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
@@ -17,6 +18,9 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -32,8 +36,11 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -54,11 +61,21 @@ import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.event.TreeWillExpandListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreePath;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.djutils.event.EventListenerMap;
 import org.djutils.event.EventProducer;
@@ -67,6 +84,8 @@ import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.swing.gui.Resource;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 import de.javagl.treetable.JTreeTable;
 
@@ -147,6 +166,9 @@ public class OtsEditor extends JFrame implements EventProducer
 
     /** Icon for in question dialog. */
     private final ImageIcon questionIcon;
+    
+    /** Root node of the XSD file. */
+    private Document xsdDocument;
 
     /**
      * Constructor.
@@ -243,6 +265,52 @@ public class OtsEditor extends JFrame implements EventProducer
         AttributesTableModel.applyColumnWidth(this.attributesTable);
         this.rightSplitPane.setBottomComponent(new JScrollPane(this.attributesTable));
 
+        // menu bar
+        JMenuBar menuBar = new JMenuBar();
+        setJMenuBar(menuBar);
+        JMenu fileMenu = new JMenu("File");
+        menuBar.add(fileMenu);
+        JMenuItem newFile = new JMenuItem("New");
+        fileMenu.add(newFile);
+        newFile.addActionListener(new ActionListener()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public void actionPerformed(final ActionEvent e)
+            {
+                try
+                {
+                    newFile();
+                }
+                catch (IOException exception)
+                {
+                    new RuntimeException("Unable to load a required resource.", exception);
+                }
+            }
+        });
+        JMenuItem load = new JMenuItem("Load...");
+        fileMenu.add(load);
+        load.addActionListener(new ActionListener()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public void actionPerformed(final ActionEvent e)
+            {
+                loadFile();
+            }
+        });
+        JMenuItem save = new JMenuItem("Save...");
+        fileMenu.add(save);
+        save.addActionListener(new ActionListener()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public void actionPerformed(final ActionEvent e)
+            {
+                saveFile();
+            }
+        });
+
         // appear to the user
         setVisible(true);
         this.mainSplitPane.setDividerLocation(0.65);
@@ -251,13 +319,20 @@ public class OtsEditor extends JFrame implements EventProducer
 
     /**
      * Sets a new schema in the GUI.
-     * @param document Document; main node from an XSD schema file.
+     * @param xsdDocument Document; main node from an XSD schema file.
      * @throws IOException when a resource could not be loaded.
      */
-    public void setSchema(final Document document) throws IOException
+    @SuppressWarnings("checkstyle:hiddenfield")
+    public void setSchema(final Document xsdDocument) throws IOException
+    {
+        this.xsdDocument = xsdDocument;
+        newFile();
+    }
+    
+    private void newFile() throws IOException
     {
         // tree table
-        XsdTreeTableModel treeModel = new XsdTreeTableModel(document);
+        XsdTreeTableModel treeModel = new XsdTreeTableModel(this.xsdDocument);
         this.treeTable = new JTreeTable(treeModel);
         treeModel.setTreeTable(this.treeTable);
         this.treeTable.setDefaultRenderer(String.class, new StringCellRenderer(this.treeTable));
@@ -715,6 +790,109 @@ public class OtsEditor extends JFrame implements EventProducer
         {
             popup.setLocation(pAttributes.x + (int) rectangle.getMinX(), pAttributes.y + (int) rectangle.getMaxY() - 1);
         }
+    }
+    
+    void loadFile()
+    {
+        FileDialog fileDialog = new FileDialog(this, "Load XML", FileDialog.LOAD);
+        // fileDialog.setDirectory("C:\\");
+        fileDialog.setFilenameFilter(new FilenameFilter()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public boolean accept(final File dir, final String name)
+            {
+                return name.toLowerCase().endsWith(".xml");
+            }
+        });
+        fileDialog.setVisible(true);
+        String fileName = fileDialog.getFile();
+        if (fileName == null)
+        {
+            return;
+        }
+        if (!fileName.toLowerCase().endsWith(".xml"))
+        {
+            return;
+        }
+        File file = new File(fileDialog.getDirectory() + File.separator + fileName);
+        
+        try
+        {
+            Document document = XsdReader.open(file.toURI());
+            newFile();
+            XsdTreeNodeRoot root = (XsdTreeNodeRoot) OtsEditor.this.treeTable.getTree().getModel().getRoot();
+            root.loadXmlNodes(document.getFirstChild());
+        }
+        catch (SAXException | IOException | ParserConfigurationException exception)
+        {
+            exception.printStackTrace();
+        }
+    }
+
+    void saveFile()
+    {
+        // TODO: save as... with correct file already set
+        // TODO: remember last directory
+        FileDialog fileDialog = new FileDialog(this, "Save XML", FileDialog.SAVE);
+        // fileDialog.setDirectory("C:\\");
+        fileDialog.setFile("*.xml");
+        fileDialog.setFilenameFilter(new FilenameFilter()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public boolean accept(final File dir, final String name)
+            {
+                return name.toLowerCase().endsWith(".xml");
+            }
+        });
+        fileDialog.setVisible(true);
+        String fileName = fileDialog.getFile();
+
+        if (fileName == null)
+        {
+            return;
+        }
+        if (!fileName.toLowerCase().endsWith(".xml"))
+        {
+            fileName = fileName + ".xml";
+        }
+
+        XsdTreeNodeRoot root = (XsdTreeNodeRoot) OtsEditor.this.treeTable.getTree().getModel().getRoot();
+        try
+        {
+            DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            Document document = docBuilder.newDocument();
+            /*
+             * The following line omits the 'standalong="no"' in the header xml tag. But there will be no new-line after this
+             * header tag. It seems a java bug: https://bugs.openjdk.org/browse/JDK-8249867.
+             * Result: <?xml version="1.0" encoding="UTF-8"?><ots:OTS xmlns:ots="http://www.opentrafficsim.org/ots" ... etc.
+             * Other lines will be on a new line and indented.
+             */
+            document.setXmlStandalone(true);
+            root.saveXmlNodes(document, document);
+            Element xmlRoot = (Element) document.getChildNodes().item(0);
+            xmlRoot.setAttribute("xmlns:ots", "http://www.opentrafficsim.org/ots");
+            xmlRoot.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            xmlRoot.setAttribute("xsi:schemaLocation",
+                    "http://www.opentrafficsim.org/ots ../../../../../ots-parser-xml/src/main/resources/xsd/ots.xsd");
+            xmlRoot.setAttribute("xmlns:xi", "http://www.w3.org/2001/XInclude");
+
+            File file = new File(fileDialog.getDirectory() + File.separator + fileName);
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            StreamResult result = new StreamResult(fileOutputStream);
+
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.transform(new DOMSource(document), result);
+
+            fileOutputStream.close();
+        }
+        catch (ParserConfigurationException | TransformerException | IOException exception)
+        {
+            exception.printStackTrace();
+        }
+
     }
 
     /**

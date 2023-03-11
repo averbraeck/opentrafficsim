@@ -146,6 +146,26 @@ public class XsdTreeNodeRoot extends XsdTreeNode
         addListener(listener, NODE_CREATED);
         addListener(listener, NODE_REMOVED);
     }
+    
+    /**
+     * Parses the information from XML root node into this node. Other than for regular nodes, this only entails children. 
+     * Attributes involving e.g. name space, may be present in the root node, but are ignored.
+     * @param nodeXml Node; node from XML.
+     */
+    @Override
+    public void loadXmlNodes(final Node nodeXml)
+    {
+        assureChildren();
+        if (nodeXml.getChildNodes() != null)
+        {
+            int index = loadChildren(0, nodeXml.getChildNodes());
+            if (index < nodeXml.getChildNodes().getLength())
+            {
+                throw new RuntimeException(
+                        "Unable to load element with name " + nodeXml.getChildNodes().item(index).getNodeName());
+            }
+        }
+    }
 
     /**
      * Validator for xsd:key, xsd:keyref and xsd:unique. Functionality is very similar, with all allowing to define multiple
@@ -348,7 +368,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
             {
                 for (XsdTreeNode treeChild : parent.getChildren())
                 {
-                    if (treeChild.getNodeString().equals(child))
+                    if (treeChild.getNodeName().equals(child))
                     {
                         nodeList.add(treeChild.getValue());
                     }

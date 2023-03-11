@@ -25,7 +25,10 @@ import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Underlying data structure object of the editor. Starting with the root node "OTS", all the information is stored in a tree.
@@ -329,10 +332,10 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     private String buildPathLocation()
     {
         List<XsdTreeNode> path = getPath();
-        StringBuilder pathStr = new StringBuilder(((XsdTreeNode) path.get(0)).getNodeString());
+        StringBuilder pathStr = new StringBuilder(((XsdTreeNode) path.get(0)).getNodeName());
         for (int i = 1; i < path.size(); i++)
         {
-            String nodeString = ((XsdTreeNode) path.get(i)).getNodeString();
+            String nodeString = ((XsdTreeNode) path.get(i)).getNodeName();
             if (!nodeString.equals("xsd:sequence") || i == path.size() - 1)
             {
                 pathStr.append(".").append(nodeString);
@@ -358,7 +361,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * {@code Node}. In rare cases it is "xi:include".
      * @return String; name of this node, as appropriate in XML.
      */
-    public String getNodeString()
+    public String getNodeName()
     {
         Node node = this.referringXsdNode == null ? this.xsdNode : this.referringXsdNode;
         String ref = XsdSchema.getAttribute(node, "ref");
@@ -495,7 +498,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * Assures children are present. If a child has minOccurs > 1, additional child nodes are added. Result is cached.
      */
-    private void assureChildren()
+    protected void assureChildren()
     {
         if (this.children != null)
         {
@@ -937,7 +940,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 return index;
             }
         }
-        throw new IllegalStateException("Attribute " + attribute + " is not in node " + getNodeString() + ".");
+        throw new IllegalStateException("Attribute " + attribute + " is not in node " + getNodeName() + ".");
     }
 
     /**
@@ -1545,7 +1548,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         List<String> combined = null;
         for (ValueValidator validator : validators)
         {
-            List<String> valueOptions = validator.getOptions(this, getNodeString());
+            List<String> valueOptions = validator.getOptions(this, getNodeName());
             if (valueOptions != null && combined != null)
             {
                 combined = combined.stream().filter(valueOptions::contains).collect(Collectors.toList());
@@ -1713,7 +1716,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         {
             return "include";
         }
-        return getNodeString().toLowerCase();
+        return getNodeName().toLowerCase();
     }
 
     /**
@@ -1749,6 +1752,263 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             string = string + " (" + this.stringFunction.apply(this) + ")";
         }
         return string;
+    }
+
+    // Save / load
+
+    /**
+     * Saves the content of this node in a new XML element under the given XML parent. This involves a value, attributes, and
+     * children. Children are further saved in a recursive manner. If this node is not active, this method does nothing.<br>
+     * <br>
+     * If this node represents a sequence as a choice option, all children are saved directly under the given XML parent node,
+     * and no information of this node itself is saved (as such nodes have no attributes or value). In other words, in that case
+     * this node is only a virtual layer presented to the user, but does not result in a layer in XML.
+     * @param document Document; used to create the new XML node.
+     * @param xmlParent Node; parent XML node.
+     */
+    public void saveXmlNodes(final Document document, final Node xmlParent)
+    {
+        if (!this.active)
+        {
+            return;
+        }
+
+        // sequences that are a choice option do not add a level in the xml, forward directly under parent
+        if (this.xsdNode.getNodeName().equals("xsd:sequence") && this.choice != null)
+        {
+            for (int index = 0; index < this.getChildCount(); index++)
+            {
+                this.children.get(index).saveXmlNodes(document, xmlParent);
+            }
+            return;
+        }
+
+        Element element = document.createElement("ots:" + getNodeName());
+        xmlParent.appendChild(element);
+
+        if (this.value != null && !this.value.isBlank())
+        {
+            element.setTextContent(this.value);
+        }
+
+        for (int index = 0; index < this.attributeCount(); index++)
+        {
+            String attributeValue = this.attributeValues.get(index);
+            if (attributeValue != null && !attributeValue.isBlank())
+            {
+                element.setAttribute(getAttributeNameByIndex(index), attributeValue);
+            }
+        }
+
+        for (int index = 0; index < this.getChildCount(); index++)
+        {
+            this.children.get(index).saveXmlNodes(document, element);
+        }
+    }
+
+    /**
+     * Parses the information from an XML node into this node. This entails a tag value, attributes, and children, for as far as
+     * each of these is present. In a recursive manner, all child nodes are further loaded.
+     * @param nodeXml Node; node from XML.
+     */
+    public void loadXmlNodes(final Node nodeXml)
+    {
+        this.active = true;
+
+        // value
+        String candidateValue = "";
+        if (nodeXml.getChildNodes() != null)
+        {
+            for (int indexXml = 0; indexXml < nodeXml.getChildNodes().getLength(); indexXml++)
+            {
+                if (nodeXml.getChildNodes().item(indexXml).getNodeName().equals("#text"))
+                {
+                    candidateValue += nodeXml.getChildNodes().item(indexXml).getNodeValue();
+                }
+            }
+        }
+        if (!candidateValue.isBlank())
+        {
+            this.value = candidateValue;
+        }
+
+        // attributes
+        assureAttributesAndDescription();
+        if (nodeXml.getAttributes() != null)
+        {
+            for (int index = 0; index < nodeXml.getAttributes().getLength(); index++)
+            {
+                Node attributeNode = nodeXml.getAttributes().item(index);
+                int attributeIndex = getAttributeIndexByName(attributeNode.getNodeName());
+                this.attributeValues.set(attributeIndex, attributeNode.getNodeValue());
+            }
+        }
+
+        // children
+        assureChildren();
+        if (nodeXml.getChildNodes() != null)
+        {
+            int index = loadChildren(0, nodeXml.getChildNodes());
+            if (index < nodeXml.getChildNodes().getLength())
+            {
+                index = loadChildren(0, nodeXml.getChildNodes());
+                throw new RuntimeException(
+                        "Unable to load element with name " + nodeXml.getChildNodes().item(index).getNodeName());
+            }
+        }
+    }
+
+    /**
+     * Parses child nodes from XML in to this node's children, as far as it can given available inactive child nodes. Note that
+     * these child nodes are derived from the XSD schema. This method will first find a relevant node to load each child XML
+     * node into. The relevant node can be found in two ways:
+     * <ol>
+     * <li>The previous child node is relevant for the XML child node. This happens when XML specifies multiple nodes of the
+     * same type, in a sequence or choice with multiple occurrence. The previous child node will be added, such that information
+     * of the XML child node can be loaded in to the added child node.</li>
+     * <li>We move to the next child node until we find a node that is relevant for the XML child node. This should only skip
+     * inactive nodes for which XML specifies no information.</li>
+     * </ol>
+     * Next, the information from XML is loaded in to the relevant child node. This can happen in three ways:
+     * <ol>
+     * <li>The relevant node is not a choice, information is loaded in to it with {@code loadXmlNodes}.</li>
+     * <li>The relevant node is a choice, where the relevant option is not a sequence. The option will be set in the choice.
+     * Information is loaded in to the selected option with {@code loadXmlNodes}.</li>
+     * <li>The relevant node is a choice, where the relevant option is a sequence. The option (sequence node) will be set in the
+     * choice. The relevant child in the sequence is found, and all XML child nodes that can be loaded in to it, are by calling
+     * {@code loadChildren}.</li>
+     * </ol>
+     * Note that for case 3, the child content of a deeper {@code XsdChildNode} is defined at the same level in XML. Hence, only
+     * some of the XML children may be loaded in the deeper level. To keep track of which XML child nodes are loaded where, the
+     * value {@code firstChild} is given as input (previous nodes have already been loaded at a higher level or in another
+     * choice sequence), and the index of the first XML child node that could not be loaded in the choice sequence is returned.
+     * @param firstChild int; index of the first XML child node to load in the the children of this node.
+     * @param childrenXml NodeList; list of XML child nodes as specified within one parent XML tag.
+     * @return int; index of the first XML child node that could not be parsed in the children nodes.
+     */
+    protected int loadChildren(final int firstChild, final NodeList childrenXml)
+    {
+        int childIndex = 0;
+        int indexXml;
+        for (indexXml = firstChild; indexXml < childrenXml.getLength(); indexXml++)
+        {
+            Node childNodeXml = childrenXml.item(indexXml);
+            if (childNodeXml.getNodeName().equals("#text"))
+            {
+                continue;
+            }
+
+            // find relevant node: previous node, or skip to next until we find the relevant node
+            String nameXml = childNodeXml.getNodeName().replace("ots:", "");
+            if (childIndex > 0 && this.children.get(childIndex - 1).isRelevantNode(nameXml))
+            {
+                this.children.get(childIndex - 1).add();
+            }
+            else
+            {
+                while (childIndex < this.children.size() && !this.children.get(childIndex).isRelevantNode(nameXml))
+                {
+                    childIndex++;
+                }
+                if (childIndex >= this.children.size())
+                {
+                    return indexXml;
+                }
+            }
+
+            // load information in relevant node, can be a choice, can be a sequence in a choice
+            XsdTreeNode relevantChild = this.children.get(childIndex);
+            if (relevantChild.choice == null)
+            {
+                relevantChild.loadXmlNodes(childNodeXml);
+            }
+            else
+            {
+                boolean optionSet = false;
+                for (XsdTreeNode option : relevantChild.choice.options)
+                {
+                    if (option.xsdNode.getNodeName().equals("xsd:sequence"))
+                    {
+                        for (XsdTreeNode child : option.children)
+                        {
+                            if (child.isRelevantNode(nameXml))
+                            {
+                                relevantChild.choice.setOption(option);
+                                indexXml = option.loadChildren(indexXml, childrenXml);
+                                indexXml--; // as loop will increase it
+                                optionSet = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (option.getNodeName().equals(nameXml))
+                    {
+                        relevantChild.choice.setOption(option);
+                        option.loadXmlNodes(childNodeXml);
+                        optionSet = true;
+                    }
+                    if (optionSet)
+                    {
+                        break;
+                    }
+                }
+            }
+            childIndex++;
+        }
+        return indexXml;
+    }
+
+    /**
+     * Checks whether this node is relevant to contain the information of the given tag name from XML. Being relevant means any
+     * of the following:
+     * <ol>
+     * <li>The name of this node is equal to the tag, and thus directly contains the tag information.</li>
+     * <li>This node is a choice, and an option of this choice is considered relevant (in a recursive manner).</li>
+     * <li>This node is a choice, and one of its options is a sequence that has a child element that is considered relevant (in
+     * a recursive manner).</li>
+     * </ol>
+     * Given the recursive nature of 2 and 3, in the end some node has a name equal to the tag from XML.
+     * @param nameXml String; tag name from XML.
+     * @return boolean; whether this node is relevant to contain the information of the given tag name from XML.
+     */
+    private boolean isRelevantNode(final String nameXml)
+    {
+        if (this.getNodeName().equals(nameXml))
+        {
+            return true;
+        }
+        if (this.choice == null)
+        {
+            return false;
+        }
+        if (this.choice.selected.equals(this))
+        {
+            for (XsdTreeNode option : this.choice.options)
+            {
+                if (!option.equals(this)) // prevents infinite loop, re-calling isRelevantNode on self
+                {
+                    if (option.xsdNode.getNodeName().equals("xsd:sequence"))
+                    {
+                        option.active = true;
+                        option.assureChildren();
+                        for (XsdTreeNode child : option.children)
+                        {
+                            boolean relevant = child.isRelevantNode(nameXml);
+                            if (relevant)
+                            {
+                                return relevant;
+                            }
+                        }
+                    }
+                    boolean relevant = option.isRelevantNode(nameXml);
+                    if (relevant)
+                    {
+                        return relevant;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
 }
