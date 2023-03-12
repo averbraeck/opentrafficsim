@@ -1,5 +1,6 @@
 package org.opentrafficsim.editor;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -186,6 +187,21 @@ public final class RunEditor
                         public String apply(final XsdTreeNode t)
                         {
                             return t.getAttributeValue("LANE");
+                        }
+                    });
+                }
+                if (node.getNodeName().equals("xi:include"))
+                {
+                    node.setStringFunction(new Function<XsdTreeNode, String>()
+                    {
+                        @Override
+                        public String apply(final XsdTreeNode t)
+                        {
+                            if (t.getValue() == null)
+                            {
+                                return null;
+                            }
+                            return new File(t.getValue()).getName();
                         }
                     });
                 }

@@ -17,6 +17,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -189,7 +191,16 @@ public class OtsEditor extends JFrame implements EventProducer
     public OtsEditor() throws IOException
     {
         setSize(1280, 720);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public void windowClosing(final WindowEvent e)
+            {
+                exit();
+            }
+        });
 
         // split panes
         this.mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, UPDATE_SPLIT_WHILE_DRAGGING);
@@ -294,7 +305,19 @@ public class OtsEditor extends JFrame implements EventProducer
         AttributesTableModel.applyColumnWidth(this.attributesTable);
         this.rightSplitPane.setBottomComponent(new JScrollPane(this.attributesTable));
 
-        // menu bar
+        addMenuBar();
+
+        // appear to the user
+        setVisible(true);
+        this.mainSplitPane.setDividerLocation(0.65);
+        this.rightSplitPane.setDividerLocation(0.75);
+    }
+
+    /**
+     * Adds the menu bar.
+     */
+    private void addMenuBar()
+    {
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
         JMenu fileMenu = new JMenu("File");
@@ -346,15 +369,22 @@ public class OtsEditor extends JFrame implements EventProducer
                 saveFileAs();
             }
         });
-
-        // appear to the user
-        setVisible(true);
-        this.mainSplitPane.setDividerLocation(0.65);
-        this.rightSplitPane.setDividerLocation(0.75);
+        fileMenu.add(new JSeparator());
+        JMenuItem exit = new JMenuItem("Exit");
+        fileMenu.add(exit);
+        exit.addActionListener(new ActionListener()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public void actionPerformed(final ActionEvent e)
+            {
+                exit();
+            }
+        });
     }
 
     /**
-     * Sets whether there are unsaved changes, resulting in a * in the window name, and confirmation pop-ups upon file changes. 
+     * Sets whether there are unsaved changes, resulting in a * in the window name, and confirmation pop-ups upon file changes.
      * @param unsavedChanges boolean; whether there are unsaved changes.
      */
     private void setUnsavedChanges(final boolean unsavedChanges)
@@ -495,6 +525,7 @@ public class OtsEditor extends JFrame implements EventProducer
         // this listener removes the selected node, if it is removable
         this.treeTable.addKeyListener(new KeyAdapter()
         {
+            /** {@inheritDoc} */
             @Override
             public void keyReleased(final KeyEvent e)
             {
@@ -550,7 +581,7 @@ public class OtsEditor extends JFrame implements EventProducer
         root.addListener(listener, XsdTreeNodeRoot.OPTION_CHANGED);
         root.addListener(listener, XsdTreeNodeRoot.ACTIVATION_CHANGED);
         fireEvent(SCHEMA_LOADED, root);
-        
+
         setUnsavedChanges(false);
     }
 
@@ -917,7 +948,7 @@ public class OtsEditor extends JFrame implements EventProducer
         {
             return;
         }
-        FileDialog fileDialog = new FileDialog(this, "Load XML", FileDialog.LOAD);
+        FileDialog fileDialog = new FileDialog(this, "Open XML", FileDialog.LOAD);
         fileDialog.setFilenameFilter(new FilenameFilter()
         {
             /** {@inheritDoc} */
@@ -945,6 +976,7 @@ public class OtsEditor extends JFrame implements EventProducer
             Document document = XsdReader.open(file.toURI());
             initializeTree();
             XsdTreeNodeRoot root = (XsdTreeNodeRoot) OtsEditor.this.treeTable.getTree().getModel().getRoot();
+            root.setDirectory(this.lastDirectory);
             root.loadXmlNodes(document.getFirstChild());
             setUnsavedChanges(false);
         }
@@ -973,7 +1005,7 @@ public class OtsEditor extends JFrame implements EventProducer
     private void saveFileAs()
     {
         FileDialog fileDialog = new FileDialog(this, "Save XML", FileDialog.SAVE);
-        fileDialog.setFile("*.xml");
+        fileDialog.setFile(this.lastFile == null ? "*.xml" : this.lastFile);
         fileDialog.setFilenameFilter(new FilenameFilter()
         {
             /** {@inheritDoc} */
@@ -1033,10 +1065,22 @@ public class OtsEditor extends JFrame implements EventProducer
 
             fileOutputStream.close();
             setUnsavedChanges(false);
+            root.setDirectory(this.lastDirectory);
         }
         catch (ParserConfigurationException | TransformerException | IOException exception)
         {
             throw new RuntimeException("Unable to save file.", exception);
+        }
+    }
+    
+    /**
+     * Exits the system, but not before a confirmation on unsaved changes if there are unsaved changes.
+     */
+    private void exit()
+    {
+        if (confirmDiscardChanges())
+        {
+            System.exit(0);
         }
     }
 
@@ -1166,9 +1210,12 @@ public class OtsEditor extends JFrame implements EventProducer
             {
                 int row = OtsEditor.this.attributesTable.rowAtPoint(e.getPoint());
                 XsdTreeNode node = ((AttributesTableModel) OtsEditor.this.attributesTable.getModel()).getNode();
-                List<String> allOptions = node.getAttributeRestrictions(row);
-                JTable table = OtsEditor.this.attributesTable;
-                optionsPopup(allOptions, table, (t) -> node.setAttributeValue(row, t));
+                if (!node.isInclude())
+                {
+                    List<String> allOptions = node.getAttributeRestrictions(row);
+                    JTable table = OtsEditor.this.attributesTable;
+                    optionsPopup(allOptions, table, (t) -> node.setAttributeValue(row, t));
+                }
             }
         }
     }
@@ -1228,13 +1275,20 @@ public class OtsEditor extends JFrame implements EventProducer
             {
                 preAppend(this.description, false);
             }
-            if (node.isChoice())
+            if (node.isChoice() && !node.isInclude())
             {
                 preAppend(this.dropdown, false);
             }
             if (node.isActive())
             {
-                setForeground(UIManager.getColor("Table.foreground"));
+                if (node.isInclude())
+                {
+                    setForeground(OtsEditor.INACTIVE_COLOR);
+                }
+                else
+                {
+                    setForeground(UIManager.getColor("Table.foreground"));
+                }
                 if (node.equals(OtsEditor.this.choiceNode))
                 {
                     setOpaque(true);
@@ -1327,7 +1381,7 @@ public class OtsEditor extends JFrame implements EventProducer
                     int row = OtsEditor.this.treeTable.rowAtPoint(e.getPoint());
                     int col = OtsEditor.this.treeTable.convertColumnIndexToView(0); // columns may have been moved in view
                     XsdTreeNode treeNode = (XsdTreeNode) OtsEditor.this.treeTable.getValueAt(row, col);
-                    if (!treeNode.isActive())
+                    if (!treeNode.isActive() && !treeNode.isInclude())
                     {
                         treeNode.setActive();
                         OtsEditor.this.treeTable.updateUI();
@@ -1337,7 +1391,7 @@ public class OtsEditor extends JFrame implements EventProducer
                 int row = OtsEditor.this.treeTable.rowAtPoint(e.getPoint());
                 int treeCol = OtsEditor.this.treeTable.convertColumnIndexToView(0); // columns may have been moved in view
                 XsdTreeNode treeNode = (XsdTreeNode) OtsEditor.this.treeTable.getValueAt(row, treeCol);
-                if (!treeNode.isActive())
+                if (!treeNode.isActive() || treeNode.isInclude())
                 {
                     return;
                 }
@@ -1435,7 +1489,7 @@ public class OtsEditor extends JFrame implements EventProducer
                 anyAdded = true;
             }
 
-            if (treeNode.isActive())
+            if (treeNode.isActive() && !treeNode.isInclude())
             {
                 anyAdded = addDefaultActions(treeNode, popup, anyAdded);
             }

@@ -58,6 +58,9 @@ public class XsdTreeNodeRoot extends XsdTreeNode
             new MetaData("Activation changed", "Activation changed on node",
                     new ObjectDescriptor("Node", "Node with changed activation.", XsdTreeNode.class),
                     new ObjectDescriptor("Activation", "New activation state.", Boolean.class)));
+    
+    /** Directory, relevant for relative paths in include nodes. */
+    private String directory;
 
     /**
      * Constructor for root node, based on a schema.
@@ -69,6 +72,24 @@ public class XsdTreeNodeRoot extends XsdTreeNode
         super(schema);
         // pointless to fire NODE_CREATED event, no one can be listening yet
         setupXPathListeners(schema);
+    }
+    
+    /**
+     * Returns the directory.
+     * @return String; directory.
+     */
+    public String getDirectory()
+    {
+        return this.directory;
+    }
+
+    /**
+     * Set the directory.
+     * @param directory String; directory.
+     */
+    public void setDirectory(final String directory)
+    {
+        this.directory = directory;
     }
 
     /**
@@ -82,7 +103,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
         {
             try
             {
-                fireCreatedEventOnExistingNodes(this, listener);
+                XsdTreeNodeUtil.fireCreatedEventOnExistingNodes(this, listener);
             }
             catch (RemoteException exception)
             {
@@ -156,26 +177,6 @@ public class XsdTreeNodeRoot extends XsdTreeNode
 
         addListener(listener, NODE_CREATED);
         addListener(listener, NODE_REMOVED);
-    }
-    
-    /**
-     * Parses the information from XML root node into this node. Other than for regular nodes, this only entails children. 
-     * Attributes involving e.g. name space, may be present in the root node, but are ignored.
-     * @param nodeXml Node; node from XML.
-     */
-    @Override
-    public void loadXmlNodes(final Node nodeXml)
-    {
-        assureChildren();
-        if (nodeXml.getChildNodes() != null)
-        {
-            int index = loadChildren(0, nodeXml.getChildNodes());
-            if (index < nodeXml.getChildNodes().getLength())
-            {
-                throw new RuntimeException(
-                        "Unable to load element with name " + nodeXml.getChildNodes().item(index).getNodeName());
-            }
-        }
     }
 
     /**

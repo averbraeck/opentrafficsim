@@ -1,5 +1,6 @@
 package org.opentrafficsim.editor;
 
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.djutils.exceptions.Throw;
 import org.w3c.dom.Node;
 
 /**
@@ -46,11 +48,8 @@ public interface ValueValidator
      */
     static String reportInvalidValue(final Node xsdNode, final String value, final XsdSchema schema)
     {
-        if (xsdNode.equals(XiIncludeNode.XI_INCLUDE))
-        {
-            // TODO: how to check xi:includes?
-            return null;
-        }
+        Throw.when(xsdNode.equals(XiIncludeNode.XI_INCLUDE), IllegalArgumentException.class,
+                "To check the value of an include, use reportInvalidInclude().");
         if (xsdNode.getChildNodes().getLength() == XsdSchema.getChildren(xsdNode, "#text").size()
                 && XsdSchema.getAttribute(xsdNode, "type") == null)
         {
@@ -62,6 +61,34 @@ public interface ValueValidator
             return "Value is empty.";
         }
         return reportTypeNonCompliance(xsdNode, "type", value, schema, null, null);
+    }
+
+    /**
+     * Validates an includes file by checking whether it can be found.
+     * @param value String; file name and path, possibly relative.
+     * @param directory String; base directory for relative paths.
+     * @return String; first encountered problem in validating the value of the include, {@code null} if there is no problem. 
+     */
+    static String reportInvalidInclude(final String value, final String directory)
+    {
+        if (value == null || value.isBlank())
+        {
+            return "Value is empty.";
+        }
+        File file = new File(value);
+        if (!file.isAbsolute())
+        {
+            if (directory == null)
+            {
+                return "Relative path defined but directory unknown. Try saving your work.";
+            }
+            file = new File(directory + value);
+        }
+        if (!file.exists())
+        {
+            return "The file cannot be found.";
+        }
+        return null;
     }
 
     /**
@@ -97,7 +124,7 @@ public interface ValueValidator
         reportTypeNonCompliance(xsdNode, "type", null, schema, restrictions, null);
         return restrictions;
     }
-    
+
     /**
      * Returns the base type of the given node, e.g. xsd:double.
      * @param xsdNode Node; node.
@@ -152,8 +179,7 @@ public interface ValueValidator
         }
         if (type != null && !isNativeType)
         {
-            String report =
-                    reportTypeNonCompliance(schema.getType(type), "base", value, schema, restrictions, baseType);
+            String report = reportTypeNonCompliance(schema.getType(type), "base", value, schema, restrictions, baseType);
             if (value != null && report != null)
             {
                 return report;
@@ -200,6 +226,8 @@ public interface ValueValidator
                     return null;
                 }
                 return reportRestrictionNonCompliance(node, value);
+            case "xi:include":
+                return null;
             default:
                 throw new RuntimeException("Unable to validate " + node.getNodeName() + ".");
         }

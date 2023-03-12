@@ -137,11 +137,12 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
         {
             return true; // required for tree in column 0
         }
+        XsdTreeNode treeNode = (XsdTreeNode) node;
         if (column == 1)
         {
-            return ((XsdTreeNode) node).isIdentifiable();
+            return treeNode.isIdentifiable() && !treeNode.isInclude();
         }
-        return ((XsdTreeNode) node).isEditable() && column == 2;
+        return treeNode.isEditable() && column == 2 && !treeNode.isInclude();
     }
 
     /** {@inheritDoc} */

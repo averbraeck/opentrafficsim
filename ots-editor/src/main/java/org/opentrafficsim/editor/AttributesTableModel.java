@@ -76,7 +76,7 @@ public class AttributesTableModel extends AbstractTableModel
     @Override
     public boolean isCellEditable(final int rowIndex, final int columnIndex)
     {
-        return columnIndex == 1;
+        return columnIndex == 1 && !this.node.isInclude();
     }
 
     /** {@inheritDoc} */

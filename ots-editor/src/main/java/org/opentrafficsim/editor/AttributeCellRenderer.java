@@ -100,7 +100,14 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
             else
             {
                 setToolTipText(value == null || value.toString().isBlank() ? null : value.toString());
-                setBackground(UIManager.getColor("Table.background"));
+                if (node.isInclude())
+                {
+                    setBackground(UIManager.getColor("Panel.background"));
+                }
+                else
+                {
+                    setBackground(UIManager.getColor("Table.background"));
+                }
             }
             setBorder(new LineBorder(UIManager.getColor("Table.gridColor")));
         }
