@@ -98,9 +98,6 @@ public interface LmrsParameters
     ParameterTypeSpeed VGAIN = new ParameterTypeSpeed("vGain", "Anticipation speed difference at full lane change desire",
             new Speed(69.6, SpeedUnit.KM_PER_HOUR), ConstraintInterface.POSITIVE);
 
-    /** Courtesy parameter. */
-    ParameterTypeDouble COURTESY = new ParameterTypeDouble("courtesy", "Courtesy level for courtesy lane changes", 1.0);
-
     /** Socio-speed sensitivity parameter. */
     ParameterTypeDouble SOCIO =
             new ParameterTypeDouble("socio", "Sensitivity level for speed of others", 1.0, ConstraintInterface.UNITINTERVAL);
