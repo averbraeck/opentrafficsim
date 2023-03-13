@@ -40,7 +40,7 @@ public final class XsdTreeNodeUtil
      */
     static int getOccurs(final Node node, final String attribute)
     {
-        String occurs = XsdSchema.getAttribute(node, attribute);
+        String occurs = DocumentReader.getAttribute(node, attribute);
         if (occurs == null)
         {
             return 1;
@@ -65,7 +65,7 @@ public final class XsdTreeNodeUtil
      * @param skip int; child index to skip, this is used when copying choice options from an option that is already created.
      */
     static void addChildren(final Node node, final XsdTreeNode parentNode, final List<XsdTreeNode> children,
-            final ImmutableList<Node> hiddenNodes, final XsdSchema schema, final boolean flattenSequence, final int skip)
+            final ImmutableList<Node> hiddenNodes, final Schema schema, final boolean flattenSequence, final int skip)
     {
         int skipIndex = skip;
         for (int childIndex = 0; childIndex < node.getChildNodes().getLength(); childIndex++)
@@ -80,8 +80,8 @@ public final class XsdTreeNodeUtil
                         break;
                     }
                     XsdTreeNode element;
-                    String ref = XsdSchema.getAttribute(child, "ref");
-                    String type = XsdSchema.getAttribute(child, "type");
+                    String ref = DocumentReader.getAttribute(child, "ref");
+                    String type = DocumentReader.getAttribute(child, "type");
                     if (ref != null)
                     {
                         element = new XsdTreeNode(parentNode, XsdTreeNodeUtil.ref(child, ref, schema),
@@ -186,16 +186,16 @@ public final class XsdTreeNodeUtil
         List<String> options = new ArrayList<>();
         for (Node restriction : restrictions)
         {
-            List<Node> enumerations = XsdSchema.getChildren(restriction, "xsd:enumeration");
+            List<Node> enumerations = DocumentReader.getChildren(restriction, "xsd:enumeration");
             for (Node enumeration : enumerations)
             {
-                options.add(XsdSchema.getAttribute(enumeration, "value"));
+                options.add(DocumentReader.getAttribute(enumeration, "value"));
             }
             // TODO: This is temporary, xsd:enumeration should be used for regular option selection.
-            Node pattern = XsdSchema.getChild(restriction, "xsd:pattern");
+            Node pattern = DocumentReader.getChild(restriction, "xsd:pattern");
             if (pattern != null)
             {
-                String patt = XsdSchema.getAttribute(pattern, "value");
+                String patt = DocumentReader.getAttribute(pattern, "value");
                 if (Pattern.matches("([A-Z]*\\|)*[A-Z]+", patt))
                 {
                     String[] values = patt.split("\\|");
@@ -220,8 +220,7 @@ public final class XsdTreeNodeUtil
     {
         Event event = new Event(XsdTreeNodeRoot.NODE_CREATED, node);
         listener.notify(event);
-        Set<XsdTreeNode> subNodes =
-                node.children == null ? new LinkedHashSet<>() : new LinkedHashSet<>(node.children);
+        Set<XsdTreeNode> subNodes = node.children == null ? new LinkedHashSet<>() : new LinkedHashSet<>(node.children);
         // only selected node extends towards choice, otherwise infinite recursion
         if (node.choice != null && node.choice.selected.equals(node))
         {
@@ -260,25 +259,26 @@ public final class XsdTreeNodeUtil
      *         node, and their appropriate hidden nodes.
      */
     static Map<Node, ImmutableList<Node>> getRelevantNodesWithChildren(final Node node, final ImmutableList<Node> hiddenNodes,
-            final XsdSchema schema)
+            final Schema schema)
     {
-        Node complexType = node.getNodeName().equals("xsd:complexType") ? node : XsdSchema.getChild(node, "xsd:complexType");
+        Node complexType =
+                node.getNodeName().equals("xsd:complexType") ? node : DocumentReader.getChild(node, "xsd:complexType");
         if (complexType != null)
         {
-            Node sequence = XsdSchema.getChild(complexType, "xsd:sequence");
+            Node sequence = DocumentReader.getChild(complexType, "xsd:sequence");
             if (sequence != null)
             {
                 return Map.of(sequence, append(hiddenNodes, complexType));
             }
-            Node complexContent = XsdSchema.getChild(complexType, "xsd:complexContent");
+            Node complexContent = DocumentReader.getChild(complexType, "xsd:complexContent");
             if (complexContent != null)
             {
-                Node extension = XsdSchema.getChild(complexContent, "xsd:extension");
+                Node extension = DocumentReader.getChild(complexContent, "xsd:extension");
                 if (extension != null)
                 {
                     ImmutableList<Node> hiddenExtension = append(append(hiddenNodes, complexType), complexContent);
                     LinkedHashMap<Node, ImmutableList<Node>> elements = new LinkedHashMap<>();
-                    String base = XsdSchema.getAttribute(extension, "base");
+                    String base = DocumentReader.getAttribute(extension, "base");
                     if (base != null)
                     {
                         Node baseNode = schema.getType(base);
@@ -317,7 +317,7 @@ public final class XsdTreeNodeUtil
      * @param schema XsdSchema; schema to take element from.
      * @return Node; element referred to by ref={ref} in an xsd:element.
      */
-    static Node ref(final Node node, final String ref, final XsdSchema schema)
+    static Node ref(final Node node, final String ref, final Schema schema)
     {
         if (ref.equals("xi:include"))
         {
@@ -336,7 +336,7 @@ public final class XsdTreeNodeUtil
      * @param schema XsdSchema; schema to take type from.
      * @return Node; element referred to by type={type} in an xsd:element.
      */
-    static Node type(final Node node, final String type, final XsdSchema schema)
+    static Node type(final Node node, final String type, final Schema schema)
     {
         if (type.startsWith("xsd:"))
         {

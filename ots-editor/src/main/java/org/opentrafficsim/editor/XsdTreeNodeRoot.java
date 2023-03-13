@@ -47,18 +47,17 @@ public class XsdTreeNodeRoot extends XsdTreeNode
      */
     public static final EventType NODE_REMOVED = new EventType("NODEREMOVEDD", new MetaData("Node removed", "Removed tree node",
             new ObjectDescriptor("Node removed", "Removed tree node", XsdTreeNode.class)));
-    
+
     /** Event when an option is changed. */
-    public static final EventType OPTION_CHANGED = new EventType("OPTIONCHANGED",
-            new MetaData("Option changed", "Option changed on node",
-                    new ObjectDescriptor("Node", "Newly selected option node", XsdTreeNode.class)));
-    
+    public static final EventType OPTION_CHANGED = new EventType("OPTIONCHANGED", new MetaData("Option changed",
+            "Option changed on node", new ObjectDescriptor("Node", "Newly selected option node", XsdTreeNode.class)));
+
     /** Event when an option is changed. */
     public static final EventType ACTIVATION_CHANGED = new EventType("ACTIVATIONCHANGED",
             new MetaData("Activation changed", "Activation changed on node",
                     new ObjectDescriptor("Node", "Node with changed activation.", XsdTreeNode.class),
                     new ObjectDescriptor("Activation", "New activation state.", Boolean.class)));
-    
+
     /** Directory, relevant for relative paths in include nodes. */
     private String directory;
 
@@ -67,13 +66,13 @@ public class XsdTreeNodeRoot extends XsdTreeNode
      * @param schema XsdSchema; XSD Schema.
      * @throws RemoteException when unable to listen for created nodes.
      */
-    public XsdTreeNodeRoot(final XsdSchema schema) throws RemoteException
+    public XsdTreeNodeRoot(final Schema schema) throws RemoteException
     {
         super(schema);
         // pointless to fire NODE_CREATED event, no one can be listening yet
-        setupXPathListeners(schema);
+        setupXPathListener(schema);
     }
-    
+
     /**
      * Returns the directory.
      * @return String; directory.
@@ -114,10 +113,12 @@ public class XsdTreeNodeRoot extends XsdTreeNode
     }
 
     /**
+     * Sets up the listener that reports on new and removed nodes for each xsd:key, xsd:keyref and xsd:unique. It is up to each
+     * key to determine whether the node is relevant for the key.
      * @param schema XsdSchema; schema.
      * @throws RemoteException when unable to listen for created nodes.
      */
-    private void setupXPathListeners(final XsdSchema schema) throws RemoteException
+    private void setupXPathListener(final Schema schema) throws RemoteException
     {
 
         Set<KeyValidator> keys = new LinkedHashSet<>();
@@ -128,7 +129,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
         Set<KeyValidator> keyrefs = new LinkedHashSet<>();
         for (Entry<Node, String> entry : schema.keyrefs().entrySet())
         {
-            String keyName = XsdSchema.getAttribute(entry.getKey(), "refer").replace("ots:", "");
+            String keyName = DocumentReader.getAttribute(entry.getKey(), "refer").replace("ots:", "");
             for (KeyValidator key : keys)
             {
                 if (key.getKeyName().equals(keyName))
@@ -185,7 +186,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
      * instance will behave as an xsd:key or xsd:unique. These check a range of values for uniqueness and officially only differ
      * in whether all values need to be present. Here this is ignored and they are treated the same. This class will maintain a
      * list of nodes (fed by an external listener) and validate against field uniqueness over those nodes. If another
-     * {@code KeyValidator} is given in the constructor, the instance will behave as a xsd:keyref and validate that the field
+     * {@code KeyValidator} is given in the constructor, the instance will behave as an xsd:keyref and validate that the field
      * values are, as a set, within the given {@code KeyValidator}.
      * @author wjschakel
      */
@@ -220,10 +221,10 @@ public class XsdTreeNodeRoot extends XsdTreeNode
             this.keyNode = keyNode;
             this.keyPath = keyPath;
             this.refer = refer;
-            List<Node> fields = XsdSchema.getChildren(keyNode, "xsd:field");
+            List<Node> fields = DocumentReader.getChildren(keyNode, "xsd:field");
             for (Node field : fields)
             {
-                String value = XsdSchema.getAttribute(field, "xpath");
+                String value = DocumentReader.getAttribute(field, "xpath");
                 if (value.startsWith("@"))
                 {
                     this.attributeNames.add(value.substring(1));
@@ -419,7 +420,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
          */
         public String getKeyName()
         {
-            return XsdSchema.getAttribute(this.keyNode, "name");
+            return DocumentReader.getAttribute(this.keyNode, "name");
         }
 
         /**
@@ -438,8 +439,8 @@ public class XsdTreeNodeRoot extends XsdTreeNode
          */
         public String getTypeString()
         {
-            return XsdSchema.getAttribute(XsdSchema.getChild(this.keyNode, "xsd:selector"), "xpath").replace(".//ots:", "")
-                    .replace("ots:", "").replace("/", ".");
+            return DocumentReader.getAttribute(DocumentReader.getChild(this.keyNode, "xsd:selector"), "xpath")
+                    .replace(".//ots:", "").replace("ots:", "").replace("/", ".");
         }
 
     }

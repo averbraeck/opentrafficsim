@@ -39,7 +39,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -107,9 +106,9 @@ public class OtsEditor extends JFrame implements EventProducer
     /** */
     private static final long serialVersionUID = 20230217L;
 
-    /** Event when a schema is loaded. */
-    public static final EventType SCHEMA_LOADED = new EventType("SCHEMALOADED",
-            new MetaData("Schema", "Schema loaded", new ObjectDescriptor("Root", "New root element", XsdTreeNodeRoot.class)));
+    /** Event when a a new file is started. */
+    public static final EventType NEW_FILE = new EventType("NEWFILEs",
+            new MetaData("New file", "New file", new ObjectDescriptor("Root", "New root element", XsdTreeNodeRoot.class)));
 
     /** Event when the selection in the tree is changed. */
     public static final EventType SELECTION_CHANGED = new EventType("SELECTIONCHANGED", new MetaData("Selection",
@@ -213,42 +212,10 @@ public class OtsEditor extends JFrame implements EventProducer
         this.mainSplitPane.setRightComponent(this.rightSplitPane);
 
         setIconImage(ImageIO.read(Resource.getResourceAsStream("./OTS_merge.png")));
-
-        ImageIcon roadIcon = loadIcon("./OTS_road.png", -1, -1, -1, -1);
-        ImageIcon networkIcon = loadIcon("./OTS_network.png", -1, -1, -1, -1);
-        ImageIcon nodeIcon = loadIcon("./OTS_node.png", -1, -1, -1, -1);
-        ImageIcon odIcon = loadIcon("./Table_blue.png", 16, 16, -1, -1);
-        ImageIcon infoIcon = loadIcon("./Info.png", 12, 12, 16, 16);
         this.questionIcon = loadIcon("./Question.png", -1, -1, -1, -1);
-
-        setCustomIcon("OTS", loadIcon("./OTS_merge.png", 14, 14, 16, 16));
-        setCustomIcon("OTS.DEFINITIONS", loadIcon("./Database.png", 14, 14, 16, 16));
-        setCustomIcon(".ROADLAYOUT", roadIcon);
-        setCustomIcon("OTS.NETWORK.LINK.DEFINEDLAYOUT", roadIcon);
-        setCustomIcon("OTS.NETWORK", networkIcon);
-        setCustomIcon(".NODE", nodeIcon);
-        setCustomIcon("OTS.NETWORK.CENTROID", loadIcon("./OTS_centroid.png", -1, -1, -1, -1)); // does not exist yet
-        setCustomIcon("OTS.NETWORK.CONNECTOR", loadIcon("./OTS_connector.png", -1, -1, -1, -1));
-        setCustomIcon(".LINK", loadIcon("./OTS_link.png", -1, -1, -1, -1));
-        setCustomIcon("OTS.NETWORKDEMAND", loadIcon("./Calendar.png", 16, 16, -1, -1));
-        setCustomIcon("OTS.NETWORKDEMAND.SHORTESTROUTE.FROM", nodeIcon);
-        setCustomIcon("OTS.NETWORKDEMAND.SHORTESTROUTE.TO", nodeIcon);
-        setCustomIcon("OTS.NETWORKDEMAND.SHORTESTROUTE.VIA", nodeIcon);
-        setCustomIcon("OTS.NETWORKDEMAND.OD", odIcon);
-        setCustomIcon("OTS.MODEL", loadIcon("./Component_blue.png", 16, 16, -1, -1));
-        setCustomIcon("OTS.SCENARIO", loadIcon("./Film.png", 14, 14, 16, 16));
-        setCustomIcon("OTS.CONTROL", loadIcon("./OTS_control.png", -1, -1, -1, -1));
-        setCustomIcon("OTS.RUN", loadIcon("./Stopwatch.png", 16, 16, -1, -1));
-        setCustomIcon("OTS.ANIMATION", loadIcon("./Play.png", 14, 14, 16, 16));
-        setCustomIcon("OTS.OUTPUT", loadIcon("./Report.png", 14, 14, 16, 16)); // does not exist yet
 
         // visualization pane
         this.visualizationPane = new JTabbedPane(JTabbedPane.BOTTOM, JTabbedPane.SCROLL_TAB_LAYOUT);
-        this.visualizationPane.addTab("Map", networkIcon, buildMapPane());
-        this.visualizationPane.addTab("Road layout", roadIcon, buildRoadLayoutPane());
-        this.visualizationPane.addTab("OD", odIcon, buildOdPane());
-        this.visualizationPane.addTab("Parameters", buildParameterPane());
-        this.visualizationPane.addTab("Text", buildTextPane());
         this.visualizationPane.setPreferredSize(new Dimension(900, 900));
         this.mainSplitPane.setLeftComponent(this.visualizationPane);
 
@@ -268,7 +235,7 @@ public class OtsEditor extends JFrame implements EventProducer
         // attributes table
         AttributesTableModel tableModel = new AttributesTableModel(null, this.treeTable);
         DefaultTableColumnModel columns = new DefaultTableColumnModel();
-        TableColumn column1 = new TableColumn(0); // may add TableCellRenderer/TableCellEditor here
+        TableColumn column1 = new TableColumn(0);
         column1.setHeaderValue(tableModel.getColumnName(0));
         columns.addColumn(column1);
         TableColumn column2 = new TableColumn(1);
@@ -282,7 +249,8 @@ public class OtsEditor extends JFrame implements EventProducer
         columns.addColumn(column4);
         this.attributesTable = new JTable(tableModel, columns);
         this.attributesTable.putClientProperty("terminateEditOnFocusLost", true);
-        this.attributesTable.setDefaultRenderer(String.class, new AttributeCellRenderer(infoIcon));
+        this.attributesTable.setDefaultRenderer(String.class,
+                new AttributeCellRenderer(loadIcon("./Info.png", 12, 12, 16, 16)));
         AttributesCellEditor editor = new AttributesCellEditor();
         editor.addCellEditorListener(new CellEditorListener()
         {
@@ -453,6 +421,42 @@ public class OtsEditor extends JFrame implements EventProducer
             }
         });
         XsdTreeTableModel.applyColumnWidth(this.treeTable);
+
+        addTreeTableListeners();
+
+        int dividerLocation = this.rightSplitPane.getDividerLocation();
+        this.rightSplitPane.setTopComponent(null);
+        this.rightSplitPane.setTopComponent(new JScrollPane(this.treeTable));
+        this.rightSplitPane.setDividerLocation(dividerLocation);
+
+        XsdTreeNodeRoot root = (XsdTreeNodeRoot) treeModel.getRoot();
+        EventListener listener = new EventListener()
+        {
+            /** */
+            private static final long serialVersionUID = 20230311L;
+
+            /** {@inheritDoc} */
+            @Override
+            public void notify(final Event event) throws RemoteException
+            {
+                setUnsavedChanges(true);
+            }
+        };
+        root.addListener(listener, XsdTreeNodeRoot.NODE_CREATED);
+        root.addListener(listener, XsdTreeNodeRoot.NODE_REMOVED);
+        root.addListener(listener, XsdTreeNodeRoot.OPTION_CHANGED);
+        root.addListener(listener, XsdTreeNodeRoot.ACTIVATION_CHANGED);
+        fireEvent(NEW_FILE, root);
+
+        setUnsavedChanges(false);
+    }
+
+    /**
+     * Adds all listeners to the tree table.
+     * @throws IOException on exception.
+     */
+    private void addTreeTableListeners() throws IOException
+    {
         // throws selection events and updates the attributes table
         this.treeTable.getTree().addTreeSelectionListener(new TreeSelectionListener()
         {
@@ -557,32 +561,6 @@ public class OtsEditor extends JFrame implements EventProducer
                 }
             }
         });
-
-        int dividerLocation = this.rightSplitPane.getDividerLocation();
-        this.rightSplitPane.setTopComponent(null);
-        this.rightSplitPane.setTopComponent(new JScrollPane(this.treeTable));
-        this.rightSplitPane.setDividerLocation(dividerLocation);
-
-        XsdTreeNodeRoot root = (XsdTreeNodeRoot) treeModel.getRoot();
-        EventListener listener = new EventListener()
-        {
-            /** */
-            private static final long serialVersionUID = 20230311L;
-
-            /** {@inheritDoc} */
-            @Override
-            public void notify(final Event event) throws RemoteException
-            {
-                setUnsavedChanges(true);
-            }
-        };
-        root.addListener(listener, XsdTreeNodeRoot.NODE_CREATED);
-        root.addListener(listener, XsdTreeNodeRoot.NODE_REMOVED);
-        root.addListener(listener, XsdTreeNodeRoot.OPTION_CHANGED);
-        root.addListener(listener, XsdTreeNodeRoot.ACTIVATION_CHANGED);
-        fireEvent(SCHEMA_LOADED, root);
-
-        setUnsavedChanges(false);
     }
 
     /**
@@ -629,11 +607,12 @@ public class OtsEditor extends JFrame implements EventProducer
     }
 
     /**
+     * Loads an icon, possibly rescaled.
      * @param image String; image filename, relative in resources.
      * @param width int; width to resize to, may be -1 to leave as is.
      * @param height int; width to resize to, may be -1 to leave as is.
-     * @param bgWidth int; background with image will be centered in, may be -1 to leave as is.
-     * @param bgHeight int; background with height will be centered in, may be -1 to leave as is.
+     * @param bgWidth int; background image width icon will be centered in, may be -1 to leave as is.
+     * @param bgHeight int; background image height icon will be centered in, may be -1 to leave as is.
      * @return ImageIcon; image icon.
      * @throws IOException if the file is not in resources.
      */
@@ -973,7 +952,7 @@ public class OtsEditor extends JFrame implements EventProducer
         File file = new File(this.lastDirectory + this.lastFile);
         try
         {
-            Document document = XsdReader.open(file.toURI());
+            Document document = DocumentReader.open(file.toURI());
             initializeTree();
             XsdTreeNodeRoot root = (XsdTreeNodeRoot) OtsEditor.this.treeTable.getTree().getModel().getRoot();
             root.setDirectory(this.lastDirectory);
@@ -1072,7 +1051,7 @@ public class OtsEditor extends JFrame implements EventProducer
             throw new RuntimeException("Unable to save file.", exception);
         }
     }
-    
+
     /**
      * Exits the system, but not before a confirmation on unsaved changes if there are unsaved changes.
      */
@@ -1084,65 +1063,65 @@ public class OtsEditor extends JFrame implements EventProducer
         }
     }
 
-    /**
-     * Temporary stub to create map pane.
-     * @return JComponent; component.
-     */
-    private static JComponent buildMapPane()
-    {
-        JLabel map = new JLabel("map");
-        map.setOpaque(true);
-        map.setHorizontalAlignment(JLabel.CENTER);
-        return map;
-    }
-
-    /**
-     * Temporary stub to create road layout pane.
-     * @return JComponent; component.
-     */
-    private static JComponent buildRoadLayoutPane()
-    {
-        JLabel roadLayout = new JLabel("road layout");
-        roadLayout.setOpaque(true);
-        roadLayout.setHorizontalAlignment(JLabel.CENTER);
-        return roadLayout;
-    }
-
-    /**
-     * Temporary stub to create OD pane.
-     * @return JComponent; component.
-     */
-    private static JComponent buildOdPane()
-    {
-        JLabel od = new JLabel("od");
-        od.setOpaque(true);
-        od.setHorizontalAlignment(JLabel.CENTER);
-        return od;
-    }
-
-    /**
-     * Temporary stub to create parameters pane.
-     * @return JComponent; component.
-     */
-    private static JComponent buildParameterPane()
-    {
-        JLabel parameters = new JLabel("parameters");
-        parameters.setOpaque(true);
-        parameters.setHorizontalAlignment(JLabel.CENTER);
-        return parameters;
-    }
-
-    /**
-     * Temporary stub to create text pane.
-     * @return JComponent; component.
-     */
-    private static JComponent buildTextPane()
-    {
-        JLabel text = new JLabel("text");
-        text.setOpaque(true);
-        text.setHorizontalAlignment(JLabel.CENTER);
-        return text;
-    }
+    // /**
+    // * Temporary stub to create map pane.
+    // * @return JComponent; component.
+    // */
+    // private static JComponent buildMapPane()
+    // {
+    // JLabel map = new JLabel("map");
+    // map.setOpaque(true);
+    // map.setHorizontalAlignment(JLabel.CENTER);
+    // return map;
+    // }
+    //
+    // /**
+    // * Temporary stub to create road layout pane.
+    // * @return JComponent; component.
+    // */
+    // private static JComponent buildRoadLayoutPane()
+    // {
+    // JLabel roadLayout = new JLabel("road layout");
+    // roadLayout.setOpaque(true);
+    // roadLayout.setHorizontalAlignment(JLabel.CENTER);
+    // return roadLayout;
+    // }
+    //
+    // /**
+    // * Temporary stub to create OD pane.
+    // * @return JComponent; component.
+    // */
+    // private static JComponent buildOdPane()
+    // {
+    // JLabel od = new JLabel("od");
+    // od.setOpaque(true);
+    // od.setHorizontalAlignment(JLabel.CENTER);
+    // return od;
+    // }
+    //
+    // /**
+    // * Temporary stub to create parameters pane.
+    // * @return JComponent; component.
+    // */
+    // private static JComponent buildParameterPane()
+    // {
+    // JLabel parameters = new JLabel("parameters");
+    // parameters.setOpaque(true);
+    // parameters.setHorizontalAlignment(JLabel.CENTER);
+    // return parameters;
+    // }
+    //
+    // /**
+    // * Temporary stub to create text pane.
+    // * @return JComponent; component.
+    // */
+    // private static JComponent buildTextPane()
+    // {
+    // JLabel text = new JLabel("text");
+    // text.setOpaque(true);
+    // text.setHorizontalAlignment(JLabel.CENTER);
+    // return text;
+    // }
 
     /**
      * Limits the length of a tooltip message. This is to prevent absurd tooltip texts based on really long patterns that should
@@ -1194,7 +1173,7 @@ public class OtsEditor extends JFrame implements EventProducer
                 {
                     XsdTreeNode node = ((AttributesTableModel) OtsEditor.this.attributesTable.getModel()).getNode();
                     String description =
-                            XsdSchema.getAnnotation(node.getAttributeNode(row), "xsd:documentation", "description");
+                            DocumentReader.getAnnotation(node.getAttributeNode(row), "xsd:documentation", "description");
                     showDescription(description);
                 }
             }

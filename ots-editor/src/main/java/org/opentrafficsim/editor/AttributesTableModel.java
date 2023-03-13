@@ -87,15 +87,15 @@ public class AttributesTableModel extends AbstractTableModel
         switch (columnIndex)
         {
             case 0:
-                return XsdSchema.getAttribute(attribute, "name").toLowerCase();
+                return DocumentReader.getAttribute(attribute, "name").toLowerCase();
             case 1:
                 Object value = this.node.getAttributeValue(rowIndex);
                 return value;
             case 2:
-                String use = XsdSchema.getAttribute(attribute, "use");
+                String use = DocumentReader.getAttribute(attribute, "use");
                 return use != null && use.equals("required") ? "*" : "";
             case 3:
-                return XsdSchema.getAnnotation(attribute, "xsd:documentation", "description") != null ? "i" : null;
+                return DocumentReader.getAnnotation(attribute, "xsd:documentation", "description") != null ? "i" : null;
             default:
                 throw new IndexOutOfBoundsException();
         }

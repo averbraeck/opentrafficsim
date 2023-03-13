@@ -80,7 +80,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     Node referringXsdNode;
 
     /** XSD schema from which to get type and element nodes that are referred to. */
-    private final XsdSchema schema;
+    private final Schema schema;
 
     /** Minimum number of this element under the parent node, as defined in minOccurs in XSD. */
     private int minOccurs = 0;
@@ -176,7 +176,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * {@code XsdSchema} that will be available to all nodes in the tree.
      * @param schema XsdSchema; XSD schema.
      */
-    protected XsdTreeNode(final XsdSchema schema)
+    protected XsdTreeNode(final Schema schema)
     {
         Throw.whenNull(schema, "XsdSchema may not be null.");
         this.parent = null;
@@ -332,12 +332,12 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     public String getNodeName()
     {
         Node node = this.referringXsdNode == null ? this.xsdNode : this.referringXsdNode;
-        String ref = XsdSchema.getAttribute(node, "ref");
+        String ref = DocumentReader.getAttribute(node, "ref");
         if (ref != null)
         {
             return ref.replace("ots:", "");
         }
-        String name = XsdSchema.getAttribute(node, "name");
+        String name = DocumentReader.getAttribute(node, "name");
         if (name != null)
         {
             return name.replace("ots:", "");
@@ -482,7 +482,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 Document document;
                 try
                 {
-                    document = XsdReader.open(file.toURI());
+                    document = DocumentReader.open(file.toURI());
                 }
                 catch (SAXException | IOException | ParserConfigurationException exception)
                 {
@@ -575,15 +575,15 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         this.attributeValues = new ArrayList<>();
         if (this.referringXsdNode != null)
         {
-            this.description = XsdSchema.getAnnotation(this.referringXsdNode, "xsd:documentation", "description");
+            this.description = DocumentReader.getAnnotation(this.referringXsdNode, "xsd:documentation", "description");
         }
         if (this.description == null)
         {
-            this.description = XsdSchema.getAnnotation(this.xsdNode, "xsd:documentation", "description");
+            this.description = DocumentReader.getAnnotation(this.xsdNode, "xsd:documentation", "description");
         }
         this.descriptionSpecificity = this.description != null ? 0 : Integer.MIN_VALUE;
         Node complexType = this.xsdNode.getNodeName().equals("xsd:complexType") ? this.xsdNode
-                : XsdSchema.getChild(this.xsdNode, "xsd:complexType");
+                : DocumentReader.getChild(this.xsdNode, "xsd:complexType");
         if (complexType != null && this.xsdNode.hasChildNodes())
         {
             findAttributes(complexType, -1);
@@ -597,7 +597,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     private void findAttributes(final Node node, final int specificity)
     {
-        String descript = XsdSchema.getAnnotation(node, "xsd:documentation", "description");
+        String descript = DocumentReader.getAnnotation(node, "xsd:documentation", "description");
         if (descript != null && this.descriptionSpecificity < specificity)
         {
             this.descriptionSpecificity = specificity;
@@ -606,28 +606,28 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         for (int childIndex = 0; childIndex < node.getChildNodes().getLength(); childIndex++)
         {
             Node child = node.getChildNodes().item(childIndex);
-            if (child.getNodeName().equals("xsd:attribute") && XsdSchema.getAttribute(child, "name") != null)
+            if (child.getNodeName().equals("xsd:attribute") && DocumentReader.getAttribute(child, "name") != null)
             {
                 this.attributeNodes.add(child);
-                this.attributeValues.add(XsdSchema.getAttribute(child, "default")); // may be null
+                this.attributeValues.add(DocumentReader.getAttribute(child, "default")); // may be null
             }
             if (child.getNodeName().equals("xsd:complexContent") || child.getNodeName().equals("xsd:simpleContent"))
             {
-                Node extension = XsdSchema.getChild(child, "xsd:extension");
+                Node extension = DocumentReader.getChild(child, "xsd:extension");
                 if (extension != null)
                 {
                     findAttributes(extension, specificity - 1);
-                    String base = XsdSchema.getAttribute(extension, "base");
+                    String base = DocumentReader.getAttribute(extension, "base");
                     Node baseNode = this.schema.getType(base);
                     if (baseNode != null)
                     {
                         findAttributes(baseNode, specificity - 2);
                     }
                 }
-                Node restriction = XsdSchema.getChild(child, "xsd:restriction");
+                Node restriction = DocumentReader.getChild(child, "xsd:restriction");
                 if (restriction != null)
                 {
-                    String base = XsdSchema.getAttribute(restriction, "base");
+                    String base = DocumentReader.getAttribute(restriction, "base");
                     Node baseNode = this.schema.getType(base);
                     if (baseNode != null)
                     {
@@ -721,7 +721,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         for (int index = 0; index < this.attributeCount(); index++)
         {
             Node attr = this.attributeNodes.get(index);
-            if (XsdSchema.getAttribute(attr, "name").equals(attribute))
+            if (DocumentReader.getAttribute(attr, "name").equals(attribute))
             {
                 return index;
             }
@@ -736,7 +736,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     private String getAttributeNameByIndex(final int index)
     {
-        String name = XsdSchema.getAttribute(this.attributeNodes.get(index), "name");
+        String name = DocumentReader.getAttribute(this.attributeNodes.get(index), "name");
         return name;
     }
 
@@ -808,7 +808,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             for (int index = 0; index < this.attributeCount(); index++)
             {
                 Node node = this.attributeNodes.get(index);
-                if (XsdSchema.getAttribute(node, "name").equals("ID"))
+                if (DocumentReader.getAttribute(node, "name").equals("ID"))
                 {
                     this.isIdentifiable = true;
                     this.idIndex = index;
@@ -853,24 +853,24 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         if (this.isEditable == null)
         {
-            if (this.xsdNode.getChildNodes().getLength() == XsdSchema.getChildren(this.xsdNode, "#text").size())
+            if (this.xsdNode.getChildNodes().getLength() == DocumentReader.getChildren(this.xsdNode, "#text").size())
             {
                 // #text children only means a simple type
                 this.isEditable = true;
                 return true;
             }
             Node simpleType = this.xsdNode.getNodeName().equals("xsd:simpleType") ? this.xsdNode
-                    : XsdSchema.getChild(this.xsdNode, "xsd:simpleType");
+                    : DocumentReader.getChild(this.xsdNode, "xsd:simpleType");
             if (simpleType != null)
             {
                 this.isEditable = true;
                 return true;
             }
             Node complexType = this.xsdNode.getNodeName().equals("xsd:complexType") ? this.xsdNode
-                    : XsdSchema.getChild(this.xsdNode, "xsd:complexType");
+                    : DocumentReader.getChild(this.xsdNode, "xsd:complexType");
             if (complexType != null)
             {
-                Node simpleContent = XsdSchema.getChild(complexType, "xsd:simpleContent");
+                Node simpleContent = DocumentReader.getChild(complexType, "xsd:simpleContent");
                 this.isEditable = simpleContent != null;
             }
             else
@@ -1301,7 +1301,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public String reportInvalidAttributeValue(final int index)
     {
-        String attribute = XsdSchema.getAttribute(getAttributeNode(index), "name");
+        String attribute = DocumentReader.getAttribute(getAttributeNode(index), "name");
         String val = this.attributeValues.get(index);
         if (val != null && !val.isBlank())
         {
@@ -1461,7 +1461,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             // this name may appear as an option for an xsd:choice
             StringBuilder stringBuilder = new StringBuilder();
             Node relevantNode = this.referringXsdNode == null ? this.xsdNode : this.referringXsdNode;
-            String annotation = XsdSchema.getAnnotation(relevantNode, "xsd:appinfo", "name");
+            String annotation = DocumentReader.getAnnotation(relevantNode, "xsd:appinfo", "name");
             if (annotation != null)
             {
                 stringBuilder.append(annotation).append("...");
@@ -1561,7 +1561,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             }
             return;
         }
-        
+
         // sequences that are a choice option do not add a level in the xml, forward directly under parent
         if (this.xsdNode.getNodeName().equals("xsd:sequence") && this.choice != null)
         {

@@ -22,6 +22,9 @@ public class GenericStringFunction implements EventListener
     /** Attributes to show in the node name. */
     private final String[] attributes;
 
+    /** Separator between attribute values. */
+    private String separator = ", ";
+
     /**
      * Constructor.
      * @param editor OtsEditor; editor.
@@ -31,9 +34,18 @@ public class GenericStringFunction implements EventListener
      */
     public GenericStringFunction(final OtsEditor editor, final String path, final String... attributes) throws RemoteException
     {
-        editor.addListener(this, OtsEditor.SCHEMA_LOADED);
+        editor.addListener(this, OtsEditor.NEW_FILE);
         this.path = path;
         this.attributes = attributes;
+    }
+
+    /**
+     * Sets the separator. Default is ", ".
+     * @param separator String; separator between attribute values.
+     */
+    public void setSeparator(final String separator)
+    {
+        this.separator = separator;
     }
 
     /** {@inheritDoc} */
@@ -44,7 +56,7 @@ public class GenericStringFunction implements EventListener
         root.addListener(new EventListener()
         {
             /** */
-            private static final long serialVersionUID = 20220301L;
+            private static final long serialVersionUID = 20230301L;
 
             /** {@inheritDoc} */
             @Override
@@ -56,6 +68,7 @@ public class GenericStringFunction implements EventListener
                 {
                     node.setStringFunction(new Function<XsdTreeNode, String>()
                     {
+                        /** {@inheritDoc} */
                         @Override
                         public String apply(final XsdTreeNode t)
                         {
@@ -63,8 +76,12 @@ public class GenericStringFunction implements EventListener
                             String out = "";
                             for (String attribute : GenericStringFunction.this.attributes)
                             {
-                                out = out + sep + node.getAttributeValue(attribute);
-                                sep = ", ";
+                                String value = node.getAttributeValue(attribute);
+                                if (value != null)
+                                {
+                                    out = out + sep + value;
+                                    sep = GenericStringFunction.this.separator;
+                                }
                             }
                             return out;
                         }

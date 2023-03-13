@@ -3,7 +3,6 @@ package org.opentrafficsim.editor;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -20,11 +19,11 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 /**
- * XsdSchema reads the XML Schema in XSD format for OTS. This class contains various methods that the editor can use to present
- * relevant structure and information to the use.
+ * Reads the XML Schema in XSD format for OTS. This class contains various methods that the editor can use to present relevant
+ * structure and information to the user.
  * @author wjschakel
  */
-public class XsdSchema
+public class Schema
 {
 
     /** Root OTS node. */
@@ -59,13 +58,13 @@ public class XsdSchema
 
     /** Paths where xsd:key are defined, same order as {@code keys}. */
     private final Map<String, String> keysPath = new LinkedHashMap<>();
-    
+
     /** Nodes xsd:keyref. */
     private final Map<String, Node> keyrefs = new LinkedHashMap<>();
 
     /** Paths where xsd:keyref are defined, same order as {@code keyrefs}. */
     private final Map<String, String> keyrefsPath = new LinkedHashMap<>();
-    
+
     /** Nodes xsd:unique. */
     private final Map<String, Node> uniques = new LinkedHashMap<>();
 
@@ -82,7 +81,7 @@ public class XsdSchema
      * Constructs the XML Schema information from a document.
      * @param document Document; main document, other files may be included from within the file.
      */
-    public XsdSchema(final Document document)
+    public Schema(final Document document)
     {
         this.readFiles.add(document.getDocumentURI());
 
@@ -96,7 +95,7 @@ public class XsdSchema
         // all elements with type={type} have that node stored, replace it with the referred node
         for (Entry<String, Node> entry : this.elements.entrySet())
         {
-            String referredTypeName = getAttribute(entry.getValue(), "type");
+            String referredTypeName = DocumentReader.getAttribute(entry.getValue(), "type");
             if (referredTypeName != null && !referredTypeName.startsWith("xsd:"))
             {
                 Node referredType = getType(referredTypeName);
@@ -144,7 +143,7 @@ public class XsdSchema
         // allElements.removeIf((key) -> !key.startsWith("OTS."));
         // allElements.forEach((key) -> System.out.println(key));
 
-        System.out.println("Root found as '" + getAttribute(this.getRoot(), "name") + "'.");
+        System.out.println("Root found as '" + DocumentReader.getAttribute(this.getRoot(), "name") + "'.");
         System.out.println("Read " + this.readFiles.size() + " files.");
         System.out.println("Read " + this.elements.size() + " elements.");
         System.out.println("Read " + this.types.size() + " types.");
@@ -197,7 +196,7 @@ public class XsdSchema
 
         if (node.getNodeName().equals("xsd:extension"))
         {
-            String base = getAttribute(node, "base").replace("ots:", "");
+            String base = DocumentReader.getAttribute(node, "base").replace("ots:", "");
             if (!base.startsWith("xsd:"))
             {
                 Node baseNode = getType(base);
@@ -230,7 +229,7 @@ public class XsdSchema
         if (node.getNodeName().equals("xsd:element") && node.hasAttributes())
         {
             // an xsd:element can not have a name and a ref attribute
-            String name = getAttribute(node, "name");
+            String name = DocumentReader.getAttribute(node, "name");
             if (name != null)
             {
                 if (name.equals("OTS"))
@@ -240,7 +239,7 @@ public class XsdSchema
                 nextPath = extendPath ? (nextPath.isEmpty() ? name : nextPath + "." + name) : nextPath;
                 this.elements.put(nextPath, node);
             }
-            String ref = getAttribute(node, "ref");
+            String ref = DocumentReader.getAttribute(node, "ref");
             if (ref != null)
             {
                 ref = ref.replace("ots:", "");
@@ -250,7 +249,7 @@ public class XsdSchema
                  * pointing to a <xsd:element name="MODEL" type="MODELTYPE" /> being typed by an <xsd:complexType
                  * name="MODELTYPE">.
                  */
-                if (getAttribute(nextNode, "type") != null)
+                if (DocumentReader.getAttribute(nextNode, "type") != null)
                 {
                     element(path, nextNode);
                 }
@@ -260,7 +259,7 @@ public class XsdSchema
             }
         }
 
-        String name = getAttribute(nextNode, "name");
+        String name = DocumentReader.getAttribute(nextNode, "name");
         String nodeName = nextNode.getNodeName();
         if (name != null && (nodeName.equals("xsd:complexType") || nodeName.equals("xsd:simpleType")))
         {
@@ -292,16 +291,16 @@ public class XsdSchema
                     documentation(nextPath, child);
                     break;
                 case "xsd:key":
-                    this.keys.put(getAttribute(child, "name"), child);
-                    this.keysPath.put(getAttribute(child, "name"), nextPath);
+                    this.keys.put(DocumentReader.getAttribute(child, "name"), child);
+                    this.keysPath.put(DocumentReader.getAttribute(child, "name"), nextPath);
                     break;
                 case "xsd:keyref":
-                    this.keyrefs.put(getAttribute(child, "name"), child);
-                    this.keyrefsPath.put(getAttribute(child, "name"), nextPath);
+                    this.keyrefs.put(DocumentReader.getAttribute(child, "name"), child);
+                    this.keyrefsPath.put(DocumentReader.getAttribute(child, "name"), nextPath);
                     break;
                 case "xsd:unique":
-                    this.uniques.put(getAttribute(child, "name"), child);
-                    this.uniquesPath.put(getAttribute(child, "name"), nextPath);
+                    this.uniques.put(DocumentReader.getAttribute(child, "name"), child);
+                    this.uniquesPath.put(DocumentReader.getAttribute(child, "name"), nextPath);
                     break;
                 default:
                     read(nextPath, child, true);
@@ -360,7 +359,7 @@ public class XsdSchema
      */
     private void include(final String path, final Node node)
     {
-        String schemaLocation = getAttribute(node, "schemaLocation");
+        String schemaLocation = DocumentReader.getAttribute(node, "schemaLocation");
         String schemaPath = folder(node) + schemaLocation;
         if (!this.readFiles.add(schemaPath))
         {
@@ -368,7 +367,7 @@ public class XsdSchema
         }
         try
         {
-            read(path, XsdReader.open(new URI(schemaPath)), true);
+            read(path, DocumentReader.open(new URI(schemaPath)), true);
         }
         catch (SAXException | IOException | ParserConfigurationException | URISyntaxException e)
         {
@@ -400,17 +399,17 @@ public class XsdSchema
      */
     private void element(final String path, final Node node)
     {
-        if (getAttribute(node, "ref") != null)
+        if (DocumentReader.getAttribute(node, "ref") != null)
         {
             ref(path, node);
             return;
         }
-        String type = getAttribute(node, "type");
+        String type = DocumentReader.getAttribute(node, "type");
         if (type != null && !type.startsWith("xsd:"))
         {
             type = type.replace("ots:", "");
-            this.referredTypes.computeIfAbsent(type, (key) -> new LinkedHashSet<>())
-                    .add(path.isEmpty() ? getAttribute(node, "name") : path + "." + getAttribute(node, "name"));
+            this.referredTypes.computeIfAbsent(type, (key) -> new LinkedHashSet<>()).add(path.isEmpty()
+                    ? DocumentReader.getAttribute(node, "name") : path + "." + DocumentReader.getAttribute(node, "name"));
             Node referred = getType(type);
             if (referred == null)
             {
@@ -419,7 +418,7 @@ public class XsdSchema
             }
             else
             {
-                queue(path + "." + getAttribute(node, "name"), referred, false);
+                queue(path + "." + DocumentReader.getAttribute(node, "name"), referred, false);
             }
         }
         read(path, node, true);
@@ -434,7 +433,7 @@ public class XsdSchema
      */
     private void ref(final String path, final Node node)
     {
-        String ref = getAttribute(node, "ref").replace("ots:", "");
+        String ref = DocumentReader.getAttribute(node, "ref").replace("ots:", "");
         if (ref.equals("xi:include"))
         {
             return;
@@ -458,10 +457,10 @@ public class XsdSchema
      */
     private void attribute(final String path, final Node node)
     {
-        if (getAttribute(node, "type") != null)
+        if (DocumentReader.getAttribute(node, "type") != null)
         {
-            String type = getAttribute(node, "type");
-            String name = getAttribute(node, "name");
+            String type = DocumentReader.getAttribute(node, "type");
+            String name = DocumentReader.getAttribute(node, "name");
             this.referredTypes.computeIfAbsent(type, (key) -> new LinkedHashSet<>()).add(path + "." + name);
         }
         read(path, node, true);
@@ -474,8 +473,8 @@ public class XsdSchema
      */
     private void documentation(final String path, final Node node)
     {
-        this.documentation.put(path, getChild(node, "#text").getNodeValue().trim().replaceAll("\r\n", " ").replaceAll("\n", " ")
-                .replaceAll("\r", " ").replaceAll("  ", ""));
+        this.documentation.put(path, DocumentReader.getChild(node, "#text").getNodeValue().trim().replaceAll("\r\n", " ")
+                .replaceAll("\n", " ").replaceAll("\r", " ").replaceAll("  ", ""));
     }
 
     /**
@@ -553,9 +552,10 @@ public class XsdSchema
         for (String keyref : this.keyrefs.keySet())
         {
             Node node = this.keyrefs.get(keyref);
-            if (!this.keys.containsKey(getAttribute(node, "refer").replace("ots:", "")))
+            if (!this.keys.containsKey(DocumentReader.getAttribute(node, "refer").replace("ots:", "")))
             {
-                System.out.println("Keyref " + keyref + " refers to non existing key " + getAttribute(node, "refer") + ".");
+                System.out.println(
+                        "Keyref " + keyref + " refers to non existing key " + DocumentReader.getAttribute(node, "refer") + ".");
             }
             Node selected = getSelectedElement(node);
             if (selected == null)
@@ -564,9 +564,9 @@ public class XsdSchema
             }
             else
             {
-                for (Node field : getChildren(node, "xsd:field"))
+                for (Node field : DocumentReader.getChildren(node, "xsd:field"))
                 {
-                    String xpathField = getAttribute(field, "xpath");
+                    String xpathField = DocumentReader.getAttribute(field, "xpath");
                     if (xpathField.startsWith("@"))
                     {
                         xpathField = xpathField.substring(1); // removes '@'
@@ -629,9 +629,9 @@ public class XsdSchema
             }
             else
             {
-                for (Node field : getChildren(node, "xsd:field"))
+                for (Node field : DocumentReader.getChildren(node, "xsd:field"))
                 {
-                    String xpathField = getAttribute(field, "xpath");
+                    String xpathField = DocumentReader.getAttribute(field, "xpath");
                     xpathField = xpathField.substring(1); // removes '@'
                     if (!hasElementAttribute(selected, xpathField))
                     {
@@ -660,28 +660,10 @@ public class XsdSchema
      */
     private String getXpath(final Node node)
     {
-        Node child = getChild(node, "xsd:selector");
-        String xpath = getAttribute(child, "xpath");
+        Node child = DocumentReader.getChild(node, "xsd:selector");
+        String xpath = DocumentReader.getAttribute(child, "xpath");
         xpath = xpath.replace(".//ots:", "").replace("/ots:", ".").replace("ots:", "");
         return xpath;
-    }
-
-    /**
-     * Returns the attribute of a node. This is short for:
-     * 
-     * <pre>
-     * String value = node.hasAttributes() &amp;&amp; node.getAttributes().getNamedItem(name) != null
-     *         ? node.getAttributes().getNamedItem(name).getNodeValue() : null;
-     * </pre>
-     * 
-     * @param node Node; node.
-     * @param name String; attribute name.
-     * @return String; value of the attribute in the node.
-     */
-    public static String getAttribute(final Node node, final String name)
-    {
-        return node.hasAttributes() && node.getAttributes().getNamedItem(name) != null
-                ? node.getAttributes().getNamedItem(name).getNodeValue() : null;
     }
 
     /**
@@ -716,19 +698,19 @@ public class XsdSchema
      */
     private boolean hasElementAttribute(final Node node, final String name, final String viaType)
     {
-        Node via = viaType == null ? node : getChild(node, viaType);
+        Node via = viaType == null ? node : DocumentReader.getChild(node, viaType);
         for (int childIndex = 0; childIndex < via.getChildNodes().getLength(); childIndex++)
         {
             Node child = via.getChildNodes().item(childIndex);
-            String childName = getAttribute(child, "name");
+            String childName = DocumentReader.getAttribute(child, "name");
             if (child.getNodeName().equals("xsd:attribute") && name.equals(childName))
             {
                 return true;
             }
             if (child.getNodeName().equals("xsd:complexContent"))
             {
-                Node extension = getChild(child, "xsd:extension");
-                String base = getAttribute(extension, "base");
+                Node extension = DocumentReader.getChild(child, "xsd:extension");
+                String base = DocumentReader.getAttribute(extension, "base");
                 if (base != null)
                 {
                     Node baseNode = getType(base);
@@ -747,7 +729,7 @@ public class XsdSchema
         }
         return false;
     }
-    
+
     /**
      * Get the root node.
      * @return Node; root node.
@@ -776,7 +758,7 @@ public class XsdSchema
     {
         return this.types.get(base.replace("ots:", ""));
     }
-    
+
     /**
      * Returns the xsd:key and the paths where they are defined.
      * @return Map&lt;Node, String&gt;; xsd:key and the paths where they are defined.
@@ -787,7 +769,7 @@ public class XsdSchema
         this.keys.forEach((key, value) -> map.put(value, this.keysPath.get(key)));
         return map;
     }
-    
+
     /**
      * Returns the xsd:keyref and the paths where they are defined.
      * @return Map&lt;Node, String&gt;; xsd:keyref and the paths where they are defined.
@@ -798,10 +780,9 @@ public class XsdSchema
         this.keyrefs.forEach((key, value) -> map.put(value, this.keyrefsPath.get(key)));
         return map;
     }
-    
+
     /**
-    /**
-     * Returns the xsd:unique and the paths where they are defined.
+     * /** Returns the xsd:unique and the paths where they are defined.
      * @return Map&lt;Node, String&gt;; xsd:unique and the paths where they are defined.
      */
     public Map<Node, String> uniques()
@@ -809,88 +790,6 @@ public class XsdSchema
         Map<Node, String> map = new LinkedHashMap<>();
         this.uniques.forEach((key, value) -> map.put(value, this.uniquesPath.get(key)));
         return map;
-    }
-
-    /**
-     * Returns a child node of specified type. It should be a type of which there may be only one.
-     * @param node Node node;
-     * @param type String; child type, e.g. xsd:complexType.
-     * @return Node; child node of specified type.
-     */
-    public static Node getChild(final Node node, final String type)
-    {
-        for (int childIndex = 0; childIndex < node.getChildNodes().getLength(); childIndex++)
-        {
-            Node child = node.getChildNodes().item(childIndex);
-            if (child.getNodeName().equals(type))
-            {
-                return child;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Returns child nodes of specified type.
-     * @param node Node node;
-     * @param type String; child type, e.g. xsd:field.
-     * @return ArayList&lt;Node&gt;; child nodes of specified type.
-     */
-    public static ArrayList<Node> getChildren(final Node node, final String type)
-    {
-        ArrayList<Node> children = new ArrayList<>();
-        for (int childIndex = 0; childIndex < node.getChildNodes().getLength(); childIndex++)
-        {
-            Node child = node.getChildNodes().item(childIndex);
-            if (child.getNodeName().equals(type))
-            {
-                children.add(child);
-            }
-        }
-        return children;
-    }
-
-    /**
-     * Returns an annotation value. These are defined as below, for either xsd:appinfo or xsd:documentation. All space-like
-     * characters are replaced by blanks, and consecutive blanks are removed.
-     * 
-     * <pre>
-     * &lt;xsd:sequence&gt;
-     *   &lt;xsd:annotation&gt;
-     *     &lt;xsd:appinfo source="name"&gt;annotates the sequence&lt;/xsd:appinfo&gt;
-     *   &lt;/xsd:annotation&gt;
-     * &lt;/xsd:sequence&gt;
-     * </pre>
-     * 
-     * @param node Node; node, either xsd:element or xsd:attribute.
-     * @param element String; either "xsd:documentation" or "xsd:appinfo".
-     * @param source String; name that the source attribute of the annotation should have.
-     * @return String; annotation value, {@code null} if not found.
-     */
-    public static String getAnnotation(final Node node, final String element, final String source)
-    {
-        for (Node child : getChildren(node, "xsd:annotation"))
-        {
-            for (Node annotation : getChildren(child, element))
-            {
-                String appInfoSource = getAttribute(annotation, "source");
-                if (appInfoSource != null && appInfoSource.equals(source))
-                {
-                    StringBuilder str = new StringBuilder();
-                    for (int appIndex = 0; appIndex < annotation.getChildNodes().getLength(); appIndex++)
-                    {
-                        Node appInfo = annotation.getChildNodes().item(appIndex);
-                        if (appInfo.getNodeName().equals("#text"))
-                        {
-                            str.append(appInfo.getNodeValue());
-                        }
-                    }
-                    // tabs, line break, etc. to blanks, then remove consecutive blanks, then trailing/leading blanks
-                    return str.toString().replaceAll("\\s", " ").replaceAll("\\s{2,}", " ").trim();
-                }
-            }
-        }
-        return null;
     }
 
 }

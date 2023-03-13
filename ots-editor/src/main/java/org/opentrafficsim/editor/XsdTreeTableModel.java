@@ -40,9 +40,9 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
      */
     protected XsdTreeTableModel(final Document document) throws RemoteException
     {
-        super(document == null ? null : new XsdTreeNodeRoot(new XsdSchema(document)));
+        super(document == null ? null : new XsdTreeNodeRoot(new Schema(document)));
     }
-    
+
     /**
      * Sets the tree table.
      * @param treeTable JTreeTable; tree table.
