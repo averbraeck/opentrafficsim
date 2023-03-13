@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
-import static org.opentrafficsim.base.parameters.constraint.NumericConstraint.POSITIVE;
+import static org.opentrafficsim.base.parameters.constraint.NumericConstraint.ATLEASTONE;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -25,7 +25,7 @@ public class IdmPlusMulti extends AbstractIdm
 
     /** Number of leaders considered parameter. */
     public static final ParameterTypeInteger NLEADERS =
-            new ParameterTypeInteger("nLeaders", "Number of leaders in car-following model.", 2, POSITIVE);
+            new ParameterTypeInteger("nLeaders", "Number of leaders in car-following model.", 2, ATLEASTONE);
 
     /**
      * Default constructor using default models for desired headway and desired speed.
