@@ -112,3 +112,8 @@ Car-following model
 </pre>
 
 Complex version of desired headway and desired speed models may depend on more than the basic input provided through their methods. These models can implement interface `Initialisable`, which supplies the GTU to the models once the GTU is initialized. For peeking by the vehicle generator, which occurs prior to GTU initialization, such models are not yet connected to the GTU. This means that models implementing `Initialisable` should function without this connection by returning a value assuming no context.
+
+
+## Intersection behavior
+
+Models are available to simulate traffic in limited urban settings. This involves both controlled and uncontrolled intersections. Traffic lights in the yellow or red phase are regarded as a stand-still vehicle using the car-following model, but using a larger allowable deceleration. However, if required deceleration is beyond the threshold, the traffic light is ignored and is passed, which should occur during the yellow phase for a well-designed traffic light. At uncontrolled intersections, the area where lanes cross are known as conflicts. Drivers respond to conflicts by considering traffic rules and traffic on the conflicting lane. The model for such situations considers several events, such as when the vehicle itself or another vehicle is expected to enter or leave the conflict. Depending on the timing and order of such events, the driver will pass the conflict, slow down for the conflict, or will stop for the conflict. Many details need to be considered for such situations. More on this is explained in [Schakel and van Arem (2012)](../10-references/references.md).
