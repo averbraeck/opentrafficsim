@@ -126,8 +126,8 @@ public class LinkTest implements EventListener
         assertFalse("link is not equal to extremely similar link with different id", link.equals(otherLink));
         // make a link with the same name in another network
         Network otherNetwork = new Network("other", MockSimulator.createMock());
-        linkType = new LinkType("myLinkType4", DefaultsNl.ROAD);
-        otherLink = new Link(otherNetwork, "link4", new Node(otherNetwork, "start", new OtsPoint3d(10, 20, 0)),
+        linkType = new LinkType("myLinkType", DefaultsNl.ROAD);
+        otherLink = new Link(otherNetwork, "link1", new Node(otherNetwork, "start", new OtsPoint3d(10, 20, 0)),
                 new Node(otherNetwork, "end", new OtsPoint3d(1000, 2000, 10)), linkType, designLine);
         assertTrue("link is equal to extremely similar link with same id but different network", link.equals(otherLink));
     }
