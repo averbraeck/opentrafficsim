@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.djutils.exceptions.Try;
 import org.junit.Test;
+import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.network.Network;
@@ -50,6 +51,7 @@ public class GtuTypeTest
         Network network = new Network("network", new OtsSimulator("Simulator for GtuTypeTest"));
         StreamInterface randomStream = new MersenneTwister();
         GtuType car = DefaultsNl.CAR;
+        GtuType.registerTemplateSupplier(DefaultsNl.CAR, Defaults.NL);
         String message = "Exception while deriving default GTU characteristics";
         GtuCharacteristics characteristicsCar1 =
                 Try.assign(() -> GtuType.defaultCharacteristics(car, network, randomStream), message);
@@ -61,6 +63,7 @@ public class GtuTypeTest
         GtuCharacteristics characteristicsSpaceCar2 =
                 Try.assign(() -> GtuType.defaultCharacteristics(spaceCar, network, randomStream), message);
         GtuType truck = DefaultsNl.TRUCK;
+        GtuType.registerTemplateSupplier(DefaultsNl.TRUCK, Defaults.NL);
         GtuCharacteristics characteristicsTruck =
                 Try.assign(() -> GtuType.defaultCharacteristics(truck, network, randomStream), message);
 

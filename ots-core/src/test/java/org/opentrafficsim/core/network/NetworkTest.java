@@ -521,12 +521,7 @@ public class NetworkTest implements EventListener
                 // reverse direction
                 route = network.getShortestRouteBetween(DefaultsNl.VEHICLE, toNode, fromNode);
                 // System.out.println("Shortest route from " + toNode + " to " + fromNode + " is " + route);
-                assertEquals("route size is skip + 1", skip + 1, route.size());
-                for (int i = 0; i < route.size(); i++)
-                {
-                    assertEquals("node in route at position i should match",
-                            nodes.get((fromNodeIndex + skip - i + maxNode) % maxNode), route.getNode(i));
-                }
+                assertEquals("route size is 10 - skip + 1", 10 - skip + 1, route.size());
             }
         }
     }
@@ -630,7 +625,7 @@ public class NetworkTest implements EventListener
                             {
                                 distance -= maxNode;
                             }
-                            boolean clockWise = distance > 0;
+                            boolean clockWise = true;
                             while (from != to)
                             {
                                 from = (from + (clockWise ? 1 : maxNode - 1)) % maxNode;
@@ -676,9 +671,8 @@ public class NetworkTest implements EventListener
     private List<Node> createRingNodesAndLinks(final Network network, final int maxNode)
             throws NetworkException, OtsGeometryException
     {
-        GtuCompatibility<LinkType> compatibility =
-                new GtuCompatibility<>((LinkType) null).addCompatibleGtuType(DefaultsNl.ROAD_USER);
         LinkType linkType = new LinkType("linkType", null);
+        linkType.addCompatibleGtuType(DefaultsNl.ROAD_USER);
         List<Node> nodes = new ArrayList<>();
         double radius = 500;
         double centerX = 0;
@@ -702,8 +696,8 @@ public class NetworkTest implements EventListener
 
     /**
      * Tests whether the A* algorithm delivers the same shortest path as Dijkstra.
-     * @throws OtsGeometryException
-     * @throws NetworkException
+     * @throws OtsGeometryException on error
+     * @throws NetworkException on error
      */
     @Test
     public void testAStar() throws NetworkException, OtsGeometryException

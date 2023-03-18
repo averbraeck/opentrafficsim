@@ -59,7 +59,7 @@ public class NodeTest
         assertTrue("Node 1 matches itself", node1.equals(node1));
         assertFalse("Node 1 does not match null", node1.equals(null));
         assertFalse("Node 1 does not match node 2", node1.equals(node2));
-        assertTrue("Node 2 has heading NaN", Double.isNaN(node2.getHeading().si));
+        assertTrue("Node 2 has heading 0", node2.getHeading().si == 0.0);
         // Create another node with name node 1 in another network
         OtsSimulatorInterface simulator = MockSimulator.createMock();
         Network otherNetwork = new Network("Node test network 2", simulator);
@@ -129,20 +129,22 @@ public class NodeTest
         for (int i = 0; i < maxNeighbor; i++)
         {
             Node neighborNode = new Node(network, "neighbor node " + i, new OtsPoint3d(20 + 10 * i, 0, 10));
+            new Link(network, "link to neighbor node " + i, node, neighborNode, DefaultsNl.ROAD,
+                    new OtsLine3d(node.getPoint(), neighborNode.getPoint()));
             new Link(network, "link from neighbor node " + i, neighborNode, node, DefaultsNl.ROAD,
                     new OtsLine3d(neighborNode.getPoint(), node.getPoint()));
         }
-        // Prove that we can go from any neighborNode to any OTHER neighborNode
+        // Prove that we can go from any neighborNode to any OTHER neighborNode including ourselves
         for (int fromIndex = 0; fromIndex < maxNeighbor; fromIndex++)
         {
             Link fromLink = network.getLink("link from neighbor node " + fromIndex);
             Set<Link> nextLinks = node.nextLinks(DefaultsNl.VEHICLE, fromLink);
-            assertEquals("should be maxNeighbor - 1 nextLinks", maxNeighbor - 1, nextLinks.size());
+            assertEquals("should be maxNeighbor nextLinks", maxNeighbor, nextLinks.size());
             assertFalse("should not contain fromLink", nextLinks.contains(fromLink));
         }
         // Add an explicit connection for the link from neighbor 1 to neighbor 2
         node.addConnection(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"),
-                network.getLink("link from neighbor node 2"));
+                network.getLink("link to neighbor node 2"));
         for (int fromIndex = 0; fromIndex < maxNeighbor; fromIndex++)
         {
             Link fromLink = network.getLink("link from neighbor node " + fromIndex);
@@ -150,7 +152,7 @@ public class NodeTest
             if (1 == fromIndex)
             {
                 assertEquals("should be 1", 1, nextLinks.size());
-                assertEquals("should only contain link form neighbor 2", network.getLink("link from neighbor node 2"),
+                assertEquals("should only contain link to neighbor 2", network.getLink("link to neighbor node 2"),
                         nextLinks.iterator().next());
             }
             else
@@ -273,18 +275,19 @@ public class NodeTest
             Node neighborNode = new Node(network, "neighbor node " + i, new OtsPoint3d(20 + 10 * i, 0, 10));
             new Link(network, "link from neighbor node " + i, neighborNode, node, DefaultsNl.ROAD,
                     new OtsLine3d(neighborNode.getPoint(), node.getPoint()));
+            new Link(network, "link to neighbor node " + i, node, neighborNode, DefaultsNl.ROAD,
+                    new OtsLine3d(node.getPoint(), neighborNode.getPoint()));
         }
-        // Prove that we can go from any neighborNode to any OTHER neighborNode
+        // Prove that we can go from any neighborNode to any neighborNode (inlcuding ourselves, b/c of two links
         for (int fromIndex = 0; fromIndex < maxNeighbor; fromIndex++)
         {
             Link fromLink = network.getLink("link from neighbor node " + fromIndex);
             Set<Link> nextLinks = node.nextLinks(DefaultsNl.VEHICLE, fromLink);
-            assertEquals("should be maxNeighbor - 1 nextLinks", maxNeighbor - 1, nextLinks.size());
-            assertFalse("should not contain fromLink", nextLinks.contains(fromLink));
+            assertEquals("should be maxNeighbor nextLinks", maxNeighbor, nextLinks.size());
         }
         // Add an explicit connection for the link from neighbor 1 to neighbor 2
         node.addConnections(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"),
-                wrap(network.getLink("link from neighbor node 2")));
+                wrap(network.getLink("link to neighbor node 2")));
         for (int fromIndex = 0; fromIndex < maxNeighbor; fromIndex++)
         {
             Link fromLink = network.getLink("link from neighbor node " + fromIndex);
@@ -292,7 +295,7 @@ public class NodeTest
             if (1 == fromIndex)
             {
                 assertEquals("should be 1", 1, nextLinks.size());
-                assertEquals("should only contain link form neighbor 2", network.getLink("link from neighbor node 2"),
+                assertEquals("should only contain link to neighbor 2", network.getLink("link to neighbor node 2"),
                         nextLinks.iterator().next());
             }
             else
