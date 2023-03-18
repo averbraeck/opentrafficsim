@@ -976,7 +976,7 @@ public final class OdApplier
          * Returns the generator of GTU characteristics.
          * @return LaneBasedGtuCharacteristicsGenerator; generator of GTU characteristics
          */
-        public LaneBasedGtuCharacteristicsGenerator getCharachteristicsGenerator()
+        public LaneBasedGtuCharacteristicsGenerator getCharacteristicsGenerator()
         {
             return this.characteristicsGenerator;
         }
