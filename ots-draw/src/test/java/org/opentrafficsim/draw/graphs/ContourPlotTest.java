@@ -86,10 +86,6 @@ public class ContourPlotTest implements UNITS
 
     Section<LaneData> section1 = Mockito.mock(Section.class);
 
-    LaneData direction0 = Mockito.mock(LaneData.class);
-
-    LaneData direction1 = Mockito.mock(LaneData.class);
-
     LaneData mockedLane0 = Mockito.mock(LaneData.class);
 
     LaneData mockedLane1 = Mockito.mock(LaneData.class);
@@ -143,13 +139,11 @@ public class ContourPlotTest implements UNITS
         sectionList.add(this.section1);
         Mockito.when(this.mockedLane0.getLength()).thenReturn(Length.valueOf("1234m"));
         Mockito.when(this.mockedLane1.getLength()).thenReturn(Length.valueOf("766m"));
-        Mockito.when(this.direction0).thenReturn(this.mockedLane0);
-        Mockito.when(this.direction1).thenReturn(this.mockedLane1);
         Set<LaneData> set0 = new HashSet<>();
-        set0.add(this.direction0);
+        set0.add(this.mockedLane0);
         Mockito.when(this.section0.iterator()).thenReturn(set0.iterator());
         Set<LaneData> set1 = new HashSet<>();
-        set1.add(this.direction1);
+        set1.add(this.mockedLane1);
         Mockito.when(this.section0.iterator()).thenReturn(set0.iterator());
         Mockito.when(this.section1.iterator()).thenReturn(set1.iterator());
         Mockito.when(this.mockedPath.getSections()).thenReturn(new ImmutableArrayList<>(sectionList));
@@ -163,7 +157,7 @@ public class ContourPlotTest implements UNITS
                     {
                         ContourPlotTest.this.lastScheduledEvent =
                                 new SimEvent<Duration>(((Time) invocation.getArgument(0)).minus(Time.ZERO),
-                                        invocation.getArgument(1), invocation.getArgument(2), "update", null);
+                                        invocation.getArgument(2), "update", null);
                         return ContourPlotTest.this.lastScheduledEvent;
                     }
                 });
