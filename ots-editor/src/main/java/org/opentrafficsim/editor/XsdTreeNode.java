@@ -453,7 +453,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
-     * Assures children are present. If a child has minOccurs > 1, additional child nodes are added. Result is cached.
+     * Assures children are present. If a child has minOccurs &gt; 1, additional child nodes are added. Result is cached.
      */
     protected void assureChildren()
     {
@@ -1399,7 +1399,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * A consumer can be set externally and will receive this node when its menu item is selected.
      * @param menuItem String; name of item as presented to the user.
-     * @param consumer Consumer&lt;XsdTreeNode>&gt;; editor.
+     * @param consumer Consumer&lt;XsdTreeNode&gt;; editor.
      */
     public void addConsumer(final String menuItem, final Consumer<XsdTreeNode> consumer)
     {
