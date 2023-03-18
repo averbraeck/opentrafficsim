@@ -500,12 +500,7 @@ public class OdApplierTest
      * @throws GtuException on exception
      * @throws ProbabilityException on exception
      */
-    // TODO: @Test
-    // TODO: fails with java.lang.NullPointerException: 
-    // Cannot invoke "org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGeneratorOd.
-    // draw(org.opentrafficsim.core.network.Node, org.opentrafficsim.core.network.Node, org.opentrafficsim.road.od.Category, 
-    // nl.tudelft.simulation.jstats.streams.StreamInterface)" because "this.val$characteristicsGeneratorOd" is null
-    // at org.opentrafficsim.road.od.OdApplier$1.draw(OdApplier.java:429)
+    @Test
     public void gtuFractionTest() throws ValueRuntimeException, NetworkException, ParameterException, SimRuntimeException,
             ProbabilityException, GtuException
     {
