@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import javax.naming.NamingException;
@@ -24,8 +25,8 @@ import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.GtuTemplate;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
@@ -231,31 +232,28 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
         });
 
         // Create some LaneTypes
-        GtuCompatibility<LaneType> noTrucks = new GtuCompatibility<>((LaneType) null);
-        noTrucks.addCompatibleGtuType(passengerCar.getGtuType());
-        LaneType trucksForbidden = new LaneType("No Trucks", DefaultsRoadNl.FREEWAY);
+        LaneType trucksForbidden = new LaneType("No Trucks", null);
+        trucksForbidden.addCompatibleGtuType(passengerCar.getGtuType());
 
-        GtuCompatibility<LaneType> truckOnly = new GtuCompatibility<>((LaneType) null);
-        truckOnly.addCompatibleGtuType(truck.getGtuType());
-        LaneType trucksOnly = new LaneType("Trucks Only", DefaultsRoadNl.FREEWAY);
+        LaneType trucksOnly = new LaneType("Trucks Only", null);
+        trucksOnly.addCompatibleGtuType(truck.getGtuType());
 
-        GtuCompatibility<LaneType> bicyclesOnly = new GtuCompatibility<>((LaneType) null);
-        LaneType bicycleLane = new LaneType("Bicycles Only", DefaultsRoadNl.FREEWAY);
+        LaneType bicycleLane = new LaneType("Bicycles Only", null);
+        bicycleLane.addCompatibleGtuType(DefaultsNl.BICYCLE);
 
-        GtuCompatibility<LaneType> urban = new GtuCompatibility<>((LaneType) null);
-        urban.addCompatibleGtuType(passengerCar.getGtuType());
-        urban.addCompatibleGtuType(truck.getGtuType());
-        LaneType urbanRoad = new LaneType("Urban road - open to all traffic", DefaultsRoadNl.FREEWAY);
+        LaneType urbanRoad = new LaneType("Urban road - open to all traffic", null);
+        urbanRoad.addCompatibleGtuType(passengerCar.getGtuType());
+        urbanRoad.addCompatibleGtuType(truck.getGtuType());
 
         // Now we test all combinations
-        // TODO assertTrue("Passengers cars are allowed on a no trucks lane", passengerCar.isCompatible(trucksForbidden));
-        // TODO assertFalse("Trucks are not allowed on a no trucks lane", truck.isCompatible(trucksForbidden));
-        // TODO assertFalse("Passenger cars are not allowed on a trucks only lane", passengerCar.isCompatible(trucksOnly));
-        // TODO assertTrue("Trucks are allowed on a trucks only lane", truck.isCompatible(trucksOnly));
-        // TODO assertTrue("Passenger cars are allowed on an urban road", passengerCar.isCompatible(urbanRoad));
-        // TODO assertTrue("Trucks are allowed on an urban road", truck.isCompatible(urbanRoad));
-        // TODO assertFalse("Passenger cars are not allowed on a bicycle path", passengerCar.isCompatible(bicycleLane));
-        // TODO assertFalse("Trucks are not allowed on an urban road", truck.isCompatible(bicycleLane));
+        assertTrue("Passengers cars are allowed on a no trucks lane", trucksForbidden.isCompatible(passengerCar.getGtuType()));
+        assertFalse("Trucks are not allowed on a no trucks lane", trucksForbidden.isCompatible(truck.getGtuType()));
+        assertFalse("Passenger cars are not allowed on a trucks only lane", trucksOnly.isCompatible(passengerCar.getGtuType()));
+        assertTrue("Trucks are allowed on a trucks only lane", trucksOnly.isCompatible(truck.getGtuType()));
+        assertTrue("Passenger cars are allowed on an urban road", urbanRoad.isCompatible(passengerCar.getGtuType()));
+        assertTrue("Trucks are allowed on an urban road", urbanRoad.isCompatible(truck.getGtuType()));
+        assertFalse("Passenger cars are not allowed on a bicycle path", bicycleLane.isCompatible(passengerCar.getGtuType()));
+        assertFalse("Trucks are not allowed on an urban road", bicycleLane.isCompatible(truck.getGtuType()));
     }
 
     /**

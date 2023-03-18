@@ -77,7 +77,7 @@ public class Node implements HierarchicallyTyped<NodeType, Node>, SpatialObject,
      */
     public Node(final Network network, final String id, final OtsPoint3d point) throws NetworkException
     {
-        this(network, id, point, Direction.instantiateSI(Double.NaN));
+        this(network, id, point, Direction.instantiateSI(0.0));
     }
 
     /**
