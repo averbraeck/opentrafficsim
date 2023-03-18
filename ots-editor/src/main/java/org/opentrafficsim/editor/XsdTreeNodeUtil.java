@@ -250,8 +250,8 @@ public final class XsdTreeNodeUtil
      * Returns from the XSD definition the appropriate nodes to take children from at the level of the input node, in the order
      * in which they should appear. This is often the xsd:complexType within an xsd:element, but can become as complex as
      * containing multiple xsd:extension and their referred base types. An xsd:sequence is also common. Adding children in the
-     * order as they appear per {@code Node}, and in the order the {@Node}'s are given, results in an overall order suitable for
-     * XML.
+     * order as they appear per {@code Node}, and in the order the {@code Node}'s are given, results in an overall order
+     * suitable for XML.
      * @param node Node; node to expand further.
      * @param hiddenNodes ImmutableList&lt;Node&gt;; nodes between the XSD node of the parent, and this tree node's XSD node.
      * @param schema XsdSchema; schema to retrieve types.
