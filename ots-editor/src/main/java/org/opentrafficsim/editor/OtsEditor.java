@@ -362,7 +362,16 @@ public class OtsEditor extends JFrame implements EventProducer
     private void setUnsavedChanges(final boolean unsavedChanges)
     {
         this.unsavedChanges = unsavedChanges;
-        setTitle("OTS | The Open Traffic Simulator | Editor" + (unsavedChanges ? " *" : ""));
+        StringBuilder title = new StringBuilder("OTS | The Open Traffic Simulator | Editor");
+        if (this.lastFile != null)
+        {
+            title.append(" (").append(this.lastDirectory).append(this.lastFile).append(")");
+        }
+        if (this.unsavedChanges)
+        {
+            title.append(" *");
+        }
+        setTitle(title.toString());
     }
 
     /**

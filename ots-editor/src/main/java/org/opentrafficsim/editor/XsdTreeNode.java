@@ -1739,7 +1739,6 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             if (childIndex > 0 && this.children.get(childIndex - 1).isRelevantNode(nameXml))
             {
                 this.children.get(childIndex - 1).add();
-                System.out.println(this.children.get(childIndex).children);
             }
             else
             {
