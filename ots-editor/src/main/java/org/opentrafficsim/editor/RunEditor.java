@@ -2,7 +2,6 @@ package org.opentrafficsim.editor;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
 
 import javax.xml.parsers.ParserConfigurationException;
 
