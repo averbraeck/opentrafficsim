@@ -10,7 +10,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.djutils.exceptions.Throw;
 import org.w3c.dom.Node;
 
 /**
@@ -37,7 +36,10 @@ public interface ValueValidator
      * @param field String; field, attribute or child element, for which to obtain the options.
      * @return List&lt;String&gt;; options, {@code null} if this is not an xsd:keyref restriction.
      */
-    List<String> getOptions(XsdTreeNode node, String field);
+    default List<String> getOptions(final XsdTreeNode node, final String field)
+    {
+        return null;
+    }
 
     /**
      * Report first encountered problem in validating the value of the node.

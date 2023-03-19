@@ -100,7 +100,7 @@ import de.javagl.treetable.JTreeTable;
  * This functionality is currently in development.
  * @author wjschakel
  */
-// TODO: validator for GTU type, road type, etc. parents that are cyclical.
+// TODO: cancel editing on node that is being removed or do not allow removal of node that is edited.
 // TODO: Allow sorting of elements.
 // TODO: Instead of lower-case, use (micro) blanks with Pascal-case tags.
 // TODO: auto-save, use System.getProperty("java.io.tmpdir")

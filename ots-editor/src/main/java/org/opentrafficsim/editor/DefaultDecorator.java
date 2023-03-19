@@ -67,6 +67,10 @@ public final class DefaultDecorator
         new GenericStringFunction(editor, "OTS.NETWORKDEMAND.OD.DEMAND", "ORIGIN", "DESTINATION").setSeparator(" > ");
         new GenericStringFunction(editor, ".SPEEDLIMIT", "GTUTYPE", "LEGALSPEEDLIMIT");
         new GenericStringFunction(editor, "OTS.NETWORK.LINK.LANEOVERRIDE", "LANE");
+        
+        editor.addListener(new ParentValidator("OTS.DEFINITIONS.GTUTYPES.GTUTYPE"), OtsEditor.NEW_FILE);
+        editor.addListener(new ParentValidator("OTS.DEFINITIONS.LINKTYPES.LINKTYPE"), OtsEditor.NEW_FILE);
+        editor.addListener(new ParentValidator("OTS.DEFINITIONS.LANETYPES.LANETYPE"), OtsEditor.NEW_FILE);
 
         editor.addListener(new AutomaticLinkId(), OtsEditor.NEW_FILE);
         editor.addListener(new XiIncludeStringFunction(), OtsEditor.NEW_FILE);
