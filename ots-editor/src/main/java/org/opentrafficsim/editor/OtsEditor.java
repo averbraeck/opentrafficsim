@@ -100,6 +100,10 @@ import de.javagl.treetable.JTreeTable;
  * This functionality is currently in development.
  * @author wjschakel
  */
+// TODO: validator for GTU type, road type, etc. parents that are cyclical.
+// TODO: Allow sorting of elements.
+// TODO: Instead of lower-case, use (micro) blanks with Pascal-case tags.
+// TODO: auto-save, use System.getProperty("java.io.tmpdir")
 public class OtsEditor extends JFrame implements EventProducer
 {
 
@@ -107,7 +111,7 @@ public class OtsEditor extends JFrame implements EventProducer
     private static final long serialVersionUID = 20230217L;
 
     /** Event when a a new file is started. */
-    public static final EventType NEW_FILE = new EventType("NEWFILEs",
+    public static final EventType NEW_FILE = new EventType("NEWFILE",
             new MetaData("New file", "New file", new ObjectDescriptor("Root", "New root element", XsdTreeNodeRoot.class)));
 
     /** Event when the selection in the tree is changed. */
@@ -386,7 +390,8 @@ public class OtsEditor extends JFrame implements EventProducer
             }
             catch (IOException exception)
             {
-                throw new RuntimeException("Unable to load new tree.", exception);
+                JOptionPane.showMessageDialog(this, "Unable to reload schema.", "Unable to reload schema.",
+                        JOptionPane.WARNING_MESSAGE);
             }
         }
     }
@@ -961,7 +966,7 @@ public class OtsEditor extends JFrame implements EventProducer
         }
         catch (SAXException | IOException | ParserConfigurationException exception)
         {
-            throw new RuntimeException("Unable to read XML file.", exception);
+            JOptionPane.showMessageDialog(this, "Unable to read file.", "Unable to read file.", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -975,7 +980,7 @@ public class OtsEditor extends JFrame implements EventProducer
             saveFileAs();
             return;
         }
-        save();
+        save(this.lastDirectory, this.lastFile);
     }
 
     /**
@@ -1006,13 +1011,15 @@ public class OtsEditor extends JFrame implements EventProducer
         }
         this.lastDirectory = fileDialog.getDirectory();
         this.lastFile = fileName;
-        save();
+        save(this.lastDirectory, this.lastFile);
     }
 
     /**
      * Performs the actual saving, either from {@code saveFile()} or {@code saveFileAs()}.
+     * @param directory String; directory. Must include a file separator at the end.
+     * @param fileName String; file name.
      */
-    private void save()
+    private void save(final String directory, final String fileName)
     {
         XsdTreeNodeRoot root = (XsdTreeNodeRoot) OtsEditor.this.treeTable.getTree().getModel().getRoot();
         try
@@ -1034,7 +1041,7 @@ public class OtsEditor extends JFrame implements EventProducer
                     "http://www.opentrafficsim.org/ots ../../../../../ots-parser-xml/src/main/resources/xsd/ots.xsd");
             xmlRoot.setAttribute("xmlns:xi", "http://www.w3.org/2001/XInclude");
 
-            File file = new File(this.lastDirectory + this.lastFile);
+            File file = new File(directory + fileName);
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             StreamResult result = new StreamResult(fileOutputStream);
 
@@ -1048,7 +1055,7 @@ public class OtsEditor extends JFrame implements EventProducer
         }
         catch (ParserConfigurationException | TransformerException | IOException exception)
         {
-            throw new RuntimeException("Unable to save file.", exception);
+            JOptionPane.showMessageDialog(this, "Unable to save file.", "Unable to save file.", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -1062,66 +1069,6 @@ public class OtsEditor extends JFrame implements EventProducer
             System.exit(0);
         }
     }
-
-    // /**
-    // * Temporary stub to create map pane.
-    // * @return JComponent; component.
-    // */
-    // private static JComponent buildMapPane()
-    // {
-    // JLabel map = new JLabel("map");
-    // map.setOpaque(true);
-    // map.setHorizontalAlignment(JLabel.CENTER);
-    // return map;
-    // }
-    //
-    // /**
-    // * Temporary stub to create road layout pane.
-    // * @return JComponent; component.
-    // */
-    // private static JComponent buildRoadLayoutPane()
-    // {
-    // JLabel roadLayout = new JLabel("road layout");
-    // roadLayout.setOpaque(true);
-    // roadLayout.setHorizontalAlignment(JLabel.CENTER);
-    // return roadLayout;
-    // }
-    //
-    // /**
-    // * Temporary stub to create OD pane.
-    // * @return JComponent; component.
-    // */
-    // private static JComponent buildOdPane()
-    // {
-    // JLabel od = new JLabel("od");
-    // od.setOpaque(true);
-    // od.setHorizontalAlignment(JLabel.CENTER);
-    // return od;
-    // }
-    //
-    // /**
-    // * Temporary stub to create parameters pane.
-    // * @return JComponent; component.
-    // */
-    // private static JComponent buildParameterPane()
-    // {
-    // JLabel parameters = new JLabel("parameters");
-    // parameters.setOpaque(true);
-    // parameters.setHorizontalAlignment(JLabel.CENTER);
-    // return parameters;
-    // }
-    //
-    // /**
-    // * Temporary stub to create text pane.
-    // * @return JComponent; component.
-    // */
-    // private static JComponent buildTextPane()
-    // {
-    // JLabel text = new JLabel("text");
-    // text.setOpaque(true);
-    // text.setHorizontalAlignment(JLabel.CENTER);
-    // return text;
-    // }
 
     /**
      * Limits the length of a tooltip message. This is to prevent absurd tooltip texts based on really long patterns that should
