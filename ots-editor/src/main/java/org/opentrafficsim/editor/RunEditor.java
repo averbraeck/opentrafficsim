@@ -6,6 +6,7 @@ import java.net.URL;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.opentrafficsim.base.Resource;
 import org.xml.sax.SAXException;
 
 /**
@@ -37,8 +38,7 @@ public final class RunEditor
     {
         OtsEditor editor = new OtsEditor();
         DefaultDecorator.decorate(editor);
-        URL url = RunEditor.class.getResource("/resources/xsd/ots.xsd");
-        editor.setSchema(DocumentReader.open(url.toURI()));
+        editor.setSchema(DocumentReader.open(Resource.getResourceAsUri("/xsd/ots.xsd")));
     }
 
 }

@@ -1,6 +1,8 @@
-package org.opentrafficsim.swing.gui;
+package org.opentrafficsim.base;
 
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Resource utility.
@@ -39,6 +41,28 @@ public final class Resource
             return stream;
         }
         throw new RuntimeException("Unable to load resource " + name);
+    }
+    
+    /**
+     * Obtains URI for resource, either in IDE or java.
+     * @param name String; name of resource
+     * @return the resolved URI
+     * @throws URISyntaxException when the file name is malformed.
+     */
+    public static URI getResourceAsUri(final String name) throws URISyntaxException
+    {
+        InputStream stream = Resource.class.getResourceAsStream(name);
+        if (stream != null)
+        {
+            return Resource.class.getResource(name).toURI();
+        }
+        stream = Resource.class.getResourceAsStream("/resources" + name);
+        if (stream != null)
+        {
+            return Resource.class.getResource("/resources" + name).toURI();
+        }
+        throw new RuntimeException("Unable to load resource " + name);
+        
     }
 
 }

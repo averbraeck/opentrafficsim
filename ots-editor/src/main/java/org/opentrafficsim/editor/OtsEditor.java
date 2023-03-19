@@ -86,7 +86,7 @@ import org.djutils.event.EventProducer;
 import org.djutils.event.EventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
-import org.opentrafficsim.swing.gui.Resource;
+import org.opentrafficsim.base.Resource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
