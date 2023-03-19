@@ -453,7 +453,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
-     * Assures children are present. If a child has minOccurs > 1, additional child nodes are added. Result is cached.
+     * Assures children are present. If a child has minOccurs &gt; 1, additional child nodes are added. Result is cached.
      */
     protected void assureChildren()
     {
@@ -468,14 +468,14 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         this.children = new ArrayList<>();
         if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
         {
-            if (this.value == null || this.value.isBlank())
+            if (this.attributeValues == null || this.attributeValues.get(0) == null || this.attributeValues.get(0).isBlank())
             {
                 return;
             }
-            File file = new File(this.value);
+            File file = new File(this.attributeValues.get(0));
             if (!file.isAbsolute())
             {
-                file = new File(((XsdTreeNodeRoot) getPath().get(0)).getDirectory() + this.value);
+                file = new File(((XsdTreeNodeRoot) getPath().get(0)).getDirectory() + this.attributeValues.get(0));
             }
             if (file.exists())
             {
@@ -582,8 +582,9 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             this.description = DocumentReader.getAnnotation(this.xsdNode, "xsd:documentation", "description");
         }
         this.descriptionSpecificity = this.description != null ? 0 : Integer.MIN_VALUE;
-        Node complexType = this.xsdNode.getNodeName().equals("xsd:complexType") ? this.xsdNode
-                : DocumentReader.getChild(this.xsdNode, "xsd:complexType");
+        Node complexType =
+                (this.xsdNode.getNodeName().equals("xsd:complexType") || this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
+                        ? this.xsdNode : DocumentReader.getChild(this.xsdNode, "xsd:complexType");
         if (complexType != null && this.xsdNode.hasChildNodes())
         {
             findAttributes(complexType, -1);
@@ -718,6 +719,10 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     private int getAttributeIndexByName(final String attribute)
     {
+        if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE) && "href".equals(attribute))
+        {
+            return 0;
+        }
         for (int index = 0; index < this.attributeCount(); index++)
         {
             Node attr = this.attributeNodes.get(index);
@@ -853,6 +858,11 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         if (this.isEditable == null)
         {
+            if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
+            {
+                this.isEditable = false;
+                return false;
+            }
             if (this.xsdNode.getChildNodes().getLength() == DocumentReader.getChildren(this.xsdNode, "#text").size())
             {
                 // #text children only means a simple type
@@ -899,12 +909,6 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         Throw.when(!isEditable(), IllegalStateException.class,
                 "Node is not an xsd:simpleType or xsd:complexType with xsd:simpleContent, hence no value is allowed.");
         this.value = value;
-        if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
-        {
-            removeChildren();
-            this.children = null;
-            assureChildren();
-        }
         fireEvent(new Event(VALUE_CHANGED, this));
     }
 
@@ -1287,10 +1291,6 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 }
             }
         }
-        if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
-        {
-            return ValueValidator.reportInvalidInclude(this.value, ((XsdTreeNodeRoot) getPath().get(0)).getDirectory());
-        }
         return ValueValidator.reportInvalidValue(this.xsdNode, this.value, this.schema);
     }
 
@@ -1301,6 +1301,11 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public String reportInvalidAttributeValue(final int index)
     {
+        if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
+        {
+            return ValueValidator.reportInvalidInclude(this.attributeValues.get(0),
+                    ((XsdTreeNodeRoot) getPath().get(0)).getDirectory());
+        }
         String attribute = DocumentReader.getAttribute(getAttributeNode(index), "name");
         String val = this.attributeValues.get(index);
         if (val != null && !val.isBlank())
@@ -1340,7 +1345,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     {
         List<String> valueOptions = getOptionsFromValidators(
                 this.attributeValidators.computeIfAbsent(getAttributeNameByIndex(index), (key) -> new LinkedHashSet<>()));
-        if (!valueOptions.isEmpty())
+        if (!valueOptions.isEmpty() || this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
         {
             return valueOptions;
         }
@@ -1382,6 +1387,10 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public String getAttributeBaseType(final int index)
     {
+        if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
+        {
+            return "xsd:anyURI";
+        }
         return ValueValidator.getBaseType(this.attributeNodes.get(index), this.schema);
     }
 
@@ -1399,7 +1408,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * A consumer can be set externally and will receive this node when its menu item is selected.
      * @param menuItem String; name of item as presented to the user.
-     * @param consumer Consumer&lt;XsdTreeNode>&gt;; editor.
+     * @param consumer Consumer&lt;XsdTreeNode&gt;; editor.
      */
     public void addConsumer(final String menuItem, final Consumer<XsdTreeNode> consumer)
     {
@@ -1555,9 +1564,9 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         {
             Element element = document.createElement(getNodeName());
             xmlParent.appendChild(element);
-            if (this.value != null && !this.value.isBlank())
+            if (this.attributeValues != null && this.attributeValues.get(0) != null && !this.attributeValues.get(0).isBlank())
             {
-                element.setAttribute("href", this.value);
+                element.setAttribute("href", this.attributeValues.get(0));
             }
             return;
         }
