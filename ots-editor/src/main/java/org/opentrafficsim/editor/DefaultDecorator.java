@@ -198,11 +198,11 @@ public final class DefaultDecorator
                             @Override
                             public String apply(final XsdTreeNode t)
                             {
-                                if (t.getValue() == null)
+                                if (t.getAttributeValue(0) == null)
                                 {
                                     return "";
                                 }
-                                return new File(t.getValue()).getName();
+                                return new File(t.getAttributeValue(0)).getName();
                             }
                         });
                     }

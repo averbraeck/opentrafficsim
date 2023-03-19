@@ -48,8 +48,6 @@ public interface ValueValidator
      */
     static String reportInvalidValue(final Node xsdNode, final String value, final Schema schema)
     {
-        Throw.when(xsdNode.equals(XiIncludeNode.XI_INCLUDE), IllegalArgumentException.class,
-                "To check the value of an include, use reportInvalidInclude().");
         if (xsdNode.getChildNodes().getLength() == DocumentReader.getChildren(xsdNode, "#text").size()
                 && DocumentReader.getAttribute(xsdNode, "type") == null)
         {

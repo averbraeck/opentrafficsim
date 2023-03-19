@@ -116,12 +116,15 @@ public final class DocumentReader
      */
     public static Node getChild(final Node node, final String type)
     {
-        for (int childIndex = 0; childIndex < node.getChildNodes().getLength(); childIndex++)
+        if (node.hasChildNodes())
         {
-            Node child = node.getChildNodes().item(childIndex);
-            if (child.getNodeName().equals(type))
+            for (int childIndex = 0; childIndex < node.getChildNodes().getLength(); childIndex++)
             {
-                return child;
+                Node child = node.getChildNodes().item(childIndex);
+                if (child.getNodeName().equals(type))
+                {
+                    return child;
+                }
             }
         }
         return null;
@@ -136,12 +139,15 @@ public final class DocumentReader
     public static ArrayList<Node> getChildren(final Node node, final String type)
     {
         ArrayList<Node> children = new ArrayList<>();
-        for (int childIndex = 0; childIndex < node.getChildNodes().getLength(); childIndex++)
+        if (node.hasChildNodes())
         {
-            Node child = node.getChildNodes().item(childIndex);
-            if (child.getNodeName().equals(type))
+            for (int childIndex = 0; childIndex < node.getChildNodes().getLength(); childIndex++)
             {
-                children.add(child);
+                Node child = node.getChildNodes().item(childIndex);
+                if (child.getNodeName().equals(type))
+                {
+                    children.add(child);
+                }
             }
         }
         return children;
