@@ -70,7 +70,7 @@ public class SamplerData<G extends GtuData> extends Table
     {
         baseColumns.add(new Column<>("traj#", "Trajectory number", Integer.class, null));
         baseColumns.add(new Column<>("linkId", "Link id", String.class, null));
-        baseColumns.add(new Column<>("laneId&dir", "Lane id and direction", String.class, null));
+        baseColumns.add(new Column<>("laneId", "Lane id", String.class, null));
         baseColumns.add(new Column<>("gtuId", "GTU id", String.class, null));
         baseColumns.add(new Column<>("t", "Simulation time", FloatDuration.class, DurationUnit.SI.getId()));
         baseColumns.add(new Column<>("x", "Position on the lane", FloatLength.class, LengthUnit.SI.getId()));
@@ -400,7 +400,7 @@ public class SamplerData<G extends GtuData> extends Table
                         data[dataIndex] = FloatAcceleration.instantiateSI(this.currentTrajectory.getA(trajectoryIndex));
                         break;
                     default:
-
+                        
                 }
                 dataIndex++;
             }
