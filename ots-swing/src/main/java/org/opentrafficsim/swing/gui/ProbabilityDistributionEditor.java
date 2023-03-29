@@ -11,8 +11,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import org.djunits.locale.DefaultLocale;
-
 import com.bric.multislider.MultiThumbSlider;
 import com.bric.multislider.MultiThumbSliderUi;
 import com.bric.multislider.MultiThumbSliderUi.Thumb;
