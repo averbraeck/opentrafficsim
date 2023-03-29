@@ -19,14 +19,14 @@ import nl.tudelft.simulation.dsol.animation.D2.RenderableScale;
 import nl.tudelft.simulation.dsol.web.animation.HtmlGraphics2d;
 
 /**
- * The GridPanel introduces the gridPanel.
+ * The VisualizationPanel introduces the gridPanel.
  * <p>
  * Copyright (c) 2003-2023 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/v2/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="mailto:nlang@fbk.eur.nl">Niels Lang </a>, <a href="https://www.peter-jacobs.com">Peter Jacobs </a>
  */
-public class HtmlGridPanel implements ImageObserver
+public class HtmlVisualizationPanel implements ImageObserver
 {
     /** the UP directions for moving/zooming. */
     public static final int UP = 1;
@@ -117,20 +117,20 @@ public class HtmlGridPanel implements ImageObserver
     private boolean dirty = false;
 
     /**
-     * constructs a new GridPanel.
+     * constructs a new VisualizationPanel.
      * @param extent Bounds2d; the extent to show.
      */
-    public HtmlGridPanel(final Bounds2d extent)
+    public HtmlVisualizationPanel(final Bounds2d extent)
     {
         this(extent, new Dimension(600, 600));
     }
 
     /**
-     * constructs a new GridPanel.
+     * constructs a new VisualizationPanel.
      * @param extent Bounds2d; the initial extent.
      * @param size Dimension; the size of the panel in pixels.
      */
-    public HtmlGridPanel(final Bounds2d extent, final Dimension size)
+    public HtmlVisualizationPanel(final Bounds2d extent, final Dimension size)
     {
         this.htmlGraphics2D = new HtmlGraphics2d();
         this.homeExtent = extent;

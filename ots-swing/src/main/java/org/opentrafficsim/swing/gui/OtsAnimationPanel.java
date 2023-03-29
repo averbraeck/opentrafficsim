@@ -55,7 +55,7 @@ import nl.tudelft.simulation.dsol.animation.gis.GisMapInterface;
 import nl.tudelft.simulation.dsol.animation.gis.GisRenderable2D;
 import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.swing.animation.D2.AnimationPanel;
-import nl.tudelft.simulation.dsol.swing.animation.D2.GridPanel;
+import nl.tudelft.simulation.dsol.swing.animation.D2.VisualizationPanel;
 import nl.tudelft.simulation.dsol.swing.animation.D2.InputListener;
 import nl.tudelft.simulation.language.DSOLException;
 
@@ -929,11 +929,11 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
                         int amount = e.getUnitsToScroll();
                         if (amount > 0)
                         {
-                            zoomVertical(GridPanel.ZOOMFACTOR, e.getX(), e.getY());
+                            zoomVertical(VisualizationPanel.ZOOMFACTOR, e.getX(), e.getY());
                         }
                         else
                         {
-                            zoomVertical(1.0 / GridPanel.ZOOMFACTOR, e.getX(), e.getY());
+                            zoomVertical(1.0 / VisualizationPanel.ZOOMFACTOR, e.getX(), e.getY());
                         }
                     }
                     else if (e.isAltDown())
@@ -941,11 +941,11 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
                         int amount = e.getUnitsToScroll();
                         if (amount > 0)
                         {
-                            zoomHorizontal(GridPanel.ZOOMFACTOR, e.getX(), e.getY());
+                            zoomHorizontal(VisualizationPanel.ZOOMFACTOR, e.getX(), e.getY());
                         }
                         else
                         {
-                            zoomHorizontal(1.0 / GridPanel.ZOOMFACTOR, e.getX(), e.getY());
+                            zoomHorizontal(1.0 / VisualizationPanel.ZOOMFACTOR, e.getX(), e.getY());
                         }
                     }
                     else
