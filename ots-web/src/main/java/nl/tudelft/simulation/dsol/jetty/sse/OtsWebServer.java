@@ -40,7 +40,7 @@ import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 import nl.tudelft.simulation.dsol.simulators.DevsRealTimeAnimator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.web.animation.d2.HtmlAnimationPanel;
-import nl.tudelft.simulation.dsol.web.animation.d2.HtmlVisualizationPanel;
+import nl.tudelft.simulation.dsol.web.animation.d2.HtmlGridPanel;
 import nl.tudelft.simulation.dsol.web.animation.d2.ToggleButtonInfo;
 import nl.tudelft.simulation.introspection.Property;
 import nl.tudelft.simulation.introspection.beans.BeanIntrospector;
@@ -359,25 +359,25 @@ public abstract class OtsWebServer implements EventListener
 
                     case "arrowDown":
                     {
-                        animationPanel.pan(HtmlVisualizationPanel.DOWN, 0.1);
+                        animationPanel.pan(HtmlGridPanel.DOWN, 0.1);
                         break;
                     }
 
                     case "arrowUp":
                     {
-                        animationPanel.pan(HtmlVisualizationPanel.UP, 0.1);
+                        animationPanel.pan(HtmlGridPanel.UP, 0.1);
                         break;
                     }
 
                     case "arrowLeft":
                     {
-                        animationPanel.pan(HtmlVisualizationPanel.LEFT, 0.1);
+                        animationPanel.pan(HtmlGridPanel.LEFT, 0.1);
                         break;
                     }
 
                     case "arrowRight":
                     {
-                        animationPanel.pan(HtmlVisualizationPanel.RIGHT, 0.1);
+                        animationPanel.pan(HtmlGridPanel.RIGHT, 0.1);
                         break;
                     }
 
