@@ -224,7 +224,7 @@ public final class ParseDistribution
         DistContinuous dist = makeDistContinuous(streamMap, lengthDist);
         for (LengthUnit unit : LengthUnit.BASE.getUnitsById().values())
         {
-            if (unit.getAbbreviations().contains(lengthDist.getLENGTHUNIT()))
+            if (unit.getDefaultAbbreviations().contains(lengthDist.getLENGTHUNIT()))
             {
                 return new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(dist, unit);
             }
@@ -246,7 +246,7 @@ public final class ParseDistribution
         DistContinuous dist = makeDistContinuous(streamMap, positionDist);
         for (PositionUnit unit : PositionUnit.BASE.getUnitsById().values())
         {
-            if (unit.getAbbreviations().contains(positionDist.getPOSITIONUNIT()))
+            if (unit.getDefaultAbbreviations().contains(positionDist.getPOSITIONUNIT()))
             {
                 return new ContinuousDistDoubleScalar.Abs<Position, PositionUnit, LengthUnit>(dist, unit);
             }
@@ -268,7 +268,7 @@ public final class ParseDistribution
         DistContinuous dist = makeDistContinuous(streamMap, durationDist);
         for (DurationUnit unit : DurationUnit.BASE.getUnitsById().values())
         {
-            if (unit.getAbbreviations().contains(durationDist.getDURATIONUNIT()))
+            if (unit.getDefaultAbbreviations().contains(durationDist.getDURATIONUNIT()))
             {
                 return new ContinuousDistDoubleScalar.Rel<Duration, DurationUnit>(dist, unit);
             }
@@ -290,7 +290,7 @@ public final class ParseDistribution
         DistContinuous dist = makeDistContinuous(streamMap, timeDist);
         for (TimeUnit unit : TimeUnit.BASE.getUnitsById().values())
         {
-            if (unit.getAbbreviations().contains(timeDist.getTIMEUNIT()))
+            if (unit.getDefaultAbbreviations().contains(timeDist.getTIMEUNIT()))
             {
                 return new ContinuousDistDoubleScalar.Abs<Time, TimeUnit, DurationUnit>(dist, unit);
             }
@@ -311,7 +311,7 @@ public final class ParseDistribution
         DistContinuous dist = makeDistContinuous(streamMap, speedDist);
         for (SpeedUnit unit : SpeedUnit.BASE.getUnitsById().values())
         {
-            if (unit.getAbbreviations().contains(speedDist.getSPEEDUNIT()))
+            if (unit.getDefaultAbbreviations().contains(speedDist.getSPEEDUNIT()))
             {
                 return new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(dist, unit);
             }
@@ -332,7 +332,7 @@ public final class ParseDistribution
         DistContinuous dist = makeDistContinuous(streamMap, accelerationDist);
         for (AccelerationUnit unit : AccelerationUnit.BASE.getUnitsById().values())
         {
-            if (unit.getAbbreviations().contains(accelerationDist.getACCELERATIONUNIT()))
+            if (unit.getDefaultAbbreviations().contains(accelerationDist.getACCELERATIONUNIT()))
             {
                 return new ContinuousDistDoubleScalar.Rel<Acceleration, AccelerationUnit>(dist, unit);
             }
@@ -354,7 +354,7 @@ public final class ParseDistribution
         DistContinuous dist = makeDistContinuous(streamMap, frequencyDist);
         for (FrequencyUnit unit : FrequencyUnit.BASE.getUnitsById().values())
         {
-            if (unit.getAbbreviations().contains(frequencyDist.getFREQUENCYUNIT()))
+            if (unit.getDefaultAbbreviations().contains(frequencyDist.getFREQUENCYUNIT()))
             {
                 return new ContinuousDistDoubleScalar.Rel<Frequency, FrequencyUnit>(dist, unit);
             }
@@ -376,7 +376,7 @@ public final class ParseDistribution
         DistContinuous dist = makeDistContinuous(streamMap, linearDensityDist);
         for (LinearDensityUnit unit : LinearDensityUnit.BASE.getUnitsById().values())
         {
-            if (unit.getAbbreviations().contains(linearDensityDist.getLINEARDENSITYUNIT()))
+            if (unit.getDefaultAbbreviations().contains(linearDensityDist.getLINEARDENSITYUNIT()))
             {
                 return new ContinuousDistDoubleScalar.Rel<LinearDensity, LinearDensityUnit>(dist, unit);
             }
