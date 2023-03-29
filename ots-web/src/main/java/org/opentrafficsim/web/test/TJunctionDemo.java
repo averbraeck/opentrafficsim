@@ -25,7 +25,7 @@ public class TJunctionDemo extends OtsWebServer
     /**
      * Create a T-Junction demo.
      * @param title String; the tile for the model
-     * @param simulator DEVSRealTimeAnimator.TimeDouble; the simulator
+     * @param simulator DevsRealTimeAnimator.TimeDouble; the simulator
      * @param model the model
      * @throws Exception on jetty error
      */

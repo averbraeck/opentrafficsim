@@ -72,7 +72,7 @@ public class TrafficLightDetectorTest implements EventListener
      * Build the test network.
      * @param lengths double[]; The lengths of the subsequent lanes to construct; negative lengths indicate that the design
      *            direction must be reversed
-     * @param simulator DEVSSimulator.TimeDoubleUnit; the simulator
+     * @param simulator DevsSimulator.TimeDoubleUnit; the simulator
      * @return Lane[]; an array of linearly connected (single) lanes
      * @throws NetworkException ...
      * @throws OtsGeometryException ...

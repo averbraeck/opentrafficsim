@@ -13,7 +13,7 @@ import org.opentrafficsim.core.gtu.Gtu;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeAnimator;
+import nl.tudelft.simulation.dsol.simulators.DevsRealTimeAnimator;
 import nl.tudelft.simulation.dsol.simulators.ErrorStrategy;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
@@ -24,7 +24,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  */
-public class OtsDevsRealTimeParallelMove extends DEVSRealTimeAnimator<Duration>
+public class OtsDevsRealTimeParallelMove extends DevsRealTimeAnimator<Duration>
 {
     /** */
     private static final long serialVersionUID = 20140909L;
@@ -83,7 +83,7 @@ public class OtsDevsRealTimeParallelMove extends DEVSRealTimeAnimator<Duration>
     @Override
     public final String toString()
     {
-        return "DEVSRealTimeAnimator.TimeDoubleUnit [time=" + getSimulatorTime() + "]";
+        return "DevsRealTimeAnimator.TimeDoubleUnit [time=" + getSimulatorTime() + "]";
     }
 
     // TODO: update the run() method of OTSDEVSRTParallelMove and adapt to the latest parent class version in DSOL 3.03.07

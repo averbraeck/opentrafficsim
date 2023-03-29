@@ -10,12 +10,12 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeAnimator;
+import nl.tudelft.simulation.dsol.simulators.DevsRealTimeAnimator;
 import nl.tudelft.simulation.dsol.simulators.ErrorStrategy;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
- * Construct a DSOL DEVSRealTimeAnimator the easy way.
+ * Construct a DSOL DevsRealTimeAnimator the easy way.
  * <p>
  * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -23,7 +23,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class OtsAnimator extends DEVSRealTimeAnimator<Duration> implements OtsAnimatorInterface, Serializable
+public class OtsAnimator extends DevsRealTimeAnimator<Duration> implements OtsAnimatorInterface, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150511L;

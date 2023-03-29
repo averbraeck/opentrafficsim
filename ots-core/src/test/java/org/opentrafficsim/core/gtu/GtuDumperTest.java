@@ -27,7 +27,7 @@ import org.opentrafficsim.core.network.Network;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
-import nl.tudelft.simulation.dsol.statistics.StatisticsInterface;
+import nl.tudelft.simulation.dsol.statistics.SimulationStatistic;
 
 /**
  * Test the GTUDumper class.
@@ -152,7 +152,7 @@ public class GtuDumperTest implements OtsModelInterface
     }
 
     @Override
-    public final List<StatisticsInterface<Duration>> getOutputStatistics()
+    public final List<SimulationStatistic<Duration>> getOutputStatistics()
     {
         return null;
     }

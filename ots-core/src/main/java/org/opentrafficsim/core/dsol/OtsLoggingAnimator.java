@@ -15,7 +15,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
- * Construct a DSOL DEVSRealTimeAnimator the easy way.
+ * Construct a DSOL DevsRealTimeAnimator the easy way.
  * <p>
  * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -123,7 +123,7 @@ public class OtsLoggingAnimator extends OtsAnimator
         double msec1 = simulatorTimeForWallClockMillis(1.0).doubleValue();
 
         while (this.isStartingOrRunning() && !this.eventList.isEmpty()
-                && this.simulatorTime.le(this.replication.getEndSimTime()))
+                && this.simulatorTime.le(this.replication.getEndTime()))
         {
             // check if speedFactor has changed. If yes: re-baseline.
             if (currentSpeedFactor != this.getSpeedFactor())

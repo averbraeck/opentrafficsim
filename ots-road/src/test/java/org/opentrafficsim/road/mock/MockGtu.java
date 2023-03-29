@@ -35,7 +35,7 @@ public class MockGtu
     }
 
     /**
-     * @return mocked DEVSSimulator
+     * @return mocked DevsSimulator
      */
     public Gtu getMock()
     {

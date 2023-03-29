@@ -58,7 +58,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeAnimator;
+import nl.tudelft.simulation.dsol.simulators.DevsRealTimeAnimator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
@@ -180,7 +180,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         this.simulator.addListener(this, ReplicationInterface.END_REPLICATION_EVENT);
         this.simulator.addListener(this, SimulatorInterface.START_EVENT);
         this.simulator.addListener(this, SimulatorInterface.STOP_EVENT);
-        this.simulator.addListener(this, DEVSRealTimeAnimator.CHANGE_SPEED_FACTOR_EVENT);
+        this.simulator.addListener(this, DevsRealTimeAnimator.CHANGE_SPEED_FACTOR_EVENT);
     }
 
     /**
@@ -774,7 +774,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
          *            value)
          * @param initialValue double; the initially selected value on the scale
          * @param ticksPerDecade int; the number of steps per decade
-         * @param simulator DEVSSimulatorInterface&lt;?, ?, ?&gt;; the simulator to change the speed of
+         * @param simulator DevsSimulatorInterface&lt;?, ?, ?&gt;; the simulator to change the speed of
          */
         TimeWarpPanel(final double minimum, final double maximum, final double initialValue, final int ticksPerDecade,
                 final OtsSimulatorInterface simulator)
@@ -852,9 +852,9 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
              */
 
             // initial value of simulation speed
-            if (simulator instanceof DEVSRealTimeAnimator)
+            if (simulator instanceof DevsRealTimeAnimator)
             {
-                DEVSRealTimeAnimator<Duration> clock = (DEVSRealTimeAnimator<Duration>) simulator;
+                DevsRealTimeAnimator<Duration> clock = (DevsRealTimeAnimator<Duration>) simulator;
                 clock.setSpeedFactor(TimeWarpPanel.this.tickValues.get(this.slider.getValue()));
             }
 
@@ -865,9 +865,9 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 public void stateChanged(final ChangeEvent ce)
                 {
                     JSlider source = (JSlider) ce.getSource();
-                    if (!source.getValueIsAdjusting() && simulator instanceof DEVSRealTimeAnimator)
+                    if (!source.getValueIsAdjusting() && simulator instanceof DevsRealTimeAnimator)
                     {
-                        DEVSRealTimeAnimator<Duration> clock = (DEVSRealTimeAnimator<Duration>) simulator;
+                        DevsRealTimeAnimator<Duration> clock = (DevsRealTimeAnimator<Duration>) simulator;
                         clock.setSpeedFactor(((TimeWarpPanel) source.getParent()).getTickValues().get(source.getValue()));
                     }
                 }
@@ -1182,10 +1182,10 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         if (event.getType().equals(ReplicationInterface.END_REPLICATION_EVENT)
                 || event.getType().equals(SimulatorInterface.START_EVENT)
                 || event.getType().equals(SimulatorInterface.STOP_EVENT)
-                || event.getType().equals(DEVSRealTimeAnimator.CHANGE_SPEED_FACTOR_EVENT))
+                || event.getType().equals(DevsRealTimeAnimator.CHANGE_SPEED_FACTOR_EVENT))
         {
             // System.out.println("OtsControlPanel receive event " + event);
-            if (event.getType().equals(DEVSRealTimeAnimator.CHANGE_SPEED_FACTOR_EVENT))
+            if (event.getType().equals(DevsRealTimeAnimator.CHANGE_SPEED_FACTOR_EVENT))
             {
                 this.timeWarpPanel.setSpeedFactor((Double) event.getContent());
             }

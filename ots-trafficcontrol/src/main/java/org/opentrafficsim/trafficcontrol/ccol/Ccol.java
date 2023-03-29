@@ -74,7 +74,7 @@ public class Ccol extends LocalEventProducer implements ActuatedTrafficControlle
      *            that match the stream numbers as used in the traffic control program
      * @param sensors Set&lt;TrafficLightSensor&gt;; the traffic sensors. The ids of the traffic sensors must end with three
      *            digits; the first two of those must match the stream and sensor numbers used in the traffic control program
-     * @param simulator DEVSSimulator&lt;Time, Duration, SimTimeDoubleUnit&gt;; the simulation engine
+     * @param simulator DevsSimulator&lt;Time, Duration, SimTimeDoubleUnit&gt;; the simulation engine
      * @throws TrafficControlException on failure to initialize the connection to the external CCOL program
      * @throws SimRuntimeException on failure to schedule the first evaluation event
      */

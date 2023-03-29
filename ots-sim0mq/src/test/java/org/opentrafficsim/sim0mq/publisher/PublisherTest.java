@@ -37,7 +37,7 @@ import org.sim0mq.Sim0MQException;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
-import nl.tudelft.simulation.dsol.statistics.StatisticsInterface;
+import nl.tudelft.simulation.dsol.statistics.SimulationStatistic;
 
 /**
  * Unit tests. This requires half of OTS in the imports because it sets up a simulation and runs that for a couple of seconds.
@@ -140,7 +140,7 @@ public class PublisherTest implements OtsModelInterface
     }
 
     @Override
-    public final List<StatisticsInterface<Duration>> getOutputStatistics()
+    public final List<SimulationStatistic<Duration>> getOutputStatistics()
     {
         return null;
     }

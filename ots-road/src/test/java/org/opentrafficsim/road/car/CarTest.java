@@ -98,7 +98,7 @@ public class CarTest implements UNITS
 
     /**
      * Create the simplest possible simulator.
-     * @return DEVSSimulator.TimeDoubleUnit
+     * @return DevsSimulator.TimeDoubleUnit
      * @throws SimRuntimeException on ???
      * @throws NamingException on ???
      */
