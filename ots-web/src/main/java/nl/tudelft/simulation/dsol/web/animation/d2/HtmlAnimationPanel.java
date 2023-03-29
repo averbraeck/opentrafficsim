@@ -39,7 +39,7 @@ import nl.tudelft.simulation.naming.context.util.ContextUtil;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  */
-public class HtmlAnimationPanel extends HtmlVisualizationPanel implements EventListener
+public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
 {
     /** */
     private static final long serialVersionUID = 1L;

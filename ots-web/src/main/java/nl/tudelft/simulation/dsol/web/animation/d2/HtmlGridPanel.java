@@ -26,7 +26,7 @@ import nl.tudelft.simulation.dsol.web.animation.HtmlGraphics2d;
  * </p>
  * @author <a href="mailto:nlang@fbk.eur.nl">Niels Lang </a>, <a href="https://www.peter-jacobs.com">Peter Jacobs </a>
  */
-public class HtmlVisualizationPanel implements ImageObserver
+public class HtmlGridPanel implements ImageObserver
 {
     /** the UP directions for moving/zooming. */
     public static final int UP = 1;
@@ -120,7 +120,7 @@ public class HtmlVisualizationPanel implements ImageObserver
      * constructs a new VisualizationPanel.
      * @param extent Bounds2d; the extent to show.
      */
-    public HtmlVisualizationPanel(final Bounds2d extent)
+    public HtmlGridPanel(final Bounds2d extent)
     {
         this(extent, new Dimension(600, 600));
     }
@@ -130,7 +130,7 @@ public class HtmlVisualizationPanel implements ImageObserver
      * @param extent Bounds2d; the initial extent.
      * @param size Dimension; the size of the panel in pixels.
      */
-    public HtmlVisualizationPanel(final Bounds2d extent, final Dimension size)
+    public HtmlGridPanel(final Bounds2d extent, final Dimension size)
     {
         this.htmlGraphics2D = new HtmlGraphics2d();
         this.homeExtent = extent;
