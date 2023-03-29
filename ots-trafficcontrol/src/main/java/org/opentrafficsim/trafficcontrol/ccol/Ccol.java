@@ -22,7 +22,7 @@ import org.opentrafficsim.trafficcontrol.ActuatedTrafficController;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
+import nl.tudelft.simulation.dsol.experiment.Replication;
 
 /**
  * Communication link with a CCOL traffic control program.
@@ -113,7 +113,7 @@ public class Ccol extends LocalEventProducer implements ActuatedTrafficControlle
             e.printStackTrace();
         }
         this.simulator.scheduleEventRel(Duration.ZERO, this, "step", null);
-        this.simulator.addListener(this, ReplicationInterface.END_REPLICATION_EVENT);
+        this.simulator.addListener(this, Replication.END_REPLICATION_EVENT);
     }
 
     /**
@@ -187,7 +187,7 @@ public class Ccol extends LocalEventProducer implements ActuatedTrafficControlle
     public void notify(final Event event) throws RemoteException
     {
         EventType eventType = event.getType();
-        if (eventType.equals(ReplicationInterface.END_REPLICATION_EVENT))
+        if (eventType.equals(Replication.END_REPLICATION_EVENT))
         {
             if (null != this.serverSocket)
             {

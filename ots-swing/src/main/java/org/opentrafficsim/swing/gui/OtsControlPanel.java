@@ -55,7 +55,7 @@ import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
+import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simulators.DevsRealTimeAnimator;
@@ -177,7 +177,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         this.add(this.otsSearchPanel, BorderLayout.SOUTH);
         fixButtons();
         installWindowCloseHandler();
-        this.simulator.addListener(this, ReplicationInterface.END_REPLICATION_EVENT);
+        this.simulator.addListener(this, Replication.END_REPLICATION_EVENT);
         this.simulator.addListener(this, SimulatorInterface.START_EVENT);
         this.simulator.addListener(this, SimulatorInterface.STOP_EVENT);
         this.simulator.addListener(this, DevsRealTimeAnimator.CHANGE_SPEED_FACTOR_EVENT);
@@ -1179,7 +1179,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
     @Override
     public final void notify(final Event event) throws RemoteException
     {
-        if (event.getType().equals(ReplicationInterface.END_REPLICATION_EVENT)
+        if (event.getType().equals(Replication.END_REPLICATION_EVENT)
                 || event.getType().equals(SimulatorInterface.START_EVENT)
                 || event.getType().equals(SimulatorInterface.STOP_EVENT)
                 || event.getType().equals(DevsRealTimeAnimator.CHANGE_SPEED_FACTOR_EVENT))

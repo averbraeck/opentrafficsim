@@ -32,7 +32,7 @@ import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 import org.opentrafficsim.swing.gui.OtsSwingApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
+import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import picocli.CommandLine.Command;
@@ -202,7 +202,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
             this.simulator = new OtsSimulator(this.name);
             final ScriptModel scriptModel = new ScriptModel(this.simulator);
             this.simulator.initialize(this.startTime, this.warmupTime, this.simulationTime, scriptModel);
-            this.simulator.addListener(this, ReplicationInterface.END_REPLICATION_EVENT);
+            this.simulator.addListener(this, Replication.END_REPLICATION_EVENT);
             double tReport = 60.0;
             Time t = this.simulator.getSimulatorAbsTime();
             while (t.si < this.simulationTime.si)
@@ -251,7 +251,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
     @Override
     public void notify(final Event event) throws RemoteException
     {
-        if (event.getType().equals(ReplicationInterface.END_REPLICATION_EVENT))
+        if (event.getType().equals(Replication.END_REPLICATION_EVENT))
         {
             // try
             // {
@@ -264,7 +264,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
             onSimulationEnd();
             // solve bug that event is fired twice
             AbstractSimulationScript.this.simulator.removeListener(AbstractSimulationScript.this,
-                    ReplicationInterface.END_REPLICATION_EVENT);
+                    Replication.END_REPLICATION_EVENT);
         }
     }
 
@@ -397,7 +397,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
             try
             {
                 AbstractSimulationScript.this.simulator.addListener(AbstractSimulationScript.this,
-                        ReplicationInterface.END_REPLICATION_EVENT);
+                        Replication.END_REPLICATION_EVENT);
             }
             catch (RemoteException exception)
             {

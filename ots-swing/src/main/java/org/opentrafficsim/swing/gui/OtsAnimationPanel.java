@@ -53,7 +53,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
 import nl.tudelft.simulation.dsol.animation.gis.GisMapInterface;
 import nl.tudelft.simulation.dsol.animation.gis.GisRenderable2D;
-import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
+import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.swing.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.swing.animation.D2.GridPanel;
 import nl.tudelft.simulation.dsol.swing.animation.D2.InputListener;
@@ -220,7 +220,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
 
         // Tell the animation to build the list of animation objects.
         this.animationPanel.notify(
-                new TimedEvent<>(ReplicationInterface.START_REPLICATION_EVENT, null, getSimulator().getSimulatorTime()));
+                new TimedEvent<>(Replication.START_REPLICATION_EVENT, null, getSimulator().getSimulatorTime()));
 
         // switch off the X and Y coordinates in a tooltip.
         this.animationPanel.setShowToolTip(false);

@@ -3,7 +3,6 @@ package org.opentrafficsim.core.dsol;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
@@ -18,7 +17,7 @@ import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
+import nl.tudelft.simulation.dsol.experiment.Replication;
 
 /**
  * Test the OTSReplication class.
@@ -49,11 +48,11 @@ public class OtsReplicationTest
         assertEquals("warmupPeriod can be retrieved", warmupPeriod, replication.getWarmupPeriod());
         assertEquals("runLength can be retrieved", runLength, replication.getRunLength());
         simulator.initialize(model, replication);
-        int listenerCount = simulator.numberOfListeners(ReplicationInterface.END_REPLICATION_EVENT);
+        int listenerCount = simulator.numberOfListeners(Replication.END_REPLICATION_EVENT);
         HistoryManagerDevs hm = (HistoryManagerDevs) replication.getHistoryManager(simulator);
         assertEquals("history manager knows time of simulator", simulator.getSimulatorAbsTime(), hm.now());
         assertEquals("history manager has subscribed to our simulator", listenerCount + 1,
-                simulator.numberOfListeners(ReplicationInterface.END_REPLICATION_EVENT));
+                simulator.numberOfListeners(Replication.END_REPLICATION_EVENT));
         Duration history = new Duration(123, DurationUnit.SECOND);
         Duration cleanupInterval = new Duration(234, DurationUnit.SECOND);
         HistoryManager ourHM = new HistoryManagerDevs(simulator, history, cleanupInterval);

@@ -10,7 +10,7 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
+import nl.tudelft.simulation.dsol.experiment.Replication;
 
 /**
  * History manager that uses an {@code OtsSimulatorInterface}.
@@ -51,7 +51,7 @@ public class HistoryManagerDevs extends HistoryManager implements EventListener
         this.history = history;
         this.cleanUpInterval = cleanUpInterval;
         cleanUpHistory(); // start clean-up event chain
-        Try.execute(() -> this.simulator.addListener(this, ReplicationInterface.END_REPLICATION_EVENT),
+        Try.execute(() -> this.simulator.addListener(this, Replication.END_REPLICATION_EVENT),
                 "Unable to add listener.");
     }
 
@@ -85,7 +85,7 @@ public class HistoryManagerDevs extends HistoryManager implements EventListener
     @Override
     public void notify(final Event event) throws RemoteException
     {
-        if (event.getType().equals(ReplicationInterface.END_REPLICATION_EVENT))
+        if (event.getType().equals(Replication.END_REPLICATION_EVENT))
         {
             endOfSimulation();
         }
