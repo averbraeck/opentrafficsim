@@ -5,6 +5,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.beans.PropertyChangeListener;
 import java.util.Arrays;
+import java.util.Locale;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -100,7 +101,7 @@ public class ProbabilityDistributionEditor extends JPanel
         result[positions.length] = 1 - previous;
         for (int i = 0; i < result.length; i++)
         {
-            this.labels[i].setText(String.format(DefaultLocale.getLocale(), "%.3f", result[i]));
+            this.labels[i].setText(String.format(Locale.getDefault(), "%.3f", result[i]));
         }
         return result;
     }
