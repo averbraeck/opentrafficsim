@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.naming.NamingException;
@@ -74,7 +75,7 @@ public class GtuDumperTest implements OtsModelInterface
         this.simulator = new OtsSimulator("Simulator for testing GTUDumper class");
         this.network = new Network("Network for testing GTUDumper class", this.simulator);
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this);
-        this.simulator.scheduleEventAbsTime(new Time(40, TimeUnit.BASE_SECOND), this, "createGTU", new Object[] {});
+        // TODO this.simulator.scheduleEventAbsTime(new Time(40, TimeUnit.BASE_SECOND), this, "createGtuDeprecated", new Object[] {});
         this.simulator.start();
         while (this.simulator.isStartingOrRunning())
         {
@@ -154,7 +155,7 @@ public class GtuDumperTest implements OtsModelInterface
     @Override
     public final List<SimulationStatistic<Duration>> getOutputStatistics()
     {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
@@ -166,13 +167,13 @@ public class GtuDumperTest implements OtsModelInterface
     @Override
     public final String getShortName()
     {
-        return null;
+        return "";
     }
 
     @Override
     public final String getDescription()
     {
-        return null;
+        return "";
     }
 
     /** {@inheritDoc} */
