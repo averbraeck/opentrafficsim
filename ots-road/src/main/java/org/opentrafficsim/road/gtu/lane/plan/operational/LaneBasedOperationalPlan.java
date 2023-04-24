@@ -1,11 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.plan.operational;
 
-import java.util.List;
-
 import org.djunits.value.vdouble.scalar.Direction;
-import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
@@ -15,6 +11,7 @@ import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.core.gtu.plan.operational.Segments;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
@@ -44,33 +41,16 @@ public class LaneBasedOperationalPlan extends OperationalPlan
      * @param path OtsLine3d; the path to follow from a certain time till a certain time. The path should have &lt;i&gt;at
      *            least&lt;/i&gt; the length
      * @param startTime Time; the absolute start time when we start executing the path
-     * @param startSpeed Speed; the GTU speed when we start executing the path
-     * @param operationalPlanSegmentList List&lt;Segment&gt;; the segments that make up the path with an acceleration, constant
+     * @param segments Segments; the segments that make up the path with an acceleration, constant
      *            speed or deceleration profile
      * @param deviative boolean; whether the path is not along lane center lines
      * @throws OperationalPlanException when the path is too short for the operation
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public LaneBasedOperationalPlan(final LaneBasedGtu gtu, final OtsLine3d path, final Time startTime, final Speed startSpeed,
-            final List<Segment> operationalPlanSegmentList, final boolean deviative) throws OperationalPlanException
+    public LaneBasedOperationalPlan(final LaneBasedGtu gtu, final OtsLine3d path, final Time startTime,
+            final Segments segments, final boolean deviative) throws OperationalPlanException
     {
-        super(gtu, path, startTime, startSpeed, operationalPlanSegmentList);
-        this.deviative = deviative;
-    }
-
-    /**
-     * Build a plan where the GTU will wait for a certain time. Of course no lane change takes place.
-     * @param gtu LaneBasedGtu; the GTU for debugging purposes
-     * @param waitPoint DirectedPoint; the point at which the GTU will wait
-     * @param startTime Time; the current time or a time in the future when the plan should start
-     * @param duration Duration; the waiting time
-     * @param deviative boolean; whether the path is not along lane center lines
-     * @throws OperationalPlanException when construction of a waiting path fails
-     */
-    public LaneBasedOperationalPlan(final LaneBasedGtu gtu, final DirectedPoint waitPoint, final Time startTime,
-            final Duration duration, final boolean deviative) throws OperationalPlanException
-    {
-        super(gtu, waitPoint, startTime, duration);
+        super(gtu, path, startTime, segments);
         this.deviative = deviative;
     }
 

@@ -1,18 +1,18 @@
 package org.opentrafficsim.road.gtu.lane.tactical;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.geometry.DirectedPoint;
+import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.core.gtu.plan.operational.Segments;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
@@ -64,7 +64,7 @@ public class LaneBasedGtuFollowingTacticalPlanner extends AbstractLaneBasedTacti
         // if the GTU's maximum speed is zero (block), generate a stand still plan for one second
         if (laneBasedGTU.getMaximumSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
         {
-            return new OperationalPlan(getGtu(), locationAtStartTime, startTime, new Duration(1.0, DurationUnit.SECOND));
+            return OperationalPlan.standStill(getGtu(), getGtu().getLocation(), startTime, Duration.ONE);
         }
 
         // see how far we can drive
@@ -110,23 +110,11 @@ public class LaneBasedGtuFollowingTacticalPlanner extends AbstractLaneBasedTacti
         // see if we have to continue standing still. In that case, generate a stand still plan
         if (accelerationStep.getAcceleration().si < 1E-6 && laneBasedGTU.getSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
         {
-            return new OperationalPlan(getGtu(), locationAtStartTime, startTime, accelerationStep.getDuration());
+            return OperationalPlan.standStill(getGtu(), getGtu().getLocation(), startTime, Duration.ONE);
         }
-
-        List<Segment> operationalPlanSegmentList = new ArrayList<>();
-        if (accelerationStep.getAcceleration().si == 0.0)
-        {
-            Segment segment = new OperationalPlan.SpeedSegment(accelerationStep.getDuration());
-            operationalPlanSegmentList.add(segment);
-        }
-        else
-        {
-            Segment segment =
-                    new OperationalPlan.AccelerationSegment(accelerationStep.getDuration(), accelerationStep.getAcceleration());
-            operationalPlanSegmentList.add(segment);
-        }
-        OperationalPlan op = new OperationalPlan(getGtu(), lanePathInfo.getPath(), startTime, getGtu().getSpeed(),
-                operationalPlanSegmentList);
+        OtsLine3d path = lanePathInfo.getPath();
+        OperationalPlan op = new OperationalPlan(getGtu(), path, startTime,
+                Segments.off(getGtu().getSpeed(), accelerationStep.getDuration(), accelerationStep.getAcceleration()));
         return op;
     }
 

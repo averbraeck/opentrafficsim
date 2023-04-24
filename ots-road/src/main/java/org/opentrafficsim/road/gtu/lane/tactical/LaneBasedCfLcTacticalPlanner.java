@@ -3,7 +3,6 @@ package org.opentrafficsim.road.gtu.lane.tactical;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.djunits.unit.AccelerationUnit;
@@ -18,17 +17,18 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.AccelerationVector;
 import org.djunits.value.vdouble.vector.base.DoubleVector;
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.core.gtu.plan.operational.Segments;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
@@ -118,7 +118,7 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
             // if the GTU's maximum speed is zero (block), generate a stand still plan for one second
             if (laneBasedGTU.getMaximumSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
             {
-                return new OperationalPlan(getGtu(), locationAtStartTime, startTime, new Duration(1.0, DurationUnit.SECOND));
+                return OperationalPlan.standStill(getGtu(), getGtu().getLocation(), startTime, Duration.ONE);
             }
 
             Length maximumForwardHeadway = laneBasedGTU.getParameters().getParameter(LOOKAHEAD);
@@ -193,33 +193,12 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
                     getGtu().getMaximumSpeed(), Speed.ZERO, dist, speedLimit));
 
             // build a list of lanes forward, with a maximum headway.
-            OtsLine3d path = lanePathInfo.getPath();
             if (a.si < 1E-6 && laneBasedGTU.getSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
             {
-                try
-                {
-                    return new OperationalPlan(getGtu(), path.getLocationFraction(0.0), startTime, duration);
-                }
-                catch (OtsGeometryException exception)
-                {
-                    // should not happen as 0.0 should be accepted
-                    throw new RuntimeException(exception);
-                }
+                return OperationalPlan.standStill(getGtu(), getGtu().getLocation(), startTime, Duration.ONE);
             }
-            List<Segment> operationalPlanSegmentList = new ArrayList<>();
-
-            if (a.si == 0.0)
-            {
-                Segment segment = new OperationalPlan.SpeedSegment(duration);
-                operationalPlanSegmentList.add(segment);
-            }
-            else
-            {
-                Segment segment = new OperationalPlan.AccelerationSegment(duration, a);
-                operationalPlanSegmentList.add(segment);
-            }
-            OperationalPlan op =
-                    new OperationalPlan(getGtu(), path, startTime, getGtu().getSpeed(), operationalPlanSegmentList);
+            OtsLine3d path = lanePathInfo.getPath();
+            OperationalPlan op = new OperationalPlan(getGtu(), path, startTime, Segments.off(getGtu().getSpeed(), duration, a));
             return op;
         }
         catch (ValueRuntimeException exception)

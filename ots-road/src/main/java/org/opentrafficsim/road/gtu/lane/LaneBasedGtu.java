@@ -12,7 +12,6 @@ import java.util.Set;
 import java.util.SortedMap;
 
 import org.djunits.unit.DirectionUnit;
-import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.PositionUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -44,8 +43,8 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanBuilder;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.core.gtu.plan.operational.Segments;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
@@ -63,7 +62,6 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneBasedOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
-import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -195,8 +193,8 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * @param strategicalPlanner LaneBasedStrategicalPlanner; the strategical planner (e.g., route determination) to use
-     * @param initialLongitudinalPositions Set&lt;LanePosition&gt;; the initial positions of the car on one or more
-     *            lanes with their directions
+     * @param initialLongitudinalPositions Set&lt;LanePosition&gt;; the initial positions of the car on one or more lanes with
+     *            their directions
      * @param initialSpeed Speed; the initial speed of the car on the lane
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
@@ -241,23 +239,17 @@ public class LaneBasedGtu extends Gtu
         // TODO: move this to super.init(...), and remove setOperationalPlan(...) method
         // Give the GTU a 1 micrometer long operational plan, or a stand-still plan, so the first move and events will work
         Time now = getSimulator().getSimulatorAbsTime();
-        try
+        if (initialSpeed.si < OperationalPlan.DRIFTING_SPEED_SI)
         {
-            if (initialSpeed.si < OperationalPlan.DRIFTING_SPEED_SI)
-            {
-                setOperationalPlan(new OperationalPlan(this, initialLocation, now, new Duration(1E-6, DurationUnit.SECOND)));
-            }
-            else
-            {
-                OtsPoint3d p2 = new OtsPoint3d(initialLocation.x + 1E-6 * Math.cos(initialLocation.getRotZ()),
-                        initialLocation.y + 1E-6 * Math.sin(initialLocation.getRotZ()), initialLocation.z);
-                OtsLine3d path = new OtsLine3d(new OtsPoint3d(initialLocation), p2);
-                setOperationalPlan(OperationalPlanBuilder.buildConstantSpeedPlan(this, path, now, initialSpeed));
-            }
+            setOperationalPlan(OperationalPlan.standStill(this, initialLocation, now, Duration.instantiateSI(1E-6)));
         }
-        catch (OperationalPlanException e)
+        else
         {
-            throw new RuntimeException("Initial operational plan could not be created.", e);
+            OtsPoint3d p2 = new OtsPoint3d(initialLocation.x + 1E-6 * Math.cos(initialLocation.getRotZ()),
+                    initialLocation.y + 1E-6 * Math.sin(initialLocation.getRotZ()), initialLocation.z);
+            OtsLine3d path = new OtsLine3d(new OtsPoint3d(initialLocation), p2);
+            setOperationalPlan(new OperationalPlan(this, path, now,
+                    Segments.off(initialSpeed, path.getLength().divide(initialSpeed), Acceleration.ZERO)));
         }
 
         // register the GTU on the lanes
