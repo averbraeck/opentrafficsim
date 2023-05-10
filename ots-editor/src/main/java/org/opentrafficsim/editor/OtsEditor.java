@@ -610,7 +610,7 @@ public class OtsEditor extends JFrame implements EventProducer
     }
 
     /**
-     * Sets a custom icon for nodes that comply to the path. The path may be an absolute path (e.g. "OTS.NETWORK.CONNECTOR") or
+     * Sets a custom icon for nodes that comply to the path. The path may be an absolute path (e.g. "OTS.Network.CONNECTOR") or
      * a relative path (e.g. ".NODE"). The image should be a filename relative in resources.
      * @param path String; path.
      * @param icon ImageIcon; image icon.
@@ -1038,7 +1038,7 @@ public class OtsEditor extends JFrame implements EventProducer
             /*
              * The following line omits the 'standalone="no"' in the header xml tag. But there will be no new-line after this
              * header tag. It seems a java bug: https://bugs.openjdk.org/browse/JDK-8249867. Result: <?xml version="1.0"
-             * encoding="UTF-8"?><ots:OTS xmlns:ots="http://www.opentrafficsim.org/ots" ... etc. Other lines will be on a new
+             * encoding="UTF-8"?><ots:Ots xmlns:ots="http://www.opentrafficsim.org/ots" ... etc. Other lines will be on a new
              * line and indented.
              */
             document.setXmlStandalone(true);

@@ -8,16 +8,16 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
-import org.opentrafficsim.xml.generated.RANDOMSTREAM;
-import org.opentrafficsim.xml.generated.RANDOMSTREAM.REPLICATION;
-import org.opentrafficsim.xml.generated.RUN;
+import org.opentrafficsim.xml.generated.RandomStream;
+import org.opentrafficsim.xml.generated.RandomStream.Replication;
+import org.opentrafficsim.xml.generated.Run;
 
 import nl.tudelft.simulation.dsol.experiment.ExperimentRunControl;
 import nl.tudelft.simulation.dsol.experiment.StreamSeedInformation;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 
 /**
- * RunParser parses the XML nodes of the RUN tag, including the RANDOMSTREAM tags.
+ * RunParser parses the XML nodes of the RUN tag, including the RandomStream tags.
  * <p>
  * Copyright (c) 2003-2023 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/v2/license.html">OpenTrafficSim License</a>.
@@ -33,23 +33,23 @@ public final class RunParser
     }
 
     /**
-     * Parse the RUN tag in the OTS XML file.
-     * @param run RUN; the RUN tag
+     * Parse the Run tag in the OTS XML file.
+     * @param run Run; the Run tag
      * @param networkId String; id of the network or the model
      * @param streamInformation StreamSeedInformation; the stream information that will be passed to the model
      * @param simulator OtsSimulatorInterface; the simulator to defined the experiment for
-     * @return experiment on the basis of the information in the RUN tag
+     * @return experiment on the basis of the information in the Run tag
      * @throws XmlParserException on parsing error
      */
-    public static ExperimentRunControl<Duration> parseRun(final String networkId, final RUN run,
+    public static ExperimentRunControl<Duration> parseRun(final String networkId, final Run run,
             final StreamSeedInformation streamInformation, final OtsSimulatorInterface simulator) throws XmlParserException
     {
-        int numberReplications = run.getNUMBERREPLICATIONS() == null ? 1 : run.getNUMBERREPLICATIONS().intValue();
-        Time startTime = run.getSTARTTIME() == null ? Time.ZERO : run.getSTARTTIME();
-        Duration warmupPeriod = run.getWARMUPPERIOD() == null ? Duration.ZERO : run.getWARMUPPERIOD();
-        Duration runLength = run.getRUNLENGTH() == null ? Duration.ZERO : run.getRUNLENGTH();
+        int numberReplications = run.getNumberReplications() == null ? 1 : run.getNumberReplications().intValue();
+        Time startTime = run.getStartTime() == null ? Time.ZERO : run.getStartTime();
+        Duration warmupPeriod = run.getWarmupPeriod() == null ? Duration.ZERO : run.getWarmupPeriod();
+        Duration runLength = run.getRunLength() == null ? Duration.ZERO : run.getRunLength();
 
-        if (run.getRANDOMSTREAMS() == null)
+        if (run.getRandomStreams() == null)
         {
             for (String streamId : new String[] {"default", "generation"})
             {
@@ -64,14 +64,14 @@ public final class RunParser
         }
         else
         {
-            List<RANDOMSTREAM> streamTags = run.getRANDOMSTREAMS().getRANDOMSTREAM();
-            for (RANDOMSTREAM streamTag : streamTags)
+            List<RandomStream> streamTags = run.getRandomStreams().getRandomStream();
+            for (RandomStream streamTag : streamTags)
             {
-                String streamId = streamTag.getID();
+                String streamId = streamTag.getId();
                 Map<Integer, Long> seedMap = new LinkedHashMap<>();
-                for (REPLICATION rep : streamTag.getREPLICATION())
+                for (Replication rep : streamTag.getReplication())
                 {
-                    seedMap.put(rep.getID().intValue(), rep.getSEED().longValue());
+                    seedMap.put(rep.getId().intValue(), rep.getSeed().longValue());
                 }
                 if (seedMap.containsKey(0))
                 {

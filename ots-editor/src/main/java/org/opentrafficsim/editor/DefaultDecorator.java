@@ -38,39 +38,39 @@ public final class DefaultDecorator
         ImageIcon networkIcon = OtsEditor.loadIcon("./OTS_network.png", -1, -1, -1, -1);
         ImageIcon nodeIcon = OtsEditor.loadIcon("./OTS_node.png", -1, -1, -1, -1);
 
-        editor.setCustomIcon("OTS", OtsEditor.loadIcon("./OTS_merge.png", 14, 14, 16, 16));
-        editor.setCustomIcon("OTS.DEFINITIONS", OtsEditor.loadIcon("./Database.png", 14, 14, 16, 16));
-        editor.setCustomIcon(".ROADLAYOUT", roadIcon);
-        editor.setCustomIcon("OTS.NETWORK.LINK.DEFINEDLAYOUT", roadIcon);
-        editor.setCustomIcon("OTS.NETWORK", networkIcon);
-        editor.setCustomIcon(".NODE", nodeIcon);
-        editor.setCustomIcon("OTS.NETWORK.CENTROID", OtsEditor.loadIcon("./OTS_centroid.png", -1, -1, -1, -1)); // not exist yet
-        editor.setCustomIcon("OTS.NETWORK.CONNECTOR", OtsEditor.loadIcon("./OTS_connector.png", -1, -1, -1, -1));
-        editor.setCustomIcon(".LINK", OtsEditor.loadIcon("./OTS_link.png", -1, -1, -1, -1));
-        editor.setCustomIcon("OTS.NETWORKDEMAND", OtsEditor.loadIcon("./Calendar.png", 16, 16, -1, -1));
-        editor.setCustomIcon("OTS.NETWORKDEMAND.SHORTESTROUTE.FROM", nodeIcon);
-        editor.setCustomIcon("OTS.NETWORKDEMAND.SHORTESTROUTE.TO", nodeIcon);
-        editor.setCustomIcon("OTS.NETWORKDEMAND.SHORTESTROUTE.VIA", nodeIcon);
-        editor.setCustomIcon("OTS.NETWORKDEMAND.OD", OtsEditor.loadIcon("./Table_blue.png", 16, 16, -1, -1));
-        editor.setCustomIcon("OTS.MODEL", OtsEditor.loadIcon("./Component_blue.png", 16, 16, -1, -1));
-        editor.setCustomIcon("OTS.SCENARIO", OtsEditor.loadIcon("./Film.png", 14, 14, 16, 16));
-        editor.setCustomIcon("OTS.CONTROL", OtsEditor.loadIcon("./OTS_control.png", -1, -1, -1, -1));
-        editor.setCustomIcon("OTS.RUN", OtsEditor.loadIcon("./Stopwatch.png", 16, 16, -1, -1));
-        editor.setCustomIcon("OTS.ANIMATION", OtsEditor.loadIcon("./Play.png", 14, 14, 16, 16));
-        editor.setCustomIcon("OTS.OUTPUT", OtsEditor.loadIcon("./Report.png", 14, 14, 16, 16)); // does not exist yet
+        editor.setCustomIcon("Ots", OtsEditor.loadIcon("./OTS_merge.png", 14, 14, 16, 16));
+        editor.setCustomIcon("Ots.Definitions", OtsEditor.loadIcon("./Database.png", 14, 14, 16, 16));
+        editor.setCustomIcon(".RoadLayout", roadIcon);
+        editor.setCustomIcon("Ots.Network.Link.DefinedLayout", roadIcon);
+        editor.setCustomIcon("Ots.Network", networkIcon);
+        editor.setCustomIcon(".Node", nodeIcon);
+        editor.setCustomIcon("Ots.Network.Centroid", OtsEditor.loadIcon("./OTS_centroid.png", -1, -1, -1, -1)); // not exist yet
+        editor.setCustomIcon("Ots.Network.Connector", OtsEditor.loadIcon("./OTS_connector.png", -1, -1, -1, -1));
+        editor.setCustomIcon(".Link", OtsEditor.loadIcon("./OTS_link.png", -1, -1, -1, -1));
+        editor.setCustomIcon("Ots.Demand", OtsEditor.loadIcon("./Calendar.png", 16, 16, -1, -1));
+        editor.setCustomIcon("Ots.Demand.ShortestRoute.From", nodeIcon);
+        editor.setCustomIcon("Ots.Demand.ShortestRoute.To", nodeIcon);
+        editor.setCustomIcon("Ots.Demand.ShortestRoute.Via", nodeIcon);
+        editor.setCustomIcon("Ots.Demand.Od", OtsEditor.loadIcon("./Table_blue.png", 16, 16, -1, -1));
+        editor.setCustomIcon("Ots.Model", OtsEditor.loadIcon("./Component_blue.png", 16, 16, -1, -1));
+        editor.setCustomIcon("Ots.Scenario", OtsEditor.loadIcon("./Film.png", 14, 14, 16, 16));
+        editor.setCustomIcon("Ots.Control", OtsEditor.loadIcon("./OTS_control.png", -1, -1, -1, -1));
+        editor.setCustomIcon("Ots.Run", OtsEditor.loadIcon("./Stopwatch.png", 16, 16, -1, -1));
+        editor.setCustomIcon("Ots.Animation", OtsEditor.loadIcon("./Play.png", 14, 14, 16, 16));
+        editor.setCustomIcon("Ots.Output", OtsEditor.loadIcon("./Report.png", 14, 14, 16, 16)); // does not exist yet
 
         editor.addTab("Map", networkIcon, buildMapPane(), null);
         editor.addTab("Parameters", null, buildParameterPane(), null);
         editor.addTab("Text", null, buildTextPane(), null);
 
-        new GenericStringFunction(editor, "OTS.NETWORKDEMAND.GENERATOR", "LINK", "LANE");
-        new GenericStringFunction(editor, "OTS.NETWORKDEMAND.OD.DEMAND", "ORIGIN", "DESTINATION").setSeparator(" > ");
-        new GenericStringFunction(editor, ".SPEEDLIMIT", "GTUTYPE", "LEGALSPEEDLIMIT");
-        new GenericStringFunction(editor, "OTS.NETWORK.LINK.LANEOVERRIDE", "LANE");
+        new GenericStringFunction(editor, "Ots.Demand.Generator", "Link", "Lane");
+        new GenericStringFunction(editor, "Ots.Demand.Od.Cell", "Origin", "Destination").setSeparator(" > ");
+        new GenericStringFunction(editor, ".SpeedLimit", "GtuType", "LegalSpeedLimit");
+        new GenericStringFunction(editor, "Ots.Network.Link.LaneOverride", "Lane");
         
-        editor.addListener(new ParentValidator("OTS.DEFINITIONS.GTUTYPES.GTUTYPE"), OtsEditor.NEW_FILE);
-        editor.addListener(new ParentValidator("OTS.DEFINITIONS.LINKTYPES.LINKTYPE"), OtsEditor.NEW_FILE);
-        editor.addListener(new ParentValidator("OTS.DEFINITIONS.LANETYPES.LANETYPE"), OtsEditor.NEW_FILE);
+        editor.addListener(new ParentValidator("Ots.Definitions.GtuTypes.GtuType"), OtsEditor.NEW_FILE);
+        editor.addListener(new ParentValidator("Ots.Definitions.LinkTypes.LinkType"), OtsEditor.NEW_FILE);
+        editor.addListener(new ParentValidator("Ots.Definitions.LaneTypes.LaneType"), OtsEditor.NEW_FILE);
 
         editor.addListener(new AutomaticLinkId(), OtsEditor.NEW_FILE);
         editor.addListener(new XiIncludeStringFunction(), OtsEditor.NEW_FILE);
@@ -143,7 +143,7 @@ public final class DefaultDecorator
                     if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
                     {
                         XsdTreeNode node = (XsdTreeNode) event.getContent();
-                        if (node.getPathString().equals("OTS.NETWORK.LINK"))
+                        if (node.getPathString().equals("Ots.Network.Link"))
                         {
                             node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
                         }
@@ -152,16 +152,16 @@ public final class DefaultDecorator
                     {
                         Object[] content = (Object[]) event.getContent();
                         String attribute = (String) content[1];
-                        if (attribute.equals("NODESTART") || attribute.equals("NODEEND"))
+                        if (attribute.equals("NodeStart") || attribute.equals("NodeEnd"))
                         {
                             XsdTreeNode node = (XsdTreeNode) content[0];
-                            String nodeStart = node.getAttributeValue("NODESTART");
-                            String nodeEnd = node.getAttributeValue("NODEEND");
-                            String id = node.getAttributeValue("ID");
+                            String nodeStart = node.getAttributeValue("NodeStart");
+                            String nodeEnd = node.getAttributeValue("NodeEnd");
+                            String id = node.getAttributeValue("Id");
                             if (nodeStart != null && !nodeStart.isBlank() && nodeEnd != null && !nodeEnd.isBlank()
                                     && (id == null || id.isBlank()))
                             {
-                                node.setAttributeValue("ID", nodeStart + "-" + nodeEnd);
+                                node.setAttributeValue("Id", nodeStart + "-" + nodeEnd);
                             }
                         }
                     }

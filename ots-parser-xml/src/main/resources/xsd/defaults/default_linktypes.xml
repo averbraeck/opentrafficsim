@@ -1,4 +1,4 @@
-<ots:LINKTYPES xmlns:ots="http://www.opentrafficsim.org/ots"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ots:LinkTypes xmlns:ots="http://www.opentrafficsim.org/ots"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions.xsd">
   
   <!-- 
@@ -30,31 +30,31 @@
     CONNECTOR = new LinkType("CONNECTOR", null, compatibility); 
   -->
 
-  <ots:LINKTYPE ID="NONE" DEFAULT="true">
-    <ots:COMPATIBILITY GTUTYPE="NONE" DIRECTION="NONE"/>
-  </ots:LINKTYPE>
+  <ots:LinkType Id="NONE" Default="true">
+    <ots:Compatibility GtuType="NONE" Direction="NONE"/>
+  </ots:LinkType>
 
-  <ots:LINKTYPE ID="ROAD" DEFAULT="true">
-    <ots:COMPATIBILITY GTUTYPE="ROAD_USER" DIRECTION="FORWARD" />
-  </ots:LINKTYPE>
+  <ots:LinkType Id="ROAD" Default="true">
+    <ots:Compatibility GtuType="ROAD_USER" Direction="FORWARD" />
+  </ots:LinkType>
 
-  <ots:LINKTYPE ID="FREEWAY" PARENT="ROAD" DEFAULT="true">
-    <ots:COMPATIBILITY GTUTYPE="ROAD_USER" DIRECTION="FORWARD" />
-    <ots:COMPATIBILITY GTUTYPE="PEDESTRIAN" DIRECTION="NONE" />
-    <ots:COMPATIBILITY GTUTYPE="BICYCLE" DIRECTION="NONE" />
-  </ots:LINKTYPE>
+  <ots:LinkType Id="FREEWAY" Parent="ROAD" Default="true">
+    <ots:Compatibility GtuType="ROAD_USER" Direction="FORWARD" />
+    <ots:Compatibility GtuType="PEDESTRIAN" Direction="NONE" />
+    <ots:Compatibility GtuType="BICYCLE" Direction="NONE" />
+  </ots:LinkType>
 
-  <ots:LINKTYPE ID="WATERWAY" DEFAULT="true">
-    <ots:COMPATIBILITY GTUTYPE="WATERWAY_USER" DIRECTION="BOTH" />
-  </ots:LINKTYPE>
+  <ots:LinkType Id="WATERWAY" Default="true">
+    <ots:Compatibility GtuType="WATERWAY_USER" Direction="BOTH" />
+  </ots:LinkType>
 
-  <ots:LINKTYPE ID="RAILWAY" DEFAULT="true">
-    <ots:COMPATIBILITY GTUTYPE="RAILWAY_USER" DIRECTION="FORWARD" />
-  </ots:LINKTYPE>
+  <ots:LinkType Id="RAILWAY" Default="true">
+    <ots:Compatibility GtuType="RAILWAY_USER" Direction="FORWARD" />
+  </ots:LinkType>
 
-  <ots:LINKTYPE ID="CONNECTOR" DEFAULT="true">
-    <ots:COMPATIBILITY GTUTYPE="ROAD_USER" DIRECTION="FORWARD" />
-    <ots:COMPATIBILITY GTUTYPE="WATERWAY_USER" DIRECTION="FORWARD" />
-    <ots:COMPATIBILITY GTUTYPE="RAILWAY_USER" DIRECTION="FORWARD" />
-  </ots:LINKTYPE>
-</ots:LINKTYPES>
+  <ots:LinkType Id="CONNECTOR" Default="true">
+    <ots:Compatibility GtuType="ROAD_USER" Direction="FORWARD" />
+    <ots:Compatibility GtuType="WATERWAY_USER" Direction="FORWARD" />
+    <ots:Compatibility GtuType="RAILWAY_USER" Direction="FORWARD" />
+  </ots:LinkType>
+</ots:LinkTypes>

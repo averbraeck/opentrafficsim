@@ -49,16 +49,15 @@ import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
-import org.opentrafficsim.xml.generated.ANIMATION;
-import org.opentrafficsim.xml.generated.CONTROL;
-import org.opentrafficsim.xml.generated.GTUTEMPLATE;
-import org.opentrafficsim.xml.generated.LINK;
-import org.opentrafficsim.xml.generated.MODELTYPE;
-import org.opentrafficsim.xml.generated.NETWORK;
-import org.opentrafficsim.xml.generated.NETWORKDEMAND;
-import org.opentrafficsim.xml.generated.OTS;
-import org.opentrafficsim.xml.generated.ROADLAYOUT;
-import org.opentrafficsim.xml.generated.SCENARIO;
+import org.opentrafficsim.xml.generated.Animation;
+import org.opentrafficsim.xml.generated.Control;
+import org.opentrafficsim.xml.generated.GtuTemplate;
+import org.opentrafficsim.xml.generated.ModelType;
+import org.opentrafficsim.xml.generated.Network;
+import org.opentrafficsim.xml.generated.Demand;
+import org.opentrafficsim.xml.generated.Ots;
+import org.opentrafficsim.xml.generated.RoadLayout;
+import org.opentrafficsim.xml.generated.Scenario;
 import org.pmw.tinylog.Level;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -148,13 +147,13 @@ public final class XmlNetworkLaneParser implements Serializable
     /**
      * Parse an OTS XML input stream and build an OTS object.
      * @param xmlURL URL; the URL for the xml file or stream
-     * @return OTS; the constructed OTS object
+     * @return Ots; the constructed OTS object
      * @throws JAXBException when the parsing fails
      * @throws ParserConfigurationException on error with parser configuration
      * @throws SAXException on error creating SAX parser
      * @throws IOException if the URL does not exist
      */
-    public static OTS parseXml(final URL xmlURL) throws JAXBException, SAXException, ParserConfigurationException, IOException
+    public static Ots parseXml(final URL xmlURL) throws JAXBException, SAXException, ParserConfigurationException, IOException
     {
         return parseXml(xmlURL.openStream());
     }
@@ -162,14 +161,14 @@ public final class XmlNetworkLaneParser implements Serializable
     /**
      * Parse an OTS XML input stream and build an OTS object.
      * @param xmlStream inputStream; the xml stream
-     * @return OTS; the constructed OTS object
+     * @return Ots; the constructed OTS object
      * @throws JAXBException when the parsing fails
      * @throws ParserConfigurationException on error with parser configuration
      * @throws SAXException on error creating SAX parser
      */
-    public static OTS parseXml(final InputStream xmlStream) throws JAXBException, SAXException, ParserConfigurationException
+    public static Ots parseXml(final InputStream xmlStream) throws JAXBException, SAXException, ParserConfigurationException
     {
-        JAXBContext jc = JAXBContext.newInstance(OTS.class);
+        JAXBContext jc = JAXBContext.newInstance(Ots.class);
         Unmarshaller unmarshaller = jc.createUnmarshaller();
         SAXParserFactory spf = SAXParserFactory.newInstance();
         spf.setXIncludeAware(true);
@@ -178,7 +177,7 @@ public final class XmlNetworkLaneParser implements Serializable
         XMLReader xmlReader = spf.newSAXParser().getXMLReader();
         xmlReader.setEntityResolver(new DefaultsResolver());
         SAXSource saxSource = new SAXSource(xmlReader, new InputSource(xmlStream));
-        return (OTS) unmarshaller.unmarshal(saxSource);
+        return (Ots) unmarshaller.unmarshal(saxSource);
     }
 
     /**
@@ -210,7 +209,7 @@ public final class XmlNetworkLaneParser implements Serializable
 
     /**
      * Build the network from an OTS object (probably constructed by parsing an OTS XML file; e.g. the parseXML method).
-     * @param ots OTS; the OTS object
+     * @param ots Ots; the OTS object
      * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
      * @param buildConflicts boolean; whether to build conflicts or not
      * @return the experiment based on the information in the RUN tag
@@ -227,7 +226,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws IOException when construction of a traffic controller fails
      * @throws MalformedURLException when construction of a traffic controller fails
      */
-    public static ExperimentRunControl<Duration> build(final OTS ots, final RoadNetwork otsNetwork,
+    public static ExperimentRunControl<Duration> build(final Ots ots, final RoadNetwork otsNetwork,
             final boolean buildConflicts) throws JAXBException, URISyntaxException, NetworkException, OtsGeometryException,
             XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GtuException,
             MalformedURLException, IOException, TrafficControlException
@@ -237,12 +236,12 @@ public final class XmlNetworkLaneParser implements Serializable
 
         StreamSeedInformation streamInformation = new StreamSeedInformation();
         ExperimentRunControl<Duration> runControl =
-                RunParser.parseRun(otsNetwork.getId(), ots.getRUN(), streamInformation, otsNetwork.getSimulator());
+                RunParser.parseRun(otsNetwork.getId(), ots.getRun(), streamInformation, otsNetwork.getSimulator());
 
-        Map<String, ROADLAYOUT> roadLayoutMap = new LinkedHashMap<>();
-        Map<String, GTUTEMPLATE> gtuTemplates = new LinkedHashMap<>();
+        Map<String, RoadLayout> roadLayoutMap = new LinkedHashMap<>();
+        Map<String, GtuTemplate> gtuTemplates = new LinkedHashMap<>();
         Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap = new LinkedHashMap<>();
-        Definitions definitions = DefinitionsParser.parseDefinitions(ots.getDEFINITIONS(), true, roadLayoutMap, gtuTemplates,
+        Definitions definitions = DefinitionsParser.parseDefinitions(ots.getDefinitions(), true, roadLayoutMap, gtuTemplates,
                 streamInformation, linkTypeSpeedLimitMap);
 
         // TODO: remove this, we need a default_detectortypes.xml
@@ -251,15 +250,15 @@ public final class XmlNetworkLaneParser implements Serializable
         definitions.add(DetectorType.class, DefaultsRoadNl.LOOP_DETECTOR);
         definitions.add(DetectorType.class, DefaultsRoadNl.TRAFFIC_LIGHT);
 
-        NETWORK network = ots.getNETWORK();
+        Network network = ots.getNetwork();
         Map<String, Direction> nodeDirections = NetworkParser.calculateNodeAngles(otsNetwork, network);
         NetworkParser.parseNodes(otsNetwork, network, nodeDirections);
         NetworkParser.parseLinks(otsNetwork, definitions, network, nodeDirections, otsNetwork.getSimulator());
         NetworkParser.applyRoadLayout(otsNetwork, definitions, network, otsNetwork.getSimulator(), roadLayoutMap,
                 linkTypeSpeedLimitMap);
 
-        List<NETWORKDEMAND> demands = ots.getNETWORKDEMAND();
-        for (NETWORKDEMAND demand : demands)
+        List<Demand> demands = ots.getDemand();
+        for (Demand demand : demands)
         {
             GeneratorSinkParser.parseRoutes(otsNetwork, definitions, demand);
             GeneratorSinkParser.parseShortestRoutes(otsNetwork, definitions, demand);
@@ -272,7 +271,7 @@ public final class XmlNetworkLaneParser implements Serializable
             GeneratorSinkParser.parseSinks(otsNetwork, demand, otsNetwork.getSimulator(), definitions);
         }
 
-        List<MODELTYPE> models = ots.getMODEL();
+        List<ModelType> models = ots.getModel();
 
         // TODO: parse input parameters
         InputParameters inputParameters = new InputParameters()
@@ -301,10 +300,10 @@ public final class XmlNetworkLaneParser implements Serializable
         Map<String, ParameterType<?>> parameterTypes = new LinkedHashMap<>();
         Map<String, ParameterFactory> parameterFactories =
                 ModelParser.parseParameters(definitions, models, inputParameters, parameterTypes, streamInformation);
-        DefinitionsParser.parseParameterTypes(ots.getDEFINITIONS(), parameterTypes);
+        DefinitionsParser.parseParameterTypes(ots.getDefinitions(), parameterTypes);
         Map<String, LaneBasedStrategicalPlannerFactory<?>> factories = ModelParser.parseModel(otsNetwork, models,
                 inputParameters, parameterTypes, streamInformation, parameterFactories);
-        Map<String, String> modelIdReferrals = ScenarioParser.parseModelIdReferral(ots.getSCENARIO(), ots.getNETWORKDEMAND());
+        Map<String, String> modelIdReferrals = ScenarioParser.parseModelIdReferral(ots.getScenario(), ots.getDemand());
         try
         {
             List<LaneBasedGtuGenerator> generators = OdParser.parseDemand(otsNetwork, definitions, demands, gtuTemplates,
@@ -321,18 +320,18 @@ public final class XmlNetworkLaneParser implements Serializable
         {
             otsNetwork.getSimulator().getLogger().always().info("Generating conflicts");
             Map<String, Set<Link>> conflictCandidateMap = new LinkedHashMap<String, Set<Link>>();
-            for (Object o : network.getIncludeOrNODEOrCONNECTOR())
+            for (Object o : network.getIncludeOrNodeOrConnector())
             {
-                if (o instanceof LINK)
+                if (o instanceof org.opentrafficsim.xml.generated.Link)
                 {
-                    LINK link = (LINK) o;
-                    if (link.getCONFLICTID() != null)
+                    org.opentrafficsim.xml.generated.Link link = (org.opentrafficsim.xml.generated.Link) o;
+                    if (link.getConflictId() != null)
                     {
-                        if (!conflictCandidateMap.containsKey(link.getCONFLICTID()))
+                        if (!conflictCandidateMap.containsKey(link.getConflictId()))
                         {
-                            conflictCandidateMap.put(link.getCONFLICTID(), new LinkedHashSet<Link>());
+                            conflictCandidateMap.put(link.getConflictId(), new LinkedHashSet<Link>());
                         }
-                        conflictCandidateMap.get(link.getCONFLICTID()).add(otsNetwork.getLink(link.getID()));
+                        conflictCandidateMap.get(link.getConflictId()).add(otsNetwork.getLink(link.getId()));
                     }
                 }
             }
@@ -378,10 +377,10 @@ public final class XmlNetworkLaneParser implements Serializable
             generator.addListener(listener, LaneBasedGtuGenerator.GTU_GENERATED_EVENT);
         }*/
 
-        List<CONTROL> controls = ots.getCONTROL();
-        List<MODELTYPE> modelParameters = ots.getMODEL();
-        List<SCENARIO> scenario = ots.getSCENARIO();
-        ANIMATION animation = ots.getANIMATION();
+        List<Control> controls = ots.getControl();
+        List<ModelType> modelParameters = ots.getModel();
+        List<Scenario> scenario = ots.getScenario();
+        Animation animation = ots.getAnimation();
 
         ControlParser.parseControl(otsNetwork, otsNetwork.getSimulator(), controls, definitions);
 

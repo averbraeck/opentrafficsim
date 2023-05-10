@@ -1,45 +1,45 @@
-<ots:GTUTYPES xmlns:ots="http://www.opentrafficsim.org/ots" 
+<ots:GtuTypes xmlns:ots="http://www.opentrafficsim.org/ots" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
   xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions.xsd">
 
 <!--
-        ROAD_USER = new GTUType("ROAD_USER", null);
-        WATERWAY_USER = new GTUType("WATERWAY_USER", null);
-        RAILWAY_USER = new GTUType("RAILWAY_USER", null);
+        ROAD_USER = new GtuType("ROAD_USER", null);
+        WATERWAY_USER = new GtuType("WATERWAY_USER", null);
+        RAILWAY_USER = new GtuType("RAILWAY_USER", null);
 
-        SHIP = new GTUType("SHIP", WATERWAY_USER);
-        TRAIN = new GTUType("TRAIN", RAILWAY_USER);
-        PEDESTRIAN = new GTUType("PEDESTRIAN", ROAD_USER);
-        BICYCLE = new GTUType("BICYCLE", ROAD_USER);
-        MOPED = new GTUType("MOPED", BICYCLE);
+        SHIP = new GtuType("SHIP", WATERWAY_USER);
+        TRAIN = new GtuType("TRAIN", RAILWAY_USER);
+        PEDESTRIAN = new GtuType("PEDESTRIAN", ROAD_USER);
+        BICYCLE = new GtuType("BICYCLE", ROAD_USER);
+        MOPED = new GtuType("MOPED", BICYCLE);
 
-        VEHICLE = new GTUType("VEHICLE", ROAD_USER);
-        EMERGENCY_VEHICLE = new GTUType("EMERGENCY_VEHICLE", VEHICLE);
-        CAR = new GTUType("CAR", VEHICLE);
-        VAN = new GTUType("VAN", VEHICLE);
-        BUS = new GTUType("BUS", VEHICLE);
-        TRUCK = new GTUType("TRUCK", VEHICLE);
-        SCHEDULED_BUS = new GTUType("SCHEDULED BUS", BUS); 
+        VEHICLE = new GtuType("VEHICLE", ROAD_USER);
+        EMERGENCY_VEHICLE = new GtuType("EMERGENCY_VEHICLE", VEHICLE);
+        CAR = new GtuType("CAR", VEHICLE);
+        VAN = new GtuType("VAN", VEHICLE);
+        BUS = new GtuType("BUS", VEHICLE);
+        TRUCK = new GtuType("TRUCK", VEHICLE);
+        SCHEDULED_BUS = new GtuType("SCHEDULED BUS", BUS); 
  -->
 
-	<ots:GTUTYPE ID="NONE" DEFAULT="true" />
+	<ots:GtuType Id="NONE" Default="true" />
 
-	<ots:GTUTYPE ID="ROAD_USER" DEFAULT="true" />
-	<ots:GTUTYPE ID="WATERWAY_USER" DEFAULT="true" />
-	<ots:GTUTYPE ID="RAILWAY_USER" DEFAULT="true" />
+	<ots:GtuType Id="ROAD_USER" Default="true" />
+	<ots:GtuType Id="WATERWAY_USER" Default="true" />
+	<ots:GtuType Id="RAILWAY_USER" Default="true" />
 
-	<ots:GTUTYPE ID="SHIP" PARENT="WATERWAY_USER" DEFAULT="true" />
-	<ots:GTUTYPE ID="TRAIN" PARENT="RAILWAY_USER" DEFAULT="true" />
-	<ots:GTUTYPE ID="PEDESTRIAN" PARENT="ROAD_USER" DEFAULT="true" />
-	<ots:GTUTYPE ID="BICYCLE" PARENT="ROAD_USER" DEFAULT="true" />
-	<ots:GTUTYPE ID="MOPED" PARENT="BICYCLE" DEFAULT="true" />
+	<ots:GtuType Id="SHIP" Parent="WATERWAY_USER" Default="true" />
+	<ots:GtuType Id="TRAIN" Parent="RAILWAY_USER" Default="true" />
+	<ots:GtuType Id="PEDESTRIAN" Parent="ROAD_USER" Default="true" />
+	<ots:GtuType Id="BICYCLE" Parent="ROAD_USER" Default="true" />
+	<ots:GtuType Id="MOPED" Parent="BICYCLE" Default="true" />
 
-	<ots:GTUTYPE ID="VEHICLE" PARENT="ROAD_USER" DEFAULT="true" />
-	<ots:GTUTYPE ID="EMERGENCY_VEHICLE" PARENT="VEHICLE" DEFAULT="true" />
-	<ots:GTUTYPE ID="CAR" PARENT="VEHICLE" DEFAULT="true" />
-	<ots:GTUTYPE ID="VAN" PARENT="VEHICLE" DEFAULT="true" />
-	<ots:GTUTYPE ID="BUS" PARENT="VEHICLE" DEFAULT="true" />
-	<ots:GTUTYPE ID="TRUCK" PARENT="VEHICLE" DEFAULT="true" />
-	<ots:GTUTYPE ID="SCHEDULED_BUS" PARENT="BUS" DEFAULT="true" />
+	<ots:GtuType Id="VEHICLE" Parent="ROAD_USER" Default="true" />
+	<ots:GtuType Id="EMERGENCY_VEHICLE" Parent="VEHICLE" Default="true" />
+	<ots:GtuType Id="CAR" Parent="VEHICLE" Default="true" />
+	<ots:GtuType Id="VAN" Parent="VEHICLE" Default="true" />
+	<ots:GtuType Id="BUS" Parent="VEHICLE" Default="true" />
+	<ots:GtuType Id="TRUCK" Parent="VEHICLE" Default="true" />
+	<ots:GtuType Id="SCHEDULED_BUS" Parent="BUS" Default="true" />
 
-</ots:GTUTYPES>
+</ots:GtuTypes>

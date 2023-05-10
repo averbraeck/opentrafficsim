@@ -3,7 +3,7 @@
   xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../../ots-xsd/src/main/resources/xsd/1.03.00/ots.xsd"
   xmlns:xi="http://www.w3.org/2001/XInclude">
 
-  <DEFINITIONS>
+  <Definitions>
     <xi:include href="https://opentrafficsim.org/docs/xsd/1.03.00/defaults/default_gtutypes.xml">
       <xi:fallback>
         <xi:include href="../xsd/1.03.00/defaults/default_gtutypes.xml">
@@ -44,662 +44,662 @@
       </xi:fallback>
     </xi:include>
 
-    <LANETYPES>
-      <LANETYPE ID="STREET">
-        <COMPATIBILITY GTUTYPE="ROAD_USER" DIRECTION="FORWARD" />
-      </LANETYPE>
-    </LANETYPES>
+    <LaneTypes>
+      <LaneType Id="STREET">
+        <Compatibility GtuType="ROAD_USER" Direction="FORWARD" />
+      </LaneType>
+    </LaneTypes>
 
     <GTUTYPES>
-      <!-- <GTUTYPE PARENT="ROAD_USER" ID="CAR" /> <GTUTYPE PARENT="ROAD_USER" ID="TRUCK" /> -->
+      <!-- <GTUTYPE PARENT="ROAD_USER" Id="CAR" /> <GTUTYPE PARENT="ROAD_USER" Id="TRUCK" /> -->
     </GTUTYPES>
 
-    <GTUTEMPLATES>
-      <GTUTEMPLATE GTUTYPE="CAR" ID="CARS">
-        <LENGTHDIST LENGTHUNIT="m">
-          <UNIFORM MIN="4" MAX="7" />
-        </LENGTHDIST>
-        <WIDTHDIST LENGTHUNIT="m">
-          <UNIFORM MIN="1.7" MAX="2" />
-        </WIDTHDIST>
-        <MAXSPEEDDIST SPEEDUNIT="km/h">
+    <GtuTemplates>
+      <GtuTemplate GtuType="CAR" Id="CARS">
+        <LengthDist LengthUnit="m">
+          <UNIFORM Min="4" Max="7" />
+        </LengthDist>
+        <WidthDist LengthUnit="m">
+          <UNIFORM Min="1.7" Max="2" />
+        </WidthDist>
+        <MaxSpeedDist SpeedUnit="km/h">
           <CONSTANT C="120" />
-        </MAXSPEEDDIST>
-      </GTUTEMPLATE>
-      <GTUTEMPLATE GTUTYPE="TRUCK" ID="TRUCKS">
-        <LENGTHDIST LENGTHUNIT="m">
-          <UNIFORM MIN="16" MAX="24" />
-        </LENGTHDIST>
-        <WIDTHDIST LENGTHUNIT="m">
-          <UNIFORM MIN="2.2" MAX="2.7" />
-        </WIDTHDIST>
-        <MAXSPEEDDIST SPEEDUNIT="km/h">
+        </MaxSpeedDist>
+      </GtuTemplate>
+      <GtuTemplate GtuType="TRUCK" Id="TRUCKS">
+        <LengthDist LengthUnit="m">
+          <UNIFORM Min="16" Max="24" />
+        </LengthDist>
+        <WidthDist LengthUnit="m">
+          <UNIFORM Min="2.2" Max="2.7" />
+        </WidthDist>
+        <MaxSpeedDist SpeedUnit="km/h">
           <CONSTANT C="100" />
-        </MAXSPEEDDIST>
+        </MaxSpeedDist>
 
-      </GTUTEMPLATE>
-    </GTUTEMPLATES>
+      </GtuTemplate>
+    </GtuTemplates>
 
-    <LINKTYPES>
-      <LINKTYPE ID="STREET">
-        <COMPATIBILITY GTUTYPE="ROAD_USER" DIRECTION="FORWARD" />
-      </LINKTYPE>
-    </LINKTYPES>
+    <LinkTypes>
+      <LinkType Id="STREET">
+        <Compatibility GtuType="ROAD_USER" Direction="FORWARD" />
+      </LinkType>
+    </LinkTypes>
 
-    <ROADLAYOUTS>
-      <ROADLAYOUT ID="r1" LINKTYPE="STREET">
+    <RoadLayouts>
+      <RoadLayout Id="r1" LinkType="STREET">
         <SHOULDER>
           <WIDTH>2m</WIDTH>
         </SHOULDER>
-        <STRIPE TYPE="SOLID">
+        <STRIPE Type="SOLID">
         </STRIPE>
-        <LANE ID="FORWARD3" LANETYPE="STREET" DESIGNDIRECTION="true">
+        <LANE Id="FORWARD3" LaneType="STREET" DesignDirection="true">
           <WIDTH>3.3m</WIDTH>
-          <SPEEDLIMIT GTUTYPE="CAR" LEGALSPEEDLIMIT="50 km/h"></SPEEDLIMIT>
+          <SPEEDLIMIT GtuType="CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
         </LANE>
-        <STRIPE TYPE="DASHED">
+        <STRIPE Type="DASHED">
         </STRIPE>
-        <LANE ID="FORWARD2" LANETYPE="STREET" DESIGNDIRECTION="true">
-          <CENTEROFFSET>-6.2m</CENTEROFFSET>
+        <LANE Id="FORWARD2" LaneType="STREET" DesignDirection="true">
+          <CenterOffset>-6.2m</CenterOffset>
           <WIDTH>3.3m</WIDTH>
-          <SPEEDLIMIT GTUTYPE="CAR" LEGALSPEEDLIMIT="50 km/h"></SPEEDLIMIT>
+          <SPEEDLIMIT GtuType="CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
         </LANE>
-        <STRIPE TYPE="DASHED">
+        <STRIPE Type="DASHED">
         </STRIPE>
-        <LANE ID="FORWARD1" LANETYPE="STREET" DESIGNDIRECTION="true">
+        <LANE Id="FORWARD1" LaneType="STREET" DesignDirection="true">
           <WIDTH>3.3m</WIDTH>
-          <SPEEDLIMIT GTUTYPE="CAR" LEGALSPEEDLIMIT="50 km/h"></SPEEDLIMIT>
+          <SPEEDLIMIT GtuType="CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
         </LANE>
-        <STRIPE TYPE="SOLID">
+        <STRIPE Type="SOLID">
         </STRIPE>
-      </ROADLAYOUT>
+      </RoadLayout>
 
-      <ROADLAYOUT ID="r1g" LINKTYPE="STREET">
+      <RoadLayout Id="r1g" LinkType="STREET">
         <SHOULDER>
           <WIDTH>2m</WIDTH>
         </SHOULDER>
-        <STRIPE TYPE="SOLID">
+        <STRIPE Type="SOLID">
         </STRIPE>
-        <LANE ID="FORWARD3" LANETYPE="STREET" DESIGNDIRECTION="true">
-          <CENTEROFFSETSTART>-6.2m</CENTEROFFSETSTART>
-          <CENTEROFFSETEND>-9.5m</CENTEROFFSETEND>
+        <LANE Id="FORWARD3" LaneType="STREET" DesignDirection="true">
+          <CenterOffsetStart>-6.2m</CenterOffsetStart>
+          <CenterOffsetEnd>-9.5m</CenterOffsetEnd>
           <WIDTH>3.3m</WIDTH>
-          <SPEEDLIMIT GTUTYPE="CAR" LEGALSPEEDLIMIT="50 km/h"></SPEEDLIMIT>
+          <SPEEDLIMIT GtuType="CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
         </LANE>
-        <STRIPE TYPE="DASHED">
-          <CENTEROFFSET>-7.85m</CENTEROFFSET>
+        <STRIPE Type="DASHED">
+          <CenterOffset>-7.85m</CenterOffset>
         </STRIPE>
-        <LANE ID="FORWARD2" LANETYPE="STREET" DESIGNDIRECTION="true">
-          <CENTEROFFSET>-6.2m</CENTEROFFSET>
+        <LANE Id="FORWARD2" LaneType="STREET" DesignDirection="true">
+          <CenterOffset>-6.2m</CenterOffset>
           <WIDTH>3.3m</WIDTH>
-          <SPEEDLIMIT GTUTYPE="CAR" LEGALSPEEDLIMIT="50 km/h"></SPEEDLIMIT>
+          <SPEEDLIMIT GtuType="CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
         </LANE>
-        <STRIPE TYPE="DASHED">
-          <CENTEROFFSET>-4.55m</CENTEROFFSET>
+        <STRIPE Type="DASHED">
+          <CenterOffset>-4.55m</CenterOffset>
         </STRIPE>
-        <LANE ID="FORWARD1" LANETYPE="STREET" DESIGNDIRECTION="true">
-          <CENTEROFFSETSTART>-6.2m</CENTEROFFSETSTART>
-          <CENTEROFFSETEND>-2.9m</CENTEROFFSETEND>
+        <LANE Id="FORWARD1" LaneType="STREET" DesignDirection="true">
+          <CenterOffsetStart>-6.2m</CenterOffsetStart>
+          <CenterOffsetEnd>-2.9m</CenterOffsetEnd>
           <WIDTH>3.3m</WIDTH>
-          <SPEEDLIMIT GTUTYPE="CAR" LEGALSPEEDLIMIT="50 km/h"></SPEEDLIMIT>
+          <SPEEDLIMIT GtuType="CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
         </LANE>
-        <STRIPE TYPE="SOLID">
+        <STRIPE Type="SOLID">
         </STRIPE>
-      </ROADLAYOUT>
+      </RoadLayout>
 
-      <ROADLAYOUT ID="r2r" LINKTYPE="STREET">
+      <RoadLayout Id="r2r" LinkType="STREET">
         <SHOULDER>
-          <CENTEROFFSET>-8.8m</CENTEROFFSET>
+          <CenterOffset>-8.8m</CenterOffset>
           <WIDTH>2m</WIDTH>
         </SHOULDER>
-        <STRIPE TYPE="SOLID">
-          <CENTEROFFSET>-7.8m</CENTEROFFSET>
+        <STRIPE Type="SOLID">
+          <CenterOffset>-7.8m</CenterOffset>
         </STRIPE>
-        <LANE ID="FORWARD" LANETYPE="STREET" DESIGNDIRECTION="true">
-          <CENTEROFFSET>-6.2m</CENTEROFFSET>
+        <LANE Id="FORWARD" LaneType="STREET" DesignDirection="true">
+          <CenterOffset>-6.2m</CenterOffset>
           <WIDTH>3.3m</WIDTH>
-          <SPEEDLIMIT GTUTYPE="CAR" LEGALSPEEDLIMIT="50 km/h"></SPEEDLIMIT>
+          <SPEEDLIMIT GtuType="CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
         </LANE>
-        <STRIPE TYPE="SOLID">
-          <CENTEROFFSET>-4.6m</CENTEROFFSET>
+        <STRIPE Type="SOLID">
+          <CenterOffset>-4.6m</CenterOffset>
         </STRIPE>
-      </ROADLAYOUT>
+      </RoadLayout>
 
-      <ROADLAYOUT ID="r2l" LINKTYPE="STREET">
+      <RoadLayout Id="r2l" LinkType="STREET">
         <SHOULDER>
-          <CENTEROFFSET>-8.8m</CENTEROFFSET>
+          <CenterOffset>-8.8m</CenterOffset>
           <WIDTH>2m</WIDTH>
         </SHOULDER>
-        <STRIPE TYPE="SOLID">
-          <CENTEROFFSET>-7.8m</CENTEROFFSET>
+        <STRIPE Type="SOLID">
+          <CenterOffset>-7.8m</CenterOffset>
         </STRIPE>
-        <LANE ID="FORWARD" LANETYPE="STREET" DESIGNDIRECTION="true">
-          <CENTEROFFSET>-6.2m</CENTEROFFSET>
+        <LANE Id="FORWARD" LaneType="STREET" DesignDirection="true">
+          <CenterOffset>-6.2m</CenterOffset>
           <WIDTH>3.3m</WIDTH>
-          <SPEEDLIMIT GTUTYPE="CAR" LEGALSPEEDLIMIT="50 km/h"></SPEEDLIMIT>
+          <SPEEDLIMIT GtuType="CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
         </LANE>
-        <STRIPE TYPE="SOLID">
-          <CENTEROFFSET>-4.6m</CENTEROFFSET>
+        <STRIPE Type="SOLID">
+          <CenterOffset>-4.6m</CenterOffset>
         </STRIPE>
-        <!-- <NOTRAFFICLANE> <CENTEROFFSET>0m</CENTEROFFSET> <WIDTH>2.5m</WIDTH> </NOTRAFFICLANE> -->
-      </ROADLAYOUT>
+        <!-- <NoTrafficLane> <CenterOffset>0m</CenterOffset> <WIDTH>2.5m</WIDTH> </NoTrafficLane> -->
+      </RoadLayout>
 
-      <ROADLAYOUT ID="r3" LINKTYPE="STREET">
-        <STRIPE TYPE="SOLID">
-          <CENTEROFFSET>-4.6m</CENTEROFFSET>
+      <RoadLayout Id="r3" LinkType="STREET">
+        <STRIPE Type="SOLID">
+          <CenterOffset>-4.6m</CenterOffset>
         </STRIPE>
-        <LANE ID="FORWARD" LANETYPE="STREET" DESIGNDIRECTION="true">
-          <CENTEROFFSET>-6.2m</CENTEROFFSET>
+        <LANE Id="FORWARD" LaneType="STREET" DesignDirection="true">
+          <CenterOffset>-6.2m</CenterOffset>
           <WIDTH>3.3m</WIDTH>
-          <SPEEDLIMIT GTUTYPE="CAR" LEGALSPEEDLIMIT="50 km/h"></SPEEDLIMIT>
+          <SPEEDLIMIT GtuType="CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
         </LANE>
-        <STRIPE TYPE="SOLID">
-          <CENTEROFFSET>-7.8m</CENTEROFFSET>
+        <STRIPE Type="SOLID">
+          <CenterOffset>-7.8m</CenterOffset>
         </STRIPE>
-      </ROADLAYOUT>
+      </RoadLayout>
 
-      <ROADLAYOUT ID="r4" LINKTYPE="STREET">
-        <!-- <NOTRAFFICLANE> <CENTEROFFSET>-2.3m</CENTEROFFSET> <WIDTH>4.6m</WIDTH> </NOTRAFFICLANE> -->
-        <STRIPE TYPE="SOLID">
-          <CENTEROFFSET>-4.6m</CENTEROFFSET>
+      <RoadLayout Id="r4" LinkType="STREET">
+        <!-- <NoTrafficLane> <CenterOffset>-2.3m</CenterOffset> <WIDTH>4.6m</WIDTH> </NoTrafficLane> -->
+        <STRIPE Type="SOLID">
+          <CenterOffset>-4.6m</CenterOffset>
         </STRIPE>
-        <LANE ID="FORWARD" LANETYPE="STREET" DESIGNDIRECTION="true">
-          <CENTEROFFSET>-6.2m</CENTEROFFSET>
+        <LANE Id="FORWARD" LaneType="STREET" DesignDirection="true">
+          <CenterOffset>-6.2m</CenterOffset>
           <WIDTH>3.3m</WIDTH>
-          <SPEEDLIMIT GTUTYPE="CAR" LEGALSPEEDLIMIT="50 km/h"></SPEEDLIMIT>
+          <SPEEDLIMIT GtuType="CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
         </LANE>
-        <STRIPE TYPE="SOLID">
-          <CENTEROFFSET>-7.8m</CENTEROFFSET>
+        <STRIPE Type="SOLID">
+          <CenterOffset>-7.8m</CenterOffset>
         </STRIPE>
         <SHOULDER>
-          <CENTEROFFSET>-8.8m</CENTEROFFSET>
+          <CenterOffset>-8.8m</CenterOffset>
           <WIDTH>2m</WIDTH>
         </SHOULDER>
-      </ROADLAYOUT>
-    </ROADLAYOUTS>
-  </DEFINITIONS>
-  <NETWORK>
-    <NODE ID="N" COORDINATE="(0,300)" DIRECTION="270 deg(E)" />
-    <NODE ID="E" COORDINATE="(300,0)" DIRECTION="180 deg(E)" />
-    <NODE ID="S" COORDINATE="(0,-300)" DIRECTION="90 deg(E)" />
-    <NODE ID="W" COORDINATE="(-300,0)" DIRECTION="0 deg(E)" />
-    <NODE ID="NO" COORDINATE="(0,300)" DIRECTION="90 deg(E)" />
-    <NODE ID="EO" COORDINATE="(300,0)" DIRECTION="0 deg(E)" />
-    <NODE ID="SO" COORDINATE="(0,-300)" DIRECTION="270 deg(E)" />
-    <NODE ID="WO" COORDINATE="(-300,0)" DIRECTION="180 deg(E)" />
-    <NODE ID="N1" COORDINATE="(0,240)" DIRECTION="270 deg(E)" />
-    <NODE ID="E1" COORDINATE="(240,0)" DIRECTION="180 deg(E)" />
-    <NODE ID="S1" COORDINATE="(0,-240)" DIRECTION="90 deg(E)" />
-    <NODE ID="W1" COORDINATE="(-240,0)" DIRECTION="0 deg(E)" />
-    <NODE ID="N2" COORDINATE="(0,200)" DIRECTION="270 deg(E)" />
-    <NODE ID="E2" COORDINATE="(200,0)" DIRECTION="180 deg(E)" />
-    <NODE ID="S2" COORDINATE="(0,-200)" DIRECTION="90 deg(E)" />
-    <NODE ID="W2" COORDINATE="(-200,0)" DIRECTION="0 deg(E)" />
-    <NODE ID="NC" COORDINATE="(0,20)" DIRECTION="270 deg(E)" />
-    <NODE ID="EC" COORDINATE="(20,0)" DIRECTION="180 deg(E)" />
-    <NODE ID="SC" COORDINATE="(0,-20)" DIRECTION="90 deg(E)" />
-    <NODE ID="WC" COORDINATE="(-20,0)" DIRECTION="0 deg(E)" />
-    <NODE ID="NCO" COORDINATE="(0,20)" DIRECTION="90 deg(E)" />
-    <NODE ID="ECO" COORDINATE="(20,0)" DIRECTION="0 deg(E)" />
-    <NODE ID="SCO" COORDINATE="(0,-20)" DIRECTION="270 deg(E)" />
-    <NODE ID="WCO" COORDINATE="(-20,0)" DIRECTION="180 deg(E)" />
+      </RoadLayout>
+    </RoadLayouts>
+  </Definitions>
+  <Network>
+    <NODE Id="N" Coordinate="(0,300)" Direction="270 deg(E)" />
+    <NODE Id="E" Coordinate="(300,0)" Direction="180 deg(E)" />
+    <NODE Id="S" Coordinate="(0,-300)" Direction="90 deg(E)" />
+    <NODE Id="W" Coordinate="(-300,0)" Direction="0 deg(E)" />
+    <NODE Id="NO" Coordinate="(0,300)" Direction="90 deg(E)" />
+    <NODE Id="EO" Coordinate="(300,0)" Direction="0 deg(E)" />
+    <NODE Id="SO" Coordinate="(0,-300)" Direction="270 deg(E)" />
+    <NODE Id="WO" Coordinate="(-300,0)" Direction="180 deg(E)" />
+    <NODE Id="N1" Coordinate="(0,240)" Direction="270 deg(E)" />
+    <NODE Id="E1" Coordinate="(240,0)" Direction="180 deg(E)" />
+    <NODE Id="S1" Coordinate="(0,-240)" Direction="90 deg(E)" />
+    <NODE Id="W1" Coordinate="(-240,0)" Direction="0 deg(E)" />
+    <NODE Id="N2" Coordinate="(0,200)" Direction="270 deg(E)" />
+    <NODE Id="E2" Coordinate="(200,0)" Direction="180 deg(E)" />
+    <NODE Id="S2" Coordinate="(0,-200)" Direction="90 deg(E)" />
+    <NODE Id="W2" Coordinate="(-200,0)" Direction="0 deg(E)" />
+    <NODE Id="NC" Coordinate="(0,20)" Direction="270 deg(E)" />
+    <NODE Id="EC" Coordinate="(20,0)" Direction="180 deg(E)" />
+    <NODE Id="SC" Coordinate="(0,-20)" Direction="90 deg(E)" />
+    <NODE Id="WC" Coordinate="(-20,0)" Direction="0 deg(E)" />
+    <NODE Id="NCO" Coordinate="(0,20)" Direction="90 deg(E)" />
+    <NODE Id="ECO" Coordinate="(20,0)" Direction="0 deg(E)" />
+    <NODE Id="SCO" Coordinate="(0,-20)" Direction="270 deg(E)" />
+    <NODE Id="WCO" Coordinate="(-20,0)" Direction="180 deg(E)" />
 
-    <LINK ID="NN1" NODESTART="N" NODEEND="N1" TYPE="STREET">
-      <STRAIGHT />
-      <DEFINEDLAYOUT>r2l</DEFINEDLAYOUT>
+    <LINK Id="NN1" NodeStart="N" NodeEnd="N1" Type="STREET">
+      <Straight />
+      <DefinedLayout>r2l</DefinedLayout>
     </LINK>
 
-    <LINK ID="N1N2" NODESTART="N1" NODEEND="N2" TYPE="STREET">
-      <STRAIGHT />
-      <DEFINEDLAYOUT>r1g</DEFINEDLAYOUT>
+    <LINK Id="N1N2" NodeStart="N1" NodeEnd="N2" Type="STREET">
+      <Straight />
+      <DefinedLayout>r1g</DefinedLayout>
     </LINK>
 
-    <LINK ID="N2NC" NODESTART="N2" NODEEND="NC" TYPE="STREET">
-      <STRAIGHT />
-      <DEFINEDLAYOUT>r1</DEFINEDLAYOUT>
-      <TRAFFICLIGHT LANE="FORWARD3"
-        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="10" POSITION="END-0.00m" />
-      <TRAFFICLIGHT LANE="FORWARD2"
-        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="11" POSITION="END-0.00m" />
-      <TRAFFICLIGHT LANE="FORWARD1"
-        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="12" POSITION="END-0.00m" />
+    <LINK Id="N2NC" NodeStart="N2" NodeEnd="NC" Type="STREET">
+      <Straight />
+      <DefinedLayout>r1</DefinedLayout>
+      <TRAFFICLIGHT Lane="FORWARD3"
+        Class="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" Id="10" Position="END-0.00m" />
+      <TRAFFICLIGHT Lane="FORWARD2"
+        Class="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" Id="11" Position="END-0.00m" />
+      <TRAFFICLIGHT Lane="FORWARD1"
+        Class="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" Id="12" Position="END-0.00m" />
     </LINK>
 
-    <LINK ID="EE1" NODESTART="E" NODEEND="E1" TYPE="STREET">
-      <STRAIGHT />
-      <DEFINEDLAYOUT>r2l</DEFINEDLAYOUT>
+    <LINK Id="EE1" NodeStart="E" NodeEnd="E1" Type="STREET">
+      <Straight />
+      <DefinedLayout>r2l</DefinedLayout>
     </LINK>
 
-    <LINK ID="E1E2" NODESTART="E1" NODEEND="E2" TYPE="STREET">
-      <STRAIGHT />
-      <DEFINEDLAYOUT>r1g</DEFINEDLAYOUT>
+    <LINK Id="E1E2" NodeStart="E1" NodeEnd="E2" Type="STREET">
+      <Straight />
+      <DefinedLayout>r1g</DefinedLayout>
     </LINK>
 
-    <LINK ID="E2EC" NODESTART="E2" NODEEND="EC" TYPE="STREET">
-      <STRAIGHT />
-      <DEFINEDLAYOUT>r1</DEFINEDLAYOUT>
-      <TRAFFICLIGHT LANE="FORWARD3"
-        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="01" POSITION="END-0.00m" />
-      <TRAFFICLIGHT LANE="FORWARD2"
-        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="02" POSITION="END-0.00m" />
-      <TRAFFICLIGHT LANE="FORWARD1"
-        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="03" POSITION="END-0.00m" />
+    <LINK Id="E2EC" NodeStart="E2" NodeEnd="EC" Type="STREET">
+      <Straight />
+      <DefinedLayout>r1</DefinedLayout>
+      <TRAFFICLIGHT Lane="FORWARD3"
+        Class="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" Id="01" Position="END-0.00m" />
+      <TRAFFICLIGHT Lane="FORWARD2"
+        Class="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" Id="02" Position="END-0.00m" />
+      <TRAFFICLIGHT Lane="FORWARD1"
+        Class="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" Id="03" Position="END-0.00m" />
     </LINK>
 
-    <LINK ID="SS1" NODESTART="S" NODEEND="S1" TYPE="STREET">
-      <STRAIGHT />
-      <DEFINEDLAYOUT>r2l</DEFINEDLAYOUT>
+    <LINK Id="SS1" NodeStart="S" NodeEnd="S1" Type="STREET">
+      <Straight />
+      <DefinedLayout>r2l</DefinedLayout>
     </LINK>
 
-    <LINK ID="S1S2" NODESTART="S1" NODEEND="S2" TYPE="STREET">
-      <STRAIGHT />
-      <DEFINEDLAYOUT>r1g</DEFINEDLAYOUT>
+    <LINK Id="S1S2" NodeStart="S1" NodeEnd="S2" Type="STREET">
+      <Straight />
+      <DefinedLayout>r1g</DefinedLayout>
     </LINK>
 
-    <LINK ID="S2SC" NODESTART="S2" NODEEND="SC" TYPE="STREET">
-      <STRAIGHT />
-      <DEFINEDLAYOUT>r1</DEFINEDLAYOUT>
-      <TRAFFICLIGHT LANE="FORWARD3"
-        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="04" POSITION="END-0.00m" />
-      <TRAFFICLIGHT LANE="FORWARD2"
-        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="05" POSITION="END-0.00m" />
-      <TRAFFICLIGHT LANE="FORWARD1"
-        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="06" POSITION="END-0.00m" />
+    <LINK Id="S2SC" NodeStart="S2" NodeEnd="SC" Type="STREET">
+      <Straight />
+      <DefinedLayout>r1</DefinedLayout>
+      <TRAFFICLIGHT Lane="FORWARD3"
+        Class="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" Id="04" Position="END-0.00m" />
+      <TRAFFICLIGHT Lane="FORWARD2"
+        Class="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" Id="05" Position="END-0.00m" />
+      <TRAFFICLIGHT Lane="FORWARD1"
+        Class="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" Id="06" Position="END-0.00m" />
     </LINK>
 
-    <LINK ID="WW1" NODESTART="W" NODEEND="W1" TYPE="STREET">
-      <STRAIGHT />
-      <DEFINEDLAYOUT>r2l</DEFINEDLAYOUT>
+    <LINK Id="WW1" NodeStart="W" NodeEnd="W1" Type="STREET">
+      <Straight />
+      <DefinedLayout>r2l</DefinedLayout>
     </LINK>
 
-    <LINK ID="W1W2" NODESTART="W1" NODEEND="W2" TYPE="STREET">
-      <STRAIGHT />
-      <DEFINEDLAYOUT>r1g</DEFINEDLAYOUT>
+    <LINK Id="W1W2" NodeStart="W1" NodeEnd="W2" Type="STREET">
+      <Straight />
+      <DefinedLayout>r1g</DefinedLayout>
     </LINK>
 
-    <LINK ID="W2WC" NODESTART="W2" NODEEND="WC" TYPE="STREET">
-      <STRAIGHT />
-      <DEFINEDLAYOUT>r1</DEFINEDLAYOUT>
-      <TRAFFICLIGHT LANE="FORWARD3"
-        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="07" POSITION="END-0.00m" />
-      <TRAFFICLIGHT LANE="FORWARD2"
-        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="08" POSITION="END-0.00m" />
-      <TRAFFICLIGHT LANE="FORWARD1"
-        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="09" POSITION="END-0.00m" />
+    <LINK Id="W2WC" NodeStart="W2" NodeEnd="WC" Type="STREET">
+      <Straight />
+      <DefinedLayout>r1</DefinedLayout>
+      <TRAFFICLIGHT Lane="FORWARD3"
+        Class="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" Id="07" Position="END-0.00m" />
+      <TRAFFICLIGHT Lane="FORWARD2"
+        Class="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" Id="08" Position="END-0.00m" />
+      <TRAFFICLIGHT Lane="FORWARD1"
+        Class="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" Id="09" Position="END-0.00m" />
     </LINK>
 
-    <LINK ID="ECNC" NODESTART="EC" NODEEND="NCO" TYPE="STREET" OFFSETSTART="-3.3m" OFFSETEND="0m">
+    <LINK Id="ECNC" NodeStart="EC" NodeEnd="NCO" Type="STREET" OffsetStart="-3.3m" OffsetEnd="0m">
       <BEZIER SHAPE="0.5" />
-      <DEFINEDLAYOUT>r2r</DEFINEDLAYOUT>
+      <DefinedLayout>r2r</DefinedLayout>
     </LINK>
 
-    <LINK ID="ECSC" NODESTART="EC" NODEEND="SCO" TYPE="STREET" OFFSETSTART="3.3m" OFFSETEND="0m">
+    <LINK Id="ECSC" NodeStart="EC" NodeEnd="SCO" Type="STREET" OffsetStart="3.3m" OffsetEnd="0m">
       <BEZIER SHAPE="1.0" />
-      <DEFINEDLAYOUT>r2l</DEFINEDLAYOUT>
+      <DefinedLayout>r2l</DefinedLayout>
     </LINK>
 
-    <LINK ID="NCWC" NODESTART="NC" NODEEND="WCO" TYPE="STREET" OFFSETSTART="-3.3m" OFFSETEND="0m">
+    <LINK Id="NCWC" NodeStart="NC" NodeEnd="WCO" Type="STREET" OffsetStart="-3.3m" OffsetEnd="0m">
       <BEZIER SHAPE="0.5" />
-      <DEFINEDLAYOUT>r2r</DEFINEDLAYOUT>
+      <DefinedLayout>r2r</DefinedLayout>
     </LINK>
 
-    <LINK ID="NCEC" NODESTART="NC" NODEEND="ECO" TYPE="STREET" OFFSETSTART="3.3m" OFFSETEND="0m">
+    <LINK Id="NCEC" NodeStart="NC" NodeEnd="ECO" Type="STREET" OffsetStart="3.3m" OffsetEnd="0m">
       <BEZIER SHAPE="1.0" />
-      <DEFINEDLAYOUT>r2l</DEFINEDLAYOUT>
+      <DefinedLayout>r2l</DefinedLayout>
     </LINK>
 
-    <LINK ID="WCSC" NODESTART="WC" NODEEND="SCO" TYPE="STREET" OFFSETSTART="-3.3m" OFFSETEND="0m">
+    <LINK Id="WCSC" NodeStart="WC" NodeEnd="SCO" Type="STREET" OffsetStart="-3.3m" OffsetEnd="0m">
       <BEZIER SHAPE="0.5" />
-      <DEFINEDLAYOUT>r2l</DEFINEDLAYOUT>
+      <DefinedLayout>r2l</DefinedLayout>
     </LINK>
 
-    <LINK ID="WCNC" NODESTART="WC" NODEEND="NCO" TYPE="STREET" OFFSETSTART="3.3m" OFFSETEND="0m">
+    <LINK Id="WCNC" NodeStart="WC" NodeEnd="NCO" Type="STREET" OffsetStart="3.3m" OffsetEnd="0m">
       <BEZIER SHAPE="1.0" />
-      <DEFINEDLAYOUT>r2l</DEFINEDLAYOUT>
+      <DefinedLayout>r2l</DefinedLayout>
     </LINK>
 
-    <LINK ID="SCEC" NODESTART="SC" NODEEND="ECO" TYPE="STREET" OFFSETSTART="-3.3m" OFFSETEND="0m">
+    <LINK Id="SCEC" NodeStart="SC" NodeEnd="ECO" Type="STREET" OffsetStart="-3.3m" OffsetEnd="0m">
       <BEZIER SHAPE="0.5" />
-      <DEFINEDLAYOUT>r2l</DEFINEDLAYOUT>
+      <DefinedLayout>r2l</DefinedLayout>
     </LINK>
 
-    <LINK ID="SCWC" NODESTART="SC" NODEEND="WCO" TYPE="STREET" OFFSETSTART="3.3m" OFFSETEND="0m">
+    <LINK Id="SCWC" NodeStart="SC" NodeEnd="WCO" Type="STREET" OffsetStart="3.3m" OffsetEnd="0m">
       <BEZIER SHAPE="1.0" />
-      <DEFINEDLAYOUT>r2l</DEFINEDLAYOUT>
+      <DefinedLayout>r2l</DefinedLayout>
     </LINK>
 
-    <LINK ID="NCSC" NODESTART="NC" NODEEND="SCO" TYPE="STREET">
-      <STRAIGHT />
-      <DEFINEDLAYOUT>r3</DEFINEDLAYOUT>
+    <LINK Id="NCSC" NodeStart="NC" NodeEnd="SCO" Type="STREET">
+      <Straight />
+      <DefinedLayout>r3</DefinedLayout>
     </LINK>
 
-    <LINK ID="WCEC" NODESTART="WC" NODEEND="ECO" TYPE="STREET">
-      <STRAIGHT />
-      <DEFINEDLAYOUT>r3</DEFINEDLAYOUT>
+    <LINK Id="WCEC" NodeStart="WC" NodeEnd="ECO" Type="STREET">
+      <Straight />
+      <DefinedLayout>r3</DefinedLayout>
     </LINK>
 
-    <LINK ID="SCNC" NODESTART="SC" NODEEND="NCO" TYPE="STREET">
-      <STRAIGHT />
-      <DEFINEDLAYOUT>r3</DEFINEDLAYOUT>
+    <LINK Id="SCNC" NodeStart="SC" NodeEnd="NCO" Type="STREET">
+      <Straight />
+      <DefinedLayout>r3</DefinedLayout>
     </LINK>
 
-    <LINK ID="ECWC" NODESTART="EC" NODEEND="WCO" TYPE="STREET">
-      <STRAIGHT />
-      <DEFINEDLAYOUT>r3</DEFINEDLAYOUT>
+    <LINK Id="ECWC" NodeStart="EC" NodeEnd="WCO" Type="STREET">
+      <Straight />
+      <DefinedLayout>r3</DefinedLayout>
     </LINK>
 
-    <LINK ID="ECOEO" NODESTART="ECO" NODEEND="EO" TYPE="STREET">
-      <STRAIGHT />
-      <DEFINEDLAYOUT>r4</DEFINEDLAYOUT>
+    <LINK Id="ECOEO" NodeStart="ECO" NodeEnd="EO" Type="STREET">
+      <Straight />
+      <DefinedLayout>r4</DefinedLayout>
     </LINK>
 
-    <LINK ID="NCONO" NODESTART="NCO" NODEEND="NO" TYPE="STREET">
-      <STRAIGHT />
-      <DEFINEDLAYOUT>r4</DEFINEDLAYOUT>
+    <LINK Id="NCONO" NodeStart="NCO" NodeEnd="NO" Type="STREET">
+      <Straight />
+      <DefinedLayout>r4</DefinedLayout>
     </LINK>
 
-    <LINK ID="WCOWO" NODESTART="WCO" NODEEND="WO" TYPE="STREET">
-      <STRAIGHT />
-      <DEFINEDLAYOUT>r4</DEFINEDLAYOUT>
+    <LINK Id="WCOWO" NodeStart="WCO" NodeEnd="WO" Type="STREET">
+      <Straight />
+      <DefinedLayout>r4</DefinedLayout>
     </LINK>
 
-    <LINK ID="SCOSO" NODESTART="SCO" NODEEND="SO" TYPE="STREET">
-      <STRAIGHT />
-      <DEFINEDLAYOUT>r4</DEFINEDLAYOUT>
+    <LINK Id="SCOSO" NodeStart="SCO" NodeEnd="SO" Type="STREET">
+      <Straight />
+      <DefinedLayout>r4</DefinedLayout>
     </LINK>
 
-  </NETWORK>
-  <NETWORKDEMAND>
-    <OD ID="Traffic Demand" GLOBALINTERPOLATION="STEPWISE" GLOBALFACTOR="1.000">
-      <CATEGORY GTUTYPE="CAR" ID="CAR" />
-      <CATEGORY GTUTYPE="TRUCK" ID="TRUCK" />
-      <DEMAND CATEGORY="CAR" ORIGIN="W" DESTINATION="NO">
+  </Network>
+  <Demand>
+    <OD Id="Traffic Demand" GlobalInterpolation="STEPWISE" GlobalFactor="1.000">
+      <CATEGORY GtuType="CAR" Id="CAR" />
+      <CATEGORY GtuType="TRUCK" Id="TRUCK" />
+      <DEMAND Category="CAR" Origin="W" Destination="NO">
         <LEVEL TIME="0s">200.00veh/h</LEVEL>
         <LEVEL TIME="3600s">200.00veh/h</LEVEL>
       </DEMAND>
-      <DEMAND CATEGORY="CAR" ORIGIN="W" DESTINATION="EO">
+      <DEMAND Category="CAR" Origin="W" Destination="EO">
         <LEVEL TIME="0s">300.00veh/h</LEVEL>
         <LEVEL TIME="3600s">300.00veh/h</LEVEL>
       </DEMAND>
-      <DEMAND CATEGORY="CAR" ORIGIN="W" DESTINATION="SO">
+      <DEMAND Category="CAR" Origin="W" Destination="SO">
         <LEVEL TIME="0s">200.00veh/h</LEVEL>
         <LEVEL TIME="3600s">200.00veh/h</LEVEL>
       </DEMAND>
-      <DEMAND CATEGORY="CAR" ORIGIN="N" DESTINATION="EO">
+      <DEMAND Category="CAR" Origin="N" Destination="EO">
         <LEVEL TIME="0s">200.00veh/h</LEVEL>
         <LEVEL TIME="3600s">200.00veh/h</LEVEL>
       </DEMAND>
-      <DEMAND CATEGORY="CAR" ORIGIN="N" DESTINATION="SO">
+      <DEMAND Category="CAR" Origin="N" Destination="SO">
         <LEVEL TIME="0s">300.00veh/h</LEVEL>
         <LEVEL TIME="3600s">300.00veh/h</LEVEL>
       </DEMAND>
-      <DEMAND CATEGORY="CAR" ORIGIN="N" DESTINATION="WO">
+      <DEMAND Category="CAR" Origin="N" Destination="WO">
         <LEVEL TIME="0s">200.00veh/h</LEVEL>
         <LEVEL TIME="3600s">200.00veh/h</LEVEL>
       </DEMAND>
-      <DEMAND CATEGORY="CAR" ORIGIN="E" DESTINATION="SO">
+      <DEMAND Category="CAR" Origin="E" Destination="SO">
         <LEVEL TIME="0s">200.00veh/h</LEVEL>
         <LEVEL TIME="3600s">200.00veh/h</LEVEL>
       </DEMAND>
-      <DEMAND CATEGORY="CAR" ORIGIN="E" DESTINATION="WO">
+      <DEMAND Category="CAR" Origin="E" Destination="WO">
         <LEVEL TIME="0s">300.00veh/h</LEVEL>
         <LEVEL TIME="3600s">300.00veh/h</LEVEL>
       </DEMAND>
-      <DEMAND CATEGORY="CAR" ORIGIN="E" DESTINATION="NO">
+      <DEMAND Category="CAR" Origin="E" Destination="NO">
         <LEVEL TIME="0s">200.00veh/h</LEVEL>
         <LEVEL TIME="3600s">200.00veh/h</LEVEL>
       </DEMAND>
-      <DEMAND CATEGORY="CAR" ORIGIN="S" DESTINATION="WO">
+      <DEMAND Category="CAR" Origin="S" Destination="WO">
         <LEVEL TIME="0s">200.00veh/h</LEVEL>
         <LEVEL TIME="3600s">200.00veh/h</LEVEL>
       </DEMAND>
-      <DEMAND CATEGORY="CAR" ORIGIN="S" DESTINATION="NO">
+      <DEMAND Category="CAR" Origin="S" Destination="NO">
         <LEVEL TIME="0s">300.00veh/h</LEVEL>
         <LEVEL TIME="3600s">300.00veh/h</LEVEL>
       </DEMAND>
-      <DEMAND CATEGORY="CAR" ORIGIN="S" DESTINATION="EO">
+      <DEMAND Category="CAR" Origin="S" Destination="EO">
         <LEVEL TIME="0s">200.00veh/h</LEVEL>
         <LEVEL TIME="3600s">200.00veh/h</LEVEL>
       </DEMAND>
     </OD>
-    <SINK LANE="FORWARD" LINK="NCONO" POSITION="END-20m" DIRECTION="DIR_PLUS" />
-    <SINK LANE="FORWARD" LINK="ECOEO" POSITION="END-20m" DIRECTION="DIR_PLUS" />
-    <SINK LANE="FORWARD" LINK="SCOSO" POSITION="END-20m" DIRECTION="DIR_PLUS" />
-    <SINK LANE="FORWARD" LINK="WCOWO" POSITION="END-20m" DIRECTION="DIR_PLUS" />
-  </NETWORKDEMAND>
+    <SINK Lane="FORWARD" Link="NCONO" Position="END-20m" Direction="DIR_PLUS" />
+    <SINK Lane="FORWARD" Link="ECOEO" Position="END-20m" Direction="DIR_PLUS" />
+    <SINK Lane="FORWARD" Link="SCOSO" Position="END-20m" Direction="DIR_PLUS" />
+    <SINK Lane="FORWARD" Link="WCOWO" Position="END-20m" Direction="DIR_PLUS" />
+  </Demand>
   <CONTROL>
-    <TRAFCOD ID="Complex TrafCOD demo">
-      <SIGNALGROUP ID="01">
-        <TRAFFICLIGHT LINK="E2EC" LANE="FORWARD3" TRAFFICLIGHTID="01" />
+    <TrafCod Id="Complex TrafCOD demo">
+      <SIGNALGROUP Id="01">
+        <TRAFFICLIGHT Link="E2EC" Lane="FORWARD3" TrafficLightId="01" />
       </SIGNALGROUP>
-      <SIGNALGROUP ID="02">
-        <TRAFFICLIGHT LINK="E2EC" LANE="FORWARD2" TRAFFICLIGHTID="01" />
+      <SIGNALGROUP Id="02">
+        <TRAFFICLIGHT Link="E2EC" Lane="FORWARD2" TrafficLightId="01" />
       </SIGNALGROUP>
-      <SIGNALGROUP ID="03">
-        <TRAFFICLIGHT LINK="E2EC" LANE="FORWARD1" TRAFFICLIGHTID="01" />
+      <SIGNALGROUP Id="03">
+        <TRAFFICLIGHT Link="E2EC" Lane="FORWARD1" TrafficLightId="01" />
       </SIGNALGROUP>
-      <SIGNALGROUP ID="04">
-        <TRAFFICLIGHT LINK="S2SC" LANE="FORWARD3" TRAFFICLIGHTID="04" />
+      <SIGNALGROUP Id="04">
+        <TRAFFICLIGHT Link="S2SC" Lane="FORWARD3" TrafficLightId="04" />
       </SIGNALGROUP>
-      <SIGNALGROUP ID="05">
-        <TRAFFICLIGHT LINK="S2SC" LANE="FORWARD2" TRAFFICLIGHTID="05" />
+      <SIGNALGROUP Id="05">
+        <TRAFFICLIGHT Link="S2SC" Lane="FORWARD2" TrafficLightId="05" />
       </SIGNALGROUP>
-      <SIGNALGROUP ID="06">
-        <TRAFFICLIGHT LINK="S2SC" LANE="FORWARD1" TRAFFICLIGHTID="06" />
+      <SIGNALGROUP Id="06">
+        <TRAFFICLIGHT Link="S2SC" Lane="FORWARD1" TrafficLightId="06" />
       </SIGNALGROUP>
-      <SIGNALGROUP ID="07">
-        <TRAFFICLIGHT LINK="W2WC" LANE="FORWARD3" TRAFFICLIGHTID="07" />
+      <SIGNALGROUP Id="07">
+        <TRAFFICLIGHT Link="W2WC" Lane="FORWARD3" TrafficLightId="07" />
       </SIGNALGROUP>
-      <SIGNALGROUP ID="08">
-        <TRAFFICLIGHT LINK="W2WC" LANE="FORWARD2" TRAFFICLIGHTID="08" />
+      <SIGNALGROUP Id="08">
+        <TRAFFICLIGHT Link="W2WC" Lane="FORWARD2" TrafficLightId="08" />
       </SIGNALGROUP>
-      <SIGNALGROUP ID="09">
-        <TRAFFICLIGHT LINK="W2WC" LANE="FORWARD1" TRAFFICLIGHTID="09" />
+      <SIGNALGROUP Id="09">
+        <TRAFFICLIGHT Link="W2WC" Lane="FORWARD1" TrafficLightId="09" />
       </SIGNALGROUP>
-      <SIGNALGROUP ID="10">
-        <TRAFFICLIGHT LINK="N2NC" LANE="FORWARD3" TRAFFICLIGHTID="10" />
+      <SIGNALGROUP Id="10">
+        <TRAFFICLIGHT Link="N2NC" Lane="FORWARD3" TrafficLightId="10" />
       </SIGNALGROUP>
-      <SIGNALGROUP ID="11">
-        <TRAFFICLIGHT LINK="N2NC" LANE="FORWARD2" TRAFFICLIGHTID="11" />
+      <SIGNALGROUP Id="11">
+        <TRAFFICLIGHT Link="N2NC" Lane="FORWARD2" TrafficLightId="11" />
       </SIGNALGROUP>
-      <SIGNALGROUP ID="12">
-        <TRAFFICLIGHT LINK="N2NC" LANE="FORWARD1" TRAFFICLIGHTID="12" />
+      <SIGNALGROUP Id="12">
+        <TRAFFICLIGHT Link="N2NC" Lane="FORWARD1" TrafficLightId="12" />
       </SIGNALGROUP>
 
-      <SENSOR ID="D011">
-        <SINGLELANE>
+      <SENSOR Id="D011">
+        <SingleLane>
           <LINK>E2EC</LINK>
           <LANE>FORWARD3</LANE>
-          <ENTRYPOSITION>END-4m</ENTRYPOSITION>
-          <EXITPOSITION>END-3m</EXITPOSITION>
-        </SINGLELANE>
+          <EntryPosition>END-4m</EntryPosition>
+          <ExitPosition>END-3m</ExitPosition>
+        </SingleLane>
       </SENSOR>
-      <SENSOR ID="D012">
-        <SINGLELANE>
+      <SENSOR Id="D012">
+        <SingleLane>
           <LINK>E2EC</LINK>
           <LANE>FORWARD3</LANE>
-          <ENTRYPOSITION>END-40m</ENTRYPOSITION>
-          <EXITPOSITION>END-10m</EXITPOSITION>
-        </SINGLELANE>
+          <EntryPosition>END-40m</EntryPosition>
+          <ExitPosition>END-10m</ExitPosition>
+        </SingleLane>
       </SENSOR>
-      <SENSOR ID="D021">
-        <SINGLELANE>
+      <SENSOR Id="D021">
+        <SingleLane>
           <LINK>E2EC</LINK>
           <LANE>FORWARD2</LANE>
-          <ENTRYPOSITION>END-4m</ENTRYPOSITION>
-          <EXITPOSITION>END-3m</EXITPOSITION>
-        </SINGLELANE>
+          <EntryPosition>END-4m</EntryPosition>
+          <ExitPosition>END-3m</ExitPosition>
+        </SingleLane>
       </SENSOR>
-      <SENSOR ID="D022">
-        <SINGLELANE>
+      <SENSOR Id="D022">
+        <SingleLane>
           <LINK>E2EC</LINK>
           <LANE>FORWARD2</LANE>
-          <ENTRYPOSITION>END-40m</ENTRYPOSITION>
-          <EXITPOSITION>END-10m</EXITPOSITION>
-        </SINGLELANE>
+          <EntryPosition>END-40m</EntryPosition>
+          <ExitPosition>END-10m</ExitPosition>
+        </SingleLane>
       </SENSOR>
-      <SENSOR ID="D031">
-        <SINGLELANE>
+      <SENSOR Id="D031">
+        <SingleLane>
           <LINK>E2EC</LINK>
           <LANE>FORWARD1</LANE>
-          <ENTRYPOSITION>END-4m</ENTRYPOSITION>
-          <EXITPOSITION>END-3m</EXITPOSITION>
-        </SINGLELANE>
+          <EntryPosition>END-4m</EntryPosition>
+          <ExitPosition>END-3m</ExitPosition>
+        </SingleLane>
       </SENSOR>
-      <SENSOR ID="D032">
-        <SINGLELANE>
+      <SENSOR Id="D032">
+        <SingleLane>
           <LINK>E2EC</LINK>
           <LANE>FORWARD1</LANE>
-          <ENTRYPOSITION>END-40m</ENTRYPOSITION>
-          <EXITPOSITION>END-10m</EXITPOSITION>
-        </SINGLELANE>
+          <EntryPosition>END-40m</EntryPosition>
+          <ExitPosition>END-10m</ExitPosition>
+        </SingleLane>
       </SENSOR>
 
-      <SENSOR ID="D041">
-        <SINGLELANE>
+      <SENSOR Id="D041">
+        <SingleLane>
           <LINK>S2SC</LINK>
           <LANE>FORWARD3</LANE>
-          <ENTRYPOSITION>END-4m</ENTRYPOSITION>
-          <EXITPOSITION>END-3m</EXITPOSITION>
-        </SINGLELANE>
+          <EntryPosition>END-4m</EntryPosition>
+          <ExitPosition>END-3m</ExitPosition>
+        </SingleLane>
       </SENSOR>
-      <SENSOR ID="D042">
-        <SINGLELANE>
+      <SENSOR Id="D042">
+        <SingleLane>
           <LINK>S2SC</LINK>
           <LANE>FORWARD3</LANE>
-          <ENTRYPOSITION>END-40m</ENTRYPOSITION>
-          <EXITPOSITION>END-10m</EXITPOSITION>
-        </SINGLELANE>
+          <EntryPosition>END-40m</EntryPosition>
+          <ExitPosition>END-10m</ExitPosition>
+        </SingleLane>
       </SENSOR>
-      <SENSOR ID="D051">
-        <SINGLELANE>
+      <SENSOR Id="D051">
+        <SingleLane>
           <LINK>S2SC</LINK>
           <LANE>FORWARD2</LANE>
-          <ENTRYPOSITION>END-4m</ENTRYPOSITION>
-          <EXITPOSITION>END-3m</EXITPOSITION>
-        </SINGLELANE>
+          <EntryPosition>END-4m</EntryPosition>
+          <ExitPosition>END-3m</ExitPosition>
+        </SingleLane>
       </SENSOR>
-      <SENSOR ID="D052">
-        <SINGLELANE>
+      <SENSOR Id="D052">
+        <SingleLane>
           <LINK>S2SC</LINK>
           <LANE>FORWARD2</LANE>
-          <ENTRYPOSITION>END-40m</ENTRYPOSITION>
-          <EXITPOSITION>END-10m</EXITPOSITION>
-        </SINGLELANE>
+          <EntryPosition>END-40m</EntryPosition>
+          <ExitPosition>END-10m</ExitPosition>
+        </SingleLane>
       </SENSOR>
-      <SENSOR ID="D061">
-        <SINGLELANE>
+      <SENSOR Id="D061">
+        <SingleLane>
           <LINK>S2SC</LINK>
           <LANE>FORWARD1</LANE>
-          <ENTRYPOSITION>END-4m</ENTRYPOSITION>
-          <EXITPOSITION>END-3m</EXITPOSITION>
-        </SINGLELANE>
+          <EntryPosition>END-4m</EntryPosition>
+          <ExitPosition>END-3m</ExitPosition>
+        </SingleLane>
       </SENSOR>
-      <SENSOR ID="D062">
-        <SINGLELANE>
+      <SENSOR Id="D062">
+        <SingleLane>
           <LINK>S2SC</LINK>
           <LANE>FORWARD1</LANE>
-          <ENTRYPOSITION>END-40m</ENTRYPOSITION>
-          <EXITPOSITION>END-10m</EXITPOSITION>
-        </SINGLELANE>
+          <EntryPosition>END-40m</EntryPosition>
+          <ExitPosition>END-10m</ExitPosition>
+        </SingleLane>
       </SENSOR>
 
-      <SENSOR ID="D071">
-        <SINGLELANE>
+      <SENSOR Id="D071">
+        <SingleLane>
           <LINK>W2WC</LINK>
           <LANE>FORWARD3</LANE>
-          <ENTRYPOSITION>END-4m</ENTRYPOSITION>
-          <EXITPOSITION>END-3m</EXITPOSITION>
-        </SINGLELANE>
+          <EntryPosition>END-4m</EntryPosition>
+          <ExitPosition>END-3m</ExitPosition>
+        </SingleLane>
       </SENSOR>
-      <SENSOR ID="D072">
-        <SINGLELANE>
+      <SENSOR Id="D072">
+        <SingleLane>
           <LINK>W2WC</LINK>
           <LANE>FORWARD3</LANE>
-          <ENTRYPOSITION>END-40m</ENTRYPOSITION>
-          <EXITPOSITION>END-10m</EXITPOSITION>
-        </SINGLELANE>
+          <EntryPosition>END-40m</EntryPosition>
+          <ExitPosition>END-10m</ExitPosition>
+        </SingleLane>
       </SENSOR>
-      <SENSOR ID="D081">
-        <SINGLELANE>
+      <SENSOR Id="D081">
+        <SingleLane>
           <LINK>W2WC</LINK>
           <LANE>FORWARD2</LANE>
-          <ENTRYPOSITION>END-4m</ENTRYPOSITION>
-          <EXITPOSITION>END-3m</EXITPOSITION>
-        </SINGLELANE>
+          <EntryPosition>END-4m</EntryPosition>
+          <ExitPosition>END-3m</ExitPosition>
+        </SingleLane>
       </SENSOR>
-      <SENSOR ID="D082">
-        <SINGLELANE>
+      <SENSOR Id="D082">
+        <SingleLane>
           <LINK>W2WC</LINK>
           <LANE>FORWARD2</LANE>
-          <ENTRYPOSITION>END-40m</ENTRYPOSITION>
-          <EXITPOSITION>END-10m</EXITPOSITION>
-        </SINGLELANE>
+          <EntryPosition>END-40m</EntryPosition>
+          <ExitPosition>END-10m</ExitPosition>
+        </SingleLane>
       </SENSOR>
-      <SENSOR ID="D091">
-        <SINGLELANE>
+      <SENSOR Id="D091">
+        <SingleLane>
           <LINK>W2WC</LINK>
           <LANE>FORWARD1</LANE>
-          <ENTRYPOSITION>END-4m</ENTRYPOSITION>
-          <EXITPOSITION>END-3m</EXITPOSITION>
-        </SINGLELANE>
+          <EntryPosition>END-4m</EntryPosition>
+          <ExitPosition>END-3m</ExitPosition>
+        </SingleLane>
       </SENSOR>
-      <SENSOR ID="D092">
-        <SINGLELANE>
+      <SENSOR Id="D092">
+        <SingleLane>
           <LINK>W2WC</LINK>
           <LANE>FORWARD1</LANE>
-          <ENTRYPOSITION>END-40m</ENTRYPOSITION>
-          <EXITPOSITION>END-10m</EXITPOSITION>
-        </SINGLELANE>
+          <EntryPosition>END-40m</EntryPosition>
+          <ExitPosition>END-10m</ExitPosition>
+        </SingleLane>
       </SENSOR>
 
-      <SENSOR ID="D101">
-        <SINGLELANE>
+      <SENSOR Id="D101">
+        <SingleLane>
           <LINK>N2NC</LINK>
           <LANE>FORWARD3</LANE>
-          <ENTRYPOSITION>END-4m</ENTRYPOSITION>
-          <EXITPOSITION>END-3m</EXITPOSITION>
-        </SINGLELANE>
+          <EntryPosition>END-4m</EntryPosition>
+          <ExitPosition>END-3m</ExitPosition>
+        </SingleLane>
       </SENSOR>
-      <SENSOR ID="D102">
-        <SINGLELANE>
+      <SENSOR Id="D102">
+        <SingleLane>
           <LINK>N2NC</LINK>
           <LANE>FORWARD3</LANE>
-          <ENTRYPOSITION>END-40m</ENTRYPOSITION>
-          <EXITPOSITION>END-10m</EXITPOSITION>
-        </SINGLELANE>
+          <EntryPosition>END-40m</EntryPosition>
+          <ExitPosition>END-10m</ExitPosition>
+        </SingleLane>
       </SENSOR>
-      <SENSOR ID="D111">
-        <SINGLELANE>
+      <SENSOR Id="D111">
+        <SingleLane>
           <LINK>N2NC</LINK>
           <LANE>FORWARD2</LANE>
-          <ENTRYPOSITION>END-4m</ENTRYPOSITION>
-          <EXITPOSITION>END-3m</EXITPOSITION>
-        </SINGLELANE>
+          <EntryPosition>END-4m</EntryPosition>
+          <ExitPosition>END-3m</ExitPosition>
+        </SingleLane>
       </SENSOR>
-      <SENSOR ID="D112">
-        <SINGLELANE>
+      <SENSOR Id="D112">
+        <SingleLane>
           <LINK>N2NC</LINK>
           <LANE>FORWARD2</LANE>
-          <ENTRYPOSITION>END-40m</ENTRYPOSITION>
-          <EXITPOSITION>END-10m</EXITPOSITION>
-        </SINGLELANE>
+          <EntryPosition>END-40m</EntryPosition>
+          <ExitPosition>END-10m</ExitPosition>
+        </SingleLane>
       </SENSOR>
-      <SENSOR ID="D121">
-        <SINGLELANE>
+      <SENSOR Id="D121">
+        <SingleLane>
           <LINK>N2NC</LINK>
           <LANE>FORWARD1</LANE>
-          <ENTRYPOSITION>END-4m</ENTRYPOSITION>
-          <EXITPOSITION>END-3m</EXITPOSITION>
-        </SINGLELANE>
+          <EntryPosition>END-4m</EntryPosition>
+          <ExitPosition>END-3m</ExitPosition>
+        </SingleLane>
       </SENSOR>
-      <SENSOR ID="D122">
-        <SINGLELANE>
+      <SENSOR Id="D122">
+        <SingleLane>
           <LINK>N2NC</LINK>
           <LANE>FORWARD1</LANE>
-          <ENTRYPOSITION>END-40m</ENTRYPOSITION>
-          <EXITPOSITION>END-10m</EXITPOSITION>
-        </SINGLELANE>
+          <EntryPosition>END-40m</EntryPosition>
+          <ExitPosition>END-10m</ExitPosition>
+        </SingleLane>
       </SENSOR>
 
       <PROGRAM>
@@ -4501,7 +4501,7 @@ ReN12 .=ER12
       
       </PROGRAM>
       <CONSOLE>
-        <MAP TYPE="PNG" ENCODING="base64">
+        <MAP Type="PNG" Encoding="base64">
 iVBORw0KGgoAAAANSUhEUgAAAlgAAANQCAIAAAB7IIZSAAAQlklEQVR4nO3dW3Lb1hJAUeGWB2qN
 TJ4p8iFfhqYeoSTIDWCv9ZVEJeaU7WRXg2yd5eHpARi0/lyXX8v0KaDrf9MHAIBJQghAmhACkCaE
 AKQJIQBpQghAmhACkCaEAKQtFuoBKDMRApAmhACkCSEAaUIIQJoQApAmhDBs/blOHwHShBCANCEE
@@ -4619,21 +4619,21 @@ detector=12.1: 220, 260 220, 260
 detector=12.2: 220, 242 220, 242
       </COORDINATES>
       </CONSOLE>
-    </TRAFCOD>
+    </TrafCod>
   </CONTROL>
   <MODEL />
   <SCENARIO />
   <RUN>
     <RUNLENGTH>3600s</RUNLENGTH>
     <NUMBERREPLICATIONS>1</NUMBERREPLICATIONS>
-    <RANDOMSTREAMS>
-      <RANDOMSTREAM ID="default">
-        <REPLICATION SEED="1" ID="1" />
-      </RANDOMSTREAM>
-      <RANDOMSTREAM ID="generation">
-        <REPLICATION SEED="1" ID="1" />
-      </RANDOMSTREAM>
-    </RANDOMSTREAMS>
+    <RandomStreams>
+      <RandomStream Id="default">
+        <REPLICATION Seed="1" Id="1" />
+      </RandomStream>
+      <RandomStream Id="generation">
+        <REPLICATION Seed="1" Id="1" />
+      </RandomStream>
+    </RandomStreams>
   </RUN>
 
 </OTS>

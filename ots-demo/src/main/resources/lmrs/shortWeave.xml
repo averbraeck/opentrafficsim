@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<ots:OTS xmlns:ots="http://www.opentrafficsim.org/ots" 
+<ots:Ots xmlns:ots="http://www.opentrafficsim.org/ots" 
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
   xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../../ots-parser-xml/src/main/resources/xsd/ots.xsd"
   xmlns:xi="http://www.w3.org/2001/XInclude">
 
-  <ots:DEFINITIONS>
+  <ots:Definitions>
   
     <xi:include href="../xsd/defaults/default_gtutypes.xml">
       <xi:fallback>
@@ -22,244 +22,244 @@
       </xi:fallback>
     </xi:include>
 
-    <ots:LINKTYPES>
-      <ots:LINKTYPE ID="HIGHWAY">
-        <ots:COMPATIBILITY GTUTYPE="VEHICLE" DIRECTION="FORWARD" />
-        <ots:SPEEDLIMIT GTUTYPE="CAR" LEGALSPEEDLIMIT="120km/h" />
-        <ots:SPEEDLIMIT GTUTYPE="TRUCK" LEGALSPEEDLIMIT="90km/h" />
-      </ots:LINKTYPE>
-      <ots:LINKTYPE ID="LOCAL">
-        <ots:COMPATIBILITY GTUTYPE="VEHICLE" DIRECTION="FORWARD" />
-        <ots:SPEEDLIMIT GTUTYPE="CAR" LEGALSPEEDLIMIT="20km/h" />
-        <ots:SPEEDLIMIT GTUTYPE="TRUCK" LEGALSPEEDLIMIT="20km/h" />
-      </ots:LINKTYPE>
-    </ots:LINKTYPES>
+    <ots:LinkTypes>
+      <ots:LinkType Id="HIGHWAY">
+        <ots:Compatibility GtuType="VEHICLE" Direction="FORWARD" />
+        <ots:SpeedLimit GtuType="CAR" LegalSpeedLimit="120km/h" />
+        <ots:SpeedLimit GtuType="TRUCK" LegalSpeedLimit="90km/h" />
+      </ots:LinkType>
+      <ots:LinkType Id="LOCAL">
+        <ots:Compatibility GtuType="VEHICLE" Direction="FORWARD" />
+        <ots:SpeedLimit GtuType="CAR" LegalSpeedLimit="20km/h" />
+        <ots:SpeedLimit GtuType="TRUCK" LegalSpeedLimit="20km/h" />
+      </ots:LinkType>
+    </ots:LinkTypes>
 
-    <ots:ROADLAYOUTS>
+    <ots:RoadLayouts>
 
-      <ots:ROADLAYOUT ID="4LaneHighway" LINKTYPE="HIGHWAY">
-        <ots:SHOULDER>
-          <ots:CENTEROFFSET>12.1m</ots:CENTEROFFSET>
-          <ots:WIDTH>3m</ots:WIDTH>
-        </ots:SHOULDER>
-        <ots:STRIPE TYPE="SOLID">
-          <ots:CENTEROFFSET>10.8m</ots:CENTEROFFSET>
-          <ots:DRAWINGWIDTH>20cm</ots:DRAWINGWIDTH>
-        </ots:STRIPE>
-        <ots:LANE ID="FORWARD1" DESIGNDIRECTION="true" LANETYPE="HIGHWAY">
-          <ots:CENTEROFFSET>9.0m</ots:CENTEROFFSET>
-          <ots:WIDTH>3.6m</ots:WIDTH>
-        </ots:LANE>
-        <ots:STRIPE TYPE="DASHED">
-          <ots:CENTEROFFSET>7.2m</ots:CENTEROFFSET>
-          <ots:DRAWINGWIDTH>20cm</ots:DRAWINGWIDTH>
-        </ots:STRIPE>
-        <ots:LANE ID="FORWARD2" DESIGNDIRECTION="true" LANETYPE="HIGHWAY">
-          <ots:CENTEROFFSET>5.4m</ots:CENTEROFFSET>
-          <ots:WIDTH>3.6m</ots:WIDTH>
-        </ots:LANE>
-        <ots:STRIPE TYPE="DASHED">
-          <ots:CENTEROFFSET>3.6m</ots:CENTEROFFSET>
-          <ots:DRAWINGWIDTH>20cm</ots:DRAWINGWIDTH>
-        </ots:STRIPE>
-        <ots:LANE ID="FORWARD3" DESIGNDIRECTION="true" LANETYPE="HIGHWAY">
-          <ots:CENTEROFFSET>1.8m</ots:CENTEROFFSET>
-          <ots:WIDTH>3.6m</ots:WIDTH>
-        </ots:LANE>
-        <ots:STRIPE TYPE="DASHED">
-          <ots:CENTEROFFSET>0m</ots:CENTEROFFSET>
-          <ots:DRAWINGWIDTH>20cm</ots:DRAWINGWIDTH>
-        </ots:STRIPE>
-        <ots:LANE ID="FORWARD4" DESIGNDIRECTION="true" LANETYPE="HIGHWAY">
-          <ots:CENTEROFFSET>-1.8m</ots:CENTEROFFSET>
-          <ots:WIDTH>3.6m</ots:WIDTH>
-        </ots:LANE>
-        <ots:STRIPE TYPE="SOLID">
-          <ots:CENTEROFFSET>-3.6m</ots:CENTEROFFSET>
-          <ots:DRAWINGWIDTH>20cm</ots:DRAWINGWIDTH>
-        </ots:STRIPE>
-        <ots:SHOULDER>
-          <ots:CENTEROFFSET>-5.1m</ots:CENTEROFFSET>
-          <ots:WIDTH>3m</ots:WIDTH>
-        </ots:SHOULDER>
-      </ots:ROADLAYOUT>
+      <ots:RoadLayout Id="4LaneHighway" LinkType="HIGHWAY">
+        <ots:Shoulder>
+          <ots:CenterOffset>12.1m</ots:CenterOffset>
+          <ots:Width>3m</ots:Width>
+        </ots:Shoulder>
+        <ots:Stripe Type="SOLID">
+          <ots:CenterOffset>10.8m</ots:CenterOffset>
+          <ots:DrawingWidth>20cm</ots:DrawingWidth>
+        </ots:Stripe>
+        <ots:Lane Id="FORWARD1" DesignDirection="true" LaneType="HIGHWAY">
+          <ots:CenterOffset>9.0m</ots:CenterOffset>
+          <ots:Width>3.6m</ots:Width>
+        </ots:Lane>
+        <ots:Stripe Type="DASHED">
+          <ots:CenterOffset>7.2m</ots:CenterOffset>
+          <ots:DrawingWidth>20cm</ots:DrawingWidth>
+        </ots:Stripe>
+        <ots:Lane Id="FORWARD2" DesignDirection="true" LaneType="HIGHWAY">
+          <ots:CenterOffset>5.4m</ots:CenterOffset>
+          <ots:Width>3.6m</ots:Width>
+        </ots:Lane>
+        <ots:Stripe Type="DASHED">
+          <ots:CenterOffset>3.6m</ots:CenterOffset>
+          <ots:DrawingWidth>20cm</ots:DrawingWidth>
+        </ots:Stripe>
+        <ots:Lane Id="FORWARD3" DesignDirection="true" LaneType="HIGHWAY">
+          <ots:CenterOffset>1.8m</ots:CenterOffset>
+          <ots:Width>3.6m</ots:Width>
+        </ots:Lane>
+        <ots:Stripe Type="DASHED">
+          <ots:CenterOffset>0m</ots:CenterOffset>
+          <ots:DrawingWidth>20cm</ots:DrawingWidth>
+        </ots:Stripe>
+        <ots:Lane Id="FORWARD4" DesignDirection="true" LaneType="HIGHWAY">
+          <ots:CenterOffset>-1.8m</ots:CenterOffset>
+          <ots:Width>3.6m</ots:Width>
+        </ots:Lane>
+        <ots:Stripe Type="SOLID">
+          <ots:CenterOffset>-3.6m</ots:CenterOffset>
+          <ots:DrawingWidth>20cm</ots:DrawingWidth>
+        </ots:Stripe>
+        <ots:Shoulder>
+          <ots:CenterOffset>-5.1m</ots:CenterOffset>
+          <ots:Width>3m</ots:Width>
+        </ots:Shoulder>
+      </ots:RoadLayout>
 
-      <ots:ROADLAYOUT ID="3LaneHighway" LINKTYPE="HIGHWAY">
-        <ots:SHOULDER>
-          <ots:CENTEROFFSET>12.1m</ots:CENTEROFFSET>
-          <ots:WIDTH>3m</ots:WIDTH>
-        </ots:SHOULDER>
-        <ots:STRIPE TYPE="SOLID">
-          <ots:CENTEROFFSET>10.8m</ots:CENTEROFFSET>
-          <ots:DRAWINGWIDTH>20cm</ots:DRAWINGWIDTH>
-        </ots:STRIPE>
-        <ots:LANE ID="FORWARD1" DESIGNDIRECTION="true" LANETYPE="HIGHWAY">
-          <ots:CENTEROFFSET>9.0m</ots:CENTEROFFSET>
-          <ots:WIDTH>3.6m</ots:WIDTH>
-        </ots:LANE>
-        <ots:STRIPE TYPE="DASHED">
-          <ots:CENTEROFFSET>7.2m</ots:CENTEROFFSET>
-          <ots:DRAWINGWIDTH>20cm</ots:DRAWINGWIDTH>
-        </ots:STRIPE>
-        <ots:LANE ID="FORWARD2" DESIGNDIRECTION="true" LANETYPE="HIGHWAY">
-          <ots:CENTEROFFSET>5.4m</ots:CENTEROFFSET>
-          <ots:WIDTH>3.6m</ots:WIDTH>
-        </ots:LANE>
-        <ots:STRIPE TYPE="DASHED">
-          <ots:CENTEROFFSET>3.6m</ots:CENTEROFFSET>
-          <ots:DRAWINGWIDTH>20cm</ots:DRAWINGWIDTH>
-        </ots:STRIPE>
-        <ots:LANE ID="FORWARD3" DESIGNDIRECTION="true" LANETYPE="HIGHWAY">
-          <ots:CENTEROFFSET>1.8m</ots:CENTEROFFSET>
-          <ots:WIDTH>3.6m</ots:WIDTH>
-        </ots:LANE>
-        <ots:STRIPE TYPE="SOLID">
-          <ots:CENTEROFFSET>0m</ots:CENTEROFFSET>
-          <ots:DRAWINGWIDTH>20cm</ots:DRAWINGWIDTH>
-        </ots:STRIPE>
-        <ots:SHOULDER>
-          <ots:CENTEROFFSET>-1.5m</ots:CENTEROFFSET>
-          <ots:WIDTH>3m</ots:WIDTH>
-        </ots:SHOULDER>
-      </ots:ROADLAYOUT>
+      <ots:RoadLayout Id="3LaneHighway" LinkType="HIGHWAY">
+        <ots:Shoulder>
+          <ots:CenterOffset>12.1m</ots:CenterOffset>
+          <ots:Width>3m</ots:Width>
+        </ots:Shoulder>
+        <ots:Stripe Type="SOLID">
+          <ots:CenterOffset>10.8m</ots:CenterOffset>
+          <ots:DrawingWidth>20cm</ots:DrawingWidth>
+        </ots:Stripe>
+        <ots:Lane Id="FORWARD1" DesignDirection="true" LaneType="HIGHWAY">
+          <ots:CenterOffset>9.0m</ots:CenterOffset>
+          <ots:Width>3.6m</ots:Width>
+        </ots:Lane>
+        <ots:Stripe Type="DASHED">
+          <ots:CenterOffset>7.2m</ots:CenterOffset>
+          <ots:DrawingWidth>20cm</ots:DrawingWidth>
+        </ots:Stripe>
+        <ots:Lane Id="FORWARD2" DesignDirection="true" LaneType="HIGHWAY">
+          <ots:CenterOffset>5.4m</ots:CenterOffset>
+          <ots:Width>3.6m</ots:Width>
+        </ots:Lane>
+        <ots:Stripe Type="DASHED">
+          <ots:CenterOffset>3.6m</ots:CenterOffset>
+          <ots:DrawingWidth>20cm</ots:DrawingWidth>
+        </ots:Stripe>
+        <ots:Lane Id="FORWARD3" DesignDirection="true" LaneType="HIGHWAY">
+          <ots:CenterOffset>1.8m</ots:CenterOffset>
+          <ots:Width>3.6m</ots:Width>
+        </ots:Lane>
+        <ots:Stripe Type="SOLID">
+          <ots:CenterOffset>0m</ots:CenterOffset>
+          <ots:DrawingWidth>20cm</ots:DrawingWidth>
+        </ots:Stripe>
+        <ots:Shoulder>
+          <ots:CenterOffset>-1.5m</ots:CenterOffset>
+          <ots:Width>3m</ots:Width>
+        </ots:Shoulder>
+      </ots:RoadLayout>
 
-      <ots:ROADLAYOUT ID="2LaneHighway" LINKTYPE="HIGHWAY">
-        <ots:SHOULDER>
-          <ots:CENTEROFFSET>8.5m</ots:CENTEROFFSET>
-          <ots:WIDTH>3m</ots:WIDTH>
-        </ots:SHOULDER>
-        <ots:STRIPE TYPE="SOLID">
-          <ots:CENTEROFFSET>7.2m</ots:CENTEROFFSET>
-          <ots:DRAWINGWIDTH>20cm</ots:DRAWINGWIDTH>
-        </ots:STRIPE>
-        <ots:LANE ID="FORWARD1" DESIGNDIRECTION="true" LANETYPE="HIGHWAY">
-          <ots:CENTEROFFSET>5.4m</ots:CENTEROFFSET>
-          <ots:WIDTH>3.6m</ots:WIDTH>
-        </ots:LANE>
-        <ots:STRIPE TYPE="DASHED">
-          <ots:CENTEROFFSET>3.6m</ots:CENTEROFFSET>
-          <ots:DRAWINGWIDTH>20cm</ots:DRAWINGWIDTH>
-        </ots:STRIPE>
-        <ots:LANE ID="FORWARD2" DESIGNDIRECTION="true" LANETYPE="HIGHWAY">
-          <ots:CENTEROFFSET>1.8m</ots:CENTEROFFSET>
-          <ots:WIDTH>3.6m</ots:WIDTH>
-        </ots:LANE>
-        <ots:STRIPE TYPE="SOLID">
-          <ots:CENTEROFFSET>0m</ots:CENTEROFFSET>
-          <ots:DRAWINGWIDTH>20cm</ots:DRAWINGWIDTH>
-        </ots:STRIPE>
-        <ots:SHOULDER>
-          <ots:CENTEROFFSET>-1.5m</ots:CENTEROFFSET>
-          <ots:WIDTH>3m</ots:WIDTH>
-        </ots:SHOULDER>
-      </ots:ROADLAYOUT>
+      <ots:RoadLayout Id="2LaneHighway" LinkType="HIGHWAY">
+        <ots:Shoulder>
+          <ots:CenterOffset>8.5m</ots:CenterOffset>
+          <ots:Width>3m</ots:Width>
+        </ots:Shoulder>
+        <ots:Stripe Type="SOLID">
+          <ots:CenterOffset>7.2m</ots:CenterOffset>
+          <ots:DrawingWidth>20cm</ots:DrawingWidth>
+        </ots:Stripe>
+        <ots:Lane Id="FORWARD1" DesignDirection="true" LaneType="HIGHWAY">
+          <ots:CenterOffset>5.4m</ots:CenterOffset>
+          <ots:Width>3.6m</ots:Width>
+        </ots:Lane>
+        <ots:Stripe Type="DASHED">
+          <ots:CenterOffset>3.6m</ots:CenterOffset>
+          <ots:DrawingWidth>20cm</ots:DrawingWidth>
+        </ots:Stripe>
+        <ots:Lane Id="FORWARD2" DesignDirection="true" LaneType="HIGHWAY">
+          <ots:CenterOffset>1.8m</ots:CenterOffset>
+          <ots:Width>3.6m</ots:Width>
+        </ots:Lane>
+        <ots:Stripe Type="SOLID">
+          <ots:CenterOffset>0m</ots:CenterOffset>
+          <ots:DrawingWidth>20cm</ots:DrawingWidth>
+        </ots:Stripe>
+        <ots:Shoulder>
+          <ots:CenterOffset>-1.5m</ots:CenterOffset>
+          <ots:Width>3m</ots:Width>
+        </ots:Shoulder>
+      </ots:RoadLayout>
 
-      <ots:ROADLAYOUT ID="1LaneHighway" LINKTYPE="HIGHWAY">
-        <ots:SHOULDER>
-          <ots:CENTEROFFSET>4.9m</ots:CENTEROFFSET>
-          <ots:WIDTH>3m</ots:WIDTH>
-        </ots:SHOULDER>
-        <ots:STRIPE TYPE="SOLID">
-          <ots:CENTEROFFSET>3.6m</ots:CENTEROFFSET>
-          <ots:DRAWINGWIDTH>20cm</ots:DRAWINGWIDTH>
-        </ots:STRIPE>
-        <ots:LANE ID="FORWARD1" DESIGNDIRECTION="true" LANETYPE="HIGHWAY">
-          <ots:CENTEROFFSET>1.8m</ots:CENTEROFFSET>
-          <ots:WIDTH>3.6m</ots:WIDTH>
-        </ots:LANE>
-        <ots:STRIPE TYPE="SOLID">
-          <ots:CENTEROFFSET>0m</ots:CENTEROFFSET>
-          <ots:DRAWINGWIDTH>20cm</ots:DRAWINGWIDTH>
-        </ots:STRIPE>
-        <ots:SHOULDER>
-          <ots:CENTEROFFSET>-1.5m</ots:CENTEROFFSET>
-          <ots:WIDTH>3m</ots:WIDTH>
-        </ots:SHOULDER>
-      </ots:ROADLAYOUT>
+      <ots:RoadLayout Id="1LaneHighway" LinkType="HIGHWAY">
+        <ots:Shoulder>
+          <ots:CenterOffset>4.9m</ots:CenterOffset>
+          <ots:Width>3m</ots:Width>
+        </ots:Shoulder>
+        <ots:Stripe Type="SOLID">
+          <ots:CenterOffset>3.6m</ots:CenterOffset>
+          <ots:DrawingWidth>20cm</ots:DrawingWidth>
+        </ots:Stripe>
+        <ots:Lane Id="FORWARD1" DesignDirection="true" LaneType="HIGHWAY">
+          <ots:CenterOffset>1.8m</ots:CenterOffset>
+          <ots:Width>3.6m</ots:Width>
+        </ots:Lane>
+        <ots:Stripe Type="SOLID">
+          <ots:CenterOffset>0m</ots:CenterOffset>
+          <ots:DrawingWidth>20cm</ots:DrawingWidth>
+        </ots:Stripe>
+        <ots:Shoulder>
+          <ots:CenterOffset>-1.5m</ots:CenterOffset>
+          <ots:Width>3m</ots:Width>
+        </ots:Shoulder>
+      </ots:RoadLayout>
 
-      <ots:ROADLAYOUT ID="1LaneLocal" LINKTYPE="LOCAL">
-        <ots:SHOULDER>
-          <ots:CENTEROFFSET>4.9m</ots:CENTEROFFSET>
-          <ots:WIDTH>3m</ots:WIDTH>
-        </ots:SHOULDER>
-        <ots:STRIPE TYPE="SOLID">
-          <ots:CENTEROFFSET>3.6m</ots:CENTEROFFSET>
-          <ots:DRAWINGWIDTH>20cm</ots:DRAWINGWIDTH>
-        </ots:STRIPE>
-        <ots:LANE ID="FORWARD1" DESIGNDIRECTION="true" LANETYPE="HIGHWAY">
-          <ots:CENTEROFFSET>1.8m</ots:CENTEROFFSET>
-          <ots:WIDTH>3.6m</ots:WIDTH>
-        </ots:LANE>
-        <ots:STRIPE TYPE="SOLID">
-          <ots:CENTEROFFSET>0m</ots:CENTEROFFSET>
-          <ots:DRAWINGWIDTH>20cm</ots:DRAWINGWIDTH>
-        </ots:STRIPE>
-        <ots:SHOULDER>
-          <ots:CENTEROFFSET>-1.5m</ots:CENTEROFFSET>
-          <ots:WIDTH>3m</ots:WIDTH>
-        </ots:SHOULDER>
-      </ots:ROADLAYOUT>
+      <ots:RoadLayout Id="1LaneLocal" LinkType="LOCAL">
+        <ots:Shoulder>
+          <ots:CenterOffset>4.9m</ots:CenterOffset>
+          <ots:Width>3m</ots:Width>
+        </ots:Shoulder>
+        <ots:Stripe Type="SOLID">
+          <ots:CenterOffset>3.6m</ots:CenterOffset>
+          <ots:DrawingWidth>20cm</ots:DrawingWidth>
+        </ots:Stripe>
+        <ots:Lane Id="FORWARD1" DesignDirection="true" LaneType="HIGHWAY">
+          <ots:CenterOffset>1.8m</ots:CenterOffset>
+          <ots:Width>3.6m</ots:Width>
+        </ots:Lane>
+        <ots:Stripe Type="SOLID">
+          <ots:CenterOffset>0m</ots:CenterOffset>
+          <ots:DrawingWidth>20cm</ots:DrawingWidth>
+        </ots:Stripe>
+        <ots:Shoulder>
+          <ots:CenterOffset>-1.5m</ots:CenterOffset>
+          <ots:Width>3m</ots:Width>
+        </ots:Shoulder>
+      </ots:RoadLayout>
 
-    </ots:ROADLAYOUTS>
-  </ots:DEFINITIONS>
+    </ots:RoadLayouts>
+  </ots:Definitions>
 
 
-  <ots:NETWORK>
-    <ots:NODE ID="A" COORDINATE="(0, 0)" DIRECTION="0 deg(E)" />
-    <ots:NODE ID="B" COORDINATE="(1500, 0)" DIRECTION="0 deg(E)" />
-    <ots:NODE ID="C" COORDINATE="(1565, 0)" DIRECTION="0 deg(E)" />
-    <ots:NODE ID="D" COORDINATE="(1570, 0)" DIRECTION="0 deg(E)" />
-    <ots:NODE ID="E" COORDINATE="(3000, 0)" DIRECTION="0 deg(E)" />
-    <ots:NODE ID="F" COORDINATE="(1260, -40)" DIRECTION="0 deg(E)" />
-    <ots:NODE ID="F2" COORDINATE="(1280, -40)" DIRECTION="0 deg(E)" />
-    <ots:NODE ID="G" COORDINATE="(3000, 30)" DIRECTION="0 deg(E)" />
+  <ots:Network>
+    <ots:Node Id="A" Coordinate="(0, 0)" Direction="0 deg(E)" />
+    <ots:Node Id="B" Coordinate="(1500, 0)" Direction="0 deg(E)" />
+    <ots:Node Id="C" Coordinate="(1565, 0)" Direction="0 deg(E)" />
+    <ots:Node Id="D" Coordinate="(1570, 0)" Direction="0 deg(E)" />
+    <ots:Node Id="E" Coordinate="(3000, 0)" Direction="0 deg(E)" />
+    <ots:Node Id="F" Coordinate="(1260, -40)" Direction="0 deg(E)" />
+    <ots:Node Id="F2" Coordinate="(1280, -40)" Direction="0 deg(E)" />
+    <ots:Node Id="G" Coordinate="(3000, 30)" Direction="0 deg(E)" />
 
-    <ots:LINK ID="AB" NODESTART="A" NODEEND="B" TYPE="HIGHWAY">
-      <ots:STRAIGHT />
-      <ots:DEFINEDLAYOUT>3LaneHighway</ots:DEFINEDLAYOUT>
-    </ots:LINK>
+    <ots:Link Id="AB" NodeStart="A" NodeEnd="B" Type="HIGHWAY">
+      <ots:Straight />
+      <ots:DefinedLayout>3LaneHighway</ots:DefinedLayout>
+    </ots:Link>
 
-    <ots:LINK ID="BC" NODESTART="B" NODEEND="C" TYPE="HIGHWAY">
-      <ots:STRAIGHT />
-      <ots:DEFINEDLAYOUT>4LaneHighway</ots:DEFINEDLAYOUT>
-    </ots:LINK>
+    <ots:Link Id="BC" NodeStart="B" NodeEnd="C" Type="HIGHWAY">
+      <ots:Straight />
+      <ots:DefinedLayout>4LaneHighway</ots:DefinedLayout>
+    </ots:Link>
 
-    <ots:LINK ID="CD" NODESTART="C" NODEEND="D" TYPE="HIGHWAY">
-      <ots:STRAIGHT />
-      <ots:DEFINEDLAYOUT>3LaneHighway</ots:DEFINEDLAYOUT>
-    </ots:LINK>
+    <ots:Link Id="CD" NodeStart="C" NodeEnd="D" Type="HIGHWAY">
+      <ots:Straight />
+      <ots:DefinedLayout>3LaneHighway</ots:DefinedLayout>
+    </ots:Link>
 
-    <ots:LINK ID="DE" NODESTART="D" NODEEND="E" TYPE="HIGHWAY">
-      <ots:STRAIGHT />
-      <ots:DEFINEDLAYOUT>2LaneHighway</ots:DEFINEDLAYOUT>
-    </ots:LINK>
+    <ots:Link Id="DE" NodeStart="D" NodeEnd="E" Type="HIGHWAY">
+      <ots:Straight />
+      <ots:DefinedLayout>2LaneHighway</ots:DefinedLayout>
+    </ots:Link>
 
-    <ots:LINK ID="FF2" NODESTART="F" NODEEND="F2" TYPE="LOCAL">
-      <ots:STRAIGHT />
-      <ots:DEFINEDLAYOUT>1LaneLocal</ots:DEFINEDLAYOUT>
-    </ots:LINK>
+    <ots:Link Id="FF2" NodeStart="F" NodeEnd="F2" Type="LOCAL">
+      <ots:Straight />
+      <ots:DefinedLayout>1LaneLocal</ots:DefinedLayout>
+    </ots:Link>
 
-    <ots:LINK ID="F2B" NODESTART="F2" NODEEND="B" TYPE="HIGHWAY" OFFSETEND="-3.6m">
-      <ots:BEZIER />
-      <ots:DEFINEDLAYOUT>1LaneHighway</ots:DEFINEDLAYOUT>
-    </ots:LINK>
+    <ots:Link Id="F2B" NodeStart="F2" NodeEnd="B" Type="HIGHWAY" OffsetEnd="-3.6m">
+      <ots:Bezier />
+      <ots:DefinedLayout>1LaneHighway</ots:DefinedLayout>
+    </ots:Link>
 
-    <ots:LINK ID="DG" NODESTART="D" NODEEND="G"  TYPE="HIGHWAY" OFFSETSTART="7.2m">
-      <ots:BEZIER />
-      <ots:DEFINEDLAYOUT>1LaneHighway</ots:DEFINEDLAYOUT>
-    </ots:LINK>
+    <ots:Link Id="DG" NodeStart="D" NodeEnd="G"  Type="HIGHWAY" OffsetStart="7.2m">
+      <ots:Bezier />
+      <ots:DefinedLayout>1LaneHighway</ots:DefinedLayout>
+    </ots:Link>
 
-  </ots:NETWORK>
+  </ots:Network>
 
-  <ots:NETWORKDEMAND>
-    <ots:SINK LINK="DE" LANE="FORWARD1" DIRECTION="DIR_PLUS" POSITION="END-50m" />
-    <ots:SINK LINK="DE" LANE="FORWARD2" DIRECTION="DIR_PLUS" POSITION="END-50m" />
-    <ots:SINK LINK="DG" LANE="FORWARD1" DIRECTION="DIR_PLUS" POSITION="END-50m" />
-  </ots:NETWORKDEMAND>
+  <ots:Demand>
+    <ots:Sink Link="DE" Lane="FORWARD1" Direction="DIR_PLUS" Position="END-50m" />
+    <ots:Sink Link="DE" Lane="FORWARD2" Direction="DIR_PLUS" Position="END-50m" />
+    <ots:Sink Link="DG" Lane="FORWARD1" Direction="DIR_PLUS" Position="END-50m" />
+  </ots:Demand>
 
-  <ots:SCENARIO></ots:SCENARIO>
+  <ots:Scenario></ots:Scenario>
 
-  <ots:RUN>
-    <ots:RUNLENGTH>1h</ots:RUNLENGTH>
-  </ots:RUN>
-</ots:OTS>
+  <ots:Run>
+    <ots:RunLength>1h</ots:RunLength>
+  </ots:Run>
+</ots:Ots>

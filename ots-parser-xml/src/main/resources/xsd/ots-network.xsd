@@ -18,81 +18,81 @@
   <!-- ================================================ NETWORK ========================================= -->
   <!-- ================================================================================================== -->
 
-  <xsd:element name="NODE">
+  <xsd:element name="Node">
     <xsd:complexType>
-      <xsd:attribute name="ID" type="xsd:string" use="required" />
-      <xsd:attribute name="COORDINATE" type="ots:COORDINATETYPE" use="required" />
-      <xsd:attribute name="DIRECTION" type="ots:DIRECTIONTYPE" use="optional" />
+      <xsd:attribute name="Id" type="xsd:string" use="required" />
+      <xsd:attribute name="Coordinate" type="ots:CoordinateType" use="required" />
+      <xsd:attribute name="Direction" type="ots:DirectionType" use="optional" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
 
-  <xsd:element name="CONNECTOR">
+  <xsd:element name="Connector">
     <xsd:complexType>
-      <xsd:attribute name="ID" type="xsd:string" use="required" />
-      <xsd:attribute name="NODESTART" type="xsd:string" use="required" />
-      <xsd:attribute name="NODEEND" type="xsd:string" use="required" />
-      <xsd:attribute name="DEMANDWEIGHT" type="ots:FRACTIONTYPE" />
+      <xsd:attribute name="Id" type="xsd:string" use="required" />
+      <xsd:attribute name="NodeStart" type="xsd:string" use="required" />
+      <xsd:attribute name="NodeEnd" type="xsd:string" use="required" />
+      <xsd:attribute name="DemandWeight" type="ots:FractionType" />
     </xsd:complexType>
   </xsd:element>
 
-  <xsd:element name="LINK">
+  <xsd:element name="Link">
     <xsd:complexType>
       <xsd:sequence>
         <xsd:choice>
-          <xsd:element name="STRAIGHT" />
-          <xsd:element name="BEZIER">
+          <xsd:element name="Straight" />
+          <xsd:element name="Bezier">
             <xsd:complexType>
-              <xsd:attribute name="STARTDIRECTION" type="ots:DIRECTIONTYPE" use="optional" />
-              <xsd:attribute name="ENDDIRECTION" type="ots:DIRECTIONTYPE" use="optional" />
-              <xsd:attribute name="NUMSEGMENTS" type="xsd:integer" use="optional" default="64" />
-              <xsd:attribute name="SHAPE" type="ots:POSITIVEDOUBLE" use="optional" default="1.0" />
-              <xsd:attribute name="WEIGHTED" type="xsd:boolean" use="optional" default="false" />
+              <xsd:attribute name="StartDirection" type="ots:DirectionType" use="optional" />
+              <xsd:attribute name="EndDirection" type="ots:DirectionType" use="optional" />
+              <xsd:attribute name="NumSegments" type="xsd:integer" use="optional" default="64" />
+              <xsd:attribute name="Shape" type="ots:PositiveDouble" use="optional" default="1.0" />
+              <xsd:attribute name="Weighted" type="xsd:boolean" use="optional" default="false" />
             </xsd:complexType>
           </xsd:element>
-          <xsd:element name="CLOTHOID">
+          <xsd:element name="Clothoid">
             <xsd:complexType>
-              <xsd:attribute name="STARTDIRECTION" type="ots:DIRECTIONTYPE" use="optional" />
-              <xsd:attribute name="STARTCURVATURE" type="ots:PERLENGTHTYPE" use="required" />
-              <xsd:attribute name="ENDDIRECTION" type="ots:DIRECTIONTYPE" use="optional" />
-              <xsd:attribute name="ENDCURVATURE" type="ots:PERLENGTHTYPE" use="required" />
-              <xsd:attribute name="LENGTH" type="ots:POSITIVELENGTHTYPE" use="optional" />
-              <xsd:attribute name="ENDELEVATION" type="ots:POSITIVELENGTHTYPE" use="optional" />
-              <xsd:attribute name="NUMSEGMENTS" type="xsd:integer" use="optional" default="64" />
+              <xsd:attribute name="StartDirection" type="ots:DirectionType" use="optional" />
+              <xsd:attribute name="StartCurvature" type="ots:PerLengthType" use="required" />
+              <xsd:attribute name="EndDirection" type="ots:DirectionType" use="optional" />
+              <xsd:attribute name="EndCurvature" type="ots:PerLengthType" use="required" />
+              <xsd:attribute name="Length" type="ots:PositiveLengthType" use="optional" />
+              <xsd:attribute name="EndElevation" type="ots:PositiveLengthType" use="optional" />
+              <xsd:attribute name="NumSegments" type="xsd:integer" use="optional" default="64" />
             </xsd:complexType>
           </xsd:element>
-          <xsd:element name="ARC">
+          <xsd:element name="Arc">
             <xsd:complexType>
-              <xsd:attribute name="RADIUS" type="ots:POSITIVELENGTHTYPE" use="required" />
-              <xsd:attribute name="DIRECTION" type="ots:LEFTRIGHTTYPE" use="required" />
-              <xsd:attribute name="NUMSEGMENTS" type="xsd:integer" use="optional" default="64" />
+              <xsd:attribute name="Radius" type="ots:PositiveLengthType" use="required" />
+              <xsd:attribute name="Direction" type="ots:LeftRightType" use="required" />
+              <xsd:attribute name="NumSegments" type="xsd:integer" use="optional" default="64" />
             </xsd:complexType>
           </xsd:element>
-          <xsd:element name="POLYLINE">
+          <xsd:element name="Polyline">
             <xsd:complexType>
               <!-- Not necessary to specify the points on the two nodes. -->
               <xsd:sequence minOccurs="1" maxOccurs="unbounded">
-                <xsd:element name="COORDINATE" type="ots:COORDINATETYPE" />
+                <xsd:element name="Coordinate" type="ots:CoordinateType" />
               </xsd:sequence>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
 
         <xsd:choice>
-          <xsd:element name="ROADLAYOUT">
+          <xsd:element name="RoadLayout">
             <xsd:complexType>
               <xsd:complexContent>
-                <xsd:extension base="ots:BASICROADLAYOUT">
+                <xsd:extension base="ots:BasicRoadLayout">
                 </xsd:extension>
               </xsd:complexContent>
             </xsd:complexType>
           </xsd:element>
           <xsd:sequence>
-            <xsd:element name="DEFINEDLAYOUT" type="xsd:string" />
-            <xsd:element name="LANEOVERRIDE" minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="DefinedLayout" type="xsd:string" />
+            <xsd:element name="LaneOverride" minOccurs="0" maxOccurs="unbounded">
               <xsd:complexType>
                 <xsd:sequence>
-                  <xsd:element ref="ots:SPEEDLIMIT" minOccurs="0" maxOccurs="unbounded" />
+                  <xsd:element ref="ots:SpeedLimit" minOccurs="0" maxOccurs="unbounded" />
                 </xsd:sequence>
                 <xsd:attribute name="LANE" type="xsd:string" use="required" />
               </xsd:complexType>
@@ -100,34 +100,34 @@
           </xsd:sequence>
         </xsd:choice>
 
-        <xsd:element name="TRAFFICLIGHT" type="ots:TRAFFICLIGHTTYPE" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element name="TRAFFICLIGHTSENSOR" type="ots:TRAFFICLIGHTSENSORTYPE" minOccurs="0"
+        <xsd:element name="TrafficLight" type="ots:TrafficLightType" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element name="TrafficLightSensor" type="ots:TrafficLightSensorType" minOccurs="0"
           maxOccurs="unbounded" />
 
       </xsd:sequence>
 
-      <xsd:attribute name="ID" type="xsd:string" use="required" />
-      <xsd:attribute name="TYPE" type="xsd:string" use="required" />
-      <xsd:attribute name="NODESTART" type="xsd:string" use="required" />
-      <xsd:attribute name="NODEEND" type="xsd:string" use="required" />
-      <xsd:attribute name="OFFSETSTART" type="ots:LENGTHTYPE" use="optional" default="0.0 m" />
-      <xsd:attribute name="OFFSETEND" type="ots:LENGTHTYPE" use="optional" default="0.0 m" />
-      <xsd:attribute name="LANEKEEPING" type="ots:LANEKEEPINGTYPE" use="optional" default="KEEPRIGHT" />
-      <xsd:attribute name="PRIORITY" type="ots:PRIORITYTYPE" use="optional" />
-      <xsd:attribute name="FIXGRADUALOFFSET" type="xsd:boolean" use="optional" default="false" />
-      <xsd:attribute name="CONFLICTID" type="xsd:string" use="optional" />
+      <xsd:attribute name="Id" type="xsd:string" use="required" />
+      <xsd:attribute name="Type" type="xsd:string" use="required" />
+      <xsd:attribute name="NodeStart" type="xsd:string" use="required" />
+      <xsd:attribute name="NodeEnd" type="xsd:string" use="required" />
+      <xsd:attribute name="OffsetStart" type="ots:LengthType" use="optional" default="0.0 m" />
+      <xsd:attribute name="OffsetEnd" type="ots:LengthType" use="optional" default="0.0 m" />
+      <xsd:attribute name="LaneKeeping" type="ots:LaneKeepingType" use="optional" default="KEEPRIGHT" />
+      <xsd:attribute name="Priority" type="ots:PriorityType" use="optional" />
+      <xsd:attribute name="FixGradualOffset" type="xsd:boolean" use="optional" default="false" />
+      <xsd:attribute name="ConflictId" type="xsd:string" use="optional" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
 
 
-  <xsd:element name="NETWORK">
+  <xsd:element name="Network">
     <xsd:complexType>
       <xsd:choice minOccurs="0" maxOccurs="unbounded">
         <xsd:element ref="xi:include" minOccurs="0" maxOccurs="1" />
-        <xsd:element ref="ots:NODE" minOccurs="0" maxOccurs="1" />
-        <xsd:element ref="ots:CONNECTOR" minOccurs="0" maxOccurs="1" />
-        <xsd:element ref="ots:LINK" minOccurs="0" maxOccurs="1" />
+        <xsd:element ref="ots:Node" minOccurs="0" maxOccurs="1" />
+        <xsd:element ref="ots:Connector" minOccurs="0" maxOccurs="1" />
+        <xsd:element ref="ots:Link" minOccurs="0" maxOccurs="1" />
       </xsd:choice>
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
@@ -139,11 +139,11 @@
 
   <!-- LINK plus TRAFFICLIGHT.ID should be unique. -->
 
-  <xsd:complexType name="TRAFFICLIGHTTYPE">
-    <xsd:attribute name="ID" type="xsd:string" use="required" />
-    <xsd:attribute name="LANE" type="xsd:string" use="required" />
-    <xsd:attribute name="POSITION" type="ots:LENGTHBEGINENDTYPE" use="required" />
-    <xsd:attribute name="CLASS" type="ots:CLASSNAMETYPE" use="required">
+  <xsd:complexType name="TrafficLightType">
+    <xsd:attribute name="Id" type="xsd:string" use="required" />
+    <xsd:attribute name="Lane" type="xsd:string" use="required" />
+    <xsd:attribute name="Position" type="ots:LengthBeginEndType" use="required" />
+    <xsd:attribute name="Class" type="ots:ClassNameType" use="required">
       <xsd:annotation>
         <xsd:documentation source="description">
           Fully specified classname including the package.
@@ -152,13 +152,13 @@
     </xsd:attribute>
   </xsd:complexType>
 
-  <xsd:complexType name="TRAFFICLIGHTSENSORTYPE">
-    <xsd:attribute name="ID" type="xsd:string" use="required" />
-    <xsd:attribute name="LANE" type="xsd:string" use="required" />
-    <xsd:attribute name="POSITION" type="ots:LENGTHBEGINENDTYPE" use="required" />
-    <xsd:attribute name="LENGTH" type="ots:POSITIVELENGTHTYPE" use="required" />
+  <xsd:complexType name="TrafficLightSensorType">
+    <xsd:attribute name="Id" type="xsd:string" use="required" />
+    <xsd:attribute name="Lane" type="xsd:string" use="required" />
+    <xsd:attribute name="Position" type="ots:LengthBeginEndType" use="required" />
+    <xsd:attribute name="Length" type="ots:PositiveLengthType" use="required" />
     <!-- TODO allow for detectors that span multiple lanes (longitudinally); thus multiple links -->
-    <xsd:attribute name="CLASS" type="ots:CLASSNAMETYPE" use="required">
+    <xsd:attribute name="Class" type="ots:ClassNameType" use="required">
       <xsd:annotation>
         <xsd:documentation source="description">
           Fully specified classname including the package.

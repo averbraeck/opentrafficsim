@@ -132,7 +132,7 @@ public class FixedTimeController extends AbstractTrafficController
                     double preGreenDuration = sg.getPreGreen().si;
                     if (preGreenDuration > 0)
                     {
-                        flanks.add(new Flank(sgOffset % this.cycleTime.si, TrafficLightColor.PREGREEN));
+                        flanks.add(new Flank(sgOffset % this.cycleTime.si, TrafficLightColor.PreGreen));
                         sgOffset += preGreenDuration;
                     }
                     flanks.add(new Flank(sgOffset % this.cycleTime.si, TrafficLightColor.GREEN));
@@ -456,7 +456,7 @@ public class FixedTimeController extends AbstractTrafficController
             }
             else if (inCycleTime.lt(this.preGreen))
             {
-                this.currentColor = TrafficLightColor.PREGREEN;
+                this.currentColor = TrafficLightColor.PreGreen;
                 duration = this.preGreen.minus(inCycleTime);
             }
             else if (inCycleTime.lt(this.preGreen.plus(this.green)))
@@ -491,7 +491,7 @@ public class FixedTimeController extends AbstractTrafficController
                 {
                     switch (color)
                     {
-                        case PREGREEN:
+                        case PreGreen:
                             color = TrafficLightColor.GREEN;
                             duration = this.green;
                             break;
@@ -504,7 +504,7 @@ public class FixedTimeController extends AbstractTrafficController
                             duration = this.red;
                             break;
                         case RED:
-                            color = TrafficLightColor.PREGREEN;
+                            color = TrafficLightColor.PreGreen;
                             duration = this.preGreen;
                             break;
                         default:

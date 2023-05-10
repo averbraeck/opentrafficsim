@@ -11,67 +11,67 @@
   <xsd:include schemaLocation="ots-definitions.xsd" />
   <xsd:include schemaLocation="ots-types.xsd" />
 
-  <xsd:complexType name="CONTROLTYPE">
+  <xsd:complexType name="ControlType">
     <xsd:sequence>
-      <xsd:element name="SIGNALGROUP" minOccurs="1" maxOccurs="unbounded">
+      <xsd:element name="SignalGroup" minOccurs="1" maxOccurs="unbounded">
         <xsd:complexType>
           <xsd:sequence>
-            <xsd:element name="TRAFFICLIGHT" minOccurs="1" maxOccurs="unbounded">
+            <xsd:element name="TrafficLight" minOccurs="1" maxOccurs="unbounded">
               <xsd:complexType>
-                <xsd:attribute name="LINK" type="xsd:string" use="required" />
-                <xsd:attribute name="LANE" type="xsd:string" use="required" />
-                <xsd:attribute name="TRAFFICLIGHTID" type="xsd:string" use="required" />
+                <xsd:attribute name="Link" type="xsd:string" use="required" />
+                <xsd:attribute name="Lane" type="xsd:string" use="required" />
+                <xsd:attribute name="TrafficLightId" type="xsd:string" use="required" />
               </xsd:complexType>
             </xsd:element>
           </xsd:sequence>
-          <xsd:attribute name="ID" type="xsd:string" use="required" />
+          <xsd:attribute name="Id" type="xsd:string" use="required" />
         </xsd:complexType>
       </xsd:element>
     </xsd:sequence>
-    <xsd:attribute name="ID" type="xsd:string" use="required" />
-    <xsd:attribute name="STARTTIME" type="ots:TIMETYPE" use="optional" />
-    <xsd:attribute name="ENDTIME" type="ots:TIMETYPE" use="optional" />
+    <xsd:attribute name="Id" type="xsd:string" use="required" />
+    <xsd:attribute name="StartTime" type="ots:TimeType" use="optional" />
+    <xsd:attribute name="EndTime" type="ots:TimeType" use="optional" />
   </xsd:complexType>
 
-  <xsd:complexType name="RESPONSIVECONTROLTYPE">
+  <xsd:complexType name="ResponsiveControlType">
     <xsd:complexContent>
-      <xsd:extension base="ots:CONTROLTYPE">
+      <xsd:extension base="ots:ControlType">
         <xsd:sequence>
-          <xsd:element name="SENSOR" minOccurs="1" maxOccurs="unbounded">
+          <xsd:element name="Sensor" minOccurs="1" maxOccurs="unbounded">
             <xsd:complexType>
               <xsd:choice>
-                <xsd:element name="MULTIPLELANE">
+                <xsd:element name="MultipleLane">
                   <xsd:complexType>
                     <xsd:sequence>
-                      <xsd:element name="ENTRYLINK" type="xsd:string" />
-                      <xsd:element name="ENTRYLANE" type="xsd:string" />
-                      <xsd:element name="ENTRYPOSITION" type="ots:LENGTHBEGINENDTYPE" />
-                      <xsd:element name="INTERMEDIATELANES" minOccurs="0" maxOccurs="unbounded">
+                      <xsd:element name="EntryLink" type="xsd:string" />
+                      <xsd:element name="EntryLane" type="xsd:string" />
+                      <xsd:element name="EntryPosition" type="ots:LengthBeginEndType" />
+                      <xsd:element name="IntermediateLanes" minOccurs="0" maxOccurs="unbounded">
                         <xsd:complexType>
                           <xsd:sequence>
-                            <xsd:element name="LINK" type="xsd:string" />
-                            <xsd:element name="LANE" type="xsd:string" />
+                            <xsd:element name="Link" type="xsd:string" />
+                            <xsd:element name="Lane" type="xsd:string" />
                           </xsd:sequence>
                         </xsd:complexType>
                       </xsd:element>
-                      <xsd:element name="EXITLINK" type="xsd:string" />
-                      <xsd:element name="EXITLANE" type="xsd:string" />
-                      <xsd:element name="EXITPOSITION" type="ots:LENGTHBEGINENDTYPE" />
+                      <xsd:element name="ExitLink" type="xsd:string" />
+                      <xsd:element name="ExitLane" type="xsd:string" />
+                      <xsd:element name="ExitPosition" type="ots:LengthBeginEndType" />
                     </xsd:sequence>
                   </xsd:complexType>
                 </xsd:element>
-                <xsd:element name="SINGLELANE">
+                <xsd:element name="SingleLane">
                   <xsd:complexType>
                     <xsd:sequence>
-                      <xsd:element name="LINK" type="xsd:string" />
-                      <xsd:element name="LANE" type="xsd:string" />
-                      <xsd:element name="ENTRYPOSITION" type="ots:LENGTHBEGINENDTYPE" />
-                      <xsd:element name="EXITPOSITION" type="ots:LENGTHBEGINENDTYPE" />
+                      <xsd:element name="Link" type="xsd:string" />
+                      <xsd:element name="Lane" type="xsd:string" />
+                      <xsd:element name="EntryPosition" type="ots:LengthBeginEndType" />
+                      <xsd:element name="ExitPosition" type="ots:LengthBeginEndType" />
                     </xsd:sequence>
                   </xsd:complexType>
                 </xsd:element>
               </xsd:choice>
-              <xsd:attribute name="ID" type="xsd:string" use="required" />
+              <xsd:attribute name="Id" type="xsd:string" use="required" />
             </xsd:complexType>
           </xsd:element>
         </xsd:sequence>
@@ -79,39 +79,39 @@
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:element name="CONTROL">
+  <xsd:element name="Control">
     <xsd:complexType>
       <xsd:choice>
 
-        <xsd:element name="FIXEDTIME" minOccurs="0" maxOccurs="unbounded">
+        <xsd:element name="FixedTime" minOccurs="0" maxOccurs="unbounded">
           <xsd:complexType>
             <xsd:complexContent>
-              <xsd:extension base="ots:CONTROLTYPE">
+              <xsd:extension base="ots:ControlType">
                 <xsd:sequence>
-                  <xsd:element name="CYCLE" minOccurs="1" maxOccurs="unbounded">
+                  <xsd:element name="Cycle" minOccurs="1" maxOccurs="unbounded">
                     <xsd:complexType>
-                      <xsd:attribute name="SIGNALGROUPID" type="xsd:string" use="required" />
-                      <xsd:attribute name="OFFSET" type="ots:DURATIONTYPE" use="required" />
-                      <xsd:attribute name="PREGREEN" type="ots:DURATIONTYPE" use="optional" />
-                      <xsd:attribute name="GREEN" type="ots:DURATIONTYPE" use="required" />
-                      <xsd:attribute name="YELLOW" type="ots:DURATIONTYPE" use="required" />
+                      <xsd:attribute name="SignalGroupId" type="xsd:string" use="required" />
+                      <xsd:attribute name="Offset" type="ots:DurationType" use="required" />
+                      <xsd:attribute name="PreGreen" type="ots:DurationType" use="optional" />
+                      <xsd:attribute name="Green" type="ots:DurationType" use="required" />
+                      <xsd:attribute name="Yellow" type="ots:DurationType" use="required" />
                     </xsd:complexType>
                   </xsd:element>
                 </xsd:sequence>
-                <xsd:attribute name="CYCLETIME" type="ots:DURATIONTYPE" use="required" />
-                <xsd:attribute name="OFFSET" type="ots:DURATIONTYPE" use="optional" default="0.0 s" />
+                <xsd:attribute name="CycleTime" type="ots:DurationType" use="required" />
+                <xsd:attribute name="Offset" type="ots:DurationType" use="optional" default="0.0 s" />
               </xsd:extension>
             </xsd:complexContent>
           </xsd:complexType>
         </xsd:element>
 
-        <xsd:element name="TRAFCOD" minOccurs="0" maxOccurs="unbounded">
+        <xsd:element name="TrafCod" minOccurs="0" maxOccurs="unbounded">
           <xsd:complexType>
             <xsd:complexContent>
-              <xsd:extension base="ots:RESPONSIVECONTROLTYPE">
+              <xsd:extension base="ots:ResponsiveControlType">
                 <xsd:sequence>
                   <xsd:choice>
-                    <xsd:element name="PROGRAM">
+                    <xsd:element name="Program">
                       <xsd:complexType>
                         <xsd:simpleContent>
                           <xsd:extension base="xsd:string">
@@ -120,28 +120,28 @@
                         </xsd:simpleContent>
                       </xsd:complexType>
                     </xsd:element>
-                    <xsd:element name="PROGRAMFILE" type="xsd:anyURI" />
+                    <xsd:element name="ProgramFile" type="xsd:anyURI" />
                   </xsd:choice>
-                  <xsd:element name="CONSOLE">
+                  <xsd:element name="Console">
                     <xsd:complexType>
                       <xsd:sequence>
                         <xsd:choice>
-                          <xsd:element name="MAP">
+                          <xsd:element name="Map">
                             <xsd:complexType>
                               <xsd:simpleContent>
                                 <xsd:extension base="xsd:string">
-                                  <xsd:attribute name="TYPE" type="ots:GRAPHICSTYPE" />
-                                  <xsd:attribute name="ENCODING" type="ots:ENCODINGTYPE" />
+                                  <xsd:attribute name="Type" type="ots:GraphicsType" />
+                                  <xsd:attribute name="Encoding" type="ots:EncodingType" />
                                   <xsd:attribute ref="xml:space" use="optional" default="preserve" />
                                 </xsd:extension>
                               </xsd:simpleContent>
                             </xsd:complexType>
                           </xsd:element>
-                          <xsd:element name="MAPFILE" type="xsd:anyURI" />
+                          <xsd:element name="MapFile" type="xsd:anyURI" />
                         </xsd:choice>
                         <xsd:choice>
-                          <xsd:element name="COORDINATES" type="ots:TRAFCODCOORDINATESTYPE" />
-                          <xsd:element name="COORDINATESFILE" type="xsd:anyURI" />
+                          <xsd:element name="Coordinates" type="ots:TrafCodCoordinatesType" />
+                          <xsd:element name="CoordinatesFile" type="xsd:anyURI" />
                         </xsd:choice>
                       </xsd:sequence>
                     </xsd:complexType>
@@ -156,19 +156,19 @@
     </xsd:complexType>
   </xsd:element>
 
-  <xsd:simpleType name="GRAPHICSTYPE">
+  <xsd:simpleType name="GraphicsType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="PNG|GIF|BMP|JPG" />
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ENCODINGTYPE">
+  <xsd:simpleType name="EncodingType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="base64" />
     </xsd:restriction>
   </xsd:simpleType>
   
-  <xsd:complexType name="TRAFCODCOORDINATESTYPE">
+  <xsd:complexType name="TrafCodCoordinatesType">
     <xsd:simpleContent>
       <xsd:extension base="xsd:string">
         <xsd:attribute ref="xml:space" use="optional" default="preserve" />

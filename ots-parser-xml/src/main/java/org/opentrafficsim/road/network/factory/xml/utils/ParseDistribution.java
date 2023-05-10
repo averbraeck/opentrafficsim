@@ -18,16 +18,16 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
-import org.opentrafficsim.xml.generated.ACCELERATIONDISTTYPE;
-import org.opentrafficsim.xml.generated.CONTDISTTYPE;
-import org.opentrafficsim.xml.generated.DISCRETEDISTTYPE;
-import org.opentrafficsim.xml.generated.DURATIONDISTTYPE;
-import org.opentrafficsim.xml.generated.FREQUENCYDISTTYPE;
-import org.opentrafficsim.xml.generated.LENGTHDISTTYPE;
-import org.opentrafficsim.xml.generated.LINEARDENSITYDISTTYPE;
-import org.opentrafficsim.xml.generated.POSITIONDISTTYPE;
-import org.opentrafficsim.xml.generated.SPEEDDISTTYPE;
-import org.opentrafficsim.xml.generated.TIMEDISTTYPE;
+import org.opentrafficsim.xml.generated.AccelerationDistType;
+import org.opentrafficsim.xml.generated.ConstantDistType;
+import org.opentrafficsim.xml.generated.DiscreteDistType;
+import org.opentrafficsim.xml.generated.DurationDistType;
+import org.opentrafficsim.xml.generated.FrequencyDistType;
+import org.opentrafficsim.xml.generated.LengthDistType;
+import org.opentrafficsim.xml.generated.LinearDensityDistType;
+import org.opentrafficsim.xml.generated.PositionDistType;
+import org.opentrafficsim.xml.generated.SpeedDistType;
+import org.opentrafficsim.xml.generated.TimeDistType;
 
 import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 import nl.tudelft.simulation.jstats.distributions.DistBernoulli;
@@ -76,44 +76,44 @@ public final class ParseDistribution
      * @return the generated distribution.
      * @throws XmlParserException in case distribution unknown or parameter number does not match.
      */
-    public static DistDiscrete makeDistDiscrete(final StreamInformation streamMap, final DISCRETEDISTTYPE distType)
+    public static DistDiscrete makeDistDiscrete(final StreamInformation streamMap, final DiscreteDistType distType)
             throws XmlParserException
     {
-        if (distType.getBERNOULLI() != null)
+        if (distType.getBernoulliI() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getBERNOULLI().getRANDOMSTREAM());
-            return new DistBernoulli(stream, distType.getBERNOULLI().getP());
+            StreamInterface stream = findStream(streamMap, distType.getBernoulliI().getRandomStream());
+            return new DistBernoulli(stream, distType.getBernoulliI().getP());
         }
-        else if (distType.getBINOMIAL() != null)
+        else if (distType.getBinomial() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getBINOMIAL().getRANDOMSTREAM());
-            return new DistBinomial(stream, (int) distType.getBINOMIAL().getN().longValue(), distType.getBINOMIAL().getP());
+            StreamInterface stream = findStream(streamMap, distType.getBinomial().getRandomStream());
+            return new DistBinomial(stream, (int) distType.getBinomial().getN().longValue(), distType.getBinomial().getP());
         }
-        else if (distType.getCONSTANT() != null)
+        else if (distType.getConstant() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getCONSTANT().getRANDOMSTREAM());
-            return new DistDiscreteConstant(stream, distType.getCONSTANT().getC());
+            StreamInterface stream = findStream(streamMap, distType.getConstant().getRandomStream());
+            return new DistDiscreteConstant(stream, distType.getConstant().getC());
         }
-        else if (distType.getGEOMETRIC() != null)
+        else if (distType.getGeometric() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getGEOMETRIC().getRANDOMSTREAM());
-            return new DistGeometric(stream, distType.getGEOMETRIC().getP());
+            StreamInterface stream = findStream(streamMap, distType.getGeometric().getRandomStream());
+            return new DistGeometric(stream, distType.getGeometric().getP());
         }
-        else if (distType.getNEGBINOMIAL() != null)
+        else if (distType.getNegBinomial() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getNEGBINOMIAL().getRANDOMSTREAM());
-            return new DistNegBinomial(stream, (int) distType.getNEGBINOMIAL().getN().longValue(),
-                    distType.getGEOMETRIC().getP());
+            StreamInterface stream = findStream(streamMap, distType.getNegBinomial().getRandomStream());
+            return new DistNegBinomial(stream, (int) distType.getNegBinomial().getN().longValue(),
+                    distType.getGeometric().getP());
         }
-        else if (distType.getPOISSON() != null)
+        else if (distType.getPoisson() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getPOISSON().getRANDOMSTREAM());
-            return new DistPoisson(stream, distType.getPOISSON().getLAMBDA());
+            StreamInterface stream = findStream(streamMap, distType.getPoisson().getRandomStream());
+            return new DistPoisson(stream, distType.getPoisson().getLambda());
         }
-        else if (distType.getUNIFORM() != null)
+        else if (distType.getUniform() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getUNIFORM().getRANDOMSTREAM());
-            return new DistDiscreteUniform(stream, distType.getUNIFORM().getMIN(), distType.getUNIFORM().getMAX());
+            StreamInterface stream = findStream(streamMap, distType.getUniform().getRandomStream());
+            return new DistDiscreteUniform(stream, distType.getUniform().getMin(), distType.getUniform().getMax());
         }
         throw new XmlParserException("makeDistDiscrete - unknown distribution function " + distType);
     }
@@ -125,71 +125,71 @@ public final class ParseDistribution
      * @return the generated distribution.
      * @throws XmlParserException in case distribution unknown or parameter number does not match.
      */
-    public static DistContinuous makeDistContinuous(final StreamInformation streamMap, final CONTDISTTYPE distType)
+    public static DistContinuous makeDistContinuous(final StreamInformation streamMap, final ConstantDistType distType)
             throws XmlParserException
     {
-        if (distType.getCONSTANT() != null)
+        if (distType.getConstant() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getCONSTANT().getRANDOMSTREAM());
-            return new DistConstant(stream, distType.getCONSTANT().getC());
+            StreamInterface stream = findStream(streamMap, distType.getConstant().getRandomStream());
+            return new DistConstant(stream, distType.getConstant().getC());
         }
-        else if (distType.getEXPONENTIAL() != null)
+        else if (distType.getExponential() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getEXPONENTIAL().getRANDOMSTREAM());
-            return new DistExponential(stream, distType.getEXPONENTIAL().getLAMBDA());
+            StreamInterface stream = findStream(streamMap, distType.getExponential().getRandomStream());
+            return new DistExponential(stream, distType.getExponential().getLambda());
         }
-        else if (distType.getTRIANGULAR() != null)
+        else if (distType.getTriangular() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getTRIANGULAR().getRANDOMSTREAM());
-            return new DistTriangular(stream, distType.getTRIANGULAR().getMIN(), distType.getTRIANGULAR().getMODE(),
-                    distType.getTRIANGULAR().getMAX());
+            StreamInterface stream = findStream(streamMap, distType.getTriangular().getRandomStream());
+            return new DistTriangular(stream, distType.getTriangular().getMin(), distType.getTriangular().getMode(),
+                    distType.getTriangular().getMax());
         }
-        else if (distType.getNORMAL() != null)
+        else if (distType.getNormal() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getNORMAL().getRANDOMSTREAM());
-            return new DistNormal(stream, distType.getNORMAL().getMU(), distType.getNORMAL().getSIGMA());
+            StreamInterface stream = findStream(streamMap, distType.getNormal().getRandomStream());
+            return new DistNormal(stream, distType.getNormal().getMu(), distType.getNormal().getSigma());
         }
         // TODO: NORMALTRUNC
-        else if (distType.getBETA() != null)
+        else if (distType.getBeta() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getBETA().getRANDOMSTREAM());
-            return new DistBeta(stream, distType.getBETA().getALPHA1(), distType.getBETA().getALPHA2());
+            StreamInterface stream = findStream(streamMap, distType.getBeta().getRandomStream());
+            return new DistBeta(stream, distType.getBeta().getAlpha1(), distType.getBeta().getAlpha2());
         }
-        else if (distType.getERLANG() != null)
+        else if (distType.getErlang() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getERLANG().getRANDOMSTREAM());
-            return new DistErlang(stream, distType.getERLANG().getK().intValue(), (int) distType.getERLANG().getMEAN());
+            StreamInterface stream = findStream(streamMap, distType.getErlang().getRandomStream());
+            return new DistErlang(stream, distType.getErlang().getK().intValue(), (int) distType.getErlang().getMean());
         }
-        else if (distType.getGAMMA() != null)
+        else if (distType.getGamma() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getGAMMA().getRANDOMSTREAM());
-            return new DistGamma(stream, distType.getGAMMA().getALPHA(), distType.getGAMMA().getBETA());
+            StreamInterface stream = findStream(streamMap, distType.getGamma().getRandomStream());
+            return new DistGamma(stream, distType.getGamma().getAlpha(), distType.getGamma().getBeta());
         }
-        else if (distType.getLOGNORMAL() != null)
+        else if (distType.getLogNormal() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getLOGNORMAL().getRANDOMSTREAM());
-            return new DistLogNormal(stream, distType.getLOGNORMAL().getMU(), distType.getLOGNORMAL().getSIGMA());
+            StreamInterface stream = findStream(streamMap, distType.getLogNormal().getRandomStream());
+            return new DistLogNormal(stream, distType.getLogNormal().getMu(), distType.getLogNormal().getSigma());
         }
-        else if (distType.getPEARSON5() != null)
+        else if (distType.getPearson5() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getPEARSON5().getRANDOMSTREAM());
-            return new DistPearson5(stream, distType.getPEARSON5().getALPHA(), distType.getPEARSON5().getBETA());
+            StreamInterface stream = findStream(streamMap, distType.getPearson5().getRandomStream());
+            return new DistPearson5(stream, distType.getPearson5().getAlpha(), distType.getPearson5().getBeta());
         }
-        else if (distType.getPEARSON6() != null)
+        else if (distType.getPearson6() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getPEARSON6().getRANDOMSTREAM());
-            return new DistPearson6(stream, distType.getPEARSON6().getALPHA1(), distType.getPEARSON6().getALPHA2(),
-                    distType.getPEARSON6().getBETA());
+            StreamInterface stream = findStream(streamMap, distType.getPearson6().getRandomStream());
+            return new DistPearson6(stream, distType.getPearson6().getAlpha1(), distType.getPearson6().getAlpha2(),
+                    distType.getPearson6().getBeta());
         }
-        else if (distType.getUNIFORM() != null)
+        else if (distType.getUniform() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getUNIFORM().getRANDOMSTREAM());
-            return new DistUniform(stream, distType.getUNIFORM().getMIN(), distType.getUNIFORM().getMAX());
+            StreamInterface stream = findStream(streamMap, distType.getUniform().getRandomStream());
+            return new DistUniform(stream, distType.getUniform().getMin(), distType.getUniform().getMax());
         }
-        else if (distType.getWEIBULL() != null)
+        else if (distType.getWeibull() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getWEIBULL().getRANDOMSTREAM());
-            return new DistWeibull(stream, distType.getWEIBULL().getALPHA(), distType.getWEIBULL().getBETA());
+            StreamInterface stream = findStream(streamMap, distType.getWeibull().getRandomStream());
+            return new DistWeibull(stream, distType.getWeibull().getAlpha(), distType.getWeibull().getBeta());
         }
         throw new XmlParserException("makeDistContinuous - unknown distribution function " + distType);
     }
@@ -206,7 +206,7 @@ public final class ParseDistribution
     {
         if (streamInformation.getStream(streamId) == null)
         {
-            throw new XmlParserException("Could not find stream with ID=" + streamId);
+            throw new XmlParserException("Could not find stream with Id=" + streamId);
         }
         return streamInformation.getStream(streamId);
     }
@@ -219,18 +219,18 @@ public final class ParseDistribution
      * @throws XmlParserException in case of a parse error.
      */
     public static ContinuousDistDoubleScalar.Rel<Length, LengthUnit> parseLengthDist(final StreamInformation streamMap,
-            final LENGTHDISTTYPE lengthDist) throws XmlParserException
+            final LengthDistType lengthDist) throws XmlParserException
     {
         DistContinuous dist = makeDistContinuous(streamMap, lengthDist);
         for (LengthUnit unit : LengthUnit.BASE.getUnitsById().values())
         {
-            if (unit.getDefaultAbbreviations().contains(lengthDist.getLENGTHUNIT()))
+            if (unit.getDefaultAbbreviations().contains(lengthDist.getLengthUnit()))
             {
                 return new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(dist, unit);
             }
         }
         throw new XmlParserException(
-                "Could not find LengthUnit " + lengthDist.getLENGTHUNIT() + " in tag of type LENGTHDISTTYPE");
+                "Could not find LengthUnit " + lengthDist.getLengthUnit() + " in tag of type LengthDistType");
     }
 
     /**
@@ -241,18 +241,18 @@ public final class ParseDistribution
      * @throws XmlParserException in case of a parse error.
      */
     public static ContinuousDistDoubleScalar.Abs<Position, PositionUnit, LengthUnit> parsePositionDist(
-            final StreamInformation streamMap, final POSITIONDISTTYPE positionDist) throws XmlParserException
+            final StreamInformation streamMap, final PositionDistType positionDist) throws XmlParserException
     {
         DistContinuous dist = makeDistContinuous(streamMap, positionDist);
         for (PositionUnit unit : PositionUnit.BASE.getUnitsById().values())
         {
-            if (unit.getDefaultAbbreviations().contains(positionDist.getPOSITIONUNIT()))
+            if (unit.getDefaultAbbreviations().contains(positionDist.getPositionUnit()))
             {
                 return new ContinuousDistDoubleScalar.Abs<Position, PositionUnit, LengthUnit>(dist, unit);
             }
         }
         throw new XmlParserException(
-                "Could not find PositionUnit " + positionDist.getPOSITIONUNIT() + " in tag of type POSITIONDISTTYPE");
+                "Could not find PositionUnit " + positionDist.getPositionUnit() + " in tag of type PositionDistType");
     }
 
     /**
@@ -263,18 +263,18 @@ public final class ParseDistribution
      * @throws XmlParserException in case of a parse error.
      */
     public static ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> parseDurationDist(final StreamInformation streamMap,
-            final DURATIONDISTTYPE durationDist) throws XmlParserException
+            final DurationDistType durationDist) throws XmlParserException
     {
         DistContinuous dist = makeDistContinuous(streamMap, durationDist);
         for (DurationUnit unit : DurationUnit.BASE.getUnitsById().values())
         {
-            if (unit.getDefaultAbbreviations().contains(durationDist.getDURATIONUNIT()))
+            if (unit.getDefaultAbbreviations().contains(durationDist.getDurationUnit()))
             {
                 return new ContinuousDistDoubleScalar.Rel<Duration, DurationUnit>(dist, unit);
             }
         }
         throw new XmlParserException(
-                "Could not find DurationUnit " + durationDist.getDURATIONUNIT() + " in tag of type DURATIONDISTTYPE");
+                "Could not find DurationUnit " + durationDist.getDurationUnit() + " in tag of type DurationDistType");
     }
 
     /**
@@ -285,17 +285,17 @@ public final class ParseDistribution
      * @throws XmlParserException in case of a parse error.
      */
     public static ContinuousDistDoubleScalar.Abs<Time, TimeUnit, DurationUnit> parseTimeDist(final StreamInformation streamMap,
-            final TIMEDISTTYPE timeDist) throws XmlParserException
+            final TimeDistType timeDist) throws XmlParserException
     {
         DistContinuous dist = makeDistContinuous(streamMap, timeDist);
         for (TimeUnit unit : TimeUnit.BASE.getUnitsById().values())
         {
-            if (unit.getDefaultAbbreviations().contains(timeDist.getTIMEUNIT()))
+            if (unit.getDefaultAbbreviations().contains(timeDist.getTimeUnit()))
             {
                 return new ContinuousDistDoubleScalar.Abs<Time, TimeUnit, DurationUnit>(dist, unit);
             }
         }
-        throw new XmlParserException("Could not find TimeUnit " + timeDist.getTIMEUNIT() + " in tag of type TIMEDISTTYPE");
+        throw new XmlParserException("Could not find TimeUnit " + timeDist.getTimeUnit() + " in tag of type TimeDistType");
     }
 
     /**
@@ -306,17 +306,17 @@ public final class ParseDistribution
      * @throws XmlParserException in case of a parse error.
      */
     public static ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> parseSpeedDist(final StreamInformation streamMap,
-            final SPEEDDISTTYPE speedDist) throws XmlParserException
+            final SpeedDistType speedDist) throws XmlParserException
     {
         DistContinuous dist = makeDistContinuous(streamMap, speedDist);
         for (SpeedUnit unit : SpeedUnit.BASE.getUnitsById().values())
         {
-            if (unit.getDefaultAbbreviations().contains(speedDist.getSPEEDUNIT()))
+            if (unit.getDefaultAbbreviations().contains(speedDist.getSpeedUnit()))
             {
                 return new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(dist, unit);
             }
         }
-        throw new XmlParserException("Could not find SpeedUnit " + speedDist.getSPEEDUNIT() + " in tag of type SPEEDDISTTYPE");
+        throw new XmlParserException("Could not find SpeedUnit " + speedDist.getSpeedUnit() + " in tag of type SpeedDistType");
     }
 
     /**
@@ -327,18 +327,18 @@ public final class ParseDistribution
      * @throws XmlParserException in case of a parse error.
      */
     public static ContinuousDistDoubleScalar.Rel<Acceleration, AccelerationUnit> parseAccelerationDist(
-            final StreamInformation streamMap, final ACCELERATIONDISTTYPE accelerationDist) throws XmlParserException
+            final StreamInformation streamMap, final AccelerationDistType accelerationDist) throws XmlParserException
     {
         DistContinuous dist = makeDistContinuous(streamMap, accelerationDist);
         for (AccelerationUnit unit : AccelerationUnit.BASE.getUnitsById().values())
         {
-            if (unit.getDefaultAbbreviations().contains(accelerationDist.getACCELERATIONUNIT()))
+            if (unit.getDefaultAbbreviations().contains(accelerationDist.getAccelerationUnit()))
             {
                 return new ContinuousDistDoubleScalar.Rel<Acceleration, AccelerationUnit>(dist, unit);
             }
         }
-        throw new XmlParserException("Could not find AccelerationUnit " + accelerationDist.getACCELERATIONUNIT()
-                + " in tag of type ACCELERATIONDISTTYPE");
+        throw new XmlParserException("Could not find AccelerationUnit " + accelerationDist.getAccelerationUnit()
+                + " in tag of type AccelerationDistType");
     }
 
     /**
@@ -349,18 +349,18 @@ public final class ParseDistribution
      * @throws XmlParserException in case of a parse error.
      */
     public static ContinuousDistDoubleScalar.Rel<Frequency, FrequencyUnit> parseFrequencyDist(final StreamInformation streamMap,
-            final FREQUENCYDISTTYPE frequencyDist) throws XmlParserException
+            final FrequencyDistType frequencyDist) throws XmlParserException
     {
         DistContinuous dist = makeDistContinuous(streamMap, frequencyDist);
         for (FrequencyUnit unit : FrequencyUnit.BASE.getUnitsById().values())
         {
-            if (unit.getDefaultAbbreviations().contains(frequencyDist.getFREQUENCYUNIT()))
+            if (unit.getDefaultAbbreviations().contains(frequencyDist.getFrequencyUnit()))
             {
                 return new ContinuousDistDoubleScalar.Rel<Frequency, FrequencyUnit>(dist, unit);
             }
         }
         throw new XmlParserException(
-                "Could not find FrequencyUnit " + frequencyDist.getFREQUENCYUNIT() + " in tag of type FREQUENCYDISTTYPE");
+                "Could not find FrequencyUnit " + frequencyDist.getFrequencyUnit() + " in tag of type FrequencyDistType");
     }
 
     /**
@@ -371,18 +371,18 @@ public final class ParseDistribution
      * @throws XmlParserException in case of a parse error.
      */
     public static ContinuousDistDoubleScalar.Rel<LinearDensity, LinearDensityUnit> parseLinearDensityDist(
-            final StreamInformation streamMap, final LINEARDENSITYDISTTYPE linearDensityDist) throws XmlParserException
+            final StreamInformation streamMap, final LinearDensityDistType linearDensityDist) throws XmlParserException
     {
         DistContinuous dist = makeDistContinuous(streamMap, linearDensityDist);
         for (LinearDensityUnit unit : LinearDensityUnit.BASE.getUnitsById().values())
         {
-            if (unit.getDefaultAbbreviations().contains(linearDensityDist.getLINEARDENSITYUNIT()))
+            if (unit.getDefaultAbbreviations().contains(linearDensityDist.getLinearDensityUnit()))
             {
                 return new ContinuousDistDoubleScalar.Rel<LinearDensity, LinearDensityUnit>(dist, unit);
             }
         }
-        throw new XmlParserException("Could not find FrequencyUnit " + linearDensityDist.getLINEARDENSITYUNIT()
-                + " in tag of type FREQUENCYDISTTYPE");
+        throw new XmlParserException("Could not find FrequencyUnit " + linearDensityDist.getLinearDensityUnit()
+                + " in tag of type FrequencyDistType");
     }
 
 }

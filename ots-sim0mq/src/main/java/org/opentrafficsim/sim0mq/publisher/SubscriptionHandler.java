@@ -38,10 +38,10 @@ public class SubscriptionHandler
     /** Event producer for add, remove, or change events; e.g. the Network. */
     private final LookupEventProducer eventProducerForAddRemoveOrChange;
 
-    /** EventType to subscribe to in order to receive creation of added object events; e.g. NETWORK.GTU_ADD_EVENT. */
+    /** EventType to subscribe to in order to receive creation of added object events; e.g. Network.GTU_ADD_EVENT. */
     private final EventType addedEventType;
 
-    /** EventType to subscribe to in order to receive removed object events; e.g. NETWORK.GTU_REMOVE_EVENT. */
+    /** EventType to subscribe to in order to receive removed object events; e.g. Network.GTU_REMOVE_EVENT. */
     private final EventType removedEventType;
 
     /** EventType to subscript to in order to receive change of the collection, or object events. */

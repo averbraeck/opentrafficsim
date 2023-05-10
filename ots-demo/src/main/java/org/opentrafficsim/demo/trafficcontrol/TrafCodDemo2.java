@@ -34,7 +34,7 @@ import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCod;
-import org.opentrafficsim.xml.generated.OTS;
+import org.opentrafficsim.xml.generated.Ots;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.swing.gui.TabbedContentPane;
@@ -189,7 +189,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
             try
             {
                 this.network = new RoadNetwork(getShortName(), getSimulator());
-                OTS ots = XmlNetworkLaneParser.parseXml(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)));
+                Ots ots = XmlNetworkLaneParser.parseXml(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)));
                 XmlNetworkLaneParser.build(ots, this.network, false);
             }
             catch (Exception exception)

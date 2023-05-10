@@ -128,7 +128,7 @@ public class Schema
         {
             allElements.removeIf((val) -> val.startsWith(str));
         }
-        allElements.removeIf((path) -> path.startsWith("OTS"));
+        allElements.removeIf((path) -> path.startsWith("Ots"));
         if (!allElements.isEmpty())
         {
             System.out.println(allElements.size() + " elements are defined but never referred to, nor are they a type.");
@@ -232,7 +232,7 @@ public class Schema
             String name = DocumentReader.getAttribute(node, "name");
             if (name != null)
             {
-                if (name.equals("OTS"))
+                if (name.equals("Ots"))
                 {
                     this.root = node;
                 }

@@ -54,7 +54,7 @@ public final class Transformer
     }
 
     /**
-     * @param positionType GTUPositionType; the JAXB position to parse
+     * @param positionType GtuPositionType; the JAXB position to parse
      * @return the corresponding OTS RelativePosition
      */
     public static RelativePosition.TYPE parseTriggerPosition(final GtuPositionType positionType)

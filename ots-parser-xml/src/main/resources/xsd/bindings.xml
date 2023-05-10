@@ -6,52 +6,52 @@
 
   <jaxb:globalBindings>
     <xjc:serializable uid="10102"/>
-    <xjc:javaType name="org.djunits.value.vdouble.scalar.Acceleration" xmlType="ots:ACCELERATIONTYPE"
+    <xjc:javaType name="org.djunits.value.vdouble.scalar.Acceleration" xmlType="ots:AccelerationType"
       adapter="org.opentrafficsim.xml.bindings.AccelerationAdapter" />
-    <xjc:javaType name="org.djunits.value.vdouble.scalar.Angle" xmlType="ots:ANGLETYPE"
+    <xjc:javaType name="org.djunits.value.vdouble.scalar.Angle" xmlType="ots:AngleType"
       adapter="org.opentrafficsim.xml.bindings.AngleAdapter" />
-    <xjc:javaType name="org.djunits.value.vdouble.scalar.Direction" xmlType="ots:DIRECTIONTYPE"
+    <xjc:javaType name="org.djunits.value.vdouble.scalar.Direction" xmlType="ots:DirectionType"
       adapter="org.opentrafficsim.xml.bindings.DirectionAdapter" />
-    <xjc:javaType name="java.lang.Class" xmlType="ots:CLASSNAMETYPE"
+    <xjc:javaType name="java.lang.Class" xmlType="ots:ClassNameType"
       adapter="org.opentrafficsim.xml.bindings.ClassNameAdapter" />
-    <xjc:javaType name="java.lang.Object" xmlType="ots:STATICFIELDNAMETYPE"
+    <xjc:javaType name="java.lang.Object" xmlType="ots:StaticFieldNameType"
       adapter="org.opentrafficsim.xml.bindings.StaticFieldNameAdapter" />
-    <xjc:javaType name="org.djunits.value.vdouble.scalar.Length" xmlType="ots:LENGTHTYPE"
+    <xjc:javaType name="org.djunits.value.vdouble.scalar.Length" xmlType="ots:LengthType"
       adapter="org.opentrafficsim.xml.bindings.LengthAdapter" />
-    <xjc:javaType name="org.djunits.value.vdouble.scalar.LinearDensity" xmlType="ots:PERLENGTHTYPE"
+    <xjc:javaType name="org.djunits.value.vdouble.scalar.LinearDensity" xmlType="ots:PerLengthType"
       adapter="org.opentrafficsim.xml.bindings.PerLengthAdapter" />
-    <xjc:javaType name="org.djunits.value.vdouble.scalar.Length" xmlType="ots:POSITIVELENGTHTYPE"
+    <xjc:javaType name="org.djunits.value.vdouble.scalar.Length" xmlType="ots:PositiveLengthType"
       adapter="org.opentrafficsim.xml.bindings.PositiveLengthAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.LengthBeginEnd"
-      xmlType="ots:LENGTHBEGINENDTYPE" adapter="org.opentrafficsim.xml.bindings.LengthBeginEndAdapter" />
-    <xjc:javaType name="org.djunits.value.vdouble.scalar.Speed" xmlType="ots:SPEEDTYPE"
+      xmlType="ots:LengthBeginEndType" adapter="org.opentrafficsim.xml.bindings.LengthBeginEndAdapter" />
+    <xjc:javaType name="org.djunits.value.vdouble.scalar.Speed" xmlType="ots:SpeedType"
       adapter="org.opentrafficsim.xml.bindings.SpeedAdapter" />
-    <xjc:javaType name="java.lang.Double" xmlType="ots:FRACTIONTYPE"
+    <xjc:javaType name="java.lang.Double" xmlType="ots:FractionType"
       adapter="org.opentrafficsim.xml.bindings.FractionAdapter" />
-    <xjc:javaType name="org.djutils.draw.point.Point3d" xmlType="ots:COORDINATETYPE"
+    <xjc:javaType name="org.djutils.draw.point.Point3d" xmlType="ots:CoordinateType"
       adapter="org.opentrafficsim.xml.bindings.CoordinateAdapter" />
-    <xjc:javaType name="org.djutils.draw.point.Point3d" xmlType="ots:COORDINATENOSPACETYPE"
+    <xjc:javaType name="org.djutils.draw.point.Point3d" xmlType="ots:CoordinateNoSpaceType"
       adapter="org.opentrafficsim.xml.bindings.CoordinateAdapter" />
-    <xjc:javaType name="org.opentrafficsim.xml.bindings.types.Point3dList" xmlType="ots:COORDINATELISTTYPE"
+    <xjc:javaType name="org.opentrafficsim.xml.bindings.types.Point3dList" xmlType="ots:CoordinateListType"
       adapter="org.opentrafficsim.xml.bindings.CoordinateListAdapter" />
-    <xjc:javaType name="org.opentrafficsim.xml.bindings.types.ArcDirection" xmlType="ots:LEFTRIGHTTYPE"
+    <xjc:javaType name="org.opentrafficsim.xml.bindings.types.ArcDirection" xmlType="ots:LeftRightType"
       adapter="org.opentrafficsim.xml.bindings.LeftRightAdapter" />
-    <xjc:javaType name="org.djunits.value.vdouble.scalar.Time" xmlType="ots:TIMETYPE"
+    <xjc:javaType name="org.djunits.value.vdouble.scalar.Time" xmlType="ots:TimeType"
       adapter="org.opentrafficsim.xml.bindings.TimeAdapter" />
-    <xjc:javaType name="org.djunits.value.vdouble.scalar.Duration" xmlType="ots:DURATIONTYPE"
+    <xjc:javaType name="org.djunits.value.vdouble.scalar.Duration" xmlType="ots:DurationType"
       adapter="org.opentrafficsim.xml.bindings.DurationAdapter" />
-    <xjc:javaType name="org.djunits.value.vdouble.scalar.Frequency" xmlType="ots:FREQUENCYTYPE"
+    <xjc:javaType name="org.djunits.value.vdouble.scalar.Frequency" xmlType="ots:FrequencyType"
       adapter="org.opentrafficsim.xml.bindings.FrequencyAdapter" />
-    <xjc:javaType name="org.djunits.value.vdouble.scalar.LinearDensity" xmlType="ots:LINEARDENSITYTYPE"
+    <xjc:javaType name="org.djunits.value.vdouble.scalar.LinearDensity" xmlType="ots:LinearDensityType"
       adapter="org.opentrafficsim.xml.bindings.LinearDensityAdapter" />
-    <xjc:javaType name="org.opentrafficsim.xml.bindings.types.StripeType" xmlType="ots:STRIPETYPE"
+    <xjc:javaType name="org.opentrafficsim.xml.bindings.types.StripeType" xmlType="ots:StripeType"
       adapter="org.opentrafficsim.xml.bindings.StripeTypeAdapter" />
-    <xjc:javaType name="java.awt.Color" xmlType="ots:COLORTYPE"
+    <xjc:javaType name="java.awt.Color" xmlType="ots:ColorType"
       adapter="org.opentrafficsim.xml.bindings.ColorAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.LaneKeepingType"
-      xmlType="ots:LANEKEEPINGTYPE" adapter="org.opentrafficsim.xml.bindings.LaneKeepingAdapter" />
-    <xjc:javaType name="org.opentrafficsim.xml.bindings.types.GTUPositionType"
-      xmlType="ots:GTUPOSITIONTYPE" adapter="org.opentrafficsim.xml.bindings.GTUPositionAdapter" />
+      xmlType="ots:LaneKeepingType" adapter="org.opentrafficsim.xml.bindings.LaneKeepingAdapter" />
+    <xjc:javaType name="org.opentrafficsim.xml.bindings.types.GtuPositionType"
+      xmlType="ots:GtuPositionType" adapter="org.opentrafficsim.xml.bindings.GTUPositionAdapter" />
   </jaxb:globalBindings>
 
 </jaxb:bindings>

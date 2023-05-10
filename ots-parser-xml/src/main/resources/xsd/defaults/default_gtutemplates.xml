@@ -1,4 +1,4 @@
-<ots:GTUTEMPLATES xmlns:ots="http://www.opentrafficsim.org/ots"  
+<ots:GtuTemplates xmlns:ots="http://www.opentrafficsim.org/ots"  
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions.xsd">
 
@@ -31,64 +31,64 @@
               new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
  -->
 
-  <ots:GTUTEMPLATE ID="CAR" GTUTYPE="CAR" DEFAULT="true">
-    <ots:LENGTHDIST LENGTHUNIT="m">
-      <ots:CONSTANT C="4.19" />
-    </ots:LENGTHDIST>
-    <ots:WIDTHDIST LENGTHUNIT="m">
-      <ots:CONSTANT C="1.7" />
-    </ots:WIDTHDIST>
-    <ots:MAXSPEEDDIST SPEEDUNIT="km/h">
-      <ots:CONSTANT C="180" />
-    </ots:MAXSPEEDDIST>
-  </ots:GTUTEMPLATE>
+  <ots:GtuTemplate Id="CAR" GtuType="CAR" Default="true">
+    <ots:LengthDist LengthUnit="m">
+      <ots:Constant C="4.19" />
+    </ots:LengthDist>
+    <ots:WidthDist LengthUnit="m">
+      <ots:Constant C="1.7" />
+    </ots:WidthDist>
+    <ots:MaxSpeedDist SpeedUnit="km/h">
+      <ots:Constant C="180" />
+    </ots:MaxSpeedDist>
+  </ots:GtuTemplate>
 
-  <ots:GTUTEMPLATE ID="TRUCK" GTUTYPE="TRUCK" DEFAULT="true">
-    <ots:LENGTHDIST LENGTHUNIT="m">
-      <ots:CONSTANT C="12.0" />
-    </ots:LENGTHDIST>
-    <ots:WIDTHDIST LENGTHUNIT="m">
-      <ots:CONSTANT C="2.55" />
-    </ots:WIDTHDIST>
-    <ots:MAXSPEEDDIST SPEEDUNIT="km/h">
-      <ots:NORMAL MU="85.0" SIGMA="2.5" />
-    </ots:MAXSPEEDDIST>
-  </ots:GTUTEMPLATE>
+  <ots:GtuTemplate Id="TRUCK" GtuType="TRUCK" Default="true">
+    <ots:LengthDist LengthUnit="m">
+      <ots:Constant C="12.0" />
+    </ots:LengthDist>
+    <ots:WidthDist LengthUnit="m">
+      <ots:Constant C="2.55" />
+    </ots:WidthDist>
+    <ots:MaxSpeedDist SpeedUnit="km/h">
+      <ots:Normal Mu="85.0" Sigma="2.5" />
+    </ots:MaxSpeedDist>
+  </ots:GtuTemplate>
 
-  <ots:GTUTEMPLATE ID="BUS" GTUTYPE="BUS" DEFAULT="true">
-    <ots:LENGTHDIST LENGTHUNIT="m">
-      <ots:CONSTANT C="12.0" />
-    </ots:LENGTHDIST>
-    <ots:WIDTHDIST LENGTHUNIT="m">
-      <ots:CONSTANT C="2.55" />
-    </ots:WIDTHDIST>
-    <ots:MAXSPEEDDIST SPEEDUNIT="km/h">
-      <ots:CONSTANT C="90" />
-    </ots:MAXSPEEDDIST>
-  </ots:GTUTEMPLATE>
+  <ots:GtuTemplate Id="BUS" GtuType="BUS" Default="true">
+    <ots:LengthDist LengthUnit="m">
+      <ots:Constant C="12.0" />
+    </ots:LengthDist>
+    <ots:WidthDist LengthUnit="m">
+      <ots:Constant C="2.55" />
+    </ots:WidthDist>
+    <ots:MaxSpeedDist SpeedUnit="km/h">
+      <ots:Constant C="90" />
+    </ots:MaxSpeedDist>
+  </ots:GtuTemplate>
 
-  <ots:GTUTEMPLATE ID="VAN" GTUTYPE="VAN" DEFAULT="true">
-    <ots:LENGTHDIST LENGTHUNIT="m">
-      <ots:CONSTANT C="5.0" />
-    </ots:LENGTHDIST>
-    <ots:WIDTHDIST LENGTHUNIT="m">
-      <ots:CONSTANT C="2.4" />
-    </ots:WIDTHDIST>
-    <ots:MAXSPEEDDIST SPEEDUNIT="km/h">
-      <ots:CONSTANT C="180" />
-    </ots:MAXSPEEDDIST>
-  </ots:GTUTEMPLATE>
+  <ots:GtuTemplate Id="VAN" GtuType="VAN" Default="true">
+    <ots:LengthDist LengthUnit="m">
+      <ots:Constant C="5.0" />
+    </ots:LengthDist>
+    <ots:WidthDist LengthUnit="m">
+      <ots:Constant C="2.4" />
+    </ots:WidthDist>
+    <ots:MaxSpeedDist SpeedUnit="km/h">
+      <ots:Constant C="180" />
+    </ots:MaxSpeedDist>
+  </ots:GtuTemplate>
 
-  <ots:GTUTEMPLATE ID="EMERGENCY_VEHICLE" GTUTYPE="EMERGENCY_VEHICLE" DEFAULT="true">
-    <ots:LENGTHDIST LENGTHUNIT="m">
-      <ots:CONSTANT C="5.0" />
-    </ots:LENGTHDIST>
-    <ots:WIDTHDIST LENGTHUNIT="m">
-      <ots:CONSTANT C="2.4" />
-    </ots:WIDTHDIST>
-    <ots:MAXSPEEDDIST SPEEDUNIT="km/h">
-      <ots:CONSTANT C="180" />
-    </ots:MAXSPEEDDIST>
-  </ots:GTUTEMPLATE>
+  <ots:GtuTemplate Id="EMERGENCY_VEHICLE" GtuType="EMERGENCY_VEHICLE" Default="true">
+    <ots:LengthDist LengthUnit="m">
+      <ots:Constant C="5.0" />
+    </ots:LengthDist>
+    <ots:WidthDist LengthUnit="m">
+      <ots:Constant C="2.4" />
+    </ots:WidthDist>
+    <ots:MaxSpeedDist SpeedUnit="km/h">
+      <ots:Constant C="180" />
+    </ots:MaxSpeedDist>
+  </ots:GtuTemplate>
 
-</ots:GTUTEMPLATES>
+</ots:GtuTemplates>

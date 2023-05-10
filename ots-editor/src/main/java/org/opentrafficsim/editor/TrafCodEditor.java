@@ -45,7 +45,7 @@ public class TrafCodEditor implements EventListener, Consumer<XsdTreeNode>
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
         {
             XsdTreeNode node = (XsdTreeNode) event.getContent();
-            if (node.getPathString().equals("OTS.CONTROL.TRAFCOD.PROGRAM"))
+            if (node.getPathString().equals("OTS.CONTROL.TrafCod.PROGRAM"))
             {
                 node.addConsumer("Configure...", this);
             }

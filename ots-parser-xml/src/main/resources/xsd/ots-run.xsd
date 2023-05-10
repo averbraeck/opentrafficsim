@@ -11,37 +11,37 @@
 
   <xsd:include schemaLocation="ots-types.xsd" />
 
-  <xsd:element name="RANDOMSTREAM">
+  <xsd:element name="RandomStream">
     <xsd:complexType>
       <xsd:sequence minOccurs="1" maxOccurs="unbounded">
-        <xsd:element name="REPLICATION">
+        <xsd:element name="Replication">
           <xsd:complexType>
-            <xsd:attribute name="ID" type="xsd:positiveInteger" use="required" />
-            <xsd:attribute name="SEED" type="xsd:integer" use="required" />
+            <xsd:attribute name="Id" type="xsd:positiveInteger" use="required" />
+            <xsd:attribute name="Seed" type="xsd:integer" use="required" />
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
-      <xsd:attribute name="ID" type="xsd:string" use="required" />
+      <xsd:attribute name="Id" type="xsd:string" use="required" />
     </xsd:complexType>
   </xsd:element>
 
-  <xsd:element name="RANDOMSTREAMS">
+  <xsd:element name="RandomStreams">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element ref="ots:RANDOMSTREAM" minOccurs="1" maxOccurs="unbounded" />
+        <xsd:element ref="ots:RandomStream" minOccurs="1" maxOccurs="unbounded" />
       </xsd:sequence>
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
 
-  <xsd:element name="RUN">
+  <xsd:element name="Run">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="STARTTIME" type="ots:TIMETYPE" minOccurs="0" default="0s" />
-        <xsd:element name="WARMUPPERIOD" type="ots:DURATIONTYPE" minOccurs="0" default="0s" />
-        <xsd:element name="RUNLENGTH" type="ots:DURATIONTYPE" minOccurs="1" />
-        <xsd:element name="NUMBERREPLICATIONS" type="xsd:unsignedInt" minOccurs="0" default="1" />
-        <xsd:element ref="ots:RANDOMSTREAMS" minOccurs="0" maxOccurs="1" />
+        <xsd:element name="StartTime" type="ots:TimeType" minOccurs="0" default="0s" />
+        <xsd:element name="WarmupPeriod" type="ots:DurationType" minOccurs="0" default="0s" />
+        <xsd:element name="RunLength" type="ots:DurationType" minOccurs="1" />
+        <xsd:element name="NumberReplications" type="xsd:unsignedInt" minOccurs="0" default="1" />
+        <xsd:element ref="ots:RandomStreams" minOccurs="0" maxOccurs="1" />
       </xsd:sequence>
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>

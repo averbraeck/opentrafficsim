@@ -17,25 +17,21 @@ import org.opentrafficsim.road.definitions.DefaultsRoad;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.xml.generated.COMPATIBILITY;
-import org.opentrafficsim.xml.generated.DEFINITIONS;
-import org.opentrafficsim.xml.generated.GTUTEMPLATE;
-import org.opentrafficsim.xml.generated.GTUTEMPLATES;
-import org.opentrafficsim.xml.generated.GTUTYPE;
-import org.opentrafficsim.xml.generated.GTUTYPES;
-import org.opentrafficsim.xml.generated.LANETYPE;
-import org.opentrafficsim.xml.generated.LANETYPES;
-import org.opentrafficsim.xml.generated.LINKTYPE;
-import org.opentrafficsim.xml.generated.LINKTYPES;
-import org.opentrafficsim.xml.generated.PARAMETERTYPE;
-import org.opentrafficsim.xml.generated.ROADLAYOUT;
-import org.opentrafficsim.xml.generated.ROADLAYOUTS;
-import org.opentrafficsim.xml.generated.SPEEDLIMIT;
+import org.opentrafficsim.xml.generated.Compatibility;
+import org.opentrafficsim.xml.generated.GtuTemplate;
+import org.opentrafficsim.xml.generated.GtuTemplates;
+import org.opentrafficsim.xml.generated.GtuTypes;
+import org.opentrafficsim.xml.generated.LaneTypes;
+import org.opentrafficsim.xml.generated.LinkTypes;
+import org.opentrafficsim.xml.generated.RoadLayout;
+import org.opentrafficsim.xml.generated.RoadLayouts;
+import org.opentrafficsim.xml.generated.SpeedLimit;
 
 import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 
 /**
- * DefinitionParser parses the XML nodes of the DEFINITIONS tag: GTUTYPE, GTUTEMPLATE, LINKTYPE, LANETYPE and ROADLAYOUT.
+ * DefinitionParser parses the XML nodes of the Definitions tag: org.opentrafficsim.xml.generated.GtuType, GtuTemplate,
+ * LinkType, LaneType and RoadLayout.
  * <p>
  * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -52,7 +48,7 @@ public final class DefinitionsParser
     }
 
     /**
-     * Parse the DEFINITIONS tag in the OTS XML file.
+     * Parse the Definitions tag in the OTS XML file.
      * @param definitions the DEFINTIONS tag
      * @param overwriteDefaults overwrite default definitions in otsNetwork or not
      * @param roadLayoutMap temporary storage for the road layouts
@@ -62,10 +58,10 @@ public final class DefinitionsParser
      * @return the parsed definitions
      * @throws XmlParserException on parsing error
      */
-    public static Definitions parseDefinitions(final DEFINITIONS definitions, final boolean overwriteDefaults,
-            final Map<String, ROADLAYOUT> roadLayoutMap, final Map<String, GTUTEMPLATE> gtuTemplates,
-            final StreamInformation streamInformation, final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap)
-            throws XmlParserException
+    public static Definitions parseDefinitions(final org.opentrafficsim.xml.generated.Definitions definitions,
+            final boolean overwriteDefaults, final Map<String, RoadLayout> roadLayoutMap,
+            final Map<String, GtuTemplate> gtuTemplates, final StreamInformation streamInformation,
+            final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap) throws XmlParserException
     {
         Definitions parsedDefinitions = new Definitions();
         parseGtuTypes(definitions, parsedDefinitions);
@@ -77,38 +73,39 @@ public final class DefinitionsParser
     }
 
     /**
-     * Parse the GTUTYPES tag in the OTS XML file.
+     * Parse the org.opentrafficsim.xml.generated.GtuTypes tag in the OTS XML file.
      * @param definitions the DEFINTIONS tag
      * @param parsedDefinitions Definitions; parsed definitions (definitions are stored in this)
      * @throws XmlParserException on parsing error
      */
-    public static void parseGtuTypes(final DEFINITIONS definitions, final Definitions parsedDefinitions)
-            throws XmlParserException
+    public static void parseGtuTypes(final org.opentrafficsim.xml.generated.Definitions definitions,
+            final Definitions parsedDefinitions) throws XmlParserException
     {
-        for (GTUTYPES gtuTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(), GTUTYPES.class))
+        for (GtuTypes gtuTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGtuTypesAndGtuTemplates(),
+                org.opentrafficsim.xml.generated.GtuTypes.class))
         {
-            for (GTUTYPE gtuTag : gtuTypes.getGTUTYPE())
+            for (org.opentrafficsim.xml.generated.GtuType gtuTag : gtuTypes.getGtuType())
             {
                 GtuType gtuType;
-                if (gtuTag.isDEFAULT())
+                if (gtuTag.isDefault())
                 {
                     // TODO: remove addition of "NL." once the xml standard has been updated
-                    String id = gtuTag.getID().contains(".") ? gtuTag.getID() : "NL." + gtuTag.getID();
+                    String id = gtuTag.getId().contains(".") ? gtuTag.getId() : "NL." + gtuTag.getId();
                     gtuType = Defaults.getByName(GtuType.class, id);
                     Throw.when(gtuType == null, XmlParserException.class, "GtuType %s could not be found as default.",
-                            gtuTag.getID());
+                            gtuTag.getId());
                 }
-                else if (gtuTag.getPARENT() != null)
+                else if (gtuTag.getParent() != null)
                 {
-                    GtuType parent = parsedDefinitions.get(GtuType.class, gtuTag.getPARENT());
-                    Throw.when(parent == null, XmlParserException.class, "GtuType %s parent %s not found", gtuTag.getID(),
-                            gtuTag.getPARENT());
-                    gtuType = new GtuType(gtuTag.getID(), parent);
+                    GtuType parent = parsedDefinitions.get(GtuType.class, gtuTag.getParent());
+                    Throw.when(parent == null, XmlParserException.class, "GtuType %s parent %s not found", gtuTag.getId(),
+                            gtuTag.getParent());
+                    gtuType = new GtuType(gtuTag.getId(), parent);
                     CategoryLogger.filter(Cat.PARSER).trace("Added GtuType {}", gtuType);
                 }
                 else
                 {
-                    gtuType = new GtuType(gtuTag.getID());
+                    gtuType = new GtuType(gtuTag.getId());
                     CategoryLogger.filter(Cat.PARSER).trace("Added GtuType {}", gtuType);
                 }
                 parsedDefinitions.add(GtuType.class, gtuType);
@@ -117,118 +114,118 @@ public final class DefinitionsParser
     }
 
     /**
-     * Parse the LINKTYPES tag in the OTS XML file.
+     * Parse the LinkTypes tag in the OTS XML file.
      * @param definitions the DEFINTIONS tag
      * @param parsedDefinitions Definitions; parsed definitions (definitions are stored in this)
      * @param overwriteDefaults overwrite default definitions in otsNetwork or not
      * @param linkTypeSpeedLimitMap map with speed limit information per link type
      * @throws XmlParserException on parsing error
      */
-    public static void parseLinkTypes(final DEFINITIONS definitions, final Definitions parsedDefinitions,
-            final boolean overwriteDefaults, final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap)
-            throws XmlParserException
+    public static void parseLinkTypes(final org.opentrafficsim.xml.generated.Definitions definitions,
+            final Definitions parsedDefinitions, final boolean overwriteDefaults,
+            final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap) throws XmlParserException
     {
-        for (LINKTYPES linkTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(),
-                LINKTYPES.class))
+        for (LinkTypes linkTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGtuTypesAndGtuTemplates(),
+                LinkTypes.class))
         {
-            for (LINKTYPE linkTag : linkTypes.getLINKTYPE())
+            for (org.opentrafficsim.xml.generated.LinkType linkTag : linkTypes.getLinkType())
             {
                 LinkType linkType;
-                if (linkTag.isDEFAULT())
+                if (linkTag.isDefault())
                 {
                     // TODO: remove if-statement (keep else-part) once the xml standard has been updated
-                    if (linkTag.getID().equals("NONE"))
+                    if (linkTag.getId().equals("NONE"))
                     {
                         linkType = DefaultsNl.NONE_LINK;
                     }
                     else
                     {
                         // TODO: remove addition of "NL." once the xml standard has been updated
-                        String id = linkTag.getID().contains(".") ? linkTag.getID() : "NL." + linkTag.getID();
+                        String id = linkTag.getId().contains(".") ? linkTag.getId() : "NL." + linkTag.getId();
                         linkType = Defaults.getByName(LinkType.class, id);
                         Throw.when(linkType == null, XmlParserException.class, "LinkType %s could not be found as default.",
-                                linkTag.getID());
+                                linkTag.getId());
                     }
                 }
-                else if (linkTag.getPARENT() != null)
+                else if (linkTag.getParent() != null)
                 {
-                    LinkType parent = parsedDefinitions.get(LinkType.class, linkTag.getPARENT());
-                    Throw.when(parent == null, XmlParserException.class, "LinkType %s parent %s not found", linkTag.getID(),
-                            linkTag.getPARENT());
-                    linkType = new LinkType(linkTag.getID(), parent);
+                    LinkType parent = parsedDefinitions.get(LinkType.class, linkTag.getParent());
+                    Throw.when(parent == null, XmlParserException.class, "LinkType %s parent %s not found", linkTag.getId(),
+                            linkTag.getParent());
+                    linkType = new LinkType(linkTag.getId(), parent);
                     CategoryLogger.filter(Cat.PARSER).trace("Added LinkType {}", linkType);
                 }
                 else
                 {
-                    linkType = new LinkType(linkTag.getID());
+                    linkType = new LinkType(linkTag.getId());
                     CategoryLogger.filter(Cat.PARSER).trace("Added LinkType {}", linkType);
                 }
                 parsedDefinitions.add(LinkType.class, linkType);
 
-                for (COMPATIBILITY compTag : linkTag.getCOMPATIBILITY())
+                for (Compatibility compTag : linkTag.getCompatibility())
                 {
                     // TODO: direction is ignored, NONE value erroneously results in accessibility
-                    GtuType gtuType = parsedDefinitions.get(GtuType.class, compTag.getGTUTYPE());
+                    GtuType gtuType = parsedDefinitions.get(GtuType.class, compTag.getGtuType());
                     Throw.when(gtuType == null, XmlParserException.class, "LinkType %s.compatibility: GtuType %s not found",
-                            linkTag.getID(), compTag.getGTUTYPE());
+                            linkTag.getId(), compTag.getGtuType());
                     linkType.addCompatibleGtuType(gtuType);
                 }
 
                 linkTypeSpeedLimitMap.put(linkType, new LinkedHashMap<>());
-                for (SPEEDLIMIT speedLimitTag : linkTag.getSPEEDLIMIT())
+                for (SpeedLimit speedLimitTag : linkTag.getSpeedLimit())
                 {
-                    GtuType gtuType = parsedDefinitions.get(GtuType.class, speedLimitTag.getGTUTYPE());
-                    linkTypeSpeedLimitMap.get(linkType).put(gtuType, speedLimitTag.getLEGALSPEEDLIMIT());
+                    GtuType gtuType = parsedDefinitions.get(GtuType.class, speedLimitTag.getGtuType());
+                    linkTypeSpeedLimitMap.get(linkType).put(gtuType, speedLimitTag.getLegalSpeedLimit());
                 }
             }
         }
     }
 
     /**
-     * Parse the LANETYPES tag in the OTS XML file.
+     * Parse the LaneTypes tag in the OTS XML file.
      * @param definitions the DEFINTIONS tag
      * @param parsedDefinitions Definitions; parsed definitions (definitions are stored in this)
      * @param overwriteDefaults overwrite default definitions in otsNetwork or not
      * @throws XmlParserException on parsing error
      */
-    public static void parseLaneTypes(final DEFINITIONS definitions, final Definitions parsedDefinitions,
-            final boolean overwriteDefaults) throws XmlParserException
+    public static void parseLaneTypes(final org.opentrafficsim.xml.generated.Definitions definitions,
+            final Definitions parsedDefinitions, final boolean overwriteDefaults) throws XmlParserException
     {
-        for (LANETYPES laneTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(),
-                LANETYPES.class))
+        for (LaneTypes laneTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGtuTypesAndGtuTemplates(),
+                LaneTypes.class))
         {
-            for (LANETYPE laneTag : laneTypes.getLANETYPE())
+            for (org.opentrafficsim.xml.generated.LaneType laneTag : laneTypes.getLaneType())
             {
                 LaneType laneType;
-                if (laneTag.isDEFAULT())
+                if (laneTag.isDefault())
                 {
                     // TODO: remove addition of "NL." once the xml standard has been updated
-                    String id = laneTag.getID().contains(".") ? laneTag.getID() : "NL." + laneTag.getID();
+                    String id = laneTag.getId().contains(".") ? laneTag.getId() : "NL." + laneTag.getId();
                     laneType = DefaultsRoad.getByName(LaneType.class, id);
                     Throw.when(laneType == null, XmlParserException.class, "LaneType %s could not be found as default.",
-                            laneTag.getID());
+                            laneTag.getId());
                 }
-                else if (laneTag.getPARENT() != null)
+                else if (laneTag.getParent() != null)
                 {
-                    LaneType parent = parsedDefinitions.get(LaneType.class, laneTag.getPARENT());
-                    Throw.when(parent == null, XmlParserException.class, "LaneType %s parent %s not found", laneTag.getID(),
-                            laneTag.getPARENT());
-                    laneType = new LaneType(laneTag.getID(), parent);
+                    LaneType parent = parsedDefinitions.get(LaneType.class, laneTag.getParent());
+                    Throw.when(parent == null, XmlParserException.class, "LaneType %s parent %s not found", laneTag.getId(),
+                            laneTag.getParent());
+                    laneType = new LaneType(laneTag.getId(), parent);
                     CategoryLogger.filter(Cat.PARSER).trace("Added LaneType {}", laneType);
                 }
                 else
                 {
-                    laneType = new LaneType(laneTag.getID());
+                    laneType = new LaneType(laneTag.getId());
                     CategoryLogger.filter(Cat.PARSER).trace("Added LaneType {}", laneType);
                 }
                 parsedDefinitions.add(LaneType.class, laneType);
 
-                for (COMPATIBILITY compTag : laneTag.getCOMPATIBILITY())
+                for (Compatibility compTag : laneTag.getCompatibility())
                 {
                     // TODO: direction is ignored, NONE value erroneously results in accessibility
-                    GtuType gtuType = parsedDefinitions.get(GtuType.class, compTag.getGTUTYPE());
+                    GtuType gtuType = parsedDefinitions.get(GtuType.class, compTag.getGtuType());
                     Throw.when(gtuType == null, XmlParserException.class, "LaneType %s.compatibility: GtuType %s not found",
-                            laneTag.getID(), compTag.getGTUTYPE());
+                            laneTag.getId(), compTag.getGtuType());
                     laneType.addCompatibleGtuType(gtuType);
                 }
             }
@@ -236,7 +233,7 @@ public final class DefinitionsParser
     }
 
     /**
-     * Store the GTUTEMPLATE tags in the OTS XML file.
+     * Store the GtuTemplate tags in the OTS XML file.
      * @param definitions the DEFINTIONS tag
      * @param parsedDefinitions Definitions; parsed definitions (definitions are stored in this)
      * @param overwriteDefaults overwrite default definitions in otsNetwork or not
@@ -244,65 +241,65 @@ public final class DefinitionsParser
      * @param streamInformation map with stream information
      * @throws XmlParserException on parsing error
      */
-    public static void parseGtuTemplates(final DEFINITIONS definitions, final Definitions parsedDefinitions,
-            final boolean overwriteDefaults, final Map<String, GTUTEMPLATE> gtuTemplates,
+    public static void parseGtuTemplates(final org.opentrafficsim.xml.generated.Definitions definitions,
+            final Definitions parsedDefinitions, final boolean overwriteDefaults, final Map<String, GtuTemplate> gtuTemplates,
             final StreamInformation streamInformation) throws XmlParserException
     {
-        for (GTUTEMPLATES templateTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(),
-                GTUTEMPLATES.class))
+        for (GtuTemplates templateTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGtuTypesAndGtuTemplates(),
+                GtuTemplates.class))
         {
-            for (GTUTEMPLATE templateTag : templateTypes.getGTUTEMPLATE())
+            for (GtuTemplate templateTag : templateTypes.getGtuTemplate())
             {
-                GtuType gtuType = parsedDefinitions.get(GtuType.class, templateTag.getGTUTYPE());
+                GtuType gtuType = parsedDefinitions.get(GtuType.class, templateTag.getGtuType());
                 if (gtuType == null)
                 {
                     throw new XmlParserException(
-                            "GTUTemplate " + templateTag.getID() + " GtuType " + templateTag.getGTUTYPE() + " not found");
+                            "GTUTemplate " + templateTag.getId() + " GtuType " + templateTag.getGtuType() + " not found");
                 }
-                gtuTemplates.put(templateTag.getID(), templateTag);
+                gtuTemplates.put(templateTag.getId(), templateTag);
             }
         }
     }
 
     /**
-     * Parse the ROADLAYOUTS tag in the OTS XML file.
+     * Parse the RoadLayouts tag in the OTS XML file.
      * @param definitions the DEFINTIONS tag
      * @param parsedDefinitions Definitions; parsed definitions (definitions are stored in this)
      * @param roadLayoutMap temporary storage for the road layouts
      * @throws XmlParserException on parsing error
      */
-    public static void parseRoadLayouts(final DEFINITIONS definitions, final Definitions parsedDefinitions,
-            final Map<String, ROADLAYOUT> roadLayoutMap) throws XmlParserException
+    public static void parseRoadLayouts(final org.opentrafficsim.xml.generated.Definitions definitions,
+            final Definitions parsedDefinitions, final Map<String, RoadLayout> roadLayoutMap) throws XmlParserException
     {
-        for (ROADLAYOUTS roadLayoutTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(),
-                ROADLAYOUTS.class))
+        for (RoadLayouts roadLayoutTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGtuTypesAndGtuTemplates(),
+                RoadLayouts.class))
         {
-            for (ROADLAYOUT layoutTag : roadLayoutTypes.getROADLAYOUT())
+            for (RoadLayout layoutTag : roadLayoutTypes.getRoadLayout())
             {
-                roadLayoutMap.put(layoutTag.getID(), layoutTag);
+                roadLayoutMap.put(layoutTag.getId(), layoutTag);
             }
         }
     }
 
     /**
-     * Parse the PARAMETERTYPE tags in the OTS XML file.
+     * Parse the ParameterType tags in the OTS XML file.
      * @param definitions the DEFINTIONS tag
      * @param parameterMap map to store parameter type by id
-     * @throws XmlParserException if the field in a PARAMETERTYPE does not refer to a ParameterType&lt;?&gt;
+     * @throws XmlParserException if the field in a ParameterType does not refer to a ParameterType&lt;?&gt;
      */
-    public static void parseParameterTypes(final DEFINITIONS definitions, final Map<String, ParameterType<?>> parameterMap)
-            throws XmlParserException
+    public static void parseParameterTypes(final org.opentrafficsim.xml.generated.Definitions definitions,
+            final Map<String, ParameterType<?>> parameterMap) throws XmlParserException
     {
-        for (PARAMETERTYPE parameterType : ParseUtil.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(),
-                PARAMETERTYPE.class))
+        for (org.opentrafficsim.xml.generated.ParameterType parameterType : ParseUtil.getObjectsOfType(
+                definitions.getIncludeAndGtuTypesAndGtuTemplates(), org.opentrafficsim.xml.generated.ParameterType.class))
         {
             try
             {
-                parameterMap.put(parameterType.getID(), (ParameterType<?>) parameterType.getFIELD());
+                parameterMap.put(parameterType.getId(), (ParameterType<?>) parameterType.getField());
             }
             catch (ClassCastException exception)
             {
-                throw new XmlParserException("Parameter type with id " + parameterType.getID()
+                throw new XmlParserException("Parameter type with id " + parameterType.getId()
                         + " refers to a static field that is not a ParameterType<?>.");
             }
         }

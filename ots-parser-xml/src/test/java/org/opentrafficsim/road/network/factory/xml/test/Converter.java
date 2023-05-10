@@ -56,42 +56,42 @@ public class Converter
         try (PrintWriter pw =
                 new PrintWriter(in.getFile().replaceAll("Old", "").replaceAll("target/test-classes", "src/test/resources")))
         {
-            pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" + "<OTS xmlns=\"http://www.opentrafficsim.org/ots\" "
+            pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" + "<Ots xmlns=\"http://www.opentrafficsim.org/ots\" "
                     + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
                     + "  xsi:schemaLocation=\"http://www.opentrafficsim.org/ots "
                     + "https://opentrafficsim.org/docs/xsd/1.03.00/ots.xsd\"\n"
-                    + "  xmlns:xi=\"http://www.w3.org/2001/XInclude\">\n" + "\n" + "  <DEFINITIONS>\n"
+                    + "  xmlns:xi=\"http://www.w3.org/2001/XInclude\">\n" + "\n" + "  <Definitions>\n"
                     + "    <xi:include href=\"https://opentrafficsim.org/docs/xsd/1.03.00/defaults/default_gtutypes.xml\" />\n");
 
-            NodeList defNodeList = nodesOfType(xmlNodeList, "DEFINITIONS").get(0).getChildNodes();
+            NodeList defNodeList = nodesOfType(xmlNodeList, "Definitions").get(0).getChildNodes();
 
-            List<Node> gtuTypeTagList = nodesOfType(defNodeList, "GTUTYPE");
+            List<Node> gtuTypeTagList = nodesOfType(defNodeList, "GtuType");
             writeGtuTypes(pw, gtuTypeTagList);
 
-            List<Node> roadTypeTagList = nodesOfType(defNodeList, "ROADTYPE");
+            List<Node> roadTypeTagList = nodesOfType(defNodeList, "RoadType");
             writeRoadLaneTypes(pw, roadTypeTagList);
 
-            List<Node> roadLayoutTagList = nodesOfType(defNodeList, "ROADLAYOUT");
+            List<Node> roadLayoutTagList = nodesOfType(defNodeList, "RoadLayout");
             writeRoadLayoutTypes(pw, roadLayoutTagList);
 
-            pw.println("  </DEFINITIONS>\n" + "\n" + "  <NETWORK>\n");
-            List<Node> networkNodeList = nodesOfType(xmlNodeList, "NODE");
+            pw.println("  </Definitions>\n" + "\n" + "  <Network>\n");
+            List<Node> networkNodeList = nodesOfType(xmlNodeList, "Node");
             writeNodes(pw, networkNodeList);
 
-            List<Node> networkLinkList = nodesOfType(xmlNodeList, "LINK");
+            List<Node> networkLinkList = nodesOfType(xmlNodeList, "Link");
             writeLinks(pw, networkLinkList);
 
-            List<Node> networkRouteList = nodesOfType(xmlNodeList, "ROUTE");
+            List<Node> networkRouteList = nodesOfType(xmlNodeList, "Route");
 
-            pw.println("  </NETWORK>\n" + "  <NETWORKDEMAND>");
+            pw.println("  </Network>\n" + "  <Demand>");
 
-            pw.println("  </NETWORKDEMAND>\n" + "\n" + "  <SCENARIO></SCENARIO>\n" + "\n" + "  <RUN>\n"
-                    + "    <RUNLENGTH>1h</RUNLENGTH>\n" + "    <RANDOMSTREAMS>\n" + "      <RANDOMSTREAM ID=\"default\">\n"
-                    + "        <REPLICATION ID=\"1\" SEED=\"1\" />\n" + "      </RANDOMSTREAM>\n"
-                    + "      <RANDOMSTREAM ID=\"generation\">\n" + "        <REPLICATION ID=\"1\" SEED=\"1\" />\n"
-                    + "      </RANDOMSTREAM>\n" + "    </RANDOMSTREAMS>\n" + "  </RUN>\n" + "\n" + "  <ANIMATION>\n"
-                    + "    <DEFAULTS>\n" + "      <SHOULDER COLOR=\"GREEN\" />\n" + "    </DEFAULTS>\n" + "  </ANIMATION>\n");
-            pw.println("\n</OTS>");
+            pw.println("  </Demand>\n" + "\n" + "  <Scenario></Scenario>\n" + "\n" + "  <Run>\n"
+                    + "    <RunLength>1h</RunLength>\n" + "    <RandomStreams>\n" + "      <RandomStream Id=\"default\">\n"
+                    + "        <Replication Id=\"1\" Seed=\"1\" />\n" + "      </RandomStream>\n"
+                    + "      <RandomStream Id=\"generation\">\n" + "        <Replication Id=\"1\" Seed=\"1\" />\n"
+                    + "      </RandomStream>\n" + "    </RandomStream>\n" + "  </Run>\n" + "\n" + "  <Animation>\n"
+                    + "    <Defaults>\n" + "      <Shoulder Color=\"GREEN\" />\n" + "    </Defaults>\n" + "  </Animation>\n");
+            pw.println("\n</Ots>");
 
         }
         catch (IOException e)
@@ -103,229 +103,229 @@ public class Converter
     private void writeGtuTypes(final PrintWriter pw, final List<Node> gtuTypeTagList)
     {
         /*-
-            <GTUTEMPLATES>
-              <GTUTEMPLATE DEFAULT="true" GTUTYPE="CAR" ID="CAR">
-                <LENGTHDIST LENGTHUNIT="m">
-                  <UNIFORM MIN="3.0" MAX="7.0" />
-                </LENGTHDIST>
-                <WIDTHDIST LENGTHUNIT="m">
-                  <UNIFORM MIN="1.7" MAX="2.0" />
-                </WIDTHDIST>
-                <MAXSPEEDDIST SPEEDUNIT="km/h">
-                  <CONSTANT C="120" />
-                </MAXSPEEDDIST>
-              </GTUTEMPLATE>
-            </GTUTEMPLATES>
+            <GtuTemplates>
+              <GtuTemplate Default="true" GtuType="CAR" Id="CAR">
+                <LengthDist LengthUnit="m">
+                  <Uniform Min="3.0" Max="7.0" />
+                </LengthDist>
+                <WidthDist LengthUnit="m">
+                  <Uniform Min="1.7" Max="2.0" />
+                </WidthDist>
+                <MaxSpeedDist SpeedUnit="km/h">
+                  <Constant C="120" />
+                </MaxSpeedDist>
+              </GtuTemplate>
+            </GtuTemplates>
         */
-        pw.println("    <GTUTYPES>");
+        pw.println("    <GtuTypes>");
         for (Node gtuTypeTag : gtuTypeTagList)
         {
-            String id = gtuTypeTag.getAttributes().getNamedItem("NAME").getNodeValue();
+            String id = gtuTypeTag.getAttributes().getNamedItem("Name").getNodeValue();
             if (!id.equals("CAR") && !id.equals("TRUCK") && (!id.equals("VEHICLE")))
             {
-                pw.println("      <GTUTYPE ID=\"" + id + "\" PARENT=\"VEHICLE\" DEFAULT=\"false\" />");
+                pw.println("      <GtuType Id=\"" + id + "\" Parent=\"VEHICLE\" Default=\"false\" />");
             }
         }
-        pw.println("    </GTUTYPES>\n");
+        pw.println("    </GtuTypes>\n");
 
-        pw.println("    <GTUTEMPLATES>");
+        pw.println("    <GtuTemplates>");
         for (Node gtuTypeTag : gtuTypeTagList)
         {
-            String id = gtuTypeTag.getAttributes().getNamedItem("NAME").getNodeValue();
-            pw.println("      <GTUTEMPLATE ID=\"" + id + "\" GTUTYPE=\"" + id + "\" DEFAULT=\"false\">");
+            String id = gtuTypeTag.getAttributes().getNamedItem("Name").getNodeValue();
+            pw.println("      <GtuTemplate Id=\"" + id + "\" GtuType=\"" + id + "\" Default=\"false\">");
             if (id.toLowerCase().contains("car"))
             {
-                pw.println("        <LENGTHDIST LENGTHUNIT=\"m\">\n" + "          <UNIFORM MIN=\"3.0\" MAX=\"7.0\" />\n"
-                        + "        </LENGTHDIST>\n" + "        <WIDTHDIST LENGTHUNIT=\"m\">\n"
-                        + "          <UNIFORM MIN=\"1.7\" MAX=\"2.0\" />\n" + "        </WIDTHDIST>\n"
-                        + "        <MAXSPEEDDIST SPEEDUNIT=\"km/h\">\n" + "          <CONSTANT C=\"120\" />\n"
-                        + "        </MAXSPEEDDIST>");
+                pw.println("        <LengthDist LengthUnit=\"m\">\n" + "          <Uniform Min=\"3.0\" Max=\"7.0\" />\n"
+                        + "        </LengthDist>\n" + "        <WidthDist LengthUnit=\"m\">\n"
+                        + "          <Uniform Min=\"1.7\" Max=\"2.0\" />\n" + "        </WidthDist>\n"
+                        + "        <MaxSpeedDist SpeedUnit=\"km/h\">\n" + "          <Constant C=\"120\" />\n"
+                        + "        </MaxSpeedDist>");
             }
             else
             {
-                pw.println("        <LENGTHDIST LENGTHUNIT=\"m\">\n" + "          <UNIFORM MIN=\"12.0\" MAX=\"18.0\" />\n"
-                        + "        </LENGTHDIST>\n" + "        <WIDTHDIST LENGTHUNIT=\"m\">\n"
-                        + "          <UNIFORM MIN=\"2.2\" MAX=\"2.4\" />\n" + "        </WIDTHDIST>\n"
-                        + "        <MAXSPEEDDIST SPEEDUNIT=\"km/h\">\n" + "          <CONSTANT C=\"100\" />\n"
-                        + "        </MAXSPEEDDIST>");
+                pw.println("        <LengthDist LengthUnit=\"m\">\n" + "          <Uniform Min=\"12.0\" Max=\"18.0\" />\n"
+                        + "        </LengthDist>\n" + "        <WidthDist LengthUnit=\"m\">\n"
+                        + "          <Uniform Min=\"2.2\" Max=\"2.4\" />\n" + "        </WidthDist>\n"
+                        + "        <MaxSpeedDist SpeedUnit=\"km/h\">\n" + "          <Constant C=\"100\" />\n"
+                        + "        </MaxSpeedDist>");
             }
-            pw.println("      </GTUTEMPLATE>\n");
+            pw.println("      </GtuTemplate>\n");
         }
-        pw.println("    </GTUTEMPLATES>\n\n");
+        pw.println("    </GtuTemplates>\n\n");
     }
 
     private void writeRoadLaneTypes(final PrintWriter pw, final List<Node> roadTypeTagList)
     {
         /*-
-        <LINKTYPES>
-          <LINKTYPE ID="STREET">
-            <COMPATIBILITY GTUTYPE="VEHICLE" DIRECTION="FORWARD" />
-            <SPEEDLIMIT GTUTYPE="CAR" LEGALSPEEDLIMIT="40km/h" />
-            <SPEEDLIMIT GTUTYPE="TRUCK" LEGALSPEEDLIMIT="40km/h" />
-          </LINKTYPE>
-        </LINKTYPES>
+        <LinkTypes>
+          <LinkType Id="STREET">
+            <Compatibility GtuType="VEHICLE" Direction="FORWARD" />
+            <SpeedLimit GtuType="CAR" LegalSpeedLimit="40km/h" />
+            <SpeedLimit GtuType="TRUCK" LegalSpeedLimit="40km/h" />
+          </LinkType>
+        </LinkTypes>
         
-        <LANETYPES>
-          <LANETYPE ID="STREET">
-            <COMPATIBILITY GTUTYPE="VEHICLE" DIRECTION="FORWARD" />
-          </LANETYPE>
-        </LANETYPES>
+        <LaneTypes>
+          <LaneType Id="STREET">
+            <Compatibility GtuType="VEHICLE" Direction="FORWARD" />
+          </LaneType>
+        </LaneTypes>
          */
 
-        pw.println("    <LINKTYPES>");
+        pw.println("    <LinkTypes>");
         for (Node roadTypeTag : roadTypeTagList)
         {
-            String id = roadTypeTag.getAttributes().getNamedItem("NAME").getNodeValue();
-            pw.println("      <LINKTYPE ID=\"" + id + "\">");
+            String id = roadTypeTag.getAttributes().getNamedItem("Name").getNodeValue();
+            pw.println("      <LinkType Id=\"" + id + "\">");
             List<String> gtuTypeList = new ArrayList<>();
             List<String> gtuSpeedList = new ArrayList<>();
-            for (Node compNode : nodesOfType(roadTypeTag.getChildNodes(), "SPEEDLIMIT"))
+            for (Node compNode : nodesOfType(roadTypeTag.getChildNodes(), "SpeedLimit"))
             {
-                String gtuType = compNode.getAttributes().getNamedItem("GTUTYPE").getNodeValue();
+                String gtuType = compNode.getAttributes().getNamedItem("GtuType").getNodeValue();
                 gtuTypeList.add(gtuType);
-                gtuSpeedList.add(compNode.getAttributes().getNamedItem("LEGALSPEEDLIMIT").getNodeValue());
-                pw.println("        <COMPATIBILITY GTUTYPE=\"" + gtuType + "\" DIRECTION=\"FORWARD\" />");
+                gtuSpeedList.add(compNode.getAttributes().getNamedItem("LegalSpeedLimit").getNodeValue());
+                pw.println("        <Compatibility GtuType=\"" + gtuType + "\" Direction=\"FORWARD\" />");
             }
             for (int i = 0; i < gtuTypeList.size(); i++)
             {
-                pw.println("        <SPEEDLIMIT GTUTYPE=\"" + gtuTypeList.get(i) + "\" LEGALSPEEDLIMIT=\"" + gtuSpeedList.get(i)
+                pw.println("        <SpeedLimit GtuType=\"" + gtuTypeList.get(i) + "\" LegalSpeedLimit=\"" + gtuSpeedList.get(i)
                         + "\" />");
             }
-            pw.println("      </LINKTYPE>");
+            pw.println("      </LinkType>");
         }
-        pw.println("    </LINKTYPES>\n");
+        pw.println("    </LinkTypes>\n");
 
-        pw.println("    <LANETYPES>");
+        pw.println("    <LaneTypes>");
         for (Node roadTypeTag : roadTypeTagList)
         {
-            String id = roadTypeTag.getAttributes().getNamedItem("NAME").getNodeValue();
-            pw.println("      <LANETYPE ID=\"" + id + "\">");
-            for (Node compNode : nodesOfType(roadTypeTag.getChildNodes(), "SPEEDLIMIT"))
+            String id = roadTypeTag.getAttributes().getNamedItem("Name").getNodeValue();
+            pw.println("      <LaneType Id=\"" + id + "\">");
+            for (Node compNode : nodesOfType(roadTypeTag.getChildNodes(), "SpeedLimit"))
             {
-                String gtuType = compNode.getAttributes().getNamedItem("GTUTYPE").getNodeValue();
-                pw.println("        <COMPATIBILITY GTUTYPE=\"" + gtuType + "\" DIRECTION=\"FORWARD\" />");
+                String gtuType = compNode.getAttributes().getNamedItem("GtuType").getNodeValue();
+                pw.println("        <Compatibility GtuType=\"" + gtuType + "\" Direction=\"FORWARD\" />");
             }
-            pw.println("      </LANETYPE>");
+            pw.println("      </LaneType>");
         }
-        pw.println("    </LANETYPES>\n\n");
+        pw.println("    </LaneTypes>\n\n");
     }
 
     private void writeRoadLayoutTypes(final PrintWriter pw, final List<Node> roadLayoutTagList)
     {
         /*-
-        <LINKTYPES>
-          <LINKTYPE ID="STREET">
-            <COMPATIBILITY GTUTYPE="VEHICLE" DIRECTION="FORWARD" />
-            <SPEEDLIMIT GTUTYPE="CAR" LEGALSPEEDLIMIT="40km/h" />
-            <SPEEDLIMIT GTUTYPE="TRUCK" LEGALSPEEDLIMIT="40km/h" />
-          </LINKTYPE>
-        </LINKTYPES>
+        <LinkTypes>
+          <LinkType Id="STREET">
+            <Compatibility GtuType="VEHICLE" Direction="FORWARD" />
+            <SpeedLimit GtuType="CAR" LegalSpeedLimit="40km/h" />
+            <SpeedLimit GtuType="TRUCK" LegalSpeedLimit="40km/h" />
+          </LinkType>
+        </LinkTypes>
         
-        <LANETYPES>
-          <LANETYPE ID="STREET">
-            <COMPATIBILITY GTUTYPE="VEHICLE" DIRECTION="FORWARD" />
-          </LANETYPE>
-        </LANETYPES>
+        <LaneTypes>
+          <LaneType Id="STREET">
+            <Compatibility GtuType="VEHICLE" Direction="FORWARD" />
+          </LaneType>
+        </LaneTypes>
          */
 
-        pw.println("    <ROADLAYOUTS>");
+        pw.println("    <RoadLayouts>");
         for (Node roadTypeTag : roadLayoutTagList)
         {
-            String id = roadTypeTag.getAttributes().getNamedItem("ID").getNodeValue();
-            String linkType = roadTypeTag.getAttributes().getNamedItem("LINKTYPE").getNodeValue();
+            String id = roadTypeTag.getAttributes().getNamedItem("Id").getNodeValue();
+            String linkType = roadTypeTag.getAttributes().getNamedItem("LinkType").getNodeValue();
             this.roadTypeToLinkTypeMap.put(id, linkType);
-            pw.println("      <ROADLAYOUT ID=\"" + id + "\" LINKTYPE= \"" + linkType + "\">");
+            pw.println("      <RoadLayout Id=\"" + id + "\" LinkType= \"" + linkType + "\">");
             NodeList cseList = roadTypeTag.getChildNodes();
             for (int i = 0; i < cseList.getLength(); i++)
             {
                 Node cseNode = cseList.item(i);
-                if (cseNode.getNodeName().equals("SHOULDER"))
+                if (cseNode.getNodeName().equals("Shoulder"))
                 {
-                    pw.println("        <SHOULDER>");
-                    String width = cseNode.getAttributes().getNamedItem("WIDTH").getNodeValue();
+                    pw.println("        <Shoulder>");
+                    String width = cseNode.getAttributes().getNamedItem("Width").getNodeValue();
                     String offset;
-                    if (cseNode.getAttributes().getNamedItem("OFFSET") != null)
-                        offset = cseNode.getAttributes().getNamedItem("OFFSET").getNodeValue();
-                    else if (cseNode.getAttributes().getNamedItem("CENTEROFFSET") != null)
-                        offset = cseNode.getAttributes().getNamedItem("CENTEROFFSET").getNodeValue();
+                    if (cseNode.getAttributes().getNamedItem("Offset") != null)
+                        offset = cseNode.getAttributes().getNamedItem("Offset").getNodeValue();
+                    else if (cseNode.getAttributes().getNamedItem("CenterOffset") != null)
+                        offset = cseNode.getAttributes().getNamedItem("CenterOffset").getNodeValue();
                     else
                     {
                         offset = "";
-                        System.err.println("offset for SHOULDER in ROADLAYOUT " + id + " unknown");
+                        System.err.println("offset for Shoulder in RoadLayout " + id + " unknown");
                     }
                     if (offset.length() > 0)
-                        pw.println("          <CENTEROFFSET>" + offset + "</CENTEROFFSET>");
-                    pw.println("          <WIDTH>" + width + "</WIDTH>");
-                    pw.println("        </SHOULDER>");
+                        pw.println("          <CenterOffset>" + offset + "</CenterOffset>");
+                    pw.println("          <Width>" + width + "</Width>");
+                    pw.println("        </Shoulder>");
                 }
-                else if (cseNode.getNodeName().equals("LANE"))
+                else if (cseNode.getNodeName().equals("Lane"))
                 {
                     /*-
-                      <LANE ID="M" LANETYPE="STREET" DESIGNDIRECTION="true">
-                        <CENTEROFFSET>0m</CENTEROFFSET>
-                        <WIDTH>3.6m</WIDTH>
-                      </LANE>
+                      <Lane Id="M" LaneType="STREET" DesignDirection="true">
+                        <CenterOffset>0m</CenterOffset>
+                        <Width>3.6m</Width>
+                      </Lane>
                      */
-                    String laneId = cseNode.getAttributes().getNamedItem("ID").getNodeValue();
-                    pw.println("        <LANE ID=\"" + laneId + "\" LANETYPE=\"" + linkType + "\" DESIGNDIRECTION=\"true\">");
-                    String width = cseNode.getAttributes().getNamedItem("WIDTH").getNodeValue();
+                    String laneId = cseNode.getAttributes().getNamedItem("Id").getNodeValue();
+                    pw.println("        <Lane Id=\"" + laneId + "\" LaneType=\"" + linkType + "\" DesignDirection=\"true\">");
+                    String width = cseNode.getAttributes().getNamedItem("Width").getNodeValue();
                     String offset;
-                    if (cseNode.getAttributes().getNamedItem("OFFSET") != null)
-                        offset = cseNode.getAttributes().getNamedItem("OFFSET").getNodeValue();
-                    else if (cseNode.getAttributes().getNamedItem("CENTEROFFSET") != null)
-                        offset = cseNode.getAttributes().getNamedItem("CENTEROFFSET").getNodeValue();
+                    if (cseNode.getAttributes().getNamedItem("Offset") != null)
+                        offset = cseNode.getAttributes().getNamedItem("Offset").getNodeValue();
+                    else if (cseNode.getAttributes().getNamedItem("CenterOffset") != null)
+                        offset = cseNode.getAttributes().getNamedItem("CenterOffset").getNodeValue();
                     else
                     {
                         offset = "";
-                        System.err.println("offset for SHOULDER in ROADLAYOUT " + id + " unknown");
+                        System.err.println("offset for Shoulder in RoadLayout " + id + " unknown");
                     }
                     if (offset.length() > 0)
-                        pw.println("          <CENTEROFFSET>" + offset + "</CENTEROFFSET>");
-                    pw.println("          <WIDTH>" + width + "</WIDTH>");
-                    pw.println("        </LANE>");
+                        pw.println("          <CenterOffset>" + offset + "</CenterOffset>");
+                    pw.println("          <Width>" + width + "</Width>");
+                    pw.println("        </Lane>");
                 }
-                else if (cseNode.getNodeName().equals("NOTRAFFICLANE"))
+                else if (cseNode.getNodeName().equals("NoTrafficLane"))
                 {
-                    pw.println("        <NOTRAFFICLANE>");
-                    String width = cseNode.getAttributes().getNamedItem("WIDTH").getNodeValue();
+                    pw.println("        <NoTrafficLane>");
+                    String width = cseNode.getAttributes().getNamedItem("Width").getNodeValue();
                     String offset;
-                    if (cseNode.getAttributes().getNamedItem("OFFSET") != null)
-                        offset = cseNode.getAttributes().getNamedItem("OFFSET").getNodeValue();
-                    else if (cseNode.getAttributes().getNamedItem("CENTEROFFSET") != null)
-                        offset = cseNode.getAttributes().getNamedItem("CENTEROFFSET").getNodeValue();
+                    if (cseNode.getAttributes().getNamedItem("Offset") != null)
+                        offset = cseNode.getAttributes().getNamedItem("Offset").getNodeValue();
+                    else if (cseNode.getAttributes().getNamedItem("CenterOffset") != null)
+                        offset = cseNode.getAttributes().getNamedItem("CenterOffset").getNodeValue();
                     else
                     {
                         offset = "";
-                        System.err.println("offset for SHOULDER in ROADLAYOUT " + id + " unknown");
+                        System.err.println("offset for Shoulder in RoadLayout " + id + " unknown");
                     }
                     if (offset.length() > 0)
-                        pw.println("          <CENTEROFFSET>" + offset + "</CENTEROFFSET>");
-                    pw.println("          <WIDTH>" + width + "</WIDTH>");
-                    pw.println("        </NOTRAFFICLANE>");
+                        pw.println("          <CenterOffset>" + offset + "</CenterOffset>");
+                    pw.println("          <Width>" + width + "</Width>");
+                    pw.println("        </NoTrafficLane>");
                 }
-                else if (cseNode.getNodeName().equals("STRIPE"))
+                else if (cseNode.getNodeName().equals("Stripe"))
                 {
-                    String type = cseNode.getAttributes().getNamedItem("TYPE").getNodeValue();
-                    pw.println("        <STRIPE TYPE=\"" + type + "\" />");
+                    String type = cseNode.getAttributes().getNamedItem("Type").getNodeValue();
+                    pw.println("        <Stripe Type=\"" + type + "\" />");
                 }
             }
-            pw.println("      </ROADLAYOUT>");
+            pw.println("      </RoadLayout>");
         }
-        pw.println("    </ROADLAYOUTS>\n");
+        pw.println("    </RoadLayouts>\n");
     }
 
     private void writeNodes(final PrintWriter pw, final List<Node> networkNodeList)
     {
         for (Node nodeTag : networkNodeList)
         {
-            String id = nodeTag.getAttributes().getNamedItem("ID").getNodeValue();
-            String coord = nodeTag.getAttributes().getNamedItem("COORDINATE").getNodeValue();
+            String id = nodeTag.getAttributes().getNamedItem("Id").getNodeValue();
+            String coord = nodeTag.getAttributes().getNamedItem("Coordinate").getNodeValue();
             String dir = "";
-            if (nodeTag.getAttributes().getNamedItem("DIRECTION") != null)
-                dir = nodeTag.getAttributes().getNamedItem("DIRECTION").getNodeValue();
-            pw.print("      <NODE ID=\"" + id + "\" COORDINATE=\"" + coord + "\" ");
+            if (nodeTag.getAttributes().getNamedItem("Direction") != null)
+                dir = nodeTag.getAttributes().getNamedItem("Direction").getNodeValue();
+            pw.print("      <Node Id=\"" + id + "\" Coordinate=\"" + coord + "\" ");
             if (dir.length() > 1)
-                pw.println("DIRECTION=\"" + dir + "\" />");
+                pw.println("Direction=\"" + dir + "\" />");
             else
                 pw.println(" />");
         }
@@ -336,65 +336,65 @@ public class Converter
     {
         /*-
          OLD:
-           <LINK ID="L2EB" NODESTART="N2EB" NODEEND="N3EB" ROADLAYOUT="HW3AFSLAG">
-             <POLYLINE INTERMEDIATEPOINTS="(137792,395679) (137816,395665) (137902.6725,395617.2567)" />
-           </LINK>
+           <Link Id="L2EB" NodeStart="N2EB" NodeEnd="N3EB" RoadLayout="HW3AFSLAG">
+             <Polyline IntermediatePoints="(137792,395679) (137816,395665) (137902.6725,395617.2567)" />
+           </Link>
            
            NEW:
-             <LINK ID="NS23" NODESTART="NS2" NODEEND="NS3" TYPE="STREET">
-               <STRAIGHT />
-               <DEFINEDLAYOUT>r3</DEFINEDLAYOUT>
-             </LINK>
+             <Link Id="NS23" NodeStart="NS2" NodeEnd="NS3" Type="STREET">
+               <Straight />
+               <DefinedLayout>r3</DefinedLayout>
+             </Link>
          */
 
         for (Node linkTag : networkLinkList)
         {
-            String id = linkTag.getAttributes().getNamedItem("ID").getNodeValue();
-            String snode = linkTag.getAttributes().getNamedItem("NODESTART").getNodeValue();
-            String enode = linkTag.getAttributes().getNamedItem("NODEEND").getNodeValue();
-            String type = linkTag.getAttributes().getNamedItem("ROADLAYOUT").getNodeValue();
-            pw.println("    <LINK ID=\"" + id + "\" NODESTART=\"" + snode + "\" NODEEND=\"" + enode + "\" TYPE=\""
+            String id = linkTag.getAttributes().getNamedItem("Id").getNodeValue();
+            String snode = linkTag.getAttributes().getNamedItem("NodeStart").getNodeValue();
+            String enode = linkTag.getAttributes().getNamedItem("NodeEnd").getNodeValue();
+            String type = linkTag.getAttributes().getNamedItem("RoadLayout").getNodeValue();
+            pw.println("    <Link Id=\"" + id + "\" NodeStart=\"" + snode + "\" NodeEnd=\"" + enode + "\" Type=\""
                     + this.roadTypeToLinkTypeMap.get(type) + "\">");
             NodeList layoutList = linkTag.getChildNodes();
             for (int i = 0; i < layoutList.getLength(); i++)
             {
                 Node layoutNode = layoutList.item(i);
-                if (layoutNode.getNodeName().equals("STRAIGHT"))
+                if (layoutNode.getNodeName().equals("Straight"))
                 {
-                    pw.println("      <STRAIGHT />");
+                    pw.println("      <Straight />");
                 }
-                else if (layoutNode.getNodeName().equals("BEZIER"))
+                else if (layoutNode.getNodeName().equals("Bezier"))
                 {
-                    pw.print("      <BEZIER ");
-                    if (layoutNode.getAttributes().getNamedItem("SHAPE") != null)
-                        pw.print("SHAPE=\"" + layoutNode.getAttributes().getNamedItem("SHAPE").getNodeValue() + "\" ");
+                    pw.print("      <Bezier ");
+                    if (layoutNode.getAttributes().getNamedItem("Shape") != null)
+                        pw.print("Shape=\"" + layoutNode.getAttributes().getNamedItem("Shape").getNodeValue() + "\" ");
                     pw.println("/>");
                 }
-                else if (layoutNode.getNodeName().equals("POLYLINE"))
+                else if (layoutNode.getNodeName().equals("Polyline"))
                 {
-                    pw.println("      <POLYLINE>");
-                    String[] coords = layoutNode.getAttributes().getNamedItem("INTERMEDIATEPOINTS").getNodeValue().split(" ");
+                    pw.println("      <Polyline>");
+                    String[] coords = layoutNode.getAttributes().getNamedItem("IntermediatePoints").getNodeValue().split(" ");
                     for (String c : coords)
                     {
-                        pw.println("        <COORDINATE>" + c + "</COORDINATE>");
+                        pw.println("        <Coordinate>" + c + "</Coordinate>");
                     }
-                    pw.println("      </POLYLINE>");
+                    pw.println("      </Polyline>");
                 }
-                else if (layoutNode.getNodeName().equals("ARC"))
+                else if (layoutNode.getNodeName().equals("Arc"))
                 {
-                    // <ARC DIRECTION="lr" RADIUS="xm"/>
-                    String dir = layoutNode.getAttributes().getNamedItem("DIRECTION").getNodeValue();
-                    String radius = layoutNode.getAttributes().getNamedItem("RADIUS").getNodeValue();
-                    pw.println("      <ARC DIRECTION=\"" + dir + "\" RADIUS=\"" + radius + "\"/>");
+                    // <Arc Direction="lr" Radius="xm"/>
+                    String dir = layoutNode.getAttributes().getNamedItem("Direction").getNodeValue();
+                    String radius = layoutNode.getAttributes().getNamedItem("Radius").getNodeValue();
+                    pw.println("      <Arc Direction=\"" + dir + "\" Radius=\"" + radius + "\"/>");
                 }
             }
-            pw.println("      <DEFINEDLAYOUT>" + type + "</DEFINEDLAYOUT>");
-            pw.println("    </LINK>\n");
+            pw.println("      <DefinedLayout>" + type + "</DefinedLayout>");
+            pw.println("    </Link>\n");
         }
         pw.println();
     }
 
-    private List<Node> nodesOfType(NodeList parent, String type)
+    private List<Node> nodesOfType(final NodeList parent, final String type)
     {
         List<Node> nodeList = new ArrayList<>();
         for (int i = 0; i < parent.getLength(); i++)

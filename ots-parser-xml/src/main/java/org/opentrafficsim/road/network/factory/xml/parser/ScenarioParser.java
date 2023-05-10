@@ -4,9 +4,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.opentrafficsim.xml.generated.MODELIDREFERRALTYPE;
-import org.opentrafficsim.xml.generated.NETWORKDEMAND;
-import org.opentrafficsim.xml.generated.SCENARIO;
+import org.opentrafficsim.xml.generated.Demand;
+import org.opentrafficsim.xml.generated.ModelIdReferralType;
+import org.opentrafficsim.xml.generated.Scenario;
 
 /**
  * <p>
@@ -27,22 +27,21 @@ public class ScenarioParser
      * @param demand demand
      * @return map from ID to ID
      */
-    public static final Map<String, String> parseModelIdReferral(final List<SCENARIO> scenario,
-            final List<NETWORKDEMAND> demand)
+    public static final Map<String, String> parseModelIdReferral(final List<Scenario> scenario, final List<Demand> demand)
     {
         // TODO: use run to select scenario (probably outside this class, and accept a single SCENARIO
         Map<String, String> map = new LinkedHashMap<>();
-        for (NETWORKDEMAND d : demand)
+        for (Demand d : demand)
         {
-            for (MODELIDREFERRALTYPE modelIdReferral : d.getMODELIDREFERRAL())
+            for (ModelIdReferralType modelIdReferral : d.getModelIdReferral())
             {
-                map.put(modelIdReferral.getID(), modelIdReferral.getMODELID());
+                map.put(modelIdReferral.getId(), modelIdReferral.getModelId());
             }
         }
         // overwrite with scenario level ID referrals
-        for (MODELIDREFERRALTYPE modelIdReferral : scenario.get(0).getMODELIDREFERRAL())
+        for (ModelIdReferralType modelIdReferral : scenario.get(0).getModelIdReferral())
         {
-            map.put(modelIdReferral.getID(), modelIdReferral.getMODELID());
+            map.put(modelIdReferral.getId(), modelIdReferral.getModelId());
         }
         return map;
     }

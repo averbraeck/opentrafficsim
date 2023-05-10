@@ -57,7 +57,7 @@ public class OdEditor implements EventListener
         {
             JLabel label = ((JLabel) this.editor.getTab("OD"));
             XsdTreeNode node = (XsdTreeNode) event.getContent();
-            if (node.getPathString().startsWith("OTS.NETWORKDEMAND.OD"))
+            if (node.getPathString().startsWith("OTS.Demand.OD"))
             {
                 label.setText(node.getPathString());
             }

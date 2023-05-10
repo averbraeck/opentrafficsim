@@ -64,8 +64,8 @@ public class RoadLayoutEditor implements EventListener, Consumer<XsdTreeNode>
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
         {
             XsdTreeNode node = (XsdTreeNode) event.getContent();
-            if (node.getPathString().equals("OTS.DEFINITIONS.ROADLAYOUTS.ROADLAYOUT")
-                    || node.getPathString().equals("OTS.NETWORK.LINK.ROADLAYOUT"))
+            if (node.getPathString().equals("OTS.Definitions.RoadLayouts.RoadLayout")
+                    || node.getPathString().equals("OTS.Network.LINK.RoadLayout"))
             {
                 node.addConsumer("Edit...", this);
             }

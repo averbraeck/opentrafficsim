@@ -57,7 +57,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
     private static final long serialVersionUID = 20161014L;
 
     /** Version of the supported TrafCOD files. */
-    static final int TRAFCOD_VERSION = 100;
+    static final int TrafCod_VERSION = 100;
 
     /** The evaluation interval of TrafCOD. */
     static final Duration EVALUATION_INTERVAL = new Duration(0.1, DurationUnit.SECOND);
@@ -262,10 +262,10 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
                     try
                     {
                         int observedVersion = Integer.parseInt(versionString);
-                        if (TRAFCOD_VERSION != observedVersion)
+                        if (TrafCod_VERSION != observedVersion)
                         {
                             throw new TrafficControlException(
-                                    "Wrong TrafCOD version (expected " + TRAFCOD_VERSION + ", got " + observedVersion + ")");
+                                    "Wrong TrafCOD version (expected " + TrafCod_VERSION + ", got " + observedVersion + ")");
                         }
                     }
                     catch (NumberFormatException nfe)

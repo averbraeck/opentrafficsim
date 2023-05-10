@@ -59,7 +59,7 @@ public class RouteEditor implements EventListener, Consumer<XsdTreeNode>
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
         {
             XsdTreeNode node = (XsdTreeNode) event.getContent();
-            if (node.getPathString().equals("OTS.NETWORKDEMAND.ROUTE"))
+            if (node.getPathString().equals("OTS.Demand.ROUTE"))
             {
                 node.addConsumer("Show in panel...", this);
                 node.addConsumer("Compute shortest...", new Consumer<XsdTreeNode>()

@@ -42,7 +42,7 @@ public class GtuPositionAdapter extends XmlAdapter<String, GtuPositionType>
             throw new IllegalArgumentException("Error parsing GTUPosition " + field, exception);
         }
         CategoryLogger.always().error("Problem parsing GTUPosition '" + field + "'");
-        throw new IllegalArgumentException("Error parsing GTUPositionType " + field);
+        throw new IllegalArgumentException("Error parsing GtuPositionType " + field);
     }
 
     /** {@inheritDoc} */

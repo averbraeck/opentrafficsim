@@ -7,12 +7,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
-import org.opentrafficsim.xml.generated.BASICROADLAYOUT;
-import org.opentrafficsim.xml.generated.CSELANE;
-import org.opentrafficsim.xml.generated.CSENOTRAFFICLANE;
-import org.opentrafficsim.xml.generated.CSESHOULDER;
-import org.opentrafficsim.xml.generated.CSESTRIPE;
-import org.opentrafficsim.xml.generated.ROADLAYOUT;
+import org.opentrafficsim.xml.generated.BasicRoadLayout;
+import org.opentrafficsim.xml.generated.CseLane;
+import org.opentrafficsim.xml.generated.CseNoTrafficLane;
+import org.opentrafficsim.xml.generated.CseShoulder;
+import org.opentrafficsim.xml.generated.CseStripe;
+import org.opentrafficsim.xml.generated.RoadLayout;
 
 /**
  * Cloner makes a deep clone of any serializable object with serializable fields.
@@ -38,7 +38,7 @@ public final class Cloner
      * @throws XmlParserException on cloning error
      */
     @SuppressWarnings("unchecked")
-    public static <T> T clone(T object) throws XmlParserException
+    public static <T> T clone(final T object) throws XmlParserException
     {
         try
         {
@@ -56,93 +56,93 @@ public final class Cloner
     }
 
     /**
-     * Clone the BASICROADLAYOUT, as not all DJUNIT types are serializable...
+     * Clone the BasicRoadLayout, as not all DJUNIT types are serializable...
      * @param in the object to clone
      * @return the cloned object
      */
-    public static ROADLAYOUT cloneRoadLayout(BASICROADLAYOUT in)
+    public static RoadLayout cloneRoadLayout(final BasicRoadLayout in)
     {
-        ROADLAYOUT rl = new ROADLAYOUT();
+        RoadLayout rl = new RoadLayout();
         rl.setBase(in.getBase());
-        rl.setLANEKEEPING(in.getLANEKEEPING());
-        rl.setLINKTYPE(in.getBase());
-        rl.getSPEEDLIMIT().addAll(in.getSPEEDLIMIT());
-        for (Object o : in.getLANEOrNOTRAFFICLANEOrSHOULDER())
+        rl.setLaneKeeping(in.getLaneKeeping());
+        rl.setLinkType(in.getBase());
+        rl.getSpeedLimit().addAll(in.getSpeedLimit());
+        for (Object o : in.getLaneOrNoTrafficLaneOrShoulder())
         {
-            if (o instanceof CSELANE)
+            if (o instanceof CseLane)
             {
-                CSELANE lane = (CSELANE) o;
-                CSELANE lc = new CSELANE();
-                lc.setCENTEROFFSET(lane.getCENTEROFFSET());
-                lc.setCENTEROFFSETEND(lane.getCENTEROFFSETEND());
-                lc.setCENTEROFFSETSTART(lane.getCENTEROFFSETSTART());
-                lc.setLEFTOFFSET(lane.getLEFTOFFSET());
-                lc.setLEFTOFFSETEND(lane.getLEFTOFFSETEND());
-                lc.setLEFTOFFSETSTART(lane.getLEFTOFFSETSTART());
-                lc.setRIGHTOFFSET(lane.getRIGHTOFFSET());
-                lc.setRIGHTOFFSETEND(lane.getRIGHTOFFSETEND());
-                lc.setRIGHTOFFSETSTART(lane.getRIGHTOFFSETSTART());
-                lc.setDESIGNDIRECTION(lane.isDESIGNDIRECTION());
-                lc.setLANETYPE(lane.getLANETYPE());
-                lc.setID(lane.getID());
-                lc.setWIDTH(lane.getWIDTH());
-                lc.setWIDTHEND(lane.getWIDTHEND());
-                lc.setWIDTHSTART(lane.getWIDTHSTART());
-                lc.getSPEEDLIMIT().addAll(lane.getSPEEDLIMIT());
-                rl.getLANEOrNOTRAFFICLANEOrSHOULDER().add(lc);
+                CseLane lane = (CseLane) o;
+                CseLane lc = new CseLane();
+                lc.setCenterOffset(lane.getCenterOffset());
+                lc.setCenterOffsetEnd(lane.getCenterOffsetEnd());
+                lc.setCenterOffsetStart(lane.getCenterOffsetStart());
+                lc.setLeftOffset(lane.getLeftOffset());
+                lc.setLeftOffsetEnd(lane.getLeftOffsetEnd());
+                lc.setLeftOffsetStart(lane.getLeftOffsetStart());
+                lc.setRightOffset(lane.getRightOffset());
+                lc.setRightOffsetEnd(lane.getRightOffsetEnd());
+                lc.setRightOffsetStart(lane.getRightOffsetStart());
+                lc.setDesignDirection(lane.isDesignDirection());
+                lc.setLaneType(lane.getLaneType());
+                lc.setId(lane.getId());
+                lc.setWidth(lane.getWidth());
+                lc.setWidthEnd(lane.getWidthEnd());
+                lc.setWidthStart(lane.getWidthStart());
+                lc.getSpeedLimit().addAll(lane.getSpeedLimit());
+                rl.getLaneOrNoTrafficLaneOrShoulder().add(lc);
             }
 
-            else if (o instanceof CSENOTRAFFICLANE)
+            else if (o instanceof CseNoTrafficLane)
             {
-                CSENOTRAFFICLANE ntl = (CSENOTRAFFICLANE) o;
-                CSENOTRAFFICLANE ntlc = new CSENOTRAFFICLANE();
-                ntlc.setCENTEROFFSET(ntl.getCENTEROFFSET());
-                ntlc.setCENTEROFFSETEND(ntl.getCENTEROFFSETEND());
-                ntlc.setCENTEROFFSETSTART(ntl.getCENTEROFFSETSTART());
-                ntlc.setLEFTOFFSET(ntl.getLEFTOFFSET());
-                ntlc.setLEFTOFFSETEND(ntl.getLEFTOFFSETEND());
-                ntlc.setLEFTOFFSETSTART(ntl.getLEFTOFFSETSTART());
-                ntlc.setRIGHTOFFSET(ntl.getRIGHTOFFSET());
-                ntlc.setRIGHTOFFSETEND(ntl.getRIGHTOFFSETEND());
-                ntlc.setRIGHTOFFSETSTART(ntl.getRIGHTOFFSETSTART());
-                ntlc.setID(ntl.getID());
-                ntlc.setWIDTH(ntl.getWIDTH());
-                ntlc.setWIDTHEND(ntl.getWIDTHEND());
-                ntlc.setWIDTHSTART(ntl.getWIDTHSTART());
-                rl.getLANEOrNOTRAFFICLANEOrSHOULDER().add(ntlc);
+                CseNoTrafficLane ntl = (CseNoTrafficLane) o;
+                CseNoTrafficLane ntlc = new CseNoTrafficLane();
+                ntlc.setCenterOffset(ntl.getCenterOffset());
+                ntlc.setCenterOffsetEnd(ntl.getCenterOffsetEnd());
+                ntlc.setCenterOffsetStart(ntl.getCenterOffsetStart());
+                ntlc.setLeftOffset(ntl.getLeftOffset());
+                ntlc.setLeftOffsetEnd(ntl.getLeftOffsetEnd());
+                ntlc.setLeftOffsetStart(ntl.getLeftOffsetStart());
+                ntlc.setRightOffset(ntl.getRightOffset());
+                ntlc.setRightOffsetEnd(ntl.getRightOffsetEnd());
+                ntlc.setRightOffsetStart(ntl.getRightOffsetStart());
+                ntlc.setId(ntl.getId());
+                ntlc.setWidth(ntl.getWidth());
+                ntlc.setWidthEnd(ntl.getWidthEnd());
+                ntlc.setWidthStart(ntl.getWidthStart());
+                rl.getLaneOrNoTrafficLaneOrShoulder().add(ntlc);
             }
 
-            else if (o instanceof CSESHOULDER)
+            else if (o instanceof CseShoulder)
             {
-                CSESHOULDER shoulder = (CSESHOULDER) o;
-                CSESHOULDER sc = new CSESHOULDER();
-                sc.setCENTEROFFSET(shoulder.getCENTEROFFSET());
-                sc.setCENTEROFFSETEND(shoulder.getCENTEROFFSETEND());
-                sc.setCENTEROFFSETSTART(shoulder.getCENTEROFFSETSTART());
-                sc.setLEFTOFFSET(shoulder.getLEFTOFFSET());
-                sc.setLEFTOFFSETEND(shoulder.getLEFTOFFSETEND());
-                sc.setLEFTOFFSETSTART(shoulder.getLEFTOFFSETSTART());
-                sc.setRIGHTOFFSET(shoulder.getRIGHTOFFSET());
-                sc.setRIGHTOFFSETEND(shoulder.getRIGHTOFFSETEND());
-                sc.setRIGHTOFFSETSTART(shoulder.getRIGHTOFFSETSTART());
-                sc.setID(shoulder.getID());
-                sc.setWIDTH(shoulder.getWIDTH());
-                sc.setWIDTHEND(shoulder.getWIDTHEND());
-                sc.setWIDTHSTART(shoulder.getWIDTHSTART());
-                rl.getLANEOrNOTRAFFICLANEOrSHOULDER().add(sc);
+                CseShoulder shoulder = (CseShoulder) o;
+                CseShoulder sc = new CseShoulder();
+                sc.setCenterOffset(shoulder.getCenterOffset());
+                sc.setCenterOffsetEnd(shoulder.getCenterOffsetEnd());
+                sc.setCenterOffsetStart(shoulder.getCenterOffsetStart());
+                sc.setLeftOffset(shoulder.getLeftOffset());
+                sc.setLeftOffsetEnd(shoulder.getLeftOffsetEnd());
+                sc.setLeftOffsetStart(shoulder.getLeftOffsetStart());
+                sc.setRightOffset(shoulder.getRightOffset());
+                sc.setRightOffsetEnd(shoulder.getRightOffsetEnd());
+                sc.setRightOffsetStart(shoulder.getRightOffsetStart());
+                sc.setId(shoulder.getId());
+                sc.setWidth(shoulder.getWidth());
+                sc.setWidthEnd(shoulder.getWidthEnd());
+                sc.setWidthStart(shoulder.getWidthStart());
+                rl.getLaneOrNoTrafficLaneOrShoulder().add(sc);
             }
 
-            else if (o instanceof CSESTRIPE)
+            else if (o instanceof CseStripe)
             {
-                CSESTRIPE stripe = (CSESTRIPE) o;
-                CSESTRIPE sc = new CSESTRIPE();
-                sc.setCENTEROFFSET(stripe.getCENTEROFFSET());
-                sc.setCENTEROFFSETEND(stripe.getCENTEROFFSETEND());
-                sc.setCENTEROFFSETSTART(stripe.getCENTEROFFSETSTART());
-                sc.setID(stripe.getID());
-                sc.setDRAWINGWIDTH(stripe.getDRAWINGWIDTH());
-                sc.setTYPE(stripe.getTYPE());
-                rl.getLANEOrNOTRAFFICLANEOrSHOULDER().add(sc);
+                CseStripe stripe = (CseStripe) o;
+                CseStripe sc = new CseStripe();
+                sc.setCenterOffset(stripe.getCenterOffset());
+                sc.setCenterOffsetEnd(stripe.getCenterOffsetEnd());
+                sc.setCenterOffsetStart(stripe.getCenterOffsetStart());
+                sc.setId(stripe.getId());
+                sc.setDrawingWidth(stripe.getDrawingWidth());
+                sc.setType(stripe.getType());
+                rl.getLaneOrNoTrafficLaneOrShoulder().add(sc);
             }
         }
         return rl;

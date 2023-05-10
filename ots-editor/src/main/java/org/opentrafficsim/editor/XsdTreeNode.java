@@ -33,7 +33,7 @@ import org.xml.sax.SAXException;
 
 /**
  * Underlying data structure object of the editor. Starting with the root node "OTS", all the information is stored in a tree.
- * The tree follows the XSD logic, e.g. "OTS.NETWORK.LINK". {@code XsdTreeNode}'s have a {@code Node} object from the XSD DOM
+ * The tree follows the XSD logic, e.g. "OTS.Network.LINK". {@code XsdTreeNode}'s have a {@code Node} object from the XSD DOM
  * tree. From this information it can be derived what the child nodes should be, and which attributes are contained.<br>
  * <br>
  * This class is mostly straightforward in the sense that there are direct parent-child relations, and that changing an option
@@ -89,7 +89,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     private int maxOccurs = -1;
 
     /**
-     * Path string of this element, e.g. "OTS.DEFINITIONS.ROADLAYOUTS". This is used to identify each unique type of element.
+     * Path string of this element, e.g. "OTS.Definitions.RoadLayouts". This is used to identify each unique type of element.
      */
     private final String pathString;
 
@@ -294,7 +294,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
-     * Builds the path location, e.g. "OTS.DEFINITIONS.ROADLAYOUTS".
+     * Builds the path location, e.g. "OTS.Definitions.RoadLayouts".
      * @return String; the path location.
      */
     private String buildPathLocation()
@@ -324,7 +324,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
-     * Returns the name of this node, as appropriate in XML. Examples are NODE, ROADLAYOUT, and TACTICALPLANNER. Most typically
+     * Returns the name of this node, as appropriate in XML. Examples are NODE, RoadLayout, and TACTICALPLANNER. Most typically
      * this is the "name" attribute of an xsd:element. In other cases it is the ref={ref} attribute of the referring
      * {@code Node}. In rare cases it is "xi:include".
      * @return String; name of this node, as appropriate in XML.
@@ -1196,9 +1196,9 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
-     * Returns the path string of this element, e.g. "OTS.DEFINITIONS.ROADLAYOUTS". This is used to identify each unique type of
+     * Returns the path string of this element, e.g. "OTS.Definitions.RoadLayouts". This is used to identify each unique type of
      * element.
-     * @return String; path string of this element, e.g. "OTS.DEFINITIONS.ROADLAYOUTS".
+     * @return String; path string of this element, e.g. "OTS.Definitions.RoadLayouts".
      */
     public String getPathString()
     {

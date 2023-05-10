@@ -7,265 +7,265 @@
   <!-- ==================================== DJUNITS UNIT TYPES ================================= -->
   <!-- ========================================================================================= -->
 
-  <xsd:simpleType name="ABSOLUTETEMPERATUREUNITTYPE">
+  <xsd:simpleType name="AbsoluteTemperatureUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(K|YK|ZK|EK|PK|TK|GK|MK|kK|hK|daK|�C|degC|C|dK|cK|mK|\\u03BCK|muK|nK|pK|fK|aK|zK|yK|�F|degF|F|�R|degR|R|�R�|degRe|Re|R�)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ABSORBEDDOSEUNITTYPE">
+  <xsd:simpleType name="AbsorbedDoseUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(Gy|YGy|ZGy|EGy|PGy|TGy|GGy|MGy|kGy|hGy|daGy|dGy|cGy|mGy|\\u03BCGy|muGy|nGy|pGy|fGy|aGy|zGy|yGy|rad|erg/g)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ACCELERATIONUNITTYPE">
+  <xsd:simpleType name="AccelerationUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(m/s2|m/sec\^2|km/h2|km/hr\^2|km/hour\^2|Gal|ft/s2|ft/sec\^2|in/s2|in/sec\^2|kt/s|kt/sec|mi/h/s|mi/hr/s|mi/hour/s|mi/h/sec|mi/hr/sec|mi/hour/sec|mi/h2|mi/hr\^2|mi/hour\^2|mi/s2|mi/sec\^2|g)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="AMOUNTOFSUBSTANCEUNITTYPE">
+  <xsd:simpleType name="AmountOfSubstanceUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(mol|Ymol|Zmol|Emol|Pmol|Tmol|Gmol|Mmol|kmol|hmol|damol|dmol|cmol|mmol|\\u03BCmol|mumol|nmol|pmol|fmol|amol|zmol|ymol)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ANGLEUNITTYPE">
+  <xsd:simpleType name="AngleUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(rad|\'|arcmin|&quot;|arcsec|�|deg|dg|c\'|c&quot;|grad|\%)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ANGULARACCELERATIONUNITTYPE">
+  <xsd:simpleType name="AngularAccelerationUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(rad/s2|rad/sec2|\'/s2|\'/sec2|arcmin/sec2|&quot;/s2|&quot;/sec2|arcsec/sec2|�/s2|deg/s2|dg/s2|dg/sec2|deg/sec2|c\'/s2|c\'/sec2|c&quot;/s2|c&quot;/sec2|grad/s2)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ANGULARVELOCITYUNITTYPE">
+  <xsd:simpleType name="AngularVelocityUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(rad/s|rad/sec|\'/s|\'/sec|arcmin/sec|&quot;/s|&quot;/sec|arcsec/sec|�/s|deg/s|dg/s|dg/sec|deg/sec|c\'/s|c\'/sec|c&quot;/s|c&quot;/sec|grad/s)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="AREAUNITTYPE">
+  <xsd:simpleType name="AreaUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(m\^2|Ym\^2|Zm\^2|Em\^2|Pm\^2|Tm\^2|Gm\^2|Mm\^2|km\^2|hm\^2|dam\^2|dm\^2|cm\^2|mm\^2|\\u03BCm\^2|mum\^2|nm\^2|pm\^2|fm\^2|am\^2|zm\^2|ym\^2|ha|a|ca|ac|NM\^2|ft\^2|in\^2|mi\^2|yd\^2)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="CATALYTICACTIVITYUNITTYPE">
+  <xsd:simpleType name="CatalyticActivityUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(kat|Ykat|Zkat|Ekat|Pkat|Tkat|Gkat|Mkat|kkat|hkat|dakat|dkat|ckat|mkat|\\u03BCkat|mukat|nkat|pkat|fkat|akat|zkat|ykat)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="DENSITYUNITTYPE">
+  <xsd:simpleType name="DensityUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(kg/m\^3|g/cm\^3)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="DIRECTIONUNITTYPE">
+  <xsd:simpleType name="DirectionUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(rad\(E\)|rad\(N\)|�\(E\)|deg\(E\)|�\(N\)|deg\(N\))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="DURATIONUNITTYPE">
+  <xsd:simpleType name="DurationUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(s|sec|Ys|Ysec|Zs|Zsec|Es|Esec|Ps|Psec|Ts|Tsec|Gs|Gsec|Ms|Msec|ks|ksec|hs|hsec|das|dasec|ds|dsec|cs|csec|ms|msec|\\u03BCs|mus|\\u03BCsec|musec|ns|nsec|ps|psec|fs|fsec|as|asec|zs|zsec|ys|ysec|day|h|hr|hour|min|wk|week)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ELECTRICALCAPACITANCEUNITTYPE">
+  <xsd:simpleType name="ElectricalCapacitanceUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(F|YF|ZF|EF|PF|TF|GF|MF|kF|hF|daF|dF|cF|mF|uF|\\u03BCF|muF|nF|pF|fF|aF|zF|yF)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ELECTRICALCHARGEUNITTYPE">
+  <xsd:simpleType name="ElectricalChargeUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(C|YC|ZC|EC|PC|TC|GC|MC|kC|hC|daC|mAs|dC|cC|mC|\\u03BCC|muC|nC|pC|fC|aC|zC|yC|Ah|aAh|cAh|daAh|dAh|e|EAh|fAh|GAh|hAh|kAh|MAh|\\u03BCAh|muAh|mAh|nAh|PAh|pAh|TAh|yAh|YAh|zAh|ZAh|abC|emu|esu|F|Fr|statC)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ELECTRICALCONDUCTANCEUNITTYPE">
+  <xsd:simpleType name="ElectricalConductanceUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(S|YS|ZS|ES|PS|TS|GS|MS|kS|hS|daS|dS|cS|mS|muS|\\u03BCS|nS|pS|fS|aS|zS|yS)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ELECTRICALCURRENTUNITTYPE">
+  <xsd:simpleType name="ElectricalCurrentUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(A|YA|ZA|EA|PA|TA|GA|MA|kA|hA|daA|dA|cA|mA|\\u03BCA|muA|nA|pA|fA|aA|zA|yA|abA|statA)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ELECTRICALINDUCTANCEUNITTYPE">
+  <xsd:simpleType name="ElectricalInductanceUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(H|YH|ZH|EH|PH|TH|GH|MH|kH|hH|daH|dH|cH|mH|muH|\\u03BCH|nH|pH|fH|aH|zH|yH)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ELECTRICALPOTENTIALUNITTYPE">
+  <xsd:simpleType name="ElectricalPotentialUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(V|YV|ZV|EV|PV|TV|GV|MV|kV|hV|daV|dV|cV|mV|\\u03BCV|muV|nV|pV|fV|aV|zV|yV|abV|stV)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ELECTRICALRESISTANCEUNITTYPE">
+  <xsd:simpleType name="ElectricalResistanceUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(\\u03A9|ohm|Y\\u03A9|Yohm|Z\\u03A9|Zohm|E\\u03A9|Eohm|P\\u03A9|Pohm|T\\u03A9|Tohm|G\\u03A9|Gohm|M\\u03A9|Mohm|k\\u03A9|kohm|h\\u03A9|hohm|da\\u03A9|daohm|d\\u03A9|dohm|c\\u03A9|cohm|m\\u03A9|mohm|\\u03BC\\u03A9|muohm|mu\\u03A9|n\\u03A9|nohm|p\\u03A9|pohm|f\\u03A9|fohm|a\\u03A9|aohm|z\\u03A9|zohm|y\\u03A9|yohm|ab\\u03A9|abohm|st\\u03A9|stohm)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ENERGYUNITTYPE">
+  <xsd:simpleType name="EnergyUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(J|YJ|ZJ|EJ|PJ|TJ|GJ|MJ|kJ|hJ|daJ|dJ|cJ|mJ|\\u03BCJ|muJ|nJ|pJ|fJ|aJ|zJ|yJ|YWh|ZWh|EWh|PWh|TWh|GWh|MWh|kWh|hWh|daWh|Wh|dWh|cWh|mWh|\\u03BCWh|muWh|nWh|pWh|fWh|aWh|zWh|yWh|YeV|ZeV|EeV|PeV|TeV|GeV|MeV|keV|heV|daeV|eV|deV|ceV|meV|\\u03BCeV|mueV|neV|peV|feV|aeV|zeV|yeV|sn\.m|erg|BTU\(ISO\)|BTU\(IT\)|cal|cal\(IT\)|ft\.lbf|in\.lbf|kcal)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="EQUIVALENTDOSEUNITTYPE">
+  <xsd:simpleType name="EquivalentDoseUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(Sv|YSv|ZSv|ESv|PSv|TSv|GSv|MSv|kSv|hSv|daSv|dSv|cSv|mSv|\\u03BCSv|muSv|nSv|pSv|fSv|aSv|zSv|ySv|rem)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="FLOWMASSUNITTYPE">
+  <xsd:simpleType name="FlowMassUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(kg/s|kg/sec|lb/s|lb/sec)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="FLOWVOLUMEUNITTYPE">
+  <xsd:simpleType name="FlowVolumeUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(m\^3/s|m\^3/sec|L/s|L/sec|m\^3/day|m\^3/h|m\^3/hr|m\^3/hour|m\^3/min|L/day|L/h|L/hr|L/hour|L/min|gal\(US\)/day|gal\(US\)/h|gal\(US\)/hr|gal\(US\)/hour|gal\(US\)/min|gal\(US\)/s|gal\(US\)/sec|ft\^3/min|ft\^3/s|ft\^3/sec|in\^3/min|in\^3/s|in\^3/sec)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="FORCEUNITTYPE">
+  <xsd:simpleType name="ForceUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(N|sn|dyn|kgf|ozf|lbf|tnf)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="FREQUENCYUNITTYPE">
+  <xsd:simpleType name="FrequencyUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(Hz|/ys|1/ys|/ysec|1/ysec|YHz|/zs|1/zs|/zsec|1/zsec|ZHz|/as|1/as|/asec|1/asec|EHz|/fs|1/fs|/fsec|1/fsec|PHz|/ps|1/ps|/psec|1/psec|THz|/ns|1/ns|/nsec|1/nsec|GHz|/\\u03BCs|/mus|1/mus|1/\\u03BCs|/musec|1/musec|/\\u03BCsec|1/\\u03BCsec|MHz|/ms|1/ms|/msec|1/msec|kHz|/cs|1/cs|/csec|1/csec|hHz|/ds|1/ds|/dsec|1/dsec|daHz|/s|1/s|/sec|1/sec|/das|1/das|/dasec|1/dasec|dHz|/hs|1/hs|/hsec|1/hsec|cHz|/ks|1/ks|/ksec|1/ksec|mHz|/Ms|1/Ms|/Msec|1/Msec|\\u03BCHz|muHz|/Gs|1/Gs|/Gsec|1/Gsec|nHz|/Ts|1/Ts|/Tsec|1/Tsec|pHz|/Ps|1/Ps|/Psec|1/Psec|fHz|/Es|1/Es|/Esec|1/Esec|aHz|/Zs|1/Zs|/Zsec|1/Zsec|zHz|/Ys|1/Ys|/Ysec|1/Ysec|yHz|/day|1/day|/h|1/h|/hr|1/hr|/hour|1/hour|/min|1/min|/wk|1/wk|/week|1/week|rpm)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ILLUMINANCEUNITTYPE">
+  <xsd:simpleType name="IlluminanceUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(lx|Ylx|Zlx|Elx|Plx|Tlx|Glx|Mlx|ph|klx|hlx|dalx|dlx|clx|mlx|nx|mulx|\\u03BClx|nlx|plx|flx|alx|zlx|ylx)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="LENGTHUNITTYPE">
+  <xsd:simpleType name="LengthUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(m|Ym|Zm|Em|Pm|Tm|Gm|Mm|km|hm|dam|dm|cm|mm|\\u03BCm|mum|nm|pm|fm|am|zm|ym|\\u212B|A|AU|Pc|ft|in|ly|mi|NM|yd)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="LINEARDENSITYUNITTYPE">
+  <xsd:simpleType name="LinearDensityUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(/m|1/m|/ym|1/ym|/zm|1/zm|/am|1/am|/fm|1/fm|/pm|1/pm|/nm|1/nm|/\\u03BCm|/mum|1/\\u03BCm|1/mum|/mm|1/mm|/cm|1/cm|/dm|1/dm|/dam|1/dam|/hm|1/hm|/km|1/km|/Mm|1/Mm|/Gm|1/Gm|/Tm|1/Tm|/Pm|1/Pm|/Em|1/Em|/Zm|1/Zm|/Ym|1/Ym|/\\u212B|/A|1/\\u212B|1/A|/AU|1/AU|/NM|1/NM|/ft|1/ft|/in|1/in|/ly|1/ly|/mi|1/mi|/pc|1/pc|/yd|1/yd)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="LUMINOUSFLUXUNITTYPE">
+  <xsd:simpleType name="LuminousFluxUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(lm|Ylm|Zlm|Elm|Plm|Tlm|Glm|Mlm|klm|hlm|dalm|dlm|clm|mlm|\\u03BClm|mulm|nlm|plm|flm|alm|zlm|ylm)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="LUMINOUSINTENSITYUNITTYPE">
+  <xsd:simpleType name="LuminousIntensityUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(cd|Ycd|Zcd|Ecd|Pcd|Tcd|Gcd|Mcd|kcd|hcd|dacd|dcd|ccd|mcd|\\u03BCcd|mucd|ncd|pcd|fcd|acd|zcd|ycd)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="MAGNETICFLUXDENSITYUNITTYPE">
+  <xsd:simpleType name="MagneticFluxDensityUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(T|YT|ZT|ET|PT|TT|GT|MT|kT|hT|daT|dT|cT|mT|muT|\\u03BCT|nT|pT|fT|aT|zT|yT|G)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="MAGNETICFLUXUNITTYPE">
+  <xsd:simpleType name="MagneticFluxUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(Wb|YWb|ZWb|EWb|PWb|TWb|GWb|MWb|kWb|hWb|daWb|dWb|cWb|mWb|muWb|\\u03BCWb|nWb|pWb|fWb|aWb|zWb|yWb|Mx)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="MASSUNITTYPE">
+  <xsd:simpleType name="MassUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(kg|Yg|Zg|Eg|Pg|Tg|Gg|Mg|t|hg|dag|g|dg|cg|mg|\\u03BCg|mug|ng|pg|fg|ag|zg|yg|Da|t\(mts\)|YeV|ZeV|EeV|PeV|TeV|GeV|MeV|keV|heV|daeV|eV|meV|\\u03BCeV|mueV|long tn|oz|lb|sh tn)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="MOMENTUMUNITTYPE">
+  <xsd:simpleType name="MomentumUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(kgm/s|kgm/sec)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIONUNITTYPE">
+  <xsd:simpleType name="PositionUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(m|Ym|Zm|Em|Pm|Tm|Gm|Mm|km|hm|dam|dm|cm|mm|\\u03BCm|mum|nm|pm|fm|am|zm|ym|\\u212B|A|AU|Pc|ft|in|ly|mi|NM|yd)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POWERUNITTYPE">
+  <xsd:simpleType name="PowerUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(W|YW|ZW|EW|PW|TW|GW|MW|kW|hW|daW|dW|cW|mW|\\u03BCW|muW|nW|pW|fW|aW|zW|yW|sn\.m/s|erg/s|ft\.lbf/h|ft\.lbf/min|ft\.lbf/s|hp\(M\))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="PRESSUREUNITTYPE">
+  <xsd:simpleType name="PressureUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(Pa|YPa|ZPa|EPa|PPa|TPa|GPa|MPa|kPa|hPa|daPa|dPa|cPa|mPa|\\u03BCPa|muPa|nPa|pPa|fPa|aPa|zPa|yPa|bar|pz|mbar|Ba|torr|atm|at|cmHg|ftHg|inHg|kgf/mm\^2|mmHg|lbf/ft\^2|lbf/in\^2)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="RADIOACTIVITYUNITTYPE">
+  <xsd:simpleType name="RadioactivityUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(Bq|YBq|ZBq|EBq|PBq|TBq|GBq|MBq|kBq|hBq|daBq|Rd|Ci|muCi|\\u03BCCi|mCi|nCi)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="SOLIDANGLEUNITTYPE">
+  <xsd:simpleType name="SolidAngleUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(sr|sq\.deg)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="SPEEDUNITTYPE">
+  <xsd:simpleType name="SpeedUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(m/s|m/sec|km/s|km/sec|km/h|km/hr|km/hour|m/h|m/hr|m/hour|ft/h|ft/hr|ft/hour|ft/s|ft/sec|in/h|in/hr|in/hour|ft/min|in/min|in/s|in/sec|kt|mi/h|mi/hr|mi/hour|mi/min|mi/s|mi/sec)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="TEMPERATUREUNITTYPE">
+  <xsd:simpleType name="TemperatureUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(K|YK|ZK|EK|PK|TK|GK|MK|kK|hK|daK|�C|degC|C|dK|cK|mK|\\u03BCK|muK|nK|pK|fK|aK|zK|yK|�F|degF|F|�R|degR|R|�R�|degRe|Re|R�)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="TIMEUNITTYPE">
+  <xsd:simpleType name="TimeUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(s|sec|Ys|Ysec|Zs|Zsec|Es|Esec|Ps|Psec|Ts|Tsec|Gs|Gsec|Ms|Msec|ks|ksec|hs|hsec|das|dasec|ds|dsec|cs|csec|ms|msec|\\u03BCs|mus|\\u03BCsec|musec|ns|nsec|ps|psec|fs|fsec|as|asec|zs|zsec|ys|ysec|day|h|hr|hour|min|wk|week|s\(Y1\)|sec\(Y1\)|s\(Y1970\)|sec\(Y1970\)|s\(Y2000\)|sec\(Y2000\)|ms\(Y1970\)|msec\(Y1970\)|\\u03BCs\(Y1970\)|mus\(Y1970\)|\\u03BCsec\(Y1970\)|musec\(Y1970\)|day\(Y1970\)|h\(Y1970\)|hour\(Y1970\)|hr\(Y1970\)|min\(Y1970\)|wk\(Y1970\)|week\(Y1970\))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="TORQUEUNITTYPE">
+  <xsd:simpleType name="TorqueUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(N\.m|m\.kgf|lbf\.ft|lbf\.in)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="VOLUMEUNITTYPE">
+  <xsd:simpleType name="VolumeUnitType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(m\^3|Ym\^3|Zm\^3|Em\^3|Pm\^3|Tm\^3|Gm\^3|Mm\^3|km\^3|hm\^3|dam\^3|L|dm\^3|cm\^3|mm\^3|\\u03BCm\^3|mum\^3|nm\^3|pm\^3|fm\^3|am\^3|zm\^3|ym\^3|NM\^3|pc\^3|ft\^3|in\^3|ly\^3|mi\^3|yd\^3|fl\.oz\(US\)|fl\.oz\(imp\)|gal\(US\)|gal\(imp\)|pt\(US\)|pt\(imp\)|qt\(US\)|qt\(imp\))"></xsd:pattern>
     </xsd:restriction>
@@ -275,265 +275,265 @@
   <!-- ================================== DJUNITS SCALAR TYPES ================================= -->
   <!-- ========================================================================================= -->
 
-  <xsd:simpleType name="ABSOLUTETEMPERATURETYPE">
+  <xsd:simpleType name="AbsoluteTemperatureType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(K|YK|ZK|EK|PK|TK|GK|MK|kK|hK|daK|�C|degC|C|dK|cK|mK|\\u03BCK|muK|nK|pK|fK|aK|zK|yK|�F|degF|F|�R|degR|R|�R�|degRe|Re|R�)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ABSORBEDDOSETYPE">
+  <xsd:simpleType name="AbsorbedDoseType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Gy|YGy|ZGy|EGy|PGy|TGy|GGy|MGy|kGy|hGy|daGy|dGy|cGy|mGy|\\u03BCGy|muGy|nGy|pGy|fGy|aGy|zGy|yGy|rad|erg/g)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ACCELERATIONTYPE">
+  <xsd:simpleType name="AccelerationType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m/s2|m/sec\^2|km/h2|km/hr\^2|km/hour\^2|Gal|ft/s2|ft/sec\^2|in/s2|in/sec\^2|kt/s|kt/sec|mi/h/s|mi/hr/s|mi/hour/s|mi/h/sec|mi/hr/sec|mi/hour/sec|mi/h2|mi/hr\^2|mi/hour\^2|mi/s2|mi/sec\^2|g)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="AMOUNTOFSUBSTANCETYPE">
+  <xsd:simpleType name="AmountOfSubstanceType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(mol|Ymol|Zmol|Emol|Pmol|Tmol|Gmol|Mmol|kmol|hmol|damol|dmol|cmol|mmol|\\u03BCmol|mumol|nmol|pmol|fmol|amol|zmol|ymol)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ANGLETYPE">
+  <xsd:simpleType name="AngleType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad|\'|arcmin|&quot;|arcsec|�|deg|dg|c\'|c&quot;|grad|\%)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ANGULARACCELERATIONTYPE">
+  <xsd:simpleType name="AngularAccelerationType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad/s2|rad/sec2|\'/s2|\'/sec2|arcmin/sec2|&quot;/s2|&quot;/sec2|arcsec/sec2|�/s2|deg/s2|dg/s2|dg/sec2|deg/sec2|c\'/s2|c\'/sec2|c&quot;/s2|c&quot;/sec2|grad/s2)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ANGULARVELOCITYTYPE">
+  <xsd:simpleType name="AngularVelocityType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad/s|rad/sec|\'/s|\'/sec|arcmin/sec|&quot;/s|&quot;/sec|arcsec/sec|�/s|deg/s|dg/s|dg/sec|deg/sec|c\'/s|c\'/sec|c&quot;/s|c&quot;/sec|grad/s)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="AREATYPE">
+  <xsd:simpleType name="AreaType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m\^2|Ym\^2|Zm\^2|Em\^2|Pm\^2|Tm\^2|Gm\^2|Mm\^2|km\^2|hm\^2|dam\^2|dm\^2|cm\^2|mm\^2|\\u03BCm\^2|mum\^2|nm\^2|pm\^2|fm\^2|am\^2|zm\^2|ym\^2|ha|a|ca|ac|NM\^2|ft\^2|in\^2|mi\^2|yd\^2)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="CATALYTICACTIVITYTYPE">
+  <xsd:simpleType name="CatalyticActivityType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kat|Ykat|Zkat|Ekat|Pkat|Tkat|Gkat|Mkat|kkat|hkat|dakat|dkat|ckat|mkat|\\u03BCkat|mukat|nkat|pkat|fkat|akat|zkat|ykat)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="DENSITYTYPE">
+  <xsd:simpleType name="DensityType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kg/m\^3|g/cm\^3)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="DIRECTIONTYPE">
+  <xsd:simpleType name="DirectionType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad\(E\)|rad\(N\)|�\(E\)|deg\(E\)|�\(N\)|deg\(N\))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="DURATIONTYPE">
+  <xsd:simpleType name="DurationType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(s|sec|Ys|Ysec|Zs|Zsec|Es|Esec|Ps|Psec|Ts|Tsec|Gs|Gsec|Ms|Msec|ks|ksec|hs|hsec|das|dasec|ds|dsec|cs|csec|ms|msec|\\u03BCs|mus|\\u03BCsec|musec|ns|nsec|ps|psec|fs|fsec|as|asec|zs|zsec|ys|ysec|day|h|hr|hour|min|wk|week)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ELECTRICALCAPACITANCETYPE">
+  <xsd:simpleType name="ElectricalCapacitanceType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(F|YF|ZF|EF|PF|TF|GF|MF|kF|hF|daF|dF|cF|mF|uF|\\u03BCF|muF|nF|pF|fF|aF|zF|yF)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ELECTRICALCHARGETYPE">
+  <xsd:simpleType name="ElectricalChargeType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(C|YC|ZC|EC|PC|TC|GC|MC|kC|hC|daC|mAs|dC|cC|mC|\\u03BCC|muC|nC|pC|fC|aC|zC|yC|Ah|aAh|cAh|daAh|dAh|e|EAh|fAh|GAh|hAh|kAh|MAh|\\u03BCAh|muAh|mAh|nAh|PAh|pAh|TAh|yAh|YAh|zAh|ZAh|abC|emu|esu|F|Fr|statC)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ELECTRICALCONDUCTANCETYPE">
+  <xsd:simpleType name="ElectricalConductanceType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(S|YS|ZS|ES|PS|TS|GS|MS|kS|hS|daS|dS|cS|mS|muS|\\u03BCS|nS|pS|fS|aS|zS|yS)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ELECTRICALCURRENTTYPE">
+  <xsd:simpleType name="ElectricalCurrentType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(A|YA|ZA|EA|PA|TA|GA|MA|kA|hA|daA|dA|cA|mA|\\u03BCA|muA|nA|pA|fA|aA|zA|yA|abA|statA)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ELECTRICALINDUCTANCETYPE">
+  <xsd:simpleType name="ElectricalInductanceType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(H|YH|ZH|EH|PH|TH|GH|MH|kH|hH|daH|dH|cH|mH|muH|\\u03BCH|nH|pH|fH|aH|zH|yH)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ELECTRICALPOTENTIALTYPE">
+  <xsd:simpleType name="ElectricalPotentialType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(V|YV|ZV|EV|PV|TV|GV|MV|kV|hV|daV|dV|cV|mV|\\u03BCV|muV|nV|pV|fV|aV|zV|yV|abV|stV)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ELECTRICALRESISTANCETYPE">
+  <xsd:simpleType name="ElectricalResistanceType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(\\u03A9|ohm|Y\\u03A9|Yohm|Z\\u03A9|Zohm|E\\u03A9|Eohm|P\\u03A9|Pohm|T\\u03A9|Tohm|G\\u03A9|Gohm|M\\u03A9|Mohm|k\\u03A9|kohm|h\\u03A9|hohm|da\\u03A9|daohm|d\\u03A9|dohm|c\\u03A9|cohm|m\\u03A9|mohm|\\u03BC\\u03A9|muohm|mu\\u03A9|n\\u03A9|nohm|p\\u03A9|pohm|f\\u03A9|fohm|a\\u03A9|aohm|z\\u03A9|zohm|y\\u03A9|yohm|ab\\u03A9|abohm|st\\u03A9|stohm)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ENERGYTYPE">
+  <xsd:simpleType name="EnergyType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(J|YJ|ZJ|EJ|PJ|TJ|GJ|MJ|kJ|hJ|daJ|dJ|cJ|mJ|\\u03BCJ|muJ|nJ|pJ|fJ|aJ|zJ|yJ|YWh|ZWh|EWh|PWh|TWh|GWh|MWh|kWh|hWh|daWh|Wh|dWh|cWh|mWh|\\u03BCWh|muWh|nWh|pWh|fWh|aWh|zWh|yWh|YeV|ZeV|EeV|PeV|TeV|GeV|MeV|keV|heV|daeV|eV|deV|ceV|meV|\\u03BCeV|mueV|neV|peV|feV|aeV|zeV|yeV|sn\.m|erg|BTU\(ISO\)|BTU\(IT\)|cal|cal\(IT\)|ft\.lbf|in\.lbf|kcal)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="EQUIVALENTDOSETYPE">
+  <xsd:simpleType name="EquivalentDoseType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Sv|YSv|ZSv|ESv|PSv|TSv|GSv|MSv|kSv|hSv|daSv|dSv|cSv|mSv|\\u03BCSv|muSv|nSv|pSv|fSv|aSv|zSv|ySv|rem)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="FLOWMASSTYPE">
+  <xsd:simpleType name="FlowMassType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kg/s|kg/sec|lb/s|lb/sec)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="FLOWVOLUMETYPE">
+  <xsd:simpleType name="FlowVolumeType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m\^3/s|m\^3/sec|L/s|L/sec|m\^3/day|m\^3/h|m\^3/hr|m\^3/hour|m\^3/min|L/day|L/h|L/hr|L/hour|L/min|gal\(US\)/day|gal\(US\)/h|gal\(US\)/hr|gal\(US\)/hour|gal\(US\)/min|gal\(US\)/s|gal\(US\)/sec|ft\^3/min|ft\^3/s|ft\^3/sec|in\^3/min|in\^3/s|in\^3/sec)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="FORCETYPE">
+  <xsd:simpleType name="ForceType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(N|sn|dyn|kgf|ozf|lbf|tnf)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="FREQUENCYTYPE">
+  <xsd:simpleType name="FrequencyType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Hz|/ys|1/ys|/ysec|1/ysec|YHz|/zs|1/zs|/zsec|1/zsec|ZHz|/as|1/as|/asec|1/asec|EHz|/fs|1/fs|/fsec|1/fsec|PHz|/ps|1/ps|/psec|1/psec|THz|/ns|1/ns|/nsec|1/nsec|GHz|/\\u03BCs|/mus|1/mus|1/\\u03BCs|/musec|1/musec|/\\u03BCsec|1/\\u03BCsec|MHz|/ms|1/ms|/msec|1/msec|kHz|/cs|1/cs|/csec|1/csec|hHz|/ds|1/ds|/dsec|1/dsec|daHz|/s|1/s|/sec|1/sec|/das|1/das|/dasec|1/dasec|dHz|/hs|1/hs|/hsec|1/hsec|cHz|/ks|1/ks|/ksec|1/ksec|mHz|/Ms|1/Ms|/Msec|1/Msec|\\u03BCHz|muHz|/Gs|1/Gs|/Gsec|1/Gsec|nHz|/Ts|1/Ts|/Tsec|1/Tsec|pHz|/Ps|1/Ps|/Psec|1/Psec|fHz|/Es|1/Es|/Esec|1/Esec|aHz|/Zs|1/Zs|/Zsec|1/Zsec|zHz|/Ys|1/Ys|/Ysec|1/Ysec|yHz|/day|1/day|/h|1/h|/hr|1/hr|/hour|1/hour|/min|1/min|/wk|1/wk|/week|1/week|rpm)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ILLUMINANCETYPE">
+  <xsd:simpleType name="IlluminanceType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(lx|Ylx|Zlx|Elx|Plx|Tlx|Glx|Mlx|ph|klx|hlx|dalx|dlx|clx|mlx|nx|mulx|\\u03BClx|nlx|plx|flx|alx|zlx|ylx)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="LENGTHTYPE">
+  <xsd:simpleType name="LengthType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m|Ym|Zm|Em|Pm|Tm|Gm|Mm|km|hm|dam|dm|cm|mm|\\u03BCm|mum|nm|pm|fm|am|zm|ym|\\u212B|A|AU|Pc|ft|in|ly|mi|NM|yd)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="LINEARDENSITYTYPE">
+  <xsd:simpleType name="LinearDensityType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(/m|1/m|/ym|1/ym|/zm|1/zm|/am|1/am|/fm|1/fm|/pm|1/pm|/nm|1/nm|/\\u03BCm|/mum|1/\\u03BCm|1/mum|/mm|1/mm|/cm|1/cm|/dm|1/dm|/dam|1/dam|/hm|1/hm|/km|1/km|/Mm|1/Mm|/Gm|1/Gm|/Tm|1/Tm|/Pm|1/Pm|/Em|1/Em|/Zm|1/Zm|/Ym|1/Ym|/\\u212B|/A|1/\\u212B|1/A|/AU|1/AU|/NM|1/NM|/ft|1/ft|/in|1/in|/ly|1/ly|/mi|1/mi|/pc|1/pc|/yd|1/yd)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="LUMINOUSFLUXTYPE">
+  <xsd:simpleType name="LuminousFluxType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(lm|Ylm|Zlm|Elm|Plm|Tlm|Glm|Mlm|klm|hlm|dalm|dlm|clm|mlm|\\u03BClm|mulm|nlm|plm|flm|alm|zlm|ylm)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="LUMINOUSINTENSITYTYPE">
+  <xsd:simpleType name="LuminousIntensityType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(cd|Ycd|Zcd|Ecd|Pcd|Tcd|Gcd|Mcd|kcd|hcd|dacd|dcd|ccd|mcd|\\u03BCcd|mucd|ncd|pcd|fcd|acd|zcd|ycd)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="MAGNETICFLUXDENSITYTYPE">
+  <xsd:simpleType name="MagneticFluxDensityType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(T|YT|ZT|ET|PT|TT|GT|MT|kT|hT|daT|dT|cT|mT|muT|\\u03BCT|nT|pT|fT|aT|zT|yT|G)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="MAGNETICFLUXTYPE">
+  <xsd:simpleType name="MagneticFluxType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Wb|YWb|ZWb|EWb|PWb|TWb|GWb|MWb|kWb|hWb|daWb|dWb|cWb|mWb|muWb|\\u03BCWb|nWb|pWb|fWb|aWb|zWb|yWb|Mx)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="MASSTYPE">
+  <xsd:simpleType name="MassType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kg|Yg|Zg|Eg|Pg|Tg|Gg|Mg|t|hg|dag|g|dg|cg|mg|\\u03BCg|mug|ng|pg|fg|ag|zg|yg|Da|t\(mts\)|YeV|ZeV|EeV|PeV|TeV|GeV|MeV|keV|heV|daeV|eV|meV|\\u03BCeV|mueV|long tn|oz|lb|sh tn)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="MOMENTUMTYPE">
+  <xsd:simpleType name="MomentumType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kgm/s|kgm/sec)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIONTYPE">
+  <xsd:simpleType name="PositionType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m|Ym|Zm|Em|Pm|Tm|Gm|Mm|km|hm|dam|dm|cm|mm|\\u03BCm|mum|nm|pm|fm|am|zm|ym|\\u212B|A|AU|Pc|ft|in|ly|mi|NM|yd)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POWERTYPE">
+  <xsd:simpleType name="PowerType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(W|YW|ZW|EW|PW|TW|GW|MW|kW|hW|daW|dW|cW|mW|\\u03BCW|muW|nW|pW|fW|aW|zW|yW|sn\.m/s|erg/s|ft\.lbf/h|ft\.lbf/min|ft\.lbf/s|hp\(M\))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="PRESSURETYPE">
+  <xsd:simpleType name="PressureType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Pa|YPa|ZPa|EPa|PPa|TPa|GPa|MPa|kPa|hPa|daPa|dPa|cPa|mPa|\\u03BCPa|muPa|nPa|pPa|fPa|aPa|zPa|yPa|bar|pz|mbar|Ba|torr|atm|at|cmHg|ftHg|inHg|kgf/mm\^2|mmHg|lbf/ft\^2|lbf/in\^2)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="RADIOACTIVITYTYPE">
+  <xsd:simpleType name="RadioactivityType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Bq|YBq|ZBq|EBq|PBq|TBq|GBq|MBq|kBq|hBq|daBq|Rd|Ci|muCi|\\u03BCCi|mCi|nCi)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="SOLIDANGLETYPE">
+  <xsd:simpleType name="SolidAngleType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(sr|sq\.deg)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="SPEEDTYPE">
+  <xsd:simpleType name="SpeedType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m/s|m/sec|km/s|km/sec|km/h|km/hr|km/hour|m/h|m/hr|m/hour|ft/h|ft/hr|ft/hour|ft/s|ft/sec|in/h|in/hr|in/hour|ft/min|in/min|in/s|in/sec|kt|mi/h|mi/hr|mi/hour|mi/min|mi/s|mi/sec)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="TEMPERATURETYPE">
+  <xsd:simpleType name="TemperatureType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(K|YK|ZK|EK|PK|TK|GK|MK|kK|hK|daK|�C|degC|C|dK|cK|mK|\\u03BCK|muK|nK|pK|fK|aK|zK|yK|�F|degF|F|�R|degR|R|�R�|degRe|Re|R�)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="TIMETYPE">
+  <xsd:simpleType name="TimeType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(s|sec|Ys|Ysec|Zs|Zsec|Es|Esec|Ps|Psec|Ts|Tsec|Gs|Gsec|Ms|Msec|ks|ksec|hs|hsec|das|dasec|ds|dsec|cs|csec|ms|msec|\\u03BCs|mus|\\u03BCsec|musec|ns|nsec|ps|psec|fs|fsec|as|asec|zs|zsec|ys|ysec|day|h|hr|hour|min|wk|week|s\(Y1\)|sec\(Y1\)|s\(Y1970\)|sec\(Y1970\)|s\(Y2000\)|sec\(Y2000\)|ms\(Y1970\)|msec\(Y1970\)|\\u03BCs\(Y1970\)|mus\(Y1970\)|\\u03BCsec\(Y1970\)|musec\(Y1970\)|day\(Y1970\)|h\(Y1970\)|hour\(Y1970\)|hr\(Y1970\)|min\(Y1970\)|wk\(Y1970\)|week\(Y1970\))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="TORQUETYPE">
+  <xsd:simpleType name="TorqueType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(N\.m|m\.kgf|lbf\.ft|lbf\.in)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="VOLUMETYPE">
+  <xsd:simpleType name="VolumeType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m\^3|Ym\^3|Zm\^3|Em\^3|Pm\^3|Tm\^3|Gm\^3|Mm\^3|km\^3|hm\^3|dam\^3|L|dm\^3|cm\^3|mm\^3|\\u03BCm\^3|mum\^3|nm\^3|pm\^3|fm\^3|am\^3|zm\^3|ym\^3|NM\^3|pc\^3|ft\^3|in\^3|ly\^3|mi\^3|yd\^3|fl\.oz\(US\)|fl\.oz\(imp\)|gal\(US\)|gal\(imp\)|pt\(US\)|pt\(imp\)|qt\(US\)|qt\(imp\))"></xsd:pattern>
     </xsd:restriction>
@@ -543,265 +543,265 @@
   <!-- ============================= DJUNITS POSITIVE SCALAR TYPES ============================= -->
   <!-- ========================================================================================= -->
 
-  <xsd:simpleType name="POSITIVEABSOLUTETEMPERATURETYPE">
+  <xsd:simpleType name="PositiveAbsoluteTemperatureType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(K|YK|ZK|EK|PK|TK|GK|MK|kK|hK|daK|�C|degC|C|dK|cK|mK|\\u03BCK|muK|nK|pK|fK|aK|zK|yK|�F|degF|F|�R|degR|R|�R�|degRe|Re|R�)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEABSORBEDDOSETYPE">
+  <xsd:simpleType name="PositiveAbsorbedDoseType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Gy|YGy|ZGy|EGy|PGy|TGy|GGy|MGy|kGy|hGy|daGy|dGy|cGy|mGy|\\u03BCGy|muGy|nGy|pGy|fGy|aGy|zGy|yGy|rad|erg/g)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEACCELERATIONTYPE">
+  <xsd:simpleType name="PositiveAccelerationType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m/s2|m/sec\^2|km/h2|km/hr\^2|km/hour\^2|Gal|ft/s2|ft/sec\^2|in/s2|in/sec\^2|kt/s|kt/sec|mi/h/s|mi/hr/s|mi/hour/s|mi/h/sec|mi/hr/sec|mi/hour/sec|mi/h2|mi/hr\^2|mi/hour\^2|mi/s2|mi/sec\^2|g)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEAMOUNTOFSUBSTANCETYPE">
+  <xsd:simpleType name="PositiveAmountOfSubstanceType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(mol|Ymol|Zmol|Emol|Pmol|Tmol|Gmol|Mmol|kmol|hmol|damol|dmol|cmol|mmol|\\u03BCmol|mumol|nmol|pmol|fmol|amol|zmol|ymol)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEANGLETYPE">
+  <xsd:simpleType name="PositiveAngleType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad|\'|arcmin|&quot;|arcsec|�|deg|dg|c\'|c&quot;|grad|\%)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEANGULARACCELERATIONTYPE">
+  <xsd:simpleType name="PositiveAngularAccelerationType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad/s2|rad/sec2|\'/s2|\'/sec2|arcmin/sec2|&quot;/s2|&quot;/sec2|arcsec/sec2|�/s2|deg/s2|dg/s2|dg/sec2|deg/sec2|c\'/s2|c\'/sec2|c&quot;/s2|c&quot;/sec2|grad/s2)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEANGULARVELOCITYTYPE">
+  <xsd:simpleType name="PositiveAngularVelocityType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad/s|rad/sec|\'/s|\'/sec|arcmin/sec|&quot;/s|&quot;/sec|arcsec/sec|�/s|deg/s|dg/s|dg/sec|deg/sec|c\'/s|c\'/sec|c&quot;/s|c&quot;/sec|grad/s)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEAREATYPE">
+  <xsd:simpleType name="PositiveAreaType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m\^2|Ym\^2|Zm\^2|Em\^2|Pm\^2|Tm\^2|Gm\^2|Mm\^2|km\^2|hm\^2|dam\^2|dm\^2|cm\^2|mm\^2|\\u03BCm\^2|mum\^2|nm\^2|pm\^2|fm\^2|am\^2|zm\^2|ym\^2|ha|a|ca|ac|NM\^2|ft\^2|in\^2|mi\^2|yd\^2)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVECATALYTICACTIVITYTYPE">
+  <xsd:simpleType name="PositiveCatalyticActivityType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kat|Ykat|Zkat|Ekat|Pkat|Tkat|Gkat|Mkat|kkat|hkat|dakat|dkat|ckat|mkat|\\u03BCkat|mukat|nkat|pkat|fkat|akat|zkat|ykat)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEDENSITYTYPE">
+  <xsd:simpleType name="PositiveDensityType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kg/m\^3|g/cm\^3)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEDIRECTIONTYPE">
+  <xsd:simpleType name="PositiveDirectionType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad\(E\)|rad\(N\)|�\(E\)|deg\(E\)|�\(N\)|deg\(N\))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEDURATIONTYPE">
+  <xsd:simpleType name="PositiveDurationType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(s|sec|Ys|Ysec|Zs|Zsec|Es|Esec|Ps|Psec|Ts|Tsec|Gs|Gsec|Ms|Msec|ks|ksec|hs|hsec|das|dasec|ds|dsec|cs|csec|ms|msec|\\u03BCs|mus|\\u03BCsec|musec|ns|nsec|ps|psec|fs|fsec|as|asec|zs|zsec|ys|ysec|day|h|hr|hour|min|wk|week)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEELECTRICALCAPACITANCETYPE">
+  <xsd:simpleType name="PositiveElectricalCapacitanceType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(F|YF|ZF|EF|PF|TF|GF|MF|kF|hF|daF|dF|cF|mF|uF|\\u03BCF|muF|nF|pF|fF|aF|zF|yF)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEELECTRICALCHARGETYPE">
+  <xsd:simpleType name="PositiveElectricalChargeType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(C|YC|ZC|EC|PC|TC|GC|MC|kC|hC|daC|mAs|dC|cC|mC|\\u03BCC|muC|nC|pC|fC|aC|zC|yC|Ah|aAh|cAh|daAh|dAh|e|EAh|fAh|GAh|hAh|kAh|MAh|\\u03BCAh|muAh|mAh|nAh|PAh|pAh|TAh|yAh|YAh|zAh|ZAh|abC|emu|esu|F|Fr|statC)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEELECTRICALCONDUCTANCETYPE">
+  <xsd:simpleType name="PositiveElectricalConductanceType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(S|YS|ZS|ES|PS|TS|GS|MS|kS|hS|daS|dS|cS|mS|muS|\\u03BCS|nS|pS|fS|aS|zS|yS)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEELECTRICALCURRENTTYPE">
+  <xsd:simpleType name="PositiveElectricalCurrentType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(A|YA|ZA|EA|PA|TA|GA|MA|kA|hA|daA|dA|cA|mA|\\u03BCA|muA|nA|pA|fA|aA|zA|yA|abA|statA)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEELECTRICALINDUCTANCETYPE">
+  <xsd:simpleType name="PositiveElectricalInductanceType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(H|YH|ZH|EH|PH|TH|GH|MH|kH|hH|daH|dH|cH|mH|muH|\\u03BCH|nH|pH|fH|aH|zH|yH)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEELECTRICALPOTENTIALTYPE">
+  <xsd:simpleType name="PositiveElectricalPotentialType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(V|YV|ZV|EV|PV|TV|GV|MV|kV|hV|daV|dV|cV|mV|\\u03BCV|muV|nV|pV|fV|aV|zV|yV|abV|stV)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEELECTRICALRESISTANCETYPE">
+  <xsd:simpleType name="PositiveElectricalResistanceType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(\\u03A9|ohm|Y\\u03A9|Yohm|Z\\u03A9|Zohm|E\\u03A9|Eohm|P\\u03A9|Pohm|T\\u03A9|Tohm|G\\u03A9|Gohm|M\\u03A9|Mohm|k\\u03A9|kohm|h\\u03A9|hohm|da\\u03A9|daohm|d\\u03A9|dohm|c\\u03A9|cohm|m\\u03A9|mohm|\\u03BC\\u03A9|muohm|mu\\u03A9|n\\u03A9|nohm|p\\u03A9|pohm|f\\u03A9|fohm|a\\u03A9|aohm|z\\u03A9|zohm|y\\u03A9|yohm|ab\\u03A9|abohm|st\\u03A9|stohm)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEENERGYTYPE">
+  <xsd:simpleType name="PositiveEnergyType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(J|YJ|ZJ|EJ|PJ|TJ|GJ|MJ|kJ|hJ|daJ|dJ|cJ|mJ|\\u03BCJ|muJ|nJ|pJ|fJ|aJ|zJ|yJ|YWh|ZWh|EWh|PWh|TWh|GWh|MWh|kWh|hWh|daWh|Wh|dWh|cWh|mWh|\\u03BCWh|muWh|nWh|pWh|fWh|aWh|zWh|yWh|YeV|ZeV|EeV|PeV|TeV|GeV|MeV|keV|heV|daeV|eV|deV|ceV|meV|\\u03BCeV|mueV|neV|peV|feV|aeV|zeV|yeV|sn\.m|erg|BTU\(ISO\)|BTU\(IT\)|cal|cal\(IT\)|ft\.lbf|in\.lbf|kcal)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEEQUIVALENTDOSETYPE">
+  <xsd:simpleType name="PositiveEquivalentDoseType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Sv|YSv|ZSv|ESv|PSv|TSv|GSv|MSv|kSv|hSv|daSv|dSv|cSv|mSv|\\u03BCSv|muSv|nSv|pSv|fSv|aSv|zSv|ySv|rem)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEFLOWMASSTYPE">
+  <xsd:simpleType name="PositiveFlowMassType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kg/s|kg/sec|lb/s|lb/sec)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEFLOWVOLUMETYPE">
+  <xsd:simpleType name="PositiveFlowVolumeType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m\^3/s|m\^3/sec|L/s|L/sec|m\^3/day|m\^3/h|m\^3/hr|m\^3/hour|m\^3/min|L/day|L/h|L/hr|L/hour|L/min|gal\(US\)/day|gal\(US\)/h|gal\(US\)/hr|gal\(US\)/hour|gal\(US\)/min|gal\(US\)/s|gal\(US\)/sec|ft\^3/min|ft\^3/s|ft\^3/sec|in\^3/min|in\^3/s|in\^3/sec)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEFORCETYPE">
+  <xsd:simpleType name="PositiveForceType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(N|sn|dyn|kgf|ozf|lbf|tnf)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEFREQUENCYTYPE">
+  <xsd:simpleType name="PositiveFrequencyType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Hz|/ys|1/ys|/ysec|1/ysec|YHz|/zs|1/zs|/zsec|1/zsec|ZHz|/as|1/as|/asec|1/asec|EHz|/fs|1/fs|/fsec|1/fsec|PHz|/ps|1/ps|/psec|1/psec|THz|/ns|1/ns|/nsec|1/nsec|GHz|/\\u03BCs|/mus|1/mus|1/\\u03BCs|/musec|1/musec|/\\u03BCsec|1/\\u03BCsec|MHz|/ms|1/ms|/msec|1/msec|kHz|/cs|1/cs|/csec|1/csec|hHz|/ds|1/ds|/dsec|1/dsec|daHz|/s|1/s|/sec|1/sec|/das|1/das|/dasec|1/dasec|dHz|/hs|1/hs|/hsec|1/hsec|cHz|/ks|1/ks|/ksec|1/ksec|mHz|/Ms|1/Ms|/Msec|1/Msec|\\u03BCHz|muHz|/Gs|1/Gs|/Gsec|1/Gsec|nHz|/Ts|1/Ts|/Tsec|1/Tsec|pHz|/Ps|1/Ps|/Psec|1/Psec|fHz|/Es|1/Es|/Esec|1/Esec|aHz|/Zs|1/Zs|/Zsec|1/Zsec|zHz|/Ys|1/Ys|/Ysec|1/Ysec|yHz|/day|1/day|/h|1/h|/hr|1/hr|/hour|1/hour|/min|1/min|/wk|1/wk|/week|1/week|rpm)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEILLUMINANCETYPE">
+  <xsd:simpleType name="PositiveIlluminanceType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(lx|Ylx|Zlx|Elx|Plx|Tlx|Glx|Mlx|ph|klx|hlx|dalx|dlx|clx|mlx|nx|mulx|\\u03BClx|nlx|plx|flx|alx|zlx|ylx)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVELENGTHTYPE">
+  <xsd:simpleType name="PositiveLengthType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m|Ym|Zm|Em|Pm|Tm|Gm|Mm|km|hm|dam|dm|cm|mm|\\u03BCm|mum|nm|pm|fm|am|zm|ym|\\u212B|A|AU|Pc|ft|in|ly|mi|NM|yd)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVELINEARDENSITYTYPE">
+  <xsd:simpleType name="PositiveLinearDensityType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(/m|1/m|/ym|1/ym|/zm|1/zm|/am|1/am|/fm|1/fm|/pm|1/pm|/nm|1/nm|/\\u03BCm|/mum|1/\\u03BCm|1/mum|/mm|1/mm|/cm|1/cm|/dm|1/dm|/dam|1/dam|/hm|1/hm|/km|1/km|/Mm|1/Mm|/Gm|1/Gm|/Tm|1/Tm|/Pm|1/Pm|/Em|1/Em|/Zm|1/Zm|/Ym|1/Ym|/\\u212B|/A|1/\\u212B|1/A|/AU|1/AU|/NM|1/NM|/ft|1/ft|/in|1/in|/ly|1/ly|/mi|1/mi|/pc|1/pc|/yd|1/yd)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVELUMINOUSFLUXTYPE">
+  <xsd:simpleType name="PositiveLuminousFluxType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(lm|Ylm|Zlm|Elm|Plm|Tlm|Glm|Mlm|klm|hlm|dalm|dlm|clm|mlm|\\u03BClm|mulm|nlm|plm|flm|alm|zlm|ylm)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVELUMINOUSINTENSITYTYPE">
+  <xsd:simpleType name="PositiveLuminousIntensityType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(cd|Ycd|Zcd|Ecd|Pcd|Tcd|Gcd|Mcd|kcd|hcd|dacd|dcd|ccd|mcd|\\u03BCcd|mucd|ncd|pcd|fcd|acd|zcd|ycd)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEMAGNETICFLUXDENSITYTYPE">
+  <xsd:simpleType name="PositiveMagneticFluxDensityType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(T|YT|ZT|ET|PT|TT|GT|MT|kT|hT|daT|dT|cT|mT|muT|\\u03BCT|nT|pT|fT|aT|zT|yT|G)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEMAGNETICFLUXTYPE">
+  <xsd:simpleType name="PositiveMagneticFluxType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Wb|YWb|ZWb|EWb|PWb|TWb|GWb|MWb|kWb|hWb|daWb|dWb|cWb|mWb|muWb|\\u03BCWb|nWb|pWb|fWb|aWb|zWb|yWb|Mx)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEMASSTYPE">
+  <xsd:simpleType name="PositiveMassType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kg|Yg|Zg|Eg|Pg|Tg|Gg|Mg|t|hg|dag|g|dg|cg|mg|\\u03BCg|mug|ng|pg|fg|ag|zg|yg|Da|t\(mts\)|YeV|ZeV|EeV|PeV|TeV|GeV|MeV|keV|heV|daeV|eV|meV|\\u03BCeV|mueV|long tn|oz|lb|sh tn)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEMOMENTUMTYPE">
+  <xsd:simpleType name="PositiveMomentumType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kgm/s|kgm/sec)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEPOSITIONTYPE">
+  <xsd:simpleType name="PositivePositionType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m|Ym|Zm|Em|Pm|Tm|Gm|Mm|km|hm|dam|dm|cm|mm|\\u03BCm|mum|nm|pm|fm|am|zm|ym|\\u212B|A|AU|Pc|ft|in|ly|mi|NM|yd)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEPOWERTYPE">
+  <xsd:simpleType name="PositivePowerType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(W|YW|ZW|EW|PW|TW|GW|MW|kW|hW|daW|dW|cW|mW|\\u03BCW|muW|nW|pW|fW|aW|zW|yW|sn\.m/s|erg/s|ft\.lbf/h|ft\.lbf/min|ft\.lbf/s|hp\(M\))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEPRESSURETYPE">
+  <xsd:simpleType name="PositivePressureType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Pa|YPa|ZPa|EPa|PPa|TPa|GPa|MPa|kPa|hPa|daPa|dPa|cPa|mPa|\\u03BCPa|muPa|nPa|pPa|fPa|aPa|zPa|yPa|bar|pz|mbar|Ba|torr|atm|at|cmHg|ftHg|inHg|kgf/mm\^2|mmHg|lbf/ft\^2|lbf/in\^2)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVERADIOACTIVITYTYPE">
+  <xsd:simpleType name="PositiveRadioactivityType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Bq|YBq|ZBq|EBq|PBq|TBq|GBq|MBq|kBq|hBq|daBq|Rd|Ci|muCi|\\u03BCCi|mCi|nCi)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVESOLIDANGLETYPE">
+  <xsd:simpleType name="PositiveSolidAngleType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(sr|sq\.deg)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVESPEEDTYPE">
+  <xsd:simpleType name="PositiveSpeedType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m/s|m/sec|km/s|km/sec|km/h|km/hr|km/hour|m/h|m/hr|m/hour|ft/h|ft/hr|ft/hour|ft/s|ft/sec|in/h|in/hr|in/hour|ft/min|in/min|in/s|in/sec|kt|mi/h|mi/hr|mi/hour|mi/min|mi/s|mi/sec)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVETEMPERATURETYPE">
+  <xsd:simpleType name="PositiveTemperatureType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(K|YK|ZK|EK|PK|TK|GK|MK|kK|hK|daK|�C|degC|C|dK|cK|mK|\\u03BCK|muK|nK|pK|fK|aK|zK|yK|�F|degF|F|�R|degR|R|�R�|degRe|Re|R�)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVETIMETYPE">
+  <xsd:simpleType name="PositiveTimeType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(s|sec|Ys|Ysec|Zs|Zsec|Es|Esec|Ps|Psec|Ts|Tsec|Gs|Gsec|Ms|Msec|ks|ksec|hs|hsec|das|dasec|ds|dsec|cs|csec|ms|msec|\\u03BCs|mus|\\u03BCsec|musec|ns|nsec|ps|psec|fs|fsec|as|asec|zs|zsec|ys|ysec|day|h|hr|hour|min|wk|week|s\(Y1\)|sec\(Y1\)|s\(Y1970\)|sec\(Y1970\)|s\(Y2000\)|sec\(Y2000\)|ms\(Y1970\)|msec\(Y1970\)|\\u03BCs\(Y1970\)|mus\(Y1970\)|\\u03BCsec\(Y1970\)|musec\(Y1970\)|day\(Y1970\)|h\(Y1970\)|hour\(Y1970\)|hr\(Y1970\)|min\(Y1970\)|wk\(Y1970\)|week\(Y1970\))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVETORQUETYPE">
+  <xsd:simpleType name="PositiveTorqueType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(N\.m|m\.kgf|lbf\.ft|lbf\.in)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEVOLUMETYPE">
+  <xsd:simpleType name="PositiveVolumeType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m\^3|Ym\^3|Zm\^3|Em\^3|Pm\^3|Tm\^3|Gm\^3|Mm\^3|km\^3|hm\^3|dam\^3|L|dm\^3|cm\^3|mm\^3|\\u03BCm\^3|mum\^3|nm\^3|pm\^3|fm\^3|am\^3|zm\^3|ym\^3|NM\^3|pc\^3|ft\^3|in\^3|ly\^3|mi\^3|yd\^3|fl\.oz\(US\)|fl\.oz\(imp\)|gal\(US\)|gal\(imp\)|pt\(US\)|pt\(imp\)|qt\(US\)|qt\(imp\))"></xsd:pattern>
     </xsd:restriction>
@@ -812,32 +812,32 @@
   <!-- ================================================= TYPES ========================================== -->
   <!-- ================================================================================================== -->
 
-  <xsd:complexType name="MODELIDREFERRALTYPE">
-    <xsd:attribute name="ID" type="xsd:string" />
-    <xsd:attribute name="MODELID" type="xsd:string" />
+  <xsd:complexType name="ModelIdReferralType">
+    <xsd:attribute name="Id" type="xsd:string" />
+    <xsd:attribute name="ModelId" type="xsd:string" />
   </xsd:complexType>
 
-  <xsd:simpleType name="CLASSNAMETYPE">
+  <xsd:simpleType name="ClassNameType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="([A-Za-z_0-9$]+\.)*[A-Za-z_0-9$]+"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <!-- Same as CLASSNAMETYPE, just a different binding. -->
-  <xsd:simpleType name="STATICFIELDNAMETYPE">
+  <!-- Same as ClassNameType, just a different binding. -->
+  <xsd:simpleType name="StaticFieldNameType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="([A-Za-z_0-9$]+\.)*[A-Za-z_0-9$]+"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="PERLENGTHTYPE">
+  <xsd:simpleType name="PerLengthType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\d+\.?\d*\s*\/\s*(mm|cm|dm|m|dam|hm|km|mi|yd|ft)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
   <!-- Allows patterns like BEGIN | END | END-10m | 25m | 50% -->
-  <xsd:simpleType name="LENGTHBEGINENDTYPE">
+  <xsd:simpleType name="LengthBeginEndType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="BEGIN|END|END\-(\d+\.?\d*\s*(mm|cm|dm|m|dam|hm|km|mi|yd|ft))|(\
 ){0}(\d+\.?\d*\s*(mm|cm|dm|m|dam|hm|km|mi|yd|ft)|(\
@@ -845,31 +845,31 @@
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="FRACTIONTYPE">
+  <xsd:simpleType name="FractionType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(0?\.\d*|1\.0*|1|0)|((\d(\.\d*)?)|(\d\d(\.\d*)?)|(100(\.\0*)?))\s*\%"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="POSITIVEDOUBLE">
+  <xsd:simpleType name="PositiveDouble">
     <xsd:restriction base="xsd:decimal">
       <xsd:minExclusive value="0" />
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="VEHICLEINTENSITYTYPE">
+  <xsd:simpleType name="VehicleIntensityType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\d+\.?\d*\s*veh"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="VEHICLEFREQUENCYTYPE">
+  <xsd:simpleType name="VehicleFrequencyType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\d+\.?\d*\s*veh\s*\/\s*(ms|s|min|h|day|wk)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="COORDINATETYPE">
+  <xsd:simpleType name="CoordinateType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\(\s*[+-]?\d+\.?\d*\s*,\s*[+-]?\d+\.?\d*(\s*,\s*[+-]?\d+\.?\d*)?\s*\)">
       </xsd:pattern>
@@ -877,7 +877,7 @@
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="COORDINATENOSPACETYPE">
+  <xsd:simpleType name="CoordinateNoSpaceType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\([+-]?\d+\.?\d*,[+-]?\d+\.?\d*(,[+-]?\d+\.?\d*)?\)">
       </xsd:pattern>
@@ -885,71 +885,71 @@
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="COORDINATELISTTYPE">
-    <xsd:list itemType="ots:COORDINATENOSPACETYPE" />
+  <xsd:simpleType name="CoordinateListType">
+    <xsd:list itemType="ots:CoordinateNoSpaceType" />
   </xsd:simpleType>
 
-  <xsd:simpleType name="LEFTRIGHTTYPE">
+  <xsd:simpleType name="LeftRightType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="L|LEFT|R|RIGHT|CLOCKWISE|COUNTERCLOCKWISE"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="DISTANCECOSTTYPE">
+  <xsd:simpleType name="DistanceCostType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\d+\.?\d*\s*\/\s*(mm|cm|dm|m|dam|hm|km|mi|yd|ft)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="TIMECOSTTYPE">
+  <xsd:simpleType name="TimeCostType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\d+\.?\d*\s*\/\s*(ms|s|min|h|day|wk)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="LANEKEEPINGTYPE">
+  <xsd:simpleType name="LaneKeepingType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="KEEPLEFT|KEEPRIGHT|KEEPLANE"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="PRIORITYTYPE">
+  <xsd:simpleType name="PriorityType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="PRIORITY|NONE|TURN_ON_RED|YIELD|STOP|ALL_STOP|BUS_STOP"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="GTUPOSITIONTYPE">
+  <xsd:simpleType name="GtuPositionType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="FRONT|REAR|REFERENCE"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="STRIPETYPE">
+  <xsd:simpleType name="StripeType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="SOLID|\||DASHED|\:|BLOCKED|DOUBLE|\|\||RIGHTTOLEFT|\|\:|LEFTTORIGHT|\:\|"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="DRIVINGDIRECTIONTYPE">
+  <xsd:simpleType name="DrivingDirectionType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="FORWARD|BACKWARD|BOTH|NONE"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="GTUDIRECTIONTYPE">
+  <xsd:simpleType name="GtuDirectionType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="DIR_PLUS|DIR_MINUS"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="INTERPOLATIONTYPE">
+  <xsd:simpleType name="InterpolationType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="STEPWISE|LINEAR"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="COLORTYPE">
+  <xsd:simpleType name="ColorType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(\
 {0})WHITE|LIGHT_GRAY|GRAY|DARK_GRAY|BLACK|RED|PINK|ORANGE|YELLOW|GREEN|MAGENTA|CYAN|BLUE(\
@@ -960,8 +960,8 @@
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:complexType name="INPUTPARAMETERTYPE">
-    <xsd:attribute name="TYPE" use="required">
+  <xsd:complexType name="InputParameterType">
+    <xsd:attribute name="Type" use="required">
       <xsd:simpleType>
         <xsd:restriction base="xsd:string">
           <xsd:pattern value="(\
@@ -971,233 +971,233 @@
         </xsd:restriction>
       </xsd:simpleType>
     </xsd:attribute>
-    <xsd:attribute name="VALUE" type="xsd:string" use="required" />
-    <xsd:attribute name="ID" type="xsd:string" use="required" />
-    <xsd:attribute name="CLASS" type="ots:CLASSNAMETYPE" use="optional" />
+    <xsd:attribute name="Value" type="xsd:string" use="required" />
+    <xsd:attribute name="Id" type="xsd:string" use="required" />
+    <xsd:attribute name="Class" type="ots:ClassNameType" use="optional" />
   </xsd:complexType>
 
   <!-- ========================================================================================= -->
   <!-- ==================================== DISTRIBUTION TYPES ================================= -->
   <!-- ========================================================================================= -->
 
-  <xsd:simpleType name="DOUBLEPOSITIVEZERO">
+  <xsd:simpleType name="DoublePositiveZero">
     <xsd:restriction base="xsd:double">
       <xsd:minInclusive value="0.0"></xsd:minInclusive>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="DOUBLEPOSITIVE">
+  <xsd:simpleType name="DoublePositive">
     <xsd:restriction base="xsd:double">
       <xsd:minExclusive value="0.0"></xsd:minExclusive>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="DOUBLEUNITINTERVAL">
+  <xsd:simpleType name="DoubleUnitInterval">
     <xsd:restriction base="xsd:double">
       <xsd:minInclusive value="0.0"></xsd:minInclusive>
       <xsd:maxInclusive value="1.0"></xsd:maxInclusive>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:complexType name="CONTDISTTYPE">
+  <xsd:complexType name="ConstantDistType">
     <xsd:choice>
-      <xsd:element name="CONSTANT">
+      <xsd:element name="Constant">
         <xsd:complexType>
           <xsd:attribute name="C" type="xsd:double" use="required" />
-          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="EXPONENTIAL">
+      <xsd:element name="Exponential">
         <xsd:complexType>
-          <xsd:attribute name="LAMBDA" type="ots:DOUBLEPOSITIVE" use="required" />
-          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+          <xsd:attribute name="Lambda" type="ots:DoublePositive" use="required" />
+          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="TRIANGULAR">
+      <xsd:element name="Triangular">
         <xsd:complexType>
-          <xsd:attribute name="MIN" type="xsd:double" use="required" />
-          <xsd:attribute name="MODE" type="xsd:double" use="required" />
-          <xsd:attribute name="MAX" type="xsd:double" use="required" />
-          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+          <xsd:attribute name="Min" type="xsd:double" use="required" />
+          <xsd:attribute name="Mode" type="xsd:double" use="required" />
+          <xsd:attribute name="Max" type="xsd:double" use="required" />
+          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="NORMAL">
+      <xsd:element name="Normal">
         <xsd:complexType>
-          <xsd:attribute name="MU" type="xsd:double" use="required" />
-          <xsd:attribute name="SIGMA" type="ots:DOUBLEPOSITIVEZERO" use="required" />
-          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+          <xsd:attribute name="Mu" type="xsd:double" use="required" />
+          <xsd:attribute name="Sigma" type="ots:DoublePositiveZero" use="required" />
+          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="BETA">
+      <xsd:element name="Beta">
         <xsd:complexType>
-          <xsd:attribute name="ALPHA1" type="ots:DOUBLEPOSITIVE" use="required" />
-          <xsd:attribute name="ALPHA2" type="ots:DOUBLEPOSITIVE" use="required" />
-          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+          <xsd:attribute name="Alpha1" type="ots:DoublePositive" use="required" />
+          <xsd:attribute name="Alpha2" type="ots:DoublePositive" use="required" />
+          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="ERLANG">
+      <xsd:element name="Erlang">
         <xsd:complexType>
-          <xsd:attribute name="MEAN" type="xsd:double" use="required" />
+          <xsd:attribute name="Mean" type="xsd:double" use="required" />
           <xsd:attribute name="K" type="xsd:positiveInteger" use="required" />
-          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="GAMMA">
+      <xsd:element name="Gamma">
         <xsd:complexType>
-          <xsd:attribute name="ALPHA" type="xsd:double" use="required" />
-          <xsd:attribute name="BETA" type="xsd:double" use="required" />
-          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+          <xsd:attribute name="Alpha" type="xsd:double" use="required" />
+          <xsd:attribute name="Beta" type="xsd:double" use="required" />
+          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="LOGNORMAL">
+      <xsd:element name="LogNormal">
         <xsd:complexType>
-          <xsd:attribute name="MU" type="xsd:double" use="required" />
-          <xsd:attribute name="SIGMA" type="ots:DOUBLEPOSITIVE" use="required" />
-          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+          <xsd:attribute name="Mu" type="xsd:double" use="required" />
+          <xsd:attribute name="Sigma" type="ots:DoublePositive" use="required" />
+          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="PEARSON5">
+      <xsd:element name="Pearson5">
         <xsd:complexType>
-          <xsd:attribute name="ALPHA" type="ots:DOUBLEPOSITIVE" use="required" />
-          <xsd:attribute name="BETA" type="ots:DOUBLEPOSITIVE" use="required" />
-          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+          <xsd:attribute name="Alpha" type="ots:DoublePositive" use="required" />
+          <xsd:attribute name="Beta" type="ots:DoublePositive" use="required" />
+          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="PEARSON6">
+      <xsd:element name="Pearson6">
         <xsd:complexType>
-          <xsd:attribute name="ALPHA1" type="ots:DOUBLEPOSITIVE" use="required" />
-          <xsd:attribute name="ALPHA2" type="ots:DOUBLEPOSITIVE" use="required" />
-          <xsd:attribute name="BETA" type="ots:DOUBLEPOSITIVE" use="required" />
-          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+          <xsd:attribute name="Alpha1" type="ots:DoublePositive" use="required" />
+          <xsd:attribute name="Alpha2" type="ots:DoublePositive" use="required" />
+          <xsd:attribute name="Beta" type="ots:DoublePositive" use="required" />
+          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="UNIFORM">
+      <xsd:element name="Uniform">
         <xsd:complexType>
-          <xsd:attribute name="MIN" type="xsd:double" use="required" />
-          <xsd:attribute name="MAX" type="xsd:double" use="required" />
-          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+          <xsd:attribute name="Min" type="xsd:double" use="required" />
+          <xsd:attribute name="Max" type="xsd:double" use="required" />
+          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="WEIBULL">
+      <xsd:element name="Weibull">
         <xsd:complexType>
-          <xsd:attribute name="ALPHA" type="ots:DOUBLEPOSITIVE" use="required" />
-          <xsd:attribute name="BETA" type="ots:DOUBLEPOSITIVE" use="required" />
-          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+          <xsd:attribute name="Alpha" type="ots:DoublePositive" use="required" />
+          <xsd:attribute name="Beta" type="ots:DoublePositive" use="required" />
+          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
         </xsd:complexType>
       </xsd:element>
     </xsd:choice>
   </xsd:complexType>
 
-  <xsd:complexType name="DISCRETEDISTTYPE">
+  <xsd:complexType name="DiscreteDistType">
     <xsd:choice>
-      <xsd:element name="CONSTANT">
+      <xsd:element name="Constant">
         <xsd:complexType>
           <xsd:attribute name="C" type="xsd:long" use="required" />
-          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="BERNOULLI">
+      <xsd:element name="BernoulliI">
         <xsd:complexType>
-          <xsd:attribute name="P" type="ots:FRACTIONTYPE" use="required" />
-          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+          <xsd:attribute name="P" type="ots:FractionType" use="required" />
+          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="BINOMIAL">
-        <xsd:complexType>
-          <xsd:attribute name="N" type="xsd:positiveInteger" use="required" />
-          <xsd:attribute name="P" type="ots:FRACTIONTYPE" use="required" />
-          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="UNIFORM">
-        <xsd:complexType>
-          <xsd:attribute name="MIN" type="xsd:int" use="required" />
-          <xsd:attribute name="MAX" type="xsd:int" use="required" />
-          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="GEOMETRIC">
-        <xsd:complexType>
-          <xsd:attribute name="P" type="ots:FRACTIONTYPE" use="required" />
-          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="NEGBINOMIAL">
+      <xsd:element name="Binomial">
         <xsd:complexType>
           <xsd:attribute name="N" type="xsd:positiveInteger" use="required" />
-          <xsd:attribute name="P" type="ots:FRACTIONTYPE" use="required" />
-          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+          <xsd:attribute name="P" type="ots:FractionType" use="required" />
+          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="POISSON">
+      <xsd:element name="Uniform">
         <xsd:complexType>
-          <xsd:attribute name="LAMBDA" type="ots:DOUBLEPOSITIVE" use="required" />
-          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+          <xsd:attribute name="Min" type="xsd:int" use="required" />
+          <xsd:attribute name="Max" type="xsd:int" use="required" />
+          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Geometric">
+        <xsd:complexType>
+          <xsd:attribute name="P" type="ots:FractionType" use="required" />
+          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="NegBinomial">
+        <xsd:complexType>
+          <xsd:attribute name="N" type="xsd:positiveInteger" use="required" />
+          <xsd:attribute name="P" type="ots:FractionType" use="required" />
+          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Poisson">
+        <xsd:complexType>
+          <xsd:attribute name="Lambda" type="ots:DoublePositive" use="required" />
+          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
         </xsd:complexType>
       </xsd:element>
     </xsd:choice>
   </xsd:complexType>
 
-  <xsd:complexType name="LENGTHDISTTYPE">
+  <xsd:complexType name="LengthDistType">
     <xsd:complexContent>
-      <xsd:extension base="ots:CONTDISTTYPE">
-        <xsd:attribute name="LENGTHUNIT" type="ots:LENGTHUNITTYPE" />
+      <xsd:extension base="ots:ConstantDistType">
+        <xsd:attribute name="LengthUnit" type="ots:LengthUnitType" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="POSITIONDISTTYPE">
+  <xsd:complexType name="PositionDistType">
     <xsd:complexContent>
-      <xsd:extension base="ots:CONTDISTTYPE">
-        <xsd:attribute name="POSITIONUNIT" type="ots:POSITIONUNITTYPE" />
+      <xsd:extension base="ots:ConstantDistType">
+        <xsd:attribute name="PositionUnit" type="ots:PositionUnitType" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="SPEEDDISTTYPE">
+  <xsd:complexType name="SpeedDistType">
     <xsd:complexContent>
-      <xsd:extension base="ots:CONTDISTTYPE">
-        <xsd:attribute name="SPEEDUNIT" type="ots:SPEEDUNITTYPE" />
+      <xsd:extension base="ots:ConstantDistType">
+        <xsd:attribute name="SpeedUnit" type="ots:SpeedUnitType" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="ACCELERATIONDISTTYPE">
+  <xsd:complexType name="AccelerationDistType">
     <xsd:complexContent>
-      <xsd:extension base="ots:CONTDISTTYPE">
-        <xsd:attribute name="ACCELERATIONUNIT" type="ots:ACCELERATIONUNITTYPE" />
+      <xsd:extension base="ots:ConstantDistType">
+        <xsd:attribute name="AccelerationUnit" type="ots:AccelerationUnitType" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="TIMEDISTTYPE">
+  <xsd:complexType name="TimeDistType">
     <xsd:complexContent>
-      <xsd:extension base="ots:CONTDISTTYPE">
-        <xsd:attribute name="TIMEUNIT" type="ots:TIMEUNITTYPE" />
+      <xsd:extension base="ots:ConstantDistType">
+        <xsd:attribute name="TimeUnit" type="ots:TimeUnitType" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="DURATIONDISTTYPE">
+  <xsd:complexType name="DurationDistType">
     <xsd:complexContent>
-      <xsd:extension base="ots:CONTDISTTYPE">
-        <xsd:attribute name="DURATIONUNIT" type="ots:DURATIONUNITTYPE" />
+      <xsd:extension base="ots:ConstantDistType">
+        <xsd:attribute name="DurationUnit" type="ots:DurationUnitType" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="LINEARDENSITYDISTTYPE">
+  <xsd:complexType name="LinearDensityDistType">
     <xsd:complexContent>
-      <xsd:extension base="ots:CONTDISTTYPE">
-        <xsd:attribute name="LINEARDENSITYUNIT" type="ots:LINEARDENSITYUNITTYPE" />
+      <xsd:extension base="ots:ConstantDistType">
+        <xsd:attribute name="LinearDensityUnit" type="ots:LinearDensityUnitType" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="FREQUENCYDISTTYPE">
+  <xsd:complexType name="FrequencyDistType">
     <xsd:complexContent>
-      <xsd:extension base="ots:CONTDISTTYPE">
-        <xsd:attribute name="FREQUENCYUNIT" type="ots:FREQUENCYUNITTYPE" />
+      <xsd:extension base="ots:ConstantDistType">
+        <xsd:attribute name="FrequencyUnit" type="ots:FrequencyUnitType" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -1206,320 +1206,320 @@
   <!-- ==================================== PARAMETER TYPES ==================================== -->
   <!-- ========================================================================================= -->
 
-  <xsd:complexType name="PARAMETERTYPE">
-    <xsd:attribute name="ID" type="xsd:string" use="required" />
-    <xsd:attribute name="FIELD" type="ots:STATICFIELDNAMETYPE" use="required" />
-    <xsd:attribute name="DESCRIPTION" type="xsd:string" use="optional" />
+  <xsd:complexType name="ParameterType">
+    <xsd:attribute name="Id" type="xsd:string" use="required" />
+    <xsd:attribute name="Field" type="ots:StaticFieldNameType" use="required" />
+    <xsd:attribute name="Description" type="xsd:string" use="optional" />
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERTYPESTRING">
+  <xsd:complexType name="ParameterTypeString">
     <xsd:complexContent>
-      <xsd:extension base="ots:PARAMETERTYPE">
-        <xsd:attribute name="DEFAULT" type="xsd:string" use="optional" />
+      <xsd:extension base="ots:ParameterType">
+        <xsd:attribute name="Default" type="xsd:string" use="optional" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERSTRING">
+  <xsd:complexType name="ParameterString">
     <xsd:simpleContent>
       <xsd:extension base="xsd:string">
-        <xsd:attribute name="ID" type="xsd:string" />
+        <xsd:attribute name="Id" type="xsd:string" />
       </xsd:extension>
     </xsd:simpleContent>
   </xsd:complexType>
 
-  <!-- PARAMETERSTRINGDIST is non-sensical -->
+  <!-- ParameterStringDIST is non-sensical -->
 
-  <xsd:complexType name="PARAMETERTYPEACCELERATION">
+  <xsd:complexType name="ParameterTypeAcceleration">
     <xsd:complexContent>
-      <xsd:extension base="ots:PARAMETERTYPE">
-        <xsd:attribute name="DEFAULT" type="ots:ACCELERATIONTYPE" use="optional" />
+      <xsd:extension base="ots:ParameterType">
+        <xsd:attribute name="Default" type="ots:AccelerationType" use="optional" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERACCELERATION">
+  <xsd:complexType name="ParameterAcceleration">
     <xsd:simpleContent>
-      <xsd:extension base="ots:ACCELERATIONTYPE">
-        <xsd:attribute name="ID" type="xsd:string" />
+      <xsd:extension base="ots:AccelerationType">
+        <xsd:attribute name="Id" type="xsd:string" />
       </xsd:extension>
     </xsd:simpleContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERACCELERATIONDIST">
+  <xsd:complexType name="ParameterAccelerationDist">
     <xsd:complexContent>
-      <xsd:extension base="ots:ACCELERATIONDISTTYPE">
-        <xsd:attribute name="ID" type="xsd:string" />
+      <xsd:extension base="ots:AccelerationDistType">
+        <xsd:attribute name="Id" type="xsd:string" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERTYPEBOOLEAN">
+  <xsd:complexType name="ParameterTypeBoolean">
     <xsd:complexContent>
-      <xsd:extension base="ots:PARAMETERTYPE">
-        <xsd:attribute name="DEFAULT" type="xsd:boolean" use="optional" />
+      <xsd:extension base="ots:ParameterType">
+        <xsd:attribute name="Default" type="xsd:boolean" use="optional" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERBOOLEAN">
+  <xsd:complexType name="ParameterBoolean">
     <xsd:simpleContent>
       <xsd:extension base="xsd:boolean">
-        <xsd:attribute name="ID" type="xsd:string" />
+        <xsd:attribute name="Id" type="xsd:string" />
       </xsd:extension>
     </xsd:simpleContent>
   </xsd:complexType>
 
-  <!-- PARAMETERBOOLEANDIST is non-sensical -->
+  <!-- ParameterBooleanDIST is non-sensical -->
 
-  <xsd:complexType name="PARAMETERTYPECLASS">
+  <xsd:complexType name="ParameterTypeClass">
     <xsd:complexContent>
-      <xsd:extension base="ots:PARAMETERTYPE">
-        <xsd:attribute name="DEFAULT" type="ots:CLASSNAMETYPE" use="optional" />
+      <xsd:extension base="ots:ParameterType">
+        <xsd:attribute name="Default" type="ots:ClassNameType" use="optional" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERCLASS">
+  <xsd:complexType name="ParameterClass">
     <xsd:simpleContent>
-      <xsd:extension base="ots:CLASSNAMETYPE">
-        <xsd:attribute name="ID" type="xsd:string" />
+      <xsd:extension base="ots:ClassNameType">
+        <xsd:attribute name="Id" type="xsd:string" />
       </xsd:extension>
     </xsd:simpleContent>
   </xsd:complexType>
 
-  <!-- PARAMETERCLASSDIST is non-sensical -->
+  <!-- ParameterClassDIST is non-sensical -->
 
-  <xsd:complexType name="PARAMETERTYPEDOUBLE">
+  <xsd:complexType name="ParameterTypeDouble">
     <xsd:complexContent>
-      <xsd:extension base="ots:PARAMETERTYPE">
-        <xsd:attribute name="DEFAULT" type="xsd:double" use="optional" />
+      <xsd:extension base="ots:ParameterType">
+        <xsd:attribute name="Default" type="xsd:double" use="optional" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERDOUBLE">
+  <xsd:complexType name="ParameterDouble">
     <xsd:simpleContent>
       <xsd:extension base="xsd:double">
-        <xsd:attribute name="ID" type="xsd:string" />
+        <xsd:attribute name="Id" type="xsd:string" />
       </xsd:extension>
     </xsd:simpleContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERDOUBLEDIST">
+  <xsd:complexType name="ParameterDoubleDist">
     <xsd:complexContent>
-      <xsd:extension base="ots:CONTDISTTYPE">
-        <xsd:attribute name="ID" type="xsd:string" />
+      <xsd:extension base="ots:ConstantDistType">
+        <xsd:attribute name="Id" type="xsd:string" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERTYPEFLOAT">
+  <xsd:complexType name="ParameterTypeFloat">
     <xsd:complexContent>
-      <xsd:extension base="ots:PARAMETERTYPE">
-        <xsd:attribute name="DEFAULT" type="xsd:float" use="optional" />
+      <xsd:extension base="ots:ParameterType">
+        <xsd:attribute name="Default" type="xsd:float" use="optional" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERFLOAT">
+  <xsd:complexType name="ParameterFloat">
     <xsd:simpleContent>
       <xsd:extension base="xsd:float">
-        <xsd:attribute name="ID" type="xsd:string" />
+        <xsd:attribute name="Id" type="xsd:string" />
       </xsd:extension>
     </xsd:simpleContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERFLOATDIST">
+  <xsd:complexType name="ParameterFloatDist">
     <xsd:complexContent>
-      <xsd:extension base="ots:CONTDISTTYPE">
-        <xsd:attribute name="ID" type="xsd:string" />
+      <xsd:extension base="ots:ConstantDistType">
+        <xsd:attribute name="Id" type="xsd:string" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERTYPELONG">
+  <xsd:complexType name="ParameterTypeLone">
     <xsd:complexContent>
-      <xsd:extension base="ots:PARAMETERTYPE">
-        <xsd:attribute name="DEFAULT" type="xsd:long" use="optional" />
+      <xsd:extension base="ots:ParameterType">
+        <xsd:attribute name="Default" type="xsd:long" use="optional" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERLONG">
+  <xsd:complexType name="ParameterLong">
     <xsd:simpleContent>
       <xsd:extension base="xsd:long">
-        <xsd:attribute name="ID" type="xsd:string" />
+        <xsd:attribute name="Id" type="xsd:string" />
       </xsd:extension>
     </xsd:simpleContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERLONGDIST">
+  <xsd:complexType name="ParameterLongDist">
     <xsd:complexContent>
-      <xsd:extension base="ots:DISCRETEDISTTYPE">
-        <xsd:attribute name="ID" type="xsd:string" />
+      <xsd:extension base="ots:DiscreteDistType">
+        <xsd:attribute name="Id" type="xsd:string" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERTYPEDURATION">
+  <xsd:complexType name="ParameterTypeDuration">
     <xsd:complexContent>
-      <xsd:extension base="ots:PARAMETERTYPE">
-        <xsd:attribute name="DEFAULT" type="ots:DURATIONTYPE" use="optional" />
+      <xsd:extension base="ots:ParameterType">
+        <xsd:attribute name="Default" type="ots:DurationType" use="optional" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERDURATION">
+  <xsd:complexType name="ParameterDuration">
     <xsd:simpleContent>
-      <xsd:extension base="ots:DURATIONTYPE">
-        <xsd:attribute name="ID" type="xsd:string" />
+      <xsd:extension base="ots:DurationType">
+        <xsd:attribute name="Id" type="xsd:string" />
       </xsd:extension>
     </xsd:simpleContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERDURATIONDIST">
+  <xsd:complexType name="ParameterDurationDist">
     <xsd:complexContent>
-      <xsd:extension base="ots:DURATIONDISTTYPE">
-        <xsd:attribute name="ID" type="xsd:string" />
+      <xsd:extension base="ots:DurationDistType">
+        <xsd:attribute name="Id" type="xsd:string" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERTYPEFRACTION">
+  <xsd:complexType name="ParameterTypeFraction">
     <xsd:complexContent>
-      <xsd:extension base="ots:PARAMETERTYPE">
-        <xsd:attribute name="DEFAULT" type="ots:FRACTIONTYPE" use="optional" />
+      <xsd:extension base="ots:ParameterType">
+        <xsd:attribute name="Default" type="ots:FractionType" use="optional" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERFRACTION">
+  <xsd:complexType name="ParameterFraction">
     <xsd:simpleContent>
-      <xsd:extension base="ots:FRACTIONTYPE">
-        <xsd:attribute name="ID" type="xsd:string" />
+      <xsd:extension base="ots:FractionType">
+        <xsd:attribute name="Id" type="xsd:string" />
       </xsd:extension>
     </xsd:simpleContent>
   </xsd:complexType>
 
-  <!-- PARAMETERFRACTIONDIST is non-sensical -->
+  <!-- ParameterFractionDIST is non-sensical -->
 
-  <xsd:complexType name="PARAMETERTYPEFREQUENCY">
+  <xsd:complexType name="ParameterTypeFrequency">
     <xsd:complexContent>
-      <xsd:extension base="ots:PARAMETERTYPE">
-        <xsd:attribute name="DEFAULT" type="ots:FREQUENCYTYPE" use="optional" />
+      <xsd:extension base="ots:ParameterType">
+        <xsd:attribute name="Default" type="ots:FrequencyType" use="optional" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERFREQUENCY">
+  <xsd:complexType name="ParameterFrequency">
     <xsd:simpleContent>
-      <xsd:extension base="ots:FREQUENCYTYPE">
-        <xsd:attribute name="ID" type="xsd:string" />
+      <xsd:extension base="ots:FrequencyType">
+        <xsd:attribute name="Id" type="xsd:string" />
       </xsd:extension>
     </xsd:simpleContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERFREQUENCYDIST">
+  <xsd:complexType name="ParameterFrequencyDist">
     <xsd:complexContent>
-      <xsd:extension base="ots:FREQUENCYDISTTYPE">
-        <xsd:attribute name="ID" type="xsd:string" />
+      <xsd:extension base="ots:FrequencyDistType">
+        <xsd:attribute name="Id" type="xsd:string" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERTYPEINTEGER">
+  <xsd:complexType name="ParameterTypeInteger">
     <xsd:complexContent>
-      <xsd:extension base="ots:PARAMETERTYPE">
-        <xsd:attribute name="DEFAULT" type="xsd:int" use="optional" />
+      <xsd:extension base="ots:ParameterType">
+        <xsd:attribute name="Default" type="xsd:int" use="optional" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERINTEGER">
+  <xsd:complexType name="ParameterInteger">
     <xsd:simpleContent>
       <xsd:extension base="xsd:int">
-        <xsd:attribute name="ID" type="xsd:string" />
+        <xsd:attribute name="Id" type="xsd:string" />
       </xsd:extension>
     </xsd:simpleContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERINTEGERDIST">
+  <xsd:complexType name="ParameterIntegerDist">
     <xsd:complexContent>
-      <xsd:extension base="ots:DISCRETEDISTTYPE">
-        <xsd:attribute name="ID" type="xsd:string" />
+      <xsd:extension base="ots:DiscreteDistType">
+        <xsd:attribute name="Id" type="xsd:string" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERTYPELENGTH">
+  <xsd:complexType name="ParameterTypeLength">
     <xsd:complexContent>
-      <xsd:extension base="ots:PARAMETERTYPE">
-        <xsd:attribute name="DEFAULT" type="ots:LENGTHTYPE" use="optional" />
+      <xsd:extension base="ots:ParameterType">
+        <xsd:attribute name="Default" type="ots:LengthType" use="optional" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERLENGTH">
+  <xsd:complexType name="ParameterLength">
     <xsd:simpleContent>
-      <xsd:extension base="ots:LENGTHTYPE">
-        <xsd:attribute name="ID" type="xsd:string" />
+      <xsd:extension base="ots:LengthType">
+        <xsd:attribute name="Id" type="xsd:string" />
       </xsd:extension>
     </xsd:simpleContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERLENGTHDIST">
+  <xsd:complexType name="ParameterLengthDist">
     <xsd:complexContent>
-      <xsd:extension base="ots:LENGTHDISTTYPE">
-        <xsd:attribute name="ID" type="xsd:string" />
+      <xsd:extension base="ots:LengthDistType">
+        <xsd:attribute name="Id" type="xsd:string" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERTYPELINEARDENSITY">
+  <xsd:complexType name="ParameterTypeLinearDensity">
     <xsd:complexContent>
-      <xsd:extension base="ots:PARAMETERTYPE">
-        <xsd:attribute name="DEFAULT" type="ots:LINEARDENSITYTYPE" use="optional" />
+      <xsd:extension base="ots:ParameterType">
+        <xsd:attribute name="Default" type="ots:LinearDensityType" use="optional" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERLINEARDENSITY">
+  <xsd:complexType name="ParameterLinearDensity">
     <xsd:simpleContent>
-      <xsd:extension base="ots:LINEARDENSITYTYPE">
-        <xsd:attribute name="ID" type="xsd:string" />
+      <xsd:extension base="ots:LinearDensityType">
+        <xsd:attribute name="Id" type="xsd:string" />
       </xsd:extension>
     </xsd:simpleContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERLINEARDENSITYDIST">
+  <xsd:complexType name="ParameterLinearDensityDist">
     <xsd:complexContent>
-      <xsd:extension base="ots:LINEARDENSITYDISTTYPE">
-        <xsd:attribute name="ID" type="xsd:string" />
+      <xsd:extension base="ots:LinearDensityDistType">
+        <xsd:attribute name="Id" type="xsd:string" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERTYPESPEED">
+  <xsd:complexType name="ParameterTypeSpeed">
     <xsd:complexContent>
-      <xsd:extension base="ots:PARAMETERTYPE">
-        <xsd:attribute name="DEFAULT" type="ots:SPEEDTYPE" use="optional" />
+      <xsd:extension base="ots:ParameterType">
+        <xsd:attribute name="Default" type="ots:SpeedType" use="optional" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERSPEED">
+  <xsd:complexType name="ParameterSpeed">
     <xsd:simpleContent>
-      <xsd:extension base="ots:SPEEDTYPE">
-        <xsd:attribute name="ID" type="xsd:string" />
+      <xsd:extension base="ots:SpeedType">
+        <xsd:attribute name="Id" type="xsd:string" />
       </xsd:extension>
     </xsd:simpleContent>
   </xsd:complexType>
 
-  <xsd:complexType name="PARAMETERSPEEDDIST">
+  <xsd:complexType name="ParameterSpeedDist">
     <xsd:complexContent>
-      <xsd:extension base="ots:SPEEDDISTTYPE">
-        <xsd:attribute name="ID" type="xsd:string" />
+      <xsd:extension base="ots:SpeedDistType">
+        <xsd:attribute name="Id" type="xsd:string" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>

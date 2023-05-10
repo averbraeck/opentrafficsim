@@ -1091,21 +1091,21 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
      * The timed event type for pub/sub indicating the removal of a GTU from the network. <br>
      * Payload: String gtuId (not an array, just a String)
      */
-    public static final EventType GTU_REMOVE_EVENT = new EventType("NETWORK.GTU.REMOVE",
+    public static final EventType GTU_REMOVE_EVENT = new EventType("Network.GTU.REMOVE",
             new MetaData("GTU removed", "GTU removed", new ObjectDescriptor("GTU id", "GTU id", String.class)));
 
     /**
      * The timed event type for pub/sub indicating the addition of a GTU to the network. <br>
      * Payload: String gtuId (not an array, just a String)
      */
-    public static final EventType GTU_ADD_EVENT = new EventType("NETWORK.GTU.ADD",
+    public static final EventType GTU_ADD_EVENT = new EventType("Network.GTU.ADD",
             new MetaData("GTU added", "GTU added", new ObjectDescriptor("GTU id", "GTU id", String.class)));
 
     /**
      * The timed event type for pub/sub indicating the removal of a Route for a gtuType. <br>
      * Payload: [String gtuTypeId, String routeId]
      */
-    public static final EventType ROUTE_REMOVE_EVENT = new EventType("NETWORK.ROUTE.REMOVE",
+    public static final EventType ROUTE_REMOVE_EVENT = new EventType("Network.ROUTE.REMOVE",
             new MetaData("Route removed", "Route removed",
                     new ObjectDescriptor[] {new ObjectDescriptor("GTU Type id", "GTU Type id", String.class),
                             new ObjectDescriptor("Route id", "Route id", String.class)}));
@@ -1114,7 +1114,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
      * The timed event type for pub/sub indicating the addition of a Route for a gtuType. <br>
      * Payload: [String gtuTypeId, String routeId]
      */
-    public static final EventType ROUTE_ADD_EVENT = new EventType("NETWORK.ROUTE.ADD",
+    public static final EventType ROUTE_ADD_EVENT = new EventType("Network.ROUTE.ADD",
             new MetaData("Route added", "Route added",
                     new ObjectDescriptor[] {new ObjectDescriptor("GTU Type id", "GTU Type id", String.class),
                             new ObjectDescriptor("Route id", "Route id", String.class)}));
@@ -1123,7 +1123,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
      * The timed event type for pub/sub indicating the removal of a NonLocatedObject implementing object. <br>
      * Payload: String objectId (not an array, just a String)
      */
-    public static final EventType NONLOCATED_OBJECT_REMOVE_EVENT = new EventType("NETWORK.NONLOCATED_OBJECT.REMOVE",
+    public static final EventType NONLOCATED_OBJECT_REMOVE_EVENT = new EventType("Network.NONLOCATED_OBJECT.REMOVE",
             new MetaData("Non-located object removed", "Non-located, stationary object removed",
                     new ObjectDescriptor("NonLocatedObject", "Id of non-located, stationary object", String.class)));
 
@@ -1131,7 +1131,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
      * The timed event type for pub/sub indicating the addition of a NonLocatedObject implementing object. <br>
      * Payload: String ObjectId (not an array, just a String)
      */
-    public static final EventType NONLOCATED_OBJECT_ADD_EVENT = new EventType("NETWORK.NONLOCATED_OBJECT.ADD",
+    public static final EventType NONLOCATED_OBJECT_ADD_EVENT = new EventType("Network.NONLOCATED_OBJECT.ADD",
             new MetaData("Non-located object added", "Non-located, stationary object added",
                     new ObjectDescriptor("NonLocatedObject", "Id of non-located, stationary object", String.class)));
 
@@ -1140,7 +1140,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
      * Payload: String objectId (not an array, just a String)
      */
     public static final EventType OBJECT_REMOVE_EVENT =
-            new EventType("NETWORK.OBJECT.REMOVE", new MetaData("Object removed", "Visible, stationary object removed",
+            new EventType("Network.OBJECT.REMOVE", new MetaData("Object removed", "Visible, stationary object removed",
                     new ObjectDescriptor("id of Static object", "id of Visible, stationary object", String.class)));
 
     /**
@@ -1148,35 +1148,35 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
      * Payload: String ObjectId (not an array, just a String)
      */
     public static final EventType OBJECT_ADD_EVENT =
-            new EventType("NETWORK.OBJECT.ADD", new MetaData("Object added", "Visible, stationary object added",
+            new EventType("Network.OBJECT.ADD", new MetaData("Object added", "Visible, stationary object added",
                     new ObjectDescriptor("id of Static object", "id of Visible, stationary object", String.class)));
 
     /**
      * The timed event type for pub/sub indicating the removal of a Link. <br>
      * Payload: String linkId (not an array, just a String)
      */
-    public static final EventType LINK_REMOVE_EVENT = new EventType("NETWORK.LINK.REMOVE",
+    public static final EventType LINK_REMOVE_EVENT = new EventType("Network.LINK.REMOVE",
             new MetaData("Link removed", "Link removed", new ObjectDescriptor("Link", "Name of link", String.class)));
 
     /**
      * The timed event type for pub/sub indicating the addition of a Link. <br>
      * Payload: String linkId (not an array, just a String)
      */
-    public static final EventType LINK_ADD_EVENT = new EventType("NETWORK.LINK.ADD",
+    public static final EventType LINK_ADD_EVENT = new EventType("Network.LINK.ADD",
             new MetaData("Link added", "Link added", new ObjectDescriptor("Link", "Name of link", String.class)));
 
     /**
      * The timed event type for pub/sub indicating the removal of a Node. <br>
      * Payload: String nodeId (not an array, just a String)
      */
-    public static final EventType NODE_REMOVE_EVENT = new EventType("NETWORK.NODE.REMOVE",
+    public static final EventType NODE_REMOVE_EVENT = new EventType("Network.NODE.REMOVE",
             new MetaData("Node removed", "Node removed", new ObjectDescriptor("Node", "Name of node", String.class)));
 
     /**
      * The timed event type for pub/sub indicating the addition of a Node. <br>
      * Payload: String nodeId (not an array, just a String)
      */
-    public static final EventType NODE_ADD_EVENT = new EventType("NETWORK.NODE.ADD",
+    public static final EventType NODE_ADD_EVENT = new EventType("Network.NODE.ADD",
             new MetaData("Node added", "Node added", new ObjectDescriptor("Node", "Name of node", String.class)));
 
 }

@@ -53,7 +53,7 @@ public interface ValueValidator
         if (xsdNode.getChildNodes().getLength() == DocumentReader.getChildren(xsdNode, "#text").size()
                 && DocumentReader.getAttribute(xsdNode, "type") == null)
         {
-            // no children and no type, this is a plain tag, e.g. <STRAIGHT />, it needs no input.
+            // no children and no type, this is a plain tag, e.g. <Straight />, it needs no input.
             return null;
         }
         if (value == null || value.isBlank())

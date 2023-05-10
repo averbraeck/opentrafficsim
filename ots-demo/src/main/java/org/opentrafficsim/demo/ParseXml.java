@@ -67,7 +67,7 @@ public class ParseXml
         builder.setEntityResolver(new DefaultsResolver());
         Document xmlDocument = builder.parse(fileIS);
         print(xmlDocument, "*");
-        print(xmlDocument, "*/ots:OTS");
+        print(xmlDocument, "*/ots:Ots");
         print(xmlDocument, ".//ots:GTUTYPE");
     }
 
