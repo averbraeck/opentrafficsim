@@ -841,13 +841,13 @@
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="BEGIN|END|END\-(\d+\.?\d*\s*(mm|cm|dm|m|dam|hm|km|mi|yd|ft))|(\
 ){0}(\d+\.?\d*\s*(mm|cm|dm|m|dam|hm|km|mi|yd|ft)|(\
-){0}((\d(\.\d*)?)|(\d\d(\.\d*)?)|(100(\.\0*)?))\s*\%)"></xsd:pattern>
+){0}((\d(\.\d*)?)|(\d\d(\.\d*)?)|(100(\.0*)?))\s*\%)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="FractionType">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(0?\.\d*|1\.0*|1|0)|((\d(\.\d*)?)|(\d\d(\.\d*)?)|(100(\.\0*)?))\s*\%"></xsd:pattern>
+      <xsd:pattern value="(0?\.\d*|1\.0*|1|0)|((\d(\.\d*)?)|(\d\d(\.\d*)?)|(100(\.0*)?))\s*\%"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
