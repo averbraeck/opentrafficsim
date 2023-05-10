@@ -37,10 +37,10 @@ import org.opentrafficsim.xml.generated.Control.FixedTime;
 import org.opentrafficsim.xml.generated.Control.FixedTime.Cycle;
 import org.opentrafficsim.xml.generated.Control.TrafCod.Console;
 import org.opentrafficsim.xml.generated.ControlType.SignalGroup.TrafficLight;
-import org.opentrafficsim.xml.generated.ResponsiveControlType.Sensor;
-import org.opentrafficsim.xml.generated.ResponsiveControlType.Sensor.MultipleLane;
-import org.opentrafficsim.xml.generated.ResponsiveControlType.Sensor.MultipleLane.IntermediateLanes;
-import org.opentrafficsim.xml.generated.ResponsiveControlType.Sensor.SingleLane;
+import org.opentrafficsim.xml.generated.ResponsiveControlType.Detector;
+import org.opentrafficsim.xml.generated.ResponsiveControlType.Detector.MultipleLane;
+import org.opentrafficsim.xml.generated.ResponsiveControlType.Detector.MultipleLane.IntermediateLanes;
+import org.opentrafficsim.xml.generated.ResponsiveControlType.Detector.SingleLane;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -182,44 +182,44 @@ public final class ControlParser
                 // this.trafCOD.traceVariablesOfStream(TrafficController.NO_STREAM, true);
                 // this.trafCOD.traceVariablesOfStream(11, true);
                 // this.trafCOD.traceVariable("MRV", 11, true);
-                for (Sensor sensor : trafCod.getSensor())
+                for (Detector detector : trafCod.getDetector())
                 {
-                    if (null != sensor.getSingleLane())
+                    if (null != detector.getSingleLane())
                     {
-                        // Handle single lane sensor
-                        SingleLane singleLaneSensor = sensor.getSingleLane();
-                        CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(singleLaneSensor.getLink());
-                        Lane lane = (Lane) link.getCrossSectionElement(singleLaneSensor.getLane());
+                        // Handle single lane detector
+                        SingleLane singleLaneDetector = detector.getSingleLane();
+                        CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(singleLaneDetector.getLink());
+                        Lane lane = (Lane) link.getCrossSectionElement(singleLaneDetector.getLane());
                         Length entryPosition =
-                                Transformer.parseLengthBeginEnd(singleLaneSensor.getEntryPosition(), lane.getLength());
+                                Transformer.parseLengthBeginEnd(singleLaneDetector.getEntryPosition(), lane.getLength());
                         Length exitPosition =
-                                Transformer.parseLengthBeginEnd(singleLaneSensor.getExitPosition(), lane.getLength());
-                        // TODO: definitions.get(DetectorType.class, sensor.getDETECTORTYPE)
+                                Transformer.parseLengthBeginEnd(singleLaneDetector.getExitPosition(), lane.getLength());
+                        // TODO: definitions.get(DetectorType.class, detector.getDETECTORTYPE)
                         DetectorType detectorType = definitions.get(DetectorType.class, "TRAFFIC_LIGHT");
-                        new TrafficLightDetector(sensor.getId(), lane, entryPosition, lane, exitPosition, null,
+                        new TrafficLightDetector(detector.getId(), lane, entryPosition, lane, exitPosition, null,
                                 RelativePosition.FRONT, RelativePosition.REAR, simulator, detectorType);
                     }
                     else
                     {
-                        // Handle sensor spanning multiple lanes
-                        MultipleLane multiLaneSensor = sensor.getMultipleLane();
-                        CrossSectionLink entryLink = (CrossSectionLink) otsNetwork.getLink(multiLaneSensor.getEntryLink());
-                        Lane entryLane = (Lane) entryLink.getCrossSectionElement(multiLaneSensor.getEntryLane());
+                        // Handle detector spanning multiple lanes
+                        MultipleLane multiLaneDetector = detector.getMultipleLane();
+                        CrossSectionLink entryLink = (CrossSectionLink) otsNetwork.getLink(multiLaneDetector.getEntryLink());
+                        Lane entryLane = (Lane) entryLink.getCrossSectionElement(multiLaneDetector.getEntryLane());
                         Length entryPosition =
-                                Transformer.parseLengthBeginEnd(multiLaneSensor.getEntryPosition(), entryLane.getLength());
-                        CrossSectionLink exitLink = (CrossSectionLink) otsNetwork.getLink(multiLaneSensor.getExitLink());
-                        Lane exitLane = (Lane) exitLink.getCrossSectionElement(multiLaneSensor.getExitLane());
+                                Transformer.parseLengthBeginEnd(multiLaneDetector.getEntryPosition(), entryLane.getLength());
+                        CrossSectionLink exitLink = (CrossSectionLink) otsNetwork.getLink(multiLaneDetector.getExitLink());
+                        Lane exitLane = (Lane) exitLink.getCrossSectionElement(multiLaneDetector.getExitLane());
                         Length exitPosition =
-                                Transformer.parseLengthBeginEnd(multiLaneSensor.getExitPosition(), exitLane.getLength());
+                                Transformer.parseLengthBeginEnd(multiLaneDetector.getExitPosition(), exitLane.getLength());
                         List<Lane> intermediateLanes = new ArrayList<>();
-                        for (IntermediateLanes linkAndLane : multiLaneSensor.getIntermediateLanes())
+                        for (IntermediateLanes linkAndLane : multiLaneDetector.getIntermediateLanes())
                         {
                             CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(linkAndLane.getLink());
                             intermediateLanes.add((Lane) link.getCrossSectionElement(linkAndLane.getLane()));
                         }
-                        // TODO: definitions.get(DetectorType.class, sensor.getDETECTORTYPE)
+                        // TODO: definitions.get(DetectorType.class, detector.getDETECTORTYPE)
                         DetectorType detectorType = definitions.get(DetectorType.class, "TRAFFIC_LIGHT");
-                        new TrafficLightDetector(sensor.getId(), entryLane, entryPosition, exitLane, exitPosition,
+                        new TrafficLightDetector(detector.getId(), entryLane, entryPosition, exitLane, exitPosition,
                                 intermediateLanes, RelativePosition.FRONT, RelativePosition.REAR, simulator, detectorType);
                     }
                 }

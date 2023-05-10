@@ -101,7 +101,7 @@
         </xsd:choice>
 
         <xsd:element name="TrafficLight" type="ots:TrafficLightType" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element name="TrafficLightSensor" type="ots:TrafficLightSensorType" minOccurs="0"
+        <xsd:element name="TrafficLightSensor" type="ots:TrafficLightDetectorType" minOccurs="0"
           maxOccurs="unbounded" />
 
       </xsd:sequence>
@@ -152,7 +152,7 @@
     </xsd:attribute>
   </xsd:complexType>
 
-  <xsd:complexType name="TrafficLightSensorType">
+  <xsd:complexType name="TrafficLightDetectorType">
     <xsd:attribute name="Id" type="xsd:string" use="required" />
     <xsd:attribute name="Lane" type="xsd:string" use="required" />
     <xsd:attribute name="Position" type="ots:LengthBeginEndType" use="required" />

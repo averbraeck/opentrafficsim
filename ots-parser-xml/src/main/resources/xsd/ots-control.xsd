@@ -37,7 +37,7 @@
     <xsd:complexContent>
       <xsd:extension base="ots:ControlType">
         <xsd:sequence>
-          <xsd:element name="Sensor" minOccurs="1" maxOccurs="unbounded">
+          <xsd:element name="Detector" minOccurs="1" maxOccurs="unbounded">
             <xsd:complexType>
               <xsd:choice>
                 <xsd:element name="MultipleLane">
