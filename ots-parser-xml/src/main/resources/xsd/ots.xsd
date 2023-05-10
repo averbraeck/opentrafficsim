@@ -231,20 +231,6 @@
 
     <!-- ========================================= CHECKS IN NETWORK ====================================== -->
 
-    <!-- Connector.NodeStart defined by Node.Id -->
-
-    <xsd:keyref name="ConnectorNodeStartNodeIdRef" refer="ots:nodeKey">
-      <xsd:selector xpath=".//ots:Network/ots:Connector" />
-      <xsd:field xpath="@NodeStart" />
-    </xsd:keyref>
-    
-    <!-- Connector.NodeEnd defined by Node.Id -->
-
-    <xsd:keyref name="ConnectorNodeEndNodeIdRef" refer="ots:nodeKey">
-      <xsd:selector xpath=".//ots:Network/ots:Connector" />
-      <xsd:field xpath="@NodeEnd" />
-    </xsd:keyref>
-    
     <!-- Link.NodeStart defined by Node.Id -->
 
     <xsd:keyref name="linkNodeStartNodeIdRef" refer="ots:nodeKey">

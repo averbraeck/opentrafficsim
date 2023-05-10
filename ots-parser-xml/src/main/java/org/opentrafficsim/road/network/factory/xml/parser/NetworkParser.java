@@ -24,6 +24,7 @@ import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.core.network.Centroid;
 import org.opentrafficsim.core.network.Connector;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -83,7 +84,13 @@ public final class NetworkParser
     public static void parseNodes(final RoadNetwork otsNetwork, final Network network,
             final Map<String, Direction> nodeDirections) throws NetworkException
     {
-        for (org.opentrafficsim.xml.generated.Node xmlNode : ParseUtil.getObjectsOfType(network.getIncludeOrNodeOrConnector(),
+        for (org.opentrafficsim.xml.generated.Centroid xmlCentroid : ParseUtil
+                .getObjectsOfType(network.getIncludeOrCentroidOrNode(), org.opentrafficsim.xml.generated.Centroid.class))
+        {
+            new Centroid(otsNetwork, xmlCentroid.getId(), new OtsPoint3d(xmlCentroid.getCoordinate().x,
+                    xmlCentroid.getCoordinate().y, xmlCentroid.getCoordinate().z));
+        }
+        for (org.opentrafficsim.xml.generated.Node xmlNode : ParseUtil.getObjectsOfType(network.getIncludeOrCentroidOrNode(),
                 org.opentrafficsim.xml.generated.Node.class))
         {
             new Node(otsNetwork, xmlNode.getId(),
@@ -103,7 +110,7 @@ public final class NetworkParser
     {
         Map<String, Direction> nodeDirections = new LinkedHashMap<>();
         Map<String, Point3d> points = new LinkedHashMap<>();
-        for (org.opentrafficsim.xml.generated.Node xmlNode : ParseUtil.getObjectsOfType(network.getIncludeOrNodeOrConnector(),
+        for (org.opentrafficsim.xml.generated.Node xmlNode : ParseUtil.getObjectsOfType(network.getIncludeOrCentroidOrNode(),
                 org.opentrafficsim.xml.generated.Node.class))
         {
             if (xmlNode.getDirection() != null)
@@ -113,7 +120,7 @@ public final class NetworkParser
             points.put(xmlNode.getId(), xmlNode.getCoordinate());
         }
 
-        for (Link xmlLink : ParseUtil.getObjectsOfType(network.getIncludeOrNodeOrConnector(), Link.class))
+        for (Link xmlLink : ParseUtil.getObjectsOfType(network.getIncludeOrCentroidOrNode(), Link.class))
         {
             if (xmlLink.getStraight() != null)
             {
@@ -131,7 +138,7 @@ public final class NetworkParser
             }
         }
 
-        for (org.opentrafficsim.xml.generated.Node xmlNode : ParseUtil.getObjectsOfType(network.getIncludeOrNodeOrConnector(),
+        for (org.opentrafficsim.xml.generated.Node xmlNode : ParseUtil.getObjectsOfType(network.getIncludeOrCentroidOrNode(),
                 org.opentrafficsim.xml.generated.Node.class))
         {
             if (!nodeDirections.containsKey(xmlNode.getId()))
@@ -158,7 +165,7 @@ public final class NetworkParser
             throws NetworkException, OtsGeometryException
     {
         for (org.opentrafficsim.xml.generated.Connector xmlConnector : ParseUtil
-                .getObjectsOfType(network.getIncludeOrNodeOrConnector(), org.opentrafficsim.xml.generated.Connector.class))
+                .getObjectsOfType(network.getIncludeOrCentroidOrNode(), org.opentrafficsim.xml.generated.Connector.class))
         {
             Node startNode = (Node) otsNetwork.getNode(xmlConnector.getNodeStart());
             if (null == startNode)
@@ -179,7 +186,7 @@ public final class NetworkParser
             link.setDemandWeight(demandWeight);
         }
 
-        for (Link xmlLink : ParseUtil.getObjectsOfType(network.getIncludeOrNodeOrConnector(), Link.class))
+        for (Link xmlLink : ParseUtil.getObjectsOfType(network.getIncludeOrCentroidOrNode(), Link.class))
         {
             Node startNode = (Node) otsNetwork.getNode(xmlLink.getNodeStart());
             Node endNode = (Node) otsNetwork.getNode(xmlLink.getNodeEnd());
@@ -341,7 +348,7 @@ public final class NetworkParser
             final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap)
             throws NetworkException, OtsGeometryException, XmlParserException, SimRuntimeException, GtuException
     {
-        for (Link xmlLink : ParseUtil.getObjectsOfType(network.getIncludeOrNodeOrConnector(), Link.class))
+        for (Link xmlLink : ParseUtil.getObjectsOfType(network.getIncludeOrCentroidOrNode(), Link.class))
         {
             CrossSectionLink csl = (CrossSectionLink) otsNetwork.getLink(xmlLink.getId());
             List<CrossSectionElement> cseList = new ArrayList<>();

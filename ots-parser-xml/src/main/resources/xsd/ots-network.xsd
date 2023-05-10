@@ -18,6 +18,14 @@
   <!-- ================================================ NETWORK ========================================= -->
   <!-- ================================================================================================== -->
 
+  <xsd:element name="Centroid">
+    <xsd:complexType>
+      <xsd:attribute name="Id" type="xsd:string" use="required" />
+      <xsd:attribute name="Coordinate" type="ots:CoordinateType" use="required" />
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+  
   <xsd:element name="Node">
     <xsd:complexType>
       <xsd:attribute name="Id" type="xsd:string" use="required" />
@@ -126,6 +134,7 @@
     <xsd:complexType>
       <xsd:choice minOccurs="0" maxOccurs="unbounded">
         <xsd:element ref="xi:include" minOccurs="0" maxOccurs="1" />
+        <xsd:element ref="ots:Centroid" minOccurs="0" maxOccurs="1" />
         <xsd:element ref="ots:Node" minOccurs="0" maxOccurs="1" />
         <xsd:element ref="ots:Connector" minOccurs="0" maxOccurs="1" />
         <xsd:element ref="ots:Link" minOccurs="0" maxOccurs="1" />

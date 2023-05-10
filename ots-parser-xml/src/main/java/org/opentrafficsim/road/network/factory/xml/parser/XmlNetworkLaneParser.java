@@ -320,7 +320,7 @@ public final class XmlNetworkLaneParser implements Serializable
         {
             otsNetwork.getSimulator().getLogger().always().info("Generating conflicts");
             Map<String, Set<Link>> conflictCandidateMap = new LinkedHashMap<String, Set<Link>>();
-            for (Object o : network.getIncludeOrNodeOrConnector())
+            for (Object o : network.getIncludeOrCentroidOrNode())
             {
                 if (o instanceof org.opentrafficsim.xml.generated.Link)
                 {
