@@ -35,61 +35,56 @@
         FOOTPATH = new LaneType("FOOTPATH", pedestriansOnly);
  -->
 
-  <ots:LaneType Id="NONE" Default="true">
-    <ots:Compatibility GtuType="NONE" Direction="NONE"/>
-  </ots:LaneType>
-  
-  <ots:LaneType Id="TWO_WAY_LANE" Default="true">
-    <ots:Compatibility GtuType="ROAD_USER" Direction="FORWARD" />
+  <ots:LaneType Id="NL.TWO_WAY_LANE" Default="true">
+    <ots:Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
   </ots:LaneType>
 
-  <ots:LaneType Id="RURAL_ROAD" Parent="TWO_WAY_LANE" Default="true">
-    <ots:Compatibility GtuType="ROAD_USER" Direction="FORWARD" />
+  <ots:LaneType Id="NL.PROVINCIAL_ROAD" Parent="NL.TWO_WAY_LANE" Default="true">
+    <ots:Compatibility GtuType="NL.PEDESTRIAN" Direction="NONE" />
+    <ots:Compatibility GtuType="NL.BICYCLE" Direction="NONE" />
   </ots:LaneType>
 
-  <ots:LaneType Id="URBAN_ROAD" Parent="TWO_WAY_LANE" Default="true">
-    <ots:Compatibility GtuType="ROAD_USER" Direction="FORWARD" />
+  <ots:LaneType Id="NL.RURAL_ROAD" Parent="NL.TWO_WAY_LANE" Default="true">
+    <ots:Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
   </ots:LaneType>
 
-  <ots:LaneType Id="RESIDENTIAL_ROAD" Parent="TWO_WAY_LANE" Default="true">
-    <ots:Compatibility GtuType="ROAD_USER" Direction="FORWARD" />
+  <ots:LaneType Id="NL.URBAN_ROAD" Parent="NL.TWO_WAY_LANE" Default="true">
+    <ots:Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
   </ots:LaneType>
 
-  <ots:LaneType Id="ONE_WAY_LANE" Default="true">
-    <ots:Compatibility GtuType="ROAD_USER" Direction="FORWARD" />
-    <ots:Compatibility GtuType="PEDESTRIAN" Direction="BOTH" />
+  <ots:LaneType Id="NL.RESIDENTIAL_ROAD" Parent="NL.TWO_WAY_LANE" Default="true">
+    <ots:Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
   </ots:LaneType>
 
-  <ots:LaneType Id="FREEWAY" Default="true">
-    <ots:Compatibility GtuType="ROAD_USER" Direction="FORWARD" />
-    <ots:Compatibility GtuType="PEDESTRIAN" Direction="NONE" />
+  <ots:LaneType Id="NL.ONE_WAY_LANE" Default="true">
+    <ots:Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
   </ots:LaneType>
 
-  <ots:LaneType Id="HIGHWAY" Default="true">
-    <ots:Compatibility GtuType="ROAD_USER" Direction="FORWARD" />
-    <ots:Compatibility GtuType="PEDESTRIAN" Direction="NONE" />
+  <ots:LaneType Id="NL.FREEWAY" Parent="NL.ONE_WAY_LANE" Default="true">
+    <ots:Compatibility GtuType="NL.PEDESTRIAN" Direction="NONE" />
+    <ots:Compatibility GtuType="NL.BICYCLE" Direction="NONE" />
   </ots:LaneType>
 
-  <ots:LaneType Id="BUS_LANE" Default="true">
-    <ots:Compatibility GtuType="ROAD_USER" Direction="NONE" />
-    <ots:Compatibility GtuType="BUS" Direction="FORWARD" />
+  <ots:LaneType Id="NL.HIGHWAY" Parent="NL.ONE_WAY_LANE" Default="true">
+    <ots:Compatibility GtuType="NL.PEDESTRIAN" Direction="NONE" />
+    <ots:Compatibility GtuType="NL.BICYCLE" Direction="NONE" />
   </ots:LaneType>
 
-  <ots:LaneType Id="MOPED_PATH" Default="true">
-    <ots:Compatibility GtuType="ROAD_USER" Direction="NONE" />
-    <ots:Compatibility GtuType="BICYCLE" Direction="FORWARD" />
+  <ots:LaneType Id="NL.BUS_LANE" Default="true">
+    <ots:Compatibility GtuType="NL.BUS" Direction="FORWARD" />
+  </ots:LaneType>
+
+  <ots:LaneType Id="NL.MOPED_PATH" Default="true">
+    <ots:Compatibility GtuType="NL.BICYCLE" Direction="FORWARD" />
     <!-- a MOPED is a special BICYCLE -->
   </ots:LaneType>
 
-  <ots:LaneType Id="BICYCLE_PATH" Default="true">
-    <ots:Compatibility GtuType="ROAD_USER" Direction="NONE" />
-    <ots:Compatibility GtuType="BICYCLE" Direction="FORWARD" />
-    <ots:Compatibility GtuType="MOPED" Direction="NONE" />
+  <ots:LaneType Id="NL.BICYCLE_PATH" Default="true">
+    <ots:Compatibility GtuType="NL.BICYCLE" Direction="FORWARD" />
   </ots:LaneType>
 
-  <ots:LaneType Id="FOOTPATH" Default="true">
-    <ots:Compatibility GtuType="ROAD_USER" Direction="NONE" />
-    <ots:Compatibility GtuType="PEDESTRIAN" Direction="BOTH" />
+  <ots:LaneType Id="NL.FOOTPATH" Default="true">
+    <ots:Compatibility GtuType="NL.PEDESTRIAN" Direction="BOTH" />
   </ots:LaneType>
 
 </ots:LaneTypes>

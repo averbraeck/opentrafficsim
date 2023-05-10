@@ -28,7 +28,7 @@
       </xi:include>
 
 		<ots:GtuTemplates>
-			<ots:GtuTemplate Default="true" GtuType="CAR" Id="CAR">
+			<ots:GtuTemplate Default="true" GtuType="NL.CAR" Id="CAR">
 				<ots:LengthDist LengthUnit="m">
 					<ots:Uniform Min="3.0" Max="4.0" />
 				</ots:LengthDist>
@@ -43,14 +43,14 @@
 
 		<ots:LinkTypes>
 			<ots:LinkType Id="URBAN">
-				<ots:Compatibility GtuType="VEHICLE" Direction="FORWARD" />
-				<ots:SpeedLimit GtuType="CAR" LegalSpeedLimit="50km/h" />
+				<ots:Compatibility GtuType="NL.VEHICLE" Direction="FORWARD" />
+				<ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50km/h" />
 			</ots:LinkType>
 		</ots:LinkTypes>
 
 		<ots:LaneTypes>
 			<ots:LaneType Id="URBAN">
-				<ots:Compatibility GtuType="VEHICLE" Direction="FORWARD" />
+				<ots:Compatibility GtuType="NL.VEHICLE" Direction="FORWARD" />
 			</ots:LaneType>
 		</ots:LaneTypes>
 
@@ -210,53 +210,53 @@
 
 	<ots:Demand>
 
-		<ots:ShortestRoute Id="EW" GtuType="CAR">
+		<ots:ShortestRoute Id="EW" GtuType="NL.CAR">
 			<ots:From Node="TRE" />
 			<ots:To Node="TRW" />
 			<ots:DistanceCost>1/m</ots:DistanceCost>
 		</ots:ShortestRoute>
 
-		<ots:ShortestRoute Id="WE" GtuType="CAR">
+		<ots:ShortestRoute Id="WE" GtuType="NL.CAR">
 			<ots:From Node="BLW" />
 			<ots:To Node="BLE" />
 			<ots:DistanceCost>1/m</ots:DistanceCost>
 		</ots:ShortestRoute>
 
-		<ots:ShortestRoute Id="WS" GtuType="CAR">
+		<ots:ShortestRoute Id="WS" GtuType="NL.CAR">
 			<ots:From Node="BLW" />
 			<ots:To Node="BLS" />
 			<ots:DistanceCost>1/m</ots:DistanceCost>
 		</ots:ShortestRoute>
 
-		<ots:ShortestRoute Id="SW" GtuType="CAR">
+		<ots:ShortestRoute Id="SW" GtuType="NL.CAR">
 			<ots:From Node="TRS" />
 			<ots:To Node="TRW" />
 			<ots:DistanceCost>1/m</ots:DistanceCost>
 		</ots:ShortestRoute>
 
-		<ots:ShortestRoute Id="ES" GtuType="CAR">
+		<ots:ShortestRoute Id="ES" GtuType="NL.CAR">
 			<ots:From Node="TRE" />
 			<ots:To Node="BLS" />
 			<ots:DistanceCost>1/m</ots:DistanceCost>
 		</ots:ShortestRoute>
 
-		<ots:ShortestRoute Id="SE" GtuType="CAR">
+		<ots:ShortestRoute Id="SE" GtuType="NL.CAR">
 			<ots:From Node="TRS" />
 			<ots:To Node="BLE" />
 			<ots:DistanceCost>1/m</ots:DistanceCost>
 		</ots:ShortestRoute>
 
-		<ots:ShortestRouteMix Id="E" GtuType="CAR">
+		<ots:ShortestRouteMix Id="E" GtuType="NL.CAR">
 			<ots:ShortestRoute Weight="0.4" Id="EW" />
 			<ots:ShortestRoute Weight="0.6" Id="ES" />
 		</ots:ShortestRouteMix>
 
-		<ots:ShortestRouteMix Id="W" GtuType="CAR">
+		<ots:ShortestRouteMix Id="W" GtuType="NL.CAR">
 			<ots:ShortestRoute Weight="0.8" Id="WE" />
 			<ots:ShortestRoute Weight="0.2" Id="WS" />
 		</ots:ShortestRouteMix>
 
-		<ots:ShortestRouteMix Id="S" GtuType="CAR">
+		<ots:ShortestRouteMix Id="S" GtuType="NL.CAR">
 			<ots:ShortestRoute Weight="0.5" Id="SW" />
 			<ots:ShortestRoute Weight="0.5" Id="SE" />
 		</ots:ShortestRouteMix>
@@ -280,9 +280,9 @@
 			<ots:RoomChecker>CF</ots:RoomChecker>
 		</ots:Generator>
 
-		<ots:Sink Type="ROAD_USERS" Link="ECE" Position="END-20m" Lane="LANE" Direction="DIR_PLUS" />
-		<ots:Sink Type="ROAD_USERS" Link="SCS" Position="END-20m" Lane="LANE" Direction="DIR_PLUS" />
-		<ots:Sink Type="ROAD_USERS" Link="WCW" Position="END-20m" Lane="LANE" Direction="DIR_PLUS" />
+		<ots:Sink Type="NL.ROAD_USERS" Link="ECE" Position="END-20m" Lane="LANE" Direction="DIR_PLUS" />
+		<ots:Sink Type="NL.ROAD_USERS" Link="SCS" Position="END-20m" Lane="LANE" Direction="DIR_PLUS" />
+		<ots:Sink Type="NL.ROAD_USERS" Link="WCW" Position="END-20m" Lane="LANE" Direction="DIR_PLUS" />
 
 	</ots:Demand>
 

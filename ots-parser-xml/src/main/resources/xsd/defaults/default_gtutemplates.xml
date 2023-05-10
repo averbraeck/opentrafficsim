@@ -2,36 +2,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions.xsd">
 
-<!--
-      // GTUType.CAR
-      // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
-      template = new TemplateGTUType(type, new ConstantGenerator<>(Length.createSI(4.19)),
-              new ConstantGenerator<>(Length.createSI(1.7)),
-              new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
-
-      // GTUType.TRUCK
-      // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
-      template = new TemplateGTUType(type, new ConstantGenerator<>(Length.createSI(12.0)),
-              new ConstantGenerator<>(Length.createSI(2.55)),
-              new ContinuousDistSpeed(new DistNormal(randomStream, 85.0, 2.5), SpeedUnit.KM_PER_HOUR));
-            
-      // GTUType.BUS
-      template = new TemplateGTUType(type, new ConstantGenerator<>(Length.createSI(12.0)),
-              new ConstantGenerator<>(Length.createSI(2.55)),
-              new ConstantGenerator<>(new Speed(90, SpeedUnit.KM_PER_HOUR)));
-
-      // GTUType.VAN
-      template = new TemplateGTUType(type, new ConstantGenerator<>(Length.createSI(5.0)),
-              new ConstantGenerator<>(Length.createSI(2.4)),
-              new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
-
-      // EMERGENCY_VEHICLE
-      template = new TemplateGTUType(type, new ConstantGenerator<>(Length.createSI(5.0)),
-              new ConstantGenerator<>(Length.createSI(2.55)),
-              new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
- -->
-
-  <ots:GtuTemplate Id="CAR" GtuType="CAR" Default="true">
+  <ots:GtuTemplate Id="CAR" GtuType="NL.CAR" Default="true">
     <ots:LengthDist LengthUnit="m">
       <ots:Constant C="4.19" />
     </ots:LengthDist>
@@ -43,7 +14,7 @@
     </ots:MaxSpeedDist>
   </ots:GtuTemplate>
 
-  <ots:GtuTemplate Id="TRUCK" GtuType="TRUCK" Default="true">
+  <ots:GtuTemplate Id="TRUCK" GtuType="NL.TRUCK" Default="true">
     <ots:LengthDist LengthUnit="m">
       <ots:Constant C="12.0" />
     </ots:LengthDist>
@@ -55,7 +26,7 @@
     </ots:MaxSpeedDist>
   </ots:GtuTemplate>
 
-  <ots:GtuTemplate Id="BUS" GtuType="BUS" Default="true">
+  <ots:GtuTemplate Id="BUS" GtuType="NL.BUS" Default="true">
     <ots:LengthDist LengthUnit="m">
       <ots:Constant C="12.0" />
     </ots:LengthDist>
@@ -67,7 +38,7 @@
     </ots:MaxSpeedDist>
   </ots:GtuTemplate>
 
-  <ots:GtuTemplate Id="VAN" GtuType="VAN" Default="true">
+  <ots:GtuTemplate Id="VAN" GtuType="NL.VAN" Default="true">
     <ots:LengthDist LengthUnit="m">
       <ots:Constant C="5.0" />
     </ots:LengthDist>
@@ -79,7 +50,7 @@
     </ots:MaxSpeedDist>
   </ots:GtuTemplate>
 
-  <ots:GtuTemplate Id="EMERGENCY_VEHICLE" GtuType="EMERGENCY_VEHICLE" Default="true">
+  <ots:GtuTemplate Id="EMERGENCY_VEHICLE" GtuType="NL.EMERGENCY_VEHICLE" Default="true">
     <ots:LengthDist LengthUnit="m">
       <ots:Constant C="5.0" />
     </ots:LengthDist>

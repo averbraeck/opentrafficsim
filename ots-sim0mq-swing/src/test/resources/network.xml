@@ -46,7 +46,7 @@
 
     <LaneTypes>
       <LaneType Id="STREET">
-        <Compatibility GtuType="ROAD_USER" Direction="FORWARD" />
+        <Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
       </LaneType>
     </LaneTypes>
 
@@ -55,7 +55,7 @@
     </GTUTYPES>
 
     <GtuTemplates>
-      <GtuTemplate GtuType="CAR" Id="CARS">
+      <GtuTemplate GtuType="NL.CAR" Id="CARS">
         <LengthDist LengthUnit="m">
           <UNIFORM Min="4" Max="7" />
         </LengthDist>
@@ -66,7 +66,7 @@
           <CONSTANT C="120" />
         </MaxSpeedDist>
       </GtuTemplate>
-      <GtuTemplate GtuType="TRUCK" Id="TRUCKS">
+      <GtuTemplate GtuType="NL.TRUCK" Id="TRUCKS">
         <LengthDist LengthUnit="m">
           <UNIFORM Min="16" Max="24" />
         </LengthDist>
@@ -82,72 +82,72 @@
 
     <LinkTypes>
       <LinkType Id="STREET">
-        <Compatibility GtuType="ROAD_USER" Direction="FORWARD" />
+        <Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
       </LinkType>
     </LinkTypes>
 
     <RoadLayouts>
-      <RoadLayout Id="r1" LinkType="STREET">
+      <RoadLayout Id="r1" LinkType="NL.STREET">
         <SHOULDER>
           <WIDTH>2m</WIDTH>
         </SHOULDER>
         <STRIPE Type="SOLID">
         </STRIPE>
-        <LANE Id="FORWARD3" LaneType="STREET" DesignDirection="true">
+        <LANE Id="FORWARD3" LaneType="NL.STREET" DesignDirection="true">
           <WIDTH>3.3m</WIDTH>
-          <SPEEDLIMIT GtuType="CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
+          <SPEEDLIMIT GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
         </LANE>
         <STRIPE Type="DASHED">
         </STRIPE>
-        <LANE Id="FORWARD2" LaneType="STREET" DesignDirection="true">
+        <LANE Id="FORWARD2" LaneType="NL.STREET" DesignDirection="true">
           <CenterOffset>-6.2m</CenterOffset>
           <WIDTH>3.3m</WIDTH>
-          <SPEEDLIMIT GtuType="CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
+          <SPEEDLIMIT GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
         </LANE>
         <STRIPE Type="DASHED">
         </STRIPE>
-        <LANE Id="FORWARD1" LaneType="STREET" DesignDirection="true">
+        <LANE Id="FORWARD1" LaneType="NL.STREET" DesignDirection="true">
           <WIDTH>3.3m</WIDTH>
-          <SPEEDLIMIT GtuType="CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
+          <SPEEDLIMIT GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
         </LANE>
         <STRIPE Type="SOLID">
         </STRIPE>
       </RoadLayout>
 
-      <RoadLayout Id="r1g" LinkType="STREET">
+      <RoadLayout Id="r1g" LinkType="NL.STREET">
         <SHOULDER>
           <WIDTH>2m</WIDTH>
         </SHOULDER>
         <STRIPE Type="SOLID">
         </STRIPE>
-        <LANE Id="FORWARD3" LaneType="STREET" DesignDirection="true">
+        <LANE Id="FORWARD3" LaneType="NL.STREET" DesignDirection="true">
           <CenterOffsetStart>-6.2m</CenterOffsetStart>
           <CenterOffsetEnd>-9.5m</CenterOffsetEnd>
           <WIDTH>3.3m</WIDTH>
-          <SPEEDLIMIT GtuType="CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
+          <SPEEDLIMIT GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
         </LANE>
         <STRIPE Type="DASHED">
           <CenterOffset>-7.85m</CenterOffset>
         </STRIPE>
-        <LANE Id="FORWARD2" LaneType="STREET" DesignDirection="true">
+        <LANE Id="FORWARD2" LaneType="NL.STREET" DesignDirection="true">
           <CenterOffset>-6.2m</CenterOffset>
           <WIDTH>3.3m</WIDTH>
-          <SPEEDLIMIT GtuType="CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
+          <SPEEDLIMIT GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
         </LANE>
         <STRIPE Type="DASHED">
           <CenterOffset>-4.55m</CenterOffset>
         </STRIPE>
-        <LANE Id="FORWARD1" LaneType="STREET" DesignDirection="true">
+        <LANE Id="FORWARD1" LaneType="NL.STREET" DesignDirection="true">
           <CenterOffsetStart>-6.2m</CenterOffsetStart>
           <CenterOffsetEnd>-2.9m</CenterOffsetEnd>
           <WIDTH>3.3m</WIDTH>
-          <SPEEDLIMIT GtuType="CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
+          <SPEEDLIMIT GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
         </LANE>
         <STRIPE Type="SOLID">
         </STRIPE>
       </RoadLayout>
 
-      <RoadLayout Id="r2r" LinkType="STREET">
+      <RoadLayout Id="r2r" LinkType="NL.STREET">
         <SHOULDER>
           <CenterOffset>-8.8m</CenterOffset>
           <WIDTH>2m</WIDTH>
@@ -155,17 +155,17 @@
         <STRIPE Type="SOLID">
           <CenterOffset>-7.8m</CenterOffset>
         </STRIPE>
-        <LANE Id="FORWARD" LaneType="STREET" DesignDirection="true">
+        <LANE Id="FORWARD" LaneType="NL.STREET" DesignDirection="true">
           <CenterOffset>-6.2m</CenterOffset>
           <WIDTH>3.3m</WIDTH>
-          <SPEEDLIMIT GtuType="CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
+          <SPEEDLIMIT GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
         </LANE>
         <STRIPE Type="SOLID">
           <CenterOffset>-4.6m</CenterOffset>
         </STRIPE>
       </RoadLayout>
 
-      <RoadLayout Id="r2l" LinkType="STREET">
+      <RoadLayout Id="r2l" LinkType="NL.STREET">
         <SHOULDER>
           <CenterOffset>-8.8m</CenterOffset>
           <WIDTH>2m</WIDTH>
@@ -173,10 +173,10 @@
         <STRIPE Type="SOLID">
           <CenterOffset>-7.8m</CenterOffset>
         </STRIPE>
-        <LANE Id="FORWARD" LaneType="STREET" DesignDirection="true">
+        <LANE Id="FORWARD" LaneType="NL.STREET" DesignDirection="true">
           <CenterOffset>-6.2m</CenterOffset>
           <WIDTH>3.3m</WIDTH>
-          <SPEEDLIMIT GtuType="CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
+          <SPEEDLIMIT GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
         </LANE>
         <STRIPE Type="SOLID">
           <CenterOffset>-4.6m</CenterOffset>
@@ -184,29 +184,29 @@
         <!-- <NoTrafficLane> <CenterOffset>0m</CenterOffset> <WIDTH>2.5m</WIDTH> </NoTrafficLane> -->
       </RoadLayout>
 
-      <RoadLayout Id="r3" LinkType="STREET">
+      <RoadLayout Id="r3" LinkType="NL.STREET">
         <STRIPE Type="SOLID">
           <CenterOffset>-4.6m</CenterOffset>
         </STRIPE>
-        <LANE Id="FORWARD" LaneType="STREET" DesignDirection="true">
+        <LANE Id="FORWARD" LaneType="NL.STREET" DesignDirection="true">
           <CenterOffset>-6.2m</CenterOffset>
           <WIDTH>3.3m</WIDTH>
-          <SPEEDLIMIT GtuType="CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
+          <SPEEDLIMIT GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
         </LANE>
         <STRIPE Type="SOLID">
           <CenterOffset>-7.8m</CenterOffset>
         </STRIPE>
       </RoadLayout>
 
-      <RoadLayout Id="r4" LinkType="STREET">
+      <RoadLayout Id="r4" LinkType="NL.STREET">
         <!-- <NoTrafficLane> <CenterOffset>-2.3m</CenterOffset> <WIDTH>4.6m</WIDTH> </NoTrafficLane> -->
         <STRIPE Type="SOLID">
           <CenterOffset>-4.6m</CenterOffset>
         </STRIPE>
-        <LANE Id="FORWARD" LaneType="STREET" DesignDirection="true">
+        <LANE Id="FORWARD" LaneType="NL.STREET" DesignDirection="true">
           <CenterOffset>-6.2m</CenterOffset>
           <WIDTH>3.3m</WIDTH>
-          <SPEEDLIMIT GtuType="CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
+          <SPEEDLIMIT GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></SPEEDLIMIT>
         </LANE>
         <STRIPE Type="SOLID">
           <CenterOffset>-7.8m</CenterOffset>
@@ -244,17 +244,17 @@
     <NODE Id="SCO" Coordinate="(0,-20)" Direction="270 deg(E)" />
     <NODE Id="WCO" Coordinate="(-20,0)" Direction="180 deg(E)" />
 
-    <LINK Id="NN1" NodeStart="N" NodeEnd="N1" Type="STREET">
+    <LINK Id="NN1" NodeStart="N" NodeEnd="N1" Type="NL.STREET">
       <Straight />
       <DefinedLayout>r2l</DefinedLayout>
     </LINK>
 
-    <LINK Id="N1N2" NodeStart="N1" NodeEnd="N2" Type="STREET">
+    <LINK Id="N1N2" NodeStart="N1" NodeEnd="N2" Type="NL.STREET">
       <Straight />
       <DefinedLayout>r1g</DefinedLayout>
     </LINK>
 
-    <LINK Id="N2NC" NodeStart="N2" NodeEnd="NC" Type="STREET">
+    <LINK Id="N2NC" NodeStart="N2" NodeEnd="NC" Type="NL.STREET">
       <Straight />
       <DefinedLayout>r1</DefinedLayout>
       <TRAFFICLIGHT Lane="FORWARD3"
@@ -265,17 +265,17 @@
         Class="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" Id="12" Position="END-0.00m" />
     </LINK>
 
-    <LINK Id="EE1" NodeStart="E" NodeEnd="E1" Type="STREET">
+    <LINK Id="EE1" NodeStart="E" NodeEnd="E1" Type="NL.STREET">
       <Straight />
       <DefinedLayout>r2l</DefinedLayout>
     </LINK>
 
-    <LINK Id="E1E2" NodeStart="E1" NodeEnd="E2" Type="STREET">
+    <LINK Id="E1E2" NodeStart="E1" NodeEnd="E2" Type="NL.STREET">
       <Straight />
       <DefinedLayout>r1g</DefinedLayout>
     </LINK>
 
-    <LINK Id="E2EC" NodeStart="E2" NodeEnd="EC" Type="STREET">
+    <LINK Id="E2EC" NodeStart="E2" NodeEnd="EC" Type="NL.STREET">
       <Straight />
       <DefinedLayout>r1</DefinedLayout>
       <TRAFFICLIGHT Lane="FORWARD3"
@@ -286,17 +286,17 @@
         Class="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" Id="03" Position="END-0.00m" />
     </LINK>
 
-    <LINK Id="SS1" NodeStart="S" NodeEnd="S1" Type="STREET">
+    <LINK Id="SS1" NodeStart="S" NodeEnd="S1" Type="NL.STREET">
       <Straight />
       <DefinedLayout>r2l</DefinedLayout>
     </LINK>
 
-    <LINK Id="S1S2" NodeStart="S1" NodeEnd="S2" Type="STREET">
+    <LINK Id="S1S2" NodeStart="S1" NodeEnd="S2" Type="NL.STREET">
       <Straight />
       <DefinedLayout>r1g</DefinedLayout>
     </LINK>
 
-    <LINK Id="S2SC" NodeStart="S2" NodeEnd="SC" Type="STREET">
+    <LINK Id="S2SC" NodeStart="S2" NodeEnd="SC" Type="NL.STREET">
       <Straight />
       <DefinedLayout>r1</DefinedLayout>
       <TRAFFICLIGHT Lane="FORWARD3"
@@ -307,17 +307,17 @@
         Class="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" Id="06" Position="END-0.00m" />
     </LINK>
 
-    <LINK Id="WW1" NodeStart="W" NodeEnd="W1" Type="STREET">
+    <LINK Id="WW1" NodeStart="W" NodeEnd="W1" Type="NL.STREET">
       <Straight />
       <DefinedLayout>r2l</DefinedLayout>
     </LINK>
 
-    <LINK Id="W1W2" NodeStart="W1" NodeEnd="W2" Type="STREET">
+    <LINK Id="W1W2" NodeStart="W1" NodeEnd="W2" Type="NL.STREET">
       <Straight />
       <DefinedLayout>r1g</DefinedLayout>
     </LINK>
 
-    <LINK Id="W2WC" NodeStart="W2" NodeEnd="WC" Type="STREET">
+    <LINK Id="W2WC" NodeStart="W2" NodeEnd="WC" Type="NL.STREET">
       <Straight />
       <DefinedLayout>r1</DefinedLayout>
       <TRAFFICLIGHT Lane="FORWARD3"
@@ -328,82 +328,82 @@
         Class="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" Id="09" Position="END-0.00m" />
     </LINK>
 
-    <LINK Id="ECNC" NodeStart="EC" NodeEnd="NCO" Type="STREET" OffsetStart="-3.3m" OffsetEnd="0m">
+    <LINK Id="ECNC" NodeStart="EC" NodeEnd="NCO" Type="NL.STREET" OffsetStart="-3.3m" OffsetEnd="0m">
       <BEZIER SHAPE="0.5" />
       <DefinedLayout>r2r</DefinedLayout>
     </LINK>
 
-    <LINK Id="ECSC" NodeStart="EC" NodeEnd="SCO" Type="STREET" OffsetStart="3.3m" OffsetEnd="0m">
+    <LINK Id="ECSC" NodeStart="EC" NodeEnd="SCO" Type="NL.STREET" OffsetStart="3.3m" OffsetEnd="0m">
       <BEZIER SHAPE="1.0" />
       <DefinedLayout>r2l</DefinedLayout>
     </LINK>
 
-    <LINK Id="NCWC" NodeStart="NC" NodeEnd="WCO" Type="STREET" OffsetStart="-3.3m" OffsetEnd="0m">
+    <LINK Id="NCWC" NodeStart="NC" NodeEnd="WCO" Type="NL.STREET" OffsetStart="-3.3m" OffsetEnd="0m">
       <BEZIER SHAPE="0.5" />
       <DefinedLayout>r2r</DefinedLayout>
     </LINK>
 
-    <LINK Id="NCEC" NodeStart="NC" NodeEnd="ECO" Type="STREET" OffsetStart="3.3m" OffsetEnd="0m">
+    <LINK Id="NCEC" NodeStart="NC" NodeEnd="ECO" Type="NL.STREET" OffsetStart="3.3m" OffsetEnd="0m">
       <BEZIER SHAPE="1.0" />
       <DefinedLayout>r2l</DefinedLayout>
     </LINK>
 
-    <LINK Id="WCSC" NodeStart="WC" NodeEnd="SCO" Type="STREET" OffsetStart="-3.3m" OffsetEnd="0m">
+    <LINK Id="WCSC" NodeStart="WC" NodeEnd="SCO" Type="NL.STREET" OffsetStart="-3.3m" OffsetEnd="0m">
       <BEZIER SHAPE="0.5" />
       <DefinedLayout>r2l</DefinedLayout>
     </LINK>
 
-    <LINK Id="WCNC" NodeStart="WC" NodeEnd="NCO" Type="STREET" OffsetStart="3.3m" OffsetEnd="0m">
+    <LINK Id="WCNC" NodeStart="WC" NodeEnd="NCO" Type="NL.STREET" OffsetStart="3.3m" OffsetEnd="0m">
       <BEZIER SHAPE="1.0" />
       <DefinedLayout>r2l</DefinedLayout>
     </LINK>
 
-    <LINK Id="SCEC" NodeStart="SC" NodeEnd="ECO" Type="STREET" OffsetStart="-3.3m" OffsetEnd="0m">
+    <LINK Id="SCEC" NodeStart="SC" NodeEnd="ECO" Type="NL.STREET" OffsetStart="-3.3m" OffsetEnd="0m">
       <BEZIER SHAPE="0.5" />
       <DefinedLayout>r2l</DefinedLayout>
     </LINK>
 
-    <LINK Id="SCWC" NodeStart="SC" NodeEnd="WCO" Type="STREET" OffsetStart="3.3m" OffsetEnd="0m">
+    <LINK Id="SCWC" NodeStart="SC" NodeEnd="WCO" Type="NL.STREET" OffsetStart="3.3m" OffsetEnd="0m">
       <BEZIER SHAPE="1.0" />
       <DefinedLayout>r2l</DefinedLayout>
     </LINK>
 
-    <LINK Id="NCSC" NodeStart="NC" NodeEnd="SCO" Type="STREET">
+    <LINK Id="NCSC" NodeStart="NC" NodeEnd="SCO" Type="NL.STREET">
       <Straight />
       <DefinedLayout>r3</DefinedLayout>
     </LINK>
 
-    <LINK Id="WCEC" NodeStart="WC" NodeEnd="ECO" Type="STREET">
+    <LINK Id="WCEC" NodeStart="WC" NodeEnd="ECO" Type="NL.STREET">
       <Straight />
       <DefinedLayout>r3</DefinedLayout>
     </LINK>
 
-    <LINK Id="SCNC" NodeStart="SC" NodeEnd="NCO" Type="STREET">
+    <LINK Id="SCNC" NodeStart="SC" NodeEnd="NCO" Type="NL.STREET">
       <Straight />
       <DefinedLayout>r3</DefinedLayout>
     </LINK>
 
-    <LINK Id="ECWC" NodeStart="EC" NodeEnd="WCO" Type="STREET">
+    <LINK Id="ECWC" NodeStart="EC" NodeEnd="WCO" Type="NL.STREET">
       <Straight />
       <DefinedLayout>r3</DefinedLayout>
     </LINK>
 
-    <LINK Id="ECOEO" NodeStart="ECO" NodeEnd="EO" Type="STREET">
+    <LINK Id="ECOEO" NodeStart="ECO" NodeEnd="EO" Type="NL.STREET">
       <Straight />
       <DefinedLayout>r4</DefinedLayout>
     </LINK>
 
-    <LINK Id="NCONO" NodeStart="NCO" NodeEnd="NO" Type="STREET">
+    <LINK Id="NCONO" NodeStart="NCO" NodeEnd="NO" Type="NL.STREET">
       <Straight />
       <DefinedLayout>r4</DefinedLayout>
     </LINK>
 
-    <LINK Id="WCOWO" NodeStart="WCO" NodeEnd="WO" Type="STREET">
+    <LINK Id="WCOWO" NodeStart="WCO" NodeEnd="WO" Type="NL.STREET">
       <Straight />
       <DefinedLayout>r4</DefinedLayout>
     </LINK>
 
-    <LINK Id="SCOSO" NodeStart="SCO" NodeEnd="SO" Type="STREET">
+    <LINK Id="SCOSO" NodeStart="SCO" NodeEnd="SO" Type="NL.STREET">
       <Straight />
       <DefinedLayout>r4</DefinedLayout>
     </LINK>
@@ -411,8 +411,8 @@
   </Network>
   <Demand>
     <OD Id="Traffic Demand" GlobalInterpolation="STEPWISE" GlobalFactor="1.000">
-      <CATEGORY GtuType="CAR" Id="CAR" />
-      <CATEGORY GtuType="TRUCK" Id="TRUCK" />
+      <CATEGORY GtuType="NL.CAR" Id="CAR" />
+      <CATEGORY GtuType="NL.TRUCK" Id="TRUCK" />
       <DEMAND Category="CAR" Origin="W" Destination="NO">
         <LEVEL TIME="0s">200.00veh/h</LEVEL>
         <LEVEL TIME="3600s">200.00veh/h</LEVEL>

@@ -134,19 +134,9 @@ public final class DefinitionsParser
                 LinkType linkType;
                 if (linkTag.isDefault())
                 {
-                    // TODO: remove if-statement (keep else-part) once the xml standard has been updated
-                    if (linkTag.getId().equals("NONE"))
-                    {
-                        linkType = DefaultsNl.NONE_LINK;
-                    }
-                    else
-                    {
-                        // TODO: remove addition of "NL." once the xml standard has been updated
-                        String id = linkTag.getId().contains(".") ? linkTag.getId() : "NL." + linkTag.getId();
-                        linkType = Defaults.getByName(LinkType.class, id);
-                        Throw.when(linkType == null, XmlParserException.class, "LinkType %s could not be found as default.",
-                                linkTag.getId());
-                    }
+                    linkType = Defaults.getByName(LinkType.class, linkTag.getId());
+                    Throw.when(linkType == null, XmlParserException.class, "LinkType %s could not be found as default.",
+                            linkTag.getId());
                 }
                 else if (linkTag.getParent() != null)
                 {

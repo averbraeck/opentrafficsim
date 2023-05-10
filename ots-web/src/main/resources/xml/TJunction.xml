@@ -21,7 +21,7 @@
     </xi:include>
 
     <GtuTemplates>
-      <GtuTemplate Default="true" GtuType="CAR" Id="CAR">
+      <GtuTemplate Default="true" GtuType="NL.CAR" Id="CAR">
         <LengthDist LengthUnit="m">
           <UNIFORM Min="3.0" Max="4.0" />
         </LengthDist>
@@ -36,14 +36,14 @@
 
     <LinkTypes>
       <LinkType Id="URBAN">
-        <Compatibility GtuType="VEHICLE" Direction="FORWARD" />
-        <SPEEDLIMIT GtuType="CAR" LegalSpeedLimit="50km/h" />
+        <Compatibility GtuType="NL.VEHICLE" Direction="FORWARD" />
+        <SPEEDLIMIT GtuType="NL.CAR" LegalSpeedLimit="50km/h" />
       </LinkType>
     </LinkTypes>
 
     <LaneTypes>
       <LaneType Id="URBAN">
-        <Compatibility GtuType="VEHICLE" Direction="FORWARD" />
+        <Compatibility GtuType="NL.VEHICLE" Direction="FORWARD" />
       </LaneType>
     </LaneTypes>
 
@@ -203,53 +203,53 @@
 
   <Demand>
 
-    <ShortestRoute Id="EW" GtuType="CAR">
+    <ShortestRoute Id="EW" GtuType="NL.CAR">
       <FROM NODE="TRE" />
       <TO NODE="TRW" />
       <DISTANCECOST>1/m</DISTANCECOST>
     </ShortestRoute>
 
-    <ShortestRoute Id="WE" GtuType="CAR">
+    <ShortestRoute Id="WE" GtuType="NL.CAR">
       <FROM NODE="BLW" />
       <TO NODE="BLE" />
       <DISTANCECOST>1/m</DISTANCECOST>
     </ShortestRoute>
 
-    <ShortestRoute Id="WS" GtuType="CAR">
+    <ShortestRoute Id="WS" GtuType="NL.CAR">
       <FROM NODE="BLW" />
       <TO NODE="BLS" />
       <DISTANCECOST>1/m</DISTANCECOST>
     </ShortestRoute>
 
-    <ShortestRoute Id="SW" GtuType="CAR">
+    <ShortestRoute Id="SW" GtuType="NL.CAR">
       <FROM NODE="TRS" />
       <TO NODE="TRW" />
       <DISTANCECOST>1/m</DISTANCECOST>
     </ShortestRoute>
 
-    <ShortestRoute Id="ES" GtuType="CAR">
+    <ShortestRoute Id="ES" GtuType="NL.CAR">
       <FROM NODE="TRE" />
       <TO NODE="BLS" />
       <DISTANCECOST>1/m</DISTANCECOST>
     </ShortestRoute>
 
-    <ShortestRoute Id="SE" GtuType="CAR">
+    <ShortestRoute Id="SE" GtuType="NL.CAR">
       <FROM NODE="TRS" />
       <TO NODE="BLE" />
       <DISTANCECOST>1/m</DISTANCECOST>
     </ShortestRoute>
 
-    <ShortestRouteMix Id="E" GtuType="CAR">
+    <ShortestRouteMix Id="E" GtuType="NL.CAR">
       <ShortestRoute Weight="0.4" Id="EW" />
       <ShortestRoute Weight="0.6" Id="ES" />
     </ShortestRouteMix>
 
-    <ShortestRouteMix Id="W" GtuType="CAR">
+    <ShortestRouteMix Id="W" GtuType="NL.CAR">
       <ShortestRoute Weight="0.8" Id="WE" />
       <ShortestRoute Weight="0.2" Id="WS" />
     </ShortestRouteMix>
 
-    <ShortestRouteMix Id="S" GtuType="CAR">
+    <ShortestRouteMix Id="S" GtuType="NL.CAR">
       <ShortestRoute Weight="0.5" Id="SW" />
       <ShortestRoute Weight="0.5" Id="SE" />
     </ShortestRouteMix>

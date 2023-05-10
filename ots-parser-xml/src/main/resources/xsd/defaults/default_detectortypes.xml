@@ -2,16 +2,16 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
   xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions.xsd">
 
-	<ots:DetectorType Id="ROAD_USERS" Default="true">
-	  <ots:Compatibility GtuType="ROAD_USER" Direction="FORWARD" />
+	<ots:DetectorType Id="NL.ROAD_USERS" Default="true">
+	  <ots:Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
 	</ots:DetectorType>
-	<ots:DetectorType Id="VEHICLES" Default="true">
-	  <ots:Compatibility GtuType="VEHICLE" Direction="FORWARD" />
+	<ots:DetectorType Id="NL.VEHICLES" Default="true">
+	  <ots:Compatibility GtuType="NL.VEHICLE" Direction="FORWARD" />
 	</ots:DetectorType>
 
-	<ots:DetectorType Id="LOOP_DETECTOR" Parent="VEHICLES" Default="true" />
-	<ots:DetectorType Id="TRAFFIC_LIGHT" Parent="LOOP_DETECTOR" Default="true">
-	  <ots:Compatibility GtuType="BICYCLE" Direction="FORWARD" />
+	<ots:DetectorType Id="NL.LOOP_DETECTOR" Parent="NL.VEHICLES" Default="true" />
+	<ots:DetectorType Id="NL.TRAFFIC_LIGHT" Parent="NL.LOOP_DETECTOR" Default="true">
+	  <ots:Compatibility GtuType="NL.BICYCLE" Direction="FORWARD" />
 	</ots:DetectorType>
 
 </ots:DetectorTypes>

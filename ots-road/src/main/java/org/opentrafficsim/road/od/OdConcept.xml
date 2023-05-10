@@ -20,7 +20,7 @@
   <!-- LANE: full id (linkid.laneid) of lane [optional*] -->
   <!-- * at least one of these three needs to be given, all categories need the same specified -->
   <!-- FACTOR: factor of demand for category, e.g. to use 10% trucks overall [optional] -->
-  <CATEGORY NAME="CAR" GtuType="CAR" ROUTE="AB" FACTOR="85%" />
+  <CATEGORY NAME="CAR" GtuType="NL.CAR" ROUTE="AB" FACTOR="85%" />
 
   <!-- DEMAND: defines demand for one option in the OD -->
   <!-- ORIGIN: id of origin node [required] -->

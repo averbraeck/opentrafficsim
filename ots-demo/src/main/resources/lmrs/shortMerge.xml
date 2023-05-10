@@ -29,14 +29,14 @@
 
     <ots:LinkTypes>
       <ots:LinkType Id="HIGHWAY">
-        <ots:Compatibility GtuType="VEHICLE" Direction="FORWARD" />
-        <ots:SpeedLimit GtuType="CAR" LegalSpeedLimit="120km/h" />
-        <ots:SpeedLimit GtuType="TRUCK" LegalSpeedLimit="90km/h" />
+        <ots:Compatibility GtuType="NL.VEHICLE" Direction="FORWARD" />
+        <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="120km/h" />
+        <ots:SpeedLimit GtuType="NL.TRUCK" LegalSpeedLimit="90km/h" />
       </ots:LinkType>
       <ots:LinkType Id="LOCAL">
-        <ots:Compatibility GtuType="VEHICLE" Direction="FORWARD" />
-        <ots:SpeedLimit GtuType="CAR" LegalSpeedLimit="20km/h" />
-        <ots:SpeedLimit GtuType="TRUCK" LegalSpeedLimit="20km/h" />
+        <ots:Compatibility GtuType="NL.VEHICLE" Direction="FORWARD" />
+        <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="20km/h" />
+        <ots:SpeedLimit GtuType="NL.TRUCK" LegalSpeedLimit="20km/h" />
       </ots:LinkType>
     </ots:LinkTypes>
 
@@ -51,7 +51,7 @@
           <ots:CenterOffset>10.8m</ots:CenterOffset>
           <ots:DrawingWidth>20cm</ots:DrawingWidth>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD1" DesignDirection="true" LaneType="HIGHWAY">
+        <ots:Lane Id="FORWARD1" DesignDirection="true" LaneType="NL.HIGHWAY">
           <ots:CenterOffset>9.0m</ots:CenterOffset>
           <ots:Width>3.6m</ots:Width>
         </ots:Lane>
@@ -59,7 +59,7 @@
           <ots:CenterOffset>7.2m</ots:CenterOffset>
           <ots:DrawingWidth>20cm</ots:DrawingWidth>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD2" DesignDirection="true" LaneType="HIGHWAY">
+        <ots:Lane Id="FORWARD2" DesignDirection="true" LaneType="NL.HIGHWAY">
           <ots:CenterOffset>5.4m</ots:CenterOffset>
           <ots:Width>3.6m</ots:Width>
         </ots:Lane>
@@ -67,7 +67,7 @@
           <ots:CenterOffset>3.6m</ots:CenterOffset>
           <ots:DrawingWidth>20cm</ots:DrawingWidth>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD3" DesignDirection="true" LaneType="HIGHWAY">
+        <ots:Lane Id="FORWARD3" DesignDirection="true" LaneType="NL.HIGHWAY">
           <ots:CenterOffset>1.8m</ots:CenterOffset>
           <ots:Width>3.6m</ots:Width>
         </ots:Lane>
@@ -90,7 +90,7 @@
           <ots:CenterOffset>7.2m</ots:CenterOffset>
           <ots:DrawingWidth>20cm</ots:DrawingWidth>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD1" DesignDirection="true" LaneType="HIGHWAY">
+        <ots:Lane Id="FORWARD1" DesignDirection="true" LaneType="NL.HIGHWAY">
           <ots:CenterOffset>5.4m</ots:CenterOffset>
           <ots:Width>3.6m</ots:Width>
         </ots:Lane>
@@ -98,7 +98,7 @@
           <ots:CenterOffset>3.6m</ots:CenterOffset>
           <ots:DrawingWidth>20cm</ots:DrawingWidth>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD2" DesignDirection="true" LaneType="HIGHWAY">
+        <ots:Lane Id="FORWARD2" DesignDirection="true" LaneType="NL.HIGHWAY">
           <ots:CenterOffset>1.8m</ots:CenterOffset>
           <ots:Width>3.6m</ots:Width>
         </ots:Lane>
@@ -121,7 +121,7 @@
           <ots:CenterOffset>3.6m</ots:CenterOffset>
           <ots:DrawingWidth>20cm</ots:DrawingWidth>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD1" DesignDirection="true" LaneType="HIGHWAY">
+        <ots:Lane Id="FORWARD1" DesignDirection="true" LaneType="NL.HIGHWAY">
           <ots:CenterOffset>1.8m</ots:CenterOffset>
           <ots:Width>3.6m</ots:Width>
         </ots:Lane>
@@ -144,7 +144,7 @@
           <ots:CenterOffset>3.6m</ots:CenterOffset>
           <ots:DrawingWidth>20cm</ots:DrawingWidth>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD1" DesignDirection="true" LaneType="HIGHWAY">
+        <ots:Lane Id="FORWARD1" DesignDirection="true" LaneType="NL.HIGHWAY">
           <ots:CenterOffset>1.8m</ots:CenterOffset>
           <ots:Width>3.6m</ots:Width>
         </ots:Lane>
@@ -203,8 +203,8 @@
   </ots:Network>
 
   <ots:Demand>
-    <ots:Sink Type="ROAD_USERS" Link="DE" Lane="FORWARD1" Direction="DIR_PLUS" Position="END-50m" />
-    <ots:Sink Type="ROAD_USERS" Link="DE" Lane="FORWARD2" Direction="DIR_PLUS" Position="END-50m" />
+    <ots:Sink Type="NL.ROAD_USERS" Link="DE" Lane="FORWARD1" Direction="DIR_PLUS" Position="END-50m" />
+    <ots:Sink Type="NL.ROAD_USERS" Link="DE" Lane="FORWARD2" Direction="DIR_PLUS" Position="END-50m" />
   </ots:Demand>
 
   <ots:Scenario></ots:Scenario>

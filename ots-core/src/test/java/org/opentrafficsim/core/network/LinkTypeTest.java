@@ -57,13 +57,10 @@ public class LinkTypeTest
         assertTrue("toString returns something with the name in it", waterwayType.toString().contains("Waterway"));
         assertFalse("waterwayType is not equal to null", waterwayType.equals(null));
         assertFalse("waterwayType is not equal to some String", waterwayType.equals("Hello world!"));
-        LinkType lava = DefaultsNl.NONE_LINK;
-        assertFalse("waterwayType is not equal to lava", waterwayType.equals(lava));
 
         // Try to create another waterwayType
         LinkType waterWayType2 = new LinkType("Waterway", null);
         assertTrue("waterwayType2 is equal to the first", waterwayType.equals(waterWayType2));
-        assertFalse("road is not of type NONE", roadLinkType.isOfType(DefaultsNl.NONE_LINK));
 
         LinkType poorSurfaceLinkType = new LinkType("PoorSurfaceType", DefaultsNl.ROAD);
         poorSurfaceLinkType.addCompatibleGtuType(DefaultsNl.CAR);

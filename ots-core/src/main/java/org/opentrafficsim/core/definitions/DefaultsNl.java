@@ -34,8 +34,6 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 public final class DefaultsNl extends Defaults implements BiFunction<GtuType, StreamInterface, GtuTemplate>
 {
 
-    // TODO: prepend all type id's with "NL."
-
     /**
      * Constructor setting locale nl_NL.
      */
@@ -48,54 +46,50 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
     /***************************************** GTU *****************************************/
     /***************************************************************************************/
 
-    /** This is here only because it is in the file default_gtutypes.xml as a default, i.e the parser needs to find it. */
-    @Deprecated
-    public static final GtuType NONE = new GtuType("NONE");
-
     /** Super type for all road users. */
-    public static final GtuType ROAD_USER = new GtuType("ROAD_USER");
+    public static final GtuType ROAD_USER = new GtuType("NL.ROAD_USER");
 
     /** Super type for all water way users. */
-    public static final GtuType WATERWAY_USER = new GtuType("WATERWAY_USER");
+    public static final GtuType WATERWAY_USER = new GtuType("NL.WATERWAY_USER");
 
     /** Super type for all rail users. */
-    public static final GtuType RAILWAY_USER = new GtuType("RAILWAY_USER");
+    public static final GtuType RAILWAY_USER = new GtuType("NL.RAILWAY_USER");
 
     /** Super type for pedestrians. */
-    public static final GtuType PEDESTRIAN = new GtuType("PEDESTRIAN", ROAD_USER);
+    public static final GtuType PEDESTRIAN = new GtuType("NL.PEDESTRIAN", ROAD_USER);
 
     /** Super type for bicycle. */
-    public static final GtuType BICYCLE = new GtuType("BICYCLE", ROAD_USER);
+    public static final GtuType BICYCLE = new GtuType("NL.BICYCLE", ROAD_USER);
 
     /** Super type for mopeds. */
-    public static final GtuType MOPED = new GtuType("MOPED", BICYCLE);
+    public static final GtuType MOPED = new GtuType("NL.MOPED", BICYCLE);
 
     /** Super type for vehicles. */
-    public static final GtuType VEHICLE = new GtuType("VEHICLE", ROAD_USER);
+    public static final GtuType VEHICLE = new GtuType("NL.VEHICLE", ROAD_USER);
 
     /** Super type for emergency vehicles. */
-    public static final GtuType EMERGENCY_VEHICLE = new GtuType("EMERGENCY_VEHICLE", VEHICLE);
+    public static final GtuType EMERGENCY_VEHICLE = new GtuType("NL.EMERGENCY_VEHICLE", VEHICLE);
 
     /** Super type for ships. */
-    public static final GtuType SHIP = new GtuType("SHIP", WATERWAY_USER);
+    public static final GtuType SHIP = new GtuType("NL.SHIP", WATERWAY_USER);
 
     /** Super type for trains. */
-    public static final GtuType TRAIN = new GtuType("TRAIN", RAILWAY_USER);
+    public static final GtuType TRAIN = new GtuType("NL.TRAIN", RAILWAY_USER);
 
     /** Super type for cars. */
-    public static final GtuType CAR = new GtuType("CAR", VEHICLE);
+    public static final GtuType CAR = new GtuType("NL.CAR", VEHICLE);
 
     /** Super type for vans. */
-    public static final GtuType VAN = new GtuType("VAN", VEHICLE);
+    public static final GtuType VAN = new GtuType("NL.VAN", VEHICLE);
 
     /** Super type for busses. */
-    public static final GtuType BUS = new GtuType("BUS", VEHICLE);
+    public static final GtuType BUS = new GtuType("NL.BUS", VEHICLE);
 
     /** Super type for trucks. */
-    public static final GtuType TRUCK = new GtuType("TRUCK", VEHICLE);
+    public static final GtuType TRUCK = new GtuType("NL.TRUCK", VEHICLE);
 
     /** Super type for scheduled busses. */
-    public static final GtuType SCHEDULED_BUS = new GtuType("SCHEDULED_BUS", BUS);
+    public static final GtuType SCHEDULED_BUS = new GtuType("NL.SCHEDULED_BUS", BUS);
 
     /** Standard drawing colors for GTU types. */
     public static final ImmutableMap<GtuType, Color> GTU_TYPE_COLORS;
@@ -167,43 +161,41 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
     /**************************************** LINK *****************************************/
     /***************************************************************************************/
 
-    /** This is here only because it is in the file default_linktypes.xml as a default, i.e the parser needs to find it. */
-    @Deprecated
-    public static final LinkType NONE_LINK = new LinkType("NONE");
-
-    /** This is here only because it is in the file default_linktypes.xml as a default, i.e the parser needs to find it. */
-    @Deprecated
-    public static final LinkType CONNECTOR = new LinkType("CONNECTOR");
-
+    /** Connector type. */
+    public static final LinkType CONNECTOR = new LinkType("NL.CONNECTOR");
+    
     /** Super type for all roads. */
-    public static final LinkType ROAD = new LinkType("ROAD");
+    public static final LinkType ROAD = new LinkType("NL.ROAD");
 
     /** Freeway (snelweg, 130km/h). */
-    public static final LinkType FREEWAY = new LinkType("FREEWAY", ROAD);
+    public static final LinkType FREEWAY = new LinkType("NL.FREEWAY", ROAD);
 
     /** Highway (autoweg, 100km/h). */
-    public static final LinkType HIGHWAY = new LinkType("HIGHWAY", ROAD);
+    public static final LinkType HIGHWAY = new LinkType("NL.HIGHWAY", ROAD);
 
     /** Provincial (provinciaalse weg / N-weg, 80km/h). */
-    public static final LinkType PROVINCIAL = new LinkType("PROVINCIAL", ROAD);
+    public static final LinkType PROVINCIAL = new LinkType("NL.PROVINCIAL", ROAD);
 
     /** Rural (landelijk, 60km/h). */
-    public static final LinkType RURAL = new LinkType("RURAL", ROAD);
+    public static final LinkType RURAL = new LinkType("NL.RURAL", ROAD);
 
     /** Urban (stedelijk, 50km/h). */
-    public static final LinkType URBAN = new LinkType("URBAN", ROAD);
+    public static final LinkType URBAN = new LinkType("NL.URBAN", ROAD);
 
     /** Residential (buurtweg, 30km/h). */
-    public static final LinkType RESIDENTIAL = new LinkType("RESIDENTIAL", ROAD);
+    public static final LinkType RESIDENTIAL = new LinkType("NL.RESIDENTIAL", ROAD);
 
     /** Waterway. */
-    public static final LinkType WATERWAY = new LinkType("WATERWAY");
+    public static final LinkType WATERWAY = new LinkType("NL.WATERWAY");
 
     /** Railway. */
-    public static final LinkType RAILWAY = new LinkType("RAILWAY");
+    public static final LinkType RAILWAY = new LinkType("NL.RAILWAY");
 
     static
     {
+        CONNECTOR.addCompatibleGtuType(ROAD_USER);
+        CONNECTOR.addCompatibleGtuType(WATERWAY_USER);
+        CONNECTOR.addCompatibleGtuType(RAILWAY_USER);
         ROAD.addCompatibleGtuType(ROAD_USER);
         FREEWAY.addIncompatibleGtuType(PEDESTRIAN);
         FREEWAY.addIncompatibleGtuType(BICYCLE);

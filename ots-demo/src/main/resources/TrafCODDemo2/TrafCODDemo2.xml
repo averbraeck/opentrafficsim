@@ -34,7 +34,7 @@
 
     <ots:LaneTypes>
       <ots:LaneType Id="STREET">
-        <ots:Compatibility GtuType="ROAD_USER" Direction="FORWARD" />
+        <ots:Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
       </ots:LaneType>
     </ots:LaneTypes>
 
@@ -43,7 +43,7 @@
     </ots:GtuTypes>
 
     <ots:GtuTemplates>
-      <ots:GtuTemplate GtuType="CAR" Id="CARS">
+      <ots:GtuTemplate GtuType="NL.CAR" Id="CARS">
         <ots:LengthDist LengthUnit="m">
           <ots:Uniform Min="4" Max="7" />
         </ots:LengthDist>
@@ -54,7 +54,7 @@
           <ots:Constant C="120" />
         </ots:MaxSpeedDist>
       </ots:GtuTemplate>
-      <ots:GtuTemplate GtuType="TRUCK" Id="TRUCKS">
+      <ots:GtuTemplate GtuType="NL.TRUCK" Id="TRUCKS">
         <ots:LengthDist LengthUnit="m">
           <ots:Uniform Min="16" Max="24" />
         </ots:LengthDist>
@@ -70,7 +70,7 @@
 
     <ots:LinkTypes>
       <ots:LinkType Id="STREET">
-        <ots:Compatibility GtuType="ROAD_USER" Direction="FORWARD" />
+        <ots:Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
       </ots:LinkType>
     </ots:LinkTypes>
 
@@ -83,20 +83,20 @@
         </ots:Stripe>
         <ots:Lane Id="FORWARD3" LaneType="STREET" DesignDirection="true">
           <ots:Width>3.3m</ots:Width>
-          <ots:SpeedLimit GtuType="CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
+          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
         <ots:Stripe Type="DASHED">
         </ots:Stripe>
         <ots:Lane Id="FORWARD2" LaneType="STREET" DesignDirection="true">
           <ots:CenterOffset>-6.2m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
-          <ots:SpeedLimit GtuType="CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
+          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
         <ots:Stripe Type="DASHED">
         </ots:Stripe>
         <ots:Lane Id="FORWARD1" LaneType="STREET" DesignDirection="true">
           <ots:Width>3.3m</ots:Width>
-          <ots:SpeedLimit GtuType="CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
+          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
         <ots:Stripe Type="SOLID">
         </ots:Stripe>
@@ -112,7 +112,7 @@
           <ots:CenterOffsetStart>-6.2m</ots:CenterOffsetStart>
           <ots:CenterOffsetEnd>-9.5m</ots:CenterOffsetEnd>
           <ots:Width>3.3m</ots:Width>
-          <ots:SpeedLimit GtuType="CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
+          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
         <ots:Stripe Type="DASHED">
           <ots:CenterOffset>-7.85m</ots:CenterOffset>
@@ -120,7 +120,7 @@
         <ots:Lane Id="FORWARD2" LaneType="STREET" DesignDirection="true">
           <ots:CenterOffset>-6.2m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
-          <ots:SpeedLimit GtuType="CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
+          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
         <ots:Stripe Type="DASHED">
           <ots:CenterOffset>-4.55m</ots:CenterOffset>
@@ -129,7 +129,7 @@
           <ots:CenterOffsetStart>-6.2m</ots:CenterOffsetStart>
           <ots:CenterOffsetEnd>-2.9m</ots:CenterOffsetEnd>
           <ots:Width>3.3m</ots:Width>
-          <ots:SpeedLimit GtuType="CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
+          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
         <ots:Stripe Type="SOLID">
         </ots:Stripe>
@@ -146,7 +146,7 @@
         <ots:Lane Id="FORWARD" LaneType="STREET" DesignDirection="true">
           <ots:CenterOffset>-6.2m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
-          <ots:SpeedLimit GtuType="CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
+          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>-4.6m</ots:CenterOffset>
@@ -164,7 +164,7 @@
         <ots:Lane Id="FORWARD" LaneType="STREET" DesignDirection="true">
           <ots:CenterOffset>-6.2m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
-          <ots:SpeedLimit GtuType="CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
+          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>-4.6m</ots:CenterOffset>
@@ -179,7 +179,7 @@
         <ots:Lane Id="FORWARD" LaneType="STREET" DesignDirection="true">
           <ots:CenterOffset>-6.2m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
-          <ots:SpeedLimit GtuType="CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
+          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>-7.8m</ots:CenterOffset>
@@ -194,7 +194,7 @@
         <ots:Lane Id="FORWARD" LaneType="STREET" DesignDirection="true">
           <ots:CenterOffset>-6.2m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
-          <ots:SpeedLimit GtuType="CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
+          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>-7.8m</ots:CenterOffset>
@@ -398,9 +398,9 @@
 
   </ots:Network>
   <ots:Demand>
-    <ots:Od Id="Traffic Demand" GlobalInterpolation="STEPWISE" GlobalFactor="1.000" SinkType="ROAD_USERS">
-      <ots:Category GtuType="CAR" Id="CAR" />
-      <ots:Category GtuType="TRUCK" Id="TRUCK" />
+    <ots:Od Id="Traffic Demand" GlobalInterpolation="STEPWISE" GlobalFactor="1.000" SinkType="NL.ROAD_USERS">
+      <ots:Category GtuType="NL.CAR" Id="CAR" />
+      <ots:Category GtuType="NL.TRUCK" Id="TRUCK" />
       <ots:Cell Category="CAR" Origin="W" Destination="NO">
         <ots:Level TIME="0s">200.00veh/h</ots:Level>
         <ots:Level TIME="3600s">200.00veh/h</ots:Level>
@@ -450,10 +450,10 @@
         <ots:Level TIME="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
     </ots:Od>
-    <ots:Sink Type="ROAD_USERS" Lane="FORWARD" Link="NCONO" Position="END-20m" Direction="DIR_PLUS" />
-    <ots:Sink Type="ROAD_USERS" Lane="FORWARD" Link="ECOEO" Position="END-20m" Direction="DIR_PLUS" />
-    <ots:Sink Type="ROAD_USERS" Lane="FORWARD" Link="SCOSO" Position="END-20m" Direction="DIR_PLUS" />
-    <ots:Sink Type="ROAD_USERS" Lane="FORWARD" Link="WCOWO" Position="END-20m" Direction="DIR_PLUS" />
+    <ots:Sink Type="NL.ROAD_USERS" Lane="FORWARD" Link="NCONO" Position="END-20m" Direction="DIR_PLUS" />
+    <ots:Sink Type="NL.ROAD_USERS" Lane="FORWARD" Link="ECOEO" Position="END-20m" Direction="DIR_PLUS" />
+    <ots:Sink Type="NL.ROAD_USERS" Lane="FORWARD" Link="SCOSO" Position="END-20m" Direction="DIR_PLUS" />
+    <ots:Sink Type="NL.ROAD_USERS" Lane="FORWARD" Link="WCOWO" Position="END-20m" Direction="DIR_PLUS" />
   </ots:Demand>
   <ots:Control>
     <ots:TrafCod Id="Complex TrafCOD demo">
@@ -494,7 +494,7 @@
         <ots:TrafficLight Link="N2NC" Lane="FORWARD1" TrafficLightId="12" />
       </ots:SignalGroup>
 
-      <ots:Detector Id="D011" Type="TRAFFIC_LIGHT">
+      <ots:Detector Id="D011" Type="NL.TRAFFIC_LIGHT">
         <ots:SingleLane>
           <ots:Link>E2EC</ots:Link>
           <ots:Lane>FORWARD3</ots:Lane>
@@ -502,7 +502,7 @@
           <ots:ExitPosition>END-3m</ots:ExitPosition>
         </ots:SingleLane>
       </ots:Detector>
-      <ots:Detector Id="D012" Type="TRAFFIC_LIGHT">
+      <ots:Detector Id="D012" Type="NL.TRAFFIC_LIGHT">
         <ots:SingleLane>
           <ots:Link>E2EC</ots:Link>
           <ots:Lane>FORWARD3</ots:Lane>
@@ -510,7 +510,7 @@
           <ots:ExitPosition>END-10m</ots:ExitPosition>
         </ots:SingleLane>
       </ots:Detector>
-      <ots:Detector Id="D021" Type="TRAFFIC_LIGHT">
+      <ots:Detector Id="D021" Type="NL.TRAFFIC_LIGHT">
         <ots:SingleLane>
           <ots:Link>E2EC</ots:Link>
           <ots:Lane>FORWARD2</ots:Lane>
@@ -518,7 +518,7 @@
           <ots:ExitPosition>END-3m</ots:ExitPosition>
         </ots:SingleLane>
       </ots:Detector>
-      <ots:Detector Id="D022" Type="TRAFFIC_LIGHT">
+      <ots:Detector Id="D022" Type="NL.TRAFFIC_LIGHT">
         <ots:SingleLane>
           <ots:Link>E2EC</ots:Link>
           <ots:Lane>FORWARD2</ots:Lane>
@@ -526,7 +526,7 @@
           <ots:ExitPosition>END-10m</ots:ExitPosition>
         </ots:SingleLane>
       </ots:Detector>
-      <ots:Detector Id="D031" Type="TRAFFIC_LIGHT">
+      <ots:Detector Id="D031" Type="NL.TRAFFIC_LIGHT">
         <ots:SingleLane>
           <ots:Link>E2EC</ots:Link>
           <ots:Lane>FORWARD1</ots:Lane>
@@ -534,7 +534,7 @@
           <ots:ExitPosition>END-3m</ots:ExitPosition>
         </ots:SingleLane>
       </ots:Detector>
-      <ots:Detector Id="D032" Type="TRAFFIC_LIGHT">
+      <ots:Detector Id="D032" Type="NL.TRAFFIC_LIGHT">
         <ots:SingleLane>
           <ots:Link>E2EC</ots:Link>
           <ots:Lane>FORWARD1</ots:Lane>
@@ -543,7 +543,7 @@
         </ots:SingleLane>
       </ots:Detector>
 
-      <ots:Detector Id="D041" Type="TRAFFIC_LIGHT">
+      <ots:Detector Id="D041" Type="NL.TRAFFIC_LIGHT">
         <ots:SingleLane>
           <ots:Link>S2SC</ots:Link>
           <ots:Lane>FORWARD3</ots:Lane>
@@ -551,7 +551,7 @@
           <ots:ExitPosition>END-3m</ots:ExitPosition>
         </ots:SingleLane>
       </ots:Detector>
-      <ots:Detector Id="D042" Type="TRAFFIC_LIGHT">
+      <ots:Detector Id="D042" Type="NL.TRAFFIC_LIGHT">
         <ots:SingleLane>
           <ots:Link>S2SC</ots:Link>
           <ots:Lane>FORWARD3</ots:Lane>
@@ -559,7 +559,7 @@
           <ots:ExitPosition>END-10m</ots:ExitPosition>
         </ots:SingleLane>
       </ots:Detector>
-      <ots:Detector Id="D051" Type="TRAFFIC_LIGHT">
+      <ots:Detector Id="D051" Type="NL.TRAFFIC_LIGHT">
         <ots:SingleLane>
           <ots:Link>S2SC</ots:Link>
           <ots:Lane>FORWARD2</ots:Lane>
@@ -567,7 +567,7 @@
           <ots:ExitPosition>END-3m</ots:ExitPosition>
         </ots:SingleLane>
       </ots:Detector>
-      <ots:Detector Id="D052" Type="TRAFFIC_LIGHT">
+      <ots:Detector Id="D052" Type="NL.TRAFFIC_LIGHT">
         <ots:SingleLane>
           <ots:Link>S2SC</ots:Link>
           <ots:Lane>FORWARD2</ots:Lane>
@@ -575,7 +575,7 @@
           <ots:ExitPosition>END-10m</ots:ExitPosition>
         </ots:SingleLane>
       </ots:Detector>
-      <ots:Detector Id="D061" Type="TRAFFIC_LIGHT">
+      <ots:Detector Id="D061" Type="NL.TRAFFIC_LIGHT">
         <ots:SingleLane>
           <ots:Link>S2SC</ots:Link>
           <ots:Lane>FORWARD1</ots:Lane>
@@ -583,65 +583,65 @@
           <ots:ExitPosition>END-3m</ots:ExitPosition>
         </ots:SingleLane>
       </ots:Detector>
-      <ots:Detector Id="D062" Type="TRAFFIC_LIGHT">
+      <ots:Detector Id="D062" Type="NL.TRAFFIC_LIGHT">
         <ots:SingleLane>
           <ots:Link>S2SC</ots:Link>
-          <ots:Lane>FORWARD1</ots:Lane>
-          <ots:EntryPosition>END-40m</ots:EntryPosition>
-          <ots:ExitPosition>END-10m</ots:ExitPosition>
-        </ots:SingleLane>
-      </ots:Detector>
-
-      <ots:Detector Id="D071" Type="TRAFFIC_LIGHT">
-        <ots:SingleLane>
-          <ots:Link>W2WC</ots:Link>
-          <ots:Lane>FORWARD3</ots:Lane>
-          <ots:EntryPosition>END-4m</ots:EntryPosition>
-          <ots:ExitPosition>END-3m</ots:ExitPosition>
-        </ots:SingleLane>
-      </ots:Detector>
-      <ots:Detector Id="D072" Type="TRAFFIC_LIGHT">
-        <ots:SingleLane>
-          <ots:Link>W2WC</ots:Link>
-          <ots:Lane>FORWARD3</ots:Lane>
-          <ots:EntryPosition>END-40m</ots:EntryPosition>
-          <ots:ExitPosition>END-10m</ots:ExitPosition>
-        </ots:SingleLane>
-      </ots:Detector>
-      <ots:Detector Id="D081" Type="TRAFFIC_LIGHT">
-        <ots:SingleLane>
-          <ots:Link>W2WC</ots:Link>
-          <ots:Lane>FORWARD2</ots:Lane>
-          <ots:EntryPosition>END-4m</ots:EntryPosition>
-          <ots:ExitPosition>END-3m</ots:ExitPosition>
-        </ots:SingleLane>
-      </ots:Detector>
-      <ots:Detector Id="D082" Type="TRAFFIC_LIGHT">
-        <ots:SingleLane>
-          <ots:Link>W2WC</ots:Link>
-          <ots:Lane>FORWARD2</ots:Lane>
-          <ots:EntryPosition>END-40m</ots:EntryPosition>
-          <ots:ExitPosition>END-10m</ots:ExitPosition>
-        </ots:SingleLane>
-      </ots:Detector>
-      <ots:Detector Id="D091" Type="TRAFFIC_LIGHT">
-        <ots:SingleLane>
-          <ots:Link>W2WC</ots:Link>
-          <ots:Lane>FORWARD1</ots:Lane>
-          <ots:EntryPosition>END-4m</ots:EntryPosition>
-          <ots:ExitPosition>END-3m</ots:ExitPosition>
-        </ots:SingleLane>
-      </ots:Detector>
-      <ots:Detector Id="D092" Type="TRAFFIC_LIGHT">
-        <ots:SingleLane>
-          <ots:Link>W2WC</ots:Link>
           <ots:Lane>FORWARD1</ots:Lane>
           <ots:EntryPosition>END-40m</ots:EntryPosition>
           <ots:ExitPosition>END-10m</ots:ExitPosition>
         </ots:SingleLane>
       </ots:Detector>
 
-      <ots:Detector Id="D101" Type="TRAFFIC_LIGHT">
+      <ots:Detector Id="D071" Type="NL.TRAFFIC_LIGHT">
+        <ots:SingleLane>
+          <ots:Link>W2WC</ots:Link>
+          <ots:Lane>FORWARD3</ots:Lane>
+          <ots:EntryPosition>END-4m</ots:EntryPosition>
+          <ots:ExitPosition>END-3m</ots:ExitPosition>
+        </ots:SingleLane>
+      </ots:Detector>
+      <ots:Detector Id="D072" Type="NL.TRAFFIC_LIGHT">
+        <ots:SingleLane>
+          <ots:Link>W2WC</ots:Link>
+          <ots:Lane>FORWARD3</ots:Lane>
+          <ots:EntryPosition>END-40m</ots:EntryPosition>
+          <ots:ExitPosition>END-10m</ots:ExitPosition>
+        </ots:SingleLane>
+      </ots:Detector>
+      <ots:Detector Id="D081" Type="NL.TRAFFIC_LIGHT">
+        <ots:SingleLane>
+          <ots:Link>W2WC</ots:Link>
+          <ots:Lane>FORWARD2</ots:Lane>
+          <ots:EntryPosition>END-4m</ots:EntryPosition>
+          <ots:ExitPosition>END-3m</ots:ExitPosition>
+        </ots:SingleLane>
+      </ots:Detector>
+      <ots:Detector Id="D082" Type="NL.TRAFFIC_LIGHT">
+        <ots:SingleLane>
+          <ots:Link>W2WC</ots:Link>
+          <ots:Lane>FORWARD2</ots:Lane>
+          <ots:EntryPosition>END-40m</ots:EntryPosition>
+          <ots:ExitPosition>END-10m</ots:ExitPosition>
+        </ots:SingleLane>
+      </ots:Detector>
+      <ots:Detector Id="D091" Type="NL.TRAFFIC_LIGHT">
+        <ots:SingleLane>
+          <ots:Link>W2WC</ots:Link>
+          <ots:Lane>FORWARD1</ots:Lane>
+          <ots:EntryPosition>END-4m</ots:EntryPosition>
+          <ots:ExitPosition>END-3m</ots:ExitPosition>
+        </ots:SingleLane>
+      </ots:Detector>
+      <ots:Detector Id="D092" Type="NL.TRAFFIC_LIGHT">
+        <ots:SingleLane>
+          <ots:Link>W2WC</ots:Link>
+          <ots:Lane>FORWARD1</ots:Lane>
+          <ots:EntryPosition>END-40m</ots:EntryPosition>
+          <ots:ExitPosition>END-10m</ots:ExitPosition>
+        </ots:SingleLane>
+      </ots:Detector>
+
+      <ots:Detector Id="D101" Type="NL.TRAFFIC_LIGHT">
         <ots:SingleLane>
           <ots:Link>N2NC</ots:Link>
           <ots:Lane>FORWARD3</ots:Lane>
@@ -649,7 +649,7 @@
           <ots:ExitPosition>END-3m</ots:ExitPosition>
         </ots:SingleLane>
       </ots:Detector>
-      <ots:Detector Id="D102" Type="TRAFFIC_LIGHT">
+      <ots:Detector Id="D102" Type="NL.TRAFFIC_LIGHT">
         <ots:SingleLane>
           <ots:Link>N2NC</ots:Link>
           <ots:Lane>FORWARD3</ots:Lane>
@@ -657,7 +657,7 @@
           <ots:ExitPosition>END-10m</ots:ExitPosition>
         </ots:SingleLane>
       </ots:Detector>
-      <ots:Detector Id="D111" Type="TRAFFIC_LIGHT">
+      <ots:Detector Id="D111" Type="NL.TRAFFIC_LIGHT">
         <ots:SingleLane>
           <ots:Link>N2NC</ots:Link>
           <ots:Lane>FORWARD2</ots:Lane>
@@ -665,7 +665,7 @@
           <ots:ExitPosition>END-3m</ots:ExitPosition>
         </ots:SingleLane>
       </ots:Detector>
-      <ots:Detector Id="D112" Type="TRAFFIC_LIGHT">
+      <ots:Detector Id="D112" Type="NL.TRAFFIC_LIGHT">
         <ots:SingleLane>
           <ots:Link>N2NC</ots:Link>
           <ots:Lane>FORWARD2</ots:Lane>
@@ -673,7 +673,7 @@
           <ots:ExitPosition>END-10m</ots:ExitPosition>
         </ots:SingleLane>
       </ots:Detector>
-      <ots:Detector Id="D121" Type="TRAFFIC_LIGHT">
+      <ots:Detector Id="D121" Type="NL.TRAFFIC_LIGHT">
         <ots:SingleLane>
           <ots:Link>N2NC</ots:Link>
           <ots:Lane>FORWARD1</ots:Lane>
@@ -681,7 +681,7 @@
           <ots:ExitPosition>END-3m</ots:ExitPosition>
         </ots:SingleLane>
       </ots:Detector>
-      <ots:Detector Id="D122" Type="TRAFFIC_LIGHT">
+      <ots:Detector Id="D122" Type="NL.TRAFFIC_LIGHT">
         <ots:SingleLane>
           <ots:Link>N2NC</ots:Link>
           <ots:Lane>FORWARD1</ots:Lane>

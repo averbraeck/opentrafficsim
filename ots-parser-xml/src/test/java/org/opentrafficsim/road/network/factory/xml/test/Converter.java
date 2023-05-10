@@ -104,7 +104,7 @@ public class Converter
     {
         /*-
             <GtuTemplates>
-              <GtuTemplate Default="true" GtuType="CAR" Id="CAR">
+              <GtuTemplate Default="true" GtuType="NL.CAR" Id="CAR">
                 <LengthDist LengthUnit="m">
                   <Uniform Min="3.0" Max="7.0" />
                 </LengthDist>
@@ -159,15 +159,15 @@ public class Converter
         /*-
         <LinkTypes>
           <LinkType Id="STREET">
-            <Compatibility GtuType="VEHICLE" Direction="FORWARD" />
-            <SpeedLimit GtuType="CAR" LegalSpeedLimit="40km/h" />
-            <SpeedLimit GtuType="TRUCK" LegalSpeedLimit="40km/h" />
+            <Compatibility GtuType="NL.VEHICLE" Direction="FORWARD" />
+            <SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="40km/h" />
+            <SpeedLimit GtuType="NL.TRUCK" LegalSpeedLimit="40km/h" />
           </LinkType>
         </LinkTypes>
         
         <LaneTypes>
           <LaneType Id="STREET">
-            <Compatibility GtuType="VEHICLE" Direction="FORWARD" />
+            <Compatibility GtuType="NL.VEHICLE" Direction="FORWARD" />
           </LaneType>
         </LaneTypes>
          */
@@ -215,15 +215,15 @@ public class Converter
         /*-
         <LinkTypes>
           <LinkType Id="STREET">
-            <Compatibility GtuType="VEHICLE" Direction="FORWARD" />
-            <SpeedLimit GtuType="CAR" LegalSpeedLimit="40km/h" />
-            <SpeedLimit GtuType="TRUCK" LegalSpeedLimit="40km/h" />
+            <Compatibility GtuType="NL.VEHICLE" Direction="FORWARD" />
+            <SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="40km/h" />
+            <SpeedLimit GtuType="NL.TRUCK" LegalSpeedLimit="40km/h" />
           </LinkType>
         </LinkTypes>
         
         <LaneTypes>
           <LaneType Id="STREET">
-            <Compatibility GtuType="VEHICLE" Direction="FORWARD" />
+            <Compatibility GtuType="NL.VEHICLE" Direction="FORWARD" />
           </LaneType>
         </LaneTypes>
          */
@@ -261,7 +261,7 @@ public class Converter
                 else if (cseNode.getNodeName().equals("Lane"))
                 {
                     /*-
-                      <Lane Id="M" LaneType="STREET" DesignDirection="true">
+                      <Lane Id="M" LaneType="NL.STREET" DesignDirection="true">
                         <CenterOffset>0m</CenterOffset>
                         <Width>3.6m</Width>
                       </Lane>
@@ -341,7 +341,7 @@ public class Converter
            </Link>
            
            NEW:
-             <Link Id="NS23" NodeStart="NS2" NodeEnd="NS3" Type="STREET">
+             <Link Id="NS23" NodeStart="NS2" NodeEnd="NS3" Type="NL.STREET">
                <Straight />
                <DefinedLayout>r3</DefinedLayout>
              </Link>

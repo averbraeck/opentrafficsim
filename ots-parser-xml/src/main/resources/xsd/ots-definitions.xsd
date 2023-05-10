@@ -73,7 +73,7 @@
   <xsd:element name="LaneType">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element ref="ots:Compatibility" minOccurs="1" maxOccurs="unbounded" />
+        <xsd:element ref="ots:Compatibility" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
       <xsd:attribute name="Id" type="xsd:string" use="required" />
       <xsd:attribute name="Parent" type="xsd:string" use="optional" />
@@ -94,7 +94,7 @@
   <xsd:element name="LinkType">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element ref="ots:Compatibility" minOccurs="1" maxOccurs="unbounded" />
+        <xsd:element ref="ots:Compatibility" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:SpeedLimit" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
       <xsd:attribute name="Id" type="xsd:string" use="required" />
