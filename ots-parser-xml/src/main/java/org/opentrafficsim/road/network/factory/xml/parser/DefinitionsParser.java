@@ -17,7 +17,9 @@ import org.opentrafficsim.road.definitions.DefaultsRoad;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
 import org.opentrafficsim.xml.generated.Compatibility;
+import org.opentrafficsim.xml.generated.DetectorTypes;
 import org.opentrafficsim.xml.generated.GtuTemplate;
 import org.opentrafficsim.xml.generated.GtuTemplates;
 import org.opentrafficsim.xml.generated.GtuTypes;
@@ -50,7 +52,6 @@ public final class DefinitionsParser
     /**
      * Parse the Definitions tag in the OTS XML file.
      * @param definitions the DEFINTIONS tag
-     * @param overwriteDefaults overwrite default definitions in otsNetwork or not
      * @param roadLayoutMap temporary storage for the road layouts
      * @param gtuTemplates map of GTU templates for the OD and/or Generators
      * @param streamInformation map with stream information
@@ -59,15 +60,16 @@ public final class DefinitionsParser
      * @throws XmlParserException on parsing error
      */
     public static Definitions parseDefinitions(final org.opentrafficsim.xml.generated.Definitions definitions,
-            final boolean overwriteDefaults, final Map<String, RoadLayout> roadLayoutMap,
-            final Map<String, GtuTemplate> gtuTemplates, final StreamInformation streamInformation,
-            final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap) throws XmlParserException
+            final Map<String, RoadLayout> roadLayoutMap, final Map<String, GtuTemplate> gtuTemplates,
+            final StreamInformation streamInformation, final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap)
+            throws XmlParserException
     {
         Definitions parsedDefinitions = new Definitions();
         parseGtuTypes(definitions, parsedDefinitions);
-        parseLinkTypes(definitions, parsedDefinitions, overwriteDefaults, linkTypeSpeedLimitMap);
-        parseLaneTypes(definitions, parsedDefinitions, overwriteDefaults);
-        parseGtuTemplates(definitions, parsedDefinitions, overwriteDefaults, gtuTemplates, streamInformation);
+        parseLinkTypes(definitions, parsedDefinitions, linkTypeSpeedLimitMap);
+        parseLaneTypes(definitions, parsedDefinitions);
+        parseDetectorTypes(definitions, parsedDefinitions);
+        parseGtuTemplates(definitions, parsedDefinitions, gtuTemplates, streamInformation);
         parseRoadLayouts(definitions, parsedDefinitions, roadLayoutMap);
         return parsedDefinitions;
     }
@@ -117,13 +119,12 @@ public final class DefinitionsParser
      * Parse the LinkTypes tag in the OTS XML file.
      * @param definitions the DEFINTIONS tag
      * @param parsedDefinitions Definitions; parsed definitions (definitions are stored in this)
-     * @param overwriteDefaults overwrite default definitions in otsNetwork or not
      * @param linkTypeSpeedLimitMap map with speed limit information per link type
      * @throws XmlParserException on parsing error
      */
     public static void parseLinkTypes(final org.opentrafficsim.xml.generated.Definitions definitions,
-            final Definitions parsedDefinitions, final boolean overwriteDefaults,
-            final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap) throws XmlParserException
+            final Definitions parsedDefinitions, final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap)
+            throws XmlParserException
     {
         for (LinkTypes linkTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGtuTypesAndGtuTemplates(),
                 LinkTypes.class))
@@ -185,11 +186,10 @@ public final class DefinitionsParser
      * Parse the LaneTypes tag in the OTS XML file.
      * @param definitions the DEFINTIONS tag
      * @param parsedDefinitions Definitions; parsed definitions (definitions are stored in this)
-     * @param overwriteDefaults overwrite default definitions in otsNetwork or not
      * @throws XmlParserException on parsing error
      */
     public static void parseLaneTypes(final org.opentrafficsim.xml.generated.Definitions definitions,
-            final Definitions parsedDefinitions, final boolean overwriteDefaults) throws XmlParserException
+            final Definitions parsedDefinitions) throws XmlParserException
     {
         for (LaneTypes laneTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGtuTypesAndGtuTemplates(),
                 LaneTypes.class))
@@ -233,16 +233,65 @@ public final class DefinitionsParser
     }
 
     /**
+     * Parse the DetectorTypes tag in the OTS XML file.
+     * @param definitions the DEFINTIONS tag
+     * @param parsedDefinitions Definitions; parsed definitions (definitions are stored in this)
+     * @throws XmlParserException on parsing error
+     */
+    public static void parseDetectorTypes(final org.opentrafficsim.xml.generated.Definitions definitions,
+            final Definitions parsedDefinitions) throws XmlParserException
+    {
+        for (DetectorTypes detectorTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGtuTypesAndGtuTemplates(),
+                DetectorTypes.class))
+        {
+            for (org.opentrafficsim.xml.generated.DetectorType detectorTag : detectorTypes.getDetectorType())
+            {
+                DetectorType detectorType;
+                if (detectorTag.isDefault())
+                {
+                    // TODO: remove addition of "NL." once the xml standard has been updated
+                    String id = detectorTag.getId().contains(".") ? detectorTag.getId() : "NL." + detectorTag.getId();
+                    detectorType = DefaultsRoad.getByName(DetectorType.class, id);
+                    Throw.when(detectorType == null, XmlParserException.class, "DetectorType %s could not be found as default.",
+                            detectorTag.getId());
+                }
+                else if (detectorTag.getParent() != null)
+                {
+                    DetectorType parent = parsedDefinitions.get(DetectorType.class, detectorTag.getParent());
+                    Throw.when(parent == null, XmlParserException.class, "DetectorType %s parent %s not found",
+                            detectorTag.getId(), detectorTag.getParent());
+                    detectorType = new DetectorType(detectorTag.getId(), parent);
+                    CategoryLogger.filter(Cat.PARSER).trace("Added DetectorType {}", detectorType);
+                }
+                else
+                {
+                    detectorType = new DetectorType(detectorTag.getId());
+                    CategoryLogger.filter(Cat.PARSER).trace("Added DetectorType {}", detectorType);
+                }
+                parsedDefinitions.add(DetectorType.class, detectorType);
+
+                for (Compatibility compTag : detectorTag.getCompatibility())
+                {
+                    // TODO: direction is ignored, NONE value erroneously results in accessibility
+                    GtuType gtuType = parsedDefinitions.get(GtuType.class, compTag.getGtuType());
+                    Throw.when(gtuType == null, XmlParserException.class, "LaneType %s.compatibility: GtuType %s not found",
+                            detectorTag.getId(), compTag.getGtuType());
+                    detectorType.addCompatibleGtuType(gtuType);
+                }
+            }
+        }
+    }
+
+    /**
      * Store the GtuTemplate tags in the OTS XML file.
      * @param definitions the DEFINTIONS tag
      * @param parsedDefinitions Definitions; parsed definitions (definitions are stored in this)
-     * @param overwriteDefaults overwrite default definitions in otsNetwork or not
      * @param gtuTemplates the templates to be used in the OD/Generators
      * @param streamInformation map with stream information
      * @throws XmlParserException on parsing error
      */
     public static void parseGtuTemplates(final org.opentrafficsim.xml.generated.Definitions definitions,
-            final Definitions parsedDefinitions, final boolean overwriteDefaults, final Map<String, GtuTemplate> gtuTemplates,
+            final Definitions parsedDefinitions, final Map<String, GtuTemplate> gtuTemplates,
             final StreamInformation streamInformation) throws XmlParserException
     {
         for (GtuTemplates templateTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGtuTypesAndGtuTemplates(),

@@ -32,6 +32,7 @@
         </xsd:element>
       </xsd:sequence>
       <xsd:attribute name="Id" type="xsd:string" use="required" />
+      <xsd:attribute name="SinkType" type="xsd:string" use="required" />
       <xsd:attribute name="GlobalInterpolation" type="ots:InterpolationType" use="optional" default="LINEAR" />
       <xsd:attribute name="GlobalFactor" type="ots:PositiveFactor" use="optional" default="1.0" />
       <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="generation" />
@@ -309,6 +310,7 @@
 
   <xsd:element name="Sink">
     <xsd:complexType>
+      <xsd:attribute name="Type" type="xsd:string" use="required" />
       <xsd:attribute name="Link" type="xsd:string" use="required" />
       <xsd:attribute name="Lane" type="xsd:string" use="required" />
       <xsd:attribute name="Direction" type="ots:GtuDirectionType" use="required">

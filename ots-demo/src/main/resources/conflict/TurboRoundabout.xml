@@ -21,6 +21,11 @@
         <xi:include href="../../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_lanetypes.xml" />
       </xi:fallback>
     </xi:include>
+    <xi:include href="../xsd/defaults/default_detectortypes.xml">
+      <xi:fallback>
+        <xi:include href="../../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_detectortypes.xml" />
+      </xi:fallback>
+    </xi:include>
 
     <ots:GtuTemplates>
       <ots:GtuTemplate Default="true" GtuType="CAR" Id="CAR">
@@ -456,11 +461,11 @@
       <ots:RoomChecker>CF</ots:RoomChecker>
     </ots:Generator>
 
-    <ots:Sink Link="EEXITE2" Lane="LANE" Position="END-20m" Direction="DIR_PLUS" />
-    <ots:Sink Link="NPN2" Lane="LANE" Position="END-20m" Direction="DIR_PLUS" />
-    <ots:Sink Link="WEXITW2" Lane="LANE" Position="END-20m" Direction="DIR_PLUS" />
-    <ots:Sink Link="SEXITS2" Lane="LEFT" Position="END-20m" Direction="DIR_PLUS" />
-    <ots:Sink Link="SEXITS2" Lane="RIGHT" Position="END-20m" Direction="DIR_PLUS" />
+    <ots:Sink Type="ROAD_USERS" Link="EEXITE2" Lane="LANE" Position="END-20m" Direction="DIR_PLUS" />
+    <ots:Sink Type="ROAD_USERS" Link="NPN2" Lane="LANE" Position="END-20m" Direction="DIR_PLUS" />
+    <ots:Sink Type="ROAD_USERS" Link="WEXITW2" Lane="LANE" Position="END-20m" Direction="DIR_PLUS" />
+    <ots:Sink Type="ROAD_USERS" Link="SEXITS2" Lane="LEFT" Position="END-20m" Direction="DIR_PLUS" />
+    <ots:Sink Type="ROAD_USERS" Link="SEXITS2" Lane="RIGHT" Position="END-20m" Direction="DIR_PLUS" />
 
   </ots:Demand>
 

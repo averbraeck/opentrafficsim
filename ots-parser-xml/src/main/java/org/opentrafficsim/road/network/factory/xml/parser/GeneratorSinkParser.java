@@ -391,8 +391,7 @@ public final class GeneratorSinkParser
             CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(sinkTag.getLink());
             Lane lane = (Lane) link.getCrossSectionElement(sinkTag.getLane());
             Length position = Transformer.parseLengthBeginEnd(sinkTag.getPosition(), lane.getLength());
-            // TODO: definitions.get(DetectorType.class, sinkTag.getDETECTORTYPE)
-            DetectorType detectorType = definitions.get(DetectorType.class, "ROAD_USERS");
+            DetectorType detectorType = definitions.get(DetectorType.class, sinkTag.getType());
             new SinkDetector(lane, position, simulator, detectorType);
         }
     }

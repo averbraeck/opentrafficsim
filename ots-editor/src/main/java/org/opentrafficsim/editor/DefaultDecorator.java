@@ -71,6 +71,7 @@ public final class DefaultDecorator
         editor.addListener(new ParentValidator("Ots.Definitions.GtuTypes.GtuType"), OtsEditor.NEW_FILE);
         editor.addListener(new ParentValidator("Ots.Definitions.LinkTypes.LinkType"), OtsEditor.NEW_FILE);
         editor.addListener(new ParentValidator("Ots.Definitions.LaneTypes.LaneType"), OtsEditor.NEW_FILE);
+        editor.addListener(new ParentValidator("Ots.Definitions.DetectorTypes.DetectorType"), OtsEditor.NEW_FILE);
 
         editor.addListener(new AutomaticLinkId(), OtsEditor.NEW_FILE);
         editor.addListener(new XiIncludeStringFunction(), OtsEditor.NEW_FILE);

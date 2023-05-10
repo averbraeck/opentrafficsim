@@ -51,10 +51,10 @@ import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.opentrafficsim.xml.generated.Animation;
 import org.opentrafficsim.xml.generated.Control;
+import org.opentrafficsim.xml.generated.Demand;
 import org.opentrafficsim.xml.generated.GtuTemplate;
 import org.opentrafficsim.xml.generated.ModelType;
 import org.opentrafficsim.xml.generated.Network;
-import org.opentrafficsim.xml.generated.Demand;
 import org.opentrafficsim.xml.generated.Ots;
 import org.opentrafficsim.xml.generated.RoadLayout;
 import org.opentrafficsim.xml.generated.Scenario;
@@ -241,14 +241,8 @@ public final class XmlNetworkLaneParser implements Serializable
         Map<String, RoadLayout> roadLayoutMap = new LinkedHashMap<>();
         Map<String, GtuTemplate> gtuTemplates = new LinkedHashMap<>();
         Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap = new LinkedHashMap<>();
-        Definitions definitions = DefinitionsParser.parseDefinitions(ots.getDefinitions(), true, roadLayoutMap, gtuTemplates,
+        Definitions definitions = DefinitionsParser.parseDefinitions(ots.getDefinitions(), roadLayoutMap, gtuTemplates,
                 streamInformation, linkTypeSpeedLimitMap);
-
-        // TODO: remove this, we need a default_detectortypes.xml
-        definitions.add(DetectorType.class, DefaultsRoadNl.ROAD_USERS);
-        definitions.add(DetectorType.class, DefaultsRoadNl.VEHICLES);
-        definitions.add(DetectorType.class, DefaultsRoadNl.LOOP_DETECTOR);
-        definitions.add(DetectorType.class, DefaultsRoadNl.TRAFFIC_LIGHT);
 
         Network network = ots.getNetwork();
         Map<String, Direction> nodeDirections = NetworkParser.calculateNodeAngles(otsNetwork, network);

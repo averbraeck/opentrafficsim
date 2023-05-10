@@ -112,6 +112,26 @@
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
+  
+  <xsd:element name="DetectorType">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="ots:Compatibility" minOccurs="0" maxOccurs="unbounded" />
+      </xsd:sequence>
+      <xsd:attribute name="Id" type="xsd:string" use="required" />
+      <xsd:attribute name="Parent" type="xsd:string" use="optional" />
+      <xsd:attribute name="Default" type="xsd:boolean" use="optional" default="false" />
+    </xsd:complexType>
+  </xsd:element>
+  
+  <xsd:element name="DetectorTypes">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="ots:DetectorType" minOccurs="0" maxOccurs="unbounded" />
+      </xsd:sequence>
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
 
   <xsd:element name="SpeedLimit">
     <xsd:complexType>
@@ -282,6 +302,7 @@
         <xsd:element ref="ots:GtuTemplates" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:LinkTypes" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:LaneTypes" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="ots:DetectorTypes" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:RoadLayouts" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:ParameterTypes" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>

@@ -66,6 +66,13 @@
       <xsd:selector xpath=".//ots:LaneTypes/ots:LaneType" />
       <xsd:field xpath="@Id" />
     </xsd:key>
+    
+    <!-- define the DetectorType.Id key -->
+
+    <xsd:key name="detectorTypeKey">
+      <xsd:selector xpath=".//ots:DetectorTypes/ots:DetectorType" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
 
     <!-- define the RoadLayout.Id key -->
 
@@ -198,6 +205,13 @@
 
     <xsd:keyref name="linkTypeParentRef" refer="ots:linkTypeKey">
       <xsd:selector xpath=".//ots:LinkTypes/ots:LinkType" />
+      <xsd:field xpath="@Parent" />
+    </xsd:keyref>
+    
+    <!-- DetectorType.Parent defined by DetectorType.Id -->
+
+    <xsd:keyref name="detectorTypeParentRef" refer="ots:detectorTypeKey">
+      <xsd:selector xpath=".//ots:DetectorTypes/ots:DetectorType" />
       <xsd:field xpath="@Parent" />
     </xsd:keyref>
 
@@ -464,11 +478,25 @@
       <xsd:field xpath="ots:ShortestRouteMix" />
     </xsd:keyref>
 
-    <!-- OD.RandomStream defined by RandomStream.Id -->
+    <!-- Od.RandomStream defined by RandomStream.Id -->
 
     <xsd:keyref name="odRandomStreamIdRef" refer="ots:randomStreamKey">
       <xsd:selector xpath=".//ots:Demand/ots:Od" />
       <xsd:field xpath="@RandomStream" />
+    </xsd:keyref>
+    
+    <!-- Od.SinkType defined by DetectorType.Id -->
+
+    <xsd:keyref name="odSinkTypeIdRef" refer="ots:detectorTypeKey">
+      <xsd:selector xpath=".//ots:Demand/ots:Od" />
+      <xsd:field xpath="@SinkType" />
+    </xsd:keyref>
+    
+    <!-- Sink.Type defined by DetectorType.Id -->
+
+    <xsd:keyref name="sinkTypeIdRef" refer="ots:detectorTypeKey">
+      <xsd:selector xpath=".//ots:Demand/ots:Sink" />
+      <xsd:field xpath="@Type" />
     </xsd:keyref>
 
     <!-- TODO: other XPath checks in Od --> 
@@ -480,6 +508,13 @@
     <xsd:keyref name="signalGroupLinkIdRef" refer="ots:linkKey">
       <xsd:selector xpath=".//ots:SignalGroup/ots:TrafficLight" />
       <xsd:field xpath="@Link" />
+    </xsd:keyref>
+    
+    <!-- TrafCod.Detector.Type defined by DetectorType.Id -->
+    
+    <xsd:keyref name="trafCodDetectorTypeIdRef" refer="ots:detectorTypeKey">
+      <xsd:selector xpath=".//ots:TrafCod/ots:Detector" />
+      <xsd:field xpath="@Type" />
     </xsd:keyref>
 
     <!-- TODO: other XPath checks in Control --> 

@@ -6,21 +6,26 @@
 
 	<ots:Definitions>
 
-		<xi:include href="../xsd/defaults/default_gtutypes.xml">
-      <xi:fallback>
-        <xi:include href="../../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_gtutypes.xml" />
-      </xi:fallback>
-    </xi:include>
-		<xi:include href="../xsd/defaults/default_linktypes.xml">
-      <xi:fallback>
-        <xi:include href="../../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_linktypes.xml" />
-      </xi:fallback>
-    </xi:include>
-		<xi:include href="../xsd/defaults/default_lanetypes.xml">
-      <xi:fallback>
-        <xi:include href="../../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_lanetypes.xml" />
-      </xi:fallback>
-    </xi:include>
+      <xi:include href="../xsd/defaults/default_gtutypes.xml">
+        <xi:fallback>
+          <xi:include href="../../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_gtutypes.xml" />
+        </xi:fallback>
+      </xi:include>
+	  	<xi:include href="../xsd/defaults/default_linktypes.xml">
+        <xi:fallback>
+          <xi:include href="../../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_linktypes.xml" />
+        </xi:fallback>
+      </xi:include>
+	  <xi:include href="../xsd/defaults/default_lanetypes.xml">
+        <xi:fallback>
+          <xi:include href="../../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_lanetypes.xml" />
+        </xi:fallback>
+      </xi:include>
+      <xi:include href="../xsd/defaults/default_detectortypes.xml">
+        <xi:fallback>
+          <xi:include href="../../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_detectortypes.xml" />
+        </xi:fallback>
+      </xi:include>
 
 		<ots:GtuTemplates>
 			<ots:GtuTemplate Default="true" GtuType="CAR" Id="CAR">
@@ -275,9 +280,9 @@
 			<ots:RoomChecker>CF</ots:RoomChecker>
 		</ots:Generator>
 
-		<ots:Sink Link="ECE" Position="END-20m" Lane="LANE" Direction="DIR_PLUS" />
-		<ots:Sink Link="SCS" Position="END-20m" Lane="LANE" Direction="DIR_PLUS" />
-		<ots:Sink Link="WCW" Position="END-20m" Lane="LANE" Direction="DIR_PLUS" />
+		<ots:Sink Type="ROAD_USERS" Link="ECE" Position="END-20m" Lane="LANE" Direction="DIR_PLUS" />
+		<ots:Sink Type="ROAD_USERS" Link="SCS" Position="END-20m" Lane="LANE" Direction="DIR_PLUS" />
+		<ots:Sink Type="ROAD_USERS" Link="WCW" Position="END-20m" Lane="LANE" Direction="DIR_PLUS" />
 
 	</ots:Demand>
 

@@ -21,6 +21,11 @@
         <xi:include href="../../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_lanetypes.xml" />
       </xi:fallback>
     </xi:include>
+    <xi:include href="../xsd/defaults/default_detectortypes.xml">
+      <xi:fallback>
+        <xi:include href="../../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_detectortypes.xml" />
+      </xi:fallback>
+    </xi:include>
 
     <ots:LinkTypes>
       <ots:LinkType Id="HIGHWAY">
@@ -252,9 +257,9 @@
   </ots:Network>
 
   <ots:Demand>
-    <ots:Sink Link="DE" Lane="FORWARD1" Direction="DIR_PLUS" Position="END-50m" />
-    <ots:Sink Link="DE" Lane="FORWARD2" Direction="DIR_PLUS" Position="END-50m" />
-    <ots:Sink Link="DG" Lane="FORWARD1" Direction="DIR_PLUS" Position="END-50m" />
+    <ots:Sink Type="ROAD_USERS" Link="DE" Lane="FORWARD1" Direction="DIR_PLUS" Position="END-50m" />
+    <ots:Sink Type="ROAD_USERS" Link="DE" Lane="FORWARD2" Direction="DIR_PLUS" Position="END-50m" />
+    <ots:Sink Type="ROAD_USERS" Link="DG" Lane="FORWARD1" Direction="DIR_PLUS" Position="END-50m" />
   </ots:Demand>
 
   <ots:Scenario></ots:Scenario>

@@ -194,8 +194,7 @@ public final class ControlParser
                                 Transformer.parseLengthBeginEnd(singleLaneDetector.getEntryPosition(), lane.getLength());
                         Length exitPosition =
                                 Transformer.parseLengthBeginEnd(singleLaneDetector.getExitPosition(), lane.getLength());
-                        // TODO: definitions.get(DetectorType.class, detector.getDETECTORTYPE)
-                        DetectorType detectorType = definitions.get(DetectorType.class, "TRAFFIC_LIGHT");
+                        DetectorType detectorType = definitions.get(DetectorType.class, detector.getType());
                         new TrafficLightDetector(detector.getId(), lane, entryPosition, lane, exitPosition, null,
                                 RelativePosition.FRONT, RelativePosition.REAR, simulator, detectorType);
                     }
@@ -217,8 +216,7 @@ public final class ControlParser
                             CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(linkAndLane.getLink());
                             intermediateLanes.add((Lane) link.getCrossSectionElement(linkAndLane.getLane()));
                         }
-                        // TODO: definitions.get(DetectorType.class, detector.getDETECTORTYPE)
-                        DetectorType detectorType = definitions.get(DetectorType.class, "TRAFFIC_LIGHT");
+                        DetectorType detectorType = definitions.get(DetectorType.class, detector.getType());
                         new TrafficLightDetector(detector.getId(), entryLane, entryPosition, exitLane, exitPosition,
                                 intermediateLanes, RelativePosition.FRONT, RelativePosition.REAR, simulator, detectorType);
                     }
