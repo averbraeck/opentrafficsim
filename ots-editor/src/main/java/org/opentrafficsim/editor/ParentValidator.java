@@ -38,7 +38,7 @@ public class ParentValidator implements ValueValidator, EventListener
     @Override
     public String validate(final XsdTreeNode node)
     {
-        String value = node.getAttributeValue("PARENT");
+        String value = node.getAttributeValue("Parent");
         if (value == null || value.isBlank())
         {
             return null;
@@ -77,7 +77,7 @@ public class ParentValidator implements ValueValidator, EventListener
                 {
                     return null; // A > B > C > C > C ... report at C, not at A
                 }
-                String value = otherNode.getAttributeValue("PARENT");
+                String value = otherNode.getAttributeValue("Parent");
                 if (value == null || value.isBlank())
                 {
                     return null;
@@ -108,7 +108,7 @@ public class ParentValidator implements ValueValidator, EventListener
                     XsdTreeNode node = (XsdTreeNode) event.getContent();
                     if (node.getPathString().equals(ParentValidator.this.path))
                     {
-                        node.addAttributeValidator("PARENT", ParentValidator.this);
+                        node.addAttributeValidator("Parent", ParentValidator.this);
                         ParentValidator.this.nodes.add(node);
                     }
                 }

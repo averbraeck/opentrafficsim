@@ -813,7 +813,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             for (int index = 0; index < this.attributeCount(); index++)
             {
                 Node node = this.attributeNodes.get(index);
-                if (DocumentReader.getAttribute(node, "name").equals("ID"))
+                if (DocumentReader.getAttribute(node, "name").equals("Id"))
                 {
                     this.isIdentifiable = true;
                     this.idIndex = index;
@@ -847,7 +847,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns whether this node is editable; i.e. whether a value can be set on the node, i.e. has a simple value, e.g.
-     * &lt;NODE&gt;Simple value&lt;/NODE&gt;.
+     * &lt;Node&gt;Simple value&lt;/Node&gt;.
      * @return boolean; whether this node is editable, i.e. whether a value can be set on the node.
      */
     public boolean isEditable()
@@ -1267,7 +1267,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public String reportInvalidId()
     {
-        return isIdentifiable() ? reportInvalidAttributeValue(getAttributeIndexByName("ID")) : null;
+        return isIdentifiable() ? reportInvalidAttributeValue(getAttributeIndexByName("Id")) : null;
     }
 
     /**

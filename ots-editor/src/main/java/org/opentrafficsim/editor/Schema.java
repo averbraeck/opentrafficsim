@@ -560,6 +560,7 @@ public class Schema
             Node selected = getSelectedElement(node);
             if (selected == null)
             {
+                getSelectedElement(node);
                 System.out.println("Keyref " + keyref + " (" + getXpath(node) + ") not found among elements.");
             }
             else
