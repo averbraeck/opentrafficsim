@@ -174,8 +174,8 @@ public final class NetworkParser
             }
             String id = xmlConnector.getId();
             double demandWeight = xmlConnector.getDemandWeight();
-            // TODO: xml definition needs a LinkType for Connector too
-            Connector link = new Connector(otsNetwork, id, startNode, endNode, new LinkType("CONNECTOR"));
+            LinkType linkType = definitions.get(LinkType.class, xmlConnector.getType());
+            Connector link = new Connector(otsNetwork, id, startNode, endNode, linkType);
             link.setDemandWeight(demandWeight);
         }
 

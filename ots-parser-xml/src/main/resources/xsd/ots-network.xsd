@@ -30,6 +30,7 @@
   <xsd:element name="Connector">
     <xsd:complexType>
       <xsd:attribute name="Id" type="xsd:string" use="required" />
+      <xsd:attribute name="Type" type="xsd:string" use="required" />
       <xsd:attribute name="NodeStart" type="xsd:string" use="required" />
       <xsd:attribute name="NodeEnd" type="xsd:string" use="required" />
       <xsd:attribute name="DemandWeight" type="ots:FractionType" />

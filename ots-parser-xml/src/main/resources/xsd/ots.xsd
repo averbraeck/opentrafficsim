@@ -273,6 +273,13 @@
       <xsd:field xpath="@Type" />
     </xsd:keyref>
     
+    <!-- Connector.Type defined by LinkType.Id -->
+
+    <xsd:keyref name="connectorTypeIdRef" refer="ots:linkTypeKey">
+      <xsd:selector xpath=".//ots:Network/ots:Connector" />
+      <xsd:field xpath="@Type" />
+    </xsd:keyref>
+    
     <!-- ======================================== CHECKS IN DEMAND ======================================== -->
 
     <!-- Route.Node defined by Node.Id -->
