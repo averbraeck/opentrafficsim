@@ -90,6 +90,36 @@
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
+  
+  <xsd:element name="LaneBias">
+    <xsd:annotation>
+      <xsd:documentation source="description">
+        Sets the preferred lateral position for given GTU type either based on speed, or a fixed lateral 
+        position (between 0 for right and 1 for left of the road width, in terms of lanes).
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:choice>
+        <xsd:sequence>
+          <xsd:element name="LeftSpeed" type="ots:SpeedType" />
+          <xsd:element name="RightSpeed" type="ots:SpeedType" />
+        </xsd:sequence>
+        <xsd:element name="FromLeft" type="ots:DoubleUnitInterval" />
+        <xsd:element name="FromRight" type="ots:DoubleUnitInterval" />
+      </xsd:choice>
+      <xsd:attribute name="GtuType" type="xsd:string" use="required" />
+      <xsd:attribute name="Bias" type="xsd:float" use="required" />
+      <xsd:attribute name="StickyLanes" type="xsd:positiveInteger" use="optional" />
+    </xsd:complexType>
+  </xsd:element>
+  
+  <xsd:element name="LaneBiases">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="ots:LaneBias" minOccurs="0" maxOccurs="unbounded" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
 
   <xsd:element name="LinkType">
     <xsd:complexType>
@@ -302,6 +332,7 @@
         <xsd:element ref="ots:GtuTemplates" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:LinkTypes" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:LaneTypes" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="ots:LaneBiases" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:DetectorTypes" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:RoadLayouts" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:ParameterTypes" minOccurs="0" maxOccurs="unbounded" />

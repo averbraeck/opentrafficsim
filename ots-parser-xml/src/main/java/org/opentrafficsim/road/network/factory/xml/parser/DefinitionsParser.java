@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.factory.xml.parser;
 
+import java.math.BigInteger;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -9,11 +10,12 @@ import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.logger.Cat;
 import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.core.definitions.Defaults;
-import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.road.definitions.DefaultsRoad;
+import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
+import org.opentrafficsim.road.gtu.generator.GeneratorPositions.RoadPosition;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -23,6 +25,7 @@ import org.opentrafficsim.xml.generated.DetectorTypes;
 import org.opentrafficsim.xml.generated.GtuTemplate;
 import org.opentrafficsim.xml.generated.GtuTemplates;
 import org.opentrafficsim.xml.generated.GtuTypes;
+import org.opentrafficsim.xml.generated.LaneBiases;
 import org.opentrafficsim.xml.generated.LaneTypes;
 import org.opentrafficsim.xml.generated.LinkTypes;
 import org.opentrafficsim.xml.generated.RoadLayout;
@@ -54,6 +57,7 @@ public final class DefinitionsParser
      * @param definitions the DEFINTIONS tag
      * @param roadLayoutMap temporary storage for the road layouts
      * @param gtuTemplates map of GTU templates for the OD and/or Generators
+     * @param laneBiases map of lane biases for the OD parser
      * @param streamInformation map with stream information
      * @param linkTypeSpeedLimitMap map with speed limit information per link type
      * @return the parsed definitions
@@ -61,8 +65,8 @@ public final class DefinitionsParser
      */
     public static Definitions parseDefinitions(final org.opentrafficsim.xml.generated.Definitions definitions,
             final Map<String, RoadLayout> roadLayoutMap, final Map<String, GtuTemplate> gtuTemplates,
-            final StreamInformation streamInformation, final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap)
-            throws XmlParserException
+            final Map<String, LaneBias> laneBiases, final StreamInformation streamInformation,
+            final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap) throws XmlParserException
     {
         Definitions parsedDefinitions = new Definitions();
         parseGtuTypes(definitions, parsedDefinitions);
@@ -71,7 +75,69 @@ public final class DefinitionsParser
         parseDetectorTypes(definitions, parsedDefinitions);
         parseGtuTemplates(definitions, parsedDefinitions, gtuTemplates, streamInformation);
         parseRoadLayouts(definitions, parsedDefinitions, roadLayoutMap);
+        parseLaneBiases(definitions, parsedDefinitions, laneBiases);
         return parsedDefinitions;
+    }
+
+    /**
+     * Parse lane biases in definitions.
+     * @param definitions org.opentrafficsim.xml.generated.Definitions; definitions as in XML.
+     * @param parsedDefinitions Definitions; to obtain GTU type.
+     * @param laneBiases Map&lt;String, LaneBias&gt;; map to return lane biases in.
+     */
+    public static void parseLaneBiases(final org.opentrafficsim.xml.generated.Definitions definitions,
+            final Definitions parsedDefinitions, final Map<String, LaneBias> laneBiases)
+    {
+        for (LaneBiases laneBiasTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGtuTypesAndGtuTemplates(),
+                LaneBiases.class))
+        {
+            for (org.opentrafficsim.xml.generated.LaneBias laneBias : laneBiasTypes.getLaneBias())
+            {
+                GtuType gtuType = parsedDefinitions.get(GtuType.class, laneBias.getGtuType());
+                Throw.whenNull(gtuType, "GTU type %s in LaneBias is not defined.", laneBias.getGtuType());
+                laneBiases.put(gtuType.getId(), parseLaneBias(laneBias));
+            }
+        }
+    }
+
+    /**
+     * Parse a single lane bias from XML.
+     * @param laneBias org.opentrafficsim.xml.generated.LaneBias; lane bias to parse.
+     * @return LaneBias; parsed lane bias.
+     */
+    public static LaneBias parseLaneBias(final org.opentrafficsim.xml.generated.LaneBias laneBias)
+    {
+        double bias = laneBias.getBias();
+        int stickyLanes;
+        if (laneBias.getStickyLanes() == null)
+        {
+            stickyLanes = Integer.MAX_VALUE;
+        }
+        else
+        {
+            if (laneBias.getStickyLanes().compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0)
+            {
+                stickyLanes = Integer.MAX_VALUE;
+            }
+            else
+            {
+                stickyLanes = laneBias.getStickyLanes().intValue();
+            }
+        }
+        RoadPosition roadPosition;
+        if (laneBias.getFromRight() != null)
+        {
+            roadPosition = new RoadPosition.ByValue(laneBias.getFromRight());
+        }
+        else if (laneBias.getFromLeft() != null)
+        {
+            roadPosition = new RoadPosition.ByValue(1.0 - laneBias.getFromLeft());
+        }
+        else
+        {
+            roadPosition = new RoadPosition.BySpeed(laneBias.getLeftSpeed(), laneBias.getRightSpeed());
+        }
+        return new LaneBias(roadPosition, bias, stickyLanes);
     }
 
     /**

@@ -141,21 +141,23 @@
               <xsd:element name="LaneBiases" minOccurs="0">
                 <xsd:annotation>
                   <xsd:documentation source="description">
-                    Influences the preferred lateral position of generated
-                    GTU's.
+                    Influences the preferred lateral position of generated GTU's.
                   </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
-                  <xsd:sequence>
-                    <xsd:element name="LaneBias" maxOccurs="unbounded">
+                  <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                  
+                    <xsd:element ref="ots:LaneBias" />
+                    <xsd:element name="DefinedLaneBias">
+                      <xsd:complexType>
+                        <xsd:attribute name="GtuType" type="xsd:string" use="required" />
+                      </xsd:complexType>
+                    </xsd:element>
+                    <!--xsd:element name="LaneBias" maxOccurs="unbounded">
                       <xsd:annotation>
                         <xsd:documentation source="description">
-                          Sets the preferred lateral position for given GTU
-                          type
-                          either based
-                          on speed, or a fixed lateral position (between 0 and 1 of the road width, in
-                          terms of
-                          lanes).
+                          Sets the preferred lateral position for given GTU type either based on speed, or a fixed lateral 
+                          position (between 0 for right and 1 for left of the road width, in terms of lanes).
                         </xsd:documentation>
                       </xsd:annotation>
                       <xsd:complexType>
@@ -171,8 +173,9 @@
                         <xsd:attribute name="Bias" type="xsd:float" use="required" />
                         <xsd:attribute name="StickyLanes" type="xsd:positiveInteger" use="optional" />
                       </xsd:complexType>
-                    </xsd:element>
-                  </xsd:sequence>
+                    </xsd:element-->
+                    
+                  </xsd:choice>
                 </xsd:complexType>
               </xsd:element>
             </xsd:sequence>

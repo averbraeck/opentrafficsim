@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.network.factory.xml.parser;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,7 +25,6 @@ import org.djutils.exceptions.Try;
 import org.djutils.logger.CategoryLogger;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.logger.Cat;
-import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -38,7 +36,6 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
-import org.opentrafficsim.road.gtu.generator.GeneratorPositions.RoadPosition;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
 import org.opentrafficsim.road.gtu.generator.characteristics.DefaultLaneBasedGtuCharacteristicsGeneratorOd;
@@ -50,6 +47,7 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerF
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseDistribution;
+import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
 import org.opentrafficsim.road.network.factory.xml.utils.Transformer;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -69,6 +67,7 @@ import org.opentrafficsim.xml.generated.Od;
 import org.opentrafficsim.xml.generated.Od.Cell;
 import org.opentrafficsim.xml.generated.OdOptions.OdOptionsItem;
 import org.opentrafficsim.xml.generated.OdOptions.OdOptionsItem.DefaultModel;
+import org.opentrafficsim.xml.generated.OdOptions.OdOptionsItem.LaneBiases.DefinedLaneBias;
 import org.opentrafficsim.xml.generated.OdOptions.OdOptionsItem.Markov.State;
 import org.opentrafficsim.xml.generated.OdOptions.OdOptionsItem.Model;
 
@@ -98,6 +97,7 @@ public final class OdParser
      * @param definitions Definitions; parsed definitions.
      * @param demands List&lt;Demand&gt;; demand
      * @param gtuTemplates Map&lt;String, org.opentrafficsim.xml.generated.GtuTemplate&gt;; GTU templates
+     * @param definedLaneBiases Map&lt;String, LaneBias&lt;?&gt;&gt;; defined lane biases
      * @param factories Map&lt;String, LaneBasedStrategicalPlannerFactory&lt;?&gt;&gt;; factories from model parser
      * @param modelIdReferrals Map&lt;String, String&gt;; model id referrals
      * @param streamMap Map&lt;String, StreamInformation&gt;; stream map
@@ -107,8 +107,8 @@ public final class OdParser
     @SuppressWarnings("checkstyle:methodlength")
     public static List<LaneBasedGtuGenerator> parseDemand(final RoadNetwork otsNetwork, final Definitions definitions,
             final List<Demand> demands, final Map<String, org.opentrafficsim.xml.generated.GtuTemplate> gtuTemplates,
-            final Map<String, LaneBasedStrategicalPlannerFactory<?>> factories, final Map<String, String> modelIdReferrals,
-            final StreamInformation streamMap) throws XmlParserException
+            final Map<String, LaneBias> definedLaneBiases, final Map<String, LaneBasedStrategicalPlannerFactory<?>> factories,
+            final Map<String, String> modelIdReferrals, final StreamInformation streamMap) throws XmlParserException
     {
         List<LaneBasedGtuGenerator> generators = new ArrayList<>();
 
@@ -530,59 +530,28 @@ public final class OdParser
                             setOption(odOptions, OdOptions.MARKOV, markov, options, otsNetwork, definitions);
                         }
                         // lane biases
-                        LaneBiases laneBiases = new LaneBiases();
                         if (options.getLaneBiases() != null)
                         {
-                            for (org.opentrafficsim.xml.generated.OdOptions.OdOptionsItem.LaneBiases.LaneBias laneBias : options
-                                    .getLaneBiases().getLaneBias())
+                            LaneBiases laneBiases = new LaneBiases();
+                            for (org.opentrafficsim.xml.generated.LaneBias laneBiasType : ParseUtil.getObjectsOfType(
+                                    options.getLaneBiases().getLaneBiasOrDefinedLaneBias(),
+                                    org.opentrafficsim.xml.generated.LaneBias.class))
                             {
-                                GtuType gtuType = definitions.get(GtuType.class, laneBias.getGtuType());
-                                double bias = laneBias.getBias();
-                                int stickyLanes;
-                                if (laneBias.getStickyLanes() == null)
-                                {
-                                    stickyLanes = Integer.MAX_VALUE;
-                                }
-                                else
-                                {
-                                    if (laneBias.getStickyLanes().compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0)
-                                    {
-                                        stickyLanes = Integer.MAX_VALUE;
-                                    }
-                                    else
-                                    {
-                                        stickyLanes = laneBias.getStickyLanes().intValue();
-                                    }
-                                }
-                                RoadPosition roadPosition;
-                                if (laneBias.getFromRight() != null)
-                                {
-                                    roadPosition = new RoadPosition.ByValue(laneBias.getFromRight());
-                                }
-                                else if (laneBias.getFromLeft() != null)
-                                {
-                                    roadPosition = new RoadPosition.ByValue(1.0 - laneBias.getFromLeft());
-                                }
-                                else
-                                {
-                                    roadPosition = new RoadPosition.BySpeed(laneBias.getLeftSpeed(), laneBias.getRightSpeed());
-                                }
-                                laneBiases.addBias(gtuType, new LaneBias(roadPosition, bias, stickyLanes));
+                                GtuType gtuType = definitions.get(GtuType.class, laneBiasType.getGtuType());
+                                Throw.whenNull(gtuType, "GTU type %s in lane bias does not exist.", laneBiasType.getGtuType());
+                                laneBiases.addBias(gtuType, DefinitionsParser.parseLaneBias(laneBiasType));
                             }
+                            for (DefinedLaneBias definedLaneBias : ParseUtil.getObjectsOfType(
+                                    options.getLaneBiases().getLaneBiasOrDefinedLaneBias(), DefinedLaneBias.class))
+                            {
+                                GtuType gtuType = definitions.get(GtuType.class, definedLaneBias.getGtuType());
+                                Throw.whenNull(gtuType, "GTU type %s in defined lane bias does not exist.",
+                                        definedLaneBias.getGtuType());
+                                laneBiases.addBias(gtuType, definedLaneBiases.get(definedLaneBias.getGtuType()));
+                            }
+                            setOption(odOptions, OdOptions.LANE_BIAS, laneBiases, options, otsNetwork, definitions);
                         }
-                        else
-                        {
-                            // TODO: skip this and supply a default_lane_biases.xml?
-                            if (definitions.getAll(GtuType.class).containsValue(DefaultsNl.TRUCK))
-                            {
-                                laneBiases.addBias(DefaultsNl.TRUCK, LaneBias.TRUCK_RIGHT);
-                            }
-                            if (definitions.getAll(GtuType.class).containsValue(DefaultsNl.VEHICLE))
-                            {
-                                laneBiases.addBias(DefaultsNl.VEHICLE, LaneBias.WEAK_LEFT);
-                            }
-                        }
-                        setOption(odOptions, OdOptions.LANE_BIAS, laneBiases, options, otsNetwork, definitions);
+
                     }
                 }
 

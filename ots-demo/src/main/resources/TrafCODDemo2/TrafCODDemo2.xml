@@ -31,6 +31,11 @@
         <xi:include href="../../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_gtutemplates.xml" />
       </xi:fallback>
     </xi:include>
+    <xi:include href="../xsd/defaults/default_lanebiases.xml">
+      <xi:fallback>
+        <xi:include href="../../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_lanebiases.xml" />
+      </xi:fallback>
+    </xi:include>
 
     <ots:LaneTypes>
       <ots:LaneType Id="STREET">
@@ -398,7 +403,18 @@
 
   </ots:Network>
   <ots:Demand>
-    <ots:Od Id="Traffic Demand" GlobalInterpolation="STEPWISE" GlobalFactor="1.000" SinkType="NL.ROAD_USERS">
+    <ots:OdOptions Id="OdOptions">
+      <ots:OdOptionsItem>
+        <ots:Global />
+        <ots:LaneBiases>
+          <ots:LaneBias GtuType="NL.TRUCK" Bias="1.0" StickyLanes="2">
+            <ots:FromRight>0.2</ots:FromRight>
+          </ots:LaneBias>
+          <ots:DefinedLaneBias GtuType="NL.ROAD_USER"></ots:DefinedLaneBias>
+        </ots:LaneBiases>
+      </ots:OdOptionsItem>
+    </ots:OdOptions>
+    <ots:Od Id="Traffic Demand" GlobalInterpolation="STEPWISE" GlobalFactor="1.000" SinkType="NL.ROAD_USERS" Options="OdOptions">
       <ots:Category GtuType="NL.CAR" Id="CAR" />
       <ots:Category GtuType="NL.TRUCK" Id="TRUCK" />
       <ots:Cell Category="CAR" Origin="W" Destination="NO">

@@ -41,13 +41,12 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.InputParameters;
 import org.opentrafficsim.core.parameters.ParameterFactory;
-import org.opentrafficsim.road.definitions.DefaultsRoadNl;
+import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
-import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.opentrafficsim.xml.generated.Animation;
 import org.opentrafficsim.xml.generated.Control;
@@ -240,9 +239,10 @@ public final class XmlNetworkLaneParser implements Serializable
 
         Map<String, RoadLayout> roadLayoutMap = new LinkedHashMap<>();
         Map<String, GtuTemplate> gtuTemplates = new LinkedHashMap<>();
+        Map<String, LaneBias> laneBiases = new LinkedHashMap<>();
         Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap = new LinkedHashMap<>();
         Definitions definitions = DefinitionsParser.parseDefinitions(ots.getDefinitions(), roadLayoutMap, gtuTemplates,
-                streamInformation, linkTypeSpeedLimitMap);
+                laneBiases, streamInformation, linkTypeSpeedLimitMap);
 
         Network network = ots.getNetwork();
         Map<String, Direction> nodeDirections = NetworkParser.calculateNodeAngles(otsNetwork, network);
@@ -301,7 +301,7 @@ public final class XmlNetworkLaneParser implements Serializable
         try
         {
             List<LaneBasedGtuGenerator> generators = OdParser.parseDemand(otsNetwork, definitions, demands, gtuTemplates,
-                    factories, modelIdReferrals, streamInformation);
+                    laneBiases, factories, modelIdReferrals, streamInformation);
             System.out.println("Created " + generators.size() + " generators based on origin destination matrices");
         }
         catch (Exception e)

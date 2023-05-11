@@ -201,7 +201,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
         /** Key that is referred to by an xsd:keyref. */
         private final KeyValidator refer;
 
-        /** Nodes maintained for a xsd:key. */
+        /** Nodes maintained for an xsd:key. */
         private final Map<XsdTreeNode, Set<XsdTreeNode>> nodes = new LinkedHashMap<>();
 
         /** Name of the attribute the key points to, {@code null} if it points to a child element. */
@@ -265,10 +265,11 @@ public class XsdTreeNodeRoot extends XsdTreeNode
             if (values.size() == 1)
             {
                 String name = this.attributeNames.isEmpty() ? this.childNames.get(0) : this.attributeNames.get(0);
-                return "Value " + values.get(0) + " for " + name + " does not refer to a known element within " + this.keyPath
-                        + ".";
+                return "Value " + values.get(0) + " for " + name + " does not refer to a known " + this.refer.getTypeString()
+                        + " within " + this.keyPath + ".";
             }
-            return "Values " + values + " do not refer to a known element within " + this.keyPath + ".";
+            return "Values " + values + " do not refer to a known " + this.refer.getTypeString() + " within " + this.keyPath
+                    + ".";
         }
 
         /**
@@ -278,7 +279,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
          */
         public void addNode(final XsdTreeNode node)
         {
-            String path = getPath().equals("Ots") ? getTypeString() : getPath() + "." + getTypeString();
+            String path = getPath().equals("Ots") ? "." + getTypeString() : getPath() + "." + getTypeString();
             boolean isType = node.getPathString().endsWith(path);
             if (isType && this.refer == null)
             {
