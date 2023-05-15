@@ -220,7 +220,7 @@ public final class XiIncludeNode implements Node
     @Override
     public boolean hasAttributes()
     {
-        return true;
+        return false;
     }
 
     /** {@inheritDoc} */

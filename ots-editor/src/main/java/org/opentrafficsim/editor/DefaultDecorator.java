@@ -44,7 +44,7 @@ public final class DefaultDecorator
         editor.setCustomIcon("Ots.Network.Link.DefinedLayout", roadIcon);
         editor.setCustomIcon("Ots.Network", networkIcon);
         editor.setCustomIcon(".Node", nodeIcon);
-        editor.setCustomIcon("Ots.Network.Centroid", OtsEditor.loadIcon("./OTS_centroid.png", -1, -1, -1, -1)); // not exist yet
+        editor.setCustomIcon("Ots.Network.Centroid", OtsEditor.loadIcon("./OTS_centroid.png", -1, -1, -1, -1));
         editor.setCustomIcon("Ots.Network.Connector", OtsEditor.loadIcon("./OTS_connector.png", -1, -1, -1, -1));
         editor.setCustomIcon(".Link", OtsEditor.loadIcon("./OTS_link.png", -1, -1, -1, -1));
         editor.setCustomIcon("Ots.Demand", OtsEditor.loadIcon("./Calendar.png", 16, 16, -1, -1));

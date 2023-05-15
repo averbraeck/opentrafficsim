@@ -253,6 +253,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         this.active = this.minOccurs > 0;
         this.pathString = buildPathLocation();
         this.isInclude = parent.isInclude;
+        this.value = referringXsdNode == null ? (xsdNode == null ? null : DocumentReader.getAttribute(xsdNode, "default"))
+                : DocumentReader.getAttribute(referringXsdNode, "default");
         ((XsdTreeNodeRoot) getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED, this);
     }
 
