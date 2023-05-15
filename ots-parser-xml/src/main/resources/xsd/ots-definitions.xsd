@@ -60,10 +60,10 @@
   <xsd:element name="Compatibility">
     <xsd:complexType>
       <xsd:attribute name="GtuType" type="xsd:string" use="required" />
-      <xsd:attribute name="Direction" type="ots:DrivingDirectionType" use="required">
+      <xsd:attribute name="Compatible" type="xsd:boolean" use="optional" default="true">
         <xsd:annotation>
           <xsd:documentation source="description">
-            DrivingDirectionType: FORWARD|BACKWARD|BOTH|NONE
+            When false, the GTU type is explicitly subtracted from the allowed GTU types.
           </xsd:documentation>
         </xsd:annotation>
       </xsd:attribute>

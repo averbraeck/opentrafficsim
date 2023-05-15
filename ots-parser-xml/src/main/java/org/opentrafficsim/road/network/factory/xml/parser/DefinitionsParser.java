@@ -221,11 +221,17 @@ public final class DefinitionsParser
 
                 for (Compatibility compTag : linkTag.getCompatibility())
                 {
-                    // TODO: direction is ignored, NONE value erroneously results in accessibility
                     GtuType gtuType = parsedDefinitions.get(GtuType.class, compTag.getGtuType());
                     Throw.when(gtuType == null, XmlParserException.class, "LinkType %s.compatibility: GtuType %s not found",
                             linkTag.getId(), compTag.getGtuType());
-                    linkType.addCompatibleGtuType(gtuType);
+                    if (compTag.isCompatible())
+                    {
+                        linkType.addCompatibleGtuType(gtuType);
+                    }
+                    else
+                    {
+                        linkType.addIncompatibleGtuType(gtuType);
+                    }
                 }
 
                 linkTypeSpeedLimitMap.put(linkType, new LinkedHashMap<>());
@@ -278,11 +284,17 @@ public final class DefinitionsParser
 
                 for (Compatibility compTag : laneTag.getCompatibility())
                 {
-                    // TODO: direction is ignored, NONE value erroneously results in accessibility
                     GtuType gtuType = parsedDefinitions.get(GtuType.class, compTag.getGtuType());
                     Throw.when(gtuType == null, XmlParserException.class, "LaneType %s.compatibility: GtuType %s not found",
                             laneTag.getId(), compTag.getGtuType());
-                    laneType.addCompatibleGtuType(gtuType);
+                    if (compTag.isCompatible())
+                    {
+                        laneType.addCompatibleGtuType(gtuType);
+                    }
+                    else
+                    {
+                        laneType.addIncompatibleGtuType(gtuType);
+                    }
                 }
             }
         }
@@ -328,11 +340,17 @@ public final class DefinitionsParser
 
                 for (Compatibility compTag : detectorTag.getCompatibility())
                 {
-                    // TODO: direction is ignored, NONE value erroneously results in accessibility
                     GtuType gtuType = parsedDefinitions.get(GtuType.class, compTag.getGtuType());
                     Throw.when(gtuType == null, XmlParserException.class, "LaneType %s.compatibility: GtuType %s not found",
                             detectorTag.getId(), compTag.getGtuType());
-                    detectorType.addCompatibleGtuType(gtuType);
+                    if (compTag.isCompatible())
+                    {
+                        detectorType.addCompatibleGtuType(gtuType);
+                    }
+                    else
+                    {
+                        detectorType.addIncompatibleGtuType(gtuType);
+                    }
                 }
             }
         }

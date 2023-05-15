@@ -1,55 +1,55 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <ots:Ots xmlns:ots="http://www.opentrafficsim.org/ots" 
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-  xsi:schemaLocation="http://www.opentrafficsim.org/ots https://raw.githubusercontent.com/averbraeck/opentrafficsim/main/ots-parser-xml/src/main/resources/xsd/ots-nocheck.xsd"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../ots-parser-xml/src/main/resources/xsd/ots.xsd"
   xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <ots:Definitions>
-    <ots:GTUTYPES xmlns:ots="http://www.opentrafficsim.org/ots" 
+    <ots:GtuTypes xmlns:ots="http://www.opentrafficsim.org/ots" 
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.opentrafficsim.org/ots ../xsd/ots-definitions.xsd">
-      <ots:GTUTYPE Id="NONE" Default="true" />
-      <ots:GTUTYPE Id="ROAD_USER" Default="true" />
-      <ots:GTUTYPE Id="WATERWAY_USER" Default="true" />
-      <ots:GTUTYPE Id="RAILWAY_USER" Default="true" />
-      <ots:GTUTYPE Id="SHIP" PARENT="WATERWAY_USER" Default="true" />
-      <ots:GTUTYPE Id="TRAIN" PARENT="RAILWAY_USER" Default="true" />
-      <ots:GTUTYPE Id="PEDESTRIAN" PARENT="ROAD_USER" Default="true" />
-      <ots:GTUTYPE Id="BICYCLE" PARENT="ROAD_USER" Default="true" />
-      <ots:GTUTYPE Id="MOPED" PARENT="BICYCLE" Default="true" />
-      <ots:GTUTYPE Id="VEHICLE" PARENT="ROAD_USER" Default="true" />
-      <ots:GTUTYPE Id="EMERGENCY_VEHICLE" PARENT="VEHICLE" Default="true" />
-      <ots:GTUTYPE Id="CAR" PARENT="VEHICLE" Default="true" />
-      <ots:GTUTYPE Id="VAN" PARENT="VEHICLE" Default="true" />
-      <ots:GTUTYPE Id="BUS" PARENT="VEHICLE" Default="true" />
-      <ots:GTUTYPE Id="TRUCK" PARENT="VEHICLE" Default="true" />
-      <ots:GTUTYPE Id="SCHEDULED_BUS" PARENT="BUS" Default="true" />
-    </ots:GTUTYPES>
+      <ots:GtuType Id="NONE" Default="true" />
+      <ots:GtuType Id="ROAD_USER" Default="true" />
+      <ots:GtuType Id="WATERWAY_USER" Default="true" />
+      <ots:GtuType Id="RAILWAY_USER" Default="true" />
+      <ots:GtuType Id="SHIP" Parent="WATERWAY_USER" Default="true" />
+      <ots:GtuType Id="TRAIN" Parent="RAILWAY_USER" Default="true" />
+      <ots:GtuType Id="PEDESTRIAN" Parent="ROAD_USER" Default="true" />
+      <ots:GtuType Id="BICYCLE" Parent="ROAD_USER" Default="true" />
+      <ots:GtuType Id="MOPED" Parent="BICYCLE" Default="true" />
+      <ots:GtuType Id="VEHICLE" Parent="ROAD_USER" Default="true" />
+      <ots:GtuType Id="EMERGENCY_VEHICLE" Parent="VEHICLE" Default="true" />
+      <ots:GtuType Id="CAR" Parent="VEHICLE" Default="true" />
+      <ots:GtuType Id="VAN" Parent="VEHICLE" Default="true" />
+      <ots:GtuType Id="BUS" Parent="VEHICLE" Default="true" />
+      <ots:GtuType Id="TRUCK" Parent="VEHICLE" Default="true" />
+      <ots:GtuType Id="SCHEDULED_BUS" Parent="BUS" Default="true" />
+    </ots:GtuTypes>
 
     <ots:LinkTypes xmlns:ots="http://www.opentrafficsim.org/ots" 
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.opentrafficsim.org/ots ../xsd/ots-definitions.xsd">
       <ots:LinkType Id="NONE" Default="true">
-        <ots:Compatibility GtuType="NONE" Direction="NONE" />
+        <ots:Compatibility GtuType="NONE" Compatible="false" />
       </ots:LinkType>
       <ots:LinkType Id="ROAD" Default="true">
-        <ots:Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
+        <ots:Compatibility GtuType="NL.ROAD_USER" />
       </ots:LinkType>
-      <ots:LinkType Id="FREEWAY" PARENT="ROAD" Default="true">
-        <ots:Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
-        <ots:Compatibility GtuType="PEDESTRIAN" Direction="NONE" />
-        <ots:Compatibility GtuType="BICYCLE" Direction="NONE" />
+      <ots:LinkType Id="FREEWAY" Parent="ROAD" Default="true">
+        <ots:Compatibility GtuType="NL.ROAD_USER" />
+        <ots:Compatibility GtuType="NL.PEDESTRIAN" Compatible="false" />
+        <ots:Compatibility GtuType="NL.BICYCLE" Compatible="false" />
       </ots:LinkType>
       <ots:LinkType Id="WATERWAY" Default="true">
-        <ots:Compatibility GtuType="WATERWAY_USER" Direction="BOTH" />
+        <ots:Compatibility GtuType="NL.WATERWAY_USER" />
       </ots:LinkType>
       <ots:LinkType Id="RAILWAY" Default="true">
-        <ots:Compatibility GtuType="RAILWAY_USER" Direction="FORWARD" />
+        <ots:Compatibility GtuType="NL.RAILWAY_USER" />
       </ots:LinkType>
       <ots:LinkType Id="CONNECTOR" Default="true">
-        <ots:Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
-        <ots:Compatibility GtuType="WATERWAY_USER" Direction="FORWARD" />
-        <ots:Compatibility GtuType="RAILWAY_USER" Direction="FORWARD" />
+        <ots:Compatibility GtuType="NL.ROAD_USER" />
+        <ots:Compatibility GtuType="WATERWAY_USER" />
+        <ots:Compatibility GtuType="RAILWAY_USER" />
       </ots:LinkType>
     </ots:LinkTypes>
 
@@ -57,49 +57,49 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
       xsi:schemaLocation="http://www.opentrafficsim.org/ots ../xsd/ots-definitions.xsd">
       <ots:LaneType Id="NONE" Default="true">
-        <ots:Compatibility GtuType="NONE" Direction="NONE" />
+        <ots:Compatibility GtuType="NONE" Compatible="false" />
       </ots:LaneType>
       <ots:LaneType Id="TWO_WAY_LANE" Default="true">
-        <ots:Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
+        <ots:Compatibility GtuType="NL.ROAD_USER" />
       </ots:LaneType>
-      <ots:LaneType Id="RURAL_ROAD" PARENT="TWO_WAY_LANE" Default="true">
-        <ots:Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
+      <ots:LaneType Id="RURAL_ROAD" Parent="TWO_WAY_LANE" Default="true">
+        <ots:Compatibility GtuType="NL.ROAD_USER" />
       </ots:LaneType>
-      <ots:LaneType Id="URBAN_ROAD" PARENT="TWO_WAY_LANE" Default="true">
-        <ots:Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
+      <ots:LaneType Id="URBAN_ROAD" Parent="TWO_WAY_LANE" Default="true">
+        <ots:Compatibility GtuType="NL.ROAD_USER" />
       </ots:LaneType>
-      <ots:LaneType Id="RESIDENTIAL_ROAD" PARENT="TWO_WAY_LANE" Default="true">
-        <ots:Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
+      <ots:LaneType Id="RESIDENTIAL_ROAD" Parent="TWO_WAY_LANE" Default="true">
+        <ots:Compatibility GtuType="NL.ROAD_USER" />
       </ots:LaneType>
       <ots:LaneType Id="ONE_WAY_LANE" Default="true">
-        <ots:Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
-        <ots:Compatibility GtuType="PEDESTRIAN" Direction="BOTH" />
+        <ots:Compatibility GtuType="NL.ROAD_USER" />
+        <ots:Compatibility GtuType="PEDESTRIAN" />
       </ots:LaneType>
       <ots:LaneType Id="FREEWAY" Default="true">
-        <ots:Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
-        <ots:Compatibility GtuType="PEDESTRIAN" Direction="NONE" />
+        <ots:Compatibility GtuType="NL.ROAD_USER" />
+        <ots:Compatibility GtuType="PEDESTRIAN" Compatible="false" />
       </ots:LaneType>
       <ots:LaneType Id="HIGHWAY" Default="true">
-        <ots:Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
-        <ots:Compatibility GtuType="PEDESTRIAN" Direction="NONE" />
+        <ots:Compatibility GtuType="NL.ROAD_USER" />
+        <ots:Compatibility GtuType="PEDESTRIAN" Compatible="false" />
       </ots:LaneType>
       <ots:LaneType Id="BUS_LANE" Default="true">
-        <ots:Compatibility GtuType="NL.ROAD_USER" Direction="NONE" />
-        <ots:Compatibility GtuType="BUS" Direction="FORWARD" />
+        <ots:Compatibility GtuType="NL.ROAD_USER" Compatible="false" />
+        <ots:Compatibility GtuType="BUS" />
       </ots:LaneType>
       <ots:LaneType Id="MOPED_PATH" Default="true">
-        <ots:Compatibility GtuType="NL.ROAD_USER" Direction="NONE" />
-        <ots:Compatibility GtuType="BICYCLE" Direction="FORWARD" />
+        <ots:Compatibility GtuType="NL.ROAD_USER" Compatible="false" />
+        <ots:Compatibility GtuType="BICYCLE" />
         <!-- a MOPED is a special BICYCLE -->
       </ots:LaneType>
       <ots:LaneType Id="BICYCLE_PATH" Default="true">
-        <ots:Compatibility GtuType="NL.ROAD_USER" Direction="NONE" />
-        <ots:Compatibility GtuType="BICYCLE" Direction="FORWARD" />
-        <ots:Compatibility GtuType="MOPED" Direction="NONE" />
+        <ots:Compatibility GtuType="NL.ROAD_USER" Compatible="false" />
+        <ots:Compatibility GtuType="BICYCLE" />
+        <ots:Compatibility GtuType="MOPED" Compatible="false" />
       </ots:LaneType>
       <ots:LaneType Id="FOOTPATH" Default="true">
-        <ots:Compatibility GtuType="NL.ROAD_USER" Direction="NONE" />
-        <ots:Compatibility GtuType="PEDESTRIAN" Direction="BOTH" />
+        <ots:Compatibility GtuType="NL.ROAD_USER" Compatible="false" />
+        <ots:Compatibility GtuType="PEDESTRIAN" />
       </ots:LaneType>
     </ots:LaneTypes>
 
@@ -125,7 +125,7 @@
           <ots:Constant C="2.55" />
         </ots:WidthDist>
         <ots:MaxSpeedDist SpeedUnit="km/h">
-          <ots:NORMAL MU="85.0" SIGMA="2.5" />
+          <ots:Normal Mu="85.0" Sigma="2.5" />
         </ots:MaxSpeedDist>
       </ots:GtuTemplate>
       <ots:GtuTemplate Id="BUS" GtuType="BUS" Default="true">
@@ -165,13 +165,13 @@
 
     <ots:LaneTypes>
       <ots:LaneType Id="STREET">
-        <ots:Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
+        <ots:Compatibility GtuType="NL.ROAD_USER" />
       </ots:LaneType>
     </ots:LaneTypes>
 
-    <ots:GTUTYPES>
-      <!-- <ots:GTUTYPE PARENT="ROAD_USER" Id="CAR" /> <ots:GTUTYPE PARENT="ROAD_USER" Id="TRUCK" /> -->
-    </ots:GTUTYPES>
+    <ots:GtuTypes>
+      <!-- <ots:GtuType Parent="ROAD_USER" Id="CAR" /> <ots:GtuType Parent="ROAD_USER" Id="TRUCK" /> -->
+    </ots:GtuTypes>
 
     <ots:GtuTemplates>
       <ots:GtuTemplate GtuType="NL.CAR" Id="CARS">
@@ -201,7 +201,7 @@
 
     <ots:LinkTypes>
       <ots:LinkType Id="STREET">
-        <ots:Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
+        <ots:Compatibility GtuType="NL.ROAD_USER" />
       </ots:LinkType>
     </ots:LinkTypes>
 
@@ -214,20 +214,20 @@
         </ots:Stripe>
         <ots:Lane Id="FORWARD3" LaneType="NL.STREET" DesignDirection="true">
           <ots:Width>3.3m</ots:Width>
-          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SPEEDLIMIT>
+          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
         <ots:Stripe Type="DASHED">
         </ots:Stripe>
         <ots:Lane Id="FORWARD2" LaneType="NL.STREET" DesignDirection="true">
           <ots:CenterOffset>-6.2m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
-          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SPEEDLIMIT>
+          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
         <ots:Stripe Type="DASHED">
         </ots:Stripe>
         <ots:Lane Id="FORWARD1" LaneType="NL.STREET" DesignDirection="true">
           <ots:Width>3.3m</ots:Width>
-          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SPEEDLIMIT>
+          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
         <ots:Stripe Type="SOLID">
         </ots:Stripe>
@@ -243,7 +243,7 @@
           <ots:CenterOffsetStart>-6.2m</ots:CenterOffsetStart>
           <ots:CenterOffsetEnd>-9.5m</ots:CenterOffsetEnd>
           <ots:Width>3.3m</ots:Width>
-          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SPEEDLIMIT>
+          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
         <ots:Stripe Type="DASHED">
           <ots:CenterOffset>-7.85m</ots:CenterOffset>
@@ -251,7 +251,7 @@
         <ots:Lane Id="FORWARD2" LaneType="NL.STREET" DesignDirection="true">
           <ots:CenterOffset>-6.2m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
-          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SPEEDLIMIT>
+          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
         <ots:Stripe Type="DASHED">
           <ots:CenterOffset>-4.55m</ots:CenterOffset>
@@ -260,7 +260,7 @@
           <ots:CenterOffsetStart>-6.2m</ots:CenterOffsetStart>
           <ots:CenterOffsetEnd>-2.9m</ots:CenterOffsetEnd>
           <ots:Width>3.3m</ots:Width>
-          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SPEEDLIMIT>
+          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
         <ots:Stripe Type="SOLID">
         </ots:Stripe>
@@ -277,7 +277,7 @@
         <ots:Lane Id="FORWARD" LaneType="NL.STREET" DesignDirection="true">
           <ots:CenterOffset>-6.2m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
-          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SPEEDLIMIT>
+          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>-4.6m</ots:CenterOffset>
@@ -295,7 +295,7 @@
         <ots:Lane Id="FORWARD" LaneType="NL.STREET" DesignDirection="true">
           <ots:CenterOffset>-6.2m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
-          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SPEEDLIMIT>
+          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>-4.6m</ots:CenterOffset>
@@ -310,7 +310,7 @@
         <ots:Lane Id="FORWARD" LaneType="NL.STREET" DesignDirection="true">
           <ots:CenterOffset>-6.2m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
-          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SPEEDLIMIT>
+          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>-7.8m</ots:CenterOffset>
@@ -325,7 +325,7 @@
         <ots:Lane Id="FORWARD" LaneType="NL.STREET" DesignDirection="true">
           <ots:CenterOffset>-6.2m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
-          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SPEEDLIMIT>
+          <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>-7.8m</ots:CenterOffset>
@@ -517,62 +517,62 @@
 
   </ots:Network>
   <ots:Demand>
-    <ots:Od Id="Traffic Demand" GlobalInterpolation="STEPWISE" GlobalFactor="1.000">
+    <ots:Od Id="Traffic Demand" GlobalInterpolation="STEPWISE" GlobalFactor="1.000" SinkType="ROAD_USERS">
       <ots:Category GtuType="NL.CAR" Id="CAR" />
       <ots:Category GtuType="NL.TRUCK" Id="TRUCK" />
-      <ots:Demand Category="CAR" Origin="W" Destination="NO">
+      <ots:Cell Category="CAR" Origin="W" Destination="NO">
         <ots:Level TIME="0s">200.00veh/h</ots:Level>
         <ots:Level TIME="3600s">200.00veh/h</ots:Level>
-      </ots:Demand>
-      <ots:Demand Category="CAR" Origin="W" Destination="EO">
+      </ots:Cell>
+      <ots:Cell Category="CAR" Origin="W" Destination="EO">
         <ots:Level TIME="0s">300.00veh/h</ots:Level>
         <ots:Level TIME="3600s">300.00veh/h</ots:Level>
-      </ots:Demand>
-      <ots:Demand Category="CAR" Origin="W" Destination="SO">
+      </ots:Cell>
+      <ots:Cell Category="CAR" Origin="W" Destination="SO">
         <ots:Level TIME="0s">200.00veh/h</ots:Level>
         <ots:Level TIME="3600s">200.00veh/h</ots:Level>
-      </ots:Demand>
-      <ots:Demand Category="CAR" Origin="N" Destination="EO">
+      </ots:Cell>
+      <ots:Cell Category="CAR" Origin="N" Destination="EO">
         <ots:Level TIME="0s">200.00veh/h</ots:Level>
         <ots:Level TIME="3600s">200.00veh/h</ots:Level>
-      </ots:Demand>
-      <ots:Demand Category="CAR" Origin="N" Destination="SO">
+      </ots:Cell>
+      <ots:Cell Category="CAR" Origin="N" Destination="SO">
         <ots:Level TIME="0s">300.00veh/h</ots:Level>
         <ots:Level TIME="3600s">300.00veh/h</ots:Level>
-      </ots:Demand>
-      <ots:Demand Category="CAR" Origin="N" Destination="WO">
+      </ots:Cell>
+      <ots:Cell Category="CAR" Origin="N" Destination="WO">
         <ots:Level TIME="0s">200.00veh/h</ots:Level>
         <ots:Level TIME="3600s">200.00veh/h</ots:Level>
-      </ots:Demand>
-      <ots:Demand Category="CAR" Origin="E" Destination="SO">
+      </ots:Cell>
+      <ots:Cell Category="CAR" Origin="E" Destination="SO">
         <ots:Level TIME="0s">200.00veh/h</ots:Level>
         <ots:Level TIME="3600s">200.00veh/h</ots:Level>
-      </ots:Demand>
-      <ots:Demand Category="CAR" Origin="E" Destination="WO">
+      </ots:Cell>
+      <ots:Cell Category="CAR" Origin="E" Destination="WO">
         <ots:Level TIME="0s">300.00veh/h</ots:Level>
         <ots:Level TIME="3600s">300.00veh/h</ots:Level>
-      </ots:Demand>
-      <ots:Demand Category="CAR" Origin="E" Destination="NO">
+      </ots:Cell>
+      <ots:Cell Category="CAR" Origin="E" Destination="NO">
         <ots:Level TIME="0s">200.00veh/h</ots:Level>
         <ots:Level TIME="3600s">200.00veh/h</ots:Level>
-      </ots:Demand>
-      <ots:Demand Category="CAR" Origin="S" Destination="WO">
+      </ots:Cell>
+      <ots:Cell Category="CAR" Origin="S" Destination="WO">
         <ots:Level TIME="0s">200.00veh/h</ots:Level>
         <ots:Level TIME="3600s">200.00veh/h</ots:Level>
-      </ots:Demand>
-      <ots:Demand Category="CAR" Origin="S" Destination="NO">
+      </ots:Cell>
+      <ots:Cell Category="CAR" Origin="S" Destination="NO">
         <ots:Level TIME="0s">300.00veh/h</ots:Level>
         <ots:Level TIME="3600s">300.00veh/h</ots:Level>
-      </ots:Demand>
-      <ots:Demand Category="CAR" Origin="S" Destination="EO">
+      </ots:Cell>
+      <ots:Cell Category="CAR" Origin="S" Destination="EO">
         <ots:Level TIME="0s">200.00veh/h</ots:Level>
         <ots:Level TIME="3600s">200.00veh/h</ots:Level>
-      </ots:Demand>
+      </ots:Cell>
     </ots:Od>
-    <ots:Sink Lane="FORWARD" Link="NCONO" Position="END-20m" Direction="DIR_PLUS" />
-    <ots:Sink Lane="FORWARD" Link="ECOEO" Position="END-20m" Direction="DIR_PLUS" />
-    <ots:Sink Lane="FORWARD" Link="SCOSO" Position="END-20m" Direction="DIR_PLUS" />
-    <ots:Sink Lane="FORWARD" Link="WCOWO" Position="END-20m" Direction="DIR_PLUS" />
+    <ots:Sink Type="ROAD_USERS" Lane="FORWARD" Link="NCONO" Position="END-20m" Direction="DIR_PLUS" />
+    <ots:Sink Type="ROAD_USERS" Lane="FORWARD" Link="ECOEO" Position="END-20m" Direction="DIR_PLUS" />
+    <ots:Sink Type="ROAD_USERS" Lane="FORWARD" Link="SCOSO" Position="END-20m" Direction="DIR_PLUS" />
+    <ots:Sink Type="ROAD_USERS" Lane="FORWARD" Link="WCOWO" Position="END-20m" Direction="DIR_PLUS" />
   </ots:Demand>
   <ots:Model />
   <ots:Scenario />

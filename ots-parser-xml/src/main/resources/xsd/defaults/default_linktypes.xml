@@ -2,28 +2,28 @@
   xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions.xsd">
   
   <ots:LinkType Id="NL.CONNECTOR" Default="true">
-    <ots:Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
-    <ots:Compatibility GtuType="NL.WATERWAY_USER" Direction="FORWARD" />
-    <ots:Compatibility GtuType="NL.RAILWAY_USER" Direction="FORWARD" />
+    <ots:Compatibility GtuType="NL.ROAD_USER" />
+    <ots:Compatibility GtuType="NL.WATERWAY_USER" />
+    <ots:Compatibility GtuType="NL.RAILWAY_USER" />
   </ots:LinkType>
 
   <ots:LinkType Id="NL.ROAD" Default="true">
-    <ots:Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
+    <ots:Compatibility GtuType="NL.ROAD_USER" />
   </ots:LinkType>
 
   <ots:LinkType Id="NL.FREEWAY" Parent="NL.ROAD" Default="true">
-    <ots:Compatibility GtuType="NL.PEDESTRIAN" Direction="NONE" />
-    <ots:Compatibility GtuType="NL.BICYCLE" Direction="NONE" />
+    <ots:Compatibility GtuType="NL.PEDESTRIAN" Compatible="false" />
+    <ots:Compatibility GtuType="NL.BICYCLE" Compatible="false" />
   </ots:LinkType>
   
   <ots:LinkType Id="NL.HIGHWAY" Parent="NL.ROAD" Default="true">
-    <ots:Compatibility GtuType="NL.PEDESTRIAN" Direction="NONE" />
-    <ots:Compatibility GtuType="NL.BICYCLE" Direction="NONE" />
+    <ots:Compatibility GtuType="NL.PEDESTRIAN" Compatible="false" />
+    <ots:Compatibility GtuType="NL.BICYCLE" Compatible="false" />
   </ots:LinkType>
   
   <ots:LinkType Id="NL.PROVINCIAL" Parent="NL.ROAD" Default="true">
-    <ots:Compatibility GtuType="NL.PEDESTRIAN" Direction="NONE" />
-    <ots:Compatibility GtuType="NL.BICYCLE" Direction="NONE" />
+    <ots:Compatibility GtuType="NL.PEDESTRIAN" Compatible="false" />
+    <ots:Compatibility GtuType="NL.BICYCLE" Compatible="false" />
   </ots:LinkType>
   
   <ots:LinkType Id="NL.RURAL" Parent="NL.ROAD" Default="true" />
@@ -33,11 +33,11 @@
   <ots:LinkType Id="NL.RESIDENTIAL" Parent="NL.ROAD" Default="true" />
 
   <ots:LinkType Id="NL.WATERWAY" Default="true">
-    <ots:Compatibility GtuType="NL.WATERWAY_USER" Direction="BOTH" />
+    <ots:Compatibility GtuType="NL.WATERWAY_USER" />
   </ots:LinkType>
 
   <ots:LinkType Id="NL.RAILWAY" Default="true">
-    <ots:Compatibility GtuType="NL.RAILWAY_USER" Direction="FORWARD" />
+    <ots:Compatibility GtuType="NL.RAILWAY_USER" />
   </ots:LinkType>
 
   
