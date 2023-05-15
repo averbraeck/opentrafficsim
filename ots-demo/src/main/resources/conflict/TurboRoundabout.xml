@@ -43,14 +43,14 @@
 
     <ots:LinkTypes>
       <ots:LinkType Id="URBAN">
-        <ots:Compatibility GtuType="NL.VEHICLE" Direction="FORWARD" />
+        <ots:Compatibility GtuType="NL.VEHICLE" />
         <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50km/h" />
       </ots:LinkType>
     </ots:LinkTypes>
 
     <ots:LaneTypes>
       <ots:LaneType Id="URBAN">
-        <ots:Compatibility GtuType="NL.VEHICLE" Direction="FORWARD" />
+        <ots:Compatibility GtuType="NL.VEHICLE" />
       </ots:LaneType>
     </ots:LaneTypes>
 

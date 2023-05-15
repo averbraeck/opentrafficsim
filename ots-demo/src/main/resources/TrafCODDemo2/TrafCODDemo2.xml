@@ -39,7 +39,7 @@
 
     <ots:LaneTypes>
       <ots:LaneType Id="STREET">
-        <ots:Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
+        <ots:Compatibility GtuType="NL.ROAD_USER" />
       </ots:LaneType>
     </ots:LaneTypes>
 
@@ -75,7 +75,7 @@
 
     <ots:LinkTypes>
       <ots:LinkType Id="STREET">
-        <ots:Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
+        <ots:Compatibility GtuType="NL.ROAD_USER" />
       </ots:LinkType>
     </ots:LinkTypes>
 

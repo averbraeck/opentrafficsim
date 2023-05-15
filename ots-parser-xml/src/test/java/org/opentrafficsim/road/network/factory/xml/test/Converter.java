@@ -159,7 +159,7 @@ public class Converter
         /*-
         <LinkTypes>
           <LinkType Id="STREET">
-            <Compatibility GtuType="NL.VEHICLE" Direction="FORWARD" />
+            <Compatibility GtuType="NL.VEHICLE" />
             <SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="40km/h" />
             <SpeedLimit GtuType="NL.TRUCK" LegalSpeedLimit="40km/h" />
           </LinkType>
@@ -167,7 +167,7 @@ public class Converter
         
         <LaneTypes>
           <LaneType Id="STREET">
-            <Compatibility GtuType="NL.VEHICLE" Direction="FORWARD" />
+            <Compatibility GtuType="NL.VEHICLE" />
           </LaneType>
         </LaneTypes>
          */
@@ -215,7 +215,7 @@ public class Converter
         /*-
         <LinkTypes>
           <LinkType Id="STREET">
-            <Compatibility GtuType="NL.VEHICLE" Direction="FORWARD" />
+            <Compatibility GtuType="NL.VEHICLE" />
             <SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="40km/h" />
             <SpeedLimit GtuType="NL.TRUCK" LegalSpeedLimit="40km/h" />
           </LinkType>
@@ -223,7 +223,7 @@ public class Converter
         
         <LaneTypes>
           <LaneType Id="STREET">
-            <Compatibility GtuType="NL.VEHICLE" Direction="FORWARD" />
+            <Compatibility GtuType="NL.VEHICLE" />
           </LaneType>
         </LaneTypes>
          */

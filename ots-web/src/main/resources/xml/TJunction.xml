@@ -36,14 +36,14 @@
 
     <LinkTypes>
       <LinkType Id="URBAN">
-        <Compatibility GtuType="NL.VEHICLE" Direction="FORWARD" />
+        <Compatibility GtuType="NL.VEHICLE" />
         <SPEEDLIMIT GtuType="NL.CAR" LegalSpeedLimit="50km/h" />
       </LinkType>
     </LinkTypes>
 
     <LaneTypes>
       <LaneType Id="URBAN">
-        <Compatibility GtuType="NL.VEHICLE" Direction="FORWARD" />
+        <Compatibility GtuType="NL.VEHICLE" />
       </LaneType>
     </LaneTypes>
 

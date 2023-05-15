@@ -46,7 +46,7 @@
 
     <LaneTypes>
       <LaneType Id="STREET">
-        <Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
+        <Compatibility GtuType="NL.ROAD_USER" />
       </LaneType>
     </LaneTypes>
 
@@ -82,7 +82,7 @@
 
     <LinkTypes>
       <LinkType Id="STREET">
-        <Compatibility GtuType="NL.ROAD_USER" Direction="FORWARD" />
+        <Compatibility GtuType="NL.ROAD_USER" />
       </LinkType>
     </LinkTypes>
 
