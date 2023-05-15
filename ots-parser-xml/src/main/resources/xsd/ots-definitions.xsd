@@ -258,14 +258,12 @@
 
   <xsd:complexType name="BasicRoadLayout">
     <xsd:sequence>
-      <xsd:sequence minOccurs="1" maxOccurs="unbounded">
-        <xsd:choice>
-          <xsd:element name="Lane" type="ots:CseLane" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element name="NoTrafficLane" type="ots:CseNoTrafficLane" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element name="Shoulder" type="ots:CseShoulder" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element name="Stripe" type="ots:CseStripe" minOccurs="0" maxOccurs="unbounded" />
-        </xsd:choice>
-      </xsd:sequence>
+      <xsd:choice minOccurs="1" maxOccurs="unbounded">
+        <xsd:element name="Lane" type="ots:CseLane" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element name="NoTrafficLane" type="ots:CseNoTrafficLane" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element name="Shoulder" type="ots:CseShoulder" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element name="Stripe" type="ots:CseStripe" minOccurs="0" maxOccurs="unbounded" />
+      </xsd:choice>
       <xsd:element ref="ots:SpeedLimit" minOccurs="0" maxOccurs="unbounded" />
     </xsd:sequence>
     <xsd:attribute name="LaneKeeping" type="ots:LaneKeepingType" use="optional" />
