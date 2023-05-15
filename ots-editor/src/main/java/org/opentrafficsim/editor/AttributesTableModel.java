@@ -87,7 +87,7 @@ public class AttributesTableModel extends AbstractTableModel
         switch (columnIndex)
         {
             case 0:
-                return DocumentReader.getAttribute(attribute, "name").toLowerCase();
+                return XsdTreeNodeUtil.separatedName(DocumentReader.getAttribute(attribute, "name"));
             case 1:
                 Object value = this.node.getAttributeValue(rowIndex);
                 return value;

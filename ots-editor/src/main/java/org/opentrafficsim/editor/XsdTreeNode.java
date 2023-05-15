@@ -1502,9 +1502,9 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         if (this.xsdNode.getNodeName().equals("xi:include"))
         {
-            return "include";
+            return "Include";
         }
-        return getNodeName().toLowerCase();
+        return XsdTreeNodeUtil.separatedName(getNodeName());
     }
 
     /**

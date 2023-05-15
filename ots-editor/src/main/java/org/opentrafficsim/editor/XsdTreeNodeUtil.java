@@ -23,6 +23,9 @@ import org.w3c.dom.Node;
  */
 public final class XsdTreeNodeUtil
 {
+    
+    /** Pattern for regular expression to split string by upper case without disregarding the upper case itself. */
+    private static final Pattern UPPER_PATTERN = Pattern.compile("(?=\\p{Lu})");
 
     /**
      * Private constructor.
@@ -345,6 +348,28 @@ public final class XsdTreeNodeUtil
         Node typeNode = schema.getType(type);
         Throw.when(typeNode == null, RuntimeException.class, "Unable to load type for %s from XSD schema.", type);
         return typeNode;
+    }
+    
+    /**
+     * Adds a thin space before each capital character in a {@code String}, except the first. 
+     * @param name String; name of node.
+     * @return String; input string but with a thin space before each capital character, except the first.
+     */
+    static String separatedName(final String name)
+    {
+        String[] parts = UPPER_PATTERN.split(name);
+        if (parts.length == 1)
+        {
+            return parts[0];
+        }
+        String separator = "";
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String part : parts)
+        {
+            stringBuilder.append(separator).append(part);
+            separator = " ";
+        }
+        return stringBuilder.toString();
     }
 
 }
