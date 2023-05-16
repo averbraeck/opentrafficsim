@@ -109,6 +109,9 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected boolean closeHandlerRegistered = false;
 
+    /** Decimal separator. */
+    private String decimalSeparator;
+
     /** Has cleanup taken place? */
     private boolean isCleanUp = false;
 
@@ -124,6 +127,8 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
     {
         this.simulator = simulator;
         this.model = model;
+        this.decimalSeparator =
+                "" + ((DecimalFormat) NumberFormat.getInstance()).getDecimalFormatSymbols().getDecimalSeparator();
 
         this.setLayout(new FlowLayout(FlowLayout.LEFT));
         JPanel buttonPanel = new JPanel();
@@ -647,7 +652,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             this.stopAtEvent = null;
         }
         String newValue = (String) evt.getNewValue();
-        String[] fields = newValue.split("[:\\.]");
+        String[] fields = newValue.split("[:\\" + this.decimalSeparator + "]");
         int hours = Integer.parseInt(fields[0]);
         int minutes = Integer.parseInt(fields[1]);
         int seconds = Integer.parseInt(fields[2]);
@@ -752,7 +757,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
     }
 
     /** JPanel that contains a JSider that uses a logarithmic scale. */
-    static class TimeWarpPanel extends JPanel
+    class TimeWarpPanel extends JPanel
     {
         /** */
         private static final long serialVersionUID = 20150408L;
@@ -816,15 +821,15 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 // System.out.println("Label " + step + " is \"" + text.toString() + "\"");
             }
             // Figure out the DecimalSymbol
-            String decimalSeparator =
-                    "" + ((DecimalFormat) NumberFormat.getInstance()).getDecimalFormatSymbols().getDecimalSeparator();
             for (int step = -1; step >= minimumTick; step--)
             {
                 StringBuilder text = new StringBuilder();
                 text.append("0");
-                text.append(decimalSeparator);
+                text.append(OtsControlPanel.this.decimalSeparator);
+                int magnitude = 1;
                 for (int decade = (step + 1) / this.ratios.length; decade < 0; decade++)
                 {
+                    magnitude *= 10;
                     text.append("0");
                 }
                 int index = step % this.ratios.length;
@@ -834,8 +839,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 }
                 text.append(this.ratios[index]);
                 labels.put(step, new JLabel(text.toString()));
-                this.tickValues.put(step, Double.parseDouble(text.toString()));
-                // System.out.println("Label " + step + " is \"" + text.toString() + "\"");
+                this.tickValues.put(step, 1.0 / (magnitude * this.ratios[index]));
             }
             labels.put(maximumTick + 1, new JLabel("\u221E"));
             this.tickValues.put(maximumTick + 1, 1E9);
@@ -979,7 +983,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
          */
         ClockLabel(final JLabel speedLabel)
         {
-            super("00:00:00.000");
+            super("00:00:00" + OtsControlPanel.this.decimalSeparator + "000");
             this.speedLabel = speedLabel;
             speedLabel.setFont(getTimeFont());
             this.setFont(getTimeFont());
@@ -1018,9 +1022,10 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             {
                 double now = Math.round(getSimulator().getSimulatorTime().getSI() * 1000) / 1000d;
                 int seconds = (int) Math.floor(now);
-                int fractionalSeconds = (int) Math.floor(1000 * (now - seconds));
-                ClockLabel.this.setText(String.format("  %02d:%02d:%02d.%03d  ", seconds / 3600, seconds / 60 % 60,
-                        seconds % 60, fractionalSeconds));
+                int h = (int) seconds / 3600;
+                int m = (int) (seconds - h * 3600) / 60;
+                double s = now - h * 3600 - m * 60;
+                ClockLabel.this.setText(String.format("  %02d:%02d:%06.3f ", h, m, s));
                 ClockLabel.this.repaint();
                 double speed = getSpeed(now);
                 if (Double.isNaN(speed))
@@ -1090,11 +1095,11 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
          */
         TimeEdit(final Time initialValue)
         {
-            super(new RegexFormatter("\\d\\d\\d\\d:[0-5]\\d:[0-5]\\d\\.\\d\\d\\d"));
+            super(new RegexFormatter("\\d\\d\\d\\d:[0-5]\\d:[0-5]\\d\\" + OtsControlPanel.this.decimalSeparator + "\\d\\d\\d"));
             MaskFormatter mf = null;
             try
             {
-                mf = new MaskFormatter("####:##:##.###");
+                mf = new MaskFormatter("####:##:##" + OtsControlPanel.this.decimalSeparator + "###");
                 mf.setPlaceholderCharacter('0');
                 mf.setAllowsInvalid(false);
                 mf.setCommitsOnValidEdit(true);
@@ -1116,11 +1121,11 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         public void setTime(final Time newValue)
         {
             double v = newValue.getSI();
-            int integerPart = (int) Math.floor(v);
-            int fraction = (int) Math.floor((v - integerPart) * 1000);
-            String text =
-                    String.format("%04d:%02d:%02d.%03d", integerPart / 3600, integerPart / 60 % 60, integerPart % 60, fraction);
-            this.setText(text);
+            int seconds = (int) Math.floor(v);
+            int h = (int) seconds / 3600;
+            int m = (int) (seconds - h * 3600) / 60;
+            double s = v - h * 3600 - m * 60;
+            this.setText(String.format("%04d:%02d:%06.3f", h, m, s));
         }
 
         /** {@inheritDoc} */
@@ -1179,8 +1184,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
     @Override
     public final void notify(final Event event) throws RemoteException
     {
-        if (event.getType().equals(Replication.END_REPLICATION_EVENT)
-                || event.getType().equals(SimulatorInterface.START_EVENT)
+        if (event.getType().equals(Replication.END_REPLICATION_EVENT) || event.getType().equals(SimulatorInterface.START_EVENT)
                 || event.getType().equals(SimulatorInterface.STOP_EVENT)
                 || event.getType().equals(DevsRealTimeAnimator.CHANGE_SPEED_FACTOR_EVENT))
         {
