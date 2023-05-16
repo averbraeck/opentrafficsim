@@ -93,11 +93,11 @@ public final class GeneratorSinkParser
             Route route = new Route(routeTag.getId(), gtuType);
             if (gtuType == null)
                 throw new NetworkException("GTUTYPE " + routeTag.getGtuType() + " not found in ROUTE " + routeTag.getId());
-            for (org.opentrafficsim.xml.generated.Route.Node nodeTag : routeTag.getNode())
+            for (String nodeTag : routeTag.getNode())
             {
-                Node node = otsNetwork.getNode(nodeTag.getId());
+                Node node = otsNetwork.getNode(nodeTag);
                 if (node == null)
-                    throw new NetworkException("NODE " + nodeTag.getId() + " not found in ROUTE " + routeTag.getId());
+                    throw new NetworkException("NODE " + nodeTag + " not found in ROUTE " + routeTag.getId());
                 route.addNode(node);
             }
             otsNetwork.addRoute(gtuType, route);

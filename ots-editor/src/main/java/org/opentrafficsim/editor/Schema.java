@@ -576,13 +576,20 @@ public class Schema
                                     + xpathField + ".");
                         }
                     }
-                    else
+                    else if (xpathField.equals("."))
                     {
-                        String type = xpathField.substring(4); // removes 'xsd:'
-                        if (!this.elements.containsKey((getXpath(node) + "." + type).replace("ots:", "")))
+                        if (!this.elements.containsKey(getXpath(node).replace("ots:", "")))
                         {
                             System.out.println("Keyref " + keyref + " (" + getXpath(node) + ") points to non existing field "
-                                    + xpathField.substring(4) + ".");
+                                    + xpathField + ".");
+                        }
+                    }
+                    else
+                    {
+                        if (!this.elements.containsKey((getXpath(node) + "." + xpathField).replace("ots:", "")))
+                        {
+                            System.out.println("Keyref " + keyref + " (" + getXpath(node) + ") points to non existing field "
+                                    + xpathField + ".");
                         }
                     }
                 }

@@ -205,11 +205,7 @@
   <xsd:element name="Route">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="Node" minOccurs="2" maxOccurs="unbounded">
-          <xsd:complexType>
-            <xsd:attribute name="Id" type="xsd:string" />
-          </xsd:complexType>
-        </xsd:element>
+        <xsd:element name="Node" type="xsd:string" minOccurs="2" maxOccurs="unbounded" />
       </xsd:sequence>
       <xsd:attribute name="GtuType" type="xsd:string" use="required" />
       <xsd:attribute name="Id" type="xsd:string" use="required" />

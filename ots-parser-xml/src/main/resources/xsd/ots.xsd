@@ -300,7 +300,7 @@
 
     <xsd:keyref name="routeNodeIdRef" refer="ots:nodeKey">
       <xsd:selector xpath=".//ots:Demand/ots:Route/ots:Node" />
-      <xsd:field xpath="@Id" />
+      <xsd:field xpath="." />
     </xsd:keyref>
 
     <!-- Route.GtuType defined by GtuType.Id -->

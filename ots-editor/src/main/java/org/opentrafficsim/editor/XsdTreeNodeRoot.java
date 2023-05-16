@@ -210,6 +210,9 @@ public class XsdTreeNodeRoot extends XsdTreeNode
         /** Name of the child element the key points to, {@code null} if it points to an argument. */
         private final List<String> childNames = new ArrayList<>();
 
+        /** Whether to include the value of the node itself (i.e. field reference "."). */
+        private boolean includeSelfValue;
+
         /**
          * Constructor.
          * @param keyNode Node; node defining the xsd:key or xsd:keyref.
@@ -233,6 +236,11 @@ public class XsdTreeNodeRoot extends XsdTreeNode
                 else if (value.startsWith("ots:"))
                 {
                     this.childNames.add(value.substring(4));
+                    continue;
+                }
+                else if (value.equals("."))
+                {
+                    this.includeSelfValue = true;
                     continue;
                 }
                 throw new UnsupportedOperationException(
@@ -264,7 +272,8 @@ public class XsdTreeNodeRoot extends XsdTreeNode
             }
             if (values.size() == 1)
             {
-                String name = this.attributeNames.isEmpty() ? this.childNames.get(0) : this.attributeNames.get(0);
+                String name = this.attributeNames.isEmpty() ? (this.childNames.isEmpty() ? "node" : this.childNames.get(0))
+                        : this.attributeNames.get(0);
                 return "Value " + values.get(0) + " for " + name + " does not refer to a known " + this.refer.getTypeString()
                         + " within " + this.keyPath + ".";
             }
@@ -288,6 +297,10 @@ public class XsdTreeNodeRoot extends XsdTreeNode
             }
             if (isType)
             {
+                if (this.includeSelfValue)
+                {
+                    node.addValueValidator(this);
+                }
                 for (String attribute : this.attributeNames)
                 {
                     node.addAttributeValidator(attribute, this);
@@ -388,6 +401,10 @@ public class XsdTreeNodeRoot extends XsdTreeNode
                     }
                 }
             }
+            if (this.includeSelfValue)
+            {
+                nodeList.add(node.getValue());
+            }
             return nodeList;
         }
 
@@ -399,10 +416,24 @@ public class XsdTreeNodeRoot extends XsdTreeNode
             {
                 return null;
             }
+            /*
+             * The following is not robust. The field index might be wrong if 'field', which is the xsd-node name, is equal
+             * among attributes, child nodes, and the node itself. E.g. when we are at Route.Node.Node and field = "Node", do we
+             * need the value of Route.Node (the node itself), or of either a child node or attribute named "Node", which may
+             * also both exist?
+             */
             int fieldIndex = this.attributeNames.indexOf(field);
             if (fieldIndex < 0)
             {
-                fieldIndex = this.attributeNames.size() + this.childNames.indexOf(field);
+                int deltaFieldIndex = this.childNames.indexOf(field);
+                if (deltaFieldIndex < 0)
+                {
+                    fieldIndex = this.attributeNames.size() + this.childNames.size(); // value of node itself appended
+                }
+                else
+                {
+                    fieldIndex = this.attributeNames.size() + deltaFieldIndex;
+                }
             }
             /*
              * We gather values from the referred xsd:key, drawing the appropriate context from the node relevant to the
