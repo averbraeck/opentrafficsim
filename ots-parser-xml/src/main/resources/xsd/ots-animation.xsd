@@ -11,26 +11,40 @@
 
   <xsd:include schemaLocation="ots-types.xsd" />
 
-  <xsd:complexType name="GtuColorerType">
-    <xsd:sequence>
-      <xsd:element name="Parameter" type="ots:ParameterType" minOccurs="0" maxOccurs="unbounded" />
-    </xsd:sequence>
-    <xsd:attribute name="Id" default="DEFAULT" use="optional">
-      <xsd:simpleType>
-        <xsd:restriction base="xsd:string">
-          <xsd:pattern value="(\
-{0})DEFAULT|ID|SPEED|ACCELERATION" />
-        </xsd:restriction>
-      </xsd:simpleType>
-    </xsd:attribute>
-    <xsd:attribute name="Class" type="ots:ClassNameType" use="optional" />
-  </xsd:complexType>
-
   <xsd:element name="GtuColorers">
     <xsd:complexType>
-      <xsd:sequence>
-        <xsd:element name="GtuColorer" type="ots:GtuColorerType" minOccurs="1" maxOccurs="unbounded" />
-      </xsd:sequence>
+      <xsd:choice minOccurs="1" maxOccurs="unbounded">
+        <xsd:element name="Default" default="DEFAULT">
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+              <xsd:enumeration value="DEFAULT" />
+              <xsd:enumeration value="ID" />
+              <xsd:enumeration value="SPEED" />
+              <xsd:enumeration value="ACCELERATION" />
+              <xsd:enumeration value="BLUE" />
+              <xsd:enumeration value="DESIRED_SPEED" />
+              <xsd:enumeration value="SPLIT" />
+              <xsd:enumeration value="SYNCHRONIZATION" />
+              <xsd:enumeration value="DESIRED_HEADWAY" />
+              <xsd:enumeration value="TOTAL_DESIRE" />
+              <xsd:enumeration value="SOCIAL_PRESSURE" />
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+        <xsd:element name="Incentive">
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+              <xsd:enumeration value="ROUTE" />
+              <xsd:enumeration value="SPEED_WITH_COURTESY" />
+              <xsd:enumeration value="KEEP" />
+              <xsd:enumeration value="COURTESY" />
+              <xsd:enumeration value="SOCIO_SPEED" />
+              <xsd:enumeration value="BUS_STOP" />
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+        <xsd:element name="Class" type="ots:ClassNameType" />
+      </xsd:choice>
     </xsd:complexType>
   </xsd:element>
 
