@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -167,6 +168,8 @@ public final class XmlNetworkLaneParser implements Serializable
      */
     public static Ots parseXml(final InputStream xmlStream) throws JAXBException, SAXException, ParserConfigurationException
     {
+        Locale locale = Locale.getDefault();
+        Locale.setDefault(Locale.US);
         JAXBContext jc = JAXBContext.newInstance(Ots.class);
         Unmarshaller unmarshaller = jc.createUnmarshaller();
         SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -176,7 +179,9 @@ public final class XmlNetworkLaneParser implements Serializable
         XMLReader xmlReader = spf.newSAXParser().getXMLReader();
         xmlReader.setEntityResolver(new DefaultsResolver());
         SAXSource saxSource = new SAXSource(xmlReader, new InputSource(xmlStream));
-        return (Ots) unmarshaller.unmarshal(saxSource);
+        Ots result = (Ots) unmarshaller.unmarshal(saxSource);
+        Locale.setDefault(locale);
+        return result;
     }
 
     /**
