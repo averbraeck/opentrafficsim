@@ -38,7 +38,11 @@
       adapter="org.opentrafficsim.xml.bindings.LeftRightAdapter" />
     <xjc:javaType name="org.djunits.value.vdouble.scalar.Time" xmlType="ots:TimeType"
       adapter="org.opentrafficsim.xml.bindings.TimeAdapter" />
+    <xjc:javaType name="org.djunits.value.vdouble.scalar.Time" xmlType="ots:PositiveTimeType"
+      adapter="org.opentrafficsim.xml.bindings.TimeAdapter" />
     <xjc:javaType name="org.djunits.value.vdouble.scalar.Duration" xmlType="ots:DurationType"
+      adapter="org.opentrafficsim.xml.bindings.DurationAdapter" />
+    <xjc:javaType name="org.djunits.value.vdouble.scalar.Duration" xmlType="ots:PositiveDurationType"
       adapter="org.opentrafficsim.xml.bindings.DurationAdapter" />
     <xjc:javaType name="org.djunits.value.vdouble.scalar.Frequency" xmlType="ots:FrequencyType"
       adapter="org.opentrafficsim.xml.bindings.FrequencyAdapter" />

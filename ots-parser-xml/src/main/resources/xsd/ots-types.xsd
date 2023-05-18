@@ -975,6 +975,12 @@
     <xsd:attribute name="Id" type="xsd:string" use="required" />
     <xsd:attribute name="Class" type="ots:ClassNameType" use="optional" />
   </xsd:complexType>
+  
+  <xsd:simpleType name="IntAtLeastOne">
+    <xsd:restriction base="xsd:positiveInteger">
+      <xsd:minInclusive value="1"></xsd:minInclusive>
+    </xsd:restriction>
+  </xsd:simpleType>
 
   <!-- ========================================================================================= -->
   <!-- ==================================== DISTRIBUTION TYPES ================================= -->
