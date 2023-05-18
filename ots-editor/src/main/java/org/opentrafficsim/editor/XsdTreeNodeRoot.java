@@ -428,11 +428,11 @@ public class XsdTreeNodeRoot extends XsdTreeNode
                 int deltaFieldIndex = this.childNames.indexOf(field);
                 if (deltaFieldIndex < 0)
                 {
-                    fieldIndex = this.attributeNames.size() + this.childNames.size(); // value of node itself appended
+                    fieldIndex = this.attributeNames.size() + this.childNames.size() - 1; // value of node itself appended
                 }
                 else
                 {
-                    fieldIndex = this.attributeNames.size() + deltaFieldIndex;
+                    fieldIndex = this.attributeNames.size() + deltaFieldIndex - 1;
                 }
             }
             /*
