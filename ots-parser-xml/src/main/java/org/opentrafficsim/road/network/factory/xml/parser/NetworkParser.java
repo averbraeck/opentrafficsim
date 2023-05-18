@@ -284,7 +284,7 @@ public final class NetworkParser
             else if (xmlLink.getBezier() != null)
             {
                 int numSegments = xmlLink.getBezier().getNumSegments().intValue();
-                double shape = xmlLink.getBezier().getShape().doubleValue();
+                double shape = xmlLink.getBezier().getShape();
                 boolean weighted = xmlLink.getBezier().isWeighted();
                 if (xmlLink.getBezier().getStartDirection() != null)
                 {
