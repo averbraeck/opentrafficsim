@@ -55,7 +55,7 @@
               <xsd:attribute name="StartDirection" type="ots:DirectionType" use="optional" />
               <xsd:attribute name="EndDirection" type="ots:DirectionType" use="optional" />
               <xsd:attribute name="NumSegments" type="xsd:integer" use="optional" default="64" />
-              <xsd:attribute name="Shape" type="ots:PositiveDouble" use="optional" default="1.0" />
+              <xsd:attribute name="Shape" type="ots:DoublePositive" use="optional" default="1.0" />
               <xsd:attribute name="Weighted" type="xsd:boolean" use="optional" default="false" />
             </xsd:complexType>
           </xsd:element>

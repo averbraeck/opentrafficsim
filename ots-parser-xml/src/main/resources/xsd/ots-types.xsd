@@ -851,12 +851,6 @@
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="PositiveDouble">
-    <xsd:restriction base="xsd:decimal">
-      <xsd:minExclusive value="0" />
-    </xsd:restriction>
-  </xsd:simpleType>
-
   <xsd:simpleType name="VehicleIntensityType">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\d+\.?\d*\s*veh"></xsd:pattern>
@@ -986,7 +980,7 @@
   <!-- ==================================== DISTRIBUTION TYPES ================================= -->
   <!-- ========================================================================================= -->
 
-  <xsd:simpleType name="DoublePositiveZero">
+  <xsd:simpleType name="DoublePositiveInclusive">
     <xsd:restriction base="xsd:double">
       <xsd:minInclusive value="0.0"></xsd:minInclusive>
     </xsd:restriction>
@@ -1030,7 +1024,7 @@
       <xsd:element name="Normal">
         <xsd:complexType>
           <xsd:attribute name="Mu" type="xsd:double" use="required" />
-          <xsd:attribute name="Sigma" type="ots:DoublePositiveZero" use="required" />
+          <xsd:attribute name="Sigma" type="ots:DoublePositiveInclusive" use="required" />
           <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
         </xsd:complexType>
       </xsd:element>

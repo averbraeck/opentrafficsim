@@ -192,7 +192,7 @@
         <xsd:element name="GtuTemplate" minOccurs="1" maxOccurs="unbounded">
           <xsd:complexType>
             <xsd:attribute name="Id" type="xsd:string" use="required" />
-            <xsd:attribute name="Weight" type="xsd:double" use="required" />
+            <xsd:attribute name="Weight" type="ots:DoublePositiveInclusive" use="required" />
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
