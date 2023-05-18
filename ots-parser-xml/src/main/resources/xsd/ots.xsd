@@ -104,6 +104,13 @@
       <xsd:selector xpath=".//ots:Network/ots:Node" />
       <xsd:field xpath="@Id" />
     </xsd:key>
+    
+    <!-- define the Centroid.Id key -->
+
+    <xsd:key name="centroidKey">
+      <xsd:selector xpath=".//ots:Network/ots:Centroid" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
 
     <!-- define the Connector.Id key -->
 
@@ -266,11 +273,25 @@
       <xsd:field xpath="@NodeStart" />
     </xsd:keyref>
     
-    <!-- Link.NodeEND defined by Node.Id -->
+    <!-- Link.NodeEnd defined by Node.Id -->
 
     <xsd:keyref name="linkNodeEndNodeIdRef" refer="ots:nodeKey">
       <xsd:selector xpath=".//ots:Network/ots:Link" />
       <xsd:field xpath="@NodeEnd" />
+    </xsd:keyref>
+    
+    <!-- Connector.Centroid defined by Centroid.Id -->
+
+    <xsd:keyref name="connectorCentroidIdRef" refer="ots:centroidKey">
+      <xsd:selector xpath=".//ots:Network/ots:Connector" />
+      <xsd:field xpath="@Centroid" />
+    </xsd:keyref>
+    
+    <!-- Connector.Node defined by Node.Id -->
+
+    <xsd:keyref name="connectorNodeIdRef" refer="ots:nodeKey">
+      <xsd:selector xpath=".//ots:Network/ots:Connector" />
+      <xsd:field xpath="@Node" />
     </xsd:keyref>
 
     <!-- Link.DefinedRoadLayout defined by RoadLayout.Id -->

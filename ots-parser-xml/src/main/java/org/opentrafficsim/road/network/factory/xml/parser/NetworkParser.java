@@ -167,22 +167,23 @@ public final class NetworkParser
         for (org.opentrafficsim.xml.generated.Connector xmlConnector : ParseUtil
                 .getObjectsOfType(network.getIncludeOrCentroidOrNode(), org.opentrafficsim.xml.generated.Connector.class))
         {
-            Node startNode = (Node) otsNetwork.getNode(xmlConnector.getNodeStart());
-            if (null == startNode)
+            Node node = (Node) otsNetwork.getNode(xmlConnector.getNode());
+            if (null == node)
             {
                 simulator.getLogger().always()
-                        .debug("No start node (" + xmlConnector.getNodeStart() + ") for Connector " + xmlConnector.getId());
+                        .debug("No node (" + xmlConnector.getNode() + ") for Connector " + xmlConnector.getId());
             }
-            Node endNode = (Node) otsNetwork.getNode(xmlConnector.getNodeEnd());
-            if (null == endNode)
+            Node centroid = (Node) otsNetwork.getNode(xmlConnector.getCentroid());
+            if (null == centroid)
             {
                 simulator.getLogger().always()
-                        .debug("No end node (" + xmlConnector.getNodeEnd() + ")for Connector " + xmlConnector.getId());
+                        .debug("No centroid (" + xmlConnector.getCentroid() + ") for Connector " + xmlConnector.getId());
             }
             String id = xmlConnector.getId();
             double demandWeight = xmlConnector.getDemandWeight();
             LinkType linkType = definitions.get(LinkType.class, xmlConnector.getType());
-            Connector link = new Connector(otsNetwork, id, startNode, endNode, linkType);
+            Connector link = xmlConnector.isOutbound() ? new Connector(otsNetwork, id, centroid, node, linkType)
+                    : new Connector(otsNetwork, id, node, centroid, linkType);
             link.setDemandWeight(demandWeight);
         }
 

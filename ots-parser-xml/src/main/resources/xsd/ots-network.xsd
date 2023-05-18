@@ -39,8 +39,15 @@
     <xsd:complexType>
       <xsd:attribute name="Id" type="xsd:string" use="required" />
       <xsd:attribute name="Type" type="xsd:string" use="required" />
-      <xsd:attribute name="NodeStart" type="xsd:string" use="required" />
-      <xsd:attribute name="NodeEnd" type="xsd:string" use="required" />
+      <xsd:attribute name="Centroid" type="xsd:string" use="required" />
+      <xsd:attribute name="Node" type="xsd:string" use="required" />
+      <xsd:attribute name="Outbound" type="xsd:boolean" use="required">
+        <xsd:annotation>
+          <xsd:documentation source="description">
+            Outbound Connectors go from Centroid to Node. Inbound from Node to Centroid.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
       <xsd:attribute name="DemandWeight" type="ots:FractionType" />
     </xsd:complexType>
   </xsd:element>
