@@ -513,11 +513,25 @@
       <xsd:field xpath="@Type" />
     </xsd:keyref>
     
-    <!-- Demand.OdOptions.LaneBiases.DefinedLaneBias.GtuType defined by LaneBias.GtuType -->
+    <!-- Demand.OdOptions.OdOptionsItem.LaneBiases.DefinedLaneBias.GtuType defined by LaneBias.GtuType -->
 
     <xsd:keyref name="definedLaneBiasGtuTypeRef" refer="ots:laneBiasGtuTypeKey">
       <xsd:selector xpath=".//ots:Demand/ots:OdOptions/ots:OdOptionsItem/ots:LaneBiases/ots:DefinedLaneBias" />
       <xsd:field xpath="@GtuType" />
+    </xsd:keyref>
+    
+    <!-- Demand.OdOptions.OdOptionsItem.Markov.State.GtuType defined by GtuType.Id -->
+    
+    <xsd:keyref name="markovStateGtuTypeRef" refer="ots:gtuTypeKey">
+      <xsd:selector xpath=".//ots:Demand/ots:OdOptions/ots:OdOptionsItem/ots:Markov/ots:State" />
+      <xsd:field xpath="@GtuType" />
+    </xsd:keyref>
+    
+    <!-- Demand.OdOptions.OdOptionsItem.Markov.State.Parent defined by GtuType.Id -->
+    
+    <xsd:keyref name="markovStateParentGtuTypeRef" refer="ots:gtuTypeKey">
+      <xsd:selector xpath=".//ots:Demand/ots:OdOptions/ots:OdOptionsItem/ots:Markov/ots:State" />
+      <xsd:field xpath="@Parent" />
     </xsd:keyref>
 
     <!-- TODO: other XPath checks in Od --> 
