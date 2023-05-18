@@ -161,8 +161,8 @@ public final class GeneratorSinkParser
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static Map<String, List<FrequencyAndObject<Route>>> parseRouteMix(final RoadNetwork otsNetwork,
-            final Demand demand) throws NetworkException
+    static Map<String, List<FrequencyAndObject<Route>>> parseRouteMix(final RoadNetwork otsNetwork, final Demand demand)
+            throws NetworkException
     {
         Map<String, List<FrequencyAndObject<Route>>> routeMixMap = new LinkedHashMap<>();
         for (RouteMix routeMixTag : demand.getRouteMix())
@@ -191,8 +191,8 @@ public final class GeneratorSinkParser
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static Map<String, List<FrequencyAndObject<Route>>> parseShortestRouteMix(final RoadNetwork otsNetwork,
-            final Demand demand) throws NetworkException
+    static Map<String, List<FrequencyAndObject<Route>>> parseShortestRouteMix(final RoadNetwork otsNetwork, final Demand demand)
+            throws NetworkException
     {
         Map<String, List<FrequencyAndObject<Route>>> shortestRouteMixMap = new LinkedHashMap<>();
         for (ShortestRouteMix routeMixTag : demand.getShortestRouteMix())
@@ -332,8 +332,8 @@ public final class GeneratorSinkParser
                             Generators.makeLengthGenerator(streamInformation, templateTag.getWidthDist());
                     Generator<Speed> maximumSpeedGenerator =
                             Generators.makeSpeedGenerator(streamInformation, templateTag.getMaxSpeedDist());
-                    LaneBasedGtuTemplate templateGtuType = new LaneBasedGtuTemplate(gtuType, lengthGenerator,
-                            widthGenerator, maximumSpeedGenerator, strategicalFactory, routeGenerator);
+                    LaneBasedGtuTemplate templateGtuType = new LaneBasedGtuTemplate(gtuType, lengthGenerator, widthGenerator,
+                            maximumSpeedGenerator, strategicalFactory, routeGenerator);
                     gtuTypeDistribution.add(new FrequencyAndObject<>(1.0, templateGtuType));
                 }
                 else if (generatorTag.getGtuTemplateMix() != null)
@@ -353,9 +353,7 @@ public final class GeneratorSinkParser
 
                 CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(generatorTag.getLink());
                 Lane lane = (Lane) link.getCrossSectionElement(generatorTag.getLane());
-                // TODO: remove this hack for testing
-                Length position = Length.instantiateSI(5.0); // Transformer.parseLengthBeginEnd(generatorTag.getPOSITION(),
-                // lane.getLength());
+                Length position = Transformer.parseLengthBeginEnd(generatorTag.getPosition(), lane.getLength());
                 Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
                 initialLongitudinalPositions.add(new LanePosition(lane, position));
 
@@ -383,8 +381,8 @@ public final class GeneratorSinkParser
      * @param definitions Definitions; type definitions.
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
-    public static void parseSinks(final RoadNetwork otsNetwork, final Demand demand,
-            final OtsSimulatorInterface simulator, final Definitions definitions) throws NetworkException
+    public static void parseSinks(final RoadNetwork otsNetwork, final Demand demand, final OtsSimulatorInterface simulator,
+            final Definitions definitions) throws NetworkException
     {
         for (Sink sinkTag : demand.getSink())
         {

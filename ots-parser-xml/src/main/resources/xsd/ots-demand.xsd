@@ -295,30 +295,15 @@
       <!-- LINK + LANE should be unique -->
       <xsd:attribute name="Link" type="xsd:string" use="required" />
       <xsd:attribute name="Lane" type="xsd:string" use="required" />
-      <xsd:attribute name="Direction" type="ots:GtuDirectionType" use="required">
-        <xsd:annotation>
-          <xsd:documentation source="description">
-            GtuDirectionType: DIR_PLUS|DIR_MINUS
-          </xsd:documentation>
-        </xsd:annotation>
-      </xsd:attribute>
       <xsd:attribute name="Position" type="ots:LengthBeginEndType" use="required" />
     </xsd:complexType>
   </xsd:element>
-
 
   <xsd:element name="Sink">
     <xsd:complexType>
       <xsd:attribute name="Type" type="xsd:string" use="required" />
       <xsd:attribute name="Link" type="xsd:string" use="required" />
       <xsd:attribute name="Lane" type="xsd:string" use="required" />
-      <xsd:attribute name="Direction" type="ots:GtuDirectionType" use="required">
-        <xsd:annotation>
-          <xsd:documentation source="description">
-            GtuDirectionType: DIR_PLUS|DIR_MINUS
-          </xsd:documentation>
-        </xsd:annotation>
-      </xsd:attribute>
       <xsd:attribute name="Position" type="ots:LengthBeginEndType" use="required" />
     </xsd:complexType>
   </xsd:element>
@@ -340,13 +325,6 @@
       </xsd:sequence>
       <xsd:attribute name="Link" type="xsd:string" use="required" />
       <xsd:attribute name="Lane" type="xsd:string" use="required" />
-      <xsd:attribute name="Direction" type="ots:GtuDirectionType" use="required">
-        <xsd:annotation>
-          <xsd:documentation source="description">
-            GtuDirectionType: DIR_PLUS|DIR_MINUS
-          </xsd:documentation>
-        </xsd:annotation>
-      </xsd:attribute>
       <xsd:attribute name="Position" type="ots:LengthBeginEndType" use="optional" />
       <xsd:attribute name="Uri" type="xsd:anyURI" use="required" />
       <!-- TODO: Add inline list. -->
