@@ -233,12 +233,8 @@
       <xsd:choice minOccurs="0">
         <xsd:element name="CenterOffset" type="ots:LengthType" />
         <xsd:sequence>
-          <xsd:choice>
-            <xsd:element name="CenterOffsetStart" type="ots:LengthType" />
-          </xsd:choice>
-          <xsd:choice>
-            <xsd:element name="CenterOffsetEnd" type="ots:LengthType" />
-          </xsd:choice>
+          <xsd:element name="CenterOffsetStart" type="ots:LengthType" />
+          <xsd:element name="CenterOffsetEnd" type="ots:LengthType" />
         </xsd:sequence>
       </xsd:choice>
       <xsd:element name="DrawingWidth" type="ots:PositiveLengthType" minOccurs="0" maxOccurs="1" />
