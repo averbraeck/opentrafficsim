@@ -166,7 +166,7 @@
   <xsd:element name="SpeedLimit">
     <xsd:complexType>
       <xsd:attribute name="GtuType" type="xsd:string" use="required" />
-      <xsd:attribute name="LegalSpeedLimit" type="ots:SpeedType" use="optional" />
+      <xsd:attribute name="LegalSpeedLimit" type="ots:SpeedType" use="required" />
     </xsd:complexType>
   </xsd:element>
 
