@@ -432,6 +432,9 @@
   </xsd:simpleType>
 
   <xsd:simpleType name="LengthType">
+    <xsd:annotation>
+      <xsd:appinfo source="pattern">Provide a valid Length, such as "3.5m".</xsd:appinfo>
+    </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m|Ym|Zm|Em|Pm|Tm|Gm|Mm|km|hm|dam|dm|cm|mm|\\u03BCm|mum|nm|pm|fm|am|zm|ym|\\u212B|A|AU|Pc|ft|in|ly|mi|NM|yd)"></xsd:pattern>
     </xsd:restriction>

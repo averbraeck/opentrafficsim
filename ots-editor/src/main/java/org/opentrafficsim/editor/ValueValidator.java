@@ -60,7 +60,7 @@ public interface ValueValidator
         {
             return "Value is empty.";
         }
-        return reportTypeNonCompliance(xsdNode, "type", value, schema, null, null);
+        return reportTypeNonCompliance(xsdNode, xsdNode, "type", value, schema, null, null);
     }
 
     /**
@@ -109,7 +109,7 @@ public interface ValueValidator
         {
             return null;
         }
-        return reportTypeNonCompliance(xsdNode, "type", value, schema, null, null);
+        return reportTypeNonCompliance(xsdNode, xsdNode, "type", value, schema, null, null);
     }
 
     /**
@@ -121,7 +121,7 @@ public interface ValueValidator
     static List<Node> getRestrictions(final Node xsdNode, final Schema schema)
     {
         List<Node> restrictions = new ArrayList<>();
-        reportTypeNonCompliance(xsdNode, "type", null, schema, restrictions, null);
+        reportTypeNonCompliance(xsdNode, xsdNode, "type", null, schema, restrictions, null);
         return restrictions;
     }
 
@@ -134,13 +134,14 @@ public interface ValueValidator
     static String getBaseType(final Node xsdNode, final Schema schema)
     {
         List<String> baseType = new ArrayList<>();
-        reportTypeNonCompliance(xsdNode, "type", null, schema, null, baseType);
+        reportTypeNonCompliance(xsdNode, xsdNode, "type", null, schema, null, baseType);
         return baseType.get(0);
     }
 
     /**
      * Report first encountered problem in validating the value by a type, or when {@code value = null} scan all restrictions
      * and place them in the input list, and/or find the base type and store it in the base type list.
+     * @param appInfoNode Node; node having possible xsd:appinfo for a message.
      * @param node Node; type node.
      * @param attribute String; "type" on normal calls, "base" on recursive calls.
      * @param value String; value.
@@ -149,8 +150,8 @@ public interface ValueValidator
      * @param baseType List&lt;String&gt;; may be filled with 1 base type, e.g. xsd:double.
      * @return String; first encountered problem in validating the value by a type, {@code null} if there is no problem.
      */
-    private static String reportTypeNonCompliance(final Node node, final String attribute, final String value,
-            final Schema schema, final List<Node> restrictions, final List<String> baseType)
+    private static String reportTypeNonCompliance(final Node appInfoNode, final Node node, final String attribute,
+            final String value, final Schema schema, final List<Node> restrictions, final List<String> baseType)
     {
         String type = DocumentReader.getAttribute(node, attribute); // can request "base" on recursion
         boolean isNativeType = type != null && type.startsWith("xsd:");
@@ -179,7 +180,8 @@ public interface ValueValidator
         }
         if (type != null && !isNativeType)
         {
-            String report = reportTypeNonCompliance(schema.getType(type), "base", value, schema, restrictions, baseType);
+            Node typeNode = schema.getType(type);
+            String report = reportTypeNonCompliance(typeNode, typeNode, "base", value, schema, restrictions, baseType);
             if (value != null && report != null)
             {
                 return report;
@@ -197,13 +199,13 @@ public interface ValueValidator
                 Node extension = DocumentReader.getChild(simpleContent, "xsd:extension");
                 if (extension != null)
                 {
-                    return reportTypeNonCompliance(extension, "base", value, schema, restrictions, baseType);
+                    return reportTypeNonCompliance(extension, extension, "base", value, schema, restrictions, baseType);
                 }
-                return reportTypeNonCompliance(DocumentReader.getChild(simpleContent, "xsd:restriction"), "base", value, schema,
-                        restrictions, baseType);
+                return reportTypeNonCompliance(appInfoNode, DocumentReader.getChild(simpleContent, "xsd:restriction"), "base",
+                        value, schema, restrictions, baseType);
             case "xsd:simpleType":
-                return reportTypeNonCompliance(DocumentReader.getChild(node, "xsd:restriction"), "base", value, schema,
-                        restrictions, baseType);
+                return reportTypeNonCompliance(appInfoNode, DocumentReader.getChild(node, "xsd:restriction"), "base", value,
+                        schema, restrictions, baseType);
             case "xsd:element":
                 if (node.getChildNodes().getLength() == 0)
                 {
@@ -212,20 +214,20 @@ public interface ValueValidator
                 Node complexType = DocumentReader.getChild(node, "xsd:complexType");
                 if (complexType != null)
                 {
-                    return reportTypeNonCompliance(complexType, "type", value, schema, restrictions, baseType);
+                    return reportTypeNonCompliance(complexType, complexType, "type", value, schema, restrictions, baseType);
                 }
                 Node simpleType = DocumentReader.getChild(node, "xsd:simpleType");
-                return reportTypeNonCompliance(simpleType, "type", value, schema, restrictions, baseType);
+                return reportTypeNonCompliance(simpleType, simpleType, "type", value, schema, restrictions, baseType);
             case "xsd:attribute":
-                return reportTypeNonCompliance(DocumentReader.getChild(node, "xsd:simpleType"), "type", value, schema,
-                        restrictions, baseType);
+                Node simpleTypeAttr = DocumentReader.getChild(node, "xsd:simpleType");
+                return reportTypeNonCompliance(simpleTypeAttr, simpleTypeAttr, "type", value, schema, restrictions, baseType);
             case "xsd:restriction":
                 if (value == null && restrictions != null)
                 {
                     restrictions.add(node);
                     return null;
                 }
-                return reportRestrictionNonCompliance(node, value);
+                return reportRestrictionNonCompliance(appInfoNode, node, value);
             case "xi:include":
                 return null;
             default:
@@ -330,11 +332,12 @@ public interface ValueValidator
 
     /**
      * Report first encountered problem in validating the value by a restriction.
+     * @param appInfoNode Node; node having possible xsd:appinfo for a message.
      * @param node Node; node, must be an xsd:restriction.
      * @param value String; value.
      * @return String; first encountered problem in validating the value by a restriction.
      */
-    private static String reportRestrictionNonCompliance(final Node node, final String value)
+    private static String reportRestrictionNonCompliance(final Node appInfoNode, final Node node, final String value)
     {
         Node pattern = DocumentReader.getChild(node, "xsd:pattern");
         if (pattern != null)
@@ -344,7 +347,8 @@ public interface ValueValidator
             {
                 if (!Pattern.matches(patternString, value))
                 {
-                    return "Value does not match pattern " + patternString;
+                    String patternMessage = DocumentReader.getAnnotation(appInfoNode, "xsd:appinfo", "pattern");
+                    return patternMessage == null ? "Value does not match pattern " + patternString : patternMessage;
                 }
             }
             catch (PatternSyntaxException exception)
