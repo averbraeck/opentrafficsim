@@ -128,7 +128,7 @@ public class OtsEditor extends JFrame implements EventProducer
     private static final boolean UPDATE_SPLIT_WHILE_DRAGGING = true;
 
     /** Color for inactive nodes (text). */
-    private static final Color INACTIVE_COLOR = new Color(160, 160, 160);
+    public static final Color INACTIVE_COLOR = new Color(160, 160, 160);
 
     /** Color for invalid nodes and values (background). */
     public static final Color INVALID_COLOR = new Color(255, 240, 240);

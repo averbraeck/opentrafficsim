@@ -105,7 +105,8 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
         setFont(table.getFont());
         table.setGridColor(UIManager.getColor("Panel.background"));
         setIcon(null);
-        setForeground(showingDefault ? Color.GRAY : Color.BLACK);
+        setForeground(
+                showingDefault ? OtsEditor.INACTIVE_COLOR : UIManager.getColor("Table.foreground"));
         if (table.convertColumnIndexToModel(column) == 1)
         {
             String message = node.reportInvalidAttributeValue(row);
