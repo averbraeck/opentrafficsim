@@ -979,10 +979,6 @@
     </xsd:restriction>
   </xsd:simpleType>
 
-  <!-- ========================================================================================= -->
-  <!-- ==================================== DISTRIBUTION TYPES ================================= -->
-  <!-- ========================================================================================= -->
-
   <xsd:simpleType name="DoublePositiveInclusive">
     <xsd:restriction base="xsd:double">
       <xsd:minInclusive value="0.0"></xsd:minInclusive>
@@ -1002,143 +998,148 @@
     </xsd:restriction>
   </xsd:simpleType>
 
+  <!-- ========================================================================================= -->
+  <!-- ==================================== DISTRIBUTION TYPES ================================= -->
+  <!-- ========================================================================================= -->
+
+  <xsd:complexType name="DistType">
+    <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
+  </xsd:complexType>
+
   <xsd:complexType name="ConstantDistType">
-    <xsd:choice>
-      <xsd:element name="Constant">
-        <xsd:complexType>
-          <xsd:attribute name="C" type="xsd:double" use="required" />
-          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="Exponential">
-        <xsd:complexType>
-          <xsd:attribute name="Lambda" type="ots:DoublePositive" use="required" />
-          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="Triangular">
-        <xsd:complexType>
-          <xsd:attribute name="Min" type="xsd:double" use="required" />
-          <xsd:attribute name="Mode" type="xsd:double" use="required" />
-          <xsd:attribute name="Max" type="xsd:double" use="required" />
-          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="Normal">
-        <xsd:complexType>
-          <xsd:attribute name="Mu" type="xsd:double" use="required" />
-          <xsd:attribute name="Sigma" type="ots:DoublePositiveInclusive" use="required" />
-          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="Beta">
-        <xsd:complexType>
-          <xsd:attribute name="Alpha1" type="ots:DoublePositive" use="required" />
-          <xsd:attribute name="Alpha2" type="ots:DoublePositive" use="required" />
-          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="Erlang">
-        <xsd:complexType>
-          <xsd:attribute name="Mean" type="xsd:double" use="required" />
-          <xsd:attribute name="K" type="xsd:positiveInteger" use="required" />
-          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="Gamma">
-        <xsd:complexType>
-          <xsd:attribute name="Alpha" type="xsd:double" use="required" />
-          <xsd:attribute name="Beta" type="xsd:double" use="required" />
-          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="LogNormal">
-        <xsd:complexType>
-          <xsd:attribute name="Mu" type="xsd:double" use="required" />
-          <xsd:attribute name="Sigma" type="ots:DoublePositive" use="required" />
-          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="Pearson5">
-        <xsd:complexType>
-          <xsd:attribute name="Alpha" type="ots:DoublePositive" use="required" />
-          <xsd:attribute name="Beta" type="ots:DoublePositive" use="required" />
-          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="Pearson6">
-        <xsd:complexType>
-          <xsd:attribute name="Alpha1" type="ots:DoublePositive" use="required" />
-          <xsd:attribute name="Alpha2" type="ots:DoublePositive" use="required" />
-          <xsd:attribute name="Beta" type="ots:DoublePositive" use="required" />
-          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="Uniform">
-        <xsd:complexType>
-          <xsd:attribute name="Min" type="xsd:double" use="required" />
-          <xsd:attribute name="Max" type="xsd:double" use="required" />
-          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="Weibull">
-        <xsd:complexType>
-          <xsd:attribute name="Alpha" type="ots:DoublePositive" use="required" />
-          <xsd:attribute name="Beta" type="ots:DoublePositive" use="required" />
-          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
-        </xsd:complexType>
-      </xsd:element>
-    </xsd:choice>
+    <xsd:complexContent>
+      <xsd:extension base="ots:DistType">
+	    <xsd:choice>
+	      <xsd:element name="Constant">
+	        <xsd:complexType>
+	          <xsd:attribute name="C" type="xsd:double" use="required" />
+	        </xsd:complexType>
+	      </xsd:element>
+	      <xsd:element name="Exponential">
+	        <xsd:complexType>
+	          <xsd:attribute name="Lambda" type="ots:DoublePositive" use="required" />
+	        </xsd:complexType>
+	      </xsd:element>
+	      <xsd:element name="Triangular">
+	        <xsd:complexType>
+	          <xsd:attribute name="Min" type="xsd:double" use="required" />
+	          <xsd:attribute name="Mode" type="xsd:double" use="required" />
+	          <xsd:attribute name="Max" type="xsd:double" use="required" />
+	        </xsd:complexType>
+	      </xsd:element>
+	      <xsd:element name="Normal">
+	        <xsd:complexType>
+	          <xsd:attribute name="Mu" type="xsd:double" use="required" />
+	          <xsd:attribute name="Sigma" type="ots:DoublePositiveInclusive" use="required" />
+	        </xsd:complexType>
+	      </xsd:element>
+	      <xsd:element name="NormalTrunc">
+	        <xsd:complexType>
+	          <xsd:attribute name="Mu" type="xsd:double" use="required" />
+	          <xsd:attribute name="Sigma" type="ots:DoublePositiveInclusive" use="required" />
+	          <xsd:attribute name="Min" type="xsd:double" use="required" />
+	          <xsd:attribute name="Max" type="xsd:double" use="required" />
+	        </xsd:complexType>
+	      </xsd:element>
+	      <xsd:element name="Beta">
+	        <xsd:complexType>
+	          <xsd:attribute name="Alpha1" type="ots:DoublePositive" use="required" />
+	          <xsd:attribute name="Alpha2" type="ots:DoublePositive" use="required" />
+	        </xsd:complexType>
+	      </xsd:element>
+	      <xsd:element name="Erlang">
+	        <xsd:complexType>
+	          <xsd:attribute name="Mean" type="xsd:double" use="required" />
+	          <xsd:attribute name="K" type="xsd:positiveInteger" use="required" />
+	        </xsd:complexType>
+	      </xsd:element>
+	      <xsd:element name="Gamma">
+	        <xsd:complexType>
+	          <xsd:attribute name="Alpha" type="xsd:double" use="required" />
+	          <xsd:attribute name="Beta" type="xsd:double" use="required" />
+	        </xsd:complexType>
+	      </xsd:element>
+	      <xsd:element name="LogNormal">
+	        <xsd:complexType>
+	          <xsd:attribute name="Mu" type="xsd:double" use="required" />
+	          <xsd:attribute name="Sigma" type="ots:DoublePositive" use="required" />
+	        </xsd:complexType>
+	      </xsd:element>
+	      <xsd:element name="Pearson5">
+	        <xsd:complexType>
+	          <xsd:attribute name="Alpha" type="ots:DoublePositive" use="required" />
+	          <xsd:attribute name="Beta" type="ots:DoublePositive" use="required" />
+	        </xsd:complexType>
+	      </xsd:element>
+	      <xsd:element name="Pearson6">
+	        <xsd:complexType>
+	          <xsd:attribute name="Alpha1" type="ots:DoublePositive" use="required" />
+	          <xsd:attribute name="Alpha2" type="ots:DoublePositive" use="required" />
+	          <xsd:attribute name="Beta" type="ots:DoublePositive" use="required" />
+	        </xsd:complexType>
+	      </xsd:element>
+	      <xsd:element name="Uniform">
+	        <xsd:complexType>
+	          <xsd:attribute name="Min" type="xsd:double" use="required" />
+	          <xsd:attribute name="Max" type="xsd:double" use="required" />
+	        </xsd:complexType>
+	      </xsd:element>
+	      <xsd:element name="Weibull">
+	        <xsd:complexType>
+	          <xsd:attribute name="Alpha" type="ots:DoublePositive" use="required" />
+	          <xsd:attribute name="Beta" type="ots:DoublePositive" use="required" />
+	        </xsd:complexType>
+	      </xsd:element>
+        </xsd:choice>
+      </xsd:extension>
+    </xsd:complexContent>
   </xsd:complexType>
 
   <xsd:complexType name="DiscreteDistType">
-    <xsd:choice>
-      <xsd:element name="Constant">
-        <xsd:complexType>
-          <xsd:attribute name="C" type="xsd:long" use="required" />
-          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="BernoulliI">
-        <xsd:complexType>
-          <xsd:attribute name="P" type="ots:FractionType" use="required" />
-          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="Binomial">
-        <xsd:complexType>
-          <xsd:attribute name="N" type="xsd:positiveInteger" use="required" />
-          <xsd:attribute name="P" type="ots:FractionType" use="required" />
-          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="Uniform">
-        <xsd:complexType>
-          <xsd:attribute name="Min" type="xsd:int" use="required" />
-          <xsd:attribute name="Max" type="xsd:int" use="required" />
-          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="Geometric">
-        <xsd:complexType>
-          <xsd:attribute name="P" type="ots:FractionType" use="required" />
-          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="NegBinomial">
-        <xsd:complexType>
-          <xsd:attribute name="N" type="xsd:positiveInteger" use="required" />
-          <xsd:attribute name="P" type="ots:FractionType" use="required" />
-          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="Poisson">
-        <xsd:complexType>
-          <xsd:attribute name="Lambda" type="ots:DoublePositive" use="required" />
-          <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
-        </xsd:complexType>
-      </xsd:element>
-    </xsd:choice>
+    <xsd:complexContent>
+      <xsd:extension base="ots:DistType">
+	    <xsd:choice>
+	      <xsd:element name="Constant">
+	        <xsd:complexType>
+	          <xsd:attribute name="C" type="xsd:long" use="required" />
+	        </xsd:complexType>
+	      </xsd:element>
+	      <xsd:element name="BernoulliI">
+	        <xsd:complexType>
+	          <xsd:attribute name="P" type="ots:FractionType" use="required" />
+	        </xsd:complexType>
+	      </xsd:element>
+	      <xsd:element name="Binomial">
+	        <xsd:complexType>
+	          <xsd:attribute name="N" type="xsd:positiveInteger" use="required" />
+	          <xsd:attribute name="P" type="ots:FractionType" use="required" />
+	        </xsd:complexType>
+	      </xsd:element>
+	      <xsd:element name="Uniform">
+	        <xsd:complexType>
+	          <xsd:attribute name="Min" type="xsd:int" use="required" />
+	          <xsd:attribute name="Max" type="xsd:int" use="required" />
+	        </xsd:complexType>
+	      </xsd:element>
+	      <xsd:element name="Geometric">
+	        <xsd:complexType>
+	          <xsd:attribute name="P" type="ots:FractionType" use="required" />
+	        </xsd:complexType>
+	      </xsd:element>
+	      <xsd:element name="NegBinomial">
+	        <xsd:complexType>
+	          <xsd:attribute name="N" type="xsd:positiveInteger" use="required" />
+	          <xsd:attribute name="P" type="ots:FractionType" use="required" />
+	        </xsd:complexType>
+	      </xsd:element>
+	      <xsd:element name="Poisson">
+	        <xsd:complexType>
+	          <xsd:attribute name="Lambda" type="ots:DoublePositive" use="required" />
+	        </xsd:complexType>
+	      </xsd:element>
+	    </xsd:choice>
+	  </xsd:extension>
+    </xsd:complexContent>
   </xsd:complexType>
 
   <xsd:complexType name="LengthDistType">

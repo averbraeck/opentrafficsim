@@ -45,6 +45,7 @@ import nl.tudelft.simulation.jstats.distributions.DistGeometric;
 import nl.tudelft.simulation.jstats.distributions.DistLogNormal;
 import nl.tudelft.simulation.jstats.distributions.DistNegBinomial;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
+import nl.tudelft.simulation.jstats.distributions.DistNormalTrunc;
 import nl.tudelft.simulation.jstats.distributions.DistPearson5;
 import nl.tudelft.simulation.jstats.distributions.DistPearson6;
 import nl.tudelft.simulation.jstats.distributions.DistPoisson;
@@ -79,40 +80,34 @@ public final class ParseDistribution
     public static DistDiscrete makeDistDiscrete(final StreamInformation streamMap, final DiscreteDistType distType)
             throws XmlParserException
     {
+        StreamInterface stream = findStream(streamMap, distType.getRandomStream());
         if (distType.getBernoulliI() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getBernoulliI().getRandomStream());
             return new DistBernoulli(stream, distType.getBernoulliI().getP());
         }
         else if (distType.getBinomial() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getBinomial().getRandomStream());
             return new DistBinomial(stream, (int) distType.getBinomial().getN().longValue(), distType.getBinomial().getP());
         }
         else if (distType.getConstant() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getConstant().getRandomStream());
             return new DistDiscreteConstant(stream, distType.getConstant().getC());
         }
         else if (distType.getGeometric() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getGeometric().getRandomStream());
             return new DistGeometric(stream, distType.getGeometric().getP());
         }
         else if (distType.getNegBinomial() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getNegBinomial().getRandomStream());
             return new DistNegBinomial(stream, (int) distType.getNegBinomial().getN().longValue(),
                     distType.getGeometric().getP());
         }
         else if (distType.getPoisson() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getPoisson().getRandomStream());
             return new DistPoisson(stream, distType.getPoisson().getLambda());
         }
         else if (distType.getUniform() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getUniform().getRandomStream());
             return new DistDiscreteUniform(stream, distType.getUniform().getMin(), distType.getUniform().getMax());
         }
         throw new XmlParserException("makeDistDiscrete - unknown distribution function " + distType);
@@ -128,67 +123,60 @@ public final class ParseDistribution
     public static DistContinuous makeDistContinuous(final StreamInformation streamMap, final ConstantDistType distType)
             throws XmlParserException
     {
+        StreamInterface stream = findStream(streamMap, distType.getRandomStream());
         if (distType.getConstant() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getConstant().getRandomStream());
             return new DistConstant(stream, distType.getConstant().getC());
         }
         else if (distType.getExponential() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getExponential().getRandomStream());
             return new DistExponential(stream, distType.getExponential().getLambda());
         }
         else if (distType.getTriangular() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getTriangular().getRandomStream());
             return new DistTriangular(stream, distType.getTriangular().getMin(), distType.getTriangular().getMode(),
                     distType.getTriangular().getMax());
         }
         else if (distType.getNormal() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getNormal().getRandomStream());
             return new DistNormal(stream, distType.getNormal().getMu(), distType.getNormal().getSigma());
         }
-        // TODO: NORMALTRUNC
+        else if (distType.getNormal() != null)
+        {
+            return new DistNormalTrunc(stream, distType.getNormalTrunc().getMu(), distType.getNormalTrunc().getSigma(),
+                    distType.getNormalTrunc().getMin(), distType.getNormalTrunc().getMax());
+        }
         else if (distType.getBeta() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getBeta().getRandomStream());
             return new DistBeta(stream, distType.getBeta().getAlpha1(), distType.getBeta().getAlpha2());
         }
         else if (distType.getErlang() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getErlang().getRandomStream());
             return new DistErlang(stream, distType.getErlang().getK().intValue(), (int) distType.getErlang().getMean());
         }
         else if (distType.getGamma() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getGamma().getRandomStream());
             return new DistGamma(stream, distType.getGamma().getAlpha(), distType.getGamma().getBeta());
         }
         else if (distType.getLogNormal() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getLogNormal().getRandomStream());
             return new DistLogNormal(stream, distType.getLogNormal().getMu(), distType.getLogNormal().getSigma());
         }
         else if (distType.getPearson5() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getPearson5().getRandomStream());
             return new DistPearson5(stream, distType.getPearson5().getAlpha(), distType.getPearson5().getBeta());
         }
         else if (distType.getPearson6() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getPearson6().getRandomStream());
             return new DistPearson6(stream, distType.getPearson6().getAlpha1(), distType.getPearson6().getAlpha2(),
                     distType.getPearson6().getBeta());
         }
         else if (distType.getUniform() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getUniform().getRandomStream());
             return new DistUniform(stream, distType.getUniform().getMin(), distType.getUniform().getMax());
         }
         else if (distType.getWeibull() != null)
         {
-            StreamInterface stream = findStream(streamMap, distType.getWeibull().getRandomStream());
             return new DistWeibull(stream, distType.getWeibull().getAlpha(), distType.getWeibull().getBeta());
         }
         throw new XmlParserException("makeDistContinuous - unknown distribution function " + distType);
