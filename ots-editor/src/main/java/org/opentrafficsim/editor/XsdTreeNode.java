@@ -612,7 +612,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             if (child.getNodeName().equals("xsd:attribute") && DocumentReader.getAttribute(child, "name") != null)
             {
                 this.attributeNodes.add(child);
-                this.attributeValues.add(DocumentReader.getAttribute(child, "default")); // may be null
+                this.attributeValues.add(null);
             }
             if (child.getNodeName().equals("xsd:complexContent") || child.getNodeName().equals("xsd:simpleContent"))
             {
@@ -700,6 +700,18 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         assureAttributesAndDescription();
         Throw.when(index < 0 || index >= this.attributeCount(), IndexOutOfBoundsException.class, "Index out of bounds.");
         return this.attributeValues.get(index);
+    }
+    
+    /**
+     * Returns the default value for the attribute.
+     * @param index int; attribute index.
+     * @return String; default value for the attribute, or {@code null} if there is no default value.
+     */
+    public String getDefaultAttributeValue(final int index)
+    {
+        assureAttributesAndDescription();
+        Throw.when(index < 0 || index >= this.attributeCount(), IndexOutOfBoundsException.class, "Index out of bounds.");
+        return DocumentReader.getAttribute(this.attributeNodes.get(index), "default"); 
     }
 
     /**

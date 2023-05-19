@@ -1,5 +1,6 @@
 package org.opentrafficsim.editor;
 
+import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.Icon;
@@ -78,7 +79,22 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
             }
         }
 
-        if (table.convertColumnIndexToModel(column) < 3)
+        boolean showingDefault = false;
+        if (table.convertColumnIndexToModel(column) == 1)
+        {
+            if (value == null || value.toString().isEmpty())
+            {
+                node = ((AttributesTableModel) table.getModel()).getNode();
+                String defaultValue = node.getDefaultAttributeValue(row);
+                showingDefault = defaultValue != null;
+                setText(showingDefault ? defaultValue : "");
+            }
+            else
+            {
+                setText(value.toString());
+            }
+        }
+        else if (table.convertColumnIndexToModel(column) < 3)
         {
             setText(value == null ? "" : value.toString());
         }
@@ -89,6 +105,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
         setFont(table.getFont());
         table.setGridColor(UIManager.getColor("Panel.background"));
         setIcon(null);
+        setForeground(showingDefault ? Color.GRAY : Color.BLACK);
         if (table.convertColumnIndexToModel(column) == 1)
         {
             String message = node.reportInvalidAttributeValue(row);
