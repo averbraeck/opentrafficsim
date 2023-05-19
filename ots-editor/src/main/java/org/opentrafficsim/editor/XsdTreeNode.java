@@ -326,7 +326,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
-     * Returns the name of this node, as appropriate in XML. Examples are NODE, RoadLayout, and TACTICALPLANNER. Most typically
+     * Returns the name of this node, as appropriate in XML. Examples are Node, RoadLayout, and TacticalPlanner. Most typically
      * this is the "name" attribute of an xsd:element. In other cases it is the ref={ref} attribute of the referring
      * {@code Node}. In rare cases it is "xi:include".
      * @return String; name of this node, as appropriate in XML.
@@ -701,7 +701,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         Throw.when(index < 0 || index >= this.attributeCount(), IndexOutOfBoundsException.class, "Index out of bounds.");
         return this.attributeValues.get(index);
     }
-    
+
     /**
      * Returns the default value for the attribute.
      * @param index int; attribute index.
@@ -711,7 +711,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     {
         assureAttributesAndDescription();
         Throw.when(index < 0 || index >= this.attributeCount(), IndexOutOfBoundsException.class, "Index out of bounds.");
-        return DocumentReader.getAttribute(this.attributeNodes.get(index), "default"); 
+        return DocumentReader.getAttribute(this.attributeNodes.get(index), "default");
     }
 
     /**
@@ -1859,6 +1859,21 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             }
         }
         return false;
+    }
+
+    /**
+     * Returns whether this node is of the type defined by the path.
+     * @param path String; path of the type in dotted xpath notation, e.g. "SignalGroup.TrafficLight". 
+     * @return boolean; whether this node is of the type defined by the path.
+     */
+    public boolean isType(final String path)
+    {
+        boolean isType = getPathString().endsWith("." + path);
+        if (isType)
+        {
+            return isType;
+        }
+        return this.schema.isType(this.xsdNode, path);
     }
 
 }

@@ -657,7 +657,24 @@ public class Schema
      */
     private Node getSelectedElement(final Node node)
     {
-        return getElement(getXpath(node));
+        String xpath = getXpath(node);
+        Node selectedNode = getElement(xpath);
+        if (selectedNode != null)
+        {
+            return selectedNode;
+        }
+        for (Entry<String, Node> entry : this.elements.entrySet())
+        {
+            if (entry.getKey().endsWith("." + xpath))
+            {
+                return entry.getValue();
+            }
+            if (isType(entry.getValue(), xpath))
+            {
+                return entry.getValue();
+            }
+        }
+        return null;
     }
 
     /**
@@ -797,6 +814,62 @@ public class Schema
         Map<Node, String> map = new LinkedHashMap<>();
         this.uniques.forEach((key, value) -> map.put(value, this.uniquesPath.get(key)));
         return map;
+    }
+    
+    /**
+     * Return whether the given node is of the type.
+     * @param node Node; node.
+     * @param path String; path of the type in dotted xpath notation, e.g. "SignalGroup.TrafficLight". 
+     * @return boolean; whether the given node is of the type.
+     */
+    public boolean isType(final Node node, final String path)
+    {
+        Node nodeUse = node;
+        if (nodeUse.getNodeName().equals("xsd:element"))
+        {
+            nodeUse = DocumentReader.getChild(node, "xsd:complexType");
+            if (nodeUse == null)
+            {
+                nodeUse = DocumentReader.getChild(node, "xsd:simpleType");
+                if (nodeUse == null)
+                {
+                    return false;
+                }
+            }
+        }
+        for (int childIndex = 0; childIndex < nodeUse.getChildNodes().getLength(); childIndex++)
+        {
+            Node child = nodeUse.getChildNodes().item(childIndex);
+            if (child.getNodeName().equals("xsd:complexContent") || child.getNodeName().equals("xsd:simpleContent"))
+            {
+                String base = null;
+                Node extension = DocumentReader.getChild(child, "xsd:extension");
+                if (extension != null)
+                {
+                    base = DocumentReader.getAttribute(extension, "base");
+
+                }
+                Node restriction = DocumentReader.getChild(child, "xsd:restriction");
+                if (restriction != null)
+                {
+                    base = DocumentReader.getAttribute(restriction, "base");
+                }
+                boolean isType = base.endsWith(path);
+                if (isType)
+                {
+                    return isType;
+                }
+                if (base != null && !base.startsWith("xsd:"))
+                {
+                    Node baseNode = getType(base);
+                    if (baseNode != null && !baseNode.equals(nodeUse))
+                    {
+                        return isType(baseNode, path);
+                    }
+                }
+            }
+        }
+        return false;
     }
 
 }

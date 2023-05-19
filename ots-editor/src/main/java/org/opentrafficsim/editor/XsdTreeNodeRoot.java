@@ -288,8 +288,8 @@ public class XsdTreeNodeRoot extends XsdTreeNode
          */
         public void addNode(final XsdTreeNode node)
         {
-            String path = getPath().equals("Ots") ? "." + getTypeString() : getPath() + "." + getTypeString();
-            boolean isType = node.getPathString().endsWith(path);
+            String path = getPath().equals("Ots") ? getTypeString() : getPath() + "." + getTypeString();
+            boolean isType = node.isType(path);
             if (isType && this.refer == null)
             {
                 XsdTreeNode context = getContext(node);
