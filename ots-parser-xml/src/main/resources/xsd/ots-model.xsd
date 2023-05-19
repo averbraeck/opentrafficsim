@@ -235,9 +235,14 @@
             <!-- Lane-based strategical route planner -->
             <xsd:element name="Route">
               <xsd:complexType>
+                <!-- This is a choice rather than a simple value to allow future strategical planners with more complexity -->
                 <xsd:choice>
-                  <xsd:element name="None" />
-                  <xsd:element name="Shortest" />
+                  <xsd:element name="None">
+                    <xsd:complexType /> <!-- Prevents this tag from having a value -->
+                  </xsd:element>
+                  <xsd:element name="Shortest">
+                    <xsd:complexType /> <!-- Prevents this tag from having a value -->
+                  </xsd:element>
                 </xsd:choice>
               </xsd:complexType>
             </xsd:element>
@@ -433,7 +438,9 @@
       <xsd:element name="DesiredHeadwayModel" minOccurs="0">
         <xsd:complexType>
           <xsd:choice>
-            <xsd:element name="Idm" />
+            <xsd:element name="Idm">
+              <xsd:complexType /> <!-- Prevents this tag from having a value -->
+            </xsd:element>
             <xsd:element name="Class" type="ots:ClassNameType" />
           </xsd:choice>
         </xsd:complexType>
@@ -444,7 +451,9 @@
 
   <xsd:complexType name="DesiredSpeedModelType">
     <xsd:choice>
-      <xsd:element name="Idm" />
+      <xsd:element name="Idm">
+        <xsd:complexType /> <!-- Prevents this tag from having a value -->
+      </xsd:element>
       <xsd:element name="Socio" type="ots:DesiredSpeedModelType">
         <xsd:annotation>
           <xsd:documentation source="description">
@@ -488,7 +497,9 @@
         </xsd:annotation>
         <xsd:complexType>
           <xsd:choice>
-            <xsd:element name="Wrap" />
+            <xsd:element name="Wrap">
+              <xsd:complexType /> <!-- Prevents this tag from having a value -->
+            </xsd:element>
             <xsd:element name="Perceived">
               <xsd:complexType>
                 <xsd:sequence>
