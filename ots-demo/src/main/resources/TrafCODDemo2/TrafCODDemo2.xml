@@ -418,52 +418,52 @@
       <ots:Category GtuType="NL.CAR" Id="CAR" />
       <ots:Category GtuType="NL.TRUCK" Id="TRUCK" />
       <ots:Cell Category="CAR" Origin="W" Destination="NO">
-        <ots:Level TIME="0s">200.00veh/h</ots:Level>
-        <ots:Level TIME="3600s">200.00veh/h</ots:Level>
+        <ots:Level Time="0s">200.00veh/h</ots:Level>
+        <ots:Level Time="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
       <ots:Cell Category="CAR" Origin="W" Destination="EO">
-        <ots:Level TIME="0s">300.00veh/h</ots:Level>
-        <ots:Level TIME="3600s">300.00veh/h</ots:Level>
+        <ots:Level Time="0s">300.00veh/h</ots:Level>
+        <ots:Level Time="3600s">300.00veh/h</ots:Level>
       </ots:Cell>
       <ots:Cell Category="CAR" Origin="W" Destination="SO">
-        <ots:Level TIME="0s">200.00veh/h</ots:Level>
-        <ots:Level TIME="3600s">200.00veh/h</ots:Level>
+        <ots:Level Time="0s">200.00veh/h</ots:Level>
+        <ots:Level Time="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
       <ots:Cell Category="CAR" Origin="N" Destination="EO">
-        <ots:Level TIME="0s">200.00veh/h</ots:Level>
-        <ots:Level TIME="3600s">200.00veh/h</ots:Level>
+        <ots:Level Time="0s">200.00veh/h</ots:Level>
+        <ots:Level Time="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
       <ots:Cell Category="CAR" Origin="N" Destination="SO">
-        <ots:Level TIME="0s">300.00veh/h</ots:Level>
-        <ots:Level TIME="3600s">300.00veh/h</ots:Level>
+        <ots:Level Time="0s">300.00veh/h</ots:Level>
+        <ots:Level Time="3600s">300.00veh/h</ots:Level>
       </ots:Cell>
       <ots:Cell Category="CAR" Origin="N" Destination="WO">
-        <ots:Level TIME="0s">200.00veh/h</ots:Level>
-        <ots:Level TIME="3600s">200.00veh/h</ots:Level>
+        <ots:Level Time="0s">200.00veh/h</ots:Level>
+        <ots:Level Time="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
       <ots:Cell Category="CAR" Origin="E" Destination="SO">
-        <ots:Level TIME="0s">200.00veh/h</ots:Level>
-        <ots:Level TIME="3600s">200.00veh/h</ots:Level>
+        <ots:Level Time="0s">200.00veh/h</ots:Level>
+        <ots:Level Time="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
       <ots:Cell Category="CAR" Origin="E" Destination="WO">
-        <ots:Level TIME="0s">300.00veh/h</ots:Level>
-        <ots:Level TIME="3600s">300.00veh/h</ots:Level>
+        <ots:Level Time="0s">300.00veh/h</ots:Level>
+        <ots:Level Time="3600s">300.00veh/h</ots:Level>
       </ots:Cell>
       <ots:Cell Category="CAR" Origin="E" Destination="NO">
-        <ots:Level TIME="0s">200.00veh/h</ots:Level>
-        <ots:Level TIME="3600s">200.00veh/h</ots:Level>
+        <ots:Level Time="0s">200.00veh/h</ots:Level>
+        <ots:Level Time="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
       <ots:Cell Category="CAR" Origin="S" Destination="WO">
-        <ots:Level TIME="0s">200.00veh/h</ots:Level>
-        <ots:Level TIME="3600s">200.00veh/h</ots:Level>
+        <ots:Level Time="0s">200.00veh/h</ots:Level>
+        <ots:Level Time="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
       <ots:Cell Category="CAR" Origin="S" Destination="NO">
-        <ots:Level TIME="0s">300.00veh/h</ots:Level>
-        <ots:Level TIME="3600s">300.00veh/h</ots:Level>
+        <ots:Level Time="0s">300.00veh/h</ots:Level>
+        <ots:Level Time="3600s">300.00veh/h</ots:Level>
       </ots:Cell>
       <ots:Cell Category="CAR" Origin="S" Destination="EO">
-        <ots:Level TIME="0s">200.00veh/h</ots:Level>
-        <ots:Level TIME="3600s">200.00veh/h</ots:Level>
+        <ots:Level Time="0s">200.00veh/h</ots:Level>
+        <ots:Level Time="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
     </ots:Od>
     <ots:Sink Type="NL.ROAD_USERS" Lane="FORWARD" Link="NCONO" Position="END-20m" />

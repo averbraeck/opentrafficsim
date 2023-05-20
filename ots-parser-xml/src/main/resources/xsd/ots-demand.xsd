@@ -394,7 +394,7 @@
   <xsd:complexType name="LevelTimeType">
     <xsd:simpleContent>
       <xsd:extension base="ots:LevelType">
-        <xsd:attribute name="TIME" type="ots:TimeType" use="optional" />
+        <xsd:attribute name="Time" type="ots:TimeType" use="optional" />
       </xsd:extension>
     </xsd:simpleContent>
   </xsd:complexType>

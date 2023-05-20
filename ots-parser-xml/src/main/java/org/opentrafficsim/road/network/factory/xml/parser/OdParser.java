@@ -304,8 +304,8 @@ public final class OdParser
                         }
 
                         // TimeVector: demand > main demand > global
-                        List<LevelTimeType> timeTags = cell.getLevel() == null || cell.getLevel().get(0).getTIME() == null
-                                ? (main == null || main.getLevel() == null || main.getLevel().get(0).getTIME() == null ? null
+                        List<LevelTimeType> timeTags = cell.getLevel() == null || cell.getLevel().get(0).getTime() == null
+                                ? (main == null || main.getLevel() == null || main.getLevel().get(0).getTime() == null ? null
                                         : main.getLevel())
                                 : cell.getLevel();
                         TimeVector timeVector = timeTags == null ? globalTimeVector : parseTimeVector(timeTags);
@@ -357,8 +357,8 @@ public final class OdParser
                         for (int i = 0; i < baseDemand.size(); i++)
                         {
                             Throw.when(
-                                    baseDemand.get(i).getTIME() != null && factors != null && factors.get(i).getTIME() != null
-                                            && !baseDemand.get(i).getTIME().eq(factors.get(i).getTIME()),
+                                    baseDemand.get(i).getTime() != null && factors != null && factors.get(i).getTime() != null
+                                            && !baseDemand.get(i).getTime().eq(factors.get(i).getTime()),
                                     XmlParserException.class, "Demand from %s to %s is specified with factors that have "
                                             + "different time from the base demand.",
                                     origin, destination);
@@ -586,19 +586,19 @@ public final class OdParser
             @Override
             public int compare(final LevelTimeType o1, final LevelTimeType o2)
             {
-                if (o1.getTIME() == null && o2.getTIME() == null)
+                if (o1.getTime() == null && o2.getTime() == null)
                 {
                     return 0;
                 }
-                if (o1.getTIME() == null)
+                if (o1.getTime() == null)
                 {
                     return -1;
                 }
-                if (o2.getTIME() == null)
+                if (o2.getTime() == null)
                 {
                     return 1;
                 }
-                return o1.getTIME().compareTo(o2.getTIME());
+                return o1.getTime().compareTo(o2.getTime());
             }
         });
     }
@@ -614,7 +614,7 @@ public final class OdParser
         List<Time> timeList = new ArrayList<>();
         for (LevelTimeType time : list)
         {
-            timeList.add(time.getTIME());
+            timeList.add(time.getTime());
         }
         Collections.sort(timeList);
         return Try.assign(() -> DoubleVector.instantiateList(timeList, TimeUnit.DEFAULT, StorageType.DENSE),
