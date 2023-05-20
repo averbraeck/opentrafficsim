@@ -22,10 +22,10 @@
       <xsd:sequence>
         <xsd:element ref="ots:Definitions" minOccurs="1" maxOccurs="1" />
         <xsd:element ref="ots:Network" minOccurs="1" maxOccurs="1" />
-        <xsd:element ref="ots:Demand" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element ref="ots:Control" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element ref="ots:Model" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element ref="ots:Scenario" minOccurs="1" maxOccurs="unbounded" />
+        <xsd:element ref="ots:Demand" minOccurs="0" maxOccurs="1" />
+        <xsd:element ref="ots:Control" minOccurs="0" maxOccurs="1" />
+        <xsd:element ref="ots:Models" minOccurs="0" maxOccurs="1" />
+        <xsd:element ref="ots:Scenarios" minOccurs="0" maxOccurs="1" />
         <xsd:element ref="ots:Run" minOccurs="1" maxOccurs="1" />
         <xsd:element ref="ots:Animation" minOccurs="0" maxOccurs="1" />
       </xsd:sequence>

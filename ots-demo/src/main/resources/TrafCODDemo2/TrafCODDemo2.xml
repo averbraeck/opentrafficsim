@@ -466,10 +466,10 @@
         <ots:Level TIME="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
     </ots:Od>
-    <ots:Sink Type="NL.ROAD_USERS" Lane="FORWARD" Link="NCONO" Position="END-20m" Direction="DIR_PLUS" />
-    <ots:Sink Type="NL.ROAD_USERS" Lane="FORWARD" Link="ECOEO" Position="END-20m" Direction="DIR_PLUS" />
-    <ots:Sink Type="NL.ROAD_USERS" Lane="FORWARD" Link="SCOSO" Position="END-20m" Direction="DIR_PLUS" />
-    <ots:Sink Type="NL.ROAD_USERS" Lane="FORWARD" Link="WCOWO" Position="END-20m" Direction="DIR_PLUS" />
+    <ots:Sink Type="NL.ROAD_USERS" Lane="FORWARD" Link="NCONO" Position="END-20m" />
+    <ots:Sink Type="NL.ROAD_USERS" Lane="FORWARD" Link="ECOEO" Position="END-20m" />
+    <ots:Sink Type="NL.ROAD_USERS" Lane="FORWARD" Link="SCOSO" Position="END-20m" />
+    <ots:Sink Type="NL.ROAD_USERS" Lane="FORWARD" Link="WCOWO" Position="END-20m" />
   </ots:Demand>
   <ots:Control>
     <ots:TrafCod Id="Complex TrafCOD demo">
@@ -4625,8 +4625,6 @@ detector=12.2: 220, 242 220, 242
       </ots:Console>
     </ots:TrafCod>
   </ots:Control>
-  <ots:Model />
-  <ots:Scenario />
   <ots:Run>
     <ots:RunLength>3600s</ots:RunLength>
     <ots:NumberReplications>1</ots:NumberReplications>

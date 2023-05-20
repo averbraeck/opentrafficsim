@@ -95,7 +95,7 @@ public final class OdParser
      * Creates generators and returns OD matrices.
      * @param otsNetwork RoadNetwork; network
      * @param definitions Definitions; parsed definitions.
-     * @param demands List&lt;Demand&gt;; demand
+     * @param demand Demand; demand
      * @param gtuTemplates Map&lt;String, org.opentrafficsim.xml.generated.GtuTemplate&gt;; GTU templates
      * @param definedLaneBiases Map&lt;String, LaneBias&lt;?&gt;&gt;; defined lane biases
      * @param factories Map&lt;String, LaneBasedStrategicalPlannerFactory&lt;?&gt;&gt;; factories from model parser
@@ -106,7 +106,7 @@ public final class OdParser
      */
     @SuppressWarnings("checkstyle:methodlength")
     public static List<LaneBasedGtuGenerator> parseDemand(final RoadNetwork otsNetwork, final Definitions definitions,
-            final List<Demand> demands, final Map<String, org.opentrafficsim.xml.generated.GtuTemplate> gtuTemplates,
+            final Demand demand, final Map<String, org.opentrafficsim.xml.generated.GtuTemplate> gtuTemplates,
             final Map<String, LaneBias> definedLaneBiases, final Map<String, LaneBasedStrategicalPlannerFactory<?>> factories,
             final Map<String, String> modelIdReferrals, final StreamInformation streamMap) throws XmlParserException
     {
@@ -114,458 +114,449 @@ public final class OdParser
 
         IdGenerator idGenerator = new IdGenerator("");
 
-        for (Demand subDemand : demands)
+        // Collect options
+        Map<String, org.opentrafficsim.xml.generated.OdOptions> odOptionsMap = new LinkedHashMap<>();
+        for (org.opentrafficsim.xml.generated.OdOptions odOptions : demand.getOdOptions())
         {
-            // Collect options
-            Map<String, org.opentrafficsim.xml.generated.OdOptions> odOptionsMap = new LinkedHashMap<>();
-            for (org.opentrafficsim.xml.generated.OdOptions odOptions : subDemand.getOdOptions())
-            {
-                odOptionsMap.put(odOptions.getId(), odOptions);
-            }
-            List<Od> ods = subDemand.getOd();
-            for (Od od : ods)
-            {
+            odOptionsMap.put(odOptions.getId(), odOptions);
+        }
+        List<Od> ods = demand.getOd();
+        for (Od od : ods)
+        {
 
-                // ID
-                String id = od.getId();
+            // ID
+            String id = od.getId();
 
-                // Origins and destinations, retrieve them from demand items
-                List<Node> origins = new ArrayList<>();
-                List<Node> destinations = new ArrayList<>();
-                for (Cell demand : od.getCell())
+            // Origins and destinations, retrieve them from demand items
+            List<Node> origins = new ArrayList<>();
+            List<Node> destinations = new ArrayList<>();
+            for (Cell cell : od.getCell())
+            {
+                if (!origins.contains(otsNetwork.getNode(cell.getOrigin())))
                 {
-                    if (!origins.contains(otsNetwork.getNode(demand.getOrigin())))
+                    Node originNode = otsNetwork.getNode(cell.getOrigin());
+                    if (null == originNode)
                     {
-                        Node originNode = otsNetwork.getNode(demand.getOrigin());
-                        if (null == originNode)
-                        {
-                            CategoryLogger.filter(Cat.PARSER).trace("Parse demand: cannot find origin {}", demand.getOrigin());
-                        }
-                        else
-                        {
-                            // TODO: will skipping origins that are not in the network cause problems later on?
-                            origins.add(originNode);
-                        }
+                        CategoryLogger.filter(Cat.PARSER).trace("Parse demand: cannot find origin {}", cell.getOrigin());
                     }
-                    if (!destinations.contains(otsNetwork.getNode(demand.getDestination())))
+                    else
                     {
-                        Node destinationNode = otsNetwork.getNode(demand.getDestination());
-                        if (null == destinationNode)
-                        {
-                            CategoryLogger.filter(Cat.PARSER).trace("Parse demand: cannot find destination {}",
-                                    demand.getDestination());
-                        }
-                        else
-                        {
-                            // TODO: will skipping origins that are not in the network cause problems later on?
-                            destinations.add(destinationNode);
-                        }
+                        // TODO: will skipping origins that are not in the network cause problems later on?
+                        origins.add(originNode);
                     }
                 }
-
-                // Create categorization
-                Categorization categorization;
-                Map<String, Category> categories = new LinkedHashMap<>();
-                Map<String, Double> categoryFactors = new LinkedHashMap<>();
-                if (od.getCategory() == null || od.getCategory().isEmpty())
+                if (!destinations.contains(otsNetwork.getNode(cell.getDestination())))
                 {
+                    Node destinationNode = otsNetwork.getNode(cell.getDestination());
+                    if (null == destinationNode)
+                    {
+                        CategoryLogger.filter(Cat.PARSER).trace("Parse demand: cannot find destination {}",
+                                cell.getDestination());
+                    }
+                    else
+                    {
+                        // TODO: will skipping origins that are not in the network cause problems later on?
+                        destinations.add(destinationNode);
+                    }
+                }
+            }
+
+            // Create categorization
+            Categorization categorization;
+            Map<String, Category> categories = new LinkedHashMap<>();
+            Map<String, Double> categoryFactors = new LinkedHashMap<>();
+            if (od.getCategory() == null || od.getCategory().isEmpty())
+            {
+                categorization = Categorization.UNCATEGORIZED;
+            }
+            else
+            {
+                List<Class<?>> categoryClasses = new ArrayList<>();
+                if (od.getCategory().get(0).getGtuType() != null)
+                {
+                    categoryClasses.add(GtuType.class);
+                }
+                if (od.getCategory().get(0).getRoute() != null)
+                {
+                    categoryClasses.add(Route.class);
+                }
+                if (od.getCategory().get(0).getLane() != null)
+                {
+                    categoryClasses.add(Lane.class);
+                }
+                if (categoryClasses.isEmpty())
+                {
+                    // XML uses categories, but these define nothing
                     categorization = Categorization.UNCATEGORIZED;
                 }
                 else
                 {
-                    List<Class<?>> categoryClasses = new ArrayList<>();
-                    if (od.getCategory().get(0).getGtuType() != null)
-                    {
-                        categoryClasses.add(GtuType.class);
-                    }
-                    if (od.getCategory().get(0).getRoute() != null)
-                    {
-                        categoryClasses.add(Route.class);
-                    }
-                    if (od.getCategory().get(0).getLane() != null)
-                    {
-                        categoryClasses.add(Lane.class);
-                    }
-                    if (categoryClasses.isEmpty())
-                    {
-                        // XML uses categories, but these define nothing
-                        categorization = Categorization.UNCATEGORIZED;
-                    }
-                    else
-                    {
-                        Class<?> clazz = categoryClasses.get(0);
-                        categoryClasses.remove(0);
-                        categorization = new Categorization("", clazz, categoryClasses.toArray(new Class[0]));
-                    }
-                    // create categories and check that all categories comply with the categorization
-                    for (CategoryType category : od.getCategory())
-                    {
-                        Throw.when(
-                                (categorization.entails(GtuType.class) && category.getGtuType() == null)
-                                        || (!categorization.entails(GtuType.class) && category.getGtuType() != null),
-                                XmlParserException.class, "Categories are inconsistent concerning GtuType.");
-                        Throw.when(
-                                (categorization.entails(Route.class) && category.getRoute() == null)
-                                        || (!categorization.entails(Route.class) && category.getRoute() != null),
-                                XmlParserException.class, "Categories are inconsistent concerning Route.");
-                        Throw.when(
-                                (categorization.entails(Lane.class) && category.getLane() == null)
-                                        || (!categorization.entails(Lane.class) && category.getLane() != null),
-                                XmlParserException.class, "Categories are inconsistent concerning Lane.");
-                        List<Object> objects = new ArrayList<>();
-                        if (categorization.entails(GtuType.class))
-                        {
-                            objects.add(definitions.get(GtuType.class, category.getGtuType()));
-                        }
-                        if (categorization.entails(Route.class))
-                        {
-                            objects.add(otsNetwork.getRoute(category.getRoute()));
-                        }
-                        if (categorization.entails(Lane.class))
-                        {
-                            CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(category.getLane().getLink());
-                            Lane lane = (Lane) link.getCrossSectionElement(category.getLane().getId());
-                            objects.add(lane);
-                        }
-                        categories.put(category.getId(), new Category(categorization, objects.get(0),
-                                objects.subList(1, objects.size()).toArray(new Object[objects.size() - 1])));
-                        categoryFactors.put(category.getId(), parsePositiveFactor(category.getFactor()));
-                    }
+                    Class<?> clazz = categoryClasses.get(0);
+                    categoryClasses.remove(0);
+                    categorization = new Categorization("", clazz, categoryClasses.toArray(new Class[0]));
                 }
-
-                // Global time vector
-                TimeVector globalTimeVector = null;
-                if (od.getGlobalTime() != null)
+                // create categories and check that all categories comply with the categorization
+                for (CategoryType category : od.getCategory())
                 {
-                    List<Time> timeList = new ArrayList<>();
-                    for (org.opentrafficsim.xml.generated.GlobalTimeType.Time time : od.getGlobalTime().getTime())
+                    Throw.when(
+                            (categorization.entails(GtuType.class) && category.getGtuType() == null)
+                                    || (!categorization.entails(GtuType.class) && category.getGtuType() != null),
+                            XmlParserException.class, "Categories are inconsistent concerning GtuType.");
+                    Throw.when(
+                            (categorization.entails(Route.class) && category.getRoute() == null)
+                                    || (!categorization.entails(Route.class) && category.getRoute() != null),
+                            XmlParserException.class, "Categories are inconsistent concerning Route.");
+                    Throw.when(
+                            (categorization.entails(Lane.class) && category.getLane() == null)
+                                    || (!categorization.entails(Lane.class) && category.getLane() != null),
+                            XmlParserException.class, "Categories are inconsistent concerning Lane.");
+                    List<Object> objects = new ArrayList<>();
+                    if (categorization.entails(GtuType.class))
                     {
-                        timeList.add(time.getValue());
+                        objects.add(definitions.get(GtuType.class, category.getGtuType()));
                     }
-                    Collections.sort(timeList);
-                    globalTimeVector =
-                            Try.assign(() -> DoubleVector.instantiateList(timeList, TimeUnit.DEFAULT, StorageType.DENSE),
-                                    XmlParserException.class, "Global time has no values.");
-                }
-
-                // Global interpolation
-                Interpolation globalInterpolation =
-                        od.getGlobalInterpolation().equals("LINEAR") ? Interpolation.LINEAR : Interpolation.STEPWISE;
-
-                // Global factor
-                double globalFactor = parsePositiveFactor(od.getGlobalFactor());
-
-                // Create the OD matrix
-                OdMatrix odMatrix =
-                        new OdMatrix(id, origins, destinations, categorization, globalTimeVector, globalInterpolation);
-
-                // Add demand
-                MultiKeyMap<Set<Cell>> demandPerOD = new MultiKeyMap<>(Node.class, Node.class);
-                for (Cell demand : od.getCell())
-                {
-                    Node origin = otsNetwork.getNode(demand.getOrigin());
-                    Node destination = otsNetwork.getNode(demand.getDestination());
-                    demandPerOD.get(() -> new LinkedHashSet<>(), origin, destination).add(demand);
-                }
-                for (Object o : demandPerOD.getKeys())
-                {
-                    MultiKeyMap<Set<Cell>> demandPerD = demandPerOD.getSubMap(o);
-                    for (Object d : demandPerD.getKeys())
+                    if (categorization.entails(Route.class))
                     {
-                        Set<Cell> set = demandPerD.get(d);
-                        Node origin = (Node) o;
-                        Node destination = (Node) d;
-                        Throw.when(categorization.equals(Categorization.UNCATEGORIZED) && set.size() > 1,
-                                XmlParserException.class,
-                                "Multiple DEMAND tags define demand from %s to %s in uncategorized demand.", origin.getId(),
-                                destination.getId());
+                        objects.add(otsNetwork.getRoute(category.getRoute()));
+                    }
+                    if (categorization.entails(Lane.class))
+                    {
+                        CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(category.getLane().getLink());
+                        Lane lane = (Lane) link.getCrossSectionElement(category.getLane().getId());
+                        objects.add(lane);
+                    }
+                    categories.put(category.getId(), new Category(categorization, objects.get(0),
+                            objects.subList(1, objects.size()).toArray(new Object[objects.size() - 1])));
+                    categoryFactors.put(category.getId(), parsePositiveFactor(category.getFactor()));
+                }
+            }
 
-                        // Find main demand, that may be split among other DEMAND tags between the same origin and destination
-                        Cell main = null;
-                        if (!categorization.equals(Categorization.UNCATEGORIZED))
-                        {
-                            for (Cell cell : set)
-                            {
-                                if (cell.getCategory() == null)
-                                {
-                                    Throw.when(main != null, XmlParserException.class,
-                                            "Multiple DEMAND tags define main demand from %s to %s.", origin.getId(),
-                                            destination.getId());
-                                    Throw.when(set.size() == 1, XmlParserException.class,
-                                            "Categorized demand from %s to %s has single DEMAND, and without category.",
-                                            origin.getId(), destination.getId());
-                                    main = cell;
-                                }
-                            }
-                        }
+            // Global time vector
+            TimeVector globalTimeVector = null;
+            if (od.getGlobalTime() != null)
+            {
+                List<Time> timeList = new ArrayList<>();
+                for (org.opentrafficsim.xml.generated.GlobalTimeType.Time time : od.getGlobalTime().getTime())
+                {
+                    timeList.add(time.getValue());
+                }
+                Collections.sort(timeList);
+                globalTimeVector = Try.assign(() -> DoubleVector.instantiateList(timeList, TimeUnit.DEFAULT, StorageType.DENSE),
+                        XmlParserException.class, "Global time has no values.");
+            }
 
-                        // Add cell per tag
+            // Global interpolation
+            Interpolation globalInterpolation =
+                    od.getGlobalInterpolation().equals("LINEAR") ? Interpolation.LINEAR : Interpolation.STEPWISE;
+
+            // Global factor
+            double globalFactor = parsePositiveFactor(od.getGlobalFactor());
+
+            // Create the OD matrix
+            OdMatrix odMatrix = new OdMatrix(id, origins, destinations, categorization, globalTimeVector, globalInterpolation);
+
+            // Add demand
+            MultiKeyMap<Set<Cell>> demandPerOD = new MultiKeyMap<>(Node.class, Node.class);
+            for (Cell cell : od.getCell())
+            {
+                Node origin = otsNetwork.getNode(cell.getOrigin());
+                Node destination = otsNetwork.getNode(cell.getDestination());
+                demandPerOD.get(() -> new LinkedHashSet<>(), origin, destination).add(cell);
+            }
+            for (Object o : demandPerOD.getKeys())
+            {
+                MultiKeyMap<Set<Cell>> demandPerD = demandPerOD.getSubMap(o);
+                for (Object d : demandPerD.getKeys())
+                {
+                    Set<Cell> set = demandPerD.get(d);
+                    Node origin = (Node) o;
+                    Node destination = (Node) d;
+                    Throw.when(categorization.equals(Categorization.UNCATEGORIZED) && set.size() > 1, XmlParserException.class,
+                            "Multiple DEMAND tags define demand from %s to %s in uncategorized demand.", origin.getId(),
+                            destination.getId());
+
+                    // Find main demand, that may be split among other DEMAND tags between the same origin and destination
+                    Cell main = null;
+                    if (!categorization.equals(Categorization.UNCATEGORIZED))
+                    {
                         for (Cell cell : set)
                         {
-                            // Skip main demand, it is split among other tags
-                            if (cell.equals(main))
+                            if (cell.getCategory() == null)
                             {
-                                continue;
+                                Throw.when(main != null, XmlParserException.class,
+                                        "Multiple DEMAND tags define main demand from %s to %s.", origin.getId(),
+                                        destination.getId());
+                                Throw.when(set.size() == 1, XmlParserException.class,
+                                        "Categorized demand from %s to %s has single DEMAND, and without category.",
+                                        origin.getId(), destination.getId());
+                                main = cell;
                             }
+                        }
+                    }
 
-                            // TimeVector: demand > main demand > global
-                            List<LevelTimeType> timeTags =
-                                    cell.getLevel() == null || cell.getLevel().get(0).getTIME() == null
-                                            ? (main == null || main.getLevel() == null
-                                                    || main.getLevel().get(0).getTIME() == null ? null : main.getLevel())
-                                            : cell.getLevel();
-                            TimeVector timeVector = timeTags == null ? globalTimeVector : parseTimeVector(timeTags);
-
-                            // Interpolation: demand > main demand > global
-                            // TODO: LINEAR follows when only global STEPWISE is defined
-                            String interpolationString = cell.getInterpolation() == null
-                                    ? (main == null || main.getInterpolation() == null ? null : main.getInterpolation())
-                                    : cell.getInterpolation();
-                            Interpolation interpolation = interpolationString == null ? globalInterpolation
-                                    : interpolationString.equals("LINEAR") ? Interpolation.LINEAR : Interpolation.STEPWISE;
-
-                            // Category
-                            Category category = categorization.equals(Categorization.UNCATEGORIZED) ? Category.UNCATEGORIZED
-                                    : categories.get(cell.getCategory());
-
-                            // Factor
-                            double factor = globalFactor;
-                            factor = main == null ? factor : factor * parsePositiveFactor(main.getFactor());
-                            factor *= parsePositiveFactor(cell.getFactor());
-
-                            // Figure out where the base demand, and optional factors are
-                            Frequency[] demandRaw = new Frequency[timeVector.size()];
-                            List<LevelTimeType> baseDemand;
-                            List<LevelTimeType> factors = null;
-                            if (cell.getLevel() == null)
-                            {
-                                // this demand specified no levels, use main demand
-                                baseDemand = main.getLevel();
-                            }
-                            else if (cell.getLevel().get(0).getValue().contains("veh"))
-                            {
-                                // this demand specifies levels
-                                baseDemand = cell.getLevel();
-                            }
-                            else
-                            {
-                                // this demand specifies factors on the main demand
-                                baseDemand = main.getLevel();
-                                factors = cell.getLevel();
-                            }
-                            // sort
-                            sortLevelTime(baseDemand);
-                            if (factors != null)
-                            {
-                                sortLevelTime(factors);
-                            }
-                            // fill array, include factors
-                            for (int i = 0; i < baseDemand.size(); i++)
-                            {
-                                Throw.when(
-                                        baseDemand.get(i).getTIME() != null && factors != null
-                                                && factors.get(i).getTIME() != null
-                                                && !baseDemand.get(i).getTIME().eq(factors.get(i).getTIME()),
-                                        XmlParserException.class, "Demand from %s to %s is specified with factors that have "
-                                                + "different time from the base demand.",
-                                        origin, destination);
-                                demandRaw[i] = parseLevel(baseDemand.get(i).getValue(),
-                                        factor * (factors == null ? 1.0 : parsePositiveFactor(factors.get(i).getValue())));
-                            }
-                            FrequencyVector demandVector =
-                                    Try.assign(() -> DoubleVector.instantiate(demandRaw, FrequencyUnit.SI, StorageType.DENSE),
-                                            XmlParserException.class, "Unexpected empty demand.");
-
-                            // Finally, add the demand
-                            odMatrix.putDemandVector(origin, destination, category, demandVector, timeVector, interpolation);
+                    // Add cell per tag
+                    for (Cell cell : set)
+                    {
+                        // Skip main demand, it is split among other tags
+                        if (cell.equals(main))
+                        {
+                            continue;
                         }
 
-                    }
-                }
+                        // TimeVector: demand > main demand > global
+                        List<LevelTimeType> timeTags = cell.getLevel() == null || cell.getLevel().get(0).getTIME() == null
+                                ? (main == null || main.getLevel() == null || main.getLevel().get(0).getTIME() == null ? null
+                                        : main.getLevel())
+                                : cell.getLevel();
+                        TimeVector timeVector = timeTags == null ? globalTimeVector : parseTimeVector(timeTags);
 
-                // OD Options
-                OdOptions odOptions =
-                        new OdOptions().set(OdOptions.GTU_ID, idGenerator).set(OdOptions.NO_LC_DIST, Length.instantiateSI(1.0));
-                // templates
-                Set<GtuTemplate> templates = new LinkedHashSet<>();
-                for (org.opentrafficsim.xml.generated.GtuTemplate template : gtuTemplates.values())
-                {
-                    GtuType gtuType = definitions.get(GtuType.class, template.getGtuType());
-                    Generator<Length> lengthGenerator = ParseDistribution.parseLengthDist(streamMap, template.getLengthDist());
-                    Generator<Length> widthGenerator = ParseDistribution.parseLengthDist(streamMap, template.getWidthDist());
-                    Generator<Speed> maximumSpeedGenerator =
-                            ParseDistribution.parseSpeedDist(streamMap, template.getMaxSpeedDist());
-                    if (template.getMaxAccelerationDist() == null || template.getMaxDecelerationDist() == null)
-                    {
-                        templates.add(new GtuTemplate(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator));
-                    }
-                    else
-                    {
-                        Generator<Acceleration> maxAccelerationGenerator =
-                                ParseDistribution.parseAccelerationDist(streamMap, template.getMaxAccelerationDist());
-                        Generator<Acceleration> maxDecelerationGenerator =
-                                ParseDistribution.parseAccelerationDist(streamMap, template.getMaxDecelerationDist());
-                        templates.add(new GtuTemplate(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator,
-                                maxAccelerationGenerator, maxDecelerationGenerator));
-                    }
-                }
-                // default global option to integrate defined templates
-                StreamInterface stream = streamMap.getStream("generation");
-                LaneBasedStrategicalRoutePlannerFactory defaultLmrsFactory =
-                        DefaultLaneBasedGtuCharacteristicsGeneratorOd.defaultLmrs(stream);
-                Factory characteristicsGeneratorFactory = new Factory(defaultLmrsFactory);
-                characteristicsGeneratorFactory.setTemplates(templates);
-                odOptions.set(OdOptions.GTU_TYPE, characteristicsGeneratorFactory.create());
-                // other options
-                if (od.getOptions() != null)
-                {
-                    Throw.when(!odOptionsMap.containsKey(od.getOptions()), XmlParserException.class,
-                            "OD options of id od.getOPTIONS() not defined.");
-                    for (OdOptionsItem options : odOptionsMap.get(od.getOptions()).getOdOptionsItem())
-                    {
-                        /*
-                         * The current 'options' is valid within a single context, i.e. global, link type, origin or lane. All
-                         * option values are set in odOptions for that context, in the current loop. For the model factories an
-                         * implementation of DefaultLaneBasedGtuCharacteristicsGeneratorOd is created that responds to the GTU
-                         * type, and selects a factory assigned to that GTU type within the context. Or, the default factory in
-                         * the context is used. Or finally, a default LMRS. If no model factory is specified in the context (nor
-                         * a higher context), no option value is set and OdOptions itself returns a default LMRS factory.
-                         */
+                        // Interpolation: demand > main demand > global
+                        // TODO: LINEAR follows when only global STEPWISE is defined
+                        String interpolationString = cell.getInterpolation() == null
+                                ? (main == null || main.getInterpolation() == null ? null : main.getInterpolation())
+                                : cell.getInterpolation();
+                        Interpolation interpolation = interpolationString == null ? globalInterpolation
+                                : interpolationString.equals("LINEAR") ? Interpolation.LINEAR : Interpolation.STEPWISE;
 
-                        // GTU type (model)
-                        if (options.getDefaultModel() != null || (options.getModel() != null && !options.getModel().isEmpty()))
+                        // Category
+                        Category category = categorization.equals(Categorization.UNCATEGORIZED) ? Category.UNCATEGORIZED
+                                : categories.get(cell.getCategory());
+
+                        // Factor
+                        double factor = globalFactor;
+                        factor = main == null ? factor : factor * parsePositiveFactor(main.getFactor());
+                        factor *= parsePositiveFactor(cell.getFactor());
+
+                        // Figure out where the base demand, and optional factors are
+                        Frequency[] demandRaw = new Frequency[timeVector.size()];
+                        List<LevelTimeType> baseDemand;
+                        List<LevelTimeType> factors = null;
+                        if (cell.getLevel() == null)
                         {
-                            LaneBasedStrategicalPlannerFactory<?> defaultFactory;
-                            if (options.getDefaultModel() != null)
-                            {
-                                // TODO: model id referral
-                                String modelId = OdParser.getModelId(options.getDefaultModel(), modelIdReferrals);
-                                Throw.when(!factories.containsKey(modelId), XmlParserException.class,
-                                        "OD option DefaultModel refers to a non-existent model with ID %s.", modelId);
-                                defaultFactory = factories.get(modelId);
-                            }
-                            else
-                            {
-                                defaultFactory = null;
-                            }
-                            // compose map that couples GTU types to factories through Model ID's
-                            final Map<GtuType, LaneBasedStrategicalPlannerFactory<?>> gtuTypeFactoryMap = new LinkedHashMap<>();
-                            if (options.getModel() != null)
-                            {
-                                for (Model model : options.getModel())
-                                {
-                                    GtuType gtuType = definitions.get(GtuType.class, model.getGtuType());
-                                    Throw.when(!factories.containsKey(model.getId()), XmlParserException.class,
-                                            "OD option Model refers to a non existent-model with ID %s.", model.getId());
-                                    gtuTypeFactoryMap.put(gtuType, factories.get(getModelId(model, modelIdReferrals)));
-                                }
-                            }
+                            // this demand specified no levels, use main demand
+                            baseDemand = main.getLevel();
+                        }
+                        else if (cell.getLevel().get(0).getValue().contains("veh"))
+                        {
+                            // this demand specifies levels
+                            baseDemand = cell.getLevel();
+                        }
+                        else
+                        {
+                            // this demand specifies factors on the main demand
+                            baseDemand = main.getLevel();
+                            factors = cell.getLevel();
+                        }
+                        // sort
+                        sortLevelTime(baseDemand);
+                        if (factors != null)
+                        {
+                            sortLevelTime(factors);
+                        }
+                        // fill array, include factors
+                        for (int i = 0; i < baseDemand.size(); i++)
+                        {
+                            Throw.when(
+                                    baseDemand.get(i).getTIME() != null && factors != null && factors.get(i).getTIME() != null
+                                            && !baseDemand.get(i).getTIME().eq(factors.get(i).getTIME()),
+                                    XmlParserException.class, "Demand from %s to %s is specified with factors that have "
+                                            + "different time from the base demand.",
+                                    origin, destination);
+                            demandRaw[i] = parseLevel(baseDemand.get(i).getValue(),
+                                    factor * (factors == null ? 1.0 : parsePositiveFactor(factors.get(i).getValue())));
+                        }
+                        FrequencyVector demandVector =
+                                Try.assign(() -> DoubleVector.instantiate(demandRaw, FrequencyUnit.SI, StorageType.DENSE),
+                                        XmlParserException.class, "Unexpected empty demand.");
 
-                            LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> factoryByGtuType =
-                                    new LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner>()
+                        // Finally, add the demand
+                        odMatrix.putDemandVector(origin, destination, category, demandVector, timeVector, interpolation);
+                    }
+
+                }
+            }
+
+            // OD Options
+            OdOptions odOptions =
+                    new OdOptions().set(OdOptions.GTU_ID, idGenerator).set(OdOptions.NO_LC_DIST, Length.instantiateSI(1.0));
+            // templates
+            Set<GtuTemplate> templates = new LinkedHashSet<>();
+            for (org.opentrafficsim.xml.generated.GtuTemplate template : gtuTemplates.values())
+            {
+                GtuType gtuType = definitions.get(GtuType.class, template.getGtuType());
+                Generator<Length> lengthGenerator = ParseDistribution.parseLengthDist(streamMap, template.getLengthDist());
+                Generator<Length> widthGenerator = ParseDistribution.parseLengthDist(streamMap, template.getWidthDist());
+                Generator<Speed> maximumSpeedGenerator =
+                        ParseDistribution.parseSpeedDist(streamMap, template.getMaxSpeedDist());
+                if (template.getMaxAccelerationDist() == null || template.getMaxDecelerationDist() == null)
+                {
+                    templates.add(new GtuTemplate(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator));
+                }
+                else
+                {
+                    Generator<Acceleration> maxAccelerationGenerator =
+                            ParseDistribution.parseAccelerationDist(streamMap, template.getMaxAccelerationDist());
+                    Generator<Acceleration> maxDecelerationGenerator =
+                            ParseDistribution.parseAccelerationDist(streamMap, template.getMaxDecelerationDist());
+                    templates.add(new GtuTemplate(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator,
+                            maxAccelerationGenerator, maxDecelerationGenerator));
+                }
+            }
+            // default global option to integrate defined templates
+            StreamInterface stream = streamMap.getStream("generation");
+            LaneBasedStrategicalRoutePlannerFactory defaultLmrsFactory =
+                    DefaultLaneBasedGtuCharacteristicsGeneratorOd.defaultLmrs(stream);
+            Factory characteristicsGeneratorFactory = new Factory(defaultLmrsFactory);
+            characteristicsGeneratorFactory.setTemplates(templates);
+            odOptions.set(OdOptions.GTU_TYPE, characteristicsGeneratorFactory.create());
+            // other options
+            if (od.getOptions() != null)
+            {
+                Throw.when(!odOptionsMap.containsKey(od.getOptions()), XmlParserException.class,
+                        "OD options of id od.getOPTIONS() not defined.");
+                for (OdOptionsItem options : odOptionsMap.get(od.getOptions()).getOdOptionsItem())
+                {
+                    /*
+                     * The current 'options' is valid within a single context, i.e. global, link type, origin or lane. All
+                     * option values are set in odOptions for that context, in the current loop. For the model factories an
+                     * implementation of DefaultLaneBasedGtuCharacteristicsGeneratorOd is created that responds to the GTU type,
+                     * and selects a factory assigned to that GTU type within the context. Or, the default factory in the
+                     * context is used. Or finally, a default LMRS. If no model factory is specified in the context (nor a
+                     * higher context), no option value is set and OdOptions itself returns a default LMRS factory.
+                     */
+
+                    // GTU type (model)
+                    if (options.getDefaultModel() != null || (options.getModel() != null && !options.getModel().isEmpty()))
+                    {
+                        LaneBasedStrategicalPlannerFactory<?> defaultFactory;
+                        if (options.getDefaultModel() != null)
+                        {
+                            // TODO: model id referral
+                            String modelId = OdParser.getModelId(options.getDefaultModel(), modelIdReferrals);
+                            Throw.when(!factories.containsKey(modelId), XmlParserException.class,
+                                    "OD option DefaultModel refers to a non-existent model with ID %s.", modelId);
+                            defaultFactory = factories.get(modelId);
+                        }
+                        else
+                        {
+                            defaultFactory = null;
+                        }
+                        // compose map that couples GTU types to factories through Model ID's
+                        final Map<GtuType, LaneBasedStrategicalPlannerFactory<?>> gtuTypeFactoryMap = new LinkedHashMap<>();
+                        if (options.getModel() != null)
+                        {
+                            for (Model model : options.getModel())
+                            {
+                                GtuType gtuType = definitions.get(GtuType.class, model.getGtuType());
+                                Throw.when(!factories.containsKey(model.getId()), XmlParserException.class,
+                                        "OD option Model refers to a non existent-model with ID %s.", model.getId());
+                                gtuTypeFactoryMap.put(gtuType, factories.get(getModelId(model, modelIdReferrals)));
+                            }
+                        }
+
+                        LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> factoryByGtuType =
+                                new LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner>()
+                                {
+                                    /** {@inheritDoc} */
+                                    @Override
+                                    public LaneBasedStrategicalPlanner create(final LaneBasedGtu gtu, final Route route,
+                                            final Node origin, final Node destination) throws GtuException
                                     {
-                                        /** {@inheritDoc} */
-                                        @Override
-                                        public LaneBasedStrategicalPlanner create(final LaneBasedGtu gtu, final Route route,
-                                                final Node origin, final Node destination) throws GtuException
+                                        LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory =
+                                                gtuTypeFactoryMap.get(gtu.getType());
+                                        if (strategicalPlannerFactory != null)
                                         {
-                                            LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory =
-                                                    gtuTypeFactoryMap.get(gtu.getType());
-                                            if (strategicalPlannerFactory != null)
-                                            {
-                                                // a model factory for this GTU type is specified
-                                                return strategicalPlannerFactory.create(gtu, route, origin, destination);
-                                            }
-                                            if (defaultFactory != null)
-                                            {
-                                                // a default model factory is specified
-                                                return defaultFactory.create(gtu, route, origin, destination);
-                                            }
-                                            return defaultLmrsFactory.create(gtu, route, origin, destination);
+                                            // a model factory for this GTU type is specified
+                                            return strategicalPlannerFactory.create(gtu, route, origin, destination);
                                         }
-                                    };
-                            characteristicsGeneratorFactory = new Factory(factoryByGtuType).setTemplates(templates);
-                            setOption(odOptions, OdOptions.GTU_TYPE, characteristicsGeneratorFactory.create(), options,
-                                    otsNetwork, definitions);
-                        }
-                        // no lc
-                        setOption(odOptions, OdOptions.NO_LC_DIST, options.getNoLaneChange(), options, otsNetwork, definitions);
-                        // room checker
-                        setOption(odOptions, OdOptions.ROOM_CHECKER, Transformer.parseRoomChecker(options.getRoomChecker()),
-                                options, otsNetwork, definitions);
-                        // headway distribution
-                        try
-                        {
-                            setOption(odOptions, OdOptions.HEADWAY_DIST,
-                                    Transformer.parseHeadwayDistribution(options.getHeadwayDist()), options, otsNetwork,
-                                    definitions);
-                        }
-                        catch (NoSuchFieldException | IllegalAccessException exception)
-                        {
-                            throw new XmlParserException(exception);
-                        }
-                        // markov
-                        if (options.getMarkov() != null)
-                        {
-                            Throw.when(!categorization.entails(GtuType.class), XmlParserException.class,
-                                    "The OD option Markov can only be used if GtuType is in the CATEGORY's.");
-                            Throw.when(!categorization.entails(Lane.class) && options.getLane() != null,
-                                    XmlParserException.class,
-                                    "Markov chains at lane level are not used if Lane's are not in the CATEGORY's.");
-                            MarkovCorrelation<GtuType, Frequency> markov = new MarkovCorrelation<>();
-                            for (State state : options.getMarkov().getState())
-                            {
-                                GtuType gtuType = definitions.get(GtuType.class, state.getGtuType());
-                                double correlation = state.getCorrelation();
-                                if (state.getParent() == null)
-                                {
-                                    markov.addState(gtuType, correlation);
-                                }
-                                else
-                                {
-                                    GtuType parentType = definitions.get(GtuType.class, state.getParent());
-                                    markov.addState(parentType, gtuType, correlation);
-                                }
-                            }
-                            setOption(odOptions, OdOptions.MARKOV, markov, options, otsNetwork, definitions);
-                        }
-                        // lane biases
-                        if (options.getLaneBiases() != null)
-                        {
-                            LaneBiases laneBiases = new LaneBiases();
-                            for (org.opentrafficsim.xml.generated.LaneBias laneBiasType : ParseUtil.getObjectsOfType(
-                                    options.getLaneBiases().getLaneBiasOrDefinedLaneBias(),
-                                    org.opentrafficsim.xml.generated.LaneBias.class))
-                            {
-                                GtuType gtuType = definitions.get(GtuType.class, laneBiasType.getGtuType());
-                                Throw.whenNull(gtuType, "GTU type %s in lane bias does not exist.", laneBiasType.getGtuType());
-                                laneBiases.addBias(gtuType, DefinitionsParser.parseLaneBias(laneBiasType));
-                            }
-                            for (DefinedLaneBias definedLaneBias : ParseUtil.getObjectsOfType(
-                                    options.getLaneBiases().getLaneBiasOrDefinedLaneBias(), DefinedLaneBias.class))
-                            {
-                                GtuType gtuType = definitions.get(GtuType.class, definedLaneBias.getGtuType());
-                                Throw.whenNull(gtuType, "GTU type %s in defined lane bias does not exist.",
-                                        definedLaneBias.getGtuType());
-                                laneBiases.addBias(gtuType, definedLaneBiases.get(definedLaneBias.getGtuType()));
-                            }
-                            setOption(odOptions, OdOptions.LANE_BIAS, laneBiases, options, otsNetwork, definitions);
-                        }
-
+                                        if (defaultFactory != null)
+                                        {
+                                            // a default model factory is specified
+                                            return defaultFactory.create(gtu, route, origin, destination);
+                                        }
+                                        return defaultLmrsFactory.create(gtu, route, origin, destination);
+                                    }
+                                };
+                        characteristicsGeneratorFactory = new Factory(factoryByGtuType).setTemplates(templates);
+                        setOption(odOptions, OdOptions.GTU_TYPE, characteristicsGeneratorFactory.create(), options, otsNetwork,
+                                definitions);
                     }
-                }
+                    // no lc
+                    setOption(odOptions, OdOptions.NO_LC_DIST, options.getNoLaneChange(), options, otsNetwork, definitions);
+                    // room checker
+                    setOption(odOptions, OdOptions.ROOM_CHECKER, Transformer.parseRoomChecker(options.getRoomChecker()),
+                            options, otsNetwork, definitions);
+                    // headway distribution
+                    try
+                    {
+                        setOption(odOptions, OdOptions.HEADWAY_DIST,
+                                Transformer.parseHeadwayDistribution(options.getHeadwayDist()), options, otsNetwork,
+                                definitions);
+                    }
+                    catch (NoSuchFieldException | IllegalAccessException exception)
+                    {
+                        throw new XmlParserException(exception);
+                    }
+                    // markov
+                    if (options.getMarkov() != null)
+                    {
+                        Throw.when(!categorization.entails(GtuType.class), XmlParserException.class,
+                                "The OD option Markov can only be used if GtuType is in the CATEGORY's.");
+                        Throw.when(!categorization.entails(Lane.class) && options.getLane() != null, XmlParserException.class,
+                                "Markov chains at lane level are not used if Lane's are not in the CATEGORY's.");
+                        MarkovCorrelation<GtuType, Frequency> markov = new MarkovCorrelation<>();
+                        for (State state : options.getMarkov().getState())
+                        {
+                            GtuType gtuType = definitions.get(GtuType.class, state.getGtuType());
+                            double correlation = state.getCorrelation();
+                            if (state.getParent() == null)
+                            {
+                                markov.addState(gtuType, correlation);
+                            }
+                            else
+                            {
+                                GtuType parentType = definitions.get(GtuType.class, state.getParent());
+                                markov.addState(parentType, gtuType, correlation);
+                            }
+                        }
+                        setOption(odOptions, OdOptions.MARKOV, markov, options, otsNetwork, definitions);
+                    }
+                    // lane biases
+                    if (options.getLaneBiases() != null)
+                    {
+                        LaneBiases laneBiases = new LaneBiases();
+                        for (org.opentrafficsim.xml.generated.LaneBias laneBiasType : ParseUtil.getObjectsOfType(
+                                options.getLaneBiases().getLaneBiasOrDefinedLaneBias(),
+                                org.opentrafficsim.xml.generated.LaneBias.class))
+                        {
+                            GtuType gtuType = definitions.get(GtuType.class, laneBiasType.getGtuType());
+                            Throw.whenNull(gtuType, "GTU type %s in lane bias does not exist.", laneBiasType.getGtuType());
+                            laneBiases.addBias(gtuType, DefinitionsParser.parseLaneBias(laneBiasType));
+                        }
+                        for (DefinedLaneBias definedLaneBias : ParseUtil.getObjectsOfType(
+                                options.getLaneBiases().getLaneBiasOrDefinedLaneBias(), DefinedLaneBias.class))
+                        {
+                            GtuType gtuType = definitions.get(GtuType.class, definedLaneBias.getGtuType());
+                            Throw.whenNull(gtuType, "GTU type %s in defined lane bias does not exist.",
+                                    definedLaneBias.getGtuType());
+                            laneBiases.addBias(gtuType, definedLaneBiases.get(definedLaneBias.getGtuType()));
+                        }
+                        setOption(odOptions, OdOptions.LANE_BIAS, laneBiases, options, otsNetwork, definitions);
+                    }
 
-                // Invoke ODApplier
-                DetectorType detectorType = definitions.get(DetectorType.class, od.getSinkType());
-                Map<String, GeneratorObjects> output =
-                        Try.assign(() -> OdApplier.applyOd(otsNetwork, odMatrix, odOptions, detectorType),
-                                XmlParserException.class, "Simulator time should be zero when parsing an OD.");
-
-                // Collect generators in output
-                for (GeneratorObjects generatorObject : output.values())
-                {
-                    generators.add(generatorObject.getGenerator());
                 }
+            }
+
+            // Invoke ODApplier
+            DetectorType detectorType = definitions.get(DetectorType.class, od.getSinkType());
+            Map<String, GeneratorObjects> output =
+                    Try.assign(() -> OdApplier.applyOd(otsNetwork, odMatrix, odOptions, detectorType), XmlParserException.class,
+                            "Simulator time should be zero when parsing an OD.");
+
+            // Collect generators in output
+            for (GeneratorObjects generatorObject : output.values())
+            {
+                generators.add(generatorObject.getGenerator());
             }
         }
 

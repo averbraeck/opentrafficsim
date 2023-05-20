@@ -419,57 +419,55 @@
       <ots:ShortestRoute Weight="0.25" Id="SW2" />
     </ots:ShortestRouteMix>
 
-    <ots:Generator Link="EEP" Lane="LANE" Position="10m" Direction="DIR_PLUS">
+    <ots:Generator Link="EEP" Lane="LANE" Position="10m">
       <ots:GtuTemplate>CAR</ots:GtuTemplate>
       <ots:ShortestRouteMix>E</ots:ShortestRouteMix>
       <ots:Frequency>25/min</ots:Frequency>
       <ots:RoomChecker>CF</ots:RoomChecker>
     </ots:Generator>
 
-    <ots:Generator Link="NNENTER" Lane="LEFT" Position="10m" Direction="DIR_PLUS">
+    <ots:Generator Link="NNENTER" Lane="LEFT" Position="10m">
       <ots:GtuTemplate>CAR</ots:GtuTemplate>
       <ots:ShortestRouteMix>N</ots:ShortestRouteMix>
       <ots:Frequency>12.5/min</ots:Frequency>
       <ots:RoomChecker>CF</ots:RoomChecker>
     </ots:Generator>
 
-    <ots:Generator Link="NNENTER" Lane="RIGHT" Position="10m" Direction="DIR_PLUS">
+    <ots:Generator Link="NNENTER" Lane="RIGHT" Position="10m">
       <ots:GtuTemplate>CAR</ots:GtuTemplate>
       <ots:ShortestRouteMix>N</ots:ShortestRouteMix>
       <ots:Frequency>12.5/min</ots:Frequency>
       <ots:RoomChecker>CF</ots:RoomChecker>
     </ots:Generator>
 
-    <ots:Generator Link="WWP" Lane="LANE" Position="10m" Direction="DIR_PLUS">
+    <ots:Generator Link="WWP" Lane="LANE" Position="10m">
       <ots:GtuTemplate>CAR</ots:GtuTemplate>
       <ots:ShortestRouteMix>W</ots:ShortestRouteMix>
       <ots:Frequency>25/min</ots:Frequency>
       <ots:RoomChecker>CF</ots:RoomChecker>
     </ots:Generator>
 
-    <ots:Generator Link="SSENTER" Lane="LEFT" Position="10m" Direction="DIR_PLUS">
+    <ots:Generator Link="SSENTER" Lane="LEFT" Position="10m">
       <ots:GtuTemplate>CAR</ots:GtuTemplate>
       <ots:ShortestRouteMix>S</ots:ShortestRouteMix>
       <ots:Frequency>12.5/min</ots:Frequency>
       <ots:RoomChecker>CF</ots:RoomChecker>
     </ots:Generator>
 
-    <ots:Generator Link="SSENTER" Lane="RIGHT" Position="10m" Direction="DIR_PLUS">
+    <ots:Generator Link="SSENTER" Lane="RIGHT" Position="10m">
       <ots:GtuTemplate>CAR</ots:GtuTemplate>
       <ots:ShortestRouteMix>S</ots:ShortestRouteMix>
       <ots:Frequency>12.5/min</ots:Frequency>
       <ots:RoomChecker>CF</ots:RoomChecker>
     </ots:Generator>
 
-    <ots:Sink Type="NL.ROAD_USERS" Link="EEXITE2" Lane="LANE" Position="END-20m" Direction="DIR_PLUS" />
-    <ots:Sink Type="NL.ROAD_USERS" Link="NPN2" Lane="LANE" Position="END-20m" Direction="DIR_PLUS" />
-    <ots:Sink Type="NL.ROAD_USERS" Link="WEXITW2" Lane="LANE" Position="END-20m" Direction="DIR_PLUS" />
-    <ots:Sink Type="NL.ROAD_USERS" Link="SEXITS2" Lane="LEFT" Position="END-20m" Direction="DIR_PLUS" />
-    <ots:Sink Type="NL.ROAD_USERS" Link="SEXITS2" Lane="RIGHT" Position="END-20m" Direction="DIR_PLUS" />
+    <ots:Sink Type="NL.ROAD_USERS" Link="EEXITE2" Lane="LANE" Position="END-20m" />
+    <ots:Sink Type="NL.ROAD_USERS" Link="NPN2" Lane="LANE" Position="END-20m" />
+    <ots:Sink Type="NL.ROAD_USERS" Link="WEXITW2" Lane="LANE" Position="END-20m" />
+    <ots:Sink Type="NL.ROAD_USERS" Link="SEXITS2" Lane="LEFT" Position="END-20m" />
+    <ots:Sink Type="NL.ROAD_USERS" Link="SEXITS2" Lane="RIGHT" Position="END-20m" />
 
   </ots:Demand>
-
-  <ots:Scenario></ots:Scenario>
 
   <ots:Run>
     <ots:RunLength>1h</ots:RunLength>

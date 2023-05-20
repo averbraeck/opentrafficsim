@@ -82,7 +82,7 @@
 
   <xsd:element name="Control">
     <xsd:complexType>
-      <xsd:choice>
+      <xsd:choice minOccurs="1" maxOccurs="unbounded">
 
         <xsd:element name="FixedTime" minOccurs="0" maxOccurs="unbounded">
           <xsd:complexType>

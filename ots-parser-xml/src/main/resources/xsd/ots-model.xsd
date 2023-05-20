@@ -13,7 +13,13 @@
   <!-- TODO: parts of a model depending on GTU type, or with a distribution (e.g. 25% overestimates, 75% underestimates). -->
   <!-- TODO: differences based on scenario -->
 
-  <xsd:element name="Model" type="ots:ModelType" />
+  <xsd:element name="Models">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="Model" type="ots:ModelType" minOccurs="1" maxOccurs="unbounded" />  
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
 
   <xsd:element name="Parameters">
     <xsd:complexType>

@@ -261,32 +261,30 @@
 			<ots:ShortestRoute Weight="0.5" Id="SE" />
 		</ots:ShortestRouteMix>
 
-		<ots:Generator Link="EE3" Lane="LANE" Position="10m" Direction="DIR_PLUS">
+		<ots:Generator Link="EE3" Lane="LANE" Position="10m">
 			<ots:GtuTemplate>CAR</ots:GtuTemplate>
 			<ots:ShortestRouteMix>E</ots:ShortestRouteMix>
 			<ots:Frequency>15/min</ots:Frequency>
 			<ots:RoomChecker>CF</ots:RoomChecker>
 		</ots:Generator>
-		<ots:Generator Link="SSC" Lane="LANE" Position="10m" Direction="DIR_PLUS">
+		<ots:Generator Link="SSC" Lane="LANE" Position="10m">
 			<ots:GtuTemplate>CAR</ots:GtuTemplate>
 			<ots:ShortestRouteMix>S</ots:ShortestRouteMix>
 			<ots:Frequency>6/min</ots:Frequency>
 			<ots:RoomChecker>CF</ots:RoomChecker>
 		</ots:Generator>
-		<ots:Generator Link="WWC" Lane="LANE" Position="10m" Direction="DIR_PLUS">
+		<ots:Generator Link="WWC" Lane="LANE" Position="10m">
 			<ots:GtuTemplate>CAR</ots:GtuTemplate>
 			<ots:ShortestRouteMix>W</ots:ShortestRouteMix>
 			<ots:Frequency>6/min</ots:Frequency>
 			<ots:RoomChecker>CF</ots:RoomChecker>
 		</ots:Generator>
 
-		<ots:Sink Type="NL.ROAD_USERS" Link="ECE" Position="END-20m" Lane="LANE" Direction="DIR_PLUS" />
-		<ots:Sink Type="NL.ROAD_USERS" Link="SCS" Position="END-20m" Lane="LANE" Direction="DIR_PLUS" />
-		<ots:Sink Type="NL.ROAD_USERS" Link="WCW" Position="END-20m" Lane="LANE" Direction="DIR_PLUS" />
+		<ots:Sink Type="NL.ROAD_USERS" Link="ECE" Position="END-20m" Lane="LANE" />
+		<ots:Sink Type="NL.ROAD_USERS" Link="SCS" Position="END-20m" Lane="LANE" />
+		<ots:Sink Type="NL.ROAD_USERS" Link="WCW" Position="END-20m" Lane="LANE" />
 
 	</ots:Demand>
-
-	<ots:Scenario></ots:Scenario>
 
 	<ots:Run>
 		<ots:RunLength>1h</ots:RunLength>

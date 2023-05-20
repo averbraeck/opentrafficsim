@@ -203,11 +203,9 @@
   </ots:Network>
 
   <ots:Demand>
-    <ots:Sink Type="NL.ROAD_USERS" Link="DE" Lane="FORWARD1" Direction="DIR_PLUS" Position="END-50m" />
-    <ots:Sink Type="NL.ROAD_USERS" Link="DE" Lane="FORWARD2" Direction="DIR_PLUS" Position="END-50m" />
+    <ots:Sink Type="NL.ROAD_USERS" Link="DE" Lane="FORWARD1" Position="END-50m" />
+    <ots:Sink Type="NL.ROAD_USERS" Link="DE" Lane="FORWARD2" Position="END-50m" />
   </ots:Demand>
-
-  <ots:Scenario></ots:Scenario>
 
   <ots:Run>
     <ots:RunLength>1h</ots:RunLength>

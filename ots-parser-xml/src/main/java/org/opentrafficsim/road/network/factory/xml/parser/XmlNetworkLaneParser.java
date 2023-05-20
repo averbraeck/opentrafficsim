@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -49,15 +50,13 @@ import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
-import org.opentrafficsim.xml.generated.Animation;
-import org.opentrafficsim.xml.generated.Control;
 import org.opentrafficsim.xml.generated.Demand;
 import org.opentrafficsim.xml.generated.GtuTemplate;
 import org.opentrafficsim.xml.generated.ModelType;
 import org.opentrafficsim.xml.generated.Network;
 import org.opentrafficsim.xml.generated.Ots;
 import org.opentrafficsim.xml.generated.RoadLayout;
-import org.opentrafficsim.xml.generated.Scenario;
+import org.opentrafficsim.xml.generated.ScenarioType;
 import org.pmw.tinylog.Level;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -256,8 +255,8 @@ public final class XmlNetworkLaneParser implements Serializable
         NetworkParser.applyRoadLayout(otsNetwork, definitions, network, otsNetwork.getSimulator(), roadLayoutMap,
                 linkTypeSpeedLimitMap);
 
-        List<Demand> demands = ots.getDemand();
-        for (Demand demand : demands)
+        Demand demand = ots.getDemand();
+        if (demand != null)
         {
             GeneratorSinkParser.parseRoutes(otsNetwork, definitions, demand);
             GeneratorSinkParser.parseShortestRoutes(otsNetwork, definitions, demand);
@@ -270,7 +269,8 @@ public final class XmlNetworkLaneParser implements Serializable
             GeneratorSinkParser.parseSinks(otsNetwork, demand, otsNetwork.getSimulator(), definitions);
         }
 
-        List<ModelType> models = ots.getModel();
+        // TODO: we now only take the first model, need to make models per GTU type, and with parents
+        List<ModelType> models = ots.getModels() == null ? new ArrayList<>() : ots.getModels().getModel();
 
         // TODO: parse input parameters
         InputParameters inputParameters = new InputParameters()
@@ -296,16 +296,19 @@ public final class XmlNetworkLaneParser implements Serializable
                 throw new UnsupportedOperationException("No input parameters.");
             }
         };
+        
         Map<String, ParameterType<?>> parameterTypes = new LinkedHashMap<>();
         Map<String, ParameterFactory> parameterFactories =
                 ModelParser.parseParameters(definitions, models, inputParameters, parameterTypes, streamInformation);
         DefinitionsParser.parseParameterTypes(ots.getDefinitions(), parameterTypes);
         Map<String, LaneBasedStrategicalPlannerFactory<?>> factories = ModelParser.parseModel(otsNetwork, models,
                 inputParameters, parameterTypes, streamInformation, parameterFactories);
-        Map<String, String> modelIdReferrals = ScenarioParser.parseModelIdReferral(ots.getScenario(), ots.getDemand());
+        List<ScenarioType> scenarios = ots.getScenarios() == null ? new ArrayList<>() : ots.getScenarios().getScenario();
+        Map<String, String> modelIdReferrals =
+                ScenarioParser.parseModelIdReferral(scenarios, ots.getDemand());
         try
         {
-            List<LaneBasedGtuGenerator> generators = OdParser.parseDemand(otsNetwork, definitions, demands, gtuTemplates,
+            List<LaneBasedGtuGenerator> generators = OdParser.parseDemand(otsNetwork, definitions, demand, gtuTemplates,
                     laneBiases, factories, modelIdReferrals, streamInformation);
             System.out.println("Created " + generators.size() + " generators based on origin destination matrices");
         }
@@ -376,12 +379,15 @@ public final class XmlNetworkLaneParser implements Serializable
             generator.addListener(listener, LaneBasedGtuGenerator.GTU_GENERATED_EVENT);
         }*/
 
-        List<Control> controls = ots.getControl();
-        List<ModelType> modelParameters = ots.getModel();
-        List<Scenario> scenario = ots.getScenario();
-        Animation animation = ots.getAnimation();
+        // Control control = ots.getControl();
+        // List<ModelType> modelParameters = ots.getModels();
+        // List<Scenario> scenario = ots.getScenario();
+        // Animation animation = ots.getAnimation();
 
-        ControlParser.parseControl(otsNetwork, otsNetwork.getSimulator(), controls, definitions);
+        if (ots.getControl() != null)
+        {
+            ControlParser.parseControl(otsNetwork, otsNetwork.getSimulator(), ots.getControl(), definitions);
+        }
 
         return runControl;
     }
