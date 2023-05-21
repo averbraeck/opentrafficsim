@@ -146,35 +146,12 @@
                 </xsd:annotation>
                 <xsd:complexType>
                   <xsd:choice minOccurs="0" maxOccurs="unbounded">
-                  
                     <xsd:element ref="ots:LaneBias" />
                     <xsd:element name="DefinedLaneBias">
                       <xsd:complexType>
                         <xsd:attribute name="GtuType" type="xsd:string" use="required" />
                       </xsd:complexType>
                     </xsd:element>
-                    <!--xsd:element name="LaneBias" maxOccurs="unbounded">
-                      <xsd:annotation>
-                        <xsd:documentation source="description">
-                          Sets the preferred lateral position for given GTU type either based on speed, or a fixed lateral 
-                          position (between 0 for right and 1 for left of the road width, in terms of lanes).
-                        </xsd:documentation>
-                      </xsd:annotation>
-                      <xsd:complexType>
-                        <xsd:choice>
-                          <xsd:sequence>
-                            <xsd:element name="LeftSpeed" type="ots:SpeedType" />
-                            <xsd:element name="RightSpeed" type="ots:SpeedType" />
-                          </xsd:sequence>
-                          <xsd:element name="FromLeft" type="ots:DoubleUnitInterval" />
-                          <xsd:element name="FromRight" type="ots:DoubleUnitInterval" />
-                        </xsd:choice>
-                        <xsd:attribute name="GtuType" type="xsd:string" use="required" />
-                        <xsd:attribute name="Bias" type="xsd:float" use="required" />
-                        <xsd:attribute name="StickyLanes" type="xsd:positiveInteger" use="optional" />
-                      </xsd:complexType>
-                    </xsd:element-->
-                    
                   </xsd:choice>
                 </xsd:complexType>
               </xsd:element>
@@ -207,8 +184,8 @@
       <xsd:sequence>
         <xsd:element name="Node" type="xsd:string" minOccurs="2" maxOccurs="unbounded" />
       </xsd:sequence>
-      <xsd:attribute name="GtuType" type="xsd:string" use="required" />
       <xsd:attribute name="Id" type="xsd:string" use="required" />
+      <xsd:attribute name="GtuType" type="xsd:string" use="required" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
@@ -236,8 +213,8 @@
           <xsd:element name="TimeCost" type="ots:TimeCostType" minOccurs="1" maxOccurs="1" />
         </xsd:choice>
       </xsd:sequence>
-      <xsd:attribute name="GtuType" type="xsd:string" use="required" />
       <xsd:attribute name="Id" type="xsd:string" use="required" />
+      <xsd:attribute name="GtuType" type="xsd:string" use="required" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
@@ -252,8 +229,8 @@
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
-      <xsd:attribute name="GtuType" type="xsd:string" use="required" />
       <xsd:attribute name="Id" type="xsd:string" use="required" />
+      <xsd:attribute name="GtuType" type="xsd:string" use="required" />
       <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
@@ -269,8 +246,8 @@
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
-      <xsd:attribute name="GtuType" type="xsd:string" use="required" />
       <xsd:attribute name="Id" type="xsd:string" use="required" />
+      <xsd:attribute name="GtuType" type="xsd:string" use="required" />
       <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
@@ -334,13 +311,13 @@
   <xsd:element name="Demand">
     <xsd:complexType>
       <xsd:sequence>
+        <xsd:element ref="ots:Od" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="ots:OdOptions" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:Route" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:RouteMix" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:ShortestRoute" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:ShortestRouteMix" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:GtuTemplateMix" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element ref="ots:OdOptions" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element ref="ots:Od" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element name="ModelIdReferral" type="ots:ModelIdReferralType" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:Generator" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:ListGenerator" minOccurs="0" maxOccurs="unbounded" />
@@ -400,12 +377,18 @@
   </xsd:complexType>
 
   <xsd:simpleType name="LevelType">
+    <xsd:annotation>
+      <xsd:appinfo source="pattern">Provide level as percentage, X.Xveh/{time unit}.</xsd:appinfo>
+    </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(\d*(\.\d\d*)?\%?)|\d+\.?\d*\s*veh(\s*\/\s*(ms|s|m|min|h|hr|d|day|wk|week))?" />
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="PositiveFactor">
+    <xsd:annotation>
+      <xsd:appinfo source="pattern">Provide a positive value or percentage.</xsd:appinfo>
+    </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\d*(\.\d\d*)?\%?" />
     </xsd:restriction>

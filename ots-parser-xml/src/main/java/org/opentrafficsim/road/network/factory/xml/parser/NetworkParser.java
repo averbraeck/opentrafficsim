@@ -386,9 +386,9 @@ public final class NetworkParser
             BasicRoadLayout roadLayoutTag = Cloner.cloneRoadLayout(roadLayoutTagBase);
             for (LaneOverride laneOverride : xmlLink.getLaneOverride())
             {
-                for (CseLane lane : ParseUtil.getObjectsOfType(roadLayoutTag.getLaneOrNoTrafficLaneOrShoulder(), CseLane.class))
+                for (CseLane lane : ParseUtil.getObjectsOfType(roadLayoutTag.getStripeOrLaneOrShoulder(), CseLane.class))
                 {
-                    if (lane.getId().equals(laneOverride.getLANE()))
+                    if (lane.getId().equals(laneOverride.getLane()))
                     {
                         if (laneOverride.getSpeedLimit().size() > 0)
                         {
@@ -406,7 +406,7 @@ public final class NetworkParser
             boolean fixGradualLateralOffset = xmlLink.isFixGradualOffset();
 
             // STRIPE
-            for (CseStripe stripeTag : ParseUtil.getObjectsOfType(roadLayoutTag.getLaneOrNoTrafficLaneOrShoulder(),
+            for (CseStripe stripeTag : ParseUtil.getObjectsOfType(roadLayoutTag.getStripeOrLaneOrShoulder(),
                     CseStripe.class))
             {
                 CseData cseData = cseDataList.get(cseTagMap.get(stripeTag));
@@ -416,7 +416,7 @@ public final class NetworkParser
 
             // Other CROSSECTIONELEMENT
             for (org.opentrafficsim.xml.generated.CrossSectionElement cseTag : ParseUtil.getObjectsOfType(
-                    roadLayoutTag.getLaneOrNoTrafficLaneOrShoulder(),
+                    roadLayoutTag.getStripeOrLaneOrShoulder(),
                     org.opentrafficsim.xml.generated.CrossSectionElement.class))
             {
                 CseData cseData = cseDataList.get(cseTagMap.get(cseTag));
@@ -519,7 +519,7 @@ public final class NetworkParser
         Length totalWidthEnd = Length.ZERO;
         boolean startOffset = false;
         boolean endOffset = false;
-        for (Object o : roadLayoutTag.getLaneOrNoTrafficLaneOrShoulder())
+        for (Object o : roadLayoutTag.getStripeOrLaneOrShoulder())
         {
             if (o instanceof CseStripe)
             {

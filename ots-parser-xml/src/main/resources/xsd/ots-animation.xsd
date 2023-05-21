@@ -118,7 +118,7 @@
 
   <xsd:complexType name="RoadLayoutAnimationType">
     <xsd:choice minOccurs="1" maxOccurs="unbounded">
-      <xsd:element name="Shoulder">
+      <xsd:element name="Stripe">
         <xsd:complexType>
           <xsd:attribute name="Id" type="xsd:string" use="required" />
           <xsd:attribute name="Color" type="ots:ColorType" use="required" />
@@ -130,7 +130,7 @@
           <xsd:attribute name="Color" type="ots:ColorType" use="required" />
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="Stripe">
+      <xsd:element name="Shoulder">
         <xsd:complexType>
           <xsd:attribute name="Id" type="xsd:string" use="required" />
           <xsd:attribute name="Color" type="ots:ColorType" use="required" />
@@ -148,7 +148,7 @@
 
   <xsd:complexType name="LinkAnimationType">
     <xsd:choice minOccurs="1" maxOccurs="unbounded">
-      <xsd:element name="Shoulder">
+      <xsd:element name="Stripe">
         <xsd:complexType>
           <xsd:attribute name="Id" type="xsd:string" use="required" />
           <xsd:attribute name="Color" type="ots:ColorType" use="required" />
@@ -160,7 +160,7 @@
           <xsd:attribute name="Color" type="ots:ColorType" use="required" />
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="Stripe">
+      <xsd:element name="Shoulder">
         <xsd:complexType>
           <xsd:attribute name="Id" type="xsd:string" use="required" />
           <xsd:attribute name="Color" type="ots:ColorType" use="required" />

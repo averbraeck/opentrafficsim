@@ -67,7 +67,7 @@ public final class Cloner
         rl.setLaneKeeping(in.getLaneKeeping());
         rl.setLinkType(in.getBase());
         rl.getSpeedLimit().addAll(in.getSpeedLimit());
-        for (Object o : in.getLaneOrNoTrafficLaneOrShoulder())
+        for (Object o : in.getStripeOrLaneOrShoulder())
         {
             if (o instanceof CseLane)
             {
@@ -89,7 +89,7 @@ public final class Cloner
                 lc.setWidthEnd(lane.getWidthEnd());
                 lc.setWidthStart(lane.getWidthStart());
                 lc.getSpeedLimit().addAll(lane.getSpeedLimit());
-                rl.getLaneOrNoTrafficLaneOrShoulder().add(lc);
+                rl.getStripeOrLaneOrShoulder().add(lc);
             }
 
             else if (o instanceof CseNoTrafficLane)
@@ -109,7 +109,7 @@ public final class Cloner
                 ntlc.setWidth(ntl.getWidth());
                 ntlc.setWidthEnd(ntl.getWidthEnd());
                 ntlc.setWidthStart(ntl.getWidthStart());
-                rl.getLaneOrNoTrafficLaneOrShoulder().add(ntlc);
+                rl.getStripeOrLaneOrShoulder().add(ntlc);
             }
 
             else if (o instanceof CseShoulder)
@@ -129,7 +129,7 @@ public final class Cloner
                 sc.setWidth(shoulder.getWidth());
                 sc.setWidthEnd(shoulder.getWidthEnd());
                 sc.setWidthStart(shoulder.getWidthStart());
-                rl.getLaneOrNoTrafficLaneOrShoulder().add(sc);
+                rl.getStripeOrLaneOrShoulder().add(sc);
             }
 
             else if (o instanceof CseStripe)
@@ -142,7 +142,7 @@ public final class Cloner
                 sc.setId(stripe.getId());
                 sc.setDrawingWidth(stripe.getDrawingWidth());
                 sc.setType(stripe.getType());
-                rl.getLaneOrNoTrafficLaneOrShoulder().add(sc);
+                rl.getStripeOrLaneOrShoulder().add(sc);
             }
         }
         return rl;
