@@ -76,7 +76,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
                 if (value == null || value.toString().isEmpty())
                 {
                     String defaultValue = node.getDefaultAttributeValue(row);
-                    this.checkBox.setSelected(defaultValue.toString().equalsIgnoreCase("true"));
+                    this.checkBox.setSelected(defaultValue != null && defaultValue.toString().equalsIgnoreCase("true"));
                     this.checkBox.setText(" (default)");
                     this.checkBox.setFont(table.getFont());
                 }
