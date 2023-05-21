@@ -324,7 +324,7 @@ public final class NetworkParser
 
             if (xmlLink.getPriority() != null)
             {
-                Priority priority = Priority.valueOf(xmlLink.getPriority());
+                Priority priority = Priority.valueOf(xmlLink.getPriority().toString());
                 link.setPriority(priority);
             }
         }

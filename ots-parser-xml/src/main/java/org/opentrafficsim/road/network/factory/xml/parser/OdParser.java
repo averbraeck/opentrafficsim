@@ -313,8 +313,8 @@ public final class OdParser
                         // Interpolation: demand > main demand > global
                         // TODO: LINEAR follows when only global STEPWISE is defined
                         String interpolationString = cell.getInterpolation() == null
-                                ? (main == null || main.getInterpolation() == null ? null : main.getInterpolation())
-                                : cell.getInterpolation();
+                                ? (main == null || main.getInterpolation() == null ? null : main.getInterpolation().toString())
+                                : cell.getInterpolation().toString();
                         Interpolation interpolation = interpolationString == null ? globalInterpolation
                                 : interpolationString.equals("LINEAR") ? Interpolation.LINEAR : Interpolation.STEPWISE;
 

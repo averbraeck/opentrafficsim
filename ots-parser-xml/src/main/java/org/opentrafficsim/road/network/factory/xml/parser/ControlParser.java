@@ -132,7 +132,7 @@ public final class ControlParser
             BufferedImage backgroundImage = null;
             if (null != mapData)
             {
-                String graphicsType = mapData.getType();
+                String graphicsType = mapData.getType().toString();
                 String encoding = mapData.getEncoding();
                 String encodedData = mapData.getValue();
                 if (!"base64".contentEquals(encoding))
