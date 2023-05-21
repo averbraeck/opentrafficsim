@@ -82,7 +82,6 @@ public final class Cloner
                 lc.setRightOffset(lane.getRightOffset());
                 lc.setRightOffsetEnd(lane.getRightOffsetEnd());
                 lc.setRightOffsetStart(lane.getRightOffsetStart());
-                lc.setDesignDirection(lane.isDesignDirection());
                 lc.setLaneType(lane.getLaneType());
                 lc.setId(lane.getId());
                 lc.setWidth(lane.getWidth());

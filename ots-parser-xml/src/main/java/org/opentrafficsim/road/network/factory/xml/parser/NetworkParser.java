@@ -85,12 +85,12 @@ public final class NetworkParser
             final Map<String, Direction> nodeDirections) throws NetworkException
     {
         for (org.opentrafficsim.xml.generated.Centroid xmlCentroid : ParseUtil
-                .getObjectsOfType(network.getIncludeOrCentroidOrNode(), org.opentrafficsim.xml.generated.Centroid.class))
+                .getObjectsOfType(network.getNodeOrLinkOrCentroid(), org.opentrafficsim.xml.generated.Centroid.class))
         {
             new Centroid(otsNetwork, xmlCentroid.getId(), new OtsPoint3d(xmlCentroid.getCoordinate().x,
                     xmlCentroid.getCoordinate().y, xmlCentroid.getCoordinate().z));
         }
-        for (org.opentrafficsim.xml.generated.Node xmlNode : ParseUtil.getObjectsOfType(network.getIncludeOrCentroidOrNode(),
+        for (org.opentrafficsim.xml.generated.Node xmlNode : ParseUtil.getObjectsOfType(network.getNodeOrLinkOrCentroid(),
                 org.opentrafficsim.xml.generated.Node.class))
         {
             new Node(otsNetwork, xmlNode.getId(),
@@ -110,7 +110,7 @@ public final class NetworkParser
     {
         Map<String, Direction> nodeDirections = new LinkedHashMap<>();
         Map<String, Point3d> points = new LinkedHashMap<>();
-        for (org.opentrafficsim.xml.generated.Node xmlNode : ParseUtil.getObjectsOfType(network.getIncludeOrCentroidOrNode(),
+        for (org.opentrafficsim.xml.generated.Node xmlNode : ParseUtil.getObjectsOfType(network.getNodeOrLinkOrCentroid(),
                 org.opentrafficsim.xml.generated.Node.class))
         {
             if (xmlNode.getDirection() != null)
@@ -120,7 +120,7 @@ public final class NetworkParser
             points.put(xmlNode.getId(), xmlNode.getCoordinate());
         }
 
-        for (Link xmlLink : ParseUtil.getObjectsOfType(network.getIncludeOrCentroidOrNode(), Link.class))
+        for (Link xmlLink : ParseUtil.getObjectsOfType(network.getNodeOrLinkOrCentroid(), Link.class))
         {
             if (xmlLink.getStraight() != null)
             {
@@ -138,7 +138,7 @@ public final class NetworkParser
             }
         }
 
-        for (org.opentrafficsim.xml.generated.Node xmlNode : ParseUtil.getObjectsOfType(network.getIncludeOrCentroidOrNode(),
+        for (org.opentrafficsim.xml.generated.Node xmlNode : ParseUtil.getObjectsOfType(network.getNodeOrLinkOrCentroid(),
                 org.opentrafficsim.xml.generated.Node.class))
         {
             if (!nodeDirections.containsKey(xmlNode.getId()))
@@ -165,7 +165,7 @@ public final class NetworkParser
             throws NetworkException, OtsGeometryException
     {
         for (org.opentrafficsim.xml.generated.Connector xmlConnector : ParseUtil
-                .getObjectsOfType(network.getIncludeOrCentroidOrNode(), org.opentrafficsim.xml.generated.Connector.class))
+                .getObjectsOfType(network.getNodeOrLinkOrCentroid(), org.opentrafficsim.xml.generated.Connector.class))
         {
             Node node = (Node) otsNetwork.getNode(xmlConnector.getNode());
             if (null == node)
@@ -187,7 +187,7 @@ public final class NetworkParser
             link.setDemandWeight(demandWeight);
         }
 
-        for (Link xmlLink : ParseUtil.getObjectsOfType(network.getIncludeOrCentroidOrNode(), Link.class))
+        for (Link xmlLink : ParseUtil.getObjectsOfType(network.getNodeOrLinkOrCentroid(), Link.class))
         {
             Node startNode = (Node) otsNetwork.getNode(xmlLink.getNodeStart());
             Node endNode = (Node) otsNetwork.getNode(xmlLink.getNodeEnd());
@@ -349,7 +349,7 @@ public final class NetworkParser
             final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap)
             throws NetworkException, OtsGeometryException, XmlParserException, SimRuntimeException, GtuException
     {
-        for (Link xmlLink : ParseUtil.getObjectsOfType(network.getIncludeOrCentroidOrNode(), Link.class))
+        for (Link xmlLink : ParseUtil.getObjectsOfType(network.getNodeOrLinkOrCentroid(), Link.class))
         {
             CrossSectionLink csl = (CrossSectionLink) otsNetwork.getLink(xmlLink.getId());
             List<CrossSectionElement> cseList = new ArrayList<>();
@@ -425,9 +425,7 @@ public final class NetworkParser
                 if (cseTag instanceof CseLane)
                 {
                     CseLane laneTag = (CseLane) cseTag;
-                    boolean direction = laneTag.isDesignDirection();
                     LaneType laneType = definitions.get(LaneType.class, laneTag.getLaneType());
-                    // TODO: Use the DESIGNDIRECTION
                     Map<GtuType, Speed> speedLimitMap = new LinkedHashMap<>();
                     LinkType linkType = csl.getType();
                     if (!linkTypeSpeedLimitMap.containsKey(linkType))

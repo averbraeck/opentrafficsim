@@ -207,7 +207,6 @@
         </xsd:sequence>
         <xsd:attribute name="Id" type="xsd:string" use="required" />
         <xsd:attribute name="LaneType" type="xsd:string" use="required" />
-        <xsd:attribute name="DesignDirection" type="xsd:boolean" use="required" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
