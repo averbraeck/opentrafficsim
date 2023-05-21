@@ -560,7 +560,35 @@
       <xsd:selector xpath=".//ots:Demand/ots:OdOptions/ots:OdOptionsItem/ots:Markov/ots:State" />
       <xsd:field xpath="@Parent" />
     </xsd:keyref>
-
+    
+    <!-- Demand.OdOptions.OdOptionsItem.LinkType defined by LinkType.Id -->
+    
+    <xsd:keyref name="linkTypeValueLinkTypeRef" refer="ots:linkTypeKey">
+      <xsd:selector xpath=".//ots:Demand/ots:OdOptions/ots:OdOptionsItem" />
+      <xsd:field xpath="ots:LinkType" />
+    </xsd:keyref>
+    
+    <!-- Demand.OdOptions.OdOptionsItem.Origin.Node defined by Node.Id -->
+    
+    <xsd:keyref name="originNodeValueNodeRef" refer="ots:nodeKey">
+      <xsd:selector xpath=".//ots:Demand/ots:OdOptions/ots:OdOptionsItem/ots:Origin" />
+      <xsd:field xpath="ots:Node" />
+    </xsd:keyref>
+    
+    <!-- Demand.OdOptions.OdOptionsItem.Origin.Centroid defined by Centroid.Id -->
+    
+    <xsd:keyref name="originNodeValueCentroidRef" refer="ots:centroidKey">
+      <xsd:selector xpath=".//ots:Demand/ots:OdOptions/ots:OdOptionsItem/ots:Origin" />
+      <xsd:field xpath="ots:Centroid" />
+    </xsd:keyref>
+    
+    <!-- Demand.OdOptions.OdOptionsItem.Lane.Link defined by Link.Id -->
+    
+    <xsd:keyref name="laneLinkRef" refer="ots:linkKey">
+      <xsd:selector xpath=".//ots:Demand/ots:OdOptions/ots:OdOptionsItem/ots:Lane" />
+      <xsd:field xpath="@Link" />
+    </xsd:keyref>
+    
     <!-- TODO: other XPath checks in Od --> 
 
     <!-- ========================================= CHECKS IN CONTROL ====================================== -->

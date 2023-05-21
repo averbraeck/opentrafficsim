@@ -656,11 +656,18 @@ public final class OdParser
         {
             if (options.getLinkType() != null)
             {
-                odOptions.set(definitions.get(LinkType.class, options.getLinkType().getValue()), option, value);
+                odOptions.set(definitions.get(LinkType.class, options.getLinkType().toString()), option, value);
             }
             else if (options.getOrigin() != null)
             {
-                odOptions.set(otsNetwork.getNode(options.getOrigin().getValue()), option, value);
+                if (options.getOrigin().getNode() != null)
+                {
+                    odOptions.set(otsNetwork.getNode(options.getOrigin().getNode().toString()), option, value);
+                }
+                else if (options.getOrigin().getCentroid() != null)
+                {
+                    odOptions.set(otsNetwork.getNode(options.getOrigin().getCentroid().toString()), option, value);
+                }
             }
             else if (options.getLane() != null)
             {

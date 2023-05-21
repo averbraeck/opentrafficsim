@@ -57,14 +57,13 @@
             <xsd:sequence>
               <xsd:choice>
                 <xsd:element name="Global" />
-                <xsd:element name="LinkType">
-                  <xsd:complexType>
-                    <xsd:attribute name="Value" type="xsd:string" />
-                  </xsd:complexType>
-                </xsd:element>
+                <xsd:element name="LinkType" />
                 <xsd:element name="Origin">
                   <xsd:complexType>
-                    <xsd:attribute name="Value" type="xsd:string" />
+                    <xsd:choice>
+                      <xsd:element name="Node" />
+                      <xsd:element name="Centroid" />
+                    </xsd:choice>
                   </xsd:complexType>
                 </xsd:element>
                 <xsd:element name="Lane" type="ots:LaneLinkType" />

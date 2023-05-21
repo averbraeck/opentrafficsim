@@ -432,7 +432,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
                 }
                 else
                 {
-                    fieldIndex = this.attributeNames.size() + deltaFieldIndex - 1;
+                    fieldIndex = this.attributeNames.size() + deltaFieldIndex;
                 }
             }
             /*
