@@ -159,7 +159,10 @@
 
   <xsd:simpleType name="GraphicsType">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="PNG|GIF|BMP|JPG" />
+      <xsd:enumeration value="PNG" />
+      <xsd:enumeration value="GIF" />
+      <xsd:enumeration value="BMP" />
+      <xsd:enumeration value="JPG" />
     </xsd:restriction>
   </xsd:simpleType>
 

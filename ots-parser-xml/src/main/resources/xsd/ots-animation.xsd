@@ -183,7 +183,9 @@
     <xsd:attribute name="Toggle" use="required">
       <xsd:simpleType>
         <xsd:restriction base="xsd:string">
-          <xsd:pattern value="ON|OFF|INVISIBLE" />
+          <xsd:enumeration value="ON" />
+          <xsd:enumeration value="OFF" />
+          <xsd:enumeration value="INVISIBLE" />
         </xsd:restriction>
       </xsd:simpleType>
     </xsd:attribute>

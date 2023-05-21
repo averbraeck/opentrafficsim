@@ -1308,7 +1308,12 @@
 
   <xsd:simpleType name="LeftRightType">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="L|LEFT|R|RIGHT|CLOCKWISE|COUNTERCLOCKWISE"></xsd:pattern>
+      <xsd:enumeration value="L" />
+      <xsd:enumeration value="LEFT" />
+      <xsd:enumeration value="R" />
+      <xsd:enumeration value="RIGHT" />
+      <xsd:enumeration value="CLOCKWISE" />
+      <xsd:enumeration value="COUNTERCLOCKWISE" />
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1332,43 +1337,68 @@
 
   <xsd:simpleType name="LaneKeepingType">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="KEEPLEFT|KEEPRIGHT|KEEPLANE"></xsd:pattern>
+      <xsd:enumeration value="KEEPLEFT" />
+      <xsd:enumeration value="KEEPRIGHT" />
+      <xsd:enumeration value="KEEPLANE" />
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="PriorityType">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="PRIORITY|NONE|TURN_ON_RED|YIELD|STOP|ALL_STOP|BUS_STOP"></xsd:pattern>
+      <xsd:enumeration value="PRIORITY" />
+      <xsd:enumeration value="NONE" />
+      <xsd:enumeration value="TURN_ON_RED" />
+      <xsd:enumeration value="YIELD" />
+      <xsd:enumeration value="STOP" />
+      <xsd:enumeration value="ALL_STOP" />
+      <xsd:enumeration value="BUS_STOP" />
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="GtuPositionType">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="FRONT|REAR|REFERENCE"></xsd:pattern>
+      <xsd:enumeration value="FRONT" />
+      <xsd:enumeration value="REAR" />
+      <xsd:enumeration value="REFERENCE" />
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="StripeType">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="SOLID|\||DASHED|\:|BLOCKED|DOUBLE|\|\||RIGHTTOLEFT|\|\:|LEFTTORIGHT|\:\|"></xsd:pattern>
+      <xsd:enumeration value="SOLID" />
+      <xsd:enumeration value="|" />
+      <xsd:enumeration value="DASHED" />
+      <xsd:enumeration value=":" />
+      <xsd:enumeration value="BLOCKED" />
+      <xsd:enumeration value="DOUBLE" />
+      <xsd:enumeration value="||" />
+      <xsd:enumeration value="RIGHTTOLEFT" />
+      <xsd:enumeration value="|:" />
+      <xsd:enumeration value="LEFTTORIGHT" />
+      <xsd:enumeration value=":|" />
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="DrivingDirectionType">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="FORWARD|BACKWARD|BOTH|NONE"></xsd:pattern>
+      <xsd:enumeration value="FORWARD" />
+      <xsd:enumeration value="BACKWARD" />
+      <xsd:enumeration value="BOTH" />
+      <xsd:enumeration value="NONE" />
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="GtuDirectionType">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="DIR_PLUS|DIR_MINUS"></xsd:pattern>
+      <xsd:enumeration value="DIR_PLUS" />
+      <xsd:enumeration value="DIR_MINUS" />
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="InterpolationType">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="STEPWISE|LINEAR"></xsd:pattern>
+      <xsd:enumeration value="STEPWISE" />
+      <xsd:enumeration value="LINEAR" />
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1390,10 +1420,19 @@
     <xsd:attribute name="Type" use="required">
       <xsd:simpleType>
         <xsd:restriction base="xsd:string">
-          <xsd:pattern value="(\
-{0})CLASS|STRING|DOUBLE|INTEGER|(\
-{0})LENGTH|POSITION|DURATION|TIME|SPEED|ACCELERATION|FREQUENCY|LINEARDENSITY|(\
-{0})FRACTION" />
+          <xsd:enumeration value="CLASS" />
+          <xsd:enumeration value="STRING" />
+          <xsd:enumeration value="DOUBLE" />
+          <xsd:enumeration value="INTEGER" />
+          <xsd:enumeration value="LENGTH" />
+          <xsd:enumeration value="POSITION" />
+          <xsd:enumeration value="DURATION" />
+          <xsd:enumeration value="TIME" />
+          <xsd:enumeration value="SPEED" />
+          <xsd:enumeration value="ACCELERATION" />
+          <xsd:enumeration value="FREQUENCY" />
+          <xsd:enumeration value="LINEARDENSITY" />
+          <xsd:enumeration value="FRACTION" />
         </xsd:restriction>
       </xsd:simpleType>
     </xsd:attribute>

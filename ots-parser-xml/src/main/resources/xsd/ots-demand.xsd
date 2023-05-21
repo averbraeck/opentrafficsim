@@ -107,7 +107,12 @@
               <xsd:element name="HeadwayDist" minOccurs="0">
                 <xsd:simpleType>
                   <xsd:restriction base="xsd:string">
-                    <xsd:pattern value="CONSTANT|EXPONENTIAL|UNIFORM|TRIANGULAR|TRI_EXP|LOGNORMAL" />
+                    <xsd:enumeration value="CONSTANT" />
+                    <xsd:enumeration value="EXPONENTIAL" />
+                    <xsd:enumeration value="UNIFORM" />
+                    <xsd:enumeration value="TRIANGULAR" />
+                    <xsd:enumeration value="TRI_EXP" />
+                    <xsd:enumeration value="LOGNORMAL" />
                   </xsd:restriction>
                 </xsd:simpleType>
               </xsd:element>

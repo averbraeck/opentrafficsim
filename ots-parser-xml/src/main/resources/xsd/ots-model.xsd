@@ -284,7 +284,11 @@
                     </xsd:annotation>
                     <xsd:simpleType>
                       <xsd:restriction base="xsd:string">
-                        <xsd:pattern value="DEADEND|PASSIVE|PASSIVEMOVING|ALIGNGAP|ACTIVE" />
+                        <xsd:enumeration value="DEADEND" />
+                        <xsd:enumeration value="PASSIVE" />
+                        <xsd:enumeration value="PASSIVEMOVING" />
+                        <xsd:enumeration value="ALIGNGAP" />
+                        <xsd:enumeration value="ACTIVE" />
                       </xsd:restriction>
                     </xsd:simpleType>
                   </xsd:element>
@@ -300,7 +304,9 @@
                     </xsd:annotation>
                     <xsd:simpleType>
                       <xsd:restriction base="xsd:string">
-                        <xsd:pattern value="PASSIVE|PASSIVEMOVING|ACTIVE" />
+                        <xsd:enumeration value="PASSIVE" />
+                        <xsd:enumeration value="PASSIVEMOVING" />
+                        <xsd:enumeration value="ACTIVE" />
                       </xsd:restriction>
                     </xsd:simpleType>
                   </xsd:element>
@@ -313,7 +319,8 @@
                     </xsd:annotation>
                     <xsd:simpleType>
                       <xsd:restriction base="xsd:string">
-                        <xsd:pattern value="INFORMED|EGOHEADWAY" />
+                        <xsd:enumeration value="INFORMED" />
+                        <xsd:enumeration value="EGOHEADWAY" />
                       </xsd:restriction>
                     </xsd:simpleType>
                   </xsd:element>
@@ -327,7 +334,9 @@
                     </xsd:annotation>
                     <xsd:simpleType>
                       <xsd:restriction base="xsd:string">
-                        <xsd:pattern value="NONE|RHOONLY|PRESSURE" />
+                        <xsd:enumeration value="NONE" />
+                        <xsd:enumeration value="RHOONLY" />
+                        <xsd:enumeration value="PRESSURE" />
                       </xsd:restriction>
                     </xsd:simpleType>
                   </xsd:element>
@@ -347,7 +356,10 @@
                           <xsd:complexType>
                             <xsd:simpleContent>
                               <xsd:restriction base="ots:ClassAttributeType">
-                                <xsd:pattern value="CLASS|ROUTE|GETINLANE|BUSSTOP" />
+                                <xsd:enumeration value="CLASS" />
+                                <xsd:enumeration value="ROUTE" />
+                                <xsd:enumeration value="GETINLANE" />
+                                <xsd:enumeration value="BUSSTOP" />
                               </xsd:restriction>
                             </xsd:simpleContent>
                           </xsd:complexType>
@@ -372,7 +384,12 @@
                           <xsd:complexType>
                             <xsd:simpleContent>
                               <xsd:restriction base="ots:ClassAttributeType">
-                                <xsd:pattern value="CLASS|KEEP|SPEEDWITHCOURTESY|COURTESY|SOCIOSPEED|STAYRIGHT" />
+                                <xsd:enumeration value="CLASS" />
+                                <xsd:enumeration value="KEEP" />
+                                <xsd:enumeration value="SPEEDWITHCOURTESY" />
+                                <xsd:enumeration value="COURTESY" />
+                                <xsd:enumeration value="SOCIOSPEED" />
+                                <xsd:enumeration value="STAYRIGHT" />
                               </xsd:restriction>
                             </xsd:simpleContent>
                           </xsd:complexType>
@@ -397,7 +414,11 @@
                           <xsd:complexType>
                             <xsd:simpleContent>
                               <xsd:restriction base="ots:ClassAttributeType">
-                                <xsd:pattern value="BUSSTOP|CONFLICTS|SPEEDLIMITTRANSITION|TRAFFICLIGHTS|NORIGHTOVERTAKE" />
+                                <xsd:enumeration value="BUSSTOP" />
+                                <xsd:enumeration value="CONFLICTS" />
+                                <xsd:enumeration value="SPEEDLIMITTRANSITION" />
+                                <xsd:enumeration value="TRAFFICLIGHTS" />
+                                <xsd:enumeration value="NORIGHTOVERTAKE" />
                               </xsd:restriction>
                             </xsd:simpleContent>
                           </xsd:complexType>
@@ -488,7 +509,13 @@
         <xsd:complexType>
           <xsd:simpleContent>
             <xsd:restriction base="ots:ClassAttributeType">
-              <xsd:pattern value="CLASS|EGO|BUSSTOP|INFRASTRUCTURE|INTERSECTION|NEIGHBORS|TRAFFIC" />
+              <xsd:enumeration value="CLASS" />
+              <xsd:enumeration value="EGO" />
+              <xsd:enumeration value="BUSSTOP" />
+              <xsd:enumeration value="INFRASTRUCTURE" />
+              <xsd:enumeration value="INTERSECTION" />
+              <xsd:enumeration value="NEIGHBORS" />
+              <xsd:enumeration value="TRAFFIC" />
             </xsd:restriction>
           </xsd:simpleContent>
         </xsd:complexType>
@@ -518,7 +545,9 @@
                     </xsd:annotation>
                     <xsd:simpleType>
                       <xsd:restriction base="xsd:string">
-                        <xsd:pattern value="NONE|UNDERESTIMATION|OVERESTIMATION" />
+                        <xsd:enumeration value="NONE" />
+                        <xsd:enumeration value="UNDERESTIMATION" />
+                        <xsd:enumeration value="OVERESTIMATION" />
                       </xsd:restriction>
                     </xsd:simpleType>
                   </xsd:element>
@@ -531,7 +560,9 @@
                     </xsd:annotation>
                     <xsd:simpleType>
                       <xsd:restriction base="xsd:string">
-                        <xsd:pattern value="NONE|CONSTANTSPEED|CONSTANTACCELERATION" />
+                        <xsd:enumeration value="NONE" />
+                        <xsd:enumeration value="CONSTANTSPEED" />
+                        <xsd:enumeration value="CONSTANTACCELERATION" />
                       </xsd:restriction>
                     </xsd:simpleType>
                   </xsd:element>
@@ -569,7 +600,10 @@
                     <xsd:complexType>
                       <xsd:simpleContent>
                         <xsd:restriction base="ots:ClassAttributeType">
-                          <xsd:pattern value="CLASS|SITUATIONALAWARENESS|HEADWAY|SPEED" />
+                          <xsd:enumeration value="CLASS" />
+                          <xsd:enumeration value="SITUATIONALAWARENESS" />
+                          <xsd:enumeration value="HEADWAY" />
+                          <xsd:enumeration value="SPEED" />
                         </xsd:restriction>
                       </xsd:simpleContent>
                     </xsd:complexType>
@@ -583,7 +617,8 @@
                     </xsd:annotation>
                     <xsd:simpleType>
                       <xsd:restriction base="xsd:string">
-                        <xsd:pattern value="SUMMATIVE|ANTICIPATIONRELIANCE" />
+                        <xsd:enumeration value="SUMMATIVE" />
+                        <xsd:enumeration value="ANTICIPATIONRELIANCE" />
                       </xsd:restriction>
                     </xsd:simpleType>
                   </xsd:element>
