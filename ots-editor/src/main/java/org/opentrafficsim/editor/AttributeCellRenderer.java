@@ -1,6 +1,5 @@
 package org.opentrafficsim.editor;
 
-import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.Icon;
@@ -74,7 +73,18 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
                         this.checkBox.setBackground(UIManager.getColor("Panel.background"));
                     }
                 }
-                this.checkBox.setSelected(value != null && value.toString().equalsIgnoreCase("true"));
+                if (value == null || value.toString().isEmpty())
+                {
+                    String defaultValue = node.getDefaultAttributeValue(row);
+                    this.checkBox.setSelected(defaultValue.toString().equalsIgnoreCase("true"));
+                    this.checkBox.setText(" (default)");
+                    this.checkBox.setFont(table.getFont());
+                }
+                else
+                {
+                    this.checkBox.setSelected(value.toString().equalsIgnoreCase("true"));
+                    this.checkBox.setText("");
+                }
                 return this.checkBox;
             }
         }
@@ -105,8 +115,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
         setFont(table.getFont());
         table.setGridColor(UIManager.getColor("Panel.background"));
         setIcon(null);
-        setForeground(
-                showingDefault ? OtsEditor.INACTIVE_COLOR : UIManager.getColor("Table.foreground"));
+        setForeground(showingDefault ? OtsEditor.INACTIVE_COLOR : UIManager.getColor("Table.foreground"));
         if (table.convertColumnIndexToModel(column) == 1)
         {
             String message = node.reportInvalidAttributeValue(row);
