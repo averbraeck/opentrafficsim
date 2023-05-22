@@ -1465,6 +1465,8 @@
       <xsd:maxInclusive value="1.0"></xsd:maxInclusive>
     </xsd:restriction>
   </xsd:simpleType>
+  
+  <xsd:complexType name="EmptyType" />
 
   <!-- ========================================================================================= -->
   <!-- ==================================== DISTRIBUTION TYPES ================================= -->

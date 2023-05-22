@@ -334,12 +334,8 @@
       </xsd:documentation>
     </xsd:annotation>
     <xsd:choice>
-      <xsd:element name="Cf">
-        <xsd:complexType />
-      </xsd:element>
-      <xsd:element name="CfBa">
-        <xsd:complexType />
-      </xsd:element>
+      <xsd:element name="Cf" type="ots:EmptyType" />
+      <xsd:element name="CfBa" type="ots:EmptyType" />
       <xsd:element name="Ttc" type="ots:DurationType" />
     </xsd:choice>
   </xsd:complexType>

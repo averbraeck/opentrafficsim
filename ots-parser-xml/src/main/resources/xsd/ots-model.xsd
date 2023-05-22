@@ -243,12 +243,8 @@
               <xsd:complexType>
                 <!-- This is a choice rather than a simple value to allow future strategical planners with more complexity -->
                 <xsd:choice>
-                  <xsd:element name="None">
-                    <xsd:complexType /> <!-- Prevents this tag from having a value -->
-                  </xsd:element>
-                  <xsd:element name="Shortest">
-                    <xsd:complexType /> <!-- Prevents this tag from having a value -->
-                  </xsd:element>
+                  <xsd:element name="None" type="ots:EmptyType" />
+                  <xsd:element name="Shortest" type="ots:EmptyType" />
                 </xsd:choice>
               </xsd:complexType>
             </xsd:element>
@@ -355,15 +351,9 @@
                           </xsd:annotation>
                           <xsd:complexType>
                             <xsd:choice>
-                              <xsd:element name="Route">
-                                <xsd:complexType />
-                              </xsd:element>
-                              <xsd:element name="GetInLane">
-                                <xsd:complexType />
-                              </xsd:element>
-                              <xsd:element name="BusStop">
-                                <xsd:complexType />
-                              </xsd:element>
+                              <xsd:element name="Route" type="ots:EmptyType" />
+                              <xsd:element name="GetInLane" type="ots:EmptyType" />
+                              <xsd:element name="BusStop" type="ots:EmptyType" />
                               <xsd:element name="Class" type="ots:ClassNameType" />
                             </xsd:choice>
                           </xsd:complexType>
@@ -387,21 +377,11 @@
                           </xsd:annotation>
                           <xsd:complexType>
                             <xsd:choice>
-                              <xsd:element name="Keep">
-                                <xsd:complexType />
-                              </xsd:element>
-                              <xsd:element name="SpeedWithCourtesy">
-                                <xsd:complexType />
-                              </xsd:element>
-                              <xsd:element name="Courtesy">
-                                <xsd:complexType />
-                              </xsd:element>
-                              <xsd:element name="SocioSpeed">
-                                <xsd:complexType />
-                              </xsd:element>
-                              <xsd:element name="StayRight">
-                                <xsd:complexType />
-                              </xsd:element>
+                              <xsd:element name="Keep" type="ots:EmptyType" />
+                              <xsd:element name="SpeedWithCourtesy" type="ots:EmptyType" />
+                              <xsd:element name="Courtesy" type="ots:EmptyType" />
+                              <xsd:element name="SocioSpeed" type="ots:EmptyType" />
+                              <xsd:element name="StayRight" type="ots:EmptyType" />
                               <xsd:element name="Class" type="ots:ClassNameType" />
                             </xsd:choice>
                           </xsd:complexType>
@@ -425,21 +405,11 @@
                           </xsd:annotation>
                           <xsd:complexType>
                             <xsd:choice>
-                              <xsd:element name="TrafficLights">
-                                <xsd:complexType />
-                              </xsd:element>
-                              <xsd:element name="Conflicts">
-                                <xsd:complexType />
-                              </xsd:element>
-                              <xsd:element name="SpeedLimitTransitions">
-                                <xsd:complexType />
-                              </xsd:element>
-                              <xsd:element name="NoRightOvertake">
-                                <xsd:complexType />
-                              </xsd:element>
-                              <xsd:element name="BusStop">
-                                <xsd:complexType />
-                              </xsd:element>
+                              <xsd:element name="TrafficLights" type="ots:EmptyType" />
+                              <xsd:element name="Conflicts" type="ots:EmptyType" />
+                              <xsd:element name="SpeedLimitTransitions" type="ots:EmptyType" />
+                              <xsd:element name="NoRightOvertake" type="ots:EmptyType" />
+                              <xsd:element name="BusStop" type="ots:EmptyType" />
                               <xsd:element name="Class" type="ots:ClassNameType" />
                             </xsd:choice>
                           </xsd:complexType>
@@ -486,9 +456,7 @@
       <xsd:element name="DesiredHeadwayModel" minOccurs="0">
         <xsd:complexType>
           <xsd:choice>
-            <xsd:element name="Idm">
-              <xsd:complexType /> <!-- Prevents this tag from having a value -->
-            </xsd:element>
+            <xsd:element name="Idm"  type="ots:EmptyType" />
             <xsd:element name="Class" type="ots:ClassNameType" />
           </xsd:choice>
         </xsd:complexType>
@@ -499,9 +467,7 @@
 
   <xsd:complexType name="DesiredSpeedModelType">
     <xsd:choice>
-      <xsd:element name="Idm">
-        <xsd:complexType /> <!-- Prevents this tag from having a value -->
-      </xsd:element>
+      <xsd:element name="Idm" type="ots:EmptyType" />
       <xsd:element name="Socio" type="ots:DesiredSpeedModelType">
         <xsd:annotation>
           <xsd:documentation source="description">
@@ -529,25 +495,13 @@
         </xsd:annotation>
         <xsd:complexType>
           <xsd:choice>
+            <xsd:element name="Ego" type="ots:EmptyType" />
+            <xsd:element name="Infrastructure" type="ots:EmptyType" />
+            <xsd:element name="Neighbors" type="ots:EmptyType" />
+            <xsd:element name="Intersection" type="ots:EmptyType" />
+            <xsd:element name="BusStop" type="ots:EmptyType" />
+            <xsd:element name="Traffic" type="ots:EmptyType" />
             <xsd:element name="Class" type="ots:ClassNameType" />
-            <xsd:element name="Ego">
-              <xsd:complexType />
-            </xsd:element>
-            <xsd:element name="Infrastructure">
-              <xsd:complexType />
-            </xsd:element>
-            <xsd:element name="Neighbors">
-              <xsd:complexType />
-            </xsd:element>
-            <xsd:element name="Intersection">
-              <xsd:complexType />
-            </xsd:element>
-            <xsd:element name="BusStop">
-              <xsd:complexType />
-            </xsd:element>
-            <xsd:element name="Traffic">
-              <xsd:complexType />
-            </xsd:element>
           </xsd:choice>
         </xsd:complexType>
       </xsd:element>
@@ -561,9 +515,7 @@
         </xsd:annotation>
         <xsd:complexType>
           <xsd:choice>
-            <xsd:element name="Wrap">
-              <xsd:complexType /> <!-- Prevents this tag from having a value -->
-            </xsd:element>
+            <xsd:element name="Wrap" type="ots:EmptyType" />
             <xsd:element name="Perceived">
               <xsd:complexType>
                 <xsd:sequence>
@@ -630,15 +582,9 @@
                     </xsd:annotation>
                     <xsd:complexType>
                       <xsd:choice>
-			            <xsd:element name="SituationalAwareness">
-			              <xsd:complexType />
-			            </xsd:element>
-			            <xsd:element name="Headway">
-			              <xsd:complexType />
-			            </xsd:element>
-			            <xsd:element name="Speed">
-			              <xsd:complexType />
-			            </xsd:element>
+			            <xsd:element name="SituationalAwareness" type="ots:EmptyType" />
+			            <xsd:element name="Headway" type="ots:EmptyType" />
+			            <xsd:element name="Speed" type="ots:EmptyType" />
 			            <xsd:element name="Class" type="ots:ClassNameType" />
 			          </xsd:choice>
                     </xsd:complexType>

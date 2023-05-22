@@ -56,9 +56,7 @@
     <xsd:complexType>
       <xsd:sequence>
         <xsd:choice>
-          <xsd:element name="Straight">
-            <xsd:complexType /> <!-- Prevents this tag from having a value -->
-          </xsd:element>
+          <xsd:element name="Straight" type="ots:EmptyType" />
           <xsd:element name="Bezier">
             <xsd:complexType>
               <xsd:attribute name="StartDirection" type="ots:DirectionType" use="optional" />
