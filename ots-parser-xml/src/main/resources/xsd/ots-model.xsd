@@ -354,14 +354,18 @@
                             </xsd:documentation>
                           </xsd:annotation>
                           <xsd:complexType>
-                            <xsd:simpleContent>
-                              <xsd:restriction base="ots:ClassAttributeType">
-                                <xsd:enumeration value="CLASS" />
-                                <xsd:enumeration value="ROUTE" />
-                                <xsd:enumeration value="GETINLANE" />
-                                <xsd:enumeration value="BUSSTOP" />
-                              </xsd:restriction>
-                            </xsd:simpleContent>
+                            <xsd:choice>
+                              <xsd:element name="Route">
+                                <xsd:complexType />
+                              </xsd:element>
+                              <xsd:element name="GetInLane">
+                                <xsd:complexType />
+                              </xsd:element>
+                              <xsd:element name="BusStop">
+                                <xsd:complexType />
+                              </xsd:element>
+                              <xsd:element name="Class" type="ots:ClassNameType" />
+                            </xsd:choice>
                           </xsd:complexType>
                         </xsd:element>
                       </xsd:sequence>
@@ -382,16 +386,24 @@
                             </xsd:documentation>
                           </xsd:annotation>
                           <xsd:complexType>
-                            <xsd:simpleContent>
-                              <xsd:restriction base="ots:ClassAttributeType">
-                                <xsd:enumeration value="CLASS" />
-                                <xsd:enumeration value="KEEP" />
-                                <xsd:enumeration value="SPEEDWITHCOURTESY" />
-                                <xsd:enumeration value="COURTESY" />
-                                <xsd:enumeration value="SOCIOSPEED" />
-                                <xsd:enumeration value="STAYRIGHT" />
-                              </xsd:restriction>
-                            </xsd:simpleContent>
+                            <xsd:choice>
+                              <xsd:element name="Keep">
+                                <xsd:complexType />
+                              </xsd:element>
+                              <xsd:element name="SpeedWithCourtesy">
+                                <xsd:complexType />
+                              </xsd:element>
+                              <xsd:element name="Courtesy">
+                                <xsd:complexType />
+                              </xsd:element>
+                              <xsd:element name="SocioSpeed">
+                                <xsd:complexType />
+                              </xsd:element>
+                              <xsd:element name="StayRight">
+                                <xsd:complexType />
+                              </xsd:element>
+                              <xsd:element name="Class" type="ots:ClassNameType" />
+                            </xsd:choice>
                           </xsd:complexType>
                         </xsd:element>
                       </xsd:sequence>
@@ -412,15 +424,24 @@
                             </xsd:documentation>
                           </xsd:annotation>
                           <xsd:complexType>
-                            <xsd:simpleContent>
-                              <xsd:restriction base="ots:ClassAttributeType">
-                                <xsd:enumeration value="BUSSTOP" />
-                                <xsd:enumeration value="CONFLICTS" />
-                                <xsd:enumeration value="SPEEDLIMITTRANSITION" />
-                                <xsd:enumeration value="TRAFFICLIGHTS" />
-                                <xsd:enumeration value="NORIGHTOVERTAKE" />
-                              </xsd:restriction>
-                            </xsd:simpleContent>
+                            <xsd:choice>
+                              <xsd:element name="TrafficLights">
+                                <xsd:complexType />
+                              </xsd:element>
+                              <xsd:element name="Conflicts">
+                                <xsd:complexType />
+                              </xsd:element>
+                              <xsd:element name="SpeedLimitTransitions">
+                                <xsd:complexType />
+                              </xsd:element>
+                              <xsd:element name="NoRightOvertake">
+                                <xsd:complexType />
+                              </xsd:element>
+                              <xsd:element name="BusStop">
+                                <xsd:complexType />
+                              </xsd:element>
+                              <xsd:element name="Class" type="ots:ClassNameType" />
+                            </xsd:choice>
                           </xsd:complexType>
                         </xsd:element>
                       </xsd:sequence>
@@ -507,17 +528,27 @@
           </xsd:documentation>
         </xsd:annotation>
         <xsd:complexType>
-          <xsd:simpleContent>
-            <xsd:restriction base="ots:ClassAttributeType">
-              <xsd:enumeration value="CLASS" />
-              <xsd:enumeration value="EGO" />
-              <xsd:enumeration value="BUSSTOP" />
-              <xsd:enumeration value="INFRASTRUCTURE" />
-              <xsd:enumeration value="INTERSECTION" />
-              <xsd:enumeration value="NEIGHBORS" />
-              <xsd:enumeration value="TRAFFIC" />
-            </xsd:restriction>
-          </xsd:simpleContent>
+          <xsd:choice>
+            <xsd:element name="Class" type="ots:ClassNameType" />
+            <xsd:element name="Ego">
+              <xsd:complexType />
+            </xsd:element>
+            <xsd:element name="Infrastructure">
+              <xsd:complexType />
+            </xsd:element>
+            <xsd:element name="Neighbors">
+              <xsd:complexType />
+            </xsd:element>
+            <xsd:element name="Intersection">
+              <xsd:complexType />
+            </xsd:element>
+            <xsd:element name="BusStop">
+              <xsd:complexType />
+            </xsd:element>
+            <xsd:element name="Traffic">
+              <xsd:complexType />
+            </xsd:element>
+          </xsd:choice>
         </xsd:complexType>
       </xsd:element>
 
@@ -598,14 +629,18 @@
                       </xsd:documentation>
                     </xsd:annotation>
                     <xsd:complexType>
-                      <xsd:simpleContent>
-                        <xsd:restriction base="ots:ClassAttributeType">
-                          <xsd:enumeration value="CLASS" />
-                          <xsd:enumeration value="SITUATIONALAWARENESS" />
-                          <xsd:enumeration value="HEADWAY" />
-                          <xsd:enumeration value="SPEED" />
-                        </xsd:restriction>
-                      </xsd:simpleContent>
+                      <xsd:choice>
+			            <xsd:element name="SituationalAwareness">
+			              <xsd:complexType />
+			            </xsd:element>
+			            <xsd:element name="Headway">
+			              <xsd:complexType />
+			            </xsd:element>
+			            <xsd:element name="Speed">
+			              <xsd:complexType />
+			            </xsd:element>
+			            <xsd:element name="Class" type="ots:ClassNameType" />
+			          </xsd:choice>
                     </xsd:complexType>
                   </xsd:element>
                   <xsd:element name="TaskManager" minOccurs="0">
