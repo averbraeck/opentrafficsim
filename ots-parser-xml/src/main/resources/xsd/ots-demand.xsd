@@ -95,15 +95,7 @@
                   </xsd:documentation>
                 </xsd:annotation>
               </xsd:element>
-              <xsd:element name="RoomChecker" type="ots:RoomCheckerType" minOccurs="0">
-                <xsd:annotation>
-                  <xsd:documentation source="description">
-                    CF follows equilibrium car-following rules. CFBA follows
-                    non-equilibrium
-                    car-following rules allowing higher flow. TTC uses time-to-collision.
-                  </xsd:documentation>
-                </xsd:annotation>
-              </xsd:element>
+              <xsd:element name="RoomChecker" type="ots:RoomCheckerType" minOccurs="0" />
               <xsd:element name="HeadwayDist" minOccurs="0">
                 <xsd:simpleType>
                   <xsd:restriction base="xsd:string">
@@ -271,7 +263,7 @@
           <xsd:element name="ShortestRouteMix" type="xsd:string" />
         </xsd:choice>
         <xsd:element name="Frequency" type="ots:FrequencyType" />
-        <xsd:element name="RoomChecker" type="ots:RoomCheckerType" minOccurs="0" maxOccurs="1" default="CF" />
+        <xsd:element name="RoomChecker" type="ots:RoomCheckerType" minOccurs="0" maxOccurs="1" />
       </xsd:sequence>
       <!-- LINK + LANE should be unique -->
       <xsd:attribute name="Link" type="xsd:string" use="required" />
@@ -302,7 +294,7 @@
           <xsd:element name="ShortestRoute" type="xsd:string" />
           <xsd:element name="ShortestRouteMix" type="xsd:string" />
         </xsd:choice>
-        <xsd:element name="RoomChecker" type="ots:RoomCheckerType" minOccurs="0" maxOccurs="1" default="CF" />
+        <xsd:element name="RoomChecker" type="ots:RoomCheckerType" minOccurs="0" maxOccurs="1" />
       </xsd:sequence>
       <xsd:attribute name="Link" type="xsd:string" use="required" />
       <xsd:attribute name="Lane" type="xsd:string" use="required" />
@@ -334,11 +326,23 @@
   <!-- ================================================= TYPES ========================================== -->
   <!-- ================================================================================================== -->
 
-  <xsd:simpleType name="RoomCheckerType">
-    <xsd:restriction base="xsd:string">
-      <xsd:pattern value="CF|CFBA|TTC(\d*(\.\d\d*)s)" />
-    </xsd:restriction>
-  </xsd:simpleType>
+  <xsd:complexType name="RoomCheckerType">
+    <xsd:annotation>
+      <xsd:documentation source="description">
+        Cf uses equilibrium car-following, CfBa uses non-equilibrium car-following to increase flow based on 
+        bounded-acceleration, Ttc uses time-to-collision.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:choice>
+      <xsd:element name="Cf">
+        <xsd:complexType />
+      </xsd:element>
+      <xsd:element name="CfBa">
+        <xsd:complexType />
+      </xsd:element>
+      <xsd:element name="Ttc" type="ots:DurationType" />
+    </xsd:choice>
+  </xsd:complexType>
 
   <xsd:complexType name="GlobalTimeType">
     <xsd:sequence>

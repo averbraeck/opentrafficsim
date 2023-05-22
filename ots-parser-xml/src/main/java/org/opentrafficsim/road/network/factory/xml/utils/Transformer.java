@@ -15,6 +15,7 @@ import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.He
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.xml.bindings.types.GtuPositionType;
 import org.opentrafficsim.xml.bindings.types.LengthBeginEnd;
+import org.opentrafficsim.xml.generated.RoomCheckerType;
 
 /**
  * Transformer contains common transformations between intermediate classes created by the JAXB Adapters and OTS objects.
@@ -98,28 +99,20 @@ public final class Transformer
     }
 
     /**
-     * @param v String; XML string value
+     * @param roomChecker RoomCheckerType; room checker type
      * @return RoomChecker; parsed room checker
      */
-    public static RoomChecker parseRoomChecker(final String v)
+    public static RoomChecker parseRoomChecker(final RoomCheckerType roomChecker)
     {
-        if (v == null)
-        {
-            return null;
-        }
-        if (v.equals("CF"))
+        if (roomChecker == null || roomChecker.getCf() != null)
         {
             return new CfRoomChecker();
         }
-        else if (v.equals("CFBA"))
+        else if (roomChecker.getCfBa() != null)
         {
             return new CfBaRoomChecker();
         }
-        else if (v.equals("TTC"))
-        {
-            return new TtcRoomChecker(Duration.instantiateSI(10));
-        }
-        return new TtcRoomChecker(Duration.valueOf(v.substring(4, v.length() - 1)));
+        return new TtcRoomChecker(roomChecker.getTtc());
     }
 
     /**
