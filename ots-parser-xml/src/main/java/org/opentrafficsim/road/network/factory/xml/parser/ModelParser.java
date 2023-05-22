@@ -1045,27 +1045,27 @@ public class ModelParser
             }
 
             // Behavioural adaptations
-            Set<BehavioralAdaptation> behavioralAdapatations = new LinkedHashSet<>();
+            Set<BehavioralAdaptation> behavioralAdaptations = new LinkedHashSet<>();
             for (org.opentrafficsim.xml.generated.PerceptionType.Mental.Fuller.BehavioralAdaptation behavioralAdaptation : fuller
                     .getBehavioralAdaptation())
             {
                 if (behavioralAdaptation.getSituationalAwareness() != null)
                 {
-                    behavioralAdapatations.add(new AdaptationSituationalAwareness());
+                    behavioralAdaptations.add(new AdaptationSituationalAwareness());
                 }
                 else if (behavioralAdaptation.getHeadway() != null)
                 {
-                    behavioralAdapatations.add(new AdaptationHeadway());
+                    behavioralAdaptations.add(new AdaptationHeadway());
                 }
                 else if (behavioralAdaptation.getSpeed() != null)
                 {
-                    behavioralAdapatations.add(new AdaptationSpeed());
+                    behavioralAdaptations.add(new AdaptationSpeed());
                 }
                 else if (behavioralAdaptation.getClazz() != null)
                 {
                     try
                     {
-                        behavioralAdapatations.add((BehavioralAdaptation) ClassUtil
+                        behavioralAdaptations.add((BehavioralAdaptation) ClassUtil
                                 .resolveConstructor(behavioralAdaptation.getClazz(), new Object[0]).newInstance());
                     }
                     catch (NullPointerException exception)
@@ -1104,7 +1104,7 @@ public class ModelParser
             }
 
             // Fuller
-            mental = new Fuller(tasks, behavioralAdapatations, taskManager);
+            mental = new Fuller(tasks, behavioralAdaptations, taskManager);
         }
         else
         {
