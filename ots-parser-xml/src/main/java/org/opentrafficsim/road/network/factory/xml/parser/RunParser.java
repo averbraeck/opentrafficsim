@@ -49,20 +49,7 @@ public final class RunParser
         Duration warmupPeriod = run.getWarmupPeriod() == null ? Duration.ZERO : run.getWarmupPeriod();
         Duration runLength = run.getRunLength() == null ? Duration.ZERO : run.getRunLength();
 
-        if (run.getRandomStreams() == null)
-        {
-            for (String streamId : new String[] {"default", "generation"})
-            {
-                Map<Integer, Long> seedMap = new LinkedHashMap<>();
-                for (int rep = 0; rep < numberReplications; rep++)
-                {
-                    seedMap.put(rep, (long) streamId.hashCode() + rep);
-                }
-                streamInformation.addStream(streamId, new MersenneTwister(seedMap.get(0)));
-                streamInformation.putSeedMap(streamId, seedMap);
-            }
-        }
-        else
+        if (run.getRandomStreams() != null)
         {
             List<RandomStream> streamTags = run.getRandomStreams().getRandomStream();
             for (RandomStream streamTag : streamTags)
@@ -81,6 +68,19 @@ public final class RunParser
                 {
                     streamInformation.addStream(streamId, new MersenneTwister(10L));
                 }
+                streamInformation.putSeedMap(streamId, seedMap);
+            }
+        }
+        for (String streamId : new String[] {"default", "generation"})
+        {
+            if (streamInformation.getSeedMap(streamId) == null)
+            {
+                Map<Integer, Long> seedMap = new LinkedHashMap<>();
+                for (int rep = 0; rep < numberReplications; rep++)
+                {
+                    seedMap.put(rep, (long) streamId.hashCode() + rep);
+                }
+                streamInformation.addStream(streamId, new MersenneTwister(seedMap.get(0)));
                 streamInformation.putSeedMap(streamId, seedMap);
             }
         }

@@ -191,9 +191,11 @@
     <!-- ================================================================================================== -->
     <!-- =========================================== XPATH CHECKS ========================================= -->
 
-    <xsd:keyref name="distTypeRandomStreamId" refer="ots:randomStreamKey">
-      <xsd:selector xpath=".//ots:DistType"/>
-      <xsd:field xpath="@RandomStream" />
+    <!-- RandomStream.Defined defined by RandomStream.Id -->
+    
+    <xsd:keyref name="randomStreamDefinedId" refer="ots:randomStreamKey">
+      <xsd:selector xpath=".//ots:RandomStreamSource/ots:Defined" />
+      <xsd:field xpath="." />
     </xsd:keyref>
 
     <!-- ================================================================================================== -->
@@ -379,13 +381,6 @@
       <xsd:field xpath="@GtuType" />
     </xsd:keyref>
 
-    <!-- RouteMix.RandomStream defined by RandomStream.Id -->
-
-    <xsd:keyref name="routeMixRandomStreamIdRef" refer="ots:randomStreamKey">
-      <xsd:selector xpath=".//ots:Demand/ots:RouteMix" />
-      <xsd:field xpath="@RandomStream" />
-    </xsd:keyref>
-
     <!-- ShortestRouteMix.Route.Id defined by ShortestRoute.Id -->
 
     <xsd:keyref name="shortestRouteMixShortestRouteIdRef" refer="ots:shortestRouteKey">
@@ -400,25 +395,11 @@
       <xsd:field xpath="@GtuType" />
     </xsd:keyref>
 
-    <!-- ShortestRouteMix.RandomStream defined by RandomStream.Id -->
-
-    <xsd:keyref name="shortestRouteMixRandomStreamIdRef" refer="ots:randomStreamKey">
-      <xsd:selector xpath=".//ots:Demand/ots:ShortestRouteMix" />
-      <xsd:field xpath="@RandomStream" />
-    </xsd:keyref>
-
     <!-- GtuTemplateMix.GtuTemplate.Id defined by GtuTemplate.Id -->
 
     <xsd:keyref name="gtuMixGtuTemplateIdRef" refer="ots:gtuTemplateKey">
       <xsd:selector xpath=".//ots:Demand/ots:GtuTemplateMix/ots:GtuTemplate" />
       <xsd:field xpath="@Id" />
-    </xsd:keyref>
-
-    <!-- GtuTemplateMix.RandomStream defined by RandomStream.Id -->
-
-    <xsd:keyref name="gtuTemplateMixRandomStreamIdRef" refer="ots:randomStreamKey">
-      <xsd:selector xpath=".//ots:Demand/ots:GtuTemplateMix" />
-      <xsd:field xpath="@RandomStream" />
     </xsd:keyref>
 
     <!-- Generator.Link defined by Link.Id -->
@@ -517,13 +498,6 @@
     <xsd:keyref name="listGeneratorShortestRouteMixIdRef" refer="ots:shortestRouteMixKey">
       <xsd:selector xpath=".//ots:Demand/ots:ListGenerator" />
       <xsd:field xpath="ots:ShortestRouteMix" />
-    </xsd:keyref>
-
-    <!-- Od.RandomStream defined by RandomStream.Id -->
-
-    <xsd:keyref name="odRandomStreamIdRef" refer="ots:randomStreamKey">
-      <xsd:selector xpath=".//ots:Demand/ots:Od" />
-      <xsd:field xpath="@RandomStream" />
     </xsd:keyref>
     
     <!-- Od.SinkType defined by DetectorType.Id -->

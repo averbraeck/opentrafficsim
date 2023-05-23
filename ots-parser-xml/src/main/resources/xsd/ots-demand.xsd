@@ -30,12 +30,12 @@
             <xsd:attribute ref="xml:base" />
           </xsd:complexType>
         </xsd:element>
+        <xsd:element name="RandomStream" type="ots:RandomStreamSource" minOccurs="0" />
       </xsd:sequence>
       <xsd:attribute name="Id" type="xsd:string" use="required" />
       <xsd:attribute name="SinkType" type="xsd:string" use="required" />
       <xsd:attribute name="GlobalInterpolation" type="ots:InterpolationType" use="optional" default="LINEAR" />
       <xsd:attribute name="GlobalFactor" type="ots:PositiveFactor" use="optional" default="1.0" />
-      <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="generation" />
       <xsd:attribute name="Options" type="xsd:string" use="optional" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
@@ -168,9 +168,9 @@
             <xsd:attribute name="Weight" type="ots:DoublePositiveInclusive" use="required" />
           </xsd:complexType>
         </xsd:element>
+        <xsd:element name="RandomStream" type="ots:RandomStreamSource" minOccurs="0" />
       </xsd:sequence>
       <xsd:attribute name="Id" type="xsd:string" use="required" />
-      <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="generation" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
@@ -224,10 +224,10 @@
             <xsd:attribute name="Weight" type="xsd:double" use="required" />
           </xsd:complexType>
         </xsd:element>
+        <xsd:element name="RandomStream" type="ots:RandomStreamSource" minOccurs="0" />
       </xsd:sequence>
       <xsd:attribute name="Id" type="xsd:string" use="required" />
       <xsd:attribute name="GtuType" type="xsd:string" use="required" />
-      <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
@@ -241,10 +241,10 @@
             <xsd:attribute name="Weight" type="xsd:double" use="required" />
           </xsd:complexType>
         </xsd:element>
+        <xsd:element name="RandomStream" type="ots:RandomStreamSource" minOccurs="0" />
       </xsd:sequence>
       <xsd:attribute name="Id" type="xsd:string" use="required" />
       <xsd:attribute name="GtuType" type="xsd:string" use="required" />
-      <xsd:attribute name="RandomStream" type="xsd:string" use="optional" default="default" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>

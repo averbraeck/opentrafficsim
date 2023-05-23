@@ -26,6 +26,7 @@ import org.opentrafficsim.xml.generated.FrequencyDistType;
 import org.opentrafficsim.xml.generated.LengthDistType;
 import org.opentrafficsim.xml.generated.LinearDensityDistType;
 import org.opentrafficsim.xml.generated.PositionDistType;
+import org.opentrafficsim.xml.generated.RandomStreamSource;
 import org.opentrafficsim.xml.generated.SpeedDistType;
 import org.opentrafficsim.xml.generated.TimeDistType;
 
@@ -185,13 +186,26 @@ public final class ParseDistribution
     /**
      * Find and return the stream belonging to te streamId.
      * @param streamInformation the map with streams from the RUN tag
-     * @param streamId the id to search for
+     * @param streamSource the stream source
      * @return the stream belonging to te streamId
      * @throws XmlParserException when the stream could not be found
      */
-    private static StreamInterface findStream(final StreamInformation streamInformation, final String streamId)
+    private static StreamInterface findStream(final StreamInformation streamInformation, final RandomStreamSource streamSource)
             throws XmlParserException
     {
+        String streamId;
+        if (streamSource == null || streamSource.getDefault() == null)
+        {
+            streamId = "default";
+        }
+        else if (streamSource.getGeneration() == null)
+        {
+            streamId = "generation";
+        }
+        else
+        {
+            streamId = streamSource.getDefined();
+        }
         if (streamInformation.getStream(streamId) == null)
         {
             throw new XmlParserException("Could not find stream with Id=" + streamId);

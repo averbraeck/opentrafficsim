@@ -117,8 +117,7 @@
         </xsd:choice>
 
         <xsd:element name="TrafficLight" type="ots:TrafficLightType" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element name="TrafficLightSensor" type="ots:TrafficLightDetectorType" minOccurs="0"
-          maxOccurs="unbounded" />
+        <xsd:element name="TrafficLightSensor" type="ots:TrafficLightDetectorType" minOccurs="0" maxOccurs="unbounded" />
 
       </xsd:sequence>
 

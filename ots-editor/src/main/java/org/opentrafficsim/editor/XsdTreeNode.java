@@ -877,7 +877,14 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 this.isEditable = false;
                 return false;
             }
-            if (this.xsdNode.getChildNodes().getLength() == DocumentReader.getChildren(this.xsdNode, "#text").size())
+            String type = DocumentReader.getAttribute(this.xsdNode, "type");
+            if (this.xsdNode.getNodeName().equals("xsd:element") && type != null && type.startsWith("xsd:"))
+            {
+                this.isEditable = true;
+                return true;
+            }
+            if (this.xsdNode.getChildNodes().getLength() == DocumentReader.getChildren(this.xsdNode, "#text").size()
+                    && this.xsdNode.getChildNodes().getLength() > 0)
             {
                 // #text children only means a simple type
                 this.isEditable = true;
@@ -1863,7 +1870,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns whether this node is of the type defined by the path.
-     * @param path String; path of the type in dotted xpath notation, e.g. "SignalGroup.TrafficLight". 
+     * @param path String; path of the type in dotted xpath notation, e.g. "SignalGroup.TrafficLight".
      * @return boolean; whether this node is of the type defined by the path.
      */
     public boolean isType(final String path)
@@ -1872,6 +1879,15 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         if (isType)
         {
             return isType;
+        }
+        int dot = path.lastIndexOf(".");
+        if (dot > -1)
+        {
+            isType = isType(path.substring(dot + 1)) && this.parent.isType(path.substring(0, dot));
+            if (isType)
+            {
+                return isType;
+            }
         }
         return this.schema.isType(this.xsdNode, path);
     }

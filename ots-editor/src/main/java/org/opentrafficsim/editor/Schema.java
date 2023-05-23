@@ -572,24 +572,24 @@ public class Schema
                         xpathField = xpathField.substring(1); // removes '@'
                         if (!hasElementAttribute(selected, xpathField))
                         {
-                            System.out.println("Keyref " + keyref + " (" + getXpath(node) + ") points to non existing field "
-                                    + xpathField + ".");
+                            System.out.println("Keyref " + keyref + " (" + getXpath(node) + ") points to non existing field '"
+                                    + xpathField + "'.");
                         }
                     }
                     else if (xpathField.equals("."))
                     {
                         if (!this.elements.containsKey(getXpath(node).replace("ots:", "")))
                         {
-                            System.out.println("Keyref " + keyref + " (" + getXpath(node) + ") points to non existing field "
-                                    + xpathField + ".");
+                            System.out
+                                    .println("Keyref " + keyref + " (" + getXpath(node) + ") points to non existing field '.'.");
                         }
                     }
                     else
                     {
                         if (!this.elements.containsKey((getXpath(node) + "." + xpathField).replace("ots:", "")))
                         {
-                            System.out.println("Keyref " + keyref + " (" + getXpath(node) + ") points to non existing field "
-                                    + xpathField + ".");
+                            System.out.println("Keyref " + keyref + " (" + getXpath(node) + ") points to non existing field '"
+                                    + xpathField + "'.");
                         }
                     }
                 }
@@ -815,15 +815,20 @@ public class Schema
         this.uniques.forEach((key, value) -> map.put(value, this.uniquesPath.get(key)));
         return map;
     }
-    
+
     /**
      * Return whether the given node is of the type.
      * @param node Node; node.
-     * @param path String; path of the type in dotted xpath notation, e.g. "SignalGroup.TrafficLight". 
+     * @param path String; path of the type in dotted xpath notation, e.g. "SignalGroup.TrafficLight".
      * @return boolean; whether the given node is of the type.
      */
     public boolean isType(final Node node, final String path)
     {
+        String name = DocumentReader.getAttribute(node, "name");
+        if (path.equals(name))
+        {
+            return true;
+        }
         Node nodeUse = node;
         if (nodeUse.getNodeName().equals("xsd:element"))
         {
