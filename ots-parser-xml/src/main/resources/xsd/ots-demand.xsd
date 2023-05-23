@@ -264,6 +264,7 @@
         </xsd:choice>
         <xsd:element name="Frequency" type="ots:FrequencyType" />
         <xsd:element name="RoomChecker" type="ots:RoomCheckerType" minOccurs="0" maxOccurs="1" />
+        <xsd:element name="RandomStream" type="ots:RandomStreamSource" minOccurs="0" />
       </xsd:sequence>
       <!-- LINK + LANE should be unique -->
       <xsd:attribute name="Link" type="xsd:string" use="required" />

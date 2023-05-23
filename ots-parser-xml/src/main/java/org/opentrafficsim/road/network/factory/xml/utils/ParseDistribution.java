@@ -81,7 +81,7 @@ public final class ParseDistribution
     public static DistDiscrete makeDistDiscrete(final StreamInformation streamMap, final DiscreteDistType distType)
             throws XmlParserException
     {
-        StreamInterface stream = findStream(streamMap, distType.getRandomStream());
+        StreamInterface stream = ParseUtil.findStream(streamMap, distType.getRandomStream());
         if (distType.getBernoulliI() != null)
         {
             return new DistBernoulli(stream, distType.getBernoulliI().getP());
@@ -124,7 +124,7 @@ public final class ParseDistribution
     public static DistContinuous makeDistContinuous(final StreamInformation streamMap, final ConstantDistType distType)
             throws XmlParserException
     {
-        StreamInterface stream = findStream(streamMap, distType.getRandomStream());
+        StreamInterface stream = ParseUtil.findStream(streamMap, distType.getRandomStream());
         if (distType.getConstant() != null)
         {
             return new DistConstant(stream, distType.getConstant().getC());
@@ -181,36 +181,6 @@ public final class ParseDistribution
             return new DistWeibull(stream, distType.getWeibull().getAlpha(), distType.getWeibull().getBeta());
         }
         throw new XmlParserException("makeDistContinuous - unknown distribution function " + distType);
-    }
-
-    /**
-     * Find and return the stream belonging to te streamId.
-     * @param streamInformation the map with streams from the RUN tag
-     * @param streamSource the stream source
-     * @return the stream belonging to te streamId
-     * @throws XmlParserException when the stream could not be found
-     */
-    private static StreamInterface findStream(final StreamInformation streamInformation, final RandomStreamSource streamSource)
-            throws XmlParserException
-    {
-        String streamId;
-        if (streamSource == null || streamSource.getDefault() == null)
-        {
-            streamId = "default";
-        }
-        else if (streamSource.getGeneration() == null)
-        {
-            streamId = "generation";
-        }
-        else
-        {
-            streamId = streamSource.getDefined();
-        }
-        if (streamInformation.getStream(streamId) == null)
-        {
-            throw new XmlParserException("Could not find stream with Id=" + streamId);
-        }
-        return streamInformation.getStream(streamId);
     }
 
     /**

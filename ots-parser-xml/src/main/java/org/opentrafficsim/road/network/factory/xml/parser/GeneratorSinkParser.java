@@ -12,6 +12,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.distributions.Distribution;
@@ -42,14 +43,15 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerF
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.Generators;
+import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
 import org.opentrafficsim.road.network.factory.xml.utils.Transformer;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
-import org.opentrafficsim.xml.generated.GtuTemplate;
 import org.opentrafficsim.xml.generated.Demand;
+import org.opentrafficsim.xml.generated.GtuTemplate;
 import org.opentrafficsim.xml.generated.RouteMix;
 import org.opentrafficsim.xml.generated.ShortestRoute;
 import org.opentrafficsim.xml.generated.ShortestRoute.Via;
@@ -57,7 +59,6 @@ import org.opentrafficsim.xml.generated.ShortestRouteMix;
 import org.opentrafficsim.xml.generated.Sink;
 
 import nl.tudelft.simulation.dsol.experiment.StreamInformation;
-import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
@@ -238,12 +239,7 @@ public final class GeneratorSinkParser
         {
             for (org.opentrafficsim.xml.generated.Generator generatorTag : demand.getGenerator())
             {
-
-                if (simulator.getModel().getStream("generation") == null)
-                {
-                    simulator.getModel().getStreams().put("generation", new MersenneTwister(1L));
-                }
-                StreamInterface stream = simulator.getModel().getStream("generation");
+                StreamInterface stream = ParseUtil.findStream(streamInformation, generatorTag.getRandomStream());
 
                 Generator<Route> routeGenerator;
                 if (generatorTag.getRoute() != null)
@@ -261,9 +257,20 @@ public final class GeneratorSinkParser
                     if (routeMix == null)
                         throw new XmlParserException("GENERATOR for LANE " + generatorTag.getLink() + "."
                                 + generatorTag.getLane() + ": RouteMix " + generatorTag.getRouteMix() + " not found");
+                    RouteMix routeMixXml = null;
+                    for (RouteMix mix : demand.getRouteMix())
+                    {
+                        if (mix.getId().equals(generatorTag.getRouteMix()))
+                        {
+                            routeMixXml = mix;
+                        }
+                    }
+                    Throw.when(routeMixXml == null, XmlParserException.class, "Route mix '%s' not defined.",
+                            generatorTag.getRouteMix());
+                    StreamInterface routeMixStream = ParseUtil.findStream(streamInformation, routeMixXml.getRandomStream());
                     try
                     {
-                        routeGenerator = new ProbabilisticRouteGenerator(routeMix, stream);
+                        routeGenerator = new ProbabilisticRouteGenerator(routeMix, routeMixStream);
                     }
                     catch (ProbabilityException exception)
                     {
@@ -289,9 +296,21 @@ public final class GeneratorSinkParser
                         throw new XmlParserException(
                                 "GENERATOR for LANE " + generatorTag.getLink() + "." + generatorTag.getLane()
                                         + ": ShortestRouteMix " + generatorTag.getShortestRouteMix() + " not found");
+                    ShortestRouteMix shortestRouteMixXml = null;
+                    for (ShortestRouteMix mix : demand.getShortestRouteMix())
+                    {
+                        if (mix.getId().equals(generatorTag.getShortestRouteMix()))
+                        {
+                            shortestRouteMixXml = mix;
+                        }
+                    }
+                    Throw.when(shortestRouteMixXml == null, XmlParserException.class, "Shortest route mix '%s' not defined.",
+                            generatorTag.getShortestRouteMix());
+                    StreamInterface shortestRouteMixStream =
+                            ParseUtil.findStream(streamInformation, shortestRouteMixXml.getRandomStream());
                     try
                     {
-                        routeGenerator = new ProbabilisticRouteGenerator(shortestRouteMix, stream);
+                        routeGenerator = new ProbabilisticRouteGenerator(shortestRouteMix, shortestRouteMixStream);
                     }
                     catch (ProbabilityException exception)
                     {
@@ -307,7 +326,7 @@ public final class GeneratorSinkParser
                 }
 
                 CarFollowingModelFactory<IdmPlus> idmPlusFactory =
-                        new IdmPlusFactory(streamInformation.getStream("generation"));
+                        new IdmPlusFactory(stream);
                 LaneBasedTacticalPlannerFactory<Lmrs> tacticalFactory =
                         new LmrsFactory(idmPlusFactory, new DefaultLmrsPerceptionFactory());
                 LaneBasedStrategicalRoutePlannerFactory strategicalFactory =
@@ -315,7 +334,7 @@ public final class GeneratorSinkParser
 
                 // the distribution of GTUs
                 Distribution<LaneBasedGtuTemplate> gtuTypeDistribution =
-                        new Distribution<>(streamInformation.getStream("generation"));
+                        new Distribution<>(stream);
                 if (generatorTag.getGtuTemplate() != null)
                 {
                     GtuTemplate templateTag = gtuTemplates.get(generatorTag.getGtuTemplate());
@@ -349,7 +368,7 @@ public final class GeneratorSinkParser
                 RoomChecker roomChecker = Transformer.parseRoomChecker(generatorTag.getRoomChecker());
 
                 Generator<Duration> headwayGenerator =
-                        new HeadwayGenerator(generatorTag.getFrequency(), streamInformation.getStream("generation"));
+                        new HeadwayGenerator(generatorTag.getFrequency(), stream);
 
                 CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(generatorTag.getLink());
                 Lane lane = (Lane) link.getCrossSectionElement(generatorTag.getLane());
