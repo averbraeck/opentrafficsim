@@ -212,20 +212,20 @@
         </ots:Shoulder>
         <ots:Stripe Type="SOLID">
         </ots:Stripe>
-        <ots:Lane Id="FORWARD3" LaneType="NL.STREET" DesignDirection="true">
+        <ots:Lane Id="FORWARD3" LaneType="NL.STREET">
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
         <ots:Stripe Type="DASHED">
         </ots:Stripe>
-        <ots:Lane Id="FORWARD2" LaneType="NL.STREET" DesignDirection="true">
+        <ots:Lane Id="FORWARD2" LaneType="NL.STREET">
           <ots:CenterOffset>-6.2m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
         <ots:Stripe Type="DASHED">
         </ots:Stripe>
-        <ots:Lane Id="FORWARD1" LaneType="NL.STREET" DesignDirection="true">
+        <ots:Lane Id="FORWARD1" LaneType="NL.STREET">
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
@@ -239,7 +239,7 @@
         </ots:Shoulder>
         <ots:Stripe Type="SOLID">
         </ots:Stripe>
-        <ots:Lane Id="FORWARD3" LaneType="NL.STREET" DesignDirection="true">
+        <ots:Lane Id="FORWARD3" LaneType="NL.STREET">
           <ots:CenterOffsetStart>-6.2m</ots:CenterOffsetStart>
           <ots:CenterOffsetEnd>-9.5m</ots:CenterOffsetEnd>
           <ots:Width>3.3m</ots:Width>
@@ -248,7 +248,7 @@
         <ots:Stripe Type="DASHED">
           <ots:CenterOffset>-7.85m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD2" LaneType="NL.STREET" DesignDirection="true">
+        <ots:Lane Id="FORWARD2" LaneType="NL.STREET">
           <ots:CenterOffset>-6.2m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
@@ -256,7 +256,7 @@
         <ots:Stripe Type="DASHED">
           <ots:CenterOffset>-4.55m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD1" LaneType="NL.STREET" DesignDirection="true">
+        <ots:Lane Id="FORWARD1" LaneType="NL.STREET">
           <ots:CenterOffsetStart>-6.2m</ots:CenterOffsetStart>
           <ots:CenterOffsetEnd>-2.9m</ots:CenterOffsetEnd>
           <ots:Width>3.3m</ots:Width>
@@ -274,7 +274,7 @@
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>-7.8m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD" LaneType="NL.STREET" DesignDirection="true">
+        <ots:Lane Id="FORWARD" LaneType="NL.STREET">
           <ots:CenterOffset>-6.2m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
@@ -292,7 +292,7 @@
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>-7.8m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD" LaneType="NL.STREET" DesignDirection="true">
+        <ots:Lane Id="FORWARD" LaneType="NL.STREET">
           <ots:CenterOffset>-6.2m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
@@ -307,7 +307,7 @@
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>-4.6m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD" LaneType="NL.STREET" DesignDirection="true">
+        <ots:Lane Id="FORWARD" LaneType="NL.STREET">
           <ots:CenterOffset>-6.2m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
@@ -322,7 +322,7 @@
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>-4.6m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD" LaneType="NL.STREET" DesignDirection="true">
+        <ots:Lane Id="FORWARD" LaneType="NL.STREET">
           <ots:CenterOffset>-6.2m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
@@ -521,52 +521,52 @@
       <ots:Category GtuType="NL.CAR" Id="CAR" />
       <ots:Category GtuType="NL.TRUCK" Id="TRUCK" />
       <ots:Cell Category="CAR" Origin="W" Destination="NO">
-        <ots:Level TIME="0s">200.00veh/h</ots:Level>
-        <ots:Level TIME="3600s">200.00veh/h</ots:Level>
+        <ots:Level Time="0s">200.00veh/h</ots:Level>
+        <ots:Level Time="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
       <ots:Cell Category="CAR" Origin="W" Destination="EO">
-        <ots:Level TIME="0s">300.00veh/h</ots:Level>
-        <ots:Level TIME="3600s">300.00veh/h</ots:Level>
+        <ots:Level Time="0s">300.00veh/h</ots:Level>
+        <ots:Level Time="3600s">300.00veh/h</ots:Level>
       </ots:Cell>
       <ots:Cell Category="CAR" Origin="W" Destination="SO">
-        <ots:Level TIME="0s">200.00veh/h</ots:Level>
-        <ots:Level TIME="3600s">200.00veh/h</ots:Level>
+        <ots:Level Time="0s">200.00veh/h</ots:Level>
+        <ots:Level Time="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
       <ots:Cell Category="CAR" Origin="N" Destination="EO">
-        <ots:Level TIME="0s">200.00veh/h</ots:Level>
-        <ots:Level TIME="3600s">200.00veh/h</ots:Level>
+        <ots:Level Time="0s">200.00veh/h</ots:Level>
+        <ots:Level Time="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
       <ots:Cell Category="CAR" Origin="N" Destination="SO">
-        <ots:Level TIME="0s">300.00veh/h</ots:Level>
-        <ots:Level TIME="3600s">300.00veh/h</ots:Level>
+        <ots:Level Time="0s">300.00veh/h</ots:Level>
+        <ots:Level Time="3600s">300.00veh/h</ots:Level>
       </ots:Cell>
       <ots:Cell Category="CAR" Origin="N" Destination="WO">
-        <ots:Level TIME="0s">200.00veh/h</ots:Level>
-        <ots:Level TIME="3600s">200.00veh/h</ots:Level>
+        <ots:Level Time="0s">200.00veh/h</ots:Level>
+        <ots:Level Time="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
       <ots:Cell Category="CAR" Origin="E" Destination="SO">
-        <ots:Level TIME="0s">200.00veh/h</ots:Level>
-        <ots:Level TIME="3600s">200.00veh/h</ots:Level>
+        <ots:Level Time="0s">200.00veh/h</ots:Level>
+        <ots:Level Time="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
       <ots:Cell Category="CAR" Origin="E" Destination="WO">
-        <ots:Level TIME="0s">300.00veh/h</ots:Level>
-        <ots:Level TIME="3600s">300.00veh/h</ots:Level>
+        <ots:Level Time="0s">300.00veh/h</ots:Level>
+        <ots:Level Time="3600s">300.00veh/h</ots:Level>
       </ots:Cell>
       <ots:Cell Category="CAR" Origin="E" Destination="NO">
-        <ots:Level TIME="0s">200.00veh/h</ots:Level>
-        <ots:Level TIME="3600s">200.00veh/h</ots:Level>
+        <ots:Level Time="0s">200.00veh/h</ots:Level>
+        <ots:Level Time="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
       <ots:Cell Category="CAR" Origin="S" Destination="WO">
-        <ots:Level TIME="0s">200.00veh/h</ots:Level>
-        <ots:Level TIME="3600s">200.00veh/h</ots:Level>
+        <ots:Level Time="0s">200.00veh/h</ots:Level>
+        <ots:Level Time="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
       <ots:Cell Category="CAR" Origin="S" Destination="NO">
-        <ots:Level TIME="0s">300.00veh/h</ots:Level>
-        <ots:Level TIME="3600s">300.00veh/h</ots:Level>
+        <ots:Level Time="0s">300.00veh/h</ots:Level>
+        <ots:Level Time="3600s">300.00veh/h</ots:Level>
       </ots:Cell>
       <ots:Cell Category="CAR" Origin="S" Destination="EO">
-        <ots:Level TIME="0s">200.00veh/h</ots:Level>
-        <ots:Level TIME="3600s">200.00veh/h</ots:Level>
+        <ots:Level Time="0s">200.00veh/h</ots:Level>
+        <ots:Level Time="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
     </ots:Od>
     <ots:Sink Type="ROAD_USERS" Lane="FORWARD" Link="NCONO" Position="END-20m" />
