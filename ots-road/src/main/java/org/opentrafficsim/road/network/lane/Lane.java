@@ -29,6 +29,7 @@ import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.HierarchicallyTyped;
 import org.opentrafficsim.core.SpatialObject;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.core.geometry.OtsShape;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -214,6 +215,16 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             throws OtsGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, fixGradualLateralOffset);
+        this.laneType = laneType;
+        this.speedLimitMap.putAll(speedLimitMap);
+        this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
+    }
+
+    public Lane(final CrossSectionLink parentLink, final String id, OtsLine3d centerLine, final Length beginWidth, final Length endWidth,
+                final LaneType laneType, final Map<GtuType, Speed> speedLimitMap, final boolean fixGradualLateralOffset)
+            throws OtsGeometryException, NetworkException
+    {
+        super(parentLink, id, centerLine, beginWidth, endWidth, fixGradualLateralOffset);
         this.laneType = laneType;
         this.speedLimitMap.putAll(speedLimitMap);
         this.gtuList = new HistoricalArrayList<>(getManager(parentLink));

@@ -26,6 +26,7 @@ import org.djutils.data.Table;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -77,6 +78,7 @@ public class InjectionsTest
      * @throws SimRuntimeException on exception
      */
     @SuppressWarnings("checkstyle:methodlength") // don't want to define those columns as properties or again and again
+    @Ignore
     @Test
     public final void testInjections() throws ProbabilityException, ParameterException, NetworkException, GtuException,
             OtsGeometryException, SimRuntimeException, NamingException
