@@ -219,14 +219,14 @@ public class CrossSectionElement extends LocalEventProducer implements Locatable
         this.parentLink = parentLink;
         this.centerLine = centerLine;
         this.length = this.centerLine.getLength();
-        this.contour = constructContour(this);
-        this.parentLink.addCrossSectionElement(this);
-
         List<CrossSectionSlice> slices = new ArrayList<>();
         slices.add(new CrossSectionSlice(Length.ZERO,Length.ZERO,beginWidth));
         slices.add(new CrossSectionSlice(this.length,Length.ZERO,endWidth));
         this.crossSectionSlices=slices;
+        this.contour = constructContour(this);
+        this.parentLink.addCrossSectionElement(this);
 
+        parentLink.getNetwork().clearLaneChangeInfoCache();
     }
     /**
      * Construct a list of cross section slices, using sinusoidal interpolation for changing lateral offset.
