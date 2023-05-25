@@ -687,6 +687,12 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     {
         assureAttributesAndDescription();
         this.attributeValues.set(getAttributeIndexByName(name), value);
+        if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
+        {
+            removeChildren();
+            this.children = null;
+            assureChildren();
+        }
         fireEvent(ATTRIBUTE_CHANGED, new Object[] {this, name});
     }
 
@@ -794,8 +800,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             this.attributeNodes = null;
             this.isIdentifiable = null;
             this.isEditable = null;
-            assureChildren();
             assureAttributesAndDescription();
+            assureChildren();
             if (this.choice != null && this.choice.selected.equals(this))
             {
                 this.choice.active = true;
@@ -1086,12 +1092,9 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         {
             numberOfTypeOrChoiceInParent = siblingPositions().size();
         }
-        if (this.minOccurs == 0 && numberOfTypeOrChoiceInParent == 1)
+        if (this.minOccurs == 0 && numberOfTypeOrChoiceInParent == 1 && !this.isInclude)
         {
-            if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE) || this.isInclude)
-            {
-                removeChildren();
-            }
+            removeChildren();
             this.deactivated = true;
             this.active = false;
             ((XsdTreeNodeRoot) getPath().get(0))
@@ -1288,6 +1291,10 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public String reportInvalidId()
     {
+        if (!isActive())
+        {
+            return null;
+        }
         return isIdentifiable() ? reportInvalidAttributeValue(getAttributeIndexByName("Id")) : null;
     }
 
@@ -1297,7 +1304,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public String reportInvalidValue()
     {
-        if (!isEditable())
+        if (!isEditable() || !isActive())
         {
             return null;
         }
@@ -1322,6 +1329,10 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public String reportInvalidAttributeValue(final int index)
     {
+        if (!isActive())
+        {
+            return null;
+        }
         if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
         {
             return ValueValidator.reportInvalidInclude(this.attributeValues.get(0),
@@ -1349,7 +1360,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public List<String> getValueRestrictions()
     {
-        List<String> valueOptions = getOptionsFromValidators(this.valueValidators);
+        List<String> valueOptions = getOptionsFromValidators(this.valueValidators, getNodeName());
         if (!valueOptions.isEmpty())
         {
             return valueOptions;
@@ -1364,8 +1375,9 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public List<String> getAttributeRestrictions(final int index)
     {
+        String field = getAttributeNameByIndex(index);
         List<String> valueOptions = getOptionsFromValidators(
-                this.attributeValidators.computeIfAbsent(getAttributeNameByIndex(index), (key) -> new LinkedHashSet<>()));
+                this.attributeValidators.computeIfAbsent(field, (key) -> new LinkedHashSet<>()), field);
         if (!valueOptions.isEmpty() || this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
         {
             return valueOptions;
@@ -1379,12 +1391,12 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * @param validators Set&lt;ValueValidator&gt;; validators.
      * @return List&lt;String&gt;; list of options.
      */
-    private List<String> getOptionsFromValidators(final Set<ValueValidator> validators)
+    private List<String> getOptionsFromValidators(final Set<ValueValidator> validators, final String field)
     {
         List<String> combined = null;
         for (ValueValidator validator : validators)
         {
-            List<String> valueOptions = validator.getOptions(this, getNodeName());
+            List<String> valueOptions = validator.getOptions(this, field);
             if (valueOptions != null && combined != null)
             {
                 combined = combined.stream().filter(valueOptions::contains).collect(Collectors.toList());

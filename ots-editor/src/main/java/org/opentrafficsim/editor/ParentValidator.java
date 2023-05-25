@@ -27,7 +27,7 @@ public class ParentValidator implements ValueValidator, EventListener
 
     /**
      * Constructor.
-     * @param path String; path of the nodes that have a PARENT attribute referring to another node under the same path.
+     * @param path String; path of the nodes that have a Parent attribute referring to another node under the same path.
      */
     public ParentValidator(final String path)
     {
@@ -39,7 +39,7 @@ public class ParentValidator implements ValueValidator, EventListener
     public String validate(final XsdTreeNode node)
     {
         String value = node.getAttributeValue("Parent");
-        if (value == null || value.isBlank())
+        if (value == null || value.isBlank() || !node.isActive())
         {
             return null;
         }
@@ -58,7 +58,7 @@ public class ParentValidator implements ValueValidator, EventListener
     {
         for (XsdTreeNode otherNode : this.nodes)
         {
-            if (parentId.equals(otherNode.getId()))
+            if (otherNode.isActive() && parentId.equals(otherNode.getId()))
             {
                 int index = nodeList.indexOf(otherNode);
                 if (index == 0)

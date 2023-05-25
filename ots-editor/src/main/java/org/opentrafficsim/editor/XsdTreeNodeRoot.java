@@ -252,6 +252,10 @@ public class XsdTreeNodeRoot extends XsdTreeNode
         @Override
         public String validate(final XsdTreeNode node)
         {
+            if (node.getPath().size() == 1)
+            {
+                return null; // Node was deleted, but is still visible in the GUI tree for a moment
+            }
             List<String> values = gatherFields(node);
             if (this.refer == null)
             {

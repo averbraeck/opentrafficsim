@@ -1,6 +1,6 @@
-<ots:Parameters xmlns:ots="http://www.opentrafficsim.org/ots" 
+<ots:ParameterTypes xmlns:ots="http://www.opentrafficsim.org/ots" 
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-model.xsd">
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions.xsd">
 
   <!-- Most common parameters, for LMRS and other models -->
   <ots:Duration Id="dt" Description="Fixed model time step" Field="org.opentrafficsim.base.parameters.ParameterTypes.DT" />
@@ -70,4 +70,4 @@
   <ots:Double Id="ka" Description="Acceleration error gain" Field="org.opentrafficsim.road.gtu.lane.control.LinearCACC.KA" />
   <ots:Double Id="kd" Description="Gap error derivative gain" Field="org.opentrafficsim.road.gtu.lane.control.PloegCACC.KD" />
 
-</ots:Parameters>
+</ots:ParameterTypes>

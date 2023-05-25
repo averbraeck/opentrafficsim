@@ -105,10 +105,10 @@ public class AttributesTableModel extends AbstractTableModel
     @Override
     public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex)
     {
-        this.treeTable.updateUI();
         Throw.when(columnIndex != 1, IllegalStateException.class,
                 "Attribute table model requested to set a value from a column that does not represent the attribute value.");
         this.node.setAttributeValue(rowIndex, aValue.toString());
+        this.treeTable.updateUI();
         this.fireTableCellUpdated(rowIndex, columnIndex);
     }
 

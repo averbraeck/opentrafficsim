@@ -102,7 +102,6 @@ import de.javagl.treetable.JTreeTable;
  */
 // TODO: cancel editing on node that is being removed or do not allow removal of node that is edited.
 // TODO: Allow sorting of elements.
-// TODO: Instead of lower-case, use (micro) blanks with Pascal-case tags.
 // TODO: auto-save, use System.getProperty("java.io.tmpdir")
 public class OtsEditor extends JFrame implements EventProducer
 {
