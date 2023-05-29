@@ -1,20 +1,29 @@
 site_name: OpenTrafficSim
 site_url: https://opentrafficsim.org
 site_favicon: images/favicon.png
-copyright: (c) 2014-2022 Delft University of Technology
+copyright: (c) 2014-2023 Delft University of Technology
 
 theme:
-  name: readthedocs
+  name: material
   navigation_depth: 1
     
 markdown_extensions:
+  - pymdownx.arithmatex:
+      generic: true
   - admonition
-
+  - toc:
+      permalink: true
+      baselevel: 1
+      toc_depth: 3
+      
 extra_css: 
   - css/custom.css
   
 extra_javascript:
   - js/collapse_menu.js
+  - js/mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
     
 nav:
   - Home: index.md
