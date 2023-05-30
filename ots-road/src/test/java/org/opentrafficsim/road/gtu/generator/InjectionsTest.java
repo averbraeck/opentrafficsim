@@ -205,17 +205,17 @@ public class InjectionsTest
         Try.testFail(() -> fullInjections(arrivals2, network).asLaneBasedGtuCharacteristicsGenerator(),
                 IllegalStateException.class);
         arrivals = new ListTable("id", "", Set.of(time, gtu, length, position, lane, link));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(1.0), gtu, "CAR", length, Length.instantiateSI(1.0), position,
+        arrivals.addRow(Map.of(time, Duration.instantiateSI(1.0), gtu, "NL.CAR", length, Length.instantiateSI(1.0), position,
                 Length.instantiateSI(10.0), lane, "Lane1", link, "AB"));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(2.0), gtu, "CAR", length, Length.instantiateSI(2.0), position,
+        arrivals.addRow(Map.of(time, Duration.instantiateSI(2.0), gtu, "NL.CAR", length, Length.instantiateSI(2.0), position,
                 Length.instantiateSI(20.0), lane, "Lane2", link, "AB"));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(3.0), gtu, "CAR", length, Length.instantiateSI(3.0), position,
+        arrivals.addRow(Map.of(time, Duration.instantiateSI(3.0), gtu, "NL.CAR", length, Length.instantiateSI(3.0), position,
                 Length.instantiateSI(30.0), lane, "Lane1", link, "AB"));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(4.0), gtu, "CAR", length, Length.instantiateSI(4.0), position,
+        arrivals.addRow(Map.of(time, Duration.instantiateSI(4.0), gtu, "NL.CAR", length, Length.instantiateSI(4.0), position,
                 Length.instantiateSI(40.0), lane, "Lane2", link, "AB"));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(5.0), gtu, "TRUCK", length, Length.instantiateSI(5.0), position,
+        arrivals.addRow(Map.of(time, Duration.instantiateSI(5.0), gtu, "NL.TRUCK", length, Length.instantiateSI(5.0), position,
                 Length.instantiateSI(50.0), lane, "Lane1", link, "AB"));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(6.0), gtu, "TRUCK", length, Length.instantiateSI(6.0), position,
+        arrivals.addRow(Map.of(time, Duration.instantiateSI(6.0), gtu, "NL.TRUCK", length, Length.instantiateSI(6.0), position,
                 Length.instantiateSI(60.0), lane, "Lane2", link, "AB"));
         // -- the test
         Injections full = fullInjections(arrivals, network);

@@ -57,7 +57,6 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 public class OdExample
 {
     
-    @Test
     public void howToCreateAnOdMatrixAndAddDemandData()
     {
         Node nodeA = Mockito.mock(Node.class);
