@@ -52,6 +52,7 @@ import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 import org.opentrafficsim.xml.generated.Demand;
 import org.opentrafficsim.xml.generated.GtuTemplate;
+import org.opentrafficsim.xml.generated.GtuTemplateMix;
 import org.opentrafficsim.xml.generated.RouteMix;
 import org.opentrafficsim.xml.generated.ShortestRoute;
 import org.opentrafficsim.xml.generated.ShortestRoute.Via;
@@ -219,7 +220,7 @@ public final class GeneratorSinkParser
      * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
      * @param definitions Definitions; parsed definitions
      * @param demand Network; the Network tag
-     * @param gtuTemplates GGtuTemplate tags
+     * @param gtuTemplates GtuTemplate tags
      * @param routeMixMap map with route mix entries
      * @param shortestRouteMixMap map with shortest route mix entries
      * @param streamInformation map with stream information
@@ -325,40 +326,53 @@ public final class GeneratorSinkParser
                             + ": No route information");
                 }
 
-                CarFollowingModelFactory<IdmPlus> idmPlusFactory =
-                        new IdmPlusFactory(stream);
+                CarFollowingModelFactory<IdmPlus> idmPlusFactory = new IdmPlusFactory(stream);
                 LaneBasedTacticalPlannerFactory<Lmrs> tacticalFactory =
                         new LmrsFactory(idmPlusFactory, new DefaultLmrsPerceptionFactory());
                 LaneBasedStrategicalRoutePlannerFactory strategicalFactory =
                         new LaneBasedStrategicalRoutePlannerFactory(tacticalFactory);
 
                 // the distribution of GTUs
-                Distribution<LaneBasedGtuTemplate> gtuTypeDistribution =
-                        new Distribution<>(stream);
+                Distribution<LaneBasedGtuTemplate> gtuTypeDistribution;
                 if (generatorTag.getGtuTemplate() != null)
                 {
+                    gtuTypeDistribution = new Distribution<>(stream);
                     GtuTemplate templateTag = gtuTemplates.get(generatorTag.getGtuTemplate());
                     if (templateTag == null)
                         throw new XmlParserException(
                                 "GtuTemplate " + generatorTag.getGtuTemplate() + " in generator not defined");
-                    GtuType gtuType = definitions.get(GtuType.class, templateTag.getGtuType());
-                    if (gtuType == null)
-                        throw new XmlParserException("GTUTYPE " + templateTag.getGtuType() + " in GtuTemplate "
-                                + generatorTag.getGtuTemplate() + " not defined");
-                    Generator<Length> lengthGenerator =
-                            Generators.makeLengthGenerator(streamInformation, templateTag.getLengthDist());
-                    Generator<Length> widthGenerator =
-                            Generators.makeLengthGenerator(streamInformation, templateTag.getWidthDist());
-                    Generator<Speed> maximumSpeedGenerator =
-                            Generators.makeSpeedGenerator(streamInformation, templateTag.getMaxSpeedDist());
-                    LaneBasedGtuTemplate templateGtuType = new LaneBasedGtuTemplate(gtuType, lengthGenerator, widthGenerator,
-                            maximumSpeedGenerator, strategicalFactory, routeGenerator);
+                    LaneBasedGtuTemplate templateGtuType = parseGtuTemplate(templateTag, definitions, streamInformation,
+                            generatorTag, routeGenerator, strategicalFactory);
                     gtuTypeDistribution.add(new FrequencyAndObject<>(1.0, templateGtuType));
                 }
                 else if (generatorTag.getGtuTemplateMix() != null)
                 {
-                    // TODO: GtuTemplateMix
-                    throw new XmlParserException("GtuTemplateMix not implemented yet in Generator");
+                    Throw.when(demand.getGtuTemplateMix() == null, XmlParserException.class,
+                            "GtuTemplateMix %s cannot be found, there are no mixes defined.",
+                            generatorTag.getGtuTemplateMix());
+                    GtuTemplateMix gtuTemplateMix = null;
+                    for (GtuTemplateMix mix : demand.getGtuTemplateMix())
+                    {
+                        if (generatorTag.getGtuTemplateMix().equals(mix.getId()))
+                        {
+                            gtuTemplateMix = mix;
+                            break;
+                        }
+                    }
+                    Throw.when(gtuTemplateMix == null, XmlParserException.class, "GtuTemplateMix %s is not defined.",
+                            generatorTag.getGtuTemplateMix());
+                    StreamInterface mixStream = gtuTemplateMix.getRandomStream() == null ? stream
+                            : ParseUtil.findStream(streamInformation, gtuTemplateMix.getRandomStream());
+                    gtuTypeDistribution = new Distribution<>(mixStream);
+                    for (org.opentrafficsim.xml.generated.GtuTemplateMix.GtuTemplate template : gtuTemplateMix.getGtuTemplate())
+                    {
+                        Throw.when(!gtuTemplates.containsKey(template.getId()), XmlParserException.class,
+                                "GtuTemplate %s is not defined.", template.getId());
+                        LaneBasedGtuTemplate templateGtuType = parseGtuTemplate(gtuTemplates.get(template.getId()), definitions,
+                                streamInformation, generatorTag, routeGenerator, strategicalFactory);
+                        gtuTypeDistribution
+                                .add(new FrequencyAndObject<LaneBasedGtuTemplate>(template.getWeight(), templateGtuType));
+                    }
                 }
                 else
                 {
@@ -367,8 +381,7 @@ public final class GeneratorSinkParser
 
                 RoomChecker roomChecker = Transformer.parseRoomChecker(generatorTag.getRoomChecker());
 
-                Generator<Duration> headwayGenerator =
-                        new HeadwayGenerator(generatorTag.getFrequency(), stream);
+                Generator<Duration> headwayGenerator = new HeadwayGenerator(generatorTag.getFrequency(), stream);
 
                 CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(generatorTag.getLink());
                 Lane lane = (Lane) link.getCrossSectionElement(generatorTag.getLane());
@@ -390,6 +403,35 @@ public final class GeneratorSinkParser
             throw new XmlParserException(exception);
         }
         return generators;
+    }
+
+    /**
+     * Parse a GtuTemplate.
+     * @param templateTag GtuTemplate; tag of the GTU template.
+     * @param definitions Definitions; definitions.
+     * @param streamInformation StreamInformation; stream information.
+     * @param generatorTag Generator; generator tag of generator for which GtuTemplate will be used.
+     * @param routeGenerator Generator&lt;Route&gt;; route generator.
+     * @param strategicalFactory LaneBasedStrategicalRoutePlannerFactory; strategical factory.
+     * @return LaneBasedGtuTemplate; parsed GTU template.
+     * @throws XmlParserException if the GtuType is not defined.
+     */
+    private static LaneBasedGtuTemplate parseGtuTemplate(final GtuTemplate templateTag, final Definitions definitions,
+            final StreamInformation streamInformation, final org.opentrafficsim.xml.generated.Generator generatorTag,
+            final Generator<Route> routeGenerator, final LaneBasedStrategicalRoutePlannerFactory strategicalFactory)
+            throws XmlParserException
+    {
+        GtuType gtuType = definitions.get(GtuType.class, templateTag.getGtuType());
+        if (gtuType == null)
+            throw new XmlParserException("GTUTYPE " + templateTag.getGtuType() + " in GtuTemplate "
+                    + generatorTag.getGtuTemplate() + " not defined");
+        Generator<Length> lengthGenerator = Generators.makeLengthGenerator(streamInformation, templateTag.getLengthDist());
+        Generator<Length> widthGenerator = Generators.makeLengthGenerator(streamInformation, templateTag.getWidthDist());
+        Generator<Speed> maximumSpeedGenerator =
+                Generators.makeSpeedGenerator(streamInformation, templateTag.getMaxSpeedDist());
+        LaneBasedGtuTemplate templateGtuType = new LaneBasedGtuTemplate(gtuType, lengthGenerator, widthGenerator,
+                maximumSpeedGenerator, strategicalFactory, routeGenerator);
+        return templateGtuType;
     }
 
     /**
