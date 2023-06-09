@@ -3,6 +3,7 @@
 Setting up GTU generators takes a considerable effort, as the previous sections point out. Demand data has to be prepared, and factories have to be set up. A utility takes away most of the effort if an OD matrix is available. This utility is `OdApplier.applyOd(…)`, which takes a network, an OD matrix, and a set of options. The options mainly determine which sub-components the GTU generators will use.
 
 The utility sets up an inter-arrival time generator for each GTU generator by using the OD matrix. Internally it uses a 3-layered node-tree, where each node represents demand. To each generator, a root node wrapped in an arrivals headway generator (the root node represents an `Arrivals` object) is provided from which the generator obtains headways. The root node represents the origin. Destinations are found in the second layer, while categories are found in the third layer. Each of these nodes can have its own form of demand data, with varying time vectors, and varying interpolation. The nodes in the 1<sup>st</sup> and 2<sup>nd</sup> layer work according to a simple delegate principle:
+
 * When the frequency at a specific time is requested, this is a sum of the frequencies from the nodes in the next layer.
 * When the start time of the next time slice is requested, this is the first time reported by any node in the next layer.
 
@@ -74,7 +75,7 @@ The default implementation is `DefaultLaneBasedGtuCharacteristicsGeneratorOd`, w
 * If a GTU type template is provided to the `DefaultLaneBasedGtuCharacteristicsGeneratorOd` for the GTU type, it is used to obtain GTU length, width, etc. Otherwise, default values for common GTU types are used.
 * If the OD category contains a route, that route is used. Otherwise it will be `null`, which might be ok on some simple networks.
 * A strategical planner is created with the help of a provided `LaneBasedStrategicalPlannerFactory`.
-* If a vehicle mode factory is given, it is used to generate a vehicle model. Otherwise `VehicleModel.MINMAX` is used by default.
+* If a vehicle model factory is given, it is used to generate a vehicle model. Otherwise `VehicleModel.MINMAX` is used by default.
 
 By default the `GTU_TYPE` option has a `null`, without templates. In section [How to set up model factories when using an OD matrix](../08-tutorials/simulation-setup.md#how-to-set-up-model-factories-when-using-an-od-matrix) a tutorial is available that gives some examples on how to use `DefaultLaneBasedGtuCharacteristicsGeneratorOd` or how to implement `LaneBasedGtuCharacteristicsGeneratorOd`.
 
