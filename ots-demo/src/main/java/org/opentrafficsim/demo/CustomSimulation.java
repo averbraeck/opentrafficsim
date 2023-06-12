@@ -128,57 +128,7 @@ public class CustomSimulation extends OtsSimulationApplication<CustomSimulation.
         /** {@inheritDoc} */
         @Override
         public void constructModel() throws SimRuntimeException {
-            try {
-                StreamInterface stream = new MersenneTwister(12345);
 
-                Node from = this.network.getNode("14-Start");
-                Node to = this.network.getNode("7-End");
-
-                CrossSectionLink link_start = (CrossSectionLink) this.network.getLink("14");
-                Lane lane_start = (Lane) link_start.getCrossSectionElement("10");
-                CrossSectionLink link_end = (CrossSectionLink) this.network.getLink("7");
-                Lane lane_end = (Lane) link_end.getCrossSectionElement("115");
-                new SinkDetector(lane_end, lane_end.getLength().minus(Length.instantiateSI(2)), this.simulator, DefaultsRoadNl.ROAD_USERS);
-
-                Route route = this.network.getShortestRouteBetween(DefaultsNl.CAR, from, to);
-                FixedRouteGenerator routeGenerator = new FixedRouteGenerator(route);
-
-                CarFollowingModelFactory<IdmPlus> idmPlusFactory =
-                        new IdmPlusFactory(stream);
-                LaneBasedTacticalPlannerFactory<Lmrs> tacticalFactory =
-                        new LmrsFactory(idmPlusFactory, new DefaultLmrsPerceptionFactory());
-                LaneBasedStrategicalPlannerFactory<?> strategicalFactory =
-                        new LaneBasedStrategicalRoutePlannerFactory(tacticalFactory);
-
-                Distribution<LaneBasedGtuTemplate> gtuTypeDistribution =
-                        new Distribution<>(stream);
-
-                Generator<Length> lengthGenerator = new ConstantGenerator(new Length(4, METER));
-                Generator<Length> widthGenerator = new ConstantGenerator(new Length(2, METER));
-                Generator<Speed> maximumSpeedGenerator = new ConstantGenerator(new Speed(50, SpeedUnit.KM_PER_HOUR));
-
-
-                LaneBasedGtuTemplate templateGtuType = new LaneBasedGtuTemplate(DefaultsNl.CAR, lengthGenerator, widthGenerator,
-                        maximumSpeedGenerator, strategicalFactory, routeGenerator);
-                gtuTypeDistribution.add(new Distribution.FrequencyAndObject<>(1.0, templateGtuType));
-
-                TtcRoomChecker roomChecker = new TtcRoomChecker(new Duration(10.0, DurationUnit.SI));
-
-                Generator<Duration> headwayGenerator = new ConstantGenerator(Duration.instantiateSI(5));
-
-                Length position = Length.instantiateSI(5);
-                Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
-                initialLongitudinalPositions.add(new LanePosition(lane_start, position));
-
-                IdGenerator idGenerator = new IdGenerator("");
-
-                LaneBasedGtuTemplateDistribution characteristicsGenerator =
-                        new LaneBasedGtuTemplateDistribution(gtuTypeDistribution);
-                new LaneBasedGtuGenerator(lane_start.getFullId(), headwayGenerator, characteristicsGenerator,
-                        GeneratorPositions.create(initialLongitudinalPositions, stream), this.network, simulator, roomChecker, idGenerator);
-            }catch (Exception e){
-                System.err.println("Error while creating GTUs");
-            }
         }
 
         /** {@inheritDoc} */
