@@ -187,7 +187,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
         Throw.when(this.warmupTime.si < 0.0, IllegalArgumentException.class, "Warm-up time should be positive");
         Throw.when(this.simulationTime.si < 0.0, IllegalArgumentException.class, "Simulation time should be positive");
         Throw.when(this.simulationTime.si < this.warmupTime.si, IllegalArgumentException.class,
-                "Simulation time should be longer than warmp-up time");
+                "Simulation time should be longer than warm-up time");
     }
 
     /**
