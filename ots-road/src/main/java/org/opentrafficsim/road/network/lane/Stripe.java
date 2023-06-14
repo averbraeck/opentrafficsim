@@ -62,10 +62,10 @@ public class Stripe extends CrossSectionElement
         this.type = type;
     }
 
-    public Stripe(final Type type, final CrossSectionLink parentLink, OtsLine3d centerLine, final Length beginWidth, final Length endWidth,
-                  final boolean fixGradualLateralOffset) throws OtsGeometryException, NetworkException
+    public Stripe(final Type type, final CrossSectionLink parentLink, OtsLine3d centerLine, final Length beginWidth, final Length endWidth
+                    ) throws OtsGeometryException, NetworkException
     {
-        super(parentLink, UUID.randomUUID().toString(), centerLine, beginWidth, endWidth, fixGradualLateralOffset);
+        super(parentLink, UUID.randomUUID().toString(), centerLine, beginWidth, endWidth);
         Throw.whenNull(type, "Type may not be null.");
         this.type = type;
     }

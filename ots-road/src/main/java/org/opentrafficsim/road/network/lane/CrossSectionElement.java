@@ -11,6 +11,7 @@ import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.logger.CategoryLogger;
+import org.locationtech.jts.geom.Coordinate;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.geometry.Bezier;
@@ -204,8 +205,8 @@ public class CrossSectionElement extends LocalEventProducer implements Locatable
                 fixGradualLateralOffset));
     }
 
-    public CrossSectionElement(final CrossSectionLink parentLink, final String id, OtsLine3d centerLine, final Length beginWidth, final Length endWidth,
-                               final boolean fixGradualLateralOffset) throws OtsGeometryException, NetworkException
+    public CrossSectionElement(final CrossSectionLink parentLink, final String id, OtsLine3d centerLine, final Length beginWidth,
+                               final Length endWidth) throws OtsGeometryException, NetworkException
     {
         Throw.when(parentLink == null, NetworkException.class,
                 "Constructor of CrossSectionElement for id %s, parentLink cannot be null", id);
@@ -220,8 +221,13 @@ public class CrossSectionElement extends LocalEventProducer implements Locatable
         this.centerLine = centerLine;
         this.length = this.centerLine.getLength();
         List<CrossSectionSlice> slices = new ArrayList<>();
+        OtsPoint3d lastPoint = centerLine.getPoints()[0];
         slices.add(new CrossSectionSlice(Length.ZERO,Length.ZERO,beginWidth));
-        slices.add(new CrossSectionSlice(this.length,Length.ZERO,endWidth));
+        for (int i = 1; i< centerLine.getPoints().length; i++){
+            OtsPoint3d nextPoint = centerLine.getPoints()[i];
+            Length dist = nextPoint.distance(lastPoint);
+            slices.add(new CrossSectionSlice(dist,Length.ZERO,beginWidth));
+        }
         this.crossSectionSlices=slices;
         this.contour = constructContour(this);
         this.parentLink.addCrossSectionElement(this);

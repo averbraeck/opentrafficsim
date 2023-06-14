@@ -221,10 +221,10 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     }
 
     public Lane(final CrossSectionLink parentLink, final String id, OtsLine3d centerLine, final Length beginWidth, final Length endWidth,
-                final LaneType laneType, final Map<GtuType, Speed> speedLimitMap, final boolean fixGradualLateralOffset)
+                final LaneType laneType, final Map<GtuType, Speed> speedLimitMap)
             throws OtsGeometryException, NetworkException
     {
-        super(parentLink, id, centerLine, beginWidth, endWidth, fixGradualLateralOffset);
+        super(parentLink, id, centerLine, beginWidth, endWidth);
         this.laneType = laneType;
         this.speedLimitMap.putAll(speedLimitMap);
         this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
