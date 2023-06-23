@@ -520,7 +520,7 @@ public class StrategiesDemo extends AbstractSimulationScript
             double angle = Math.PI * (i) / (coordsHalf1.length - 1);
             coordsHalf1[i] = new OtsPoint3d(radius * Math.cos(angle), radius * Math.sin(angle), 0);
         }
-        List<Lane> lanes1 = new LaneFactory(network, nodeB, nodeA, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPLEFT,
+        List<Lane> lanes1 = new LaneFactory(network, nodeB, nodeA, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPRIGHT,
                 DefaultsNl.VEHICLE, new OtsLine3d(coordsHalf1))
                         .leftToRight(0.0, Length.instantiateSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit).addLanes(Type.DASHED)
                         .getLanes();
@@ -530,7 +530,7 @@ public class StrategiesDemo extends AbstractSimulationScript
             double angle = Math.PI + Math.PI * (i) / (coordsHalf2.length - 1);
             coordsHalf2[i] = new OtsPoint3d(radius * Math.cos(angle), radius * Math.sin(angle), 0);
         }
-        List<Lane> lanes2 = new LaneFactory(network, nodeA, nodeB, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPLEFT,
+        List<Lane> lanes2 = new LaneFactory(network, nodeA, nodeB, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPRIGHT,
                 DefaultsNl.VEHICLE, new OtsLine3d(coordsHalf2))
                         .leftToRight(0.0, Length.instantiateSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit).addLanes(Type.DASHED)
                         .getLanes();
