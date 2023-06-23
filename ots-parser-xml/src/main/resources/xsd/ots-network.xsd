@@ -22,7 +22,7 @@
     <xsd:complexType>
       <xsd:attribute name="Id" type="xsd:string" use="required" />
       <xsd:attribute name="Coordinate" type="ots:CoordinateType" use="required" />
-      <xsd:attribute ref="xml:base" />
+      <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
   
@@ -31,7 +31,7 @@
       <xsd:attribute name="Id" type="xsd:string" use="required" />
       <xsd:attribute name="Coordinate" type="ots:CoordinateType" use="required" />
       <xsd:attribute name="Direction" type="ots:DirectionType" use="optional" />
-      <xsd:attribute ref="xml:base" />
+      <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
 
@@ -131,7 +131,7 @@
       <xsd:attribute name="Priority" type="ots:PriorityType" use="optional" />
       <xsd:attribute name="FixGradualOffset" type="xsd:boolean" use="optional" default="false" />
       <xsd:attribute name="ConflictId" type="xsd:string" use="optional" />
-      <xsd:attribute ref="xml:base" />
+      <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
 
@@ -145,7 +145,7 @@
         <xsd:element ref="ots:Connector" minOccurs="0" maxOccurs="1" />
         <xsd:element ref="xi:include" minOccurs="0" maxOccurs="1" />
       </xsd:choice>
-      <xsd:attribute ref="xml:base" />
+      <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
 

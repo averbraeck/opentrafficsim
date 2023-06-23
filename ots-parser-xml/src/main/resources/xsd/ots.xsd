@@ -29,7 +29,7 @@
         <xsd:element ref="ots:Run" minOccurs="1" maxOccurs="1" />
         <xsd:element ref="ots:Animation" minOccurs="0" maxOccurs="1" />
       </xsd:sequence>
-      <xsd:attribute ref="xml:base" />
+      <!-- xsd:attribute ref="xml:base" / -->
       <xsd:attribute ref="xml:space" use="optional" default="preserve" />
     </xsd:complexType>
 
