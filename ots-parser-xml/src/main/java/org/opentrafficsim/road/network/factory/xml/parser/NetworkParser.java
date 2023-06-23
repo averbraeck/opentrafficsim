@@ -358,7 +358,7 @@ public final class NetworkParser
             // CategoryLogger.filter(Cat.PARSER).trace("Parse link: {}", xmlLink.getID());
 
             // Get the RoadLayout (either defined here, or via pointer to Definitions)
-            BasicRoadLayout roadLayoutTagBase;
+            BasicRoadLayout roadLayoutTag;
             if (xmlLink.getDefinedLayout() != null)
             {
                 if (xmlLink.getRoadLayout() != null)
@@ -366,36 +366,35 @@ public final class NetworkParser
                     throw new XmlParserException(
                             "Link " + xmlLink.getId() + " Ambiguous RoadLayout; both DefinedRoadLayout and RoadLayout defined");
                 }
-                roadLayoutTagBase = roadLayoutMap.get(xmlLink.getDefinedLayout());
+                RoadLayout roadLayoutTagBase = roadLayoutMap.get(xmlLink.getDefinedLayout());
                 if (roadLayoutTagBase == null)
                 {
                     throw new XmlParserException(
                             "Link " + xmlLink.getId() + " Could not find defined RoadLayout " + xmlLink.getDefinedLayout());
                 }
+                // Process LaneOverrides
+                roadLayoutTag = Cloner.cloneRoadLayout(roadLayoutTagBase);
+                for (LaneOverride laneOverride : xmlLink.getLaneOverride())
+                {
+                    for (CseLane lane : ParseUtil.getObjectsOfType(roadLayoutTag.getStripeOrLaneOrShoulder(), CseLane.class))
+                    {
+                        if (lane.getId().equals(laneOverride.getLane()))
+                        {
+                            if (laneOverride.getSpeedLimit().size() > 0)
+                            {
+                                lane.getSpeedLimit().clear();
+                                lane.getSpeedLimit().addAll(laneOverride.getSpeedLimit());
+                            }
+                        }
+                    }
+                }
             }
             else
             {
-                roadLayoutTagBase = xmlLink.getRoadLayout();
-                if (roadLayoutTagBase == null)
+                roadLayoutTag = xmlLink.getRoadLayout();
+                if (roadLayoutTag == null)
                 {
                     throw new XmlParserException("Link " + xmlLink.getId() + " No RoadLayout defined");
-                }
-            }
-
-            // Process LaneOverrides
-            BasicRoadLayout roadLayoutTag = Cloner.cloneRoadLayout(roadLayoutTagBase);
-            for (LaneOverride laneOverride : xmlLink.getLaneOverride())
-            {
-                for (CseLane lane : ParseUtil.getObjectsOfType(roadLayoutTag.getStripeOrLaneOrShoulder(), CseLane.class))
-                {
-                    if (lane.getId().equals(laneOverride.getLane()))
-                    {
-                        if (laneOverride.getSpeedLimit().size() > 0)
-                        {
-                            lane.getSpeedLimit().clear();
-                            lane.getSpeedLimit().addAll(laneOverride.getSpeedLimit());
-                        }
-                    }
                 }
             }
 
