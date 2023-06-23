@@ -7,7 +7,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
-import org.opentrafficsim.xml.generated.BasicRoadLayout;
 import org.opentrafficsim.xml.generated.CseLane;
 import org.opentrafficsim.xml.generated.CseNoTrafficLane;
 import org.opentrafficsim.xml.generated.CseShoulder;
@@ -60,12 +59,11 @@ public final class Cloner
      * @param in the object to clone
      * @return the cloned object
      */
-    public static RoadLayout cloneRoadLayout(final BasicRoadLayout in)
+    public static RoadLayout cloneRoadLayout(final RoadLayout in)
     {
         RoadLayout rl = new RoadLayout();
-        rl.setBase(in.getBase());
         rl.setLaneKeeping(in.getLaneKeeping());
-        rl.setLinkType(in.getBase());
+        rl.setLinkType(in.getLinkType());
         rl.getSpeedLimit().addAll(in.getSpeedLimit());
         for (Object o : in.getStripeOrLaneOrShoulder())
         {
