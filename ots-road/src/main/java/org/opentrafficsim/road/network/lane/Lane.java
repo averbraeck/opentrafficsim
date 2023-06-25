@@ -220,11 +220,11 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
     }
 
-    public Lane(final CrossSectionLink parentLink, final String id, OtsLine3d centerLine, final Length beginWidth, final Length endWidth,
-                final LaneType laneType, final Map<GtuType, Speed> speedLimitMap)
+    public Lane(final CrossSectionLink parentLink, final String id, OtsLine3d centerLine, final Length offsetStart, final Length offsetEnd,
+                final Length beginWidth, final Length endWidth,  final LaneType laneType, final Map<GtuType, Speed> speedLimitMap)
             throws OtsGeometryException, NetworkException
     {
-        super(parentLink, id, centerLine, beginWidth, endWidth);
+        super(parentLink, id, centerLine, offsetStart, offsetEnd, beginWidth, endWidth);
         this.laneType = laneType;
         this.speedLimitMap.putAll(speedLimitMap);
         this.gtuList = new HistoricalArrayList<>(getManager(parentLink));

@@ -205,17 +205,16 @@ public class CrossSectionElement extends LocalEventProducer implements Locatable
                 fixGradualLateralOffset));
     }
 
-    public CrossSectionElement(final CrossSectionLink parentLink, final String id, OtsLine3d centerLine, final Length beginWidth,
-                               final Length endWidth) throws OtsGeometryException, NetworkException
+    public CrossSectionElement(final CrossSectionLink parentLink, final String id, OtsLine3d centerLine, final Length offsetStart, final Length offsetEnd,
+                               final Length beginWidth, final Length endWidth) throws OtsGeometryException, NetworkException
     {
         this.id = id;
         this.parentLink = parentLink;
         this.centerLine = centerLine;
         this.length = centerLine.getLength();
-        System.out.println(parentLink.getId() + "   "+centerLine.getLength().minus(parentLink.getLength()));
         List<CrossSectionSlice> slices = new ArrayList<>();
-        slices.add(new CrossSectionSlice(Length.ZERO,Length.ZERO,beginWidth));
-        slices.add(new CrossSectionSlice(parentLink.getLength(),Length.ZERO,endWidth));
+        slices.add(new CrossSectionSlice(Length.ZERO,offsetStart,beginWidth));
+        slices.add(new CrossSectionSlice(parentLink.getLength(),offsetEnd,endWidth));
         this.crossSectionSlices=slices;
         this.contour = constructContour(this);
         this.parentLink.addCrossSectionElement(this);
@@ -223,20 +222,6 @@ public class CrossSectionElement extends LocalEventProducer implements Locatable
         parentLink.getNetwork().clearLaneChangeInfoCache();
     }
 
-    private static List<CrossSectionSlice> constructSlices(OtsLine3d centerLine, Length beginWidth){
-        List<CrossSectionSlice> slices = new ArrayList<>();
-        OtsPoint3d lastPoint = centerLine.getPoints()[0];
-        Length length = Length.ZERO;
-        slices.add(new CrossSectionSlice(length,Length.ZERO,beginWidth));
-        for (int i = 1; i< centerLine.getPoints().length; i++){
-            OtsPoint3d nextPoint = centerLine.getPoints()[i];
-            Length dist = nextPoint.distance(lastPoint);
-            length = length.plus(dist);
-            slices.add(new CrossSectionSlice(length,Length.ZERO,beginWidth));
-        }
-
-        return slices;
-    }
     /**
      * Construct a list of cross section slices, using sinusoidal interpolation for changing lateral offset.
      * @param parentLink CrossSectionLink; Link to which the element belongs.

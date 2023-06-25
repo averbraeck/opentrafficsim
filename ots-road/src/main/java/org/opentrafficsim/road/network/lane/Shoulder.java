@@ -40,10 +40,10 @@ public class Shoulder extends CrossSectionElement
         super(parentLink, id, lateralPositionStart, lateralPositionEnd, beginWidth, endWidth, false);
     }
 
-    public Shoulder(final CrossSectionLink parentLink, final String id, OtsLine3d centerLine, final Length beginWidth, final Length endWidth
-                    ) throws OtsGeometryException, NetworkException
+    public Shoulder(final CrossSectionLink parentLink, final String id, OtsLine3d centerLine, final Length offsetStart, final Length offsetEnd,
+                    final Length beginWidth, final Length endWidth) throws OtsGeometryException, NetworkException
     {
-        super(parentLink, id, centerLine, beginWidth, endWidth);
+        super(parentLink, id, centerLine, offsetStart, offsetEnd, beginWidth, endWidth);
     }
 
     /** {@inheritDoc} */
