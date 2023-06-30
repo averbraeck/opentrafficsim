@@ -42,7 +42,6 @@ import org.opentrafficsim.core.perception.collections.HistoricalArrayList;
 import org.opentrafficsim.core.perception.collections.HistoricalList;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
-import org.opentrafficsim.road.network.lane.object.detector.DestinationDetector;
 import org.opentrafficsim.road.network.lane.object.detector.Detector;
 import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
@@ -571,7 +570,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @throws NetworkException when GTU not on this lane.
      * @throws SimRuntimeException when method cannot be scheduled.
      */
-    public final void scheduleDetectorrTriggers(final LaneBasedGtu gtu, final double referenceStartSI,
+    public final void scheduleDetectorTriggers(final LaneBasedGtu gtu, final double referenceStartSI,
             final double referenceMoveSI) throws NetworkException, SimRuntimeException
     {
         double minPos = referenceStartSI + gtu.getRear().getDx().si;
@@ -611,10 +610,9 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                         gtu.getSimulator().scheduleEvent(event);
                         gtu.addTrigger(this, event);
                     }
-                    else if (detector.getLongitudinalPosition().si < minPos
-                            && (detector instanceof SinkDetector || detector instanceof DestinationDetector))
+                    else if (detector.getLongitudinalPosition().si < minPos && detector instanceof SinkDetector)
                     {
-                        // TODO this is a hack for when sink detector aren't perfectly adjacent or the GTU overshoots with nose
+                        // TODO this is a hack for when sink detectors aren't perfectly adjacent or the GTU overshoots with nose
                         // due to curvature
                         SimEvent<Duration> event = new SimEvent<>(new Duration(gtu.getSimulator().getSimulatorTime()), detector,
                                 "trigger", new Object[] {gtu});

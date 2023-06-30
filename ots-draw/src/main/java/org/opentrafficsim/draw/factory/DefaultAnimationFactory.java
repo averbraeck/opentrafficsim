@@ -17,8 +17,8 @@ import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuGenerator.GtuGeneratorPosition;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.object.LocatedObject;
 import org.opentrafficsim.core.object.NonLocatedObject;
 import org.opentrafficsim.draw.core.OtsDrawingException;
@@ -44,7 +44,6 @@ import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.object.BusStop;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
-import org.opentrafficsim.road.network.lane.object.detector.DestinationDetector;
 import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector;
@@ -277,13 +276,6 @@ public class DefaultAnimationFactory implements EventListener
             {
                 SinkDetector detector = (SinkDetector) object;
                 // Renderable2D<SinkSensor> objectAnimation = new SinkAnimation(detector, this.simulator);
-                Renderable2D<LaneDetector> objectAnimation = new DetectorAnimation(detector, this.simulator, Color.ORANGE);
-                this.animatedLocatedObjects.put(object, objectAnimation);
-            }
-            else if (object instanceof DestinationDetector)
-            {
-                DestinationDetector detector = (DestinationDetector) object;
-                // Renderable2D<DestinationSensor> objectAnimation = new DestinationAnimation(detector, this.simulator);
                 Renderable2D<LaneDetector> objectAnimation = new DetectorAnimation(detector, this.simulator, Color.ORANGE);
                 this.animatedLocatedObjects.put(object, objectAnimation);
             }
