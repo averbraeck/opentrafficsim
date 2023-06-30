@@ -129,6 +129,8 @@ public final class LaneOperationalPlanBuilder
             }
             Lane prevFrom = null;
             Lane from = ref.getLane();
+            Length prevPos = null;
+            Length pos = ref.getPosition();
             int n = 1;
             while (path == null || path.getLength().si < distance.si + n * Lane.MARGIN.si)
             {
@@ -139,14 +141,14 @@ public final class LaneOperationalPlanBuilder
                     CategoryLogger.always().warn("About to die: GTU {} has null from value", gtu.getId());
                 }
                 from = gtu.getNextLaneForRoute(from);
+                prevPos = pos;
+                pos = Length.ZERO;
                 if (from == null)
                 {
                     // check sink detector
-                    Length pos = prevFrom.getLength();
-                    for (LaneDetector detector : prevFrom.getDetectors(pos, pos, gtu.getType()))
+                    for (LaneDetector detector : prevFrom.getDetectors(prevPos, prevFrom.getLength(), gtu.getType()))
                     {
-                        // XXX for now, the same is not done for the DestinationSensor (e.g., decrease speed for parking)
-                        if (detector instanceof SinkDetector)
+                        if (detector instanceof SinkDetector && ((SinkDetector) detector).willDestroy(gtu))
                         {
                             // just add some length so the GTU is happy to go to the sink
                             DirectedPoint end = path.getLocationExtendedSI(distance.si + n * Lane.MARGIN.si);
@@ -155,8 +157,8 @@ public final class LaneOperationalPlanBuilder
                             return new OtsLine3d(points);
                         }
                     }
-                    CategoryLogger.always().error("GTU {} has nowhere to go and no sink detector either", gtu);
-                    // gtu.getReferencePosition(); // CLEVER
+                    CategoryLogger.always().error("GTU {} on link {} has nowhere to go and no sink detector either", gtu,
+                            ref.getLane().getParentLink().getId());
                     gtu.destroy();
                     return path;
                 }
@@ -213,7 +215,7 @@ public final class LaneOperationalPlanBuilder
         {
             distance = distance.plus(segment.totalDistance());
         }
-        
+
         try
         {
             // get position on from lane

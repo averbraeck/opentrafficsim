@@ -46,9 +46,9 @@ import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
-import org.opentrafficsim.road.network.lane.object.detector.DestinationDetector;
 import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
 import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
+import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -124,8 +124,8 @@ public final class OdApplier
      * @throws SimRuntimeException if this method is called after simulation time 0
      */
     @SuppressWarnings("checkstyle:methodlength")
-    public static Map<String, GeneratorObjects> applyOd(final RoadNetwork network, final OdMatrix od,
-            final OdOptions odOptions, final DetectorType detectorType) throws ParameterException, SimRuntimeException
+    public static Map<String, GeneratorObjects> applyOd(final RoadNetwork network, final OdMatrix od, final OdOptions odOptions,
+            final DetectorType detectorType) throws ParameterException, SimRuntimeException
     {
         Throw.whenNull(network, "Network may not be null.");
         Throw.whenNull(od, "OD matrix may not be null.");
@@ -529,25 +529,18 @@ public final class OdApplier
                 {
                     try
                     {
-                        // if the lane already contains a DestinationDetector, skip creating a new one
+                        // if the lane already contains a SinkDetector, skip creating a new one
                         boolean destinationDetectorExists = false;
                         for (LaneDetector detector : lane.getDetectors())
                         {
-                            if (detector instanceof DestinationDetector)
+                            if (detector instanceof SinkDetector)
                             {
                                 destinationDetectorExists = true;
                             }
                         }
                         if (!destinationDetectorExists)
                         {
-                            if (link.getEndNode().equals(destination))
-                            {
-                                new DestinationDetector(lane, lane.getLength(), simulator, detectorType);
-                            }
-                            else if (link.getStartNode().equals(destination))
-                            {
-                                new DestinationDetector(lane, Length.ZERO, simulator, detectorType);
-                            }
+                            new SinkDetector(lane, lane.getLength(), simulator, detectorType, SinkDetector.DESTINATION);
                         }
                     }
                     catch (NetworkException exception)
