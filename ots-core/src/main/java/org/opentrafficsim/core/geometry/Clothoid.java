@@ -289,7 +289,7 @@ public class Clothoid
 
         double dx = end.x - start.x;
         double dy = end.y - start.y;
-        double d2 = Math.sqrt(dx * dx + dy * dy); // length of straight line from start to end
+        double d2 = Math.hypot(dx, dy); // length of straight line from start to end
         double d = Math.atan2(dy, dx); // angle of line through start and end points
 
         double phi1 = normalizeAngle(d - startDirection.si);

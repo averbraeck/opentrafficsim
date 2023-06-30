@@ -27,6 +27,9 @@ public class ClothoidTest
 
     /** Number of segments for the clothoid lines to generated. */
     private static final int SEGMENTS = 64;
+    
+    /** Number of random runs per test. */
+    private static final int RUNS = 10000; // this test was run 10.000.000 times, 10.000 is to check no change broke the logic
 
     /**
      * A reasonable S-shaped clothoid can make a total angle transition of 2 circles, one on the positive, and one on the
@@ -47,7 +50,7 @@ public class ClothoidTest
     public void TestPoints() throws OtsGeometryException
     {
         StreamInterface r = new MersenneTwister(3L);
-        for (int i = 0; i < 10000; i++) // this test was run 10.000.000 times, 10.000 is to check no change broke the logic
+        for (int i = 0; i < RUNS; i++) // this test was run 10.000.000 times, 10.000 is to check no change broke the logic
         {
             OtsPoint3d start = new OtsPoint3d(r.nextDouble() * 10.0, r.nextDouble() * 10.0, 0.0);
             OtsPoint3d end = new OtsPoint3d(r.nextDouble() * 10.0, r.nextDouble() * 10.0, 0.0);
@@ -99,7 +102,7 @@ public class ClothoidTest
     public void testLength() throws OtsGeometryException
     {
         StreamInterface r = new MersenneTwister(3L);
-        for (int i = 0; i < 10000; i++) // this test was run 10.000.000 times, 10.000 is to check no change broke the logic
+        for (int i = 0; i < RUNS; i++) // this test was run 10.000.000 times, 10.000 is to check no change broke the logic
         {
             OtsPoint3d start = new OtsPoint3d(r.nextDouble() * 10.0, r.nextDouble() * 10.0, 0.0);
             Direction startDirection = Direction.instantiateSI((r.nextDouble() * 2 - 1) * Math.PI);
@@ -124,7 +127,7 @@ public class ClothoidTest
     public void testA() throws OtsGeometryException
     {
         StreamInterface r = new MersenneTwister(3L);
-        for (int i = 0; i < 10000; i++) // this test was run 10.000.000 times, 10.000 is to check no change broke the logic
+        for (int i = 0; i < RUNS; i++) // this test was run 10.000.000 times, 10.000 is to check no change broke the logic
         {
             OtsPoint3d start = new OtsPoint3d(r.nextDouble() * 10.0, r.nextDouble() * 10.0, 0.0);
             Direction startDirection = Direction.instantiateSI((r.nextDouble() * 2 - 1) * Math.PI);
@@ -151,7 +154,7 @@ public class ClothoidTest
      * @param a Length A-value, may be {@code null} if no theoretical value available.
      * @throws OtsGeometryException if segment number is not available on the line
      */
-    public void VerifyLine(final OtsPoint3d start, final Direction startDirection, final ClothoidInfo clothoid,
+    private void VerifyLine(final OtsPoint3d start, final Direction startDirection, final ClothoidInfo clothoid,
             final LinearDensity startCurvature, final LinearDensity endCurvature, final Length a) throws OtsGeometryException
     {
         OtsLine3d line = clothoid.getLine();
