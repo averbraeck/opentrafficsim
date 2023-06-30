@@ -303,10 +303,6 @@ public class RampMeteringDemo extends AbstractSimulationScript
         List<Lane> lanesFB = new LaneFactory(network, nodeF, nodeB, freeway, sim, policy, DefaultsNl.VEHICLE)
                 .setOffsetStart(laneWidth.times(1.5).neg()).setOffsetEnd(laneWidth.times(1.5).neg())
                 .leftToRight(0.5, laneWidth, freewayLane, speedLimit).addLanes().getLanes();
-        for (Lane lane : lanesCD)
-        {
-            new SinkDetector(lane, lane.getLength().minus(Length.instantiateSI(50)), sim, DefaultsRoadNl.ROAD_USERS);
-        }
         // detectors
         Duration agg = Duration.instantiateSI(60.0);
         // TODO: detector length affects occupancy, which length to use?
