@@ -3,7 +3,6 @@ package org.opentrafficsim.core.geometry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.junit.Test;
@@ -27,7 +26,7 @@ public class ClothoidTest
 
     /** Number of segments for the clothoid lines to generated. */
     private static final int SEGMENTS = 64;
-    
+
     /** Number of random runs per test. */
     private static final int RUNS = 10000; // this test was run 10.000.000 times, 10.000 is to check no change broke the logic
 
@@ -50,21 +49,21 @@ public class ClothoidTest
     public void TestPoints() throws OtsGeometryException
     {
         StreamInterface r = new MersenneTwister(3L);
-        for (int i = 0; i < RUNS; i++) // this test was run 10.000.000 times, 10.000 is to check no change broke the logic
+        for (int i = 0; i < RUNS; i++)
         {
-            OtsPoint3d start = new OtsPoint3d(r.nextDouble() * 10.0, r.nextDouble() * 10.0, 0.0);
-            OtsPoint3d end = new OtsPoint3d(r.nextDouble() * 10.0, r.nextDouble() * 10.0, 0.0);
-            Direction startDirection = Direction.instantiateSI((r.nextDouble() * 2 - 1) * Math.PI);
-            Direction endDirection = Direction.instantiateSI((r.nextDouble() * 2 - 1) * Math.PI);
+            DirectedPoint start = new DirectedPoint(r.nextDouble() * 10.0, r.nextDouble() * 10.0, 0.0, 0.0, 0.0,
+                    (r.nextDouble() * 2 - 1) * Math.PI);
+            DirectedPoint end = new DirectedPoint(r.nextDouble() * 10.0, r.nextDouble() * 10.0, 0.0, 0.0, 0.0,
+                    (r.nextDouble() * 2 - 1) * Math.PI);
 
-            ClothoidInfo clothoid = Clothoid.clothoidPoints(start, startDirection, end, endDirection, SEGMENTS);
+            ClothoidInfo clothoid = Clothoid.clothoidPoints(start, end, SEGMENTS);
 
-            VerifyLine(start, startDirection, clothoid, null, null, null);
+            VerifyLine(start, clothoid, null, null, null);
         }
     }
 
     /**
-     * Tests whether clothoid between two directed points on a line, or just not on a line, are correct. This test is separate 
+     * Tests whether clothoid between two directed points on a line, or just not on a line, are correct. This test is separate
      * from {@code TestPoints()} because the random procedure generates very few straight situations.
      */
     @Test
@@ -79,17 +78,16 @@ public class ClothoidTest
         {
             double x = Math.cos(ang);
             double y = Math.sin(ang);
-            OtsPoint3d start = new OtsPoint3d(x, y, 0.0);
-            Direction startDirection = Direction.instantiateSI(ang - tolerance + r.nextDouble() * tolerance * 2);
-            OtsPoint3d end = new OtsPoint3d(3 * x, 3 * y, 0.0);
-            Direction endDirection = Direction.instantiateSI(ang - tolerance + r.nextDouble() * tolerance * 2);
-            ClothoidInfo clothoid = Clothoid.clothoidPoints(start, startDirection, end, endDirection, SEGMENTS);
+            DirectedPoint start = new DirectedPoint(x, y, 0.0, 0.0, 0.0, ang - tolerance + r.nextDouble() * tolerance * 2);
+            DirectedPoint end =
+                    new DirectedPoint(3 * x, 3 * y, 0.0, 0.0, 0.0, ang - tolerance + r.nextDouble() * tolerance * 2);
+            ClothoidInfo clothoid = Clothoid.clothoidPoints(start, end, SEGMENTS);
             assertEquals("Clothoid between point on line did not become a straight", clothoid.getLine().size(), 2);
 
-            startDirection = Direction.instantiateSI(ang + sign * tolerance * 1.1);
-            endDirection = Direction.instantiateSI(ang + sign * tolerance * 1.1);
+            start = new DirectedPoint(x, y, 0.0, 0.0, 0.0, ang + sign * tolerance * 1.1);
+            end = new DirectedPoint(3 * x, 3 * y, 0.0, 0.0, 0.0, ang + sign * tolerance * 1.1);
             sign *= -1.0;
-            clothoid = Clothoid.clothoidPoints(start, startDirection, end, endDirection, SEGMENTS);
+            clothoid = Clothoid.clothoidPoints(start, end, SEGMENTS);
             assertTrue("Clothoid between point just not on line should not become a straight", clothoid.getLine().size() > 2);
         }
     }
@@ -102,20 +100,19 @@ public class ClothoidTest
     public void testLength() throws OtsGeometryException
     {
         StreamInterface r = new MersenneTwister(3L);
-        for (int i = 0; i < RUNS; i++) // this test was run 10.000.000 times, 10.000 is to check no change broke the logic
+        for (int i = 0; i < RUNS; i++)
         {
-            OtsPoint3d start = new OtsPoint3d(r.nextDouble() * 10.0, r.nextDouble() * 10.0, 0.0);
-            Direction startDirection = Direction.instantiateSI((r.nextDouble() * 2 - 1) * Math.PI);
+            DirectedPoint start = new DirectedPoint(r.nextDouble() * 10.0, r.nextDouble() * 10.0, 0.0, 0.0, 0.0,
+                    (r.nextDouble() * 2 - 1) * Math.PI);
             Length length = Length.instantiateSI(10.0 + r.nextDouble() * 500.0);
             double sign = r.nextBoolean() ? 1.0 : -1.0;
             LinearDensity startCurvature = LinearDensity.instantiateSI(sign / (50.0 + r.nextDouble() * 1000.0));
             sign = r.nextBoolean() ? 1.0 : -1.0;
             LinearDensity endCurvature = LinearDensity.instantiateSI(sign / (50.0 + r.nextDouble() * 1000.0));
 
-            ClothoidInfo clothoid =
-                    Clothoid.clothoidLength(start, startDirection, length, startCurvature, endCurvature, SEGMENTS);
+            ClothoidInfo clothoid = Clothoid.clothoidLength(start, length, startCurvature, endCurvature, SEGMENTS);
 
-            VerifyLine(start, startDirection, clothoid, startCurvature, endCurvature, null);
+            VerifyLine(start, clothoid, startCurvature, endCurvature, null);
         }
     }
 
@@ -127,10 +124,10 @@ public class ClothoidTest
     public void testA() throws OtsGeometryException
     {
         StreamInterface r = new MersenneTwister(3L);
-        for (int i = 0; i < RUNS; i++) // this test was run 10.000.000 times, 10.000 is to check no change broke the logic
+        for (int i = 0; i < RUNS; i++)
         {
-            OtsPoint3d start = new OtsPoint3d(r.nextDouble() * 10.0, r.nextDouble() * 10.0, 0.0);
-            Direction startDirection = Direction.instantiateSI((r.nextDouble() * 2 - 1) * Math.PI);
+            DirectedPoint start = new DirectedPoint(r.nextDouble() * 10.0, r.nextDouble() * 10.0, 0.0, 0.0, 0.0,
+                    (r.nextDouble() * 2 - 1) * Math.PI);
             double sign = r.nextBoolean() ? 1.0 : -1.0;
             LinearDensity startCurvature = LinearDensity.instantiateSI(sign / (50.0 + r.nextDouble() * 1000.0));
             sign = r.nextBoolean() ? 1.0 : -1.0;
@@ -138,32 +135,32 @@ public class ClothoidTest
             Length a = Length
                     .instantiateSI(Math.sqrt((10.0 + r.nextDouble() * 500.0) / Math.abs(endCurvature.si - startCurvature.si)));
 
-            ClothoidInfo clothoid = Clothoid.clothoidA(start, startDirection, a, startCurvature, endCurvature, SEGMENTS);
+            ClothoidInfo clothoid = Clothoid.clothoidA(start, a, startCurvature, endCurvature, SEGMENTS);
 
-            VerifyLine(start, startDirection, clothoid, startCurvature, endCurvature, a);
+            VerifyLine(start, clothoid, startCurvature, endCurvature, a);
         }
     }
 
     /**
      * Verifies a line by comparing theoretical and numerical values.
      * @param start OtsPoint3d; theoretical start point.
-     * @param startDirection Direction; theoretical start location.
      * @param clothoid ClothoidInfo; created clothoid.
      * @param startCurvature LinearDensity; start curvature, may be {@code null} if no theoretical value available.
      * @param endCurvature LinearDensity; end curvature, may be {@code null} if no theoretical value available.
      * @param a Length A-value, may be {@code null} if no theoretical value available.
      * @throws OtsGeometryException if segment number is not available on the line
      */
-    private void VerifyLine(final OtsPoint3d start, final Direction startDirection, final ClothoidInfo clothoid,
-            final LinearDensity startCurvature, final LinearDensity endCurvature, final Length a) throws OtsGeometryException
+    private void VerifyLine(final DirectedPoint start, final ClothoidInfo clothoid, final LinearDensity startCurvature,
+            final LinearDensity endCurvature, final Length a) throws OtsGeometryException
     {
         OtsLine3d line = clothoid.getLine();
-        assertEquals("Start location deviates", 0.0, start.distance(line.get(0)).si, DISTANCE_TOLERANCE);
-        assertEquals("End location deviates", 0.0, clothoid.getEndPoint().distance(line.get(line.size() - 1)).si,
+        assertEquals("Start location deviates", 0.0, Math.hypot(start.x - line.get(0).x, start.y - line.get(0).y),
                 DISTANCE_TOLERANCE);
-        assertEquals("Start direction deviates", 0.0, normalizeAngle(startDirection.si - getAngle(line, 0)), ANGLE_TOLERANCE);
+        assertEquals("End location deviates", 0.0, Math.hypot(clothoid.getEndPoint().x - line.get(line.size() - 1).x,
+                clothoid.getEndPoint().y - line.get(line.size() - 1).y), DISTANCE_TOLERANCE);
+        assertEquals("Start direction deviates", 0.0, normalizeAngle(start.dirZ - getAngle(line, 0)), ANGLE_TOLERANCE);
         assertEquals("End direction deviates", 0.0,
-                normalizeAngle(clothoid.getEndDirection().si - getAngle(line, line.size() - 2)), ANGLE_TOLERANCE);
+                normalizeAngle(clothoid.getEndPoint().dirZ - getAngle(line, line.size() - 2)), ANGLE_TOLERANCE);
         double lengthRatio = line.getLength().si / clothoid.getLength().si;
         assertEquals("Length is more than 1% shorter or longer than theoretical", 1.0, lengthRatio, 0.01);
         if (startCurvature != null)

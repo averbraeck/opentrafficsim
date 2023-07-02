@@ -269,22 +269,17 @@ public class Clothoid
      * If the points approximate a straight line or circle, with a tolerance of up to half a degree, those respective lines are
      * created. The numerical approximation of the underlying Fresnal integral is different from the paper. See
      * {@code fresnal()}.
-     * @param start OtsPoint3d; start point.
-     * @param startDirection Direction; start direction.
-     * @param end OtsPoint3d; end point.
-     * @param endDirection Direction; end direction.
+     * @param start DirectedPoint; start point.
+     * @param end DirectedPoint; end point.
      * @param numSegments int; number of segments.
      * @return ClothoidInfo; clothoid information including line through the directed points.
      * @see <a href="https://www.sciencedirect.com/science/article/pii/S0377042713006286">Connor and Krivodonova (2014)</a>
      * @see <a href="https://www.sciencedirect.com/science/article/pii/S0377042704000925">Waltona and Meek (2009)</a>
      */
-    public static ClothoidInfo clothoidPoints(final OtsPoint3d start, final Direction startDirection, final OtsPoint3d end,
-            final Direction endDirection, final int numSegments)
+    public static ClothoidInfo clothoidPoints(final DirectedPoint start, final DirectedPoint end, final int numSegments)
     {
         Throw.whenNull(start, "Start may not be null.");
-        Throw.whenNull(startDirection, "Start direction may not be null.");
         Throw.whenNull(end, "End may not be null.");
-        Throw.whenNull(endDirection, "End direction may not be null.");
         Throw.when(numSegments < 2, IllegalArgumentException.class, "Number of segments must be at least 2.");
 
         double dx = end.x - start.x;
@@ -292,30 +287,32 @@ public class Clothoid
         double d2 = Math.hypot(dx, dy); // length of straight line from start to end
         double d = Math.atan2(dy, dx); // angle of line through start and end points
 
-        double phi1 = normalizeAngle(d - startDirection.si);
-        double phi2 = normalizeAngle(endDirection.si - d);
+        double phi1 = normalizeAngle(d - start.dirZ);
+        double phi2 = normalizeAngle(end.dirZ - d);
         double phi1Abs = Math.abs(phi1);
         double phi2Abs = Math.abs(phi2);
 
         if (phi1Abs < ANGLE_TOLERANCE && phi2Abs < ANGLE_TOLERANCE)
         {
             // Straight
-            OtsLine3d line =
-                    Try.assign(() -> new OtsLine3d(start, end), "Unable to create straight line from start to end point"
+            OtsPoint3d startPoint = new OtsPoint3d(start.x, start.y, start.z);
+            OtsPoint3d endPoint = new OtsPoint3d(end.x, end.y, end.z);
+            OtsLine3d line = Try.assign(() -> new OtsLine3d(startPoint, endPoint),
+                    "Unable to create straight line from start to end point"
                             + " (which is done as the points and their directions are on a line).");
-            return new ClothoidInfo(line, LinearDensity.ZERO, end, endDirection, LinearDensity.ZERO, start.distance(end),
-                    Length.POSITIVE_INFINITY);
+            return new ClothoidInfo(line, LinearDensity.ZERO, end, LinearDensity.ZERO,
+                    Length.instantiateSI(start.distance(end)), Length.POSITIVE_INFINITY);
         }
         else if (Math.abs(phi2 - phi1) < ANGLE_TOLERANCE)
         {
             // Circle, as points are (nearly) on a circle arc
-            return makeCircle(start, end, d2, startDirection, endDirection, phi1, numSegments);
+            return makeCircle(start, end, d2, phi1, numSegments);
         }
 
         // The algorithm assumes |phi2| to be larger than |phi1|. If this is not the case, the clothoid is created in the
         // opposite direction.
-        OtsPoint3d p1;
-        OtsPoint3d p2;
+        DirectedPoint p1;
+        DirectedPoint p2;
         boolean opposite;
         if (phi2Abs < phi1Abs)
         {
@@ -383,43 +380,40 @@ public class Clothoid
         LinearDensity startCurvature = LinearDensity.instantiateSI(Math.PI * alphaToT(alphaMin) / a);
         LinearDensity endCurvature = LinearDensity.instantiateSI(Math.PI * alphaToT(v1) / a);
         Length length = Length.instantiateSI(a * (alphaToT(v1) - alphaToT(alphaMin)));
-        return new ClothoidInfo(line, startCurvature, end, endDirection, endCurvature, length, Length.instantiateSI(a));
+        return new ClothoidInfo(line, startCurvature, end, endCurvature, length, Length.instantiateSI(a));
     }
 
     /**
      * Create clothoid from one point based on curvature and length. This method calculates the A-value as
      * <i>sqrt(L/|k2-k1|)</i>, where <i>L</i> is the length of the resulting clothoid, and <i>k2</i> and <i>k1</i> are the end
      * and start curvature.
-     * @param start OtsPoint3d; start point.
-     * @param startDirection Direction; start direction.
+     * @param start DirectedPoint; start point.
      * @param length Length; Length of the resulting clothoid.
      * @param startCurvature LinearDensity; start curvature.
      * @param endCurvature LinearDensity; end curvature;
      * @param numSegments int; number of segments.
      * @return ClothoidInfo; clothoid information including line through the start point obeying the curvature and A-value.
      */
-    public static ClothoidInfo clothoidLength(final OtsPoint3d start, final Direction startDirection, final Length length,
+    public static ClothoidInfo clothoidLength(final DirectedPoint start, final Length length,
             final LinearDensity startCurvature, final LinearDensity endCurvature, final int numSegments)
     {
         Length a = Length.instantiateSI(Math.sqrt(length.si / Math.abs(endCurvature.si - startCurvature.si)));
-        return clothoidA(start, startDirection, a, startCurvature, endCurvature, numSegments);
+        return clothoidA(start, a, startCurvature, endCurvature, numSegments);
     }
 
     /**
      * Create clothoid from one point based on curvature and A-value.
-     * @param start OtsPoint3d; start point.
-     * @param startDirection Direction; start direction.
+     * @param start DirectedPoint; start point.
      * @param a Length; A-value.
      * @param startCurvature LinearDensity; start curvature.
      * @param endCurvature LinearDensity; end curvature;
      * @param numSegments int; number of segments.
      * @return ClothoidInfo; clothoid information including line through the start point obeying the curvature and A-value.
      */
-    public static ClothoidInfo clothoidA(final OtsPoint3d start, final Direction startDirection, final Length a,
-            final LinearDensity startCurvature, final LinearDensity endCurvature, final int numSegments)
+    public static ClothoidInfo clothoidA(final DirectedPoint start, final Length a, final LinearDensity startCurvature,
+            final LinearDensity endCurvature, final int numSegments)
     {
         Throw.whenNull(start, "Start may not be null.");
-        Throw.whenNull(startDirection, "Start direction may not be null.");
         Throw.whenNull(a, "\"A\"-value may not be null.");
         Throw.whenNull(startCurvature, "Start curvature may not be null.");
         Throw.whenNull(endCurvature, "End curvature may not be null.");
@@ -432,7 +426,7 @@ public class Clothoid
         double alphaMin = Math.abs(l1) * startCurvature.si / 2.0;
         double alphaMax = Math.abs(l2) * endCurvature.si / 2.0;
 
-        double ang = normalizeAngle(startDirection.si) - Math.abs(alphaMin);
+        double ang = normalizeAngle(start.dirZ) - Math.abs(alphaMin);
         double[] t0 = new double[] {Math.cos(ang), Math.sin(ang)};
         double[] n0 = new double[] {t0[1], -t0[0]};
         Direction endDirection = Direction.instantiateSI(ang + Math.abs(alphaMax));
@@ -440,7 +434,7 @@ public class Clothoid
         {
             // In these cases the algorithm works in the negative direction. We need to flip over the line through the start
             // point that runs perpendicular to the start direction.
-            double m = Math.tan(startDirection.si + Math.PI / 2.0);
+            double m = Math.tan(start.dirZ + Math.PI / 2.0);
 
             // Linear algebra flipping, see: https://math.stackexchange.com/questions/525082/reflection-across-a-line
             double onePlusMm = 1.0 + m * m;
@@ -461,9 +455,10 @@ public class Clothoid
 
         OtsLine3d line = makeLine(alphaMin, alphaMax, aa, start, null, t0, n0, numSegments);
         Length length = Length.instantiateSI(a.si * a.si * Math.abs(endCurvature.si - startCurvature.si));
-        OtsPoint3d end = Try.assign(() -> line.get(line.size() - 1), "Line does not have an end point.");
+        OtsPoint3d endPoint = Try.assign(() -> line.get(line.size() - 1), "Line does not have an end point.");
+        DirectedPoint end = new DirectedPoint(endPoint.x, endPoint.y, endPoint.z, 0.0, 0.0, endDirection.si);
 
-        return new ClothoidInfo(line, startCurvature, end, endDirection, endCurvature, length, a);
+        return new ClothoidInfo(line, startCurvature, end, endCurvature, length, a);
     }
 
     /**
@@ -475,15 +470,15 @@ public class Clothoid
      * @param alphaMin double; minimum number of radians that is moved on to a side of the full clothoid.
      * @param alphaMax double; maximum number of radians that is moved on to a side of the full clothoid.
      * @param a double; shape or scaling factor for the clothoid
-     * @param p1 OtsPoint3d; from point.
-     * @param p2 OtsPoint3d; to point, may be {@code null} as it is only used for corrective shift.
+     * @param p1 DirectedPoint; from point.
+     * @param p2 DirectedPoint; to point, may be {@code null} as it is only used for corrective shift.
      * @param t0 double[]; unit vector from the origin of the clothoid, towards the positive side.
      * @param n0 double[]; normal unit vector to t0.
      * @param numSegments int; number of segments.
      * @return OtsLine3d; clothoid line.
      */
-    private static OtsLine3d makeLine(final double alphaMin, final double alphaMax, final double a, final OtsPoint3d p1,
-            final OtsPoint3d p2, final double[] t0, final double[] n0, final int numSegments)
+    private static OtsLine3d makeLine(final double alphaMin, final double alphaMax, final double a, final DirectedPoint p1,
+            final DirectedPoint p2, final double[] t0, final double[] n0, final int numSegments)
     {
         double step = (alphaMax - alphaMin) / numSegments;
         List<OtsPoint3d> points = new ArrayList<>(numSegments + 1);
@@ -543,21 +538,19 @@ public class Clothoid
 
     /**
      * Create a circle arc. This is done instead of a clothoid when the points and their directions are on a circle arc.
-     * @param start OtsPoint3d; start point for the circle arc.
-     * @param end OtsPoint3d; end point for the circle arc.
+     * @param start DirectedPoint; start point for the circle arc.
+     * @param end DirectedPoint; end point for the circle arc.
      * @param d2 double; length of straight line from start to end.
-     * @param startDirection Direction; start direction
-     * @param endDirection Direction; start direction
      * @param phi1 double; angle between start direction and straight line from start to end 'd'.
      * @param numSegments int; number of segments.
      * @return OtsLine3d; line.
      */
-    private static ClothoidInfo makeCircle(final OtsPoint3d start, final OtsPoint3d end, final double d2,
-            final Direction startDirection, final Direction endDirection, final double phi1, final int numSegments)
+    private static ClothoidInfo makeCircle(final DirectedPoint start, final DirectedPoint end, final double d2,
+            final double phi1, final int numSegments)
     {
         double r = .5 * d2 / Math.sin(phi1);
-        double cosStartDirection = Math.cos(startDirection.si);
-        double sinStartDirection = Math.sin(startDirection.si);
+        double cosStartDirection = Math.cos(start.dirZ);
+        double sinStartDirection = Math.sin(start.dirZ);
         double ang = Math.PI / 2.0;
         double cosAng = Math.cos(ang);
         double sinAng = Math.sin(ang);
@@ -584,7 +577,7 @@ public class Clothoid
         OtsLine3d line = Try.assign(() -> new OtsLine3d(points), "Unable to create OtsLine3d.");
         LinearDensity curvature = LinearDensity.instantiateSI(1.0 / r);
         Length length = Length.instantiateSI(Math.abs((to - from) * r));
-        return new ClothoidInfo(line, curvature, end, endDirection, curvature, length, Length.ZERO);
+        return new ClothoidInfo(line, curvature, end, curvature, length, Length.ZERO);
     }
 
     /**
@@ -777,10 +770,7 @@ public class Clothoid
         private final LinearDensity startCurvature;
 
         /** End point. */
-        private final OtsPoint3d endPoint;
-
-        /** End direction. */
-        private final Direction endDirection;
+        private final DirectedPoint endPoint;
 
         /** End curvature. */
         private final LinearDensity endCurvature;
@@ -795,19 +785,17 @@ public class Clothoid
          * Constructor.
          * @param line OtsLine3d; start curvature.
          * @param startCurvature LinearDensity;
-         * @param endPoint OtsPoint3d; 3nd point.
-         * @param endDirection Direction; end direction.
+         * @param endPoint DirectedPoint; 3nd point.
          * @param endCurvature LinearDensity; end curvature.
          * @param length Length; length.
          * @param a Length; A-value; scaling factor for the clothoid.
          */
-        public ClothoidInfo(final OtsLine3d line, final LinearDensity startCurvature, final OtsPoint3d endPoint,
-                final Direction endDirection, final LinearDensity endCurvature, final Length length, final Length a)
+        public ClothoidInfo(final OtsLine3d line, final LinearDensity startCurvature, final DirectedPoint endPoint,
+                final LinearDensity endCurvature, final Length length, final Length a)
         {
             this.line = line;
             this.startCurvature = startCurvature;
             this.endPoint = endPoint;
-            this.endDirection = endDirection;
             this.endCurvature = endCurvature;
             this.length = length;
             this.a = a;
@@ -833,20 +821,11 @@ public class Clothoid
 
         /**
          * Returns the end point.
-         * @return OtsPoint3d; end point.
+         * @return DirectedPoint; end point.
          */
-        public OtsPoint3d getEndPoint()
+        public DirectedPoint getEndPoint()
         {
             return this.endPoint;
-        }
-
-        /**
-         * Returns the theoretical end direction.
-         * @return Direction; end direction.
-         */
-        public Direction getEndDirection()
-        {
-            return this.endDirection;
         }
 
         /**
