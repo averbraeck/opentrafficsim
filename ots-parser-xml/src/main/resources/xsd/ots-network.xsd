@@ -129,7 +129,6 @@
       <xsd:attribute name="OffsetEnd" type="ots:LengthType" use="optional" default="0.0 m" />
       <xsd:attribute name="LaneKeeping" type="ots:LaneKeepingType" use="optional" default="KEEPRIGHT" />
       <xsd:attribute name="Priority" type="ots:PriorityType" use="optional" />
-      <xsd:attribute name="FixGradualOffset" type="xsd:boolean" use="optional" default="false" />
       <xsd:attribute name="ConflictId" type="xsd:string" use="optional" />
       <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
