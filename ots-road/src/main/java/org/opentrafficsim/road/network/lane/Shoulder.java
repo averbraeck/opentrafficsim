@@ -2,6 +2,7 @@ package org.opentrafficsim.road.network.lane;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -37,6 +38,12 @@ public class Shoulder extends CrossSectionElement
             final boolean fixGradualLateralOffset) throws OtsGeometryException, NetworkException
     {
         super(parentLink, id, lateralPositionStart, lateralPositionEnd, beginWidth, endWidth, false);
+    }
+
+    public Shoulder(final CrossSectionLink parentLink, final String id, OtsLine3d centerLine, final Length offsetStart, final Length offsetEnd,
+                    final Length beginWidth, final Length endWidth) throws OtsGeometryException, NetworkException
+    {
+        super(parentLink, id, centerLine, offsetStart, offsetEnd, beginWidth, endWidth);
     }
 
     /** {@inheritDoc} */

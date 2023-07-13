@@ -10,6 +10,7 @@ import java.util.UUID;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -57,6 +58,14 @@ public class Stripe extends CrossSectionElement
     {
         super(parentLink, UUID.randomUUID().toString(), startCenterPosition, endCenterPosition, beginWidth, endWidth,
                 fixGradualLateralOffset);
+        Throw.whenNull(type, "Type may not be null.");
+        this.type = type;
+    }
+
+    public Stripe(final Type type, final CrossSectionLink parentLink, OtsLine3d centerLine, final Length offsetStart, final Length offsetEnd,
+                  final Length beginWidth, final Length endWidth ) throws OtsGeometryException, NetworkException
+    {
+        super(parentLink, UUID.randomUUID().toString(), centerLine, offsetStart, offsetEnd, beginWidth, endWidth);
         Throw.whenNull(type, "Type may not be null.");
         this.type = type;
     }

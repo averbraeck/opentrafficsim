@@ -204,6 +204,23 @@ public class CrossSectionElement extends LocalEventProducer implements Locatable
                 fixGradualLateralOffset));
     }
 
+    public CrossSectionElement(final CrossSectionLink parentLink, final String id, OtsLine3d centerLine, final Length offsetStart,
+                               final Length offsetEnd, final Length beginWidth, final Length endWidth) throws OtsGeometryException, NetworkException
+    {
+        this.id = id;
+        this.parentLink = parentLink;
+        this.centerLine = centerLine;
+        this.length = centerLine.getLength();
+        List<CrossSectionSlice> slices = new ArrayList<>();
+        slices.add(new CrossSectionSlice(Length.ZERO,offsetStart,beginWidth));
+        slices.add(new CrossSectionSlice(parentLink.getLength(),offsetEnd,endWidth));
+        this.crossSectionSlices=slices;
+        this.contour = constructContour(this);
+        this.parentLink.addCrossSectionElement(this);
+
+        parentLink.getNetwork().clearLaneChangeInfoCache();
+    }
+
     /**
      * Construct a list of cross section slices, using sinusoidal interpolation for changing lateral offset.
      * @param parentLink CrossSectionLink; Link to which the element belongs.
