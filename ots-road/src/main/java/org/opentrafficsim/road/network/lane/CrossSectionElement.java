@@ -205,8 +205,8 @@ public class CrossSectionElement extends LocalEventProducer implements Locatable
                 fixGradualLateralOffset));
     }
 
-    public CrossSectionElement(final CrossSectionLink parentLink, final String id, OtsLine3d centerLine, final Length offsetStart, final Length offsetEnd,
-                               final Length beginWidth, final Length endWidth) throws OtsGeometryException, NetworkException
+    public CrossSectionElement(final CrossSectionLink parentLink, final String id, OtsLine3d centerLine, final Length offsetStart,
+                               final Length offsetEnd, final Length beginWidth, final Length endWidth) throws OtsGeometryException, NetworkException
     {
         this.id = id;
         this.parentLink = parentLink;

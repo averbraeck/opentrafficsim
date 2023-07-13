@@ -67,10 +67,10 @@ public class CustomSimulation extends OtsSimulationApplication<CustomSimulation.
     private static final long serialVersionUID = 20161211L;
 
     /**
-     * Create a T-Junction demo.
+     * Create a custom simulation.
      * @param title String; the title of the Frame
      * @param panel OtsAnimationPanel; the tabbed panel to display
-     * @param model TJunctionModel; the model
+     * @param model CustomModel; the model
      * @throws OtsDrawingException on animation error
      */
     public CustomSimulation(final String title, final OtsAnimationPanel panel, final CustomModel model)
@@ -89,7 +89,7 @@ public class CustomSimulation extends OtsSimulationApplication<CustomSimulation.
         {
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(model.getNetwork().getExtent(),
                     new Dimension(800, 600), simulator, model, DEFAULT_COLORER, model.getNetwork());
-            CustomSimulation app = new CustomSimulation("T-Junction demo", animationPanel, model);
+            CustomSimulation app = new CustomSimulation("Custom Simulation", animationPanel, model);
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();
         }
