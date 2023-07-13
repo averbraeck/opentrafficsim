@@ -398,8 +398,8 @@ public class OtsLine3d implements Locatable, Serializable // XXX: DJ
         for (int i = 0; i < fractionsList.size(); i++)
         {
             offsetLine[i] = offsetLine(offsetsList.get(i));
-            System.out.println("# offset is " + offsetsList.get(i));
-            System.out.println(offsetLine[i].toPlot());
+            // System.out.println("# offset is " + offsetsList.get(i));
+            // System.out.println(offsetLine[i].toPlot());
         }
         List<Coordinate> out = new ArrayList<>();
         Coordinate prevCoordinate = null;

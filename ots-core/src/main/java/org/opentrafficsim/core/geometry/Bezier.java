@@ -106,8 +106,8 @@ public final class Bezier
      * @param numPoints int; the number of points for the B&eacute;zier curve
      * @param start DirectedPoint; the directed start point of the B&eacute;zier curve
      * @param end DirectedPoint; the directed end point of the B&eacute;zier curve
-     * @param shape shape factor; 1 = control points at half the distance between start and end, &gt; 1 results in a pointier
-     *            shape, &lt; 1 results in a flatter shape, value should be above 0
+     * @param shape double; shape factor; 1 = control points at half the distance between start and end, &gt; 1 results in a
+     *            pointier shape, &lt; 1 results in a flatter shape, value should be above 0
      * @param weighted boolean; control point distance relates to distance to projected point on extended line from other end
      * @return a cubic B&eacute;zier curve between start and end, with the two determined control points
      * @throws OtsGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
@@ -116,6 +116,23 @@ public final class Bezier
     public static OtsLine3d cubic(final int numPoints, final DirectedPoint start, final DirectedPoint end, final double shape,
             final boolean weighted) throws OtsGeometryException
     {
+        return bezier(cubicControlPoints(start, end, shape, weighted));
+    }
+
+    /**
+     * Construct control points for a cubic B&eacute;zier curve from start to end with two generated control points at half the
+     * distance between start and end.
+     * @param start DirectedPoint; the directed start point of the B&eacute;zier curve
+     * @param end DirectedPoint; the directed end point of the B&eacute;zier curve
+     * @param shape double; shape factor; 1 = control points at half the distance between start and end, &gt; 1 results in a
+     *            pointier shape, &lt; 1 results in a flatter shape, value should be above 0
+     * @param weighted boolean; control point distance relates to distance to projected point on extended line from other end
+     * @return a cubic B&eacute;zier curve between start and end, with the two determined control points
+     */
+    public static OtsPoint3d[] cubicControlPoints(final DirectedPoint start, final DirectedPoint end, final double shape,
+            final boolean weighted)
+    {
+        Throw.when(shape <= 0.0, IllegalArgumentException.class, "Shape factor must be above 0.0.");
         OtsPoint3d control1;
         OtsPoint3d control2;
 
@@ -153,8 +170,7 @@ public final class Bezier
         OtsPoint3d s = new OtsPoint3d(start);
         OtsPoint3d e = new OtsPoint3d(end);
 
-        // return cubic(numPoints, new OtsPoint3d(start), control1, control2, new OtsPoint3d(end));
-        return bezier(numPoints, s, control1, control2, e);
+        return new OtsPoint3d[] {s, control1, control2, e};
     }
 
     /**
@@ -246,7 +262,7 @@ public final class Bezier
      * @return the B&eacute;zier value B(t) of degree n, where n is the number of points in the array
      */
     @SuppressWarnings("checkstyle:methodname")
-    private static double Bn(final double t, final double... p)
+    static double Bn(final double t, final double... p)
     {
         double b = 0.0;
         double m = (1.0 - t);

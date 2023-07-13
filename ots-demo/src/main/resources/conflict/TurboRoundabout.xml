@@ -246,12 +246,12 @@
     </ots:Link>
 
     <!-- Roundabout itself, generated code -->
-    <ots:Node Id="EENTER" Coordinate="(44.0000,5.2500)" Direction="180.0000 deg(E)" />
-    <ots:Node Id="EEXIT" Coordinate="(44.0000,-1.7500)" Direction="360.0000 deg(E)" />
+    <ots:Node Id="EENTER" Coordinate="(29.0000,5.2500)" Direction="180.0000 deg(E)" />
+    <ots:Node Id="EEXIT" Coordinate="(29.0000,-1.7500)" Direction="360.0000 deg(E)" />
     <ots:Node Id="EA" Coordinate="(15.9460,12.0808)" Direction="122.9377 deg(E)" />
     <ots:Node Id="EB" Coordinate="(10.3308,17.6960)" Direction="147.0623 deg(E)" />
     <ots:Link Id="EENTEREA" NodeStart="EENTER" NodeEnd="EA" Type="URBAN">
-      <ots:Bezier Shape="1.1" Weighted="true" />
+      <ots:Bezier Shape="0.8" Weighted="true" />
       <ots:DefinedLayout>2LANE</ots:DefinedLayout>
     </ots:Link>
     <ots:Link Id="EAEB" NodeStart="EA" NodeEnd="EB" Type="URBAN">
@@ -266,12 +266,12 @@
       <ots:Bezier Shape="1.1" Weighted="true" />
       <ots:DefinedLayout>2LANE</ots:DefinedLayout>
     </ots:Link>
-    <ots:Node Id="NENTER" Coordinate="(-5.2500,44.0000)" Direction="270.0000 deg(E)" />
-    <ots:Node Id="NEXIT" Coordinate="(5.2500,44.0000)" Direction="90.0000 deg(E)" />
+    <ots:Node Id="NENTER" Coordinate="(-5.2500,29.0000)" Direction="270.0000 deg(E)" />
+    <ots:Node Id="NEXIT" Coordinate="(5.2500,29.0000)" Direction="90.0000 deg(E)" />
     <ots:Node Id="NA" Coordinate="(-10.3308,14.1960)" Direction="212.9377 deg(E)" />
     <ots:Node Id="NB" Coordinate="(-15.9460,8.5808)" Direction="237.0623 deg(E)" />
     <ots:Link Id="NENTERNA" NodeStart="NENTER" NodeEnd="NA" Type="URBAN">
-      <ots:Bezier Shape="1.1" Weighted="true" />
+      <ots:Bezier Shape="0.8" Weighted="true" />
       <ots:DefinedLayout>2LANE</ots:DefinedLayout>
     </ots:Link>
     <ots:Link Id="NANB" NodeStart="NA" NodeEnd="NB" Type="URBAN">
@@ -286,12 +286,12 @@
       <ots:Bezier Shape="1.1" Weighted="true" />
       <ots:DefinedLayout>1LEFT</ots:DefinedLayout>
     </ots:Link>
-    <ots:Node Id="WENTER" Coordinate="(-44.0000,-5.2500)" Direction="0 deg(E)" />
-    <ots:Node Id="WEXIT" Coordinate="(-44.0000,1.7500)" Direction="180.0000 deg(E)" />
+    <ots:Node Id="WENTER" Coordinate="(-29.0000,-5.2500)" Direction="0 deg(E)" />
+    <ots:Node Id="WEXIT" Coordinate="(-29.0000,1.7500)" Direction="180.0000 deg(E)" />
     <ots:Node Id="WA" Coordinate="(-15.9460,-12.0808)" Direction="302.9377 deg(E)" />
     <ots:Node Id="WB" Coordinate="(-10.3308,-17.6960)" Direction="327.0623 deg(E)" />
     <ots:Link Id="WENTERWA" NodeStart="WENTER" NodeEnd="WA" Type="URBAN">
-      <ots:Bezier Shape="1.1" Weighted="true" />
+      <ots:Bezier Shape="0.8" Weighted="true" />
       <ots:DefinedLayout>2LANE</ots:DefinedLayout>
     </ots:Link>
     <ots:Link Id="WAWB" NodeStart="WA" NodeEnd="WB" Type="URBAN">
@@ -306,12 +306,12 @@
       <ots:Bezier Shape="1.1" Weighted="true" />
       <ots:DefinedLayout>2LANE</ots:DefinedLayout>
     </ots:Link>
-    <ots:Node Id="SENTER" Coordinate="(5.2500,-44.0000)" Direction="90.0000 deg(E)" />
-    <ots:Node Id="SEXIT" Coordinate="(-5.2500,-44.0000)" Direction="270.0000 deg(E)" />
+    <ots:Node Id="SENTER" Coordinate="(5.2500,-29.0000)" Direction="90.0000 deg(E)" />
+    <ots:Node Id="SEXIT" Coordinate="(-5.2500,-29.0000)" Direction="270.0000 deg(E)" />
     <ots:Node Id="SA" Coordinate="(10.3308,-14.1960)" Direction="392.9377 deg(E)" />
     <ots:Node Id="SB" Coordinate="(15.9460,-8.5808)" Direction="417.0623 deg(E)" />
     <ots:Link Id="SENTERSA" NodeStart="SENTER" NodeEnd="SA" Type="URBAN">
-      <ots:Bezier Shape="1.1" Weighted="true" />
+      <ots:Bezier Shape="0.9" Weighted="true" />
       <ots:DefinedLayout>2LANE</ots:DefinedLayout>
     </ots:Link>
     <ots:Link Id="SASB" NodeStart="SA" NodeEnd="SB" Type="URBAN">

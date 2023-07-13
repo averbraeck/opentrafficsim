@@ -40,9 +40,9 @@ import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.GeneratorLanePosition;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.Placement;
@@ -52,7 +52,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -198,8 +198,10 @@ public class InjectionsTest
         CrossSectionLink linkAB = new CrossSectionLink(network, "AB", nodeA, nodeB, DefaultsNl.FREEWAY,
                 new OtsLine3d(nodeA.getPoint(), nodeB.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
         Length laneWidth = Length.instantiateSI(3.5);
-        new Lane(linkAB, "Lane1", Length.ZERO, laneWidth, DefaultsRoadNl.FREEWAY, Collections.emptyMap());
-        new Lane(linkAB, "Lane2", laneWidth, laneWidth, DefaultsRoadNl.FREEWAY, Collections.emptyMap());
+        LaneGeometryUtil.createStraightLane(linkAB, "Lane1", Length.ZERO, laneWidth, DefaultsRoadNl.FREEWAY,
+                Collections.emptyMap());
+        LaneGeometryUtil.createStraightLane(linkAB, "Lane2", laneWidth, laneWidth, DefaultsRoadNl.FREEWAY,
+                Collections.emptyMap());
         // -- table
         Table arrivals2 = new ListTable("id", "", Set.of(time, length)); // no GTU type column
         Try.testFail(() -> fullInjections(arrivals2, network).asLaneBasedGtuCharacteristicsGenerator(),

@@ -55,6 +55,7 @@ import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.He
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.od.Categorization;
 import org.opentrafficsim.road.od.Category;
@@ -180,13 +181,13 @@ public class OdApplierTest
         CrossSectionLink linkAB = new CrossSectionLink(this.network, "AB", nodeA, nodeB, DefaultsNl.ROAD,
                 new OtsLine3d(pointA, pointB), LaneKeepingPolicy.KEEPRIGHT);
         this.lanes.put("lane1",
-                new Lane(linkAB, "lane1", Length.instantiateSI(1.75), Length.instantiateSI(1.75), Length.instantiateSI(3.5),
-                        Length.instantiateSI(3.5), DefaultsRoadNl.HIGHWAY,
-                        Map.of(DefaultsNl.VEHICLE, new Speed(120, SpeedUnit.KM_PER_HOUR)), false));
+                LaneGeometryUtil.createStraightLane(linkAB, "lane1", Length.instantiateSI(1.75), Length.instantiateSI(1.75),
+                        Length.instantiateSI(3.5), Length.instantiateSI(3.5), DefaultsRoadNl.HIGHWAY,
+                        Map.of(DefaultsNl.VEHICLE, new Speed(120, SpeedUnit.KM_PER_HOUR))));
         this.lanes.put("lane2",
-                new Lane(linkAB, "lane2", Length.instantiateSI(-1.75), Length.instantiateSI(-1.75), Length.instantiateSI(3.5),
-                        Length.instantiateSI(3.5), DefaultsRoadNl.HIGHWAY,
-                        Map.of(DefaultsNl.VEHICLE, new Speed(120, SpeedUnit.KM_PER_HOUR)), false));
+                LaneGeometryUtil.createStraightLane(linkAB, "lane2", Length.instantiateSI(-1.75), Length.instantiateSI(-1.75),
+                        Length.instantiateSI(3.5), Length.instantiateSI(3.5), DefaultsRoadNl.HIGHWAY,
+                        Map.of(DefaultsNl.VEHICLE, new Speed(120, SpeedUnit.KM_PER_HOUR))));
         Set<GtuType> gtuTypes = new LinkedHashSet<>();
         gtuTypes.add(DefaultsNl.VEHICLE);
     }

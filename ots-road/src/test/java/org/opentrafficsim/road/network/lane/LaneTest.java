@@ -30,7 +30,6 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.mockito.Mockito;
-import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
@@ -40,6 +39,7 @@ import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.core.geometry.OtsPoint3d;
+import org.opentrafficsim.core.geometry.OtsShape;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -95,7 +95,8 @@ public class LaneTest implements UNITS
         speedMap.put(DefaultsNl.VEHICLE, new Speed(100, KM_PER_HOUR));
         // Now we can construct a Lane
         // FIXME what overtaking conditions do we want to test in this unit test?
-        Lane lane = new Lane(link, "lane", startLateralPos, endLateralPos, startWidth, endWidth, laneType, speedMap, false);
+        Lane lane = LaneGeometryUtil.createStraightLane(link, "lane", startLateralPos, endLateralPos, startWidth, endWidth,
+                laneType, speedMap);
         // Verify the easy bits
         assertEquals("Link returns network", network, link.getNetwork());
         assertEquals("Lane returns network", network, lane.getNetwork());
@@ -145,9 +146,10 @@ public class LaneTest implements UNITS
         coordinates[2] = new OtsPoint3d(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
         link = new CrossSectionLink(network, "A to B with Kink", nodeFrom, nodeTo, DefaultsNl.FREEWAY,
                 new OtsLine3d(coordinates), LaneKeepingPolicy.KEEPRIGHT);
-        lane = new Lane(link, "lane.1", startLateralPos, endLateralPos, startWidth, endWidth, laneType, speedMap, false);
+        lane = LaneGeometryUtil.createStraightLane(link, "lane.1", startLateralPos, endLateralPos, startWidth, endWidth,
+                laneType, speedMap);
         // Verify the easy bits
-        
+
         // XXX: This is not correct...
         /*-
         assertEquals("PrevLanes should contain one lane from the other link", 1, lane.prevLanes(gtuTypeCar).size());
@@ -175,11 +177,14 @@ public class LaneTest implements UNITS
         assertEquals("There should be no GTUs on the lane", 0, lane2.getGtuList().size());
         assertEquals("LaneType should be " + laneType, laneType, lane2.getType());
         */
-        
+
         // Construct a lane using CrossSectionSlices
+        OtsLine3d centerLine = new OtsLine3d(new OtsPoint3d(0.0, 0.0, 0.0), new OtsPoint3d(100.0, 0.0, 0.0));
+        OtsShape contour = new OtsShape(new OtsPoint3d(0.0, -1.75, 0.0), new OtsPoint3d(100.0, -1.75, 0.0),
+                new OtsPoint3d(100.0, 1.75, 0.0), new OtsPoint3d(0.0, -1.75, 0.0));
         try
         {
-            new Lane(link, "lanex", null, laneType, speedMap);
+            new Lane(link, "lanex", centerLine, contour, null, laneType, speedMap);
             fail("null pointer for CrossSectionSlices should have thrown a NullPointerException");
         }
         catch (NullPointerException npe)
@@ -189,7 +194,7 @@ public class LaneTest implements UNITS
         List<CrossSectionSlice> crossSectionSlices = new ArrayList<>();
         try
         {
-            new Lane(link, "lanex", crossSectionSlices, laneType, speedMap);
+            new Lane(link, "lanex", centerLine, contour, crossSectionSlices, laneType, speedMap);
             fail("empty CrossSectionSlices should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -197,7 +202,7 @@ public class LaneTest implements UNITS
             // Ignore expected exception
         }
         crossSectionSlices.add(new CrossSectionSlice(Length.ZERO, startLateralPos, startWidth));
-        lane = new Lane(link, "lanex", crossSectionSlices, laneType, speedMap);
+        lane = new Lane(link, "lanex", centerLine, contour, crossSectionSlices, laneType, speedMap);
         sensorTest(lane);
     }
 
@@ -575,7 +580,8 @@ public class LaneTest implements UNITS
         Length offsetAtStart = Length.instantiateSI(5);
         Length offsetAtEnd = Length.instantiateSI(15);
         Length width = Length.instantiateSI(4);
-        Lane lane = new Lane(link, "lane", offsetAtStart, offsetAtEnd, width, width, laneType, speedMap, true);
+        Lane lane =
+                LaneGeometryUtil.createStraightLane(link, "lane", offsetAtStart, offsetAtEnd, width, width, laneType, speedMap);
         OtsLine3d laneCenterLine = lane.getCenterLine();
         // System.out.println("Center line is " + laneCenterLine);
         OtsPoint3d[] points = laneCenterLine.getPoints();
@@ -645,13 +651,11 @@ public class LaneTest implements UNITS
                     laneType.addCompatibleGtuType(DefaultsNl.VEHICLE);
                     Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
                     speedMap.put(DefaultsNl.VEHICLE, new Speed(50, KM_PER_HOUR));
-                    Node start =
-                            new Node(network, "start", new OtsPoint3d(xStart, yStart), Direction.instantiateSI(angle));
+                    Node start = new Node(network, "start", new OtsPoint3d(xStart, yStart), Direction.instantiateSI(angle));
                     double linkLength = 1000;
                     double xEnd = xStart + linkLength * Math.cos(angle);
                     double yEnd = yStart + linkLength * Math.sin(angle);
-                    Node end =
-                            new Node(network, "end", new OtsPoint3d(xEnd, yEnd), Direction.instantiateSI(angle));
+                    Node end = new Node(network, "end", new OtsPoint3d(xEnd, yEnd), Direction.instantiateSI(angle));
                     OtsPoint3d[] coordinates = new OtsPoint3d[2];
                     coordinates[0] = start.getPoint();
                     coordinates[1] = end.getPoint();
@@ -668,9 +672,9 @@ public class LaneTest implements UNITS
                             {
                                 // Now we can construct a Lane
                                 // FIXME what overtaking conditions do we want to test in this unit test?
-                                Lane lane = new Lane(link, "lane." + ++laneNum, new Length(startLateralOffset, METER),
-                                        new Length(endLateralOffset, METER), new Length(startWidth, METER),
-                                        new Length(endWidth, METER), laneType, speedMap, false);
+                                Lane lane = LaneGeometryUtil.createStraightLane(link, "lane." + ++laneNum,
+                                        new Length(startLateralOffset, METER), new Length(endLateralOffset, METER),
+                                        new Length(startWidth, METER), new Length(endWidth, METER), laneType, speedMap);
                                 final Geometry geometry = lane.getContour().getLineString();
                                 assertNotNull("geometry of the lane should not be null", geometry);
                                 // Verify a couple of points that should be inside the contour of the Lane

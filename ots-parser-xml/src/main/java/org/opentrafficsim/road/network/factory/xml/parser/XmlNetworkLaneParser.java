@@ -34,6 +34,7 @@ import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.opentrafficsim.core.geometry.ContinuousLine;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -251,9 +252,10 @@ public final class XmlNetworkLaneParser implements Serializable
         Network network = ots.getNetwork();
         Map<String, Direction> nodeDirections = NetworkParser.calculateNodeAngles(otsNetwork, network);
         NetworkParser.parseNodes(otsNetwork, network, nodeDirections);
-        NetworkParser.parseLinks(otsNetwork, definitions, network, nodeDirections, otsNetwork.getSimulator());
+        Map<String, ContinuousLine> designLines = new LinkedHashMap<>();
+        NetworkParser.parseLinks(otsNetwork, definitions, network, nodeDirections, otsNetwork.getSimulator(), designLines);
         NetworkParser.applyRoadLayout(otsNetwork, definitions, network, otsNetwork.getSimulator(), roadLayoutMap,
-                linkTypeSpeedLimitMap);
+                linkTypeSpeedLimitMap, designLines);
 
         Demand demand = ots.getDemand();
         if (demand != null)

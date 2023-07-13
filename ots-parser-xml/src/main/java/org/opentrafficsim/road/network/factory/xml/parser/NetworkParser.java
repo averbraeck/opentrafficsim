@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -18,10 +19,17 @@ import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
+import org.opentrafficsim.core.geometry.ContinuousArc;
+import org.opentrafficsim.core.geometry.ContinuousBezierCubic;
+import org.opentrafficsim.core.geometry.ContinuousLine;
+import org.opentrafficsim.core.geometry.ContinuousPolyLine;
+import org.opentrafficsim.core.geometry.ContinuousStraight;
 import org.opentrafficsim.core.geometry.DirectedPoint;
+import org.opentrafficsim.core.geometry.OtsGeometryUtil;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.core.geometry.OtsPoint3d;
+import org.opentrafficsim.core.geometry.OtsShape;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Centroid;
@@ -37,13 +45,16 @@ import org.opentrafficsim.road.network.factory.xml.utils.Transformer;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
+import org.opentrafficsim.road.network.lane.CrossSectionSlice;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Type;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.xml.bindings.types.ArcDirection;
+import org.opentrafficsim.xml.bindings.types.StripeType;
 import org.opentrafficsim.xml.generated.BasicRoadLayout;
 import org.opentrafficsim.xml.generated.CseLane;
 import org.opentrafficsim.xml.generated.CseNoTrafficLane;
@@ -157,12 +168,13 @@ public final class NetworkParser
      * @param network Network; the Network tag
      * @param nodeDirections Map&lt;String,Direction&gt;; a map of the node ids and their default directions
      * @param simulator OtsSimulatorInterface; the simulator
+     * @param designLines Map&lt;String, ContinuousLine&gt;; map t store created design lines.
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      * @throws OtsGeometryException when the design line is invalid
      */
     static void parseLinks(final RoadNetwork otsNetwork, final Definitions definitions, final Network network,
-            final Map<String, Direction> nodeDirections, final OtsSimulatorInterface simulator)
-            throws NetworkException, OtsGeometryException
+            final Map<String, Direction> nodeDirections, final OtsSimulatorInterface simulator,
+            final Map<String, ContinuousLine> designLines) throws NetworkException, OtsGeometryException
     {
         for (org.opentrafficsim.xml.generated.Connector xmlConnector : ParseUtil
                 .getObjectsOfType(network.getNodeOrLinkOrCentroid(), org.opentrafficsim.xml.generated.Connector.class))
@@ -191,21 +203,32 @@ public final class NetworkParser
         {
             Node startNode = (Node) otsNetwork.getNode(xmlLink.getNodeStart());
             Node endNode = (Node) otsNetwork.getNode(xmlLink.getNodeEnd());
-            double startDirection =
-                    nodeDirections.containsKey(startNode.getId()) ? nodeDirections.get(startNode.getId()).getSI() : 0.0;
-            double endDirection =
-                    nodeDirections.containsKey(endNode.getId()) ? nodeDirections.get(endNode.getId()).getSI() : 0.0;
             OtsPoint3d startPoint = new OtsPoint3d(startNode.getPoint());
             OtsPoint3d endPoint = new OtsPoint3d(endNode.getPoint());
             OtsPoint3d[] coordinates = null;
 
-            if (xmlLink.getStraight() != null)
+            // start and end with heading, adjusted with offset
+            double startHeading = startNode.getHeading().si;
+            DirectedPoint start = new DirectedPoint(startPoint.x, startPoint.y, startPoint.z, 0.0, 0.0, startHeading);
+            if (xmlLink.getOffsetStart() != null)
             {
-                coordinates = new OtsPoint3d[2];
-                coordinates[0] = startPoint;
-                coordinates[1] = endPoint;
+                start = OtsGeometryUtil.offsetPoint(start, xmlLink.getOffsetStart().si);
+            }
+            double endHeading = endNode.getHeading().si;
+            DirectedPoint end = new DirectedPoint(endPoint.x, endPoint.y, endPoint.z, 0.0, 0.0, endHeading);
+            if (xmlLink.getOffsetEnd() != null)
+            {
+                end = OtsGeometryUtil.offsetPoint(end, xmlLink.getOffsetEnd().si);
             }
 
+            ContinuousLine designLine;
+            Integer numSegments = null;
+            Angle maxAngleError = null;
+            Length maxSpatialError = null;
+            if (xmlLink.getStraight() != null)
+            {
+                designLine = new ContinuousStraight(start, Math.hypot(end.x - start.x, end.y - start.y));
+            }
             else if (xmlLink.getPolyline() != null)
             {
                 int intermediatePoints = xmlLink.getPolyline().getCoordinate().size();
@@ -216,96 +239,43 @@ public final class NetworkParser
                 {
                     coordinates[p + 1] = new OtsPoint3d(xmlLink.getPolyline().getCoordinate().get(p));
                 }
-
+                designLine = new ContinuousPolyLine(OtsLine3d.createAndCleanOtsLine3d(coordinates));
             }
             else if (xmlLink.getArc() != null)
             {
-                // calculate the center position
-                double radiusSI = xmlLink.getArc().getRadius().getSI();
-                double offsetStart = 0.0;
-                if (xmlLink.getOffsetStart() != null)
+                if (xmlLink.getArc().getNumSegments() != null)
                 {
-                    offsetStart = xmlLink.getOffsetStart().si;
+                    numSegments = xmlLink.getArc().getNumSegments().intValue();
                 }
-                double offsetEnd = 0.0;
-                if (xmlLink.getOffsetEnd() != null)
+                double radius = xmlLink.getArc().getRadius().getSI();
+                boolean left = xmlLink.getArc().getDirection().equals(ArcDirection.LEFT);
+                while (left && endHeading < startHeading)
                 {
-                    offsetEnd = xmlLink.getOffsetEnd().si;
+                    endHeading += 2.0 * Math.PI;
                 }
-                List<OtsPoint3d> centerList = OtsPoint3d.circleIntersections(startNode.getPoint(), radiusSI + offsetStart,
-                        endNode.getPoint(), radiusSI + offsetEnd);
-                OtsPoint3d center =
-                        (xmlLink.getArc().getDirection().equals(ArcDirection.RIGHT)) ? centerList.get(0) : centerList.get(1);
-
-                // calculate start angle and end angle
-                double sa = Math.atan2(startNode.getPoint().y - center.y, startNode.getPoint().x - center.x);
-                double ea = Math.atan2(endNode.getPoint().y - center.y, endNode.getPoint().x - center.x);
-                if (xmlLink.getArc().getDirection().equals(ArcDirection.RIGHT))
+                while (!left && endHeading > startHeading)
                 {
-                    // right -> negative direction, ea should be less than sa
-                    ea = (sa < ea) ? ea + Math.PI * 2.0 : ea;
+                    endHeading -= 2.0 * Math.PI;
                 }
-                else
-                {
-                    // left -> positive direction, sa should be less than ea
-                    ea = (ea < sa) ? ea + Math.PI * 2.0 : ea;
-                }
-
-                int numSegments = xmlLink.getArc().getNumSegments().intValue();
-                coordinates = new OtsPoint3d[numSegments];
-                coordinates[0] = new OtsPoint3d(startNode.getPoint().x + Math.cos(sa) * offsetStart,
-                        startNode.getPoint().y + Math.sin(sa) * offsetStart, startNode.getPoint().z);
-                coordinates[coordinates.length - 1] = new OtsPoint3d(endNode.getPoint().x + Math.cos(ea) * offsetEnd,
-                        endNode.getPoint().y + Math.sin(ea) * offsetEnd, endNode.getPoint().z);
-                double angleStep = Math.abs((ea - sa)) / numSegments;
-                double slopeStep = (endNode.getPoint().z - startNode.getPoint().z) / numSegments;
-
-                if (xmlLink.getArc().getDirection().equals(ArcDirection.RIGHT))
-                {
-                    for (int p = 1; p < numSegments - 1; p++)
-                    {
-                        double dRad = offsetStart + (offsetEnd - offsetStart) * p / numSegments;
-                        coordinates[p] = new OtsPoint3d(center.x + (radiusSI + dRad) * Math.cos(sa - angleStep * p),
-                                center.y + (radiusSI + dRad) * Math.sin(sa - angleStep * p),
-                                startNode.getPoint().z + slopeStep * p);
-                    }
-                }
-                else
-                {
-                    for (int p = 1; p < numSegments - 1; p++)
-                    {
-                        double dRad = offsetStart + (offsetEnd - offsetStart) * p / numSegments;
-                        coordinates[p] = new OtsPoint3d(center.x + (radiusSI + dRad) * Math.cos(sa + angleStep * p),
-                                center.y + (radiusSI + dRad) * Math.sin(sa + angleStep * p),
-                                startNode.getPoint().z + slopeStep * p);
-                    }
-                }
+                designLine = new ContinuousArc(start, radius, left, Angle.instantiateSI(Math.abs(endHeading) - startHeading));
             }
-
             else if (xmlLink.getBezier() != null)
             {
-                int numSegments = xmlLink.getBezier().getNumSegments().intValue();
+                if (xmlLink.getBezier().getNumSegments() != null)
+                {
+                    numSegments = xmlLink.getBezier().getNumSegments().intValue();
+                }
                 double shape = xmlLink.getBezier().getShape();
                 boolean weighted = xmlLink.getBezier().isWeighted();
-                if (xmlLink.getBezier().getStartDirection() != null)
-                {
-                    startDirection = xmlLink.getBezier().getStartDirection().getSI();
-                }
-                if (xmlLink.getBezier().getEndDirection() != null)
-                {
-                    endDirection = xmlLink.getBezier().getEndDirection().getSI();
-                }
-                coordinates = Bezier
-                        .cubic(numSegments, new DirectedPoint(startPoint.x, startPoint.y, startPoint.z, 0, 0, startDirection),
-                                new DirectedPoint(endPoint.x, endPoint.y, endPoint.z, 0, 0, endDirection), shape, weighted)
-                        .getPoints();
+                OtsPoint3d[] designPoints = Bezier.cubicControlPoints(start, end, shape, weighted);
+                designLine = new ContinuousBezierCubic(designPoints[0], designPoints[1], designPoints[2], designPoints[3]);
             }
-
             else if (xmlLink.getClothoid() != null)
             {
                 // int numSegments = xmlLink.getCLOTHOID().getNumSegments().intValue();
 
                 // TODO: Clothoid parsing
+                designLine = null;
             }
 
             else
@@ -313,14 +283,25 @@ public final class NetworkParser
                 throw new NetworkException("Making link, but link " + xmlLink.getId()
                         + " has no filled straight, arc, bezier, polyline, or clothoid definition");
             }
+            designLines.put(xmlLink.getId(), designLine);
 
-            OtsLine3d designLine = OtsLine3d.createAndCleanOtsLine3d(coordinates);
+            // TODO: take defaults from network when not defined for link
+            OtsLine3d flattenedLine;
+            if (maxAngleError != null)
+            {
+                flattenedLine = designLine.flatten(maxAngleError, maxSpatialError.si);
+            }
+            else
+            {
+                numSegments = numSegments == null ? 64 : numSegments;
+                flattenedLine = designLine.flatten(numSegments);
+            }
 
             // TODO: Directionality has to be added later when the lanes and their direction are known.
             LaneKeepingPolicy laneKeepingPolicy = LaneKeepingPolicy.valueOf(xmlLink.getLaneKeeping().name());
             LinkType linkType = definitions.get(LinkType.class, xmlLink.getType());
-            CrossSectionLink link = new CrossSectionLink(otsNetwork, xmlLink.getId(), startNode, endNode, linkType, designLine,
-                    laneKeepingPolicy);
+            CrossSectionLink link = new CrossSectionLink(otsNetwork, xmlLink.getId(), startNode, endNode, linkType,
+                    flattenedLine, laneKeepingPolicy);
 
             if (xmlLink.getPriority() != null)
             {
@@ -338,6 +319,7 @@ public final class NetworkParser
      * @param simulator OtsSimulatorInterface; the simulator
      * @param roadLayoutMap the map of the tags of the predefined RoadLayout tags in Definitions
      * @param linkTypeSpeedLimitMap map of speed limits per link type
+     * @param designLines Map&lt;String, ContinuousLine&gt;; design lines per link id.
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      * @throws OtsGeometryException when the design line is invalid
      * @throws XmlParserException when the stripe type cannot be recognized
@@ -346,7 +328,7 @@ public final class NetworkParser
      */
     static void applyRoadLayout(final RoadNetwork otsNetwork, final Definitions definitions, final Network network,
             final OtsSimulatorInterface simulator, final Map<String, RoadLayout> roadLayoutMap,
-            final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap)
+            final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap, final Map<String, ContinuousLine> designLines)
             throws NetworkException, OtsGeometryException, XmlParserException, SimRuntimeException, GtuException
     {
         for (Link xmlLink : ParseUtil.getObjectsOfType(network.getNodeOrLinkOrCentroid(), Link.class))
@@ -402,25 +384,29 @@ public final class NetworkParser
             List<CseData> cseDataList = new ArrayList<>();
             Map<Object, Integer> cseTagMap = new LinkedHashMap<>();
             calculateOffsets(roadLayoutTag, xmlLink, cseDataList, cseTagMap);
-            boolean fixGradualLateralOffset = xmlLink.isFixGradualOffset();
 
             // STRIPE
-            for (CseStripe stripeTag : ParseUtil.getObjectsOfType(roadLayoutTag.getStripeOrLaneOrShoulder(),
-                    CseStripe.class))
+            ContinuousLine designLine = designLines.get(xmlLink.getId());
+            for (CseStripe stripeTag : ParseUtil.getObjectsOfType(roadLayoutTag.getStripeOrLaneOrShoulder(), CseStripe.class))
             {
                 CseData cseData = cseDataList.get(cseTagMap.get(stripeTag));
-                makeStripe(csl, cseData.centerOffsetStart, cseData.centerOffsetEnd, stripeTag, cseList,
-                        fixGradualLateralOffset);
+                makeStripe(csl, designLine, cseData.centerOffsetStart, cseData.centerOffsetEnd, stripeTag, cseList);
             }
 
             // Other CROSSECTIONELEMENT
             for (org.opentrafficsim.xml.generated.CrossSectionElement cseTag : ParseUtil.getObjectsOfType(
-                    roadLayoutTag.getStripeOrLaneOrShoulder(),
-                    org.opentrafficsim.xml.generated.CrossSectionElement.class))
+                    roadLayoutTag.getStripeOrLaneOrShoulder(), org.opentrafficsim.xml.generated.CrossSectionElement.class))
             {
                 CseData cseData = cseDataList.get(cseTagMap.get(cseTag));
 
-                // LANE
+                List<CrossSectionSlice> slices = LaneGeometryUtil.getSlices(designLine, cseData.centerOffsetStart,
+                        cseData.centerOffsetEnd, cseData.widthStart, cseData.widthEnd);
+                OtsLine3d centerLine = designLine.offset(LaneGeometryUtil.getCenterOffsets(designLine, slices), 64);
+                OtsLine3d leftEdge = designLine.offset(LaneGeometryUtil.getLeftEdgeOffsets(designLine, slices), 64);
+                OtsLine3d rightEdge = designLine.offset(LaneGeometryUtil.getRightEdgeOffsets(designLine, slices), 64);
+                OtsShape contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
+
+                // Lane
                 if (cseTag instanceof CseLane)
                 {
                     CseLane laneTag = (CseLane) cseTag;
@@ -442,8 +428,7 @@ public final class NetworkParser
                         GtuType gtuType = definitions.get(GtuType.class, speedLimitTag.getGtuType());
                         speedLimitMap.put(gtuType, speedLimitTag.getLegalSpeedLimit());
                     }
-                    Lane lane = new Lane(csl, laneTag.getId(), cseData.centerOffsetStart, cseData.centerOffsetEnd,
-                            cseData.widthStart, cseData.widthEnd, laneType, speedLimitMap, fixGradualLateralOffset);
+                    Lane lane = new Lane(csl, laneTag.getId(), centerLine, contour, slices, laneType, speedLimitMap);
                     cseList.add(lane);
                     lanes.put(lane.getId(), lane);
                 }
@@ -454,23 +439,21 @@ public final class NetworkParser
                     CseNoTrafficLane ntlTag = (CseNoTrafficLane) cseTag;
                     String id = ntlTag.getId() != null ? ntlTag.getId() : UUID.randomUUID().toString();
                     // TODO: obtain GTU type from XML?
-                    Lane lane = Lane.noTrafficLane(csl, id, cseData.centerOffsetStart, cseData.centerOffsetEnd,
-                            cseData.widthStart, cseData.widthEnd, fixGradualLateralOffset);
+                    Lane lane = Lane.noTrafficLane(csl, id, centerLine, contour, slices);
                     cseList.add(lane);
                 }
 
-                // SHOULDER
+                // Shoulder
                 else if (cseTag instanceof CseShoulder)
                 {
                     CseShoulder shoulderTag = (CseShoulder) cseTag;
                     String id = shoulderTag.getId() != null ? shoulderTag.getId() : UUID.randomUUID().toString();
-                    CrossSectionElement shoulder = new Shoulder(csl, id, cseData.centerOffsetStart, cseData.centerOffsetEnd,
-                            cseData.widthStart, cseData.widthEnd, fixGradualLateralOffset);
+                    CrossSectionElement shoulder = new Shoulder(csl, id, centerLine, contour, slices);
                     cseList.add(shoulder);
                 }
             }
 
-            // TRAFFICLIGHT
+            // TrafficLight
             for (TrafficLightType trafficLight : xmlLink.getTrafficLight())
             {
                 if (!lanes.containsKey(trafficLight.getLane()))
@@ -690,73 +673,77 @@ public final class NetworkParser
         }
 
         // add the link offset
-        if (xmlLink.getOffsetStart() != null && xmlLink.getOffsetStart().ne0())
-        {
-            for (CseData cseData : cseDataList)
-            {
-                cseData.centerOffsetStart = cseData.centerOffsetStart.plus(xmlLink.getOffsetStart());
-            }
-        }
-        if (xmlLink.getOffsetEnd() != null && xmlLink.getOffsetEnd().ne0())
-        {
-            for (CseData cseData : cseDataList)
-            {
-                cseData.centerOffsetEnd = cseData.centerOffsetEnd.plus(xmlLink.getOffsetEnd());
-            }
-        }
+//        if (xmlLink.getOffsetStart() != null && xmlLink.getOffsetStart().ne0())
+//        {
+//            for (CseData cseData : cseDataList)
+//            {
+//                cseData.centerOffsetStart = cseData.centerOffsetStart.plus(xmlLink.getOffsetStart());
+//            }
+//        }
+//        if (xmlLink.getOffsetEnd() != null && xmlLink.getOffsetEnd().ne0())
+//        {
+//            for (CseData cseData : cseDataList)
+//            {
+//                cseData.centerOffsetEnd = cseData.centerOffsetEnd.plus(xmlLink.getOffsetEnd());
+//            }
+//        }
     }
 
     /**
      * Parse a stripe on a road.
      * @param csl CrossSectionLink; the CrossSectionLine
+     * @param designLine ContinuousLine; design line.
      * @param startOffset Length; the offset of the start node
      * @param endOffset Length; the offset of the end node
      * @param stripeTag CseStripe; the CseStripe tag in the XML file
      * @param cseList List&lt;CrossSectionElement&gt;; the list of CrossSectionElements to which the stripes should be added
-     * @param fixGradualLateralOffset boolean; true if gradualLateralOffset needs to be fixed
      * @throws OtsGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id of the stripe not unique
      * @throws XmlParserException when the stripe type cannot be recognized
      */
-    private static void makeStripe(final CrossSectionLink csl, final Length startOffset, final Length endOffset,
-            final CseStripe stripeTag, final List<CrossSectionElement> cseList, final boolean fixGradualLateralOffset)
+    private static void makeStripe(final CrossSectionLink csl, final ContinuousLine designLine, final Length startOffset,
+            final Length endOffset, final CseStripe stripeTag, final List<CrossSectionElement> cseList)
             throws OtsGeometryException, NetworkException, XmlParserException
     {
-        Length width =
-                stripeTag.getDrawingWidth() != null ? stripeTag.getDrawingWidth() : new Length(20.0, LengthUnit.CENTIMETER);
+        Length width = stripeTag.getDrawingWidth() != null ? stripeTag.getDrawingWidth()
+                : (stripeTag.getType().equals(StripeType.BLOCKED) ? new Length(40.0, LengthUnit.CENTIMETER)
+                        : new Length(20.0, LengthUnit.CENTIMETER));
+        List<CrossSectionSlice> slices = LaneGeometryUtil.getSlices(designLine, startOffset, endOffset, width, width);
+
+        OtsLine3d centerLine = designLine.offset(LaneGeometryUtil.getCenterOffsets(designLine, slices), 64);
+        OtsLine3d leftEdge = designLine.offset(LaneGeometryUtil.getLeftEdgeOffsets(designLine, slices), 64);
+        OtsLine3d rightEdge = designLine.offset(LaneGeometryUtil.getRightEdgeOffsets(designLine, slices), 64);
+        OtsShape contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
+
         switch (stripeTag.getType())
         {
             case BLOCKED:
-                Length w = stripeTag.getDrawingWidth() != null ? stripeTag.getDrawingWidth()
-                        : new Length(40.0, LengthUnit.CENTIMETER);
-                Stripe blockedLine = new Stripe(Type.BLOCK, csl, startOffset, endOffset, w, w, fixGradualLateralOffset);
+                Stripe blockedLine = new Stripe(Type.BLOCK, csl, centerLine, contour, slices);
                 cseList.add(blockedLine);
                 break;
 
             case DASHED:
-                Stripe dashedLine = new Stripe(Type.DASHED, csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
+                Stripe dashedLine = new Stripe(Type.DASHED, csl, centerLine, contour, slices);
                 cseList.add(dashedLine);
                 break;
 
             case DOUBLE:
-                Stripe doubleLine = new Stripe(Type.DOUBLE, csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
+                Stripe doubleLine = new Stripe(Type.DOUBLE, csl, centerLine, contour, slices);
                 cseList.add(doubleLine);
                 break;
 
             case LEFTTORIGHT:
-                Stripe leftOnlyLine =
-                        new Stripe(Type.RIGHT, csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
+                Stripe leftOnlyLine = new Stripe(Type.RIGHT, csl, centerLine, contour, slices);
                 cseList.add(leftOnlyLine);
                 break;
 
             case RIGHTTOLEFT:
-                Stripe rightOnlyLine =
-                        new Stripe(Type.LEFT, csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
+                Stripe rightOnlyLine = new Stripe(Type.LEFT, csl, centerLine, contour, slices);
                 cseList.add(rightOnlyLine);
                 break;
 
             case SOLID:
-                Stripe solidLine = new Stripe(Type.SOLID, csl, startOffset, endOffset, width, width, fixGradualLateralOffset);
+                Stripe solidLine = new Stripe(Type.SOLID, csl, centerLine, contour, slices);
                 cseList.add(solidLine);
                 break;
 

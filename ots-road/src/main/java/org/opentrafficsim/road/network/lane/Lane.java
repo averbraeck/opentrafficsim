@@ -29,6 +29,7 @@ import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.HierarchicallyTyped;
 import org.opentrafficsim.core.SpatialObject;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.core.geometry.OtsShape;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -73,9 +74,6 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /** Type of lane to deduce compatibility with GTU types. */
     private final LaneType laneType;
-
-    /** the shape in absolute coordinates (getContour() returns relative coordinates). */
-    private OtsShape shape = null;
 
     /**
      * The speed limit of this lane, which can differ per GTU type. Cars might be allowed to drive 120 km/h and trucks 90 km/h.
@@ -191,76 +189,24 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             "Object", new ObjectDescriptor("GTU", "The lane-based GTU", LaneBasedObject.class)));
 
     /**
-     * Construct a new Lane.
-     * @param parentLink CrossSectionLink; the link to which the new Lane will belong (must be constructed first)
+     * Constructor specifying geometry.
+     * @param link CrossSectionLink; link.
      * @param id String; the id of this lane within the link; should be unique within the link.
-     * @param lateralOffsetAtStart Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
-     *            design line of the parent Link at the start of the parent Link
-     * @param lateralOffsetAtEnd Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
-     *            design line of the parent Link at the end of the parent Link
-     * @param beginWidth Length; start width, positioned <i>symmetrically around</i> the design line
-     * @param endWidth Length; end width, positioned <i>symmetrically around</i> the design line
-     * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
-     * @param speedLimitMap Map&lt;GtuType, Speed&gt;; speed limit on this lane, specified per GTU Type
-     * @param fixGradualLateralOffset boolean; true if gradualLateralOffset needs to be fixed
-     * @throws OtsGeometryException when creation of the center line or contour geometry fails
-     * @throws NetworkException when id equal to null or not unique
+     * @param centerLine OtsLine3d; center line.
+     * @param contour OtsShape; contour shape.
+     * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
+     * @param laneType LaneType; lane type.
+     * @param speedLimitMap Map&lt;GtuType, Speed&gt;; the speed limit on this lane, specified per GTU Type.
+     * @throws NetworkException when no cross-section slice is defined.
      */
-    @SuppressWarnings("checkstyle:parameternumber")
-    public Lane(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtStart,
-            final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth, final LaneType laneType,
-            final Map<GtuType, Speed> speedLimitMap, final boolean fixGradualLateralOffset)
-            throws OtsGeometryException, NetworkException
+    public Lane(final CrossSectionLink link, final String id, final OtsLine3d centerLine, final OtsShape contour,
+            final List<CrossSectionSlice> crossSectionSlices, final LaneType laneType, final Map<GtuType, Speed> speedLimitMap)
+            throws NetworkException
     {
-        super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, fixGradualLateralOffset);
+        super(link, id, centerLine, contour, crossSectionSlices);
         this.laneType = laneType;
         this.speedLimitMap.putAll(speedLimitMap);
-        this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
-    }
-
-    /**
-     * Construct a new Lane.
-     * @param parentLink CrossSectionLink; the link to which the element will belong (must be constructed first)
-     * @param id String; the id of this lane within the link; should be unique within the link.
-     * @param lateralOffset Length; the lateral offset of the design line of the new CrossSectionLink with respect to the design
-     *            line of the parent Link
-     * @param width Length; width, positioned <i>symmetrically around</i> the design line
-     * @param laneType LaneType; type of lane to deduce compatibility with GTU types
-     * @param speedLimitMap Map&lt;GtuType, Speed&gt;; the speed limit on this lane, specified per GTU Type
-     * @throws OtsGeometryException when creation of the center line or contour geometry fails
-     * @throws NetworkException when id equal to null or not unique
-     */
-    @SuppressWarnings("checkstyle:parameternumber")
-    public Lane(final CrossSectionLink parentLink, final String id, final Length lateralOffset, final Length width,
-            final LaneType laneType, final Map<GtuType, Speed> speedLimitMap) throws OtsGeometryException, NetworkException
-    {
-        super(parentLink, id, lateralOffset, width);
-        this.laneType = laneType;
-        this.speedLimitMap.putAll(speedLimitMap);
-        this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
-    }
-
-    /**
-     * Construct a new Lane.
-     * @param parentLink CrossSectionLink; the link to which the element belongs (must be constructed first)
-     * @param id String; the id of this lane within the link; should be unique within the link.
-     * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; the offsets and widths at positions along the line, relative to
-     *            the design line of the parent link. If there is just one with and offset, there should just be one element in
-     *            the list with Length = 0. If there are more slices, the last one should be at the length of the design line.
-     *            If not, a NetworkException is thrown.
-     * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
-     * @param speedLimitMap Map&lt;GtuType, Speed&gt;; the speed limit on this lane, specified per GTU Type
-     * @throws OtsGeometryException when creation of the center line or contour geometry fails
-     * @throws NetworkException when id equal to null or not unique
-     */
-    @SuppressWarnings("checkstyle:parameternumber")
-    public Lane(final CrossSectionLink parentLink, final String id, final List<CrossSectionSlice> crossSectionSlices,
-            final LaneType laneType, final Map<GtuType, Speed> speedLimitMap) throws OtsGeometryException, NetworkException
-    {
-        super(parentLink, id, crossSectionSlices);
-        this.laneType = laneType;
-        this.speedLimitMap.putAll(speedLimitMap);
-        this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
+        this.gtuList = new HistoricalArrayList<>(getManager(link));
     }
 
     /**
@@ -747,11 +693,11 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      */
     public final Length position(final double fraction)
     {
-        if (this.length.getDisplayUnit().isBaseSIUnit())
+        if (getLength().getDisplayUnit().isBaseSIUnit())
         {
-            return new Length(this.length.si * fraction, LengthUnit.SI);
+            return new Length(getLength().si * fraction, LengthUnit.SI);
         }
-        return new Length(this.length.getInUnit() * fraction, this.length.getDisplayUnit());
+        return new Length(getLength().getInUnit() * fraction, getLength().getDisplayUnit());
     }
 
     /**
@@ -761,7 +707,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      */
     public final double positionSI(final double fraction)
     {
-        return this.length.si * fraction;
+        return getLength().si * fraction;
     }
 
     /**
@@ -771,7 +717,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      */
     public final double fraction(final Length position)
     {
-        return position.si / this.length.si;
+        return position.si / getLength().si;
     }
 
     /**
@@ -781,7 +727,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      */
     public final double fractionSI(final double positionSI)
     {
-        return positionSI / this.length.si;
+        return positionSI / getLength().si;
     }
 
     /** {@inheritDoc} */
@@ -1000,7 +946,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         else
         {
             int low = 0;
-            int mid = (int) ((listSize - 1) * position / this.length.si);
+            int mid = (int) ((listSize - 1) * position / getLength().si);
             mid = mid < 0 ? 0 : mid >= listSize ? listSize - 1 : mid;
             int high = listSize - 1;
             while (high - low > 1)
@@ -1595,24 +1541,20 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * Creates a no-traffic, i.e. a {@code Lane} returning a z-value for drawing of -0.00005 with zero speed for all traffic.
      * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
      * @param id String; the id of the lane. Should be unique within the parentLink.
-     * @param lateralOffsetAtStart Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
-     *            design line of the parent Link at the start of the parent Link
-     * @param lateralOffsetAtEnd Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
-     *            design line of the parent Link at the end of the parent Link
-     * @param beginWidth Length; start width, positioned <i>symmetrically around</i> the design line
-     * @param endWidth Length; end width, positioned <i>symmetrically around</i> the design line
-     * @param fixGradualLateralOffset boolean; true if gradualLateralOffset needs to be fixed
+     * @param centerLine OtsLine3d; center line.
+     * @param contour OtsShape; contour shape.
+     * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
      * @return Lane; lane representing a no-traffic lane.
      * @throws OtsGeometryException when creation of the geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public static Lane noTrafficLane(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtStart,
-            final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth,
-            final boolean fixGradualLateralOffset) throws OtsGeometryException, NetworkException
+    public static Lane noTrafficLane(final CrossSectionLink parentLink, final String id, final OtsLine3d centerLine,
+            final OtsShape contour, final List<CrossSectionSlice> crossSectionSlices)
+            throws OtsGeometryException, NetworkException
     {
-        return new Lane(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth,
-                new LaneType("NO_TRAFFIC"), new LinkedHashMap<>(), fixGradualLateralOffset)
+        return new Lane(parentLink, id, centerLine, contour, crossSectionSlices, new LaneType("NO_TRAFFIC"),
+                new LinkedHashMap<>())
         {
             /** */
             private static final long serialVersionUID = 20230116L;

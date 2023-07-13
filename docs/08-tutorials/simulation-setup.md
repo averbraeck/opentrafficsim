@@ -51,13 +51,13 @@ The autorun parameter triggers animation when false. These, and other, parameter
         LaneType freewayLane = DefaultsRoadNl.FREEWAY;
         CrossSectionLink link = new CrossSectionLink(network, "AB", nodeA, nodeB, freewayLink, new OtsLine3d(pointA, pointB),
                 LaneKeepingPolicy.KEEPRIGHT);
-        new Lane(link, "Left", Length.instantiateSI(1.75), Length.instantiateSI(3.5), freewayLane,
+        LaneGeometryUtil.createStraightLane(link, "Left", Length.instantiateSI(1.75), Length.instantiateSI(3.5), freewayLane,
                 Map.of(car, new Speed(120, SpeedUnit.KM_PER_HOUR)));
-        new Lane(link, "Right", Length.instantiateSI(-1.75), Length.instantiateSI(3.5), freewayLane,
+        LaneGeometryUtil.createStraightLane(link, "Right", Length.instantiateSI(-1.75), Length.instantiateSI(3.5), freewayLane,
                 Map.of(car, new Speed(120, SpeedUnit.KM_PER_HOUR)));
-        new Stripe(Type.SOLID, link, Length.instantiateSI(3.5), Length.instantiateSI(0.2));
-        new Stripe(Type.DASHED, link, Length.instantiateSI(0.0), Length.instantiateSI(0.2));
-        new Stripe(Type.SOLID, link, Length.instantiateSI(-3.5), Length.instantiateSI(0.2));
+        LaneGeometryUtil.createStraightStripe(Type.SOLID, link, Length.instantiateSI(3.5), Length.instantiateSI(0.2));
+        LaneGeometryUtil.createStraightStripe(Type.DASHED, link, Length.instantiateSI(0.0), Length.instantiateSI(0.2));
+        LaneGeometryUtil.createStraightStripe(Type.SOLID, link, Length.instantiateSI(-3.5), Length.instantiateSI(0.2));
         return network;
     }
 ```

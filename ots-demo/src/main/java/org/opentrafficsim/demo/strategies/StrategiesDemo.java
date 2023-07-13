@@ -26,6 +26,7 @@ import javax.swing.event.ChangeListener;
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -45,6 +46,8 @@ import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGtuColorer;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.opentrafficsim.core.geometry.ContinuousArc;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.core.geometry.OtsPoint3d;
@@ -509,29 +512,18 @@ public class StrategiesDemo extends AbstractSimulationScript
 
         double radius = 150;
         Speed speedLimit = new Speed(120.0, SpeedUnit.KM_PER_HOUR);
-        Node nodeA =
-                new Node(network, "A", new OtsPoint3d(-radius, 0, 0), new Direction(270, DirectionUnit.EAST_DEGREE));
-        Node nodeB =
-                new Node(network, "B", new OtsPoint3d(radius, 0, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
+        Node nodeA = new Node(network, "A", new OtsPoint3d(-radius, 0, 0), new Direction(270, DirectionUnit.EAST_DEGREE));
+        Node nodeB = new Node(network, "B", new OtsPoint3d(radius, 0, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
 
-        OtsPoint3d[] coordsHalf1 = new OtsPoint3d[127];
-        for (int i = 0; i < coordsHalf1.length; i++)
-        {
-            double angle = Math.PI * (i) / (coordsHalf1.length - 1);
-            coordsHalf1[i] = new OtsPoint3d(radius * Math.cos(angle), radius * Math.sin(angle), 0);
-        }
+        ContinuousArc half1 = new ContinuousArc(new DirectedPoint(radius, 0.0, 0.0, 0.0, 0.0, Math.PI / 2), radius, true,
+                Angle.instantiateSI(Math.PI));
         List<Lane> lanes1 = new LaneFactory(network, nodeB, nodeA, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPRIGHT,
-                DefaultsNl.VEHICLE, new OtsLine3d(coordsHalf1))
-                        .leftToRight(0.0, Length.instantiateSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit).addLanes(Type.DASHED)
-                        .getLanes();
-        OtsPoint3d[] coordsHalf2 = new OtsPoint3d[127];
-        for (int i = 0; i < coordsHalf2.length; i++)
-        {
-            double angle = Math.PI + Math.PI * (i) / (coordsHalf2.length - 1);
-            coordsHalf2[i] = new OtsPoint3d(radius * Math.cos(angle), radius * Math.sin(angle), 0);
-        }
+                DefaultsNl.VEHICLE, half1).leftToRight(0.0, Length.instantiateSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit)
+                        .addLanes(Type.DASHED).getLanes();
+        ContinuousArc half2 = new ContinuousArc(new DirectedPoint(-radius, 0.0, 0.0, 0.0, 0.0, -Math.PI / 2), radius, true,
+                Angle.instantiateSI(Math.PI));
         List<Lane> lanes2 = new LaneFactory(network, nodeA, nodeB, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPRIGHT,
-                DefaultsNl.VEHICLE, new OtsLine3d(coordsHalf2))
+                DefaultsNl.VEHICLE, half2)
                         .leftToRight(0.0, Length.instantiateSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit).addLanes(Type.DASHED)
                         .getLanes();
 

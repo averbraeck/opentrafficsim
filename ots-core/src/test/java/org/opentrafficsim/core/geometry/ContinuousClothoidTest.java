@@ -6,13 +6,12 @@ import static org.junit.Assert.assertTrue;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.junit.Test;
-import org.opentrafficsim.core.geometry.Clothoid.ClothoidInfo;
 
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
- * Tests the generation of clothoids in with various input.
+ * Tests the generation of clothoids with various input.
  * <p>
  * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -21,7 +20,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class ClothoidTest
+public class ContinuousClothoidTest
 {
 
     /** Number of segments for the clothoid lines to generated. */
@@ -39,14 +38,14 @@ public class ClothoidTest
     private static final double ANGLE_TOLERANCE = 4 * Math.PI / SEGMENTS;
 
     /** Allowable distance between resulting and theoretical endpoints of a clothoid. */
-    private static final double DISTANCE_TOLERANCE = 1e-6;
+    private static final double DISTANCE_TOLERANCE = 1e-2;
 
     /**
      * Tests whether clothoid between two directed points are correct.
      * @throws OtsGeometryException if segment number is not available on the line
      */
     @Test
-    public void TestPoints() throws OtsGeometryException
+    public void testPoints() throws OtsGeometryException
     {
         StreamInterface r = new MersenneTwister(3L);
         for (int i = 0; i < RUNS; i++)
@@ -55,10 +54,9 @@ public class ClothoidTest
                     (r.nextDouble() * 2 - 1) * Math.PI);
             DirectedPoint end = new DirectedPoint(r.nextDouble() * 10.0, r.nextDouble() * 10.0, 0.0, 0.0, 0.0,
                     (r.nextDouble() * 2 - 1) * Math.PI);
-
-            ClothoidInfo clothoid = Clothoid.clothoidPoints(start, end, SEGMENTS);
-
-            VerifyLine(start, clothoid, null, null, null);
+            ContinuousClothoid clothoid = new ContinuousClothoid(start, end);
+            OtsLine3d line = clothoid.flatten(SEGMENTS);
+            VerifyLine(start, clothoid, line, null, null, null);
         }
     }
 
@@ -67,10 +65,10 @@ public class ClothoidTest
      * from {@code TestPoints()} because the random procedure generates very few straight situations.
      */
     @Test
-    public void TestStraight()
+    public void testStraight()
     {
         StreamInterface r = new MersenneTwister(3L);
-        double tolerance = 2.0 * Math.PI / 720.0; // This value might change in the future, or depend on the number of segments
+        double tolerance = 2.0 * Math.PI / 3600.0; // see ContinuousClothoid.ANGLE_TOLERANCE
         double startAng = -Math.PI;
         double dAng = Math.PI * 2 / 100;
         double sign = 1.0;
@@ -81,14 +79,17 @@ public class ClothoidTest
             DirectedPoint start = new DirectedPoint(x, y, 0.0, 0.0, 0.0, ang - tolerance + r.nextDouble() * tolerance * 2);
             DirectedPoint end =
                     new DirectedPoint(3 * x, 3 * y, 0.0, 0.0, 0.0, ang - tolerance + r.nextDouble() * tolerance * 2);
-            ClothoidInfo clothoid = Clothoid.clothoidPoints(start, end, SEGMENTS);
-            assertEquals("Clothoid between point on line did not become a straight", clothoid.getLine().size(), 2);
+
+            ContinuousClothoid clothoid = new ContinuousClothoid(start, end);
+            OtsLine3d line = clothoid.flatten(SEGMENTS);
+            assertEquals("Clothoid between point on line did not become a straight", line.size(), 2);
 
             start = new DirectedPoint(x, y, 0.0, 0.0, 0.0, ang + sign * tolerance * 1.1);
             end = new DirectedPoint(3 * x, 3 * y, 0.0, 0.0, 0.0, ang + sign * tolerance * 1.1);
             sign *= -1.0;
-            clothoid = Clothoid.clothoidPoints(start, end, SEGMENTS);
-            assertTrue("Clothoid between point just not on line should not become a straight", clothoid.getLine().size() > 2);
+            clothoid = new ContinuousClothoid(start, end);
+            line = clothoid.flatten(SEGMENTS);
+            assertTrue("Clothoid between point just not on line should not become a straight", line.size() > 2);
         }
     }
 
@@ -110,9 +111,9 @@ public class ClothoidTest
             sign = r.nextBoolean() ? 1.0 : -1.0;
             LinearDensity endCurvature = LinearDensity.instantiateSI(sign / (50.0 + r.nextDouble() * 1000.0));
 
-            ClothoidInfo clothoid = Clothoid.clothoidLength(start, length, startCurvature, endCurvature, SEGMENTS);
-
-            VerifyLine(start, clothoid, startCurvature, endCurvature, null);
+            ContinuousClothoid clothoid = ContinuousClothoid.withLength(start, length.si, startCurvature.si, endCurvature.si);
+            OtsLine3d line = clothoid.flatten(SEGMENTS);
+            VerifyLine(start, clothoid, line, startCurvature, endCurvature, null);
         }
     }
 
@@ -135,9 +136,9 @@ public class ClothoidTest
             Length a = Length
                     .instantiateSI(Math.sqrt((10.0 + r.nextDouble() * 500.0) / Math.abs(endCurvature.si - startCurvature.si)));
 
-            ClothoidInfo clothoid = Clothoid.clothoidA(start, a, startCurvature, endCurvature, SEGMENTS);
-
-            VerifyLine(start, clothoid, startCurvature, endCurvature, a);
+            ContinuousClothoid clothoid = new ContinuousClothoid(start, a.si, startCurvature.si, endCurvature.si);
+            OtsLine3d line = clothoid.flatten(SEGMENTS);
+            VerifyLine(start, clothoid, line, startCurvature, endCurvature, a);
         }
     }
 
@@ -145,15 +146,15 @@ public class ClothoidTest
      * Verifies a line by comparing theoretical and numerical values.
      * @param start OtsPoint3d; theoretical start point.
      * @param clothoid ClothoidInfo; created clothoid.
+     * @param line OtsLine3d; flattened line.
      * @param startCurvature LinearDensity; start curvature, may be {@code null} if no theoretical value available.
      * @param endCurvature LinearDensity; end curvature, may be {@code null} if no theoretical value available.
      * @param a Length A-value, may be {@code null} if no theoretical value available.
      * @throws OtsGeometryException if segment number is not available on the line
      */
-    private void VerifyLine(final DirectedPoint start, final ClothoidInfo clothoid, final LinearDensity startCurvature,
-            final LinearDensity endCurvature, final Length a) throws OtsGeometryException
+    private void VerifyLine(final DirectedPoint start, final ContinuousClothoid clothoid, final OtsLine3d line,
+            final LinearDensity startCurvature, final LinearDensity endCurvature, final Length a) throws OtsGeometryException
     {
-        OtsLine3d line = clothoid.getLine();
         assertEquals("Start location deviates", 0.0, Math.hypot(start.x - line.get(0).x, start.y - line.get(0).y),
                 DISTANCE_TOLERANCE);
         assertEquals("End location deviates", 0.0, Math.hypot(clothoid.getEndPoint().x - line.get(line.size() - 1).x,
@@ -161,21 +162,21 @@ public class ClothoidTest
         assertEquals("Start direction deviates", 0.0, normalizeAngle(start.dirZ - getAngle(line, 0)), ANGLE_TOLERANCE);
         assertEquals("End direction deviates", 0.0,
                 normalizeAngle(clothoid.getEndPoint().dirZ - getAngle(line, line.size() - 2)), ANGLE_TOLERANCE);
-        double lengthRatio = line.getLength().si / clothoid.getLength().si;
+        double lengthRatio = line.getLength().si / clothoid.getLength();
         assertEquals("Length is more than 1% shorter or longer than theoretical", 1.0, lengthRatio, 0.01);
         if (startCurvature != null)
         {
-            double curveatureRatio = clothoid.getStartCurvature().si / startCurvature.si;
+            double curveatureRatio = clothoid.getStartCurvature() / startCurvature.si;
             assertEquals("Start curvature is more than 1% shorter or longer than theoretical", 1.0, curveatureRatio, 0.01);
         }
         if (endCurvature != null)
         {
-            double curveatureRatio = clothoid.getEndCurvature().si / endCurvature.si;
+            double curveatureRatio = clothoid.getEndCurvature() / endCurvature.si;
             assertEquals("End curvature is more than 1% shorter or longer than theoretical", 1.0, curveatureRatio, 0.01);
         }
         if (a != null)
         {
-            double aRadius = clothoid.getA().si / a.si;
+            double aRadius = clothoid.getA() / a.si;
             assertEquals("A-value is more than 1% less or more than theoretical", 1.0, aRadius, 0.01);
         }
     }

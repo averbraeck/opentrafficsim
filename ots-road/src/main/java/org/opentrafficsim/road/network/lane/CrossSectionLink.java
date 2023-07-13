@@ -203,7 +203,7 @@ public class CrossSectionLink extends Link implements Serializable
                     right = lane.getDesignLineOffsetAtBegin().si - half;
                 }
             }
-            OtsPoint3d start = getStartNode().getPoint();
+            OtsPoint3d start = getDesignLine().getFirst();
             double heading = getStartNode().getHeading().si + .5 * Math.PI;
             double cosHeading = Math.cos(heading);
             double sinHeading = Math.sin(heading);
@@ -238,7 +238,7 @@ public class CrossSectionLink extends Link implements Serializable
                     right = lane.getDesignLineOffsetAtEnd().si - half;
                 }
             }
-            OtsPoint3d start = getEndNode().getPoint();
+            OtsPoint3d start = getDesignLine().getLast();
             DirectedPoint p = Try.assign(() -> getEndNode().getLocation(), "Unexpected remote exception.");
             double heading = p.getRotZ() + .5 * Math.PI;
             double cosHeading = Math.cos(heading);

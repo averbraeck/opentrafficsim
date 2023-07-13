@@ -31,15 +31,20 @@ import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.opentrafficsim.core.geometry.ContinuousLine;
+import org.opentrafficsim.core.geometry.ContinuousStraight;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.core.geometry.OtsPoint3d;
+import org.opentrafficsim.core.geometry.OtsShape;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
@@ -59,7 +64,9 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerF
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.CrossSectionSlice;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
@@ -477,13 +484,24 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
         double endY = to.getPoint().y + (endLinkLength / link.getLength().getSI()) * (to.getPoint().y - from.getPoint().y);
         Node end = new Node(this.network, link.getId() + "END", new OtsPoint3d(endX, endY, to.getPoint().z),
                 Direction.instantiateSI(Math.atan2(to.getPoint().y - from.getPoint().y, to.getPoint().x - from.getPoint().x)));
+        double dir = Math.atan2(to.getPoint().y - from.getPoint().y, to.getPoint().x - from.getPoint().x);
+        DirectedPoint startPoint = new DirectedPoint(to.getPoint().x, to.getPoint().y, to.getPoint().z, 0.0, 0.0, dir);
+        ContinuousLine designLine = new ContinuousStraight(startPoint, endLinkLength);
         CrossSectionLink endLink = LaneFactory.makeLink(this.network, link.getId() + "endLink", to, end, null, this.simulator);
         for (Lane lane : lanes)
         {
+            double offset = lane.getLateralCenterPosition(1.0).si;
+            double width = lane.getWidth(1.0).si;
+            OtsLine3d centerLine = designLine.offset(offset, 1);
+            OtsLine3d leftEdge = designLine.offset(offset + .5 * width, 1);
+            OtsLine3d rightEdge = designLine.offset(offset - .5 * width, 1);
+            OtsShape contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
+            List<CrossSectionSlice> crossSections =
+                    LaneGeometryUtil.getSlices(designLine, Length.instantiateSI(offset), Length.instantiateSI(width));
+
             // Overtaking left and right allowed on the sinkLane
-            Lane sinkLane = new Lane(endLink, lane.getId() + "." + "sinkLane", lane.getLateralCenterPosition(1.0),
-                    lane.getLateralCenterPosition(1.0), lane.getWidth(1.0), lane.getWidth(1.0), laneType,
-                    Map.of(DefaultsNl.VEHICLE, this.speedLimit), false);
+            Lane sinkLane = new Lane(endLink, lane.getId() + "." + "sinkLane", centerLine, contour, crossSections, laneType,
+                    Map.of(DefaultsNl.VEHICLE, this.speedLimit));
             new SinkDetector(sinkLane, new Length(10.0, METER), this.simulator, DefaultsRoadNl.ROAD_USERS);
         }
         return lanes;

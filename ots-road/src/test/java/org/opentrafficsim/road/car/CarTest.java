@@ -43,6 +43,7 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -165,8 +166,8 @@ public class CarTest implements UNITS
                 LaneKeepingPolicy.KEEPRIGHT);
         Length latPos = new Length(0.0, METER);
         Length width = new Length(4.0, METER);
-        return new Lane(link12, "lane.1", latPos, latPos, width, width, laneType,
-                Map.of(DefaultsNl.VEHICLE, new Speed(100, KM_PER_HOUR)), false);
+        return LaneGeometryUtil.createStraightLane(link12, "lane.1", latPos, latPos, width, width, laneType,
+                Map.of(DefaultsNl.VEHICLE, new Speed(100, KM_PER_HOUR)));
     }
 
     /** The helper model. */

@@ -52,6 +52,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Type;
@@ -330,10 +331,10 @@ public class TransceiverTest
         Mockito.when(hmd.now()).thenReturn(Time.ZERO);
         Mockito.when(replication.getHistoryManager(simulator)).thenReturn(hmd);
         Mockito.when(simulator.getReplication()).thenReturn(replication);
-        Lane lane = new Lane(link, "lane", Length.ZERO, new Length(3, LengthUnit.METER), laneType,
+        Lane lane = LaneGeometryUtil.createStraightLane(link, "lane", Length.ZERO, new Length(3, LengthUnit.METER), laneType,
                 Map.of(DefaultsNl.VEHICLE, new Speed(50, SpeedUnit.KM_PER_HOUR)));
         Length width = new Length(20, LengthUnit.DECIMETER);
-        Stripe stripe = new Stripe(Type.DASHED, link, Length.ZERO, width);
+        Stripe stripe = LaneGeometryUtil.createStraightStripe(Type.DASHED, link, Length.ZERO, width);
         String stripeId = stripe.getId();
 
         LinkGtuIdTransceiver linkgit = new LinkGtuIdTransceiver(network);

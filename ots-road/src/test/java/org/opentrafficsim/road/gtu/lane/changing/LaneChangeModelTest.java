@@ -50,6 +50,7 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -122,8 +123,8 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
             final Length width) throws NamingException, NetworkException, OtsGeometryException
     {
         // XXX Decide what type of overtaking conditions we want in this test
-        Lane result = new Lane(link, id, latPos, latPos, width, width, laneType,
-                Map.of(DefaultsNl.VEHICLE, new Speed(100, KM_PER_HOUR)), false);
+        Lane result = LaneGeometryUtil.createStraightLane(link, id, latPos, latPos, width, width, laneType,
+                Map.of(DefaultsNl.VEHICLE, new Speed(100, KM_PER_HOUR)));
         return result;
     }
 

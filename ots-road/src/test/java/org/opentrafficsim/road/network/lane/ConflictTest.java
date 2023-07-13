@@ -82,8 +82,8 @@ public class ConflictTest implements EventListener
         Node nodeATo = new Node(network, "A to", pointATo, Direction.ZERO);
         CrossSectionLink linkA = new CrossSectionLink(network, "Link A", nodeAFrom, nodeATo, linkType,
                 new OtsLine3d(pointAFrom, pointATo), LaneKeepingPolicy.KEEPRIGHT);
-        Lane laneA = new Lane(linkA, "lane A", Length.ZERO, new Length(2, LengthUnit.METER), laneType,
-                Map.of(DefaultsNl.VEHICLE, new Speed(50, SpeedUnit.KM_PER_HOUR)));
+        Lane laneA = LaneGeometryUtil.createStraightLane(linkA, "lane A", Length.ZERO, new Length(2, LengthUnit.METER),
+                laneType, Map.of(DefaultsNl.VEHICLE, new Speed(50, SpeedUnit.KM_PER_HOUR)));
         laneA.addListener(this, Lane.OBJECT_ADD_EVENT);
 
         OtsPoint3d pointBFrom = new OtsPoint3d(30, -15, 0);
@@ -94,8 +94,8 @@ public class ConflictTest implements EventListener
         Node nodeBTo = new Node(network, "B to", pointBTo, bDirection);
         CrossSectionLink linkB = new CrossSectionLink(network, "Link B", nodeBFrom, nodeBTo, linkType,
                 new OtsLine3d(pointBFrom, pointBTo), LaneKeepingPolicy.KEEPRIGHT);
-        Lane laneB = new Lane(linkB, "lane B", Length.ZERO, new Length(4, LengthUnit.METER), laneType,
-                Map.of(DefaultsNl.VEHICLE, new Speed(50, SpeedUnit.KM_PER_HOUR)));
+        Lane laneB = LaneGeometryUtil.createStraightLane(linkB, "lane B", Length.ZERO, new Length(4, LengthUnit.METER),
+                laneType, Map.of(DefaultsNl.VEHICLE, new Speed(50, SpeedUnit.KM_PER_HOUR)));
         laneB.addListener(this, Lane.OBJECT_ADD_EVENT);
         // The intersection of the link design lines is at 50, 0
         System.out.print(laneA.getContour().toPlot());

@@ -57,9 +57,9 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
@@ -118,7 +118,6 @@ import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Type;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.object.detector.LoopDetector;
-import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
@@ -161,8 +160,8 @@ public class RampMeteringDemo extends AbstractSimulationScript
     private boolean output;
 
     /** Accepted gap. */
-    @Option(names = "--acceptedGap", description = "Accepted gap.", defaultValue = "0.5s")
-    private Duration acceptedGap;
+    @Option(names = "--acceptedGap", description = "Accepted gap.") // , defaultValue = "0.5s")
+    private Duration acceptedGap = Duration.instantiateSI(0.5);
 
     /** Main demand. */
     private FrequencyVector mainDemand;
