@@ -699,6 +699,10 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         if (this.absoluteCrossSection2.equals("None") && this.absoluteCrossSection3.equals("None"))
         {
             source = this.fdSourceMap.get(this.absoluteCrossSection1);
+            if (source == null)
+            {
+                source = this.fdSourceMap.get(this.absoluteCrossSection1.replace(".", ",")); // Locale issue
+            }
             source.clearFundamentalDiagrams();
         }
         else
