@@ -42,7 +42,7 @@ public class SinkDetector extends LaneDetector
                 return true;
             }
             Node destination = route.size() == 0 ? null : Try.assign(() -> route.destinationNode(), "Cannot happen.");
-            Link link = detector.getLane().getParentLink();
+            Link link = detector.getLane().getLink();
             if (link.getEndNode().equals(destination))
             {
                 return true;

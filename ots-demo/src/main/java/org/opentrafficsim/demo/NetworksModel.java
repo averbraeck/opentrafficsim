@@ -462,7 +462,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
                 return maximumSpeedDistribution.draw();
             }
         }, strategicalPlannerFactory,
-                lane.getParentLink().getStartNode().getId().equals("From") ? this.routeGeneratorMain : this.routeGeneratorRamp);
+                lane.getLink().getStartNode().getId().equals("From") ? this.routeGeneratorMain : this.routeGeneratorRamp);
 
     }
 
@@ -476,7 +476,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
      */
     private Lane[] setupSink(final Lane[] lanes, final LaneType laneType) throws NetworkException, OtsGeometryException
     {
-        CrossSectionLink link = lanes[0].getParentLink();
+        CrossSectionLink link = lanes[0].getLink();
         Node to = (Node) link.getEndNode();
         Node from = (Node) link.getStartNode();
         double endLinkLength = 50; // [m]

@@ -450,7 +450,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
                     while (it.hasNext())
                     {
                         RollingLaneStructureRecord otherDown = it.next();
-                        if (!otherDown.getLane().getParentLink().equals(record.getLane().getParentLink()))
+                        if (!otherDown.getLane().getLink().equals(record.getLane().getLink()))
                         {
                             // split not taken can be thrown away
                             otherDown.changeStartDistanceSource(null, null);
@@ -640,7 +640,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
                             for (RollingLaneStructureRecord edgeRecord : edge)
                             {
                                 if (!edgeRecord.equals(prev)
-                                        && edgeRecord.getLane().getParentLink().equals(next.getLane().getParentLink()))
+                                        && edgeRecord.getLane().getLink().equals(next.getLane().getLink()))
                                 {
                                     for (Lane adjLane : edgeRecord.getLane()
                                             .accessibleAdjacentLanesPhysical(LateralDirectionality.RIGHT, gtuType))
@@ -665,7 +665,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
                             for (RollingLaneStructureRecord edgeRecord : edge)
                             {
                                 if (!edgeRecord.equals(prev)
-                                        && edgeRecord.getLane().getParentLink().equals(next.getLane().getParentLink()))
+                                        && edgeRecord.getLane().getLink().equals(next.getLane().getLink()))
                                 {
                                     for (Lane adjLane : edgeRecord.getLane()
                                             .accessibleAdjacentLanesPhysical(LateralDirectionality.LEFT, gtuType))
@@ -868,7 +868,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
                 RollingLaneStructureRecord record = iterator.next();
                 if (record.getStartDistance().si + record.getLane().getLength().si < this.down.si)
                 {
-                    linksToExpandFrom.add(record.getLane().getParentLink());
+                    linksToExpandFrom.add(record.getLane().getLink());
                 }
             }
             Set<RollingLaneStructureRecord> modifiedEdge = new LinkedHashSet<>(this.downstreamEdge);
@@ -877,7 +877,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
             {
                 RollingLaneStructureRecord record = iterator.next();
                 Set<Lane> nexts = record.getLane().nextLanes(gtuType);
-                if (!linksToExpandFrom.contains(record.getLane().getParentLink()))
+                if (!linksToExpandFrom.contains(record.getLane().getLink()))
                 {
                     // downstream search ends on this lane
                     record.setCutOffEnd(this.down.minus(record.getStartDistance()));
@@ -897,7 +897,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
                     iterator.remove(); // can remove from edge, no algorithm needs it anymore in the downstream edge
                     for (Lane nextLane : nexts)
                     {
-                        if (nextLaneForSplit != null && nextLane.getParentLink().equals(nextLaneForSplit.getParentLink())
+                        if (nextLaneForSplit != null && nextLane.getLink().equals(nextLaneForSplit.getLink())
                                 && !nextLane.equals(nextLaneForSplit))
                         {
                             // skip this lane as its a not chosen lane on the next link after a lane split
@@ -977,8 +977,8 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
                 RelativeLane relativeLane = this.relativeLanes.get(prev);
                 for (Lane nextLane : nextLanes)
                 {
-                    Node fromNode = nextLane.getParentLink().getStartNode();
-                    Node toNode = nextLane.getParentLink().getEndNode();
+                    Node fromNode = nextLane.getLink().getStartNode();
+                    Node toNode = nextLane.getLink().getEndNode();
                     int from = route.indexOf(fromNode);
                     int to = route.indexOf(toNode);
                     if (from == -1 || to == -1 || to - from != 1)
@@ -1030,8 +1030,8 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
                 boolean anyAdded = false;
                 for (Lane nextLane : nextLanes)
                 {
-                    Node fromNode = nextLane.getParentLink().getStartNode();
-                    Node toNode = nextLane.getParentLink().getEndNode();
+                    Node fromNode = nextLane.getLink().getStartNode();
+                    Node toNode = nextLane.getLink().getEndNode();
                     int from = route == null ? 0 : route.indexOf(fromNode);
                     int to = route == null ? 1 : route.indexOf(toNode);
                     // TODO we now assume everything is on the route, but merges could be ok without route
@@ -1322,7 +1322,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
             while (iterator.hasNext())
             {
                 Entry<T> entry = iterator.next();
-                CrossSectionLink link = entry.getLaneBasedObject().getLane().getParentLink();
+                CrossSectionLink link = entry.getLaneBasedObject().getLane().getLink();
                 if (!route.contains(link.getStartNode()) || !route.contains(link.getEndNode())
                         || Math.abs(route.indexOf(link.getStartNode()) - route.indexOf(link.getEndNode())) != 1)
                 {

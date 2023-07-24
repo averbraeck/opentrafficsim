@@ -339,7 +339,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
         List<String> names = new ArrayList<>();
         names.add("Left lane");
         names.add("Right lane");
-        LinkPosition linkPosition = new LinkPosition(getModel().getPath(0).get(0).getParentLink(), 0.0);
+        LinkPosition linkPosition = new LinkPosition(getModel().getPath(0).get(0).getLink(), 0.0);
         GraphCrossSection<LaneDataRoad> crossSection;
         try
         {

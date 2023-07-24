@@ -55,7 +55,7 @@ public class LaneAnimation extends Renderable2D<Lane> implements Renderable2DInt
     {
         super(lane, simulator);
         this.color = color;
-        this.text = new Text(lane, lane.getParentLink().getId() + "." + lane.getId(), 0.0f, 0.0f, TextAlignment.CENTER,
+        this.text = new Text(lane, lane.getLink().getId() + "." + lane.getId(), 0.0f, 0.0f, TextAlignment.CENTER,
                 Color.BLACK, simulator);
         new CenterLineAnimation(new CenterLine(lane.getCenterLine()), simulator);
     }

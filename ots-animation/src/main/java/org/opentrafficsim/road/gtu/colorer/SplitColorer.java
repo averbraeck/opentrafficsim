@@ -72,7 +72,7 @@ public class SplitColorer implements GtuColorer
         {
             return UNKNOWN;
         }
-        Link link = refPos.getLane().getParentLink();
+        Link link = refPos.getLane().getLink();
         Route route = laneGtu.getStrategicalPlanner().getRoute();
         if (route == null)
         {

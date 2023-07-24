@@ -144,9 +144,9 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGtu, 
         Lane next = getGtu().getNextLaneForRoute(lane);
         if (next == null)
         {
-            Node endNode = lane.getParentLink().getEndNode();
+            Node endNode = lane.getLink().getEndNode();
             Set<Link> links = endNode.getLinks().toSet();
-            links.remove(lane.getParentLink());
+            links.remove(lane.getLink());
             if (route.contains(endNode) && (links.isEmpty() || links.iterator().next().isConnector()))
             {
                 // dead-end link, must be destination

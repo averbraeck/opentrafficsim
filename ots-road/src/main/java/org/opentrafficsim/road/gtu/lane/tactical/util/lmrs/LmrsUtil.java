@@ -543,7 +543,7 @@ public final class LmrsUtil implements LmrsParameters
             conflicts = intersection.getConflicts(RelativeLane.CURRENT);
             for (HeadwayConflict conflict : conflicts)
             {
-                if (conflict.getLane().getParentLink().equals(conflict.getConflictingLink()))
+                if (conflict.getLane().getLink().equals(conflict.getConflictingLink()))
                 {
                     if (conflict.isMerge() && conflict.getDistance().le0()
                             && conflict.getDistance().neg().gt(conflict.getLength()))

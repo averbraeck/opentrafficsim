@@ -351,7 +351,7 @@ public class LaneBasedGtu extends Gtu
         // fire event
         this.fireTimedEvent(
                 LaneBasedGtu.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection.name(),
-                        from.getLane().getParentLink().getId(), from.getLane().getId(), from.getPosition()},
+                        from.getLane().getLink().getId(), from.getLane().getId(), from.getPosition()},
                 getSimulator().getSimulatorTime());
 
     }
@@ -521,7 +521,7 @@ public class LaneBasedGtu extends Gtu
         // XXX: WRONG: getSimulator().getSimulatorTime());
         this.fireTimedEvent(
                 LaneBasedGtu.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection.name(),
-                        from.getLane().getParentLink().getId(), from.getLane().getId(), from.getPosition()},
+                        from.getLane().getLink().getId(), from.getLane().getId(), from.getPosition()},
                 getSimulator().getSimulatorTime());
 
         this.finalizeLaneChangeEvent = null;
@@ -595,7 +595,7 @@ public class LaneBasedGtu extends Gtu
             fireTimedEvent(LaneBasedGtu.LANEBASED_MOVE_EVENT,
                     new Object[] {getId(), new OtsPoint3d(fromLocation).doubleVector(PositionUnit.METER),
                             OtsPoint3d.direction(fromLocation, DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
-                            getTurnIndicatorStatus().name(), getOdometer(), dlp.getLane().getParentLink().getId(),
+                            getTurnIndicatorStatus().name(), getOdometer(), dlp.getLane().getLink().getId(),
                             dlp.getLane().getId(), dlp.getPosition()},
                     getSimulator().getSimulatorTime());
 
@@ -661,7 +661,7 @@ public class LaneBasedGtu extends Gtu
         boolean possiblyNearNextSection = lane.getLength().minus(position).lt(remain);
         if (possiblyNearNextSection)
         {
-            CrossSectionLink link = lastCrossSection.getLanes().get(0).getParentLink();
+            CrossSectionLink link = lastCrossSection.getLanes().get(0).getLink();
             OtsLine3d enterLine = link.getEndLine();
             Time enterTime = timeAtLine(enterLine, getFront());
             if (enterTime != null)
@@ -720,7 +720,7 @@ public class LaneBasedGtu extends Gtu
                     boolean added = false;
                     for (Lane nextLane : lanes)
                     {
-                        if (nextLane.getParentLink().equals(nextLcsLane.getParentLink())
+                        if (nextLane.getLink().equals(nextLcsLane.getLink())
                                 && nextLane
                                         .accessibleAdjacentLanesPhysical(this.referenceLaneIndex == 0
                                                 ? LateralDirectionality.LEFT : LateralDirectionality.RIGHT, getType())
@@ -800,7 +800,7 @@ public class LaneBasedGtu extends Gtu
         }
         if (possiblyNearNextSection)
         {
-            CrossSectionLink link = firstCrossSection.getLanes().get(0).getParentLink();
+            CrossSectionLink link = firstCrossSection.getLanes().get(0).getLink();
             OtsLine3d leaveLine = link.getEndLine();
             Time leaveTime = timeAtLine(leaveLine, getRear());
             if (leaveTime == null)
@@ -930,7 +930,7 @@ public class LaneBasedGtu extends Gtu
         // ask tactical planner
         return Try.assign(() -> getTacticalPlanner().chooseLaneAtSplit(lane, set),
                 "Could not find suitable lane at split after lane %s of link %s for GTU %s.", lane.getId(),
-                lane.getParentLink().getId(), getId());
+                lane.getLink().getId(), getId());
     }
 
     /**
@@ -948,7 +948,7 @@ public class LaneBasedGtu extends Gtu
         Link link;
         try
         {
-            link = getStrategicalPlanner().nextLink(lane.getParentLink(), getType());
+            link = getStrategicalPlanner().nextLink(lane.getLink(), getType());
         }
         catch (NetworkException exception)
         {
@@ -957,7 +957,7 @@ public class LaneBasedGtu extends Gtu
         Set<Lane> out = new LinkedHashSet<>();
         for (Lane l : next)
         {
-            if (l.getParentLink().equals(link))
+            if (l.getLink().equals(link))
             {
                 out.add(l);
             }
@@ -1442,7 +1442,7 @@ public class LaneBasedGtu extends Gtu
             fireTimedEvent(LaneBasedGtu.LANEBASED_DESTROY_EVENT,
                     new Object[] {getId(), new OtsPoint3d(location).doubleVector(PositionUnit.METER),
                             OtsPoint3d.direction(location, DirectionUnit.EAST_RADIAN), getOdometer(),
-                            referenceLane.getParentLink().getId(), referenceLane.getId(), dlp.getPosition()},
+                            referenceLane.getLink().getId(), referenceLane.getId(), dlp.getPosition()},
                     getSimulator().getSimulatorTime());
         }
         else

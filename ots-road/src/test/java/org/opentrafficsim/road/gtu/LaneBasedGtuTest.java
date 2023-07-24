@@ -114,7 +114,7 @@ public class LaneBasedGtuTest implements UNITS
             String linkName = fromNode.getId() + "-" + toNode.getId();
             Lane[] lanes = LaneFactory.makeMultiLane(network, linkName, fromNode, toNode, null, laneCount, laneType,
                     new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
-            links.add(lanes[0].getParentLink());
+            links.add(lanes[0].getLink());
         }
         // Create a long truck with its front (reference) one meter in the last link on the 3rd lane
         Length truckPosition = new Length(99.5, METER);

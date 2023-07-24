@@ -128,7 +128,7 @@ public class TrafficLightDetectorTest implements EventListener
             if (lane.getLength().ge(remainingLength))
             {
                 boolean reverse =
-                        lane.getParentLink().getEndNode().getPoint().x < lane.getParentLink().getStartNode().getPoint().x;
+                        lane.getLink().getEndNode().getPoint().x < lane.getLink().getStartNode().getPoint().x;
                 if (reverse)
                 {
                     remainingLength = lane.getLength().minus(remainingLength);
@@ -162,7 +162,7 @@ public class TrafficLightDetectorTest implements EventListener
                 Model model = new Model(simulator);
                 simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
                 Lane[] lanes = buildNetwork(lengthList, simulator);
-                RoadNetwork network = (RoadNetwork) lanes[0].getParentLink().getNetwork();
+                RoadNetwork network = (RoadNetwork) lanes[0].getLink().getNetwork();
                 Length a = new Length(100, LengthUnit.METER);
                 Length b = new Length(120, LengthUnit.METER);
                 LanePosition pA = findLaneAndPosition(lanes, a);

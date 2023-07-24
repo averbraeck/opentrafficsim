@@ -237,7 +237,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         return cache.get(() ->
         {
             Set<Lane> lanes = new LinkedHashSet<>(1);
-            for (CrossSectionElement cse : this.parentLink.getCrossSectionElementList())
+            for (CrossSectionElement cse : this.link.getCrossSectionElementList())
             {
                 if (cse instanceof Lane && !cse.equals(this))
                 {
@@ -288,7 +288,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                 // look at stripes between the two lanes
                 if (legal)
                 {
-                    for (CrossSectionElement cse : this.parentLink.getCrossSectionElementList())
+                    for (CrossSectionElement cse : this.link.getCrossSectionElementList())
                     {
                         if (cse instanceof Stripe)
                         {
@@ -328,7 +328,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                 // look at stripes between the two lanes
                 if (legal)
                 {
-                    for (CrossSectionElement cse : this.parentLink.getCrossSectionElementList())
+                    for (CrossSectionElement cse : this.link.getCrossSectionElementList())
                     {
                         if (cse instanceof Stripe)
                         {
@@ -371,7 +371,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             throw new NetworkException(
                     "Illegal position for detector " + position + " valid range is 0.." + getLength().getSI());
         }
-        if (this.parentLink.getNetwork().containsObject(detector.getFullId()))
+        if (this.link.getNetwork().containsObject(detector.getFullId()))
         {
             throw new NetworkException("Network already contains an object with the name " + detector.getFullId());
         }
@@ -382,7 +382,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             this.detectors.put(position, detectorList);
         }
         detectorList.add(detector);
-        this.parentLink.getNetwork().addObject(detector);
+        this.link.getNetwork().addObject(detector);
         fireTimedEvent(Lane.DETECTOR_ADD_EVENT, new Object[] {detector.getId(), detector},
                 detector.getSimulator().getSimulatorTime());
     }
@@ -406,7 +406,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         {
             this.detectors.remove(detector.getLongitudinalPosition().si);
         }
-        this.parentLink.getNetwork().removeObject(detector);
+        this.link.getNetwork().removeObject(detector);
     }
 
     /**
@@ -584,7 +584,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             throw new NetworkException(
                     "Illegal position for laneBasedObject " + position + " valid range is 0.." + getLength().getSI());
         }
-        if (this.parentLink.getNetwork().containsObject(laneBasedObject.getFullId()))
+        if (this.link.getNetwork().containsObject(laneBasedObject.getFullId()))
         {
             throw new NetworkException("Network already contains an object with the name " + laneBasedObject.getFullId());
         }
@@ -595,9 +595,9 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             this.laneBasedObjects.put(position, laneBasedObjectList);
         }
         laneBasedObjectList.add(laneBasedObject);
-        this.parentLink.getNetwork().addObject(laneBasedObject);
+        this.link.getNetwork().addObject(laneBasedObject);
         fireTimedEvent(Lane.OBJECT_ADD_EVENT, new Object[] {laneBasedObject},
-                getParentLink().getSimulator().getSimulatorTime());
+                getLink().getSimulator().getSimulatorTime());
     }
 
     /**
@@ -608,7 +608,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     public final synchronized void removeLaneBasedObject(final LaneBasedObject laneBasedObject) throws NetworkException
     {
         fireTimedEvent(Lane.OBJECT_REMOVE_EVENT, new Object[] {laneBasedObject},
-                getParentLink().getSimulator().getSimulatorTime());
+                getLink().getSimulator().getSimulatorTime());
         List<LaneBasedObject> laneBasedObjectList =
                 this.laneBasedObjects.get(laneBasedObject.getLongitudinalPosition().getSI());
         if (null == laneBasedObjectList)
@@ -620,7 +620,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         {
             this.laneBasedObjects.remove(laneBasedObject.getLongitudinalPosition().doubleValue());
         }
-        this.parentLink.getNetwork().removeObject(laneBasedObject);
+        this.link.getNetwork().removeObject(laneBasedObject);
     }
 
     /**
@@ -775,10 +775,10 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             this.gtuList.add(index, gtu);
         }
         // @docs/02-model-structure/djutils.md#event-producers-and-listeners
-        fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] {gtu.getId(), this.gtuList.size(), getId(), getParentLink().getId()},
+        fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] {gtu.getId(), this.gtuList.size(), getId(), getLink().getId()},
                 gtu.getSimulator().getSimulatorTime());
         // @end
-        getParentLink().addGTU(gtu);
+        getLink().addGTU(gtu);
         return index;
     }
 
@@ -809,13 +809,13 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         {
             // @docs/02-model-structure/djutils.md#event-producers-and-listeners
             fireTimedEvent(Lane.GTU_REMOVE_EVENT,
-                    new Object[] {gtu.getId(), gtu, this.gtuList.size(), position, getId(), getParentLink().getId()},
+                    new Object[] {gtu.getId(), gtu, this.gtuList.size(), position, getId(), getLink().getId()},
                     gtu.getSimulator().getSimulatorTime());
             // @end
         }
         if (removeFromParentLink)
         {
-            this.parentLink.removeGTU(gtu);
+            this.link.removeGTU(gtu);
         }
     }
 
@@ -1049,9 +1049,9 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             if (gtuType == null)
             {
                 // Construct (and cache) the result.
-                for (Link link : getParentLink().getEndNode().getLinks())
+                for (Link link : getLink().getEndNode().getLinks())
                 {
-                    if (!(link.equals(this.getParentLink())) && link instanceof CrossSectionLink)
+                    if (!(link.equals(this.getLink())) && link instanceof CrossSectionLink)
                     {
                         for (CrossSectionElement cse : ((CrossSectionLink) link).getCrossSectionElementList())
                         {
@@ -1061,7 +1061,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                                 Length jumpToStart = this.getCenterLine().getLast().distance(lane.getCenterLine().getFirst());
                                 Length jumpToEnd = this.getCenterLine().getLast().distance(lane.getCenterLine().getLast());
                                 if (jumpToStart.lt(MARGIN) && jumpToStart.lt(jumpToEnd)
-                                        && link.getStartNode().equals(getParentLink().getEndNode()))
+                                        && link.getStartNode().equals(getLink().getEndNode()))
                                 {
                                     // TODO And is it aligned with its next lane?
                                     laneSet.add(lane);
@@ -1117,9 +1117,9 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             // Construct (and cache) the result.
             if (gtuType == null)
             {
-                for (Link link : getParentLink().getStartNode().getLinks())
+                for (Link link : getLink().getStartNode().getLinks())
                 {
-                    if (!(link.equals(this.getParentLink())) && link instanceof CrossSectionLink)
+                    if (!(link.equals(this.getLink())) && link instanceof CrossSectionLink)
                     {
                         for (CrossSectionElement cse : ((CrossSectionLink) link).getCrossSectionElementList())
                         {
@@ -1129,7 +1129,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                                 Length jumpToStart = this.getCenterLine().getFirst().distance(lane.getCenterLine().getFirst());
                                 Length jumpToEnd = this.getCenterLine().getFirst().distance(lane.getCenterLine().getLast());
                                 if (jumpToEnd.lt(MARGIN) && jumpToEnd.lt(jumpToStart)
-                                        && link.getEndNode().equals(getParentLink().getStartNode()))
+                                        && link.getEndNode().equals(getLink().getStartNode()))
                                 {
                                     // TODO And is it aligned with its next lane?
                                     laneSet.add(lane);
@@ -1471,7 +1471,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     @Override
     public final String toString()
     {
-        CrossSectionLink link = getParentLink();
+        CrossSectionLink link = getLink();
         return String.format("Lane %s of %s", getId(), link.getId());
     }
 

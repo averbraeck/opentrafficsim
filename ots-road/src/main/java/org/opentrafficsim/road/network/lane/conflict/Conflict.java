@@ -210,7 +210,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             final HeadwayGtuType headwayGtuType, final Length visibility)
     {
         provideUpstreamVisibility(visibility);
-        Time time = this.getLane().getParentLink().getSimulator().getSimulatorAbsTime();
+        Time time = this.getLane().getLink().getSimulator().getSimulatorAbsTime();
         if (this.upstreamTime == null || !time.eq(this.upstreamTime))
         {
             for (LaneBasedGtu gtu : this.upstreamListening)
@@ -259,7 +259,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             final HeadwayGtuType headwayGtuType, final Length visibility)
     {
         provideDownstreamVisibility(visibility);
-        Time time = this.getLane().getParentLink().getSimulator().getSimulatorAbsTime();
+        Time time = this.getLane().getLink().getSimulator().getSimulatorAbsTime();
         if (this.downstreamTime == null || !time.eq(this.downstreamTime))
         {
             for (LaneBasedGtu gtu : this.downstreamListening)

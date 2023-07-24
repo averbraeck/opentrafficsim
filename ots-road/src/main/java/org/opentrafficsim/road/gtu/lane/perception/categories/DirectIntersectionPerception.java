@@ -168,7 +168,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                     String id = conflict.getId();
                     Length length = conflict.getLength();
                     Length conflictingLength = otherConflict.getLength();
-                    CrossSectionLink conflictingLink = otherConflict.getLane().getParentLink();
+                    CrossSectionLink conflictingLink = otherConflict.getLane().getLink();
 
                     // TODO get from link combination (needs to be a map property on the links)
                     Length lookAhead =

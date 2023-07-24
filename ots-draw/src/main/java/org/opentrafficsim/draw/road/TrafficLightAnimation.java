@@ -50,7 +50,7 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLight>
         super(trafficLight, simulator, 0.9, new Length(0.5, LengthUnit.SI));
 
         this.text = new Text(trafficLight,
-                trafficLight.getLane().getParentLink().getId() + "." + trafficLight.getLane().getId() + trafficLight.getId(),
+                trafficLight.getLane().getLink().getId() + "." + trafficLight.getLane().getId() + trafficLight.getId(),
                 0.0f, (float) getHalfLength() + 0.2f, TextAlignment.CENTER, Color.BLACK, simulator);
     }
 

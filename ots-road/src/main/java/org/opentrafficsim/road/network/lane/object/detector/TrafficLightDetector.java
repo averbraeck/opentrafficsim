@@ -125,7 +125,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
         // Set up detection of GTUs that enter or leave the detector laterally or appear due to a generator or disappear due to
         // a sink
         this.lanes.add(laneA);
-        this.network = laneA.getParentLink().getNetwork();
+        this.network = laneA.getLink().getNetwork();
         if (null != intermediateLanes)
         {
             this.lanes.addAll(intermediateLanes);
@@ -230,7 +230,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
                 String linkId = (String) ((Object[]) event.getContent())[5];
                 for (Lane detectorLane : this.lanes)
                 {
-                    if (detectorLane.getId().equals(laneId) && detectorLane.getParentLink().getId().equals(linkId))
+                    if (detectorLane.getId().equals(laneId) && detectorLane.getLink().getId().equals(linkId))
                     {
                         lane = detectorLane;
                         break;
@@ -281,7 +281,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
                 String linkId = (String) ((Object[]) event.getContent())[3];
                 for (Lane detectorLane : this.lanes)
                 {
-                    if (detectorLane.getId().equals(laneId) && detectorLane.getParentLink().getId().equals(linkId))
+                    if (detectorLane.getId().equals(laneId) && detectorLane.getLink().getId().equals(linkId))
                     {
                         lane = detectorLane;
                     }

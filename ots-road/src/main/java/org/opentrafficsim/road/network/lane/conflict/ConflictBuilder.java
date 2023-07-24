@@ -411,7 +411,7 @@ public final class ConflictBuilder
         }
 
         // Create crossings
-        if (!lane1.getParentLink().equals(lane2.getParentLink())) // tight inner-curves with dedicated Bezier ignored
+        if (!lane1.getLink().equals(lane2.getLink())) // tight inner-curves with dedicated Bezier ignored
         {
             boolean[] crossed = new boolean[4];
             Iterator<Intersection> iterator = intersections.iterator();
@@ -484,9 +484,9 @@ public final class ConflictBuilder
 
         // Determine conflict rule
         ConflictRule conflictRule;
-        if (lane1.getParentLink().getPriority().isBusStop() || lane2.getParentLink().getPriority().isBusStop())
+        if (lane1.getLink().getPriority().isBusStop() || lane2.getLink().getPriority().isBusStop())
         {
-            Throw.when(lane1.getParentLink().getPriority().isBusStop() && lane2.getParentLink().getPriority().isBusStop(),
+            Throw.when(lane1.getLink().getPriority().isBusStop() && lane2.getLink().getPriority().isBusStop(),
                     IllegalArgumentException.class, "Merge conflict between two links with bus stop priority not supported.");
             // TODO: handle bus priority on the model side
             conflictRule = new BusStopConflictRule(simulator, DefaultsNl.BUS);
@@ -594,9 +594,9 @@ public final class ConflictBuilder
 
         // Determine conflict rule
         ConflictRule conflictRule;
-        if (lane1.getParentLink().getPriority().isBusStop() || lane2.getParentLink().getPriority().isBusStop())
+        if (lane1.getLink().getPriority().isBusStop() || lane2.getLink().getPriority().isBusStop())
         {
-            Throw.when(lane1.getParentLink().getPriority().isBusStop() && lane2.getParentLink().getPriority().isBusStop(),
+            Throw.when(lane1.getLink().getPriority().isBusStop() && lane2.getLink().getPriority().isBusStop(),
                     IllegalArgumentException.class, "Merge conflict between two links with bus stop priority not supported.");
             // TODO: handle bus priority on the model side
             conflictRule = new BusStopConflictRule(simulator, DefaultsNl.BUS);
@@ -640,7 +640,7 @@ public final class ConflictBuilder
         }
         if (Math.abs(f1 - f2) < 1E-8)
         {
-            lane.getParentLink().getSimulator().getLogger().always()
+            lane.getLink().getSimulator().getLogger().always()
                     .debug("f1 (" + f1 + ") equals f2 (" + f2 + "); problematic lane is " + lane.toString());
             // Fix up
             if (f1 > 0)
@@ -1480,7 +1480,7 @@ public final class ConflictBuilder
                     }
                     catch (NetworkException | OtsGeometryException ne)
                     {
-                        lane2.getParentLink().getSimulator().getLogger().always().error(ne,
+                        lane2.getLink().getSimulator().getLogger().always().error(ne,
                                 "Conflict build with bad combination of types / rules.");
                     }
                 }

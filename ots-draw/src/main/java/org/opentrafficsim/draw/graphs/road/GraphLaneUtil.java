@@ -123,7 +123,7 @@ public final class GraphLaneUtil
             set.addAll(lanes);
             // per link and then per lane, find the downstream lane
             Map<Link, List<Lane>> linkMap = new LinkedHashMap<>();
-            Link link = firstNextLane.getParentLink();
+            Link link = firstNextLane.getLink();
             ImmutableSet<Link> links = link.getEndNode().getLinks();
             for (Link nextLink : links)
             {
@@ -136,7 +136,7 @@ public final class GraphLaneUtil
                         int n = 0;
                         for (Lane nl : nextLaneSet)
                         {
-                            if (nl.getParentLink().equals(nextLink))
+                            if (nl.getLink().equals(nextLink))
                             {
                                 n++;
                                 nextLanes.add(nl);

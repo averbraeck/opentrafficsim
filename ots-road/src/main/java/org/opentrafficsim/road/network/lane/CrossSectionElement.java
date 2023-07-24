@@ -43,7 +43,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
 
     /** Cross Section Link to which the element belongs. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final CrossSectionLink parentLink;
+    protected final CrossSectionLink link;
 
     /** The offsets and widths at positions along the line, relative to the design line of the parent link. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -73,7 +73,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
         Throw.whenNull(contour, "Contour may not be null.");
         Throw.whenNull(crossSectionSlices, "Cross section slices may not be null.");
         Throw.when(crossSectionSlices.isEmpty(), NetworkException.class, "Need at least 1 cross section slice.");
-        this.parentLink = link;
+        this.link = link;
         this.id = id;
         this.centerLine = centerLine;
         this.contour = contour;
@@ -86,11 +86,12 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
     }
 
     /**
-     * @return parentLink.
+     * Returns the link of this cross-section element.
+     * @return CrossSectionLink; link of this cross-section element.
      */
-    public final CrossSectionLink getParentLink()
+    public final CrossSectionLink getLink()
     {
-        return this.parentLink;
+        return this.link;
     }
 
     /**
@@ -98,7 +99,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      */
     public final RoadNetwork getNetwork()
     {
-        return this.parentLink.getNetwork();
+        return this.link.getNetwork();
     }
 
     /**
@@ -108,7 +109,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      */
     private int calculateSliceNumber(final double fractionalPosition)
     {
-        double linkLength = this.parentLink.getLength().si;
+        double linkLength = this.link.getLength().si;
         for (int i = 0; i < this.crossSectionSlices.size() - 1; i++)
         {
             if (fractionalPosition >= this.crossSectionSlices.get(i).getRelativeLength().si / linkLength
@@ -285,7 +286,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      */
     public final String getFullId()
     {
-        return getParentLink().getId() + "." + this.id;
+        return getLink().getId() + "." + this.id;
     }
 
     /**
@@ -378,7 +379,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
             List<OtsPoint3d> rightBoundary = new ArrayList<>();
             for (int i = 0; i < cse.crossSectionSlices.size() - 1; i++)
             {
-                double plLength = cse.getParentLink().getLength().si;
+                double plLength = cse.getLink().getLength().si;
                 double so = cse.crossSectionSlices.get(i).getDesignLineOffset().si;
                 double eo = cse.crossSectionSlices.get(i + 1).getDesignLineOffset().si;
                 double sw2 = cse.crossSectionSlices.get(i).getWidth().si / 2.0;
@@ -386,7 +387,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
                 double sf = cse.crossSectionSlices.get(i).getRelativeLength().si / plLength;
                 double ef = cse.crossSectionSlices.get(i + 1).getRelativeLength().si / plLength;
                 OtsLine3d crossSectionDesignLine =
-                        cse.getParentLink().getDesignLine().extractFractional(sf, ef).offsetLine(so, eo);
+                        cse.getLink().getDesignLine().extractFractional(sf, ef).offsetLine(so, eo);
                 resultList.addAll(Arrays.asList(crossSectionDesignLine.offsetLine(-sw2, -ew2).getPoints()));
                 rightBoundary.addAll(Arrays.asList(crossSectionDesignLine.offsetLine(sw2, ew2).getPoints()));
             }
@@ -435,7 +436,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
         final int prime = 31;
         int result = 1;
         result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
-        result = prime * result + ((this.parentLink == null) ? 0 : this.parentLink.hashCode());
+        result = prime * result + ((this.link == null) ? 0 : this.link.hashCode());
         return result;
     }
 
@@ -458,12 +459,12 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
         }
         else if (!this.id.equals(other.id))
             return false;
-        if (this.parentLink == null)
+        if (this.link == null)
         {
-            if (other.parentLink != null)
+            if (other.link != null)
                 return false;
         }
-        else if (!this.parentLink.equals(other.parentLink))
+        else if (!this.link.equals(other.link))
             return false;
         return true;
     }

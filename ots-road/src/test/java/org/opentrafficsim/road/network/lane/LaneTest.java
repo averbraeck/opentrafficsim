@@ -761,7 +761,7 @@ public class LaneTest implements UNITS
      */
     private void checkInside(final Lane lane, final double longitudinal, final double lateral, final boolean expectedResult)
     {
-        CrossSectionLink parentLink = lane.getParentLink();
+        CrossSectionLink parentLink = lane.getLink();
         Node start = parentLink.getStartNode();
         Node end = parentLink.getEndNode();
         double startX = start.getPoint().x;

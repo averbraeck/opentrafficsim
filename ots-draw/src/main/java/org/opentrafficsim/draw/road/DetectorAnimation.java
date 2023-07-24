@@ -54,7 +54,7 @@ public class DetectorAnimation extends AbstractLineAnimation<LaneDetector> imple
         this.color = color;
 
         this.text = new Text(detector,
-                detector.getLane().getParentLink().getId() + "." + detector.getLane().getId() + detector.getId(), 0.0f,
+                detector.getLane().getLink().getId() + "." + detector.getLane().getId() + detector.getId(), 0.0f,
                 (float) getHalfLength() + 0.2f, TextAlignment.CENTER, Color.BLACK, simulator);
     }
 

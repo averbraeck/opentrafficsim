@@ -255,12 +255,12 @@ public class RoadNetwork extends Network
                 for (Lane nextLane : nextLanes)
                 {
                     LaneChangeInfoEdge edge =
-                            new LaneChangeInfoEdge(lane, LaneChangeInfoEdgeType.DOWNSTREAM, nextLane.getParentLink());
+                            new LaneChangeInfoEdge(lane, LaneChangeInfoEdgeType.DOWNSTREAM, nextLane.getLink());
                     graph.addEdge(lane, nextLane, edge);
                 }
                 // add edge towards end node so that it can be used as a destination in the shortest path search
                 LaneChangeInfoEdge edge = new LaneChangeInfoEdge(lane, LaneChangeInfoEdgeType.DOWNSTREAM, null);
-                graph.addEdge(lane, lane.getParentLink().getEndNode(), edge);
+                graph.addEdge(lane, lane.getLink().getEndNode(), edge);
             }
         }
     }
@@ -284,7 +284,7 @@ public class RoadNetwork extends Network
             destination = graph.getNoRouteDestinationNode(gtuType);
             try
             {
-                routeForWeights = getShortestRouteBetween(gtuType, lane.getParentLink().getStartNode(), destination);
+                routeForWeights = getShortestRouteBetween(gtuType, lane.getLink().getStartNode(), destination);
             }
             catch (NetworkException exception)
             {
@@ -446,7 +446,7 @@ public class RoadNetwork extends Network
             if (e.getLaneChangeInfoEdgeType().equals(LaneChangeInfoEdgeType.LEFT)
                     || e.getLaneChangeInfoEdgeType().equals(LaneChangeInfoEdgeType.RIGHT))
             {
-                int indexEndNode = this.route.indexOf(e.getFromLane().getParentLink().getEndNode());
+                int indexEndNode = this.route.indexOf(e.getFromLane().getLink().getEndNode());
                 return 1.0 + 1.0 / indexEndNode; // lateral, reduce weight for further lane changes
             }
             Link toLink = e.getToLink();
@@ -486,7 +486,7 @@ public class RoadNetwork extends Network
                 // move to downstream link for as long as there is 1 downstream link
                 try
                 {
-                    Link link = lane.getParentLink();
+                    Link link = lane.getLink();
                     Set<Link> downstreamLinks = link.getEndNode().nextLinks(gtuType, link);
                     while (downstreamLinks.size() == 1)
                     {

@@ -98,8 +98,8 @@ public class DefaultConflictRule implements ConflictRule
         Throw.when(conflictType.equals(ConflictType.SPLIT), UnsupportedOperationException.class,
                 "DefaultConflictRule is not for use on a split conflict. Use SplitConflictRule instead.");
         ConflictPriority[] conflictRules = new ConflictPriority[2];
-        Priority priority1 = lane1.getParentLink().getPriority();
-        Priority priority2 = lane2.getParentLink().getPriority();
+        Priority priority1 = lane1.getLink().getPriority();
+        Priority priority2 = lane2.getLink().getPriority();
         if (priority1.isAllStop() && priority2.isAllStop())
         {
             conflictRules[0] = ConflictPriority.ALL_STOP;

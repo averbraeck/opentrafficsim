@@ -348,7 +348,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
         {
             return true;
         }
-        Link link = record.getLane().getParentLink();
+        Link link = record.getLane().getLink();
         int from;
         int to;
         from = this.route.indexOf(link.getStartNode());

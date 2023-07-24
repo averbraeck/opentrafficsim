@@ -425,11 +425,11 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
         double remainingDistance = lane.getLength().getSI() - longitudinalPosition.getSI();
         double spareTime = timeHorizon.getSI() - remainingDistance / lane.getSpeedLimit(gtu.getType()).getSI();
         // Find the first upcoming Node where there is a branch
-        Node nextNode = lane.getParentLink().getEndNode();
-        Link lastLink = lane.getParentLink();
+        Node nextNode = lane.getLink().getEndNode();
+        Link lastLink = lane.getLink();
         Node nextSplitNode = null;
         Lane currentLane = lane;
-        CrossSectionLink linkBeforeBranch = lane.getParentLink();
+        CrossSectionLink linkBeforeBranch = lane.getLink();
         while (null != nextNode)
         {
             if (spareTime <= 0)
@@ -535,7 +535,7 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
                 {
                     for (Lane connectingLane : l.nextLanes(gtu.getType()))
                     {
-                        if (connectingLane.getParentLink() == linkAfterBranch
+                        if (connectingLane.getLink() == linkAfterBranch
                                 && connectingLane.getType().isCompatible(gtu.getType()))
                         {
                             Length currentValue = suitabilityOfLanesBeforeBranch.get(l);
@@ -565,7 +565,7 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
             return currentLaneSuitability; // Following the current lane will keep us on the Route
         }
         // Performing one or more lane changes (left or right) is required.
-        int totalLanes = countCompatibleLanes(currentLane.getParentLink(), gtu.getType());
+        int totalLanes = countCompatibleLanes(currentLane.getLink(), gtu.getType());
         Length leftSuitability = computeSuitabilityWithLaneChanges(currentLane, remainingDistance,
                 suitabilityOfLanesBeforeBranch, totalLanes, LateralDirectionality.LEFT, gtu.getType());
         Length rightSuitability = computeSuitabilityWithLaneChanges(currentLane, remainingDistance,

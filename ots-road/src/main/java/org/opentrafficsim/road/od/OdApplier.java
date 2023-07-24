@@ -245,7 +245,7 @@ public final class OdApplier
                             if (markovian)
                             {
                                 MarkovCorrelation<GtuType, Frequency> correlation =
-                                        odOptions.get(OdOptions.MARKOV, lane, origin, lane.getParentLink().getType());
+                                        odOptions.get(OdOptions.MARKOV, lane, origin, lane.getLink().getType());
                                 if (correlation != null)
                                 {
                                     Throw.when(!od.getCategorization().entails(GtuType.class), IllegalArgumentException.class,
@@ -289,7 +289,7 @@ public final class OdApplier
         {
             DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> demandNode = originNodePerLane.get(lane);
             Set<LanePosition> initialPosition = new LinkedHashSet<>();
-            initialPosition.add(lane.getParentLink().getStartNode().equals(demandNode.getObject())
+            initialPosition.add(lane.getLink().getStartNode().equals(demandNode.getObject())
                     ? new LanePosition(lane, Length.ZERO) : new LanePosition(lane, lane.getLength()));
             initialPositions.put(demandNode, initialPosition);
         }
@@ -404,7 +404,7 @@ public final class OdApplier
             if (laneBased)
             {
                 lane = initialPosition.iterator().next().getLane();
-                linkType = lane.getParentLink().getType();
+                linkType = lane.getLink().getType();
             }
             else
             {
@@ -616,9 +616,9 @@ public final class OdApplier
             public int compare(final Entry<K, V> o1, final Entry<K, V> o2)
             {
                 LanePosition lanePos1 = o1.getValue().iterator().next();
-                String linkId1 = lanePos1.getLane().getParentLink().getId();
+                String linkId1 = lanePos1.getLane().getLink().getId();
                 LanePosition lanePos2 = o2.getValue().iterator().next();
-                String linkId2 = lanePos2.getLane().getParentLink().getId();
+                String linkId2 = lanePos2.getLane().getLink().getId();
                 int c = linkId1.compareToIgnoreCase(linkId2);
                 if (c == 0)
                 {
@@ -644,7 +644,7 @@ public final class OdApplier
         for (Lane lane : link.getLanes())
         {
             // TODO should be GTU type dependent.
-            if (lane.getParentLink().getStartNode().equals(node))
+            if (lane.getLink().getStartNode().equals(node))
             {
                 positionSet.add(new LanePosition(lane, Length.ZERO));
             }

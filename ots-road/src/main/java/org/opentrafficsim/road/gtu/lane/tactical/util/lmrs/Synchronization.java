@@ -570,7 +570,7 @@ public interface Synchronization extends LmrsParameters
         try
         {
             out = new SortedSetPerceptionIterable<HeadwayGtu>(
-                    (RoadNetwork) perception.getGtu().getReferencePosition().getLane().getParentLink().getNetwork());
+                    (RoadNetwork) perception.getGtu().getReferencePosition().getLane().getLink().getNetwork());
         }
         catch (GtuException exception)
         {

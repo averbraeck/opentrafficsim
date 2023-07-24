@@ -158,7 +158,7 @@ public final class LaneOperationalPlanBuilder
                         }
                     }
                     CategoryLogger.always().error("GTU {} on link {} has nowhere to go and no sink detector either", gtu,
-                            ref.getLane().getParentLink().getId());
+                            ref.getLane().getLink().getId());
                     gtu.destroy();
                     return path;
                 }

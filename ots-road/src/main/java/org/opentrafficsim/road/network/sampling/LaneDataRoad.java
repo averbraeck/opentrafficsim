@@ -47,7 +47,7 @@ public class LaneDataRoad implements LaneData
     @Override
     public final LinkDataRoad getLinkData()
     {
-        return new LinkDataRoad(this.lane.getParentLink());
+        return new LinkDataRoad(this.lane.getLink());
     }
 
     /** {@inheritDoc} */
