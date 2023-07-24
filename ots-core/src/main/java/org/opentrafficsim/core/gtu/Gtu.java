@@ -476,7 +476,7 @@ public class Gtu extends LocalEventProducer
             throws SimRuntimeException, OperationalPlanException, GtuException, NetworkException, ParameterException
     {
         this.simulator.cancelEvent(this.nextMoveEvent);
-        move(this.operationalPlan.get().getLocation(this.simulator.getSimulatorTime()));
+        move(this.operationalPlan.get().getLocation(this.simulator.getSimulatorAbsTime()));
     }
 
     /** @return the id of the GTU */
