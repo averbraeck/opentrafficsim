@@ -368,7 +368,7 @@ public final class Query<G extends GtuData, L extends LaneData> implements Ident
             String gtuId = iterator.next();
             TrajectoryAcceptList trajectoryAcceptListCombined = trajectoryAcceptLists.get(gtuId);
             trajectoryAcceptListCombined.acceptAll(); // refuse only if any filter data type refuses
-            for (FilterDataType<?> filterDataType : this.filterDataSet.getMetaDataTypes())
+            for (FilterDataType<?> filterDataType : this.filterDataSet.getFilterDataTypes())
             {
                 // create safe copy per filter data type, with defaults accepts = false
                 TrajectoryAcceptList trajectoryAcceptListCopy = copyTrajectoryAcceptList(trajectoryAcceptLists.get(gtuId));
