@@ -366,7 +366,7 @@ public final class Query<G extends GtuData, L extends LaneData> implements Ident
         while (iterator.hasNext())
         {
             String gtuId = iterator.next();
-            TrajectoryAcceptList trajectoryAcceptListCombined = copyTrajectoryAcceptList(trajectoryAcceptLists.get(gtuId));
+            TrajectoryAcceptList trajectoryAcceptListCombined = trajectoryAcceptLists.get(gtuId);
             trajectoryAcceptListCombined.acceptAll(); // refuse only if any filter data type refuses
             for (FilterDataType<?> filterDataType : this.filterDataSet.getMetaDataTypes())
             {
