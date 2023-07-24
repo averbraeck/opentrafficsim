@@ -215,7 +215,7 @@ public class OperationalPlan implements Serializable
      */
     public DirectedPoint getEndLocation()
     {
-        return Try.assign(() -> this.path.getLocationFraction(Math.min(1.0, this.totalLength.si / this.path.getLengthSI())),
+        return Try.assign(() -> this.path.getLocationFraction(Math.min(1.0, this.totalLength.si / this.path.getLength().si)),
                 "Unexpected exception for path extraction till 1.0.");
     }
 
@@ -402,13 +402,13 @@ public class OperationalPlan implements Serializable
                     continue;
                 }
                 boolean onSegment =
-                        prevPoint.distanceSI(nextPoint) + 2e-5 > Math.max(prevPoint.distanceSI(p), nextPoint.distanceSI(p));
+                        prevPoint.distance(nextPoint).si + 2e-5 > Math.max(prevPoint.distance(p).si, nextPoint.distance(p).si);
                 if (p != null // on segment, or last segment
                         && (i == this.path.size() - 2 || onSegment))
                 {
                     // point is on the line
                     traveledDistanceAlongPath += this.path.get(i).distance(p).si;
-                    if (traveledDistanceAlongPath > this.path.getLengthSI())
+                    if (traveledDistanceAlongPath > this.path.getLength().si)
                     {
                         return Time.instantiateSI(Double.NaN);
                     }

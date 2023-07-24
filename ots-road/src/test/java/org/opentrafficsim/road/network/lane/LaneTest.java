@@ -103,9 +103,9 @@ public class LaneTest implements UNITS
         assertEquals("PrevLanes should be empty", 0, lane.prevLanes(gtuTypeCar).size()); // this one caught a bug!
         assertEquals("NextLanes should be empty", 0, lane.nextLanes(gtuTypeCar).size());
         double approximateLengthOfContour =
-                2 * nodeFrom.getPoint().distanceSI(nodeTo.getPoint()) + startWidth.getSI() + endWidth.getSI();
+                2 * nodeFrom.getPoint().distance(nodeTo.getPoint()).si + startWidth.getSI() + endWidth.getSI();
         assertEquals("Length of contour is approximately " + approximateLengthOfContour, approximateLengthOfContour,
-                lane.getContour().getLengthSI(), 0.1);
+                lane.getContour().getLength().si, 0.1);
         assertEquals("SpeedLimit should be " + (new Speed(100, KM_PER_HOUR)), new Speed(100, KM_PER_HOUR),
                 lane.getSpeedLimit(DefaultsNl.VEHICLE));
         assertEquals("There should be no GTUs on the lane", 0, lane.getGtuList().size());

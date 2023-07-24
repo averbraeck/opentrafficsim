@@ -1064,7 +1064,7 @@ public final class ConflictBuilderParallel
                         dx = p.x - start2.x;
                         dy = p.y - start2.y;
                         double length2 = cumul2 + Math.sqrt(dx * dx + dy * dy);
-                        out.add(new Intersection(length1 / line1.getLengthSI(), length2 / line2.getLengthSI(), combo));
+                        out.add(new Intersection(length1 / line1.getLength().si, length2 / line2.getLength().si, combo));
                     }
 
                     double dx = end2.x - start2.x;

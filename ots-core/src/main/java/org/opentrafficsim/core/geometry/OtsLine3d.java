@@ -112,7 +112,7 @@ public class OtsLine3d implements Locatable, Serializable // XXX: DJ
                 throw new OtsGeometryException(
                         "Degenerate OtsLine3d; point " + (i - 1) + " has the same x, y and z as point " + i);
             }
-            this.lengthIndexedLine[i] = this.lengthIndexedLine[i - 1] + pts[i - 1].distanceSI(pts[i]);
+            this.lengthIndexedLine[i] = this.lengthIndexedLine[i - 1] + pts[i - 1].distance(pts[i]).si;
         }
         this.points = pts;
         this.length = Length.instantiateSI(this.lengthIndexedLine[this.lengthIndexedLine.length - 1]); // XXX: DJ double
@@ -177,7 +177,7 @@ public class OtsLine3d implements Locatable, Serializable // XXX: DJ
         for (int index = 0; index < this.size(); index++)
         {
             OtsPoint3d currentPoint = this.points[index];
-            if (null != prevPoint && prevPoint.distanceSI(currentPoint) < noiseLevel)
+            if (null != prevPoint && prevPoint.distance(currentPoint).si < noiseLevel)
             {
                 if (null == list)
                 {
@@ -262,7 +262,7 @@ public class OtsLine3d implements Locatable, Serializable // XXX: DJ
                 OtsPoint3d point = get(i);
                 OtsPoint3d closest =
                         useHorizontalDistance ? point.closestPointOnLine2D(straight) : point.closestPointOnLine(straight);
-                double deviation = useHorizontalDistance ? closest.horizontalDistanceSI(point) : closest.distanceSI(point);
+                double deviation = useHorizontalDistance ? closest.horizontalDistance(point).si : closest.distance(point).si;
                 if (deviation > maxDeviation)
                 {
                     splitIndex = i;
@@ -605,10 +605,10 @@ public class OtsLine3d implements Locatable, Serializable // XXX: DJ
      */
     public final OtsLine3d extract(final double start, final double end) throws OtsGeometryException
     {
-        if (Double.isNaN(start) || Double.isNaN(end) || start < 0 || start >= end || end > getLengthSI())
+        if (Double.isNaN(start) || Double.isNaN(end) || start < 0 || start >= end || end > this.length.si)
         {
             throw new OtsGeometryException(
-                    "Bad interval (" + start + ".." + end + "; length of this OtsLine3d is " + this.getLengthSI() + ")");
+                    "Bad interval (" + start + ".." + end + "; length of this OtsLine3d is " + this.length.si + ")");
         }
         double cumulativeLength = 0;
         double nextCumulativeLength = 0;
@@ -621,7 +621,7 @@ public class OtsLine3d implements Locatable, Serializable // XXX: DJ
             OtsPoint3d fromPoint = this.points[index];
             index++;
             OtsPoint3d toPoint = this.points[index];
-            segmentLength = fromPoint.distanceSI(toPoint);
+            segmentLength = fromPoint.distance(toPoint).si;
             cumulativeLength = nextCumulativeLength;
             nextCumulativeLength = cumulativeLength + segmentLength;
             if (nextCumulativeLength >= start)
@@ -651,7 +651,7 @@ public class OtsLine3d implements Locatable, Serializable // XXX: DJ
                 break; // rounding error
             }
             OtsPoint3d toPoint = this.points[index];
-            segmentLength = fromPoint.distanceSI(toPoint);
+            segmentLength = fromPoint.distance(toPoint).si;
             cumulativeLength = nextCumulativeLength;
             nextCumulativeLength = cumulativeLength + segmentLength;
             if (nextCumulativeLength >= end)
@@ -883,21 +883,11 @@ public class OtsLine3d implements Locatable, Serializable // XXX: DJ
     }
 
     /**
-     * Return the length of this OtsLine3d as a double value in SI units. (Assumes that the coordinates of the points
-     * constituting this line are expressed in meters.)
-     * @return the length of the line in SI units
-     */
-    public final double getLengthSI()
-    {
-        return this.length.si;
-    }
-
-    /**
      * Return the length of this OtsLine3d in meters. (Assuming that the coordinates of the points constituting this line are
      * expressed in meters.)
      * @return the length of the line
      */
-    public final Length getLength() // XXX: DJ
+    public final Length getLength()
     {
         return this.length;
     }
@@ -922,7 +912,7 @@ public class OtsLine3d implements Locatable, Serializable // XXX: DJ
             this.lengthIndexedLine[0] = 0.0;
             for (int i = 1; i < this.points.length; i++)
             {
-                this.lengthIndexedLine[i] = this.lengthIndexedLine[i - 1] + this.points[i - 1].distanceSI(this.points[i]);
+                this.lengthIndexedLine[i] = this.lengthIndexedLine[i - 1] + this.points[i - 1].distance(this.points[i]).si;
             }
         }
     }
@@ -948,7 +938,7 @@ public class OtsLine3d implements Locatable, Serializable // XXX: DJ
     public final synchronized DirectedPoint getLocationExtendedSI(final double positionSI) // XXX: DJ name + super(p)
     {
         makeLengthIndexedLine();
-        if (positionSI >= 0.0 && positionSI <= getLengthSI())
+        if (positionSI >= 0.0 && positionSI <= this.length.si)
         {
             try
             {
@@ -974,7 +964,7 @@ public class OtsLine3d implements Locatable, Serializable // XXX: DJ
         // position beyond end point -- extrapolate
         int n1 = this.lengthIndexedLine.length - 1;
         int n2 = this.lengthIndexedLine.length - 2;
-        double len = positionSI - getLengthSI();
+        double len = positionSI - this.length.si;
         double fraction = len / (this.lengthIndexedLine[n1] - this.lengthIndexedLine[n2]);
         while (Double.isInfinite(fraction))
         {
@@ -1004,7 +994,7 @@ public class OtsLine3d implements Locatable, Serializable // XXX: DJ
         {
             throw new OtsGeometryException("getLocationFraction for line: fraction < 0.0 or > 1.0. fraction = " + fraction);
         }
-        return getLocationSI(fraction * getLengthSI());
+        return getLocationSI(fraction * this.length.si);
     }
 
     /**
@@ -1022,7 +1012,7 @@ public class OtsLine3d implements Locatable, Serializable // XXX: DJ
                     "getLocationFraction for line: fraction < 0.0 - tolerance or > 1.0 + tolerance; fraction = " + fraction);
         }
         double f = fraction < 0 ? 0.0 : fraction > 1.0 ? 1.0 : fraction;
-        return getLocationSI(f * getLengthSI());
+        return getLocationSI(f * this.length.si);
     }
 
     /**
@@ -1032,7 +1022,7 @@ public class OtsLine3d implements Locatable, Serializable // XXX: DJ
      */
     public final DirectedPoint getLocationFractionExtended(final double fraction)
     {
-        return getLocationExtendedSI(fraction * getLengthSI());
+        return getLocationExtendedSI(fraction * this.length.si);
     }
 
     /**
@@ -1095,10 +1085,10 @@ public class OtsLine3d implements Locatable, Serializable // XXX: DJ
                                                                                                                // without SI
     {
         makeLengthIndexedLine();
-        if (positionSI < 0.0 || positionSI > getLengthSI())
+        if (positionSI < 0.0 || positionSI > this.length.si)
         {
             throw new OtsGeometryException("getLocationSI for line: position < 0.0 or > line length. Position = " + positionSI
-                    + " m. Length = " + getLengthSI() + " m.");
+                    + " m. Length = " + this.length.si + " m.");
         }
 
         // handle special cases: position == 0.0, or position == length
@@ -1108,7 +1098,7 @@ public class OtsLine3d implements Locatable, Serializable // XXX: DJ
             OtsPoint3d p2 = this.points[1];
             return new DirectedPoint(p1.x, p1.y, p1.z, 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
         }
-        if (positionSI == getLengthSI())
+        if (positionSI == this.length.si)
         {
             OtsPoint3d p1 = this.points[this.points.length - 2];
             OtsPoint3d p2 = this.points[this.points.length - 1];
@@ -1134,14 +1124,14 @@ public class OtsLine3d implements Locatable, Serializable // XXX: DJ
     public final synchronized OtsLine3d truncate(final double lengthSI) throws OtsGeometryException
     {
         makeLengthIndexedLine();
-        if (lengthSI <= 0.0 || lengthSI > getLengthSI())
+        if (lengthSI <= 0.0 || lengthSI > this.length.si)
         {
             throw new OtsGeometryException("truncate for line: position <= 0.0 or > line length. Position = " + lengthSI
-                    + " m. Length = " + getLengthSI() + " m.");
+                    + " m. Length = " + this.length.si + " m.");
         }
 
         // handle special case: position == length
-        if (lengthSI == getLengthSI())
+        if (lengthSI == this.length.si)
         {
             return new OtsLine3d(getPoints());
         }
@@ -1274,7 +1264,7 @@ public class OtsLine3d implements Locatable, Serializable // XXX: DJ
 
         // return
         double segLen = this.lengthIndexedLine[minSegment + 1] - this.lengthIndexedLine[minSegment];
-        return (this.lengthIndexedLine[minSegment] + segLen * minSegmentFraction) / getLengthSI();
+        return (this.lengthIndexedLine[minSegment] + segLen * minSegmentFraction) / this.length.si;
 
     }
 
@@ -1426,7 +1416,7 @@ public class OtsLine3d implements Locatable, Serializable // XXX: DJ
         }
 
         double segLen = this.lengthIndexedLine[minSegment + 1] - this.lengthIndexedLine[minSegment];
-        return (this.lengthIndexedLine[minSegment] + segLen * minSegmentFraction) / getLengthSI();
+        return (this.lengthIndexedLine[minSegment] + segLen * minSegmentFraction) / this.length.si;
 
     }
 
@@ -1460,15 +1450,15 @@ public class OtsLine3d implements Locatable, Serializable // XXX: DJ
             double getFraction(final OtsLine3d line, final double x, final double y)
             {
                 OtsPoint3d point = new OtsPoint3d(x, y);
-                double dStart = point.distanceSI(line.getFirst());
-                double dEnd = point.distanceSI(line.getLast());
+                double dStart = point.distance(line.getFirst()).si;
+                double dEnd = point.distance(line.getLast()).si;
                 if (dStart < dEnd)
                 {
-                    return -dStart / line.getLengthSI();
+                    return -dStart / line.length.si;
                 }
                 else
                 {
-                    return (dEnd + line.getLengthSI()) / line.getLengthSI();
+                    return (dEnd + line.length.si) / line.length.si;
                 }
             }
         },
@@ -1520,8 +1510,8 @@ public class OtsLine3d implements Locatable, Serializable // XXX: DJ
                 {
                     parStartPoint = OtsPoint3d.intersectionOfLines(prevOfsSeg.get(0), prevOfsSeg.get(1), nextOfsSeg.get(0),
                             nextOfsSeg.get(1));
-                    if (parStartPoint == null || prevOfsSeg.get(1).distanceSI(nextOfsSeg.get(0)) < Math
-                            .min(prevOfsSeg.get(1).distanceSI(parStartPoint), nextOfsSeg.get(0).distanceSI(parStartPoint)))
+                    if (parStartPoint == null || prevOfsSeg.get(1).distance(nextOfsSeg.get(0)).si < Math
+                            .min(prevOfsSeg.get(1).distance(parStartPoint).si, nextOfsSeg.get(0).distance(parStartPoint).si))
                     {
                         parStartPoint = new OtsPoint3d((prevOfsSeg.get(1).x + nextOfsSeg.get(0).x) / 2,
                                 (prevOfsSeg.get(1).y + nextOfsSeg.get(0).y) / 2);
@@ -1544,8 +1534,8 @@ public class OtsLine3d implements Locatable, Serializable // XXX: DJ
                     {
                         parEndPoint = OtsPoint3d.intersectionOfLines(prevOfsSeg.get(0), prevOfsSeg.get(1), nextOfsSeg.get(0),
                                 nextOfsSeg.get(1));
-                        if (parEndPoint == null || prevOfsSeg.get(1).distanceSI(nextOfsSeg.get(0)) < Math
-                                .min(prevOfsSeg.get(1).distanceSI(parEndPoint), nextOfsSeg.get(0).distanceSI(parEndPoint)))
+                        if (parEndPoint == null || prevOfsSeg.get(1).distance(nextOfsSeg.get(0)).si < Math
+                                .min(prevOfsSeg.get(1).distance(parEndPoint).si, nextOfsSeg.get(0).distance(parEndPoint).si))
                         {
                             parEndPoint = new OtsPoint3d((prevOfsSeg.get(1).x + nextOfsSeg.get(0).x) / 2,
                                     (prevOfsSeg.get(1).y + nextOfsSeg.get(0).y) / 2);
@@ -1757,7 +1747,7 @@ public class OtsLine3d implements Locatable, Serializable // XXX: DJ
         Throw.when(index < 0 || index > size() - 1, OtsGeometryException.class, "Index %d is out of bounds [0 %d].", index,
                 size() - 1);
         makeLengthIndexedLine();
-        return this.lengthIndexedLine[index] / getLengthSI();
+        return this.lengthIndexedLine[index] / this.length.si;
     }
 
     /**

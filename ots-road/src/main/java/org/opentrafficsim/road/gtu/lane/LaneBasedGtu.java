@@ -985,7 +985,7 @@ public class LaneBasedGtu extends Gtu
             // as the position is downstream of the reference, we need to attach some distance at the end
             points = new OtsPoint3d[path.size() + 1];
             System.arraycopy(path.getPoints(), 0, points, 0, path.size());
-            points[path.size()] = new OtsPoint3d(path.getLocationExtendedSI(path.getLengthSI() + relativePosition.getDx().si));
+            points[path.size()] = new OtsPoint3d(path.getLocationExtendedSI(path.getLength().si + relativePosition.getDx().si));
             adjust = -relativePosition.getDx().si;
         }
         else if (relativePosition.getDx().lt0())
@@ -1017,7 +1017,7 @@ public class LaneBasedGtu extends Gtu
             }
             if (intersect != null)
             {
-                cumul += points[i].distanceSI(intersect);
+                cumul += points[i].distance(intersect).si;
                 cumul += adjust; // , 0.0); // possible rear is already considered in first segment
                 // return time at distance
                 if (cumul < 0.0)
@@ -1038,7 +1038,7 @@ public class LaneBasedGtu extends Gtu
             }
             else if (i < points.length - 2)
             {
-                cumul += points[i].distanceSI(points[i + 1]);
+                cumul += points[i].distance(points[i + 1]).si;
             }
         }
         // no intersect

@@ -679,11 +679,11 @@ public final class Test
                 closestToResult[i] = Double.MAX_VALUE;
                 closestToReference[i] = Double.MAX_VALUE;
             }
-            double referenceLength = referenceLine.getLengthSI();
-            double resultLength = offsetLine.getLengthSI();
-            double resultEndFirst = offsetLine.getFirst().distanceSI(offsetLine.get(1));
+            double referenceLength = referenceLine.getLength().si;
+            double resultLength = offsetLine.getLength().si;
+            double resultEndFirst = offsetLine.getFirst().distance(offsetLine.get(1)).si;
             double resultStartLast =
-                    offsetLine.getLengthSI() - offsetLine.getLast().distanceSI(offsetLine.get(offsetLine.size() - 2));
+                    offsetLine.getLength().si - offsetLine.getLast().distance(offsetLine.get(offsetLine.size() - 2)).si;
             for (int referenceStep = 0; referenceStep < numSteps + 1; referenceStep++)
             {
                 double referencePosition = referenceLength * referenceStep / numSteps;
@@ -692,7 +692,7 @@ public final class Test
                 {
                     double resultPosition = resultLength * resultStep / numSteps;
                     OtsPoint3d resultPoint = new OtsPoint3d(offsetLine.getLocationExtendedSI(resultPosition));
-                    double distance = referencePoint.horizontalDistanceSI(resultPoint);
+                    double distance = referencePoint.horizontalDistance(resultPoint).si;
                     if (distance <= absOffset)
                     {
                         if (resultPosition <= resultEndFirst)
@@ -878,7 +878,7 @@ public final class Test
             // centerLine.get(i).horizontalDistanceToLineSegment(centerLine.get(0), centerLine.get(centerLine.size() - 1));
             double distance = centerLine.get(i)
                     .closestPointOnLine2D(new OtsLine3d(centerLine.get(0), centerLine.get(centerLine.size() - 1)))
-                    .horizontalDistanceSI(centerLine.get(i));
+                    .horizontalDistance(centerLine.get(i)).si;
             System.out.println("#distance of intermediate point " + i + " to overall line is " + distance);
         }
         OtsLine3d right = centerLine.offsetLine(-2);

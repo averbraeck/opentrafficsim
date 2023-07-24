@@ -95,7 +95,7 @@ public class LinkAnimation extends Renderable2D<Link> implements Renderable2DInt
         // End point marker is 2 times the width of the design line
         double dx = nextPoint.x - endPoint.x;
         double dy = nextPoint.y - endPoint.y;
-        double length = endPoint.distanceSI(nextPoint);
+        double length = endPoint.distance(nextPoint).si;
         // scale dx, dy so that size is this.width
         dx *= this.width / length;
         dy *= this.width / length;

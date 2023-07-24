@@ -173,8 +173,8 @@ public class OtsLine3dTest
         }
         assertEquals("length", length, line.getLength().si, 10 * Math.ulp(length));
         assertEquals("length", length, line.getLength().si, 10 * Math.ulp(length));
-        assertEquals("length", length, line.getLengthSI(), 10 * Math.ulp(length));
-        assertEquals("length", length, line.getLengthSI(), 10 * Math.ulp(length));
+        assertEquals("length", length, line.getLength().si, 10 * Math.ulp(length));
+        assertEquals("length", length, line.getLength().si, 10 * Math.ulp(length));
         // Construct a Path3D.Double that contains the horizontal moves.
         int horizontalMoves = 0;
         Path2D path = new Path2D.Double();
@@ -323,7 +323,7 @@ public class OtsLine3dTest
     private void checkGetLocation(final OtsLine3d line, final double fraction, final OtsPoint3d expectedPoint,
             final double expectedZRotation) throws OtsGeometryException
     {
-        double length = line.getLengthSI();
+        double length = line.getLength().si;
         checkDirectedPoint(line.getLocationExtendedSI(fraction * length), expectedPoint, expectedZRotation);
         Length typedLength = new Length(fraction * length, LengthUnit.METER);
         checkDirectedPoint(line.getLocationExtended(typedLength), expectedPoint, expectedZRotation);
@@ -378,7 +378,7 @@ public class OtsLine3dTest
         if (null != expectedPoint)
         {
             OtsPoint3d p = new OtsPoint3d(dp);
-            assertEquals("locationExtendedSI(0) returns approximately expected point", 0, expectedPoint.distanceSI(p), 0.1);
+            assertEquals("locationExtendedSI(0) returns approximately expected point", 0, expectedPoint.distance(p).si, 0.1);
         }
         assertEquals("z-rotation at 0", expectedZRotation, dp.getRotZ(), 0.001);
     }
@@ -780,7 +780,7 @@ public class OtsLine3dTest
         }
         try
         {
-            l.extract(0, l.getLengthSI() + 0.1);
+            l.extract(0, l.getLength().si + 0.1);
             fail("end > length should have thrown an exception");
         }
         catch (OtsGeometryException exception)
@@ -810,8 +810,8 @@ public class OtsLine3dTest
         {
             for (int j = i + 1; j < 10; j++)
             {
-                double start = i * l.getLengthSI() / 10;
-                double end = j * l.getLengthSI() / 10;
+                double start = i * l.getLength().si / 10;
+                double end = j * l.getLength().si / 10;
                 // System.err.println("i=" + i + ", j=" + j);
                 for (OtsLine3d extractedLine : new OtsLine3d[] {l.extract(start, end),
                         l.extract(new Length(start, LengthUnit.SI), new Length(end, LengthUnit.SI)),
@@ -842,10 +842,10 @@ public class OtsLine3dTest
                     {
                         continue; // results are not entirely predictable due to rounding errors
                     }
-                    double start = i * line.getLengthSI() / 110;
-                    double end = j * line.getLengthSI() / 110;
+                    double start = i * line.getLength().si / 110;
+                    double end = j * line.getLength().si / 110;
                     // System.err.println("first length is " + firstLength);
-                    // System.err.println("second length is " + line.getLengthSI());
+                    // System.err.println("second length is " + line.getLength().si);
                     // System.err.println("i=" + i + ", j=" + j);
                     for (OtsLine3d extractedLine : new OtsLine3d[] {line.extract(start, end),
                             line.extract(new Length(start, LengthUnit.SI), new Length(end, LengthUnit.SI)),
@@ -899,20 +899,20 @@ public class OtsLine3dTest
         OtsPoint3d from = new OtsPoint3d(1, 2, 3);
         OtsPoint3d to = new OtsPoint3d(4, 3, 2);
         OtsLine3d line = new OtsLine3d(from, to);
-        double lineLengthHorizontal = new OtsPoint3d(from.x, from.y).distanceSI(new OtsPoint3d(to.x, to.y));
+        double lineLengthHorizontal = new OtsPoint3d(from.x, from.y).distance(new OtsPoint3d(to.x, to.y)).si;
         for (int step = -5; step <= 5; step++)
         {
             OtsLine3d offsetLine = line.offsetLine(step);
             assertEquals("Offset line of a single straight segment has two points", 2, offsetLine.size());
             assertEquals("Distance between start points should be equal to offset", Math.abs(step),
-                    offsetLine.getFirst().horizontalDistanceSI(line.getFirst()), 0.0001);
+                    offsetLine.getFirst().horizontalDistance(line.getFirst()).si, 0.0001);
             assertEquals("Distance between end points should be equal to offset", Math.abs(step),
-                    offsetLine.getLast().horizontalDistanceSI(line.getLast()), 0.0001);
+                    offsetLine.getLast().horizontalDistance(line.getLast()).si, 0.0001);
             // System.out.println("step: " + step);
             // System.out.println("reference: " + line);
             // System.out.println("offset: " + offsetLine);
             assertEquals("Length of offset line of straight segment should equal length of reference line",
-                    lineLengthHorizontal, offsetLine.getLengthSI(), 0.001);
+                    lineLengthHorizontal, offsetLine.getLength().si, 0.001);
         }
         OtsPoint3d via = new OtsPoint3d(4, 3, 3);
         line = new OtsLine3d(from, via, to);
@@ -924,9 +924,9 @@ public class OtsLine3dTest
             // System.out.println("offset: " + offsetLine);
             assertTrue("Offset line has > 2 points", 2 <= offsetLine.size());
             assertEquals("Distance between start points should be equal to offset", Math.abs(step),
-                    offsetLine.getFirst().horizontalDistanceSI(line.getFirst()), 0.0001);
+                    offsetLine.getFirst().horizontalDistance(line.getFirst()).si, 0.0001);
             assertEquals("Distance between end points should be equal to offset", Math.abs(step),
-                    offsetLine.getLast().horizontalDistanceSI(line.getLast()), 0.0001);
+                    offsetLine.getLast().horizontalDistance(line.getLast()).si, 0.0001);
         }
     }
 
@@ -950,7 +950,7 @@ public class OtsLine3dTest
             points.add(to);
             OtsLine3d line = new OtsLine3d(points);
             // System.out.println("ref: " + line);
-            double segmentLength = line.getFirst().distanceSI(line.get(1));
+            double segmentLength = line.getFirst().distance(line.get(1)).si;
             OtsLine3d filteredLine = line.noiseFilteredLine(segmentLength * 0.9);
             assertEquals("filtering with a filter that is smaller than any segment should return the original", line.size(),
                     filteredLine.size());
@@ -1159,7 +1159,7 @@ public class OtsLine3dTest
     {
         OtsPoint3d from = new OtsPoint3d(10, 20, 30);
         OtsPoint3d to = new OtsPoint3d(70, 80, 90);
-        double length = from.distanceSI(to);
+        double length = from.distance(to).si;
         OtsLine3d line = new OtsLine3d(from, to);
         OtsLine3d truncatedLine = line.truncate(length);
         assertEquals("Start of line truncated at full length is the same as start of the input line", truncatedLine.get(0),
@@ -1188,7 +1188,7 @@ public class OtsLine3dTest
         assertEquals("Start of truncated line is the same as start of the input line", truncatedLine.get(0), from);
         OtsPoint3d halfWay = new OtsPoint3d((from.x + to.x) / 2, (from.y + to.y) / 2, (from.z + to.z) / 2);
         assertEquals("End of 50%, truncated 2-point line should be at the half way point", 0,
-                halfWay.distanceSI(truncatedLine.get(1)), 0.0001);
+                halfWay.distance(truncatedLine.get(1)).si, 0.0001);
         OtsPoint3d intermediatePoint = new OtsPoint3d(20, 20, 20);
         line = new OtsLine3d(from, intermediatePoint, to);
         length = from.distance(intermediatePoint).plus(intermediatePoint.distance(to)).si;
@@ -1197,11 +1197,11 @@ public class OtsLine3dTest
                 from);
         assertEquals("End of line truncated at full length is about the same as end of input line", 0,
                 truncatedLine.get(2).distance(to).si, 0.0001);
-        truncatedLine = line.truncate(from.distanceSI(intermediatePoint));
+        truncatedLine = line.truncate(from.distance(intermediatePoint).si);
         assertEquals("Start of line truncated at full length is the same as start of the input line", truncatedLine.get(0),
                 from);
         assertEquals("Line truncated at intermediate point ends at that intermediate point", 0,
-                truncatedLine.get(1).distanceSI(intermediatePoint), 0.0001);
+                truncatedLine.get(1).distance(intermediatePoint).si, 0.0001);
     }
 
     /**
@@ -1236,7 +1236,7 @@ public class OtsLine3dTest
                 new OtsPoint3d(30, 40, 30), new OtsPoint3d(30, 30, 30)});
         System.out.println(line.toPlot());
         double boundary = 1 / (2 + Math.sqrt(2));
-        double length = line.getLengthSI();
+        double length = line.getLength().si;
         for (int percentage = 0; percentage <= 100; percentage++)
         {
             double fraction = percentage / 100.0;

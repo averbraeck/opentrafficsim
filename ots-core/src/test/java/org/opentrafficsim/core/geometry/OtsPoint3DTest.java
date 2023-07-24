@@ -161,10 +161,10 @@ public class OtsPoint3DTest
             OtsPoint3d point = new OtsPoint3d(x, 0, 0);
             OtsPoint3d result = point.closestPointOnLine2D(line);
             // System.out.printf("2D x=%.2f, point=%s, result=%s\n", x, point, result);
-            assertEquals("distance to spiral is 0", 0, point.horizontalDistanceSI(result), 0.0001);
+            assertEquals("distance to spiral is 0", 0, point.horizontalDistance(result).si, 0.0001);
             result = point.closestPointOnLine(line);
             // System.out.printf("3D x=%.2f, point=%s, result=%s\n", x, point, result);
-            double distance = point.horizontalDistanceSI(result);
+            double distance = point.horizontalDistance(result).si;
             assertEquals("horizontal distance to spiral is x", x, distance, 0.5);
             // Check the horizontalDistance method
             Length horizontalDistance = point.horizontalDistance(result);
@@ -280,7 +280,7 @@ public class OtsPoint3DTest
                     {
                         OtsPoint3d other = new OtsPoint3d(reference.x + Math.cos(actualDirectionRadians) * actualDistance,
                                 reference.y + Math.sin(actualDirectionRadians) * actualDistance, reference.z + dZ);
-                        double angle = reference.horizontalDirectionSI(other);
+                        double angle = reference.horizontalDirection(other).si;
                         double angle2 = reference.horizontalDirection(other).si;
                         if (angle < 0)
                         {
@@ -322,7 +322,7 @@ public class OtsPoint3DTest
                     {
                         OtsPoint3d other = new OtsPoint3d(reference.x + Math.cos(actualDirectionRadians) * horizontalDistance,
                                 reference.y + Math.sin(actualDirectionRadians) * horizontalDistance, reference.z + dZ);
-                        double actualDistance = reference.distanceSI(other);
+                        double actualDistance = reference.distance(other).si;
                         list = OtsPoint3d.circleCenter(reference, other, actualDistance * 0.499);
                         assertEquals("Radius too short returns empty list", 0, list.size());
                         System.out.println(String.format("actualDistance=%f", actualDistance));
@@ -332,13 +332,13 @@ public class OtsPoint3DTest
                         for (OtsPoint3d p : list)
                         {
                             System.out.println(String.format("ref=%s, oth=%s p=%s, distance should be %f, got %f", reference,
-                                    other, p, actualDistance * factor, reference.distanceSI(p)));
+                                    other, p, actualDistance * factor, reference.distance(p)));
                             assertEquals("Z is average of input points", (reference.z + other.z) / 2, p.z, 0.001);
                             assertEquals("horizontal distance from reference is R", actualDistance * factor,
-                                    reference.distanceSI(p), 0.001);
+                                    reference.distance(p).si, 0.001);
                             System.out.println(String.format("ref=%s, oth=%s p=%s, distance should be %f, got %f", reference,
-                                    other, p, actualDistance * factor, other.distanceSI(p)));
-                            assertEquals("horizontal distance from other is R", actualDistance * factor, other.distanceSI(p),
+                                    other, p, actualDistance * factor, other.distance(p).si));
+                            assertEquals("horizontal distance from other is R", actualDistance * factor, other.distance(p).si,
                                     0.001);
                         }
                     }
@@ -355,7 +355,7 @@ public class OtsPoint3DTest
     {
         OtsPoint3d c1 = new OtsPoint3d(10, 20, 30);
         OtsPoint3d c2 = new OtsPoint3d(20, 10, 0);
-        double centerDistance = c1.distanceSI(c2);
+        double centerDistance = c1.distance(c2).si;
         for (int r1 = 0; r1 < 50; r1++)
         {
             for (int r2 = 0; r2 < 50; r2++)

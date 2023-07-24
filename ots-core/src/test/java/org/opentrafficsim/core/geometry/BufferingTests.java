@@ -57,7 +57,7 @@ public class BufferingTests
                 {
 
                     OtsPoint3d closest = p.closestPointOnLine(referenceLine);
-                    double distance = p.distanceSI(closest);
+                    double distance = p.distance(closest).si;
                     assertEquals("closest point should be offset away", Math.abs(offset), distance, 0.01);
                 }
                 // Varying offset
@@ -92,10 +92,10 @@ public class BufferingTests
                 {
 
                     OtsPoint3d closest = p.closestPointOnLine(referenceLine);
-                    double distance = p.distanceSI(closest);
+                    double distance = p.distance(closest).si;
                     // determine the approximate fractional position of the closest point
                     double pivot = 0.5; // initial guess
-                    double referenceLineLength = referenceLine.getLengthSI();
+                    double referenceLineLength = referenceLine.getLength().si;
                     for (double step = 0.25; step > 0.05; step *= 0.7)
                     {
                         double lowerGuess = Math.max(0, pivot - step);
@@ -105,9 +105,9 @@ public class BufferingTests
                                 new OtsPoint3d(referenceLine.getLocationSI(lowerGuess * referenceLineLength));
                         OtsPoint3d higherGuessPoint =
                                 new OtsPoint3d(referenceLine.getLocationSI(higherGuess * referenceLineLength));
-                        double errorPivot = pivotPoint.distanceSI(closest);
-                        double errorLowerGuess = lowerGuessPoint.distanceSI(closest);
-                        double errorHigherGuess = higherGuessPoint.distanceSI(closest);
+                        double errorPivot = pivotPoint.distance(closest).si;
+                        double errorLowerGuess = lowerGuessPoint.distance(closest).si;
+                        double errorHigherGuess = higherGuessPoint.distance(closest).si;
                         if (errorLowerGuess < errorPivot && errorLowerGuess <= errorHigherGuess)
                         {
                             pivot = lowerGuess;

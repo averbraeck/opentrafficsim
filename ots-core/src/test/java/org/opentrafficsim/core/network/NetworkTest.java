@@ -817,7 +817,7 @@ public class NetworkTest implements EventListener
         {
             if (i > 0)
             {
-                length += route.getNode(i - 1).getPoint().distanceSI(route.getNode(i).getPoint());
+                length += route.getNode(i - 1).getPoint().distance(route.getNode(i).getPoint()).si;
             }
         }
         return length;

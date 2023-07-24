@@ -67,7 +67,7 @@ public class LanePosition implements Serializable
     {
         // double fraction = this.position.si / this.lane.getParentLink().getLength().si;
         OtsLine3d centerLine = this.lane.getCenterLine();
-        double centerLineLength = centerLine.getLengthSI();
+        double centerLineLength = centerLine.getLength().si;
         double fraction = this.position.si / centerLineLength;
         return centerLine.getLocationFractionExtended(fraction);
     }

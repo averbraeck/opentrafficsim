@@ -151,7 +151,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
                             double fGap = gap.projectFractional(null, null, point.x, point.y, FractionalFallback.NaN);
                             if (!Double.isNaN(fGap))
                             {
-                                f = (lane.getLength().si + fGap * gap.getLengthSI()) / lane.getLength().si;
+                                f = (lane.getLength().si + fGap * gap.getLength().si) / lane.getLength().si;
                             }
                             else
                             {

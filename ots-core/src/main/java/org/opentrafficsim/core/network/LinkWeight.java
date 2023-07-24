@@ -95,7 +95,7 @@ public interface LinkWeight
         @Override
         public double getCostEstimate(final Node sourceVertex, final Node targetVertex)
         {
-            return sourceVertex.getPoint().distanceSI(targetVertex.getPoint());
+            return sourceVertex.getPoint().distance(targetVertex.getPoint()).si;
         }
     };
 

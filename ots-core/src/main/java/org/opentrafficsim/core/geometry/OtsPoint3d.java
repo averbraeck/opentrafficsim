@@ -337,7 +337,7 @@ public class OtsPoint3d implements Locatable, Serializable
             if (null != prevPoint)
             {
                 OtsPoint3d closest = closestPointOnSegment(prevPoint, nextPoint);
-                double thisDistance = useHorizontalDistance ? horizontalDistanceSI(closest) : distanceSI(closest);
+                double thisDistance = useHorizontalDistance ? horizontalDistance(closest).si : distance(closest).si;
                 if (thisDistance < distance)
                 {
                     result = closest;
@@ -403,7 +403,7 @@ public class OtsPoint3d implements Locatable, Serializable
     {
         List<OtsPoint3d> result = new ArrayList<>();
         OtsPoint3d m = interpolate(0.5, point1, point2);
-        double h = point1.distanceSI(m);
+        double h = point1.distance(m).si;
         if (radius < h) // no intersection
         {
             return result;
@@ -434,7 +434,7 @@ public class OtsPoint3d implements Locatable, Serializable
     {
         List<OtsPoint3d> center = new ArrayList<>();
         OtsPoint3d m = interpolate(radius1 / (radius1 + radius2), center1, center2);
-        double h = center1.distanceSI(m);
+        double h = center1.distance(m).si;
         if (radius1 < h) // no intersection
         {
             return center;
@@ -453,36 +453,13 @@ public class OtsPoint3d implements Locatable, Serializable
 
     /**
      * @param point OtsPoint3d; the point to which the distance has to be calculated.
-     * @return the distance in 3D according to Pythagoras, expressed in the SI unit for length (meter)
-     */
-    public final double distanceSI(final OtsPoint3d point)
-    {
-        double dx = point.x - this.x;
-        double dy = point.y - this.y;
-        double dz = point.z - this.z;
-
-        return Math.sqrt(dx * dx + dy * dy + dz * dz);
-    }
-
-    /**
-     * @param point OtsPoint3d; the point to which the distance has to be calculated.
-     * @return the distance in 3D according to Pythagoras, expressed in the SI unit for length (meter)
-     */
-    public final double horizontalDistanceSI(final OtsPoint3d point)
-    {
-        double dx = point.x - this.x;
-        double dy = point.y - this.y;
-
-        return Math.sqrt(dx * dx + dy * dy);
-    }
-
-    /**
-     * @param point OtsPoint3d; the point to which the distance has to be calculated.
      * @return the distance in 3D according to Pythagoras
      */
     public final Length horizontalDistance(final OtsPoint3d point)
     {
-        return new Length(horizontalDistanceSI(point), LengthUnit.SI);
+        double dx = point.x - this.x;
+        double dy = point.y - this.y;
+        return Length.instantiateSI(Math.hypot(dx, dy));
     }
 
     /**
@@ -492,17 +469,10 @@ public class OtsPoint3d implements Locatable, Serializable
      */
     public final Length distance(final OtsPoint3d point)
     {
-        return new Length(distanceSI(point), LengthUnit.SI);
-    }
-
-    /**
-     * Compute the horizontal direction to another point.
-     * @param point OtsPoint3d; the other point
-     * @return double; the direction in radians
-     */
-    public final double horizontalDirectionSI(final OtsPoint3d point)
-    {
-        return Math.atan2(point.y - this.y, point.x - this.x);
+        double dx = point.x - this.x;
+        double dy = point.y - this.y;
+        double dz = point.z - this.z;
+        return Length.instantiateSI(Math.sqrt(dx * dx + dy * dy + dz * dz));
     }
 
     /**

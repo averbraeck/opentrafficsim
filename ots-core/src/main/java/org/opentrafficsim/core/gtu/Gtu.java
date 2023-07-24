@@ -861,7 +861,7 @@ public class Gtu extends LocalEventProducer
             // part of the Gtu length has to be added before the start and after the end of the path.
             // we assume the reference point is within the contour of the Gtu.
             double rear = Math.max(0.0, getReference().getDx().si - getRear().getDx().si);
-            double front = path.getLengthSI() + Math.max(0.0, getFront().getDx().si - getReference().getDx().si);
+            double front = path.getLength().si + Math.max(0.0, getFront().getDx().si - getReference().getDx().si);
             DirectedPoint p0 = path.getLocationExtendedSI(-rear);
             DirectedPoint pn = path.getLocationExtendedSI(front);
             List<OtsPoint3d> pList = new ArrayList<>(Arrays.asList(path.getPoints()));

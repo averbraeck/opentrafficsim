@@ -39,7 +39,7 @@ public final class OtsBufferingJts
      */
     public static double distanceLineSegmentToPoint(final OtsPoint3d lineP1, final OtsPoint3d lineP2, final OtsPoint3d point)
     {
-        return closestPointOnSegmentToPoint(lineP1, lineP2, point).distanceSI(point);
+        return closestPointOnSegmentToPoint(lineP1, lineP2, point).distance(point).si;
     }
 
     /**
@@ -214,7 +214,7 @@ public final class OtsBufferingJts
                         OtsPoint3d closestPoint = closestPointOnSegmentToPoint(prevPoint, p, checkPoint);
                         if (closestPoint != referenceLine.get(0) && closestPoint != referenceLine.get(referenceLine.size() - 1))
                         {
-                            double distance = closestPoint.horizontalDistanceSI(checkPoint);
+                            double distance = closestPoint.horizontalDistance(checkPoint).si;
                             if (distance < bufferOffset - circlePrecision)
                             {
                                 // CategoryLogger.trace(Cat.CORE, "point " + checkPoint + " inside buffer (distance is " +

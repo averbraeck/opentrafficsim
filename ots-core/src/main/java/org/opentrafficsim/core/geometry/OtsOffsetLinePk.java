@@ -166,9 +166,9 @@ public final class OtsOffsetLinePk
                                 OtsPoint3d prevSegIntersection = OtsPoint3d.intersectionOfLineSegments(prevArcPoint,
                                         intermediatePoint, prevSegFrom, prevSegTo);
                                 if (null != prevSegIntersection
-                                        && prevSegIntersection.horizontalDistanceSI(prevArcPoint) > circlePrecision
-                                        && prevSegIntersection.horizontalDistanceSI(prevSegFrom) > circlePrecision
-                                        && prevSegIntersection.horizontalDistanceSI(prevSegTo) > circlePrecision)
+                                        && prevSegIntersection.horizontalDistance(prevArcPoint).si > circlePrecision
+                                        && prevSegIntersection.horizontalDistance(prevSegFrom).si > circlePrecision
+                                        && prevSegIntersection.horizontalDistance(prevSegTo).si > circlePrecision)
                                 {
                                     if (debugOffsetLine)
                                     {
@@ -322,7 +322,7 @@ public final class OtsOffsetLinePk
                 if (null != prevPoint)
                 {
                     OtsPoint3d closestPoint = checkPoint.closestPointOnSegment(prevPoint, p);
-                    double distance = closestPoint.horizontalDistanceSI(checkPoint);
+                    double distance = closestPoint.horizontalDistance(checkPoint).si;
                     if (distance < bufferOffset - circlePrecision)
                     {
                         if (debugOffsetLine)

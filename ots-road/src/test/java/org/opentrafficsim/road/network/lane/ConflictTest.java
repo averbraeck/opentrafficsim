@@ -113,7 +113,7 @@ public class ConflictTest implements EventListener
         double furthestDistance = 0.0;
         for (OtsPoint3d intersection : intersections(laneA.getContour(), laneB.getContour()))
         {
-            double distance = pointAFrom.distanceSI(intersection);
+            double distance = pointAFrom.distance(intersection).si;
             if (distance < closestDistance)
             {
                 conflictStart = intersection;
