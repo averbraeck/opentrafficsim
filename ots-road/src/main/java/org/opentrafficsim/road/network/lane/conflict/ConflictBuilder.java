@@ -825,21 +825,21 @@ public final class ConflictBuilder
                         // Segments intersect
                         double dx = p.x - start1.x;
                         double dy = p.y - start1.y;
-                        double length1 = cumul1 + Math.sqrt(dx * dx + dy * dy);
+                        double length1 = cumul1 + Math.hypot(dx, dy);
                         dx = p.x - start2.x;
                         dy = p.y - start2.y;
-                        double length2 = cumul2 + Math.sqrt(dx * dx + dy * dy);
+                        double length2 = cumul2 + Math.hypot(dx, dy);
                         out.add(new Intersection(length1 / line1.getLength().si, length2 / line2.getLength().si, combo));
                     }
 
                     double dx = end2.x - start2.x;
                     double dy = end2.y - start2.y;
-                    cumul2 += Math.sqrt(dx * dx + dy * dy);
+                    cumul2 += Math.hypot(dx, dy);
                 }
 
                 double dx = end1.x - start1.x;
                 double dy = end1.y - start1.y;
-                cumul1 += Math.sqrt(dx * dx + dy * dy);
+                cumul1 += Math.hypot(dx, dy);
             }
 
             return out;

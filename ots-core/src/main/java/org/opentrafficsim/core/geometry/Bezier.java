@@ -140,7 +140,9 @@ public final class Bezier
         {
             // each control point is 'w' * the distance between the end-points away from the respective end point
             // 'w' is a weight given by the distance from the end point to the extended line of the other end point
-            double distance = shape * Math.sqrt((end.x - start.x) * (end.x - start.x) + (end.y - start.y) * (end.y - start.y));
+            double dx = end.x - start.x;
+            double dy = end.y - start.y;
+            double distance = shape * Math.hypot(dx, dy);
             double cosEnd = Math.cos(end.getRotZ());
             double sinEnd = Math.sin(end.getRotZ());
             double dStart = Line2D.ptLineDist(end.x, end.y, end.x + cosEnd, end.y + sinEnd, start.x, start.y);
@@ -158,8 +160,9 @@ public final class Bezier
         else
         {
             // each control point is half the distance between the end-points away from the respective end point
-            double distance2 =
-                    shape * Math.sqrt((end.x - start.x) * (end.x - start.x) + (end.y - start.y) * (end.y - start.y)) / 2.0;
+            double dx = end.x - start.x;
+            double dy = end.y - start.y;
+            double distance2 = shape * .5 * Math.hypot(dx, dy);
             control1 = new OtsPoint3d(start.x + distance2 * Math.cos(start.getRotZ()),
                     start.y + distance2 * Math.sin(start.getRotZ()), start.z);
             control2 = new OtsPoint3d(end.x - distance2 * Math.cos(end.getRotZ()), end.y - distance2 * Math.sin(end.getRotZ()),

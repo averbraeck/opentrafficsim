@@ -734,10 +734,10 @@ public class LaneChange implements Serializable
 
                 double dx = fromLine.get(0).getLocation().x - startPosition.x;
                 double dy = fromLine.get(0).getLocation().y - startPosition.y;
-                double distFromLoc = Math.sqrt(dx * dx + dy * dy);
+                double distFromLoc = Math.hypot(dx, dy);
                 dx = fromLine.get(0).getLocation().x - toLine.get(0).getLocation().x;
                 dy = fromLine.get(0).getLocation().y - toLine.get(0).getLocation().y;
-                double distFromTo = Math.sqrt(dx * dx + dy * dy);
+                double distFromTo = Math.hypot(dx, dy);
                 double startLateralFraction = distFromLoc / distFromTo;
                 // Location is not on path in z-direction, so using .distance() create bugs
                 // PK: added test for NaN (which occurs when fromLine and toLine start on top of each other.

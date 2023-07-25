@@ -1387,13 +1387,13 @@ public class OtsLine3d implements Locatable, Serializable // XXX: DJ
             // distance from (x, y) to intersection on segment
             double dx = x - p.x;
             double dy = y - p.y;
-            distance = Math.sqrt(dx * dx + dy * dy);
+            distance = Math.hypot(dx, dy);
             // distance from start of segment to point on segment
             if (distance < minDistance)
             {
                 dx = p.x - this.points[i].x;
                 dy = p.y - this.points[i].y;
-                double dFrac = Math.sqrt(dx * dx + dy * dy);
+                double dFrac = Math.hypot(dx, dy);
                 // fraction to point on segment
                 minDistance = distance;
                 minSegmentFraction = dFrac / (this.lengthIndexedLine[i + 1] - this.lengthIndexedLine[i]);
