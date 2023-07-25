@@ -243,10 +243,6 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
         OtsPoint3d p2 = new OtsPoint3d(bezier.points[3].x - (bezier.points[2].y - bezier.points[3].y),
                 bezier.points[3].y + (bezier.points[2].x - bezier.points[3].x), 0.0);
         OtsPoint3d center = OtsPoint3d.intersectionOfLines(bezier.points[0], p1, p2, bezier.points[3]);
-        if (center == null)
-        {
-            double q = 8;
-        }
 
         // move 1st and 4th point their respective offsets away from the center
         OtsPoint3d[] newBezierPoints = new OtsPoint3d[4];
