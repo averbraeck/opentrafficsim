@@ -1094,7 +1094,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         if (this.minOccurs == 0 && numberOfTypeOrChoiceInParent == 1 && !this.isInclude)
         {
-            removeChildren();
+            //removeChildren();
             this.deactivated = true;
             this.active = false;
             ((XsdTreeNodeRoot) getPath().get(0))
