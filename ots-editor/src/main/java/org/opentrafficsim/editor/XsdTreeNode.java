@@ -1094,7 +1094,6 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         if (this.minOccurs == 0 && numberOfTypeOrChoiceInParent == 1 && !this.isInclude)
         {
-            //removeChildren();
             this.deactivated = true;
             this.active = false;
             ((XsdTreeNodeRoot) getPath().get(0))
@@ -1389,6 +1388,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * Returns options based on a set of validators.
      * @param validators Set&lt;ValueValidator&gt;; validators.
+     * @param field String; field, attribute or child element, for which to obtain the options.
      * @return List&lt;String&gt;; list of options.
      */
     private List<String> getOptionsFromValidators(final Set<ValueValidator> validators, final String field)
