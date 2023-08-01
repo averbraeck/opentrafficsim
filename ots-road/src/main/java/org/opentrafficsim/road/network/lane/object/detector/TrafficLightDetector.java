@@ -9,6 +9,9 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.EventType;
@@ -17,16 +20,13 @@ import org.djutils.exceptions.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.Bounds;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -74,10 +74,10 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
     private final DetectorType type;
 
     /** Center location. */
-    private final DirectedPoint location;
+    private final Point2d location;
 
     /** Geometry of the detector. */
-    private final OtsLine3d geometry;
+    private final PolyLine2d geometry;
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the triggering of the entry of a NonDirectionalOccupancyDetector. <br>
@@ -145,7 +145,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
             }
             else
             {
-                List<OtsPoint3d> pathPoints = new ArrayList<>();
+                List<Point2d> pathPoints = new ArrayList<>();
                 pathPoints.addAll(Arrays.asList(laneA.getCenterLine().extract(positionA, laneA.getLength()).getPoints()));
                 for (Lane intermediateLane : intermediateLanes)
                 {
@@ -159,17 +159,17 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
             this.location = path.getLocation();
             double dx = this.location.x;
             double dy = this.location.y;
-            List<OtsPoint3d> geometryPoints = new ArrayList<>();
-            geometryPoints.add(new OtsPoint3d(right.get(0).x - dx, right.get(0).y - dy));
-            for (OtsPoint3d p : left.getPoints())
+            List<Point2d> geometryPoints = new ArrayList<>();
+            geometryPoints.add(new Point2d(right.get(0).x - dx, right.get(0).y - dy));
+            for (Point2d p : left.getPoints())
             {
-                geometryPoints.add(new OtsPoint3d(p.x - dx, p.y - dy));
+                geometryPoints.add(new Point2d(p.x - dx, p.y - dy));
             }
-            for (OtsPoint3d p : right.reverse().getPoints())
+            for (Point2d p : right.reverse().getPoints())
             {
-                geometryPoints.add(new OtsPoint3d(p.x - dx, p.y - dy));
+                geometryPoints.add(new Point2d(p.x - dx, p.y - dy));
             }
-            this.geometry = new OtsLine3d(geometryPoints);
+            this.geometry = new PolyLine2d(geometryPoints);
         }
         catch (OtsGeometryException exception)
         {
@@ -401,14 +401,14 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
 
     /** {@inheritDoc} */
     @Override
-    public final DirectedPoint getLocation()
+    public final Point2d getLocation()
     {
         return this.location;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Bounds getBounds()
+    public final Bounds2d getBounds()
     {
         return this.geometry.getBounds();
     }
@@ -424,7 +424,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
 
     /** {@inheritDoc} */
     @Override
-    public OtsLine3d getGeometry()
+    public PolyLine2d getGeometry()
     {
         return this.geometry;
     }

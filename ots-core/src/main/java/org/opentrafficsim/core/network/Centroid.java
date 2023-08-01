@@ -1,8 +1,8 @@
 package org.opentrafficsim.core.network;
 
+import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.OtsRuntimeException;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 
 /**
  * Centroid Node that is only connected by Connector links.
@@ -23,10 +23,10 @@ public class Centroid extends Node
      * Construction of a Centroid Node.
      * @param network Network; the network.
      * @param id String; the id of the Node.
-     * @param point OtsPoint3d; the point with usually an x and y setting.
+     * @param point Point2d; the point with usually an x and y setting.
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
-    public Centroid(final Network network, final String id, final OtsPoint3d point) throws NetworkException
+    public Centroid(final Network network, final String id, final Point2d point) throws NetworkException
     {
         super(network, id, point);
     }

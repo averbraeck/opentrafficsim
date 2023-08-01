@@ -4,14 +4,16 @@ import java.rmi.RemoteException;
 
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.PositionUnit;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.vector.PositionVector;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
-import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.Node;
 import org.sim0mq.Sim0MQException;
 
 /**
@@ -68,8 +70,10 @@ public class NodeTransceiver extends AbstractTransceiver
             returnWrapper.nack("Network does not contain a node with id " + address[0]);
             return null;
         }
-        return new Object[] {node.getId(), node.getPoint().doubleVector(PositionUnit.METER),
-                OtsPoint3d.direction(node.getLocation(), DirectionUnit.EAST_RADIAN), node.getLinks().size()};
+        OrientedPoint2d nodeLocation = node.getLocation();
+        return new Object[] {node.getId(),
+                DoubleVector.instantiate(new double[] {nodeLocation.x, nodeLocation.y}, PositionUnit.METER, StorageType.DENSE),
+                new Direction(nodeLocation.getDirZ(), DirectionUnit.EAST_DEGREE), node.getLinks().size()};
     }
 
     /** {@inheritDoc} */

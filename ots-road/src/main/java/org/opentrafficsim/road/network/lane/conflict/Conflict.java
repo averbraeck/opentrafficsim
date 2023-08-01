@@ -11,6 +11,8 @@ import java.util.UUID;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
@@ -18,8 +20,6 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -135,14 +135,14 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * @param lane Lane; lane where this conflict starts
      * @param longitudinalPosition Length; position of start of conflict on lane
      * @param length Length; length of the conflict along the lane centerline
-     * @param geometry OtsLine3d; geometry of conflict
+     * @param geometry PolyLine2d; geometry of conflict
      * @param conflictType ConflictType; conflict type, i.e. crossing, merge or split
      * @param conflictRule ConflictRule; conflict rule, i.e. determines priority, give way, stop or all-stop
      * @param permitted boolean; whether the conflict is permitted in traffic light control
      * @throws NetworkException when the position on the lane is out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    private Conflict(final Lane lane, final Length longitudinalPosition, final Length length, final OtsLine3d geometry,
+    private Conflict(final Lane lane, final Length longitudinalPosition, final Length length, final PolyLine2d geometry,
             final ConflictType conflictType, final ConflictRule conflictRule, final boolean permitted) throws NetworkException
     {
         super(UUID.randomUUID().toString(), lane, longitudinalPosition, geometry);
@@ -413,19 +413,19 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * @param lane1 Lane; lane of conflict 1
      * @param longitudinalPosition1 Length; longitudinal position of conflict 1
      * @param length1 Length; {@code Length} of conflict 1
-     * @param geometry1 OtsLine3d; geometry of conflict 1
+     * @param geometry1 PolyLine2d; geometry of conflict 1
      * @param lane2 Lane; lane of conflict 2
      * @param longitudinalPosition2 Length; longitudinal position of conflict 2
      * @param length2 Length; {@code Length} of conflict 2
-     * @param geometry2 OtsLine3d; geometry of conflict 2
+     * @param geometry2 PolyLine2d; geometry of conflict 2
      * @param simulator OtsSimulatorInterface; the simulator for animation and timed events
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static void generateConflictPair(final ConflictType conflictType, final ConflictRule conflictRule,
             final boolean permitted, final Lane lane1, final Length longitudinalPosition1, final Length length1,
-            final OtsLine3d geometry1, final Lane lane2, final Length longitudinalPosition2, final Length length2,
-            final OtsLine3d geometry2, final OtsSimulatorInterface simulator) throws NetworkException
+            final PolyLine2d geometry1, final Lane lane2, final Length longitudinalPosition2, final Length length2,
+            final PolyLine2d geometry2, final OtsSimulatorInterface simulator) throws NetworkException
     {
         // lane, longitudinalPosition, length and geometry are checked in AbstractLaneBasedObject
         Throw.whenNull(conflictType, "Conflict type may not be null.");
@@ -437,7 +437,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         conf1.otherConflict = conf2;
         conf2.otherConflict = conf1;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public double getZ() throws RemoteException
@@ -484,8 +484,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                 throws NetworkException, OtsGeometryException
         {
             // FIXME: the OtsLine3d object should be shared by all ConflictEnd objects (removing OtsGeometryException)
-            super(conflict.getId() + "End", lane, longitudinalPosition,
-                    new OtsLine3d(new OtsPoint3d(0, 0, 0), new OtsPoint3d(1, 0, 0)));
+            super(conflict.getId() + "End", lane, longitudinalPosition, new PolyLine2d(new Point2d(0, 0), new Point2d(1, 0)));
             this.conflict = conflict;
         }
 

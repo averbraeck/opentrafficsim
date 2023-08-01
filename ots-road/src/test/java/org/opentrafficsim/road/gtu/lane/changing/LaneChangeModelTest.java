@@ -18,6 +18,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.point.Point2d;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -27,7 +28,6 @@ import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -99,8 +99,8 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
     {
         // TODO create a LinkAnimation if the simulator is compatible with that.
         // FIXME The current LinkAnimation is too bad to use...
-        OtsPoint3d[] coordinates = new OtsPoint3d[] {new OtsPoint3d(from.getPoint().x, from.getPoint().y, 0),
-                new OtsPoint3d(to.getPoint().x, to.getPoint().y, 0)};
+        Point2d[] coordinates = new Point2d[] {new Point2d(from.getPoint().x, from.getPoint().y),
+                new Point2d(to.getPoint().x, to.getPoint().y)};
         OtsLine3d line = new OtsLine3d(coordinates);
         CrossSectionLink link =
                 new CrossSectionLink(network, name, from, to, DefaultsNl.ROAD, line, LaneKeepingPolicy.KEEPRIGHT);
@@ -168,8 +168,8 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
         int laneCount = 2;
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), this);
         Lane[] lanes = makeMultiLane(this.network, "Road with two lanes",
-                new Node(this.network, "From", new OtsPoint3d(0, 0, 0), Direction.ZERO),
-                new Node(this.network, "To", new OtsPoint3d(200, 0, 0), Direction.ZERO), laneType, laneCount, this.simulator);
+                new Node(this.network, "From", new Point2d(0, 0), Direction.ZERO),
+                new Node(this.network, "To", new Point2d(200, 0), Direction.ZERO), laneType, laneCount, this.simulator);
 
         // Let's see if adjacent lanes are accessible
         // lanes: | 0 : 1 : 2 | in case of three lanes

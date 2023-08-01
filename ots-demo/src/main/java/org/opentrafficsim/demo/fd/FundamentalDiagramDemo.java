@@ -37,6 +37,7 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.cli.CliUtil;
+import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
 import org.djutils.means.HarmonicMean;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -47,7 +48,6 @@ import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuErrorHandler;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -210,9 +210,9 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         GtuType.registerTemplateSupplier(car, Defaults.NL);
         GtuType.registerTemplateSupplier(truck, Defaults.NL);
 
-        Node nodeA = new Node(network, "Origin", new OtsPoint3d(0.0, 0.0), Direction.ZERO);
-        Node nodeB = new Node(network, "Lane-drop", new OtsPoint3d(1500.0, 0.0), Direction.ZERO);
-        Node nodeC = new Node(network, "Destination", new OtsPoint3d(2500.0, 0.0), Direction.ZERO);
+        Node nodeA = new Node(network, "Origin", new Point2d(0.0, 0.0), Direction.ZERO);
+        Node nodeB = new Node(network, "Lane-drop", new Point2d(1500.0, 0.0), Direction.ZERO);
+        Node nodeC = new Node(network, "Destination", new Point2d(2500.0, 0.0), Direction.ZERO);
 
         LinkType linkType = DefaultsNl.FREEWAY;
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;

@@ -27,6 +27,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
 import org.djunits.value.vdouble.vector.base.DoubleVector;
+import org.djutils.draw.point.Point2d;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -40,7 +41,6 @@ import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -174,8 +174,8 @@ public class OdApplierTest
     private void makeNetwork() throws NetworkException, OtsGeometryException
     {
         this.network = new RoadNetwork("ODApplierExample", this.simulator);
-        OtsPoint3d pointA = new OtsPoint3d(0, 0, 0);
-        OtsPoint3d pointB = new OtsPoint3d(1000, 0, 0);
+        Point2d pointA = new Point2d(0, 0);
+        Point2d pointB = new Point2d(1000, 0);
         Node nodeA = new Node(this.network, "A", pointA, Direction.ZERO);
         Node nodeB = new Node(this.network, "B", pointB, Direction.ZERO);
         CrossSectionLink linkAB = new CrossSectionLink(this.network, "AB", nodeA, nodeB, DefaultsNl.ROAD,

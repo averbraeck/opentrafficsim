@@ -3,6 +3,8 @@ package org.opentrafficsim.core.geometry;
 import java.util.NavigableMap;
 
 import org.djunits.value.vdouble.scalar.Angle;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 
@@ -22,13 +24,13 @@ public class ContinuousPolyLine implements ContinuousLine
     private final OtsLine3d line;
 
     /** Start point. */
-    private final DirectedPoint startPoint;
+    private final OrientedPoint2d startPoint;
 
     /** End points. */
-    private final DirectedPoint endPoint;
+    private final OrientedPoint2d endPoint;
 
     /**
-     * Define continuous line from polyline.
+     * Define continuous line from polyline. Start and end point direction are derived from the line.
      * @param line OtsLine3d; line.
      */
     public ContinuousPolyLine(final OtsLine3d line)
@@ -39,16 +41,31 @@ public class ContinuousPolyLine implements ContinuousLine
         this.endPoint = line.getLocationFractionExtended(1.0);
     }
 
+    /**
+     * Define continuous line from polyline. Start and end point are given and may alter the direction at the endpoints
+     * (slightly).
+     * @param line OtsLine3d; line.
+     * @param startPoint OrientedPoint2d; start point.
+     * @param endPoint OrientedPoint2d; end point.
+     */
+    public ContinuousPolyLine(final OtsLine3d line, final OrientedPoint2d startPoint, final OrientedPoint2d endPoint)
+    {
+        Throw.whenNull(line, "Line may not be null.");
+        this.line = line;
+        this.startPoint = startPoint;
+        this.endPoint = endPoint;
+    }
+
     /** {@inheritDoc} */
     @Override
-    public DirectedPoint getStartPoint()
+    public OrientedPoint2d getStartPoint()
     {
         return this.startPoint;
     }
 
     /** {@inheritDoc} */
     @Override
-    public DirectedPoint getEndPoint()
+    public OrientedPoint2d getEndPoint()
     {
         return this.endPoint;
     }
@@ -152,9 +169,9 @@ public class ContinuousPolyLine implements ContinuousLine
         }
         OtsLine3d offsetLine = Try.assign(() -> this.line.offsetLine(relativeFractions, offs),
                 "Unexpected exception while creating offset line.");
-        OtsPoint3d start = new OtsPoint3d(OtsGeometryUtil.offsetPoint(this.startPoint, offs[0]));
-        OtsPoint3d end = new OtsPoint3d(OtsGeometryUtil.offsetPoint(this.endPoint, offs[offs.length - 1]));
-        OtsPoint3d[] points = offsetLine.getPoints();
+        Point2d start = OtsGeometryUtil.offsetPoint(this.startPoint, offs[0]);
+        Point2d end = OtsGeometryUtil.offsetPoint(this.endPoint, offs[offs.length - 1]);
+        Point2d[] points = offsetLine.getPoints();
         points[0] = start;
         points[points.length - 1] = end;
         return Try.assign(() -> new OtsLine3d(points), "Unexpected exception while creating offset line.");

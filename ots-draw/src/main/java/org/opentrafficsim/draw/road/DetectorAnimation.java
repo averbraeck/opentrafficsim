@@ -10,12 +10,15 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
 import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
+
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
+import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
@@ -28,7 +31,8 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class DetectorAnimation extends AbstractLineAnimation<LaneDetector> implements Renderable2DInterface<LaneDetector>, Serializable
+public class DetectorAnimation extends AbstractLineAnimation<LaneDetector>
+        implements Renderable2DInterface<LaneDetector>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150130L;
@@ -53,9 +57,9 @@ public class DetectorAnimation extends AbstractLineAnimation<LaneDetector> imple
         super(detector, simulator, .9, new Length(0.5, LengthUnit.SI));
         this.color = color;
 
-        this.text = new Text(detector,
-                detector.getLane().getLink().getId() + "." + detector.getLane().getId() + detector.getId(), 0.0f,
-                (float) getHalfLength() + 0.2f, TextAlignment.CENTER, Color.BLACK, simulator);
+        this.text =
+                new Text(detector, detector.getLane().getLink().getId() + "." + detector.getLane().getId() + detector.getId(),
+                        0.0f, (float) getHalfLength() + 0.2f, TextAlignment.CENTER, Color.BLACK, simulator);
     }
 
     /**
@@ -121,6 +125,21 @@ public class DetectorAnimation extends AbstractLineAnimation<LaneDetector> imple
                 throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textPlacement, color, simulator, TextAnimation.RENDERALWAYS);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        @SuppressWarnings("checkstyle:designforextension")
+        public OrientedPoint2d getLocation()
+        {
+            // draw always on top, and not upside down.
+            OrientedPoint2d p = ((LaneDetector) getSource()).getLocation();
+            double a = Angle.normalizePi(p.getDirZ());
+            if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
+            {
+                a += Math.PI;
+            }
+            return new OrientedPoint2d(p.x, p.y, a);
         }
 
         /** {@inheritDoc} */

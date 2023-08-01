@@ -12,11 +12,11 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
+import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.IdGtuColorer;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -348,16 +348,16 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGtu> implements R
         /** {@inheritDoc} */
         @Override
         @SuppressWarnings("checkstyle:designforextension")
-        public DirectedPoint getLocation()
+        public OrientedPoint2d getLocation()
         {
             // draw always on top, and not upside down.
-            DirectedPoint p = ((LaneBasedGtu) getSource()).getLocation();
-            double a = Angle.normalizePi(p.getRotZ());
+            OrientedPoint2d p = ((LaneBasedGtu) getSource()).getLocation();
+            double a = Angle.normalizePi(p.getDirZ());
             if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
             {
                 a += Math.PI;
             }
-            return new DirectedPoint(p.x, p.y, Double.MAX_VALUE, 0.0, 0.0, a);
+            return new OrientedPoint2d(p.x, p.y, a);
         }
 
         /** {@inheritDoc} */

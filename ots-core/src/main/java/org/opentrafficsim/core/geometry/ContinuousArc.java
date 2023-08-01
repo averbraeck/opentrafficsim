@@ -5,6 +5,8 @@ import java.util.NavigableSet;
 import java.util.TreeSet;
 
 import org.djunits.value.vdouble.scalar.Angle;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 
@@ -20,7 +22,7 @@ public class ContinuousArc implements ContinuousLine
 {
 
     /** Starting point. */
-    private final DirectedPoint startPoint;
+    private final OrientedPoint2d startPoint;
 
     /** Curve radius. */
     private final double radius;
@@ -32,16 +34,16 @@ public class ContinuousArc implements ContinuousLine
     private double sign;
 
     /** Center point of circle, as calculated in constructor. */
-    private final OtsPoint3d center;
+    private final Point2d center;
 
     /**
      * Define arc by starting point, radius, curve direction, and length.
-     * @param startPoint DirectedPoint; starting point.
+     * @param startPoint OrientedPoint2d; starting point.
      * @param radius double; radius (must be positive).
      * @param left boolean; left curve, or right.
      * @param length double; arc length.
      */
-    public ContinuousArc(final DirectedPoint startPoint, final double radius, final boolean left, final double length)
+    public ContinuousArc(final OrientedPoint2d startPoint, final double radius, final boolean left, final double length)
     {
         this(startPoint, radius, left, Angle.instantiateSI(
                 Throw.when(length, length <= 0.0, IllegalArgumentException.class, "Length must be above 0.") / radius));
@@ -49,12 +51,12 @@ public class ContinuousArc implements ContinuousLine
 
     /**
      * Define arc by starting point, radius, curve direction, and angle.
-     * @param startPoint DirectedPoint; starting point.
+     * @param startPoint OrientedPoint2d; starting point.
      * @param radius double; radius (must be positive).
      * @param left boolean; left curve, or right.
      * @param angle Angle; angle of arc (must be positive).
      */
-    public ContinuousArc(final DirectedPoint startPoint, final double radius, final boolean left, final Angle angle)
+    public ContinuousArc(final OrientedPoint2d startPoint, final double radius, final boolean left, final Angle angle)
     {
         Throw.whenNull(startPoint, "Start point may not be null.");
         Throw.when(radius < 0.0, IllegalArgumentException.class, "Radius must be positive.");
@@ -66,24 +68,24 @@ public class ContinuousArc implements ContinuousLine
         double dx = Math.cos(startPoint.dirZ) * this.sign * radius;
         double dy = Math.sin(startPoint.dirZ) * this.sign * radius;
 
-        this.center = new OtsPoint3d(startPoint.x - dy, startPoint.y + dx);
+        this.center = new Point2d(startPoint.x - dy, startPoint.y + dx);
     }
 
     /** {@inheritDoc} */
     @Override
-    public DirectedPoint getStartPoint()
+    public OrientedPoint2d getStartPoint()
     {
         return this.startPoint;
     }
 
     /** {@inheritDoc} */
     @Override
-    public DirectedPoint getEndPoint()
+    public OrientedPoint2d getEndPoint()
     {
-        OtsPoint3d point = getPoint(this.angle.si, 0.0);
+        Point2d point = getPoint(this.angle.si, 0.0);
         double dirZ = this.startPoint.dirZ + this.sign * this.angle.si;
         dirZ = dirZ > Math.PI ? dirZ - 2.0 * Math.PI : (dirZ < -Math.PI ? dirZ + 2.0 * Math.PI : 0.0);
-        return new DirectedPoint(point.x, point.y, point.z, 0.0, 0.0, dirZ);
+        return new OrientedPoint2d(point.x, point.y, dirZ);
     }
 
     /** {@inheritDoc} */
@@ -119,7 +121,7 @@ public class ContinuousArc implements ContinuousLine
     public OtsLine3d flatten(final int numSegments)
     {
         Throw.when(numSegments < 1, IllegalArgumentException.class, "Number of segments should be at least 1.");
-        OtsPoint3d[] points = new OtsPoint3d[numSegments + 1];
+        Point2d[] points = new Point2d[numSegments + 1];
         double da = this.angle.si / numSegments;
         for (int i = 0; i < points.length; i++)
         {
@@ -147,13 +149,13 @@ public class ContinuousArc implements ContinuousLine
      * @param offset double; offset relative to radius.
      * @return OtsPoint3d; point on the arc at an angle of 'a' from the start angle.
      */
-    private OtsPoint3d getPoint(final double a, final double offset)
+    private Point2d getPoint(final double a, final double offset)
     {
         double len = this.radius - this.sign * offset;
         double angle = this.startPoint.dirZ + this.sign * a;
         double dx = this.sign * Math.cos(angle) * len;
         double dy = this.sign * Math.sin(angle) * len;
-        return new OtsPoint3d(this.center.x + dy, this.center.y - dx, 0.0);
+        return new Point2d(this.center.x + dy, this.center.y - dx);
     }
 
     /** {@inheritDoc} */
@@ -170,7 +172,7 @@ public class ContinuousArc implements ContinuousLine
             f.add(((double) i) / numSegments);
         }
         offsets.keySet().forEach((r) -> f.add(r));
-        OtsPoint3d[] points = new OtsPoint3d[f.size()];
+        Point2d[] points = new Point2d[f.size()];
         int i = 0;
         for (double r : f)
         {

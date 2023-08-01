@@ -18,6 +18,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.line.Polygon2d;
 import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
@@ -30,7 +31,6 @@ import org.opentrafficsim.base.HierarchicallyTyped;
 import org.opentrafficsim.core.SpatialObject;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsShape;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -193,13 +193,13 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param link CrossSectionLink; link.
      * @param id String; the id of this lane within the link; should be unique within the link.
      * @param centerLine OtsLine3d; center line.
-     * @param contour OtsShape; contour shape.
+     * @param contour Polygon2d; contour shape.
      * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
      * @param laneType LaneType; lane type.
      * @param speedLimitMap Map&lt;GtuType, Speed&gt;; the speed limit on this lane, specified per GTU Type.
      * @throws NetworkException when no cross-section slice is defined.
      */
-    public Lane(final CrossSectionLink link, final String id, final OtsLine3d centerLine, final OtsShape contour,
+    public Lane(final CrossSectionLink link, final String id, final OtsLine3d centerLine, final Polygon2d contour,
             final List<CrossSectionSlice> crossSectionSlices, final LaneType laneType, final Map<GtuType, Speed> speedLimitMap)
             throws NetworkException
     {
@@ -596,8 +596,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         }
         laneBasedObjectList.add(laneBasedObject);
         this.link.getNetwork().addObject(laneBasedObject);
-        fireTimedEvent(Lane.OBJECT_ADD_EVENT, new Object[] {laneBasedObject},
-                getLink().getSimulator().getSimulatorTime());
+        fireTimedEvent(Lane.OBJECT_ADD_EVENT, new Object[] {laneBasedObject}, getLink().getSimulator().getSimulatorTime());
     }
 
     /**
@@ -607,8 +606,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      */
     public final synchronized void removeLaneBasedObject(final LaneBasedObject laneBasedObject) throws NetworkException
     {
-        fireTimedEvent(Lane.OBJECT_REMOVE_EVENT, new Object[] {laneBasedObject},
-                getLink().getSimulator().getSimulatorTime());
+        fireTimedEvent(Lane.OBJECT_REMOVE_EVENT, new Object[] {laneBasedObject}, getLink().getSimulator().getSimulatorTime());
         List<LaneBasedObject> laneBasedObjectList =
                 this.laneBasedObjects.get(laneBasedObject.getLongitudinalPosition().getSI());
         if (null == laneBasedObjectList)
@@ -732,7 +730,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /** {@inheritDoc} */
     @Override
-    public OtsShape getShape()
+    public Polygon2d getShape()
     {
         return getContour();
     }
@@ -1058,9 +1056,9 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                             if (cse instanceof Lane)
                             {
                                 Lane lane = (Lane) cse;
-                                Length jumpToStart = this.getCenterLine().getLast().distance(lane.getCenterLine().getFirst());
-                                Length jumpToEnd = this.getCenterLine().getLast().distance(lane.getCenterLine().getLast());
-                                if (jumpToStart.lt(MARGIN) && jumpToStart.lt(jumpToEnd)
+                                double jumpToStart = this.getCenterLine().getLast().distance(lane.getCenterLine().getFirst());
+                                double jumpToEnd = this.getCenterLine().getLast().distance(lane.getCenterLine().getLast());
+                                if (jumpToStart < MARGIN.si && jumpToStart < jumpToEnd
                                         && link.getStartNode().equals(getLink().getEndNode()))
                                 {
                                     // TODO And is it aligned with its next lane?
@@ -1126,9 +1124,9 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                             if (cse instanceof Lane)
                             {
                                 Lane lane = (Lane) cse;
-                                Length jumpToStart = this.getCenterLine().getFirst().distance(lane.getCenterLine().getFirst());
-                                Length jumpToEnd = this.getCenterLine().getFirst().distance(lane.getCenterLine().getLast());
-                                if (jumpToEnd.lt(MARGIN) && jumpToEnd.lt(jumpToStart)
+                                double jumpToStart = this.getCenterLine().getFirst().distance(lane.getCenterLine().getFirst());
+                                double jumpToEnd = this.getCenterLine().getFirst().distance(lane.getCenterLine().getLast());
+                                if (jumpToEnd < MARGIN.si && jumpToEnd < jumpToStart
                                         && link.getEndNode().equals(getLink().getStartNode()))
                                 {
                                     // TODO And is it aligned with its next lane?
@@ -1542,7 +1540,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
      * @param id String; the id of the lane. Should be unique within the parentLink.
      * @param centerLine OtsLine3d; center line.
-     * @param contour OtsShape; contour shape.
+     * @param contour Polygon2d; contour shape.
      * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
      * @return Lane; lane representing a no-traffic lane.
      * @throws OtsGeometryException when creation of the geometry fails
@@ -1550,7 +1548,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane noTrafficLane(final CrossSectionLink parentLink, final String id, final OtsLine3d centerLine,
-            final OtsShape contour, final List<CrossSectionSlice> crossSectionSlices)
+            final Polygon2d contour, final List<CrossSectionSlice> crossSectionSlices)
             throws OtsGeometryException, NetworkException
     {
         return new Lane(parentLink, id, centerLine, contour, crossSectionSlices, new LaneType("NO_TRAFFIC"),

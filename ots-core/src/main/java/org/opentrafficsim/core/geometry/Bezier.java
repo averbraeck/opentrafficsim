@@ -2,6 +2,8 @@ package org.opentrafficsim.core.geometry;
 
 import java.awt.geom.Line2D;
 
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 
 /**
@@ -41,27 +43,26 @@ public final class Bezier
     /**
      * Construct a cubic B&eacute;zier curve from start to end with two control points.
      * @param numPoints int; the number of points for the B&eacute;zier curve
-     * @param start OtsPoint3d; the start point of the B&eacute;zier curve
-     * @param control1 OtsPoint3d; the first control point
-     * @param control2 OtsPoint3d; the second control point
-     * @param end OtsPoint3d; the end point of the B&eacute;zier curve
+     * @param start Point2d; the start point of the B&eacute;zier curve
+     * @param control1 Point2d; the first control point
+     * @param control2 Point2d; the second control point
+     * @param end Point2d; the end point of the B&eacute;zier curve
      * @return a cubic B&eacute;zier curve between start and end, with the two provided control points
      * @throws OtsGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
      *             constructed
      */
-    public static OtsLine3d cubic(final int numPoints, final OtsPoint3d start, final OtsPoint3d control1,
-            final OtsPoint3d control2, final OtsPoint3d end) throws OtsGeometryException
+    public static OtsLine3d cubic(final int numPoints, final Point2d start, final Point2d control1,
+            final Point2d control2, final Point2d end) throws OtsGeometryException
     {
         Throw.when(numPoints < 2, OtsGeometryException.class, "Number of points too small (got %d; minimum value is 2)",
                 numPoints);
-        OtsPoint3d[] points = new OtsPoint3d[numPoints];
+        Point2d[] points = new Point2d[numPoints];
         for (int n = 0; n < numPoints; n++)
         {
             double t = n / (numPoints - 1.0);
             double x = B3(t, start.x, control1.x, control2.x, end.x);
             double y = B3(t, start.y, control1.y, control2.y, end.y);
-            double z = B3(t, start.z, control1.z, control2.z, end.z);
-            points[n] = new OtsPoint3d(x, y, z);
+            points[n] = new Point2d(x, y);
         }
         return new OtsLine3d(points);
     }
@@ -70,13 +71,13 @@ public final class Bezier
      * Construct a cubic B&eacute;zier curve from start to end with two generated control points at half the distance between
      * start and end. The z-value is interpolated in a linear way.
      * @param numPoints int; the number of points for the B&eacute;zier curve
-     * @param start DirectedPoint; the directed start point of the B&eacute;zier curve
-     * @param end DirectedPoint; the directed end point of the B&eacute;zier curve
+     * @param start OrientedPoint2d; the directed start point of the B&eacute;zier curve
+     * @param end OrientedPoint2d; the directed end point of the B&eacute;zier curve
      * @return a cubic B&eacute;zier curve between start and end, with the two provided control points
      * @throws OtsGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
      *             constructed
      */
-    public static OtsLine3d cubic(final int numPoints, final DirectedPoint start, final DirectedPoint end)
+    public static OtsLine3d cubic(final int numPoints, final OrientedPoint2d start, final OrientedPoint2d end)
             throws OtsGeometryException
     {
         return cubic(numPoints, start, end, 1.0);
@@ -86,15 +87,15 @@ public final class Bezier
      * Construct a cubic B&eacute;zier curve from start to end with two generated control points at half the distance between
      * start and end. The z-value is interpolated in a linear way.
      * @param numPoints int; the number of points for the B&eacute;zier curve
-     * @param start DirectedPoint; the directed start point of the B&eacute;zier curve
-     * @param end DirectedPoint; the directed end point of the B&eacute;zier curve
+     * @param start OrientedPoint2d; the directed start point of the B&eacute;zier curve
+     * @param end OrientedPoint2d; the directed end point of the B&eacute;zier curve
      * @param shape shape factor; 1 = control points at half the distance between start and end, &gt; 1 results in a pointier
      *            shape, &lt; 1 results in a flatter shape, value should be above 0
      * @return a cubic B&eacute;zier curve between start and end, with the two determined control points
      * @throws OtsGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
      *             constructed
      */
-    public static OtsLine3d cubic(final int numPoints, final DirectedPoint start, final DirectedPoint end, final double shape)
+    public static OtsLine3d cubic(final int numPoints, final OrientedPoint2d start, final OrientedPoint2d end, final double shape)
             throws OtsGeometryException
     {
         return cubic(numPoints, start, end, shape, false);
@@ -104,8 +105,8 @@ public final class Bezier
      * Construct a cubic B&eacute;zier curve from start to end with two generated control points at half the distance between
      * start and end. The z-value is interpolated in a linear way.
      * @param numPoints int; the number of points for the B&eacute;zier curve
-     * @param start DirectedPoint; the directed start point of the B&eacute;zier curve
-     * @param end DirectedPoint; the directed end point of the B&eacute;zier curve
+     * @param start OrientedPoint2d; the directed start point of the B&eacute;zier curve
+     * @param end OrientedPoint2d; the directed end point of the B&eacute;zier curve
      * @param shape double; shape factor; 1 = control points at half the distance between start and end, &gt; 1 results in a
      *            pointier shape, &lt; 1 results in a flatter shape, value should be above 0
      * @param weighted boolean; control point distance relates to distance to projected point on extended line from other end
@@ -113,7 +114,7 @@ public final class Bezier
      * @throws OtsGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
      *             constructed
      */
-    public static OtsLine3d cubic(final int numPoints, final DirectedPoint start, final DirectedPoint end, final double shape,
+    public static OtsLine3d cubic(final int numPoints, final OrientedPoint2d start, final OrientedPoint2d end, final double shape,
             final boolean weighted) throws OtsGeometryException
     {
         return bezier(cubicControlPoints(start, end, shape, weighted));
@@ -122,19 +123,19 @@ public final class Bezier
     /**
      * Construct control points for a cubic B&eacute;zier curve from start to end with two generated control points at half the
      * distance between start and end.
-     * @param start DirectedPoint; the directed start point of the B&eacute;zier curve
-     * @param end DirectedPoint; the directed end point of the B&eacute;zier curve
+     * @param start OrientedPoint2d; the directed start point of the B&eacute;zier curve
+     * @param end OrientedPoint2d; the directed end point of the B&eacute;zier curve
      * @param shape double; shape factor; 1 = control points at half the distance between start and end, &gt; 1 results in a
      *            pointier shape, &lt; 1 results in a flatter shape, value should be above 0
      * @param weighted boolean; control point distance relates to distance to projected point on extended line from other end
      * @return a cubic B&eacute;zier curve between start and end, with the two determined control points
      */
-    public static OtsPoint3d[] cubicControlPoints(final DirectedPoint start, final DirectedPoint end, final double shape,
+    public static Point2d[] cubicControlPoints(final OrientedPoint2d start, final OrientedPoint2d end, final double shape,
             final boolean weighted)
     {
         Throw.when(shape <= 0.0, IllegalArgumentException.class, "Shape factor must be above 0.0.");
-        OtsPoint3d control1;
-        OtsPoint3d control2;
+        Point2d control1;
+        Point2d control2;
 
         if (weighted)
         {
@@ -143,19 +144,19 @@ public final class Bezier
             double dx = end.x - start.x;
             double dy = end.y - start.y;
             double distance = shape * Math.hypot(dx, dy);
-            double cosEnd = Math.cos(end.getRotZ());
-            double sinEnd = Math.sin(end.getRotZ());
+            double cosEnd = Math.cos(end.getDirZ());
+            double sinEnd = Math.sin(end.getDirZ());
             double dStart = Line2D.ptLineDist(end.x, end.y, end.x + cosEnd, end.y + sinEnd, start.x, start.y);
-            double cosStart = Math.cos(start.getRotZ());
-            double sinStart = Math.sin(start.getRotZ());
+            double cosStart = Math.cos(start.getDirZ());
+            double sinStart = Math.sin(start.getDirZ());
             double dEnd = Line2D.ptLineDist(start.x, start.y, start.x + cosStart, start.y + sinStart, end.x, end.y);
             double wStart = dStart / (dStart + dEnd);
             double wEnd = dEnd / (dStart + dEnd);
             double wStartDistance = wStart * distance;
             double wEndDistance = wEnd * distance;
-            control1 = new OtsPoint3d(start.x + wStartDistance * cosStart, start.y + wStartDistance * sinStart);
+            control1 = new Point2d(start.x + wStartDistance * cosStart, start.y + wStartDistance * sinStart);
             // - (minus) as the angle is where the line leaves, i.e. from shape point to end
-            control2 = new OtsPoint3d(end.x - wEndDistance * cosEnd, end.y - wEndDistance * sinEnd);
+            control2 = new Point2d(end.x - wEndDistance * cosEnd, end.y - wEndDistance * sinEnd);
         }
         else
         {
@@ -163,29 +164,24 @@ public final class Bezier
             double dx = end.x - start.x;
             double dy = end.y - start.y;
             double distance2 = shape * .5 * Math.hypot(dx, dy);
-            control1 = new OtsPoint3d(start.x + distance2 * Math.cos(start.getRotZ()),
-                    start.y + distance2 * Math.sin(start.getRotZ()), start.z);
-            control2 = new OtsPoint3d(end.x - distance2 * Math.cos(end.getRotZ()), end.y - distance2 * Math.sin(end.getRotZ()),
-                    end.z);
+            control1 = new Point2d(start.x + distance2 * Math.cos(start.getDirZ()),
+                    start.y + distance2 * Math.sin(start.getDirZ()));
+            control2 = new Point2d(end.x - distance2 * Math.cos(end.getDirZ()), end.y - distance2 * Math.sin(end.getDirZ()));
         }
 
-        // Limit control points to not intersect with the other (infinite) line
-        OtsPoint3d s = new OtsPoint3d(start);
-        OtsPoint3d e = new OtsPoint3d(end);
-
-        return new OtsPoint3d[] {s, control1, control2, e};
+        return new Point2d[] {start, control1, control2, end};
     }
 
     /**
      * Construct a cubic B&eacute;zier curve from start to end with two generated control points at half the distance between
      * start and end. The z-value is interpolated in a linear way.
-     * @param start DirectedPoint; the directed start point of the B&eacute;zier curve
-     * @param end DirectedPoint; the directed end point of the B&eacute;zier curve
+     * @param start OrientedPoint2d; the directed start point of the B&eacute;zier curve
+     * @param end OrientedPoint2d; the directed end point of the B&eacute;zier curve
      * @return a cubic B&eacute;zier curve between start and end, with the two provided control points
      * @throws OtsGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
      *             constructed
      */
-    public static OtsLine3d cubic(final DirectedPoint start, final DirectedPoint end) throws OtsGeometryException
+    public static OtsLine3d cubic(final OrientedPoint2d start, final OrientedPoint2d end) throws OtsGeometryException
     {
         return cubic(DEFAULT_NUM_POINTS, start, end);
     }
@@ -214,44 +210,41 @@ public final class Bezier
     /**
      * Construct a B&eacute;zier curve of degree n.
      * @param numPoints int; the number of points for the B&eacute;zier curve to be constructed
-     * @param points OtsPoint3d...; the points of the curve, where the first and last are begin and end point, and the
+     * @param points Point2d...; the points of the curve, where the first and last are begin and end point, and the
      *            intermediate ones are control points. There should be at least two points.
      * @return the B&eacute;zier value B(t) of degree n, where n is the number of points in the array
      * @throws OtsGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
      *             constructed
      */
-    public static OtsLine3d bezier(final int numPoints, final OtsPoint3d... points) throws OtsGeometryException
+    public static OtsLine3d bezier(final int numPoints, final Point2d... points) throws OtsGeometryException
     {
-        OtsPoint3d[] result = new OtsPoint3d[numPoints];
+        Point2d[] result = new Point2d[numPoints];
         double[] px = new double[points.length];
         double[] py = new double[points.length];
-        double[] pz = new double[points.length];
         for (int i = 0; i < points.length; i++)
         {
             px[i] = points[i].x;
             py[i] = points[i].y;
-            pz[i] = points[i].z;
         }
         for (int n = 0; n < numPoints; n++)
         {
             double t = n / (numPoints - 1.0);
             double x = Bn(t, px);
             double y = Bn(t, py);
-            double z = Bn(t, pz);
-            result[n] = new OtsPoint3d(x, y, z);
+            result[n] = new Point2d(x, y);
         }
         return new OtsLine3d(result);
     }
 
     /**
      * Construct a B&eacute;zier curve of degree n.
-     * @param points OtsPoint3d...; the points of the curve, where the first and last are begin and end point, and the
+     * @param points Point2d...; the points of the curve, where the first and last are begin and end point, and the
      *            intermediate ones are control points. There should be at least two points.
      * @return the B&eacute;zier value B(t) of degree n, where n is the number of points in the array
      * @throws OtsGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
      *             constructed
      */
-    public static OtsLine3d bezier(final OtsPoint3d... points) throws OtsGeometryException
+    public static OtsLine3d bezier(final Point2d... points) throws OtsGeometryException
     {
         return bezier(DEFAULT_NUM_POINTS, points);
     }

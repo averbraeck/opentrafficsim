@@ -8,6 +8,8 @@ import java.util.TreeMap;
 
 import org.djunits.unit.AngleUnit;
 import org.djunits.value.vdouble.scalar.Angle;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
 import org.junit.Test;
 
@@ -33,15 +35,15 @@ public class ContinuousArcTest
     {
         Try.testFail(() -> new ContinuousArc(null, 1.0, true, Angle.instantiateSI(Math.PI)), "Should fail on null start point.",
                 NullPointerException.class);
-        DirectedPoint start = new DirectedPoint(1.0, 0.0, 0.0, 0.0, 0.0, Math.PI / 2.0);
+        OrientedPoint2d start = new OrientedPoint2d(1.0, 0.0, Math.PI / 2.0);
         Try.testFail(() -> new ContinuousArc(start, -1.0, true, Angle.instantiateSI(Math.PI)),
                 "Should fail on negative radius.", IllegalArgumentException.class);
-        Try.testFail(() -> new ContinuousArc(start, 1.0, true, Angle.instantiateSI(-Math.PI)),
-                "Should fail on negative angle.", IllegalArgumentException.class);
-        Try.testFail(() -> new ContinuousArc(start, 1.0, true, -Math.PI),
-                "Should fail on negative length.", IllegalArgumentException.class);
+        Try.testFail(() -> new ContinuousArc(start, 1.0, true, Angle.instantiateSI(-Math.PI)), "Should fail on negative angle.",
+                IllegalArgumentException.class);
+        Try.testFail(() -> new ContinuousArc(start, 1.0, true, -Math.PI), "Should fail on negative length.",
+                IllegalArgumentException.class);
     }
-    
+
     /**
      * Tests the return values of standard continuous line methods.
      */
@@ -49,11 +51,11 @@ public class ContinuousArcTest
     public void continuousLineTest()
     {
         // half standard unit circle
-        DirectedPoint start = new DirectedPoint(1.0, 0.0, 0.0, 0.0, 0.0, Math.PI / 2.0);
+        OrientedPoint2d start = new OrientedPoint2d(1.0, 0.0, Math.PI / 2.0);
         ContinuousArc arc = new ContinuousArc(start, 1.0, true, Angle.instantiateSI(Math.PI));
-        
-        isApproximal(new OtsPoint3d(arc.getStartPoint()), 1.0, 0.0);
-        isApproximal(new OtsPoint3d(arc.getEndPoint()), -1.0, 0.0);
+
+        isApproximal(arc.getStartPoint(), 1.0, 0.0);
+        isApproximal(arc.getEndPoint(), -1.0, 0.0);
         assertEquals("Start direction is incorrect.", Math.PI / 2.0, arc.getStartDirection().si, MARGIN);
         assertEquals("End direction is incorrect.", -Math.PI / 2.0, arc.getEndDirection().si, MARGIN);
         assertEquals("Start radius is incorrect.", 1.0, arc.getStartRadius(), MARGIN);
@@ -72,7 +74,7 @@ public class ContinuousArcTest
         double u = Math.sin(Math.PI / 4.0);
 
         // half standard unit circle
-        DirectedPoint start = new DirectedPoint(1.0, 0.0, 0.0, 0.0, 0.0, Math.PI / 2.0);
+        OrientedPoint2d start = new OrientedPoint2d(1.0, 0.0, Math.PI / 2.0);
         ContinuousArc arc = new ContinuousArc(start, 1.0, true, Angle.instantiateSI(Math.PI));
         OtsLine3d line = arc.flatten(4);
         isApproximal(line.get(0), 1.0, 0.0);
@@ -91,7 +93,7 @@ public class ContinuousArcTest
         isApproximal(line.get(4), 3.0, 0.0);
 
         // half unit circle but with r=2.0
-        start = new DirectedPoint(2.0, 0.0, 0.0, 0.0, 0.0, Math.PI / 2.0);
+        start = new OrientedPoint2d(2.0, 0.0, Math.PI / 2.0);
         arc = new ContinuousArc(start, 2.0, true, Angle.instantiateSI(Math.PI));
         line = arc.flatten(4);
         isApproximal(line.get(0), 2.0, 0.0);
@@ -101,7 +103,7 @@ public class ContinuousArcTest
         isApproximal(line.get(4), -2.0, 0.0);
 
         // negative half unit circle
-        start = new DirectedPoint(1.0, 0.0, 0.0, 0.0, 0.0, -Math.PI / 2.0);
+        start = new OrientedPoint2d(1.0, 0.0, -Math.PI / 2.0);
         arc = new ContinuousArc(start, 1.0, false, Angle.instantiateSI(Math.PI));
         line = arc.flatten(4);
         isApproximal(line.get(0), 1.0, 0.0);
@@ -126,7 +128,7 @@ public class ContinuousArcTest
     @Test
     public void flattenArcErrorTest()
     {
-        DirectedPoint start = new DirectedPoint(1.0, 0.0, 0.0, 0.0, 0.0, Math.PI / 2.0);
+        OrientedPoint2d start = new OrientedPoint2d(1.0, 0.0, Math.PI / 2.0);
         ContinuousArc arc = new ContinuousArc(start, 1.0, true, Angle.instantiateSI(Math.PI));
 
         // 10 degrees
@@ -153,7 +155,7 @@ public class ContinuousArcTest
     public void offsetArcTest() throws OtsGeometryException
     {
         // half standard unit circle
-        DirectedPoint start = new DirectedPoint(1.0, 0.0, 0.0, 0.0, 0.0, Math.PI / 2.0);
+        OrientedPoint2d start = new OrientedPoint2d(1.0, 0.0, Math.PI / 2.0);
         ContinuousArc arc = new ContinuousArc(start, 1.0, true, Angle.instantiateSI(Math.PI));
 
         // right-hand increasing offset
@@ -206,7 +208,7 @@ public class ContinuousArcTest
     public void offsetArcErrorTest()
     {
         // half standard unit circle
-        DirectedPoint start = new DirectedPoint(1.0, 0.0, 0.0, 0.0, 0.0, Math.PI / 2.0);
+        OrientedPoint2d start = new OrientedPoint2d(1.0, 0.0, Math.PI / 2.0);
         ContinuousArc arc = new ContinuousArc(start, 1.0, true, Angle.instantiateSI(Math.PI));
 
         // 10 degrees
@@ -238,7 +240,7 @@ public class ContinuousArcTest
     public void lengthTest() throws OtsGeometryException
     {
         // half standard unit circle
-        DirectedPoint start = new DirectedPoint(1.0, 0.0, 0.0, 0.0, 0.0, Math.PI / 2.0);
+        OrientedPoint2d start = new OrientedPoint2d(1.0, 0.0, Math.PI / 2.0);
         ContinuousArc arc = new ContinuousArc(start, 1.0, true, Angle.instantiateSI(Math.PI));
         OtsLine3d line1 = arc.flatten(4);
         arc = new ContinuousArc(start, 1.0, true, Math.PI);
@@ -251,11 +253,11 @@ public class ContinuousArcTest
 
     /**
      * Test point is approximately the same.
-     * @param point OtsPoint3d; point to test.
+     * @param point Point2d; point to test.
      * @param x double; expected x coordinate.
      * @param y double; expected y coordinate.
      */
-    private void isApproximal(final OtsPoint3d point, final double x, final double y)
+    private void isApproximal(final Point2d point, final double x, final double y)
     {
         assertEquals("Resulting x-coordinate is incorrect", x, point.x, MARGIN);
         assertEquals("Resulting y-coordinate is incorrect", y, point.y, MARGIN);

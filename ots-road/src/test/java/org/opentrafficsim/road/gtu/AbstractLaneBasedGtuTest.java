@@ -20,6 +20,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.point.Point2d;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.definitions.DefaultsNl;
@@ -27,7 +28,6 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -78,16 +78,16 @@ public class AbstractLaneBasedGtuTest implements UNITS
         RoadNetwork network = new RoadNetwork("lane base gtu test network", simulator);
         OtsModelInterface model = new DummyModel(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), model);
-        Node nodeAFrom = new Node(network, "AFrom", new OtsPoint3d(0, 0, 0), Direction.ZERO);
-        Node nodeATo = new Node(network, "ATo", new OtsPoint3d(1000, 0, 0), Direction.ZERO);
+        Node nodeAFrom = new Node(network, "AFrom", new Point2d(0, 0), Direction.ZERO);
+        Node nodeATo = new Node(network, "ATo", new Point2d(1000, 0), Direction.ZERO);
         GtuType gtuType = DefaultsNl.CAR;
         LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
 
         Lane[] lanesGroupA = LaneFactory.makeMultiLane(network, "A", nodeAFrom, nodeATo, null, 3, laneType,
                 new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
         // A GTU can exist on several lanes at once; create another lane group to test that
-        Node nodeBFrom = new Node(network, "BFrom", new OtsPoint3d(10, 0, 0), Direction.ZERO);
-        Node nodeBTo = new Node(network, "BTo", new OtsPoint3d(1000, 0, 0), Direction.ZERO);
+        Node nodeBFrom = new Node(network, "BFrom", new Point2d(10, 0), Direction.ZERO);
+        Node nodeBTo = new Node(network, "BTo", new Point2d(1000, 0), Direction.ZERO);
         Lane[] lanesGroupB = LaneFactory.makeMultiLane(network, "B", nodeBFrom, nodeBTo, null, 3, laneType,
                 new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
         Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(2);
@@ -343,8 +343,8 @@ public class AbstractLaneBasedGtuTest implements UNITS
             }
         }
         // A GTU can exist on several lanes at once; create another lane group to test that
-        Node nodeCFrom = new Node(network, "CFrom", new OtsPoint3d(10, 100, 0), Direction.ZERO);
-        Node nodeCTo = new Node(network, "CTo", new OtsPoint3d(1000, 0, 0), Direction.ZERO);
+        Node nodeCFrom = new Node(network, "CFrom", new Point2d(10, 100), Direction.ZERO);
+        Node nodeCTo = new Node(network, "CTo", new Point2d(1000, 0), Direction.ZERO);
         Lane[] lanesGroupC = LaneFactory.makeMultiLane(network, "C", nodeCFrom, nodeCTo, null, 3, laneType,
                 new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
         for (RelativePosition relativePosition : new RelativePosition[] {car.getFront(), car.getRear()})

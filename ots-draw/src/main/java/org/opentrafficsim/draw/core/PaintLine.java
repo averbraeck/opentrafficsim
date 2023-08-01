@@ -6,12 +6,12 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.Path2D;
 
-import org.djutils.draw.line.PolyLine3d;
+import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.Point;
+import org.djutils.draw.point.Point2d;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 
 /**
  * Paint a line as a Path2D.Double
@@ -29,19 +29,16 @@ public final class PaintLine
         // Cannot be instantiated.
     }
 
-    /** Dummy coordinate that forces the drawing operation to start a new path. */
-    public static final OtsPoint3d NEWPATH = new OtsPoint3d(Double.NaN, Double.NaN, Double.NaN);
-
     /**
      * Paint line.
      * @param graphics Graphics2D; the graphics environment
      * @param color Color; the color to use
      * @param width double; the width to use
      * @param referencePoint DirectedPoint; the reference point
-     * @param line OtsLine3d; array of points
+     * @param line PolyLine2d; array of points
      */
     public static void paintLine(final Graphics2D graphics, final Color color, final double width,
-            final Point<?> referencePoint, final PolyLine3d line)
+            final Point<?> referencePoint, final PolyLine2d line)
     {
         graphics.setColor(color);
         Stroke oldStroke = graphics.getStroke();
@@ -76,11 +73,11 @@ public final class PaintLine
             // Setting cap and join to make perfectly visible where a line begins and ends.
             graphics.setStroke(new BasicStroke((float) width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
             Path2D.Double path = new Path2D.Double();
-            OtsPoint3d point = line.get(0);
+            Point2d point = line.get(0);
             path.moveTo(point.x - referencePoint.getX(), -point.y + referencePoint.getY());
             for (int index = 1; index < line.size(); index++)
             {
-                OtsPoint3d p = line.get(index);
+                Point2d p = line.get(index);
                 path.lineTo(p.x - referencePoint.getX(), -p.y + referencePoint.getY());
             }
             graphics.draw(path);

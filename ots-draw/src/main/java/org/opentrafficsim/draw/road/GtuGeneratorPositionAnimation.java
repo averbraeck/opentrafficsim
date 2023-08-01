@@ -8,8 +8,8 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
+import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.gtu.GtuGenerator.GtuGeneratorPosition;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
@@ -33,7 +33,7 @@ public class GtuGeneratorPositionAnimation extends Renderable2D<GtuGeneratorPosi
 
     /** */
     private static final long serialVersionUID = 20230204L;
-    
+
     /** Chevron path to draw. */
     private static final Path2D.Float PATH;
 
@@ -112,20 +112,20 @@ public class GtuGeneratorPositionAnimation extends Renderable2D<GtuGeneratorPosi
             super(source, "", 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, 3.0f, 12.0f, 50f, simulator, null,
                     TextAnimation.RENDERALWAYS);
         }
-        
+
         /** {@inheritDoc} */
         @Override
         @SuppressWarnings("checkstyle:designforextension")
-        public DirectedPoint getLocation()
+        public OrientedPoint2d getLocation()
         {
             // draw always on top, and not upside down.
-            DirectedPoint p = super.getLocation();
-            double a = Angle.normalizePi(p.getRotZ());
+            OrientedPoint2d p = super.getLocation();
+            double a = Angle.normalizePi(p.getDirZ());
             if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
             {
                 a += Math.PI;
             }
-            return new DirectedPoint(p.x, p.y, Double.MAX_VALUE, 0.0, 0.0, a);
+            return new OrientedPoint2d(p.x, p.y, a);
         }
 
         /** {@inheritDoc} */

@@ -13,12 +13,11 @@ import javax.naming.NamingException;
 
 import org.djutils.draw.Oriented;
 import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point;
 import org.djutils.draw.point.Point2d;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.Bounds;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
@@ -173,27 +172,26 @@ public abstract class TextAnimation implements Locatable, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public DirectedPoint getLocation()
+    public OrientedPoint2d getLocation()
     {
         // draw always on top.
         try
         {
             Point<?> p = this.source.getLocation();
-            return new DirectedPoint(p.getX(), p.getY(), Double.MAX_VALUE, 0.0, 0.0,
-                    p instanceof Oriented ? ((Oriented<?>) p).getDirZ() : 0.0);
+            return new OrientedPoint2d(p.getX(), p.getY(), p instanceof Oriented ? ((Oriented<?>) p).getDirZ() : 0.0);
         }
         catch (RemoteException exception)
         {
             CategoryLogger.always().warn(exception);
-            return new DirectedPoint(0, 0, 0);
+            return new OrientedPoint2d(0, 0, 0);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Bounds getBounds() throws RemoteException
+    public final Bounds2d getBounds() throws RemoteException
     {
-        return new Bounds(0.0, 0.0, 0.0);
+        return new Bounds2d(0.0, 0.0, 0.0, 0.0);
     }
 
     /**

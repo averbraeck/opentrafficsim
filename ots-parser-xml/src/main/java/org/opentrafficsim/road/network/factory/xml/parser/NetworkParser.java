@@ -14,6 +14,9 @@ import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.draw.point.Point3d;
 import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.core.definitions.Definitions;
@@ -24,12 +27,9 @@ import org.opentrafficsim.core.geometry.ContinuousBezierCubic;
 import org.opentrafficsim.core.geometry.ContinuousLine;
 import org.opentrafficsim.core.geometry.ContinuousPolyLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
-import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OtsGeometryUtil;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.geometry.OtsGeometryUtil;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
-import org.opentrafficsim.core.geometry.OtsShape;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Centroid;
@@ -98,14 +98,13 @@ public final class NetworkParser
         for (org.opentrafficsim.xml.generated.Centroid xmlCentroid : ParseUtil
                 .getObjectsOfType(network.getNodeOrLinkOrCentroid(), org.opentrafficsim.xml.generated.Centroid.class))
         {
-            new Centroid(otsNetwork, xmlCentroid.getId(), new OtsPoint3d(xmlCentroid.getCoordinate().x,
-                    xmlCentroid.getCoordinate().y, xmlCentroid.getCoordinate().z));
+            new Centroid(otsNetwork, xmlCentroid.getId(),
+                    new Point2d(xmlCentroid.getCoordinate().x, xmlCentroid.getCoordinate().y));
         }
         for (org.opentrafficsim.xml.generated.Node xmlNode : ParseUtil.getObjectsOfType(network.getNodeOrLinkOrCentroid(),
                 org.opentrafficsim.xml.generated.Node.class))
         {
-            new Node(otsNetwork, xmlNode.getId(),
-                    new OtsPoint3d(xmlNode.getCoordinate().x, xmlNode.getCoordinate().y, xmlNode.getCoordinate().z),
+            new Node(otsNetwork, xmlNode.getId(), new Point2d(xmlNode.getCoordinate().x, xmlNode.getCoordinate().y),
                     nodeDirections.get(xmlNode.getId()));
         }
     }
@@ -203,19 +202,19 @@ public final class NetworkParser
         {
             Node startNode = (Node) otsNetwork.getNode(xmlLink.getNodeStart());
             Node endNode = (Node) otsNetwork.getNode(xmlLink.getNodeEnd());
-            OtsPoint3d startPoint = new OtsPoint3d(startNode.getPoint());
-            OtsPoint3d endPoint = new OtsPoint3d(endNode.getPoint());
-            OtsPoint3d[] coordinates = null;
+            Point2d startPoint = startNode.getPoint();
+            Point2d endPoint = endNode.getPoint();
+            Point2d[] coordinates = null;
 
             // start and end with heading, adjusted with offset
             double startHeading = startNode.getHeading().si;
-            DirectedPoint start = new DirectedPoint(startPoint.x, startPoint.y, startPoint.z, 0.0, 0.0, startHeading);
+            OrientedPoint2d start = new OrientedPoint2d(startPoint.x, startPoint.y, startHeading);
             if (xmlLink.getOffsetStart() != null)
             {
                 start = OtsGeometryUtil.offsetPoint(start, xmlLink.getOffsetStart().si);
             }
             double endHeading = endNode.getHeading().si;
-            DirectedPoint end = new DirectedPoint(endPoint.x, endPoint.y, endPoint.z, 0.0, 0.0, endHeading);
+            OrientedPoint2d end = new OrientedPoint2d(endPoint.x, endPoint.y, endHeading);
             if (xmlLink.getOffsetEnd() != null)
             {
                 end = OtsGeometryUtil.offsetPoint(end, xmlLink.getOffsetEnd().si);
@@ -232,12 +231,13 @@ public final class NetworkParser
             else if (xmlLink.getPolyline() != null)
             {
                 int intermediatePoints = xmlLink.getPolyline().getCoordinate().size();
-                coordinates = new OtsPoint3d[intermediatePoints + 2];
+                coordinates = new Point2d[intermediatePoints + 2];
                 coordinates[0] = startPoint;
                 coordinates[intermediatePoints + 1] = endPoint;
                 for (int p = 0; p < intermediatePoints; p++)
                 {
-                    coordinates[p + 1] = new OtsPoint3d(xmlLink.getPolyline().getCoordinate().get(p));
+                    Point3d point = xmlLink.getPolyline().getCoordinate().get(p);
+                    coordinates[p + 1] = new Point2d(point.x, point.y);
                 }
                 designLine = new ContinuousPolyLine(OtsLine3d.createAndCleanOtsLine3d(coordinates));
             }
@@ -267,7 +267,7 @@ public final class NetworkParser
                 }
                 double shape = xmlLink.getBezier().getShape();
                 boolean weighted = xmlLink.getBezier().isWeighted();
-                OtsPoint3d[] designPoints = Bezier.cubicControlPoints(start, end, shape, weighted);
+                Point2d[] designPoints = Bezier.cubicControlPoints(start, end, shape, weighted);
                 designLine = new ContinuousBezierCubic(designPoints[0], designPoints[1], designPoints[2], designPoints[3]);
             }
             else if (xmlLink.getClothoid() != null)
@@ -404,7 +404,7 @@ public final class NetworkParser
                 OtsLine3d centerLine = designLine.offset(LaneGeometryUtil.getCenterOffsets(designLine, slices), 64);
                 OtsLine3d leftEdge = designLine.offset(LaneGeometryUtil.getLeftEdgeOffsets(designLine, slices), 64);
                 OtsLine3d rightEdge = designLine.offset(LaneGeometryUtil.getRightEdgeOffsets(designLine, slices), 64);
-                OtsShape contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
+                Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
 
                 // Lane
                 if (cseTag instanceof CseLane)
@@ -673,20 +673,20 @@ public final class NetworkParser
         }
 
         // add the link offset
-//        if (xmlLink.getOffsetStart() != null && xmlLink.getOffsetStart().ne0())
-//        {
-//            for (CseData cseData : cseDataList)
-//            {
-//                cseData.centerOffsetStart = cseData.centerOffsetStart.plus(xmlLink.getOffsetStart());
-//            }
-//        }
-//        if (xmlLink.getOffsetEnd() != null && xmlLink.getOffsetEnd().ne0())
-//        {
-//            for (CseData cseData : cseDataList)
-//            {
-//                cseData.centerOffsetEnd = cseData.centerOffsetEnd.plus(xmlLink.getOffsetEnd());
-//            }
-//        }
+        // if (xmlLink.getOffsetStart() != null && xmlLink.getOffsetStart().ne0())
+        // {
+        // for (CseData cseData : cseDataList)
+        // {
+        // cseData.centerOffsetStart = cseData.centerOffsetStart.plus(xmlLink.getOffsetStart());
+        // }
+        // }
+        // if (xmlLink.getOffsetEnd() != null && xmlLink.getOffsetEnd().ne0())
+        // {
+        // for (CseData cseData : cseDataList)
+        // {
+        // cseData.centerOffsetEnd = cseData.centerOffsetEnd.plus(xmlLink.getOffsetEnd());
+        // }
+        // }
     }
 
     /**
@@ -713,7 +713,7 @@ public final class NetworkParser
         OtsLine3d centerLine = designLine.offset(LaneGeometryUtil.getCenterOffsets(designLine, slices), 64);
         OtsLine3d leftEdge = designLine.offset(LaneGeometryUtil.getLeftEdgeOffsets(designLine, slices), 64);
         OtsLine3d rightEdge = designLine.offset(LaneGeometryUtil.getRightEdgeOffsets(designLine, slices), 64);
-        OtsShape contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
+        Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
 
         switch (stripeTag.getType())
         {

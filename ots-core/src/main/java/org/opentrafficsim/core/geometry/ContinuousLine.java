@@ -5,6 +5,7 @@ import java.util.TreeMap;
 
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
+import org.djutils.draw.point.OrientedPoint2d;
 
 /**
  * A continuous line defines a line in an exact manner, from which numerical polylines can be derived. The continuous definition
@@ -24,15 +25,15 @@ public interface ContinuousLine
 
     /**
      * Start point.
-     * @return DirectedPoint; start point.
+     * @return OrientedPoint2d; start point.
      */
-    DirectedPoint getStartPoint();
+    OrientedPoint2d getStartPoint();
 
     /**
      * End point.
-     * @return DirectedPoint; end point.
+     * @return OrientedPoint2d; end point.
      */
-    DirectedPoint getEndPoint();
+    OrientedPoint2d getEndPoint();
 
     /**
      * Start direction.

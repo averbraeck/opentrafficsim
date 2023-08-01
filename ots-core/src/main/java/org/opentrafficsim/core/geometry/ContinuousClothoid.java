@@ -6,6 +6,8 @@ import java.util.NavigableMap;
 
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 
@@ -43,10 +45,10 @@ public class ContinuousClothoid implements ContinuousLine
     private static final double SECANT_TOLERANCE = 1e-8;
 
     /** Start point with direction. */
-    private final DirectedPoint startPoint;
+    private final OrientedPoint2d startPoint;
 
     /** End point with direction. */
-    private final DirectedPoint endPoint;
+    private final OrientedPoint2d endPoint;
 
     /** Start curvature. */
     private final double startCurvature;
@@ -99,12 +101,12 @@ public class ContinuousClothoid implements ContinuousLine
      * If the points approximate a straight line or circle, with a tolerance of up 1/10th of a degree, those respective lines
      * are created. The numerical approximation of the underlying Fresnal integral is different from the paper. See
      * {@code Clothoid.fresnal()}.
-     * @param startPoint DirectedPoint; start point.
-     * @param endPoint DirectedPoint; end point.
+     * @param startPoint OrientedPoint2d; start point.
+     * @param endPoint OrientedPoint2d; end point.
      * @see <a href="https://www.sciencedirect.com/science/article/pii/S0377042713006286">Connor and Krivodonova (2014)</a>
      * @see <a href="https://www.sciencedirect.com/science/article/pii/S0377042704000925">Waltona and Meek (2009)</a>
      */
-    public ContinuousClothoid(final DirectedPoint startPoint, final DirectedPoint endPoint)
+    public ContinuousClothoid(final OrientedPoint2d startPoint, final OrientedPoint2d endPoint)
     {
         Throw.whenNull(startPoint, "Start point may not be null.");
         Throw.whenNull(endPoint, "End point may not be null.");
@@ -238,12 +240,12 @@ public class ContinuousClothoid implements ContinuousLine
 
     /**
      * Create clothoid from one point based on curvature and A-value.
-     * @param startPoint DirectedPoint; start point.
+     * @param startPoint OrientedPoint2d; start point.
      * @param a Length; A-value.
      * @param startCurvature double; start curvature.
      * @param endCurvature double; end curvature;
      */
-    public ContinuousClothoid(final DirectedPoint startPoint, final double a, final double startCurvature,
+    public ContinuousClothoid(final OrientedPoint2d startPoint, final double a, final double startCurvature,
             final double endCurvature)
     {
         Throw.whenNull(startPoint, "Start point may not be null.");
@@ -288,8 +290,8 @@ public class ContinuousClothoid implements ContinuousLine
             endDirection = Direction.instantiateSI(ang2 - Math.abs(this.alphaMax) + Math.PI);
         }
         OtsLine3d line = flatten(1);
-        OtsPoint3d end = Try.assign(() -> line.get(line.size() - 1), "Line does not have an end point.");
-        this.endPoint = new DirectedPoint(end.x, end.y, end.z, 0.0, 0.0, endDirection.si);
+        Point2d end = Try.assign(() -> line.get(line.size() - 1), "Line does not have an end point.");
+        this.endPoint = new OrientedPoint2d(end.x, end.y, endDirection.si);
 
         // Fields not relevant for definition with curvatures
         this.straight = null;
@@ -301,13 +303,13 @@ public class ContinuousClothoid implements ContinuousLine
      * Create clothoid from one point based on curvature and length. This method calculates the A-value as
      * <i>sqrt(L/|k2-k1|)</i>, where <i>L</i> is the length of the resulting clothoid, and <i>k2</i> and <i>k1</i> are the end
      * and start curvature.
-     * @param startPoint DirectedPoint; start point.
+     * @param startPoint OrientedPoint2d; start point.
      * @param length double; Length of the resulting clothoid.
      * @param startCurvature double; start curvature.
      * @param endCurvature double; end curvature;
      * @return ContinuousClothoid; clothoid based on curvature and length.
      */
-    public static ContinuousClothoid withLength(final DirectedPoint startPoint, final double length,
+    public static ContinuousClothoid withLength(final OrientedPoint2d startPoint, final double length,
             final double startCurvature, final double endCurvature)
     {
         Throw.when(length <= 0.0, IllegalArgumentException.class, "Length must be above 0.");
@@ -416,14 +418,14 @@ public class ContinuousClothoid implements ContinuousLine
 
     /** {@inheritDoc} */
     @Override
-    public DirectedPoint getStartPoint()
+    public OrientedPoint2d getStartPoint()
     {
         return this.startPoint;
     }
 
     /** {@inheritDoc} */
     @Override
-    public DirectedPoint getEndPoint()
+    public OrientedPoint2d getEndPoint()
     {
         return this.endPoint;
     }
@@ -470,10 +472,10 @@ public class ContinuousClothoid implements ContinuousLine
             return this.arc.flatten(numSegments);
         }
         double step = (this.alphaMax - this.alphaMin) / numSegments;
-        List<OtsPoint3d> points = new ArrayList<>(numSegments + 1);
+        List<Point2d> points = new ArrayList<>(numSegments + 1);
 
-        DirectedPoint p1 = this.opposite ? this.endPoint : this.startPoint;
-        DirectedPoint p2 = this.opposite ? this.startPoint : this.endPoint;
+        OrientedPoint2d p1 = this.opposite ? this.endPoint : this.startPoint;
+        OrientedPoint2d p2 = this.opposite ? this.startPoint : this.endPoint;
 
         // Create first point to figure out the required overall shift
         double[] csMin = Clothoid.fresnel(alphaToT(this.alphaMin));
@@ -481,7 +483,7 @@ public class ContinuousClothoid implements ContinuousLine
         double yMin = this.a * (csMin[0] * this.t0[1] - csMin[1] * this.n0[1]);
         double dx = p1.x - xMin;
         double dy = p1.y - yMin;
-        points.add(new OtsPoint3d(xMin + dx, yMin + dy, 0.0));
+        points.add(new Point2d(xMin + dx, yMin + dy));
 
         // Due to numerical precision, we linearly scale over alpha such that the final point is exactly on p2
         double xShift = 0.0;
@@ -503,8 +505,8 @@ public class ContinuousClothoid implements ContinuousLine
             double alpha = this.alphaMin + i * step;
             double r = (alpha - this.alphaMin) / dAlpha;
             double[] cs = Clothoid.fresnel(alphaToT(alpha));
-            points.add(new OtsPoint3d(dx + this.a * (cs[0] * this.t0[0] - cs[1] * this.n0[0]) + r * xShift,
-                    dy + this.a * (cs[0] * this.t0[1] - cs[1] * this.n0[1]) + r * yShift, 0.0));
+            points.add(new Point2d(dx + this.a * (cs[0] * this.t0[0] - cs[1] * this.n0[0]) + r * xShift,
+                    dy + this.a * (cs[0] * this.t0[1] - cs[1] * this.n0[1]) + r * yShift));
         }
 
         OtsLine3d line = Try.assign(() -> new OtsLine3d(points), "Unable to create OtsLine3d.");
@@ -577,8 +579,8 @@ public class ContinuousClothoid implements ContinuousLine
     }
 
     /**
-     * Applies a naive offset on the line, and then adjusts the start and end point to be on the line perpendicular through
-     * each end point.
+     * Applies a naive offset on the line, and then adjusts the start and end point to be on the line perpendicular through each
+     * end point.
      * @param offsets NavigableMap&lt;Double, Double&gt;; offsets, should contain keys 0.0 and 1.0.
      * @param line OtsLine3d; flattened line to offset.
      * @return OtsLine3d; offset line.
@@ -598,9 +600,9 @@ public class ContinuousClothoid implements ContinuousLine
         }
         OtsLine3d offsetLine =
                 Try.assign(() -> line.offsetLine(relativeFractions, offs), "Unexpected exception while creating offset line.");
-        OtsPoint3d start = new OtsPoint3d(OtsGeometryUtil.offsetPoint(this.startPoint, offs[0]));
-        OtsPoint3d end = new OtsPoint3d(OtsGeometryUtil.offsetPoint(this.endPoint, offs[offs.length - 1]));
-        OtsPoint3d[] points = offsetLine.getPoints();
+        Point2d start = OtsGeometryUtil.offsetPoint(this.startPoint, offs[0]);
+        Point2d end = OtsGeometryUtil.offsetPoint(this.endPoint, offs[offs.length - 1]);
+        Point2d[] points = offsetLine.getPoints();
         points[0] = start;
         points[points.length - 1] = end;
         return Try.assign(() -> new OtsLine3d(points), "Unexpected exception while creating offset line.");

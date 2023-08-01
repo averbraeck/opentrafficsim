@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.junit.Test;
 
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -50,10 +51,10 @@ public class ContinuousClothoidTest
         StreamInterface r = new MersenneTwister(3L);
         for (int i = 0; i < RUNS; i++)
         {
-            DirectedPoint start = new DirectedPoint(r.nextDouble() * 10.0, r.nextDouble() * 10.0, 0.0, 0.0, 0.0,
-                    (r.nextDouble() * 2 - 1) * Math.PI);
-            DirectedPoint end = new DirectedPoint(r.nextDouble() * 10.0, r.nextDouble() * 10.0, 0.0, 0.0, 0.0,
-                    (r.nextDouble() * 2 - 1) * Math.PI);
+            OrientedPoint2d start =
+                    new OrientedPoint2d(r.nextDouble() * 10.0, r.nextDouble() * 10.0, (r.nextDouble() * 2 - 1) * Math.PI);
+            OrientedPoint2d end =
+                    new OrientedPoint2d(r.nextDouble() * 10.0, r.nextDouble() * 10.0, (r.nextDouble() * 2 - 1) * Math.PI);
             ContinuousClothoid clothoid = new ContinuousClothoid(start, end);
             OtsLine3d line = clothoid.flatten(SEGMENTS);
             VerifyLine(start, clothoid, line, null, null, null);
@@ -76,16 +77,15 @@ public class ContinuousClothoidTest
         {
             double x = Math.cos(ang);
             double y = Math.sin(ang);
-            DirectedPoint start = new DirectedPoint(x, y, 0.0, 0.0, 0.0, ang - tolerance + r.nextDouble() * tolerance * 2);
-            DirectedPoint end =
-                    new DirectedPoint(3 * x, 3 * y, 0.0, 0.0, 0.0, ang - tolerance + r.nextDouble() * tolerance * 2);
+            OrientedPoint2d start = new OrientedPoint2d(x, y, ang - tolerance + r.nextDouble() * tolerance * 2);
+            OrientedPoint2d end = new OrientedPoint2d(3 * x, 3 * y, ang - tolerance + r.nextDouble() * tolerance * 2);
 
             ContinuousClothoid clothoid = new ContinuousClothoid(start, end);
             OtsLine3d line = clothoid.flatten(SEGMENTS);
             assertEquals("Clothoid between point on line did not become a straight", line.size(), 2);
 
-            start = new DirectedPoint(x, y, 0.0, 0.0, 0.0, ang + sign * tolerance * 1.1);
-            end = new DirectedPoint(3 * x, 3 * y, 0.0, 0.0, 0.0, ang + sign * tolerance * 1.1);
+            start = new OrientedPoint2d(x, y, ang + sign * tolerance * 1.1);
+            end = new OrientedPoint2d(3 * x, 3 * y, ang + sign * tolerance * 1.1);
             sign *= -1.0;
             clothoid = new ContinuousClothoid(start, end);
             line = clothoid.flatten(SEGMENTS);
@@ -103,8 +103,8 @@ public class ContinuousClothoidTest
         StreamInterface r = new MersenneTwister(3L);
         for (int i = 0; i < RUNS; i++)
         {
-            DirectedPoint start = new DirectedPoint(r.nextDouble() * 10.0, r.nextDouble() * 10.0, 0.0, 0.0, 0.0,
-                    (r.nextDouble() * 2 - 1) * Math.PI);
+            OrientedPoint2d start =
+                    new OrientedPoint2d(r.nextDouble() * 10.0, r.nextDouble() * 10.0, (r.nextDouble() * 2 - 1) * Math.PI);
             Length length = Length.instantiateSI(10.0 + r.nextDouble() * 500.0);
             double sign = r.nextBoolean() ? 1.0 : -1.0;
             LinearDensity startCurvature = LinearDensity.instantiateSI(sign / (50.0 + r.nextDouble() * 1000.0));
@@ -127,8 +127,8 @@ public class ContinuousClothoidTest
         StreamInterface r = new MersenneTwister(3L);
         for (int i = 0; i < RUNS; i++)
         {
-            DirectedPoint start = new DirectedPoint(r.nextDouble() * 10.0, r.nextDouble() * 10.0, 0.0, 0.0, 0.0,
-                    (r.nextDouble() * 2 - 1) * Math.PI);
+            OrientedPoint2d start =
+                    new OrientedPoint2d(r.nextDouble() * 10.0, r.nextDouble() * 10.0, (r.nextDouble() * 2 - 1) * Math.PI);
             double sign = r.nextBoolean() ? 1.0 : -1.0;
             LinearDensity startCurvature = LinearDensity.instantiateSI(sign / (50.0 + r.nextDouble() * 1000.0));
             sign = r.nextBoolean() ? 1.0 : -1.0;
@@ -152,7 +152,7 @@ public class ContinuousClothoidTest
      * @param a Length A-value, may be {@code null} if no theoretical value available.
      * @throws OtsGeometryException if segment number is not available on the line
      */
-    private void VerifyLine(final DirectedPoint start, final ContinuousClothoid clothoid, final OtsLine3d line,
+    private void VerifyLine(final OrientedPoint2d start, final ContinuousClothoid clothoid, final OtsLine3d line,
             final LinearDensity startCurvature, final LinearDensity endCurvature, final Length a) throws OtsGeometryException
     {
         assertEquals("Start location deviates", 0.0, Math.hypot(start.x - line.get(0).x, start.y - line.get(0).y),

@@ -3,11 +3,11 @@ package org.opentrafficsim.road.gtu.lane.plan.operational;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.geometry.DirectedPoint;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.core.geometry.OtsLine3d.FractionalFallback;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -93,7 +93,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
         double f = start ? 0.0 : 1.0;
         try
         {
-            return lane.getCenterLine().getLocationFraction(f).getRotZ();
+            return lane.getCenterLine().getLocationFraction(f).getDirZ();
         }
         catch (OtsGeometryException exception)
         {
@@ -105,11 +105,11 @@ public class LaneBasedOperationalPlan extends OperationalPlan
     /**
      * Returns the distance along the reference lane that the GTU travels from the current location up to the point.
      * @param gtu LaneBasedGtu; GTU
-     * @param point DirectedPoint; point where the GTU is or will be
+     * @param point OrientedPoint2d; point where the GTU is or will be
      * @return Length; total length along the path
      * @throws GtuException if the GTU has not reference position
      */
-    public final Length getDistanceAlongLane(final LaneBasedGtu gtu, final DirectedPoint point) throws GtuException
+    public final Length getDistanceAlongLane(final LaneBasedGtu gtu, final OrientedPoint2d point) throws GtuException
     {
 
         // start lane center lines at current reference lane
@@ -143,8 +143,8 @@ public class LaneBasedOperationalPlan extends OperationalPlan
                     try
                     {
                         // compose gap line
-                        OtsPoint3d last = lane.getCenterLine().getLast();
-                        OtsPoint3d first = nextLane.getCenterLine().get(0);
+                        Point2d last = lane.getCenterLine().getLast();
+                        Point2d first = nextLane.getCenterLine().get(0);
                         if (!(last).equals(first))
                         {
                             OtsLine3d gap = new OtsLine3d(last, first);

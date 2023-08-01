@@ -64,7 +64,7 @@ public class StaticObjectAnimation extends Renderable2D<StaticObject> implements
             Stroke oldStroke = graphics.getStroke();
             graphics.setStroke(new BasicStroke(this.width));
             PaintPolygons.paintMultiPolygon(graphics, this.color, getSource().getLocation(),
-                    ((StaticObject) getSource()).getGeometry(), this.fill);
+                    ((StaticObject) getSource()).getGeometry().getPointList(), this.fill);
             graphics.setStroke(oldStroke);
         }
     }

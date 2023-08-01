@@ -11,6 +11,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.djunits.value.vdouble.scalar.Angle;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 
@@ -29,45 +31,42 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
 {
 
     /** Start point with direction. */
-    private final DirectedPoint startPoint;
+    private final OrientedPoint2d startPoint;
 
     /** End point with direction. */
-    private final DirectedPoint endPoint;
+    private final OrientedPoint2d endPoint;
 
     /** Length. */
     private final double length;
-    
+
     /** Cached splits. */
     private NavigableMap<Double, Integer> splits = null;
 
     /**
      * Create a cubic Bezier.
-     * @param point1 OtsPoint3d; start point.
-     * @param point2 OtsPoint3d; first intermediate shape point.
-     * @param point3 OtsPoint3d; second intermediate shape point.
-     * @param point4 OtsPoint3d; end point.
+     * @param point1 Point2d; start point.
+     * @param point2 Point2d; first intermediate shape point.
+     * @param point3 Point2d; second intermediate shape point.
+     * @param point4 Point2d; end point.
      */
-    public ContinuousBezierCubic(final OtsPoint3d point1, final OtsPoint3d point2, final OtsPoint3d point3,
-            final OtsPoint3d point4)
+    public ContinuousBezierCubic(final Point2d point1, final Point2d point2, final Point2d point3, final Point2d point4)
     {
         super(point1, point2, point3, point4);
-        this.startPoint =
-                new DirectedPoint(point1.x, point1.y, point1.z, 0.0, 0.0, Math.atan2(point2.y - point1.y, point2.x - point1.x));
-        this.endPoint =
-                new DirectedPoint(point4.x, point4.y, point4.z, 0.0, 0.0, Math.atan2(point4.y - point3.y, point4.x - point3.x));
+        this.startPoint = new OrientedPoint2d(point1.x, point1.y, Math.atan2(point2.y - point1.y, point2.x - point1.x));
+        this.endPoint = new OrientedPoint2d(point4.x, point4.y, Math.atan2(point4.y - point3.y, point4.x - point3.x));
         this.length = length();
     }
 
     /** {@inheritDoc} */
     @Override
-    public DirectedPoint getStartPoint()
+    public OrientedPoint2d getStartPoint()
     {
         return this.startPoint;
     }
 
     /** {@inheritDoc} */
     @Override
-    public DirectedPoint getEndPoint()
+    public OrientedPoint2d getEndPoint()
     {
         return this.endPoint;
     }
@@ -154,7 +153,7 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
         double sig = Math.signum((this.points[1].y - this.points[0].y) * (this.points[2].x - this.points[0].x)
                 - (this.points[1].x - this.points[0].x) * (this.points[2].y - this.points[0].y));
 
-        List<OtsPoint3d> points = new ArrayList<>();
+        List<Point2d> points = new ArrayList<>();
         Iterator<Integer> numSegmentsIterator = numSegmentsPerSegment.iterator();
         Iterator<Double> typeIterator = this.splits.navigableKeySet().iterator();
         if (this.splits.isEmpty())
@@ -220,7 +219,7 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
 
     /**
      * Creates the line segment points of an offset line of a Bezier segment.
-     * @param points List&lt;OtsPoint3d&gt;; list of points to add points to.
+     * @param points List&lt;Point2d&gt;; list of points to add points to.
      * @param bezier ContinuousBezierCubic; Bezier segment to offset.
      * @param offsets NavigableMap&lt;Double, Double&gt;; offsets as defined for entire Bezier.
      * @param lengthSoFar double; total length of previous segments.
@@ -231,21 +230,21 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
      * @param last boolean; {@code true} for the last Bezier segment.
      * @param numSegments int; number of segments to apply for this Bezier segment.
      */
-    private static void appendOffset(final List<OtsPoint3d> points, final ContinuousBezierCubic bezier,
+    private static void appendOffset(final List<Point2d> points, final ContinuousBezierCubic bezier,
             final NavigableMap<Double, Double> offsets, final double lengthSoFar, final double lengthSegment,
             final double lengthTotal, final double sig, final boolean first, final boolean last, final int numSegments)
     {
         double offsetStart = sig * OtsGeometryUtil.offsetInterpolation(lengthSoFar / lengthTotal, offsets);
         double offsetEnd = sig * OtsGeometryUtil.offsetInterpolation((lengthSoFar + lengthSegment) / lengthTotal, offsets);
-        
-        OtsPoint3d p1 = new OtsPoint3d(bezier.points[0].x - (bezier.points[1].y - bezier.points[0].y),
-                bezier.points[0].y + (bezier.points[1].x - bezier.points[0].x), 0.0);
-        OtsPoint3d p2 = new OtsPoint3d(bezier.points[3].x - (bezier.points[2].y - bezier.points[3].y),
-                bezier.points[3].y + (bezier.points[2].x - bezier.points[3].x), 0.0);
-        OtsPoint3d center = OtsPoint3d.intersectionOfLines(bezier.points[0], p1, p2, bezier.points[3]);
+
+        Point2d p1 = new Point2d(bezier.points[0].x - (bezier.points[1].y - bezier.points[0].y),
+                bezier.points[0].y + (bezier.points[1].x - bezier.points[0].x));
+        Point2d p2 = new Point2d(bezier.points[3].x - (bezier.points[2].y - bezier.points[3].y),
+                bezier.points[3].y + (bezier.points[2].x - bezier.points[3].x));
+        Point2d center = Point2d.intersectionOfLines(bezier.points[0], p1, p2, bezier.points[3]);
 
         // move 1st and 4th point their respective offsets away from the center
-        OtsPoint3d[] newBezierPoints = new OtsPoint3d[4];
+        Point2d[] newBezierPoints = new Point2d[4];
         double off = offsetStart;
         for (int i = 0; i < 4; i = i + 3)
         {
@@ -253,7 +252,7 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
             double dx = bezier.points[i].x - center.x;
             double ang = Math.atan2(dy, dx);
             double len = Math.hypot(dx, dy) + off;
-            newBezierPoints[i] = new OtsPoint3d(center.x + len * Math.cos(ang), center.y + len * Math.sin(ang), 0.0);
+            newBezierPoints[i] = new Point2d(center.x + len * Math.cos(ang), center.y + len * Math.sin(ang));
             off = offsetEnd;
         }
 
@@ -296,14 +295,14 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
 
         // control points 2 and 3 as intersections between tangent unit vectors and line through center and original point 2 and
         // 3 in original Bezier
-        OtsPoint3d cp2 = new OtsPoint3d(newBezierPoints[0].x + dx1, newBezierPoints[0].y + dy1, 0.0);
-        newBezierPoints[1] = OtsPoint3d.intersectionOfLines(newBezierPoints[0], cp2, center, bezier.points[1]);
-        OtsPoint3d cp3 = new OtsPoint3d(newBezierPoints[3].x + dx2, newBezierPoints[3].y + dy2, 0.0);
-        newBezierPoints[2] = OtsPoint3d.intersectionOfLines(newBezierPoints[3], cp3, center, bezier.points[2]);
+        Point2d cp2 = new Point2d(newBezierPoints[0].x + dx1, newBezierPoints[0].y + dy1);
+        newBezierPoints[1] = Point2d.intersectionOfLines(newBezierPoints[0], cp2, center, bezier.points[1]);
+        Point2d cp3 = new Point2d(newBezierPoints[3].x + dx2, newBezierPoints[3].y + dy2);
+        newBezierPoints[2] = Point2d.intersectionOfLines(newBezierPoints[3], cp3, center, bezier.points[2]);
 
         // create and add points
         int lastI = last ? numSegments : numSegments - 1; // prevent duplicate points where segments meet
-        OtsPoint3d[] offsetPoints = Try.assign(() -> Bezier.bezier(numSegments + 1, newBezierPoints).getPoints(),
+        Point2d[] offsetPoints = Try.assign(() -> Bezier.bezier(numSegments + 1, newBezierPoints).getPoints(),
                 "Unable to create Bezier segment offset line.");
         for (int i = 0; i <= lastI; i++)
         {
@@ -369,15 +368,15 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
     private SortedSet<Double> getInflections()
     {
         // Align: translate so first point is (0, 0), rotate so last point is on x=axis (y = 0)
-        OtsPoint3d[] aligned = new OtsPoint3d[4];
+        Point2d[] aligned = new Point2d[4];
         double ang = -Math.atan2(this.points[3].y - this.points[0].y, this.points[3].x - this.points[0].x);
         double cosAng = Math.cos(ang);
         double sinAng = Math.sin(ang);
         for (int i = 0; i < 4; i++)
         {
-            aligned[i] = new OtsPoint3d(
-                    cosAng * (this.points[i].x - this.points[0].x) - sinAng * (this.points[i].y - this.points[0].y),
-                    sinAng * (this.points[i].x - this.points[0].x) + cosAng * (this.points[i].y - this.points[0].y), 0.0);
+            aligned[i] =
+                    new Point2d(cosAng * (this.points[i].x - this.points[0].x) - sinAng * (this.points[i].y - this.points[0].y),
+                            sinAng * (this.points[i].x - this.points[0].x) + cosAng * (this.points[i].y - this.points[0].y));
         }
 
         // Inflection as curvature = 0, using:
@@ -473,8 +472,8 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
     public ContinuousBezierCubic[] split(final double t)
     {
         Throw.when(t < 0.0 || t > 1.0, IllegalArgumentException.class, "t value should be in the range [0.0 ... 1.0].");
-        List<OtsPoint3d> p1 = new ArrayList<>();
-        List<OtsPoint3d> p2 = new ArrayList<>();
+        List<Point2d> p1 = new ArrayList<>();
+        List<Point2d> p2 = new ArrayList<>();
         split0(t, List.of(this.points), p1, p2);
         return new ContinuousBezierCubic[] {new ContinuousBezierCubic(p1.get(0), p1.get(1), p1.get(2), p1.get(3)),
                 new ContinuousBezierCubic(p2.get(3), p2.get(2), p2.get(1), p2.get(0))};
@@ -483,11 +482,11 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
     /**
      * Performs the iterative algorithm of Casteljau to derive the split Beziers.
      * @param t double; t value along the Bezier to apply the split.
-     * @param p List&lt;OtsPoint3d&gt;; shape points of Bezier still to split.
-     * @param p1 List&lt;OtsPoint3d&gt;; shape points of first part, accumulated in the recursion.
-     * @param p2 List&lt;OtsPoint3d&gt;; shape points of first part, accumulated in the recursion.
+     * @param p List&lt;Point2d&gt;; shape points of Bezier still to split.
+     * @param p1 List&lt;Point2d&gt;; shape points of first part, accumulated in the recursion.
+     * @param p2 List&lt;Point2d&gt;; shape points of first part, accumulated in the recursion.
      */
-    private void split0(final double t, final List<OtsPoint3d> p, final List<OtsPoint3d> p1, final List<OtsPoint3d> p2)
+    private void split0(final double t, final List<Point2d> p, final List<Point2d> p1, final List<Point2d> p2)
     {
         if (p.size() == 1)
         {
@@ -496,7 +495,7 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
         }
         else
         {
-            List<OtsPoint3d> pNew = new ArrayList<>();
+            List<Point2d> pNew = new ArrayList<>();
             for (int i = 0; i < p.size() - 1; i++)
             {
                 if (i == 0)
@@ -508,7 +507,7 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
                     p2.add(p.get(i + 1));
                 }
                 double t1 = 1.0 - t;
-                pNew.add(new OtsPoint3d(t1 * p.get(i).x + t * p.get(i + 1).x, t1 * p.get(i).y + t * p.get(i + 1).y, 0.0));
+                pNew.add(new Point2d(t1 * p.get(i).x + t * p.get(i + 1).x, t1 * p.get(i).y + t * p.get(i + 1).y));
             }
             split0(t, pNew, p1, p2);
         }
@@ -520,7 +519,7 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
     {
         return "ContinuousBezierCubic [points=" + Arrays.toString(this.points) + "]";
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public double getLength()

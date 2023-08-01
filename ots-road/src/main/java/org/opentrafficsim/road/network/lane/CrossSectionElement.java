@@ -6,17 +6,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.animation.Drawable;
-import org.opentrafficsim.core.geometry.Bounds;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
-import org.opentrafficsim.core.geometry.OtsShape;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.RoadNetwork;
@@ -53,19 +52,25 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
     private final OtsLine3d centerLine;
 
     /** The contour of the element. Calculated once at the creation. */
-    private final OtsShape contour;
+    private final Polygon2d contour;
+
+    /** Location, center of contour. */
+    private final Point2d location;
+
+    /** Bounding box. */
+    private final Bounds2d bounds;
 
     /**
      * Constructor.
      * @param link CrossSectionLink; link.
      * @param id String; id.
      * @param centerLine OtsLine3d; center line.
-     * @param contour OtsShape; contour shape.
+     * @param contour Polygon2d; contour shape.
      * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
      * @throws NetworkException when no cross-section slice is defined.
      */
-    public CrossSectionElement(final CrossSectionLink link, final String id, final OtsLine3d centerLine, final OtsShape contour,
-            final List<CrossSectionSlice> crossSectionSlices) throws NetworkException
+    public CrossSectionElement(final CrossSectionLink link, final String id, final OtsLine3d centerLine,
+            final Polygon2d contour, final List<CrossSectionSlice> crossSectionSlices) throws NetworkException
     {
         Throw.whenNull(link, "Link may not be null.");
         Throw.whenNull(id, "Id may not be null.");
@@ -77,6 +82,8 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
         this.id = id;
         this.centerLine = centerLine;
         this.contour = contour;
+        this.location = contour.getBounds().midPoint();
+        this.bounds = new Bounds2d(contour.getBounds().getDeltaX(), contour.getBounds().getDeltaY());
         this.crossSectionSlices = crossSectionSlices;
 
         link.addCrossSectionElement(this);
@@ -263,9 +270,9 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
 
     /**
      * Retrieve the contour of this CrossSectionElement.
-     * @return OtsShape; the contour of this CrossSectionElement
+     * @return Polygon2d; the contour of this CrossSectionElement
      */
-    public final OtsShape getContour()
+    public final Polygon2d getContour()
     {
         return this.contour;
     }
@@ -345,14 +352,14 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      * Construct a buffer geometry by offsetting the linear geometry line with a distance and constructing a so-called "buffer"
      * around it.
      * @param cse CrossSectionElement; the cross section element to construct the contour for
-     * @return OtsShape; the geometry belonging to this CrossSectionElement.
+     * @return Polygon2d; the geometry belonging to this CrossSectionElement.
      * @throws OtsGeometryException when construction of the geometry fails
      * @throws NetworkException when the resulting contour is degenerate (cannot happen; we hope)
      */
     @Deprecated
-    public static OtsShape constructContour(final CrossSectionElement cse) throws OtsGeometryException, NetworkException
+    public static Polygon2d constructContour(final CrossSectionElement cse) throws OtsGeometryException, NetworkException
     {
-        OtsPoint3d[] result = null;
+        Point2d[] result = null;
 
         if (cse.crossSectionSlices.size() <= 2)
         {
@@ -361,7 +368,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
                     crossSectionDesignLine.offsetLine(-cse.getBeginWidth().getSI() / 2, -cse.getEndWidth().getSI() / 2);
             OtsLine3d leftBoundary =
                     crossSectionDesignLine.offsetLine(cse.getBeginWidth().getSI() / 2, cse.getEndWidth().getSI() / 2);
-            result = new OtsPoint3d[rightBoundary.size() + leftBoundary.size() + 1];
+            result = new Point2d[rightBoundary.size() + leftBoundary.size() + 1];
             int resultIndex = 0;
             for (int index = 0; index < rightBoundary.size(); index++)
             {
@@ -375,8 +382,8 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
         }
         else
         {
-            List<OtsPoint3d> resultList = new ArrayList<>();
-            List<OtsPoint3d> rightBoundary = new ArrayList<>();
+            List<Point2d> resultList = new ArrayList<>();
+            List<Point2d> rightBoundary = new ArrayList<>();
             for (int i = 0; i < cse.crossSectionSlices.size() - 1; i++)
             {
                 double plLength = cse.getLink().getLength().si;
@@ -386,8 +393,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
                 double ew2 = cse.crossSectionSlices.get(i + 1).getWidth().si / 2.0;
                 double sf = cse.crossSectionSlices.get(i).getRelativeLength().si / plLength;
                 double ef = cse.crossSectionSlices.get(i + 1).getRelativeLength().si / plLength;
-                OtsLine3d crossSectionDesignLine =
-                        cse.getLink().getDesignLine().extractFractional(sf, ef).offsetLine(so, eo);
+                OtsLine3d crossSectionDesignLine = cse.getLink().getDesignLine().extractFractional(sf, ef).offsetLine(so, eo);
                 resultList.addAll(Arrays.asList(crossSectionDesignLine.offsetLine(-sw2, -ew2).getPoints()));
                 rightBoundary.addAll(Arrays.asList(crossSectionDesignLine.offsetLine(sw2, ew2).getPoints()));
             }
@@ -397,26 +403,25 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
             }
             // close the contour (might not be needed)
             resultList.add(resultList.get(0));
-            result = resultList.toArray(new OtsPoint3d[] {});
+            result = resultList.toArray(new Point2d[] {});
         }
-        return OtsShape.createAndCleanOtsShape(result);
+        return new Polygon2d(true, result);
     }
 
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public DirectedPoint getLocation()
+    public Point2d getLocation()
     {
-        DirectedPoint centroid = this.contour.getLocation();
-        return new DirectedPoint(centroid.x, centroid.y, getZ());
+        return this.location;
     }
 
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Bounds getBounds()
+    public Bounds2d getBounds()
     {
-        return this.contour.getBounds();
+        return this.bounds;
     }
 
     /** {@inheritDoc} */

@@ -23,6 +23,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.data.Column;
 import org.djutils.data.ListTable;
 import org.djutils.data.Table;
+import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
@@ -37,7 +38,6 @@ import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Network;
@@ -193,8 +193,8 @@ public class InjectionsTest
         OtsSimulatorInterface simulator = new OtsSimulator("net");
         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ONE, Mockito.mock(OtsModelInterface.class));
         RoadNetwork network = new RoadNetwork("network", simulator);
-        Node nodeA = new Node(network, "A", new OtsPoint3d(0.0, 0.0, 0.0), Direction.ZERO);
-        Node nodeB = new Node(network, "B", new OtsPoint3d(100.0, 0.0, 0.0), Direction.ZERO);
+        Node nodeA = new Node(network, "A", new Point2d(0.0, 0.0), Direction.ZERO);
+        Node nodeB = new Node(network, "B", new Point2d(100.0, 0.0), Direction.ZERO);
         CrossSectionLink linkAB = new CrossSectionLink(network, "AB", nodeA, nodeB, DefaultsNl.FREEWAY,
                 new OtsLine3d(nodeA.getPoint(), nodeB.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
         Length laneWidth = Length.instantiateSI(3.5);

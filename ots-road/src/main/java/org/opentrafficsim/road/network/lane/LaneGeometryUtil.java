@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.lane;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -7,12 +8,13 @@ import java.util.TreeMap;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.geometry.ContinuousLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
+import org.opentrafficsim.core.geometry.OtsGeometryUtil;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
-import org.opentrafficsim.core.geometry.OtsShape;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.network.lane.Stripe.Type;
 
@@ -123,15 +125,15 @@ public class LaneGeometryUtil
      * Returns the contour based on left and right edge.
      * @param leftEdge OtsLine3d; left edge, in design line direction.
      * @param rightEdge OtsLine3d; right edge, in design line direction.
-     * @return OtsShape; a closed loop of both edges.
+     * @return Polygon2d; a closed loop of both edges.
      */
-    public static OtsShape getContour(final OtsLine3d leftEdge, final OtsLine3d rightEdge)
+    public static Polygon2d getContour(final OtsLine3d leftEdge, final OtsLine3d rightEdge)
     {
-        OtsPoint3d[] points = new OtsPoint3d[leftEdge.size() + rightEdge.size() + 1];
+        Point2d[] points = new Point2d[leftEdge.size() + rightEdge.size() + 1];
         System.arraycopy(leftEdge.getPoints(), 0, points, 0, leftEdge.size());
         System.arraycopy(rightEdge.reverse().getPoints(), 0, points, leftEdge.size(), rightEdge.size());
         points[points.length - 1] = points[0]; // close loop
-        return Try.assign(() -> OtsShape.createAndCleanOtsShape(points), "Existing line must have points");
+        return new Polygon2d(true, points);
     }
 
     /**
@@ -191,7 +193,7 @@ public class LaneGeometryUtil
         OtsLine3d centerLine = designLine.offset(getCenterOffsets(designLine, slices), 1);
         OtsLine3d leftEdge = designLine.offset(getLeftEdgeOffsets(designLine, slices), 1);
         OtsLine3d rightEdge = designLine.offset(getRightEdgeOffsets(designLine, slices), 1);
-        OtsShape contour = getContour(leftEdge, rightEdge);
+        Polygon2d contour = getContour(leftEdge, rightEdge);
         return Try.assign(() -> new Lane(link, id, centerLine, contour, slices, laneType, speedLimits), "Network exception.");
     }
 
@@ -213,7 +215,7 @@ public class LaneGeometryUtil
         OtsLine3d centerLine = designLine.offset(getCenterOffsets(designLine, slices), 1);
         OtsLine3d leftEdge = designLine.offset(getLeftEdgeOffsets(designLine, slices), 1);
         OtsLine3d rightEdge = designLine.offset(getRightEdgeOffsets(designLine, slices), 1);
-        OtsShape contour = getContour(leftEdge, rightEdge);
+        Polygon2d contour = getContour(leftEdge, rightEdge);
         return Try.assign(() -> new Stripe(type, link, centerLine, contour, slices), "Network exception.");
     }
 
@@ -237,7 +239,7 @@ public class LaneGeometryUtil
         OtsLine3d centerLine = designLine.offset(getCenterOffsets(designLine, slices), 1);
         OtsLine3d leftEdge = designLine.offset(getLeftEdgeOffsets(designLine, slices), 1);
         OtsLine3d rightEdge = designLine.offset(getRightEdgeOffsets(designLine, slices), 1);
-        OtsShape contour = getContour(leftEdge, rightEdge);
+        Polygon2d contour = getContour(leftEdge, rightEdge);
         return Try.assign(() -> new Shoulder(link, id, centerLine, contour, slices), "Network exception.");
     }
 }

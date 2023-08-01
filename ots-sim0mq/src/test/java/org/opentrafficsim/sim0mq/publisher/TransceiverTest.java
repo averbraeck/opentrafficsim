@@ -24,6 +24,8 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.PositionVector;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.EventProducer;
@@ -37,10 +39,8 @@ import org.mockito.Mockito;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
@@ -192,7 +192,7 @@ public class TransceiverTest
 
         GtuType gtuType = new GtuType("gtuType 1");
         LaneBasedGtu gtu1 =
-                new MyMockGTU("gtu 1", gtuType, new DirectedPoint(1, 10, 100, 1, 1, 1), new Speed(1, SpeedUnit.KM_PER_HOUR),
+                new MyMockGTU("gtu 1", gtuType, new OrientedPoint2d(1, 10, 1), new Speed(1, SpeedUnit.KM_PER_HOUR),
                         new Acceleration(1, AccelerationUnit.METER_PER_SECOND_2), simulator).getMock();
         network.addGTU(gtu1);
         result = gtuIdTransceiver.get(null, storeLastResult);
@@ -200,7 +200,7 @@ public class TransceiverTest
         assertTrue("result contains a string", result[0] instanceof String);
         assertEquals("result[0] is name of our mocked GTU", "gtu 1", result[0]);
         LaneBasedGtu gtu2 =
-                new MyMockGTU("gtu 2", gtuType, new DirectedPoint(2, 20, 200, 2, 2, 2), new Speed(2, SpeedUnit.KM_PER_HOUR),
+                new MyMockGTU("gtu 2", gtuType, new OrientedPoint2d(2, 20, 2), new Speed(2, SpeedUnit.KM_PER_HOUR),
                         new Acceleration(2, AccelerationUnit.METER_PER_SECOND_2), simulator).getMock();
         network.addGTU(gtu2);
         result = gtuIdTransceiver.get(new Object[0], storeLastResult);
@@ -299,8 +299,7 @@ public class TransceiverTest
             assertEquals("gtu type matches", gtuType.getId(), gtuResult[1]);
             assertEquals("x matches", gtu.getLocation().x, ((PositionVector) gtuResult[2]).get(0).si, 0.0000);
             assertEquals("y matches", gtu.getLocation().y, ((PositionVector) gtuResult[2]).get(1).si, 0.0000);
-            assertEquals("z matches", gtu.getLocation().z, ((PositionVector) gtuResult[2]).get(2).si, 0.0000);
-            assertEquals("direction matches", new Direction(gtu.getLocation().getRotZ(), DirectionUnit.EAST_DEGREE).si,
+            assertEquals("direction matches", new Direction(gtu.getLocation().getDirZ(), DirectionUnit.EAST_DEGREE).si,
                     ((Direction) gtuResult[3]).si, 0.0001);
             assertEquals("speed", gtu.getSpeed(), gtuResult[4]);
             assertEquals("acceleration", gtu.getAcceleration(), gtuResult[5]);
@@ -319,9 +318,9 @@ public class TransceiverTest
                 lit.toString().startsWith("LinkIdTransceiver"));
 
         // Give the network two nodes and a link with a lane - A lot of code is required to create a lane :-(
-        OtsPoint3d node1Point = new OtsPoint3d(10, 20, 30);
+        Point2d node1Point = new Point2d(10, 20);
         Node node1 = new Node(network, "node 1", node1Point, Direction.ZERO);
-        Node node2 = new Node(network, "node 2", new OtsPoint3d(110, 20, 30), Direction.ZERO);
+        Node node2 = new Node(network, "node 2", new Point2d(110, 20), Direction.ZERO);
         LinkType roadLinkType = DefaultsNl.ROAD;
         CrossSectionLink link = new CrossSectionLink(network, "1 to 2", node1, node2, roadLinkType,
                 new OtsLine3d(node1.getPoint(), node2.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
@@ -457,10 +456,9 @@ public class TransceiverTest
         assertEquals("field 0 is node id", node1.getId(), result[0]);
         assertTrue("field 1 is a position vector", result[1] instanceof PositionVector);
         PositionVector pv = (PositionVector) result[1];
-        assertEquals("Position vector size is 3", 3, pv.size());
+        assertEquals("Position vector size is 2", 2, pv.size());
         assertEquals("x matches", node1Point.x, pv.get(0).si, 0);
         assertEquals("y matches", node1Point.y, pv.get(1).si, 0);
-        assertEquals("z matches", node1Point.z, pv.get(2).si, 0);
         assertEquals("direction matches", Direction.ZERO, result[2]);
         assertEquals("Number of links is 1", 1, result[3]);
 
@@ -608,7 +606,7 @@ class MyMockGTU
     private final GtuType gtuType;
 
     /** location. */
-    private final DirectedPoint location;
+    private final OrientedPoint2d location;
 
     /** speed. */
     private final Speed speed;
@@ -622,13 +620,14 @@ class MyMockGTU
     /**
      * @param name String; the name of the mocked GTU
      * @param gtuType GtuType; the GTU type
-     * @param location DirectedPoint; the location of the mocked GTU
+     * @param location OrientedPoint2d; the location of the mocked GTU
      * @param speed Speed; the speed of the mocked GTU
      * @param acceleration Acceleration; the acceleration of the mocked GTU
      * @param simulator OtsSimulatorInterface; (mocked) simulator
      * @throws RemoteException cannot happen ...
      */
-    MyMockGTU(final String name, final GtuType gtuType, final DirectedPoint location, final Speed speed,
+    MyMockGTU(final String name, final GtuType gtuType,
+            final OrientedPoint2d location, final Speed speed,
             final Acceleration acceleration, final OtsSimulatorInterface simulator) throws RemoteException
     {
         this.name = name;

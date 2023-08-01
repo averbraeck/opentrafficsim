@@ -8,13 +8,13 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableList;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.RelativePosition;
 
@@ -73,16 +73,16 @@ public class OperationalPlan implements Serializable
     /**
      * Creates a stand-still plan at a point. A 1m path in the direction of the point is created.
      * @param gtu Gtu; GTU.
-     * @param point DirectedPoint; point.
+     * @param point OrientedPoint2d; point.
      * @param startTime Time; start time.
      * @param duration Duration; duration.
      * @return OperationalPlan; stand-still plan.
      */
-    public static OperationalPlan standStill(final Gtu gtu, final DirectedPoint point, final Time startTime,
+    public static OperationalPlan standStill(final Gtu gtu, final OrientedPoint2d point, final Time startTime,
             final Duration duration)
     {
-        OtsPoint3d p2 = new OtsPoint3d(point.x + Math.cos(point.getRotZ()), point.y + Math.sin(point.getRotZ()), point.z);
-        OtsLine3d path = Try.assign(() -> new OtsLine3d(new OtsPoint3d(point), p2), "Unexpected geometry exception.");
+        Point2d p2 = new Point2d(point.x + Math.cos(point.getDirZ()), point.y + Math.sin(point.getDirZ()));
+        OtsLine3d path = Try.assign(() -> new OtsLine3d(point, p2), "Unexpected geometry exception.");
         return new OperationalPlan(gtu, path, startTime, Segments.standStill(duration));
     }
 
@@ -211,9 +211,9 @@ public class OperationalPlan implements Serializable
 
     /**
      * Provide the end location of this operational plan as a DirectedPoint.
-     * @return DirectedPoint; the end location
+     * @return OrientedPoint2d; the end location
      */
-    public DirectedPoint getEndLocation()
+    public OrientedPoint2d getEndLocation()
     {
         return Try.assign(() -> this.path.getLocationFraction(Math.min(1.0, this.totalLength.si / this.path.getLength().si)),
                 "Unexpected exception for path extraction till 1.0.");
@@ -260,7 +260,7 @@ public class OperationalPlan implements Serializable
      * @return the location after the given duration since the start of the plan.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
-    public final DirectedPoint getLocation(final Duration duration) throws OperationalPlanException
+    public final OrientedPoint2d getLocation(final Duration duration) throws OperationalPlanException
     {
         return getLocation(this.startTime.plus(duration));
     }
@@ -271,7 +271,7 @@ public class OperationalPlan implements Serializable
      * @return the location at the given time.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
-    public final DirectedPoint getLocation(final Time time) throws OperationalPlanException
+    public final OrientedPoint2d getLocation(final Time time) throws OperationalPlanException
     {
         Throw.when(time.lt(this.startTime), OperationalPlanException.class, "Requested time is before start time.");
         Throw.when(time.gt(this.getEndTime()), OperationalPlanException.class, "Requested time is beyond end time.");
@@ -287,7 +287,7 @@ public class OperationalPlan implements Serializable
      * @return the location after the given duration since the start of the plan.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
-    public final DirectedPoint getLocation(final Time time, final RelativePosition pos) throws OperationalPlanException
+    public final OrientedPoint2d getLocation(final Time time, final RelativePosition pos) throws OperationalPlanException
     {
         double distanceSI = getTraveledDistance(time).si + pos.getDx().si;
         return this.path.getLocationExtendedSI(distanceSI);
@@ -372,42 +372,42 @@ public class OperationalPlan implements Serializable
      * Calculates when the GTU will be at the given point. The point does not need to be at the traveled path, as the point is
      * projected to the path at 90 degrees. The point may for instance be the end of a lane, which is crossed by a GTU possibly
      * during a lane change.
-     * @param point DirectedPoint; point with angle, which will be projected to the path at 90 degrees
+     * @param point OrientedPoint2d; point with angle, which will be projected to the path at 90 degrees
      * @param upstream boolean; true if the point is upstream of the path
      * @return Time; time at point
      */
-    public final Time timeAtPoint(final DirectedPoint point, final boolean upstream)
+    public final Time timeAtPoint(final OrientedPoint2d point, final boolean upstream)
     {
-        OtsPoint3d p1 = new OtsPoint3d(point);
+        Point2d p1 = point;
         // point at 90 degrees
-        OtsPoint3d p2 = new OtsPoint3d(point.x - Math.sin(point.getRotZ()), point.y + Math.cos(point.getRotZ()), point.z);
+        Point2d p2 = new Point2d(point.x - Math.sin(point.getDirZ()), point.y + Math.cos(point.getDirZ()));
         double traveledDistanceAlongPath = 0.0;
         try
         {
             if (upstream)
             {
-                OtsPoint3d p = OtsPoint3d.intersectionOfLines(this.path.get(0), this.path.get(1), p1, p2);
-                double dist = traveledDistanceAlongPath - this.path.get(0).distance(p).si;
+                Point2d p = Point2d.intersectionOfLines(this.path.get(0), this.path.get(1), p1, p2);
+                double dist = traveledDistanceAlongPath - this.path.get(0).distance(p);
                 dist = dist >= 0.0 ? dist : 0.0; // negative in case of a gap
                 return timeAtDistance(Length.instantiateSI(dist));
             }
             for (int i = 0; i < this.path.size() - 1; i++)
             {
-                OtsPoint3d prevPoint = this.path.get(i);
-                OtsPoint3d nextPoint = this.path.get(i + 1);
-                OtsPoint3d p = OtsPoint3d.intersectionOfLines(prevPoint, nextPoint, p1, p2);
+                Point2d prevPoint = this.path.get(i);
+                Point2d nextPoint = this.path.get(i + 1);
+                Point2d p = Point2d.intersectionOfLines(prevPoint, nextPoint, p1, p2);
                 if (p == null)
                 {
                     // point too close, check next section
                     continue;
                 }
                 boolean onSegment =
-                        prevPoint.distance(nextPoint).si + 2e-5 > Math.max(prevPoint.distance(p).si, nextPoint.distance(p).si);
+                        prevPoint.distance(nextPoint) + 2e-5 > Math.max(prevPoint.distance(p), nextPoint.distance(p));
                 if (p != null // on segment, or last segment
                         && (i == this.path.size() - 2 || onSegment))
                 {
                     // point is on the line
-                    traveledDistanceAlongPath += this.path.get(i).distance(p).si;
+                    traveledDistanceAlongPath += this.path.get(i).distance(p);
                     if (traveledDistanceAlongPath > this.path.getLength().si)
                     {
                         return Time.instantiateSI(Double.NaN);
@@ -416,7 +416,7 @@ public class OperationalPlan implements Serializable
                 }
                 else
                 {
-                    traveledDistanceAlongPath += this.path.get(i).distance(this.path.get(i + 1)).si;
+                    traveledDistanceAlongPath += this.path.get(i).distance(this.path.get(i + 1));
                 }
             }
         }

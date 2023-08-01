@@ -7,16 +7,16 @@ import static org.junit.Assert.assertTrue;
 
 import java.rmi.RemoteException;
 
+import org.djutils.draw.bounds.Bounds;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.EventType;
 import org.junit.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
-import org.opentrafficsim.core.geometry.Bounds;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.mock.MockGtu;
 import org.opentrafficsim.core.mock.MockSimulator;
@@ -54,8 +54,8 @@ public class LinkTest implements EventListener
     public final void testOTSLink() throws NetworkException, OtsGeometryException
     {
         Network network = new Network("OTSLinkTestNetwork", MockSimulator.createMock());
-        Node startNode = new Node(network, "start", new OtsPoint3d(10, 20, 0));
-        Node endNode = new Node(network, "end", new OtsPoint3d(1000, 2000, 10));
+        Node startNode = new Node(network, "start", new Point2d(10, 20));
+        Node endNode = new Node(network, "end", new Point2d(1000, 2000));
         LinkType linkType = new LinkType("myLinkType", DefaultsNl.ROAD);
         OtsLine3d designLine = new OtsLine3d(startNode.getPoint(), endNode.getPoint());
         Link link = new Link(network, "link1", startNode, endNode, linkType, designLine);
@@ -112,8 +112,8 @@ public class LinkTest implements EventListener
         assertFalse("The link no longer contains gtu2", link.getGTUs().contains(gtu2));
         assertEquals("Network is correctly returned", network, link.getNetwork());
         assertEquals("LinkType is correctly returned", linkType, link.getType());
-        DirectedPoint location = link.getLocation();
-        DirectedPoint expectedLocation = designLine.getLocationFraction(0.5);
+        OrientedPoint2d location = link.getLocation();
+        OrientedPoint2d expectedLocation = designLine.getLocationFraction(0.5);
         assertEquals("location is at halfway point of design line (because design line contains only two points)", 0,
                 expectedLocation.distance(location), 0.1);
         // RotZ of location is bogus; makes no sense to test that
@@ -127,8 +127,8 @@ public class LinkTest implements EventListener
         // make a link with the same name in another network
         Network otherNetwork = new Network("other", MockSimulator.createMock());
         linkType = new LinkType("myLinkType", DefaultsNl.ROAD);
-        otherLink = new Link(otherNetwork, "link1", new Node(otherNetwork, "start", new OtsPoint3d(10, 20, 0)),
-                new Node(otherNetwork, "end", new OtsPoint3d(1000, 2000, 10)), linkType, designLine);
+        otherLink = new Link(otherNetwork, "link1", new Node(otherNetwork, "start", new Point2d(10, 20)),
+                new Node(otherNetwork, "end", new Point2d(1000, 2000)), linkType, designLine);
         assertTrue("link is equal to extremely similar link with same id but different network", link.equals(otherLink));
     }
 

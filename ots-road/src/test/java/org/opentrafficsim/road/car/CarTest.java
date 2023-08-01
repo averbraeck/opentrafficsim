@@ -17,6 +17,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.point.Point2d;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.definitions.DefaultsNl;
@@ -25,7 +26,6 @@ import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -159,9 +159,9 @@ public class CarTest implements UNITS
     public static Lane makeLane(final RoadNetwork network, final LaneType laneType, final OtsSimulatorInterface simulator)
             throws NetworkException, OtsGeometryException
     {
-        Node n1 = new Node(network, "n1", new OtsPoint3d(0, 0), Direction.ZERO);
-        Node n2 = new Node(network, "n2", new OtsPoint3d(100000.0, 0.0), Direction.ZERO);
-        OtsPoint3d[] coordinates = new OtsPoint3d[] {new OtsPoint3d(0.0, 0.0), new OtsPoint3d(100000.0, 0.0)};
+        Node n1 = new Node(network, "n1", new Point2d(0, 0), Direction.ZERO);
+        Node n2 = new Node(network, "n2", new Point2d(100000.0, 0.0), Direction.ZERO);
+        Point2d[] coordinates = new Point2d[] {new Point2d(0.0, 0.0), new Point2d(100000.0, 0.0)};
         CrossSectionLink link12 = new CrossSectionLink(network, "link12", n1, n2, DefaultsNl.ROAD, new OtsLine3d(coordinates),
                 LaneKeepingPolicy.KEEPRIGHT);
         Length latPos = new Length(0.0, METER);

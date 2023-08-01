@@ -17,6 +17,7 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.core.definitions.DefaultsNl;
@@ -28,7 +29,6 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
@@ -128,9 +128,9 @@ public class StraightModel extends AbstractOtsModel implements UNITS
     {
         try
         {
-            Node from = new Node(this.network, "From", new OtsPoint3d(0.0, 0, 0), Direction.ZERO);
-            Node to = new Node(this.network, "To", new OtsPoint3d(this.maximumDistance.getSI(), 0, 0), Direction.ZERO);
-            Node end = new Node(this.network, "End", new OtsPoint3d(this.maximumDistance.getSI() + 50.0, 0, 0), Direction.ZERO);
+            Node from = new Node(this.network, "From", new Point2d(0.0, 0), Direction.ZERO);
+            Node to = new Node(this.network, "To", new Point2d(this.maximumDistance.getSI(), 0), Direction.ZERO);
+            Node end = new Node(this.network, "End", new Point2d(this.maximumDistance.getSI() + 50.0, 0), Direction.ZERO);
             LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
             this.lane = LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator,
                     DefaultsNl.VEHICLE);

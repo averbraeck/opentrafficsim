@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
+import org.djutils.draw.point.Point2d;
 import org.junit.Test;
 
 /**
@@ -31,11 +32,11 @@ public class ContinuousBezierTest
          * This is a Bezier with two roots, one inflection, and one (intermediate) cross-section for the offset lines. It was
          * tested and visually verified in Matlab. This method tests the right outcome.
          */
-        ContinuousBezierCubic bezier = new ContinuousBezierCubic(new OtsPoint3d(0.0, 0.0, 0.0), new OtsPoint3d(50.0, 0.0, 0.0),
-                new OtsPoint3d(150.0, 100.0, 0.0), new OtsPoint3d(145.0, 50.0, 0.0));
+        ContinuousBezierCubic bezier = new ContinuousBezierCubic(new Point2d(0.0, 0.0), new Point2d(50.0, 0.0),
+                new Point2d(150.0, 100.0), new Point2d(145.0, 50.0));
 
-        isApproximal(new OtsPoint3d(bezier.getStartPoint()), 0.0, 0.0);
-        isApproximal(new OtsPoint3d(bezier.getEndPoint()), 145.0, 50.0);
+        isApproximal(bezier.getStartPoint(), 0.0, 0.0);
+        isApproximal(bezier.getEndPoint(), 145.0, 50.0);
         assertEquals("Start direction is incorrect.", 0.0, bezier.getStartDirection().si, MARGIN);
         assertEquals("End direction is incorrect.", Math.atan2(50.0 - 100.0, 145.0 - 150.0), bezier.getEndDirection().si,
                 MARGIN);
@@ -66,11 +67,11 @@ public class ContinuousBezierTest
 
     /**
      * Test point is approximately the same.
-     * @param point OtsPoint3d; point to test.
+     * @param point Point2d; point to test.
      * @param x double; expected x coordinate.
      * @param y double; expected y coordinate.
      */
-    private void isApproximal(final OtsPoint3d point, final double x, final double y)
+    private void isApproximal(final Point2d point, final double x, final double y)
     {
         assertEquals("Resulting x-coordinate is incorrect", x, point.x, MARGIN);
         assertEquals("Resulting y-coordinate is incorrect", y, point.y, MARGIN);

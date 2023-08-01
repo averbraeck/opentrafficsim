@@ -7,18 +7,14 @@ import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
 import javax.naming.NamingException;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.linearref.LengthIndexedLine;
-import org.locationtech.jts.operation.buffer.BufferParameters;
+import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.draw.core.PaintPolygons;
 import org.opentrafficsim.road.network.lane.Stripe;
 
@@ -39,10 +35,7 @@ public class StripeAnimation extends Renderable2D<Stripe> implements Renderable2
     private static final long serialVersionUID = 20141017L;
 
     /** The points for the outline of the Stripe. */
-    private final OtsLine3d line;
-
-    /** Precision of buffer operations. */
-    private static final int QUADRANTSEGMENTS = 8;
+    private final List<Point2d> line;
 
     /**
      * Generate the drawing commands for a dash pattern.
@@ -55,8 +48,7 @@ public class StripeAnimation extends Renderable2D<Stripe> implements Renderable2
      * @return ArrayList&lt;Coordinate&gt;; the coordinates of the dashes separated and terminated by a <cite>NEWPATH</cite>
      *         Coordinate
      */
-    // TODO startOffset does not work if a dash falls inside of it (so below the offset is 2.99m, rather than 3m)
-    private ArrayList<OtsPoint3d> makeDashes(final LengthIndexedLine center, final double width, final double startOffset,
+    private ArrayList<Point2d> makeDashes(final OtsLine3d center, final double width, final double startOffset,
             final double[] onOffLengths)
     {
         double period = 0;
@@ -72,10 +64,10 @@ public class StripeAnimation extends Renderable2D<Stripe> implements Renderable2
         {
             throw new Error("Bad pattern - repeat period length is 0");
         }
-        double length = center.getEndIndex();
+        double length = center.getLength().si;
         double position = -startOffset;
         int phase = 0;
-        ArrayList<OtsPoint3d> result = new ArrayList<>();
+        ArrayList<Point2d> result = new ArrayList<>();
         while (position < length)
         {
             double nextBoundary = position + onOffLengths[phase++ % onOffLengths.length];
@@ -90,12 +82,11 @@ public class StripeAnimation extends Renderable2D<Stripe> implements Renderable2
                 {
                     endPosition = length; // Draw a partial dash, ending at length (end of the center line)
                 }
-                Coordinate[] oneDash = center.extractLine(position, endPosition)
-                        .buffer(width / 2, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
-                for (int i = 0; i < oneDash.length; i++)
-                {
-                    result.add(new OtsPoint3d(oneDash[i]));
-                }
+
+                OtsLine3d dashCenter;
+                dashCenter = center.extract(position, endPosition);
+                dashCenter.offsetLine(width / 2).getLine2d().getPoints().forEachRemaining(result::add);
+                dashCenter.offsetLine(-width / 2).getLine2d().reverse().getPoints().forEachRemaining(result::add);
                 result.add(PaintPolygons.NEWPATH);
             }
             position = nextBoundary + onOffLengths[phase++ % onOffLengths.length];
@@ -109,72 +100,46 @@ public class StripeAnimation extends Renderable2D<Stripe> implements Renderable2
      * @return Coordinate[]; array of Coordinate
      * @throws NamingException when <cite>type</cite> is not supported
      */
-    private ArrayList<OtsPoint3d> makePoints(final Stripe stripe) throws NamingException
+    private List<Point2d> makePoints(final Stripe stripe) throws NamingException
     {
         double width = stripe.getWidth(0.5).si;
         switch (stripe.getType())
         {
             case DASHED:// ¦ - Draw a 3-9 dash pattern on the center line
-                return makeDashes(new LengthIndexedLine(stripe.getCenterLine().getLineString()), width, 3.0,
-                        new double[] {3, 9});
+                return makeDashes(stripe.getCenterLine(), width, 3.0, new double[] {3, 9});
 
             case BLOCK:// : - Draw a 1-3 dash pattern on the center line
-                return makeDashes(new LengthIndexedLine(stripe.getCenterLine().getLineString()), width, 1.0,
-                        new double[] {1, 3});
+                return makeDashes(stripe.getCenterLine(), width, 1.0, new double[] {1, 3});
 
             case DOUBLE:// ||- Draw two solid lines
             {
                 OtsLine3d centerLine = stripe.getCenterLine();
-                Coordinate[] leftLine = centerLine.offsetLine(width / 3).getLineString()
-                        .buffer(width / 6, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
-                Coordinate[] rightLine = centerLine.offsetLine(-width / 3).getLineString()
-                        .buffer(width / 6, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
-                ArrayList<OtsPoint3d> result = new ArrayList<>(leftLine.length + rightLine.length);
-                for (int i = 0; i < leftLine.length; i++)
-                {
-                    result.add(new OtsPoint3d(leftLine[i]));
-                }
-                for (int i = 0; i < rightLine.length; i++)
-                {
-                    result.add(new OtsPoint3d(rightLine[i]));
-                }
+                List<Point2d> result = new ArrayList<>(centerLine.size() * 2);
+                centerLine.offsetLine(width / 2).getLine2d().getPoints().forEachRemaining(result::add);
+                centerLine.offsetLine(-width / 2).getLine2d().reverse().getPoints().forEachRemaining(result::add);
                 return result;
             }
 
             case LEFT: // |¦ - Draw left solid, right 3-9 dashed
             {
                 OtsLine3d centerLine = stripe.getCenterLine();
-                Geometry rightDesignLine = centerLine.offsetLine(-width / 3).getLineString();
-                ArrayList<OtsPoint3d> result =
-                        makeDashes(new LengthIndexedLine(rightDesignLine), width / 3, 0.0, new double[] {3, 9});
-                Coordinate[] leftCoordinates = centerLine.offsetLine(width / 3).getLineString()
-                        .buffer(width / 6, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
-                for (int i = 0; i < leftCoordinates.length; i++)
-                {
-                    result.add(new OtsPoint3d(leftCoordinates[i]));
-                }
-                result.add(PaintPolygons.NEWPATH);
+                List<Point2d> result = makeDashes(centerLine.offsetLine(-width / 3), width / 3, 0.0, new double[] {3, 9});
+                centerLine.offsetLine(width / 3).getLine2d().getPoints().forEachRemaining(result::add);
                 return result;
             }
 
             case RIGHT: // ¦| - Draw left 3-9 dashed, right solid
             {
                 OtsLine3d centerLine = stripe.getCenterLine();
-                Geometry leftDesignLine = centerLine.offsetLine(width / 3).getLineString();
-                ArrayList<OtsPoint3d> result =
-                        makeDashes(new LengthIndexedLine(leftDesignLine), width / 3, 0.0, new double[] {3, 9});
-                Coordinate[] rightCoordinates = centerLine.offsetLine(-width / 3).getLineString()
-                        .buffer(width / 6, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
-                for (int i = 0; i < rightCoordinates.length; i++)
-                {
-                    result.add(new OtsPoint3d(rightCoordinates[i]));
-                }
-                result.add(PaintPolygons.NEWPATH);
+                ArrayList<Point2d> result = makeDashes(centerLine.offsetLine(width / 3), width / 3, 0.0, new double[] {3, 9});
+                centerLine.offsetLine(-width / 3).getLine2d().getPoints().forEachRemaining(result::add);
                 return result;
             }
 
             case SOLID:// | - Draw single solid line. This (regretfully) involves copying everything twice...
-                return new ArrayList<>(Arrays.asList(stripe.getContour().getPoints()));
+                List<Point2d> result = new ArrayList<>(stripe.getContour().size());
+                stripe.getContour().getPoints().forEachRemaining(result::add);
+                return result;
 
             default:
                 throw new NamingException("Unsupported stripe type: " + stripe.getType());
@@ -193,10 +158,10 @@ public class StripeAnimation extends Renderable2D<Stripe> implements Renderable2
             throws NamingException, RemoteException, OtsGeometryException
     {
         super(source, simulator);
-        ArrayList<OtsPoint3d> list = makePoints(source);
+        List<Point2d> list = makePoints(source);
         if (!list.isEmpty())
         {
-            this.line = new OtsLine3d(list);
+            this.line = list;
         }
         else
         {

@@ -48,7 +48,8 @@ public class CrossSectionElementAnimation extends Renderable2D<CrossSectionEleme
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         CrossSectionElement shoulder = getSource();
-        PaintPolygons.paintMultiPolygon(graphics, this.color, shoulder.getLocation(), shoulder.getContour(), true);
+        PaintPolygons.paintMultiPolygon(graphics, this.color, shoulder.getLocation(), shoulder.getContour().getPointList(),
+                true);
     }
 
     /** {@inheritDoc} */

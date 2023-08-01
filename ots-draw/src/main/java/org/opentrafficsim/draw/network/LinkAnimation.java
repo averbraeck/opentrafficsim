@@ -8,16 +8,14 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import org.djutils.draw.line.PolyLine3d;
-import org.djutils.draw.point.Point3d;
+import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.draw.core.PaintLine;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
@@ -85,22 +83,21 @@ public class LinkAnimation extends Renderable2D<Link> implements Renderable2DInt
 
     /**
      * Draw end point on design line.
-     * @param endPoint OtsPoint3d; the end of the design line where a end point must be highlighted
-     * @param nextPoint OtsPoint3d; the point nearest <code>endPoint</code> (needed to figure out the direction of the design
-     *            line)
+     * @param endPoint Point2d; the end of the design line where a end point must be highlighted
+     * @param nextPoint Point2d; the point nearest <code>endPoint</code> (needed to figure out the direction of the design line)
      * @param graphics Graphics2D; graphics content
      */
-    private void drawEndPoint(final OtsPoint3d endPoint, final OtsPoint3d nextPoint, final Graphics2D graphics)
+    private void drawEndPoint(final Point2d endPoint, final Point2d nextPoint, final Graphics2D graphics)
     {
         // End point marker is 2 times the width of the design line
         double dx = nextPoint.x - endPoint.x;
         double dy = nextPoint.y - endPoint.y;
-        double length = endPoint.distance(nextPoint).si;
+        double length = endPoint.distance(nextPoint);
         // scale dx, dy so that size is this.width
         dx *= this.width / length;
         dy *= this.width / length;
-        PolyLine3d line = new PolyLine3d(new Point3d(endPoint.x - dy, endPoint.y + dx, endPoint.z),
-                new Point3d(endPoint.x + dy, endPoint.y - dx, endPoint.z));
+        PolyLine2d line =
+                new PolyLine2d(new Point2d(endPoint.x - dy, endPoint.y + dx), new Point2d(endPoint.x + dy, endPoint.y - dx));
         PaintLine.paintLine(graphics, getSource().isConnector() ? Color.PINK.darker() : Color.BLUE, this.width / 30,
                 getSource().getLocation(), line);
     }
@@ -158,16 +155,16 @@ public class LinkAnimation extends Renderable2D<Link> implements Renderable2DInt
         /** {@inheritDoc} */
         @Override
         @SuppressWarnings("checkstyle:designforextension")
-        public DirectedPoint getLocation()
+        public OrientedPoint2d getLocation()
         {
             // draw always on top, and not upside down.
-            DirectedPoint p = ((Link) getSource()).getDesignLine().getLocationFractionExtended(0.5);
-            double a = Angle.normalizePi(p.getRotZ());
+            OrientedPoint2d p = ((Link) getSource()).getDesignLine().getLocationFractionExtended(0.5);
+            double a = Angle.normalizePi(p.getDirZ());
             if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
             {
                 a += Math.PI;
             }
-            return new DirectedPoint(p.x, p.y, Double.MAX_VALUE, 0.0, 0.0, a);
+            return new OrientedPoint2d(p.x, p.y, a);
         }
 
         /** {@inheritDoc} */

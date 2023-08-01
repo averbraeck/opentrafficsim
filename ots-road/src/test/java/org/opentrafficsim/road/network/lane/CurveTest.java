@@ -12,12 +12,12 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.draw.point.Point2d;
 import org.junit.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -64,11 +64,11 @@ public class CurveTest
         GtuType gtuType = DefaultsNl.CAR;
         LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
         Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
-        Node origin = new Node(network, "origin", new OtsPoint3d(10, 10, 0), Direction.ZERO);
-        Node curveStart = new Node(network, "curveStart", new OtsPoint3d(100, 10, 0), Direction.ZERO);
-        Node curveEnd = new Node(network, "curveEnd", new OtsPoint3d(150, 60, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
+        Node origin = new Node(network, "origin", new Point2d(10, 10), Direction.ZERO);
+        Node curveStart = new Node(network, "curveStart", new Point2d(100, 10), Direction.ZERO);
+        Node curveEnd = new Node(network, "curveEnd", new Point2d(150, 60), new Direction(90, DirectionUnit.EAST_DEGREE));
         Node destination =
-                new Node(network, "destination", new OtsPoint3d(150, 150, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
+                new Node(network, "destination", new Point2d(150, 150), new Direction(90, DirectionUnit.EAST_DEGREE));
         Lane[] straight1 = LaneFactory.makeMultiLane(network, "straight1", origin, curveStart, null, laneCount, laneType,
                 speedLimit, simulator, DefaultsNl.VEHICLE);
         Lane[] straight2 = LaneFactory.makeMultiLane(network, "straight2", curveEnd, destination, null, laneCount, laneType,

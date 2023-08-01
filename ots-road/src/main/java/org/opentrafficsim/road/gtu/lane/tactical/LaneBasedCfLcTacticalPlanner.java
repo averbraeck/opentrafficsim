@@ -17,13 +17,11 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.AccelerationVector;
 import org.djunits.value.vdouble.vector.base.DoubleVector;
-import org.djutils.exceptions.Try;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
@@ -106,7 +104,8 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
 
     /** {@inheritDoc} */
     @Override
-    public final OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
+    public final OperationalPlan generateOperationalPlan(final Time startTime,
+            final OrientedPoint2d locationAtStartTime)
             throws OperationalPlanException, NetworkException, GtuException, ParameterException
     {
         try

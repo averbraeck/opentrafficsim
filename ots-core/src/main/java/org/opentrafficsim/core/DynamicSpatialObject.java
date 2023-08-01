@@ -1,11 +1,13 @@
 package org.opentrafficsim.core;
 
+import java.util.Iterator;
+
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.Transform2d;
-import org.opentrafficsim.core.geometry.DirectedPoint;
+import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
-import org.opentrafficsim.core.geometry.OtsShape;
 
 /**
  * DynamicSpatialObject has two shapes: the shape that is registered in the Map is the shape that indicates where the object
@@ -30,29 +32,31 @@ public interface DynamicSpatialObject extends SpatialObject
      * @param time Time; the time for which we want the shape
      * @return OtsShape; the shape of the object at time 'time'
      */
-    OtsShape getShape(Time time);
+    Polygon2d getShape(Time time);
 
     /**
      * Return the contour of the dynamic object at the right position and in the right direction.
      * @param shape OtsShape; the shape to translate and rotate for point p
-     * @param p DirectedPoint; the location and direction of the reference point of the object
+     * @param p OrientedPoint2d; the location and direction of the reference point of the object
      * @return Polygon2d; the contour of the dynamic object at the right position and in the right direction
      * @throws OtsGeometryException on invalid geometry after transformation
      */
-    default OtsShape transformShape(final OtsShape shape, final DirectedPoint p) throws OtsGeometryException
+    default Polygon2d transformShape(final Polygon2d shape, final OrientedPoint2d p) throws OtsGeometryException
     {
         Transform2d transform = new Transform2d();
         transform.translate(p.x, p.y);
-        transform.rotation(p.getRotZ());
-        OtsPoint3d[] points = new OtsPoint3d[shape.size()];
+        transform.rotation(p.getDirZ());
+        Point2d[] points = new Point2d[shape.size()];
         int i = 0;
-        for (OtsPoint3d sp : shape.getPoints())
+        Iterator<Point2d> iterator = shape.getPoints();
+        while (iterator.hasNext())
         {
+            Point2d sp = iterator.next();
             double[] point = {sp.x, sp.y};
             double[] t = transform.transform(point);
-            points[i++] = new OtsPoint3d(t[0], t[1], sp.z);
+            points[i++] = new Point2d(t[0], t[1]);
         }
-        return new OtsShape(points);
+        return new Polygon2d(points);
     }
 
 }

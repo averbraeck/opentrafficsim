@@ -8,9 +8,10 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.Bounds;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.draw.core.PaintLine;
 import org.opentrafficsim.draw.core.PaintPolygons;
@@ -55,8 +56,8 @@ public class LaneAnimation extends Renderable2D<Lane> implements Renderable2DInt
     {
         super(lane, simulator);
         this.color = color;
-        this.text = new Text(lane, lane.getLink().getId() + "." + lane.getId(), 0.0f, 0.0f, TextAlignment.CENTER,
-                Color.BLACK, simulator);
+        this.text = new Text(lane, lane.getLink().getId() + "." + lane.getId(), 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK,
+                simulator);
         new CenterLineAnimation(new CenterLine(lane.getCenterLine()), simulator);
     }
 
@@ -75,7 +76,7 @@ public class LaneAnimation extends Renderable2D<Lane> implements Renderable2DInt
         Lane lane = getSource();
         if (this.color != null)
         {
-            PaintPolygons.paintMultiPolygon(graphics, this.color, lane.getLocation(), lane.getContour(), true);
+            PaintPolygons.paintMultiPolygon(graphics, this.color, lane.getLocation(), lane.getContour().getPointList(), true);
         }
     }
 
@@ -102,6 +103,9 @@ public class LaneAnimation extends Renderable2D<Lane> implements Renderable2DInt
         /** The center line. */
         private final OtsLine3d centerLine;
 
+        /** Bounds. */
+        private final Bounds2d bounds;
+
         /**
          * Construct a new CenterLine.
          * @param centerLine OtsLine3d; the center line of a lane
@@ -109,19 +113,19 @@ public class LaneAnimation extends Renderable2D<Lane> implements Renderable2DInt
         CenterLine(final OtsLine3d centerLine)
         {
             this.centerLine = centerLine;
+            this.bounds = new Bounds2d(centerLine.getBounds().getDeltaX(), centerLine.getBounds().getDeltaY());
         }
 
         @Override
-        public final DirectedPoint getLocation()
+        public final Point2d getLocation()
         {
-            DirectedPoint dp = this.centerLine.getLocation();
-            return new DirectedPoint(dp.x, dp.y, dp.z + 0.1);
+            return this.centerLine.getLocation();
         }
 
         @Override
-        public final Bounds getBounds() throws RemoteException
+        public final Bounds2d getBounds()
         {
-            return this.centerLine.getBounds();
+            return this.bounds;
         }
 
         /**
@@ -205,16 +209,16 @@ public class LaneAnimation extends Renderable2D<Lane> implements Renderable2DInt
         /** {@inheritDoc} */
         @Override
         @SuppressWarnings("checkstyle:designforextension")
-        public DirectedPoint getLocation()
+        public OrientedPoint2d getLocation()
         {
             // draw always on top.
-            DirectedPoint p = ((Lane) getSource()).getCenterLine().getLocationFractionExtended(0.5);
-            double a = Angle.normalizePi(p.getRotZ());
+            OrientedPoint2d p = ((Lane) getSource()).getCenterLine().getLocationFractionExtended(0.5);
+            double a = Angle.normalizePi(p.getDirZ());
             if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
             {
                 a += Math.PI;
             }
-            return new DirectedPoint(p.x, p.y, Double.MAX_VALUE, 0.0, 0.0, a);
+            return new OrientedPoint2d(p.x, p.y, a);
         }
 
         /** {@inheritDoc} */

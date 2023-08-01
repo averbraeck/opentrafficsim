@@ -25,6 +25,8 @@ import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.cli.CliUtil;
 import org.djutils.data.csv.CsvData;
 import org.djutils.data.serialization.TextSerializationException;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
@@ -44,8 +46,6 @@ import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -275,12 +275,12 @@ public class RampMeteringDemo extends AbstractSimulationScript
         StreamInterface stream = sim.getModel().getStream("generation");
         this.parameterFactory.addParameter(ParameterTypes.FSPEED, new DistNormal(stream, 123.7 / 120.0, 12.0 / 1200));
 
-        Node nodeA = new Node(network, "A", new OtsPoint3d(0, 0), Direction.ZERO);
-        Node nodeB = new Node(network, "B", new OtsPoint3d(3000, 0), Direction.ZERO);
-        Node nodeC = new Node(network, "C", new OtsPoint3d(3250, 0), Direction.ZERO);
-        Node nodeD = new Node(network, "D", new OtsPoint3d(6000, 0), Direction.ZERO);
-        Node nodeE = new Node(network, "E", new OtsPoint3d(2000, -25), Direction.ZERO);
-        Node nodeF = new Node(network, "F", new OtsPoint3d(2750, 0.0), Direction.ZERO);
+        Node nodeA = new Node(network, "A", new Point2d(0, 0), Direction.ZERO);
+        Node nodeB = new Node(network, "B", new Point2d(3000, 0), Direction.ZERO);
+        Node nodeC = new Node(network, "C", new Point2d(3250, 0), Direction.ZERO);
+        Node nodeD = new Node(network, "D", new Point2d(6000, 0), Direction.ZERO);
+        Node nodeE = new Node(network, "E", new Point2d(2000, -25), Direction.ZERO);
+        Node nodeF = new Node(network, "F", new Point2d(2750, 0.0), Direction.ZERO);
 
         LinkType freeway = DefaultsNl.FREEWAY;
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;
@@ -608,7 +608,8 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
         /** {@inheritDoc} */
         @Override
-        public OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
+        public OperationalPlan generateOperationalPlan(final Time startTime,
+                final OrientedPoint2d locationAtStartTime)
                 throws OperationalPlanException, GtuException, NetworkException, ParameterException
         {
             // get some general input

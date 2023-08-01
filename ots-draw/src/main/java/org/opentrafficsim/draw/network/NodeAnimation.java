@@ -12,9 +12,10 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
+import org.djutils.draw.bounds.Bounds;
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.Bounds;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
@@ -65,7 +66,7 @@ public class NodeAnimation extends Renderable2D<NodeAnimation.ElevatedNode>
         graphics.setColor(Color.BLACK);
         graphics.setStroke(new BasicStroke(0.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
         graphics.draw(new Ellipse2D.Double(-0.5, -0.5, 1.0, 1.0));
-        double direction = getSource().getLocation().getZ();
+        double direction = getSource().getLocation().getDirZ();
         if (!Double.isNaN(direction))
         {
             GeneralPath arrow = new GeneralPath(Path2D.WIND_EVEN_ODD, 3);
@@ -98,10 +99,10 @@ public class NodeAnimation extends Renderable2D<NodeAnimation.ElevatedNode>
         private final Node node;
 
         /** the location of the node to which the animation belongs. */
-        private DirectedPoint location;
+        private OrientedPoint2d location;
 
         /** the bounds of the node to which the animation belongs. */
-        private Bounds bounds;
+        private Bounds2d bounds;
 
         /**
          * @param node Node; the node to which the animation belongs
@@ -109,14 +110,14 @@ public class NodeAnimation extends Renderable2D<NodeAnimation.ElevatedNode>
         public ElevatedNode(final Node node)
         {
             this.node = node;
-            DirectedPoint p = node.getLocation();
-            this.location = new DirectedPoint(p.x, p.y, p.z + ZOFFSET, p.getRotX(), p.getRotY(), p.getRotZ());
+            OrientedPoint2d p = node.getLocation();
+            this.location = new OrientedPoint2d(p.x, p.y, p.getDirZ());
             this.bounds = node.getBounds();
         }
 
         /** {@inheritDoc} */
         @Override
-        public DirectedPoint getLocation()
+        public OrientedPoint2d getLocation()
         {
             return this.location;
         }
@@ -131,7 +132,7 @@ public class NodeAnimation extends Renderable2D<NodeAnimation.ElevatedNode>
 
         /** {@inheritDoc} */
         @Override
-        public Bounds getBounds() throws RemoteException
+        public Bounds2d getBounds() throws RemoteException
         {
             return this.bounds;
         }

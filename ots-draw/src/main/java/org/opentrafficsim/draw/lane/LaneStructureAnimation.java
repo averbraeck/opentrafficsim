@@ -12,10 +12,10 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
 import org.opentrafficsim.road.gtu.lane.perception.RollingLaneStructure;
@@ -81,7 +81,7 @@ public class LaneStructureAnimation extends Renderable2D<LaneStructureLocatable>
     private void paintRecord(final LaneStructureRecord lsr, final Graphics2D graphics)
     {
         // line
-        DirectedPoint loc = Try.assign(() -> getSource().getLocation(), "Unable to return location.");
+        OrientedPoint2d loc = Try.assign(() -> getSource().getLocation(), "Unable to return location.");
         graphics.setStroke(new BasicStroke(
                 getSource().getRollingLaneStructure().animationAccess.getCrossSectionRecords().containsValue(lsr) ? 1.0f
                         : 0.5f));
@@ -94,7 +94,7 @@ public class LaneStructureAnimation extends Renderable2D<LaneStructureLocatable>
                 "Exception while painting LaneStructures");
         Path2D.Double path = new Path2D.Double();
         boolean start = true;
-        for (OtsPoint3d point : line.getPoints())
+        for (Point2d point : line.getPoints())
         {
             if (start)
             {
@@ -123,9 +123,9 @@ public class LaneStructureAnimation extends Renderable2D<LaneStructureLocatable>
             float f2 = link.equals(RecordLink.DOWN) ? 0.0f : link.equals(RecordLink.UP) ? 1.0f : 0.5f;
             float f3 = f1;
             float f4 = f2;
-            DirectedPoint p1 = Try.assign(() -> src.getLane().getCenterLine().getLocationFraction(f3),
+            OrientedPoint2d p1 = Try.assign(() -> src.getLane().getCenterLine().getLocationFraction(f3),
                     "Exception while painting LaneStructure");
-            DirectedPoint p2 = Try.assign(() -> line.getLocationFraction(f4), "Exception while painting LaneStructure");
+            OrientedPoint2d p2 = Try.assign(() -> line.getLocationFraction(f4), "Exception while painting LaneStructure");
             path = new Path2D.Double();
             path.moveTo(p1.x - loc.x, -(p1.y - loc.y));
             path.lineTo(p2.x - loc.x, -(p2.y - loc.y));
@@ -158,10 +158,10 @@ public class LaneStructureAnimation extends Renderable2D<LaneStructureLocatable>
      * @param adj LaneStructureRecord; adjacent record, can be {@code null}
      * @param color Color; color
      * @param graphics Graphics2D; graphics
-     * @param loc DirectedPoint; location
+     * @param loc OrientedPoint2d; location
      */
     private void paintLateralConnection(final LaneStructureRecord main, final LaneStructureRecord adj, final Color color,
-            final Graphics2D graphics, final DirectedPoint loc)
+            final Graphics2D graphics, final OrientedPoint2d loc)
     {
         if (adj == null)
         {
@@ -169,9 +169,9 @@ public class LaneStructureAnimation extends Renderable2D<LaneStructureLocatable>
         }
         float f1 = 0.45f;
         float f2 = 0.55f;
-        DirectedPoint p1 = Try.assign(() -> main.getLane().getCenterLine().getLocationFraction(f1),
+        OrientedPoint2d p1 = Try.assign(() -> main.getLane().getCenterLine().getLocationFraction(f1),
                 "Exception while painting LaneStructure");
-        DirectedPoint p2 = Try.assign(() -> adj.getLane().getCenterLine().getLocationFraction(f2),
+        OrientedPoint2d p2 = Try.assign(() -> adj.getLane().getCenterLine().getLocationFraction(f2),
                 "Exception while painting LaneStructure");
         Path2D.Double path = new Path2D.Double();
         path.moveTo(p1.x - loc.x, -(p1.y - loc.y));

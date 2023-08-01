@@ -6,9 +6,11 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.point.Point2d;
 import org.junit.Test;
 
 /**
@@ -39,27 +41,7 @@ public class Ots2dSetTest
         {
             // Ignore expected exception
         }
-        Rectangle2D rectangle = new Rectangle2D.Double(10, 10, 0, 1);
-        try
-        {
-            new Ots2dSet(rectangle, 1);
-            fail("Rectangle with 0 width should have thrown an OTSGeometryException");
-        }
-        catch (OtsGeometryException e)
-        {
-            // Ignore expected exception
-        }
-        rectangle = new Rectangle2D.Double(10, 10, 1, 0);
-        try
-        {
-            new Ots2dSet(rectangle, 1);
-            fail("Rectangle with 0 height should have thrown an OTSGeometryException");
-        }
-        catch (OtsGeometryException e)
-        {
-            // Ignore expected exception
-        }
-        rectangle = new Rectangle2D.Double(-200, -200, 400, 400);
+        Bounds2d rectangle = new Bounds2d(-200, 200, -400, 400);
         try
         {
             new Ots2dSet(rectangle, 0);
@@ -77,13 +59,13 @@ public class Ots2dSetTest
         double radius = 40;
         double centerX = 95;
         double centerY = 55;
-        OtsPoint3d[] shapePoints = new OtsPoint3d[maxPoint];
+        Point2d[] shapePoints = new Point2d[maxPoint];
         for (int i = 0; i < maxPoint; i++)
         {
             double angle = 2 * Math.PI * i / maxPoint;
-            shapePoints[i] = new OtsPoint3d(centerX + radius * Math.sin(angle), centerY + radius * Math.cos(angle));
+            shapePoints[i] = new Point2d(centerX + radius * Math.sin(angle), centerY + radius * Math.cos(angle));
         }
-        OtsShape shape = new OtsShape(shapePoints);
+        Polygon2d shape = new Polygon2d(shapePoints);
         assertFalse("set does not contain shape", set.contains(shape));
         assertTrue("Adding shape to empty set should return true", set.add(shape));
         assertEquals("Size of the set should now be one", 1, set.size());
@@ -108,7 +90,7 @@ public class Ots2dSetTest
         // System.out.println(set.toStringGraphic(6));
         assertTrue("set contains shape", set.contains(shape));
         int count = 0;
-        for (OtsShape s : set)
+        for (Polygon2d s : set)
         {
             assertEquals("With one object in the set, the iterator should return that object", shape, s);
             count++;
@@ -118,16 +100,16 @@ public class Ots2dSetTest
         assertEquals("toArray returns array of length 1", 1, array.length);
         assertEquals("Element in array is our shape", shape, array[0]);
 
-        OtsShape[] elements = set.toArray(new OtsShape[5]);
+        Polygon2d[] elements = set.toArray(new Polygon2d[5]);
         elements[1] = shape;
         set.toArray(elements);
         assertEquals("Element 0 in array is our shape", shape, elements[0]);
         assertNull("There is a null pointer at position 1 in the array", elements[1]);
-        elements = new OtsShape[0]; // too short; should be replaced by toArray by one that has the correct length
+        elements = new Polygon2d[0]; // too short; should be replaced by toArray by one that has the correct length
         elements = set.toArray(elements);
         assertEquals("Elements is new array with length 1", 1, elements.length);
         assertEquals("Element 0 in array is our shape", shape, elements[0]);
-        assertFalse("Attempt to remove a non OtsShape should return false", set.remove("String"));
+        assertFalse("Attempt to remove a non Polygon2d should return false", set.remove("String"));
         assertEquals("Size of the set should still be one", 1, set.size());
         assertTrue("Removal of shape should succeed", set.remove(shape));
         assertEquals("Size of set should be 0 again", 0, set.size());
@@ -137,13 +119,13 @@ public class Ots2dSetTest
         System.out.println(set.toStringGraphic(3));
         set.add(shape);
         assertEquals("Set should contain one shape", 1, set.size());
-        OtsShape triangleShape = new OtsShape(new OtsPoint3d(-1, 0), new OtsPoint3d(1, 0), new OtsPoint3d(0, 1));
+        Polygon2d triangleShape = new Polygon2d(new Point2d(-1, 0), new Point2d(1, 0), new Point2d(0, 1));
         set.add(triangleShape);
         assertEquals("Set should contain two shapes", 2, set.size());
-        OtsShape triangleShape2 = new OtsShape(new OtsPoint3d(0, 0), new OtsPoint3d(2, 0), new OtsPoint3d(1, 1));
+        Polygon2d triangleShape2 = new Polygon2d(new Point2d(0, 0), new Point2d(2, 0), new Point2d(1, 1));
         set.add(triangleShape2);
         assertEquals("Set should contain two shapes", 3, set.size());
-        for (Iterator<OtsShape> it = set.iterator(); it.hasNext();)
+        for (Iterator<Polygon2d> it = set.iterator(); it.hasNext();)
         {
             it.next();
             it.remove();
@@ -151,16 +133,16 @@ public class Ots2dSetTest
         assertEquals("Set should be empty again", 0, set.size());
         double left = rectangle.getMaxX();
         left += Math.ulp(left);
-        OtsShape shape2 = new OtsShape(new OtsPoint3d(left, rectangle.getMinY()),
-                new OtsPoint3d(left + 10, rectangle.getMinY()), new OtsPoint3d(left, rectangle.getMaxY()));
+        Polygon2d shape2 = new Polygon2d(new Point2d(left, rectangle.getMinY()), new Point2d(left + 10, rectangle.getMinY()),
+                new Point2d(left, rectangle.getMaxY()));
         // This shape is one ULP outside the area of the set (without that ULP it would be added).
-        assertFalse("OtsShape just outside rectangle should not be added", set.add(shape2));
+        assertFalse("Polygon2d just outside rectangle should not be added", set.add(shape2));
         assertTrue("set should still be empty", set.isEmpty());
-        rectangle = new Rectangle2D.Double(0, 0, Math.ulp(0d), 100);
+        rectangle = new Bounds2d(0, Math.ulp(0d), 0, 100);
         set = new Ots2dSet(rectangle, 10);
         // Adding this shape should cause underflow
         set.add(triangleShape);
-        rectangle = new Rectangle2D.Double(0, 0, 100, Math.ulp(0d));
+        rectangle = new Bounds2d(0, 100, 0, Math.ulp(0d));
         set = new Ots2dSet(rectangle, 10);
         // Adding this shape should cause underflow
         set.add(triangleShape);

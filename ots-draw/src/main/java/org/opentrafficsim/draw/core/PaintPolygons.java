@@ -3,10 +3,9 @@ package org.opentrafficsim.draw.core;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
+import java.util.List;
 
-import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
+import org.djutils.draw.point.Point2d;
 
 /**
  * Paint a (series of) filled polygon(s) defined as a Path2D.Double
@@ -25,25 +24,25 @@ public final class PaintPolygons
     }
 
     /** Dummy coordinate that forces the drawing operation to start a new path. */
-    public static final OtsPoint3d NEWPATH = new OtsPoint3d(Double.NaN, Double.NaN, Double.NaN);
+    public static final Point2d NEWPATH = null;
 
     /**
      * Paint (fill) a polygon or a series of polygons.
      * @param graphics Graphics2D; the graphics environment
      * @param color Color; the color to use
-     * @param referencePoint DirectedPoint; the reference point
-     * @param line OtsLine3d; array of points
+     * @param referencePoint Point2d; the reference point
+     * @param line List&lt;Point2d&gt;; array of points
      * @param fill boolean; fill or just contour
      */
-    public static void paintMultiPolygon(final Graphics2D graphics, final Color color, final DirectedPoint referencePoint,
-            final OtsLine3d line, final boolean fill)
+    public static void paintMultiPolygon(final Graphics2D graphics, final Color color, final Point2d referencePoint,
+            final List<Point2d> line, final boolean fill)
     {
         graphics.setColor(color);
         Path2D.Double path = new Path2D.Double();
         boolean withinPath = false;
-        for (OtsPoint3d point : line.getPoints())
+        for (Point2d point : line)
         {
-            if (NEWPATH.equals(point))
+            if (point == NEWPATH)
             {
                 if (withinPath)
                 {

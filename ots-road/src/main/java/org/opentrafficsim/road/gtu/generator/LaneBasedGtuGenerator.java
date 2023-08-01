@@ -23,6 +23,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.bounds.Bounds;
 import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
@@ -35,7 +36,6 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuErrorHandler;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -509,7 +509,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
         Set<GtuGeneratorPosition> set = new LinkedHashSet<>();
         for (GeneratorLanePosition lanePosition : this.generatorPositions.getAllPositions())
         {
-            DirectedPoint p = lanePosition.getPosition().iterator().next().getLocation();
+            OrientedPoint2d p = lanePosition.getPosition().iterator().next().getLocation();
             set.add(new GtuGeneratorPosition()
             {
                 /** {@inheritDoc} */

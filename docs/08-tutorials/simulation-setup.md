@@ -41,8 +41,8 @@ The autorun parameter triggers animation when false. These, and other, parameter
             throws NullPointerException, DrawRuntimeException, NetworkException, OtsGeometryException
     {
         RoadNetwork network = new RoadNetwork("Simple network", sim);
-        OtsPoint3d pointA = new OtsPoint3d(0, 0, 0);
-        OtsPoint3d pointB = new OtsPoint3d(500, 0, 0);
+        Point2d pointA = new Point2d(0, 0);
+        Point2d pointB = new Point2d(500, 0);
         Node nodeA = new Node(network, "A", pointA, Direction.ZERO);
         Node nodeB = new Node(network, "B", pointB, Direction.ZERO);
         GtuType car = DefaultsNl.CAR;

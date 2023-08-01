@@ -13,6 +13,7 @@ import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.PositionUnit;
 import org.djunits.unit.TimeUnit;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -20,7 +21,11 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.PositionVector;
-import org.djutils.draw.point.Point3d;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
@@ -39,12 +44,8 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.DynamicSpatialObject;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.Bounds;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
-import org.opentrafficsim.core.geometry.OtsShape;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -154,7 +155,7 @@ public class Gtu extends LocalEventProducer
     private GtuErrorHandler errorHandler = GtuErrorHandler.THROW;
 
     /** shape of the Gtu contour. */
-    private OtsShape shape = null;
+    private Polygon2d shape = null;
 
     /** Sensing positions. */
     private final Map<RelativePosition.TYPE, RelativePosition> relativePositions = new LinkedHashMap<>();
@@ -176,7 +177,7 @@ public class Gtu extends LocalEventProducer
 
     /** The maximum speed of the GTU (in the driving direction). */
     private final Speed maximumSpeed;
-    
+
     /** Tags of the GTU, these are used for specific use cases of any sort. */
     private final Map<String, String> tags = new LinkedHashMap<>();
 
@@ -249,20 +250,20 @@ public class Gtu extends LocalEventProducer
      * Initialize the GTU at a location and speed, and give it a mission to fulfill through the strategical planner.
      * @param strategicalPlanner StrategicalPlanner; the strategical planner responsible for the overall 'mission' of the GTU,
      *            usually indicating where it needs to go. It operates by instantiating tactical planners to do the work.
-     * @param initialLocation DirectedPoint; the initial location (and direction) of the GTU
+     * @param initialLocation OrientedPoint2d; the initial location (and direction) of the GTU
      * @param initialSpeed Speed; the initial speed of the GTU
      * @throws SimRuntimeException when scheduling after the first move fails
      * @throws GtuException when the preconditions of the parameters are not met or when the construction of the original
      *             waiting path fails
      */
     @SuppressWarnings({"checkstyle:hiddenfield", "hiding", "checkstyle:designforextension"})
-    public void init(final StrategicalPlanner strategicalPlanner, final DirectedPoint initialLocation, final Speed initialSpeed)
-            throws SimRuntimeException, GtuException
+    public void init(final StrategicalPlanner strategicalPlanner, final OrientedPoint2d initialLocation,
+            final Speed initialSpeed) throws SimRuntimeException, GtuException
     {
         Throw.when(strategicalPlanner == null, GtuException.class, "strategicalPlanner is null for GTU with id %s", this.id);
         Throw.whenNull(initialLocation, "Initial location of GTU cannot be null");
-        Throw.when(Double.isNaN(initialLocation.x) || Double.isNaN(initialLocation.y) || Double.isNaN(initialLocation.z),
-                GtuException.class, "initialLocation %s invalid for GTU with id %s", initialLocation, this.id);
+        Throw.when(Double.isNaN(initialLocation.x) || Double.isNaN(initialLocation.y), GtuException.class,
+                "initialLocation %s invalid for GTU with id %s", initialLocation, this.id);
         Throw.when(initialSpeed == null, GtuException.class, "initialSpeed is null for GTU with id %s", this.id);
         Throw.when(!getId().equals(strategicalPlanner.getGtu().getId()), GtuException.class,
                 "GTU %s is initialized with a strategical planner for GTU %s", getId(), strategicalPlanner.getGtu().getId());
@@ -330,11 +331,11 @@ public class Gtu extends LocalEventProducer
 
     /** {@inheritDoc} */
     @Override
-    public final Bounds getBounds()
+    public final Bounds2d getBounds()
     {
         double dx = 0.5 * getLength().doubleValue();
         double dy = 0.5 * getWidth().doubleValue();
-        return new Bounds(new Point3d(-dx, -dy, 0.0), new Point3d(dx, dy, 0.0));
+        return new Bounds2d(-dx, dx, -dy, dy);
     }
 
     /**
@@ -343,10 +344,11 @@ public class Gtu extends LocalEventProducer
     @SuppressWarnings("checkstyle:designforextension")
     public void destroy()
     {
-        DirectedPoint location = getLocation();
+        OrientedPoint2d location = getLocation();
         fireTimedEvent(Gtu.DESTROY_EVENT,
-                new Object[] {getId(), new OtsPoint3d(location).doubleVector(PositionUnit.METER),
-                        new Direction(location.getZ(), DirectionUnit.EAST_RADIAN), getOdometer()},
+                new Object[] {getId(),
+                        DoubleVector.instantiate(new double[] {location.x, location.y}, PositionUnit.METER, StorageType.DENSE),
+                        new Direction(location.getDirZ(), DirectionUnit.EAST_RADIAN), getOdometer()},
                 this.simulator.getSimulatorTime());
 
         // cancel the next move
@@ -366,8 +368,8 @@ public class Gtu extends LocalEventProducer
      * This method can be overridden to carry out specific behavior during the execution of the plan (e.g., scheduling of
      * triggers, entering or leaving lanes, etc.). Please bear in mind that the call to super.move() is essential, and that one
      * has to take care to handle the situation that the plan gets interrupted.
-     * @param fromLocation DirectedPoint; the last known location (initial location, or end location of the previous operational
-     *            plan)
+     * @param fromLocation OrientedPoint2d; the last known location (initial location, or end location of the previous
+     *            operational plan)
      * @return boolean; whether an exception occurred
      * @throws SimRuntimeException when scheduling of the next move fails
      * @throws OperationalPlanException when there is a problem creating a good path for the GTU
@@ -376,7 +378,7 @@ public class Gtu extends LocalEventProducer
      * @throws ParameterException in there is a parameter problem
      */
     @SuppressWarnings("checkstyle:designforextension")
-    protected boolean move(final DirectedPoint fromLocation)
+    protected boolean move(final OrientedPoint2d fromLocation)
             throws SimRuntimeException, OperationalPlanException, GtuException, NetworkException, ParameterException
     {
         try
@@ -423,7 +425,7 @@ public class Gtu extends LocalEventProducer
                 // schedule the next move at exactly 0.5 seconds on the clock
                 // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
                 double tNext = Math.floor(2.0 * now.si + 1.0) / 2.0;
-                DirectedPoint p = (tNext - now.si < 0.5) ? newOperationalPlan.getEndLocation()
+                OrientedPoint2d p = (tNext - now.si < 0.5) ? newOperationalPlan.getEndLocation()
                         : newOperationalPlan.getLocation(new Duration(tNext - now.si, DurationUnit.SI));
                 this.nextMoveEvent =
                         new SimEvent<Duration>(new Duration(tNext - getSimulator().getStartTimeAbs().si, DurationUnit.SI), this,
@@ -440,8 +442,10 @@ public class Gtu extends LocalEventProducer
             }
             this.simulator.scheduleEvent(this.nextMoveEvent);
             fireTimedEvent(Gtu.MOVE_EVENT,
-                    new Object[] {getId(), new OtsPoint3d(fromLocation).doubleVector(PositionUnit.METER),
-                            new Direction(fromLocation.getZ(), DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
+                    new Object[] {getId(),
+                            DoubleVector.instantiate(new double[] {fromLocation.x, fromLocation.y}, PositionUnit.METER,
+                                    StorageType.DENSE),
+                            new Direction(fromLocation.getDirZ(), DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
                             getOdometer()},
                     this.simulator.getSimulatorTime());
 
@@ -485,7 +489,7 @@ public class Gtu extends LocalEventProducer
     {
         return this.id;
     }
-    
+
     /**
      * Sets a tag, these are used for specific use cases of any sort.
      * @param tag String; name of the tag.
@@ -495,7 +499,7 @@ public class Gtu extends LocalEventProducer
     {
         this.tags.put(tag, value);
     }
-    
+
     /**
      * Returns the value for the given tag, these are used for specific use cases of any sort.
      * @param tag String; name of the tag.
@@ -782,12 +786,12 @@ public class Gtu extends LocalEventProducer
     private Time cacheLocationTime = new Time(Double.NaN, TimeUnit.DEFAULT);
 
     /** Cached location at that time. */
-    private DirectedPoint cacheLocation = null;
+    private OrientedPoint2d cacheLocation = null;
 
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public DirectedPoint getLocation()
+    public OrientedPoint2d getLocation()
     {
         synchronized (this)
         {
@@ -795,7 +799,7 @@ public class Gtu extends LocalEventProducer
             {
                 this.simulator.getLogger().always()
                         .error("No operational plan for GTU " + this.id + " at t=" + this.getSimulator().getSimulatorTime());
-                return new DirectedPoint(0, 0, 0); // Do not cache it
+                return new OrientedPoint2d(0, 0, 0); // Do not cache it
             }
             try
             {
@@ -811,7 +815,7 @@ public class Gtu extends LocalEventProducer
             }
             catch (OperationalPlanException exception)
             {
-                return new DirectedPoint(0, 0, 0);
+                return new OrientedPoint2d(0, 0, 0);
             }
         }
     }
@@ -824,7 +828,7 @@ public class Gtu extends LocalEventProducer
      * @return OtsShape; the shape of the object at time 'time'
      */
     @Override
-    public OtsShape getShape(final Time time)
+    public Polygon2d getShape(final Time time)
     {
         try
         {
@@ -832,10 +836,10 @@ public class Gtu extends LocalEventProducer
             {
                 double w = getWidth().si;
                 double l = getLength().si;
-                this.shape = new OtsShape(new OtsPoint3d(-0.5 * l, -0.5 * w, 0.0), new OtsPoint3d(-0.5 * l, 0.5 * w, 0.0),
-                        new OtsPoint3d(0.5 * l, 0.5 * w, 0.0), new OtsPoint3d(0.5 * l, -0.5 * w, 0.0));
+                this.shape = new Polygon2d(new Point2d(-0.5 * l, -0.5 * w), new Point2d(-0.5 * l, 0.5 * w),
+                        new Point2d(0.5 * l, 0.5 * w), new Point2d(0.5 * l, -0.5 * w));
             }
-            OtsShape s = transformShape(this.shape, this.operationalPlan.get(time).getLocation(time));
+            Polygon2d s = transformShape(this.shape, this.operationalPlan.get(time).getLocation(time));
             System.out.println("gtu " + getId() + ", shape(t)=" + s);
             return s;
         }
@@ -852,7 +856,7 @@ public class Gtu extends LocalEventProducer
      * @return OtsShape; the shape of the object over the validity of the operational plan
      */
     @Override
-    public OtsShape getShape()
+    public Polygon2d getShape()
     {
         try
         {
@@ -862,16 +866,16 @@ public class Gtu extends LocalEventProducer
             // we assume the reference point is within the contour of the Gtu.
             double rear = Math.max(0.0, getReference().getDx().si - getRear().getDx().si);
             double front = path.getLength().si + Math.max(0.0, getFront().getDx().si - getReference().getDx().si);
-            DirectedPoint p0 = path.getLocationExtendedSI(-rear);
-            DirectedPoint pn = path.getLocationExtendedSI(front);
-            List<OtsPoint3d> pList = new ArrayList<>(Arrays.asList(path.getPoints()));
-            pList.add(0, new OtsPoint3d(p0));
-            pList.add(new OtsPoint3d(pn));
+            Point2d p0 = path.getLocationExtendedSI(-rear);
+            Point2d pn = path.getLocationExtendedSI(front);
+            List<Point2d> pList = new ArrayList<>(Arrays.asList(path.getPoints()));
+            pList.add(0, p0);
+            pList.add(pn);
             OtsLine3d extendedPath = new OtsLine3d(pList);
-            List<OtsPoint3d> swath = new ArrayList<>();
+            List<Point2d> swath = new ArrayList<>();
             swath.addAll(Arrays.asList(extendedPath.offsetLine(getWidth().si / 2.0).getPoints()));
             swath.addAll(Arrays.asList(extendedPath.offsetLine(-getWidth().si / 2.0).reverse().getPoints()));
-            OtsShape s = new OtsShape(swath);
+            Polygon2d s = new Polygon2d(swath);
             // System.out.println("gtu " + getId() + ", w=" + getWidth() + ", path="
             // + this.operationalPlan.get().getPath().toString() + ", shape=" + s);
             return s;

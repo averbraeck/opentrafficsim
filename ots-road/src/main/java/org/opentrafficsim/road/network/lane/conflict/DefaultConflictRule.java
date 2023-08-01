@@ -4,8 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -112,8 +112,8 @@ public class DefaultConflictRule implements ConflictRule
                     "Both priorities are either 'turn on red' or 'bus stop', which is not allowed. "
                             + "Use BusStopConflictRule for bus stops.");
             // Based on right- or left-hand traffic
-            DirectedPoint p1;
-            DirectedPoint p2;
+            OrientedPoint2d p1;
+            OrientedPoint2d p2;
             try
             {
                 p1 = lane1.getCenterLine().getLocation(longitudinalPosition1);
@@ -123,7 +123,7 @@ public class DefaultConflictRule implements ConflictRule
             {
                 throw new RuntimeException("Conflict position is not on its lane.", exception);
             }
-            double diff = p2.getRotZ() - p1.getRotZ();
+            double diff = p2.getDirZ() - p1.getDirZ();
             while (diff > Math.PI)
             {
                 diff -= 2 * Math.PI;

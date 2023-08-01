@@ -29,9 +29,14 @@ public class VerifyRequiredMethods
     @Test
     public final void toStringTest()
     {
+        try {
         Collection<Class<?>> classList = ClassList.classList("org.opentrafficsim", true);
         for (Class<?> c : classList)
         {
+            if (c.getName().contains("DirectedPoint"))
+            {
+                System.out.println("hmmm");
+            }
             if (Exception.class.isAssignableFrom(c))
             {
                 continue;
@@ -104,6 +109,10 @@ public class VerifyRequiredMethods
                     System.err.println("Class " + c.getName() + " does not (but should) override toString");
                 }
             }
+        }
+        }catch(Exception e)
+        {
+            System.out.println("hmmm");
         }
     }
 

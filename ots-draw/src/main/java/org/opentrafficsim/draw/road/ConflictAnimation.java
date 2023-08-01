@@ -91,15 +91,16 @@ public class ConflictAnimation extends AbstractLineAnimation<Conflict> implement
         }
         graphics.setStroke(stroke);
         AffineTransform saveAT = graphics.getTransform();
-        double angle = -getSource().getLocation().getRotZ();
+        double angle = -getSource().getLocation().getDirZ();
         if (isRotate() && angle != 0.0)
         {
             graphics.rotate(-angle);
         }
         if (conflict.getGeometry() != null)
         {
-            PaintPolygons.paintMultiPolygon(graphics, fillColor, conflict.getLocation(), conflict.getGeometry(), false);
-            
+            PaintPolygons.paintMultiPolygon(graphics, fillColor, conflict.getLocation(), conflict.getGeometry().getPointList(),
+                    false);
+
             /*- This code may be used to visually check conflicts are correctly paired
             if (conflict.conflictPriority().isPriority())
             {

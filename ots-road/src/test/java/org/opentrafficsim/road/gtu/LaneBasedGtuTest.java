@@ -20,6 +20,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.point.Point2d;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
@@ -27,7 +28,6 @@ import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Node;
@@ -102,7 +102,7 @@ public class LaneBasedGtuTest implements UNITS
         int[] linkBoundaries = {0, 25, 50, 100, 101, 102, 103, 104, 105, 150, 175, 200};
         for (int xPos : linkBoundaries)
         {
-            nodes.add(new Node(network, "Node at " + xPos, new OtsPoint3d(xPos, 20, 0), Direction.ZERO));
+            nodes.add(new Node(network, "Node at " + xPos, new Point2d(xPos, 20), Direction.ZERO));
         }
         // Now we can build a series of Links with Lanes on them
         ArrayList<CrossSectionLink> links = new ArrayList<CrossSectionLink>();
@@ -384,8 +384,8 @@ public class LaneBasedGtuTest implements UNITS
             }
             GtuType carType = DefaultsNl.CAR;
             LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
-            Node fromNode = new Node(network, "Node A", new OtsPoint3d(0, 0, 0), Direction.ZERO);
-            Node toNode = new Node(network, "Node B", new OtsPoint3d(1000, 0, 0), Direction.ZERO);
+            Node fromNode = new Node(network, "Node A", new Point2d(0, 0), Direction.ZERO);
+            Node toNode = new Node(network, "Node B", new Point2d(1000, 0), Direction.ZERO);
             String linkName = "AB";
             Lane lane = LaneFactory.makeMultiLane(network, linkName, fromNode, toNode, null, 1, laneType,
                     new Speed(200, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE)[0];

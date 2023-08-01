@@ -10,9 +10,9 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
+import org.djutils.draw.line.PolyLine2d;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
@@ -51,7 +51,7 @@ public class TrafficLightDetectorAnimation extends Renderable2D<TrafficLightDete
     {
         super(detector, simulator);
         this.detector = detector;
-        OtsLine3d coordinates = this.detector.getGeometry();
+        PolyLine2d coordinates = this.detector.getGeometry();
         this.polygon = new Path2D.Float();
         this.polygon.moveTo(coordinates.get(0).x, coordinates.get(0).y);
         for (int i = 1; i < coordinates.size(); i++)

@@ -24,6 +24,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.point.Point2d;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.jfree.data.DomainOrder;
 import org.junit.Test;
@@ -36,7 +37,6 @@ import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -103,20 +103,17 @@ public class ContourPlotTest implements UNITS
      * @return GraphPath&lt;LaneData&gt;; the dummy path
      * @throws Exception when something goes wrong (should not happen)
      */
-    private GraphPath<LaneDataRoad> dummyPath(final OtsSimulatorInterface simulator, final RoadNetwork network)
-            throws Exception
+    private GraphPath<LaneDataRoad> dummyPath(final OtsSimulatorInterface simulator, final RoadNetwork network) throws Exception
     {
         LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
-        Node b = new Node(network, "B", new OtsPoint3d(12345, 0, 0), Direction.ZERO);
+        Node b = new Node(network, "B", new Point2d(12345, 0), Direction.ZERO);
         ArrayList<Lane> result = new ArrayList<Lane>();
-        Lane[] lanes =
-                LaneFactory.makeMultiLane(network, "AtoB", new Node(network, "A", new OtsPoint3d(1234, 0, 0), Direction.ZERO),
-                        b, null, 1, laneType, new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
+        Lane[] lanes = LaneFactory.makeMultiLane(network, "AtoB", new Node(network, "A", new Point2d(1234, 0), Direction.ZERO),
+                b, null, 1, laneType, new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
         result.add(lanes[0]);
         // Make a continuation lane to prevent errors when the operational plan exceeds the available remaining length
-        lanes = LaneFactory.makeMultiLane(network, "BtoC", b,
-                new Node(network, "C", new OtsPoint3d(99999, 0, 0), Direction.ZERO), null, 1, laneType,
-                new Speed(100, KM_PER_HOUR), null, DefaultsNl.VEHICLE);
+        lanes = LaneFactory.makeMultiLane(network, "BtoC", b, new Node(network, "C", new Point2d(99999, 0), Direction.ZERO),
+                null, 1, laneType, new Speed(100, KM_PER_HOUR), null, DefaultsNl.VEHICLE);
         return GraphLaneUtil.createPath("AtoB", lanes[0]);
     }
 
@@ -155,9 +152,8 @@ public class ContourPlotTest implements UNITS
                     @Override
                     public SimEventInterface<Duration> answer(final InvocationOnMock invocation) throws Throwable
                     {
-                        ContourPlotTest.this.lastScheduledEvent =
-                                new SimEvent<Duration>(((Time) invocation.getArgument(0)).minus(Time.ZERO),
-                                        invocation.getArgument(2), "update", null);
+                        ContourPlotTest.this.lastScheduledEvent = new SimEvent<Duration>(
+                                ((Time) invocation.getArgument(0)).minus(Time.ZERO), invocation.getArgument(2), "update", null);
                         return ContourPlotTest.this.lastScheduledEvent;
                     }
                 });

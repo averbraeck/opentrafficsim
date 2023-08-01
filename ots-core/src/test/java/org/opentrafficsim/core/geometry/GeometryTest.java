@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Locale;
 
+import org.djutils.draw.point.Point2d;
 import org.junit.Test;
 
 /**
@@ -22,7 +23,7 @@ public class GeometryTest
     @Test
     public final void geometryTest()
     {
-        OtsPoint3d p0 = new OtsPoint3d(1.2, 2.3, 3.4);
+        Point2d p0 = new Point2d(1.2, 2.3);
         String prefix = "Prefix";
         String result = OtsGeometryUtil.printCoordinate(prefix, p0);
         assertTrue("output starts with prefix", result.startsWith(prefix));

@@ -2,6 +2,7 @@ package org.opentrafficsim.core.geometry;
 
 import java.util.Arrays;
 
+import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 
 /**
@@ -49,17 +50,17 @@ public class ContinuousBezier
                     0.0123412297999871995468056670700372915759, 0.0123412297999871995468056670700372915759};
 
     /** The shape points. */
-    protected OtsPoint3d[] points;
+    protected Point2d[] points;
 
     /**
      * Create a Bezier of any order.
-     * @param points OtsPoint3d... shape points.
+     * @param points Point2d... shape points.
      */
-    public ContinuousBezier(final OtsPoint3d... points)
+    public ContinuousBezier(final Point2d... points)
     {
         Throw.whenNull(points, "Points may not be null.");
         Throw.when(points.length < 2, IllegalArgumentException.class, "Minimum number of points is 2.");
-        for (OtsPoint3d point : points)
+        for (Point2d point : points)
         {
             Throw.whenNull(point, "One of the points is null.");
         }
@@ -76,11 +77,11 @@ public class ContinuousBezier
         Throw.when(this.points.length < 2, IllegalStateException.class,
                 "Requesting derivative on Bezier with less than 2 points");
         int n = this.points.length - 1;
-        OtsPoint3d[] derivativePoints = new OtsPoint3d[n];
+        Point2d[] derivativePoints = new Point2d[n];
         for (int i = 0; i < n; i++)
         {
-            derivativePoints[i] = new OtsPoint3d(n * (this.points[i + 1].x - this.points[i].x),
-                    n * (this.points[i + 1].y - this.points[i].y), 0.0);
+            derivativePoints[i] =
+                    new Point2d(n * (this.points[i + 1].x - this.points[i].x), n * (this.points[i + 1].y - this.points[i].y));
         }
         return new ContinuousBezier(derivativePoints);
     }
@@ -95,7 +96,7 @@ public class ContinuousBezier
         for (int i = 0; i < T.length; i++)
         {
             double t = 0.5 * T[i] + 0.5;
-            OtsPoint3d p = derivative().at(t);
+            Point2d p = derivative().at(t);
             len += C[i] * Math.hypot(p.x, p.y);
         }
         len *= 0.5;
@@ -105,9 +106,9 @@ public class ContinuousBezier
     /**
      * Return the point for the given t value.
      * @param t double; t value, moving from 0 to 1 along the Bezier.
-     * @return OstPoint3d; point of the Bezier at t.
+     * @return Point2d; point of the Bezier at t.
      */
-    public OtsPoint3d at(final double t)
+    public Point2d at(final double t)
     {
         double[] x = new double[this.points.length];
         double[] y = new double[this.points.length];
@@ -116,7 +117,7 @@ public class ContinuousBezier
             x[j] = this.points[j].x;
             y[j] = this.points[j].y;
         }
-        return new OtsPoint3d(Bezier.Bn(t, x), Bezier.Bn(t, y), 0.0);
+        return new Point2d(Bezier.Bn(t, x), Bezier.Bn(t, y));
     }
 
     /**
@@ -127,17 +128,17 @@ public class ContinuousBezier
     public double curvature(final double t)
     {
         ContinuousBezier der = derivative();
-        OtsPoint3d d = der.at(t);
+        Point2d d = der.at(t);
         double denom = Math.pow(d.x * d.x + d.y * d.y, 3.0 / 2.0);
         if (denom == 0.0)
         {
             return Double.POSITIVE_INFINITY;
         }
-        OtsPoint3d dd = der.derivative().at(t);
+        Point2d dd = der.derivative().at(t);
         double numer = d.x * dd.y - dd.x * d.y;
         return numer / denom;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String toString()

@@ -3,6 +3,8 @@ package org.opentrafficsim.core.geometry;
 import java.util.NavigableMap;
 
 import org.djunits.value.vdouble.scalar.Angle;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 
@@ -18,10 +20,10 @@ public class ContinuousStraight implements ContinuousLine
 {
 
     /** Start point with direction. */
-    private final DirectedPoint startPoint;
+    private final OrientedPoint2d startPoint;
 
     /** End point with direction. */
-    private final DirectedPoint endPoint;
+    private final OrientedPoint2d endPoint;
 
     /** Length. */
     private final double length;
@@ -31,26 +33,26 @@ public class ContinuousStraight implements ContinuousLine
      * @param startPoint DirectedPoint; start point.
      * @param length double; length.
      */
-    public ContinuousStraight(final DirectedPoint startPoint, final double length)
+    public ContinuousStraight(final OrientedPoint2d startPoint, final double length)
     {
         Throw.whenNull(startPoint, "Start point may not be null.");
         Throw.when(length <= 0.0, IllegalArgumentException.class, "Length must be above 0.");
         this.startPoint = startPoint;
-        this.endPoint = new DirectedPoint(startPoint.x + length * Math.cos(startPoint.dirZ),
-                startPoint.y + length * Math.sin(startPoint.dirZ), startPoint.z, 0.0, 0.0, startPoint.dirZ);
+        this.endPoint = new OrientedPoint2d(startPoint.x + length * Math.cos(startPoint.dirZ),
+                startPoint.y + length * Math.sin(startPoint.dirZ), startPoint.dirZ);
         this.length = length;
     }
 
     /** {@inheritDoc} */
     @Override
-    public DirectedPoint getStartPoint()
+    public OrientedPoint2d getStartPoint()
     {
         return this.startPoint;
     }
 
     /** {@inheritDoc} */
     @Override
-    public DirectedPoint getEndPoint()
+    public OrientedPoint2d getEndPoint()
     {
         return this.endPoint;
     }
@@ -98,7 +100,9 @@ public class ContinuousStraight implements ContinuousLine
      */
     public OtsLine3d flatten()
     {
-        return Try.assign(() -> new OtsLine3d(new OtsPoint3d(this.startPoint), new OtsPoint3d(this.endPoint)),
+        return Try.assign(
+                () -> new OtsLine3d(new Point2d(this.startPoint.x, this.startPoint.y),
+                        new Point2d(this.endPoint.x, this.endPoint.y)),
                 "Unexpected exception while creating straight OtsLine3d.");
     }
 

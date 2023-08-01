@@ -12,16 +12,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.EventType;
 import org.junit.Test;
-import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.mock.MockGtu;
@@ -89,7 +88,7 @@ public class NetworkTest implements EventListener
         assertEquals("GTU removed event count is 0", 0, this.gtuRemovedCount);
         assertEquals("other event count is 0", 0, this.otherEventCount);
         assertEquals("Node map is empty", 0, network.getNodeMap().size());
-        Node node1 = new Node(network, "node1", new OtsPoint3d(10, 20, 30));
+        Node node1 = new Node(network, "node1", new Point2d(10, 20));
         assertEquals("link add event count is 0", 0, this.linkAddedCount);
         assertEquals("link removed event count is 0", 0, this.linkRemovedCount);
         assertEquals("node add event count is 1", 1, this.nodeAddedCount);
@@ -105,7 +104,7 @@ public class NetworkTest implements EventListener
         assertTrue("network contains a node with id node1", network.containsNode("node1"));
         // Create a node that is NOT in this network; to do that we must create another network
         Network otherNetwork = new Network("other network", simulator);
-        Node node2 = new Node(otherNetwork, "node2", new OtsPoint3d(11, 12, 13));
+        Node node2 = new Node(otherNetwork, "node2", new Point2d(11, 12));
         assertFalse("node2 is NOT in network", network.containsNode(node2));
         assertEquals("link add event count is 0", 0, this.linkAddedCount);
         assertEquals("link removed event count is 0", 0, this.linkRemovedCount);
@@ -116,7 +115,7 @@ public class NetworkTest implements EventListener
         assertEquals("other event count is 0", 0, this.otherEventCount);
         try
         {
-            new Node(network, "node1", new OtsPoint3d(110, 20, 30));
+            new Node(network, "node1", new Point2d(110, 20));
             fail("duplicate node id should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -181,7 +180,7 @@ public class NetworkTest implements EventListener
         {
             // Ignore expected exception
         }
-        Node node3 = new Node(network, "node3", new OtsPoint3d(11, 12, 13));
+        Node node3 = new Node(network, "node3", new Point2d(11, 12));
         assertEquals("link add event count is 0", 0, this.linkAddedCount);
         assertEquals("link removed event count is 0", 0, this.linkRemovedCount);
         assertEquals("node add event count is 3", 3, this.nodeAddedCount);
@@ -213,7 +212,7 @@ public class NetworkTest implements EventListener
         assertEquals("link1 is the link connecting node1 to node3", link1, network.getLink(node1, node3));
         assertEquals("link1 is the link connecting node named node1 to node named node3", link1,
                 network.getLink("node1", "node3"));
-        Node node4 = new Node(otherNetwork, "node4", new OtsPoint3d(-2, -3, -4));
+        Node node4 = new Node(otherNetwork, "node4", new Point2d(-2, -3));
         Link otherLink = new Link(otherNetwork, "otherLink", node2, node4, DefaultsNl.ROAD,
                 new OtsLine3d(node2.getPoint(), node4.getPoint()));
         try
@@ -344,7 +343,7 @@ public class NetworkTest implements EventListener
         assertEquals("extend top", 500, extent.getMaxY(), 0);
 
         // Add one node
-        new Node(network, "node1", new OtsPoint3d(10, 20, 30));
+        new Node(network, "node1", new Point2d(10, 20));
         extent = network.getExtent();
         double margin = Node.BOUNDINGRADIUS * (1.0 + Network.EXTENT_MARGIN);
         assertEquals("extend left", 10 - margin, extent.getMinX(), 0.01);
@@ -352,7 +351,7 @@ public class NetworkTest implements EventListener
         assertEquals("extend right", 10 + margin, extent.getMaxX(), 0.01);
         assertEquals("extend top", 20 + margin, extent.getMaxY(), 0.01);
         // Add another node
-        new Node(network, "node2", new OtsPoint3d(110, 220, 330));
+        new Node(network, "node2", new Point2d(110, 220));
         extent = network.getExtent();
         double xMargin = (100 + 2 * Node.BOUNDINGRADIUS) * Network.EXTENT_MARGIN / 2;
         double yMargin = (200 + 2 * Node.BOUNDINGRADIUS) * Network.EXTENT_MARGIN / 2;
@@ -406,8 +405,8 @@ public class NetworkTest implements EventListener
     public final void testRouteMap() throws NetworkException, OtsGeometryException
     {
         Network network = new Network("Route map test network", MockSimulator.createMock());
-        Node node1 = new Node(network, "node1", new OtsPoint3d(10, 20, 30));
-        Node node2 = new Node(network, "node2", new OtsPoint3d(110, 20, 30));
+        Node node1 = new Node(network, "node1", new Point2d(10, 20));
+        Node node2 = new Node(network, "node2", new Point2d(110, 20));
         List<Node> nodeList = new ArrayList<>();
         nodeList.add(node1);
         nodeList.add(node2);
@@ -442,7 +441,7 @@ public class NetworkTest implements EventListener
             // Ignore expected exception
         }
         Network otherNetwork = new Network("other Route map test network", MockSimulator.createMock());
-        Node badNode = new Node(otherNetwork, "nodeInOtherNetwork", new OtsPoint3d(100, 200, 0));
+        Node badNode = new Node(otherNetwork, "nodeInOtherNetwork", new Point2d(100, 200));
         List<Node> badNodeList = new ArrayList<>();
         badNodeList.add(node1);
         badNodeList.add(node2);
@@ -681,7 +680,7 @@ public class NetworkTest implements EventListener
         {
             double angle = i * Math.PI * 2 / maxNode;
             nodes.add(new Node(network, "node" + i,
-                    new OtsPoint3d(centerX + radius * Math.cos(angle), centerY + radius * Math.sin(angle), 20)));
+                    new Point2d(centerX + radius * Math.cos(angle), centerY + radius * Math.sin(angle))));
         }
         // Create bi-directional links between all adjacent nodes
         Node prevNode = nodes.get(maxNode - 1);
@@ -763,7 +762,7 @@ public class NetworkTest implements EventListener
             for (int j = 0; j < gridSize; j++)
             {
                 double x = 10.0 * (Math.max(Math.min(sigma * r.nextGaussian(), sigmaLim), -sigmaLim) + j);
-                OtsPoint3d point = new OtsPoint3d(x, y);
+                Point2d point = new Point2d(x, y);
                 Node node = new Node(network, "Node " + nodeNumber, point);
 
                 // origin-destination
@@ -817,7 +816,7 @@ public class NetworkTest implements EventListener
         {
             if (i > 0)
             {
-                length += route.getNode(i - 1).getPoint().distance(route.getNode(i).getPoint()).si;
+                length += route.getNode(i - 1).getPoint().distance(route.getNode(i).getPoint());
             }
         }
         return length;

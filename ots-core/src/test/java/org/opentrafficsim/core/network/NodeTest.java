@@ -9,13 +9,13 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Direction;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.junit.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.mock.MockSimulator;
 
@@ -41,21 +41,22 @@ public class NodeTest
     public final void testNode() throws NetworkException, OtsGeometryException
     {
         Network network = new Network("Node test network", MockSimulator.createMock());
-        OtsPoint3d point1 = new OtsPoint3d(20, 40, 60);
+        Point2d point1 = new Point2d(20, 40);
         Direction heading = Direction.instantiateSI(Math.toRadians(123));
+        OrientedPoint2d point1Oriented = new OrientedPoint2d(point1, heading.si);
         Node node1 = new Node(network, "node 1", point1, heading);
         assertEquals("network matches", network, node1.getNetwork());
         assertEquals("name matches", "node 1", node1.getId());
-        assertEquals("point matches", point1, node1.getPoint());
-        assertEquals("getLocation", new DirectedPoint(point1.x, point1.y, point1.z, 0.0, 0.0, Math.toRadians(123)),
-                node1.getLocation());
+        assertEquals("point matches", point1Oriented, node1.getPoint());
+        assertEquals("getLocation", new OrientedPoint2d(point1.x, point1.y, Math.toRadians(123)), node1.getLocation());
         assertTrue("name is in toString", node1.toString().contains(node1.getId()));
         assertEquals("heading matches", heading.si, node1.getHeading().si, 0.00001);
-        OtsPoint3d point2 = new OtsPoint3d(120, 240, 60);
+        Point2d point2 = new Point2d(120, 240);
+        OrientedPoint2d point2Oriented = new OrientedPoint2d(120, 240);
         Node node2 = new Node(network, "node 2", point2);
         assertEquals("network matches", network, node2.getNetwork());
         assertEquals("name matches", "node 2", node2.getId());
-        assertEquals("point matches", point2, node2.getPoint());
+        assertEquals("point matches", point2Oriented, node2.getPoint());
         assertTrue("Node 1 matches itself", node1.equals(node1));
         assertFalse("Node 1 does not match null", node1.equals(null));
         assertFalse("Node 1 does not match node 2", node1.equals(node2));
@@ -69,19 +70,19 @@ public class NodeTest
         assertEquals("node 1 has no links", 0, node1.getLinks().size());
 
         // Create a couple of links
-        Link link1 = new Link(network, "link 1", node1, node2, DefaultsNl.ROAD,
-                new OtsLine3d(node1.getPoint(), node2.getPoint()));
+        Link link1 =
+                new Link(network, "link 1", node1, node2, DefaultsNl.ROAD, new OtsLine3d(node1.getPoint(), node2.getPoint()));
         assertEquals("node 1 has one link", 1, node1.getLinks().size());
         assertEquals("node 2 has one link", 1, node2.getLinks().size());
         assertEquals("link at node 1 is link1", link1, node1.getLinks().iterator().next());
         assertEquals("link at node 2 is link1", link1, node2.getLinks().iterator().next());
-        Node node4 = new Node(network, "node 3", new OtsPoint3d(10, 10, 10));
-        Link link2 = new Link(network, "link 2", node1, node4, DefaultsNl.ROAD,
-                new OtsLine3d(node1.getPoint(), node4.getPoint()));
-        Link link3 = new Link(network, "link 3", node4, node2, DefaultsNl.ROAD,
-                new OtsLine3d(node4.getPoint(), node2.getPoint()));
-        Link link4 = new Link(network, "link 4", node2, node1, DefaultsNl.ROAD,
-                new OtsLine3d(node2.getPoint(), node1.getPoint()));
+        Node node4 = new Node(network, "node 3", new Point2d(10, 10));
+        Link link2 =
+                new Link(network, "link 2", node1, node4, DefaultsNl.ROAD, new OtsLine3d(node1.getPoint(), node4.getPoint()));
+        Link link3 =
+                new Link(network, "link 3", node4, node2, DefaultsNl.ROAD, new OtsLine3d(node4.getPoint(), node2.getPoint()));
+        Link link4 =
+                new Link(network, "link 4", node2, node1, DefaultsNl.ROAD, new OtsLine3d(node2.getPoint(), node1.getPoint()));
         assertEquals("node 1 has three links", 3, node1.getLinks().size());
         assertEquals("node 2 has three links", 3, node2.getLinks().size());
         assertEquals("node 4 has two links", 2, node4.getLinks().size());
@@ -103,7 +104,7 @@ public class NodeTest
             // Ignore expected exception
         }
         assertTrue("node 1 has direct connection to node 2", node1.isConnectedTo(DefaultsNl.VEHICLE, node2));
-        Node node5 = new Node(network, "node 5", new OtsPoint3d(1000, 0, 0));
+        Node node5 = new Node(network, "node 5", new Point2d(1000, 0));
         assertFalse("node 1 has no direct connection to node 5", node1.isConnectedTo(DefaultsNl.VEHICLE, node5));
         Link link5 = new Link(network, "link 5", node5, node1, DefaultsNl.FREEWAY,
                 new OtsLine3d(node1.getPoint(), node5.getPoint()));
@@ -124,11 +125,11 @@ public class NodeTest
     {
         OtsSimulatorInterface simulator = MockSimulator.createMock();
         Network network = new Network("connection test network", simulator);
-        Node node = new Node(network, "main", new OtsPoint3d(10, 100, 10));
+        Node node = new Node(network, "main", new Point2d(10, 100));
         int maxNeighbor = 10;
         for (int i = 0; i < maxNeighbor; i++)
         {
-            Node neighborNode = new Node(network, "neighbor node " + i, new OtsPoint3d(20 + 10 * i, 0, 10));
+            Node neighborNode = new Node(network, "neighbor node " + i, new Point2d(20 + 10 * i, 0));
             new Link(network, "link to neighbor node " + i, node, neighborNode, DefaultsNl.ROAD,
                     new OtsLine3d(node.getPoint(), neighborNode.getPoint()));
             new Link(network, "link from neighbor node " + i, neighborNode, node, DefaultsNl.ROAD,
@@ -268,11 +269,11 @@ public class NodeTest
     {
         OtsSimulatorInterface simulator = MockSimulator.createMock();
         Network network = new Network("connectionSets test network", simulator);
-        Node node = new Node(network, "main", new OtsPoint3d(10, 100, 10));
+        Node node = new Node(network, "main", new Point2d(10, 100));
         int maxNeighbor = 10;
         for (int i = 0; i < maxNeighbor; i++)
         {
-            Node neighborNode = new Node(network, "neighbor node " + i, new OtsPoint3d(20 + 10 * i, 0, 10));
+            Node neighborNode = new Node(network, "neighbor node " + i, new Point2d(20 + 10 * i, 0));
             new Link(network, "link from neighbor node " + i, neighborNode, node, DefaultsNl.ROAD,
                     new OtsLine3d(neighborNode.getPoint(), node.getPoint()));
             new Link(network, "link to neighbor node " + i, node, neighborNode, DefaultsNl.ROAD,

@@ -21,6 +21,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.opentrafficsim.base.parameters.Parameters;
@@ -29,7 +30,6 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -90,7 +90,7 @@ public class TrafficLightDetectorTest implements EventListener
         double cumulativeLength = 0;
         for (int nodeNumber = 0; nodeNumber <= lengths.length; nodeNumber++)
         {
-            Node node = new Node(network, "node" + nodeNumber, new OtsPoint3d(cumulativeLength, 0, 0), Direction.ZERO);
+            Node node = new Node(network, "node" + nodeNumber, new Point2d(cumulativeLength, 0), Direction.ZERO);
             if (null != prevNode)
             {
                 Node fromNode = prevNode;
@@ -127,8 +127,7 @@ public class TrafficLightDetectorTest implements EventListener
         {
             if (lane.getLength().ge(remainingLength))
             {
-                boolean reverse =
-                        lane.getLink().getEndNode().getPoint().x < lane.getLink().getStartNode().getPoint().x;
+                boolean reverse = lane.getLink().getEndNode().getPoint().x < lane.getLink().getStartNode().getPoint().x;
                 if (reverse)
                 {
                     remainingLength = lane.getLength().minus(remainingLength);

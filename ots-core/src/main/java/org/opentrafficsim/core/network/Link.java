@@ -5,6 +5,10 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
@@ -15,11 +19,7 @@ import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.SpatialObject;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.Bounds;
-import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsShape;
 import org.opentrafficsim.core.gtu.Gtu;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -78,7 +78,10 @@ public class Link extends LocalEventProducer
     private final OtsLine3d designLine;
 
     /** the shape. */
-    private final OtsShape shape;
+    private final Polygon2d shape;
+    
+    /** Bounds. */
+    private final Bounds2d bounds;
 
     /** The GTUs on this Link. */
     private final Set<Gtu> gtus = new LinkedHashSet<>();
@@ -113,14 +116,8 @@ public class Link extends LocalEventProducer
         this.startNode.addLink(this);
         this.endNode.addLink(this);
         this.designLine = designLine;
-        try
-        {
-            this.shape = new OtsShape(this.designLine.offsetLine(0.5).getPoints());
-        }
-        catch (OtsGeometryException exception)
-        {
-            throw new NetworkException(exception);
-        }
+        this.shape = new Polygon2d(this.designLine.offsetLine(0.5).getPoints());
+        this.bounds = new Bounds2d(this.shape.getBounds().getDeltaX(), this.shape.getBounds().getDeltaY());
         this.network.addLink(this);
     }
 
@@ -235,7 +232,7 @@ public class Link extends LocalEventProducer
 
     /** {@inheritDoc} */
     @Override
-    public OtsShape getShape()
+    public Polygon2d getShape()
     {
         return this.shape;
     }
@@ -259,17 +256,17 @@ public class Link extends LocalEventProducer
     }
 
     /** the location with 0.01 m extra height. */
-    private DirectedPoint zLocation = null;
+    private OrientedPoint2d zLocation = null;
 
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public DirectedPoint getLocation()
+    public OrientedPoint2d getLocation()
     {
         if (this.zLocation == null)
         {
-            DirectedPoint p = this.designLine.getLocation();
-            this.zLocation = new DirectedPoint(p.x, p.y, p.z + 0.01, p.getRotX(), p.getRotY(), p.getRotZ());
+            Point2d p = this.designLine.getLocation();
+            this.zLocation = new OrientedPoint2d(p.x, p.y, 0.0);
         }
         return this.zLocation;
     }
@@ -277,9 +274,9 @@ public class Link extends LocalEventProducer
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Bounds getBounds()
+    public Bounds2d getBounds()
     {
-        return this.designLine.getBounds();
+        return this.bounds;
     }
 
     /** {@inheritDoc} */

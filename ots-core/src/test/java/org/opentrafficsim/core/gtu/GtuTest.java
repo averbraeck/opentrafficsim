@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
@@ -16,6 +15,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.Parameters;
@@ -23,14 +23,13 @@ import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.perception.PerceivableContext;
 
@@ -125,8 +124,7 @@ public class GtuTest
 
         };
         Parameters parameters = new ParameterSet();
-        DirectedPoint initialLocation =
-                new DirectedPoint(10, 20, 30, Math.toRadians(10), Math.toRadians(20), Math.toRadians(30));
+        OrientedPoint2d initialLocation = new OrientedPoint2d(10, 20, Math.toRadians(30));
         GtuType gtuType1 = new GtuType("gtu type 1", DefaultsNl.VEHICLE);
         GtuType gtuType2 = new GtuType("gtu type 2", DefaultsNl.VEHICLE);
         for (String id : new String[] {"id1", "id2"})
@@ -218,7 +216,7 @@ public class GtuTest
 
         try
         {
-            gtu.init(strategicalPlanner, new DirectedPoint(Double.NaN, 20, 30), initialSpeed);
+            gtu.init(strategicalPlanner, new OrientedPoint2d(Double.NaN, 20, 30), initialSpeed);
             fail("null initialSpeed should have thrown an IllegalArgumentException");
         }
         catch (IllegalArgumentException ge)
@@ -228,7 +226,7 @@ public class GtuTest
 
         try
         {
-            gtu.init(strategicalPlanner, new DirectedPoint(10, Double.NaN, 30), initialSpeed);
+            gtu.init(strategicalPlanner, new OrientedPoint2d(10, Double.NaN, 30), initialSpeed);
             fail("null initialSpeed should have thrown an IllegalArgumentException");
         }
         catch (IllegalArgumentException ge)
@@ -238,7 +236,7 @@ public class GtuTest
 
         try
         {
-            gtu.init(strategicalPlanner, new DirectedPoint(10, 20, Double.NaN), initialSpeed);
+            gtu.init(strategicalPlanner, new OrientedPoint2d(10, 20, Double.NaN), initialSpeed);
             fail("null initialSpeed should have thrown an IllegalArgumentException");
         }
         catch (IllegalArgumentException ge)

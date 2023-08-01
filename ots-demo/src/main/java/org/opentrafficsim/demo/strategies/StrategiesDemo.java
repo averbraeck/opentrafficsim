@@ -33,6 +33,8 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.cli.CliException;
 import org.djutils.cli.CliUtil;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.exceptions.Try;
@@ -47,10 +49,7 @@ import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.ContinuousArc;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -512,20 +511,19 @@ public class StrategiesDemo extends AbstractSimulationScript
 
         double radius = 150;
         Speed speedLimit = new Speed(120.0, SpeedUnit.KM_PER_HOUR);
-        Node nodeA = new Node(network, "A", new OtsPoint3d(-radius, 0, 0), new Direction(270, DirectionUnit.EAST_DEGREE));
-        Node nodeB = new Node(network, "B", new OtsPoint3d(radius, 0, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
+        Node nodeA = new Node(network, "A", new Point2d(-radius, 0), new Direction(270, DirectionUnit.EAST_DEGREE));
+        Node nodeB = new Node(network, "B", new Point2d(radius, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
 
-        ContinuousArc half1 = new ContinuousArc(new DirectedPoint(radius, 0.0, 0.0, 0.0, 0.0, Math.PI / 2), radius, true,
-                Angle.instantiateSI(Math.PI));
+        ContinuousArc half1 =
+                new ContinuousArc(new OrientedPoint2d(radius, 0.0, Math.PI / 2), radius, true, Angle.instantiateSI(Math.PI));
         List<Lane> lanes1 = new LaneFactory(network, nodeB, nodeA, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPRIGHT,
                 DefaultsNl.VEHICLE, half1).leftToRight(0.0, Length.instantiateSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit)
                         .addLanes(Type.DASHED).getLanes();
-        ContinuousArc half2 = new ContinuousArc(new DirectedPoint(-radius, 0.0, 0.0, 0.0, 0.0, -Math.PI / 2), radius, true,
-                Angle.instantiateSI(Math.PI));
+        ContinuousArc half2 =
+                new ContinuousArc(new OrientedPoint2d(-radius, 0.0, -Math.PI / 2), radius, true, Angle.instantiateSI(Math.PI));
         List<Lane> lanes2 = new LaneFactory(network, nodeA, nodeB, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPRIGHT,
-                DefaultsNl.VEHICLE, half2)
-                        .leftToRight(0.0, Length.instantiateSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit).addLanes(Type.DASHED)
-                        .getLanes();
+                DefaultsNl.VEHICLE, half2).leftToRight(0.0, Length.instantiateSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit)
+                        .addLanes(Type.DASHED).getLanes();
 
         // Strategical factories
         PerceptionFactory perceptionFactory = new LmrsStrategiesPerceptionFactory();

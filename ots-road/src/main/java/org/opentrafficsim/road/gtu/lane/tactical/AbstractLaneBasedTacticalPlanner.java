@@ -131,24 +131,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         laneListForward.add(lastLane);
         Length distanceToEndOfLane;
         OtsLine3d path;
-        try
-        {
-            distanceToEndOfLane = lane.getLength().minus(position);
-            path = lane.getCenterLine().extract(position, lane.getLength());
-        }
-        catch (OtsGeometryException exception)
-        {
-            // System.err.println(gtu + ": " + exception.getMessage());
-            // System.err.println(lane + ", len=" + lane.getLength());
-            // System.err.println(position);
-            // throw new GTUException(exception);
-
-            // section on current lane too short, floating point operations cause only a single point at the end of the lane
-            path = null;
-            distanceToEndOfLane = Length.ZERO;
-            laneListForward.clear();
-            startPosition = Length.ZERO;
-        }
+        distanceToEndOfLane = lane.getLength().minus(position);
+        path = lane.getCenterLine().extract(position, lane.getLength());
 
         while (distanceToEndOfLane.lt(maxHeadway))
         {

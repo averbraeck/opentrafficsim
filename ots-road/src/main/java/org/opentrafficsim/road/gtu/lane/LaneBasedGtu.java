@@ -14,6 +14,7 @@ import java.util.SortedMap;
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.PositionUnit;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -21,6 +22,10 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.PositionVector;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
+import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
@@ -31,11 +36,9 @@ import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.core.geometry.OtsLine3d.FractionalFallback;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -227,14 +230,14 @@ public class LaneBasedGtu extends Gtu
 
         }
 
-        DirectedPoint lastPoint = null;
+        OrientedPoint2d lastPoint = null;
         for (LanePosition pos : initialLongitudinalPositions)
         {
             // Throw.when(lastPoint != null && pos.getLocation().distance(lastPoint) > initialLocationThresholdDifference.si,
             // GTUException.class, "initial locations for GTU have distance > " + initialLocationThresholdDifference);
             lastPoint = pos.getLocation();
         }
-        DirectedPoint initialLocation = lastPoint;
+        OrientedPoint2d initialLocation = lastPoint;
 
         // TODO: move this to super.init(...), and remove setOperationalPlan(...) method
         // Give the GTU a 1 micrometer long operational plan, or a stand-still plan, so the first move and events will work
@@ -245,9 +248,9 @@ public class LaneBasedGtu extends Gtu
         }
         else
         {
-            OtsPoint3d p2 = new OtsPoint3d(initialLocation.x + 1E-6 * Math.cos(initialLocation.getRotZ()),
-                    initialLocation.y + 1E-6 * Math.sin(initialLocation.getRotZ()), initialLocation.z);
-            OtsLine3d path = new OtsLine3d(new OtsPoint3d(initialLocation), p2);
+            Point2d p2 = new Point2d(initialLocation.x + 1E-6 * Math.cos(initialLocation.getDirZ()),
+                    initialLocation.y + 1E-6 * Math.sin(initialLocation.getDirZ()));
+            OtsLine3d path = new OtsLine3d(initialLocation, p2);
             setOperationalPlan(new OperationalPlan(this, path, now,
                     Segments.off(initialSpeed, path.getLength().divide(initialSpeed), Acceleration.ZERO)));
         }
@@ -442,7 +445,7 @@ public class LaneBasedGtu extends Gtu
         List<CrossSection> newLanes = new ArrayList<>();
         int index = laneChangeDirection.isLeft() ? 0 : 1;
         int numRegistered = 0;
-        DirectedPoint point = getLocation();
+        OrientedPoint2d point = getLocation();
         Map<Lane, Double> addToLanes = new LinkedHashMap<>();
         for (CrossSection crossSection : this.crossSections)
         {
@@ -539,7 +542,7 @@ public class LaneBasedGtu extends Gtu
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    protected synchronized boolean move(final DirectedPoint fromLocation)
+    protected synchronized boolean move(final OrientedPoint2d fromLocation)
             throws SimRuntimeException, GtuException, OperationalPlanException, NetworkException, ParameterException
     {
         if (this.isDestroyed())
@@ -593,8 +596,10 @@ public class LaneBasedGtu extends Gtu
             }
 
             fireTimedEvent(LaneBasedGtu.LANEBASED_MOVE_EVENT,
-                    new Object[] {getId(), new OtsPoint3d(fromLocation).doubleVector(PositionUnit.METER),
-                            OtsPoint3d.direction(fromLocation, DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
+                    new Object[] {getId(),
+                            DoubleVector.instantiate(new double[] {fromLocation.x, fromLocation.y}, PositionUnit.METER,
+                                    StorageType.DENSE),
+                            new Direction(fromLocation.getDirZ(), DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
                             getTurnIndicatorStatus().name(), getOdometer(), dlp.getLane().getLink().getId(),
                             dlp.getLane().getId(), dlp.getPosition()},
                     getSimulator().getSimulatorTime());
@@ -662,7 +667,7 @@ public class LaneBasedGtu extends Gtu
         if (possiblyNearNextSection)
         {
             CrossSectionLink link = lastCrossSection.getLanes().get(0).getLink();
-            OtsLine3d enterLine = link.getEndLine();
+            PolyLine2d enterLine = link.getEndLine();
             Time enterTime = timeAtLine(enterLine, getFront());
             if (enterTime != null)
             {
@@ -801,7 +806,7 @@ public class LaneBasedGtu extends Gtu
         if (possiblyNearNextSection)
         {
             CrossSectionLink link = firstCrossSection.getLanes().get(0).getLink();
-            OtsLine3d leaveLine = link.getEndLine();
+            PolyLine2d leaveLine = link.getEndLine();
             Time leaveTime = timeAtLine(leaveLine, getRear());
             if (leaveTime == null)
             {
@@ -968,31 +973,31 @@ public class LaneBasedGtu extends Gtu
     /**
      * Returns an estimation of when the relative position will reach the line. Returns {@code null} if this does not occur
      * during the current operational plan.
-     * @param line OtsLine3d; line, i.e. lateral line at link start or lateral entrance of sensor
+     * @param line PolyLine2d; line, i.e. lateral line at link start or lateral entrance of sensor
      * @param relativePosition RelativePosition; position to cross the line
      * @return estimation of when the relative position will reach the line, {@code null} if this does not occur during the
      *         current operational plan
      * @throws GtuException position error
      */
-    private Time timeAtLine(final OtsLine3d line, final RelativePosition relativePosition) throws GtuException
+    private Time timeAtLine(final PolyLine2d line, final RelativePosition relativePosition) throws GtuException
     {
         Throw.when(line.size() != 2, IllegalArgumentException.class, "Line to cross with path should have 2 points.");
         OtsLine3d path = getOperationalPlan().getPath();
-        OtsPoint3d[] points;
+        Point2d[] points;
         double adjust;
         if (relativePosition.getDx().gt0())
         {
             // as the position is downstream of the reference, we need to attach some distance at the end
-            points = new OtsPoint3d[path.size() + 1];
+            points = new Point2d[path.size() + 1];
             System.arraycopy(path.getPoints(), 0, points, 0, path.size());
-            points[path.size()] = new OtsPoint3d(path.getLocationExtendedSI(path.getLength().si + relativePosition.getDx().si));
+            points[path.size()] = path.getLocationExtendedSI(path.getLength().si + relativePosition.getDx().si);
             adjust = -relativePosition.getDx().si;
         }
         else if (relativePosition.getDx().lt0())
         {
-            points = new OtsPoint3d[path.size() + 1];
+            points = new Point2d[path.size() + 1];
             System.arraycopy(path.getPoints(), 0, points, 1, path.size());
-            points[0] = new OtsPoint3d(path.getLocationExtendedSI(relativePosition.getDx().si));
+            points[0] = path.getLocationExtendedSI(relativePosition.getDx().si);
             adjust = 0.0;
         }
         else
@@ -1005,19 +1010,34 @@ public class LaneBasedGtu extends Gtu
         double cumul = 0.0;
         for (int i = 0; i < points.length - 1; i++)
         {
-            OtsPoint3d intersect;
-            try
+            Point2d intersect;
+            intersect = Point2d.intersectionOfLineSegments(points[i], points[i + 1], line.get(0), line.get(1));
+
+            /*
+             * SKL 31-07-2023: Using the djunits code rather than the older OTS point and line code, causes an intersection on a
+             * polyline to sometimes not be found, if the path has a point that is essentially on the line to cross. Clearly,
+             * when entering a next lane/link, this is often the case as the GTU path is made from lane center lines that have
+             * the endpoint of the lanes in it.
+             */
+            if (intersect == null)
             {
-                intersect = OtsPoint3d.intersectionOfLineSegments(points[i], points[i + 1], line.get(0), line.get(1));
+                double projectionFraction = line.projectOrthogonalFractionalExtended(points[i]);
+                if (0.0 <= projectionFraction && projectionFraction <= 1.0)
+                {
+                    Point2d projection = line.getLocationFraction(projectionFraction);
+                    double distance = projection.distance(points[i]);
+                    if (distance < 1e-6)
+                    {
+                        // CategoryLogger.always().error("GTU {} enters cross-section through forced intersection of lines.",
+                        // getId()); // this line pops up a lot in certain simulations making them slow
+                        intersect = projection;
+                    }
+                }
             }
-            catch (OtsGeometryException exception)
-            {
-                // should not occur, we check line.size() == 2
-                throw new RuntimeException("Unexpected exception while obtaining points from line to cross.", exception);
-            }
+
             if (intersect != null)
             {
-                cumul += points[i].distance(intersect).si;
+                cumul += points[i].distance(intersect);
                 cumul += adjust; // , 0.0); // possible rear is already considered in first segment
                 // return time at distance
                 if (cumul < 0.0)
@@ -1038,7 +1058,7 @@ public class LaneBasedGtu extends Gtu
             }
             else if (i < points.length - 2)
             {
-                cumul += points[i].distance(points[i + 1]).si;
+                cumul += points[i].distance(points[i + 1]);
             }
         }
         // no intersect
@@ -1169,8 +1189,9 @@ public class LaneBasedGtu extends Gtu
                     }
                     Throw.when(lateralIndex == -1, GtuException.class, "GTU %s is not on lane %s.", this, lane);
 
-                    DirectedPoint p = plan.getLocation(when, relativePosition);
-                    double f = lane.getCenterLine().projectFractional(null, null, p.x, p.y, FractionalFallback.NaN);
+                    OrientedPoint2d p = plan.getLocation(when, relativePosition);
+                    double f = lane.getCenterLine().projectFractional(lane.getLink().getStartNode().getHeading(),
+                            lane.getLink().getEndNode().getHeading(), p.x, p.y, FractionalFallback.NaN);
                     if (!Double.isNaN(f))
                     {
                         loc = f * lane.getLength().si;
@@ -1183,7 +1204,8 @@ public class LaneBasedGtu extends Gtu
                         for (int i = crossSectionIndex - 1; i >= 0; i--)
                         {
                             Lane tryLane = whenCrossSections.get(i).getLanes().get(lateralIndex);
-                            f = tryLane.getCenterLine().projectFractional(null, null, p.x, p.y, FractionalFallback.NaN);
+                            f = tryLane.getCenterLine().projectFractional(tryLane.getLink().getStartNode().getHeading(),
+                                    tryLane.getLink().getEndNode().getHeading(), p.x, p.y, FractionalFallback.NaN);
                             if (!Double.isNaN(f))
                             {
                                 f = 1 - f;
@@ -1199,7 +1221,8 @@ public class LaneBasedGtu extends Gtu
                             for (int i = crossSectionIndex + 1; i < whenCrossSections.size(); i++)
                             {
                                 Lane tryLane = whenCrossSections.get(i).getLanes().get(lateralIndex);
-                                f = tryLane.getCenterLine().projectFractional(null, null, p.x, p.y, FractionalFallback.NaN);
+                                f = tryLane.getCenterLine().projectFractional(tryLane.getLink().getStartNode().getHeading(),
+                                        tryLane.getLink().getEndNode().getHeading(), p.x, p.y, FractionalFallback.NaN);
                                 if (!Double.isNaN(f))
                                 {
                                     loc = distance + f * tryLane.getLength().si;
@@ -1412,7 +1435,7 @@ public class LaneBasedGtu extends Gtu
         {
             // ignore. not important at destroy
         }
-        DirectedPoint location = this.getOperationalPlan() == null ? new DirectedPoint(0.0, 0.0, 0.0) : getLocation();
+        OrientedPoint2d location = this.getOperationalPlan() == null ? new OrientedPoint2d(0.0, 0.0, 0.0) : getLocation();
         synchronized (this.lock)
         {
             for (CrossSection crossSection : this.crossSections)
@@ -1440,16 +1463,20 @@ public class LaneBasedGtu extends Gtu
         {
             Lane referenceLane = dlp.getLane();
             fireTimedEvent(LaneBasedGtu.LANEBASED_DESTROY_EVENT,
-                    new Object[] {getId(), new OtsPoint3d(location).doubleVector(PositionUnit.METER),
-                            OtsPoint3d.direction(location, DirectionUnit.EAST_RADIAN), getOdometer(),
+                    new Object[] {getId(),
+                            DoubleVector.instantiate(new double[] {location.x, location.y}, PositionUnit.METER,
+                                    StorageType.DENSE),
+                            new Direction(location.getDirZ(), DirectionUnit.EAST_RADIAN), getOdometer(),
                             referenceLane.getLink().getId(), referenceLane.getId(), dlp.getPosition()},
                     getSimulator().getSimulatorTime());
         }
         else
         {
             fireTimedEvent(LaneBasedGtu.LANEBASED_DESTROY_EVENT,
-                    new Object[] {getId(), new OtsPoint3d(location).doubleVector(PositionUnit.METER),
-                            OtsPoint3d.direction(location, DirectionUnit.EAST_RADIAN), getOdometer(), null, null, null},
+                    new Object[] {getId(),
+                            DoubleVector.instantiate(new double[] {location.x, location.y}, PositionUnit.METER,
+                                    StorageType.DENSE),
+                            new Direction(location.getDirZ(), DirectionUnit.EAST_RADIAN), getOdometer(), null, null, null},
                     getSimulator().getSimulatorTime());
         }
         cancelAllEvents();
@@ -1599,17 +1626,17 @@ public class LaneBasedGtu extends Gtu
         }
         Throw.when(latIndex == -1 || longIndex == -1, GtuException.class, "GTU %s is not on %s", getId(), lane);
         Lane refCrossSectionLane = this.crossSections.get(longIndex).getLanes().get(latIndex);
-        DirectedPoint loc = getLocation();
+        OrientedPoint2d loc = getLocation();
         double f = refCrossSectionLane.getCenterLine().projectOrthogonal(loc.x, loc.y);
-        DirectedPoint p = Try.assign(() -> refCrossSectionLane.getCenterLine().getLocationFraction(f), GtuException.class,
+        OrientedPoint2d p = Try.assign(() -> refCrossSectionLane.getCenterLine().getLocationFraction(f), GtuException.class,
                 "GTU %s is not orthogonal to the reference lane.", getId());
         double d = p.distance(loc);
         if (this.crossSections.get(0).getLanes().size() > 1)
         {
             return Length.instantiateSI(latIndex == 0 ? -d : d);
         }
-        double x2 = p.x + Math.cos(p.getRotZ());
-        double y2 = p.y + Math.sin(p.getRotZ());
+        double x2 = p.x + Math.cos(p.getDirZ());
+        double y2 = p.y + Math.sin(p.getDirZ());
         double det = (loc.x - p.x) * (y2 - p.y) - (loc.y - p.y) * (x2 - p.x);
         return Length.instantiateSI(det < 0.0 ? -d : d);
     }

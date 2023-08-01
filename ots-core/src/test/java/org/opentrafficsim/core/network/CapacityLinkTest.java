@@ -4,11 +4,11 @@ import static org.junit.Assert.assertTrue;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.value.vdouble.scalar.Frequency;
+import org.djutils.draw.point.Point2d;
 import org.junit.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.mock.MockSimulator;
 
 /**
@@ -31,8 +31,8 @@ public class CapacityLinkTest
     @Test
     public final void constructorTest() throws NetworkException, OtsGeometryException
     {
-        OtsPoint3d fromPoint = new OtsPoint3d(100, 200, 300);
-        OtsPoint3d toPoint = new OtsPoint3d(1000, 2000, 330);
+        Point2d fromPoint = new Point2d(100, 200);
+        Point2d toPoint = new Point2d(1000, 2000);
         Network network = new Network("testNetworkForCapacityOTSLink", MockSimulator.createMock());
         Node fromNode = new Node(network, "startNode", fromPoint);
         Node toNode = new Node(network, "endNode", toPoint);

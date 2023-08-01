@@ -2,7 +2,6 @@ package org.opentrafficsim.road.network.lane;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -23,23 +22,19 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.bounds.Bounds;
+import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.junit.Test;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
 import org.mockito.Mockito;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.Bounds;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
-import org.opentrafficsim.core.geometry.OtsShape;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -75,12 +70,12 @@ public class LaneTest implements UNITS
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         // First we need two Nodes
-        Node nodeFrom = new Node(network, "A", new OtsPoint3d(0, 0, 0), Direction.ZERO);
-        Node nodeTo = new Node(network, "B", new OtsPoint3d(1000, 0, 0), Direction.ZERO);
+        Node nodeFrom = new Node(network, "A", new Point2d(0, 0), Direction.ZERO);
+        Node nodeTo = new Node(network, "B", new Point2d(1000, 0), Direction.ZERO);
         // Now we can make a Link
-        OtsPoint3d[] coordinates = new OtsPoint3d[2];
-        coordinates[0] = new OtsPoint3d(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
-        coordinates[1] = new OtsPoint3d(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
+        Point2d[] coordinates = new Point2d[2];
+        coordinates[0] = nodeFrom.getPoint();
+        coordinates[1] = nodeTo.getPoint();
         CrossSectionLink link = new CrossSectionLink(network, "A to B", nodeFrom, nodeTo, DefaultsNl.FREEWAY,
                 new OtsLine3d(coordinates), LaneKeepingPolicy.KEEPRIGHT);
         Length startLateralPos = new Length(2, METER);
@@ -103,9 +98,9 @@ public class LaneTest implements UNITS
         assertEquals("PrevLanes should be empty", 0, lane.prevLanes(gtuTypeCar).size()); // this one caught a bug!
         assertEquals("NextLanes should be empty", 0, lane.nextLanes(gtuTypeCar).size());
         double approximateLengthOfContour =
-                2 * nodeFrom.getPoint().distance(nodeTo.getPoint()).si + startWidth.getSI() + endWidth.getSI();
+                2 * nodeFrom.getPoint().distance(nodeTo.getPoint()) + startWidth.getSI() + endWidth.getSI();
         assertEquals("Length of contour is approximately " + approximateLengthOfContour, approximateLengthOfContour,
-                lane.getContour().getLength().si, 0.1);
+                lane.getContour().getLength(), 0.1);
         assertEquals("SpeedLimit should be " + (new Speed(100, KM_PER_HOUR)), new Speed(100, KM_PER_HOUR),
                 lane.getSpeedLimit(DefaultsNl.VEHICLE));
         assertEquals("There should be no GTUs on the lane", 0, lane.getGtuList().size());
@@ -140,10 +135,10 @@ public class LaneTest implements UNITS
 
         // Harder case; create a Link with form points along the way
         // System.out.println("Constructing Link and Lane with one form point");
-        coordinates = new OtsPoint3d[3];
-        coordinates[0] = new OtsPoint3d(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
-        coordinates[1] = new OtsPoint3d(200, 100);
-        coordinates[2] = new OtsPoint3d(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
+        coordinates = new Point2d[3];
+        coordinates[0] = new Point2d(nodeFrom.getPoint().x, nodeFrom.getPoint().y);
+        coordinates[1] = new Point2d(200, 100);
+        coordinates[2] = new Point2d(nodeTo.getPoint().x, nodeTo.getPoint().y);
         link = new CrossSectionLink(network, "A to B with Kink", nodeFrom, nodeTo, DefaultsNl.FREEWAY,
                 new OtsLine3d(coordinates), LaneKeepingPolicy.KEEPRIGHT);
         lane = LaneGeometryUtil.createStraightLane(link, "lane.1", startLateralPos, endLateralPos, startWidth, endWidth,
@@ -179,9 +174,9 @@ public class LaneTest implements UNITS
         */
 
         // Construct a lane using CrossSectionSlices
-        OtsLine3d centerLine = new OtsLine3d(new OtsPoint3d(0.0, 0.0, 0.0), new OtsPoint3d(100.0, 0.0, 0.0));
-        OtsShape contour = new OtsShape(new OtsPoint3d(0.0, -1.75, 0.0), new OtsPoint3d(100.0, -1.75, 0.0),
-                new OtsPoint3d(100.0, 1.75, 0.0), new OtsPoint3d(0.0, -1.75, 0.0));
+        OtsLine3d centerLine = new OtsLine3d(new Point2d(0.0, 0.0), new Point2d(100.0, 0.0));
+        Polygon2d contour = new Polygon2d(new Point2d(0.0, -1.75), new Point2d(100.0, -1.75), new Point2d(100.0, 1.75),
+                new Point2d(0.0, -1.75));
         try
         {
             new Lane(link, "lanex", centerLine, contour, null, laneType, speedMap);
@@ -559,8 +554,8 @@ public class LaneTest implements UNITS
     @Test
     public final void lateralOffsetTest() throws NetworkException, SimRuntimeException, NamingException, OtsGeometryException
     {
-        OtsPoint3d from = new OtsPoint3d(10, 10, 0);
-        OtsPoint3d to = new OtsPoint3d(1010, 10, 0);
+        Point2d from = new Point2d(10, 10);
+        Point2d to = new Point2d(1010, 10);
         OtsSimulatorInterface simulator = new OtsSimulator("LaneTest");
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
@@ -571,7 +566,7 @@ public class LaneTest implements UNITS
         speedMap.put(DefaultsNl.VEHICLE, new Speed(50, KM_PER_HOUR));
         Node start = new Node(network, "start", from, Direction.ZERO);
         Node end = new Node(network, "end", to, Direction.ZERO);
-        OtsPoint3d[] coordinates = new OtsPoint3d[2];
+        Point2d[] coordinates = new Point2d[2];
         coordinates[0] = start.getPoint();
         coordinates[1] = end.getPoint();
         OtsLine3d line = new OtsLine3d(coordinates);
@@ -584,13 +579,13 @@ public class LaneTest implements UNITS
                 LaneGeometryUtil.createStraightLane(link, "lane", offsetAtStart, offsetAtEnd, width, width, laneType, speedMap);
         OtsLine3d laneCenterLine = lane.getCenterLine();
         // System.out.println("Center line is " + laneCenterLine);
-        OtsPoint3d[] points = laneCenterLine.getPoints();
+        Point2d[] points = laneCenterLine.getPoints();
         double prev = offsetAtStart.si + from.y;
         double prevRatio = 0;
         double prevDirection = 0;
         for (int i = 0; i < points.length; i++)
         {
-            OtsPoint3d p = points[i];
+            Point2d p = points[i];
             double relativeLength = p.x - from.x;
             double ratio = relativeLength / (to.x - from.x);
             double actualOffset = p.y;
@@ -607,7 +602,7 @@ public class LaneTest implements UNITS
             assertTrue("delta must be nonnegative", delta >= 0);
             if (i > 0)
             {
-                OtsPoint3d prevPoint = points[i - 1];
+                Point2d prevPoint = points[i - 1];
                 double direction = Math.atan2(p.y - prevPoint.y, p.x - prevPoint.x);
                 // System.out.println(String.format("p=%30s: ratio=%7.5f, direction=%10.7f", p, ratio, direction));
                 assertTrue("Direction of lane center line is > 0", direction > 0);
@@ -651,12 +646,12 @@ public class LaneTest implements UNITS
                     laneType.addCompatibleGtuType(DefaultsNl.VEHICLE);
                     Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
                     speedMap.put(DefaultsNl.VEHICLE, new Speed(50, KM_PER_HOUR));
-                    Node start = new Node(network, "start", new OtsPoint3d(xStart, yStart), Direction.instantiateSI(angle));
+                    Node start = new Node(network, "start", new Point2d(xStart, yStart), Direction.instantiateSI(angle));
                     double linkLength = 1000;
                     double xEnd = xStart + linkLength * Math.cos(angle);
                     double yEnd = yStart + linkLength * Math.sin(angle);
-                    Node end = new Node(network, "end", new OtsPoint3d(xEnd, yEnd), Direction.instantiateSI(angle));
-                    OtsPoint3d[] coordinates = new OtsPoint3d[2];
+                    Node end = new Node(network, "end", new Point2d(xEnd, yEnd), Direction.instantiateSI(angle));
+                    Point2d[] coordinates = new Point2d[2];
                     coordinates[0] = start.getPoint();
                     coordinates[1] = end.getPoint();
                     OtsLine3d line = new OtsLine3d(coordinates);
@@ -675,10 +670,12 @@ public class LaneTest implements UNITS
                                 Lane lane = LaneGeometryUtil.createStraightLane(link, "lane." + ++laneNum,
                                         new Length(startLateralOffset, METER), new Length(endLateralOffset, METER),
                                         new Length(startWidth, METER), new Length(endWidth, METER), laneType, speedMap);
-                                final Geometry geometry = lane.getContour().getLineString();
-                                assertNotNull("geometry of the lane should not be null", geometry);
                                 // Verify a couple of points that should be inside the contour of the Lane
                                 // One meter along the lane design line
+                                if (startLateralOffset == -3 && endLateralOffset == -1 && endWidth == 4)
+                                {
+                                    System.out.println("hmmm");
+                                }
                                 checkInside(lane, 1, startLateralOffset, true);
                                 // One meter before the end along the lane design line
                                 checkInside(lane, link.getLength().getSI() - 1, endLateralOffset, true);
@@ -695,7 +692,7 @@ public class LaneTest implements UNITS
                                 // One meter before the end, right outside the lane
                                 checkInside(lane, link.getLength().getSI() - 1, endLateralOffset + endWidth / 2 + 1, false);
                                 // Check the result of getBounds.
-                                DirectedPoint l = lane.getLocation();
+                                Point2d l = lane.getLocation();
                                 Bounds bb = lane.getBounds();
                                 // System.out.println("bb is " + bb);
                                 // System.out.println("l is " + l.x + "," + l.y + "," + l.z);
@@ -775,14 +772,14 @@ public class LaneTest implements UNITS
         double lateralAngle = Math.atan2(endY - startY, endX - startX) + Math.PI / 2;
         double px = designLineX + lateral * Math.cos(lateralAngle);
         double py = designLineY + lateral * Math.sin(lateralAngle);
-        Geometry contour = lane.getContour().getLineString();
-        GeometryFactory factory = new GeometryFactory();
-        Geometry p = factory.createPoint(new Coordinate(px, py));
+        Polygon2d contour = lane.getContour();
+        // GeometryFactory factory = new GeometryFactory();
+        // Geometry p = factory.createPoint(new Coordinate(px, py));
+        Point2d p = new Point2d(px, py);
         // CrossSectionElement.printCoordinates("contour: ", contour);
         // System.out.println("p: " + p);
-        boolean result = contour.contains(p);
-        Coordinate[] polygon = contour.getCoordinates();
-        result = pointInsidePolygon(new Coordinate(px, py), polygon);
+        boolean result2 = contour.contains(p);
+        boolean result = contains(contour, p);
         if (expectedResult)
         {
             assertTrue("Point at " + longitudinal + " along and " + lateral + " lateral is within lane", result);
@@ -793,28 +790,38 @@ public class LaneTest implements UNITS
         }
     }
 
-    /**
-     * Algorithm of W. Randolph Franklin http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html, found via
-     * stackoverflow.com: https://stackoverflow.com/questions/217578/point-in-polygon-aka-hit-test.
-     * @param point Coordinate; the point
-     * @param polygon OtsPoint3d[]; the polygon (last coordinate is allowed to be identical to the first, but his is not a
-     *            requirement)
-     * @return boolean; true if the point is inside the polygon; false if it is outside the polygon; if the point lies <b>on</b>
-     *         an vertex or edge of the polygon the result is (of course) undefined
+    /*
+     * TODO: remove this method Pending djutils issue #15, this method should be removed. Then, 'result2' above should become
+     * 'result' instead.
      */
-    private boolean pointInsidePolygon(final Coordinate point, final Coordinate[] polygon)
+    private boolean contains(final Polygon2d contour, final Point2d p)
     {
-        boolean result = false;
-        for (int i = 0, j = polygon.length - 1; i < polygon.length; j = i++)
+        if (!contour.getBounds().contains(p.x, p.y))
         {
-            if ((polygon[i].y > point.y) != (polygon[j].y > point.y)
-                    && point.x < (polygon[j].x - polygon[i].x) * (point.y - polygon[i].y) / (polygon[j].y - polygon[i].y)
-                            + polygon[i].x)
-            {
-                result = !result;
-            }
+            return false;
         }
-        return result;
+        int counter = 0;
+        // Unlike Paul Bourke, we initialize prevPoint to the last point of the polygon (so we never have to wrap around)
+        double prevPointX = contour.getX(contour.size() - 1);
+        double prevPointY = contour.getY(contour.size() - 1);
+        for (int i = 0; i < contour.size(); i++)
+        {
+            double curPointX = contour.getX(i);
+            double curPointY = contour.getY(i);
+            // Combined 4 if statements into one; I trust that the java compiler will short-circuit this nicely
+            if (p.y >= Math.min(prevPointY, curPointY) && p.y < Math.max(prevPointY, curPointY)
+                    && p.x <= Math.max(prevPointX, curPointX) && prevPointY != curPointY)
+            {
+                double xIntersection = (p.y - prevPointY) * (curPointX - prevPointX) / (curPointY - prevPointY) + prevPointX;
+                if (prevPointX == curPointX || p.x <= xIntersection)
+                {
+                    counter++;
+                }
+            }
+            prevPointX = curPointX;
+            prevPointY = curPointY;
+        }
+        return counter % 2 != 0;
     }
 
     /** The helper model. */

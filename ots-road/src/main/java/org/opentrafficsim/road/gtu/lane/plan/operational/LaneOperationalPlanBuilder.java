@@ -12,13 +12,13 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -92,9 +92,9 @@ public final class LaneOperationalPlanBuilder
         if (startSpeed.si <= OperationalPlan.DRIFTING_SPEED_SI && acceleration.le(Acceleration.ZERO)
                 || distance.le(MINIMUM_CREDIBLE_PATH_LENGTH))
         {
-            DirectedPoint point = gtu.getLocation();
-            OtsPoint3d p2 = new OtsPoint3d(point.x + Math.cos(point.getRotZ()), point.y + Math.sin(point.getRotZ()), point.z);
-            OtsLine3d path = new OtsLine3d(new OtsPoint3d(point), p2);
+            OrientedPoint2d point = gtu.getLocation();
+            Point2d p2 = new Point2d(point.x + Math.cos(point.getDirZ()), point.y + Math.sin(point.getDirZ()));
+            OtsLine3d path = new OtsLine3d(point, p2);
             return new LaneBasedOperationalPlan(gtu, path, startTime, Segments.standStill(timeStep), deviative);
         }
 
@@ -151,9 +151,9 @@ public final class LaneOperationalPlanBuilder
                         if (detector instanceof SinkDetector && ((SinkDetector) detector).willDestroy(gtu))
                         {
                             // just add some length so the GTU is happy to go to the sink
-                            DirectedPoint end = path.getLocationExtendedSI(distance.si + n * Lane.MARGIN.si);
-                            List<OtsPoint3d> points = new ArrayList<>(Arrays.asList(path.getPoints()));
-                            points.add(new OtsPoint3d(end));
+                            OrientedPoint2d end = path.getLocationExtendedSI(distance.si + n * Lane.MARGIN.si);
+                            List<Point2d> points = new ArrayList<>(Arrays.asList(path.getPoints()));
+                            points.add(end);
                             return new OtsLine3d(points);
                         }
                     }
@@ -187,7 +187,7 @@ public final class LaneOperationalPlanBuilder
      * @param gtu LaneBasedGtu; the GTU for debugging purposes
      * @param laneChangeDirectionality LateralDirectionality; direction of lane change (on initiation only, after that not
      *            important)
-     * @param startPosition DirectedPoint; current position
+     * @param startPosition OrientedPoint2d; current position
      * @param startTime Time; the current time or a time in the future when the plan should start
      * @param startSpeed Speed; the speed at the start of the path
      * @param acceleration Acceleration; the acceleration to use
@@ -200,7 +200,7 @@ public final class LaneOperationalPlanBuilder
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static LaneBasedOperationalPlan buildAccelerationLaneChangePlan(final LaneBasedGtu gtu,
-            final LateralDirectionality laneChangeDirectionality, final DirectedPoint startPosition, final Time startTime,
+            final LateralDirectionality laneChangeDirectionality, final OrientedPoint2d startPosition, final Time startTime,
             final Speed startSpeed, final Acceleration acceleration, final Duration timeStep, final LaneChange laneChange)
             throws OperationalPlanException, OtsGeometryException
     {

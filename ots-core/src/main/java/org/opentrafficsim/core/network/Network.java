@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.event.EventProducer;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
@@ -27,7 +28,6 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.route.Route;
@@ -1031,7 +1031,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
         {
             for (Node node : this.nodeMap.values())
             {
-                Bounds b = node.getBounds();
+                Bounds2d b = node.getBounds();
                 minX = Math.min(minX, node.getLocation().getX() + b.getMinX());
                 minY = Math.min(minY, node.getLocation().getY() + b.getMinY());
                 maxX = Math.max(maxX, node.getLocation().getX() + b.getMaxX());
@@ -1040,7 +1040,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
             }
             for (Link link : this.linkMap.values())
             {
-                Bounds b = link.getBounds();
+                Bounds2d b = link.getBounds();
                 minX = Math.min(minX, link.getLocation().getX() + b.getMinX());
                 minY = Math.min(minY, link.getLocation().getY() + b.getMinY());
                 maxX = Math.max(maxX, link.getLocation().getX() + b.getMaxX());
@@ -1049,7 +1049,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
             }
             for (LocatedObject object : this.objectMap.values())
             {
-                Bounds b = new Bounds(object.getBounds());
+                Bounds2d b = object.getBounds();
                 minX = Math.min(minX, object.getLocation().getX() + b.getMinX());
                 minY = Math.min(minY, object.getLocation().getY() + b.getMinY());
                 maxX = Math.max(maxX, object.getLocation().getX() + b.getMaxX());

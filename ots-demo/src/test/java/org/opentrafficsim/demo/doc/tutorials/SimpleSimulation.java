@@ -8,12 +8,12 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.cli.CliUtil;
 import org.djutils.draw.DrawRuntimeException;
+import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -54,8 +54,8 @@ public class SimpleSimulation extends AbstractSimulationScript
             throws NullPointerException, DrawRuntimeException, NetworkException, OtsGeometryException
     {
         RoadNetwork network = new RoadNetwork("Simple network", sim);
-        OtsPoint3d pointA = new OtsPoint3d(0, 0, 0);
-        OtsPoint3d pointB = new OtsPoint3d(500, 0, 0);
+        Point2d pointA = new Point2d(0, 0);
+        Point2d pointB = new Point2d(500, 0);
         Node nodeA = new Node(network, "A", pointA, Direction.ZERO);
         Node nodeB = new Node(network, "B", pointB, Direction.ZERO);
         GtuType car = DefaultsNl.CAR;
