@@ -2,7 +2,6 @@ package org.opentrafficsim.core.geometry;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NavigableMap;
 
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
@@ -553,7 +552,7 @@ public class ContinuousClothoid implements ContinuousLine
 
     /** {@inheritDoc} */
     @Override
-    public OtsLine3d offset(final NavigableMap<Double, Double> offsets, final int numSegments)
+    public OtsLine3d offset(final FractionalLengthData offsets, final int numSegments)
     {
         Throw.whenNull(offsets, "Offsets may not be null.");
         return offset(offsets, flatten(numSegments));
@@ -561,7 +560,7 @@ public class ContinuousClothoid implements ContinuousLine
 
     /** {@inheritDoc} */
     @Override
-    public OtsLine3d offset(final NavigableMap<Double, Double> offsets, final Angle maxAngleError, final double maxSpatialError)
+    public OtsLine3d offset(final FractionalLengthData offsets, final Angle maxAngleError, final double maxSpatialError)
     {
         Throw.whenNull(maxAngleError, "Maximum angle error may not be null");
         Throw.when(maxAngleError.si <= 0.0, IllegalArgumentException.class, "Max angle error should be above 0.");
@@ -569,7 +568,7 @@ public class ContinuousClothoid implements ContinuousLine
         Throw.whenNull(offsets, "Offsets may not be null.");
         int numSegmentsAngle = (int) Math.ceil(getTotalAngle().si / maxAngleError.si);
         double maxOffset = 0.0;
-        for (double offset : offsets.values())
+        for (double offset : offsets.getValues())
         {
             maxOffset = Math.max(maxOffset, Math.abs(offset));
         }
@@ -581,27 +580,17 @@ public class ContinuousClothoid implements ContinuousLine
     /**
      * Applies a naive offset on the line, and then adjusts the start and end point to be on the line perpendicular through each
      * end point.
-     * @param offsets NavigableMap&lt;Double, Double&gt;; offsets, should contain keys 0.0 and 1.0.
+     * @param offsets FractionalLengthData; offsets, should contain keys 0.0 and 1.0.
      * @param line OtsLine3d; flattened line to offset.
      * @return OtsLine3d; offset line.
      */
-    private OtsLine3d offset(final NavigableMap<Double, Double> offsets, final OtsLine3d line)
+    private OtsLine3d offset(final FractionalLengthData offsets, final OtsLine3d line)
     {
-        Throw.when(!offsets.containsKey(0.0), IllegalArgumentException.class, "Offsets need to contain key 0.0.");
-        Throw.when(!offsets.containsKey(1.0), IllegalArgumentException.class, "Offsets need to contain key 1.0.");
-        double[] relativeFractions = new double[offsets.size()];
-        double[] offs = new double[offsets.size()];
-        int i = 0;
-        for (double f : offsets.navigableKeySet())
-        {
-            relativeFractions[i] = f;
-            offs[i] = offsets.get(f);
-            i++;
-        }
         OtsLine3d offsetLine =
-                Try.assign(() -> line.offsetLine(relativeFractions, offs), "Unexpected exception while creating offset line.");
-        Point2d start = OtsGeometryUtil.offsetPoint(this.startPoint, offs[0]);
-        Point2d end = OtsGeometryUtil.offsetPoint(this.endPoint, offs[offs.length - 1]);
+                Try.assign(() -> line.offsetLine(offsets.getFractionalLengthsAsArray(), offsets.getValuesAsArray()),
+                        "Unexpected exception while creating offset line.");
+        Point2d start = OtsGeometryUtil.offsetPoint(this.startPoint, offsets.get(0.0));
+        Point2d end = OtsGeometryUtil.offsetPoint(this.endPoint, offsets.get(1.0));
         Point2d[] points = offsetLine.getPoints();
         points[0] = start;
         points[points.length - 1] = end;

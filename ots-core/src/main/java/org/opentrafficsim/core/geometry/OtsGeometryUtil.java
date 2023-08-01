@@ -90,25 +90,7 @@ public final class OtsGeometryUtil
         }
         return result.toString();
     }
-
-    /**
-     * Returns a linearly interpolated offset at the given longitudinal fraction.
-     * @param f double; longitudinal fraction.
-     * @param offsets NavigableMap&lt;Double, Double&gt;; offset per longitudinal fraction.
-     * @return double; linearly interpolated offset at the given longitudinal fraction.
-     */
-    public static double offsetInterpolation(final double f, final NavigableMap<Double, Double> offsets)
-    {
-        Entry<Double, Double> entry0 = offsets.floorEntry(f);
-        Entry<Double, Double> entry1 = offsets.ceilingEntry(f);
-        if (entry1 == null || entry0.equals(entry1))
-        {
-            return entry0.getValue();
-        }
-        double r = (f - entry0.getKey()) / (entry1.getKey() - entry0.getKey());
-        return (1.0 - r) * entry0.getValue() + r * entry1.getValue();
-    }
-
+    
     /**
      * Returns the number of segments to use for a given maximum spatial error, and radius.
      * @param maxSpatialError double; maximum spatial error.

@@ -1010,8 +1010,7 @@ public class LaneBasedGtu extends Gtu
         double cumul = 0.0;
         for (int i = 0; i < points.length - 1; i++)
         {
-            Point2d intersect;
-            intersect = Point2d.intersectionOfLineSegments(points[i], points[i + 1], line.get(0), line.get(1));
+            Point2d intersect = Point2d.intersectionOfLineSegments(points[i], points[i + 1], line.get(0), line.get(1));
 
             /*
              * SKL 31-07-2023: Using the djunits code rather than the older OTS point and line code, causes an intersection on a

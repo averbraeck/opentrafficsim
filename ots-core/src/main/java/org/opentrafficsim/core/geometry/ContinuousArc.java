@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.geometry;
 
-import java.util.NavigableMap;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 
@@ -160,23 +159,21 @@ public class ContinuousArc implements ContinuousLine
 
     /** {@inheritDoc} */
     @Override
-    public OtsLine3d offset(final NavigableMap<Double, Double> offsets, final int numSegments)
+    public OtsLine3d offset(final FractionalLengthData offsets, final int numSegments)
     {
         Throw.when(numSegments < 1, IllegalArgumentException.class, "Number of segments should be at least 1.");
         Throw.whenNull(offsets, "Offsets may not be null.");
-        Throw.when(!offsets.containsKey(0.0), IllegalArgumentException.class, "Offsets need to contain key 0.0.");
-        Throw.when(!offsets.containsKey(1.0), IllegalArgumentException.class, "Offsets need to contain key 1.0.");
         NavigableSet<Double> f = new TreeSet<>();
         for (int i = 0; i < numSegments + 1; i++)
         {
             f.add(((double) i) / numSegments);
         }
-        offsets.keySet().forEach((r) -> f.add(r));
+        offsets.getFractionalLengths().forEach((r) -> f.add(r));
         Point2d[] points = new Point2d[f.size()];
         int i = 0;
         for (double r : f)
         {
-            points[i] = getPoint(this.angle.si * r, OtsGeometryUtil.offsetInterpolation(r, offsets));
+            points[i] = getPoint(this.angle.si * r, offsets.get(r));
             i++;
         }
         return Try.assign(() -> new OtsLine3d(points), "Exception while creating offset arc.");
@@ -184,17 +181,15 @@ public class ContinuousArc implements ContinuousLine
 
     /** {@inheritDoc} */
     @Override
-    public OtsLine3d offset(final NavigableMap<Double, Double> offsets, final Angle maxAngleError, final double maxSpatialError)
+    public OtsLine3d offset(final FractionalLengthData offsets, final Angle maxAngleError, final double maxSpatialError)
     {
         Throw.whenNull(offsets, "Offsets may not be null.");
-        Throw.when(!offsets.containsKey(0.0), IllegalArgumentException.class, "Offsets need to contain key 0.0.");
-        Throw.when(!offsets.containsKey(1.0), IllegalArgumentException.class, "Offsets need to contain key 1.0.");
         Throw.whenNull(maxAngleError, "Maximum angle error may not be null");
         Throw.when(maxAngleError.si <= 0.0, IllegalArgumentException.class, "Max angle error should be above 0.");
         Throw.when(maxSpatialError <= 0.0, IllegalArgumentException.class, "Max spatial error should be above 0.");
         int numSegmentsAngle = (int) Math.ceil(this.angle.si / maxAngleError.si);
         double criticalOffset = 0.0;
-        for (double off : offsets.values())
+        for (double off : offsets.getValues())
         {
             criticalOffset = Math.max(criticalOffset, -this.sign * off);
         }

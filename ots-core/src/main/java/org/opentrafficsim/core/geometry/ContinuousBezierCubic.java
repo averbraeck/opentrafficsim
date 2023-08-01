@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NavigableMap;
 import java.util.NavigableSet;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -107,12 +108,10 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
 
     /** {@inheritDoc} */
     @Override
-    public OtsLine3d offset(final NavigableMap<Double, Double> offsets, final int numSegments)
+    public OtsLine3d offset(final FractionalLengthData offsets, final int numSegments)
     {
         Throw.when(numSegments < 1, IllegalArgumentException.class, "Number of segments should be at least 1.");
         Throw.whenNull(offsets, "Offsets may not be null.");
-        Throw.when(!offsets.containsKey(0.0), IllegalArgumentException.class, "Offsets need to contain key 0.0.");
-        Throw.when(!offsets.containsKey(1.0), IllegalArgumentException.class, "Offsets need to contain key 1.0.");
         /*
          * A Bezier does not have a trivial offset. Hence, we split the Bezier along points of 3 types. 1) roots, where the
          * derivative of either the x-component or y-component is 0, such that we obtain C-shaped scalable segments, 2)
@@ -127,7 +126,7 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
             this.splits = new TreeMap<>(); // cache
             getRoots().forEach((t) -> this.splits.put(t, 1));
             getInflections().forEach((t) -> this.splits.put(t, 2));
-            getCrossSections(offsets.navigableKeySet()).forEach((t) -> this.splits.put(t, 3));
+            getCrossSections(offsets.getFractionalLengths().toSet()).forEach((t) -> this.splits.put(t, 3));
             this.splits = this.splits.subMap(1e-6, false, 1.0 - 1e-6, false);
         }
 
@@ -144,7 +143,7 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
 
         // Initialize loop variables
         // copy of cross-section fractions, so we can remove each we use; exclude 0.0 value to find split points -on- Bezier
-        NavigableSet<Double> fCrossSectionRemain = new TreeSet<>(offsets.navigableKeySet()).tailSet(0.0, false);
+        NavigableSet<Double> fCrossSectionRemain = new TreeSet<>(offsets.getFractionalLengths().toSet()).tailSet(0.0, false);
         double lengthTotal = length();
         ContinuousBezierCubic currentBezier = this;
         double lengthSoFar = 0.0;
@@ -221,7 +220,7 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
      * Creates the line segment points of an offset line of a Bezier segment.
      * @param points List&lt;Point2d&gt;; list of points to add points to.
      * @param bezier ContinuousBezierCubic; Bezier segment to offset.
-     * @param offsets NavigableMap&lt;Double, Double&gt;; offsets as defined for entire Bezier.
+     * @param offsets FractionalLengthData; offsets as defined for entire Bezier.
      * @param lengthSoFar double; total length of previous segments.
      * @param lengthSegment double; length of the current Bezier segment.
      * @param lengthTotal double; total length of full Bezier.
@@ -231,11 +230,11 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
      * @param numSegments int; number of segments to apply for this Bezier segment.
      */
     private static void appendOffset(final List<Point2d> points, final ContinuousBezierCubic bezier,
-            final NavigableMap<Double, Double> offsets, final double lengthSoFar, final double lengthSegment,
-            final double lengthTotal, final double sig, final boolean first, final boolean last, final int numSegments)
+            final FractionalLengthData offsets, final double lengthSoFar, final double lengthSegment, final double lengthTotal,
+            final double sig, final boolean first, final boolean last, final int numSegments)
     {
-        double offsetStart = sig * OtsGeometryUtil.offsetInterpolation(lengthSoFar / lengthTotal, offsets);
-        double offsetEnd = sig * OtsGeometryUtil.offsetInterpolation((lengthSoFar + lengthSegment) / lengthTotal, offsets);
+        double offsetStart = sig * offsets.get(lengthSoFar / lengthTotal);
+        double offsetEnd = sig * offsets.get((lengthSoFar + lengthSegment) / lengthTotal);
 
         Point2d p1 = new Point2d(bezier.points[0].x - (bezier.points[1].y - bezier.points[0].y),
                 bezier.points[0].y + (bezier.points[1].x - bezier.points[0].x));
@@ -312,14 +311,12 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
 
     /** {@inheritDoc} */
     @Override
-    public OtsLine3d offset(final NavigableMap<Double, Double> offsets, final Angle maxAngleError, final double maxSpatialError)
+    public OtsLine3d offset(final FractionalLengthData offsets, final Angle maxAngleError, final double maxSpatialError)
     {
         Throw.whenNull(maxAngleError, "Maximum angle error may not be null");
         Throw.when(maxAngleError.si <= 0.0, IllegalArgumentException.class, "Max angle error should be above 0.");
         Throw.when(maxSpatialError <= 0.0, IllegalArgumentException.class, "Max spatial error should be above 0.");
         Throw.whenNull(offsets, "Offsets may not be null.");
-        Throw.when(!offsets.containsKey(0.0), IllegalArgumentException.class, "Offsets need to contain key 0.0.");
-        Throw.when(!offsets.containsKey(1.0), IllegalArgumentException.class, "Offsets need to contain key 1.0.");
         // TODO
         return null;
     }
@@ -418,10 +415,10 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
 
     /**
      * Returns the cross-section t values.
-     * @param fractions SortedSet&lt;Double&gt;; length fractions at which cross-sections are defined.
+     * @param fractions Set&lt;Double&gt;; length fractions at which cross-sections are defined.
      * @return SortedSet&lt;Double&gt;; set of cross-section t values, sorted and in the range (0, 1), exclusive.
      */
-    private SortedSet<Double> getCrossSections(final SortedSet<Double> fractions)
+    private SortedSet<Double> getCrossSections(final Set<Double> fractions)
     {
         TreeSet<Double> crossSections = new TreeSet<>();
         double lenTot = length();

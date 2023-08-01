@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.network.lane;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -13,7 +12,7 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.geometry.ContinuousLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
-import org.opentrafficsim.core.geometry.OtsGeometryUtil;
+import org.opentrafficsim.core.geometry.FractionalLengthData;
 import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.network.lane.Stripe.Type;
@@ -73,9 +72,9 @@ public class LaneGeometryUtil
      * Returns the offsets to use on a {@code ContinuousLine} for the left-hand edge.
      * @param designLine ContinuousLine; design line.
      * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
-     * @return NavigableMap&lt;Double, Double&gt;; offsets to use on a {@code ContinuousLine}.
+     * @return FractionalLengthData; offsets at fractional lengths to use on a {@code ContinuousLine}.
      */
-    public static NavigableMap<Double, Double> getCenterOffsets(final ContinuousLine designLine,
+    public static FractionalLengthData getCenterOffsets(final ContinuousLine designLine,
             final List<CrossSectionSlice> crossSectionSlices)
     {
         return getOffsets(crossSectionSlices, designLine.getLength(), 0.0);
@@ -85,9 +84,9 @@ public class LaneGeometryUtil
      * Returns the offsets to use on a {@code ContinuousLine} for the left-hand edge.
      * @param designLine ContinuousLine; design line.
      * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
-     * @return NavigableMap&lt;Double, Double&gt;; offsets to use on a {@code ContinuousLine}.
+     * @return FractionalLengthData; offsets at fractional lengths to use on a {@code ContinuousLine}.
      */
-    public static NavigableMap<Double, Double> getLeftEdgeOffsets(final ContinuousLine designLine,
+    public static FractionalLengthData getLeftEdgeOffsets(final ContinuousLine designLine,
             final List<CrossSectionSlice> crossSectionSlices)
     {
         return getOffsets(crossSectionSlices, designLine.getLength(), 0.5);
@@ -97,9 +96,9 @@ public class LaneGeometryUtil
      * Returns the offsets to use on a {@code ContinuousLine} for the right-hand edge.
      * @param designLine ContinuousLine; design line.
      * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
-     * @return NavigableMap&lt;Double, Double&gt;; offsets to use on a {@code ContinuousLine}.
+     * @return FractionalLengthData; offsets at fractional lengths to use on a {@code ContinuousLine}.
      */
-    public static NavigableMap<Double, Double> getRightEdgeOffsets(final ContinuousLine designLine,
+    public static FractionalLengthData getRightEdgeOffsets(final ContinuousLine designLine,
             final List<CrossSectionSlice> crossSectionSlices)
     {
         return getOffsets(crossSectionSlices, designLine.getLength(), -0.5);
@@ -110,15 +109,15 @@ public class LaneGeometryUtil
      * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
      * @param length double; length of the design line.
      * @param widthFactor double; factor to use, typically -0.5 for right-hand, 0.0 for center, and 0.5 for left-hand.
-     * @return NavigableMap&lt;Double, Double&gt;; offsets to use on a {@code ContinuousLine}.
+     * @return FractionalLengthData; offsets at fractional lengths to use on a {@code ContinuousLine}.
      */
-    private static NavigableMap<Double, Double> getOffsets(final List<CrossSectionSlice> crossSectionSlices,
-            final double length, final double widthFactor)
+    private static FractionalLengthData getOffsets(final List<CrossSectionSlice> crossSectionSlices, final double length,
+            final double widthFactor)
     {
         NavigableMap<Double, Double> map = new TreeMap<>();
         crossSectionSlices.forEach((slice) -> map.put(slice.getRelativeLength().si / length,
                 slice.getDesignLineOffset().si + widthFactor * slice.getWidth().si));
-        return map;
+        return new FractionalLengthData(map);
     }
 
     /**

@@ -1,8 +1,5 @@
 package org.opentrafficsim.core.geometry;
 
-import java.util.NavigableMap;
-import java.util.TreeMap;
-
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djutils.draw.point.OrientedPoint2d;
@@ -104,22 +101,22 @@ public interface ContinuousLine
     /**
      * Offset polyline based on variable offset. The number of segments of the polyline is guaranteed to be at least
      * {@code numSegments}, but it may be larger.
-     * @param offsets NavigableMap&lt;Double, Double&gt;; offsets, should contain keys 0.0 and 1.0.
+     * @param offsets FractionalLengthData; offsets at fractional lengths.
      * @param numSegments int; minimum number of segments.
      * @return OtsLine3d; offset polyline.
      */
-    OtsLine3d offset(NavigableMap<Double, Double> offsets, int numSegments);
+    OtsLine3d offset(FractionalLengthData offsets, int numSegments);
 
     /**
      * Offset polyline based on variable offset. Implementations of this method guarantee that the resulting polyline shows
      * angle errors and spatial errors smaller than specified. Implementation are free to apply conservative heuristics that
      * create smaller errors and a larger number of points.
-     * @param offsets NavigableMap&lt;Double, Double&gt;; offsets, should contain keys 0.0 and 1.0.
+     * @param offsets FractionalLengthData; offsets at fractional lengths.
      * @param maxAngleError Angle; maximum angle error in polyline.
      * @param maxSpatialError double; maximum spatial error in polyline.
      * @return OtsLine3d; offset polyline.
      */
-    OtsLine3d offset(NavigableMap<Double, Double> offsets, Angle maxAngleError, double maxSpatialError);
+    OtsLine3d offset(FractionalLengthData offsets, Angle maxAngleError, double maxSpatialError);
 
     /**
      * Offset polyline based on single offset. The number of segments of the polyline is guaranteed to be at least
@@ -157,10 +154,7 @@ public interface ContinuousLine
      */
     default OtsLine3d offset(final double startOffset, final double endOffset, final int numSegments)
     {
-        NavigableMap<Double, Double> offsets = new TreeMap<>();
-        offsets.put(0.0, startOffset);
-        offsets.put(1.0, endOffset);
-        return offset(offsets, numSegments);
+        return offset(FractionalLengthData.of(0.0, startOffset, 1.0, endOffset), numSegments);
     }
 
     /**
@@ -176,12 +170,9 @@ public interface ContinuousLine
     default OtsLine3d offset(final double startOffset, final double endOffset, final Angle maxAngleError,
             final double maxSpatialError)
     {
-        NavigableMap<Double, Double> offsets = new TreeMap<>();
-        offsets.put(0.0, startOffset);
-        offsets.put(1.0, endOffset);
-        return offset(offsets, maxAngleError, maxSpatialError);
+        return offset(FractionalLengthData.of(0.0, startOffset, 1.0, endOffset), maxAngleError, maxSpatialError);
     }
-    
+
     /**
      * Return the length of the line.
      * @return double; length of the line.

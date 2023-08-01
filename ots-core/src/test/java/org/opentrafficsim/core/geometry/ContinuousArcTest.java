@@ -3,9 +3,6 @@ package org.opentrafficsim.core.geometry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.NavigableMap;
-import java.util.TreeMap;
-
 import org.djunits.unit.AngleUnit;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djutils.draw.point.OrientedPoint2d;
@@ -159,9 +156,7 @@ public class ContinuousArcTest
         ContinuousArc arc = new ContinuousArc(start, 1.0, true, Angle.instantiateSI(Math.PI));
 
         // right-hand increasing offset
-        NavigableMap<Double, Double> offsets = new TreeMap<>();
-        offsets.put(0.0, 0.0);
-        offsets.put(1.0, -1.0);
+        FractionalLengthData offsets = FractionalLengthData.of(0.0, 0.0, 1.0, -1.0);
         OtsLine3d line = arc.offset(offsets, 4);
         isApproximal(line.get(0), 1.0, 0.0);
         isApproximal(line.get(2), 0.0, 1.5);
@@ -174,9 +169,7 @@ public class ContinuousArcTest
         isApproximal(line.get(4), -2.0, 0.0);
 
         // left-hand increasing offset
-        offsets = new TreeMap<>();
-        offsets.put(0.0, 0.0);
-        offsets.put(1.0, 1.0);
+        offsets = FractionalLengthData.of(0.0, 0.0, 1.0, 1.0);
         line = arc.offset(offsets, 4);
         isApproximal(line.get(0), 1.0, 0.0);
         isApproximal(line.get(2), 0.0, 0.5);

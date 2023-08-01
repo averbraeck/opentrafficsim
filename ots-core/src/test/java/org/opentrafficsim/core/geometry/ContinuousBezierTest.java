@@ -2,9 +2,6 @@ package org.opentrafficsim.core.geometry;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.NavigableMap;
-import java.util.TreeMap;
-
 import org.djutils.draw.point.Point2d;
 import org.junit.Test;
 
@@ -48,18 +45,12 @@ public class ContinuousBezierTest
         OtsLine3d line = bezier.flatten(32);
         assertEquals("Length of flattened Bezier is not correct", line.getLength().si, 171.2213439251704017, MARGIN);
 
-        NavigableMap<Double, Double> offsets = new TreeMap<>();
-        offsets.put(0.0, 2.0);
-        offsets.put(0.33, 3.0);
-        offsets.put(1.0, 10.0);
+        FractionalLengthData offsets = FractionalLengthData.of(0.0, 2.0, 0.33, 3.0, 1.0, 10.0);
         line = bezier.offset(offsets, 32);
         assertEquals("Length of offset Bezier is not correct", line.getLength().si, 190.5485421127407335, MARGIN);
         assertEquals("Number of segments of offset Bezier is not correct", line.size(), 36);
 
-        offsets = new TreeMap<>();
-        offsets.put(0.0, -1.0);
-        offsets.put(0.33, -1.5);
-        offsets.put(1.0, -5.0);
+        offsets = FractionalLengthData.of(0.0, -1.0, 0.33, -1.5, 1.0, -5.0);
         line = bezier.offset(offsets, 32);
         assertEquals("Length of offset Bezier is not correct", line.getLength().si, 161.7801902734066459, MARGIN);
         assertEquals("Number of segments of offset Bezier is not correct", line.size(), 36);

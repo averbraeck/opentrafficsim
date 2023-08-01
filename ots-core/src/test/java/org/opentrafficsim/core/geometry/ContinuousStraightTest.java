@@ -3,9 +3,6 @@ package org.opentrafficsim.core.geometry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.NavigableMap;
-import java.util.TreeMap;
-
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
@@ -30,7 +27,7 @@ public class ContinuousStraightTest
      * @throws OtsGeometryException if test is ill defined.
      */
     @Test
-    public void straighTest() throws OtsGeometryException
+    public void straightTest() throws OtsGeometryException
     {
         OrientedPoint2d startPoint = new OrientedPoint2d(0.0, 0.0, 0.0);
         Try.testFail(() -> new ContinuousStraight(startPoint, -100.0), "Negative length should not be allowed.",
@@ -46,19 +43,13 @@ public class ContinuousStraightTest
         assertEquals("Start curvature is incorrect.", 0.0, straight.getStartCurvature(), MARGIN);
         assertEquals("End curvature is incorrect.", 0.0, straight.getEndCurvature(), MARGIN);
 
-        NavigableMap<Double, Double> offsets = new TreeMap<>();
-        offsets.put(0.0, -1.0);
-        offsets.put(0.5, -1.0);
-        offsets.put(1.0, -2.0);
+        FractionalLengthData offsets = FractionalLengthData.of(0.0, -1.0, 0.5, -1.0, 1.0, -2.0);
         OtsLine3d line = straight.offset(offsets);
         isApproximal(line.get(0), 0.0, -1.0);
         isApproximal(line.get(1), 50.0, -1.0);
         isApproximal(line.get(2), 100.0, -2.0);
 
-        offsets = new TreeMap<>();
-        offsets.put(0.0, 1.0);
-        offsets.put(0.5, 1.0);
-        offsets.put(1.0, 2.0);
+        offsets = FractionalLengthData.of(0.0, 1.0, 0.5, 1.0, 1.0, 2.0);
         line = straight.offset(offsets);
         isApproximal(line.get(0), 0.0, 1.0);
         isApproximal(line.get(1), 50.0, 1.0);
