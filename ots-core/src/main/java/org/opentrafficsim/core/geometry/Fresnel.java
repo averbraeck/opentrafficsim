@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.geometry;
 
 /**
- * Utility class to create clothoid lines, in particular the Fresnal integral based on:
+ * Utility class to create clothoid lines, in particular the Fresnel integral based on:
  * <li>W.J. Cody (1968) Chebyshev approximations for the Fresnel integrals. Mathematics of Computation, Vol. 22, Issue 102, pp.
  * 450–453.</li>
  * </ul>
@@ -15,7 +15,7 @@ package org.opentrafficsim.core.geometry;
  * @see <a href="https://www.ams.org/journals/mcom/1985-44-170/S0025-5718-1985-0777277-6/S0025-5718-1985-0777277-6.pdf">Cody
  *      (1968)</a>
  */
-public class Clothoid
+public class Fresnel
 {
 
     // {@formatter:off}
@@ -221,7 +221,7 @@ public class Clothoid
     // {@formatter:on}
 
     /** Utility class. */
-    private Clothoid()
+    private Fresnel()
     {
         // do not instantiate
     }

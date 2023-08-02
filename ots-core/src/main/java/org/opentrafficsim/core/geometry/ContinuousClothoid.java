@@ -202,8 +202,7 @@ public class ContinuousClothoid implements ContinuousLine
         }
 
         // h(phi1, phi2) guarantees for negative values along with 0 < phi1 < phi2 < pi, that a C-shaped clothoid exists.
-        // In our numerical case, this is an indication rather than a guarantee, hence getTheta() may shift shape.
-        double[] cs = Clothoid.fresnel(alphaToT(phi1 + phi2));
+        double[] cs = Fresnel.fresnel(alphaToT(phi1 + phi2));
         double h = cs[1] * Math.cos(phi1) - cs[0] * Math.sin(phi1);
         boolean cShape = 0 < phi1 && phi1 < phi2 && phi2 < Math.PI && h < 0; // otherwise, S-shape
         double theta = getTheta(phi1, phi2, cShape);
@@ -212,8 +211,8 @@ public class ContinuousClothoid implements ContinuousLine
 
         double v1 = theta + phi1 + phi2;
         double v2 = theta + phi1;
-        double[] cs0 = Clothoid.fresnel(alphaToT(theta));
-        double[] cs1 = Clothoid.fresnel(alphaToT(v1));
+        double[] cs0 = Fresnel.fresnel(alphaToT(theta));
+        double[] cs1 = Fresnel.fresnel(alphaToT(v1));
         this.a = d2 / ((cs1[1] + aSign * cs0[1]) * Math.sin(v2) + (cs1[0] + aSign * cs0[0]) * Math.cos(v2));
 
         dx /= d2; // normalized
@@ -410,8 +409,8 @@ public class ContinuousClothoid implements ContinuousLine
     private static double fTheta(final double theta, final double phi1, final double phi2, final double sign)
     {
         double thetaPhi1 = theta + phi1;
-        double[] cs0 = Clothoid.fresnel(alphaToT(theta));
-        double[] cs1 = Clothoid.fresnel(alphaToT(thetaPhi1 + phi2));
+        double[] cs0 = Fresnel.fresnel(alphaToT(theta));
+        double[] cs1 = Fresnel.fresnel(alphaToT(thetaPhi1 + phi2));
         return (cs1[1] + sign * cs0[1]) * Math.cos(thetaPhi1) - (cs1[0] + sign * cs0[0]) * Math.sin(thetaPhi1);
     }
 
@@ -477,7 +476,7 @@ public class ContinuousClothoid implements ContinuousLine
         OrientedPoint2d p2 = this.opposite ? this.startPoint : this.endPoint;
 
         // Create first point to figure out the required overall shift
-        double[] csMin = Clothoid.fresnel(alphaToT(this.alphaMin));
+        double[] csMin = Fresnel.fresnel(alphaToT(this.alphaMin));
         double xMin = this.a * (csMin[0] * this.t0[0] - csMin[1] * this.n0[0]);
         double yMin = this.a * (csMin[0] * this.t0[1] - csMin[1] * this.n0[1]);
         double dx = p1.x - xMin;
@@ -491,7 +490,7 @@ public class ContinuousClothoid implements ContinuousLine
         // Create last point to figure out linear shift over alpha such that last point ends up at p2 (if any)
         if (p2 != null)
         {
-            double[] csMax = Clothoid.fresnel(alphaToT(this.alphaMax));
+            double[] csMax = Fresnel.fresnel(alphaToT(this.alphaMax));
             double xMax = this.a * (csMax[0] * this.t0[0] - csMax[1] * this.n0[0]);
             double yMax = this.a * (csMax[0] * this.t0[1] - csMax[1] * this.n0[1]);
             xShift = p2.x - (xMax + dx);
@@ -503,7 +502,7 @@ public class ContinuousClothoid implements ContinuousLine
         {
             double alpha = this.alphaMin + i * step;
             double r = (alpha - this.alphaMin) / dAlpha;
-            double[] cs = Clothoid.fresnel(alphaToT(alpha));
+            double[] cs = Fresnel.fresnel(alphaToT(alpha));
             points.add(new Point2d(dx + this.a * (cs[0] * this.t0[0] - cs[1] * this.n0[0]) + r * xShift,
                     dy + this.a * (cs[0] * this.t0[1] - cs[1] * this.n0[1]) + r * yShift));
         }
