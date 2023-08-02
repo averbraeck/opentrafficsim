@@ -17,7 +17,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
-import org.djutils.draw.point.Point3d;
 import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -119,7 +118,7 @@ public final class NetworkParser
     public static Map<String, Direction> calculateNodeAngles(final RoadNetwork otsNetwork, final Network network)
     {
         Map<String, Direction> nodeDirections = new LinkedHashMap<>();
-        Map<String, Point3d> points = new LinkedHashMap<>();
+        Map<String, Point2d> points = new LinkedHashMap<>();
         for (org.opentrafficsim.xml.generated.Node xmlNode : ParseUtil.getObjectsOfType(network.getNodeOrLinkOrCentroid(),
                 org.opentrafficsim.xml.generated.Node.class))
         {
@@ -134,8 +133,8 @@ public final class NetworkParser
         {
             if (xmlLink.getStraight() != null)
             {
-                Point3d startPoint = points.get(xmlLink.getNodeStart());
-                Point3d endPoint = points.get(xmlLink.getNodeEnd());
+                Point2d startPoint = points.get(xmlLink.getNodeStart());
+                Point2d endPoint = points.get(xmlLink.getNodeEnd());
                 double direction = Math.atan2(endPoint.y - startPoint.y, endPoint.x - startPoint.x);
                 if (!nodeDirections.containsKey(xmlLink.getNodeStart()))
                 {
@@ -236,8 +235,7 @@ public final class NetworkParser
                 coordinates[intermediatePoints + 1] = endPoint;
                 for (int p = 0; p < intermediatePoints; p++)
                 {
-                    Point3d point = xmlLink.getPolyline().getCoordinate().get(p);
-                    coordinates[p + 1] = new Point2d(point.x, point.y);
+                    coordinates[p + 1] = xmlLink.getPolyline().getCoordinate().get(p);
                 }
                 designLine = new ContinuousPolyLine(OtsLine2d.createAndCleanOtsLine2d(coordinates));
             }

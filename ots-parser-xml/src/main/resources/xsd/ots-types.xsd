@@ -1282,10 +1282,10 @@
 
   <xsd:simpleType name="CoordinateType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a value as (X.X, X.X, X.X).</xsd:appinfo>
+      <xsd:appinfo source="pattern">Provide a value as (X.X, X.X).</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\(\s*[+-]?\d+\.?\d*\s*,\s*[+-]?\d+\.?\d*(\s*,\s*[+-]?\d+\.?\d*)?\s*\)">
+      <xsd:pattern value="\(\s*[+-]?\d+\.?\d*\s*,\s*[+-]?\d+\.?\d*\s*\)">
       </xsd:pattern>
       <xsd:whiteSpace value="collapse" />
     </xsd:restriction>
@@ -1293,10 +1293,10 @@
 
   <xsd:simpleType name="CoordinateNoSpaceType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a value as (X.X,X.X,X.X).</xsd:appinfo>
+      <xsd:appinfo source="pattern">Provide a value as (X.X,X.X).</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\([+-]?\d+\.?\d*,[+-]?\d+\.?\d*(,[+-]?\d+\.?\d*)?\)">
+      <xsd:pattern value="\([+-]?\d+\.?\d*,[+-]?\d+\.?\d*\)">
       </xsd:pattern>
       <xsd:whiteSpace value="collapse" />
     </xsd:restriction>

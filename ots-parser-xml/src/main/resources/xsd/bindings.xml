@@ -28,11 +28,11 @@
       adapter="org.opentrafficsim.xml.bindings.SpeedAdapter" />
     <xjc:javaType name="java.lang.Double" xmlType="ots:FractionType"
       adapter="org.opentrafficsim.xml.bindings.FractionAdapter" />
-    <xjc:javaType name="org.djutils.draw.point.Point3d" xmlType="ots:CoordinateType"
+    <xjc:javaType name="org.djutils.draw.point.Point2d" xmlType="ots:CoordinateType"
       adapter="org.opentrafficsim.xml.bindings.CoordinateAdapter" />
-    <xjc:javaType name="org.djutils.draw.point.Point3d" xmlType="ots:CoordinateNoSpaceType"
+    <xjc:javaType name="org.djutils.draw.point.Point2d" xmlType="ots:CoordinateNoSpaceType"
       adapter="org.opentrafficsim.xml.bindings.CoordinateAdapter" />
-    <xjc:javaType name="org.opentrafficsim.xml.bindings.types.Point3dList" xmlType="ots:CoordinateListType"
+    <xjc:javaType name="org.opentrafficsim.xml.bindings.types.Point2dList" xmlType="ots:CoordinateListType"
       adapter="org.opentrafficsim.xml.bindings.CoordinateListAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.ArcDirection" xmlType="ots:LeftRightType"
       adapter="org.opentrafficsim.xml.bindings.LeftRightAdapter" />
