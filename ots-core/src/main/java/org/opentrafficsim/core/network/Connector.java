@@ -2,7 +2,7 @@ package org.opentrafficsim.core.network;
 
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 
 /**
  * Special link type that represents a connector.
@@ -30,14 +30,15 @@ public class Connector extends Link
      * @param startNode Node; start node (directional)
      * @param endNode Node; end node (directional)
      * @param linkType LinkType; Link type to indicate compatibility with GTU types
-     * @throws NetworkException if link already exists in the network, if name of the link is not unique, if the start node
-     *             or the end node of the link are not registered in the network, or if neither node is a centroid.
+     * @throws NetworkException if link already exists in the network, if name of the link is not unique, if the start node or
+     *             the end node of the link are not registered in the network, or if neither node is a centroid.
      */
     public Connector(final Network network, final String id, final Node startNode, final Node endNode, final LinkType linkType)
             throws NetworkException
     {
         super(network, id, startNode, endNode, linkType,
-                Try.assign(() -> new OtsLine3d(startNode.getPoint(), endNode.getPoint()), "Could not create connector line."));
+                Try.assign(() -> new OtsLine2d(startNode.getPoint(), endNode.getPoint()), "Could not create connector line."),
+                null);
         Throw.when(!startNode.isCentroid() && !endNode.isCentroid(), NetworkException.class,
                 "At least on node connected to a Connector should be a centroid.");
     }

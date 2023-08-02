@@ -33,7 +33,7 @@ public class BezierTest
         Point2d to = new Point2d(0, 10);
         for (int n : new int[] {2, 3, 4, 100})
         {
-            OtsLine3d line = Bezier.cubic(n, from, control1, control2, to);
+            OtsLine2d line = Bezier.cubic(n, from, control1, control2, to);
             assertTrue("result has n points", line.size() == n);
             assertTrue("result starts with from", line.get(0).equals(from));
             assertTrue("result ends with to", line.get(line.size() - 1).equals(to));
@@ -63,7 +63,7 @@ public class BezierTest
                 {
                     OrientedPoint2d start = new OrientedPoint2d(from.x, from.y, 0);
                     OrientedPoint2d end = new OrientedPoint2d(to.x, to.y, -Math.PI / 2);
-                    OtsLine3d line = 1.0 == shape ? Bezier.cubic(n, start, end) : Bezier.cubic(n, start, end, shape, weighted);
+                    OtsLine2d line = 1.0 == shape ? Bezier.cubic(n, start, end) : Bezier.cubic(n, start, end, shape, weighted);
                     for (int i = 1; i < line.size() - 1; i++)
                     {
                         Point2d p = line.get(i);
@@ -81,7 +81,7 @@ public class BezierTest
         control2 = new Point2d(0, 5);
         for (int n : new int[] {2, 3, 4, 100})
         {
-            OtsLine3d line = Bezier.cubic(n, from, control1, control2, to);
+            OtsLine2d line = Bezier.cubic(n, from, control1, control2, to);
             for (int i = 1; i < line.size() - 1; i++)
             {
                 Point2d p = line.get(i);
@@ -92,7 +92,7 @@ public class BezierTest
         }
         for (int n : new int[] {2, 3, 4, 100})
         {
-            OtsLine3d line =
+            OtsLine2d line =
                     Bezier.cubic(n, new OrientedPoint2d(from.x, from.y, Math.PI), new OrientedPoint2d(to.x, to.y, Math.PI / 2));
             for (int i = 1; i < line.size() - 1; i++)
             {

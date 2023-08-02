@@ -7,7 +7,6 @@ import java.util.Set;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
@@ -19,7 +18,8 @@ import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.SpatialObject;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.FractionalLengthData;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.Gtu;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -75,11 +75,14 @@ public class Link extends LocalEventProducer
     private final LinkType linkType;
 
     /** Design line of the link. */
-    private final OtsLine3d designLine;
+    private final OtsLine2d designLine;
+
+    /** Elevation data. */
+    private final FractionalLengthData elevation;
 
     /** the shape. */
     private final Polygon2d shape;
-    
+
     /** Bounds. */
     private final Bounds2d bounds;
 
@@ -93,13 +96,13 @@ public class Link extends LocalEventProducer
      * @param startNode Node; start node (directional)
      * @param endNode Node; end node (directional)
      * @param linkType LinkType; Link type to indicate compatibility with GTU types
-     * @param designLine OtsLine3d; the OtsLine3d design line of the Link
+     * @param designLine OtsLine2d; the OtsLine2d design line of the Link
+     * @param elevation FractionalLengthData; elevation given over fractional length, may be {@code null}.
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    @SuppressWarnings("checkstyle:parameternumber")
     public Link(final Network network, final String id, final Node startNode, final Node endNode, final LinkType linkType,
-            final OtsLine3d designLine) throws NetworkException
+            final OtsLine2d designLine, final FractionalLengthData elevation) throws NetworkException
     {
         Throw.whenNull(network, "network cannot be null");
         Throw.whenNull(id, "id cannot be null");
@@ -116,6 +119,7 @@ public class Link extends LocalEventProducer
         this.startNode.addLink(this);
         this.endNode.addLink(this);
         this.designLine = designLine;
+        this.elevation = elevation;
         this.shape = new Polygon2d(this.designLine.offsetLine(0.5).getPoints());
         this.bounds = new Bounds2d(this.shape.getBounds().getDeltaX(), this.shape.getBounds().getDeltaY());
         this.network.addLink(this);
@@ -223,9 +227,9 @@ public class Link extends LocalEventProducer
 
     /**
      * Returns the design line.
-     * @return OtsLine3d; design line.
+     * @return OtsLine2d; design line.
      */
-    public final OtsLine3d getDesignLine()
+    public final OtsLine2d getDesignLine()
     {
         return this.designLine;
     }
@@ -255,20 +259,12 @@ public class Link extends LocalEventProducer
         return this.designLine.getLength();
     }
 
-    /** the location with 0.01 m extra height. */
-    private OrientedPoint2d zLocation = null;
-
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public OrientedPoint2d getLocation()
+    public Point2d getLocation()
     {
-        if (this.zLocation == null)
-        {
-            Point2d p = this.designLine.getLocation();
-            this.zLocation = new OrientedPoint2d(p.x, p.y, 0.0);
-        }
-        return this.zLocation;
+        return this.designLine.getLocation();
     }
 
     /** {@inheritDoc} */
@@ -277,6 +273,54 @@ public class Link extends LocalEventProducer
     public Bounds2d getBounds()
     {
         return this.bounds;
+    }
+
+    /**
+     * Returns the elevation at the given position.
+     * @param position Length; position.
+     * @return Length; elevation at the given position.
+     */
+    public Length getElevation(final Length position)
+    {
+        return getElevation(position.si / getLength().si);
+    }
+
+    /**
+     * Returns the elevation at the given fractional position.
+     * @param fractionalPosition double; fractional position.
+     * @return Length; elevation at the given fractional position.
+     */
+    public Length getElevation(final double fractionalPosition)
+    {
+        if (this.elevation == null)
+        {
+            return Length.ZERO;
+        }
+        return Length.instantiateSI(this.elevation.get(fractionalPosition));
+    }
+
+    /**
+     * Returns the grade at the given position, given as delta_h / delta_f, where f is fractional position.
+     * @param position Length; position.
+     * @return double; grade at the given position.
+     */
+    public double getGrade(final Length position)
+    {
+        return getGrade(position.si / getLength().si);
+    }
+
+    /**
+     * Returns the grade at the given fractional position, given as delta_h / delta_f, where f is fractional position.
+     * @param fractionalPosition double; fractional position.
+     * @return double; grade at the given fractional position.
+     */
+    public double getGrade(final double fractionalPosition)
+    {
+        if (this.elevation == null)
+        {
+            return 0.0;
+        }
+        return this.elevation.getDerivative(fractionalPosition) / getLength().si;
     }
 
     /** {@inheritDoc} */

@@ -483,7 +483,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         ConflictEnd(final Conflict conflict, final Lane lane, final Length longitudinalPosition)
                 throws NetworkException, OtsGeometryException
         {
-            // FIXME: the OtsLine3d object should be shared by all ConflictEnd objects (removing OtsGeometryException)
+            // FIXME: the OtsLine2d object should be shared by all ConflictEnd objects (removing OtsGeometryException)
             super(conflict.getId() + "End", lane, longitudinalPosition, new PolyLine2d(new Point2d(0, 0), new Point2d(1, 0)));
             this.conflict = conflict;
         }

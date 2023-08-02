@@ -17,7 +17,7 @@ import org.junit.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -73,7 +73,7 @@ public class CurveTest
                 speedLimit, simulator, DefaultsNl.VEHICLE);
         Lane[] straight2 = LaneFactory.makeMultiLane(network, "straight2", curveEnd, destination, null, laneCount, laneType,
                 speedLimit, simulator, DefaultsNl.VEHICLE);
-        OtsLine3d curveLine = LaneFactory.makeBezier(origin, curveStart, curveEnd, destination);
+        OtsLine2d curveLine = LaneFactory.makeBezier(origin, curveStart, curveEnd, destination);
         Lane[] curve = LaneFactory.makeMultiLane(network, "bezier", curveStart, curveEnd, curveLine.getPoints(), laneCount,
                 laneType, speedLimit, simulator, DefaultsNl.VEHICLE);
         Lane[][] laneSets = new Lane[][] {straight1, curve, straight2};

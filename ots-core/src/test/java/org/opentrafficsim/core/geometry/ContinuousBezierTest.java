@@ -42,7 +42,7 @@ public class ContinuousBezierTest
         assertEquals("Start curvature is incorrect.", 0.0266666666666667, bezier.getStartCurvature(), MARGIN);
         assertEquals("End curvature is incorrect.", -0.0236444480841978, bezier.getEndCurvature(), MARGIN);
 
-        OtsLine3d line = bezier.flatten(32);
+        OtsLine2d line = bezier.flatten(32);
         assertEquals("Length of flattened Bezier is not correct", line.getLength().si, 171.2213439251704017, MARGIN);
 
         FractionalLengthData offsets = FractionalLengthData.of(0.0, 2.0, 0.33, 3.0, 1.0, 10.0);

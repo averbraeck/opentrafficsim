@@ -21,7 +21,7 @@ import org.djutils.draw.DrawRuntimeException;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.Test;
-import org.opentrafficsim.core.geometry.OtsLine3d.FractionalFallback;
+import org.opentrafficsim.core.geometry.OtsLine2d.FractionalFallback;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -31,10 +31,10 @@ import org.opentrafficsim.core.network.NetworkException;
  * </p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class OtsLine3dTest
+public class OtsLine2dTest
 {
     /**
-     * Test the constructors of OtsLine3d.
+     * Test the constructors of OtsLine2d.
      * @throws OtsGeometryException on failure
      * @throws NetworkException on failure
      */
@@ -130,16 +130,16 @@ public class OtsLine3dTest
      */
     private void runConstructors(final Point2d[] points) throws OtsGeometryException, NetworkException
     {
-        verifyPoints(new OtsLine3d(points), points);
+        verifyPoints(new OtsLine2d(points), points);
         List<Point2d> list = new ArrayList<>();
         for (int i = 0; i < points.length; i++)
         {
             list.add(points[i]);
         }
-        OtsLine3d line = new OtsLine3d(list);
+        OtsLine2d line = new OtsLine2d(list);
         verifyPoints(line, points);
-        // Convert it to Point2d[], create another OtsLine3d from that and check that
-        verifyPoints(new OtsLine3d(line.getPoints()), points);
+        // Convert it to Point2d[], create another OtsLine2d from that and check that
+        verifyPoints(new OtsLine2d(line.getPoints()), points);
         double length = 0;
         for (int i = 1; i < points.length; i++)
         {
@@ -165,12 +165,12 @@ public class OtsLine3dTest
         }
         try
         {
-            line = new OtsLine3d(path);
+            line = new OtsLine2d(path);
             if (0 == horizontalMoves)
             {
-                fail("Construction of OtsLine3d from path with degenerate projection should have failed");
+                fail("Construction of OtsLine2d from path with degenerate projection should have failed");
             }
-            // This new OtsLine3d has z=0 for all points so veryfyPoints won't work
+            // This new OtsLine2d has z=0 for all points so veryfyPoints won't work
             assertEquals("number of points should match", horizontalMoves + 1, line.size());
             int indexInLine = 0;
             for (int i = 0; i < points.length; i++)
@@ -187,7 +187,7 @@ public class OtsLine3dTest
         {
             if (0 != horizontalMoves)
             {
-                fail("Construction of OtsLine3d from path with non-degenerate projection should not have failed");
+                fail("Construction of OtsLine2d from path with non-degenerate projection should not have failed");
             }
         }
     }
@@ -221,12 +221,12 @@ public class OtsLine3dTest
     }
 
     /**
-     * Verify that a OtsLine3d contains the same points as an array of Point2d.
-     * @param line OtsLine3d; the OTS line
+     * Verify that a OtsLine2d contains the same points as an array of Point2d.
+     * @param line OtsLine2d; the OTS line
      * @param points Point2d[]; the OTSPoint array
      * @throws OtsGeometryException should not happen; this test has failed if it does happen
      */
-    private void verifyPoints(final OtsLine3d line, final Point2d[] points) throws OtsGeometryException
+    private void verifyPoints(final OtsLine2d line, final Point2d[] points) throws OtsGeometryException
     {
         assertEquals("Line should have same number of points as point array", line.size(), points.length);
         for (int i = 0; i < points.length; i++)
@@ -243,7 +243,7 @@ public class OtsLine3dTest
     @Test
     public final void exceptionTest() throws OtsGeometryException
     {
-        OtsLine3d line = new OtsLine3d(new Point2d[] {new Point2d(1, 2), new Point2d(4, 5)});
+        OtsLine2d line = new OtsLine2d(new Point2d[] {new Point2d(1, 2), new Point2d(4, 5)});
         try
         {
             line.get(-1);
@@ -274,7 +274,7 @@ public class OtsLine3dTest
         Point2d p0 = new Point2d(10, 20);
         Point2d p1 = new Point2d(40, 50);
         Point2d p2 = new Point2d(90, 80);
-        OtsLine3d l = new OtsLine3d(new Point2d[] {p0, p1, p2});
+        OtsLine2d l = new OtsLine2d(new Point2d[] {p0, p1, p2});
         checkGetLocation(l, -10, null, Math.atan2(p1.y - p0.y, p1.x - p0.x));
         checkGetLocation(l, -0.0001, p0, Math.atan2(p1.y - p0.y, p1.x - p0.x));
         checkGetLocation(l, 0, p0, Math.atan2(p1.y - p0.y, p1.x - p0.x));
@@ -287,13 +287,13 @@ public class OtsLine3dTest
 
     /**
      * Check the location returned by the various location methods.
-     * @param line OtsLine3d; the line
+     * @param line OtsLine2d; the line
      * @param fraction double; relative position to check
      * @param expectedPoint Point2d; expected location of the result
      * @param expectedZRotation double; expected Z rotation of the result
      * @throws OtsGeometryException on failure
      */
-    private void checkGetLocation(final OtsLine3d line, final double fraction, final Point2d expectedPoint,
+    private void checkGetLocation(final OtsLine2d line, final double fraction, final Point2d expectedPoint,
             final double expectedZRotation) throws OtsGeometryException
     {
         double length = line.getLength().si;
@@ -365,22 +365,22 @@ public class OtsLine3dTest
         Point2d p0 = new Point2d(10, 20);
         Point2d p1 = new Point2d(40, 50);
         Point2d p2 = new Point2d(90, 70);
-        OtsLine3d l = new OtsLine3d(new Point2d[] {p0, p1, p2});
+        OtsLine2d l = new OtsLine2d(new Point2d[] {p0, p1, p2});
         Point2d dp = l.getLocation();
         assertEquals("centroid x", 50, dp.x, 0.001);
         assertEquals("centroid y", 45, dp.y, 0.001);
-        l = new OtsLine3d(new Point2d[] {p1, p0, p2}); // Some arguments swapped
+        l = new OtsLine2d(new Point2d[] {p1, p0, p2}); // Some arguments swapped
         dp = l.getLocation();
         assertEquals("centroid x", 50, dp.x, 0.001);
         assertEquals("centroid y", 45, dp.y, 0.001);
-        l = new OtsLine3d(new Point2d[] {p0, p1}); // Two points; all in same Z-plane
+        l = new OtsLine2d(new Point2d[] {p0, p1}); // Two points; all in same Z-plane
         dp = l.getLocation();
         assertEquals("centroid x", 25, dp.x, 0.001);
         assertEquals("centroid y", 35, dp.y, 0.001);
     }
 
     /**
-     * Test the createAndCleanOtsLine3d method.
+     * Test the createAndCleanOtsLine2d method.
      * @throws OtsGeometryException should never happen
      */
     @Test
@@ -389,7 +389,7 @@ public class OtsLine3dTest
         Point2d[] tooShort = new Point2d[] {};
         try
         {
-            OtsLine3d.createAndCleanOtsLine3d(tooShort);
+            OtsLine2d.createAndCleanOtsLine2d(tooShort);
             fail("Array with no points should have thrown an exception");
         }
         catch (OtsGeometryException ne)
@@ -399,7 +399,7 @@ public class OtsLine3dTest
         tooShort = new Point2d[] {new Point2d(1, 2)};
         try
         {
-            OtsLine3d.createAndCleanOtsLine3d(tooShort);
+            OtsLine2d.createAndCleanOtsLine2d(tooShort);
             fail("Array with no points should have thrown an exception");
         }
         catch (OtsGeometryException ne)
@@ -409,11 +409,11 @@ public class OtsLine3dTest
         Point2d p0 = new Point2d(1, 2);
         Point2d p1 = new Point2d(4, 5);
         Point2d[] points = new Point2d[] {p0, p1};
-        OtsLine3d result = OtsLine3d.createAndCleanOtsLine3d(points);
+        OtsLine2d result = OtsLine2d.createAndCleanOtsLine2d(points);
         assertTrue("first point is p0", p0.equals(result.get(0)));
         assertTrue("second point is p1", p1.equals(result.get(1)));
         Point2d p1Same = new Point2d(4, 5);
-        result = OtsLine3d.createAndCleanOtsLine3d(new Point2d[] {p0, p0, p0, p0, p1Same, p0, p1, p1, p1Same, p1, p1});
+        result = OtsLine2d.createAndCleanOtsLine2d(new Point2d[] {p0, p0, p0, p0, p1Same, p0, p1, p1, p1Same, p1, p1});
         assertEquals("result should contain 4 points", 4, result.size());
         assertTrue("first point is p0", p0.equals(result.get(0)));
         assertTrue("second point is p1", p1.equals(result.get(1)));
@@ -432,24 +432,24 @@ public class OtsLine3dTest
         Point2d p1 = new Point2d(2.1, 2.2);
         Point2d p2 = new Point2d(3.1, 2.2);
 
-        OtsLine3d line = new OtsLine3d(new Point2d[] {p0, p1, p2});
-        assertTrue("OtsLine3d is equal to itself", line.equals(line));
-        assertFalse("OtsLine3d is not equal to null", line.equals(null));
-        assertFalse("OtsLine3d is not equals to some other kind of Object", line.equals(new String("hello")));
-        OtsLine3d line2 = new OtsLine3d(new Point2d[] {p0, p1, p2});
-        assertTrue("OtsLine3d is equal ot other OtsLine3d that has the exact same list of Point2d", line.equals(line2));
+        OtsLine2d line = new OtsLine2d(new Point2d[] {p0, p1, p2});
+        assertTrue("OtsLine2d is equal to itself", line.equals(line));
+        assertFalse("OtsLine2d is not equal to null", line.equals(null));
+        assertFalse("OtsLine2d is not equals to some other kind of Object", line.equals(new String("hello")));
+        OtsLine2d line2 = new OtsLine2d(new Point2d[] {p0, p1, p2});
+        assertTrue("OtsLine2d is equal ot other OtsLine2d that has the exact same list of Point2d", line.equals(line2));
         Point2d p2Same = new Point2d(3.1, 2.2);
-        line2 = new OtsLine3d(new Point2d[] {p0, p1, p2Same});
-        assertTrue("OtsLine3d is equal ot other OtsLine3d that has the exact same list of Point2d; even if some of "
+        line2 = new OtsLine2d(new Point2d[] {p0, p1, p2Same});
+        assertTrue("OtsLine2d is equal ot other OtsLine2d that has the exact same list of Point2d; even if some of "
                 + "those point are different instances with the same coordinates", line.equals(line2));
         Point2d p2NotSame = new Point2d(3.1, 2.25);
-        line2 = new OtsLine3d(new Point2d[] {p0, p1, p2NotSame});
-        assertFalse("OtsLine3d is not equal ot other OtsLine3d that differs in one coordinate", line.equals(line2));
-        line2 = new OtsLine3d(new Point2d[] {p0, p1, p2, p2NotSame});
-        assertFalse("OtsLine3d is not equal ot other OtsLine3d that has more points (but is identical up to the common length)",
+        line2 = new OtsLine2d(new Point2d[] {p0, p1, p2NotSame});
+        assertFalse("OtsLine2d is not equal ot other OtsLine2d that differs in one coordinate", line.equals(line2));
+        line2 = new OtsLine2d(new Point2d[] {p0, p1, p2, p2NotSame});
+        assertFalse("OtsLine2d is not equal ot other OtsLine2d that has more points (but is identical up to the common length)",
                 line.equals(line2));
         assertFalse(
-                "OtsLine3d is not equal ot other OtsLine3d that has fewer points  (but is identical up to the common length)",
+                "OtsLine2d is not equal ot other OtsLine2d that has fewer points  (but is identical up to the common length)",
                 line2.equals(line));
     }
 
@@ -467,10 +467,10 @@ public class OtsLine3dTest
         Point2d p4 = new Point2d(5.1, 2.2);
         Point2d p5 = new Point2d(6.1, 2.2);
 
-        OtsLine3d l0 = new OtsLine3d(p0, p1, p2);
-        OtsLine3d l1 = new OtsLine3d(p2, p3);
-        OtsLine3d l2 = new OtsLine3d(p3, p4, p5);
-        OtsLine3d ll = OtsLine3d.concatenate(l0, l1, l2);
+        OtsLine2d l0 = new OtsLine2d(p0, p1, p2);
+        OtsLine2d l1 = new OtsLine2d(p2, p3);
+        OtsLine2d l2 = new OtsLine2d(p3, p4, p5);
+        OtsLine2d ll = OtsLine2d.concatenate(l0, l1, l2);
         assertEquals("size is 6", 6, ll.size());
         assertEquals("point 0 is p0", p0, ll.get(0));
         assertEquals("point 1 is p1", p1, ll.get(1));
@@ -479,14 +479,14 @@ public class OtsLine3dTest
         assertEquals("point 4 is p4", p4, ll.get(4));
         assertEquals("point 5 is p5", p5, ll.get(5));
 
-        ll = OtsLine3d.concatenate(l1);
+        ll = OtsLine2d.concatenate(l1);
         assertEquals("size is 2", 2, ll.size());
         assertEquals("point 0 is p2", p2, ll.get(0));
         assertEquals("point 1 is p3", p3, ll.get(1));
 
         try
         {
-            OtsLine3d.concatenate(l0, l2);
+            OtsLine2d.concatenate(l0, l2);
             fail("Gap should have throw an exception");
         }
         catch (DrawRuntimeException e)
@@ -495,7 +495,7 @@ public class OtsLine3dTest
         }
         try
         {
-            OtsLine3d.concatenate();
+            OtsLine2d.concatenate();
             fail("concatenate of empty list should have thrown an exception");
         }
         catch (DrawRuntimeException e)
@@ -504,7 +504,7 @@ public class OtsLine3dTest
         }
 
         // Test concatenate methods with tolerance
-        OtsLine3d thirdLine = new OtsLine3d(p4, p5);
+        OtsLine2d thirdLine = new OtsLine2d(p4, p5);
         for (double tolerance : new double[] {0.1, 0.01, 0.001, 0.0001, 0.00001})
         {
             for (double actualError : new double[] {tolerance * 0.9, tolerance * 1.1})
@@ -514,22 +514,22 @@ public class OtsLine3dTest
                 {
                     double dx = actualError * Math.cos(Math.PI * 2 * direction / maxDirection);
                     double dy = actualError * Math.sin(Math.PI * 2 * direction / maxDirection);
-                    OtsLine3d otherLine = new OtsLine3d(new Point2d(p2.x + dx, p2.y + dy), p3, p4);
+                    OtsLine2d otherLine = new OtsLine2d(new Point2d(p2.x + dx, p2.y + dy), p3, p4);
                     if (actualError < tolerance)
                     {
                         try
                         {
-                            OtsLine3d.concatenate(tolerance, l0, otherLine);
+                            OtsLine2d.concatenate(tolerance, l0, otherLine);
                         }
                         catch (DrawRuntimeException oge)
                         {
-                            OtsLine3d.concatenate(tolerance, l0, otherLine);
+                            OtsLine2d.concatenate(tolerance, l0, otherLine);
                             fail("concatenation with error " + actualError + " and tolerance " + tolerance
                                     + " should not have failed");
                         }
                         try
                         {
-                            OtsLine3d.concatenate(tolerance, l0, otherLine, thirdLine);
+                            OtsLine2d.concatenate(tolerance, l0, otherLine, thirdLine);
                         }
                         catch (DrawRuntimeException oge)
                         {
@@ -541,7 +541,7 @@ public class OtsLine3dTest
                     {
                         try
                         {
-                            OtsLine3d.concatenate(tolerance, l0, otherLine);
+                            OtsLine2d.concatenate(tolerance, l0, otherLine);
                         }
                         catch (DrawRuntimeException oge)
                         {
@@ -549,7 +549,7 @@ public class OtsLine3dTest
                         }
                         try
                         {
-                            OtsLine3d.concatenate(tolerance, l0, otherLine, thirdLine);
+                            OtsLine2d.concatenate(tolerance, l0, otherLine, thirdLine);
                         }
                         catch (DrawRuntimeException oge)
                         {
@@ -577,7 +577,7 @@ public class OtsLine3dTest
             double dx = length * Math.cos(angle);
             double dy = length * Math.sin(angle);
             Point2d end = new Point2d(start.x + dx, start.y + dy);
-            OtsLine3d straightLine = new OtsLine3d(start, end);
+            OtsLine2d straightLine = new OtsLine2d(start, end);
             int intermediatePointCount = 5;
             for (double tolerance : new double[] {0.1, 0.01, 0.001})
             {
@@ -595,8 +595,8 @@ public class OtsLine3dTest
                     pointsOnTestLine.add(additionalPoint);
                 }
                 pointsOnTestLine.add(end);
-                OtsLine3d testLine = new OtsLine3d(pointsOnTestLine);
-                OtsLine3d filteredLine = testLine.noiseFilterRamerDouglasPeucker(tolerance, false);
+                OtsLine2d testLine = new OtsLine2d(pointsOnTestLine);
+                OtsLine2d filteredLine = testLine.noiseFilterRamerDouglasPeucker(tolerance, false);
                 assertEquals("RamerDouglasPeuker filter should have removed all intermediate points", 2, filteredLine.size());
                 // Now add a couple of points that should not be removed and will not cause the current start and end point
                 // to be removed
@@ -604,7 +604,7 @@ public class OtsLine3dTest
                 pointsOnTestLine.add(0, newStart);
                 // This filter does not find optimal solutions in many cases. Only case where one serious (really far)
                 // "outlier" is added on only one end work most of the time.
-                testLine = new OtsLine3d(pointsOnTestLine);
+                testLine = new OtsLine2d(pointsOnTestLine);
                 filteredLine = testLine.noiseFilterRamerDouglasPeucker(tolerance, false);
                 // if (3 != filteredLine.size())
                 // {
@@ -614,7 +614,7 @@ public class OtsLine3dTest
                 pointsOnTestLine.remove(0);
                 Point2d newEnd = new Point2d(end.x + 10 * tolerance * dy / length, end.y - 10 * tolerance * dx / length);
                 pointsOnTestLine.add(newEnd);
-                testLine = new OtsLine3d(pointsOnTestLine);
+                testLine = new OtsLine2d(pointsOnTestLine);
                 filteredLine = testLine.noiseFilterRamerDouglasPeucker(tolerance, false);
                 // if (3 != filteredLine.size())
                 // {
@@ -639,13 +639,13 @@ public class OtsLine3dTest
         Point2d p4 = new Point2d(5.1, 2.2);
         Point2d p5 = new Point2d(6.1, 2.2);
 
-        OtsLine3d l01 = new OtsLine3d(p0, p1);
-        OtsLine3d r = l01.reverse();
+        OtsLine2d l01 = new OtsLine2d(p0, p1);
+        OtsLine2d r = l01.reverse();
         assertEquals("result has size 2", 2, r.size());
         assertEquals("point 0 is p1", p1, r.get(0));
         assertEquals("point 1 is p0", p0, r.get(1));
 
-        OtsLine3d l05 = new OtsLine3d(p0, p1, p2, p3, p4, p5);
+        OtsLine2d l05 = new OtsLine2d(p0, p1, p2, p3, p4, p5);
         r = l05.reverse();
         assertEquals("result has size 6", 6, r.size());
         assertEquals("point 0 is p5", p5, r.get(0));
@@ -672,8 +672,8 @@ public class OtsLine3dTest
         Point2d p1c = new Point2d(2.03, 3.03);
         Point2d p2 = new Point2d(12, 13);
 
-        OtsLine3d l = new OtsLine3d(p0, p1);
-        OtsLine3d e = l.extractFractional(0, 1);
+        OtsLine2d l = new OtsLine2d(p0, p1);
+        OtsLine2d e = l.extractFractional(0, 1);
         assertEquals("size of extraction is 2", 2, e.size());
         assertEquals("point 0 is p0", p0, e.get(0));
         assertEquals("point 1 is p1", p1, e.get(1));
@@ -775,7 +775,7 @@ public class OtsLine3dTest
                 double start = i * l.getLength().si / 10;
                 double end = j * l.getLength().si / 10;
                 // System.err.println("i=" + i + ", j=" + j);
-                for (OtsLine3d extractedLine : new OtsLine3d[] {l.extract(start, end),
+                for (OtsLine2d extractedLine : new OtsLine2d[] {l.extract(start, end),
                         l.extract(new Length(start, LengthUnit.SI), new Length(end, LengthUnit.SI)),
                         l.extractFractional(1.0 * i / 10, 1.0 * j / 10)})
                 {
@@ -788,7 +788,7 @@ public class OtsLine3dTest
             }
         }
 
-        for (OtsLine3d line : new OtsLine3d[] {new OtsLine3d(p0, p1, p2), new OtsLine3d(p0, p1, p1a, p1b, p1c, p2)})
+        for (OtsLine2d line : new OtsLine2d[] {new OtsLine2d(p0, p1, p2), new OtsLine2d(p0, p1, p1a, p1b, p1c, p2)})
         {
             for (int i = 0; i < 110; i++)
             {
@@ -807,7 +807,7 @@ public class OtsLine3dTest
                     // System.err.println("first length is " + firstLength);
                     // System.err.println("second length is " + line.getLength().si);
                     // System.err.println("i=" + i + ", j=" + j);
-                    for (OtsLine3d extractedLine : new OtsLine3d[] {line.extract(start, end),
+                    for (OtsLine2d extractedLine : new OtsLine2d[] {line.extract(start, end),
                             line.extract(new Length(start, LengthUnit.SI), new Length(end, LengthUnit.SI)),
                             line.extractFractional(1.0 * i / 110, 1.0 * j / 110)})
                     {
@@ -853,11 +853,11 @@ public class OtsLine3dTest
     {
         Point2d from = new Point2d(1, 2);
         Point2d to = new Point2d(4, 3);
-        OtsLine3d line = new OtsLine3d(from, to);
+        OtsLine2d line = new OtsLine2d(from, to);
         double lineLengthHorizontal = new Point2d(from.x, from.y).distance(new Point2d(to.x, to.y));
         for (int step = -5; step <= 5; step++)
         {
-            OtsLine3d offsetLine = line.offsetLine(step);
+            OtsLine2d offsetLine = line.offsetLine(step);
             assertEquals("Offset line of a single straight segment has two points", 2, offsetLine.size());
             assertEquals("Distance between start points should be equal to offset", Math.abs(step),
                     offsetLine.getFirst().distance(line.getFirst()), 0.0001);
@@ -870,10 +870,10 @@ public class OtsLine3dTest
                     lineLengthHorizontal, offsetLine.getLength().si, 0.001);
         }
         Point2d via = new Point2d(2.5, 2.5);
-        line = new OtsLine3d(from, via, to);
+        line = new OtsLine2d(from, via, to);
         for (int step = -5; step <= 5; step++)
         {
-            OtsLine3d offsetLine = line.offsetLine(step);
+            OtsLine2d offsetLine = line.offsetLine(step);
             // System.out.println("step: " + step);
             // System.out.println("reference: " + line);
             // System.out.println("offset: " + offsetLine);
@@ -894,8 +894,8 @@ public class OtsLine3dTest
     {
         Direction zeroDir = Direction.ZERO;
         // test correct projection with parallel helper lines on line /\/\
-        OtsLine3d line =
-                new OtsLine3d(new Point2d(0, 0), new Point2d(1, 1), new Point2d(2, 0), new Point2d(3, 1), new Point2d(4, 0));
+        OtsLine2d line =
+                new OtsLine2d(new Point2d(0, 0), new Point2d(1, 1), new Point2d(2, 0), new Point2d(3, 1), new Point2d(4, 0));
         double fraction;
         fraction = line.projectFractional(zeroDir, zeroDir, 1.5, -5.0, FractionalFallback.ORTHOGONAL);
         checkGetLocation(line, fraction, new Point2d(1.5, .5), Math.atan2(-1, 1));
@@ -906,13 +906,13 @@ public class OtsLine3dTest
         fraction = line.projectFractional(zeroDir, zeroDir, 2.5, 5.0, FractionalFallback.ORTHOGONAL);
         checkGetLocation(line, fraction, new Point2d(2.5, .5), Math.atan2(1, 1));
         // test correct projection with parallel helper lines on line ---
-        line = new OtsLine3d(new Point2d(0, 0), new Point2d(2, 2), new Point2d(4, 4), new Point2d(6, 6));
+        line = new OtsLine2d(new Point2d(0, 0), new Point2d(2, 2), new Point2d(4, 4), new Point2d(6, 6));
         fraction = line.projectFractional(zeroDir, zeroDir, 2, 4, FractionalFallback.ORTHOGONAL);
         checkGetLocation(line, fraction, new Point2d(3, 3), Math.atan2(1, 1));
         fraction = line.projectFractional(zeroDir, zeroDir, 4, 2, FractionalFallback.ORTHOGONAL);
         checkGetLocation(line, fraction, new Point2d(3, 3), Math.atan2(1, 1));
         // test correct projection without parallel helper lines on just some line
-        line = new OtsLine3d(new Point2d(-2, -2), new Point2d(2, -2), new Point2d(2, 2), new Point2d(-2, 2));
+        line = new OtsLine2d(new Point2d(-2, -2), new Point2d(2, -2), new Point2d(2, 2), new Point2d(-2, 2));
         for (double f = 0; f < 0; f += .1)
         {
             fraction = line.projectFractional(zeroDir, zeroDir, 1, -1 + f * 2, FractionalFallback.ORTHOGONAL); // from y = -1 to
@@ -926,7 +926,7 @@ public class OtsLine3dTest
         double[] d = new double[] {1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e9, 1e12}; // that's pretty far from a line...
         for (int i = 0; i < e.length; i++)
         {
-            line = new OtsLine3d(new Point2d(e[i], 0), new Point2d(2 + e[i], 2), new Point2d(4, 4), new Point2d(6, 6 - e[i]),
+            line = new OtsLine2d(new Point2d(e[i], 0), new Point2d(2 + e[i], 2), new Point2d(4, 4), new Point2d(6, 6 - e[i]),
                     new Point2d(8, 8 - e[i]));
             for (int j = 0; j < d.length; j++)
             {
@@ -960,7 +960,7 @@ public class OtsLine3dTest
                 {
                     list.add(new Point2d(Math.cos(r) * radius, Math.sin(r) * radius));
                 }
-                line = new OtsLine3d(list);
+                line = new OtsLine2d(list);
                 for (double x : new double[] {0, 1e-3, 1e-6, 1e-9, 1e-12})
                 {
                     for (double y : new double[] {0, 1e-3, 1e-6, 1e-9, 1e-12})
@@ -985,7 +985,7 @@ public class OtsLine3dTest
                 list.add(new Point2d(x, random.nextDouble()));
                 // System.out.println(list.get(list.size() - 1).x + ", " + list.get(list.size() - 1).y);
             }
-            line = new OtsLine3d(list);
+            line = new OtsLine2d(list);
             for (double x = -2; x < 12; x += 0.01)
             {
                 for (double y = -1; y <= 2; y += 0.1)
@@ -996,7 +996,7 @@ public class OtsLine3dTest
             }
         }
         // 2-point line
-        line = new OtsLine3d(new Point2d(0, 0), new Point2d(1, 1));
+        line = new OtsLine2d(new Point2d(0, 0), new Point2d(1, 1));
         fraction = line.projectFractional(zeroDir, zeroDir, .5, 1, FractionalFallback.ORTHOGONAL);
         assertTrue("Projection on line with single segment is not correct.", Math.abs(fraction - 0.5) < 0.001);
         // square test (THIS TEST IS NOT YET SUCCESSFUL, THE POINTS ARE PROJECTED ORTHOGONALLY TO BEFORE END!!!)
@@ -1010,7 +1010,7 @@ public class OtsLine3dTest
          * ---------
          */
         // {@formatter:on}
-        // line = new OtsLine3d(new Point2d(0, 0), new Point2d(4, 0), new Point2d(4, 4), new Point2d(0, 4));
+        // line = new OtsLine2d(new Point2d(0, 0), new Point2d(4, 0), new Point2d(4, 4), new Point2d(0, 4));
         // start = new Direction(Math.atan2(-1, 3), AngleUnit.SI);
         // end = new Direction(Math.atan2(-1, -1), AngleUnit.SI);
         // fraction = line.projectFractional(start, end, 1.25, 2.25); // nearest to top of square, but can only project to
@@ -1041,7 +1041,7 @@ public class OtsLine3dTest
         {
             points.add(new Point2d(Math.pow(2, i) - 1, 10));
         }
-        OtsLine3d line = new OtsLine3d(points);
+        OtsLine2d line = new OtsLine2d(points);
         double end = points.get(points.size() - 1).x;
         Method findMethod = line.getClass().getDeclaredMethod("find", double.class);
         findMethod.setAccessible(true);
@@ -1065,8 +1065,8 @@ public class OtsLine3dTest
         Point2d from = new Point2d(10, 20);
         Point2d to = new Point2d(70, 80);
         double length = from.distance(to);
-        OtsLine3d line = new OtsLine3d(from, to);
-        OtsLine3d truncatedLine = line.truncate(length);
+        OtsLine2d line = new OtsLine2d(from, to);
+        OtsLine2d truncatedLine = line.truncate(length);
         assertEquals("Start of line truncated at full length is the same as start of the input line", truncatedLine.get(0),
                 from);
         assertEquals("End of line truncated at full length is about the same as end of input line", 0,
@@ -1095,7 +1095,7 @@ public class OtsLine3dTest
         assertEquals("End of 50%, truncated 2-point line should be at the half way point", 0,
                 halfWay.distance(truncatedLine.get(1)), 0.0001);
         Point2d intermediatePoint = new Point2d(20, 20);
-        line = new OtsLine3d(from, intermediatePoint, to);
+        line = new OtsLine2d(from, intermediatePoint, to);
         length = from.distance(intermediatePoint) + intermediatePoint.distance(to);
         truncatedLine = line.truncate(length);
         assertEquals("Start of line truncated at full length is the same as start of the input line", truncatedLine.get(0),
@@ -1117,16 +1117,16 @@ public class OtsLine3dTest
     public void testRadius() throws OtsGeometryException
     {
         // Single segment line is always straight
-        OtsLine3d line = new OtsLine3d(new Point2d[] {new Point2d(10, 20), new Point2d(20, 30)});
+        OtsLine2d line = new OtsLine2d(new Point2d[] {new Point2d(10, 20), new Point2d(20, 30)});
         Length radius = line.getProjectedRadius(0.5);
         assertTrue("should be NaN", Double.isNaN(radius.getSI()));
         // Two segment line that is perfectly straight
-        line = new OtsLine3d(new Point2d[] {new Point2d(10, 20), new Point2d(20, 30), new Point2d(30, 40)});
+        line = new OtsLine2d(new Point2d[] {new Point2d(10, 20), new Point2d(20, 30), new Point2d(30, 40)});
         radius = line.getProjectedRadius(0.5);
         assertTrue("should be NaN", Double.isNaN(radius.getSI()));
         // Two segment line that is not straight
-        line = new OtsLine3d(new Point2d[] {new Point2d(10, 30), new Point2d(20, 30), new Point2d(30, 40)});
-        // for a 2-segment OtsLine3d, the result should be independent of the fraction
+        line = new OtsLine2d(new Point2d[] {new Point2d(10, 30), new Point2d(20, 30), new Point2d(30, 40)});
+        // for a 2-segment OtsLine2d, the result should be independent of the fraction
         for (int step = 0; step <= 10; step++)
         {
             double fraction = step / 10.0;
@@ -1135,7 +1135,7 @@ public class OtsLine3dTest
         }
         System.out.println("radius is " + radius);
         // Now a bit harder
-        line = new OtsLine3d(
+        line = new OtsLine2d(
                 new Point2d[] {new Point2d(10, 30), new Point2d(20, 30), new Point2d(30, 40), new Point2d(30, 30)});
         System.out.println(line.toPlot());
         double boundary = 1 / (2 + Math.sqrt(2));

@@ -16,7 +16,7 @@ import org.djutils.event.EventType;
 import org.junit.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.mock.MockGtu;
 import org.opentrafficsim.core.mock.MockSimulator;
@@ -57,8 +57,8 @@ public class LinkTest implements EventListener
         Node startNode = new Node(network, "start", new Point2d(10, 20));
         Node endNode = new Node(network, "end", new Point2d(1000, 2000));
         LinkType linkType = new LinkType("myLinkType", DefaultsNl.ROAD);
-        OtsLine3d designLine = new OtsLine3d(startNode.getPoint(), endNode.getPoint());
-        Link link = new Link(network, "link1", startNode, endNode, linkType, designLine);
+        OtsLine2d designLine = new OtsLine2d(startNode.getPoint(), endNode.getPoint());
+        Link link = new Link(network, "link1", startNode, endNode, linkType, designLine, null);
         assertTrue("network contains the newly constructed link", network.containsLink(link));
         // directionalityMap is currently empty
         assertEquals("The link contains no GTUs", 0, link.getGTUCount());
@@ -112,7 +112,7 @@ public class LinkTest implements EventListener
         assertFalse("The link no longer contains gtu2", link.getGTUs().contains(gtu2));
         assertEquals("Network is correctly returned", network, link.getNetwork());
         assertEquals("LinkType is correctly returned", linkType, link.getType());
-        OrientedPoint2d location = link.getLocation();
+        Point2d location = link.getLocation();
         OrientedPoint2d expectedLocation = designLine.getLocationFraction(0.5);
         assertEquals("location is at halfway point of design line (because design line contains only two points)", 0,
                 expectedLocation.distance(location), 0.1);
@@ -122,13 +122,13 @@ public class LinkTest implements EventListener
         assertFalse("link is not equal to null", link.equals(null));
         assertFalse("link is not equal to some other object", link.equals("Hello World!"));
         // Make another link to test the rest of equals
-        Link otherLink = new Link(network, "link5", startNode, endNode, linkType, designLine);
+        Link otherLink = new Link(network, "link5", startNode, endNode, linkType, designLine, null);
         assertFalse("link is not equal to extremely similar link with different id", link.equals(otherLink));
         // make a link with the same name in another network
         Network otherNetwork = new Network("other", MockSimulator.createMock());
         linkType = new LinkType("myLinkType", DefaultsNl.ROAD);
         otherLink = new Link(otherNetwork, "link1", new Node(otherNetwork, "start", new Point2d(10, 20)),
-                new Node(otherNetwork, "end", new Point2d(1000, 2000)), linkType, designLine);
+                new Node(otherNetwork, "end", new Point2d(1000, 2000)), linkType, designLine, null);
         assertTrue("link is equal to extremely similar link with same id but different network", link.equals(otherLink));
     }
 

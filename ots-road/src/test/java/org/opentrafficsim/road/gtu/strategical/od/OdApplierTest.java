@@ -40,7 +40,7 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -179,7 +179,7 @@ public class OdApplierTest
         Node nodeA = new Node(this.network, "A", pointA, Direction.ZERO);
         Node nodeB = new Node(this.network, "B", pointB, Direction.ZERO);
         CrossSectionLink linkAB = new CrossSectionLink(this.network, "AB", nodeA, nodeB, DefaultsNl.ROAD,
-                new OtsLine3d(pointA, pointB), LaneKeepingPolicy.KEEPRIGHT);
+                new OtsLine2d(pointA, pointB), null, LaneKeepingPolicy.KEEPRIGHT);
         this.lanes.put("lane1",
                 LaneGeometryUtil.createStraightLane(linkAB, "lane1", Length.instantiateSI(1.75), Length.instantiateSI(1.75),
                         Length.instantiateSI(3.5), Length.instantiateSI(3.5), DefaultsRoadNl.HIGHWAY,

@@ -9,7 +9,7 @@ import java.util.UUID;
 
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -41,12 +41,12 @@ public class Stripe extends CrossSectionElement
      * Constructor specifying geometry.
      * @param type Type; stripe type defining appearance and default permeability.
      * @param link CrossSectionLink; link.
-     * @param centerLine OtsLine3d; center line.
+     * @param centerLine OtsLine2d; center line.
      * @param contour Polygon2d; contour shape.
      * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
      * @throws NetworkException when no cross-section slice is defined.
      */
-    public Stripe(final Type type, final CrossSectionLink link, final OtsLine3d centerLine, final Polygon2d contour,
+    public Stripe(final Type type, final CrossSectionLink link, final OtsLine2d centerLine, final Polygon2d contour,
             final List<CrossSectionSlice> crossSectionSlices) throws NetworkException
     {
         super(link, UUID.randomUUID().toString(), centerLine, contour, crossSectionSlices);

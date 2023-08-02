@@ -40,7 +40,7 @@ import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
@@ -191,17 +191,15 @@ public class TransceiverTest
                 checkAckNack(gtuIdTransceiver, new Object[] {"this is a bad address"}, false, "wrong length"));
 
         GtuType gtuType = new GtuType("gtuType 1");
-        LaneBasedGtu gtu1 =
-                new MyMockGTU("gtu 1", gtuType, new OrientedPoint2d(1, 10, 1), new Speed(1, SpeedUnit.KM_PER_HOUR),
-                        new Acceleration(1, AccelerationUnit.METER_PER_SECOND_2), simulator).getMock();
+        LaneBasedGtu gtu1 = new MyMockGTU("gtu 1", gtuType, new OrientedPoint2d(1, 10, 1), new Speed(1, SpeedUnit.KM_PER_HOUR),
+                new Acceleration(1, AccelerationUnit.METER_PER_SECOND_2), simulator).getMock();
         network.addGTU(gtu1);
         result = gtuIdTransceiver.get(null, storeLastResult);
         assertEquals("length of result is now 1", 1, result.length);
         assertTrue("result contains a string", result[0] instanceof String);
         assertEquals("result[0] is name of our mocked GTU", "gtu 1", result[0]);
-        LaneBasedGtu gtu2 =
-                new MyMockGTU("gtu 2", gtuType, new OrientedPoint2d(2, 20, 2), new Speed(2, SpeedUnit.KM_PER_HOUR),
-                        new Acceleration(2, AccelerationUnit.METER_PER_SECOND_2), simulator).getMock();
+        LaneBasedGtu gtu2 = new MyMockGTU("gtu 2", gtuType, new OrientedPoint2d(2, 20, 2), new Speed(2, SpeedUnit.KM_PER_HOUR),
+                new Acceleration(2, AccelerationUnit.METER_PER_SECOND_2), simulator).getMock();
         network.addGTU(gtu2);
         result = gtuIdTransceiver.get(new Object[0], storeLastResult);
         assertEquals("length of result is now 2", 2, result.length);
@@ -323,7 +321,7 @@ public class TransceiverTest
         Node node2 = new Node(network, "node 2", new Point2d(110, 20), Direction.ZERO);
         LinkType roadLinkType = DefaultsNl.ROAD;
         CrossSectionLink link = new CrossSectionLink(network, "1 to 2", node1, node2, roadLinkType,
-                new OtsLine3d(node1.getPoint(), node2.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
+                new OtsLine2d(node1.getPoint(), node2.getPoint()), null, LaneKeepingPolicy.KEEPRIGHT);
         LaneType laneType = DefaultsRoadNl.RESIDENTIAL_ROAD;
         OtsReplication replication = Mockito.mock(OtsReplication.class);
         HistoryManagerDevs hmd = Mockito.mock(HistoryManagerDevs.class);
@@ -626,8 +624,7 @@ class MyMockGTU
      * @param simulator OtsSimulatorInterface; (mocked) simulator
      * @throws RemoteException cannot happen ...
      */
-    MyMockGTU(final String name, final GtuType gtuType,
-            final OrientedPoint2d location, final Speed speed,
+    MyMockGTU(final String name, final GtuType gtuType, final OrientedPoint2d location, final Speed speed,
             final Acceleration acceleration, final OtsSimulatorInterface simulator) throws RemoteException
     {
         this.name = name;

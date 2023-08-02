@@ -140,7 +140,7 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
      * @param lane Lane; the lane for which to make a perpendicular geometry
      * @param longitudinalPosition Length; the position on the lane
      * @param relativeWidth double; lane width to use
-     * @return an OtsLine3d that describes the line
+     * @return an OtsLine2d that describes the line
      * @throws NetworkException in case the detector point on the center line of the lane cannot be found
      */
     protected static PolyLine2d makeGeometry(final Lane lane, final Length longitudinalPosition, final double relativeWidth)

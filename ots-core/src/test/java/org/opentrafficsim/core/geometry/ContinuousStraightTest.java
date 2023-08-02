@@ -44,7 +44,7 @@ public class ContinuousStraightTest
         assertEquals("End curvature is incorrect.", 0.0, straight.getEndCurvature(), MARGIN);
 
         FractionalLengthData offsets = FractionalLengthData.of(0.0, -1.0, 0.5, -1.0, 1.0, -2.0);
-        OtsLine3d line = straight.offset(offsets);
+        OtsLine2d line = straight.offset(offsets);
         isApproximal(line.get(0), 0.0, -1.0);
         isApproximal(line.get(1), 50.0, -1.0);
         isApproximal(line.get(2), 100.0, -2.0);

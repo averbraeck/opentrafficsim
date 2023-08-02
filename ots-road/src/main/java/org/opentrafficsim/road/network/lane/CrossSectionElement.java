@@ -15,7 +15,7 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.RoadNetwork;
@@ -49,7 +49,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
     protected final List<CrossSectionSlice> crossSectionSlices;
 
     /** The center line of the element. Calculated once at the creation. */
-    private final OtsLine3d centerLine;
+    private final OtsLine2d centerLine;
 
     /** The contour of the element. Calculated once at the creation. */
     private final Polygon2d contour;
@@ -64,12 +64,12 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      * Constructor.
      * @param link CrossSectionLink; link.
      * @param id String; id.
-     * @param centerLine OtsLine3d; center line.
+     * @param centerLine OtsLine2d; center line.
      * @param contour Polygon2d; contour shape.
      * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
      * @throws NetworkException when no cross-section slice is defined.
      */
-    public CrossSectionElement(final CrossSectionLink link, final String id, final OtsLine3d centerLine,
+    public CrossSectionElement(final CrossSectionLink link, final String id, final OtsLine2d centerLine,
             final Polygon2d contour, final List<CrossSectionSlice> crossSectionSlices) throws NetworkException
     {
         Throw.whenNull(link, "Link may not be null.");
@@ -261,9 +261,9 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
 
     /**
      * Retrieve the center line of this CrossSectionElement.
-     * @return OtsLine3d; the center line of this CrossSectionElement
+     * @return OtsLine2d; the center line of this CrossSectionElement
      */
-    public final OtsLine3d getCenterLine()
+    public final OtsLine2d getCenterLine()
     {
         return this.centerLine;
     }
@@ -363,10 +363,10 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
 
         if (cse.crossSectionSlices.size() <= 2)
         {
-            OtsLine3d crossSectionDesignLine = cse.centerLine;
-            OtsLine3d rightBoundary =
+            OtsLine2d crossSectionDesignLine = cse.centerLine;
+            OtsLine2d rightBoundary =
                     crossSectionDesignLine.offsetLine(-cse.getBeginWidth().getSI() / 2, -cse.getEndWidth().getSI() / 2);
-            OtsLine3d leftBoundary =
+            OtsLine2d leftBoundary =
                     crossSectionDesignLine.offsetLine(cse.getBeginWidth().getSI() / 2, cse.getEndWidth().getSI() / 2);
             result = new Point2d[rightBoundary.size() + leftBoundary.size() + 1];
             int resultIndex = 0;
@@ -393,7 +393,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
                 double ew2 = cse.crossSectionSlices.get(i + 1).getWidth().si / 2.0;
                 double sf = cse.crossSectionSlices.get(i).getRelativeLength().si / plLength;
                 double ef = cse.crossSectionSlices.get(i + 1).getRelativeLength().si / plLength;
-                OtsLine3d crossSectionDesignLine = cse.getLink().getDesignLine().extractFractional(sf, ef).offsetLine(so, eo);
+                OtsLine2d crossSectionDesignLine = cse.getLink().getDesignLine().extractFractional(sf, ef).offsetLine(so, eo);
                 resultList.addAll(Arrays.asList(crossSectionDesignLine.offsetLine(-sw2, -ew2).getPoints()));
                 rightBoundary.addAll(Arrays.asList(crossSectionDesignLine.offsetLine(sw2, ew2).getPoints()));
             }
@@ -424,6 +424,46 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
         return this.bounds;
     }
 
+    /**
+     * Returns the elevation at the given position.
+     * @param position Length; position.
+     * @return Length; elevation at the given position.
+     */
+    public Length getElevation(final Length position)
+    {
+        return getElevation(position.si / getLength().si);
+    }
+
+    /**
+     * Returns the elevation at the given fractional position.
+     * @param fractionalPosition double; fractional position.
+     * @return Length; elevation at the given fractional position.
+     */
+    public Length getElevation(final double fractionalPosition)
+    {
+        return getLink().getElevation(fractionalPosition);
+    }
+
+    /**
+     * Returns the grade at the given position, given as delta_h / delta_f, where f is fractional position.
+     * @param position Length; position.
+     * @return double; grade at the given position.
+     */
+    public double getGrade(final Length position)
+    {
+        return getGrade(position.si / getLength().si);
+    }
+
+    /**
+     * Returns the grade at the given fractional position, given as delta_h / delta_f, where f is fractional position.
+     * @param fractionalPosition double; fractional position.
+     * @return double; grade at the given fractional position.
+     */
+    public double getGrade(final double fractionalPosition)
+    {
+        return getLink().getGrade(fractionalPosition);
+    }
+    
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")

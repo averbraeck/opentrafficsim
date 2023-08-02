@@ -14,7 +14,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableList;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.RelativePosition;
 
@@ -38,7 +38,7 @@ public class OperationalPlan implements Serializable
     private static final long serialVersionUID = 20151114L;
 
     /** The path to follow from a certain time till a certain time. */
-    private final OtsLine3d path;
+    private final OtsLine2d path;
 
     /** The absolute start time when we start executing the path. */
     private final Time startTime;
@@ -82,19 +82,19 @@ public class OperationalPlan implements Serializable
             final Duration duration)
     {
         Point2d p2 = new Point2d(point.x + Math.cos(point.getDirZ()), point.y + Math.sin(point.getDirZ()));
-        OtsLine3d path = Try.assign(() -> new OtsLine3d(point, p2), "Unexpected geometry exception.");
+        OtsLine2d path = Try.assign(() -> new OtsLine2d(point, p2), "Unexpected geometry exception.");
         return new OperationalPlan(gtu, path, startTime, Segments.standStill(duration));
     }
 
     /**
      * Construct an operational plan. The plan will be as long as the minimum of the path or segments allow.
      * @param gtu Gtu; the GTU for debugging purposes
-     * @param path OtsLine3d; the path to follow from a certain time till a certain time. The path should have &lt;i&gt;at
+     * @param path OtsLine2d; the path to follow from a certain time till a certain time. The path should have &lt;i&gt;at
      *            least&lt;/i&gt; the length
      * @param startTime Time; the absolute start time when we start executing the path
      * @param segments Segments; the segments that make up the longitudinal dynamics
      */
-    public OperationalPlan(final Gtu gtu, final OtsLine3d path, final Time startTime, final Segments segments)
+    public OperationalPlan(final Gtu gtu, final OtsLine2d path, final Time startTime, final Segments segments)
     {
         this.gtu = gtu;
         this.startTime = startTime;
@@ -117,7 +117,7 @@ public class OperationalPlan implements Serializable
         this.segmentStartDistances[this.segments.size()] = segmentsLength.si;
 
         // If segmentsLength == 0, we have a stand-still plan with non-zero length path. This path is required as a degenerate
-        // OtsLine3d (with <2 points) is not allowed. In that case (in else) do not truncate path.
+        // OtsLine2d (with <2 points) is not allowed. In that case (in else) do not truncate path.
         if (segmentsLength.gt0() && pathLength.gt(segmentsLength))
         {
             this.totalDuration = segmentsDuration;
@@ -148,9 +148,9 @@ public class OperationalPlan implements Serializable
     /**
      * Return the path that will be traveled. If the plan is a wait plan, the start point of the path is good; the end point of
      * the path is bogus (should only be used to determine the orientation of the GTU).
-     * @return OtsLine3d; the path
+     * @return OtsLine2d; the path
      */
-    public OtsLine3d getPath()
+    public OtsLine2d getPath()
     {
         return this.path;
     }

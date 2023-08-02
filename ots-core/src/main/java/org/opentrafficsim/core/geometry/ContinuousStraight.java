@@ -72,10 +72,10 @@ public class ContinuousStraight implements ContinuousLine
     /**
      * Returns the line. Number of segments is ignored.
      * @param numSegments int; minimum number of segments (ignored).
-     * @return OtsLine3d; polyline.
+     * @return OtsLine2d; polyline.
      */
     @Override
-    public OtsLine3d flatten(final int numSegments)
+    public OtsLine2d flatten(final int numSegments)
     {
         return flatten();
     }
@@ -84,34 +84,34 @@ public class ContinuousStraight implements ContinuousLine
      * Returns the line. Maximum errors are ignored.
      * @param maxAngleError Angle; maximum angle error in polyline (ignored).
      * @param maxSpatialError double; maximum spatial error in polyline (ignored).
-     * @return OtsLine3d; polyline.
+     * @return OtsLine2d; polyline.
      */
     @Override
-    public OtsLine3d flatten(final Angle maxAngleError, final double maxSpatialError)
+    public OtsLine2d flatten(final Angle maxAngleError, final double maxSpatialError)
     {
         return flatten();
     }
 
     /**
      * Polyline from continuous line. A straight uses no segments.
-     * @return OtsLine3d; polyline.
+     * @return OtsLine2d; polyline.
      */
-    public OtsLine3d flatten()
+    public OtsLine2d flatten()
     {
         return Try.assign(
-                () -> new OtsLine3d(new Point2d(this.startPoint.x, this.startPoint.y),
+                () -> new OtsLine2d(new Point2d(this.startPoint.x, this.startPoint.y),
                         new Point2d(this.endPoint.x, this.endPoint.y)),
-                "Unexpected exception while creating straight OtsLine3d.");
+                "Unexpected exception while creating straight OtsLine2d.");
     }
 
     /**
      * Offset polyline based on variable offset. The number of segments is ignored.
      * @param offsets FractionalLengthData; offsets at fractional lengths.
      * @param numSegments int; minimum number of segments (ignored).
-     * @return OtsLine3d; offset polyline.
+     * @return OtsLine2d; offset polyline.
      */
     @Override
-    public OtsLine3d offset(final FractionalLengthData offsets, final int numSegments)
+    public OtsLine2d offset(final FractionalLengthData offsets, final int numSegments)
     {
         return offset(offsets);
     }
@@ -121,10 +121,10 @@ public class ContinuousStraight implements ContinuousLine
      * @param offsets FractionalLengthData; offsets at fractional lengths.
      * @param maxAngleError Angle; maximum angle error in polyline (ignored).
      * @param maxSpatialError double; maximum spatial error in polyline (ignored).
-     * @return OtsLine3d; offset polyline.
+     * @return OtsLine2d; offset polyline.
      */
     @Override
-    public OtsLine3d offset(final FractionalLengthData offsets, final Angle maxAngleError, final double maxSpatialError)
+    public OtsLine2d offset(final FractionalLengthData offsets, final Angle maxAngleError, final double maxSpatialError)
     {
         return offset(offsets);
     }
@@ -132,13 +132,13 @@ public class ContinuousStraight implements ContinuousLine
     /**
      * Offset polyline based on variable offset. A straight uses no segments, other than for varying offset.
      * @param offsets FractionalLengthData; offsets, should contain keys 0.0 and 1.0.
-     * @return OtsLine3d; offset polyline.
+     * @return OtsLine2d; offset polyline.
      */
-    public OtsLine3d offset(final FractionalLengthData offsets)
+    public OtsLine2d offset(final FractionalLengthData offsets)
     {
         Throw.whenNull(offsets, "Offsets may not be null.");
         return Try.assign(() -> flatten(0).offsetLine(offsets.getFractionalLengthsAsArray(), offsets.getValuesAsArray()),
-                "Unexpected exception while creating straigh OtsLine3d.");
+                "Unexpected exception while creating straigh OtsLine2d.");
     }
 
     /** {@inheritDoc} */

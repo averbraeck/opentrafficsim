@@ -73,7 +73,7 @@ public class ContinuousArcTest
         // half standard unit circle
         OrientedPoint2d start = new OrientedPoint2d(1.0, 0.0, Math.PI / 2.0);
         ContinuousArc arc = new ContinuousArc(start, 1.0, true, Angle.instantiateSI(Math.PI));
-        OtsLine3d line = arc.flatten(4);
+        OtsLine2d line = arc.flatten(4);
         isApproximal(line.get(0), 1.0, 0.0);
         isApproximal(line.get(1), u, u);
         isApproximal(line.get(2), 0.0, 1.0);
@@ -129,7 +129,7 @@ public class ContinuousArcTest
         ContinuousArc arc = new ContinuousArc(start, 1.0, true, Angle.instantiateSI(Math.PI));
 
         // 10 degrees
-        OtsLine3d line = arc.flatten(new Angle(10.0, AngleUnit.DEGREE), Double.POSITIVE_INFINITY);
+        OtsLine2d line = arc.flatten(new Angle(10.0, AngleUnit.DEGREE), Double.POSITIVE_INFINITY);
         assertEquals("Number of segments incorrect", 19, line.size());
 
         // 1 degree
@@ -137,9 +137,9 @@ public class ContinuousArcTest
         assertEquals("Number of segments incorrect", 181, line.size());
 
         // different spatial errors
-        OtsLine3d line1 = arc.flatten(Angle.POSITIVE_INFINITY, 0.1);
-        OtsLine3d line2 = arc.flatten(Angle.POSITIVE_INFINITY, 0.01);
-        OtsLine3d line3 = arc.flatten(Angle.POSITIVE_INFINITY, 0.001);
+        OtsLine2d line1 = arc.flatten(Angle.POSITIVE_INFINITY, 0.1);
+        OtsLine2d line2 = arc.flatten(Angle.POSITIVE_INFINITY, 0.01);
+        OtsLine2d line3 = arc.flatten(Angle.POSITIVE_INFINITY, 0.001);
         assertTrue("Reduced spatial error should result in more segments",
                 line1.size() < line2.size() && line2.size() < line3.size());
     }
@@ -157,7 +157,7 @@ public class ContinuousArcTest
 
         // right-hand increasing offset
         FractionalLengthData offsets = FractionalLengthData.of(0.0, 0.0, 1.0, -1.0);
-        OtsLine3d line = arc.offset(offsets, 4);
+        OtsLine2d line = arc.offset(offsets, 4);
         isApproximal(line.get(0), 1.0, 0.0);
         isApproximal(line.get(2), 0.0, 1.5);
         isApproximal(line.get(4), -2.0, 0.0);
@@ -205,7 +205,7 @@ public class ContinuousArcTest
         ContinuousArc arc = new ContinuousArc(start, 1.0, true, Angle.instantiateSI(Math.PI));
 
         // 10 degrees
-        OtsLine3d line = arc.offset(-1.0, new Angle(10.0, AngleUnit.DEGREE), Double.POSITIVE_INFINITY);
+        OtsLine2d line = arc.offset(-1.0, new Angle(10.0, AngleUnit.DEGREE), Double.POSITIVE_INFINITY);
         assertEquals("Number of segments incorrect", 19, line.size());
 
         // 1 degree
@@ -213,15 +213,15 @@ public class ContinuousArcTest
         assertEquals("Number of segments incorrect", 181, line.size());
 
         // variable radius
-        OtsLine3d line1 = arc.offset(-0.5, 0.25, new Angle(1.0, AngleUnit.DEGREE), Double.POSITIVE_INFINITY);
-        OtsLine3d line2 = arc.offset(0.25, -0.5, new Angle(1.0, AngleUnit.DEGREE), Double.POSITIVE_INFINITY);
+        OtsLine2d line1 = arc.offset(-0.5, 0.25, new Angle(1.0, AngleUnit.DEGREE), Double.POSITIVE_INFINITY);
+        OtsLine2d line2 = arc.offset(0.25, -0.5, new Angle(1.0, AngleUnit.DEGREE), Double.POSITIVE_INFINITY);
         assertEquals("Maximum radius should result in the same number of segments, whereever it is on the arc", line1.size(),
                 line2.size());
 
         // different spatial errors
         line1 = arc.offset(-0.5, Angle.POSITIVE_INFINITY, 0.1);
         line2 = arc.offset(-0.5, Angle.POSITIVE_INFINITY, 0.01);
-        OtsLine3d line3 = arc.offset(-0.5, Angle.POSITIVE_INFINITY, 0.001);
+        OtsLine2d line3 = arc.offset(-0.5, Angle.POSITIVE_INFINITY, 0.001);
         assertTrue("Reduced spatial error should result in more segments",
                 line1.size() < line2.size() && line2.size() < line3.size());
     }
@@ -235,9 +235,9 @@ public class ContinuousArcTest
         // half standard unit circle
         OrientedPoint2d start = new OrientedPoint2d(1.0, 0.0, Math.PI / 2.0);
         ContinuousArc arc = new ContinuousArc(start, 1.0, true, Angle.instantiateSI(Math.PI));
-        OtsLine3d line1 = arc.flatten(4);
+        OtsLine2d line1 = arc.flatten(4);
         arc = new ContinuousArc(start, 1.0, true, Math.PI);
-        OtsLine3d line2 = arc.flatten(4);
+        OtsLine2d line2 = arc.flatten(4);
         for (int i = 1; i < line1.size(); i++)
         {
             isApproximal(line1.get(i), line2.get(i).x, line2.get(i).y);

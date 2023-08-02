@@ -12,7 +12,7 @@ import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.draw.core.PaintLine;
 import org.opentrafficsim.draw.core.PaintPolygons;
 import org.opentrafficsim.draw.core.TextAlignment;
@@ -101,16 +101,16 @@ public class LaneAnimation extends Renderable2D<Lane> implements Renderable2DInt
     public static class CenterLine implements Locatable
     {
         /** The center line. */
-        private final OtsLine3d centerLine;
+        private final OtsLine2d centerLine;
 
         /** Bounds. */
         private final Bounds2d bounds;
 
         /**
          * Construct a new CenterLine.
-         * @param centerLine OtsLine3d; the center line of a lane
+         * @param centerLine OtsLine2d; the center line of a lane
          */
-        CenterLine(final OtsLine3d centerLine)
+        CenterLine(final OtsLine2d centerLine)
         {
             this.centerLine = centerLine;
             this.bounds = new Bounds2d(centerLine.getBounds().getDeltaX(), centerLine.getBounds().getDeltaY());
@@ -130,9 +130,9 @@ public class LaneAnimation extends Renderable2D<Lane> implements Renderable2DInt
 
         /**
          * Retrieve the center line.
-         * @return OtsLine3d; the center line
+         * @return OtsLine2d; the center line
          */
-        public OtsLine3d getCenterLine()
+        public OtsLine2d getCenterLine()
         {
             return this.centerLine;
         }

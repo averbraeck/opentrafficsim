@@ -3,7 +3,7 @@ package org.opentrafficsim.road.network.lane;
 import java.util.List;
 
 import org.djutils.draw.line.Polygon2d;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -26,12 +26,12 @@ public class Shoulder extends CrossSectionElement
      * Constructor specifying geometry.s
      * @param link CrossSectionLink; link.
      * @param id String; the id of this lane within the link; should be unique within the link.
-     * @param centerLine OtsLine3d; center line.
+     * @param centerLine OtsLine2d; center line.
      * @param contour Polygon2d; contour shape.
      * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
      * @throws NetworkException when no cross-section slice is defined.
      */
-    public Shoulder(final CrossSectionLink link, final String id, final OtsLine3d centerLine, final Polygon2d contour,
+    public Shoulder(final CrossSectionLink link, final String id, final OtsLine2d centerLine, final Polygon2d contour,
             final List<CrossSectionSlice> crossSectionSlices) throws NetworkException
     {
         super(link, id, centerLine, contour, crossSectionSlices);

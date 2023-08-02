@@ -37,7 +37,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.ContinuousLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -492,9 +492,9 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
         {
             double offset = lane.getLateralCenterPosition(1.0).si;
             double width = lane.getWidth(1.0).si;
-            OtsLine3d centerLine = designLine.offset(offset, 1);
-            OtsLine3d leftEdge = designLine.offset(offset + .5 * width, 1);
-            OtsLine3d rightEdge = designLine.offset(offset - .5 * width, 1);
+            OtsLine2d centerLine = designLine.offset(offset, 1);
+            OtsLine2d leftEdge = designLine.offset(offset + .5 * width, 1);
+            OtsLine2d rightEdge = designLine.offset(offset - .5 * width, 1);
             Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
             List<CrossSectionSlice> crossSections =
                     LaneGeometryUtil.getSlices(designLine, Length.instantiateSI(offset), Length.instantiateSI(width));

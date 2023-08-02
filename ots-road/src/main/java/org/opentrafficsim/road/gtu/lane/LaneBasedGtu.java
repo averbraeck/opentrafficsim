@@ -37,8 +37,8 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsLine3d.FractionalFallback;
+import org.opentrafficsim.core.geometry.OtsLine2d;
+import org.opentrafficsim.core.geometry.OtsLine2d.FractionalFallback;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -250,7 +250,7 @@ public class LaneBasedGtu extends Gtu
         {
             Point2d p2 = new Point2d(initialLocation.x + 1E-6 * Math.cos(initialLocation.getDirZ()),
                     initialLocation.y + 1E-6 * Math.sin(initialLocation.getDirZ()));
-            OtsLine3d path = new OtsLine3d(initialLocation, p2);
+            OtsLine2d path = new OtsLine2d(initialLocation, p2);
             setOperationalPlan(new OperationalPlan(this, path, now,
                     Segments.off(initialSpeed, path.getLength().divide(initialSpeed), Acceleration.ZERO)));
         }
@@ -982,7 +982,7 @@ public class LaneBasedGtu extends Gtu
     private Time timeAtLine(final PolyLine2d line, final RelativePosition relativePosition) throws GtuException
     {
         Throw.when(line.size() != 2, IllegalArgumentException.class, "Line to cross with path should have 2 points.");
-        OtsLine3d path = getOperationalPlan().getPath();
+        OtsLine2d path = getOperationalPlan().getPath();
         Point2d[] points;
         double adjust;
         if (relativePosition.getDx().gt0())

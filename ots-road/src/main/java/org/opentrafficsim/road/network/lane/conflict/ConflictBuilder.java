@@ -20,7 +20,7 @@ import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.RoadNetwork;
@@ -137,8 +137,8 @@ public final class ConflictBuilder
         long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
         simulator.getLogger().always().trace("GENERATING CONFLICTS (NON-PARALLEL MODE). {} COMBINATIONS", totalCombinations);
         long lastReported = 0;
-        Map<Lane, OtsLine3d> leftEdges = new LinkedHashMap<>();
-        Map<Lane, OtsLine3d> rightEdges = new LinkedHashMap<>();
+        Map<Lane, OtsLine2d> leftEdges = new LinkedHashMap<>();
+        Map<Lane, OtsLine2d> rightEdges = new LinkedHashMap<>();
 
         for (int i = 0; i < lanes.size(); i++)
         {
@@ -241,8 +241,8 @@ public final class ConflictBuilder
      * @param permitted boolean; conflict permitted by traffic control
      * @param simulator OtsSimulatorInterface; simulator
      * @param widthGenerator WidthGenerator; width generator
-     * @param leftEdges Map&lt;Lane, OtsLine3d&gt;; cache of left edge lines
-     * @param rightEdges Map&lt;Lane, OtsLine3d&gt;; cache of right edge lines
+     * @param leftEdges Map&lt;Lane, OtsLine2d&gt;; cache of left edge lines
+     * @param rightEdges Map&lt;Lane, OtsLine2d&gt;; cache of right edge lines
      * @param intersectionCheck indicate whether we have to do a contour intersection check still
      * @param conflictId String; identification of the conflict (may be null)
      * @throws OtsGeometryException in case of geometry exception
@@ -251,7 +251,7 @@ public final class ConflictBuilder
     @SuppressWarnings({"checkstyle:parameternumber", "checkstyle:methodlength"})
     static void buildConflicts(final Lane lane1, final Set<Lane> down1, final Set<Lane> up1, final Lane lane2,
             final Set<Lane> down2, final Set<Lane> up2, final boolean permitted, final OtsSimulatorInterface simulator,
-            final WidthGenerator widthGenerator, final Map<Lane, OtsLine3d> leftEdges, final Map<Lane, OtsLine3d> rightEdges,
+            final WidthGenerator widthGenerator, final Map<Lane, OtsLine2d> leftEdges, final Map<Lane, OtsLine2d> rightEdges,
             final boolean intersectionCheck, final String conflictId) throws OtsGeometryException, NetworkException
     {
         // Quick contour check, skip if not overlapping -- Don't repeat if it has taken place
@@ -267,13 +267,13 @@ public final class ConflictBuilder
 
         String paddedConflictId = null == conflictId ? "" : (" in conflict group " + conflictId);
         // Get left and right lines at specified width
-        OtsLine3d left1;
-        OtsLine3d right1;
+        OtsLine2d left1;
+        OtsLine2d right1;
         synchronized (lane1)
         {
             left1 = leftEdges.get(lane1);
             right1 = rightEdges.get(lane1);
-            OtsLine3d line1 = lane1.getCenterLine();
+            OtsLine2d line1 = lane1.getCenterLine();
             if (null == left1)
             {
                 left1 = line1.offsetLine(widthGenerator.getWidth(lane1, 0.0) / 2, widthGenerator.getWidth(lane1, 1.0) / 2);
@@ -286,13 +286,13 @@ public final class ConflictBuilder
             }
         }
 
-        OtsLine3d left2;
-        OtsLine3d right2;
+        OtsLine2d left2;
+        OtsLine2d right2;
         synchronized (lane2)
         {
             left2 = leftEdges.get(lane2);
             right2 = rightEdges.get(lane2);
-            OtsLine3d line2 = lane2.getCenterLine();
+            OtsLine2d line2 = lane2.getCenterLine();
             if (null == left2)
             {
                 left2 = line2.offsetLine(widthGenerator.getWidth(lane2, 0.0) / 2, widthGenerator.getWidth(lane2, 1.0) / 2);
@@ -653,9 +653,9 @@ public final class ConflictBuilder
                 f2 = f2 + f2 / 1000;
             }
         }
-        OtsLine3d centerLine = lane.getCenterLine().extractFractional(f1, f2);
-        OtsLine3d left = centerLine.offsetLine(widthGenerator.getWidth(lane, f1) / 2, widthGenerator.getWidth(lane, f2) / 2);
-        OtsLine3d right =
+        OtsLine2d centerLine = lane.getCenterLine().extractFractional(f1, f2);
+        OtsLine2d left = centerLine.offsetLine(widthGenerator.getWidth(lane, f1) / 2, widthGenerator.getWidth(lane, f2) / 2);
+        OtsLine2d right =
                 centerLine.offsetLine(-widthGenerator.getWidth(lane, f1) / 2, -widthGenerator.getWidth(lane, f2) / 2).reverse();
         Point2d[] points = new Point2d[left.size() + right.size()];
         System.arraycopy(left.getPoints(), 0, points, 0, left.size());
@@ -789,13 +789,13 @@ public final class ConflictBuilder
 
         /**
          * Returns a set of intersections, sorted by the fraction on line 1.
-         * @param line1 OtsLine3d; line 1
-         * @param line2 OtsLine3d; line 2
+         * @param line1 OtsLine2d; line 1
+         * @param line2 OtsLine2d; line 2
          * @param combo int; edge combination number
          * @return set of intersections, sorted by the fraction on line 1
          * @throws OtsGeometryException in case of geometry exception
          */
-        public static SortedSet<Intersection> getIntersectionList(final OtsLine3d line1, final OtsLine3d line2, final int combo)
+        public static SortedSet<Intersection> getIntersectionList(final OtsLine2d line1, final OtsLine2d line2, final int combo)
                 throws OtsGeometryException
         {
             SortedSet<Intersection> out = new TreeSet<>();
@@ -1047,8 +1047,8 @@ public final class ConflictBuilder
         long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
         System.out.println("PARALLEL GENERATING OF CONFLICTS (SMALL JOBS). " + totalCombinations + " COMBINATIONS");
         long lastReported = 0;
-        Map<Lane, OtsLine3d> leftEdges = new LinkedHashMap<>();
-        Map<Lane, OtsLine3d> rightEdges = new LinkedHashMap<>();
+        Map<Lane, OtsLine2d> leftEdges = new LinkedHashMap<>();
+        Map<Lane, OtsLine2d> rightEdges = new LinkedHashMap<>();
 
         // make a threadpool and execute buildConflicts for all records
         int cores = Runtime.getRuntime().availableProcessors();
@@ -1168,8 +1168,8 @@ public final class ConflictBuilder
         long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
         System.out.println("PARALLEL GENERATING OF CONFLICTS (BIG JOBS). " + totalCombinations + " COMBINATIONS");
         long lastReported = 0;
-        Map<Lane, OtsLine3d> leftEdges = new LinkedHashMap<>();
-        Map<Lane, OtsLine3d> rightEdges = new LinkedHashMap<>();
+        Map<Lane, OtsLine2d> leftEdges = new LinkedHashMap<>();
+        Map<Lane, OtsLine2d> rightEdges = new LinkedHashMap<>();
 
         // make a threadpool and execute buildConflicts for all records
         int cores = Runtime.getRuntime().availableProcessors();
@@ -1370,10 +1370,10 @@ public final class ConflictBuilder
         final WidthGenerator widthGenerator;
 
         /** */
-        final Map<Lane, OtsLine3d> leftEdges;
+        final Map<Lane, OtsLine2d> leftEdges;
 
         /** */
-        final Map<Lane, OtsLine3d> rightEdges;
+        final Map<Lane, OtsLine2d> rightEdges;
 
         /**
          * Stores conflicts about a single lane pair.
@@ -1386,14 +1386,14 @@ public final class ConflictBuilder
          * @param permitted boolean; conflict permitted by traffic control
          * @param simulator OtsSimulatorInterface; simulator
          * @param widthGenerator WidthGenerator; width generator
-         * @param leftEdges Map&lt;Lane, OtsLine3d&gt;; cache of left edge lines
-         * @param rightEdges Map&lt;Lane, OtsLine3d&gt;; cache of right edge lines
+         * @param leftEdges Map&lt;Lane, OtsLine2d&gt;; cache of left edge lines
+         * @param rightEdges Map&lt;Lane, OtsLine2d&gt;; cache of right edge lines
          */
         @SuppressWarnings("checkstyle:parameternumber")
         ConflictBuilderRecordSmall(final Lane lane1, final Set<Lane> down1, final Set<Lane> up1, final Lane lane2,
                 final Set<Lane> down2, final Set<Lane> up2, final boolean permitted, final OtsSimulatorInterface simulator,
-                final WidthGenerator widthGenerator, final Map<Lane, OtsLine3d> leftEdges,
-                final Map<Lane, OtsLine3d> rightEdges)
+                final WidthGenerator widthGenerator, final Map<Lane, OtsLine2d> leftEdges,
+                final Map<Lane, OtsLine2d> rightEdges)
         {
             this.lane1 = lane1;
             this.down1 = down1;
@@ -1515,10 +1515,10 @@ public final class ConflictBuilder
         final WidthGenerator widthGenerator;
 
         /** */
-        final Map<Lane, OtsLine3d> leftEdges;
+        final Map<Lane, OtsLine2d> leftEdges;
 
         /** */
-        final Map<Lane, OtsLine3d> rightEdges;
+        final Map<Lane, OtsLine2d> rightEdges;
 
         /**
          * Stores conflicts about a single lane pair.
@@ -1531,14 +1531,14 @@ public final class ConflictBuilder
          * @param up1 Set&lt;Lane&gt;; upstream lanes 1
          * @param simulator OtsSimulatorInterface; simulator
          * @param widthGenerator WidthGenerator; width generator
-         * @param leftEdges Map&lt;Lane, OtsLine3d&gt;; cache of left edge lines
-         * @param rightEdges Map&lt;Lane, OtsLine3d&gt;; cache of right edge lines
+         * @param leftEdges Map&lt;Lane, OtsLine2d&gt;; cache of left edge lines
+         * @param rightEdges Map&lt;Lane, OtsLine2d&gt;; cache of right edge lines
          */
         @SuppressWarnings("checkstyle:parameternumber")
         ConflictBuilderRecordBig(final int starti, final List<Lane> lanes, final LaneCombinationList ignoreList,
                 final LaneCombinationList permittedList, final Lane lane1, final Set<Lane> down1, final Set<Lane> up1,
                 final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator,
-                final Map<Lane, OtsLine3d> leftEdges, final Map<Lane, OtsLine3d> rightEdges)
+                final Map<Lane, OtsLine2d> leftEdges, final Map<Lane, OtsLine2d> rightEdges)
         {
             this.starti = starti;
             this.lanes = lanes;

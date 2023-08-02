@@ -84,9 +84,9 @@ public interface ContinuousLine
      * Polyline from continuous line. The number of segments of the polyline is guaranteed to be at least {@code numSegments},
      * but it may be larger.
      * @param numSegments int; minimum number of segments.
-     * @return OtsLine3d; polyline.
+     * @return OtsLine2d; polyline.
      */
-    OtsLine3d flatten(int numSegments);
+    OtsLine2d flatten(int numSegments);
 
     /**
      * Polyline from continuous line. Implementations of this method guarantee that the resulting polyline shows angle errors
@@ -94,18 +94,18 @@ public interface ContinuousLine
      * errors and a larger number of points.
      * @param maxAngleError Angle; maximum angle error in polyline.
      * @param maxSpatialError double; maximum spatial error in polyline.
-     * @return OtsLine3d; polyline.
+     * @return OtsLine2d; polyline.
      */
-    OtsLine3d flatten(Angle maxAngleError, double maxSpatialError);
+    OtsLine2d flatten(Angle maxAngleError, double maxSpatialError);
 
     /**
      * Offset polyline based on variable offset. The number of segments of the polyline is guaranteed to be at least
      * {@code numSegments}, but it may be larger.
      * @param offsets FractionalLengthData; offsets at fractional lengths.
      * @param numSegments int; minimum number of segments.
-     * @return OtsLine3d; offset polyline.
+     * @return OtsLine2d; offset polyline.
      */
-    OtsLine3d offset(FractionalLengthData offsets, int numSegments);
+    OtsLine2d offset(FractionalLengthData offsets, int numSegments);
 
     /**
      * Offset polyline based on variable offset. Implementations of this method guarantee that the resulting polyline shows
@@ -114,18 +114,18 @@ public interface ContinuousLine
      * @param offsets FractionalLengthData; offsets at fractional lengths.
      * @param maxAngleError Angle; maximum angle error in polyline.
      * @param maxSpatialError double; maximum spatial error in polyline.
-     * @return OtsLine3d; offset polyline.
+     * @return OtsLine2d; offset polyline.
      */
-    OtsLine3d offset(FractionalLengthData offsets, Angle maxAngleError, double maxSpatialError);
+    OtsLine2d offset(FractionalLengthData offsets, Angle maxAngleError, double maxSpatialError);
 
     /**
      * Offset polyline based on single offset. The number of segments of the polyline is guaranteed to be at least
      * {@code numSegments}, but it may be larger.
      * @param offset double; offset.
      * @param numSegments int; minimum number of segments.
-     * @return OtsLine3d; offset polyline.
+     * @return OtsLine2d; offset polyline.
      */
-    default OtsLine3d offset(final double offset, final int numSegments)
+    default OtsLine2d offset(final double offset, final int numSegments)
     {
         return offset(offset, offset, numSegments);
     }
@@ -137,9 +137,9 @@ public interface ContinuousLine
      * @param offset double; offset.
      * @param maxAngleError Angle; maximum angle error in polyline.
      * @param maxSpatialError double; maximum spatial error in polyline.
-     * @return OtsLine3d; offset polyline.
+     * @return OtsLine2d; offset polyline.
      */
-    default OtsLine3d offset(final double offset, final Angle maxAngleError, final double maxSpatialError)
+    default OtsLine2d offset(final double offset, final Angle maxAngleError, final double maxSpatialError)
     {
         return offset(offset, offset, maxAngleError, maxSpatialError);
     }
@@ -150,9 +150,9 @@ public interface ContinuousLine
      * @param startOffset double; offset at start.
      * @param endOffset double; offset at end.
      * @param numSegments int; minimum number of segments.
-     * @return OtsLine3d; offset polyline.
+     * @return OtsLine2d; offset polyline.
      */
-    default OtsLine3d offset(final double startOffset, final double endOffset, final int numSegments)
+    default OtsLine2d offset(final double startOffset, final double endOffset, final int numSegments)
     {
         return offset(FractionalLengthData.of(0.0, startOffset, 1.0, endOffset), numSegments);
     }
@@ -165,9 +165,9 @@ public interface ContinuousLine
      * @param endOffset double; offset at end.
      * @param maxAngleError Angle; maximum angle error in polyline.
      * @param maxSpatialError double; maximum spatial error in polyline.
-     * @return OtsLine3d; offset polyline.
+     * @return OtsLine2d; offset polyline.
      */
-    default OtsLine3d offset(final double startOffset, final double endOffset, final Angle maxAngleError,
+    default OtsLine2d offset(final double startOffset, final double endOffset, final Angle maxAngleError,
             final double maxSpatialError)
     {
         return offset(FractionalLengthData.of(0.0, startOffset, 1.0, endOffset), maxAngleError, maxSpatialError);

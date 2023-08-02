@@ -17,7 +17,7 @@ import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.Test;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 
 /**
  * Test the OperationalPlan and OperationalPlanBuilder classes.
@@ -87,7 +87,7 @@ public class OperationalPlanTest
             assertEquals("Distance from wait point at " + t + " is 0", 0, waitPoint.distance(locationAtT), 0.002);
         }
         assertEquals("end location matches start location", 0, op.getEndLocation().distance(waitPoint), 0.0001);
-        OtsLine3d path = new OtsLine3d(new Point2d(12, 13), new Point2d(123, 234));
+        OtsLine2d path = new OtsLine2d(new Point2d(12, 13), new Point2d(123, 234));
         Speed startSpeed = new Speed(20, SpeedUnit.KM_PER_HOUR);
         Speed endSpeed = new Speed(50, SpeedUnit.KM_PER_HOUR);
         Acceleration maxAcceleration = new Acceleration(1, AccelerationUnit.METER_PER_SECOND_2);
@@ -114,7 +114,7 @@ public class OperationalPlanTest
         // TODO assertEquals("getPath returns the path", path, op.getPath());
         // What acceleration is required to reach endSpeed at the end of the path?
         // (This mathematical derivation constructed independently from the OperationalPlanBuilder code.)
-        OtsLine3d returnedPath = op.getPath();
+        OtsLine2d returnedPath = op.getPath();
         // This fails: assertEquals("returned path should match path", path, returnedPath);
         assertEquals("size of path should match", path.size(), returnedPath.size());
         for (int i = 0; i < path.size(); i++)
@@ -185,7 +185,7 @@ public class OperationalPlanTest
     @Test
     public void constantSpeedPlanBuilderTest() throws OperationalPlanException, OtsGeometryException
     {
-        OtsLine3d path = new OtsLine3d(new Point2d(0, 0), new Point2d(1000, 0));
+        OtsLine2d path = new OtsLine2d(new Point2d(0, 0), new Point2d(1000, 0));
         Time startTime = Time.valueOf("100 s");
         Speed speed = Speed.valueOf("20 m/s");
         OperationalPlan csp = new OperationalPlan(null, path, startTime,
@@ -218,7 +218,7 @@ public class OperationalPlanTest
     @Test
     public void constantAccelerationPlanBuilderTest() throws OtsGeometryException, OperationalPlanException
     {
-        OtsLine3d path = new OtsLine3d(new Point2d(0, 0), new Point2d(1000, 0));
+        OtsLine2d path = new OtsLine2d(new Point2d(0, 0), new Point2d(1000, 0));
         Time startTime = Time.valueOf("100 s");
         for (double startSpeedDouble : new double[] {0, 10, 20, 30})
         {

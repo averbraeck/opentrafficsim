@@ -50,7 +50,7 @@ The autorun parameter triggers animation when false. These, and other, parameter
         LinkType freewayLink = DefaultsNl.FREEWAY;
         LaneType freewayLane = DefaultsRoadNl.FREEWAY;
         CrossSectionLink link = new CrossSectionLink(network, "AB", nodeA, nodeB, freewayLink, new OtsLine3d(pointA, pointB),
-                LaneKeepingPolicy.KEEPRIGHT);
+                null, LaneKeepingPolicy.KEEPRIGHT);
         LaneGeometryUtil.createStraightLane(link, "Left", Length.instantiateSI(1.75), Length.instantiateSI(3.5), freewayLane,
                 Map.of(car, new Speed(120, SpeedUnit.KM_PER_HOUR)));
         LaneGeometryUtil.createStraightLane(link, "Right", Length.instantiateSI(-1.75), Length.instantiateSI(3.5), freewayLane,

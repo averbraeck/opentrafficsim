@@ -51,7 +51,7 @@ public final class Bezier
      * @throws OtsGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
      *             constructed
      */
-    public static OtsLine3d cubic(final int numPoints, final Point2d start, final Point2d control1,
+    public static OtsLine2d cubic(final int numPoints, final Point2d start, final Point2d control1,
             final Point2d control2, final Point2d end) throws OtsGeometryException
     {
         Throw.when(numPoints < 2, OtsGeometryException.class, "Number of points too small (got %d; minimum value is 2)",
@@ -64,7 +64,7 @@ public final class Bezier
             double y = B3(t, start.y, control1.y, control2.y, end.y);
             points[n] = new Point2d(x, y);
         }
-        return new OtsLine3d(points);
+        return new OtsLine2d(points);
     }
 
     /**
@@ -77,7 +77,7 @@ public final class Bezier
      * @throws OtsGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
      *             constructed
      */
-    public static OtsLine3d cubic(final int numPoints, final OrientedPoint2d start, final OrientedPoint2d end)
+    public static OtsLine2d cubic(final int numPoints, final OrientedPoint2d start, final OrientedPoint2d end)
             throws OtsGeometryException
     {
         return cubic(numPoints, start, end, 1.0);
@@ -95,7 +95,7 @@ public final class Bezier
      * @throws OtsGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
      *             constructed
      */
-    public static OtsLine3d cubic(final int numPoints, final OrientedPoint2d start, final OrientedPoint2d end, final double shape)
+    public static OtsLine2d cubic(final int numPoints, final OrientedPoint2d start, final OrientedPoint2d end, final double shape)
             throws OtsGeometryException
     {
         return cubic(numPoints, start, end, shape, false);
@@ -114,7 +114,7 @@ public final class Bezier
      * @throws OtsGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
      *             constructed
      */
-    public static OtsLine3d cubic(final int numPoints, final OrientedPoint2d start, final OrientedPoint2d end, final double shape,
+    public static OtsLine2d cubic(final int numPoints, final OrientedPoint2d start, final OrientedPoint2d end, final double shape,
             final boolean weighted) throws OtsGeometryException
     {
         return bezier(cubicControlPoints(start, end, shape, weighted));
@@ -181,7 +181,7 @@ public final class Bezier
      * @throws OtsGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
      *             constructed
      */
-    public static OtsLine3d cubic(final OrientedPoint2d start, final OrientedPoint2d end) throws OtsGeometryException
+    public static OtsLine2d cubic(final OrientedPoint2d start, final OrientedPoint2d end) throws OtsGeometryException
     {
         return cubic(DEFAULT_NUM_POINTS, start, end);
     }
@@ -216,7 +216,7 @@ public final class Bezier
      * @throws OtsGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
      *             constructed
      */
-    public static OtsLine3d bezier(final int numPoints, final Point2d... points) throws OtsGeometryException
+    public static OtsLine2d bezier(final int numPoints, final Point2d... points) throws OtsGeometryException
     {
         Point2d[] result = new Point2d[numPoints];
         double[] px = new double[points.length];
@@ -233,7 +233,7 @@ public final class Bezier
             double y = Bn(t, py);
             result[n] = new Point2d(x, y);
         }
-        return new OtsLine3d(result);
+        return new OtsLine2d(result);
     }
 
     /**
@@ -244,7 +244,7 @@ public final class Bezier
      * @throws OtsGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
      *             constructed
      */
-    public static OtsLine3d bezier(final Point2d... points) throws OtsGeometryException
+    public static OtsLine2d bezier(final Point2d... points) throws OtsGeometryException
     {
         return bezier(DEFAULT_NUM_POINTS, points);
     }

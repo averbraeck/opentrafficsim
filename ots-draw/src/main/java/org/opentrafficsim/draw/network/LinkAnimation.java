@@ -14,7 +14,7 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.draw.core.PaintLine;
 import org.opentrafficsim.draw.core.TextAlignment;
@@ -66,7 +66,7 @@ public class LinkAnimation extends Renderable2D<Link> implements Renderable2DInt
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         Color color = getSource().isConnector() ? Color.PINK.darker() : Color.BLUE;
-        OtsLine3d designLine = getSource().getDesignLine();
+        OtsLine2d designLine = getSource().getDesignLine();
         PaintLine.paintLine(graphics, color, this.width, getSource().getLocation(), designLine);
         // Accentuate the end points
         try

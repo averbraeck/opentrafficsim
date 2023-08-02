@@ -10,7 +10,7 @@ import org.djutils.draw.point.Point2d;
 import org.junit.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.mock.MockSimulator;
 
 /**
@@ -39,14 +39,14 @@ public class LinkLocationTest
         Node fromNode = new Node(network, "startNode", fromPoint);
         Node toNode = new Node(network, "endNode", toPoint);
         LinkType linkType = DefaultsNl.ROAD;
-        OtsLine3d designLine = new OtsLine3d(fromPoint, toPoint);
-        Link link = new Link(network, "link", fromNode, toNode, linkType, designLine);
+        OtsLine2d designLine = new OtsLine2d(fromPoint, toPoint);
+        Link link = new Link(network, "link", fromNode, toNode, linkType, designLine, null);
         Length linkLength = link.getLength();
         // Create an unrelated link
         Point2d a = new Point2d(1, 2);
         Point2d b = new Point2d(11, 12);
         Link otherLink = new Link(network, "otherLink", new Node(network, "a", a), new Node(network, "b", b), linkType,
-                new OtsLine3d(a, b));
+                new OtsLine2d(a, b), null);
         for (int percentage = 0; percentage <= 100; percentage += 10)
         {
             double fraction = percentage / 100.0;

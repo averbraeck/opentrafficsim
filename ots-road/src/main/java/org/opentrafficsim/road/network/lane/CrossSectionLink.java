@@ -9,7 +9,8 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.event.EventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.FractionalLengthData;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -81,17 +82,18 @@ public class CrossSectionLink extends Link implements Serializable
      * @param startNode Node; the start node (directional).
      * @param endNode Node; the end node (directional).
      * @param linkType LinkType; the link type
-     * @param designLine OtsLine3d; the design line of the Link
+     * @param designLine OtsLine2d; the design line of the Link
+     * @param elevation FractionalLengthData; elevation given over fractional length, may be {@code null}.
      * @param laneKeepingPolicy LaneKeepingPolicy; the policy to generally keep left, keep right, or keep lane
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public CrossSectionLink(final RoadNetwork network, final String id, final Node startNode, final Node endNode,
-            final LinkType linkType, final OtsLine3d designLine, final LaneKeepingPolicy laneKeepingPolicy)
-            throws NetworkException
+            final LinkType linkType, final OtsLine2d designLine, final FractionalLengthData elevation,
+            final LaneKeepingPolicy laneKeepingPolicy) throws NetworkException
     {
-        super(network, id, startNode, endNode, linkType, designLine);
+        super(network, id, startNode, endNode, linkType, designLine, elevation);
         this.laneKeepingPolicy = laneKeepingPolicy;
     }
 

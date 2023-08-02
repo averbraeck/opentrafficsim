@@ -21,7 +21,7 @@ import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
@@ -196,7 +196,7 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
             {
                 return OperationalPlan.standStill(getGtu(), getGtu().getLocation(), startTime, Duration.ONE);
             }
-            OtsLine3d path = lanePathInfo.getPath();
+            OtsLine2d path = lanePathInfo.getPath();
             OperationalPlan op = new OperationalPlan(getGtu(), path, startTime, Segments.off(getGtu().getSpeed(), duration, a));
             return op;
         }

@@ -37,7 +37,7 @@ import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Network;
@@ -196,7 +196,7 @@ public class InjectionsTest
         Node nodeA = new Node(network, "A", new Point2d(0.0, 0.0), Direction.ZERO);
         Node nodeB = new Node(network, "B", new Point2d(100.0, 0.0), Direction.ZERO);
         CrossSectionLink linkAB = new CrossSectionLink(network, "AB", nodeA, nodeB, DefaultsNl.FREEWAY,
-                new OtsLine3d(nodeA.getPoint(), nodeB.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
+                new OtsLine2d(nodeA.getPoint(), nodeB.getPoint()), null, LaneKeepingPolicy.KEEPRIGHT);
         Length laneWidth = Length.instantiateSI(3.5);
         LaneGeometryUtil.createStraightLane(linkAB, "Lane1", Length.ZERO, laneWidth, DefaultsRoadNl.FREEWAY,
                 Collections.emptyMap());

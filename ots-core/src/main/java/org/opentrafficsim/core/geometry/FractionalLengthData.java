@@ -90,6 +90,26 @@ public class FractionalLengthData
     }
     
     /**
+     * Returns the derivative of the data with respect to fractional length.
+     * @param fractionalLength double; fractional length, may be outside range [0 ... 1].
+     * @return double; derivative of the data with respect to fractional length.
+     */
+    public double getDerivative(final double fractionalLength)
+    {
+        Entry<Double, Double> ceiling = this.data.ceilingEntry(fractionalLength);
+        if (ceiling == null)
+        {
+            return 0.0;
+        }
+        Entry<Double, Double> floor = this.data.floorEntry(fractionalLength);
+        if (floor == null)
+        {
+            return 0.0;
+        }
+        return (ceiling.getValue() - floor.getValue()) / (ceiling.getKey() - floor.getKey());
+    }
+    
+    /**
      * Returns the fractional lengths in the underlying data.
      * @return ImmutableNavigableSet&lt;Double&gt;; fractional lengths in the underlying data.
      */

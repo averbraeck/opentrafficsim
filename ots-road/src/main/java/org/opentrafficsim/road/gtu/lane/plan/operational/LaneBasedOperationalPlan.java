@@ -6,8 +6,8 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsLine3d.FractionalFallback;
+import org.opentrafficsim.core.geometry.OtsLine2d;
+import org.opentrafficsim.core.geometry.OtsLine2d.FractionalFallback;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -38,7 +38,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
     /**
      * Construct an operational plan with or without a lane change.
      * @param gtu LaneBasedGtu; the GTU for debugging purposes
-     * @param path OtsLine3d; the path to follow from a certain time till a certain time. The path should have &lt;i&gt;at
+     * @param path OtsLine2d; the path to follow from a certain time till a certain time. The path should have &lt;i&gt;at
      *            least&lt;/i&gt; the length
      * @param startTime Time; the absolute start time when we start executing the path
      * @param segments Segments; the segments that make up the path with an acceleration, constant
@@ -47,7 +47,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
      * @throws OperationalPlanException when the path is too short for the operation
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public LaneBasedOperationalPlan(final LaneBasedGtu gtu, final OtsLine3d path, final Time startTime,
+    public LaneBasedOperationalPlan(final LaneBasedGtu gtu, final OtsLine2d path, final Time startTime,
             final Segments segments, final boolean deviative) throws OperationalPlanException
     {
         super(gtu, path, startTime, segments);
@@ -147,7 +147,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
                         Point2d first = nextLane.getCenterLine().get(0);
                         if (!(last).equals(first))
                         {
-                            OtsLine3d gap = new OtsLine3d(last, first);
+                            OtsLine2d gap = new OtsLine2d(last, first);
                             double fGap = gap.projectFractional(null, null, point.x, point.y, FractionalFallback.NaN);
                             if (!Double.isNaN(fGap))
                             {

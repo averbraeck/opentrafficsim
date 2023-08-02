@@ -21,7 +21,7 @@ import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
@@ -138,7 +138,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
         }
         try
         {
-            OtsLine3d path;
+            OtsLine2d path;
             if (this.lanes.size() == 1)
             {
                 path = laneA.getCenterLine().extract(positionA, positionB);
@@ -152,10 +152,10 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
                     pathPoints.addAll(Arrays.asList(intermediateLane.getCenterLine().getPoints()));
                 }
                 pathPoints.addAll(Arrays.asList(laneB.getCenterLine().extract(Length.ZERO, positionB).getPoints()));
-                path = OtsLine3d.createAndCleanOtsLine3d(pathPoints);
+                path = OtsLine2d.createAndCleanOtsLine2d(pathPoints);
             }
-            OtsLine3d left = path.offsetLine(0.5);
-            OtsLine3d right = path.offsetLine(-0.5);
+            OtsLine2d left = path.offsetLine(0.5);
+            OtsLine2d right = path.offsetLine(-0.5);
             this.location = path.getLocation();
             double dx = this.location.x;
             double dy = this.location.y;

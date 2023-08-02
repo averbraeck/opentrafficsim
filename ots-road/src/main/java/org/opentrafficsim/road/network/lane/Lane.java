@@ -30,7 +30,7 @@ import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.HierarchicallyTyped;
 import org.opentrafficsim.core.SpatialObject;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -192,14 +192,14 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * Constructor specifying geometry.
      * @param link CrossSectionLink; link.
      * @param id String; the id of this lane within the link; should be unique within the link.
-     * @param centerLine OtsLine3d; center line.
+     * @param centerLine OtsLine2d; center line.
      * @param contour Polygon2d; contour shape.
      * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
      * @param laneType LaneType; lane type.
      * @param speedLimitMap Map&lt;GtuType, Speed&gt;; the speed limit on this lane, specified per GTU Type.
      * @throws NetworkException when no cross-section slice is defined.
      */
-    public Lane(final CrossSectionLink link, final String id, final OtsLine3d centerLine, final Polygon2d contour,
+    public Lane(final CrossSectionLink link, final String id, final OtsLine2d centerLine, final Polygon2d contour,
             final List<CrossSectionSlice> crossSectionSlices, final LaneType laneType, final Map<GtuType, Speed> speedLimitMap)
             throws NetworkException
     {
@@ -1539,7 +1539,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * Creates a no-traffic, i.e. a {@code Lane} returning a z-value for drawing of -0.00005 with zero speed for all traffic.
      * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
      * @param id String; the id of the lane. Should be unique within the parentLink.
-     * @param centerLine OtsLine3d; center line.
+     * @param centerLine OtsLine2d; center line.
      * @param contour Polygon2d; contour shape.
      * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
      * @return Lane; lane representing a no-traffic lane.
@@ -1547,7 +1547,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public static Lane noTrafficLane(final CrossSectionLink parentLink, final String id, final OtsLine3d centerLine,
+    public static Lane noTrafficLane(final CrossSectionLink parentLink, final String id, final OtsLine2d centerLine,
             final Polygon2d contour, final List<CrossSectionSlice> crossSectionSlices)
             throws OtsGeometryException, NetworkException
     {

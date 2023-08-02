@@ -9,7 +9,7 @@ import org.djutils.draw.point.Point2d;
 import org.junit.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.mock.MockSimulator;
 
 /**
@@ -33,8 +33,8 @@ public class LinkPositionTest
         Network network = new Network("test network for LinkPosition test", MockSimulator.createMock());
         Node nodeA = new Node(network, "A", new Point2d(10, 10));
         Node nodeB = new Node(network, "B", new Point2d(110, 10));
-        Link link =
-                new Link(network, "A to B", nodeA, nodeB, DefaultsNl.ROAD, new OtsLine3d(nodeA.getPoint(), nodeB.getPoint()));
+        Link link = new Link(network, "A to B", nodeA, nodeB, DefaultsNl.ROAD,
+                new OtsLine2d(nodeA.getPoint(), nodeB.getPoint()), null);
         double linkLength = link.getLength().si;
         // Apparently (reading the source), LinkPosition is not restricted to the length-range of the link
         for (double fraction : new double[] {-10, 0, 0.1, 0.5, 0.9, 1.0, 11.0})

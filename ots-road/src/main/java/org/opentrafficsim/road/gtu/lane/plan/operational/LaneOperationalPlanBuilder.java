@@ -18,7 +18,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -94,11 +94,11 @@ public final class LaneOperationalPlanBuilder
         {
             OrientedPoint2d point = gtu.getLocation();
             Point2d p2 = new Point2d(point.x + Math.cos(point.getDirZ()), point.y + Math.sin(point.getDirZ()));
-            OtsLine3d path = new OtsLine3d(point, p2);
+            OtsLine2d path = new OtsLine2d(point, p2);
             return new LaneBasedOperationalPlan(gtu, path, startTime, Segments.standStill(timeStep), deviative);
         }
 
-        OtsLine3d path = createPathAlongCenterLine(gtu, distance);
+        OtsLine2d path = createPathAlongCenterLine(gtu, distance);
         return new LaneBasedOperationalPlan(gtu, path, startTime, segments, deviative);
     }
 
@@ -106,12 +106,12 @@ public final class LaneOperationalPlanBuilder
      * Creates a path along lane center lines.
      * @param gtu LaneBasedGtu; gtu
      * @param distance Length; minimum distance
-     * @return OtsLine3d; path along lane center lines
-     * @throws OtsGeometryException when any of the OtsLine3d operations fails
+     * @return OtsLine2d; path along lane center lines
+     * @throws OtsGeometryException when any of the OtsLine2d operations fails
      */
-    public static OtsLine3d createPathAlongCenterLine(final LaneBasedGtu gtu, final Length distance) throws OtsGeometryException
+    public static OtsLine2d createPathAlongCenterLine(final LaneBasedGtu gtu, final Length distance) throws OtsGeometryException
     {
-        OtsLine3d path = null;
+        OtsLine2d path = null;
         try
         {
             LanePosition ref = gtu.getReferencePosition();
@@ -154,7 +154,7 @@ public final class LaneOperationalPlanBuilder
                             OrientedPoint2d end = path.getLocationExtendedSI(distance.si + n * Lane.MARGIN.si);
                             List<Point2d> points = new ArrayList<>(Arrays.asList(path.getPoints()));
                             points.add(end);
-                            return new OtsLine3d(points);
+                            return new OtsLine2d(points);
                         }
                     }
                     CategoryLogger.always().error("GTU {} on link {} has nowhere to go and no sink detector either", gtu,
@@ -168,7 +168,7 @@ public final class LaneOperationalPlanBuilder
                 }
                 else
                 {
-                    path = OtsLine3d.concatenate(Lane.MARGIN.si, path, from.getCenterLine());
+                    path = OtsLine2d.concatenate(Lane.MARGIN.si, path, from.getCenterLine());
                 }
             }
         }
@@ -244,7 +244,7 @@ public final class LaneOperationalPlanBuilder
             Throw.when(from == null, RuntimeException.class, "From lane could not be determined during lane change.");
 
             // get path and make plan
-            OtsLine3d path = laneChange.getPath(timeStep, gtu, from, startPosition, distance, direction);
+            OtsLine2d path = laneChange.getPath(timeStep, gtu, from, startPosition, distance, direction);
             LaneBasedOperationalPlan plan = new LaneBasedOperationalPlan(gtu, path, startTime, segments, true);
             return plan;
         }

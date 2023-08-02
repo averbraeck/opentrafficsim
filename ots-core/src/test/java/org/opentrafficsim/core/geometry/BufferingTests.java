@@ -20,7 +20,7 @@ public class BufferingTests
     public void fractionalOffsetLineTest() throws OtsGeometryException
     {
         System.out.println("Hier komt ie");
-        OtsLine3d referenceLine = new OtsLine3d(
+        OtsLine2d referenceLine = new OtsLine2d(
                 new Point2d[] {new Point2d(10, 20), new Point2d(20, 20), new Point2d(30, 30), new Point2d(30, 40)});
         double[] relativeFractions = new double[] {0.1, 0.2, 0.3, 0.4, 0.8};
         double[] offsets = new double[] {2, 3, -2, 4, 5};
@@ -64,7 +64,7 @@ public class BufferingTests
             // Ignore expected exception
         }
 
-        //OtsLine3d offsetLine = referenceLine.offsetLine(relativeFractions, offsets);
+        //OtsLine2d offsetLine = referenceLine.offsetLine(relativeFractions, offsets);
         //System.out.println(offsetLine.toPlot());
     }
 

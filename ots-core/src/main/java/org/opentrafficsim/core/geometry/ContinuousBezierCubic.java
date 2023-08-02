@@ -88,7 +88,7 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
 
     /** {@inheritDoc} */
     @Override
-    public OtsLine3d flatten(final int numSegments)
+    public OtsLine2d flatten(final int numSegments)
     {
         Throw.when(numSegments < 1, IllegalArgumentException.class, "Number of segments should be at least 1.");
         return Try.assign(() -> Bezier.cubic(numSegments + 1, this.points[0], this.points[1], this.points[2], this.points[3]),
@@ -97,7 +97,7 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
 
     /** {@inheritDoc} */
     @Override
-    public OtsLine3d flatten(final Angle maxAngleError, final double maxSpatialError)
+    public OtsLine2d flatten(final Angle maxAngleError, final double maxSpatialError)
     {
         Throw.whenNull(maxAngleError, "Maximum angle error may not be null");
         Throw.when(maxAngleError.si <= 0.0, IllegalArgumentException.class, "Max angle error should be above 0.");
@@ -108,7 +108,7 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
 
     /** {@inheritDoc} */
     @Override
-    public OtsLine3d offset(final FractionalLengthData offsets, final int numSegments)
+    public OtsLine2d offset(final FractionalLengthData offsets, final int numSegments)
     {
         Throw.when(numSegments < 1, IllegalArgumentException.class, "Number of segments should be at least 1.");
         Throw.whenNull(offsets, "Offsets may not be null.");
@@ -213,7 +213,7 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
             }
         }
 
-        return Try.assign(() -> new OtsLine3d(points), "Bezier offset has too few points.");
+        return Try.assign(() -> new OtsLine2d(points), "Bezier offset has too few points.");
     }
 
     /**
@@ -311,7 +311,7 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
 
     /** {@inheritDoc} */
     @Override
-    public OtsLine3d offset(final FractionalLengthData offsets, final Angle maxAngleError, final double maxSpatialError)
+    public OtsLine2d offset(final FractionalLengthData offsets, final Angle maxAngleError, final double maxSpatialError)
     {
         Throw.whenNull(maxAngleError, "Maximum angle error may not be null");
         Throw.when(maxAngleError.si <= 0.0, IllegalArgumentException.class, "Max angle error should be above 0.");

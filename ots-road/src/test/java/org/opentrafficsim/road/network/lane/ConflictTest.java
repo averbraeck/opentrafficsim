@@ -30,7 +30,7 @@ import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
@@ -83,7 +83,7 @@ public class ConflictTest implements EventListener
         Point2d pointATo = new Point2d(100, 0);
         Node nodeATo = new Node(network, "A to", pointATo, Direction.ZERO);
         CrossSectionLink linkA = new CrossSectionLink(network, "Link A", nodeAFrom, nodeATo, linkType,
-                new OtsLine3d(pointAFrom, pointATo), LaneKeepingPolicy.KEEPRIGHT);
+                new OtsLine2d(pointAFrom, pointATo), null, LaneKeepingPolicy.KEEPRIGHT);
         Lane laneA = LaneGeometryUtil.createStraightLane(linkA, "lane A", Length.ZERO, new Length(2, LengthUnit.METER),
                 laneType, Map.of(DefaultsNl.VEHICLE, new Speed(50, SpeedUnit.KM_PER_HOUR)));
         laneA.addListener(this, Lane.OBJECT_ADD_EVENT);
@@ -95,7 +95,7 @@ public class ConflictTest implements EventListener
         Node nodeBFrom = new Node(network, "B from", pointBFrom, bDirection);
         Node nodeBTo = new Node(network, "B to", pointBTo, bDirection);
         CrossSectionLink linkB = new CrossSectionLink(network, "Link B", nodeBFrom, nodeBTo, linkType,
-                new OtsLine3d(pointBFrom, pointBTo), LaneKeepingPolicy.KEEPRIGHT);
+                new OtsLine2d(pointBFrom, pointBTo), null, LaneKeepingPolicy.KEEPRIGHT);
         Lane laneB = LaneGeometryUtil.createStraightLane(linkB, "lane B", Length.ZERO, new Length(4, LengthUnit.METER),
                 laneType, Map.of(DefaultsNl.VEHICLE, new Speed(50, SpeedUnit.KM_PER_HOUR)));
         laneB.addListener(this, Lane.OBJECT_ADD_EVENT);
@@ -189,14 +189,14 @@ public class ConflictTest implements EventListener
     }
 
     /**
-     * Find all 2D (ignoring Z) intersections between two OtsLine3d objects.
+     * Find all 2D (ignoring Z) intersections between two OtsLine2d objects.
      * @param a Polygon2d; the first polyline
      * @param b Polygon2d; the second polyline
      * @return Set&lt;Point2d&gt;; the intersections
      */
     public Set<Point2d> intersections(final Polygon2d a, final Polygon2d b)
     {
-        // TODO discuss if this method should be moved into the OtsLine3d class
+        // TODO discuss if this method should be moved into the OtsLine2d class
         Set<Point2d> result = new LinkedHashSet<>();
         Point2d prevA = null;
         for (Point2d nextA : a.getPointList())

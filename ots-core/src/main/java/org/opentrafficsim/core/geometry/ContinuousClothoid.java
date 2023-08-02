@@ -288,7 +288,7 @@ public class ContinuousClothoid implements ContinuousLine
             double ang2 = Math.atan2(this.t0[1], this.t0[0]);
             endDirection = Direction.instantiateSI(ang2 - Math.abs(this.alphaMax) + Math.PI);
         }
-        OtsLine3d line = flatten(1);
+        OtsLine2d line = flatten(1);
         Point2d end = Try.assign(() -> line.get(line.size() - 1), "Line does not have an end point.");
         this.endPoint = new OrientedPoint2d(end.x, end.y, endDirection.si);
 
@@ -459,7 +459,7 @@ public class ContinuousClothoid implements ContinuousLine
 
     /** {@inheritDoc} */
     @Override
-    public OtsLine3d flatten(final int numSegments)
+    public OtsLine2d flatten(final int numSegments)
     {
         Throw.when(numSegments < 1, IllegalArgumentException.class, "Number of segments should be at least 1.");
         if (this.straight != null)
@@ -508,7 +508,7 @@ public class ContinuousClothoid implements ContinuousLine
                     dy + this.a * (cs[0] * this.t0[1] - cs[1] * this.n0[1]) + r * yShift));
         }
 
-        OtsLine3d line = Try.assign(() -> new OtsLine3d(points), "Unable to create OtsLine3d.");
+        OtsLine2d line = Try.assign(() -> new OtsLine2d(points), "Unable to create OtsLine2d.");
         if (this.opposite)
         {
             line = line.reverse();
@@ -518,7 +518,7 @@ public class ContinuousClothoid implements ContinuousLine
 
     /** {@inheritDoc} */
     @Override
-    public OtsLine3d flatten(final Angle maxAngleError, final double maxSpatialError)
+    public OtsLine2d flatten(final Angle maxAngleError, final double maxSpatialError)
     {
         Throw.whenNull(maxAngleError, "Maximum angle error may not be null");
         Throw.when(maxAngleError.si <= 0.0, IllegalArgumentException.class, "Max angle error should be above 0.");
@@ -552,7 +552,7 @@ public class ContinuousClothoid implements ContinuousLine
 
     /** {@inheritDoc} */
     @Override
-    public OtsLine3d offset(final FractionalLengthData offsets, final int numSegments)
+    public OtsLine2d offset(final FractionalLengthData offsets, final int numSegments)
     {
         Throw.whenNull(offsets, "Offsets may not be null.");
         return offset(offsets, flatten(numSegments));
@@ -560,7 +560,7 @@ public class ContinuousClothoid implements ContinuousLine
 
     /** {@inheritDoc} */
     @Override
-    public OtsLine3d offset(final FractionalLengthData offsets, final Angle maxAngleError, final double maxSpatialError)
+    public OtsLine2d offset(final FractionalLengthData offsets, final Angle maxAngleError, final double maxSpatialError)
     {
         Throw.whenNull(maxAngleError, "Maximum angle error may not be null");
         Throw.when(maxAngleError.si <= 0.0, IllegalArgumentException.class, "Max angle error should be above 0.");
@@ -581,12 +581,12 @@ public class ContinuousClothoid implements ContinuousLine
      * Applies a naive offset on the line, and then adjusts the start and end point to be on the line perpendicular through each
      * end point.
      * @param offsets FractionalLengthData; offsets, should contain keys 0.0 and 1.0.
-     * @param line OtsLine3d; flattened line to offset.
-     * @return OtsLine3d; offset line.
+     * @param line OtsLine2d; flattened line to offset.
+     * @return OtsLine2d; offset line.
      */
-    private OtsLine3d offset(final FractionalLengthData offsets, final OtsLine3d line)
+    private OtsLine2d offset(final FractionalLengthData offsets, final OtsLine2d line)
     {
-        OtsLine3d offsetLine =
+        OtsLine2d offsetLine =
                 Try.assign(() -> line.offsetLine(offsets.getFractionalLengthsAsArray(), offsets.getValuesAsArray()),
                         "Unexpected exception while creating offset line.");
         Point2d start = OtsGeometryUtil.offsetPoint(this.startPoint, offsets.get(0.0));
@@ -594,7 +594,7 @@ public class ContinuousClothoid implements ContinuousLine
         Point2d[] points = offsetLine.getPoints();
         points[0] = start;
         points[points.length - 1] = end;
-        return Try.assign(() -> new OtsLine3d(points), "Unexpected exception while creating offset line.");
+        return Try.assign(() -> new OtsLine2d(points), "Unexpected exception while creating offset line.");
     }
 
     /** {@inheritDoc} */

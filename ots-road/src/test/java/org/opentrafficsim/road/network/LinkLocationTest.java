@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.network.LinkLocation;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
@@ -41,9 +41,9 @@ public class LinkLocationTest implements UNITS
         RoadNetwork network = new RoadNetwork("link location test network", simulator);
         Node nodeFrom = new Node(network, "From", new Point2d(0, 0), Direction.ZERO);
         Node nodeTo = new Node(network, "To", new Point2d(1000, 0), Direction.ZERO);
-        OtsLine3d line = new OtsLine3d(new Point2d[] {new Point2d(0, 0), new Point2d(1000, 0)});
-        CrossSectionLink link =
-                new CrossSectionLink(network, "Link", nodeFrom, nodeTo, DefaultsNl.ROAD, line, LaneKeepingPolicy.KEEPRIGHT);
+        OtsLine2d line = new OtsLine2d(new Point2d[] {new Point2d(0, 0), new Point2d(1000, 0)});
+        CrossSectionLink link = new CrossSectionLink(network, "Link", nodeFrom, nodeTo, DefaultsNl.ROAD, line, null,
+                LaneKeepingPolicy.KEEPRIGHT);
         Length linkLength = line.getLength();
         // Now we can make a LinkLocation.
         Length referenceLocationDistance = new Length(123, METER);

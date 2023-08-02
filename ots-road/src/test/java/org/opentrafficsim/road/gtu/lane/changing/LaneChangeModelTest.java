@@ -27,7 +27,7 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -101,9 +101,9 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
         // FIXME The current LinkAnimation is too bad to use...
         Point2d[] coordinates = new Point2d[] {new Point2d(from.getPoint().x, from.getPoint().y),
                 new Point2d(to.getPoint().x, to.getPoint().y)};
-        OtsLine3d line = new OtsLine3d(coordinates);
+        OtsLine2d line = new OtsLine2d(coordinates);
         CrossSectionLink link =
-                new CrossSectionLink(network, name, from, to, DefaultsNl.ROAD, line, LaneKeepingPolicy.KEEPRIGHT);
+                new CrossSectionLink(network, name, from, to, DefaultsNl.ROAD, line, null, LaneKeepingPolicy.KEEPRIGHT);
         return link;
     }
 

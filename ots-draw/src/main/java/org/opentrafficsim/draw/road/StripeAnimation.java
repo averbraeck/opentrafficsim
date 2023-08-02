@@ -14,7 +14,7 @@ import javax.naming.NamingException;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.draw.core.PaintPolygons;
 import org.opentrafficsim.road.network.lane.Stripe;
 
@@ -48,7 +48,7 @@ public class StripeAnimation extends Renderable2D<Stripe> implements Renderable2
      * @return ArrayList&lt;Coordinate&gt;; the coordinates of the dashes separated and terminated by a <cite>NEWPATH</cite>
      *         Coordinate
      */
-    private ArrayList<Point2d> makeDashes(final OtsLine3d center, final double width, final double startOffset,
+    private ArrayList<Point2d> makeDashes(final OtsLine2d center, final double width, final double startOffset,
             final double[] onOffLengths)
     {
         double period = 0;
@@ -83,7 +83,7 @@ public class StripeAnimation extends Renderable2D<Stripe> implements Renderable2
                     endPosition = length; // Draw a partial dash, ending at length (end of the center line)
                 }
 
-                OtsLine3d dashCenter;
+                OtsLine2d dashCenter;
                 dashCenter = center.extract(position, endPosition);
                 dashCenter.offsetLine(width / 2).getLine2d().getPoints().forEachRemaining(result::add);
                 dashCenter.offsetLine(-width / 2).getLine2d().reverse().getPoints().forEachRemaining(result::add);
@@ -113,7 +113,7 @@ public class StripeAnimation extends Renderable2D<Stripe> implements Renderable2
 
             case DOUBLE:// ||- Draw two solid lines
             {
-                OtsLine3d centerLine = stripe.getCenterLine();
+                OtsLine2d centerLine = stripe.getCenterLine();
                 List<Point2d> result = new ArrayList<>(centerLine.size() * 2);
                 centerLine.offsetLine(width / 2).getLine2d().getPoints().forEachRemaining(result::add);
                 centerLine.offsetLine(-width / 2).getLine2d().reverse().getPoints().forEachRemaining(result::add);
@@ -122,7 +122,7 @@ public class StripeAnimation extends Renderable2D<Stripe> implements Renderable2
 
             case LEFT: // |¦ - Draw left solid, right 3-9 dashed
             {
-                OtsLine3d centerLine = stripe.getCenterLine();
+                OtsLine2d centerLine = stripe.getCenterLine();
                 List<Point2d> result = makeDashes(centerLine.offsetLine(-width / 3), width / 3, 0.0, new double[] {3, 9});
                 centerLine.offsetLine(width / 3).getLine2d().getPoints().forEachRemaining(result::add);
                 return result;
@@ -130,7 +130,7 @@ public class StripeAnimation extends Renderable2D<Stripe> implements Renderable2
 
             case RIGHT: // ¦| - Draw left 3-9 dashed, right solid
             {
-                OtsLine3d centerLine = stripe.getCenterLine();
+                OtsLine2d centerLine = stripe.getCenterLine();
                 ArrayList<Point2d> result = makeDashes(centerLine.offsetLine(width / 3), width / 3, 0.0, new double[] {3, 9});
                 centerLine.offsetLine(-width / 3).getLine2d().getPoints().forEachRemaining(result::add);
                 return result;

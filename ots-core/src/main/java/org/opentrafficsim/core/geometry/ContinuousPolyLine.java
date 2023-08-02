@@ -19,7 +19,7 @@ public class ContinuousPolyLine implements ContinuousLine
 {
 
     /** Line. */
-    private final OtsLine3d line;
+    private final OtsLine2d line;
 
     /** Start point. */
     private final OrientedPoint2d startPoint;
@@ -29,9 +29,9 @@ public class ContinuousPolyLine implements ContinuousLine
 
     /**
      * Define continuous line from polyline. Start and end point direction are derived from the line.
-     * @param line OtsLine3d; line.
+     * @param line OtsLine2d; line.
      */
-    public ContinuousPolyLine(final OtsLine3d line)
+    public ContinuousPolyLine(final OtsLine2d line)
     {
         Throw.whenNull(line, "Line may not be null.");
         this.line = line;
@@ -42,11 +42,11 @@ public class ContinuousPolyLine implements ContinuousLine
     /**
      * Define continuous line from polyline. Start and end point are given and may alter the direction at the endpoints
      * (slightly).
-     * @param line OtsLine3d; line.
+     * @param line OtsLine2d; line.
      * @param startPoint OrientedPoint2d; start point.
      * @param endPoint OrientedPoint2d; end point.
      */
-    public ContinuousPolyLine(final OtsLine3d line, final OrientedPoint2d startPoint, final OrientedPoint2d endPoint)
+    public ContinuousPolyLine(final OtsLine2d line, final OrientedPoint2d startPoint, final OrientedPoint2d endPoint)
     {
         Throw.whenNull(line, "Line may not be null.");
         this.line = line;
@@ -99,10 +99,10 @@ public class ContinuousPolyLine implements ContinuousLine
     /**
      * Returns the line. Number of segments is ignored.
      * @param numSegments int; minimum number of segments (ignored).
-     * @return OtsLine3d; polyline.
+     * @return OtsLine2d; polyline.
      */
     @Override
-    public OtsLine3d flatten(final int numSegments)
+    public OtsLine2d flatten(final int numSegments)
     {
         return this.line;
     }
@@ -111,10 +111,10 @@ public class ContinuousPolyLine implements ContinuousLine
      * Returns the line. Maximum errors are ignored.
      * @param maxAngleError Angle; maximum angle error in polyline (ignored).
      * @param maxSpatialError double; maximum spatial error in polyline (ignored).
-     * @return OtsLine3d; polyline.
+     * @return OtsLine2d; polyline.
      */
     @Override
-    public OtsLine3d flatten(final Angle maxAngleError, final double maxSpatialError)
+    public OtsLine2d flatten(final Angle maxAngleError, final double maxSpatialError)
     {
         // TODO: possibly apply smoothing algorithm
         return this.line;
@@ -124,10 +124,10 @@ public class ContinuousPolyLine implements ContinuousLine
      * Offset polyline based on variable offset. The number of segments is ignored.
      * @param offsets FractionalLengthData; offsets at fractional lengths.
      * @param numSegments int; minimum number of segments (ignored).
-     * @return OtsLine3d; offset polyline.
+     * @return OtsLine2d; offset polyline.
      */
     @Override
-    public OtsLine3d offset(final FractionalLengthData offsets, final int numSegments)
+    public OtsLine2d offset(final FractionalLengthData offsets, final int numSegments)
     {
         return offset(offsets);
     }
@@ -137,10 +137,10 @@ public class ContinuousPolyLine implements ContinuousLine
      * @param offsets FractionalLengthData; offsets at fractional lengths.
      * @param maxAngleError Angle; maximum angle error in polyline (ignored).
      * @param maxSpatialError double; maximum spatial error in polyline (ignored).
-     * @return OtsLine3d; offset polyline.
+     * @return OtsLine2d; offset polyline.
      */
     @Override
-    public OtsLine3d offset(final FractionalLengthData offsets, final Angle maxAngleError, final double maxSpatialError)
+    public OtsLine2d offset(final FractionalLengthData offsets, final Angle maxAngleError, final double maxSpatialError)
     {
         return offset(offsets);
     }
@@ -149,12 +149,12 @@ public class ContinuousPolyLine implements ContinuousLine
      * Applies a naive offset on the line, and then adjusts the start and end point to be on the line perpendicular through each
      * end point.
      * @param offsets FractionalLengthData; offsets, should contain keys 0.0 and 1.0.
-     * @return OtsLine3d; offset line.
+     * @return OtsLine2d; offset line.
      */
-    private OtsLine3d offset(final FractionalLengthData offsets)
+    private OtsLine2d offset(final FractionalLengthData offsets)
     {
         Throw.whenNull(offsets, "Offsets may not be null.");
-        OtsLine3d offsetLine =
+        OtsLine2d offsetLine =
                 Try.assign(() -> this.line.offsetLine(offsets.getFractionalLengthsAsArray(), offsets.getValuesAsArray()),
                         "Unexpected exception while creating offset line.");
         Point2d start = OtsGeometryUtil.offsetPoint(this.startPoint, offsets.get(0.0));
@@ -162,7 +162,7 @@ public class ContinuousPolyLine implements ContinuousLine
         Point2d[] points = offsetLine.getPoints();
         points[0] = start;
         points[points.length - 1] = end;
-        return Try.assign(() -> new OtsLine3d(points), "Unexpected exception while creating offset line.");
+        return Try.assign(() -> new OtsLine2d(points), "Unexpected exception while creating offset line.");
     }
 
     /** {@inheritDoc} */

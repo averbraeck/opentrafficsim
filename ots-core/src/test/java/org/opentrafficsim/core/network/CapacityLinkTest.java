@@ -8,7 +8,7 @@ import org.djutils.draw.point.Point2d;
 import org.junit.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.mock.MockSimulator;
 
 /**
@@ -37,10 +37,10 @@ public class CapacityLinkTest
         Node fromNode = new Node(network, "startNode", fromPoint);
         Node toNode = new Node(network, "endNode", toPoint);
         LinkType linkType = DefaultsNl.ROAD;
-        OtsLine3d designLine = new OtsLine3d(fromPoint, toPoint);
+        OtsLine2d designLine = new OtsLine2d(fromPoint, toPoint);
         Frequency initialCapacity = new Frequency(1234, FrequencyUnit.PER_HOUR);
         Frequency finalCapacity = new Frequency(1234, FrequencyUnit.PER_HOUR);
-        CapacityLink link = new CapacityLink(network, "link", fromNode, toNode, linkType, designLine, initialCapacity);
+        CapacityLink link = new CapacityLink(network, "link", fromNode, toNode, linkType, designLine, null, initialCapacity);
         assertTrue("from point matches", fromPoint.equals(link.getDesignLine().get(0)));
         assertTrue("to point matches", toPoint.equals(link.getDesignLine().get(1)));
         assertTrue("from node matches", fromNode.equals(link.getStartNode()));

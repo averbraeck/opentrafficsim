@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.core.geometry.OtsLine3d.FractionalFallback;
+import org.opentrafficsim.core.geometry.OtsLine2d.FractionalFallback;
 
 /**
  * Test/development code for the fractional helper stuff.
@@ -32,7 +32,7 @@ public final class FractionalHelper
             NoSuchFieldException, SecurityException
     {
         /*-
-        OtsLine3d line = new OtsLine3d(new Point2d(-263.811, -86.551, 1.180), new Point2d(-262.945, -84.450, 1.180),
+        OtsLine2d line = new OtsLine2d(new Point2d(-263.811, -86.551, 1.180), new Point2d(-262.945, -84.450, 1.180),
                 new Point2d(-261.966, -82.074, 1.180), new Point2d(-260.890, -79.464, 1.198),
                 new Point2d(-259.909, -76.955, 1.198), new Point2d(-258.911, -74.400, 1.198),
                 new Point2d(-257.830, -71.633, 1.234));
@@ -147,7 +147,7 @@ public final class FractionalHelper
 
             }
         }
-        OtsLine3d line = new OtsLine3d(list);
+        OtsLine2d line = new OtsLine2d(list);
 
         line.projectFractional(null, null, 1.0, 0.5, FractionalFallback.NaN); // creates fractional helper points
 
@@ -160,7 +160,7 @@ public final class FractionalHelper
                 array[i] = new Point2d(Double.NaN, Double.NaN);
             }
         }
-        OtsLine3d helpers = new OtsLine3d(getFractionalHelperCenters(line));
+        OtsLine2d helpers = new OtsLine2d(getFractionalHelperCenters(line));
 
         // create Matlab compatible strings of lines
         StringBuilder str = new StringBuilder();
@@ -187,17 +187,17 @@ public final class FractionalHelper
 
     /**
      * Dirty hack.
-     * @param line OtsLine3d; the line
+     * @param line OtsLine2d; the line
      * @return OTSPoine3D[]
      * @throws IllegalArgumentException ...
      * @throws IllegalAccessException ...
      * @throws NoSuchFieldException ...
      * @throws SecurityException ...
      */
-    static Point2d[] getFractionalHelperCenters(final OtsLine3d line)
+    static Point2d[] getFractionalHelperCenters(final OtsLine2d line)
             throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException
     {
-        Field fhcArray = OtsLine3d.class.getDeclaredField("fractionalHelperCenters");
+        Field fhcArray = OtsLine2d.class.getDeclaredField("fractionalHelperCenters");
         fhcArray.setAccessible(true);
         return (Point2d[]) fhcArray.get(line);
     }

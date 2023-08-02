@@ -11,7 +11,7 @@ import org.djutils.draw.point.Point;
 import org.djutils.draw.point.Point2d;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 
 /**
  * Paint a line as a Path2D.Double
@@ -61,10 +61,10 @@ public final class PaintLine
      * @param color Color; the color to use
      * @param width double; the width to use
      * @param referencePoint DirectedPoint; the reference point
-     * @param line OtsLine3d; array of points
+     * @param line OtsLine2d; array of points
      */
     public static void paintLine(final Graphics2D graphics, final Color color, final double width,
-            final Point<?> referencePoint, final OtsLine3d line)
+            final Point<?> referencePoint, final OtsLine2d line)
     {
         try
         {

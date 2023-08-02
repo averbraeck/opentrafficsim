@@ -34,7 +34,7 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -77,7 +77,7 @@ public class LaneTest implements UNITS
         coordinates[0] = nodeFrom.getPoint();
         coordinates[1] = nodeTo.getPoint();
         CrossSectionLink link = new CrossSectionLink(network, "A to B", nodeFrom, nodeTo, DefaultsNl.FREEWAY,
-                new OtsLine3d(coordinates), LaneKeepingPolicy.KEEPRIGHT);
+                new OtsLine2d(coordinates), null, LaneKeepingPolicy.KEEPRIGHT);
         Length startLateralPos = new Length(2, METER);
         Length endLateralPos = new Length(5, METER);
         Length startWidth = new Length(3, METER);
@@ -140,7 +140,7 @@ public class LaneTest implements UNITS
         coordinates[1] = new Point2d(200, 100);
         coordinates[2] = new Point2d(nodeTo.getPoint().x, nodeTo.getPoint().y);
         link = new CrossSectionLink(network, "A to B with Kink", nodeFrom, nodeTo, DefaultsNl.FREEWAY,
-                new OtsLine3d(coordinates), LaneKeepingPolicy.KEEPRIGHT);
+                new OtsLine2d(coordinates), null, LaneKeepingPolicy.KEEPRIGHT);
         lane = LaneGeometryUtil.createStraightLane(link, "lane.1", startLateralPos, endLateralPos, startWidth, endWidth,
                 laneType, speedMap);
         // Verify the easy bits
@@ -174,7 +174,7 @@ public class LaneTest implements UNITS
         */
 
         // Construct a lane using CrossSectionSlices
-        OtsLine3d centerLine = new OtsLine3d(new Point2d(0.0, 0.0), new Point2d(100.0, 0.0));
+        OtsLine2d centerLine = new OtsLine2d(new Point2d(0.0, 0.0), new Point2d(100.0, 0.0));
         Polygon2d contour = new Polygon2d(new Point2d(0.0, -1.75), new Point2d(100.0, -1.75), new Point2d(100.0, 1.75),
                 new Point2d(0.0, -1.75));
         try
@@ -569,15 +569,15 @@ public class LaneTest implements UNITS
         Point2d[] coordinates = new Point2d[2];
         coordinates[0] = start.getPoint();
         coordinates[1] = end.getPoint();
-        OtsLine3d line = new OtsLine3d(coordinates);
+        OtsLine2d line = new OtsLine2d(coordinates);
         CrossSectionLink link =
-                new CrossSectionLink(network, "A to B", start, end, DefaultsNl.ROAD, line, LaneKeepingPolicy.KEEPRIGHT);
+                new CrossSectionLink(network, "A to B", start, end, DefaultsNl.ROAD, line, null, LaneKeepingPolicy.KEEPRIGHT);
         Length offsetAtStart = Length.instantiateSI(5);
         Length offsetAtEnd = Length.instantiateSI(15);
         Length width = Length.instantiateSI(4);
         Lane lane =
                 LaneGeometryUtil.createStraightLane(link, "lane", offsetAtStart, offsetAtEnd, width, width, laneType, speedMap);
-        OtsLine3d laneCenterLine = lane.getCenterLine();
+        OtsLine2d laneCenterLine = lane.getCenterLine();
         // System.out.println("Center line is " + laneCenterLine);
         Point2d[] points = laneCenterLine.getPoints();
         double prev = offsetAtStart.si + from.y;
@@ -654,8 +654,8 @@ public class LaneTest implements UNITS
                     Point2d[] coordinates = new Point2d[2];
                     coordinates[0] = start.getPoint();
                     coordinates[1] = end.getPoint();
-                    OtsLine3d line = new OtsLine3d(coordinates);
-                    CrossSectionLink link = new CrossSectionLink(network, "A to B", start, end, DefaultsNl.ROAD, line,
+                    OtsLine2d line = new OtsLine2d(coordinates);
+                    CrossSectionLink link = new CrossSectionLink(network, "A to B", start, end, DefaultsNl.ROAD, line, null,
                             LaneKeepingPolicy.KEEPRIGHT);
                     final int[] lateralOffsets = {-10, -3, -1, 0, 1, 3, 10};
                     for (int startLateralOffset : lateralOffsets)

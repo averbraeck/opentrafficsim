@@ -29,7 +29,7 @@ import org.opentrafficsim.core.geometry.ContinuousPolyLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsGeometryUtil;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Centroid;
@@ -239,7 +239,7 @@ public final class NetworkParser
                     Point3d point = xmlLink.getPolyline().getCoordinate().get(p);
                     coordinates[p + 1] = new Point2d(point.x, point.y);
                 }
-                designLine = new ContinuousPolyLine(OtsLine3d.createAndCleanOtsLine3d(coordinates));
+                designLine = new ContinuousPolyLine(OtsLine2d.createAndCleanOtsLine2d(coordinates));
             }
             else if (xmlLink.getArc() != null)
             {
@@ -286,7 +286,7 @@ public final class NetworkParser
             designLines.put(xmlLink.getId(), designLine);
 
             // TODO: take defaults from network when not defined for link
-            OtsLine3d flattenedLine;
+            OtsLine2d flattenedLine;
             if (maxAngleError != null)
             {
                 flattenedLine = designLine.flatten(maxAngleError, maxSpatialError.si);
@@ -300,8 +300,9 @@ public final class NetworkParser
             // TODO: Directionality has to be added later when the lanes and their direction are known.
             LaneKeepingPolicy laneKeepingPolicy = LaneKeepingPolicy.valueOf(xmlLink.getLaneKeeping().name());
             LinkType linkType = definitions.get(LinkType.class, xmlLink.getType());
+            // TODO: elevation data
             CrossSectionLink link = new CrossSectionLink(otsNetwork, xmlLink.getId(), startNode, endNode, linkType,
-                    flattenedLine, laneKeepingPolicy);
+                    flattenedLine, null, laneKeepingPolicy);
 
             if (xmlLink.getPriority() != null)
             {
@@ -401,9 +402,9 @@ public final class NetworkParser
 
                 List<CrossSectionSlice> slices = LaneGeometryUtil.getSlices(designLine, cseData.centerOffsetStart,
                         cseData.centerOffsetEnd, cseData.widthStart, cseData.widthEnd);
-                OtsLine3d centerLine = designLine.offset(LaneGeometryUtil.getCenterOffsets(designLine, slices), 64);
-                OtsLine3d leftEdge = designLine.offset(LaneGeometryUtil.getLeftEdgeOffsets(designLine, slices), 64);
-                OtsLine3d rightEdge = designLine.offset(LaneGeometryUtil.getRightEdgeOffsets(designLine, slices), 64);
+                OtsLine2d centerLine = designLine.offset(LaneGeometryUtil.getCenterOffsets(designLine, slices), 64);
+                OtsLine2d leftEdge = designLine.offset(LaneGeometryUtil.getLeftEdgeOffsets(designLine, slices), 64);
+                OtsLine2d rightEdge = designLine.offset(LaneGeometryUtil.getRightEdgeOffsets(designLine, slices), 64);
                 Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
 
                 // Lane
@@ -710,9 +711,9 @@ public final class NetworkParser
                         : new Length(20.0, LengthUnit.CENTIMETER));
         List<CrossSectionSlice> slices = LaneGeometryUtil.getSlices(designLine, startOffset, endOffset, width, width);
 
-        OtsLine3d centerLine = designLine.offset(LaneGeometryUtil.getCenterOffsets(designLine, slices), 64);
-        OtsLine3d leftEdge = designLine.offset(LaneGeometryUtil.getLeftEdgeOffsets(designLine, slices), 64);
-        OtsLine3d rightEdge = designLine.offset(LaneGeometryUtil.getRightEdgeOffsets(designLine, slices), 64);
+        OtsLine2d centerLine = designLine.offset(LaneGeometryUtil.getCenterOffsets(designLine, slices), 64);
+        OtsLine2d leftEdge = designLine.offset(LaneGeometryUtil.getLeftEdgeOffsets(designLine, slices), 64);
+        OtsLine2d rightEdge = designLine.offset(LaneGeometryUtil.getRightEdgeOffsets(designLine, slices), 64);
         Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
 
         switch (stripeTag.getType())

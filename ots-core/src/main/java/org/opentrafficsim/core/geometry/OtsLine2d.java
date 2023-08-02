@@ -22,8 +22,8 @@ import org.djutils.exceptions.Throw;
 import nl.tudelft.simulation.dsol.animation.Locatable;
 
 /**
- * Line with Point2d points, optional elevation data, a cached length indexed line, a cached length, and a cached centroid (all
- * calculated on first use).
+ * Line with underlying PolyLine2d, a cached length indexed line, a cached length, and a cached centroid (all calculated on
+ * first use). This class supports fractional projection.
  * <p>
  * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -33,7 +33,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class OtsLine3d implements Locatable, Serializable
+public class OtsLine2d implements Locatable, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150722L;
@@ -72,25 +72,25 @@ public class OtsLine3d implements Locatable, Serializable
     private Length[] vertexRadii;
 
     /**
-     * Construct a new OtsLine3d.
-     * @param points Point2d...; the array of points to construct this OtsLine3d from.
+     * Construct a new OtsLine2d.
+     * @param points Point2d...; the array of points to construct this OtsLine2d from.
      */
-    public OtsLine3d(final Point2d... points)
+    public OtsLine2d(final Point2d... points)
     {
         this(new PolyLine2d(points));
     }
 
     /**
-     * Creates a new OtsLine3d based on 2d information. Elevation will be 0.
+     * Creates a new OtsLine2d based on 2d information. Elevation will be 0.
      * @param line2d PolyLine2d; 2d information.
      */
-    public OtsLine3d(final PolyLine2d line2d)
+    public OtsLine2d(final PolyLine2d line2d)
     {
         init(line2d);
     }
 
     /**
-     * Construct a new OtsLine3d, and immediately make the length-indexed line.
+     * Construct a new OtsLine2d, and immediately make the length-indexed line.
      * @param line2d PolyLine2d; the 2d line.
      */
     private void init(final PolyLine2d line2d)
@@ -108,12 +108,11 @@ public class OtsLine3d implements Locatable, Serializable
     /**
      * Construct parallel line.<br>
      * @param offset double; offset distance from the reference line; positive is LEFT, negative is RIGHT
-     * @return OtsLine3d; the line that has the specified offset from the reference line
+     * @return OtsLine2d; the line that has the specified offset from the reference line
      */
-    public final OtsLine3d offsetLine(final double offset)
+    public final OtsLine2d offsetLine(final double offset)
     {
-        return new OtsLine3d(this.line2d.offsetLine(offset));
-        // TODO: elevation information
+        return new OtsLine2d(this.line2d.offsetLine(offset));
     }
 
     /**
@@ -121,10 +120,10 @@ public class OtsLine3d implements Locatable, Serializable
      * straightened version of the line. <br>
      * @param epsilon double; maximal deviation
      * @param useHorizontalDistance boolean; if true; the horizontal distance is used; if false; the 3D distance is used
-     * @return OtsLine3d; a new OtsLine3d containing all the remaining points
+     * @return OtsLine2d; a new OtsLine2d containing all the remaining points
      */
     @Deprecated
-    public final OtsLine3d noiseFilterRamerDouglasPeucker(final double epsilon, final boolean useHorizontalDistance)
+    public final OtsLine2d noiseFilterRamerDouglasPeucker(final double epsilon, final boolean useHorizontalDistance)
     {
         // Apply the Ramer-Douglas-Peucker algorithm to the buffered points.
         // Adapted from https://en.wikipedia.org/wiki/Ramer%E2%80%93Douglas%E2%80%93Peucker_algorithm
@@ -146,15 +145,15 @@ public class OtsLine3d implements Locatable, Serializable
         if (maxDeviation <= epsilon)
         {
             // All intermediate points can be dropped. Return a new list containing only the first and last point.
-            return new OtsLine3d(this.line2d.get(0), this.line2d.get(pointCount - 1));
+            return new OtsLine2d(this.line2d.get(0), this.line2d.get(pointCount - 1));
         }
         // The largest deviation is larger than epsilon.
         // Split the polyLine at the point with the maximum deviation. Process each sub list recursively and concatenate the
         // results
         List<Point2d> points = this.line2d.getPointList();
-        OtsLine3d first = new OtsLine3d(points.subList(0, splitIndex + 1).toArray(new Point2d[splitIndex + 1]))
+        OtsLine2d first = new OtsLine2d(points.subList(0, splitIndex + 1).toArray(new Point2d[splitIndex + 1]))
                 .noiseFilterRamerDouglasPeucker(epsilon, useHorizontalDistance);
-        OtsLine3d second = new OtsLine3d(
+        OtsLine2d second = new OtsLine2d(
                 points.subList(splitIndex, this.line2d.size()).toArray(new Point2d[this.line2d.size() - splitIndex]))
                         .noiseFilterRamerDouglasPeucker(epsilon, useHorizontalDistance);
         return concatenate(epsilon, first, second);
@@ -174,11 +173,11 @@ public class OtsLine3d implements Locatable, Serializable
      * start of the reference line to its final offset value at the end of the reference line.
      * @param offsetAtStart double; offset at the start of the reference line (positive value is Left, negative value is Right)
      * @param offsetAtEnd double; offset at the end of the reference line (positive value is Left, negative value is Right)
-     * @return OtsLine3d; the OtsLine3d of the line at linearly changing offset of the reference line
+     * @return OtsLine2d; the OtsLine2d of the line at linearly changing offset of the reference line
      */
-    public final OtsLine3d offsetLine(final double offsetAtStart, final double offsetAtEnd)
+    public final OtsLine2d offsetLine(final double offsetAtStart, final double offsetAtEnd)
     {
-        return new OtsLine3d(this.line2d.offsetLine(offsetAtStart, offsetAtEnd));
+        return new OtsLine2d(this.line2d.offsetLine(offsetAtStart, offsetAtEnd));
     }
 
     /**
@@ -190,145 +189,141 @@ public class OtsLine3d implements Locatable, Serializable
      * @return Geometry; the Geometry of the line at linearly changing offset of the reference line
      * @throws OtsGeometryException when this method fails to create the offset line
      */
-    public final OtsLine3d offsetLine(final double[] relativeFractions, final double[] offsets) throws OtsGeometryException
+    public final OtsLine2d offsetLine(final double[] relativeFractions, final double[] offsets) throws OtsGeometryException
     {
-        return new OtsLine3d(OtsGeometryUtil.offsetLine(this.line2d, relativeFractions, offsets));
+        return new OtsLine2d(OtsGeometryUtil.offsetLine(this.line2d, relativeFractions, offsets));
     }
 
     /**
-     * Concatenate several OtsLine3d instances.
-     * @param lines OtsLine3d...; OtsLine3d... one or more OtsLine3d. The last point of the first
+     * Concatenate several OtsLine2d instances.
+     * @param lines OtsLine2d...; OtsLine2d... one or more OtsLine2d. The last point of the first
      *            &lt;strong&gt;must&lt;/strong&gt; match the first of the second, etc.
-     * @return OtsLine3d
+     * @return OtsLine2d
      */
-    public static OtsLine3d concatenate(final OtsLine3d... lines)
+    public static OtsLine2d concatenate(final OtsLine2d... lines)
     {
         return concatenate(0.0, lines);
     }
 
     /**
-     * Concatenate two OtsLine3d instances. This method is separate for efficiency reasons.
+     * Concatenate two OtsLine2d instances. This method is separate for efficiency reasons.
      * @param toleranceSI double; the tolerance between the end point of a line and the first point of the next line
-     * @param line1 OtsLine3d; first line
-     * @param line2 OtsLine3d; second line
-     * @return OtsLine3d
+     * @param line1 OtsLine2d; first line
+     * @param line2 OtsLine2d; second line
+     * @return OtsLine2d
      */
-    public static OtsLine3d concatenate(final double toleranceSI, final OtsLine3d line1, final OtsLine3d line2)
+    public static OtsLine2d concatenate(final double toleranceSI, final OtsLine2d line1, final OtsLine2d line2)
     {
-        return new OtsLine3d(PolyLine2d.concatenate(toleranceSI, line1.line2d, line2.line2d));
-        // TODO: elevation information
+        return new OtsLine2d(PolyLine2d.concatenate(toleranceSI, line1.line2d, line2.line2d));
     }
 
     /**
-     * Concatenate several OtsLine3d instances.
+     * Concatenate several OtsLine2d instances.
      * @param toleranceSI double; the tolerance between the end point of a line and the first point of the next line
-     * @param lines OtsLine3d...; OtsLine3d... one or more OtsLine3d. The last point of the first
+     * @param lines OtsLine2d...; OtsLine2d... one or more OtsLine2d. The last point of the first
      *            &lt;strong&gt;must&lt;/strong&gt; match the first of the second, etc.
-     * @return OtsLine3d
+     * @return OtsLine2d
      */
-    public static OtsLine3d concatenate(final double toleranceSI, final OtsLine3d... lines)
+    public static OtsLine2d concatenate(final double toleranceSI, final OtsLine2d... lines)
     {
         List<PolyLine2d> lines2d = new ArrayList<>();
-        for (OtsLine3d line : lines)
+        for (OtsLine2d line : lines)
         {
             lines2d.add(line.line2d);
         }
-        return new OtsLine3d(PolyLine2d.concatenate(toleranceSI, lines2d.toArray(new PolyLine2d[lines.length])));
-        // TODO: elevation information
+        return new OtsLine2d(PolyLine2d.concatenate(toleranceSI, lines2d.toArray(new PolyLine2d[lines.length])));
     }
 
     /**
-     * Construct a new OtsLine3d with all points of this OtsLine3d in reverse order.
-     * @return OtsLine3d; the new OtsLine3d
+     * Construct a new OtsLine2d with all points of this OtsLine2d in reverse order.
+     * @return OtsLine2d; the new OtsLine2d
      */
-    public final OtsLine3d reverse()
+    public final OtsLine2d reverse()
     {
-        return new OtsLine3d(this.line2d.reverse());
-        // TODO: elevation information
+        return new OtsLine2d(this.line2d.reverse());
     }
 
     /**
-     * Construct a new OtsLine3d covering the indicated fraction of this OtsLine3d.
+     * Construct a new OtsLine2d covering the indicated fraction of this OtsLine2d.
      * @param start double; starting point, valid range [0..<cite>end</cite>)
      * @param end double; ending point, valid range (<cite>start</cite>..1]
-     * @return OtsLine3d; the new OtsLine3d
+     * @return OtsLine2d; the new OtsLine2d
      */
-    public final OtsLine3d extractFractional(final double start, final double end)
+    public final OtsLine2d extractFractional(final double start, final double end)
     {
         return extract(start * this.length.si, end * this.length.si);
     }
 
     /**
-     * Create a new OtsLine3d that covers a sub-section of this OtsLine3d.
-     * @param start Length; the length along this OtsLine3d where the sub-section starts, valid range [0..<cite>end</cite>)
-     * @param end Length; length along this OtsLine3d where the sub-section ends, valid range
-     *            (<cite>start</cite>..<cite>length</cite> (length is the length of this OtsLine3d)
-     * @return OtsLine3d; the selected sub-section
+     * Create a new OtsLine2d that covers a sub-section of this OtsLine2d.
+     * @param start Length; the length along this OtsLine2d where the sub-section starts, valid range [0..<cite>end</cite>)
+     * @param end Length; length along this OtsLine2d where the sub-section ends, valid range
+     *            (<cite>start</cite>..<cite>length</cite> (length is the length of this OtsLine2d)
+     * @return OtsLine2d; the selected sub-section
      */
-    public final OtsLine3d extract(final Length start, final Length end)
+    public final OtsLine2d extract(final Length start, final Length end)
     {
         return extract(start.si, end.si);
     }
 
     /**
-     * Create a new OtsLine3d that covers a sub-section of this OtsLine3d.
-     * @param start double; length along this OtsLine3d where the sub-section starts, valid range [0..<cite>end</cite>)
-     * @param end double; length along this OtsLine3d where the sub-section ends, valid range
-     *            (<cite>start</cite>..<cite>length</cite> (length is the length of this OtsLine3d)
-     * @return OtsLine3d; the selected sub-section
+     * Create a new OtsLine2d that covers a sub-section of this OtsLine2d.
+     * @param start double; length along this OtsLine2d where the sub-section starts, valid range [0..<cite>end</cite>)
+     * @param end double; length along this OtsLine2d where the sub-section ends, valid range
+     *            (<cite>start</cite>..<cite>length</cite> (length is the length of this OtsLine2d)
+     * @return OtsLine2d; the selected sub-section
      */
-    public final OtsLine3d extract(final double start, final double end)
+    public final OtsLine2d extract(final double start, final double end)
     {
-        return new OtsLine3d(this.line2d.extract(start, end));
-        // TODO: elevation information
+        return new OtsLine2d(this.line2d.extract(start, end));
     }
 
     /**
-     * Create an OtsLine3d, while cleaning repeating successive points.
+     * Create an OtsLine2d, while cleaning repeating successive points.
      * @param points Point2d...; the coordinates of the line as OtsPoint3d
      * @return the line
      * @throws OtsGeometryException when number of points &lt; 2
      */
-    public static OtsLine3d createAndCleanOtsLine3d(final Point2d... points) throws OtsGeometryException
+    public static OtsLine2d createAndCleanOtsLine2d(final Point2d... points) throws OtsGeometryException
     {
         if (points.length < 2)
         {
             throw new OtsGeometryException(
-                    "Degenerate OtsLine3d; has " + points.length + " point" + (points.length != 1 ? "s" : ""));
+                    "Degenerate OtsLine2d; has " + points.length + " point" + (points.length != 1 ? "s" : ""));
         }
-        return createAndCleanOtsLine3d(new ArrayList<>(Arrays.asList(points)));
+        return createAndCleanOtsLine2d(new ArrayList<>(Arrays.asList(points)));
     }
 
     /**
-     * Create an OtsLine3d, while cleaning repeating successive points.
+     * Create an OtsLine2d, while cleaning repeating successive points.
      * @param pointList List&lt;Point2d&gt;; list of the coordinates of the line as OtsPoint3d; any duplicate points in this
      *            list are removed (this method may modify the provided list)
-     * @return OtsLine3d; the line
+     * @return OtsLine2d; the line
      * @throws OtsGeometryException when number of non-equal points &lt; 2
      */
-    public static OtsLine3d createAndCleanOtsLine3d(final List<Point2d> pointList) throws OtsGeometryException
+    public static OtsLine2d createAndCleanOtsLine2d(final List<Point2d> pointList) throws OtsGeometryException
     {
-        return new OtsLine3d(new PolyLine2d(true, pointList));
+        return new OtsLine2d(new PolyLine2d(true, pointList));
     }
 
     /**
-     * Construct a new OtsLine3d from a List&lt;OtsPoint3d&gt;.
-     * @param pointList List&lt;OtsPoint3d&gt;; the list of points to construct this OtsLine3d from.
+     * Construct a new OtsLine2d from a List&lt;OtsPoint3d&gt;.
+     * @param pointList List&lt;OtsPoint3d&gt;; the list of points to construct this OtsLine2d from.
      * @throws OtsGeometryException when the provided points do not constitute a valid line (too few points or identical
      *             adjacent points)
      */
-    public OtsLine3d(final List<Point2d> pointList) throws OtsGeometryException
+    public OtsLine2d(final List<Point2d> pointList) throws OtsGeometryException
     {
         this(pointList.toArray(new Point2d[pointList.size()]));
     }
 
     /**
      * Construct a new OtsShape (closed shape) from a Path2D. Elevation will be 0.
-     * @param path Path2D; the Path2D to construct this OtsLine3d from.
+     * @param path Path2D; the Path2D to construct this OtsLine2d from.
      * @throws OtsGeometryException when the provided points do not constitute a valid line (too few points or identical
      *             adjacent points)
      */
-    public OtsLine3d(final Path2D path) throws OtsGeometryException
+    public OtsLine2d(final Path2D path) throws OtsGeometryException
     {
         List<Point2d> pl = new ArrayList<>();
         for (PathIterator pi = path.getPathIterator(null); !pi.isDone(); pi.next())
@@ -352,7 +347,7 @@ public class OtsLine3d implements Locatable, Serializable
     }
 
     /**
-     * Return the number of points in this OtsLine3d. This is the number of points in horizontal plane.
+     * Return the number of points in this OtsLine2d. This is the number of points in horizontal plane.
      * @return the number of points on the line
      */
     public final int size()
@@ -361,7 +356,7 @@ public class OtsLine3d implements Locatable, Serializable
     }
 
     /**
-     * Return the first point of this OtsLine3d.
+     * Return the first point of this OtsLine2d.
      * @return the first point on the line
      */
     public final Point2d getFirst()
@@ -370,7 +365,7 @@ public class OtsLine3d implements Locatable, Serializable
     }
 
     /**
-     * Return the last point of this OtsLine3d.
+     * Return the last point of this OtsLine2d.
      * @return the last point on the line
      */
     public final Point2d getLast()
@@ -379,7 +374,7 @@ public class OtsLine3d implements Locatable, Serializable
     }
 
     /**
-     * Return one point of this OtsLine3d.
+     * Return one point of this OtsLine2d.
      * @param i int; the index of the point to retrieve
      * @return Point2d; the i-th point of the line
      * @throws OtsGeometryException when i &lt; 0 or i &gt; the number of points
@@ -388,13 +383,13 @@ public class OtsLine3d implements Locatable, Serializable
     {
         if (i < 0 || i > size() - 1)
         {
-            throw new OtsGeometryException("OtsLine3d.get(i=" + i + "); i<0 or i>=size(), which is " + size());
+            throw new OtsGeometryException("OtsLine2d.get(i=" + i + "); i<0 or i>=size(), which is " + size());
         }
         return this.line2d.get(i);
     }
 
     /**
-     * Return the length of this OtsLine3d in meters. (Assuming that the coordinates of the points constituting this line are
+     * Return the length of this OtsLine2d in meters. (Assuming that the coordinates of the points constituting this line are
      * expressed in meters.)
      * @return the length of the line
      */
@@ -404,7 +399,7 @@ public class OtsLine3d implements Locatable, Serializable
     }
 
     /**
-     * Return an array of OtsPoint3d that represents this OtsLine3d.
+     * Return an array of OtsPoint3d that represents this OtsLine2d.
      * @return the points of this line
      */
     public final Point2d[] getPoints()
@@ -537,46 +532,19 @@ public class OtsLine3d implements Locatable, Serializable
      */
     public final OrientedPoint2d getLocationSI(final double positionSI) throws OtsGeometryException
     {
-        if (positionSI < 0.0 || positionSI > this.length.si)
-        {
-            throw new OtsGeometryException("getLocationSI for line: position < 0.0 or > line length. Position = " + positionSI
-                    + " m. Length = " + this.length.si + " m.");
-        }
-
-        // handle special cases: position == 0.0, or position == length
-        if (positionSI == 0.0)
-        {
-            Point2d p1 = this.line2d.get(0);
-            Point2d p2 = this.line2d.get(1);
-            return new OrientedPoint2d(p1.x, p1.y, Math.atan2(p2.y - p1.y, p2.x - p1.x));
-        }
-        if (positionSI == this.length.si)
-        {
-            Point2d p1 = this.line2d.get(size() - 2);
-            Point2d p2 = this.line2d.get(size() - 1);
-            return new OrientedPoint2d(p2.x, p2.y, Math.atan2(p2.y - p1.y, p2.x - p1.x));
-        }
-
-        // find the index of the line segment, use binary search
-        int index = find(positionSI);
-        double remainder = positionSI - this.lengthIndexedLine[index];
-        double fraction = remainder / (this.lengthIndexedLine[index + 1] - this.lengthIndexedLine[index]);
-        Point2d p1 = this.line2d.get(index);
-        Point2d p2 = this.line2d.get(index + 1);
-        return new OrientedPoint2d(p1.x + fraction * (p2.x - p1.x), p1.y + fraction * (p2.y - p1.y),
-                Math.atan2(p2.y - p1.y, p2.x - p1.x));
+        Ray2d ray = this.line2d.getLocation(positionSI);
+        return new OrientedPoint2d(ray.x, ray.y, ray.phi);
     }
 
     /**
      * Truncate a line at the given length (less than the length of the line, and larger than zero) and return a new line.
      * @param lengthSI double; the location where to truncate the line
-     * @return a new OtsLine3d truncated at the exact position where line.getLength() == lengthSI
+     * @return a new OtsLine2d truncated at the exact position where line.getLength() == lengthSI
      * @throws OtsGeometryException when position less than 0.0 or more than line length.
      */
-    public final OtsLine3d truncate(final double lengthSI) throws OtsGeometryException
+    public final OtsLine2d truncate(final double lengthSI) throws OtsGeometryException
     {
-        return new OtsLine3d(this.line2d.truncate(lengthSI));
-        // TODO: elevation information
+        return new OtsLine2d(this.line2d.truncate(lengthSI));
     }
 
     /**
@@ -761,7 +729,7 @@ public class OtsLine3d implements Locatable, Serializable
         ORTHOGONAL
         {
             @Override
-            double getFraction(final OtsLine3d line, final double x, final double y)
+            double getFraction(final OtsLine2d line, final double x, final double y)
             {
                 return line.projectOrthogonal(x, y);
             }
@@ -771,7 +739,7 @@ public class OtsLine3d implements Locatable, Serializable
         ENDPOINT
         {
             @Override
-            double getFraction(final OtsLine3d line, final double x, final double y)
+            double getFraction(final OtsLine2d line, final double x, final double y)
             {
                 Point2d point = new Point2d(x, y);
                 double dStart = point.distance(line.getFirst());
@@ -791,7 +759,7 @@ public class OtsLine3d implements Locatable, Serializable
         NaN
         {
             @Override
-            double getFraction(final OtsLine3d line, final double x, final double y)
+            double getFraction(final OtsLine2d line, final double x, final double y)
             {
                 return Double.NaN;
             }
@@ -799,12 +767,12 @@ public class OtsLine3d implements Locatable, Serializable
 
         /**
          * Returns fraction for when fractional projection fails as the point is beyond the line or from numerical limitations.
-         * @param line OtsLine3d; line
+         * @param line OtsLine2d; line
          * @param x double; x coordinate of point
          * @param y double; y coordinate of point
          * @return double; fraction for when fractional projection fails
          */
-        abstract double getFraction(OtsLine3d line, double x, double y);
+        abstract double getFraction(OtsLine2d line, double x, double y);
 
     }
 
@@ -814,7 +782,7 @@ public class OtsLine3d implements Locatable, Serializable
      * @param start Direction; direction in first point
      * @param end Direction; direction in last point
      */
-    private synchronized void determineFractionalHelpers(final Direction start, final Direction end) // XXX: DJ
+    private synchronized void determineFractionalHelpers(final Direction start, final Direction end)
     {
 
         final int n = size() - 1;
@@ -1055,8 +1023,8 @@ public class OtsLine3d implements Locatable, Serializable
     }
 
     /**
-     * Retrieve the centroid of this OtsLine3d.
-     * @return OtsPoint3d; the centroid of this OtsLine3d
+     * Retrieve the centroid of this OtsLine2d.
+     * @return OtsPoint3d; the centroid of this OtsLine2d
      */
     public final Point2d getCentroid()
     {
@@ -1068,8 +1036,8 @@ public class OtsLine3d implements Locatable, Serializable
     }
 
     /**
-     * Get the bounding rectangle of this OtsLine3d.
-     * @return Rectangle2D; the bounding rectangle of this OtsLine3d
+     * Get the bounding rectangle of this OtsLine2d.
+     * @return Rectangle2D; the bounding rectangle of this OtsLine2d
      */
     public final Bounds2d getEnvelope()
     {
@@ -1103,7 +1071,6 @@ public class OtsLine3d implements Locatable, Serializable
     public String toString()
     {
         return this.line2d.toString();
-        // TODO: elevation information
     }
 
     /** {@inheritDoc} */
@@ -1112,7 +1079,6 @@ public class OtsLine3d implements Locatable, Serializable
     public int hashCode()
     {
         return this.line2d.hashCode();
-        // TODO: elevation information
     }
 
     /** {@inheritDoc} */
@@ -1120,16 +1086,15 @@ public class OtsLine3d implements Locatable, Serializable
     @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     public boolean equals(final Object obj)
     {
-        if (!(obj instanceof OtsLine3d))
+        if (!(obj instanceof OtsLine2d))
         {
             return false;
         }
-        return this.line2d.equals(((OtsLine3d) obj).line2d);
-        // TODO: elevation information
+        return this.line2d.equals(((OtsLine2d) obj).line2d);
     }
 
     /**
-     * Convert the 2D projection of this OtsLine3d to something that MS-Excel can plot.
+     * Convert the 2D projection of this OtsLine2d to something that MS-Excel can plot.
      * @return excel XY plottable output
      */
     public final String toExcel()
@@ -1138,7 +1103,7 @@ public class OtsLine3d implements Locatable, Serializable
     }
 
     /**
-     * Convert the 2D projection of this OtsLine3d to Peter's plot format.
+     * Convert the 2D projection of this OtsLine2d to Peter's plot format.
      * @return Peter's format plot output
      */
     public final String toPlot()

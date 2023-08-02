@@ -56,13 +56,13 @@ public final class OtsGeometryUtil
     }
 
     /**
-     * Build a string description from an OtsLine3d.
+     * Build a string description from an OtsLine2d.
      * @param prefix String; text to put before the coordinates
-     * @param line OtsLine3d; the line for which to print the points
+     * @param line OtsLine2d; the line for which to print the points
      * @param separator String; prepended to each coordinate
-     * @return String; description of the OtsLine3d
+     * @return String; description of the OtsLine2d
      */
-    public static String printCoordinates(final String prefix, final OtsLine3d line, final String separator)
+    public static String printCoordinates(final String prefix, final OtsLine2d line, final String separator)
     {
         return printCoordinates(prefix + "(" + line.size() + " pts)", line.getPoints(), 0, line.size(), separator);
     }

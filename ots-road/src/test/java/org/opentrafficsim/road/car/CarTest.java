@@ -25,7 +25,7 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -162,8 +162,8 @@ public class CarTest implements UNITS
         Node n1 = new Node(network, "n1", new Point2d(0, 0), Direction.ZERO);
         Node n2 = new Node(network, "n2", new Point2d(100000.0, 0.0), Direction.ZERO);
         Point2d[] coordinates = new Point2d[] {new Point2d(0.0, 0.0), new Point2d(100000.0, 0.0)};
-        CrossSectionLink link12 = new CrossSectionLink(network, "link12", n1, n2, DefaultsNl.ROAD, new OtsLine3d(coordinates),
-                LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink link12 = new CrossSectionLink(network, "link12", n1, n2, DefaultsNl.ROAD, new OtsLine2d(coordinates),
+                null, LaneKeepingPolicy.KEEPRIGHT);
         Length latPos = new Length(0.0, METER);
         Length width = new Length(4.0, METER);
         return LaneGeometryUtil.createStraightLane(link12, "lane.1", latPos, latPos, width, width, laneType,
