@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.geometry;
 
-import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
+import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 
 /**
@@ -81,97 +81,19 @@ public interface ContinuousLine
     }
 
     /**
-     * Polyline from continuous line. The number of segments of the polyline is guaranteed to be at least {@code numSegments},
-     * but it may be larger.
-     * @param numSegments int; minimum number of segments.
-     * @return OtsLine2d; polyline.
+     * Flatten continuous line in to a polyline. Implementations should use the flattener when relevant and possible.
+     * @param flattener Flattener; flattener.
+     * @return PolyLine2d; flattened line.
      */
-    OtsLine2d flatten(int numSegments);
+    PolyLine2d flatten(Flattener flattener);
 
     /**
-     * Polyline from continuous line. Implementations of this method guarantee that the resulting polyline shows angle errors
-     * and spatial errors smaller than specified. Implementation are free to apply conservative heuristics that create smaller
-     * errors and a larger number of points.
-     * @param maxAngleError Angle; maximum angle error in polyline.
-     * @param maxSpatialError double; maximum spatial error in polyline.
-     * @return OtsLine2d; polyline.
+     * Flatten continuous line offset in to a polyline. Implementations should use the flattener when relevant and possible.
+     * @param offsets FractionalLengthData; offset data.
+     * @param flattener Flattener; flattener.
+     * @return PolyLine2d; flattened line.
      */
-    OtsLine2d flatten(Angle maxAngleError, double maxSpatialError);
-
-    /**
-     * Offset polyline based on variable offset. The number of segments of the polyline is guaranteed to be at least
-     * {@code numSegments}, but it may be larger.
-     * @param offsets FractionalLengthData; offsets at fractional lengths.
-     * @param numSegments int; minimum number of segments.
-     * @return OtsLine2d; offset polyline.
-     */
-    OtsLine2d offset(FractionalLengthData offsets, int numSegments);
-
-    /**
-     * Offset polyline based on variable offset. Implementations of this method guarantee that the resulting polyline shows
-     * angle errors and spatial errors smaller than specified. Implementation are free to apply conservative heuristics that
-     * create smaller errors and a larger number of points.
-     * @param offsets FractionalLengthData; offsets at fractional lengths.
-     * @param maxAngleError Angle; maximum angle error in polyline.
-     * @param maxSpatialError double; maximum spatial error in polyline.
-     * @return OtsLine2d; offset polyline.
-     */
-    OtsLine2d offset(FractionalLengthData offsets, Angle maxAngleError, double maxSpatialError);
-
-    /**
-     * Offset polyline based on single offset. The number of segments of the polyline is guaranteed to be at least
-     * {@code numSegments}, but it may be larger.
-     * @param offset double; offset.
-     * @param numSegments int; minimum number of segments.
-     * @return OtsLine2d; offset polyline.
-     */
-    default OtsLine2d offset(final double offset, final int numSegments)
-    {
-        return offset(offset, offset, numSegments);
-    }
-
-    /**
-     * Offset polyline based on single offset. Implementations of this method guarantee that the resulting polyline shows angle
-     * errors and spatial errors smaller than specified. Implementation are free to apply conservative heuristics that create
-     * smaller errors and a larger number of points.
-     * @param offset double; offset.
-     * @param maxAngleError Angle; maximum angle error in polyline.
-     * @param maxSpatialError double; maximum spatial error in polyline.
-     * @return OtsLine2d; offset polyline.
-     */
-    default OtsLine2d offset(final double offset, final Angle maxAngleError, final double maxSpatialError)
-    {
-        return offset(offset, offset, maxAngleError, maxSpatialError);
-    }
-
-    /**
-     * Offset polyline based on start and end offset. The number of segments of the polyline is guaranteed to be at least
-     * {@code numSegments}, but it may be larger.
-     * @param startOffset double; offset at start.
-     * @param endOffset double; offset at end.
-     * @param numSegments int; minimum number of segments.
-     * @return OtsLine2d; offset polyline.
-     */
-    default OtsLine2d offset(final double startOffset, final double endOffset, final int numSegments)
-    {
-        return offset(FractionalLengthData.of(0.0, startOffset, 1.0, endOffset), numSegments);
-    }
-
-    /**
-     * Offset polyline based on start and end offset. Implementations of this method guarantee that the resulting polyline shows
-     * angle errors and spatial errors smaller than specified. Implementation are free to apply conservative heuristics that
-     * create smaller errors and a larger number of points.
-     * @param startOffset double; offset at start.
-     * @param endOffset double; offset at end.
-     * @param maxAngleError Angle; maximum angle error in polyline.
-     * @param maxSpatialError double; maximum spatial error in polyline.
-     * @return OtsLine2d; offset polyline.
-     */
-    default OtsLine2d offset(final double startOffset, final double endOffset, final Angle maxAngleError,
-            final double maxSpatialError)
-    {
-        return offset(FractionalLengthData.of(0.0, startOffset, 1.0, endOffset), maxAngleError, maxSpatialError);
-    }
+    PolyLine2d flattenOffset(FractionalLengthData offsets, Flattener flattener);
 
     /**
      * Return the length of the line.

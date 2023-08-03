@@ -51,8 +51,7 @@ public class FractionalLengthData
      */
     public FractionalLengthData(final Map<Double, Double> data) throws IllegalArgumentException
     {
-        Throw.when(data == null || data.isEmpty(), IllegalArgumentException.class,
-                "Input data is empty or null.");
+        Throw.when(data == null || data.isEmpty(), IllegalArgumentException.class, "Input data is empty or null.");
         for (Entry<Double, Double> entry : data.entrySet())
         {
             Throw.when(entry.getKey() < 0.0 || entry.getKey() > 1.0, IllegalArgumentException.class,
@@ -88,7 +87,7 @@ public class FractionalLengthData
         double w = (fractionalLength - floor.getKey()) / (ceiling.getKey() - floor.getKey());
         return (1.0 - w) * floor.getValue() + w * ceiling.getValue();
     }
-    
+
     /**
      * Returns the derivative of the data with respect to fractional length.
      * @param fractionalLength double; fractional length, may be outside range [0 ... 1].
@@ -96,19 +95,24 @@ public class FractionalLengthData
      */
     public double getDerivative(final double fractionalLength)
     {
-        Entry<Double, Double> ceiling = this.data.ceilingEntry(fractionalLength);
-        if (ceiling == null)
+        Entry<Double, Double> ceiling, floor;
+        if (fractionalLength == 0.0)
         {
-            return 0.0;
+            ceiling = this.data.higherEntry(fractionalLength);
+            floor = this.data.floorEntry(fractionalLength);
         }
-        Entry<Double, Double> floor = this.data.floorEntry(fractionalLength);
-        if (floor == null)
+        else
+        {
+            ceiling = this.data.ceilingEntry(fractionalLength);
+            floor = this.data.lowerEntry(fractionalLength);
+        }
+        if (ceiling == null || floor == null)
         {
             return 0.0;
         }
         return (ceiling.getValue() - floor.getValue()) / (ceiling.getKey() - floor.getKey());
     }
-    
+
     /**
      * Returns the fractional lengths in the underlying data.
      * @return ImmutableNavigableSet&lt;Double&gt;; fractional lengths in the underlying data.
@@ -117,7 +121,7 @@ public class FractionalLengthData
     {
         return new ImmutableTreeSet<>(this.data.keySet());
     }
-    
+
     /**
      * Returns the values in the underlying data.
      * @return ImmutableSet&lt;Double&gt;; values in the underlying data.
@@ -126,39 +130,53 @@ public class FractionalLengthData
     {
         return new ImmutableLinkedHashSet<>(this.data.values());
     }
-    
+
     /**
-     * Returns fractional lengths in array form.
+     * Returns fractional lengths in array form, including 0.0 and 1.0.
      * @return double[]; fractional lengths.
      */
     public double[] getFractionalLengthsAsArray()
     {
-        double[] fractionalLengths = new double[size()];
+        NavigableMap<Double, Double> full = fullRange();
+        double[] fractionalLengths = new double[full.size()];
         int i = 0;
-        for (double f : this.data.navigableKeySet())
+        for (double f : full.navigableKeySet())
         {
             fractionalLengths[i++] = f;
         }
         return fractionalLengths;
     }
-    
+
     /**
-     * Returns fractional lengths in array form.
+     * Returns fractional lengths in array form, including values at 0.0 and 1.0.
      * @return double[]; fractional lengths.
      */
     public double[] getValuesAsArray()
     {
-        double[] values = new double[size()];
+        NavigableMap<Double, Double> full = fullRange();
+        double[] values = new double[full.size()];
         int i = 0;
-        for (double f : this.data.navigableKeySet())
+        for (double f : full.navigableKeySet())
         {
-            values[i++] = this.data.get(f);
+            values[i++] = full.get(f);
         }
         return values;
     }
-    
+
     /**
-     * Returns the number of data points. 
+     * Returns the data including entries at 0.0 and 1.0.
+     * @return NavigableMap&lt;Double, Double&gt;; data with fill range.
+     */
+    private final NavigableMap<Double, Double> fullRange()
+    {
+        NavigableMap<Double, Double> full = new TreeMap<>(this.data);
+        full.put(0.0, full.firstEntry().getValue());
+        full.put(1.0, full.lastEntry().getValue());
+        return full;
+    }
+
+    /**
+     * Returns the number of data points.
      * @return int; number of data points.
      */
     public int size()

@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.geometry;
 
-import org.djunits.value.vdouble.scalar.Angle;
+import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
@@ -70,75 +70,48 @@ public class ContinuousStraight implements ContinuousLine
     }
 
     /**
-     * Returns the line. Number of segments is ignored.
-     * @param numSegments int; minimum number of segments (ignored).
-     * @return OtsLine2d; polyline.
-     */
-    @Override
-    public OtsLine2d flatten(final int numSegments)
-    {
-        return flatten();
-    }
-
-    /**
-     * Returns the line. Maximum errors are ignored.
-     * @param maxAngleError Angle; maximum angle error in polyline (ignored).
-     * @param maxSpatialError double; maximum spatial error in polyline (ignored).
-     * @return OtsLine2d; polyline.
-     */
-    @Override
-    public OtsLine2d flatten(final Angle maxAngleError, final double maxSpatialError)
-    {
-        return flatten();
-    }
-
-    /**
      * Polyline from continuous line. A straight uses no segments.
-     * @return OtsLine2d; polyline.
+     * @return PolyLine2d; polyline.
      */
-    public OtsLine2d flatten()
+    public PolyLine2d flatten()
     {
-        return Try.assign(
-                () -> new OtsLine2d(new Point2d(this.startPoint.x, this.startPoint.y),
-                        new Point2d(this.endPoint.x, this.endPoint.y)),
-                "Unexpected exception while creating straight OtsLine2d.");
+        return new PolyLine2d(new Point2d(this.startPoint.x, this.startPoint.y), new Point2d(this.endPoint.x, this.endPoint.y));
     }
 
     /**
-     * Offset polyline based on variable offset. The number of segments is ignored.
-     * @param offsets FractionalLengthData; offsets at fractional lengths.
-     * @param numSegments int; minimum number of segments (ignored).
-     * @return OtsLine2d; offset polyline.
+     * Returns a 2-point line. Flattener is ignored.
+     * @param flattener Flattener; flattener (ignored).
+     * @return PolyLine2d; flattened line.
      */
     @Override
-    public OtsLine2d offset(final FractionalLengthData offsets, final int numSegments)
+    public PolyLine2d flatten(final Flattener flattener)
     {
-        return offset(offsets);
+        return flatten();
     }
-
-    /**
-     * Offset polyline based on variable offset. Maximum errors are ignored.
-     * @param offsets FractionalLengthData; offsets at fractional lengths.
-     * @param maxAngleError Angle; maximum angle error in polyline (ignored).
-     * @param maxSpatialError double; maximum spatial error in polyline (ignored).
-     * @return OtsLine2d; offset polyline.
-     */
-    @Override
-    public OtsLine2d offset(final FractionalLengthData offsets, final Angle maxAngleError, final double maxSpatialError)
-    {
-        return offset(offsets);
-    }
-
+    
     /**
      * Offset polyline based on variable offset. A straight uses no segments, other than for varying offset.
      * @param offsets FractionalLengthData; offsets, should contain keys 0.0 and 1.0.
-     * @return OtsLine2d; offset polyline.
+     * @return PolyLine2d; offset polyline.
      */
-    public OtsLine2d offset(final FractionalLengthData offsets)
+    public PolyLine2d offset(final FractionalLengthData offsets)
     {
         Throw.whenNull(offsets, "Offsets may not be null.");
-        return Try.assign(() -> flatten(0).offsetLine(offsets.getFractionalLengthsAsArray(), offsets.getValuesAsArray()),
+        return Try.assign(
+                () -> OtsGeometryUtil.offsetLine(flatten(), offsets.getFractionalLengthsAsArray(), offsets.getValuesAsArray()),
                 "Unexpected exception while creating straigh OtsLine2d.");
+    }
+
+    /**
+     * Returns the regular offset line of a 2-point line. Flattener is ignored.
+     * @param offsets FractionalLengthData; offset data.
+     * @param flattener Flattener; flattener (ignored).
+     * @return PolyLine2d; flattened line.
+     */
+    @Override
+    public PolyLine2d flattenOffset(final FractionalLengthData offsets, final Flattener flattener)
+    {
+        return offset(offsets);
     }
 
     /** {@inheritDoc} */
@@ -146,6 +119,14 @@ public class ContinuousStraight implements ContinuousLine
     public double getLength()
     {
         return this.length;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "ContinuousStraight [startPoint=" + this.startPoint + ", endPoint=" + this.endPoint + ", length=" + this.length
+                + "]";
     }
 
 }

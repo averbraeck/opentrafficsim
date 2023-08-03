@@ -7,6 +7,7 @@ import java.util.TreeMap;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
@@ -122,15 +123,15 @@ public class LaneGeometryUtil
 
     /**
      * Returns the contour based on left and right edge.
-     * @param leftEdge OtsLine2d; left edge, in design line direction.
-     * @param rightEdge OtsLine2d; right edge, in design line direction.
+     * @param leftEdge PolyLine2d; left edge, in design line direction.
+     * @param rightEdge PolyLine2d; right edge, in design line direction.
      * @return Polygon2d; a closed loop of both edges.
      */
-    public static Polygon2d getContour(final OtsLine2d leftEdge, final OtsLine2d rightEdge)
+    public static Polygon2d getContour(final PolyLine2d leftEdge, final PolyLine2d rightEdge)
     {
         Point2d[] points = new Point2d[leftEdge.size() + rightEdge.size() + 1];
-        System.arraycopy(leftEdge.getPoints(), 0, points, 0, leftEdge.size());
-        System.arraycopy(rightEdge.reverse().getPoints(), 0, points, leftEdge.size(), rightEdge.size());
+        System.arraycopy(leftEdge.getPointList().toArray(), 0, points, 0, leftEdge.size());
+        System.arraycopy(rightEdge.reverse().getPointList().toArray(), 0, points, leftEdge.size(), rightEdge.size());
         points[points.length - 1] = points[0]; // close loop
         return new Polygon2d(true, points);
     }
@@ -189,11 +190,12 @@ public class LaneGeometryUtil
         ContinuousLine designLine = new ContinuousStraight(
                 Try.assign(() -> link.getDesignLine().getLocationFraction(0.0), "Link should have a valid design line."),
                 link.getLength().si);
-        OtsLine2d centerLine = designLine.offset(getCenterOffsets(designLine, slices), 1);
-        OtsLine2d leftEdge = designLine.offset(getLeftEdgeOffsets(designLine, slices), 1);
-        OtsLine2d rightEdge = designLine.offset(getRightEdgeOffsets(designLine, slices), 1);
+        PolyLine2d centerLine = designLine.flattenOffset(getCenterOffsets(designLine, slices), null);
+        PolyLine2d leftEdge = designLine.flattenOffset(getLeftEdgeOffsets(designLine, slices), null);
+        PolyLine2d rightEdge = designLine.flattenOffset(getRightEdgeOffsets(designLine, slices), null);
         Polygon2d contour = getContour(leftEdge, rightEdge);
-        return Try.assign(() -> new Lane(link, id, centerLine, contour, slices, laneType, speedLimits), "Network exception.");
+        return Try.assign(() -> new Lane(link, id, new OtsLine2d(centerLine), contour, slices, laneType, speedLimits),
+                "Network exception.");
     }
 
     /**
@@ -211,11 +213,11 @@ public class LaneGeometryUtil
                 Try.assign(() -> link.getDesignLine().getLocationFraction(0.0), "Link should have a valid design line."),
                 link.getLength().si);
         List<CrossSectionSlice> slices = getSlices(designLine, offset, width);
-        OtsLine2d centerLine = designLine.offset(getCenterOffsets(designLine, slices), 1);
-        OtsLine2d leftEdge = designLine.offset(getLeftEdgeOffsets(designLine, slices), 1);
-        OtsLine2d rightEdge = designLine.offset(getRightEdgeOffsets(designLine, slices), 1);
+        PolyLine2d centerLine = designLine.flattenOffset(getCenterOffsets(designLine, slices), null);
+        PolyLine2d leftEdge = designLine.flattenOffset(getLeftEdgeOffsets(designLine, slices), null);
+        PolyLine2d rightEdge = designLine.flattenOffset(getRightEdgeOffsets(designLine, slices), null);
         Polygon2d contour = getContour(leftEdge, rightEdge);
-        return Try.assign(() -> new Stripe(type, link, centerLine, contour, slices), "Network exception.");
+        return Try.assign(() -> new Stripe(type, link, new OtsLine2d(centerLine), contour, slices), "Network exception.");
     }
 
     /**
@@ -235,10 +237,10 @@ public class LaneGeometryUtil
                 Try.assign(() -> link.getDesignLine().getLocationFraction(0.0), "Link should have a valid design line."),
                 link.getLength().si);
         List<CrossSectionSlice> slices = getSlices(designLine, startOffset, endOffset, startWidth, endWidth);
-        OtsLine2d centerLine = designLine.offset(getCenterOffsets(designLine, slices), 1);
-        OtsLine2d leftEdge = designLine.offset(getLeftEdgeOffsets(designLine, slices), 1);
-        OtsLine2d rightEdge = designLine.offset(getRightEdgeOffsets(designLine, slices), 1);
+        PolyLine2d centerLine = designLine.flattenOffset(getCenterOffsets(designLine, slices), null);
+        PolyLine2d leftEdge = designLine.flattenOffset(getLeftEdgeOffsets(designLine, slices), null);
+        PolyLine2d rightEdge = designLine.flattenOffset(getRightEdgeOffsets(designLine, slices), null);
         Polygon2d contour = getContour(leftEdge, rightEdge);
-        return Try.assign(() -> new Shoulder(link, id, centerLine, contour, slices), "Network exception.");
+        return Try.assign(() -> new Shoulder(link, id, new OtsLine2d(centerLine), contour, slices), "Network exception.");
     }
 }

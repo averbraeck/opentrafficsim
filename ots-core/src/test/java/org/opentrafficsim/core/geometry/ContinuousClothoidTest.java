@@ -5,8 +5,10 @@ import static org.junit.Assert.assertTrue;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
+import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.junit.Test;
+import org.opentrafficsim.core.geometry.Flattener.NumSegments;
 
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -56,7 +58,7 @@ public class ContinuousClothoidTest
             OrientedPoint2d end =
                     new OrientedPoint2d(r.nextDouble() * 10.0, r.nextDouble() * 10.0, (r.nextDouble() * 2 - 1) * Math.PI);
             ContinuousClothoid clothoid = new ContinuousClothoid(start, end);
-            OtsLine2d line = clothoid.flatten(SEGMENTS);
+            PolyLine2d line = clothoid.flatten(new NumSegments(64));
             VerifyLine(start, clothoid, line, null, null, null);
         }
     }
@@ -81,14 +83,15 @@ public class ContinuousClothoidTest
             OrientedPoint2d end = new OrientedPoint2d(3 * x, 3 * y, ang - tolerance + r.nextDouble() * tolerance * 2);
 
             ContinuousClothoid clothoid = new ContinuousClothoid(start, end);
-            OtsLine2d line = clothoid.flatten(SEGMENTS);
+            NumSegments numSegments64 = new NumSegments(64);
+            PolyLine2d line = clothoid.flatten(numSegments64);
             assertEquals("Clothoid between point on line did not become a straight", line.size(), 2);
 
             start = new OrientedPoint2d(x, y, ang + sign * tolerance * 1.1);
             end = new OrientedPoint2d(3 * x, 3 * y, ang + sign * tolerance * 1.1);
             sign *= -1.0;
             clothoid = new ContinuousClothoid(start, end);
-            line = clothoid.flatten(SEGMENTS);
+            line = clothoid.flatten(numSegments64);
             assertTrue("Clothoid between point just not on line should not become a straight", line.size() > 2);
         }
     }
@@ -112,7 +115,7 @@ public class ContinuousClothoidTest
             LinearDensity endCurvature = LinearDensity.instantiateSI(sign / (50.0 + r.nextDouble() * 1000.0));
 
             ContinuousClothoid clothoid = ContinuousClothoid.withLength(start, length.si, startCurvature.si, endCurvature.si);
-            OtsLine2d line = clothoid.flatten(SEGMENTS);
+            PolyLine2d line = clothoid.flatten(new NumSegments(64));
             VerifyLine(start, clothoid, line, startCurvature, endCurvature, null);
         }
     }
@@ -137,7 +140,7 @@ public class ContinuousClothoidTest
                     .instantiateSI(Math.sqrt((10.0 + r.nextDouble() * 500.0) / Math.abs(endCurvature.si - startCurvature.si)));
 
             ContinuousClothoid clothoid = new ContinuousClothoid(start, a.si, startCurvature.si, endCurvature.si);
-            OtsLine2d line = clothoid.flatten(SEGMENTS);
+            PolyLine2d line = clothoid.flatten(new NumSegments(64));
             VerifyLine(start, clothoid, line, startCurvature, endCurvature, a);
         }
     }
@@ -146,13 +149,13 @@ public class ContinuousClothoidTest
      * Verifies a line by comparing theoretical and numerical values.
      * @param start OtsPoint3d; theoretical start point.
      * @param clothoid ClothoidInfo; created clothoid.
-     * @param line OtsLine2d; flattened line.
+     * @param line PolyLine2d; flattened line.
      * @param startCurvature LinearDensity; start curvature, may be {@code null} if no theoretical value available.
      * @param endCurvature LinearDensity; end curvature, may be {@code null} if no theoretical value available.
      * @param a Length A-value, may be {@code null} if no theoretical value available.
      * @throws OtsGeometryException if segment number is not available on the line
      */
-    private void VerifyLine(final OrientedPoint2d start, final ContinuousClothoid clothoid, final OtsLine2d line,
+    private void VerifyLine(final OrientedPoint2d start, final ContinuousClothoid clothoid, final PolyLine2d line,
             final LinearDensity startCurvature, final LinearDensity endCurvature, final Length a) throws OtsGeometryException
     {
         assertEquals("Start location deviates", 0.0, Math.hypot(start.x - line.get(0).x, start.y - line.get(0).y),
@@ -162,7 +165,7 @@ public class ContinuousClothoidTest
         assertEquals("Start direction deviates", 0.0, normalizeAngle(start.dirZ - getAngle(line, 0)), ANGLE_TOLERANCE);
         assertEquals("End direction deviates", 0.0,
                 normalizeAngle(clothoid.getEndPoint().dirZ - getAngle(line, line.size() - 2)), ANGLE_TOLERANCE);
-        double lengthRatio = line.getLength().si / clothoid.getLength();
+        double lengthRatio = line.getLength() / clothoid.getLength();
         assertEquals("Length is more than 1% shorter or longer than theoretical", 1.0, lengthRatio, 0.01);
         if (startCurvature != null)
         {
@@ -183,12 +186,12 @@ public class ContinuousClothoidTest
 
     /**
      * Return the angle from a line segment.
-     * @param line OtsLine2d; line.
+     * @param line PolyLine2d; line.
      * @param segment int; segment number.
      * @return double; angle of the line segment.
      * @throws OtsGeometryException if segment number is not available on the line
      */
-    private static double getAngle(final OtsLine2d line, final int segment) throws OtsGeometryException
+    private static double getAngle(final PolyLine2d line, final int segment) throws OtsGeometryException
     {
         return Math.atan2(line.get(segment + 1).y - line.get(segment).y, line.get(segment + 1).x - line.get(segment).x);
     }

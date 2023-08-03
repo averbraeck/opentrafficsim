@@ -114,8 +114,8 @@ public class LinkTest implements EventListener
         assertEquals("LinkType is correctly returned", linkType, link.getType());
         Point2d location = link.getLocation();
         OrientedPoint2d expectedLocation = designLine.getLocationFraction(0.5);
-        assertEquals("location is at halfway point of design line (because design line contains only two points)", 0,
-                expectedLocation.distance(location), 0.1);
+        assertEquals("location is at halfway point of design line (because design line contains only two points)",
+                expectedLocation.distance(location), 0.0, 0.1);
         // RotZ of location is bogus; makes no sense to test that
         Bounds bounds = link.getBounds();
         assertNotNull("bounds should not be null", bounds);

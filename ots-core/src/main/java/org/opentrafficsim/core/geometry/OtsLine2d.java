@@ -18,6 +18,7 @@ import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
+import org.djutils.exceptions.Try;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 
@@ -532,7 +533,7 @@ public class OtsLine2d implements Locatable, Serializable
      */
     public final OrientedPoint2d getLocationSI(final double positionSI) throws OtsGeometryException
     {
-        Ray2d ray = this.line2d.getLocation(positionSI);
+        Ray2d ray = Try.assign(() -> this.line2d.getLocation(positionSI), OtsGeometryException.class, "Position not on line.");
         return new OrientedPoint2d(ray.x, ray.y, ray.phi);
     }
 

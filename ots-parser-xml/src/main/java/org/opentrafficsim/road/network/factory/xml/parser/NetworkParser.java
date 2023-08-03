@@ -14,6 +14,7 @@ import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
@@ -26,6 +27,8 @@ import org.opentrafficsim.core.geometry.ContinuousBezierCubic;
 import org.opentrafficsim.core.geometry.ContinuousLine;
 import org.opentrafficsim.core.geometry.ContinuousPolyLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
+import org.opentrafficsim.core.geometry.Flattener.MaxDeviationAndAngle;
+import org.opentrafficsim.core.geometry.Flattener.NumSegments;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsGeometryUtil;
 import org.opentrafficsim.core.geometry.OtsLine2d;
@@ -237,7 +240,7 @@ public final class NetworkParser
                 {
                     coordinates[p + 1] = xmlLink.getPolyline().getCoordinate().get(p);
                 }
-                designLine = new ContinuousPolyLine(OtsLine2d.createAndCleanOtsLine2d(coordinates));
+                designLine = new ContinuousPolyLine(new PolyLine2d(true, coordinates));
             }
             else if (xmlLink.getArc() != null)
             {
@@ -284,15 +287,15 @@ public final class NetworkParser
             designLines.put(xmlLink.getId(), designLine);
 
             // TODO: take defaults from network when not defined for link
-            OtsLine2d flattenedLine;
+            PolyLine2d flattenedLine;
             if (maxAngleError != null)
             {
-                flattenedLine = designLine.flatten(maxAngleError, maxSpatialError.si);
+                flattenedLine = designLine.flatten(new MaxDeviationAndAngle(maxSpatialError.si, maxAngleError.si));
             }
             else
             {
                 numSegments = numSegments == null ? 64 : numSegments;
-                flattenedLine = designLine.flatten(numSegments);
+                flattenedLine = designLine.flatten(new NumSegments(numSegments));
             }
 
             // TODO: Directionality has to be added later when the lanes and their direction are known.
@@ -300,7 +303,7 @@ public final class NetworkParser
             LinkType linkType = definitions.get(LinkType.class, xmlLink.getType());
             // TODO: elevation data
             CrossSectionLink link = new CrossSectionLink(otsNetwork, xmlLink.getId(), startNode, endNode, linkType,
-                    flattenedLine, null, laneKeepingPolicy);
+                    new OtsLine2d(flattenedLine), null, laneKeepingPolicy);
 
             if (xmlLink.getPriority() != null)
             {
@@ -400,9 +403,13 @@ public final class NetworkParser
 
                 List<CrossSectionSlice> slices = LaneGeometryUtil.getSlices(designLine, cseData.centerOffsetStart,
                         cseData.centerOffsetEnd, cseData.widthStart, cseData.widthEnd);
-                OtsLine2d centerLine = designLine.offset(LaneGeometryUtil.getCenterOffsets(designLine, slices), 64);
-                OtsLine2d leftEdge = designLine.offset(LaneGeometryUtil.getLeftEdgeOffsets(designLine, slices), 64);
-                OtsLine2d rightEdge = designLine.offset(LaneGeometryUtil.getRightEdgeOffsets(designLine, slices), 64);
+                NumSegments numSegments64 = new NumSegments(64);
+                PolyLine2d centerLine =
+                        designLine.flattenOffset(LaneGeometryUtil.getCenterOffsets(designLine, slices), numSegments64);
+                PolyLine2d leftEdge =
+                        designLine.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(designLine, slices), numSegments64);
+                PolyLine2d rightEdge =
+                        designLine.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(designLine, slices), numSegments64);
                 Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
 
                 // Lane
@@ -427,7 +434,8 @@ public final class NetworkParser
                         GtuType gtuType = definitions.get(GtuType.class, speedLimitTag.getGtuType());
                         speedLimitMap.put(gtuType, speedLimitTag.getLegalSpeedLimit());
                     }
-                    Lane lane = new Lane(csl, laneTag.getId(), centerLine, contour, slices, laneType, speedLimitMap);
+                    Lane lane =
+                            new Lane(csl, laneTag.getId(), new OtsLine2d(centerLine), contour, slices, laneType, speedLimitMap);
                     cseList.add(lane);
                     lanes.put(lane.getId(), lane);
                 }
@@ -438,7 +446,7 @@ public final class NetworkParser
                     CseNoTrafficLane ntlTag = (CseNoTrafficLane) cseTag;
                     String id = ntlTag.getId() != null ? ntlTag.getId() : UUID.randomUUID().toString();
                     // TODO: obtain GTU type from XML?
-                    Lane lane = Lane.noTrafficLane(csl, id, centerLine, contour, slices);
+                    Lane lane = Lane.noTrafficLane(csl, id, new OtsLine2d(centerLine), contour, slices);
                     cseList.add(lane);
                 }
 
@@ -447,7 +455,7 @@ public final class NetworkParser
                 {
                     CseShoulder shoulderTag = (CseShoulder) cseTag;
                     String id = shoulderTag.getId() != null ? shoulderTag.getId() : UUID.randomUUID().toString();
-                    CrossSectionElement shoulder = new Shoulder(csl, id, centerLine, contour, slices);
+                    CrossSectionElement shoulder = new Shoulder(csl, id, new OtsLine2d(centerLine), contour, slices);
                     cseList.add(shoulder);
                 }
             }
@@ -709,40 +717,42 @@ public final class NetworkParser
                         : new Length(20.0, LengthUnit.CENTIMETER));
         List<CrossSectionSlice> slices = LaneGeometryUtil.getSlices(designLine, startOffset, endOffset, width, width);
 
-        OtsLine2d centerLine = designLine.offset(LaneGeometryUtil.getCenterOffsets(designLine, slices), 64);
-        OtsLine2d leftEdge = designLine.offset(LaneGeometryUtil.getLeftEdgeOffsets(designLine, slices), 64);
-        OtsLine2d rightEdge = designLine.offset(LaneGeometryUtil.getRightEdgeOffsets(designLine, slices), 64);
+        NumSegments numSegments64 = new NumSegments(64);
+        PolyLine2d centerLine = designLine.flattenOffset(LaneGeometryUtil.getCenterOffsets(designLine, slices), numSegments64);
+        PolyLine2d leftEdge = designLine.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(designLine, slices), numSegments64);
+        PolyLine2d rightEdge =
+                designLine.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(designLine, slices), numSegments64);
         Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
 
         switch (stripeTag.getType())
         {
             case BLOCKED:
-                Stripe blockedLine = new Stripe(Type.BLOCK, csl, centerLine, contour, slices);
+                Stripe blockedLine = new Stripe(Type.BLOCK, csl, new OtsLine2d(centerLine), contour, slices);
                 cseList.add(blockedLine);
                 break;
 
             case DASHED:
-                Stripe dashedLine = new Stripe(Type.DASHED, csl, centerLine, contour, slices);
+                Stripe dashedLine = new Stripe(Type.DASHED, csl, new OtsLine2d(centerLine), contour, slices);
                 cseList.add(dashedLine);
                 break;
 
             case DOUBLE:
-                Stripe doubleLine = new Stripe(Type.DOUBLE, csl, centerLine, contour, slices);
+                Stripe doubleLine = new Stripe(Type.DOUBLE, csl, new OtsLine2d(centerLine), contour, slices);
                 cseList.add(doubleLine);
                 break;
 
             case LEFTTORIGHT:
-                Stripe leftOnlyLine = new Stripe(Type.RIGHT, csl, centerLine, contour, slices);
+                Stripe leftOnlyLine = new Stripe(Type.RIGHT, csl, new OtsLine2d(centerLine), contour, slices);
                 cseList.add(leftOnlyLine);
                 break;
 
             case RIGHTTOLEFT:
-                Stripe rightOnlyLine = new Stripe(Type.LEFT, csl, centerLine, contour, slices);
+                Stripe rightOnlyLine = new Stripe(Type.LEFT, csl, new OtsLine2d(centerLine), contour, slices);
                 cseList.add(rightOnlyLine);
                 break;
 
             case SOLID:
-                Stripe solidLine = new Stripe(Type.SOLID, csl, centerLine, contour, slices);
+                Stripe solidLine = new Stripe(Type.SOLID, csl, new OtsLine2d(centerLine), contour, slices);
                 cseList.add(solidLine);
                 break;
 

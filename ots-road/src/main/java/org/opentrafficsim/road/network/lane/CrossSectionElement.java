@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.LocalEventProducer;
@@ -64,8 +65,8 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      * Constructor.
      * @param link CrossSectionLink; link.
      * @param id String; id.
-     * @param centerLine OtsLine2d; center line.
-     * @param contour Polygon2d; contour shape.
+     * @param centerLine PolyLine2d; center line.
+     * @param contour OtsLine2d; contour shape.
      * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
      * @throws NetworkException when no cross-section slice is defined.
      */
@@ -364,10 +365,10 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
         if (cse.crossSectionSlices.size() <= 2)
         {
             OtsLine2d crossSectionDesignLine = cse.centerLine;
-            OtsLine2d rightBoundary =
-                    crossSectionDesignLine.offsetLine(-cse.getBeginWidth().getSI() / 2, -cse.getEndWidth().getSI() / 2);
-            OtsLine2d leftBoundary =
-                    crossSectionDesignLine.offsetLine(cse.getBeginWidth().getSI() / 2, cse.getEndWidth().getSI() / 2);
+            PolyLine2d rightBoundary = crossSectionDesignLine.getLine2d().offsetLine(-cse.getBeginWidth().getSI() / 2,
+                    -cse.getEndWidth().getSI() / 2);
+            PolyLine2d leftBoundary = crossSectionDesignLine.getLine2d().offsetLine(cse.getBeginWidth().getSI() / 2,
+                    cse.getEndWidth().getSI() / 2);
             result = new Point2d[rightBoundary.size() + leftBoundary.size() + 1];
             int resultIndex = 0;
             for (int index = 0; index < rightBoundary.size(); index++)
@@ -463,7 +464,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
     {
         return getLink().getGrade(fractionalPosition);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")

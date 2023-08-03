@@ -1,7 +1,5 @@
 package org.opentrafficsim.demo.fd;
 
-import java.io.Serializable;
-
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.Network;

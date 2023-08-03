@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.NavigableSet;
 import java.util.Set;
@@ -11,11 +12,10 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.djunits.value.vdouble.scalar.Angle;
+import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
-import org.djutils.exceptions.Try;
 
 /**
  * Continuous definition of a cubic Bezier. This extends from the more general {@code ContinuousBezier} as certain methods are
@@ -39,9 +39,6 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
 
     /** Length. */
     private final double length;
-
-    /** Cached splits. */
-    private NavigableMap<Double, Integer> splits = null;
 
     /**
      * Create a cubic Bezier.
@@ -84,241 +81,6 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
     public double getEndCurvature()
     {
         return curvature(1.0);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public OtsLine2d flatten(final int numSegments)
-    {
-        Throw.when(numSegments < 1, IllegalArgumentException.class, "Number of segments should be at least 1.");
-        return Try.assign(() -> Bezier.cubic(numSegments + 1, this.points[0], this.points[1], this.points[2], this.points[3]),
-                "Cannot happen.");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public OtsLine2d flatten(final Angle maxAngleError, final double maxSpatialError)
-    {
-        Throw.whenNull(maxAngleError, "Maximum angle error may not be null");
-        Throw.when(maxAngleError.si <= 0.0, IllegalArgumentException.class, "Max angle error should be above 0.");
-        Throw.when(maxSpatialError <= 0.0, IllegalArgumentException.class, "Max spatial error should be above 0.");
-        // TODO
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public OtsLine2d offset(final FractionalLengthData offsets, final int numSegments)
-    {
-        Throw.when(numSegments < 1, IllegalArgumentException.class, "Number of segments should be at least 1.");
-        Throw.whenNull(offsets, "Offsets may not be null.");
-        /*
-         * A Bezier does not have a trivial offset. Hence, we split the Bezier along points of 3 types. 1) roots, where the
-         * derivative of either the x-component or y-component is 0, such that we obtain C-shaped scalable segments, 2)
-         * inflections, where the curvature changes sign and the offset and offset angle need to flip sign, and 3) cross-section
-         * fractions so that the intended offset segments can be adhered to. Note that C-shaped segments can be scaled similar
-         * to a circle arc, whereas S-shaped segments have no trivial scaling and are thus split.
-         */
-
-        // Gather all points to split segments, and their types (1=root, 2=inflection, or 3=cross-section)
-        if (this.splits == null)
-        {
-            this.splits = new TreeMap<>(); // cache
-            getRoots().forEach((t) -> this.splits.put(t, 1));
-            getInflections().forEach((t) -> this.splits.put(t, 2));
-            getCrossSections(offsets.getFractionalLengths().toSet()).forEach((t) -> this.splits.put(t, 3));
-            this.splits = this.splits.subMap(1e-6, false, 1.0 - 1e-6, false);
-        }
-
-        // Pre-calculate number of segments
-        double tPrev = 0.0;
-        List<Integer> numSegmentsPerSegment = new ArrayList<>();
-        for (int i = 0; i <= this.splits.size(); i++)
-        {
-            Double t = this.splits.higherKey(tPrev);
-            t = t == null ? 1.0 : t;
-            numSegmentsPerSegment.add((int) Math.ceil((t - tPrev) * numSegments));
-            tPrev = t;
-        }
-
-        // Initialize loop variables
-        // copy of cross-section fractions, so we can remove each we use; exclude 0.0 value to find split points -on- Bezier
-        NavigableSet<Double> fCrossSectionRemain = new TreeSet<>(offsets.getFractionalLengths().toSet()).tailSet(0.0, false);
-        double lengthTotal = length();
-        ContinuousBezierCubic currentBezier = this;
-        double lengthSoFar = 0.0;
-        boolean first = true;
-        // curvature and angle sign, flips at each inflection, start based on initial curve
-        double sig = Math.signum((this.points[1].y - this.points[0].y) * (this.points[2].x - this.points[0].x)
-                - (this.points[1].x - this.points[0].x) * (this.points[2].y - this.points[0].y));
-
-        List<Point2d> points = new ArrayList<>();
-        Iterator<Integer> numSegmentsIterator = numSegmentsPerSegment.iterator();
-        Iterator<Double> typeIterator = this.splits.navigableKeySet().iterator();
-        if (this.splits.isEmpty())
-        {
-            appendOffset(points, currentBezier, offsets, lengthSoFar, lengthTotal, lengthTotal, sig, first, true, numSegments);
-        }
-        while (typeIterator.hasNext())
-        {
-
-            int type = this.splits.get(typeIterator.next());
-            boolean isRoot = type == 1;
-            boolean isInflection = type == 2;
-            // boolean isCrossSection = type == 3;
-            double t;
-            // Note: as we split the Bezier and work with the remainder in each loop, the resulting t value is not the same as
-            // on the full Bezier. Therefore we need to refind the roots, or inflections, or at least one cross-section.
-            if (isRoot)
-            {
-                t = currentBezier.getRoots().first();
-            }
-            else if (isInflection)
-            {
-                t = currentBezier.getInflections().first();
-            }
-            else
-            {
-                NavigableSet<Double> fCrossSection = new TreeSet<>();
-                double fSoFar = lengthSoFar / lengthTotal;
-                double fFirst = fCrossSectionRemain.pollFirst(); // fraction in total Bezier
-                fCrossSection.add((fFirst - fSoFar) / (1.0 - fSoFar)); // add fraction in remaining Bezier
-                t = currentBezier.getCrossSections(fCrossSection).first();
-            }
-
-            // Split Bezier, and add offset of first part
-            ContinuousBezierCubic[] parts = currentBezier.split(t);
-            double lengthSegment = parts[0].length();
-            int n = numSegmentsIterator.next();
-            appendOffset(points, parts[0], offsets, lengthSoFar, lengthSegment, lengthTotal, sig, first, false, n);
-
-            // Update loop variables
-            first = false;
-            lengthSoFar += lengthSegment;
-            if (isInflection)
-            {
-                sig = -sig;
-            }
-
-            // Append last segment, or loop again with remainder
-            if (!typeIterator.hasNext())
-            {
-                lengthSegment = parts[1].length();
-                n = numSegmentsIterator.next();
-                appendOffset(points, parts[1], offsets, lengthSoFar, lengthSegment, lengthTotal, sig, first, true, n);
-            }
-            else
-            {
-                currentBezier = parts[1];
-            }
-        }
-
-        return Try.assign(() -> new OtsLine2d(points), "Bezier offset has too few points.");
-    }
-
-    /**
-     * Creates the line segment points of an offset line of a Bezier segment.
-     * @param points List&lt;Point2d&gt;; list of points to add points to.
-     * @param bezier ContinuousBezierCubic; Bezier segment to offset.
-     * @param offsets FractionalLengthData; offsets as defined for entire Bezier.
-     * @param lengthSoFar double; total length of previous segments.
-     * @param lengthSegment double; length of the current Bezier segment.
-     * @param lengthTotal double; total length of full Bezier.
-     * @param sig double; sign of offset and offset slope
-     * @param first boolean; {@code true} for the first Bezier segment.
-     * @param last boolean; {@code true} for the last Bezier segment.
-     * @param numSegments int; number of segments to apply for this Bezier segment.
-     */
-    private static void appendOffset(final List<Point2d> points, final ContinuousBezierCubic bezier,
-            final FractionalLengthData offsets, final double lengthSoFar, final double lengthSegment, final double lengthTotal,
-            final double sig, final boolean first, final boolean last, final int numSegments)
-    {
-        double offsetStart = sig * offsets.get(lengthSoFar / lengthTotal);
-        double offsetEnd = sig * offsets.get((lengthSoFar + lengthSegment) / lengthTotal);
-
-        Point2d p1 = new Point2d(bezier.points[0].x - (bezier.points[1].y - bezier.points[0].y),
-                bezier.points[0].y + (bezier.points[1].x - bezier.points[0].x));
-        Point2d p2 = new Point2d(bezier.points[3].x - (bezier.points[2].y - bezier.points[3].y),
-                bezier.points[3].y + (bezier.points[2].x - bezier.points[3].x));
-        Point2d center = Point2d.intersectionOfLines(bezier.points[0], p1, p2, bezier.points[3]);
-
-        // move 1st and 4th point their respective offsets away from the center
-        Point2d[] newBezierPoints = new Point2d[4];
-        double off = offsetStart;
-        for (int i = 0; i < 4; i = i + 3)
-        {
-            double dy = bezier.points[i].y - center.y;
-            double dx = bezier.points[i].x - center.x;
-            double ang = Math.atan2(dy, dx);
-            double len = Math.hypot(dx, dy) + off;
-            newBezierPoints[i] = new Point2d(center.x + len * Math.cos(ang), center.y + len * Math.sin(ang));
-            off = offsetEnd;
-        }
-
-        // find tangent unit vectors that account for slope in offset
-        double ang = sig * Math.atan((offsetEnd - offsetStart) / lengthSegment);
-        double cosAng = Math.cos(ang);
-        double sinAng = Math.sin(ang);
-        double dx = bezier.points[1].x - bezier.points[0].x;
-        double dy = bezier.points[1].y - bezier.points[0].y;
-        double dx1;
-        double dy1;
-        if (first)
-        {
-            // force same start angle
-            dx1 = dx;
-            dy1 = dy;
-        }
-        else
-        {
-            // shift angle by 'ang'
-            dx1 = cosAng * dx - sinAng * dy;
-            dy1 = sinAng * dx + cosAng * dy;
-        }
-        dx = bezier.points[2].x - bezier.points[3].x;
-        dy = bezier.points[2].y - bezier.points[3].y;
-        double dx2;
-        double dy2;
-        if (last)
-        {
-            // force same end angle
-            dx2 = dx;
-            dy2 = dy;
-        }
-        else
-        {
-            // shift angle by 'ang'
-            dx2 = cosAng * dx - sinAng * dy;
-            dy2 = sinAng * dx + cosAng * dy;
-        }
-
-        // control points 2 and 3 as intersections between tangent unit vectors and line through center and original point 2 and
-        // 3 in original Bezier
-        Point2d cp2 = new Point2d(newBezierPoints[0].x + dx1, newBezierPoints[0].y + dy1);
-        newBezierPoints[1] = Point2d.intersectionOfLines(newBezierPoints[0], cp2, center, bezier.points[1]);
-        Point2d cp3 = new Point2d(newBezierPoints[3].x + dx2, newBezierPoints[3].y + dy2);
-        newBezierPoints[2] = Point2d.intersectionOfLines(newBezierPoints[3], cp3, center, bezier.points[2]);
-
-        // create and add points
-        int lastI = last ? numSegments : numSegments - 1; // prevent duplicate points where segments meet
-        Point2d[] offsetPoints = Try.assign(() -> Bezier.bezier(numSegments + 1, newBezierPoints).getPoints(),
-                "Unable to create Bezier segment offset line.");
-        for (int i = 0; i <= lastI; i++)
-        {
-            points.add(offsetPoints[i]);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public OtsLine2d offset(final FractionalLengthData offsets, final Angle maxAngleError, final double maxSpatialError)
-    {
-        Throw.whenNull(maxAngleError, "Maximum angle error may not be null");
-        Throw.when(maxAngleError.si <= 0.0, IllegalArgumentException.class, "Max angle error should be above 0.");
-        Throw.when(maxSpatialError <= 0.0, IllegalArgumentException.class, "Max spatial error should be above 0.");
-        Throw.whenNull(offsets, "Offsets may not be null.");
-        // TODO
-        return null;
     }
 
     /**
@@ -414,11 +176,11 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
     }
 
     /**
-     * Returns the cross-section t values.
-     * @param fractions Set&lt;Double&gt;; length fractions at which cross-sections are defined.
-     * @return SortedSet&lt;Double&gt;; set of cross-section t values, sorted and in the range (0, 1), exclusive.
+     * Returns the offset t values.
+     * @param fractions Set&lt;Double&gt;; length fractions at which offsets are defined.
+     * @return SortedSet&lt;Double&gt;; set of offset t values, sorted and in the range (0, 1), exclusive.
      */
-    private SortedSet<Double> getCrossSections(final Set<Double> fractions)
+    private SortedSet<Double> getOffsetT(final Set<Double> fractions)
     {
         TreeSet<Double> crossSections = new TreeSet<>();
         double lenTot = length();
@@ -512,9 +274,242 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public PolyLine2d flatten(final Flattener flattener)
     {
-        return "ContinuousBezierCubic [points=" + Arrays.toString(this.points) + "]";
+        Throw.whenNull(flattener, "Flattener may not be null.");
+        return flattener.flatten(new FlattableLine()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public Point2d get(final double fraction)
+            {
+                return at(fraction);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public double getDirection(final double fraction)
+            {
+                Point2d derivative = derivative().at(fraction);
+                return Math.atan2(derivative.y, derivative.x);
+            }
+        });
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public PolyLine2d flattenOffset(final FractionalLengthData offsets, final Flattener flattener)
+    {
+        Throw.whenNull(offsets, "Offsets may not be null.");
+        Throw.whenNull(flattener, "Flattener may not be null.");
+
+        /*
+         * A Bezier does not have a trivial offset. Hence, we split the Bezier along points of 3 types. 1) roots, where the
+         * derivative of either the x-component or y-component is 0, such that we obtain C-shaped scalable segments, 2)
+         * inflections, where the curvature changes sign and the offset and offset angle need to flip sign, and 3) offset
+         * fractions so that the intended offset segments can be adhered to. Note that C-shaped segments can be scaled similar
+         * to a circle arc, whereas S-shaped segments have no trivial scaling and are thus split.
+         */
+        NavigableMap<Double, ContinuousBezierCubic> segments = new TreeMap<>();
+
+        // Gather all points to split segments, and their types (1=root, 2=inflection, or 3=offset fraction)
+        NavigableMap<Double, Integer> splits0 = new TreeMap<>(); // splits0 & splits because splits0 must be effectively final
+        getRoots().forEach((t) -> splits0.put(t, 1));
+        getInflections().forEach((t) -> splits0.put(t, 2));
+        getOffsetT(offsets.getFractionalLengths().toSet()).forEach((t) -> splits0.put(t, 3));
+        NavigableMap<Double, Integer> splits = splits0.subMap(1e-6, false, 1.0 - 1e-6, false);
+
+        // Initialize loop variables
+        // copy of offset fractions, so we can remove each we use; exclude 0.0 value to find split points -on- Bezier
+        NavigableSet<Double> fCrossSectionRemain = offsets.getFractionalLengths().toSet().tailSet(0.0, false);
+        double lengthTotal = length();
+        ContinuousBezierCubic currentBezier = this;
+        double lengthSoFar = 0.0;
+        boolean first = true;
+        // curvature and angle sign, flips at each inflection, start based on initial curve
+        double sig = Math.signum((this.points[1].y - this.points[0].y) * (this.points[2].x - this.points[0].x)
+                - (this.points[1].x - this.points[0].x) * (this.points[2].y - this.points[0].y));
+
+        Iterator<Double> typeIterator = splits.navigableKeySet().iterator();
+        double tStart = 0.0;
+        if (splits.isEmpty())
+        {
+            segments.put(tStart, currentBezier.offset(offsets, lengthSoFar, lengthTotal, sig, first, true));
+        }
+        while (typeIterator.hasNext())
+        {
+
+            double tInFull = typeIterator.next();
+            int type = splits.get(tInFull);
+            boolean isRoot = type == 1;
+            boolean isInflection = type == 2;
+            // boolean isOffsetFraction = type == 3;
+            double t;
+            // Note: as we split the Bezier and work with the remainder in each loop, the resulting t value is not the same as
+            // on the full Bezier. Therefore we need to refind the roots, or inflections, or at least one cross-section.
+            if (isRoot)
+            {
+                t = currentBezier.getRoots().first();
+            }
+            else if (isInflection)
+            {
+                t = currentBezier.getInflections().first();
+            }
+            else
+            {
+                NavigableSet<Double> fCrossSection = new TreeSet<>();
+                double fSoFar = lengthSoFar / lengthTotal;
+                double fFirst = fCrossSectionRemain.pollFirst(); // fraction in total Bezier
+                fCrossSection.add((fFirst - fSoFar) / (1.0 - fSoFar)); // add fraction in remaining Bezier
+                t = currentBezier.getOffsetT(fCrossSection).first();
+            }
+
+            // Split Bezier, and add offset of first part
+            ContinuousBezierCubic[] parts = currentBezier.split(t);
+            segments.put(tStart, parts[0].offset(offsets, lengthSoFar, lengthTotal, sig, first, false));
+
+            // Update loop variables
+            first = false;
+            lengthSoFar += parts[0].getLength();
+            if (isInflection)
+            {
+                sig = -sig;
+            }
+            tStart = tInFull;
+
+            // Append last segment, or loop again with remainder
+            if (!typeIterator.hasNext())
+            {
+                segments.put(tStart, parts[1].offset(offsets, lengthSoFar, lengthTotal, sig, first, true));
+            }
+            else
+            {
+                currentBezier = parts[1];
+            }
+        }
+        segments.put(1.0, null); // so we can interpolate t values along segments
+
+        // Flatten with FlattableLine based on the offset segments created above
+        return flattener.flatten(new FlattableLine()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public Point2d get(final double fraction)
+            {
+                Entry<Double, ContinuousBezierCubic> entry;
+                double nextT;
+                if (fraction == 1.0)
+                {
+                    entry = segments.lowerEntry(fraction);
+                    nextT = fraction;
+                }
+                else
+                {
+                    entry= segments.floorEntry(fraction);
+                    nextT = segments.higherKey(fraction);
+                }
+                double t = (fraction - entry.getKey()) / (nextT - entry.getKey());
+                return entry.getValue().at(t);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public double getDirection(final double fraction)
+            {
+                Entry<Double, ContinuousBezierCubic> entry = segments.floorEntry(fraction);
+                Double nextT = segments.ceilingKey(fraction);
+                if (nextT == null)
+                {
+                    nextT = 1.0;
+                }
+                double t = (fraction - entry.getKey()) / (nextT - entry.getKey());
+                Point2d derivative = entry.getValue().derivative().at(t);
+                return Math.atan2(derivative.y, derivative.x);
+            }
+        });
+    }
+
+    /**
+     * Creates the offset Bezier of a Bezier segment. These segments are part of the offset procedure.
+     * @param offsets FractionalLengthData; offsets as defined for entire Bezier.
+     * @param lengthSoFar double; total length of previous segments.
+     * @param lengthTotal double; total length of full Bezier.
+     * @param sig double; sign of offset and offset slope
+     * @param first boolean; {@code true} for the first Bezier segment.
+     * @param last boolean; {@code true} for the last Bezier segment.
+     * @return ContinuousBezierCubic; offset Bezier.
+     */
+    private ContinuousBezierCubic offset(final FractionalLengthData offsets, final double lengthSoFar, final double lengthTotal,
+            final double sig, final boolean first, final boolean last)
+    {
+        double offsetStart = sig * offsets.get(lengthSoFar / lengthTotal);
+        double offsetEnd = sig * offsets.get((lengthSoFar + getLength()) / lengthTotal);
+
+        Point2d p1 = new Point2d(this.points[0].x - (this.points[1].y - this.points[0].y),
+                this.points[0].y + (this.points[1].x - this.points[0].x));
+        Point2d p2 = new Point2d(this.points[3].x - (this.points[2].y - this.points[3].y),
+                this.points[3].y + (this.points[2].x - this.points[3].x));
+        Point2d center = Point2d.intersectionOfLines(this.points[0], p1, p2, this.points[3]);
+
+        // move 1st and 4th point their respective offsets away from the center
+        Point2d[] newBezierPoints = new Point2d[4];
+        double off = offsetStart;
+        for (int i = 0; i < 4; i = i + 3)
+        {
+            double dy = this.points[i].y - center.y;
+            double dx = this.points[i].x - center.x;
+            double ang = Math.atan2(dy, dx);
+            double len = Math.hypot(dx, dy) + off;
+            newBezierPoints[i] = new Point2d(center.x + len * Math.cos(ang), center.y + len * Math.sin(ang));
+            off = offsetEnd;
+        }
+
+        // find tangent unit vectors that account for slope in offset
+        double ang = sig * Math.atan((offsetEnd - offsetStart) / getLength());
+        double cosAng = Math.cos(ang);
+        double sinAng = Math.sin(ang);
+        double dx = this.points[1].x - this.points[0].x;
+        double dy = this.points[1].y - this.points[0].y;
+        double dx1;
+        double dy1;
+        if (first)
+        {
+            // force same start angle
+            dx1 = dx;
+            dy1 = dy;
+        }
+        else
+        {
+            // shift angle by 'ang'
+            dx1 = cosAng * dx - sinAng * dy;
+            dy1 = sinAng * dx + cosAng * dy;
+        }
+        dx = this.points[2].x - this.points[3].x;
+        dy = this.points[2].y - this.points[3].y;
+        double dx2;
+        double dy2;
+        if (last)
+        {
+            // force same end angle
+            dx2 = dx;
+            dy2 = dy;
+        }
+        else
+        {
+            // shift angle by 'ang'
+            dx2 = cosAng * dx - sinAng * dy;
+            dy2 = sinAng * dx + cosAng * dy;
+        }
+
+        // control points 2 and 3 as intersections between tangent unit vectors and line through center and original point 2 and
+        // 3 in original Bezier
+        Point2d cp2 = new Point2d(newBezierPoints[0].x + dx1, newBezierPoints[0].y + dy1);
+        newBezierPoints[1] = Point2d.intersectionOfLines(newBezierPoints[0], cp2, center, this.points[1]);
+        Point2d cp3 = new Point2d(newBezierPoints[3].x + dx2, newBezierPoints[3].y + dy2);
+        newBezierPoints[2] = Point2d.intersectionOfLines(newBezierPoints[3], cp3, center, this.points[2]);
+
+        // create offset Bezier
+        return new ContinuousBezierCubic(newBezierPoints[0], newBezierPoints[1], newBezierPoints[2], newBezierPoints[3]);
     }
 
     /** {@inheritDoc} */
@@ -522,6 +517,13 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
     public double getLength()
     {
         return this.length;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "ContinuousBezierCubic [points=" + Arrays.toString(this.points) + "]";
     }
 
 }

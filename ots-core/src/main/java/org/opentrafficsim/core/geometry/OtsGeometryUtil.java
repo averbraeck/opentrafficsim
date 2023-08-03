@@ -3,8 +3,6 @@ package org.opentrafficsim.core.geometry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map.Entry;
-import java.util.NavigableMap;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
@@ -90,7 +88,7 @@ public final class OtsGeometryUtil
         }
         return result.toString();
     }
-    
+
     /**
      * Returns the number of segments to use for a given maximum spatial error, and radius.
      * @param maxSpatialError double; maximum spatial error.

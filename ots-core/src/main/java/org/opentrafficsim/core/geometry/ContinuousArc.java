@@ -1,13 +1,10 @@
 package org.opentrafficsim.core.geometry;
 
-import java.util.NavigableSet;
-import java.util.TreeSet;
-
 import org.djunits.value.vdouble.scalar.Angle;
+import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
-import org.djutils.exceptions.Try;
 
 /**
  * Continuous definition of an arc.
@@ -81,7 +78,7 @@ public class ContinuousArc implements ContinuousLine
     @Override
     public OrientedPoint2d getEndPoint()
     {
-        Point2d point = getPoint(this.angle.si, 0.0);
+        Point2d point = getPoint(1.0, 0.0);
         double dirZ = this.startPoint.dirZ + this.sign * this.angle.si;
         dirZ = dirZ > Math.PI ? dirZ - 2.0 * Math.PI : (dirZ < -Math.PI ? dirZ + 2.0 * Math.PI : 0.0);
         return new OrientedPoint2d(point.x, point.y, dirZ);
@@ -115,88 +112,114 @@ public class ContinuousArc implements ContinuousLine
         return this.radius;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public OtsLine2d flatten(final int numSegments)
-    {
-        Throw.when(numSegments < 1, IllegalArgumentException.class, "Number of segments should be at least 1.");
-        Point2d[] points = new Point2d[numSegments + 1];
-        double da = this.angle.si / numSegments;
-        for (int i = 0; i < points.length; i++)
-        {
-            points[i] = getPoint(i * da, 0.0);
-        }
-        return Try.assign(() -> new OtsLine2d(points), "Exception while creating flattened arc.");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public OtsLine2d flatten(final Angle maxAngleError, final double maxSpatialError)
-    {
-        Throw.whenNull(maxAngleError, "Maximum angle error may not be null");
-        Throw.when(maxAngleError.si <= 0.0, IllegalArgumentException.class, "Max angle error should be above 0.");
-        Throw.when(maxSpatialError <= 0.0, IllegalArgumentException.class, "Max spatial error should be above 0.");
-        int numSegmentsAngle = (int) Math.ceil(this.angle.si / maxAngleError.si);
-        int numSegmentsDeviation = OtsGeometryUtil.getNumSegmentsForRadius(maxSpatialError, this.angle, this.radius);
-        int numSegments = numSegmentsAngle > numSegmentsDeviation ? numSegmentsAngle : numSegmentsDeviation;
-        return flatten(numSegments);
-    }
-
     /**
-     * Returns a point on the arc at an angle of 'a' from the start angle.
-     * @param a double; angle.
+     * Returns a point on the arc at a fraction along the arc.
+     * @param fraction double; fraction along the arc.
      * @param offset double; offset relative to radius.
-     * @return OtsPoint3d; point on the arc at an angle of 'a' from the start angle.
+     * @return Point2d; point on the arc at a fraction along the arc.
      */
-    private Point2d getPoint(final double a, final double offset)
+    private Point2d getPoint(final double fraction, final double offset)
     {
         double len = this.radius - this.sign * offset;
-        double angle = this.startPoint.dirZ + this.sign * a;
+        double angle = this.startPoint.dirZ + this.sign * (this.angle.si * fraction);
         double dx = this.sign * Math.cos(angle) * len;
         double dy = this.sign * Math.sin(angle) * len;
         return new Point2d(this.center.x + dy, this.center.y - dx);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public OtsLine2d offset(final FractionalLengthData offsets, final int numSegments)
+    /**
+     * Returns the direction at given fraction along the arc.
+     * @param fraction double; fraction along the arc.
+     * @return double; direction at given fraction along the arc.
+     */
+    private double getDirection(final double fraction)
     {
-        Throw.when(numSegments < 1, IllegalArgumentException.class, "Number of segments should be at least 1.");
-        Throw.whenNull(offsets, "Offsets may not be null.");
-        NavigableSet<Double> f = new TreeSet<>();
-        for (int i = 0; i < numSegments + 1; i++)
+        double d = this.startPoint.dirZ + this.sign * (this.angle.si) * fraction;
+        while (d > Math.PI)
         {
-            f.add(((double) i) / numSegments);
+            d -= (2 * Math.PI);
         }
-        offsets.getFractionalLengths().forEach((r) -> f.add(r));
-        Point2d[] points = new Point2d[f.size()];
-        int i = 0;
-        for (double r : f)
+        while (d < -Math.PI)
         {
-            points[i] = getPoint(this.angle.si * r, offsets.get(r));
-            i++;
+            d += (2 * Math.PI);
         }
-        return Try.assign(() -> new OtsLine2d(points), "Exception while creating offset arc.");
+        return d;
     }
 
     /** {@inheritDoc} */
     @Override
-    public OtsLine2d offset(final FractionalLengthData offsets, final Angle maxAngleError, final double maxSpatialError)
+    public PolyLine2d flatten(final Flattener flattener)
+    {
+        Throw.whenNull(flattener, "Flattener may not be null.");
+        return flattener.flatten(new FlattableLine()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public Point2d get(final double fraction)
+            {
+                return getPoint(fraction, 0.0);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public double getDirection(final double fraction)
+            {
+                return ContinuousArc.this.getDirection(fraction);
+            }
+        });
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public PolyLine2d flattenOffset(final FractionalLengthData offsets, final Flattener flattener)
     {
         Throw.whenNull(offsets, "Offsets may not be null.");
-        Throw.whenNull(maxAngleError, "Maximum angle error may not be null");
-        Throw.when(maxAngleError.si <= 0.0, IllegalArgumentException.class, "Max angle error should be above 0.");
-        Throw.when(maxSpatialError <= 0.0, IllegalArgumentException.class, "Max spatial error should be above 0.");
-        int numSegmentsAngle = (int) Math.ceil(this.angle.si / maxAngleError.si);
-        double criticalOffset = 0.0;
-        for (double off : offsets.getValues())
+        Throw.whenNull(flattener, "Flattener may not be null.");
+        return flattener.flatten(new FlattableLine()
         {
-            criticalOffset = Math.max(criticalOffset, -this.sign * off);
-        }
-        int numSegmentsDeviation =
-                OtsGeometryUtil.getNumSegmentsForRadius(maxSpatialError, this.angle, this.radius + criticalOffset);
-        int numSegments = numSegmentsAngle > numSegmentsDeviation ? numSegmentsAngle : numSegmentsDeviation;
-        return offset(offsets, numSegments);
+            /** {@inheritDoc} */
+            @Override
+            public Point2d get(final double fraction)
+            {
+                return getPoint(fraction, offsets.get(fraction));
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public double getDirection(final double fraction)
+            {
+                /*-
+                 * x = cos(phi) * (r - s(phi))
+                 * y = sin(phi) * (r - s(phi)) 
+                 * 
+                 * with,
+                 *   phi    = angle of circle arc point at fraction, relative to circle center
+                 *   r      = radius
+                 *   s(phi) = offset at phi (or at fraction)
+                 * 
+                 * then using the product rule: 
+                 * 
+                 * x' = -sin(phi) * (r - s(phi)) - cos(phi) * s'(phi)
+                 * y' = cos(phi) * (r - s(phi)) - sin(phi) * s'(phi)
+                 */
+                double phi = (ContinuousArc.this.startPoint.dirZ
+                        + ContinuousArc.this.sign * (ContinuousArc.this.angle.si * fraction - Math.PI / 2));
+                double sinPhi = Math.sin(phi);
+                double cosPhi = Math.cos(phi);
+                double sPhi = ContinuousArc.this.sign * offsets.get(fraction);
+                double sPhiD = offsets.getDerivative(fraction) / ContinuousArc.this.angle.si;
+                double dx = -sinPhi * (ContinuousArc.this.radius - sPhi) - cosPhi * sPhiD;
+                double dy = cosPhi * (ContinuousArc.this.radius - sPhi) - sinPhi * sPhiD;
+                return Math.atan2(ContinuousArc.this.sign * dy, ContinuousArc.this.sign * dx);
+            }
+        });
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double getLength()
+    {
+        return this.angle.si * this.radius;
     }
 
     /** {@inheritDoc} */
@@ -205,13 +228,6 @@ public class ContinuousArc implements ContinuousLine
     {
         return "ContinuousArc [startPoint=" + this.startPoint + ", radius=" + this.radius + ", angle=" + this.angle + ", left="
                 + (this.sign > 0.0) + "]";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double getLength()
-    {
-        return this.angle.si * this.radius;
     }
 
 }

@@ -20,6 +20,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.base.DoubleScalar;
+import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
@@ -36,6 +37,7 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.ContinuousLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
+import org.opentrafficsim.core.geometry.FractionalLengthData;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.Gtu;
@@ -492,16 +494,16 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
         {
             double offset = lane.getLateralCenterPosition(1.0).si;
             double width = lane.getWidth(1.0).si;
-            OtsLine2d centerLine = designLine.offset(offset, 1);
-            OtsLine2d leftEdge = designLine.offset(offset + .5 * width, 1);
-            OtsLine2d rightEdge = designLine.offset(offset - .5 * width, 1);
+            PolyLine2d centerLine = designLine.flattenOffset(FractionalLengthData.of(0.0, offset), null);
+            PolyLine2d leftEdge = designLine.flattenOffset(FractionalLengthData.of(0.0, offset + .5 * width), null);
+            PolyLine2d rightEdge = designLine.flattenOffset(FractionalLengthData.of(0.0, offset - .5 * width), null);
             Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
             List<CrossSectionSlice> crossSections =
                     LaneGeometryUtil.getSlices(designLine, Length.instantiateSI(offset), Length.instantiateSI(width));
 
             // Overtaking left and right allowed on the sinkLane
-            Lane sinkLane = new Lane(endLink, lane.getId() + "." + "sinkLane", centerLine, contour, crossSections, laneType,
-                    Map.of(DefaultsNl.VEHICLE, this.speedLimit));
+            Lane sinkLane = new Lane(endLink, lane.getId() + "." + "sinkLane", new OtsLine2d(centerLine), contour,
+                    crossSections, laneType, Map.of(DefaultsNl.VEHICLE, this.speedLimit));
             new SinkDetector(sinkLane, new Length(10.0, METER), this.simulator, DefaultsRoadNl.ROAD_USERS);
         }
         return lanes;

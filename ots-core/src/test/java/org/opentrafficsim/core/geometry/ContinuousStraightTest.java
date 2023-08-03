@@ -3,6 +3,7 @@ package org.opentrafficsim.core.geometry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
@@ -44,7 +45,7 @@ public class ContinuousStraightTest
         assertEquals("End curvature is incorrect.", 0.0, straight.getEndCurvature(), MARGIN);
 
         FractionalLengthData offsets = FractionalLengthData.of(0.0, -1.0, 0.5, -1.0, 1.0, -2.0);
-        OtsLine2d line = straight.offset(offsets);
+        PolyLine2d line = straight.offset(offsets);
         isApproximal(line.get(0), 0.0, -1.0);
         isApproximal(line.get(1), 50.0, -1.0);
         isApproximal(line.get(2), 100.0, -2.0);

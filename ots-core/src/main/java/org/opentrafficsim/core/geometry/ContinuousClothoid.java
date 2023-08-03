@@ -1,10 +1,8 @@
 package org.opentrafficsim.core.geometry;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
+import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
@@ -84,6 +82,21 @@ public class ContinuousClothoid implements ContinuousLine
 
     /** Simplification to arc when valid. */
     private final ContinuousArc arc;
+
+    /** Whether the shift was determined. */
+    private boolean shiftDetermined;
+
+    /** Shift in x-coordinate of start point. */
+    private double shiftX;
+
+    /** Shift in y-coordinate of start point. */
+    private double shiftY;
+
+    /** Additional shift in x-coordinate towards end point. */
+    private double dShiftX;
+
+    /** Additional shift in y-coordinate towards end point. */
+    private double dShiftY;
 
     /**
      * Create clothoid between two directed points. This constructor is based on the procedure in:<br>
@@ -287,7 +300,7 @@ public class ContinuousClothoid implements ContinuousLine
             double ang2 = Math.atan2(this.t0[1], this.t0[0]);
             endDirection = Direction.instantiateSI(ang2 - Math.abs(this.alphaMax) + Math.PI);
         }
-        OtsLine2d line = flatten(1);
+        PolyLine2d line = flatten(new Flattener.NumSegments(1));
         Point2d end = Try.assign(() -> line.get(line.size() - 1), "Line does not have an end point.");
         this.endPoint = new OrientedPoint2d(end.x, end.y, endDirection.si);
 
@@ -456,153 +469,6 @@ public class ContinuousClothoid implements ContinuousLine
         return 1.0 / this.endCurvature;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public OtsLine2d flatten(final int numSegments)
-    {
-        Throw.when(numSegments < 1, IllegalArgumentException.class, "Number of segments should be at least 1.");
-        if (this.straight != null)
-        {
-            return this.straight.flatten();
-        }
-        if (this.arc != null)
-        {
-            return this.arc.flatten(numSegments);
-        }
-        double step = (this.alphaMax - this.alphaMin) / numSegments;
-        List<Point2d> points = new ArrayList<>(numSegments + 1);
-
-        OrientedPoint2d p1 = this.opposite ? this.endPoint : this.startPoint;
-        OrientedPoint2d p2 = this.opposite ? this.startPoint : this.endPoint;
-
-        // Create first point to figure out the required overall shift
-        double[] csMin = Fresnel.fresnel(alphaToT(this.alphaMin));
-        double xMin = this.a * (csMin[0] * this.t0[0] - csMin[1] * this.n0[0]);
-        double yMin = this.a * (csMin[0] * this.t0[1] - csMin[1] * this.n0[1]);
-        double dx = p1.x - xMin;
-        double dy = p1.y - yMin;
-        points.add(new Point2d(xMin + dx, yMin + dy));
-
-        // Due to numerical precision, we linearly scale over alpha such that the final point is exactly on p2
-        double xShift = 0.0;
-        double yShift = 0.0;
-
-        // Create last point to figure out linear shift over alpha such that last point ends up at p2 (if any)
-        if (p2 != null)
-        {
-            double[] csMax = Fresnel.fresnel(alphaToT(this.alphaMax));
-            double xMax = this.a * (csMax[0] * this.t0[0] - csMax[1] * this.n0[0]);
-            double yMax = this.a * (csMax[0] * this.t0[1] - csMax[1] * this.n0[1]);
-            xShift = p2.x - (xMax + dx);
-            yShift = p2.y - (yMax + dy);
-        }
-
-        double dAlpha = this.alphaMax - this.alphaMin;
-        for (int i = 1; i <= numSegments; i++)
-        {
-            double alpha = this.alphaMin + i * step;
-            double r = (alpha - this.alphaMin) / dAlpha;
-            double[] cs = Fresnel.fresnel(alphaToT(alpha));
-            points.add(new Point2d(dx + this.a * (cs[0] * this.t0[0] - cs[1] * this.n0[0]) + r * xShift,
-                    dy + this.a * (cs[0] * this.t0[1] - cs[1] * this.n0[1]) + r * yShift));
-        }
-
-        OtsLine2d line = Try.assign(() -> new OtsLine2d(points), "Unable to create OtsLine2d.");
-        if (this.opposite)
-        {
-            line = line.reverse();
-        }
-        return line;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public OtsLine2d flatten(final Angle maxAngleError, final double maxSpatialError)
-    {
-        Throw.whenNull(maxAngleError, "Maximum angle error may not be null");
-        Throw.when(maxAngleError.si <= 0.0, IllegalArgumentException.class, "Max angle error should be above 0.");
-        Throw.when(maxSpatialError <= 0.0, IllegalArgumentException.class, "Max spatial error should be above 0.");
-        int numSegmentsAngle = (int) Math.ceil(getTotalAngle().si / maxAngleError.si);
-        int numSegmentsDeviation = numSegmentsForRadius(maxSpatialError, 0.0);
-        int numSegments = numSegmentsAngle > numSegmentsDeviation ? numSegmentsAngle : numSegmentsDeviation;
-        return flatten(numSegments);
-    }
-
-    /**
-     * Returns the total angle that the Clothoid covers.
-     * @return Angle; total angle that the Clothoid covers.
-     */
-    private Angle getTotalAngle()
-    {
-        return Angle.instantiateSI(Math.abs(this.alphaMin) + Math.abs(this.alphaMax));
-    }
-
-    /**
-     * Returns the number of segments to use for given maximum spatial error, accounting for given offset.
-     * @param maxSpatialError double; maximum spatial error.
-     * @param maxOffset double; maximum offset along the Clothoid.
-     * @return int; number of segments to use for given maximum spatial error, accounting for given offset.
-     */
-    private int numSegmentsForRadius(final double maxSpatialError, final double maxOffset)
-    {
-        double maxRadius = Math.max(Math.abs(getStartRadius()), Math.abs(getEndRadius()));
-        return OtsGeometryUtil.getNumSegmentsForRadius(maxSpatialError, getTotalAngle(), maxRadius + maxOffset);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public OtsLine2d offset(final FractionalLengthData offsets, final int numSegments)
-    {
-        Throw.whenNull(offsets, "Offsets may not be null.");
-        return offset(offsets, flatten(numSegments));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public OtsLine2d offset(final FractionalLengthData offsets, final Angle maxAngleError, final double maxSpatialError)
-    {
-        Throw.whenNull(maxAngleError, "Maximum angle error may not be null");
-        Throw.when(maxAngleError.si <= 0.0, IllegalArgumentException.class, "Max angle error should be above 0.");
-        Throw.when(maxSpatialError <= 0.0, IllegalArgumentException.class, "Max spatial error should be above 0.");
-        Throw.whenNull(offsets, "Offsets may not be null.");
-        int numSegmentsAngle = (int) Math.ceil(getTotalAngle().si / maxAngleError.si);
-        double maxOffset = 0.0;
-        for (double offset : offsets.getValues())
-        {
-            maxOffset = Math.max(maxOffset, Math.abs(offset));
-        }
-        int numSegmentsDeviation = numSegmentsForRadius(maxSpatialError, maxOffset);
-        int numSegments = numSegmentsAngle > numSegmentsDeviation ? numSegmentsAngle : numSegmentsDeviation;
-        return offset(offsets, flatten(numSegments));
-    }
-
-    /**
-     * Applies a naive offset on the line, and then adjusts the start and end point to be on the line perpendicular through each
-     * end point.
-     * @param offsets FractionalLengthData; offsets, should contain keys 0.0 and 1.0.
-     * @param line OtsLine2d; flattened line to offset.
-     * @return OtsLine2d; offset line.
-     */
-    private OtsLine2d offset(final FractionalLengthData offsets, final OtsLine2d line)
-    {
-        OtsLine2d offsetLine =
-                Try.assign(() -> line.offsetLine(offsets.getFractionalLengthsAsArray(), offsets.getValuesAsArray()),
-                        "Unexpected exception while creating offset line.");
-        Point2d start = OtsGeometryUtil.offsetPoint(this.startPoint, offsets.get(0.0));
-        Point2d end = OtsGeometryUtil.offsetPoint(this.endPoint, offsets.get(1.0));
-        Point2d[] points = offsetLine.getPoints();
-        points[0] = start;
-        points[points.length - 1] = end;
-        return Try.assign(() -> new OtsLine2d(points), "Unexpected exception while creating offset line.");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double getLength()
-    {
-        return this.length;
-    }
-
     /**
      * Return A, the clothoid scaling parameter.
      * @return double; a, the clothoid scaling parameter.
@@ -612,6 +478,154 @@ public class ContinuousClothoid implements ContinuousLine
         // Scale 'a', due to parameter conversion between C(alpha)/S(alpha) and C(t)/S(t); t = sqrt(2*alpha/pi).
         // The value of 'this.a' is used when scaling the Fresnel integral, which is why this is stored.
         return this.a / Math.sqrt(Math.PI);
+    }
+
+    /**
+     * Calculates shifts if these have not yet been calculated.
+     */
+    private void assureShift()
+    {
+        if (this.shiftDetermined)
+        {
+            return;
+        }
+
+        OrientedPoint2d p1 = this.opposite ? this.endPoint : this.startPoint;
+        OrientedPoint2d p2 = this.opposite ? this.startPoint : this.endPoint;
+
+        // Create first point to figure out the required overall shift
+        double[] csMin = Fresnel.fresnel(alphaToT(this.alphaMin));
+        double xMin = this.a * (csMin[0] * this.t0[0] - csMin[1] * this.n0[0]);
+        double yMin = this.a * (csMin[0] * this.t0[1] - csMin[1] * this.n0[1]);
+        this.shiftX = p1.x - xMin;
+        this.shiftY = p1.y - yMin;
+
+        // Due to numerical precision, we linearly scale over alpha such that the final point is exactly on p2
+        if (p2 != null)
+        {
+            double[] csMax = Fresnel.fresnel(alphaToT(this.alphaMax));
+            double xMax = this.a * (csMax[0] * this.t0[0] - csMax[1] * this.n0[0]);
+            double yMax = this.a * (csMax[0] * this.t0[1] - csMax[1] * this.n0[1]);
+            this.dShiftX = p2.x - (xMax + this.shiftX);
+            this.dShiftY = p2.y - (yMax + this.shiftY);
+        }
+        else
+        {
+            this.dShiftX = 0.0;
+            this.dShiftY = 0.0;
+        }
+
+        this.shiftDetermined = true;
+    }
+
+    /**
+     * Returns a point on the clothoid at a fraction of curvature along the clothoid.
+     * @param fraction double; fraction of curvature along the clothoid.
+     * @param offset double; offset relative to radius.
+     * @return Point2d; point on the clothoid at a fraction of curvature along the clothoid.
+     */
+    private Point2d getPoint(final double fraction, final double offset)
+    {
+        double f = this.opposite ? 1.0 - fraction : fraction;
+        double alpha = this.alphaMin + f * (this.alphaMax - this.alphaMin);
+        double[] cs = Fresnel.fresnel(alphaToT(alpha));
+        double x = this.shiftX + this.a * (cs[0] * this.t0[0] - cs[1] * this.n0[0]) + f * this.dShiftX;
+        double y = this.shiftY + this.a * (cs[0] * this.t0[1] - cs[1] * this.n0[1]) + f * this.dShiftY;
+        double d = getDirection(alpha) + Math.PI / 2;
+        return new Point2d(x + Math.cos(d) * offset, y + Math.sin(d) * offset);
+    }
+
+    /**
+     * Returns the direction at given alpha.
+     * @param alpha double; alpha.
+     * @return double; direction at given alpha.
+     */
+    private double getDirection(final double alpha)
+    {
+        double rot = Math.atan2(this.t0[1], this.t0[0]);
+        return normalizeAngle(alpha + rot);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public PolyLine2d flatten(final Flattener flattener)
+    {
+        Throw.whenNull(flattener, "Flattener may not be null.");
+        if (this.straight != null)
+        {
+            return this.straight.flatten(flattener);
+        }
+        if (this.arc != null)
+        {
+            return this.arc.flatten(flattener);
+        }
+        assureShift();
+        return flattener.flatten(new FlattableLine()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public Point2d get(final double fraction)
+            {
+                return getPoint(fraction, 0.0);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public double getDirection(final double fraction)
+            {
+                return ContinuousClothoid.this.getDirection(ContinuousClothoid.this.alphaMin
+                        + fraction * (ContinuousClothoid.this.alphaMax - ContinuousClothoid.this.alphaMin));
+            }
+        });
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public PolyLine2d flattenOffset(final FractionalLengthData offsets, final Flattener flattener)
+    {
+        Throw.whenNull(offsets, "Offsets may not be null.");
+        Throw.whenNull(flattener, "Flattener may not be null.");
+        if (this.straight != null)
+        {
+            return this.straight.flattenOffset(offsets, flattener);
+        }
+        if (this.arc != null)
+        {
+            return this.arc.flattenOffset(offsets, flattener);
+        }
+        assureShift();
+        return flattener.flatten(new FlattableLine()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public Point2d get(final double fraction)
+            {
+                return getPoint(fraction, offsets.get(fraction));
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public double getDirection(final double fraction)
+            {
+                return ContinuousClothoid.this.getDirection(ContinuousClothoid.this.alphaMin
+                        + fraction * (ContinuousClothoid.this.alphaMax - ContinuousClothoid.this.alphaMin));
+            }
+        });
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double getLength()
+    {
+        return this.length;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "ContinuousClothoid [startPoint=" + this.startPoint + ", endPoint=" + this.endPoint + ", startCurvature="
+                + this.startCurvature + ", endCurvature=" + this.endCurvature + ", length=" + this.length + "]";
     }
 
 }
