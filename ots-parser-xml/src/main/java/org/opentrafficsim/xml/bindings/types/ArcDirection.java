@@ -12,6 +12,7 @@ public enum ArcDirection
 {
     /** Left = counter-clockwise. */
     LEFT,
+    
     /** Right = clockwise. */
     RIGHT;
 }

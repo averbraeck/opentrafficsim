@@ -10,7 +10,6 @@ package org.opentrafficsim.road.network.factory.xml;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-// TODO this class is not yet used in the network parser
 public class XmlParserException extends Exception
 {
 
@@ -25,6 +24,7 @@ public class XmlParserException extends Exception
     }
 
     /**
+     * Constructor with message and cause.
      * @param message String; message
      * @param cause Throwable; cause
      */
@@ -34,7 +34,8 @@ public class XmlParserException extends Exception
     }
 
     /**
-     * @param message String; messge
+     * Constructor with message.
+     * @param message String; message
      */
     public XmlParserException(final String message)
     {
@@ -42,6 +43,7 @@ public class XmlParserException extends Exception
     }
 
     /**
+     * Constructor with cause.
      * @param cause Throwable; cause
      */
     public XmlParserException(final Throwable cause)

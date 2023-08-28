@@ -21,40 +21,21 @@ public class LaneKeepingAdapter extends XmlAdapter<String, LaneKeepingType>
     {
         try
         {
-            String lkpStr = field.replaceAll("\\s", "");
-            if (lkpStr.equals("KEEPRIGHT"))
-            {
-                return LaneKeepingType.KEEPRIGHT;
-            }
-            else if (lkpStr.equals("KEEPLEFT"))
-            {
-                return LaneKeepingType.KEEPLEFT;
-            }
-            else if (lkpStr.equals("KEEPLANE"))
-            {
-                return LaneKeepingType.KEEPLANE;
-            }
+            String lkpStr = field.replaceAll("\\s", "").trim();
+            return LaneKeepingType.valueOf(lkpStr);
         }
         catch (Exception exception)
         {
             CategoryLogger.always().error(exception, "Problem parsing LaneKeeping '" + field + "'");
             throw new IllegalArgumentException("Error parsing LaneKeeping " + field, exception);
         }
-        CategoryLogger.always().error("Problem parsing LaneKeeping '" + field + "'");
-        throw new IllegalArgumentException("Error parsing LaneKeeping " + field);
     }
 
     /** {@inheritDoc} */
     @Override
-    public String marshal(final LaneKeepingType laneKeeping) throws IllegalArgumentException
+    public String marshal(final LaneKeepingType laneKeeping)
     {
-        if (laneKeeping.equals(LaneKeepingType.KEEPRIGHT))
-            return "KEEPRIGHT";
-        if (laneKeeping.equals(LaneKeepingType.KEEPLEFT))
-            return "KEEPLEFT";
-        if (laneKeeping.equals(LaneKeepingType.KEEPLANE))
-            return "KEEPLANE";
-        throw new IllegalArgumentException("Error parsing LaneKeeping " + laneKeeping);
+        return laneKeeping.name();
     }
 
 }

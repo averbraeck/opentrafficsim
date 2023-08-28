@@ -21,16 +21,16 @@ public class LengthBeginEndAdapter extends XmlAdapter<String, LengthBeginEnd>
     @Override
     public LengthBeginEnd unmarshal(final String field) throws IllegalArgumentException
     {
-        String clean = field.replaceAll("\\s", "");
+        String clean = field.replaceAll("\\s", "").trim();
 
         try
         {
-            if (clean.trim().equals("BEGIN"))
+            if (clean.equals("BEGIN"))
             {
                 return new LengthBeginEnd(true, Length.ZERO);
             }
 
-            if (clean.trim().equals("END"))
+            if (clean.equals("END"))
             {
                 return new LengthBeginEnd(false, Length.ZERO);
             }

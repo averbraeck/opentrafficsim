@@ -75,6 +75,7 @@ import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
+ * This utility creates GTU generators from an OD matrix.
  * <p>
  * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -193,7 +194,7 @@ public final class OdParser
                 {
                     Class<?> clazz = categoryClasses.get(0);
                     categoryClasses.remove(0);
-                    categorization = new Categorization("", clazz, categoryClasses.toArray(new Class[0]));
+                    categorization = new Categorization("", clazz, categoryClasses.toArray(new Class<?>[0]));
                 }
                 // create categories and check that all categories comply with the categorization
                 for (CategoryType category : od.getCategory())
@@ -246,8 +247,7 @@ public final class OdParser
             }
 
             // Global interpolation
-            Interpolation globalInterpolation =
-                    od.getGlobalInterpolation().equals("LINEAR") ? Interpolation.LINEAR : Interpolation.STEPWISE;
+            Interpolation globalInterpolation = od.getGlobalInterpolation();
 
             // Global factor
             double globalFactor = parsePositiveFactor(od.getGlobalFactor());
@@ -272,10 +272,10 @@ public final class OdParser
                     Node origin = (Node) o;
                     Node destination = (Node) d;
                     Throw.when(categorization.equals(Categorization.UNCATEGORIZED) && set.size() > 1, XmlParserException.class,
-                            "Multiple DEMAND tags define demand from %s to %s in uncategorized demand.", origin.getId(),
+                            "Multiple Cell tags define demand from %s to %s in uncategorized demand.", origin.getId(),
                             destination.getId());
 
-                    // Find main demand, that may be split among other DEMAND tags between the same origin and destination
+                    // Find main cell, that may be split among other Cell tags between the same origin and destination
                     Cell main = null;
                     if (!categorization.equals(Categorization.UNCATEGORIZED))
                     {
@@ -284,10 +284,10 @@ public final class OdParser
                             if (cell.getCategory() == null)
                             {
                                 Throw.when(main != null, XmlParserException.class,
-                                        "Multiple DEMAND tags define main demand from %s to %s.", origin.getId(),
+                                        "Multiple Cell tags define main demand from %s to %s.", origin.getId(),
                                         destination.getId());
                                 Throw.when(set.size() == 1, XmlParserException.class,
-                                        "Categorized demand from %s to %s has single DEMAND, and without category.",
+                                        "Categorized demand from %s to %s has single Cell, and without category.",
                                         origin.getId(), destination.getId());
                                 main = cell;
                             }
@@ -413,7 +413,7 @@ public final class OdParser
             if (od.getOptions() != null)
             {
                 Throw.when(!odOptionsMap.containsKey(od.getOptions()), XmlParserException.class,
-                        "OD options of id od.getOPTIONS() not defined.");
+                        "OD options of id od.getOptions() not defined.");
                 for (OdOptionsItem options : odOptionsMap.get(od.getOptions()).getOdOptionsItem())
                 {
                     /*

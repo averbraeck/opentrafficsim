@@ -26,7 +26,6 @@ import org.opentrafficsim.xml.generated.FrequencyDistType;
 import org.opentrafficsim.xml.generated.LengthDistType;
 import org.opentrafficsim.xml.generated.LinearDensityDistType;
 import org.opentrafficsim.xml.generated.PositionDistType;
-import org.opentrafficsim.xml.generated.RandomStreamSource;
 import org.opentrafficsim.xml.generated.SpeedDistType;
 import org.opentrafficsim.xml.generated.TimeDistType;
 

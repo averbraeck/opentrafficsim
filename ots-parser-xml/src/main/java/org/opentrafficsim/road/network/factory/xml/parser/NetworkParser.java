@@ -18,6 +18,7 @@ import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
+import org.djutils.exceptions.Throw;
 import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -56,7 +57,6 @@ import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Type;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.xml.bindings.types.ArcDirection;
-import org.opentrafficsim.xml.bindings.types.StripeType;
 import org.opentrafficsim.xml.generated.BasicRoadLayout;
 import org.opentrafficsim.xml.generated.CseLane;
 import org.opentrafficsim.xml.generated.CseNoTrafficLane;
@@ -339,23 +339,15 @@ public final class NetworkParser
             List<CrossSectionElement> cseList = new ArrayList<>();
             Map<String, Lane> lanes = new LinkedHashMap<>();
 
-            // CategoryLogger.filter(Cat.PARSER).trace("Parse link: {}", xmlLink.getID());
-
             // Get the RoadLayout (either defined here, or via pointer to Definitions)
             BasicRoadLayout roadLayoutTag;
             if (xmlLink.getDefinedLayout() != null)
             {
-                if (xmlLink.getRoadLayout() != null)
-                {
-                    throw new XmlParserException(
-                            "Link " + xmlLink.getId() + " Ambiguous RoadLayout; both DefinedRoadLayout and RoadLayout defined");
-                }
+                Throw.when(xmlLink.getRoadLayout() != null, XmlParserException.class,
+                        "Link %s Ambiguous RoadLayout; both DefinedRoadLayout and RoadLayout defined", xmlLink.getId());
                 RoadLayout roadLayoutTagBase = roadLayoutMap.get(xmlLink.getDefinedLayout());
-                if (roadLayoutTagBase == null)
-                {
-                    throw new XmlParserException(
-                            "Link " + xmlLink.getId() + " Could not find defined RoadLayout " + xmlLink.getDefinedLayout());
-                }
+                Throw.when(roadLayoutTagBase == null, XmlParserException.class, "Link %s Could not find defined RoadLayout %s",
+                        xmlLink.getId(), xmlLink.getDefinedLayout());
                 // Process LaneOverrides
                 roadLayoutTag = Cloner.cloneRoadLayout(roadLayoutTagBase);
                 for (LaneOverride laneOverride : xmlLink.getLaneOverride())
@@ -387,7 +379,7 @@ public final class NetworkParser
             Map<Object, Integer> cseTagMap = new LinkedHashMap<>();
             calculateOffsets(roadLayoutTag, xmlLink, cseDataList, cseTagMap);
 
-            // STRIPE
+            // Stripe
             ContinuousLine designLine = designLines.get(xmlLink.getId());
             for (CseStripe stripeTag : ParseUtil.getObjectsOfType(roadLayoutTag.getStripeOrLaneOrShoulder(), CseStripe.class))
             {
@@ -395,7 +387,7 @@ public final class NetworkParser
                 makeStripe(csl, designLine, cseData.centerOffsetStart, cseData.centerOffsetEnd, stripeTag, cseList);
             }
 
-            // Other CROSSECTIONELEMENT
+            // Other CrossSectionElement
             for (org.opentrafficsim.xml.generated.CrossSectionElement cseTag : ParseUtil.getObjectsOfType(
                     roadLayoutTag.getStripeOrLaneOrShoulder(), org.opentrafficsim.xml.generated.CrossSectionElement.class))
             {
@@ -445,7 +437,6 @@ public final class NetworkParser
                 {
                     CseNoTrafficLane ntlTag = (CseNoTrafficLane) cseTag;
                     String id = ntlTag.getId() != null ? ntlTag.getId() : UUID.randomUUID().toString();
-                    // TODO: obtain GTU type from XML?
                     Lane lane = Lane.noTrafficLane(csl, id, new OtsLine2d(centerLine), contour, slices);
                     cseList.add(lane);
                 }
@@ -463,15 +454,14 @@ public final class NetworkParser
             // TrafficLight
             for (TrafficLightType trafficLight : xmlLink.getTrafficLight())
             {
-                if (!lanes.containsKey(trafficLight.getLane()))
-                {
-                    throw new NetworkException("Link: " + xmlLink.getId() + ", TrafficLight with id " + trafficLight.getId()
-                            + " on Lane " + trafficLight.getLane() + " - Lane not found");
-                }
+                Throw.when(!lanes.containsKey(trafficLight.getLane()), NetworkException.class,
+                        "Link: %s, TrafficLight with id %s on Lane %s - Lane not found", xmlLink.getId(), trafficLight.getId(),
+                        trafficLight.getLane());
                 Lane lane = lanes.get(trafficLight.getLane());
                 Length position = Transformer.parseLengthBeginEnd(trafficLight.getPosition(), lane.getLength());
                 try
                 {
+                    @SuppressWarnings("unchecked")
                     Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(trafficLight.getClazz(),
                             new Class[] {String.class, Lane.class, Length.class, OtsSimulatorInterface.class});
                     trafficLightConstructor.newInstance(new Object[] {trafficLight.getId(), lane, position, simulator});
@@ -479,7 +469,7 @@ public final class NetworkParser
                 catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException
                         | InvocationTargetException exception)
                 {
-                    throw new NetworkException("TRAFFICLIGHT: CLASS NAME " + trafficLight.getClazz().getName()
+                    throw new NetworkException("TrafficLight: Class Name " + trafficLight.getClazz().getName()
                             + " for traffic light " + trafficLight.getId() + " on lane " + lane.toString() + " at position "
                             + position + " -- class not found or constructor not right", exception);
                     // TODO: this discards too much information; e.g. Network already contains an object with the name ...
@@ -679,21 +669,6 @@ public final class NetworkParser
             }
         }
 
-        // add the link offset
-        // if (xmlLink.getOffsetStart() != null && xmlLink.getOffsetStart().ne0())
-        // {
-        // for (CseData cseData : cseDataList)
-        // {
-        // cseData.centerOffsetStart = cseData.centerOffsetStart.plus(xmlLink.getOffsetStart());
-        // }
-        // }
-        // if (xmlLink.getOffsetEnd() != null && xmlLink.getOffsetEnd().ne0())
-        // {
-        // for (CseData cseData : cseDataList)
-        // {
-        // cseData.centerOffsetEnd = cseData.centerOffsetEnd.plus(xmlLink.getOffsetEnd());
-        // }
-        // }
     }
 
     /**
@@ -712,9 +687,9 @@ public final class NetworkParser
             final Length endOffset, final CseStripe stripeTag, final List<CrossSectionElement> cseList)
             throws OtsGeometryException, NetworkException, XmlParserException
     {
-        Length width = stripeTag.getDrawingWidth() != null ? stripeTag.getDrawingWidth()
-                : (stripeTag.getType().equals(StripeType.BLOCKED) ? new Length(40.0, LengthUnit.CENTIMETER)
-                        : new Length(20.0, LengthUnit.CENTIMETER));
+        Length width =
+                stripeTag.getDrawingWidth() != null ? stripeTag.getDrawingWidth() : (stripeTag.getType().equals(Type.BLOCK)
+                        ? new Length(40.0, LengthUnit.CENTIMETER) : new Length(20.0, LengthUnit.CENTIMETER));
         List<CrossSectionSlice> slices = LaneGeometryUtil.getSlices(designLine, startOffset, endOffset, width, width);
 
         NumSegments numSegments64 = new NumSegments(64);
@@ -724,41 +699,7 @@ public final class NetworkParser
                 designLine.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(designLine, slices), numSegments64);
         Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
 
-        switch (stripeTag.getType())
-        {
-            case BLOCKED:
-                Stripe blockedLine = new Stripe(Type.BLOCK, csl, new OtsLine2d(centerLine), contour, slices);
-                cseList.add(blockedLine);
-                break;
-
-            case DASHED:
-                Stripe dashedLine = new Stripe(Type.DASHED, csl, new OtsLine2d(centerLine), contour, slices);
-                cseList.add(dashedLine);
-                break;
-
-            case DOUBLE:
-                Stripe doubleLine = new Stripe(Type.DOUBLE, csl, new OtsLine2d(centerLine), contour, slices);
-                cseList.add(doubleLine);
-                break;
-
-            case LEFTTORIGHT:
-                Stripe leftOnlyLine = new Stripe(Type.RIGHT, csl, new OtsLine2d(centerLine), contour, slices);
-                cseList.add(leftOnlyLine);
-                break;
-
-            case RIGHTTOLEFT:
-                Stripe rightOnlyLine = new Stripe(Type.LEFT, csl, new OtsLine2d(centerLine), contour, slices);
-                cseList.add(rightOnlyLine);
-                break;
-
-            case SOLID:
-                Stripe solidLine = new Stripe(Type.SOLID, csl, new OtsLine2d(centerLine), contour, slices);
-                cseList.add(solidLine);
-                break;
-
-            default:
-                throw new XmlParserException("Unknown Stripe type: " + stripeTag.getType().toString());
-        }
+        cseList.add(new Stripe(stripeTag.getType(), csl, new OtsLine2d(centerLine), contour, slices));
     }
 
     /** contains information about the lanes and stripes to calculate the offset. */

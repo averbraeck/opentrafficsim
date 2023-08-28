@@ -10,7 +10,12 @@ package org.opentrafficsim.xml.bindings.types;
  */
 public enum LaneKeepingType
 {
+    /** Keep right. */
     KEEPRIGHT,
+    
+    /** Keep left. */
     KEEPLEFT,
+    
+    /** Keep lane. */
     KEEPLANE;
 }

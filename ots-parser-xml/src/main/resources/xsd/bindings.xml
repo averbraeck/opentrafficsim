@@ -18,8 +18,6 @@
       adapter="org.opentrafficsim.xml.bindings.StaticFieldNameAdapter" />
     <xjc:javaType name="org.djunits.value.vdouble.scalar.Length" xmlType="ots:LengthType"
       adapter="org.opentrafficsim.xml.bindings.LengthAdapter" />
-    <xjc:javaType name="org.djunits.value.vdouble.scalar.LinearDensity" xmlType="ots:PerLengthType"
-      adapter="org.opentrafficsim.xml.bindings.PerLengthAdapter" />
     <xjc:javaType name="org.djunits.value.vdouble.scalar.Length" xmlType="ots:PositiveLengthType"
       adapter="org.opentrafficsim.xml.bindings.PositiveLengthAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.LengthBeginEnd"
@@ -48,14 +46,16 @@
       adapter="org.opentrafficsim.xml.bindings.FrequencyAdapter" />
     <xjc:javaType name="org.djunits.value.vdouble.scalar.LinearDensity" xmlType="ots:LinearDensityType"
       adapter="org.opentrafficsim.xml.bindings.LinearDensityAdapter" />
-    <xjc:javaType name="org.opentrafficsim.xml.bindings.types.StripeType" xmlType="ots:StripeType"
+    <xjc:javaType name="org.opentrafficsim.road.network.lane.Stripe.Type" xmlType="ots:StripeType"
       adapter="org.opentrafficsim.xml.bindings.StripeTypeAdapter" />
     <xjc:javaType name="java.awt.Color" xmlType="ots:ColorType"
       adapter="org.opentrafficsim.xml.bindings.ColorAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.LaneKeepingType"
       xmlType="ots:LaneKeepingType" adapter="org.opentrafficsim.xml.bindings.LaneKeepingAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.GtuPositionType"
-      xmlType="ots:GtuPositionType" adapter="org.opentrafficsim.xml.bindings.GTUPositionAdapter" />
+      xmlType="ots:GtuPositionType" adapter="org.opentrafficsim.xml.bindings.GtuPositionAdapter" />
+    <xjc:javaType name="org.opentrafficsim.road.od.Interpolation"
+      xmlType="ots:InterpolationType" adapter="org.opentrafficsim.xml.bindings.InterpolationTypeAdapter" />
   </jaxb:globalBindings>
 
 </jaxb:bindings>

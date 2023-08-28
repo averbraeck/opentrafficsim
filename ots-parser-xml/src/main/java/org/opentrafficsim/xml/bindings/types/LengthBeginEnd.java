@@ -3,12 +3,12 @@ package org.opentrafficsim.xml.bindings.types;
 import org.djunits.value.vdouble.scalar.Length;
 
 /**
- * LengthBeginEnd contains the information from the LengthBeginEndType. Examples of type instances are<br>
- * - BEGIN <br>
- * - END <br>
- * - END - 10m <br>
- * - 25 ft <br>
- * - 0.8 <br>
+ * LengthBeginEnd contains the information from the LengthBeginEndType. Examples of type instances are:<br>
+ * - BEGIN<br>
+ * - END<br>
+ * - END - 10m<br>
+ * - 25 ft<br>
+ * - 0.8<br>
  * - 80%
  * <p>
  * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -18,21 +18,22 @@ import org.djunits.value.vdouble.scalar.Length;
  */
 public class LengthBeginEnd
 {
-    /** begin or end? */
+    /** Begin or end? */
     private final boolean begin;
 
-    /** absolute offset or relative fraction? */
+    /** Absolute offset or relative fraction? */
     private final boolean absolute;
 
-    /** the offset in case absolute == true. */
+    /** The offset in case absolute == true. */
     private final Length offset;
 
-    /** the fraction in case absolute == false. */
+    /** The fraction in case absolute == false. */
     private final double fraction;
 
     /**
+     * Constructor with length.
      * @param begin boolean; begin or end?
-     * @param offset the offset; absolute = true
+     * @param offset Length; the offset, absolute = true
      */
     public LengthBeginEnd(final boolean begin, final Length offset)
     {
@@ -43,7 +44,8 @@ public class LengthBeginEnd
     }
 
     /**
-     * @param fraction the fraction; absolute = false
+     * Constructor with fraction.
+     * @param fraction double; the fraction, absolute = false
      */
     public LengthBeginEnd(final double fraction)
     {
@@ -54,6 +56,7 @@ public class LengthBeginEnd
     }
 
     /**
+     * Returns whether this is from the begin
      * @return begin
      */
     public final boolean isBegin()
@@ -62,6 +65,7 @@ public class LengthBeginEnd
     }
 
     /**
+     * Returns whether the length is absolute.
      * @return absolute
      */
     public final boolean isAbsolute()
@@ -70,6 +74,7 @@ public class LengthBeginEnd
     }
 
     /**
+     * Returns the offset.
      * @return offset
      */
     public final Length getOffset()
@@ -78,6 +83,7 @@ public class LengthBeginEnd
     }
 
     /**
+     * Returns the fraction.
      * @return fraction
      */
     public final double getFraction()
@@ -102,7 +108,7 @@ public class LengthBeginEnd
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
         if (this == obj)
             return true;

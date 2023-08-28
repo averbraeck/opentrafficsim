@@ -242,6 +242,7 @@ public final class XmlNetworkLaneParser implements Serializable
         ExperimentRunControl<Duration> runControl =
                 RunParser.parseRun(otsNetwork.getId(), ots.getRun(), streamInformation, otsNetwork.getSimulator());
 
+        // definitions
         Map<String, RoadLayout> roadLayoutMap = new LinkedHashMap<>();
         Map<String, GtuTemplate> gtuTemplates = new LinkedHashMap<>();
         Map<String, LaneBias> laneBiases = new LinkedHashMap<>();
@@ -249,6 +250,7 @@ public final class XmlNetworkLaneParser implements Serializable
         Definitions definitions = DefinitionsParser.parseDefinitions(ots.getDefinitions(), roadLayoutMap, gtuTemplates,
                 laneBiases, streamInformation, linkTypeSpeedLimitMap);
 
+        // network
         Network network = ots.getNetwork();
         Map<String, Direction> nodeDirections = NetworkParser.calculateNodeAngles(otsNetwork, network);
         NetworkParser.parseNodes(otsNetwork, network, nodeDirections);
@@ -257,6 +259,7 @@ public final class XmlNetworkLaneParser implements Serializable
         NetworkParser.applyRoadLayout(otsNetwork, definitions, network, otsNetwork.getSimulator(), roadLayoutMap,
                 linkTypeSpeedLimitMap, designLines);
 
+        // routes, generators and sinks
         Demand demand = ots.getDemand();
         if (demand != null)
         {
@@ -271,9 +274,9 @@ public final class XmlNetworkLaneParser implements Serializable
             GeneratorSinkParser.parseSinks(otsNetwork, demand, otsNetwork.getSimulator(), definitions);
         }
 
+        // models and parameters
         // TODO: we now only take the first model, need to make models per GTU type, and with parents
         List<ModelType> models = ots.getModels() == null ? new ArrayList<>() : ots.getModels().getModel();
-
         // TODO: parse input parameters
         InputParameters inputParameters = new InputParameters()
         {
@@ -306,18 +309,12 @@ public final class XmlNetworkLaneParser implements Serializable
         Map<String, LaneBasedStrategicalPlannerFactory<?>> factories = ModelParser.parseModel(otsNetwork, models,
                 inputParameters, parameterTypes, streamInformation, parameterFactories);
         List<ScenarioType> scenarios = ots.getScenarios() == null ? new ArrayList<>() : ots.getScenarios().getScenario();
-        Map<String, String> modelIdReferrals =
-                ScenarioParser.parseModelIdReferral(scenarios, ots.getDemand());
-        try
-        {
-            List<LaneBasedGtuGenerator> generators = OdParser.parseDemand(otsNetwork, definitions, demand, gtuTemplates,
-                    laneBiases, factories, modelIdReferrals, streamInformation);
-            System.out.println("Created " + generators.size() + " generators based on origin destination matrices");
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+        Map<String, String> modelIdReferrals = ScenarioParser.parseModelIdReferral(scenarios, ots.getDemand());
+
+        // OD generators
+        List<LaneBasedGtuGenerator> generators = OdParser.parseDemand(otsNetwork, definitions, demand, gtuTemplates, laneBiases,
+                factories, modelIdReferrals, streamInformation);
+        System.out.println("Created " + generators.size() + " generators based on origin destination matrices");
 
         // conflicts
         if (buildConflicts)
@@ -355,37 +352,7 @@ public final class XmlNetworkLaneParser implements Serializable
             otsNetwork.getSimulator().getLogger().always().info("Object map size = {}", otsNetwork.getObjectMap().size());
         }
 
-        // The code below can be used to visualize the LaneStructure of a particular GTU
-        /*-EventListener listener = new EventListener()
-        {
-            @Override
-            public void notify(final Event event) throws RemoteException
-            {
-                LaneBasedGtu gtu = (LaneBasedGtu) event.getContent();
-                if (gtu.getId().equals("27"))
-                {
-                    try
-                    {
-                        LaneStructureAnimation.visualize(
-                                (RollingLaneStructure) gtu.getTacticalPlanner().getPerception().getLaneStructure(), gtu);
-                    }
-                    catch (ParameterException | ClassCastException exception)
-                    {
-                        SimLogger.always().warn("Could not draw lane structure of GTU.");
-                    }
-                }
-            }
-        };
-        for (LaneBasedGtuGenerator generator : generators)
-        {
-            generator.addListener(listener, LaneBasedGtuGenerator.GTU_GENERATED_EVENT);
-        }*/
-
-        // Control control = ots.getControl();
-        // List<ModelType> modelParameters = ots.getModels();
-        // List<Scenario> scenario = ots.getScenario();
-        // Animation animation = ots.getAnimation();
-
+        // control
         if (ots.getControl() != null)
         {
             ControlParser.parseControl(otsNetwork, otsNetwork.getSimulator(), ots.getControl(), definitions);

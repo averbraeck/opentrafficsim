@@ -412,7 +412,7 @@
       <xsd:appinfo source="pattern">Provide a valid AbsoluteTemperature, with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(K|YK|ZK|EK|PK|TK|GK|MK|kK|hK|daK|�C|degC|C|dK|cK|mK|\\u03BCK|muK|nK|pK|fK|aK|zK|yK|�F|degF|F|�R|degR|R|�R�|degRe|Re|R�)"></xsd:pattern>
+      <xsd:pattern value="\{[^{}]*\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(K|YK|ZK|EK|PK|TK|GK|MK|kK|hK|daK|�C|degC|C|dK|cK|mK|\\u03BCK|muK|nK|pK|fK|aK|zK|yK|�F|degF|F|�R|degR|R|�R�|degRe|Re|R�))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1232,15 +1232,6 @@
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="PerLengthType">
-    <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a value as X.X/{distance unit}.</xsd:appinfo>
-    </xsd:annotation>
-    <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\d+\.?\d*\s*\/\s*(mm|cm|dm|m|dam|hm|km|mi|yd|ft)"></xsd:pattern>
-    </xsd:restriction>
-  </xsd:simpleType>
-
   <!-- Allows patterns like BEGIN | END | END-10m | 25m | 50% -->
   <xsd:simpleType name="LengthBeginEndType">
     <xsd:annotation>
@@ -1369,12 +1360,12 @@
       <xsd:enumeration value="|" />
       <xsd:enumeration value="DASHED" />
       <xsd:enumeration value=":" />
-      <xsd:enumeration value="BLOCKED" />
+      <xsd:enumeration value="BLOCK" />
       <xsd:enumeration value="DOUBLE" />
       <xsd:enumeration value="||" />
-      <xsd:enumeration value="RIGHTTOLEFT" />
+      <xsd:enumeration value="LEFT" />
       <xsd:enumeration value="|:" />
-      <xsd:enumeration value="LEFTTORIGHT" />
+      <xsd:enumeration value="RIGHT" />
       <xsd:enumeration value=":|" />
     </xsd:restriction>
   </xsd:simpleType>

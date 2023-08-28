@@ -12,8 +12,10 @@ public enum GtuPositionType
 {
     /** Front of the GTU. */
     FRONT,
+
     /** Rear of the GTU. */
     REAR,
+    
     /** Reference position of the GTU. */
     REFERENCE;
 }

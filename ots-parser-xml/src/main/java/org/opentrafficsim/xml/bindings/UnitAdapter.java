@@ -12,6 +12,7 @@ import org.djutils.exceptions.Throw;
  * BSD-style license. See <a href="https://djunits.org/docs/license.html">DJUNITS License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
+ * @param <S> type of unit
  */
 public abstract class UnitAdapter<S extends DoubleScalarInterface<?, S>> extends XmlAdapter<String, S>
 {

@@ -374,11 +374,8 @@ public final class DefinitionsParser
             for (GtuTemplate templateTag : templateTypes.getGtuTemplate())
             {
                 GtuType gtuType = parsedDefinitions.get(GtuType.class, templateTag.getGtuType());
-                if (gtuType == null)
-                {
-                    throw new XmlParserException(
-                            "GTUTemplate " + templateTag.getId() + " GtuType " + templateTag.getGtuType() + " not found");
-                }
+                Throw.when(gtuType == null, XmlParserException.class, "GtuTemplate %s GtuType %s not found",
+                        templateTag.getId(), templateTag.getGtuType());
                 gtuTemplates.put(templateTag.getId(), templateTag);
             }
         }

@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.network.factory.xml.utils;
 
-import java.util.Map;
-
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;

@@ -2,7 +2,6 @@ package org.opentrafficsim.road.network.factory.xml.utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.xml.generated.RandomStreamSource;
@@ -27,7 +26,8 @@ public final class ParseUtil
     }
 
     /**
-     * Returns all objects of given type from the list of all objects.
+     * Returns all objects of given type from the list of all objects. The returned list may be altered as it is not backed by
+     * the input list.
      * @param objectList List&lt;?&gt;; list of objects
      * @param clazz Class&lt;T&gt;; class of type of objects to return
      * @param <T> type
@@ -47,50 +47,6 @@ public final class ParseUtil
         return list;
     }
 
-    /**
-     * Select object of given type by predicate.
-     * @param objectList List&lt;?&gt;; list of objects
-     * @param clazz Class&lt;T&gt;; class of type of objects to return
-     * @param predicate Predicate&lt;T&gt;; predicate
-     * @param <T> type
-     * @return (first) object of given type that matches the predicate
-     */
-    public static <T> T findObject(final List<?> objectList, final Class<T> clazz, final Predicate<T> predicate)
-    {
-        for (Object object : objectList)
-        {
-            if (clazz.isAssignableFrom(object.getClass()))
-            {
-                @SuppressWarnings("unchecked")
-                T t = (T) object;
-                if (predicate.test(t))
-                {
-                    return t;
-                }
-            }
-        }
-        throw new RuntimeException(String.format("Object of type %s could not be found.", clazz));
-    }
-
-    /**
-     * Select object of given type by predicate.
-     * @param objectList List&lt;T&gt;; list of objects
-     * @param predicate Predicate&lt;T&gt;; predicate
-     * @param <T> type
-     * @return (first) object of given type that matches the predicate
-     */
-    public static <T> T findObject(final List<T> objectList, final Predicate<T> predicate)
-    {
-        for (T object : objectList)
-        {
-            if (predicate.test(object))
-            {
-                return object;
-            }
-        }
-        throw new RuntimeException("Object with predicate not be found.");
-    }
-    
     /**
      * Find and return the stream belonging to te streamId.
      * @param streamInformation the map with streams from the RUN tag

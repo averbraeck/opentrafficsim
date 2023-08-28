@@ -2,18 +2,13 @@ package org.opentrafficsim.road.network.factory.xml.utils;
 
 import java.lang.reflect.Field;
 
-import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.reflection.ClassUtil;
-import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.generator.CfBaRoomChecker;
 import org.opentrafficsim.road.gtu.generator.CfRoomChecker;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.TtcRoomChecker;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayDistribution;
-import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
-import org.opentrafficsim.xml.bindings.types.GtuPositionType;
 import org.opentrafficsim.xml.bindings.types.LengthBeginEnd;
 import org.opentrafficsim.xml.generated.RoomCheckerType;
 
@@ -55,50 +50,7 @@ public final class Transformer
     }
 
     /**
-     * @param positionType GtuPositionType; the JAXB position to parse
-     * @return the corresponding OTS RelativePosition
-     */
-    public static RelativePosition.TYPE parseTriggerPosition(final GtuPositionType positionType)
-    {
-        switch (positionType)
-        {
-            case FRONT:
-                return RelativePosition.FRONT;
-
-            case REAR:
-                return RelativePosition.REAR;
-
-            case REFERENCE:
-                return RelativePosition.REFERENCE;
-
-            default:
-                return RelativePosition.REFERENCE;
-        }
-    }
-
-    /**
-     * @param lkpStr String; the lane keeping policy string.
-     * @return the lane keeping policy.
-     * @throws NetworkException in case of unknown policy.
-     */
-    public static LaneKeepingPolicy parseLaneKeepingPolicy(final String lkpStr) throws NetworkException
-    {
-        if (lkpStr.equals("KEEPRIGHT"))
-        {
-            return LaneKeepingPolicy.KEEPRIGHT;
-        }
-        else if (lkpStr.equals("KEEPLEFT"))
-        {
-            return LaneKeepingPolicy.KEEPLEFT;
-        }
-        else if (lkpStr.equals("KEEPLANE"))
-        {
-            return LaneKeepingPolicy.KEEPLANE;
-        }
-        throw new NetworkException("Unknown lane keeping policy string: " + lkpStr);
-    }
-
-    /**
+     * Parse room checker.
      * @param roomChecker RoomCheckerType; room checker type
      * @return RoomChecker; parsed room checker
      */
@@ -116,6 +68,7 @@ public final class Transformer
     }
 
     /**
+     * Parse headway distribution.
      * @param v String; XML string value
      * @return RoomChecker; parsed room checker
      * @throws NoSuchFieldException if {@code HeadwayDistribution} does not have specified field
