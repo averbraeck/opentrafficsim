@@ -2,6 +2,7 @@ package org.opentrafficsim.xml.bindings;
 
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.xml.bindings.types.SpeedType;
 
 /**
  * SpeedAdapter converts between the XML String for a Speed and the DJUnits Speed.
@@ -10,16 +11,22 @@ import org.djutils.logger.CategoryLogger;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class SpeedAdapter extends UnitAdapter<Speed>
+public class SpeedAdapter extends ScalarAdapter<Speed, SpeedType>
 {
+    
     /** {@inheritDoc} */
     @Override
-    public Speed unmarshal(final String field) throws IllegalArgumentException
+    public SpeedType unmarshal(final String field) throws IllegalArgumentException
     {
+        if (isExpression(field))
+        {
+            return new SpeedType(trimBrackets(field));
+        }
         try
         {
-            return Speed.valueOf(field);
+            return new SpeedType(Speed.valueOf(field));
         }
         catch (Exception exception)
         {

@@ -2,6 +2,7 @@ package org.opentrafficsim.xml.bindings;
 
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.xml.bindings.types.FrequencyType;
 
 /**
  * FrequencyAdapter converts between the XML String for a Frequency and the DJUnits Frequency.
@@ -10,16 +11,22 @@ import org.djutils.logger.CategoryLogger;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class FrequencyAdapter extends UnitAdapter<Frequency>
+public class FrequencyAdapter extends ScalarAdapter<Frequency, FrequencyType>
 {
+    
     /** {@inheritDoc} */
     @Override
-    public Frequency unmarshal(final String field) throws IllegalArgumentException
+    public FrequencyType unmarshal(final String field) throws IllegalArgumentException
     {
+        if (isExpression(field))
+        {
+            return new FrequencyType(trimBrackets(field));
+        }
         try
         {
-            return Frequency.valueOf(field);
+            return new FrequencyType(Frequency.valueOf(field));
         }
         catch (Exception exception)
         {

@@ -2,6 +2,7 @@ package org.opentrafficsim.xml.bindings;
 
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.xml.bindings.types.LinearDensityType;
 
 /**
  * LinearDensityAdapter converts between the XML String for a LinearDensity and the DJUnits LinearDensity.
@@ -10,16 +11,22 @@ import org.djutils.logger.CategoryLogger;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LinearDensityAdapter extends UnitAdapter<LinearDensity>
+public class LinearDensityAdapter extends ScalarAdapter<LinearDensity, LinearDensityType>
 {
+
     /** {@inheritDoc} */
     @Override
-    public LinearDensity unmarshal(final String field) throws IllegalArgumentException
+    public LinearDensityType unmarshal(final String field) throws IllegalArgumentException
     {
+        if (isExpression(field))
+        {
+            return new LinearDensityType(trimBrackets(field));
+        }
         try
         {
-            return LinearDensity.valueOf(field);
+            return new LinearDensityType(LinearDensity.valueOf(field));
         }
         catch (Exception exception)
         {

@@ -2,6 +2,7 @@ package org.opentrafficsim.xml.bindings;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.xml.bindings.types.DurationType;
 
 /**
  * DurationAdapter converts between the XML String for a Duration and the DJUnits Duration.
@@ -10,16 +11,22 @@ import org.djutils.logger.CategoryLogger;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class DurationAdapter extends UnitAdapter<Duration>
+public class DurationAdapter extends ScalarAdapter<Duration, DurationType>
 {
+    
     /** {@inheritDoc} */
     @Override
-    public Duration unmarshal(final String field) throws IllegalArgumentException
+    public DurationType unmarshal(final String field) throws IllegalArgumentException
     {
+        if (isExpression(field))
+        {
+            return new DurationType(trimBrackets(field));
+        }
         try
         {
-            return Duration.valueOf(field);
+            return new DurationType(Duration.valueOf(field));
         }
         catch (Exception exception)
         {

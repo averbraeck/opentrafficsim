@@ -1,35 +1,40 @@
 package org.opentrafficsim.xml.bindings;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-
 import org.djutils.logger.CategoryLogger;
-import org.opentrafficsim.xml.bindings.types.ArcDirection;
+import org.opentrafficsim.xml.bindings.types.ArcDirectionType;
+import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
 
 /**
- * LeftRightAdapter to convert between XML representations of an arc direction, coded as L | LEFT | R | RIGHT | CLOCKWISE |
+ * ArcDirectionAdapter to convert between XML representations of an arc direction, coded as L | LEFT | R | RIGHT | CLOCKWISE |
  * COUNTERCLOCKWISE, and an enum type.
  * <p>
  * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LeftRightAdapter extends XmlAdapter<String, ArcDirection>
+public class ArcDirectionAdapter extends ExpressionAdapter<ArcDirection, ArcDirectionType>
 {
+
     /** {@inheritDoc} */
     @Override
-    public ArcDirection unmarshal(final String field) throws IllegalArgumentException
+    public ArcDirectionType unmarshal(final String field) throws IllegalArgumentException
     {
+        if (isExpression(field))
+        {
+            return new ArcDirectionType(trimBrackets(field));
+        }
         try
         {
             String clean = field.replaceAll("\\s", "");
             if (clean.equals("L") || clean.equals("LEFT") || clean.equals("COUNTERCLOCKWISE"))
             {
-                return ArcDirection.LEFT;
+                return new ArcDirectionType(ArcDirection.LEFT);
             }
             if (clean.equals("R") || clean.equals("RIGHT") || clean.equals("CLOCKWISE"))
             {
-                return ArcDirection.RIGHT;
+                return new ArcDirectionType(ArcDirection.RIGHT);
             }
         }
         catch (Exception exception)
@@ -43,11 +48,9 @@ public class LeftRightAdapter extends XmlAdapter<String, ArcDirection>
 
     /** {@inheritDoc} */
     @Override
-    public String marshal(final ArcDirection arcDirection) throws IllegalArgumentException
+    public String marshal(final ArcDirectionType value) throws IllegalArgumentException
     {
-        if (arcDirection.equals(ArcDirection.LEFT))
-            return "LEFT";
-        return "RIGHT";
+        return marshal(value, (v) -> v.name());
     }
 
 }

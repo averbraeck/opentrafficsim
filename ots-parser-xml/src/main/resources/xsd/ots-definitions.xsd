@@ -15,11 +15,27 @@
   <!-- =============================================== ELEMENTS ========================================= -->
   <!-- ================================================================================================== -->
 
+  <xsd:complexType name="HierarchicalType">
+    <xsd:attribute name="Id" type="xsd:string" use="required" />
+    <xsd:attribute name="Parent" type="ots:string" use="optional" />
+    <xsd:attribute name="Default" type="xsd:boolean" use="optional" default="false" />
+  </xsd:complexType>
+  
+  <xsd:complexType name="GtuCompatibleInfraType">
+    <xsd:complexContent>
+      <xsd:extension base="ots:HierarchicalType">
+        <xsd:sequence>
+          <xsd:element ref="ots:Compatibility" minOccurs="0" maxOccurs="unbounded" />
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
   <xsd:element name="GtuType">
     <xsd:complexType>
-      <xsd:attribute name="Id" type="xsd:string" use="required" />
-      <xsd:attribute name="Parent" type="xsd:string" use="optional" />
-      <xsd:attribute name="Default" type="xsd:boolean" use="optional" default="false" />
+      <xsd:complexContent>
+        <xsd:extension base="ots:HierarchicalType" />
+      </xsd:complexContent>
     </xsd:complexType>
   </xsd:element>
 
@@ -42,7 +58,7 @@
         <xsd:element name="MaxDecelerationDist" type="ots:AccelerationDistType" minOccurs="0" />
       </xsd:sequence>
       <xsd:attribute name="Id" type="xsd:string" use="required" />
-      <xsd:attribute name="GtuType" type="xsd:string" use="required" />
+      <xsd:attribute name="GtuType" type="ots:string" use="required" />
       <xsd:attribute name="Default" type="xsd:boolean" use="optional" default="false" />
       <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
@@ -59,8 +75,8 @@
 
   <xsd:element name="Compatibility">
     <xsd:complexType>
-      <xsd:attribute name="GtuType" type="xsd:string" use="required" />
-      <xsd:attribute name="Compatible" type="xsd:boolean" use="optional" default="true">
+      <xsd:attribute name="GtuType" type="ots:string" use="required" />
+      <xsd:attribute name="Compatible" type="ots:boolean" use="optional" default="true">
         <xsd:annotation>
           <xsd:documentation source="description">
             When false, the GTU type is explicitly subtracted from the allowed GTU types.
@@ -72,12 +88,9 @@
 
   <xsd:element name="LaneType">
     <xsd:complexType>
-      <xsd:sequence>
-        <xsd:element ref="ots:Compatibility" minOccurs="0" maxOccurs="unbounded" />
-      </xsd:sequence>
-      <xsd:attribute name="Id" type="xsd:string" use="required" />
-      <xsd:attribute name="Parent" type="xsd:string" use="optional" />
-      <xsd:attribute name="Default" type="xsd:boolean" use="optional" default="false" />
+      <xsd:complexContent>
+        <xsd:extension base="ots:GtuCompatibleInfraType" />
+      </xsd:complexContent>
       <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
@@ -107,8 +120,8 @@
         <xsd:element name="FromLeft" type="ots:DoubleUnitInterval" />
         <xsd:element name="FromRight" type="ots:DoubleUnitInterval" />
       </xsd:choice>
-      <xsd:attribute name="GtuType" type="xsd:string" use="required" />
-      <xsd:attribute name="Bias" type="xsd:float" use="required" />
+      <xsd:attribute name="GtuType" type="ots:string" use="required" />
+      <xsd:attribute name="Bias" type="ots:float" use="required" />
       <xsd:attribute name="StickyLanes" type="ots:IntAtLeastOne" use="optional" />
     </xsd:complexType>
   </xsd:element>
@@ -123,13 +136,13 @@
 
   <xsd:element name="LinkType">
     <xsd:complexType>
-      <xsd:sequence>
-        <xsd:element ref="ots:Compatibility" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element ref="ots:SpeedLimit" minOccurs="0" maxOccurs="unbounded" />
-      </xsd:sequence>
-      <xsd:attribute name="Id" type="xsd:string" use="required" />
-      <xsd:attribute name="Parent" type="xsd:string" use="optional" />
-      <xsd:attribute name="Default" type="xsd:boolean" use="optional" default="false" />
+      <xsd:complexContent>
+        <xsd:extension base="ots:GtuCompatibleInfraType">
+          <xsd:sequence>
+            <xsd:element ref="ots:SpeedLimit" minOccurs="0" maxOccurs="unbounded" />
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
       <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
@@ -145,12 +158,9 @@
   
   <xsd:element name="DetectorType">
     <xsd:complexType>
-      <xsd:sequence>
-        <xsd:element ref="ots:Compatibility" minOccurs="0" maxOccurs="unbounded" />
-      </xsd:sequence>
-      <xsd:attribute name="Id" type="xsd:string" use="required" />
-      <xsd:attribute name="Parent" type="xsd:string" use="optional" />
-      <xsd:attribute name="Default" type="xsd:boolean" use="optional" default="false" />
+      <xsd:complexContent>
+        <xsd:extension base="ots:GtuCompatibleInfraType" />
+      </xsd:complexContent>
     </xsd:complexType>
   </xsd:element>
   
@@ -165,7 +175,7 @@
 
   <xsd:element name="SpeedLimit">
     <xsd:complexType>
-      <xsd:attribute name="GtuType" type="xsd:string" use="required" />
+      <xsd:attribute name="GtuType" type="ots:string" use="required" />
       <xsd:attribute name="LegalSpeedLimit" type="ots:SpeedType" use="required" />
     </xsd:complexType>
   </xsd:element>
@@ -192,8 +202,8 @@
       <xsd:choice>
         <xsd:element name="Width" type="ots:PositiveLengthType" />
         <xsd:sequence>
-          <xsd:element name="WidthStart" type="ots:LengthType" />
-          <xsd:element name="WidthEnd" type="ots:LengthType" />
+          <xsd:element name="WidthStart" type="ots:PositiveLengthType" />
+          <xsd:element name="WidthEnd" type="ots:PositiveLengthType" />
         </xsd:sequence>
       </xsd:choice>
     </xsd:sequence>
@@ -206,7 +216,7 @@
           <xsd:element ref="ots:SpeedLimit" minOccurs="0" maxOccurs="unbounded" />
         </xsd:sequence>
         <xsd:attribute name="Id" type="xsd:string" use="required" />
-        <xsd:attribute name="LaneType" type="xsd:string" use="required" />
+        <xsd:attribute name="LaneType" type="ots:string" use="required" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -277,7 +287,7 @@
       <xsd:complexContent>
         <xsd:extension base="ots:BasicRoadLayout">
           <xsd:attribute name="Id" type="xsd:string" use="required" />
-          <xsd:attribute name="LinkType" type="xsd:string" use="required" />
+          <xsd:attribute name="LinkType" type="ots:string" use="required" />
         </xsd:extension>
       </xsd:complexContent>
     </xsd:complexType>
@@ -299,7 +309,7 @@
           <xsd:element name="Class" type="ots:ParameterTypeClass" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element name="Double" type="ots:ParameterTypeDouble" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element name="Float" type="ots:ParameterTypeFloat" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element name="Long" type="ots:ParameterTypeLone" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element name="Long" type="ots:ParameterTypeLong" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element name="Duration" type="ots:ParameterTypeDuration" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element name="Fraction" type="ots:ParameterTypeFraction" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element name="Frequency" type="ots:ParameterTypeFrequency" minOccurs="0" maxOccurs="unbounded" />

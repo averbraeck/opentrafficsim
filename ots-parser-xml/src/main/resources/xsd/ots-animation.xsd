@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
-  xmlns:ots="http://www.opentrafficsim.org/ots" 
-  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  elementFormDefault="qualified">
+  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" elementFormDefault="qualified">
 
   <!-- http://www.w3.org/2009/01/xml.xsd -->
   <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="ref/xml.xsd" />
@@ -16,31 +15,39 @@
       <xsd:choice minOccurs="1" maxOccurs="unbounded">
         <xsd:element name="Default" default="DEFAULT">
           <xsd:simpleType>
-            <xsd:restriction base="xsd:string">
-              <xsd:enumeration value="DEFAULT" />
-              <xsd:enumeration value="ID" />
-              <xsd:enumeration value="SPEED" />
-              <xsd:enumeration value="ACCELERATION" />
-              <xsd:enumeration value="BLUE" />
-              <xsd:enumeration value="DESIRED_SPEED" />
-              <xsd:enumeration value="SPLIT" />
-              <xsd:enumeration value="SYNCHRONIZATION" />
-              <xsd:enumeration value="DESIRED_HEADWAY" />
-              <xsd:enumeration value="TOTAL_DESIRE" />
-              <xsd:enumeration value="SOCIAL_PRESSURE" />
-            </xsd:restriction>
+            <xsd:union memberTypes="ots:Expression">
+              <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                  <xsd:enumeration value="DEFAULT" />
+                  <xsd:enumeration value="ID" />
+                  <xsd:enumeration value="SPEED" />
+                  <xsd:enumeration value="ACCELERATION" />
+                  <xsd:enumeration value="BLUE" />
+                  <xsd:enumeration value="DESIRED_SPEED" />
+                  <xsd:enumeration value="SPLIT" />
+                  <xsd:enumeration value="SYNCHRONIZATION" />
+                  <xsd:enumeration value="DESIRED_HEADWAY" />
+                  <xsd:enumeration value="TOTAL_DESIRE" />
+                  <xsd:enumeration value="SOCIAL_PRESSURE" />
+                </xsd:restriction>
+              </xsd:simpleType>
+            </xsd:union>
           </xsd:simpleType>
         </xsd:element>
         <xsd:element name="Incentive">
           <xsd:simpleType>
-            <xsd:restriction base="xsd:string">
-              <xsd:enumeration value="ROUTE" />
-              <xsd:enumeration value="SPEED_WITH_COURTESY" />
-              <xsd:enumeration value="KEEP" />
-              <xsd:enumeration value="COURTESY" />
-              <xsd:enumeration value="SOCIO_SPEED" />
-              <xsd:enumeration value="BUS_STOP" />
-            </xsd:restriction>
+            <xsd:union memberTypes="ots:Expression">
+              <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                  <xsd:enumeration value="ROUTE" />
+                  <xsd:enumeration value="SPEED_WITH_COURTESY" />
+                  <xsd:enumeration value="KEEP" />
+                  <xsd:enumeration value="COURTESY" />
+                  <xsd:enumeration value="SOCIO_SPEED" />
+                  <xsd:enumeration value="BUS_STOP" />
+                </xsd:restriction>
+              </xsd:simpleType>
+            </xsd:union>
           </xsd:simpleType>
         </xsd:element>
         <xsd:element name="Class" type="ots:ClassNameType" />
@@ -49,7 +56,6 @@
   </xsd:element>
 
   <!--
-  The idea is:
   <Animation>
     <Defaults>
       <Link Color="BLUE" WIDTH="10 cm"/>
@@ -107,12 +113,12 @@
   </xsd:complexType>
 
   <xsd:complexType name="LinkTypeAnimationType">
-    <xsd:attribute name="Id" type="xsd:string" use="required" />
+    <xsd:attribute name="Id" type="ots:string" use="required" />
     <xsd:attribute name="Color" type="ots:ColorType" use="required" />
   </xsd:complexType>
 
   <xsd:complexType name="LaneTypeAnimationType">
-    <xsd:attribute name="Id" type="xsd:string" use="required" />
+    <xsd:attribute name="Id" type="ots:string" use="required" />
     <xsd:attribute name="Color" type="ots:ColorType" use="required" />
   </xsd:complexType>
 
@@ -120,60 +126,60 @@
     <xsd:choice minOccurs="1" maxOccurs="unbounded">
       <xsd:element name="Stripe">
         <xsd:complexType>
-          <xsd:attribute name="Id" type="xsd:string" use="required" />
+          <xsd:attribute name="Id" type="ots:string" use="required" />
           <xsd:attribute name="Color" type="ots:ColorType" use="required" />
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="Lane">
         <xsd:complexType>
-          <xsd:attribute name="Id" type="xsd:string" use="required" />
+          <xsd:attribute name="Id" type="ots:string" use="required" />
           <xsd:attribute name="Color" type="ots:ColorType" use="required" />
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="Shoulder">
         <xsd:complexType>
-          <xsd:attribute name="Id" type="xsd:string" use="required" />
+          <xsd:attribute name="Id" type="ots:string" use="required" />
           <xsd:attribute name="Color" type="ots:ColorType" use="required" />
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="NoTrafficLane">
         <xsd:complexType>
-          <xsd:attribute name="Id" type="xsd:string" use="required" />
+          <xsd:attribute name="Id" type="ots:string" use="required" />
           <xsd:attribute name="Color" type="ots:ColorType" use="required" />
         </xsd:complexType>
       </xsd:element>
     </xsd:choice>
-    <xsd:attribute name="Id" type="xsd:string" use="required" />
+    <xsd:attribute name="Id" type="ots:string" use="required" />
   </xsd:complexType>
 
   <xsd:complexType name="LinkAnimationType">
     <xsd:choice minOccurs="1" maxOccurs="unbounded">
       <xsd:element name="Stripe">
         <xsd:complexType>
-          <xsd:attribute name="Id" type="xsd:string" use="required" />
+          <xsd:attribute name="Id" type="ots:string" use="required" />
           <xsd:attribute name="Color" type="ots:ColorType" use="required" />
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="Lane">
         <xsd:complexType>
-          <xsd:attribute name="Id" type="xsd:string" use="required" />
+          <xsd:attribute name="Id" type="ots:string" use="required" />
           <xsd:attribute name="Color" type="ots:ColorType" use="required" />
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="Shoulder">
         <xsd:complexType>
-          <xsd:attribute name="Id" type="xsd:string" use="required" />
+          <xsd:attribute name="Id" type="ots:string" use="required" />
           <xsd:attribute name="Color" type="ots:ColorType" use="required" />
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="NoTrafficLane">
         <xsd:complexType>
-          <xsd:attribute name="Id" type="xsd:string" use="required" />
+          <xsd:attribute name="Id" type="ots:string" use="required" />
           <xsd:attribute name="Color" type="ots:ColorType" use="required" />
         </xsd:complexType>
       </xsd:element>
     </xsd:choice>
-    <xsd:attribute name="Id" type="xsd:string" use="required" />
+    <xsd:attribute name="Id" type="ots:string" use="required" />
     <xsd:attribute name="Color" type="ots:ColorType" use="optional" />
     <xsd:attribute name="Width" type="ots:PositiveLengthType" use="optional" />
   </xsd:complexType>
@@ -182,7 +188,7 @@
     <xsd:attribute name="Id" type="xsd:string" use="required" />
     <xsd:attribute name="Toggle" use="required">
       <xsd:simpleType>
-        <xsd:restriction base="xsd:string">
+        <xsd:restriction base="ots:string">
           <xsd:enumeration value="ON" />
           <xsd:enumeration value="OFF" />
           <xsd:enumeration value="INVISIBLE" />

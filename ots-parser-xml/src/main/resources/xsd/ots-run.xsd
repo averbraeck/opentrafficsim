@@ -16,8 +16,8 @@
       <xsd:sequence minOccurs="1" maxOccurs="unbounded">
         <xsd:element name="Replication">
           <xsd:complexType>
-            <xsd:attribute name="Id" type="xsd:positiveInteger" use="required" />
-            <xsd:attribute name="Seed" type="xsd:integer" use="required" />
+            <xsd:attribute name="Id" type="ots:positiveInteger" use="required" />
+            <xsd:attribute name="Seed" type="ots:integer" use="required" />
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>

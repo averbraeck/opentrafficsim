@@ -21,6 +21,7 @@ public interface Anticipation
     /** Assume no anticipation. */
     Anticipation NONE = new Anticipation()
     {
+        /** {@inheritDoc} */
         @Override
         public NeighborTriplet anticipate(final NeighborTriplet neighborTriplet, final Duration duration,
                 final Length traveledDistance, final boolean downstream)
@@ -28,16 +29,25 @@ public interface Anticipation
             return neighborTriplet;
         }
 
+        /** {@inheritDoc} */
         @Override
         public Length egoAnticipation(final Speed speed, final Acceleration acceleration, final Duration duration)
         {
             return Length.ZERO;
+        }
+        
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "NONE";
         }
     };
 
     /** Assume constant speed. */
     Anticipation CONSTANT_SPEED = new Anticipation()
     {
+        /** {@inheritDoc} */
         @Override
         public NeighborTriplet anticipate(final NeighborTriplet neighborTriplet, final Duration duration,
                 final Length traveledDistance, final boolean downstream)
@@ -49,16 +59,25 @@ public interface Anticipation
             return new NeighborTriplet(distance, neighborTriplet.getSpeed(), neighborTriplet.getAcceleration());
         }
 
+        /** {@inheritDoc} */
         @Override
         public Length egoAnticipation(final Speed speed, final Acceleration acceleration, final Duration duration)
         {
             return speed.times(duration);
+        }
+        
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "CONSTANT_SPEED";
         }
     };
 
     /** Assume constant acceleration. */
     Anticipation CONSTANT_ACCELERATION = new Anticipation()
     {
+        /** {@inheritDoc} */
         @Override
         public NeighborTriplet anticipate(final NeighborTriplet neighborTriplet, final Duration duration,
                 final Length traveledDistance, final boolean downstream)
@@ -79,10 +98,18 @@ public interface Anticipation
                     Speed.instantiateSI(neighborTriplet.getSpeed().si + dv), neighborTriplet.getAcceleration());
         }
 
+        /** {@inheritDoc} */
         @Override
         public Length egoAnticipation(final Speed speed, final Acceleration acceleration, final Duration duration)
         {
             return speed.times(duration);
+        }
+        
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "CONSTANT_ACCELERATION";
         }
     };
 

@@ -1,25 +1,30 @@
 package org.opentrafficsim.xml.bindings;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.xml.bindings.types.Point2dType;
 
 /**
- * CoordinateAdapter converts between the XML String for a coordinate and a Point2d.
+ * Point2dAdapter converts between the XML String for a coordinate and a Point2d.
  * <p>
  * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class CoordinateAdapter extends XmlAdapter<String, Point2d>
+public class Point2dAdapter extends ExpressionAdapter<Point2d, Point2dType>
 {
+    
     /** {@inheritDoc} */
     @Override
-    public Point2d unmarshal(final String field) throws IllegalArgumentException
+    public Point2dType unmarshal(final String field) throws IllegalArgumentException
     {
+        if (isExpression(field))
+        {
+            return new Point2dType(trimBrackets(field));
+        }
         try
         {
             String clean = field.replaceAll("\\s", "");
@@ -33,7 +38,7 @@ public class CoordinateAdapter extends XmlAdapter<String, Point2d>
 
             double x = Double.parseDouble(digits[0]);
             double y = Double.parseDouble(digits[1]);
-            return new Point2d(x, y);
+            return new Point2dType(new Point2d(x, y));
         }
         catch (Exception exception)
         {
@@ -44,9 +49,9 @@ public class CoordinateAdapter extends XmlAdapter<String, Point2d>
 
     /** {@inheritDoc} */
     @Override
-    public String marshal(final Point2d point) throws IllegalArgumentException
+    public String marshal(final Point2dType point) throws IllegalArgumentException
     {
-        return "(" + point.x + ", " + point.y + ")";
+        return marshal(point, (p) -> "(" + p.x + ", " + p.y + ")");
     }
 
 }

@@ -1,8 +1,7 @@
 package org.opentrafficsim.xml.bindings;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-
 import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.xml.bindings.types.ClassType;
 
 /**
  * ClassNameAdapter converts between the XML String for a class name and the Class object.
@@ -11,16 +10,23 @@ import org.djutils.logger.CategoryLogger;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class ClassNameAdapter extends XmlAdapter<String, Class<?>>
+@SuppressWarnings("rawtypes")
+public class ClassNameAdapter extends ExpressionAdapter<Class, ClassType>
 {
+
     /** {@inheritDoc} */
     @Override
-    public Class<?> unmarshal(final String field) throws IllegalArgumentException
+    public ClassType unmarshal(final String field) throws IllegalArgumentException
     {
+        if (isExpression(field))
+        {
+            return new ClassType(trimBrackets(field));
+        }
         try
         {
-            return Class.forName(field);
+            return new ClassType(Class.forName(field));
         }
         catch (Exception exception)
         {
@@ -31,9 +37,9 @@ public class ClassNameAdapter extends XmlAdapter<String, Class<?>>
 
     /** {@inheritDoc} */
     @Override
-    public String marshal(final Class<?> clazz) throws IllegalArgumentException
+    public String marshal(final ClassType clazz) throws IllegalArgumentException
     {
-        return clazz.getName();
+        return marshal(clazz, (c) -> c.getName());
     }
 
 }

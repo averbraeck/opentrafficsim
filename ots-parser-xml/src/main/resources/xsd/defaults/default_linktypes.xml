@@ -39,6 +39,5 @@
   <ots:LinkType Id="NL.RAILWAY" Default="true">
     <ots:Compatibility GtuType="NL.RAILWAY_USER" />
   </ots:LinkType>
-
   
 </ots:LinkTypes>

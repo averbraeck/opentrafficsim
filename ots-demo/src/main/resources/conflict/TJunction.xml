@@ -204,6 +204,10 @@
 			<ots:Bezier />
 			<ots:DefinedLayout>RIGHT</ots:DefinedLayout>
 		</ots:Link>
+    
+        <ots:Conflicts>
+            <ots:DefaultWidth />
+        </ots:Conflicts>
 
 	</ots:Network>
 
@@ -213,37 +217,31 @@
 		<ots:ShortestRoute Id="EW" GtuType="NL.CAR">
 			<ots:From Node="TRE" />
 			<ots:To Node="TRW" />
-			<ots:DistanceCost>1/m</ots:DistanceCost>
 		</ots:ShortestRoute>
 
 		<ots:ShortestRoute Id="WE" GtuType="NL.CAR">
 			<ots:From Node="BLW" />
 			<ots:To Node="BLE" />
-			<ots:DistanceCost>1/m</ots:DistanceCost>
 		</ots:ShortestRoute>
 
 		<ots:ShortestRoute Id="WS" GtuType="NL.CAR">
 			<ots:From Node="BLW" />
 			<ots:To Node="BLS" />
-			<ots:DistanceCost>1/m</ots:DistanceCost>
 		</ots:ShortestRoute>
 
 		<ots:ShortestRoute Id="SW" GtuType="NL.CAR">
 			<ots:From Node="TRS" />
 			<ots:To Node="TRW" />
-			<ots:DistanceCost>1/m</ots:DistanceCost>
 		</ots:ShortestRoute>
 
 		<ots:ShortestRoute Id="ES" GtuType="NL.CAR">
 			<ots:From Node="TRE" />
 			<ots:To Node="BLS" />
-			<ots:DistanceCost>1/m</ots:DistanceCost>
 		</ots:ShortestRoute>
 
 		<ots:ShortestRoute Id="SE" GtuType="NL.CAR">
 			<ots:From Node="TRS" />
 			<ots:To Node="BLE" />
-			<ots:DistanceCost>1/m</ots:DistanceCost>
 		</ots:ShortestRoute>
 
 		<ots:ShortestRouteMix Id="E" GtuType="NL.CAR">

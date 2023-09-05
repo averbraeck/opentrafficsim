@@ -22,9 +22,9 @@ import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.parameters.InputParameters;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
-import org.opentrafficsim.road.network.factory.xml.utils.Transformer;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
@@ -33,14 +33,16 @@ import org.opentrafficsim.trafficcontrol.FixedTimeController;
 import org.opentrafficsim.trafficcontrol.FixedTimeController.SignalGroup;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCod;
+import org.opentrafficsim.xml.bindings.types.EncodingType.Encoding;
+import org.opentrafficsim.xml.bindings.types.GraphicsTypeType.GraphicsType;
 import org.opentrafficsim.xml.generated.Control;
 import org.opentrafficsim.xml.generated.Control.FixedTime;
 import org.opentrafficsim.xml.generated.Control.FixedTime.Cycle;
 import org.opentrafficsim.xml.generated.Control.TrafCod.Console;
 import org.opentrafficsim.xml.generated.ControlType.SignalGroup.TrafficLight;
+import org.opentrafficsim.xml.generated.LaneLinkType;
 import org.opentrafficsim.xml.generated.ResponsiveControlType.Detector;
 import org.opentrafficsim.xml.generated.ResponsiveControlType.Detector.MultipleLane;
-import org.opentrafficsim.xml.generated.ResponsiveControlType.Detector.MultipleLane.IntermediateLanes;
 import org.opentrafficsim.xml.generated.ResponsiveControlType.Detector.SingleLane;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -52,6 +54,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 public final class ControlParser
 {
@@ -67,6 +70,7 @@ public final class ControlParser
      * @param simulator OtsSimulatorInterface; simulator
      * @param control List&lt;Control&gt;; control objects
      * @param definitions Definitions; type definitions.
+     * @param inputParameters InputParameters; input parameters.
      * @throws NetworkException when sensors could not be added to the network
      * @throws IOException when a TrafCOD engine cannot be loaded
      * @throws MalformedURLException when a TrafCOD engine cannot be loaded
@@ -74,7 +78,7 @@ public final class ControlParser
      * @throws SimRuntimeException when a TrafCOD engine fails to initialize
      */
     public static void parseControl(final RoadNetwork otsNetwork, final OtsSimulatorInterface simulator, final Control control,
-            final Definitions definitions)
+            final Definitions definitions, final InputParameters inputParameters)
             throws NetworkException, MalformedURLException, IOException, SimRuntimeException, TrafficControlException
     {
 
@@ -82,29 +86,29 @@ public final class ControlParser
         for (FixedTime fixedTime : ParseUtil.getObjectsOfType(control.getFixedTimeOrTrafCod(), FixedTime.class))
         {
             String id = fixedTime.getId();
-            Duration cycleTime = fixedTime.getCycleTime();
-            Duration offset = fixedTime.getOffset();
+            Duration cycleTime = fixedTime.getCycleTime().get(inputParameters);
+            Duration offset = fixedTime.getOffset().get(inputParameters);
             Set<SignalGroup> signalGroups = new LinkedHashSet<>();
             Map<String, Cycle> cycles = new LinkedHashMap<>();
             for (Cycle cycle : fixedTime.getCycle())
             {
-                cycles.put(cycle.getSignalGroupId(), cycle);
+                cycles.put(cycle.getSignalGroupId().get(inputParameters), cycle);
             }
             for (org.opentrafficsim.xml.generated.ControlType.SignalGroup signalGroup : fixedTime.getSignalGroup())
             {
                 String signalGroupId = signalGroup.getId();
                 Cycle cycle = cycles.get(signalGroupId);
-                Duration signalGroupOffset = cycle.getOffset();
-                Duration preGreen = cycle.getPreGreen() == null ? Duration.ZERO : cycle.getPreGreen();
-                Duration green = cycle.getGreen();
-                Duration yellow = cycle.getYellow();
+                Duration signalGroupOffset = cycle.getOffset().get(inputParameters);
+                Duration preGreen = cycle.getPreGreen() == null ? Duration.ZERO : cycle.getPreGreen().get(inputParameters);
+                Duration green = cycle.getGreen().get(inputParameters);
+                Duration yellow = cycle.getYellow().get(inputParameters);
                 List<TrafficLight> trafficLights = signalGroup.getTrafficLight();
                 Set<String> trafficLightIds = new LinkedHashSet<>();
                 for (TrafficLight trafficLight : trafficLights)
                 {
-                    String linkId = trafficLight.getLink();
-                    String laneId = trafficLight.getLane();
-                    String trafficLightId = trafficLight.getTrafficLightId();
+                    String linkId = trafficLight.getLink().get(inputParameters);
+                    String laneId = trafficLight.getLane().get(inputParameters);
+                    String trafficLightId = trafficLight.getTrafficLightId().get(inputParameters);
                     trafficLightIds.add(linkId + "." + laneId + "." + trafficLightId);
                 }
                 signalGroups.add(new SignalGroup(signalGroupId, trafficLightIds, signalGroupOffset, preGreen, green, yellow));
@@ -124,7 +128,9 @@ public final class ControlParser
                 .getObjectsOfType(control.getFixedTimeOrTrafCod(), org.opentrafficsim.xml.generated.Control.TrafCod.class))
         {
             String controllerName = trafCod.getId();
-            String programString = trafCod.getProgram().getValue();
+            String programString = trafCod.getProgram().getValue().get(inputParameters);
+            // TODO: use space
+            //String programSpace = trafCod.getProgram().getSpace().get(inputParameters);
             List<String> program = null == programString ? TrafCod.loadTextFromURL(new URL(trafCod.getProgramFile()))
                     : Arrays.asList(programString.split("\n"));
             // Obtain the background image for the TrafCOD controller state display
@@ -132,17 +138,19 @@ public final class ControlParser
             BufferedImage backgroundImage = null;
             if (null != mapData)
             {
-                String graphicsType = mapData.getType().toString();
-                String encoding = mapData.getEncoding();
-                String encodedData = mapData.getValue();
-                if (!"base64".contentEquals(encoding))
+                GraphicsType graphicsType = mapData.getType().get(inputParameters);
+                Encoding encoding = mapData.getEncoding().get(inputParameters);
+                String encodedData = mapData.getValue().get(inputParameters);
+                // TODO: use space
+                //String mapSpace = mapData.getSpace().get(inputParameters);
+                if (!Encoding.BASE64.equals(encoding))
                 {
                     throw new RuntimeException("Unexpected image encoding: " + encoding);
                 }
                 byte[] imageBytes = DatatypeConverter.parseBase64Binary(encodedData);
                 switch (graphicsType)
                 {
-                    case "PNG":
+                    case PNG:
                         backgroundImage = ImageIO.read(new ByteArrayInputStream(imageBytes));
                         // javax.imageio.ImageIO.write(backgroundImage, "png", new File("c:\\temp\\test.png"));
                         break;
@@ -152,12 +160,13 @@ public final class ControlParser
                 }
             }
             Console trafCODConsole = trafCod.getConsole();
+            // TODO: implement coordinates file
             if (trafCODConsole.getCoordinatesFile() != null)
             {
                 System.out.println("coordinates file is " + trafCODConsole.getCoordinatesFile());
                 throw new TrafficControlException("Loading coordinates from file not implemented yet");
             }
-            String objectLocationsString = trafCODConsole.getCoordinates().getValue();
+            String objectLocationsString = trafCODConsole.getCoordinates().getValue().get(inputParameters);
             List<String> displayObjectLocations =
                     null == objectLocationsString ? TrafCod.loadTextFromURL(new URL(trafCod.getConsole().getCoordinatesFile()))
                             : Arrays.asList(objectLocationsString.split("\n"));
@@ -188,13 +197,14 @@ public final class ControlParser
                 {
                     // Handle single lane detector
                     SingleLane singleLaneDetector = detector.getSingleLane();
-                    CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(singleLaneDetector.getLink());
-                    Lane lane = (Lane) link.getCrossSectionElement(singleLaneDetector.getLane());
-                    Length entryPosition =
-                            Transformer.parseLengthBeginEnd(singleLaneDetector.getEntryPosition(), lane.getLength());
-                    Length exitPosition =
-                            Transformer.parseLengthBeginEnd(singleLaneDetector.getExitPosition(), lane.getLength());
-                    DetectorType detectorType = definitions.get(DetectorType.class, detector.getType());
+                    CrossSectionLink link =
+                            (CrossSectionLink) otsNetwork.getLink(singleLaneDetector.getLink().get(inputParameters));
+                    Lane lane = (Lane) link.getCrossSectionElement(singleLaneDetector.getLane().get(inputParameters));
+                    Length entryPosition = ParseUtil
+                            .parseLengthBeginEnd(singleLaneDetector.getEntryPosition().get(inputParameters), lane.getLength());
+                    Length exitPosition = ParseUtil
+                            .parseLengthBeginEnd(singleLaneDetector.getExitPosition().get(inputParameters), lane.getLength());
+                    DetectorType detectorType = definitions.get(DetectorType.class, detector.getType().get(inputParameters));
                     new TrafficLightDetector(detector.getId(), lane, entryPosition, lane, exitPosition, null,
                             RelativePosition.FRONT, RelativePosition.REAR, simulator, detectorType);
                 }
@@ -202,21 +212,26 @@ public final class ControlParser
                 {
                     // Handle detector spanning multiple lanes
                     MultipleLane multiLaneDetector = detector.getMultipleLane();
-                    CrossSectionLink entryLink = (CrossSectionLink) otsNetwork.getLink(multiLaneDetector.getEntryLink());
-                    Lane entryLane = (Lane) entryLink.getCrossSectionElement(multiLaneDetector.getEntryLane());
-                    Length entryPosition =
-                            Transformer.parseLengthBeginEnd(multiLaneDetector.getEntryPosition(), entryLane.getLength());
-                    CrossSectionLink exitLink = (CrossSectionLink) otsNetwork.getLink(multiLaneDetector.getExitLink());
-                    Lane exitLane = (Lane) exitLink.getCrossSectionElement(multiLaneDetector.getExitLane());
-                    Length exitPosition =
-                            Transformer.parseLengthBeginEnd(multiLaneDetector.getExitPosition(), exitLane.getLength());
+                    CrossSectionLink entryLink =
+                            (CrossSectionLink) otsNetwork.getLink(multiLaneDetector.getEntryLink().get(inputParameters));
+                    Lane entryLane =
+                            (Lane) entryLink.getCrossSectionElement(multiLaneDetector.getEntryLane().get(inputParameters));
+                    Length entryPosition = ParseUtil.parseLengthBeginEnd(
+                            multiLaneDetector.getEntryPosition().get(inputParameters), entryLane.getLength());
+                    CrossSectionLink exitLink =
+                            (CrossSectionLink) otsNetwork.getLink(multiLaneDetector.getExitLink().get(inputParameters));
+                    Lane exitLane =
+                            (Lane) exitLink.getCrossSectionElement(multiLaneDetector.getExitLane().get(inputParameters));
+                    Length exitPosition = ParseUtil.parseLengthBeginEnd(
+                            multiLaneDetector.getExitPosition().get(inputParameters), exitLane.getLength());
                     List<Lane> intermediateLanes = new ArrayList<>();
-                    for (IntermediateLanes linkAndLane : multiLaneDetector.getIntermediateLanes())
+                    for (LaneLinkType linkAndLane : multiLaneDetector.getIntermediateLanes())
                     {
-                        CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(linkAndLane.getLink());
-                        intermediateLanes.add((Lane) link.getCrossSectionElement(linkAndLane.getLane()));
+                        CrossSectionLink link =
+                                (CrossSectionLink) otsNetwork.getLink(linkAndLane.getLink().get(inputParameters));
+                        intermediateLanes.add((Lane) link.getCrossSectionElement(linkAndLane.getLane().get(inputParameters)));
                     }
-                    DetectorType detectorType = definitions.get(DetectorType.class, detector.getType());
+                    DetectorType detectorType = definitions.get(DetectorType.class, detector.getType().get(inputParameters));
                     new TrafficLightDetector(detector.getId(), entryLane, entryPosition, exitLane, exitPosition,
                             intermediateLanes, RelativePosition.FRONT, RelativePosition.REAR, simulator, detectorType);
                 }

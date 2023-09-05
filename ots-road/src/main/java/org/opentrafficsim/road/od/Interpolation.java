@@ -39,6 +39,13 @@ public enum Interpolation
             return (int) (frequency0.getInUnit(FrequencyUnit.PER_HOUR)
                     * (time1.getInUnit(TimeUnit.BASE_HOUR) - time0.getInUnit(TimeUnit.BASE_HOUR)));
         }
+        
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "STEPWISE";
+        }
     },
 
     /** Linear interpolation of demand. */
@@ -58,6 +65,13 @@ public enum Interpolation
         {
             return (int) (0.5 * (frequency0.getInUnit(FrequencyUnit.PER_HOUR) + frequency1.getInUnit(FrequencyUnit.PER_HOUR))
                     * (time1.getInUnit(TimeUnit.BASE_HOUR) - time0.getInUnit(TimeUnit.BASE_HOUR)));
+        }
+        
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "LINEAR";
         }
     };
 

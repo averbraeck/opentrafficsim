@@ -326,7 +326,11 @@
       <ots:Bezier Shape="1.1" Weighted="true" />
       <ots:DefinedLayout>1LEFT</ots:DefinedLayout>
     </ots:Link>
-
+    
+    <ots:Conflicts>
+      <ots:DefaultWidth />
+    </ots:Conflicts>
+    
   </ots:Network>
 
   <ots:Demand>
@@ -334,65 +338,53 @@
     <ots:ShortestRoute Id="EN2" GtuType="NL.CAR">
       <ots:From Node="E" />
       <ots:To Node="N2" />
-      <ots:DistanceCost>1/m</ots:DistanceCost>
     </ots:ShortestRoute>
     <ots:ShortestRoute Id="EW2" GtuType="NL.CAR">
       <ots:From Node="E" />
       <ots:To Node="W2" />
-      <ots:DistanceCost>1/m</ots:DistanceCost>
     </ots:ShortestRoute>
     <ots:ShortestRoute Id="ES2" GtuType="NL.CAR">
       <ots:From Node="E" />
       <ots:To Node="S2" />
-      <ots:DistanceCost>1/m</ots:DistanceCost>
     </ots:ShortestRoute>
 
     <ots:ShortestRoute Id="NW2" GtuType="NL.CAR">
       <ots:From Node="N" />
       <ots:To Node="W2" />
-      <ots:DistanceCost>1/m</ots:DistanceCost>
     </ots:ShortestRoute>
     <ots:ShortestRoute Id="NS2" GtuType="NL.CAR">
       <ots:From Node="N" />
       <ots:To Node="S2" />
-      <ots:DistanceCost>1/m</ots:DistanceCost>
     </ots:ShortestRoute>
     <ots:ShortestRoute Id="NE2" GtuType="NL.CAR">
       <ots:From Node="N" />
       <ots:To Node="E2" />
-      <ots:DistanceCost>1/m</ots:DistanceCost>
     </ots:ShortestRoute>
 
     <ots:ShortestRoute Id="WS2" GtuType="NL.CAR">
       <ots:From Node="W" />
       <ots:To Node="S2" />
-      <ots:DistanceCost>1/m</ots:DistanceCost>
     </ots:ShortestRoute>
     <ots:ShortestRoute Id="WE2" GtuType="NL.CAR">
       <ots:From Node="W" />
       <ots:To Node="E2" />
-      <ots:DistanceCost>1/m</ots:DistanceCost>
     </ots:ShortestRoute>
     <ots:ShortestRoute Id="WN2" GtuType="NL.CAR">
       <ots:From Node="W" />
       <ots:To Node="N2" />
-      <ots:DistanceCost>1/m</ots:DistanceCost>
     </ots:ShortestRoute>
 
     <ots:ShortestRoute Id="SE2" GtuType="NL.CAR">
       <ots:From Node="S" />
       <ots:To Node="E2" />
-      <ots:DistanceCost>1/m</ots:DistanceCost>
     </ots:ShortestRoute>
     <ots:ShortestRoute Id="SN2" GtuType="NL.CAR">
       <ots:From Node="S" />
       <ots:To Node="N2" />
-      <ots:DistanceCost>1/m</ots:DistanceCost>
     </ots:ShortestRoute>
     <ots:ShortestRoute Id="SW2" GtuType="NL.CAR">
       <ots:From Node="S" />
       <ots:To Node="W2" />
-      <ots:DistanceCost>1/m</ots:DistanceCost>
     </ots:ShortestRoute>
 
     <ots:ShortestRouteMix Id="E" GtuType="NL.CAR">

@@ -30,7 +30,7 @@
         <xsd:element ref="ots:Animation" minOccurs="0" maxOccurs="1" />
       </xsd:sequence>
       <!-- xsd:attribute ref="xml:base" / -->
-      <xsd:attribute ref="xml:space" use="optional" default="preserve" />
+      <xsd:attribute name="Space" type="ots:space" use="optional" default="preserve" />
     </xsd:complexType>
 
     <!-- ================================================================================================== -->

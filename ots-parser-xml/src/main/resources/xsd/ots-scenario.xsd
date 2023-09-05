@@ -298,13 +298,13 @@
 
       <xsd:element name="Od" minOccurs="0" maxOccurs="unbounded">
         <xsd:complexType>
-          <xsd:attribute name="Id" type="xsd:string" use="required" />
+          <xsd:attribute name="Id" type="ots:string" use="required" />
         </xsd:complexType>
       </xsd:element>
 
       <xsd:element name="Control" minOccurs="0" maxOccurs="unbounded">
         <xsd:complexType>
-          <xsd:attribute name="Id" type="xsd:string" use="required" />
+          <xsd:attribute name="Id" type="ots:string" use="required" />
         </xsd:complexType>
       </xsd:element>
 

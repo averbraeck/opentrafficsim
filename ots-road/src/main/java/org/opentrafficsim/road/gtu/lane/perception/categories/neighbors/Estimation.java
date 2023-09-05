@@ -25,6 +25,7 @@ public interface Estimation
     /** No estimation errors. */
     Estimation NONE = new Estimation()
     {
+        /** {@inheritDoc} */
         @Override
         public NeighborTriplet estimate(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length distance, final boolean downstream, final Time when) throws ParameterException
@@ -32,6 +33,13 @@ public interface Estimation
             return new NeighborTriplet(getDelayedHeadway(perceivingGtu, perceivedGtu, distance, downstream, when),
                     getEgoSpeed(perceivingGtu).plus(getDelayedSpeedDifference(perceivingGtu, perceivedGtu, when)),
                     perceivedGtu.getAcceleration(when));
+        }
+        
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "NONE";
         }
     };
 
@@ -44,6 +52,13 @@ public interface Estimation
         {
             return false;
         }
+        
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "UNDERESTIMATION";
+        }
     };
 
     /** OVerestimation based on situational awareness. */
@@ -54,6 +69,13 @@ public interface Estimation
         boolean overEstimation()
         {
             return true;
+        }
+        
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "OVERESTIMATION";
         }
     };
 

@@ -1,7 +1,9 @@
 package org.opentrafficsim.xml.bindings;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.exceptions.Throw;
 import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.xml.bindings.types.LengthType;
 
 /**
  * PositiveLengthAdapter converts between the XML String for a Length and the DJUnits Length. The length should be positive.
@@ -11,12 +13,17 @@ import org.djutils.logger.CategoryLogger;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class PositiveLengthAdapter extends UnitAdapter<Length>
+public class PositiveLengthAdapter extends ScalarAdapter<Length, LengthType>
 {
+    
     /** {@inheritDoc} */
     @Override
-    public Length unmarshal(final String field) throws IllegalArgumentException
+    public LengthType unmarshal(final String field) throws IllegalArgumentException
     {
+        if (isExpression(field))
+        {
+            return new LengthType(trimBrackets(field));
+        }
         if (field.trim().startsWith("-"))
         {
             CategoryLogger.always().error("PositiveLength cannot be negative '" + field + "'");
@@ -24,7 +31,7 @@ public class PositiveLengthAdapter extends UnitAdapter<Length>
         }
         try
         {
-            return Length.valueOf(field);
+            return new LengthType(Length.valueOf(field));
         }
         catch (Exception exception)
         {
@@ -35,9 +42,10 @@ public class PositiveLengthAdapter extends UnitAdapter<Length>
 
     /** {@inheritDoc} */
     @Override
-    public String marshal(final Length length) throws IllegalArgumentException
+    public String marshal(final LengthType length) throws IllegalArgumentException
     {
-        if (length.lt(Length.ZERO))
+        Throw.whenNull(length, "Marshalling scalar with unit: argument contains null value");
+        if (!length.isExpression() && length.getValue().lt(Length.ZERO))
         {
             CategoryLogger.always().error("PositiveLength cannot be negative: " + length);
             throw new IllegalArgumentException("PositiveLength cannot be negative: " + length);

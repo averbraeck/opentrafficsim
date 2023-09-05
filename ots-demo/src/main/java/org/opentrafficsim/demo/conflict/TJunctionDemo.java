@@ -118,12 +118,6 @@ public class TJunctionDemo extends OtsSimulationApplication<TJunctionModel>
                 this.network = new RoadNetwork("TJunction", getSimulator());
                 XmlNetworkLaneParser.build(xmlURL, this.network, false);
 
-                // add conflicts
-                // ((CrossSectionLink) this.network.getLink("SCEC")).setPriority(Priority.STOP);
-                // ((CrossSectionLink) this.network.getLink("SCWC")).setPriority(Priority.STOP);
-                ConflictBuilder.buildConflicts(this.network, this.simulator,
-                        new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
-
                 // add trafficlight after
                 Lane lane = ((CrossSectionLink) this.network.getLink("ECE")).getLanes().get(0);
                 TrafficLight trafficLight =

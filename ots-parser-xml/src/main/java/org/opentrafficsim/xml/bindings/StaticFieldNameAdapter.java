@@ -1,10 +1,10 @@
 package org.opentrafficsim.xml.bindings;
 
-import javax.management.modelmbean.XMLParseException;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import java.lang.reflect.Field;
 
 import org.djutils.logger.CategoryLogger;
 import org.djutils.reflection.ClassUtil;
+import org.opentrafficsim.xml.bindings.types.FieldType;
 
 /**
  * StaticFieldNameAdapter converts between the XML String for a class name and the Class object. <br>
@@ -16,19 +16,23 @@ import org.djutils.reflection.ClassUtil;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class StaticFieldNameAdapter extends XmlAdapter<String, Object>
+public class StaticFieldNameAdapter extends ExpressionAdapter<Field, FieldType>
 {
 
     /** {@inheritDoc} */
     @Override
-    public Object unmarshal(final String field) throws Exception
+    public FieldType unmarshal(final String field) throws Exception
     {
+        if (isExpression(field))
+        {
+            return new FieldType(trimBrackets(field));
+        }
         try
         {
             int dot = field.lastIndexOf(".");
             String className = field.substring(0, dot);
             String fieldName = field.substring(dot + 1);
-            return ClassUtil.resolveField(Class.forName(className), fieldName).get(null);
+            return new FieldType(ClassUtil.resolveField(Class.forName(className), fieldName));
         }
         catch (Exception exception)
         {
@@ -39,9 +43,9 @@ public class StaticFieldNameAdapter extends XmlAdapter<String, Object>
 
     /** {@inheritDoc} */
     @Override
-    public String marshal(final Object v) throws Exception
+    public String marshal(final FieldType value)
     {
-        throw new XMLParseException("Unable to marshal an object to it's original static field location.");
+        return marshal(value, (v) -> (v.getDeclaringClass().getName() + "." + v.getName()));
     }
 
 }

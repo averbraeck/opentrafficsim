@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
-  xmlns:ots="http://www.opentrafficsim.org/ots" 
-  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  elementFormDefault="qualified">
+  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" elementFormDefault="qualified">
 
   <!-- http://www.w3.org/2009/01/xml.xsd -->
   <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="ref/xml.xsd" />
@@ -22,11 +21,11 @@
             <xsd:sequence>
               <xsd:element name="Level" type="ots:LevelTimeType" minOccurs="0" maxOccurs="unbounded" />
             </xsd:sequence>
-            <xsd:attribute name="Origin" type="xsd:string" use="required" />
-            <xsd:attribute name="Destination" type="xsd:string" use="required" />
-            <xsd:attribute name="Category" type="xsd:string" use="optional" />
-            <xsd:attribute name="Interpolation" type="ots:InterpolationType" use="optional" default="LINEAR" />
-            <xsd:attribute name="Factor" type="ots:PositiveFactor" use="optional" default="1.0" />
+            <xsd:attribute name="Origin" type="ots:string" use="required" />
+            <xsd:attribute name="Destination" type="ots:string" use="required" />
+            <xsd:attribute name="Category" type="ots:string" use="optional" />
+            <xsd:attribute name="Interpolation" type="ots:InterpolationType" use="optional" />
+            <xsd:attribute name="Factor" type="ots:PositiveFactor" use="optional" />
             <!-- xsd:attribute ref="xml:base" / -->
           </xsd:complexType>
         </xsd:element>
@@ -36,7 +35,7 @@
       <xsd:attribute name="SinkType" type="xsd:string" use="required" />
       <xsd:attribute name="GlobalInterpolation" type="ots:InterpolationType" use="optional" default="LINEAR" />
       <xsd:attribute name="GlobalFactor" type="ots:PositiveFactor" use="optional" default="1.0" />
-      <xsd:attribute name="Options" type="xsd:string" use="optional" />
+      <xsd:attribute name="Options" type="ots:string" use="optional" />
       <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
@@ -72,7 +71,7 @@
                 <xsd:complexType>
                   <xsd:choice>
                     <xsd:element name="Id" type="xsd:string" />
-                    <xsd:element name="ModelIdReferral" type="xsd:string" />
+                    <xsd:element name="ModelIdReferral" type="ots:string" />
                   </xsd:choice>
                 </xsd:complexType>
               </xsd:element>
@@ -80,9 +79,9 @@
                 <xsd:complexType>
                   <xsd:choice>
                     <xsd:element name="Id" type="xsd:string" />
-                    <xsd:element name="ModelIdReferral" type="xsd:string" />
+                    <xsd:element name="ModelIdReferral" type="ots:string" />
                   </xsd:choice>
-                  <xsd:attribute name="GtuType" type="xsd:string" use="required" />
+                  <xsd:attribute name="GtuType" type="ots:string" use="required" />
                 </xsd:complexType>
               </xsd:element>
               <xsd:element name="NoLaneChange" type="ots:PositiveLengthType" minOccurs="0">
@@ -98,14 +97,18 @@
               <xsd:element name="RoomChecker" type="ots:RoomCheckerType" minOccurs="0" />
               <xsd:element name="HeadwayDist" minOccurs="0">
                 <xsd:simpleType>
-                  <xsd:restriction base="xsd:string">
-                    <xsd:enumeration value="CONSTANT" />
-                    <xsd:enumeration value="EXPONENTIAL" />
-                    <xsd:enumeration value="UNIFORM" />
-                    <xsd:enumeration value="TRIANGULAR" />
-                    <xsd:enumeration value="TRI_EXP" />
-                    <xsd:enumeration value="LOGNORMAL" />
-                  </xsd:restriction>
+                  <xsd:union memberTypes="ots:Expression">
+                    <xsd:simpleType>
+                      <xsd:restriction base="xsd:string">
+                        <xsd:enumeration value="CONSTANT" />
+                        <xsd:enumeration value="EXPONENTIAL" />
+                        <xsd:enumeration value="UNIFORM" />
+                        <xsd:enumeration value="TRIANGULAR" />
+                        <xsd:enumeration value="TRI_EXP" />
+                        <xsd:enumeration value="LOGNORMAL" />
+                      </xsd:restriction>
+                    </xsd:simpleType>
+                  </xsd:union>
                 </xsd:simpleType>
               </xsd:element>
               <xsd:element name="Markov" minOccurs="0">
@@ -126,9 +129,9 @@
                         </xsd:documentation>
                       </xsd:annotation>
                       <xsd:complexType>
-                        <xsd:attribute name="GtuType" type="xsd:string" use="required" />
-                        <xsd:attribute name="Parent" type="xsd:string" use="optional" />
-                        <xsd:attribute name="Correlation" type="xsd:float" use="required" />
+                        <xsd:attribute name="GtuType" type="ots:string" use="required" />
+                        <xsd:attribute name="Parent" type="ots:string" use="optional" />
+                        <xsd:attribute name="Correlation" type="ots:double" use="required" />
                       </xsd:complexType>
                     </xsd:element>
                   </xsd:sequence>
@@ -145,7 +148,7 @@
                     <xsd:element ref="ots:LaneBias" />
                     <xsd:element name="DefinedLaneBias">
                       <xsd:complexType>
-                        <xsd:attribute name="GtuType" type="xsd:string" use="required" />
+                        <xsd:attribute name="GtuType" type="ots:string" use="required" />
                       </xsd:complexType>
                     </xsd:element>
                   </xsd:choice>
@@ -178,10 +181,10 @@
   <xsd:element name="Route">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="Node" type="xsd:string" minOccurs="2" maxOccurs="unbounded" />
+        <xsd:element name="Node" type="ots:string" minOccurs="2" maxOccurs="unbounded" />
       </xsd:sequence>
       <xsd:attribute name="Id" type="xsd:string" use="required" />
-      <xsd:attribute name="GtuType" type="xsd:string" use="required" />
+      <xsd:attribute name="GtuType" type="ots:string" use="required" />
       <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
@@ -191,26 +194,36 @@
       <xsd:sequence>
         <xsd:element name="From" minOccurs="1">
           <xsd:complexType>
-            <xsd:attribute name="Node" type="xsd:string" use="required" />
+            <xsd:attribute name="Node" type="ots:string" use="required" />
           </xsd:complexType>
         </xsd:element>
         <xsd:element name="To" minOccurs="1">
           <xsd:complexType>
-            <xsd:attribute name="Node" type="xsd:string" use="required" />
+            <xsd:attribute name="Node" type="ots:string" use="required" />
           </xsd:complexType>
         </xsd:element>
         <xsd:element name="Via" minOccurs="0" maxOccurs="unbounded">
           <xsd:complexType>
-            <xsd:attribute name="Node" type="xsd:string" use="required" />
+            <xsd:attribute name="Node" type="ots:string" use="required" />
           </xsd:complexType>
         </xsd:element>
-        <xsd:choice minOccurs="1" maxOccurs="2">
-          <xsd:element name="DistanceCost" type="ots:DistanceCostType" minOccurs="1" maxOccurs="1" />
-          <xsd:element name="TimeCost" type="ots:TimeCostType" minOccurs="1" maxOccurs="1" />
-        </xsd:choice>
+        <xsd:element name="Cost" minOccurs="0">
+          <xsd:complexType>
+            <xsd:choice minOccurs="1">
+              <xsd:element name="Distance" type="ots:EmptyType" />
+              <xsd:element name="FreeFlowTime" type="ots:EmptyType" />
+              <xsd:element name="DistanceAndFreeFlowTime">
+                <xsd:complexType>
+                  <xsd:attribute name="DistanceCost" type="ots:LinearDensityType" use="optional" />
+                  <xsd:attribute name="TimeCost" type="ots:FrequencyType" use="optional" />
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:choice>
+          </xsd:complexType>
+        </xsd:element>
       </xsd:sequence>
       <xsd:attribute name="Id" type="xsd:string" use="required" />
-      <xsd:attribute name="GtuType" type="xsd:string" use="required" />
+      <xsd:attribute name="GtuType" type="ots:string" use="required" />
       <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
@@ -220,14 +233,14 @@
       <xsd:sequence>
         <xsd:element name="Route" minOccurs="1" maxOccurs="unbounded">
           <xsd:complexType>
-            <xsd:attribute name="Id" type="xsd:string" use="required" />
-            <xsd:attribute name="Weight" type="xsd:double" use="required" />
+            <xsd:attribute name="Id" type="ots:string" use="required" />
+            <xsd:attribute name="Weight" type="ots:double" use="required" />
           </xsd:complexType>
         </xsd:element>
         <xsd:element name="RandomStream" type="ots:RandomStreamSource" minOccurs="0" />
       </xsd:sequence>
       <xsd:attribute name="Id" type="xsd:string" use="required" />
-      <xsd:attribute name="GtuType" type="xsd:string" use="required" />
+      <xsd:attribute name="GtuType" type="ots:string" use="required" />
       <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
@@ -237,14 +250,14 @@
       <xsd:sequence>
         <xsd:element name="ShortestRoute" minOccurs="1" maxOccurs="unbounded">
           <xsd:complexType>
-            <xsd:attribute name="Id" type="xsd:string" use="required" />
-            <xsd:attribute name="Weight" type="xsd:double" use="required" />
+            <xsd:attribute name="Id" type="ots:string" use="required" />
+            <xsd:attribute name="Weight" type="ots:double" use="required" />
           </xsd:complexType>
         </xsd:element>
         <xsd:element name="RandomStream" type="ots:RandomStreamSource" minOccurs="0" />
       </xsd:sequence>
       <xsd:attribute name="Id" type="xsd:string" use="required" />
-      <xsd:attribute name="GtuType" type="xsd:string" use="required" />
+      <xsd:attribute name="GtuType" type="ots:string" use="required" />
       <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
@@ -253,37 +266,39 @@
     <xsd:complexType>
       <xsd:sequence>
         <xsd:choice>
-          <xsd:element name="GtuTemplate" type="xsd:string" />
-          <xsd:element name="GtuTemplateMix" type="xsd:string" />
+          <xsd:element name="GtuTemplate" type="ots:string" />
+          <xsd:element name="GtuTemplateMix" type="ots:string" />
         </xsd:choice>
         <xsd:choice>
-          <xsd:element name="Route" type="xsd:string" />
-          <xsd:element name="RouteMix" type="xsd:string" />
-          <xsd:element name="ShortestRoute" type="xsd:string" />
-          <xsd:element name="ShortestRouteMix" type="xsd:string" />
+          <xsd:element name="Route" type="ots:string" />
+          <xsd:element name="RouteMix" type="ots:string" />
+          <xsd:element name="ShortestRoute" type="ots:string" />
+          <xsd:element name="ShortestRouteMix" type="ots:string" />
         </xsd:choice>
         <xsd:element name="Frequency" type="ots:FrequencyType" />
         <xsd:element name="RoomChecker" type="ots:RoomCheckerType" minOccurs="0" maxOccurs="1" />
         <xsd:element name="RandomStream" type="ots:RandomStreamSource" minOccurs="0" />
       </xsd:sequence>
       <!-- LINK + LANE should be unique -->
-      <xsd:attribute name="Link" type="xsd:string" use="required" />
-      <xsd:attribute name="Lane" type="xsd:string" use="required" />
+      <xsd:attribute name="Link" type="ots:string" use="required" />
+      <xsd:attribute name="Lane" type="ots:string" use="required" />
       <xsd:attribute name="Position" type="ots:LengthBeginEndType" use="required" />
     </xsd:complexType>
   </xsd:element>
 
   <xsd:element name="Sink">
     <xsd:complexType>
-      <xsd:attribute name="Type" type="xsd:string" use="required" />
-      <xsd:attribute name="Link" type="xsd:string" use="required" />
-      <xsd:attribute name="Lane" type="xsd:string" use="required" />
+      <xsd:attribute name="Type" type="ots:string" use="required" />
+      <xsd:attribute name="Link" type="ots:string" use="required" />
+      <xsd:attribute name="Lane" type="ots:string" use="required" />
       <xsd:attribute name="Position" type="ots:LengthBeginEndType" use="required" />
-      <xsd:attribute name="Destination" type="xsd:boolean" use="optional" default="true">
-      	<xsd:annotation>
-      	  <xsd:documentation source="description">When true, only GTUs with a route towards the link end node will be deleted, 
-      	  or possibly towards the end node of a next connector.</xsd:documentation>
-      	</xsd:annotation>
+      <xsd:attribute name="Destination" type="ots:boolean" use="optional" default="true">
+        <xsd:annotation>
+          <xsd:documentation source="description">When true, only GTUs with a route towards the link end node will be
+            deleted,
+            or possibly towards the end node of a next connector.
+          </xsd:documentation>
+        </xsd:annotation>
       </xsd:attribute>
     </xsd:complexType>
   </xsd:element>
@@ -292,21 +307,21 @@
     <xsd:complexType>
       <xsd:sequence>
         <xsd:choice>
-          <xsd:element name="GtuTemplate" type="xsd:string" />
-          <xsd:element name="GtuTemplateMix" type="xsd:string" />
+          <xsd:element name="GtuTemplate" type="ots:string" />
+          <xsd:element name="GtuTemplateMix" type="ots:string" />
         </xsd:choice>
         <xsd:choice>
-          <xsd:element name="Route" type="xsd:string" />
-          <xsd:element name="RouteMix" type="xsd:string" />
-          <xsd:element name="ShortestRoute" type="xsd:string" />
-          <xsd:element name="ShortestRouteMix" type="xsd:string" />
+          <xsd:element name="Route" type="ots:string" />
+          <xsd:element name="RouteMix" type="ots:string" />
+          <xsd:element name="ShortestRoute" type="ots:string" />
+          <xsd:element name="ShortestRouteMix" type="ots:string" />
         </xsd:choice>
         <xsd:element name="RoomChecker" type="ots:RoomCheckerType" minOccurs="0" maxOccurs="1" />
       </xsd:sequence>
-      <xsd:attribute name="Link" type="xsd:string" use="required" />
-      <xsd:attribute name="Lane" type="xsd:string" use="required" />
+      <xsd:attribute name="Link" type="ots:string" use="required" />
+      <xsd:attribute name="Lane" type="ots:string" use="required" />
       <xsd:attribute name="Position" type="ots:LengthBeginEndType" use="optional" />
-      <xsd:attribute name="Uri" type="xsd:anyURI" use="required" />
+      <xsd:attribute name="Uri" type="ots:anyURI" use="required" />
       <!-- TODO: Add inline list. -->
     </xsd:complexType>
   </xsd:element>
@@ -336,7 +351,8 @@
   <xsd:complexType name="RoomCheckerType">
     <xsd:annotation>
       <xsd:documentation source="description">
-        Cf uses equilibrium car-following, CfBa uses non-equilibrium car-following to increase flow based on 
+        Cf uses equilibrium car-following, CfBa uses non-equilibrium car-following to
+        increase flow based on
         bounded-acceleration, Ttc uses time-to-collision.
       </xsd:documentation>
     </xsd:annotation>
@@ -357,23 +373,13 @@
     </xsd:sequence>
   </xsd:complexType>
 
-  <xsd:complexType name="Time">
-    <xsd:attribute name="Value" type="ots:TimeType" use="required" />
-    <!-- xsd:attribute ref="xml:base" / -->
-  </xsd:complexType>
-
-  <xsd:complexType name="LaneLinkType">
-    <xsd:attribute name="Id" type="xsd:string" />
-    <xsd:attribute name="Link" type="xsd:string" />
-  </xsd:complexType>
-
   <xsd:complexType name="CategoryType">
     <xsd:sequence>
       <xsd:element name="Lane" type="ots:LaneLinkType" minOccurs="0" />
     </xsd:sequence>
     <xsd:attribute name="Id" type="xsd:string" use="required" />
-    <xsd:attribute name="GtuType" type="xsd:string" use="optional" />
-    <xsd:attribute name="Route" type="xsd:string" use="optional" />
+    <xsd:attribute name="GtuType" type="ots:string" use="optional" />
+    <xsd:attribute name="Route" type="ots:string" use="optional" />
     <xsd:attribute name="Factor" type="ots:PositiveFactor" use="optional" default="1.0" />
     <!-- xsd:attribute ref="xml:base" / -->
   </xsd:complexType>
@@ -389,10 +395,10 @@
 
   <xsd:simpleType name="LevelType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide level as percentage, X.Xveh/{time unit}.</xsd:appinfo>
+      <xsd:appinfo source="pattern">Provide a positive value or percentage, or X.Xveh/{time unit}.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(\d*(\.\d\d*)?\%?)|\d+\.?\d*\s*veh(\s*\/\s*(ms|s|m|min|h|hr|d|day|wk|week))?" />
+      <xsd:pattern value="\{[^{}]+\}|((\d*(\.\d\d*)?\%?)|\d+\.?\d*\s*veh(\s*\/\s*(ms|s|m|min|h|hr|d|day|wk|week))?)" />
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -401,7 +407,7 @@
       <xsd:appinfo source="pattern">Provide a positive value or percentage.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\d*(\.\d\d*)?\%?" />
+      <xsd:pattern value="\{[^{}]+\}|(\d*(\.\d\d*)?\%?)" />
     </xsd:restriction>
   </xsd:simpleType>
 

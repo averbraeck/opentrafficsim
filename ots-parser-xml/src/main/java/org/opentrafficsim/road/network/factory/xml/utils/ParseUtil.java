@@ -3,8 +3,16 @@ package org.opentrafficsim.road.network.factory.xml.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.parameters.InputParameters;
+import org.opentrafficsim.road.gtu.generator.CfBaRoomChecker;
+import org.opentrafficsim.road.gtu.generator.CfRoomChecker;
+import org.opentrafficsim.road.gtu.generator.TtcRoomChecker;
+import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
+import org.opentrafficsim.xml.bindings.types.LengthBeginEndType.LengthBeginEnd;
 import org.opentrafficsim.xml.generated.RandomStreamSource;
+import org.opentrafficsim.xml.generated.RoomCheckerType;
 
 import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -16,6 +24,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 public final class ParseUtil
 {
@@ -51,11 +60,12 @@ public final class ParseUtil
      * Find and return the stream belonging to te streamId.
      * @param streamInformation the map with streams from the RUN tag
      * @param streamSource the stream source
+     * @param inputParameters InputParameters; input parameters.
      * @return the stream belonging to te streamId
      * @throws XmlParserException when the stream could not be found
      */
-    public static StreamInterface findStream(final StreamInformation streamInformation, final RandomStreamSource streamSource)
-            throws XmlParserException
+    public static StreamInterface findStream(final StreamInformation streamInformation, final RandomStreamSource streamSource,
+            final InputParameters inputParameters) throws XmlParserException
     {
         String streamId;
         if (streamSource == null || streamSource.getDefault() == null)
@@ -68,12 +78,52 @@ public final class ParseUtil
         }
         else
         {
-            streamId = streamSource.getDefined();
+            streamId = streamSource.getDefined().get(inputParameters);
         }
         if (streamInformation.getStream(streamId) == null)
         {
             throw new XmlParserException("Could not find stream with Id=" + streamId);
         }
         return streamInformation.getStream(streamId);
+    }
+    
+    /**
+     * Parse LengthBeginEnd for a Lane.
+     * @param lbe LengthBeginEnd; the begin, end, fraction, or offset from begin or end on the lane
+     * @param laneLength Length; the length of the lane
+     * @return the offset on the lane
+     */
+    public static Length parseLengthBeginEnd(final LengthBeginEnd lbe, final Length laneLength)
+    {
+        if (lbe.isAbsolute())
+        {
+            if (lbe.isBegin())
+                return lbe.getOffset();
+            else
+                return laneLength.minus(lbe.getOffset());
+        }
+        else
+        {
+            return laneLength.times(lbe.getFraction());
+        }
+    }
+
+    /**
+     * Parse room checker.
+     * @param roomChecker RoomCheckerType; room checker type
+     * @param inputParameters InputParameters; input parameters.
+     * @return RoomChecker; parsed room checker
+     */
+    public static RoomChecker parseRoomChecker(final RoomCheckerType roomChecker, final InputParameters inputParameters)
+    {
+        if (roomChecker == null || roomChecker.getCf() != null)
+        {
+            return new CfRoomChecker();
+        }
+        else if (roomChecker.getCfBa() != null)
+        {
+            return new CfBaRoomChecker();
+        }
+        return new TtcRoomChecker(roomChecker.getTtc().get(inputParameters));
     }
 }

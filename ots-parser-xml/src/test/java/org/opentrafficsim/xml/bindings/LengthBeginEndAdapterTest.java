@@ -7,7 +7,8 @@ import javax.xml.bind.JAXBException;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.xml.bindings.types.LengthBeginEnd;
+import org.opentrafficsim.xml.bindings.types.LengthBeginEndType;
+import org.opentrafficsim.xml.bindings.types.LengthBeginEndType.LengthBeginEnd;
 
 /**
  * LengthBeginEndAdapterTest for LengthBeginEnd.
@@ -30,58 +31,58 @@ public class LengthBeginEndAdapterTest
     /**
      * Test the LengthBeginEndAdapter
      */
-    // TODO: repair @Test
+    // TODO: repair @Test (problem with Locale when creating Length from String "2.3mm")
     public void testLengthBeginEndAdapter() throws JAXBException
     {
         LengthBeginEndAdapter lbeAdapter = new LengthBeginEndAdapter();
 
-        LengthBeginEnd lbeBegin = new LengthBeginEnd(true, Length.ZERO);
-        LengthBeginEnd lbeEnd = new LengthBeginEnd(false, Length.ZERO);
+        LengthBeginEndType lbeBegin = new LengthBeginEndType(new LengthBeginEnd(true, Length.ZERO));
+        LengthBeginEndType lbeEnd = new LengthBeginEndType(new LengthBeginEnd(false, Length.ZERO));
 
-        assertEquals(lbeBegin, lbeAdapter.unmarshal("BEGIN"));
-        assertEquals(lbeEnd, lbeAdapter.unmarshal("END"));
+        assertEquals(lbeBegin.getValue(), lbeAdapter.unmarshal("BEGIN").getValue());
+        assertEquals(lbeEnd.getValue(), lbeAdapter.unmarshal("END").getValue());
 
         assertEquals("BEGIN", lbeAdapter.marshal(lbeBegin));
         assertEquals("END", lbeAdapter.marshal(lbeEnd));
 
-        LengthBeginEnd lbeFraction00 = new LengthBeginEnd(0.0);
-        LengthBeginEnd lbeFraction05 = new LengthBeginEnd(0.5);
-        LengthBeginEnd lbeFraction10 = new LengthBeginEnd(1.0);
+        LengthBeginEndType lbeFraction00 = new LengthBeginEndType(new LengthBeginEnd(0.0));
+        LengthBeginEndType lbeFraction05 = new LengthBeginEndType(new LengthBeginEnd(0.5));
+        LengthBeginEndType lbeFraction10 = new LengthBeginEndType(new LengthBeginEnd(1.0));
 
-        assertEquals(lbeFraction00, lbeAdapter.unmarshal("0.0"));
-        assertEquals(lbeFraction00, lbeAdapter.unmarshal(".0"));
-        assertEquals(lbeFraction00, lbeAdapter.unmarshal("0"));
-        assertEquals(lbeFraction00, lbeAdapter.unmarshal("0.00"));
+        assertEquals(lbeFraction00.getValue(), lbeAdapter.unmarshal("0.0").getValue());
+        assertEquals(lbeFraction00.getValue(), lbeAdapter.unmarshal(".0").getValue());
+        assertEquals(lbeFraction00.getValue(), lbeAdapter.unmarshal("0").getValue());
+        assertEquals(lbeFraction00.getValue(), lbeAdapter.unmarshal("0.00").getValue());
 
-        assertEquals(lbeFraction05, lbeAdapter.unmarshal("0.5"));
-        assertEquals(lbeFraction05, lbeAdapter.unmarshal(".5"));
-        assertEquals(lbeFraction05, lbeAdapter.unmarshal("0.50"));
+        assertEquals(lbeFraction05.getValue(), lbeAdapter.unmarshal("0.5").getValue());
+        assertEquals(lbeFraction05.getValue(), lbeAdapter.unmarshal(".5").getValue());
+        assertEquals(lbeFraction05.getValue(), lbeAdapter.unmarshal("0.50").getValue());
 
-        assertEquals(lbeFraction10, lbeAdapter.unmarshal("1.0"));
-        assertEquals(lbeFraction10, lbeAdapter.unmarshal("1"));
-        assertEquals(lbeFraction10, lbeAdapter.unmarshal("1.00"));
+        assertEquals(lbeFraction10.getValue(), lbeAdapter.unmarshal("1.0").getValue());
+        assertEquals(lbeFraction10.getValue(), lbeAdapter.unmarshal("1").getValue());
+        assertEquals(lbeFraction10.getValue(), lbeAdapter.unmarshal("1.00").getValue());
 
-        assertEquals(lbeFraction00, lbeAdapter.unmarshal("0.0%"));
-        assertEquals(lbeFraction00, lbeAdapter.unmarshal(".0%"));
-        assertEquals(lbeFraction00, lbeAdapter.unmarshal("0%"));
-        assertEquals(lbeFraction00, lbeAdapter.unmarshal("0.00%"));
+        assertEquals(lbeFraction00.getValue(), lbeAdapter.unmarshal("0.0%").getValue());
+        assertEquals(lbeFraction00.getValue(), lbeAdapter.unmarshal(".0%").getValue());
+        assertEquals(lbeFraction00.getValue(), lbeAdapter.unmarshal("0%").getValue());
+        assertEquals(lbeFraction00.getValue(), lbeAdapter.unmarshal("0.00%").getValue());
 
-        assertEquals(lbeFraction00, lbeAdapter.unmarshal("0.0 %"));
-        assertEquals(lbeFraction00, lbeAdapter.unmarshal(".0 %"));
-        assertEquals(lbeFraction00, lbeAdapter.unmarshal("0 %"));
-        assertEquals(lbeFraction00, lbeAdapter.unmarshal("0.00 %"));
+        assertEquals(lbeFraction00.getValue(), lbeAdapter.unmarshal("0.0 %").getValue());
+        assertEquals(lbeFraction00.getValue(), lbeAdapter.unmarshal(".0 %").getValue());
+        assertEquals(lbeFraction00.getValue(), lbeAdapter.unmarshal("0 %").getValue());
+        assertEquals(lbeFraction00.getValue(), lbeAdapter.unmarshal("0.00 %").getValue());
 
-        assertEquals(lbeFraction05, lbeAdapter.unmarshal("50%"));
-        assertEquals(lbeFraction05, lbeAdapter.unmarshal("50.0%"));
+        assertEquals(lbeFraction05.getValue(), lbeAdapter.unmarshal("50%").getValue());
+        assertEquals(lbeFraction05.getValue(), lbeAdapter.unmarshal("50.0%").getValue());
 
-        assertEquals(lbeFraction05, lbeAdapter.unmarshal("50 %"));
-        assertEquals(lbeFraction05, lbeAdapter.unmarshal("50.0 %"));
+        assertEquals(lbeFraction05.getValue(), lbeAdapter.unmarshal("50 %").getValue());
+        assertEquals(lbeFraction05.getValue(), lbeAdapter.unmarshal("50.0 %").getValue());
 
-        assertEquals(lbeFraction10, lbeAdapter.unmarshal("100%"));
-        assertEquals(lbeFraction10, lbeAdapter.unmarshal("100.0%"));
+        assertEquals(lbeFraction10.getValue(), lbeAdapter.unmarshal("100%").getValue());
+        assertEquals(lbeFraction10.getValue(), lbeAdapter.unmarshal("100.0%").getValue());
 
-        assertEquals(lbeFraction10, lbeAdapter.unmarshal("100 %"));
-        assertEquals(lbeFraction10, lbeAdapter.unmarshal("100.0 %"));
+        assertEquals(lbeFraction10.getValue(), lbeAdapter.unmarshal("100 %").getValue());
+        assertEquals(lbeFraction10.getValue(), lbeAdapter.unmarshal("100.0 %").getValue());
 
         assertEquals("0.0", lbeAdapter.marshal(lbeFraction00));
         assertEquals("0.5", lbeAdapter.marshal(lbeFraction05));
@@ -104,24 +105,26 @@ public class LengthBeginEndAdapterTest
                 final LengthUnit unit = this.units[i];
                 final String us = this.unitStrings[i];
                 final String prefix = begin ? "" : "END-";
-                final LengthBeginEnd lbe23 = new LengthBeginEnd(begin, new Length(2.3, unit));
-                final LengthBeginEnd lbe00 = new LengthBeginEnd(begin, new Length(0.0, unit));
+                final LengthBeginEndType lbe23 = new LengthBeginEndType(new LengthBeginEnd(begin, new Length(2.3, unit)));
+                final LengthBeginEndType lbe00 = new LengthBeginEndType(new LengthBeginEnd(begin, new Length(0.0, unit)));
 
-                assertEquals(lbe23, lbeAdapter.unmarshal(prefix + "2.3 " + us));
-                assertEquals(lbe23, lbeAdapter.unmarshal(prefix + "2.3" + us));
+                assertEquals(lbe23.getValue(), lbeAdapter.unmarshal(prefix + "2.3 " + us).getValue());
+                assertEquals(lbe23.getValue(), lbeAdapter.unmarshal(prefix + "2.3" + us).getValue());
                 Try.testFail(() -> lbeAdapter.unmarshal(prefix + "-2.3 " + us));
                 Try.testFail(() -> lbeAdapter.unmarshal(prefix + "-2.3" + us));
 
                 assertEquals(prefix + "2.3 " + us, lbeAdapter.marshal(lbe23));
-                Try.testFail(() -> lbeAdapter.marshal(new LengthBeginEnd(begin, new Length(-2.3, unit))));
+                Try.testFail(
+                        () -> lbeAdapter.marshal(new LengthBeginEndType(new LengthBeginEnd(begin, new Length(-2.3, unit)))));
 
-                assertEquals(lbe00, lbeAdapter.unmarshal(prefix + "0.0 " + us));
-                assertEquals(lbe00, lbeAdapter.unmarshal(prefix + "0.0" + us));
+                assertEquals(lbe00.getValue(), lbeAdapter.unmarshal(prefix + "0.0 " + us).getValue());
+                assertEquals(lbe00.getValue(), lbeAdapter.unmarshal(prefix + "0.0" + us).getValue());
                 Try.testFail(() -> lbeAdapter.unmarshal(prefix + "-0.0 " + us));
                 Try.testFail(() -> lbeAdapter.unmarshal(prefix + "-0.0" + us));
 
                 assertEquals(begin ? "BEGIN" : "END", lbeAdapter.marshal(lbe00));
-                Try.testFail(() -> lbeAdapter.marshal(new LengthBeginEnd(begin, new Length(-0.0, unit))));
+                Try.testFail(
+                        () -> lbeAdapter.marshal(new LengthBeginEndType(new LengthBeginEnd(begin, new Length(-0.0, unit)))));
             }
         }
     }
