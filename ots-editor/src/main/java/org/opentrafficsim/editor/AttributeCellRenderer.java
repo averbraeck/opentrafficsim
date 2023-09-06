@@ -68,6 +68,11 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
                     {
                         this.checkBox.setBackground(UIManager.getColor("Table.selectionBackground"));
                     }
+                    else if (node.attributeIsExpression(row))
+                    {
+                        // TODO: we could never set an expression on a checkbox
+                        this.checkBox.setBackground(OtsEditor.EXPRESSION_COLOR);
+                    }
                     else
                     {
                         this.checkBox.setBackground(UIManager.getColor("Panel.background"));
@@ -130,6 +135,10 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
                 if (node.isInclude())
                 {
                     setBackground(UIManager.getColor("Panel.background"));
+                }
+                else if (node.attributeIsExpression(row))
+                {
+                    setBackground(OtsEditor.EXPRESSION_COLOR);
                 }
                 else
                 {

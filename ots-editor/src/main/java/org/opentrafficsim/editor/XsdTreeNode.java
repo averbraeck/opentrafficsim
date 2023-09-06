@@ -1263,6 +1263,69 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         return true;
     }
+    
+    /**
+     * Returns whether the value, any of the attributes, or any of the sub-elements, has an expression.
+     * @return boolean; whether the node has an expression.
+     */
+    public boolean hasExpression()
+    {
+        if (!this.active)
+        {
+            return false;
+        }
+        if (valueIsExpression())
+        {
+            return true;
+        }
+        for (int index = 0; index < attributeCount(); index++)
+        {
+            if (attributeIsExpression(index))
+            {
+                return true;
+            }
+        }
+        if (this.children != null)
+        {
+            for (XsdTreeNode child : this.children)
+            {
+                if (child.hasExpression())
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Returns whether the value is an expression. 
+     * @return boolean; whether the value is an expression.
+     */
+    public boolean valueIsExpression()
+    {
+        return this.value != null && this.value.startsWith("{") && this.value.endsWith("}");
+    }
+    
+    /**
+     * Returns whether the attribute is an expression. 
+     * @param index int; attribute index.
+     * @return boolean; whether the attribute is an expression.
+     */
+    public boolean attributeIsExpression(final int index)
+    {
+        String attributeValue = this.attributeValues.get(index);
+        return attributeValue != null && attributeValue.startsWith("{") && attributeValue.endsWith("}");
+    }
+    
+    /**
+     * Returns whether the Id is an expression.
+     * @return boolean; whether the Id is an expression.
+     */
+    public boolean idIsExpression()
+    {
+        return attributeIsExpression(getAttributeIndexByName("Id"));
+    }
 
     /**
      * Adds a validator for the value.

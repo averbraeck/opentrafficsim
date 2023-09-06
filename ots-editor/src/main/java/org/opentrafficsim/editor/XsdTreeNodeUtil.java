@@ -156,6 +156,7 @@ public final class XsdTreeNodeUtil
                 case "xsd:simpleType": // only defines xsd:restriction with xsd:pattern/xsd:enumeration
                 case "xsd:restriction":
                 case "xsd:simpleContent": // bit of a late capture, followed "type" attribute and did not check what it was
+                case "xsd:union":
                 case "#text":
                     // nothing, not even report ignoring, these are not relevant regarding element structure
                     break;

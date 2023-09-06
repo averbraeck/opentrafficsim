@@ -131,6 +131,9 @@ public class OtsEditor extends JFrame implements EventProducer
 
     /** Color for invalid nodes and values (background). */
     public static final Color INVALID_COLOR = new Color(255, 240, 240);
+    
+    /** Color for expression nodes and values (background). */
+    public static final Color EXPRESSION_COLOR = new Color(252, 250, 239);
 
     /** Maximum length for tooltips. */
     private static final int MAX_TOOLTIP_LENGTH = 96;
@@ -1233,7 +1236,15 @@ public class OtsEditor extends JFrame implements EventProducer
                 {
                     if (node.isValid())
                     {
-                        setOpaque(false);
+                        if (node.hasExpression())
+                        {
+                            setOpaque(true);
+                            setBackground(OtsEditor.EXPRESSION_COLOR);
+                        }
+                        else
+                        {
+                            setOpaque(false);
+                        }
                     }
                     else
                     {

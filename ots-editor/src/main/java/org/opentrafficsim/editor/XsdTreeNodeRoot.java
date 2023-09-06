@@ -276,11 +276,17 @@ public class XsdTreeNodeRoot extends XsdTreeNode
             }
             if (values.size() == 1)
             {
+                String value = values.get(0);
+                if (value.startsWith("{") && value.endsWith("}"))
+                {
+                    return null; // expression
+                }
                 String name = this.attributeNames.isEmpty() ? (this.childNames.isEmpty() ? "node" : this.childNames.get(0))
                         : this.attributeNames.get(0);
-                return "Value " + values.get(0) + " for " + name + " does not refer to a known " + this.refer.getTypeString()
+                return "Value " + value + " for " + name + " does not refer to a known " + this.refer.getTypeString()
                         + " within " + this.keyPath + ".";
             }
+            values.removeIf((value) -> value.startsWith("{") && value.endsWith("}")); // expressions
             return "Values " + values + " do not refer to a known " + this.refer.getTypeString() + " within " + this.keyPath
                     + ".";
         }

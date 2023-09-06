@@ -67,7 +67,16 @@ public class StringCellRenderer extends JLabel implements TableCellRenderer
                 {
                     setToolTipText(OtsEditor
                             .limitTooltip(!val.isBlank() && (column == idColumn || column == valueColumn) ? val : null));
-                    setBackground(UIManager.getColor("Table.background"));
+                    boolean expression = column == idColumn ? node.idIsExpression()
+                            : (column == valueColumn ? node.valueIsExpression() : false);
+                    if (expression)
+                    {
+                        setBackground(OtsEditor.EXPRESSION_COLOR);
+                    }
+                    else
+                    {
+                        setBackground(UIManager.getColor("Table.background"));
+                    }
                 }
             }
             else
