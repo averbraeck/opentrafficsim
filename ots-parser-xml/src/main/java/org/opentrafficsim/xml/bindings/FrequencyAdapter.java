@@ -18,7 +18,7 @@ public class FrequencyAdapter extends ScalarAdapter<Frequency, FrequencyType>
     
     /** {@inheritDoc} */
     @Override
-    public FrequencyType unmarshal(final String field) throws IllegalArgumentException
+    public FrequencyType unmarshal(final String field)
     {
         if (isExpression(field))
         {

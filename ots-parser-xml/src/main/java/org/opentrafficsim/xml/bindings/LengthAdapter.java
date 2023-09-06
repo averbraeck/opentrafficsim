@@ -18,7 +18,7 @@ public class LengthAdapter extends ScalarAdapter<Length, LengthType>
     
     /** {@inheritDoc} */
     @Override
-    public LengthType unmarshal(final String field) throws IllegalArgumentException
+    public LengthType unmarshal(final String field)
     {
         if (isExpression(field))
         {

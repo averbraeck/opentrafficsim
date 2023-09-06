@@ -18,7 +18,7 @@ public class LinearDensityAdapter extends ScalarAdapter<LinearDensity, LinearDen
 
     /** {@inheritDoc} */
     @Override
-    public LinearDensityType unmarshal(final String field) throws IllegalArgumentException
+    public LinearDensityType unmarshal(final String field)
     {
         if (isExpression(field))
         {

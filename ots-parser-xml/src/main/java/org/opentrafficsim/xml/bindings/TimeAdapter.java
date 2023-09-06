@@ -18,7 +18,7 @@ public class TimeAdapter extends ScalarAdapter<Time, TimeType>
 
     /** {@inheritDoc} */
     @Override
-    public TimeType unmarshal(final String field) throws IllegalArgumentException
+    public TimeType unmarshal(final String field)
     {
         if (isExpression(field))
         {

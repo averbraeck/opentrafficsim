@@ -1272,16 +1272,6 @@
     <xsd:union memberTypes="ots:Expression xsd:anyURI" />
   </xsd:simpleType>
 
-  <xsd:simpleType name="IntAtLeastOne">
-    <xsd:union memberTypes="ots:Expression">
-      <xsd:simpleType>
-        <xsd:restriction base="xsd:positiveInteger">
-          <xsd:minInclusive value="1"></xsd:minInclusive>
-        </xsd:restriction>
-      </xsd:simpleType>
-    </xsd:union>
-  </xsd:simpleType>
-
   <xsd:simpleType name="DoublePositiveInclusive">
     <xsd:union memberTypes="ots:Expression">
       <xsd:simpleType>

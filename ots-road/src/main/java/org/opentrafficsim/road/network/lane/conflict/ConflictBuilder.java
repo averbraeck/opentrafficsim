@@ -1059,7 +1059,7 @@ public final class ConflictBuilder
 
         for (int i = 0; i < lanes.size(); i++)
         {
-            long combinationsDone = totalCombinations - ((long) (lanes.size() - i)) * ((long) (lanes.size() - i)) / 2;
+            long combinationsDone = totalCombinations - ((long) (lanes.size() - i)) * ((long) (lanes.size() - i - 1)) / 2;
             if (combinationsDone / 100000000 > lastReported)
             {
                 simulator.getLogger().always()
@@ -1180,7 +1180,7 @@ public final class ConflictBuilder
 
         for (int i = 0; i < lanes.size(); i++)
         {
-            long combinationsDone = totalCombinations - ((long) (lanes.size() - i)) * ((long) (lanes.size() - i)) / 2;
+            long combinationsDone = totalCombinations - ((long) (lanes.size() - i)) * ((long) (lanes.size() - i - 1)) / 2;
             if (combinationsDone / 100000000 > lastReported)
             {
                 simulator.getLogger().always()

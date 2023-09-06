@@ -16,9 +16,7 @@
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.IntegerType" xmlType="ots:int"
       adapter="org.opentrafficsim.xml.bindings.IntegerAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.IntegerType" xmlType="ots:positiveInteger"
-      adapter="org.opentrafficsim.xml.bindings.IntegerAdapter" />
-    <xjc:javaType name="org.opentrafficsim.xml.bindings.types.IntegerType" xmlType="ots:IntAtLeastOne"
-      adapter="org.opentrafficsim.xml.bindings.IntegerAdapter" />
+      adapter="org.opentrafficsim.xml.bindings.PositiveIntegerAdapter" />
 
     <!-- Long -->
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.LongType" xmlType="ots:long"
@@ -33,11 +31,11 @@
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.DoubleType" xmlType="ots:double"
       adapter="org.opentrafficsim.xml.bindings.DoubleAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.DoubleType" xmlType="ots:DoubleUnitInterval"
-      adapter="org.opentrafficsim.xml.bindings.DoubleAdapter" />
+      adapter="org.opentrafficsim.xml.bindings.DoubleUnitIntervalAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.DoubleType" xmlType="ots:DoublePositive"
-      adapter="org.opentrafficsim.xml.bindings.DoubleAdapter" />
+      adapter="org.opentrafficsim.xml.bindings.DoublePositiveAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.DoubleType" xmlType="ots:DoublePositiveInclusive"
-      adapter="org.opentrafficsim.xml.bindings.DoubleAdapter" />
+      adapter="org.opentrafficsim.xml.bindings.DoublePositiveInclusiveAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.DoubleType" xmlType="ots:FractionType"
       adapter="org.opentrafficsim.xml.bindings.FractionAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.DoubleType" xmlType="ots:PositiveFactor"
@@ -49,23 +47,23 @@
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.StringType" xmlType="ots:MultiLineString"
       adapter="org.opentrafficsim.xml.bindings.StringAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.StringType" xmlType="ots:space"
-      adapter="org.opentrafficsim.xml.bindings.StringAdapter" />
+      adapter="org.opentrafficsim.xml.bindings.SpaceAdapter" />
 
     <!-- Djunits units -->
-    <xjc:javaType name="org.opentrafficsim.xml.bindings.types.AccelerationUnitType" xmlType="ots:AccelerationUnitType"
-      adapter="org.opentrafficsim.xml.bindings.AccelerationUnitAdapter" />
+    <xjc:javaType name="org.opentrafficsim.xml.bindings.types.AccelerationUnitType"
+      xmlType="ots:AccelerationUnitType" adapter="org.opentrafficsim.xml.bindings.AccelerationUnitAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.FrequencyUnitType" xmlType="ots:FrequencyUnitType"
       adapter="org.opentrafficsim.xml.bindings.FrequencyUnitAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.LengthUnitType" xmlType="ots:LengthUnitType"
       adapter="org.opentrafficsim.xml.bindings.LengthUnitAdapter" />
-    <xjc:javaType name="org.opentrafficsim.xml.bindings.types.LinearDensityUnitType" xmlType="ots:LinearDensityUnitType"
-      adapter="org.opentrafficsim.xml.bindings.LinearDensityUnitAdapter" />
+    <xjc:javaType name="org.opentrafficsim.xml.bindings.types.LinearDensityUnitType"
+      xmlType="ots:LinearDensityUnitType" adapter="org.opentrafficsim.xml.bindings.LinearDensityUnitAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.SpeedUnitType" xmlType="ots:SpeedUnitType"
       adapter="org.opentrafficsim.xml.bindings.SpeedUnitAdapter" />
-      
+
     <!-- Djunits scalars -->
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.TimeType" xmlType="ots:PositiveTimeType"
-      adapter="org.opentrafficsim.xml.bindings.TimeAdapter" />
+      adapter="org.opentrafficsim.xml.bindings.PositiveTimeAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.AccelerationType" xmlType="ots:AccelerationType"
       adapter="org.opentrafficsim.xml.bindings.AccelerationAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.AngleType" xmlType="ots:AngleType"
@@ -83,7 +81,7 @@
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.DurationType" xmlType="ots:DurationType"
       adapter="org.opentrafficsim.xml.bindings.DurationAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.DurationType" xmlType="ots:PositiveDurationType"
-      adapter="org.opentrafficsim.xml.bindings.DurationAdapter" />
+      adapter="org.opentrafficsim.xml.bindings.PositiveDurationAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.LinearDensityType" xmlType="ots:LinearDensityType"
       adapter="org.opentrafficsim.xml.bindings.LinearDensityAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.FrequencyType" xmlType="ots:FrequencyType"
@@ -178,7 +176,7 @@
       </jaxb:property>
     </jaxb:bindings>
   </jaxb:bindings>
-  
+
   <jaxb:bindings schemaLocation="ots-demand.xsd">
     <jaxb:bindings node="//xsd:element[@name='HeadwayDist']">
       <jaxb:property>

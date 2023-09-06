@@ -18,7 +18,7 @@ public class DurationAdapter extends ScalarAdapter<Duration, DurationType>
     
     /** {@inheritDoc} */
     @Override
-    public DurationType unmarshal(final String field) throws IllegalArgumentException
+    public DurationType unmarshal(final String field)
     {
         if (isExpression(field))
         {

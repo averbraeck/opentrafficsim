@@ -20,7 +20,7 @@ public class DirectionAdapter extends ScalarAdapter<Direction, DirectionType>
     
     /** {@inheritDoc} */
     @Override
-    public DirectionType unmarshal(final String field) throws IllegalArgumentException
+    public DirectionType unmarshal(final String field)
     {
         if (isExpression(field))
         {

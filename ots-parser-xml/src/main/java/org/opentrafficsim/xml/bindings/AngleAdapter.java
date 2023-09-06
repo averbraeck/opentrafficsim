@@ -18,7 +18,7 @@ public class AngleAdapter extends ScalarAdapter<Angle, AngleType>
     
     /** {@inheritDoc} */
     @Override
-    public AngleType unmarshal(final String field) throws IllegalArgumentException
+    public AngleType unmarshal(final String field)
     {
         if (isExpression(field))
         {

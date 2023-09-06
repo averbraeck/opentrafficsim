@@ -18,7 +18,7 @@ public class AccelerationAdapter extends ScalarAdapter<Acceleration, Acceleratio
     
     /** {@inheritDoc} */
     @Override
-    public AccelerationType unmarshal(final String field) throws IllegalArgumentException
+    public AccelerationType unmarshal(final String field)
     {
         if (isExpression(field))
         {

@@ -122,7 +122,7 @@
       </xsd:choice>
       <xsd:attribute name="GtuType" type="ots:string" use="required" />
       <xsd:attribute name="Bias" type="ots:float" use="required" />
-      <xsd:attribute name="StickyLanes" type="ots:IntAtLeastOne" use="optional" />
+      <xsd:attribute name="StickyLanes" type="ots:positiveInteger" use="optional" />
     </xsd:complexType>
   </xsd:element>
   

@@ -18,7 +18,7 @@ public class SpeedAdapter extends ScalarAdapter<Speed, SpeedType>
     
     /** {@inheritDoc} */
     @Override
-    public SpeedType unmarshal(final String field) throws IllegalArgumentException
+    public SpeedType unmarshal(final String field)
     {
         if (isExpression(field))
         {
