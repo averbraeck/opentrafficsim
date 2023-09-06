@@ -25,6 +25,7 @@ import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.opentrafficsim.editor.validation.ValueValidator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -32,15 +33,15 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- * Underlying data structure object of the editor. Starting with the root node "OTS", all the information is stored in a tree.
- * The tree follows the XSD logic, e.g. "OTS.Network.LINK". {@code XsdTreeNode}'s have a {@code Node} object from the XSD DOM
+ * Underlying data structure object of the editor. Starting with the root node "Ots", all the information is stored in a tree.
+ * The tree follows the XSD logic, e.g. "Ots.Network.Link". {@code XsdTreeNode}'s have a {@code Node} object from the XSD DOM
  * tree. From this information it can be derived what the child nodes should be, and which attributes are contained.<br>
  * <br>
  * This class is mostly straightforward in the sense that there are direct parent-child relations, and that changing an option
  * replaces a node. When an xsd:sequence is part of an xsd:choice, things become complex as the xsd:sequence is a single option.
  * Therefore the xsd:sequence becomes a node visible in the tree, when it's an option under a choice. Furthermore, for each
  * xsd:choice node an {@code XsdTreeNode} is created that is not visible in the tree. It stores all options
- * {@code XsdTreeNode}'s and knows that option is selected. Only one options is ever in the list of children of the parent node.
+ * {@code XsdTreeNode}'s and knows what option is selected. Only one options is ever in the list of children of the parent node.
  * @author wjschakel
  */
 public class XsdTreeNode extends LocalEventProducer implements Serializable
@@ -296,7 +297,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
-     * Builds the path location, e.g. "OTS.Definitions.RoadLayouts".
+     * Builds the path location, e.g. "Ots.Definitions.RoadLayouts".
      * @return String; the path location.
      */
     private String buildPathLocation()
@@ -417,6 +418,28 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         return insertIndex < 0 ? this.parent.children.size() : insertIndex;
     }
 
+    /**
+     * Creates the option nodes as part of an xsd:choice node.
+     */
+    void createOptions()
+    {
+        Throw.when(!this.xsdNode.getNodeName().equals("xsd:choice"), IllegalStateException.class,
+                "Can only add options for a node of type xsd:choice.");
+        this.options = new ArrayList<>();
+        XsdTreeNodeUtil.addChildren(this.xsdNode, this.parent, this.options, this.hiddenNodes, this.schema, false, -1);
+        this.choice = this;
+        for (XsdTreeNode option : this.options)
+        {
+            option.minOccurs = this.minOccurs;
+            option.maxOccurs = this.maxOccurs;
+            if (this.minOccurs > 0)
+            {
+                option.setActive();
+            }
+            option.choice = this;
+        }
+    }
+
     // ====== Children ======
 
     /**
@@ -524,28 +547,6 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 child.add();
                 index++;
             }
-        }
-    }
-
-    /**
-     * Creates the option nodes as part of an xsd:choice node.
-     */
-    void createOptions()
-    {
-        Throw.when(!this.xsdNode.getNodeName().equals("xsd:choice"), IllegalStateException.class,
-                "Can only add options for a node of type xsd:choice.");
-        this.options = new ArrayList<>();
-        XsdTreeNodeUtil.addChildren(this.xsdNode, this.parent, this.options, this.hiddenNodes, this.schema, false, -1);
-        this.choice = this;
-        for (XsdTreeNode option : this.options)
-        {
-            option.minOccurs = this.minOccurs;
-            option.maxOccurs = this.maxOccurs;
-            if (this.minOccurs > 0)
-            {
-                option.setActive();
-            }
-            option.choice = this;
         }
     }
 
@@ -1263,7 +1264,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         return true;
     }
-    
+
     /**
      * Returns whether the value, any of the attributes, or any of the sub-elements, has an expression.
      * @return boolean; whether the node has an expression.
@@ -1297,18 +1298,18 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         return false;
     }
-    
+
     /**
-     * Returns whether the value is an expression. 
+     * Returns whether the value is an expression.
      * @return boolean; whether the value is an expression.
      */
     public boolean valueIsExpression()
     {
         return this.value != null && this.value.startsWith("{") && this.value.endsWith("}");
     }
-    
+
     /**
-     * Returns whether the attribute is an expression. 
+     * Returns whether the attribute is an expression.
      * @param index int; attribute index.
      * @return boolean; whether the attribute is an expression.
      */
@@ -1317,7 +1318,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         String attributeValue = this.attributeValues.get(index);
         return attributeValue != null && attributeValue.startsWith("{") && attributeValue.endsWith("}");
     }
-    
+
     /**
      * Returns whether the Id is an expression.
      * @return boolean; whether the Id is an expression.
@@ -1489,6 +1490,30 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         return ValueValidator.getBaseType(this.attributeNodes.get(index), this.schema);
     }
+    
+    /**
+     * Returns whether this node is of the type defined by the path.
+     * @param path String; path of the type in dotted xpath notation, e.g. "SignalGroup.TrafficLight".
+     * @return boolean; whether this node is of the type defined by the path.
+     */
+    public boolean isType(final String path)
+    {
+        boolean isType = getPathString().endsWith("." + path);
+        if (isType)
+        {
+            return isType;
+        }
+        int dot = path.lastIndexOf(".");
+        if (dot > -1)
+        {
+            isType = isType(path.substring(dot + 1)) && this.parent.isType(path.substring(0, dot));
+            if (isType)
+            {
+                return isType;
+            }
+        }
+        return this.schema.isType(this.xsdNode, path);
+    }
 
     // ====== Interaction with visualization ======
 
@@ -1636,7 +1661,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         return string;
     }
 
-    // Save / load
+    // ====== Save / load ======
 
     /**
      * Saves the content of this node in a new XML element under the given XML parent. This involves a value, attributes, and
@@ -1760,25 +1785,26 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 System.err.println("Unable to load element with name " + nodeXml.getChildNodes().item(index).getNodeName());
                 index = loadChildren(index + 1, nodeXml.getChildNodes());
             }
-            // in included nodes, remove nodes that are not relevant for any of the loaded xml data, typically inactive nodes
+            // In included nodes, remove nodes that will not contain any of the loaded xml data. For example remove nodes that
+            // are otherwise shown as inactive and allow a user to enable it, which makes no sense for imported nodes.
             if (this.isInclude)
             {
                 index = 0;
                 while (index < this.children.size())
                 {
-                    boolean relevantForaAny = false;
+                    boolean relevantForAny = false;
                     for (int indexXml = 0; indexXml < nodeXml.getChildNodes().getLength(); indexXml++)
                     {
                         String xmlName = nodeXml.getChildNodes().item(indexXml).getNodeName().replace("ots:", "");
                         if (this.children.get(index).isRelevantNode(xmlName))
                         {
-                            relevantForaAny = true;
+                            relevantForAny = true;
                             break;
                         }
                     }
-                    if (!relevantForaAny)
+                    if (!relevantForAny)
                     {
-                        // can't do a remove() on the node, as it might just be deactivated and still be visible
+                        // can't do a remove() on the node, as it might just become deactivated and still be visible
                         this.children.remove(index);
                     }
                     else
@@ -1941,30 +1967,6 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             }
         }
         return false;
-    }
-
-    /**
-     * Returns whether this node is of the type defined by the path.
-     * @param path String; path of the type in dotted xpath notation, e.g. "SignalGroup.TrafficLight".
-     * @return boolean; whether this node is of the type defined by the path.
-     */
-    public boolean isType(final String path)
-    {
-        boolean isType = getPathString().endsWith("." + path);
-        if (isType)
-        {
-            return isType;
-        }
-        int dot = path.lastIndexOf(".");
-        if (dot > -1)
-        {
-            isType = isType(path.substring(dot + 1)) && this.parent.isType(path.substring(0, dot));
-            if (isType)
-            {
-                return isType;
-            }
-        }
-        return this.schema.isType(this.xsdNode, path);
     }
 
 }

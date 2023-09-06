@@ -1,4 +1,4 @@
-package org.opentrafficsim.editor;
+package org.opentrafficsim.editor.validation;
 
 import java.io.File;
 import java.net.URI;
@@ -10,6 +10,9 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.opentrafficsim.editor.DocumentReader;
+import org.opentrafficsim.editor.Schema;
+import org.opentrafficsim.editor.XsdTreeNode;
 import org.w3c.dom.Node;
 
 /**

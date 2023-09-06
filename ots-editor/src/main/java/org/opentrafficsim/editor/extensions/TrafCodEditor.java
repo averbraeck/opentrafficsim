@@ -1,20 +1,22 @@
-package org.opentrafficsim.editor;
+package org.opentrafficsim.editor.extensions;
 
 import java.rmi.RemoteException;
 import java.time.LocalDateTime;
 import java.util.function.Consumer;
 
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
+import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.XsdTreeNodeRoot;
 
 /**
- * Editor for route.
+ * Editor for TrafCod program.
  * @author wjschakel
  */
-public class RouteEditor implements EventListener, Consumer<XsdTreeNode>
+public class TrafCodEditor implements EventListener, Consumer<XsdTreeNode>
 {
     /** */
     private static final long serialVersionUID = 20230313L;
@@ -27,23 +29,10 @@ public class RouteEditor implements EventListener, Consumer<XsdTreeNode>
      * @param editor OtsEditor; editor.
      * @throws RemoteException if listener cannot be added.
      */
-    public RouteEditor(final OtsEditor editor) throws RemoteException
+    public TrafCodEditor(final OtsEditor editor) throws RemoteException
     {
-        editor.addTab("Route", null, buildRoutePane(), null);
         editor.addListener(this, OtsEditor.NEW_FILE);
         this.editor = editor;
-    }
-
-    /**
-     * Temporary stub to create route pane.
-     * @return JComponent; component.
-     */
-    private static JComponent buildRoutePane()
-    {
-        JLabel route = new JLabel("route");
-        route.setOpaque(true);
-        route.setHorizontalAlignment(JLabel.CENTER);
-        return route;
     }
 
     /** {@inheritDoc} */
@@ -59,18 +48,9 @@ public class RouteEditor implements EventListener, Consumer<XsdTreeNode>
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
         {
             XsdTreeNode node = (XsdTreeNode) event.getContent();
-            if (node.getPathString().equals("Ots.Demand.Route"))
+            if (node.isType("Ots.Control.TrafCod.Program"))
             {
-                node.addConsumer("Show in panel...", this);
-                node.addConsumer("Compute shortest...", new Consumer<XsdTreeNode>()
-                {
-                    /** {@inheritDoc} */
-                    @Override
-                    public void accept(final XsdTreeNode t)
-                    {
-                        System.out.println("We are not going to do that.");
-                    }
-                });
+                node.addConsumer("Configure...", this);
             }
         }
     }
@@ -79,8 +59,8 @@ public class RouteEditor implements EventListener, Consumer<XsdTreeNode>
     @Override
     public void accept(final XsdTreeNode t)
     {
-        JLabel label = ((JLabel) this.editor.getTab("Route"));
+        JLabel label = (JLabel) this.editor.getTab("Text");
         label.setText(LocalDateTime.now().toString());
-        this.editor.focusTab("Route");
+        this.editor.focusTab("Text");
     }
 }

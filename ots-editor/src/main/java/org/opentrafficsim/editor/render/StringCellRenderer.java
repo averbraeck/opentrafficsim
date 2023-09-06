@@ -1,4 +1,4 @@
-package org.opentrafficsim.editor;
+package org.opentrafficsim.editor.render;
 
 import java.awt.Component;
 
@@ -9,6 +9,9 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.TableCellRenderer;
+
+import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.XsdTreeNode;
 
 import de.javagl.treetable.JTreeTable;
 

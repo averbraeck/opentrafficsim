@@ -1,4 +1,4 @@
-package org.opentrafficsim.editor;
+package org.opentrafficsim.editor.extensions;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -9,6 +9,8 @@ import javax.swing.JLabel;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
+import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.XsdTreeNode;
 
 /**
  * Editor for OD.

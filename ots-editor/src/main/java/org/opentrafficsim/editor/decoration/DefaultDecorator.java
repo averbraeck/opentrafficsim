@@ -1,9 +1,7 @@
-package org.opentrafficsim.editor;
+package org.opentrafficsim.editor.decoration;
 
-import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.function.Function;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -11,6 +9,15 @@ import javax.swing.JLabel;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
+import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.XsdTreeNodeRoot;
+import org.opentrafficsim.editor.extensions.OdEditor;
+import org.opentrafficsim.editor.extensions.RoadLayoutEditor;
+import org.opentrafficsim.editor.extensions.RouteEditor;
+import org.opentrafficsim.editor.extensions.TrafCodEditor;
+import org.opentrafficsim.editor.validation.ParentValidator;
+import org.opentrafficsim.editor.validation.StartEndNodeValidator;
 
 /**
  * Decorates the editor with custom icons, tabs, string functions and custom editors.
@@ -120,107 +127,10 @@ public final class DefaultDecorator
     }
 
     /**
-     * Sets the ID of a link if it is not defined yet, and both NODESTART and NODEEND are defined.
-     * @author wjschakel
-     */
-    private static class AutomaticLinkId implements EventListener
-    {
-        /** */
-        private static final long serialVersionUID = 20230313L;
-
-        /** {@inheritDoc} */
-        @Override
-        public void notify(final Event event) throws RemoteException
-        {
-            XsdTreeNodeRoot root = (XsdTreeNodeRoot) event.getContent();
-            root.addListener(new EventListener()
-            {
-                /** */
-                private static final long serialVersionUID = 20230313L;
-
-                /** {@inheritDoc} */
-                @Override
-                public void notify(final Event event) throws RemoteException
-                {
-                    if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
-                    {
-                        XsdTreeNode node = (XsdTreeNode) event.getContent();
-                        if (node.getPathString().equals("Ots.Network.Link"))
-                        {
-                            node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
-                        }
-                    }
-                    else if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED))
-                    {
-                        Object[] content = (Object[]) event.getContent();
-                        String attribute = (String) content[1];
-                        if (attribute.equals("NodeStart") || attribute.equals("NodeEnd"))
-                        {
-                            XsdTreeNode node = (XsdTreeNode) content[0];
-                            String nodeStart = node.getAttributeValue("NodeStart");
-                            String nodeEnd = node.getAttributeValue("NodeEnd");
-                            String id = node.getAttributeValue("Id");
-                            if (nodeStart != null && !nodeStart.isBlank() && nodeEnd != null && !nodeEnd.isBlank()
-                                    && (id == null || id.isBlank()))
-                            {
-                                node.setAttributeValue("Id", nodeStart + "-" + nodeEnd);
-                            }
-                        }
-                    }
-                }
-            }, XsdTreeNodeRoot.NODE_CREATED);
-        }
-    }
-
-    /**
-     * Adds the included file name to the include node.
-     * @author wjschakel
-     */
-    private static class XiIncludeStringFunction implements EventListener
-    {
-        /** */
-        private static final long serialVersionUID = 20230313L;
-
-        /** {@inheritDoc} */
-        @Override
-        public void notify(final Event event) throws RemoteException
-        {
-            XsdTreeNodeRoot root = (XsdTreeNodeRoot) event.getContent();
-            root.addListener(new EventListener()
-            {
-                /** */
-                private static final long serialVersionUID = 20230313L;
-
-                /** {@inheritDoc} */
-                @Override
-                public void notify(final Event event) throws RemoteException
-                {
-                    XsdTreeNode node = (XsdTreeNode) event.getContent();
-                    if (node.getNodeName().equals("xi:include"))
-                    {
-                        node.setStringFunction(new Function<XsdTreeNode, String>()
-                        {
-                            /** {@inheritDoc} */
-                            @Override
-                            public String apply(final XsdTreeNode t)
-                            {
-                                if (t.getAttributeValue(0) == null)
-                                {
-                                    return "";
-                                }
-                                return new File(t.getAttributeValue(0)).getName();
-                            }
-                        });
-                    }
-                }
-            }, XsdTreeNodeRoot.NODE_CREATED);
-        }
-    }
-    
-    /**
      * Prints nodes that are created or removed.
      * @author wjschakel
      */
+    // Leave this class for debugging. It can be added by a line above that is commented out.
     private static class NodeCreatedRemovedPrinter implements EventListener
     {
         /** */

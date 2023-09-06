@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.opentrafficsim.base.Resource;
+import org.opentrafficsim.editor.decoration.DefaultDecorator;
 import org.xml.sax.SAXException;
 
 /**

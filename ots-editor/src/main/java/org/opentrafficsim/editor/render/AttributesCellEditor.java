@@ -1,4 +1,4 @@
-package org.opentrafficsim.editor;
+package org.opentrafficsim.editor.render;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -13,6 +13,10 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+
+import org.opentrafficsim.editor.AttributesTableModel;
+import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.XsdTreeNode;
 
 /**
  * Editor for attribute table cells. Extends the default cell editor with checkboxes for boolean attributes. This involves the

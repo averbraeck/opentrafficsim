@@ -195,20 +195,6 @@ public final class XsdTreeNodeUtil
             {
                 options.add(DocumentReader.getAttribute(enumeration, "value"));
             }
-            // TODO: This is temporary, xsd:enumeration should be used for regular option selection.
-            Node pattern = DocumentReader.getChild(restriction, "xsd:pattern");
-            if (pattern != null)
-            {
-                String patt = DocumentReader.getAttribute(pattern, "value");
-                if (Pattern.matches("([A-Z]*\\|)*[A-Z]+", patt))
-                {
-                    String[] values = patt.split("\\|");
-                    for (String value : values)
-                    {
-                        options.add(value);
-                    }
-                }
-            }
         }
         return options;
     }

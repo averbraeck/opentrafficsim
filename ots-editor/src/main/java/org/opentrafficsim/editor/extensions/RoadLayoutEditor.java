@@ -1,4 +1,4 @@
-package org.opentrafficsim.editor;
+package org.opentrafficsim.editor.extensions;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -11,6 +11,9 @@ import javax.swing.JLabel;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
+import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.XsdTreeNodeRoot;
 
 /**
  * Editor for road layouts.
@@ -64,8 +67,8 @@ public class RoadLayoutEditor implements EventListener, Consumer<XsdTreeNode>
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
         {
             XsdTreeNode node = (XsdTreeNode) event.getContent();
-            if (node.getPathString().equals("Ots.Definitions.RoadLayouts.RoadLayout")
-                    || node.getPathString().equals("Ots.Network.Link.RoadLayout"))
+            if (node.isType("Ots.Definitions.RoadLayouts.RoadLayout")
+                    || node.isType("Ots.Network.Link.RoadLayout"))
             {
                 node.addConsumer("Edit...", this);
             }

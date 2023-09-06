@@ -1,9 +1,11 @@
-package org.opentrafficsim.editor;
+package org.opentrafficsim.editor.validation;
 
 import java.rmi.RemoteException;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
+import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.XsdTreeNodeRoot;
 
 /**
  * Validates that the start node and end node of a link are not the same.
@@ -53,7 +55,7 @@ public class StartEndNodeValidator implements ValueValidator, EventListener
                 if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
                 {
                     XsdTreeNode node = (XsdTreeNode) event.getContent();
-                    if (node.getPathString().equals("Ots.Network.Link"))
+                    if (node.isType("Ots.Network.Link"))
                     {
                         node.addAttributeValidator("NodeStart", StartEndNodeValidator.this);
                         node.addAttributeValidator("NodeEnd", StartEndNodeValidator.this);

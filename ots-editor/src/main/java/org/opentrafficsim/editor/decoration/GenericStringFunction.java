@@ -1,10 +1,13 @@
-package org.opentrafficsim.editor;
+package org.opentrafficsim.editor.decoration;
 
 import java.rmi.RemoteException;
 import java.util.function.Function;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
+import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.XsdTreeNodeRoot;
 
 /**
  * Generic implementation to enhance the information in nodes as displayed in the tree, by showing a few attribute values.

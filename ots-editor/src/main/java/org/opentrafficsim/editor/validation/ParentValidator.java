@@ -1,4 +1,4 @@
-package org.opentrafficsim.editor;
+package org.opentrafficsim.editor.validation;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -8,6 +8,8 @@ import java.util.Set;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
+import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.XsdTreeNodeRoot;
 
 /**
  * Validates that the Parent attribute of a node does not refer to self, either directly or indirectly.
@@ -106,7 +108,7 @@ public class ParentValidator implements ValueValidator, EventListener
                 if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
                 {
                     XsdTreeNode node = (XsdTreeNode) event.getContent();
-                    if (node.getPathString().equals(ParentValidator.this.path))
+                    if (node.isType(ParentValidator.this.path))
                     {
                         node.addAttributeValidator("Parent", ParentValidator.this);
                         ParentValidator.this.nodes.add(node);
@@ -115,7 +117,7 @@ public class ParentValidator implements ValueValidator, EventListener
                 if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
                 {
                     XsdTreeNode node = (XsdTreeNode) event.getContent();
-                    if (node.getPathString().equals(ParentValidator.this.path))
+                    if (node.isType(ParentValidator.this.path))
                     {
                         ParentValidator.this.nodes.remove(node);
                     }
