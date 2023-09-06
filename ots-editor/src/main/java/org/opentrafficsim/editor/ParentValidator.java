@@ -10,7 +10,7 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 
 /**
- * Validates that the PARENT attribute of a node does not refer to self, either directly or indirectly.
+ * Validates that the Parent attribute of a node does not refer to self, either directly or indirectly.
  * @author wjschakel
  */
 public class ParentValidator implements ValueValidator, EventListener

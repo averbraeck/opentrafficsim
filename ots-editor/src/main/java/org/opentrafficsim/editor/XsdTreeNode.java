@@ -136,13 +136,13 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     private boolean deactivated;
 
-    /** Whether this node is identifiable, i.e. has an ID attribute. */
+    /** Whether this node is identifiable, i.e. has an Id attribute. */
     private Boolean isIdentifiable;
 
-    /** Attribute index of ID. */
+    /** Attribute index of Id. */
     private int idIndex;
 
-    /** Whether this node is editable, i.e. has a simple value, e.g. &lt;NODE&gt;Simple value&lt;/NODE&gt;. */
+    /** Whether this node is editable, i.e. has a simple value, e.g. &lt;Node&gt;Simple value&lt;/Node&gt;. */
     private Boolean isEditable;
 
     /** Stored simple value of the node. */
@@ -818,8 +818,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
-     * Returns whether this node has an attribute named "ID".
-     * @return boolean; whether this node has an attribute named "ID".
+     * Returns whether this node has an attribute named "Id".
+     * @return boolean; whether this node has an attribute named "Id".
      */
     public boolean isIdentifiable()
     {
@@ -846,7 +846,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
-     * Sets the value for an attribute with name "ID".
+     * Sets the value for an attribute with name "Id".
      * @param id String; value to set.
      */
     public void setId(final String id)
@@ -856,8 +856,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
-     * Returns the value of an attribute with name "ID".
-     * @return String; value of an attribute with name "ID".
+     * Returns the value of an attribute with name "Id".
+     * @return String; value of an attribute with name "Id".
      */
     public String getId()
     {
@@ -1348,7 +1348,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns a message why the id is invalid, or {@code null} if it is valid. This should only be used to determine a GUI
-     * indication on an invalid ID. For other cases processing the attributes includes the ID.
+     * indication on an invalid Id. For other cases processing the attributes includes the Id.
      * @return String; message why the id is invalid, or {@code null} if it is valid.
      */
     public String reportInvalidId()
