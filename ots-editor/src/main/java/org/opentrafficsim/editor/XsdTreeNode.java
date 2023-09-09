@@ -884,12 +884,6 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 this.isEditable = false;
                 return false;
             }
-            String type = DocumentReader.getAttribute(this.xsdNode, "type");
-            if (this.xsdNode.getNodeName().equals("xsd:element") && type != null && type.startsWith("xsd:"))
-            {
-                this.isEditable = true;
-                return true;
-            }
             if (this.xsdNode.getChildNodes().getLength() == DocumentReader.getChildren(this.xsdNode, "#text").size()
                     && this.xsdNode.getChildNodes().getLength() > 0)
             {
@@ -910,11 +904,15 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             {
                 Node simpleContent = DocumentReader.getChild(complexType, "xsd:simpleContent");
                 this.isEditable = simpleContent != null;
+                return this.isEditable;
             }
-            else
+            String type = DocumentReader.getAttribute(this.xsdNode, "type");
+            if (this.xsdNode.getNodeName().equals("xsd:element") && (type == null || type.startsWith("xsd:")))
             {
-                this.isEditable = false;
+                this.isEditable = true;
+                return true;
             }
+            this.isEditable = false;
         }
         return this.isEditable;
     }

@@ -45,23 +45,20 @@
       <xsd:sequence>
         <xsd:element name="OdOptionsItem" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:documentation source="description">
-              Defines options on a GLOBAL, LinkType, ORIGIN (node) or LANE
-              level. The
-              most
-              specific level is always applicable for a vehicle generator.
+            <xsd:documentation source="description">Defines options on a Global, LinkType, Origin (node) or Lane level. The
+              most specific level is always applicable for a vehicle generator.
             </xsd:documentation>
           </xsd:annotation>
           <xsd:complexType>
             <xsd:sequence>
               <xsd:choice>
-                <xsd:element name="Global" />
-                <xsd:element name="LinkType" />
+                <xsd:element name="Global" type="ots:EmptyType" />
+                <xsd:element name="LinkType" type="ots:string" />
                 <xsd:element name="Origin">
                   <xsd:complexType>
                     <xsd:choice>
-                      <xsd:element name="Node" />
-                      <xsd:element name="Centroid" />
+                      <xsd:element name="Node" type="ots:string" />
+                      <xsd:element name="Centroid" type="ots:string" />
                     </xsd:choice>
                   </xsd:complexType>
                 </xsd:element>
@@ -70,7 +67,7 @@
               <xsd:element name="DefaultModel" minOccurs="0" maxOccurs="1">
                 <xsd:complexType>
                   <xsd:choice>
-                    <xsd:element name="Id" type="xsd:string" />
+                    <xsd:element name="Id" type="ots:string" />
                     <xsd:element name="ModelIdReferral" type="ots:string" />
                   </xsd:choice>
                 </xsd:complexType>
@@ -78,7 +75,7 @@
               <xsd:element name="Model" minOccurs="0" maxOccurs="unbounded">
                 <xsd:complexType>
                   <xsd:choice>
-                    <xsd:element name="Id" type="xsd:string" />
+                    <xsd:element name="Id" type="ots:string" />
                     <xsd:element name="ModelIdReferral" type="ots:string" />
                   </xsd:choice>
                   <xsd:attribute name="GtuType" type="ots:string" use="required" />
@@ -86,11 +83,8 @@
               </xsd:element>
               <xsd:element name="NoLaneChange" type="ots:PositiveLengthType" minOccurs="0">
                 <xsd:annotation>
-                  <xsd:documentation source="description">
-                    Initial distance over which GTUs are not allowed to change
-                    lane,
-                    to
-                    prevent interacting with generation on adjacent lanes.
+                  <xsd:documentation source="description">Initial distance over which GTUs are not allowed to change lane,
+                    to prevent interacting with generation on adjacent lanes.
                   </xsd:documentation>
                 </xsd:annotation>
               </xsd:element>
@@ -113,19 +107,15 @@
               </xsd:element>
               <xsd:element name="Markov" minOccurs="0">
                 <xsd:annotation>
-                  <xsd:documentation source="description">
-                    Markov chaining based on auto-correlation of GTU types.
+                  <xsd:documentation source="description">Markov chaining based on auto-correlation of GTU types.
                   </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
                   <xsd:sequence>
                     <xsd:element name="State" maxOccurs="unbounded">
                       <xsd:annotation>
-                        <xsd:documentation source="description">
-                          Defines auto-correlation of a GTU type. The parent
-                          type
-                          creates a
-                          group of correlated GTU types under a single parent.
+                        <xsd:documentation source="description">Defines auto-correlation of a GTU type. The parent type
+                          creates a group of correlated GTU types under a single parent.
                         </xsd:documentation>
                       </xsd:annotation>
                       <xsd:complexType>
@@ -139,8 +129,7 @@
               </xsd:element>
               <xsd:element name="LaneBiases" minOccurs="0">
                 <xsd:annotation>
-                  <xsd:documentation source="description">
-                    Influences the preferred lateral position of generated GTU's.
+                  <xsd:documentation source="description">Influences the preferred lateral position of generated GTU's.
                   </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>

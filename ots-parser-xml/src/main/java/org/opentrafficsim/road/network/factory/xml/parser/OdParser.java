@@ -768,7 +768,7 @@ public final class OdParser
         {
             return modelIdReferrals.get(model.getModelIdReferral().get(inputParameters));
         }
-        return model.getId();
+        return model.getId().get(inputParameters);
     }
 
     /**
@@ -785,7 +785,7 @@ public final class OdParser
         {
             return modelIdReferrals.get(model.getModelIdReferral().get(inputParameters));
         }
-        return model.getId();
+        return model.getId().get(inputParameters);
     }
 
 }
