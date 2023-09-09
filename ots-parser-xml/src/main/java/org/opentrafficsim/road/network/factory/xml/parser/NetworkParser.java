@@ -105,13 +105,11 @@ public final class NetworkParser
     public static void parseNodes(final RoadNetwork otsNetwork, final Network network,
             final Map<String, Direction> nodeDirections, final InputParameters inputParameters) throws NetworkException
     {
-        for (org.opentrafficsim.xml.generated.Centroid xmlCentroid : ParseUtil
-                .getObjectsOfType(network.getNodeOrLinkOrCentroid(), org.opentrafficsim.xml.generated.Centroid.class))
+        for (org.opentrafficsim.xml.generated.Centroid xmlCentroid : network.getCentroid())
         {
             new Centroid(otsNetwork, xmlCentroid.getId(), xmlCentroid.getCoordinate().get(inputParameters));
         }
-        for (org.opentrafficsim.xml.generated.Node xmlNode : ParseUtil.getObjectsOfType(network.getNodeOrLinkOrCentroid(),
-                org.opentrafficsim.xml.generated.Node.class))
+        for (org.opentrafficsim.xml.generated.Node xmlNode : network.getNode())
         {
             new Node(otsNetwork, xmlNode.getId(), xmlNode.getCoordinate().get(inputParameters),
                     nodeDirections.get(xmlNode.getId()));
@@ -131,8 +129,7 @@ public final class NetworkParser
     {
         Map<String, Direction> nodeDirections = new LinkedHashMap<>();
         Map<String, Point2d> points = new LinkedHashMap<>();
-        for (org.opentrafficsim.xml.generated.Node xmlNode : ParseUtil.getObjectsOfType(network.getNodeOrLinkOrCentroid(),
-                org.opentrafficsim.xml.generated.Node.class))
+        for (org.opentrafficsim.xml.generated.Node xmlNode : network.getNode())
         {
             if (xmlNode.getDirection() != null)
             {
@@ -141,7 +138,7 @@ public final class NetworkParser
             points.put(xmlNode.getId(), xmlNode.getCoordinate().get(inputParameters));
         }
 
-        for (Link xmlLink : ParseUtil.getObjectsOfType(network.getNodeOrLinkOrCentroid(), Link.class))
+        for (Link xmlLink : network.getLink())
         {
             if (xmlLink.getStraight() != null)
             {
@@ -161,8 +158,7 @@ public final class NetworkParser
             }
         }
 
-        for (org.opentrafficsim.xml.generated.Node xmlNode : ParseUtil.getObjectsOfType(network.getNodeOrLinkOrCentroid(),
-                org.opentrafficsim.xml.generated.Node.class))
+        for (org.opentrafficsim.xml.generated.Node xmlNode : network.getNode())
         {
             if (!nodeDirections.containsKey(xmlNode.getId()))
             {
@@ -190,8 +186,7 @@ public final class NetworkParser
             final Map<String, ContinuousLine> designLines, final InputParameters inputParameters)
             throws NetworkException, OtsGeometryException
     {
-        for (org.opentrafficsim.xml.generated.Connector xmlConnector : ParseUtil
-                .getObjectsOfType(network.getNodeOrLinkOrCentroid(), org.opentrafficsim.xml.generated.Connector.class))
+        for (org.opentrafficsim.xml.generated.Connector xmlConnector : network.getConnector())
         {
             String nodeId = xmlConnector.getNode().get(inputParameters);
             Node node = (Node) otsNetwork.getNode(nodeId);
@@ -214,7 +209,7 @@ public final class NetworkParser
             link.setDemandWeight(demandWeight);
         }
 
-        for (Link xmlLink : ParseUtil.getObjectsOfType(network.getNodeOrLinkOrCentroid(), Link.class))
+        for (Link xmlLink : network.getLink())
         {
             Node startNode = (Node) otsNetwork.getNode(xmlLink.getNodeStart().get(inputParameters));
             Node endNode = (Node) otsNetwork.getNode(xmlLink.getNodeEnd().get(inputParameters));
@@ -348,7 +343,7 @@ public final class NetworkParser
             final InputParameters inputParameters)
             throws NetworkException, OtsGeometryException, XmlParserException, SimRuntimeException, GtuException
     {
-        for (Link xmlLink : ParseUtil.getObjectsOfType(network.getNodeOrLinkOrCentroid(), Link.class))
+        for (Link xmlLink : network.getLink())
         {
             CrossSectionLink csl = (CrossSectionLink) otsNetwork.getLink(xmlLink.getId());
             List<CrossSectionElement> cseList = new ArrayList<>();
@@ -763,8 +758,7 @@ public final class NetworkParser
 
             otsNetwork.getSimulator().getLogger().always().info("Generating conflicts");
             Map<String, Set<org.opentrafficsim.core.network.Link>> conflictCandidateMap = new LinkedHashMap<>();
-            for (Link link : ParseUtil.getObjectsOfType(network.getNodeOrLinkOrCentroid(),
-                    org.opentrafficsim.xml.generated.Link.class))
+            for (Link link : network.getLink())
             {
                 if (link.getConflictId() != null)
                 {

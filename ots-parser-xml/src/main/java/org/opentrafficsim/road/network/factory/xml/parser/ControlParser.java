@@ -83,7 +83,7 @@ public final class ControlParser
     {
 
         // Fixed time controllers
-        for (FixedTime fixedTime : ParseUtil.getObjectsOfType(control.getFixedTimeOrTrafCod(), FixedTime.class))
+        for (FixedTime fixedTime : control.getFixedTime())
         {
             String id = fixedTime.getId();
             Duration cycleTime = fixedTime.getCycleTime().get(inputParameters);
@@ -124,8 +124,7 @@ public final class ControlParser
             }
         }
 
-        for (org.opentrafficsim.xml.generated.Control.TrafCod trafCod : ParseUtil
-                .getObjectsOfType(control.getFixedTimeOrTrafCod(), org.opentrafficsim.xml.generated.Control.TrafCod.class))
+        for (org.opentrafficsim.xml.generated.Control.TrafCod trafCod : control.getTrafCod())
         {
             String controllerName = trafCod.getId();
             String programString = trafCod.getProgram().getValue().get(inputParameters);

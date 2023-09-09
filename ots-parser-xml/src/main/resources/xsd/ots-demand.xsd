@@ -295,8 +295,7 @@
       <xsd:attribute name="Destination" type="ots:boolean" use="optional" default="true">
         <xsd:annotation>
           <xsd:documentation source="description">When true, only GTUs with a route towards the link end node will be
-            deleted,
-            or possibly towards the end node of a next connector.
+            deleted, or possibly towards the end node of a next connector.
           </xsd:documentation>
         </xsd:annotation>
       </xsd:attribute>

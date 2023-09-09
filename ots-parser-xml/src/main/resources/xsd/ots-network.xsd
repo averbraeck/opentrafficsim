@@ -147,8 +147,8 @@
         </xsd:choice>
         <xsd:element name="Conflicts" minOccurs="0" maxOccurs="1">
           <xsd:annotation>
-            <xsd:documentation source="description">
-              Default width is 2m. None creates no conflicts. Relative width is relative to lane width. Otherwise specify width.
+            <xsd:documentation source="description">Default width is 2m. None creates no conflicts. Relative width is
+              relative to lane width. Otherwise specify width.
             </xsd:documentation>
           </xsd:annotation>
           <xsd:complexType>
@@ -177,8 +177,7 @@
     <xsd:attribute name="Position" type="ots:LengthBeginEndType" use="required" />
     <xsd:attribute name="Class" type="ots:ClassNameType" use="required">
       <xsd:annotation>
-        <xsd:documentation source="description">
-          Fully specified classname including the package.
+        <xsd:documentation source="description">Fully specified classname including the package.
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>
@@ -192,8 +191,7 @@
     <!-- TODO allow for detectors that span multiple lanes (longitudinally); thus multiple links -->
     <xsd:attribute name="Class" type="ots:ClassNameType" use="required">
       <xsd:annotation>
-        <xsd:documentation source="description">
-          Fully specified classname including the package.
+        <xsd:documentation source="description">Fully specified classname including the package.
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>

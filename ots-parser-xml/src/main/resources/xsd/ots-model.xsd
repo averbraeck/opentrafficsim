@@ -270,12 +270,9 @@
                   <!-- Basic behavioral components -->
                   <xsd:element name="Synchronization" minOccurs="0" default="PASSIVE">
                     <xsd:annotation>
-                      <xsd:documentation source="description">
-                        DEADEND: stop for dead-end during synchronization. PASSIVE
-                        (default):
-                        follow first leader in target lane. ALIGNGAP: align to middle of adjacent gap. ACTIVE:
-                        actively
-                        consider whether gaps can be reached in time (not advised).
+                      <xsd:documentation source="description">DEADEND: stop for dead-end during synchronization. PASSIVE
+                        (default): follow first leader in target lane. ALIGNGAP: align to middle of adjacent gap. ACTIVE:
+                        actively consider whether gaps can be reached in time (not advised).
                       </xsd:documentation>
                     </xsd:annotation>
                     <xsd:simpleType>
@@ -294,12 +291,9 @@
                   </xsd:element>
                   <xsd:element name="Cooperation" minOccurs="0" default="PASSIVE">
                     <xsd:annotation>
-                      <xsd:documentation source="description">
-                        PASSIVE (default): follow potential lane changer.
-                        PASSIVEMOVING:
-                        follow potential lane changer except at very low ego-speed. ACTIVE: actively consider
-                        whether the
-                        potential lane changer can make the gap.
+                      <xsd:documentation source="description">PASSIVE (default): follow potential lane changer.
+                        PASSIVEMOVING: follow potential lane changer except at very low ego-speed. ACTIVE: actively consider
+                        whether the potential lane changer can make the gap.
                       </xsd:documentation>
                     </xsd:annotation>
                     <xsd:simpleType>
@@ -316,8 +310,7 @@
                   </xsd:element>
                   <xsd:element name="GapAcceptance" minOccurs="0">
                     <xsd:annotation>
-                      <xsd:documentation source="description">
-                        INFORMED: aware of desired headway of potential follower.
+                      <xsd:documentation source="description">INFORMED: aware of desired headway of potential follower.
                         EGOHEADWAY (default): potential follower evaluated with own desired headway.
                       </xsd:documentation>
                     </xsd:annotation>
@@ -334,10 +327,8 @@
                   </xsd:element>
                   <xsd:element name="Tailgating" minOccurs="0">
                     <xsd:annotation>
-                      <xsd:documentation source="description">
-                        NONE (default): no tailgating. RHOONLY: pressure parameter
-                        affects
-                        other traffic, ego headway not affected. PRESSURE: ego headway and surrounding traffic affected.
+                      <xsd:documentation source="description">NONE (default): no tailgating. RHOONLY: pressure parameter
+                        affects other traffic, ego headway not affected. PRESSURE: ego headway and surrounding traffic affected.
                       </xsd:documentation>
                     </xsd:annotation>
                     <xsd:simpleType>
@@ -356,81 +347,59 @@
                   <!-- Lane change incentives -->
                   <xsd:element name="MandatoryIncentives" minOccurs="0">
                     <xsd:complexType>
-                      <xsd:sequence>
-                        <xsd:element name="Incentive" minOccurs="0" maxOccurs="unbounded">
-                          <xsd:annotation>
-                            <xsd:documentation source="description">
-                              ROUTE: route and infrastructure. GETINLANE: earlier
-                              lane
-                              change when traffic on target lane is slow. BUSSTOP: for scheduled busses.
-                            </xsd:documentation>
-                          </xsd:annotation>
-                          <xsd:complexType>
-                            <xsd:choice>
-                              <xsd:element name="Route" type="ots:EmptyType" />
-                              <xsd:element name="GetInLane" type="ots:EmptyType" />
-                              <xsd:element name="BusStop" type="ots:EmptyType" />
-                              <xsd:element name="Class" type="ots:ClassNameType" />
-                            </xsd:choice>
-                          </xsd:complexType>
-                        </xsd:element>
-                      </xsd:sequence>
+                      <xsd:annotation>
+                        <xsd:documentation source="description">Route: route and infrastructure. GetInLane: earlier lane
+                          change when traffic on target lane is slow. BusStop: for scheduled busses. Class: from a class with
+                          empty constructor.
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:choice maxOccurs="unbounded">
+                        <xsd:element name="Route" type="ots:EmptyType" />
+                        <xsd:element name="GetInLane" type="ots:EmptyType" />
+                        <xsd:element name="BusStop" type="ots:EmptyType" />
+                        <xsd:element name="Class" type="ots:ClassNameType" />
+                      </xsd:choice>
                     </xsd:complexType>
                   </xsd:element>
                   <xsd:element name="VoluntaryIncentives" minOccurs="0">
                     <xsd:complexType>
-                      <xsd:sequence>
-                        <xsd:element name="Incentive" minOccurs="0" maxOccurs="unbounded">
-                          <xsd:annotation>
-                            <xsd:documentation source="description">
-                              KEEP: keep right. SPEEDWITHCOURTESY: based on
-                              anticipated speed, and potential lane changers. COURTESY: get or stay out of the way for lane
-                              change desire of others. SOCIOSPEED: get or stay out of the way for desired speed of others.
-                              STAYRIGHT: incentive for trucks to stay on the right-most two lanes, interpreted in line with
-                              the
-                              route.
-                            </xsd:documentation>
-                          </xsd:annotation>
-                          <xsd:complexType>
-                            <xsd:choice>
-                              <xsd:element name="Keep" type="ots:EmptyType" />
-                              <xsd:element name="SpeedWithCourtesy" type="ots:EmptyType" />
-                              <xsd:element name="Courtesy" type="ots:EmptyType" />
-                              <xsd:element name="SocioSpeed" type="ots:EmptyType" />
-                              <xsd:element name="StayRight" type="ots:EmptyType" />
-                              <xsd:element name="Class" type="ots:ClassNameType" />
-                            </xsd:choice>
-                          </xsd:complexType>
-                        </xsd:element>
-                      </xsd:sequence>
+                      <xsd:annotation>
+                        <xsd:documentation source="description">Keep: keep right. SpeedWithCourtesy: based on anticipated
+                          speed, and potential lane changers. Courtesy: get or stay out of the way for lane change desire of
+                          others. SocioSpeed: get or stay out of the way for desired speed of others. StayRight: incentive for
+                          trucks to stay on the right-most two lanes, interpreted in line with the route. Class: from a class
+                          with empty constructor.
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:choice maxOccurs="unbounded">
+                        <xsd:element name="Keep" type="ots:EmptyType" />
+                        <xsd:element name="SpeedWithCourtesy" type="ots:EmptyType" />
+                        <xsd:element name="Courtesy" type="ots:EmptyType" />
+                        <xsd:element name="SocioSpeed" type="ots:EmptyType" />
+                        <xsd:element name="StayRight" type="ots:EmptyType" />
+                        <xsd:element name="Class" type="ots:ClassNameType" />
+                      </xsd:choice>
                     </xsd:complexType>
                   </xsd:element>
 
                   <!-- Acceleration incentives -->
                   <xsd:element name="AccelerationIncentives" minOccurs="0">
                     <xsd:complexType>
-                      <xsd:sequence>
-                        <xsd:element name="Incentive" minOccurs="0" maxOccurs="unbounded">
-                          <xsd:annotation>
-                            <xsd:documentation source="description">
-                              BUSSTOP: for scheduled busses to stop. CONFLICTS:
-                              consider intersection conflicts. SPEEDLIMITTRANSITION: decelerate for lower speed limit ahead.
-                              TRAFFICLIGHTS: consider traffic lights. NORIGHTOVERTAKE: follow left leader, in some
-                              circumstances.
-                            </xsd:documentation>
-                          </xsd:annotation>
-                          <xsd:complexType>
-                            <xsd:choice>
-                              <xsd:element name="TrafficLights" type="ots:EmptyType" />
-                              <xsd:element name="Conflicts" type="ots:EmptyType" />
-                              <xsd:element name="SpeedLimitTransitions" type="ots:EmptyType" />
-                              <xsd:element name="NoRightOvertake" type="ots:EmptyType" />
-                              <xsd:element name="BusStop" type="ots:EmptyType" />
-                              <xsd:element name="Class" type="ots:ClassNameType" />
-                            </xsd:choice>
-                          </xsd:complexType>
-                        </xsd:element>
-                      </xsd:sequence>
+                      <xsd:annotation>
+                        <xsd:documentation source="description">TrafficLights: consider traffic lights. Conflicts: consider
+                          intersection conflicts. SpeedLimitTransitions: decelerate for lower speed limit ahead.
+                          NoRightOvertake: follow left leader, in some circumstances. BusStop: for scheduled busses to stop.
+                          Class: from a class with empty constructor.
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:choice maxOccurs="unbounded">
+                        <xsd:element name="TrafficLights" type="ots:EmptyType" />
+                        <xsd:element name="Conflicts" type="ots:EmptyType" />
+                        <xsd:element name="SpeedLimitTransitions" type="ots:EmptyType" />
+                        <xsd:element name="NoRightOvertake" type="ots:EmptyType" />
+                        <xsd:element name="BusStop" type="ots:EmptyType" />
+                        <xsd:element name="Class" type="ots:ClassNameType" />
+                      </xsd:choice>
                     </xsd:complexType>
                   </xsd:element>
 
@@ -500,17 +469,16 @@
   <xsd:complexType name="PerceptionType">
     <xsd:sequence>
 
-      <xsd:element name="Category" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="Categories" minOccurs="0">
         <xsd:annotation>
-          <xsd:documentation source="description">
-            CLASS: category by class name, should have LanePerception as constructor
-            parameter, and optionally a second HeadwayGtuType parameter. BUSSTOP: perceive bus stops for scheduled busses.
-            INFRASTRUCTURE: infrastructure. INTERSECTION: conflicts and traffic lights. NEIGHBORS: surrounding GTUs. TRAFFIC:
-            speed and density on lanes.
+          <xsd:documentation source="description"> Class: category by class name, should have LanePerception as constructor
+            parameter, and optionally a second HeadwayGtuType parameter. Ego: perception of own vehicle. BusStop: perceive bus
+            stops for scheduled busses. Infrastructure: infrastructure. Intersection: conflicts and traffic lights. Neighbors:
+            surrounding GTUs. Traffic: speed and density on lanes.
           </xsd:documentation>
         </xsd:annotation>
         <xsd:complexType>
-          <xsd:choice>
+          <xsd:choice minOccurs="0" maxOccurs="unbounded">
             <xsd:element name="Ego" type="ots:EmptyType" />
             <xsd:element name="Infrastructure" type="ots:EmptyType" />
             <xsd:element name="Neighbors" type="ots:EmptyType" />
@@ -524,8 +492,7 @@
 
       <xsd:element name="HeadwayGtuType" minOccurs="0">
         <xsd:annotation>
-          <xsd:documentation source="description">
-            WRAP: perfect perception. PERCEIVED: imperfect (delayed) perception with
+          <xsd:documentation source="description">Wrap: perfect perception. Perceived: imperfect (delayed) perception with
             estimation and anticipation.
           </xsd:documentation>
         </xsd:annotation>
@@ -537,8 +504,7 @@
                 <xsd:sequence>
                   <xsd:element name="Estimation">
                     <xsd:annotation>
-                      <xsd:documentation source="description">
-                        Estimation entails perfect (NONE) or under- or overestimation
+                      <xsd:documentation source="description">Estimation entails perfect (NONE) or under- or overestimation
                         (UNDERESTIMATION, OVERESTIMATION) of the delayed speed and headway.
                       </xsd:documentation>
                     </xsd:annotation>
@@ -556,9 +522,8 @@
                   </xsd:element>
                   <xsd:element name="Anticipation">
                     <xsd:annotation>
-                      <xsd:documentation source="description">
-                        Anticipation entails NONE, CONSTANTSPEED or
-                        CONSTANTACCELERATION, where the latter two anticipate to compensate the delay.
+                      <xsd:documentation source="description">Anticipation entails NONE, CONSTANTSPEED or
+                        CONSTANT_ACCELERATION, where the latter two anticipate to compensate the delay.
                       </xsd:documentation>
                     </xsd:annotation>
                     <xsd:simpleType>
@@ -590,22 +555,20 @@
                 <xsd:sequence>
                   <xsd:element name="Task" type="ots:ClassNameType" minOccurs="0" maxOccurs="unbounded">
                     <xsd:annotation>
-                      <xsd:documentation source="description">
-                        Implementations of Task with constructor without input.
+                      <xsd:documentation source="description">Implementations of Task with constructor without input.
                       </xsd:documentation>
                     </xsd:annotation>
                   </xsd:element>
-                  <xsd:element name="BehavioralAdaptation" minOccurs="0" maxOccurs="unbounded">
+                  <xsd:element name="BehavioralAdaptations" minOccurs="0" maxOccurs="1">
                     <xsd:annotation>
-                      <xsd:documentation source="description">
-                        Implementations of BehavioralAdaptation with constructor
+                      <xsd:documentation source="description"> Implementations of BehavioralAdaptation with constructor
                         without input (value CLASS, with CLASS attribute), or a default. SITUATIONALAWARENESS: sets parameters
                         for situational awareness and reaction time. HEADWAY: increases the headway with high task demand.
                         SPEED: decreases speed with high task demand.
                       </xsd:documentation>
                     </xsd:annotation>
                     <xsd:complexType>
-                      <xsd:choice>
+                      <xsd:choice minOccurs="0" maxOccurs="unbounded">
                         <xsd:element name="SituationalAwareness" type="ots:EmptyType" />
                         <xsd:element name="Headway" type="ots:EmptyType" />
                         <xsd:element name="Speed" type="ots:EmptyType" />
@@ -615,8 +578,7 @@
                   </xsd:element>
                   <xsd:element name="TaskManager" minOccurs="0">
                     <xsd:annotation>
-                      <xsd:documentation source="description">
-                        SUMMATIVE: add task demand of tasks. ANTICIPATIONRELIANCE:
+                      <xsd:documentation source="description">SUMMATIVE: add task demand of tasks. ANTICIPATION_RELIANCE:
                         rely on anticipation to reduce task demand of secondary task(s).
                       </xsd:documentation>
                     </xsd:annotation>

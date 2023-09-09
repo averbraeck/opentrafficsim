@@ -37,6 +37,17 @@
           <specVersion>2.3</specVersion>
           <verbose>true</verbose>
           <extension>true</extension>
+          <!-- -Xsimplify & jaxb2-basics can simplify heterogeneous elements with List<JAXBElement<?>> to a few List<Type> -->
+          <args>
+            <arg>-Xsimplify</arg>
+          </args>
+          <plugins>
+            <plugin>
+              <groupId>org.jvnet.jaxb2_commons</groupId>
+              <artifactId>jaxb2-basics</artifactId>
+              <version>${maven-jaxb2-basics.version}</version>
+            </plugin>
+          </plugins>
           <bindingDirectory>src/main/resources/xsd</bindingDirectory>
           <bindingIncludes>
             <bindingInclude>bindings.xml</bindingInclude>

@@ -110,11 +110,7 @@ import org.opentrafficsim.xml.generated.ModelType.ModelParameters.IntegerDist;
 import org.opentrafficsim.xml.generated.ModelType.ModelParameters.LengthDist;
 import org.opentrafficsim.xml.generated.ModelType.ModelParameters.LinearDensityDist;
 import org.opentrafficsim.xml.generated.ModelType.ModelParameters.SpeedDist;
-import org.opentrafficsim.xml.generated.ModelType.TacticalPlanner.Lmrs.AccelerationIncentives;
-import org.opentrafficsim.xml.generated.ModelType.TacticalPlanner.Lmrs.MandatoryIncentives.Incentive;
-import org.opentrafficsim.xml.generated.ModelType.TacticalPlanner.Lmrs.VoluntaryIncentives;
 import org.opentrafficsim.xml.generated.PerceptionType;
-import org.opentrafficsim.xml.generated.PerceptionType.Category;
 import org.opentrafficsim.xml.generated.PerceptionType.HeadwayGtuType.Perceived;
 
 import nl.tudelft.simulation.dsol.experiment.StreamInformation;
@@ -405,37 +401,30 @@ public class ModelParser
 
         // Mandatory incentives
         Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
-        for (Incentive incentive : lmrs.getMandatoryIncentives().getIncentive())
+        if (!lmrs.getMandatoryIncentives().getRoute().isEmpty())
         {
-            if (incentive.getRoute() != null)
+            mandatoryIncentives.add(new IncentiveRoute());
+        }
+        if (!lmrs.getMandatoryIncentives().getGetInLane().isEmpty())
+        {
+            mandatoryIncentives.add(new IncentiveGetInLane());
+        }
+        if (!lmrs.getMandatoryIncentives().getBusStop().isEmpty())
+        {
+            mandatoryIncentives.add(new IncentiveBusStop());
+        }
+        for (ClassType classType : lmrs.getMandatoryIncentives().getClazz())
+        {
+            try
             {
-                mandatoryIncentives.add(new IncentiveRoute());
+                mandatoryIncentives.add((MandatoryIncentive) ClassUtil
+                        .resolveConstructor(classType.get(inputParameters), new Class<?>[0]).newInstance());
             }
-            else if (incentive.getGetInLane() != null)
+            catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                    | NoSuchMethodException | ClassCastException exception)
             {
-                mandatoryIncentives.add(new IncentiveGetInLane());
-            }
-            else if (incentive.getBusStop() != null)
-            {
-                mandatoryIncentives.add(new IncentiveBusStop());
-            }
-            else if (incentive.getClazz() != null)
-            {
-                try
-                {
-                    mandatoryIncentives.add((MandatoryIncentive) ClassUtil
-                            .resolveConstructor(incentive.getClazz().get(inputParameters), new Class<?>[0]).newInstance());
-                }
-                catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                        | NoSuchMethodException | ClassCastException exception)
-                {
-                    throw new XmlParserException("Class " + incentive.getClazz()
-                            + " does not have a valid empty contructor, or is not a MandatoryIncentive.");
-                }
-            }
-            else
-            {
-                throw new XmlParserException("MandatoryIncentive not specified or not known.");
+                throw new XmlParserException("Class " + classType.get(inputParameters)
+                        + " does not have a valid empty contructor, or is not a MandatoryIncentive.");
             }
         }
         if (mandatoryIncentives.isEmpty())
@@ -445,89 +434,75 @@ public class ModelParser
 
         // Voluntary incentives
         Set<VoluntaryIncentive> voluntaryIncentives = new LinkedHashSet<>();
-        for (VoluntaryIncentives.Incentive incentive : lmrs.getVoluntaryIncentives().getIncentive())
+        if (!lmrs.getVoluntaryIncentives().getKeep().isEmpty())
         {
-            if (incentive.getKeep() != null)
+            voluntaryIncentives.add(new IncentiveKeep());
+        }
+        if (!lmrs.getVoluntaryIncentives().getSpeedWithCourtesy().isEmpty())
+        {
+            voluntaryIncentives.add(new IncentiveSpeedWithCourtesy());
+        }
+        if (!lmrs.getVoluntaryIncentives().getCourtesy().isEmpty())
+        {
+            voluntaryIncentives.add(new IncentiveCourtesy());
+        }
+        if (!lmrs.getVoluntaryIncentives().getSocioSpeed().isEmpty())
+        {
+            voluntaryIncentives.add(new IncentiveSocioSpeed());
+        }
+        if (!lmrs.getVoluntaryIncentives().getStayRight().isEmpty())
+        {
+            voluntaryIncentives.add(new IncentiveStayRight());
+        }
+        for (ClassType classType : lmrs.getVoluntaryIncentives().getClazz())
+        {
+            try
             {
-                voluntaryIncentives.add(new IncentiveKeep());
+                voluntaryIncentives.add((VoluntaryIncentive) ClassUtil
+                        .resolveConstructor(classType.get(inputParameters), new Class<?>[0]).newInstance());
             }
-            else if (incentive.getSpeedWithCourtesy() != null)
+            catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                    | NoSuchMethodException | ClassCastException exception)
             {
-                voluntaryIncentives.add(new IncentiveSpeedWithCourtesy());
-            }
-            else if (incentive.getCourtesy() != null)
-            {
-                voluntaryIncentives.add(new IncentiveCourtesy());
-            }
-            else if (incentive.getSocioSpeed() != null)
-            {
-                voluntaryIncentives.add(new IncentiveSocioSpeed());
-            }
-            else if (incentive.getStayRight() != null)
-            {
-                voluntaryIncentives.add(new IncentiveStayRight());
-            }
-            else if (incentive.getClazz() != null)
-            {
-                try
-                {
-                    voluntaryIncentives.add((VoluntaryIncentive) ClassUtil
-                            .resolveConstructor(incentive.getClazz().get(inputParameters), new Class<?>[0]).newInstance());
-                }
-                catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                        | NoSuchMethodException | ClassCastException exception)
-                {
-                    throw new XmlParserException("Class " + incentive.getClazz()
-                            + " does not have a valid empty contructor, or is not a VoluntaryIncentive.");
-                }
-            }
-            else
-            {
-                throw new XmlParserException("VoluntaryIncentive not specified or not known.");
+                throw new XmlParserException("Class " + classType.get(inputParameters)
+                        + " does not have a valid empty contructor, or is not a VoluntaryIncentive.");
             }
         }
 
         // Acceleration incentives
         Set<AccelerationIncentive> accelerationIncentives = new LinkedHashSet<>();
-        for (AccelerationIncentives.Incentive incentive : lmrs.getAccelerationIncentives().getIncentive())
+        if (!lmrs.getAccelerationIncentives().getBusStop().isEmpty())
         {
-            if (incentive.getBusStop() != null)
+            accelerationIncentives.add(new AccelerationBusStop());
+        }
+        if (!lmrs.getAccelerationIncentives().getConflicts().isEmpty())
+        {
+            accelerationIncentives.add(new AccelerationConflicts());
+        }
+        if (!lmrs.getAccelerationIncentives().getSpeedLimitTransitions().isEmpty())
+        {
+            accelerationIncentives.add(new AccelerationSpeedLimitTransition());
+        }
+        if (!lmrs.getAccelerationIncentives().getTrafficLights().isEmpty())
+        {
+            accelerationIncentives.add(new AccelerationTrafficLights());
+        }
+        if (!lmrs.getAccelerationIncentives().getNoRightOvertake().isEmpty())
+        {
+            accelerationIncentives.add(new AccelerationNoRightOvertake());
+        }
+        for (ClassType classType : lmrs.getAccelerationIncentives().getClazz())
+        {
+            try
             {
-                accelerationIncentives.add(new AccelerationBusStop());
+                accelerationIncentives.add((AccelerationIncentive) ClassUtil
+                        .resolveConstructor(classType.get(inputParameters), new Class<?>[0]).newInstance());
             }
-            else if (incentive.getConflicts() != null)
+            catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                    | NoSuchMethodException | ClassCastException exception)
             {
-                accelerationIncentives.add(new AccelerationConflicts());
-            }
-            else if (incentive.getSpeedLimitTransitions() != null)
-            {
-                accelerationIncentives.add(new AccelerationSpeedLimitTransition());
-            }
-            else if (incentive.getTrafficLights() != null)
-            {
-                accelerationIncentives.add(new AccelerationTrafficLights());
-            }
-            else if (incentive.getNoRightOvertake() != null)
-            {
-                accelerationIncentives.add(new AccelerationNoRightOvertake());
-            }
-            else if (incentive.getClazz() != null)
-            {
-                try
-                {
-                    accelerationIncentives.add((AccelerationIncentive) ClassUtil
-                            .resolveConstructor(incentive.getClazz().get(inputParameters), new Class<?>[0]).newInstance());
-                }
-                catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                        | NoSuchMethodException | ClassCastException exception)
-                {
-                    throw new XmlParserException("Class " + incentive.getClazz()
-                            + " does not have a valid empty contructor, or is not a AccelerationIncentive.");
-                }
-            }
-            else
-            {
-                throw new XmlParserException("AccelerationIncentive not specified or not known.");
+                throw new XmlParserException("Class " + classType.get(inputParameters)
+                        + " does not have a valid empty contructor, or is not a AccelerationIncentive.");
             }
         }
 
@@ -796,74 +771,71 @@ public class ModelParser
         List<Constructor<? extends PerceptionCategory>> categoryConstructorsPerceptionHeadway = new ArrayList<>();
         Class<?>[] perceptionConstructor = new Class[] {LanePerception.class};
         Class<?>[] perceptionHeadwayConstructor = new Class[] {LanePerception.class, HeadwayGtuType.class};
-        for (Category category : perception.getCategory())
+        try
         {
-            try
+            if (!perception.getCategories().getEgo().isEmpty())
             {
-                if (category.getEgo() != null)
+                categoryConstructorsPerception
+                        .add(ClassUtil.resolveConstructor(DirectEgoPerception.class, perceptionConstructor));
+            }
+            if (!perception.getCategories().getBusStop().isEmpty())
+            {
+                categoryConstructorsPerception
+                        .add(ClassUtil.resolveConstructor(DirectBusStopPerception.class, perceptionConstructor));
+            }
+            if (!perception.getCategories().getInfrastructure().isEmpty())
+            {
+                categoryConstructorsPerception
+                        .add(ClassUtil.resolveConstructor(DirectInfrastructurePerception.class, perceptionConstructor));
+            }
+            if (!perception.getCategories().getIntersection().isEmpty())
+            {
+                categoryConstructorsPerception
+                        .add(ClassUtil.resolveConstructor(DirectIntersectionPerception.class, perceptionHeadwayConstructor));
+            }
+            if (!perception.getCategories().getNeighbors().isEmpty())
+            {
+                categoryConstructorsPerception
+                        .add(ClassUtil.resolveConstructor(DirectNeighborsPerception.class, perceptionHeadwayConstructor));
+            }
+            if (!perception.getCategories().getTraffic().isEmpty())
+            {
+                categoryConstructorsPerception
+                        .add(ClassUtil.resolveConstructor(AnticipationTrafficPerception.class, perceptionHeadwayConstructor));
+            }
+            for (ClassType classType : perception.getCategories().getClazz())
+            {
+                Class<? extends PerceptionCategory<?, ?>> clazz = classType.get(inputParameters);
+                Constructor<? extends PerceptionCategory<?, ?>> constructor;
+                try
                 {
-                    categoryConstructorsPerception
-                            .add(ClassUtil.resolveConstructor(DirectEgoPerception.class, perceptionConstructor));
+                    constructor = ClassUtil.resolveConstructor(clazz, perceptionHeadwayConstructor);
+                    categoryConstructorsPerceptionHeadway.add(constructor);
                 }
-                else if (category.getBusStop() != null)
+                catch (NoSuchMethodException exception)
                 {
-                    categoryConstructorsPerception
-                            .add(ClassUtil.resolveConstructor(DirectBusStopPerception.class, perceptionConstructor));
-                }
-                else if (category.getInfrastructure() != null)
-                {
-                    categoryConstructorsPerception
-                            .add(ClassUtil.resolveConstructor(DirectInfrastructurePerception.class, perceptionConstructor));
-                }
-                else if (category.getIntersection() != null)
-                {
-                    categoryConstructorsPerceptionHeadway.add(
-                            ClassUtil.resolveConstructor(DirectIntersectionPerception.class, perceptionHeadwayConstructor));
-                }
-                else if (category.getNeighbors() != null)
-                {
-                    categoryConstructorsPerceptionHeadway
-                            .add(ClassUtil.resolveConstructor(DirectNeighborsPerception.class, perceptionHeadwayConstructor));
-                }
-                else if (category.getTraffic() != null)
-                {
-                    categoryConstructorsPerception
-                            .add(ClassUtil.resolveConstructor(AnticipationTrafficPerception.class, perceptionConstructor));
-                }
-                else if (category.getClazz() != null)
-                {
-                    Class<? extends PerceptionCategory<?, ?>> clazz = category.getClazz().get(inputParameters);
-                    Constructor<? extends PerceptionCategory<?, ?>> constructor;
                     try
                     {
-                        constructor = ClassUtil.resolveConstructor(clazz, perceptionHeadwayConstructor);
-                        categoryConstructorsPerceptionHeadway.add(constructor);
+                        constructor = ClassUtil.resolveConstructor(clazz, perceptionConstructor);
+                        categoryConstructorsPerception.add(constructor);
                     }
-                    catch (NoSuchMethodException exception)
+                    catch (NoSuchMethodException exceptionInner)
                     {
-                        try
-                        {
-                            constructor = ClassUtil.resolveConstructor(clazz, perceptionConstructor);
-                            categoryConstructorsPerception.add(constructor);
-                        }
-                        catch (NoSuchMethodException exceptionInner)
-                        {
-                            throw new XmlParserException("Class " + clazz
-                                    + " does not have a valid perception category contructor, or is not a PerceptionCategory.");
-                        }
-                    }
-                    catch (NullPointerException exception)
-                    {
-                        throw new XmlParserException("Perception category defined with value Class but no class is specified.",
-                                exception);
+                        throw new XmlParserException("Class " + clazz
+                                + " does not have a valid perception category contructor, or is not a PerceptionCategory.");
                     }
                 }
+                catch (NullPointerException exception)
+                {
+                    throw new XmlParserException("Perception category defined with value Class but no class is specified.",
+                            exception);
+                }
             }
-            catch (NoSuchMethodException exception)
-            {
-                throw new XmlParserException("Perception category does not have a valid perception category contructor, "
-                        + "or is not a PerceptionCategory.");
-            }
+        }
+        catch (NoSuchMethodException exception)
+        {
+            throw new XmlParserException("Perception category does not have a valid perception category contructor, "
+                    + "or is not a PerceptionCategory.");
         }
 
         // Mental
@@ -894,44 +866,40 @@ public class ModelParser
 
             // Behavioural adaptations
             Set<BehavioralAdaptation> behavioralAdaptations = new LinkedHashSet<>();
-            for (org.opentrafficsim.xml.generated.PerceptionType.Mental.Fuller.BehavioralAdaptation behavioralAdaptation : fuller
-                    .getBehavioralAdaptation())
+            if (!fuller.getBehavioralAdaptations().getSituationalAwareness().isEmpty())
             {
-                if (behavioralAdaptation.getSituationalAwareness() != null)
+                behavioralAdaptations.add(new AdaptationSituationalAwareness());
+                componentClasses.add(AdaptationSituationalAwareness.class);
+            }
+            if (!fuller.getBehavioralAdaptations().getHeadway().isEmpty())
+            {
+                behavioralAdaptations.add(new AdaptationHeadway());
+                componentClasses.add(AdaptationHeadway.class);
+            }
+            if (!fuller.getBehavioralAdaptations().getSpeed().isEmpty())
+            {
+                behavioralAdaptations.add(new AdaptationSpeed());
+                componentClasses.add(AdaptationSpeed.class);
+            }
+            for (ClassType classType : fuller.getBehavioralAdaptations().getClazz())
+            {
+                Class<?> clazz = classType.get(inputParameters);
+                componentClasses.add(clazz);
+                try
                 {
-                    behavioralAdaptations.add(new AdaptationSituationalAwareness());
-                    componentClasses.add(AdaptationSituationalAwareness.class);
+                    behavioralAdaptations
+                            .add((BehavioralAdaptation) ClassUtil.resolveConstructor(clazz, new Object[0]).newInstance());
                 }
-                else if (behavioralAdaptation.getHeadway() != null)
+                catch (NullPointerException exception)
                 {
-                    behavioralAdaptations.add(new AdaptationHeadway());
-                    componentClasses.add(AdaptationHeadway.class);
+                    throw new XmlParserException("Behavioral adaptation defined with value Class but no class is specified.",
+                            exception);
                 }
-                else if (behavioralAdaptation.getSpeed() != null)
+                catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                        | NoSuchMethodException exception)
                 {
-                    behavioralAdaptations.add(new AdaptationSpeed());
-                    componentClasses.add(AdaptationSpeed.class);
-                }
-                else if (behavioralAdaptation.getClazz() != null)
-                {
-                    Class<?> clazz = behavioralAdaptation.getClazz().get(inputParameters);
-                    componentClasses.add(clazz);
-                    try
-                    {
-                        behavioralAdaptations
-                                .add((BehavioralAdaptation) ClassUtil.resolveConstructor(clazz, new Object[0]).newInstance());
-                    }
-                    catch (NullPointerException exception)
-                    {
-                        throw new XmlParserException(
-                                "Behavioral adaptation defined with value Class but no class is specified.", exception);
-                    }
-                    catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-                            | InvocationTargetException | NoSuchMethodException exception)
-                    {
-                        throw new XmlParserException("Unable to instantiate class " + clazz + " through an empty constructor.",
-                                exception);
-                    }
+                    throw new XmlParserException("Unable to instantiate class " + clazz + " through an empty constructor.",
+                            exception);
                 }
             }
 

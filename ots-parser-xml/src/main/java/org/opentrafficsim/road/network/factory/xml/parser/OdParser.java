@@ -214,7 +214,7 @@ public final class OdParser
     {
         Categorization categorization;
         Map<String, Double> categoryFactors = new LinkedHashMap<>();
-        if (od.getCategory() == null || od.getCategory().isEmpty())
+        if (od.getCategory().isEmpty())
         {
             categorization = Categorization.UNCATEGORIZED;
         }
@@ -507,17 +507,14 @@ public final class OdParser
                 if (option.getLaneBiases() != null)
                 {
                     LaneBiases laneBiases = new LaneBiases();
-                    for (org.opentrafficsim.xml.generated.LaneBias laneBiasType : ParseUtil.getObjectsOfType(
-                            option.getLaneBiases().getLaneBiasOrDefinedLaneBias(),
-                            org.opentrafficsim.xml.generated.LaneBias.class))
+                    for (org.opentrafficsim.xml.generated.LaneBias laneBiasType : option.getLaneBiases().getLaneBias())
                     {
                         String gtuTypeId = laneBiasType.getGtuType().get(inputParameters);
                         GtuType gtuType = definitions.get(GtuType.class, gtuTypeId);
                         Throw.whenNull(gtuType, "GTU type %s in lane bias does not exist.", gtuTypeId);
                         laneBiases.addBias(gtuType, DefinitionsParser.parseLaneBias(laneBiasType, inputParameters));
                     }
-                    for (DefinedLaneBias definedLaneBias : ParseUtil
-                            .getObjectsOfType(option.getLaneBiases().getLaneBiasOrDefinedLaneBias(), DefinedLaneBias.class))
+                    for (DefinedLaneBias definedLaneBias : option.getLaneBiases().getDefinedLaneBias())
                     {
                         String gtuTypeId = definedLaneBias.getGtuType().get(inputParameters);
                         GtuType gtuType = definitions.get(GtuType.class, gtuTypeId);
