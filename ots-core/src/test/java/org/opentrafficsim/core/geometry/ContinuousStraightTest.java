@@ -1,13 +1,13 @@
 package org.opentrafficsim.core.geometry;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for ContinuousStraight.
@@ -37,12 +37,12 @@ public class ContinuousStraightTest
 
         isApproximal(straight.getStartPoint(), 0.0, 0.0);
         isApproximal(straight.getEndPoint(), 100.0, 0.0);
-        assertEquals("Start direction is incorrect.", 0.0, straight.getStartDirection().si, MARGIN);
-        assertEquals("End direction is incorrect.", 0.0, straight.getEndDirection().si, MARGIN);
-        assertTrue("Start radius is incorrect.", Double.isInfinite(straight.getStartRadius()));
-        assertTrue("End radius is incorrect.", Double.isInfinite(straight.getEndRadius()));
-        assertEquals("Start curvature is incorrect.", 0.0, straight.getStartCurvature(), MARGIN);
-        assertEquals("End curvature is incorrect.", 0.0, straight.getEndCurvature(), MARGIN);
+        assertEquals(0.0, straight.getStartDirection().si, MARGIN, "Start direction is incorrect.");
+        assertEquals(0.0, straight.getEndDirection().si, MARGIN, "End direction is incorrect.");
+        assertTrue(Double.isInfinite(straight.getStartRadius()), "Start radius is incorrect.");
+        assertTrue(Double.isInfinite(straight.getEndRadius()), "End radius is incorrect.");
+        assertEquals(0.0, straight.getStartCurvature(), MARGIN, "Start curvature is incorrect.");
+        assertEquals(0.0, straight.getEndCurvature(), MARGIN, "End curvature is incorrect.");
 
         FractionalLengthData offsets = FractionalLengthData.of(0.0, -1.0, 0.5, -1.0, 1.0, -2.0);
         PolyLine2d line = straight.offset(offsets);
@@ -65,8 +65,8 @@ public class ContinuousStraightTest
      */
     private void isApproximal(final Point2d point, final double x, final double y)
     {
-        assertEquals("Resulting x-coordinate is incorrect", x, point.x, MARGIN);
-        assertEquals("Resulting y-coordinate is incorrect", y, point.y, MARGIN);
+        assertEquals(x, point.x, MARGIN, "Resulting x-coordinate is incorrect");
+        assertEquals(y, point.y, MARGIN, "Resulting y-coordinate is incorrect");
     }
 
 }

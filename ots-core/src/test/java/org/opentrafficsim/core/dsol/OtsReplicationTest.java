@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.dsol;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.rmi.RemoteException;
 
@@ -11,7 +11,7 @@ import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
@@ -44,22 +44,22 @@ public class OtsReplicationTest
         OtsSimulatorInterface simulator = new OtsSimulator("Simulator for OTSReplicationTest");
         OtsModel model = new OtsModel(simulator);
         OtsReplication replication = new OtsReplication(id, startTime, warmupPeriod, runLength);
-        assertEquals("startTime can be retrieved", startTime, replication.getStartTimeAbs());
-        assertEquals("warmupPeriod can be retrieved", warmupPeriod, replication.getWarmupPeriod());
-        assertEquals("runLength can be retrieved", runLength, replication.getRunLength());
+        assertEquals(startTime, replication.getStartTimeAbs(), "startTime can be retrieved");
+        assertEquals(warmupPeriod, replication.getWarmupPeriod(), "warmupPeriod can be retrieved");
+        assertEquals(runLength, replication.getRunLength(), "runLength can be retrieved");
         simulator.initialize(model, replication);
         int listenerCount = simulator.numberOfListeners(Replication.END_REPLICATION_EVENT);
         HistoryManagerDevs hm = (HistoryManagerDevs) replication.getHistoryManager(simulator);
-        assertEquals("history manager knows time of simulator", simulator.getSimulatorAbsTime(), hm.now());
-        assertEquals("history manager has subscribed to our simulator", listenerCount + 1,
-                simulator.numberOfListeners(Replication.END_REPLICATION_EVENT));
+        assertEquals(simulator.getSimulatorAbsTime(), hm.now(), "history manager knows time of simulator");
+        assertEquals(listenerCount + 1, simulator.numberOfListeners(Replication.END_REPLICATION_EVENT),
+                "history manager has subscribed to our simulator");
         Duration history = new Duration(123, DurationUnit.SECOND);
         Duration cleanupInterval = new Duration(234, DurationUnit.SECOND);
         HistoryManager ourHM = new HistoryManagerDevs(simulator, history, cleanupInterval);
         replication.setHistoryManager(ourHM);
         hm = (HistoryManagerDevs) replication.getHistoryManager(simulator);
-        assertEquals("Our manually set history manager is returned", ourHM, hm);
-        assertTrue("toString method returns something descriptive", replication.toString().startsWith("OTSReplication"));
+        assertEquals(ourHM, hm, "Our manually set history manager is returned");
+        assertTrue(replication.toString().startsWith("OTSReplication"), "toString method returns something descriptive");
     }
 
     /**

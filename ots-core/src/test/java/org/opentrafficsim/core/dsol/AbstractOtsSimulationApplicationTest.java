@@ -1,8 +1,8 @@
 package org.opentrafficsim.core.dsol;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.dsol.AbstractOtsModelTest.OtsModel;
 
 /**
@@ -25,7 +25,7 @@ public class AbstractOtsSimulationApplicationTest
         OtsSimulatorInterface simulator = new OtsSimulator("Simulator for AbstractOtsSimulationApplicationlTest");
         OtsModel model = new OtsModel(simulator);
         OtsSimulationApplication otsSimulationApplication = new OtsSimulationApplication(model);
-        assertEquals("model can be retrieved", model, otsSimulationApplication.getModel());
+        assertEquals(model, otsSimulationApplication.getModel(), "model can be retrieved");
     }
 
     /**

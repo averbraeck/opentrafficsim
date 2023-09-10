@@ -1,8 +1,8 @@
 package trafficcontrol;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -127,13 +127,13 @@ public class TestFixedTimeController
         }
         // Test the controller that adds default for pre green time
         SignalGroup sg = new SignalGroup(signalGroupId, trafficLightIds, signalGroupOffset, green, yellow);
-        assertEquals("default for pre green", 0, sg.getPreGreen().si, 0);
-        assertEquals("green", green.si, sg.getGreen().si, 0);
-        assertEquals("yellow", yellow.si, sg.getYellow().si, 0);
+        assertEquals(0, sg.getPreGreen().si, 0, "default for pre green");
+        assertEquals(green.si, sg.getGreen().si, 0, "green");
+        assertEquals(yellow.si, sg.getYellow().si, 0, "yellow");
         // Now that we've tested all ways that the constructor should have told us to go to hell, create a signal group
         sg = new SignalGroup(signalGroupId, trafficLightIds, signalGroupOffset, preGreen, green, yellow);
-        assertEquals("group id", signalGroupId, sg.getId());
-        assertTrue("toString returns something descriptive", sg.toString().startsWith("SignalGroup ["));
+        assertEquals(signalGroupId, sg.getId(), "group id");
+        assertTrue(sg.toString().startsWith("SignalGroup ["), "toString returns something descriptive");
 
         String ftcId = "FTCid";
         OtsSimulatorInterface simulator = new OtsSimulator("TestFixedTimeController");
@@ -150,11 +150,11 @@ public class TestFixedTimeController
         ImmutableSet<String> ids = sg.getTrafficLightIds();
         for (String tlId : ids)
         {
-            assertTrue("returned id is in provided set", trafficLightMap.containsKey(tlId));
+            assertTrue(trafficLightMap.containsKey(tlId), "returned id is in provided set");
         }
         for (String tlId : trafficLightMap.keySet())
         {
-            assertTrue("provided id is returned", ids.contains(tlId));
+            assertTrue(ids.contains(tlId), "provided id is returned");
         }
         signalGroups.add(sg);
         try
@@ -241,8 +241,8 @@ public class TestFixedTimeController
         // Not testing check for identical signal groups; yet
         // Now that we've tested all ways that the constructor should have told us to go to hell, create a controller
         FixedTimeController ftc = new FixedTimeController(ftcId, simulator, network, cycleTime, offset, signalGroups);
-        assertEquals("FTC id", ftcId, ftc.getId());
-        assertTrue("toString returns something descriptive", ftc.toString().startsWith("FixedTimeController ["));
+        assertEquals(ftcId, ftc.getId(), "FTC id");
+        assertTrue(ftc.toString().startsWith("FixedTimeController ["), "toString returns something descriptive");
 
         simulator.runUpTo(Time.instantiateSI(1));
         while (simulator.isStartingOrRunning())
@@ -258,10 +258,10 @@ public class TestFixedTimeController
         }
         for (TrafficLight tl : sg.getTrafficLights())
         {
-            assertTrue("acquired traffic light is in the proved set", trafficLightMap.containsKey(tl.getId()));
+            assertTrue(trafficLightMap.containsKey(tl.getId()), "acquired traffic light is in the proved set");
         }
-        assertEquals("red time makes up remainder of cycle time", cycleTime.minus(preGreen).minus(green).minus(yellow).si,
-                sg.getRed().si, 0.0001);
+        assertEquals(cycleTime.minus(preGreen).minus(green).minus(yellow).si, sg.getRed().si,
+                0.0001, "red time makes up remainder of cycle time");
     }
 
     /**
@@ -384,11 +384,11 @@ public class TestFixedTimeController
                                     catch (SimRuntimeException exception)
                                     {
                                         exceptionThrown = true;
-                                        assertTrue("exception explains cycle time problem",
-                                                exception.getCause().getCause().getMessage().contains("Cycle time shorter "));
+                                        assertTrue(exception.getCause().getCause().getMessage().contains("Cycle time shorter "),
+                                                "exception explains cycle time problem");
                                     }
-                                    assertTrue("Too short cycle time should have thrown a SimRuntimeException",
-                                            exceptionThrown);
+                                    assertTrue(exceptionThrown,
+                                            "Too short cycle time should have thrown a SimRuntimeException");
                                 }
                                 else
                                 {
@@ -487,10 +487,10 @@ public class TestFixedTimeController
                     else
                     {
                         assertEquals(
-                                "Traffic light color mismatch at simulator time " + simulator.getSimulatorTime()
-                                        + " of signal group " + sg,
                                 expectedColor + " which is in phase " + phase + " of cycle time " + cycleTime,
-                                tl.getTrafficLightColor());
+                                tl.getTrafficLightColor(),
+                                "Traffic light color mismatch at simulator time " + simulator.getSimulatorTime()
+                                        + " of signal group " + sg);
                     }
                 }
             }

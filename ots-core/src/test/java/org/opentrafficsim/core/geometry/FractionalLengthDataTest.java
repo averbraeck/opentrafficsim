@@ -1,9 +1,9 @@
 package org.opentrafficsim.core.geometry;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.djutils.exceptions.Try;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * FractionalLengthDataTest test.
@@ -31,17 +31,17 @@ public class FractionalLengthDataTest
         
         data = FractionalLengthData.of(0.2, 1.0, 0.4, 2.0, 0.6, 2.0, 0.8, 3.0);
         double precision = 1e-9; 
-        assertEquals("Fraction < 0.0 not extended", data.get(-1.0), 1.0, precision);
-        assertEquals("Fraction > 1.0 not extended", data.get(2.0), 3.0, precision);
-        assertEquals("Fraction < smallest fraction not extended", data.get(0.1), 1.0, precision);
-        assertEquals("Fraction > largest fraction not extended", data.get(0.9), 3.0, precision);
-        assertEquals("Exact fraction, no exact value", data.get(0.2), 1.0, 0.0);
-        assertEquals("Exact fraction, no exact value", data.get(0.4), 2.0, 0.0);
-        assertEquals("Exact fraction, no exact value", data.get(0.6), 2.0, 0.0);
-        assertEquals("Exact fraction, no exact value", data.get(0.8), 3.0, 0.0);
-        assertEquals("Fraction not correctly interpolated", data.get(0.3), 1.5, precision);
-        assertEquals("Fraction not correctly interpolated", data.get(0.5), 2.0, precision);
-        assertEquals("Fraction not correctly interpolated", data.get(0.7), 2.5, precision);
+        assertEquals(data.get(-1.0), 1.0, precision, "Fraction < 0.0 not extended");
+        assertEquals(data.get(2.0), 3.0, precision, "Fraction > 1.0 not extended");
+        assertEquals(data.get(0.1), 1.0, precision, "Fraction < smallest fraction not extended");
+        assertEquals(data.get(0.9), 3.0, precision, "Fraction > largest fraction not extended");
+        assertEquals(data.get(0.2), 1.0, 0.0, "Exact fraction, no exact value");
+        assertEquals(data.get(0.4), 2.0, 0.0, "Exact fraction, no exact value");
+        assertEquals(data.get(0.6), 2.0, 0.0, "Exact fraction, no exact value");
+        assertEquals(data.get(0.8), 3.0, 0.0, "Exact fraction, no exact value");
+        assertEquals(data.get(0.3), 1.5, precision, "Fraction not correctly interpolated");
+        assertEquals(data.get(0.5), 2.0, precision, "Fraction not correctly interpolated");
+        assertEquals(data.get(0.7), 2.5, precision, "Fraction not correctly interpolated");
     }
     
 }

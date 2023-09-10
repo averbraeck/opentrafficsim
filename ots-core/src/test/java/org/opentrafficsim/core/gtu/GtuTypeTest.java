@@ -1,11 +1,11 @@
 package org.opentrafficsim.core.gtu;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.djutils.exceptions.Try;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulator;
@@ -34,12 +34,12 @@ public class GtuTypeTest
     {
         Network network = new Network("network", new OtsSimulator("Simulator for GtuTypeTest"));
         GtuType t = new GtuType("abc", DefaultsNl.VEHICLE);
-        assertTrue("Id is stored in the newly created GtuType", "abc".equals(t.getId()));
+        assertTrue("abc".equals(t.getId()), "Id is stored in the newly created GtuType");
         GtuType t2 = new GtuType("pqr", DefaultsNl.VEHICLE);
-        assertTrue("Id is stored in the newly created GtuType", "pqr".equals(t2.getId()));
+        assertTrue("pqr".equals(t2.getId()), "Id is stored in the newly created GtuType");
         // prove that the two are really distinct (do not use the same storage for the type string
-        assertTrue("Id is stored in the newly created GtuType", "abc".equals(t.getId()));
-        assertEquals("parent can be retrieved", DefaultsNl.VEHICLE, t.getParent());
+        assertTrue("abc".equals(t.getId()), "Id is stored in the newly created GtuType");
+        assertEquals(DefaultsNl.VEHICLE, t.getParent(), "parent can be retrieved");
     }
 
     /**
@@ -69,15 +69,15 @@ public class GtuTypeTest
 
         // Note: we can only compare characteristics that we know are not distributed for the used GTU type CAR.
         message = "Default characteristics of DEFAULTS and derived GtuType should be equal.";
-        assertEquals(message, characteristicsCar1.getLength(), characteristicsCar2.getLength());
-        assertEquals(message, characteristicsCar1.getLength(), characteristicsSpaceCar1.getLength());
-        assertEquals(message, characteristicsCar1.getLength(), characteristicsSpaceCar2.getLength());
-        assertEquals(message, characteristicsCar1.getWidth(), characteristicsCar2.getWidth());
-        assertEquals(message, characteristicsCar1.getWidth(), characteristicsSpaceCar1.getWidth());
-        assertEquals(message, characteristicsCar1.getWidth(), characteristicsSpaceCar2.getWidth());
+        assertEquals(characteristicsCar1.getLength(), characteristicsCar2.getLength(), message);
+        assertEquals(characteristicsCar1.getLength(), characteristicsSpaceCar1.getLength(), message);
+        assertEquals(characteristicsCar1.getLength(), characteristicsSpaceCar2.getLength(), message);
+        assertEquals(characteristicsCar1.getWidth(), characteristicsCar2.getWidth(), message);
+        assertEquals(characteristicsCar1.getWidth(), characteristicsSpaceCar1.getWidth(), message);
+        assertEquals(characteristicsCar1.getWidth(), characteristicsSpaceCar2.getWidth(), message);
 
         message = "Default characteristics of distinct DEFAULTS GtuType should not be equal.";
-        assertNotEquals(message, characteristicsCar1.getLength(), characteristicsTruck.getLength());
-        assertNotEquals(message, characteristicsCar1.getWidth(), characteristicsTruck.getWidth());
+        assertNotEquals(characteristicsCar1.getLength(), characteristicsTruck.getLength(), message);
+        assertNotEquals(characteristicsCar1.getWidth(), characteristicsTruck.getWidth(), message);
     }
 }

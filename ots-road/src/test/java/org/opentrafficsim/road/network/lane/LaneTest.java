@@ -1,9 +1,9 @@
 package org.opentrafficsim.road.network.lane;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.awt.geom.Point2D;
 import java.rmi.RemoteException;
@@ -27,7 +27,7 @@ import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
@@ -93,44 +93,44 @@ public class LaneTest implements UNITS
         Lane lane = LaneGeometryUtil.createStraightLane(link, "lane", startLateralPos, endLateralPos, startWidth, endWidth,
                 laneType, speedMap);
         // Verify the easy bits
-        assertEquals("Link returns network", network, link.getNetwork());
-        assertEquals("Lane returns network", network, lane.getNetwork());
-        assertEquals("PrevLanes should be empty", 0, lane.prevLanes(gtuTypeCar).size()); // this one caught a bug!
-        assertEquals("NextLanes should be empty", 0, lane.nextLanes(gtuTypeCar).size());
+        assertEquals(network, link.getNetwork(), "Link returns network");
+        assertEquals(network, lane.getNetwork(), "Lane returns network");
+        assertEquals(0, lane.prevLanes(gtuTypeCar).size(), "PrevLanes should be empty"); // this one caught a bug!
+        assertEquals(0, lane.nextLanes(gtuTypeCar).size(), "NextLanes should be empty");
         double approximateLengthOfContour =
                 2 * nodeFrom.getPoint().distance(nodeTo.getPoint()) + startWidth.getSI() + endWidth.getSI();
-        assertEquals("Length of contour is approximately " + approximateLengthOfContour, approximateLengthOfContour,
-                lane.getContour().getLength(), 0.1);
-        assertEquals("SpeedLimit should be " + (new Speed(100, KM_PER_HOUR)), new Speed(100, KM_PER_HOUR),
-                lane.getSpeedLimit(DefaultsNl.VEHICLE));
-        assertEquals("There should be no GTUs on the lane", 0, lane.getGtuList().size());
-        assertEquals("LaneType should be " + laneType, laneType, lane.getType());
+        assertEquals(approximateLengthOfContour, lane.getContour().getLength(),
+                0.1, "Length of contour is approximately " + approximateLengthOfContour);
+        assertEquals(new Speed(100, KM_PER_HOUR), lane.getSpeedLimit(DefaultsNl.VEHICLE),
+                "SpeedLimit should be " + (new Speed(100, KM_PER_HOUR)));
+        assertEquals(0, lane.getGtuList().size(), "There should be no GTUs on the lane");
+        assertEquals(laneType, lane.getType(), "LaneType should be " + laneType);
         // TODO: This test for expectedLateralCenterOffset fails
         for (int i = 0; i < 10; i++)
         {
             double expectedLateralCenterOffset =
                     startLateralPos.getSI() + (endLateralPos.getSI() - startLateralPos.getSI()) * i / 10;
-            assertEquals(String.format("Lateral offset at %d%% should be %.3fm", 10 * i, expectedLateralCenterOffset),
-                    expectedLateralCenterOffset, lane.getLateralCenterPosition(i / 10.0).getSI(), 0.01);
+            assertEquals(expectedLateralCenterOffset,
+                    lane.getLateralCenterPosition(i / 10.0).getSI(), 0.01, String.format("Lateral offset at %d%% should be %.3fm", 10 * i, expectedLateralCenterOffset));
             Length longitudinalPosition = new Length(lane.getLength().getSI() * i / 10, METER);
-            assertEquals("Lateral offset at " + longitudinalPosition + " should be " + expectedLateralCenterOffset,
-                    expectedLateralCenterOffset, lane.getLateralCenterPosition(longitudinalPosition).getSI(), 0.01);
+            assertEquals(expectedLateralCenterOffset,
+                    lane.getLateralCenterPosition(longitudinalPosition).getSI(), 0.01, "Lateral offset at " + longitudinalPosition + " should be " + expectedLateralCenterOffset);
             double expectedWidth = startWidth.getSI() + (endWidth.getSI() - startWidth.getSI()) * i / 10;
-            assertEquals(String.format("Width at %d%% should be %.3fm", 10 * i, expectedWidth), expectedWidth,
-                    lane.getWidth(i / 10.0).getSI(), 0.0001);
-            assertEquals("Width at " + longitudinalPosition + " should be " + expectedWidth, expectedWidth,
-                    lane.getWidth(longitudinalPosition).getSI(), 0.0001);
+            assertEquals(expectedWidth, lane.getWidth(i / 10.0).getSI(),
+                    0.0001, String.format("Width at %d%% should be %.3fm", 10 * i, expectedWidth));
+            assertEquals(expectedWidth, lane.getWidth(longitudinalPosition).getSI(),
+                    0.0001, "Width at " + longitudinalPosition + " should be " + expectedWidth);
             double expectedLeftOffset = expectedLateralCenterOffset - expectedWidth / 2;
             // The next test caught a bug
-            assertEquals(String.format("Left edge at %d%% should be %.3fm", 10 * i, expectedLeftOffset), expectedLeftOffset,
-                    lane.getLateralBoundaryPosition(LateralDirectionality.LEFT, i / 10.0).getSI(), 0.001);
-            assertEquals("Left edge at " + longitudinalPosition + " should be " + expectedLeftOffset, expectedLeftOffset,
-                    lane.getLateralBoundaryPosition(LateralDirectionality.LEFT, longitudinalPosition).getSI(), 0.001);
+            assertEquals(expectedLeftOffset, lane.getLateralBoundaryPosition(LateralDirectionality.LEFT, i / 10.0).getSI(),
+                    0.001, String.format("Left edge at %d%% should be %.3fm", 10 * i, expectedLeftOffset));
+            assertEquals(expectedLeftOffset, lane.getLateralBoundaryPosition(LateralDirectionality.LEFT, longitudinalPosition).getSI(),
+                    0.001, "Left edge at " + longitudinalPosition + " should be " + expectedLeftOffset);
             double expectedRightOffset = expectedLateralCenterOffset + expectedWidth / 2;
-            assertEquals(String.format("Right edge at %d%% should be %.3fm", 10 * i, expectedRightOffset), expectedRightOffset,
-                    lane.getLateralBoundaryPosition(LateralDirectionality.RIGHT, i / 10.0).getSI(), 0.001);
-            assertEquals("Right edge at " + longitudinalPosition + " should be " + expectedRightOffset, expectedRightOffset,
-                    lane.getLateralBoundaryPosition(LateralDirectionality.RIGHT, longitudinalPosition).getSI(), 0.001);
+            assertEquals(expectedRightOffset, lane.getLateralBoundaryPosition(LateralDirectionality.RIGHT, i / 10.0).getSI(),
+                    0.001, String.format("Right edge at %d%% should be %.3fm", 10 * i, expectedRightOffset));
+            assertEquals(expectedRightOffset, lane.getLateralBoundaryPosition(LateralDirectionality.RIGHT, longitudinalPosition).getSI(),
+                    0.001, "Right edge at " + longitudinalPosition + " should be " + expectedRightOffset);
         }
 
         // Harder case; create a Link with form points along the way
@@ -208,58 +208,58 @@ public class LaneTest implements UNITS
      */
     public final void sensorTest(final Lane lane) throws NetworkException
     {
-        assertEquals("List of sensor is initially empty", 0, lane.getDetectors().size());
+        assertEquals(0, lane.getDetectors().size(), "List of sensor is initially empty");
         Listener listener = new Listener();
         double length = lane.getLength().si;
         lane.addListener(listener, Lane.DETECTOR_ADD_EVENT);
         lane.addListener(listener, Lane.DETECTOR_REMOVE_EVENT);
-        assertEquals("event list is initially empty", 0, listener.events.size());
+        assertEquals(0, listener.events.size(), "event list is initially empty");
         LaneDetector sensor1 = new MockSensor("sensor1", Length.instantiateSI(length / 4)).getMock();
         lane.addDetector(sensor1);
-        assertEquals("event list now contains one event", 1, listener.events.size());
-        assertEquals("event indicates that a sensor got added", listener.events.get(0).getType(), Lane.DETECTOR_ADD_EVENT);
-        assertEquals("lane now contains one sensor", 1, lane.getDetectors().size());
-        assertEquals("sensor on lane is sensor1", sensor1, lane.getDetectors().get(0));
+        assertEquals(1, listener.events.size(), "event list now contains one event");
+        assertEquals(listener.events.get(0).getType(), Lane.DETECTOR_ADD_EVENT, "event indicates that a sensor got added");
+        assertEquals(1, lane.getDetectors().size(), "lane now contains one sensor");
+        assertEquals(sensor1, lane.getDetectors().get(0), "sensor on lane is sensor1");
         LaneDetector sensor2 = new MockSensor("sensor2", Length.instantiateSI(length / 2)).getMock();
         lane.addDetector(sensor2);
-        assertEquals("event list now contains two events", 2, listener.events.size());
-        assertEquals("event indicates that a sensor got added", listener.events.get(1).getType(), Lane.DETECTOR_ADD_EVENT);
+        assertEquals(2, listener.events.size(), "event list now contains two events");
+        assertEquals(listener.events.get(1).getType(), Lane.DETECTOR_ADD_EVENT, "event indicates that a sensor got added");
         List<LaneDetector> sensors = lane.getDetectors();
-        assertEquals("lane now contains two sensors", 2, sensors.size());
-        assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
-        assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
+        assertEquals(2, sensors.size(), "lane now contains two sensors");
+        assertTrue(sensors.contains(sensor1), "sensor list contains sensor1");
+        assertTrue(sensors.contains(sensor2), "sensor list contains sensor2");
         sensors = lane.getDetectors(Length.ZERO, Length.instantiateSI(length / 3), DefaultsNl.VEHICLE);
-        assertEquals("first third of lane contains 1 sensor", 1, sensors.size());
-        assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
+        assertEquals(1, sensors.size(), "first third of lane contains 1 sensor");
+        assertTrue(sensors.contains(sensor1), "sensor list contains sensor1");
         sensors = lane.getDetectors(Length.instantiateSI(length / 3), Length.instantiateSI(length), DefaultsNl.VEHICLE);
-        assertEquals("last two-thirds of lane contains 1 sensor", 1, sensors.size());
-        assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
+        assertEquals(1, sensors.size(), "last two-thirds of lane contains 1 sensor");
+        assertTrue(sensors.contains(sensor2), "sensor list contains sensor2");
         sensors = lane.getDetectors(DefaultsNl.VEHICLE);
         // NB. The mocked sensor is compatible with all GTU types in all directions.
-        assertEquals("sensor list contains two sensors", 2, sensors.size());
-        assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
-        assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
+        assertEquals(2, sensors.size(), "sensor list contains two sensors");
+        assertTrue(sensors.contains(sensor1), "sensor list contains sensor1");
+        assertTrue(sensors.contains(sensor2), "sensor list contains sensor2");
         sensors = lane.getDetectors(DefaultsNl.VEHICLE);
         // NB. The mocked sensor is compatible with all GTU types in all directions.
-        assertEquals("sensor list contains two sensors", 2, sensors.size());
-        assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
-        assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
+        assertEquals(2, sensors.size(), "sensor list contains two sensors");
+        assertTrue(sensors.contains(sensor1), "sensor list contains sensor1");
+        assertTrue(sensors.contains(sensor2), "sensor list contains sensor2");
         SortedMap<Double, List<LaneDetector>> sensorMap = lane.getDetectorMap(DefaultsNl.VEHICLE);
-        assertEquals("sensor map contains two entries", 2, sensorMap.size());
+        assertEquals(2, sensorMap.size(), "sensor map contains two entries");
         for (Double d : sensorMap.keySet())
         {
             List<LaneDetector> sensorsAtD = sensorMap.get(d);
-            assertEquals("There is one sensor at position d", 1, sensorsAtD.size());
-            assertEquals("Sensor map contains the correct sensor at the correct distance", d < length / 3 ? sensor1 : sensor2,
-                    sensorsAtD.get(0));
+            assertEquals(1, sensorsAtD.size(), "There is one sensor at position d");
+            assertEquals(d < length / 3 ? sensor1 : sensor2, sensorsAtD.get(0),
+                    "Sensor map contains the correct sensor at the correct distance");
         }
 
         lane.removeDetector(sensor1);
-        assertEquals("event list now contains three events", 3, listener.events.size());
-        assertEquals("event indicates that a sensor got removed", listener.events.get(2).getType(), Lane.DETECTOR_REMOVE_EVENT);
+        assertEquals(3, listener.events.size(), "event list now contains three events");
+        assertEquals(listener.events.get(2).getType(), Lane.DETECTOR_REMOVE_EVENT, "event indicates that a sensor got removed");
         sensors = lane.getDetectors();
-        assertEquals("lane now contains one sensor", 1, sensors.size());
-        assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
+        assertEquals(1, sensors.size(), "lane now contains one sensor");
+        assertTrue(sensors.contains(sensor2), "sensor list contains sensor2");
         try
         {
             lane.removeDetector(sensor1);
@@ -300,40 +300,40 @@ public class LaneTest implements UNITS
         }
         lane.removeDetector(sensor2);
         List<LaneBasedObject> lboList = lane.getLaneBasedObjects();
-        assertEquals("lane initially contains zero lane based objects", 0, lboList.size());
+        assertEquals(0, lboList.size(), "lane initially contains zero lane based objects");
         LaneBasedObject lbo1 = new MockLaneBasedObject("lbo1", Length.instantiateSI(length / 4)).getMock();
         listener.getEvents().clear();
         lane.addListener(listener, Lane.OBJECT_ADD_EVENT);
         lane.addListener(listener, Lane.OBJECT_REMOVE_EVENT);
         lane.addLaneBasedObject(lbo1);
-        assertEquals("adding a lane based object cause the lane to emit an event", 1, listener.getEvents().size());
-        assertEquals("The emitted event was a OBJECT_ADD_EVENT", Lane.OBJECT_ADD_EVENT, listener.getEvents().get(0).getType());
+        assertEquals(1, listener.getEvents().size(), "adding a lane based object cause the lane to emit an event");
+        assertEquals(Lane.OBJECT_ADD_EVENT, listener.getEvents().get(0).getType(), "The emitted event was a OBJECT_ADD_EVENT");
         LaneBasedObject lbo2 = new MockLaneBasedObject("lbo2", Length.instantiateSI(3 * length / 4)).getMock();
         lane.addLaneBasedObject(lbo2);
         lboList = lane.getLaneBasedObjects();
-        assertEquals("lane based object list now contains two objects", 2, lboList.size());
-        assertTrue("lane base object list contains lbo1", lboList.contains(lbo1));
-        assertTrue("lane base object list contains lbo2", lboList.contains(lbo2));
+        assertEquals(2, lboList.size(), "lane based object list now contains two objects");
+        assertTrue(lboList.contains(lbo1), "lane base object list contains lbo1");
+        assertTrue(lboList.contains(lbo2), "lane base object list contains lbo2");
         lboList = lane.getLaneBasedObjects(Length.ZERO, Length.instantiateSI(length / 2));
-        assertEquals("first half of lane contains one object", 1, lboList.size());
-        assertEquals("object in first haf of lane is lbo1", lbo1, lboList.get(0));
+        assertEquals(1, lboList.size(), "first half of lane contains one object");
+        assertEquals(lbo1, lboList.get(0), "object in first haf of lane is lbo1");
         lboList = lane.getLaneBasedObjects(Length.instantiateSI(length / 2), Length.instantiateSI(length));
-        assertEquals("second half of lane contains one object", 1, lboList.size());
-        assertEquals("object in second haf of lane is lbo2", lbo2, lboList.get(0));
+        assertEquals(1, lboList.size(), "second half of lane contains one object");
+        assertEquals(lbo2, lboList.get(0), "object in second haf of lane is lbo2");
         SortedMap<Double, List<LaneBasedObject>> sortedMap = lane.getLaneBasedObjectMap();
-        assertEquals("sorted map contains two objects", 2, sortedMap.size());
+        assertEquals(2, sortedMap.size(), "sorted map contains two objects");
         for (Double d : sortedMap.keySet())
         {
             List<LaneBasedObject> objectsAtD = sortedMap.get(d);
-            assertEquals("There is one object at position d", 1, objectsAtD.size());
-            assertEquals("Object at position d is the expected one", d < length / 2 ? lbo1 : lbo2, objectsAtD.get(0));
+            assertEquals(1, objectsAtD.size(), "There is one object at position d");
+            assertEquals(d < length / 2 ? lbo1 : lbo2, objectsAtD.get(0), "Object at position d is the expected one");
         }
 
         for (double fraction : new double[] {-0.5, 0, 0.2, 0.5, 0.9, 1.0, 2})
         {
             double positionSI = length * fraction;
             double fractionSI = lane.fractionSI(positionSI);
-            assertEquals("fractionSI matches fraction", fraction, fractionSI, 0.0001);
+            assertEquals(fraction, fractionSI, 0.0001, "fractionSI matches fraction");
 
             LaneBasedObject nextObject = positionSI < lbo1.getLongitudinalPosition().si ? lbo1
                     : positionSI < lbo2.getLongitudinalPosition().si ? lbo2 : null;
@@ -344,7 +344,7 @@ public class LaneTest implements UNITS
                 expected.add(nextObject);
             }
             List<LaneBasedObject> got = lane.getObjectAhead(Length.instantiateSI(positionSI));
-            assertEquals("First bunch of objects ahead of d", expected, got);
+            assertEquals(expected, got, "First bunch of objects ahead of d");
 
             nextObject = positionSI > lbo2.getLongitudinalPosition().si ? lbo2
                     : positionSI > lbo1.getLongitudinalPosition().si ? lbo1 : null;
@@ -355,13 +355,13 @@ public class LaneTest implements UNITS
                 expected.add(nextObject);
             }
             got = lane.getObjectBehind(Length.instantiateSI(positionSI));
-            assertEquals("First bunch of objects behind d", expected, got);
+            assertEquals(expected, got, "First bunch of objects behind d");
         }
 
         lane.removeLaneBasedObject(lbo1);
-        assertEquals("removing a lane based object caused the lane to emit an event", 3, listener.getEvents().size());
-        assertEquals("removing a lane based object caused the lane to emit OBJECT_REMOVE_EVENT", Lane.OBJECT_REMOVE_EVENT,
-                listener.getEvents().get(2).getType());
+        assertEquals(3, listener.getEvents().size(), "removing a lane based object caused the lane to emit an event");
+        assertEquals(Lane.OBJECT_REMOVE_EVENT, listener.getEvents().get(2).getType(),
+                "removing a lane based object caused the lane to emit OBJECT_REMOVE_EVENT");
         try
         {
             lane.removeLaneBasedObject(lbo1);
@@ -591,28 +591,28 @@ public class LaneTest implements UNITS
             double actualOffset = p.y;
             if (0 == i)
             {
-                assertEquals("first point must have offset at start", offsetAtStart.si + from.y, actualOffset, 0.001);
+                assertEquals(offsetAtStart.si + from.y, actualOffset, 0.001, "first point must have offset at start");
             }
             if (points.length - 1 == i)
             {
-                assertEquals("last point must have offset at end", offsetAtEnd.si + from.y, actualOffset, 0.001);
+                assertEquals(offsetAtEnd.si + from.y, actualOffset, 0.001, "last point must have offset at end");
             }
             // Other offsets must grow smoothly
             double delta = actualOffset - prev;
-            assertTrue("delta must be nonnegative", delta >= 0);
+            assertTrue(delta >= 0, "delta must be nonnegative");
             if (i > 0)
             {
                 Point2d prevPoint = points[i - 1];
                 double direction = Math.atan2(p.y - prevPoint.y, p.x - prevPoint.x);
                 // System.out.println(String.format("p=%30s: ratio=%7.5f, direction=%10.7f", p, ratio, direction));
-                assertTrue("Direction of lane center line is > 0", direction > 0);
+                assertTrue(direction > 0, "Direction of lane center line is > 0");
                 if (ratio < 0.5)
                 {
-                    assertTrue("in first half direction is increasing", direction > prevDirection);
+                    assertTrue(direction > prevDirection, "in first half direction is increasing");
                 }
                 else if (prevRatio > 0.5)
                 {
-                    assertTrue("in second half direction is decreasing", direction < prevDirection);
+                    assertTrue(direction < prevDirection, "in second half direction is decreasing");
                 }
                 prevDirection = direction;
                 prevRatio = ratio;
@@ -732,10 +732,10 @@ public class LaneTest implements UNITS
                                 double boundsMinY = bb.getMinY() + l.y;
                                 double boundsMaxX = bb.getMaxX() + l.x;
                                 double boundsMaxY = bb.getMaxY() + l.y;
-                                assertEquals("low x boundary", minX, boundsMinX, 0.1);
-                                assertEquals("low y boundary", minY, boundsMinY, 0.1);
-                                assertEquals("high x boundary", maxX, boundsMaxX, 0.1);
-                                assertEquals("high y boundary", maxY, boundsMaxY, 0.1);
+                                assertEquals(minX, boundsMinX, 0.1, "low x boundary");
+                                assertEquals(minY, boundsMinY, 0.1, "low y boundary");
+                                assertEquals(maxX, boundsMaxX, 0.1, "high x boundary");
+                                assertEquals(maxY, boundsMaxY, 0.1, "high y boundary");
                             }
                         }
                     }
@@ -782,11 +782,11 @@ public class LaneTest implements UNITS
         boolean result = contains(contour, p);
         if (expectedResult)
         {
-            assertTrue("Point at " + longitudinal + " along and " + lateral + " lateral is within lane", result);
+            assertTrue(result, "Point at " + longitudinal + " along and " + lateral + " lateral is within lane");
         }
         else
         {
-            assertFalse("Point at " + longitudinal + " along and " + lateral + " lateral is outside lane", result);
+            assertFalse(result, "Point at " + longitudinal + " along and " + lateral + " lateral is outside lane");
         }
     }
 

@@ -1,9 +1,9 @@
 package org.opentrafficsim.draw.graphs;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.Point2d;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.jfree.data.DomainOrder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -174,7 +174,7 @@ public class ContourPlotTest implements UNITS
         setUp();
         ContourDataSource dataPool = new ContourDataSource(this.mockedSamplerData, this.mockedPath);
         ContourPlotAcceleration acp = new ContourPlotAcceleration("acceleration", this.mockedSimulator, dataPool);
-        assertEquals("SeriesKey should be \"acceleration\"", "acceleration", acp.getSeriesKey(0));
+        assertEquals("acceleration", acp.getSeriesKey(0), "SeriesKey should be \"acceleration\"");
         standardContourTests(this.mockedSimulator, acp, this.mockedPath, Double.NaN, 0);
     }
 
@@ -192,8 +192,8 @@ public class ContourPlotTest implements UNITS
         RoadSampler sampler = new RoadSampler(network);
         ContourDataSource dataPool = new ContourDataSource(sampler.getSamplerData(), path);
         ContourPlotDensity dcp = new ContourPlotDensity("density", simulator, dataPool);
-        assertTrue("newly created DensityContourPlot should not be null", null != dcp);
-        assertEquals("SeriesKey should be \"density\"", "density", dcp.getSeriesKey(0));
+        assertTrue(null != dcp, "newly created DensityContourPlot should not be null");
+        assertEquals("density", dcp.getSeriesKey(0), "SeriesKey should be \"density\"");
         standardContourTests(simulator, dcp, path, Double.NaN, Double.NaN);
     }
 
@@ -211,8 +211,8 @@ public class ContourPlotTest implements UNITS
         RoadSampler sampler = new RoadSampler(network);
         ContourDataSource dataPool = new ContourDataSource(sampler.getSamplerData(), path);
         ContourPlotFlow fcp = new ContourPlotFlow("flow", simulator, dataPool);
-        assertTrue("newly created DensityContourPlot should not be null", null != fcp);
-        assertEquals("SeriesKey should be \"flow\"", "flow", fcp.getSeriesKey(0));
+        assertTrue(null != fcp, "newly created DensityContourPlot should not be null");
+        assertEquals("flow", fcp.getSeriesKey(0), "SeriesKey should be \"flow\"");
         standardContourTests(simulator, fcp, path, Double.NaN, Double.NaN);
     }
 
@@ -230,8 +230,8 @@ public class ContourPlotTest implements UNITS
         RoadSampler sampler = new RoadSampler(network);
         ContourDataSource dataPool = new ContourDataSource(sampler.getSamplerData(), path);
         ContourPlotSpeed scp = new ContourPlotSpeed("speed", simulator, dataPool);
-        assertTrue("newly created DensityContourPlot should not be null", null != scp);
-        assertEquals("SeriesKey should be \"speed\"", "speed", scp.getSeriesKey(0));
+        assertTrue(null != scp, "newly created DensityContourPlot should not be null");
+        assertEquals("speed", scp.getSeriesKey(0), "SeriesKey should be \"speed\"");
         standardContourTests(simulator, scp, path, Double.NaN, 50);
     }
 
@@ -289,23 +289,23 @@ public class ContourPlotTest implements UNITS
     public static void standardContourTests(final OtsSimulatorInterface simulator, final AbstractContourPlot<?> cp,
             final GraphPath<?> path, final double expectedZValue, final double expectedZValueWithTraffic) throws Exception
     {
-        assertEquals("seriesCount should be 1", 1, cp.getSeriesCount());
-        assertEquals("domainOrder should be ASCENDING", DomainOrder.ASCENDING, cp.getDomainOrder());
-        assertEquals("indexOf always returns 0", 0, cp.indexOf(0));
-        assertEquals("indexOf always returns 0", 0, cp.indexOf("abc"));
-        assertNull("getGroup always returns null", cp.getGroup());
+        assertEquals(1, cp.getSeriesCount(), "seriesCount should be 1");
+        assertEquals(DomainOrder.ASCENDING, cp.getDomainOrder(), "domainOrder should be ASCENDING");
+        assertEquals(0, cp.indexOf(0), "indexOf always returns 0");
+        assertEquals(0, cp.indexOf("abc"), "indexOf always returns 0");
+        assertNull(cp.getGroup(), "getGroup always returns null");
         int xBins = cp.getDataPool().timeAxis.getBinCount();
         int yBins = cp.getDataPool().spaceAxis.getBinCount();
         int expectedXBins = (int) Math.ceil(((AbstractPlot.DEFAULT_INITIAL_UPPER_TIME_BOUND).getSI())
                 / ContourDataSource.DEFAULT_TIME_GRANULARITIES[ContourDataSource.DEFAULT_TIME_GRANULARITY_INDEX]
                 + (cp.getDataPool().timeAxis.isInterpolate() ? 1 : 0));
-        assertEquals("Initial xBins should be " + expectedXBins, expectedXBins, xBins);
+        assertEquals(expectedXBins, xBins, "Initial xBins should be " + expectedXBins);
         int expectedYBins = (int) Math.ceil(path.getTotalLength().getSI()
                 / ContourDataSource.DEFAULT_SPACE_GRANULARITIES[ContourDataSource.DEFAULT_SPACE_GRANULARITY_INDEX]
                 + (cp.getDataPool().timeAxis.isInterpolate() ? 1 : 0));
-        assertEquals("yBins should be " + expectedYBins, expectedYBins, yBins);
+        assertEquals(expectedYBins, yBins, "yBins should be " + expectedYBins);
         int bins = cp.getItemCount(0);
-        assertEquals("Total bin count is product of xBins * yBins", xBins * yBins, bins);
+        assertEquals(xBins * yBins, bins, "Total bin count is product of xBins * yBins");
         String initialUpperTimeBoundString = AbstractPlot.DEFAULT_INITIAL_UPPER_TIME_BOUND.toString();
         // Vary the time granularity
         for (double timeGranularity : ContourDataSource.DEFAULT_TIME_GRANULARITIES)
@@ -319,48 +319,48 @@ public class ContourPlotTest implements UNITS
                 expectedXBins = (int) Math.ceil((AbstractPlot.DEFAULT_INITIAL_UPPER_TIME_BOUND.getSI()) / timeGranularity)
                         + (cp.getDataPool().timeAxis.isInterpolate() ? 1 : 0);
                 xBins = cp.getDataPool().timeAxis.getBinCount();
-                assertEquals("Modified xBins should be " + expectedXBins, expectedXBins, xBins);
+                assertEquals(expectedXBins, xBins, "Modified xBins should be " + expectedXBins);
                 expectedYBins = (int) Math.ceil(path.get(0).getLength().getSI() / distanceGranularity)
                         + (cp.getDataPool().spaceAxis.isInterpolate() ? 1 : 0);
                 yBins = cp.getDataPool().spaceAxis.getBinCount();
                 // System.out.println(cp.getDataPool().spaceAxis);
                 // System.out.println("path.get(0) is " + path.get(0));
                 // System.out.println("path.get(0).getLength() is " + path.get(0).getLength());
-                assertEquals("Modified yBins should be " + expectedYBins, expectedYBins, yBins);
+                assertEquals(expectedYBins, yBins, "Modified yBins should be " + expectedYBins);
                 bins = cp.getItemCount(0);
-                assertEquals("Total bin count is product of xBins * yBins", xBins * yBins, bins);
+                assertEquals(xBins * yBins, bins, "Total bin count is product of xBins * yBins");
                 for (int item = 0; item < bins; item++)
                 {
                     double x = cp.getXValue(0, item);
                     // System.out.println("x for item " + item + " is " + x);
-                    assertTrue("X should be >= -granularity / 2", x >= -timeGranularity / 2);
-                    assertTrue("X should be <= " + initialUpperTimeBoundString,
-                            x <= AbstractPlot.DEFAULT_INITIAL_UPPER_TIME_BOUND.getSI());
+                    assertTrue(x >= -timeGranularity / 2, "X should be >= -granularity / 2");
+                    assertTrue(x <= AbstractPlot.DEFAULT_INITIAL_UPPER_TIME_BOUND.getSI(),
+                            "X should be <= " + initialUpperTimeBoundString);
                     Number alternateX = cp.getX(0, item);
-                    assertEquals("getXValue and getX should return things that have the same value", x,
-                            alternateX.doubleValue(), 0.000001);
+                    assertEquals(x, alternateX.doubleValue(),
+                            0.000001, "getXValue and getX should return things that have the same value");
                     double y = cp.getYValue(0, item);
                     Number alternateY = cp.getY(0, item);
-                    assertEquals("getYValue and getY should return things that have the same value", y,
-                            alternateY.doubleValue(), 0.000001);
+                    assertEquals(y, alternateY.doubleValue(),
+                            0.000001, "getYValue and getY should return things that have the same value");
                     double z = cp.getZValue(0, item);
                     if (Double.isNaN(expectedZValue))
                     {
-                        assertTrue("Z value should be NaN", Double.isNaN(z));
+                        assertTrue(Double.isNaN(z), "Z value should be NaN");
                     }
                     else
                     {
-                        assertEquals("Z value should be " + expectedZValue, expectedZValue, z, 0.0001);
+                        assertEquals(expectedZValue, z, 0.0001, "Z value should be " + expectedZValue);
                     }
                     Number alternateZ = cp.getZ(0, item);
                     if (Double.isNaN(expectedZValue))
                     {
-                        assertTrue("Alternate Z value should be NaN", Double.isNaN(alternateZ.doubleValue()));
+                        assertTrue(Double.isNaN(alternateZ.doubleValue()), "Alternate Z value should be NaN");
                     }
                     else
                     {
-                        assertEquals("Alternate Z value should be " + expectedZValue, expectedZValue, alternateZ.doubleValue(),
-                                0.0000);
+                        assertEquals(expectedZValue, alternateZ.doubleValue(), 0.0000,
+                                "Alternate Z value should be " + expectedZValue);
                     }
                 }
                 try
@@ -469,32 +469,32 @@ public class ContourPlotTest implements UNITS
             double x = cp.getXValue(0, item);
             // System.out.println("x is " + x);
             // System.out.println("time granularity is " + cp.getTimeGranularity());
-            assertTrue("X should be >= -timeGranularity / 2", x >= -cp.getTimeGranularity() / 2);
-            assertTrue("X should be <= " + initialUpperTimeBoundString, x <= AbstractPlot.DEFAULT_INITIAL_UPPER_TIME_BOUND.si);
+            assertTrue(x >= -cp.getTimeGranularity() / 2, "X should be >= -timeGranularity / 2");
+            assertTrue(x <= AbstractPlot.DEFAULT_INITIAL_UPPER_TIME_BOUND.si, "X should be <= " + initialUpperTimeBoundString);
             Number alternateX = cp.getX(0, item);
-            assertEquals("getXValue and getX should return things that have the same value", x, alternateX.doubleValue(),
-                    0.000001);
+            assertEquals(x, alternateX.doubleValue(), 0.000001,
+                    "getXValue and getX should return things that have the same value");
             double y = cp.getYValue(0, item);
             Number alternateY = cp.getY(0, item);
-            assertEquals("getYValue and getY should return things that have the same value", y, alternateY.doubleValue(),
-                    0.000001);
+            assertEquals(y, alternateY.doubleValue(), 0.000001,
+                    "getYValue and getY should return things that have the same value");
             double z = cp.getZValue(0, item);
             if (Double.isNaN(expectedZValue))
             {
-                assertTrue("Z value should be NaN (got " + z + ")", Double.isNaN(z));
+                assertTrue(Double.isNaN(z), "Z value should be NaN (got " + z + ")");
             }
             else
             {
-                assertEquals("Z value should be " + expectedZValue, expectedZValue, z, 0.0001);
+                assertEquals(expectedZValue, z, 0.0001, "Z value should be " + expectedZValue);
             }
             Number alternateZ = cp.getZ(0, item);
             if (Double.isNaN(expectedZValue))
             {
-                assertTrue("Alternate Z value should be NaN", Double.isNaN(alternateZ.doubleValue()));
+                assertTrue(Double.isNaN(alternateZ.doubleValue()), "Alternate Z value should be NaN");
             }
             else
             {
-                assertEquals("Alternate Z value should be " + expectedZValue, expectedZValue, alternateZ.doubleValue(), 0.0000);
+                assertEquals(expectedZValue, alternateZ.doubleValue(), 0.0000, "Alternate Z value should be " + expectedZValue);
             }
         }
 

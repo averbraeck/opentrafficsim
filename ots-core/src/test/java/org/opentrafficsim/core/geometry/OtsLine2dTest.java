@@ -1,9 +1,9 @@
 package org.opentrafficsim.core.geometry;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
@@ -20,7 +20,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.DrawRuntimeException;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.geometry.OtsLine2d.FractionalFallback;
 import org.opentrafficsim.core.network.NetworkException;
 
@@ -145,10 +145,10 @@ public class OtsLine2dTest
         {
             length += Math.sqrt(Math.pow(points[i].x - points[i - 1].x, 2) + Math.pow(points[i].y - points[i - 1].y, 2));
         }
-        assertEquals("length", length, line.getLength().si, 10 * Math.ulp(length));
-        assertEquals("length", length, line.getLength().si, 10 * Math.ulp(length));
-        assertEquals("length", length, line.getLength().si, 10 * Math.ulp(length));
-        assertEquals("length", length, line.getLength().si, 10 * Math.ulp(length));
+        assertEquals(length, line.getLength().si, 10 * Math.ulp(length), "length");
+        assertEquals(length, line.getLength().si, 10 * Math.ulp(length), "length");
+        assertEquals(length, line.getLength().si, 10 * Math.ulp(length), "length");
+        assertEquals(length, line.getLength().si, 10 * Math.ulp(length), "length");
         // Construct a Path3D.Double that contains the horizontal moves.
         int horizontalMoves = 0;
         Path2D path = new Path2D.Double();
@@ -171,7 +171,7 @@ public class OtsLine2dTest
                 fail("Construction of OtsLine2d from path with degenerate projection should have failed");
             }
             // This new OtsLine2d has z=0 for all points so veryfyPoints won't work
-            assertEquals("number of points should match", horizontalMoves + 1, line.size());
+            assertEquals(horizontalMoves + 1, line.size(), "number of points should match");
             int indexInLine = 0;
             for (int i = 0; i < points.length; i++)
             {
@@ -179,8 +179,8 @@ public class OtsLine2dTest
                 {
                     indexInLine++;
                 }
-                assertEquals("x in line", points[i].x, line.get(indexInLine).x, 0.001);
-                assertEquals("y in line", points[i].y, line.get(indexInLine).y, 0.001);
+                assertEquals(points[i].x, line.get(indexInLine).x, 0.001, "x in line");
+                assertEquals(points[i].y, line.get(indexInLine).y, 0.001, "y in line");
             }
         }
         catch (OtsGeometryException e)
@@ -228,11 +228,11 @@ public class OtsLine2dTest
      */
     private void verifyPoints(final OtsLine2d line, final Point2d[] points) throws OtsGeometryException
     {
-        assertEquals("Line should have same number of points as point array", line.size(), points.length);
+        assertEquals(line.size(), points.length, "Line should have same number of points as point array");
         for (int i = 0; i < points.length; i++)
         {
-            assertEquals("x of point i should match", points[i].x, line.get(i).x, Math.ulp(points[i].x));
-            assertEquals("y of point i should match", points[i].y, line.get(i).y, Math.ulp(points[i].y));
+            assertEquals(points[i].x, line.get(i).x, Math.ulp(points[i].x), "x of point i should match");
+            assertEquals(points[i].y, line.get(i).y, Math.ulp(points[i].y), "y of point i should match");
         }
     }
 
@@ -350,9 +350,9 @@ public class OtsLine2dTest
         // TODO verify rotations around x and y
         if (null != expectedPoint)
         {
-            assertEquals("locationExtendedSI(0) returns approximately expected point", 0, expectedPoint.distance(dp), 0.1);
+            assertEquals(0, expectedPoint.distance(dp), 0.1, "locationExtendedSI(0) returns approximately expected point");
         }
-        assertEquals("z-rotation at 0", expectedZRotation, dp.getDirZ(), 0.001);
+        assertEquals(expectedZRotation, dp.getDirZ(), 0.001, "z-rotation at 0");
     }
 
     /**
@@ -367,16 +367,16 @@ public class OtsLine2dTest
         Point2d p2 = new Point2d(90, 70);
         OtsLine2d l = new OtsLine2d(new Point2d[] {p0, p1, p2});
         Point2d dp = l.getLocation();
-        assertEquals("centroid x", 50, dp.x, 0.001);
-        assertEquals("centroid y", 45, dp.y, 0.001);
+        assertEquals(50, dp.x, 0.001, "centroid x");
+        assertEquals(45, dp.y, 0.001, "centroid y");
         l = new OtsLine2d(new Point2d[] {p1, p0, p2}); // Some arguments swapped
         dp = l.getLocation();
-        assertEquals("centroid x", 50, dp.x, 0.001);
-        assertEquals("centroid y", 45, dp.y, 0.001);
+        assertEquals(50, dp.x, 0.001, "centroid x");
+        assertEquals(45, dp.y, 0.001, "centroid y");
         l = new OtsLine2d(new Point2d[] {p0, p1}); // Two points; all in same Z-plane
         dp = l.getLocation();
-        assertEquals("centroid x", 25, dp.x, 0.001);
-        assertEquals("centroid y", 35, dp.y, 0.001);
+        assertEquals(25, dp.x, 0.001, "centroid x");
+        assertEquals(35, dp.y, 0.001, "centroid y");
     }
 
     /**
@@ -410,15 +410,15 @@ public class OtsLine2dTest
         Point2d p1 = new Point2d(4, 5);
         Point2d[] points = new Point2d[] {p0, p1};
         OtsLine2d result = OtsLine2d.createAndCleanOtsLine2d(points);
-        assertTrue("first point is p0", p0.equals(result.get(0)));
-        assertTrue("second point is p1", p1.equals(result.get(1)));
+        assertTrue(p0.equals(result.get(0)), "first point is p0");
+        assertTrue(p1.equals(result.get(1)), "second point is p1");
         Point2d p1Same = new Point2d(4, 5);
         result = OtsLine2d.createAndCleanOtsLine2d(new Point2d[] {p0, p0, p0, p0, p1Same, p0, p1, p1, p1Same, p1, p1});
-        assertEquals("result should contain 4 points", 4, result.size());
-        assertTrue("first point is p0", p0.equals(result.get(0)));
-        assertTrue("second point is p1", p1.equals(result.get(1)));
-        assertTrue("third point is p0", p0.equals(result.get(0)));
-        assertTrue("last point is p1", p1.equals(result.get(1)));
+        assertEquals(4, result.size(), "result should contain 4 points");
+        assertTrue(p0.equals(result.get(0)), "first point is p0");
+        assertTrue(p1.equals(result.get(1)), "second point is p1");
+        assertTrue(p0.equals(result.get(0)), "third point is p0");
+        assertTrue(p1.equals(result.get(1)), "last point is p1");
     }
 
     /**
@@ -433,24 +433,24 @@ public class OtsLine2dTest
         Point2d p2 = new Point2d(3.1, 2.2);
 
         OtsLine2d line = new OtsLine2d(new Point2d[] {p0, p1, p2});
-        assertTrue("OtsLine2d is equal to itself", line.equals(line));
-        assertFalse("OtsLine2d is not equal to null", line.equals(null));
-        assertFalse("OtsLine2d is not equals to some other kind of Object", line.equals(new String("hello")));
+        assertTrue(line.equals(line), "OtsLine2d is equal to itself");
+        assertFalse(line.equals(null), "OtsLine2d is not equal to null");
+        assertFalse(line.equals(new String("hello")), "OtsLine2d is not equals to some other kind of Object");
         OtsLine2d line2 = new OtsLine2d(new Point2d[] {p0, p1, p2});
-        assertTrue("OtsLine2d is equal ot other OtsLine2d that has the exact same list of Point2d", line.equals(line2));
+        assertTrue(line.equals(line2), "OtsLine2d is equal ot other OtsLine2d that has the exact same list of Point2d");
         Point2d p2Same = new Point2d(3.1, 2.2);
         line2 = new OtsLine2d(new Point2d[] {p0, p1, p2Same});
-        assertTrue("OtsLine2d is equal ot other OtsLine2d that has the exact same list of Point2d; even if some of "
-                + "those point are different instances with the same coordinates", line.equals(line2));
+        assertTrue(line.equals(line2), "OtsLine2d is equal ot other OtsLine2d that has the exact same list of Point2d; even if some of "
+                        + "those point are different instances with the same coordinates");
         Point2d p2NotSame = new Point2d(3.1, 2.25);
         line2 = new OtsLine2d(new Point2d[] {p0, p1, p2NotSame});
-        assertFalse("OtsLine2d is not equal ot other OtsLine2d that differs in one coordinate", line.equals(line2));
+        assertFalse(line.equals(line2), "OtsLine2d is not equal ot other OtsLine2d that differs in one coordinate");
         line2 = new OtsLine2d(new Point2d[] {p0, p1, p2, p2NotSame});
-        assertFalse("OtsLine2d is not equal ot other OtsLine2d that has more points (but is identical up to the common length)",
-                line.equals(line2));
+        assertFalse(line.equals(line2),
+                "OtsLine2d is not equal ot other OtsLine2d that has more points (but is identical up to the common length)");
         assertFalse(
-                "OtsLine2d is not equal ot other OtsLine2d that has fewer points  (but is identical up to the common length)",
-                line2.equals(line));
+                line2.equals(line),
+                "OtsLine2d is not equal ot other OtsLine2d that has fewer points  (but is identical up to the common length)");
     }
 
     /**
@@ -471,18 +471,18 @@ public class OtsLine2dTest
         OtsLine2d l1 = new OtsLine2d(p2, p3);
         OtsLine2d l2 = new OtsLine2d(p3, p4, p5);
         OtsLine2d ll = OtsLine2d.concatenate(l0, l1, l2);
-        assertEquals("size is 6", 6, ll.size());
-        assertEquals("point 0 is p0", p0, ll.get(0));
-        assertEquals("point 1 is p1", p1, ll.get(1));
-        assertEquals("point 2 is p2", p2, ll.get(2));
-        assertEquals("point 3 is p3", p3, ll.get(3));
-        assertEquals("point 4 is p4", p4, ll.get(4));
-        assertEquals("point 5 is p5", p5, ll.get(5));
+        assertEquals(6, ll.size(), "size is 6");
+        assertEquals(p0, ll.get(0), "point 0 is p0");
+        assertEquals(p1, ll.get(1), "point 1 is p1");
+        assertEquals(p2, ll.get(2), "point 2 is p2");
+        assertEquals(p3, ll.get(3), "point 3 is p3");
+        assertEquals(p4, ll.get(4), "point 4 is p4");
+        assertEquals(p5, ll.get(5), "point 5 is p5");
 
         ll = OtsLine2d.concatenate(l1);
-        assertEquals("size is 2", 2, ll.size());
-        assertEquals("point 0 is p2", p2, ll.get(0));
-        assertEquals("point 1 is p3", p3, ll.get(1));
+        assertEquals(2, ll.size(), "size is 2");
+        assertEquals(p2, ll.get(0), "point 0 is p2");
+        assertEquals(p3, ll.get(1), "point 1 is p3");
 
         try
         {
@@ -597,7 +597,7 @@ public class OtsLine2dTest
                 pointsOnTestLine.add(end);
                 OtsLine2d testLine = new OtsLine2d(pointsOnTestLine);
                 OtsLine2d filteredLine = testLine.noiseFilterRamerDouglasPeucker(tolerance, false);
-                assertEquals("RamerDouglasPeuker filter should have removed all intermediate points", 2, filteredLine.size());
+                assertEquals(2, filteredLine.size(), "RamerDouglasPeuker filter should have removed all intermediate points");
                 // Now add a couple of points that should not be removed and will not cause the current start and end point
                 // to be removed
                 Point2d newStart = new Point2d(start.x + 10 * tolerance * dy / length, start.y - 10 * tolerance * dx / length);
@@ -610,7 +610,7 @@ public class OtsLine2dTest
                 // {
                 // testLine.noiseFilterRamerDouglasPeuker(tolerance, useHorizontalDistance);
                 // }
-                assertEquals("RamerDouglasPeuker filter should have left three points", 3, filteredLine.size());
+                assertEquals(3, filteredLine.size(), "RamerDouglasPeuker filter should have left three points");
                 pointsOnTestLine.remove(0);
                 Point2d newEnd = new Point2d(end.x + 10 * tolerance * dy / length, end.y - 10 * tolerance * dx / length);
                 pointsOnTestLine.add(newEnd);
@@ -620,7 +620,7 @@ public class OtsLine2dTest
                 // {
                 // testLine.noiseFilterRamerDouglasPeuker(tolerance, useHorizontalDistance);
                 // }
-                assertEquals("RamerDouglasPeuker filter should have left three points", 3, filteredLine.size());
+                assertEquals(3, filteredLine.size(), "RamerDouglasPeuker filter should have left three points");
             }
         }
     }
@@ -641,19 +641,19 @@ public class OtsLine2dTest
 
         OtsLine2d l01 = new OtsLine2d(p0, p1);
         OtsLine2d r = l01.reverse();
-        assertEquals("result has size 2", 2, r.size());
-        assertEquals("point 0 is p1", p1, r.get(0));
-        assertEquals("point 1 is p0", p0, r.get(1));
+        assertEquals(2, r.size(), "result has size 2");
+        assertEquals(p1, r.get(0), "point 0 is p1");
+        assertEquals(p0, r.get(1), "point 1 is p0");
 
         OtsLine2d l05 = new OtsLine2d(p0, p1, p2, p3, p4, p5);
         r = l05.reverse();
-        assertEquals("result has size 6", 6, r.size());
-        assertEquals("point 0 is p5", p5, r.get(0));
-        assertEquals("point 1 is p4", p4, r.get(1));
-        assertEquals("point 2 is p3", p3, r.get(2));
-        assertEquals("point 3 is p2", p2, r.get(3));
-        assertEquals("point 4 is p1", p1, r.get(4));
-        assertEquals("point 5 is p0", p0, r.get(5));
+        assertEquals(6, r.size(), "result has size 6");
+        assertEquals(p5, r.get(0), "point 0 is p5");
+        assertEquals(p4, r.get(1), "point 1 is p4");
+        assertEquals(p3, r.get(2), "point 2 is p3");
+        assertEquals(p2, r.get(3), "point 3 is p2");
+        assertEquals(p1, r.get(4), "point 4 is p1");
+        assertEquals(p0, r.get(5), "point 5 is p0");
 
     }
 
@@ -674,9 +674,9 @@ public class OtsLine2dTest
 
         OtsLine2d l = new OtsLine2d(p0, p1);
         OtsLine2d e = l.extractFractional(0, 1);
-        assertEquals("size of extraction is 2", 2, e.size());
-        assertEquals("point 0 is p0", p0, e.get(0));
-        assertEquals("point 1 is p1", p1, e.get(1));
+        assertEquals(2, e.size(), "size of extraction is 2");
+        assertEquals(p0, e.get(0), "point 0 is p0");
+        assertEquals(p1, e.get(1), "point 1 is p1");
         try
         {
             l.extractFractional(-0.1, 1);
@@ -779,11 +779,11 @@ public class OtsLine2dTest
                         l.extract(new Length(start, LengthUnit.SI), new Length(end, LengthUnit.SI)),
                         l.extractFractional(1.0 * i / 10, 1.0 * j / 10)})
                 {
-                    assertEquals("size of extract is 2", 2, extractedLine.size());
-                    assertEquals("x of 0", p0.x + (p1.x - p0.x) * i / 10, extractedLine.get(0).x, 0.0001);
-                    assertEquals("y of 0", p0.y + (p1.y - p0.y) * i / 10, extractedLine.get(0).y, 0.0001);
-                    assertEquals("x of 1", p0.x + (p1.x - p0.x) * j / 10, extractedLine.get(1).x, 0.0001);
-                    assertEquals("y of 1", p0.y + (p1.y - p0.y) * j / 10, extractedLine.get(1).y, 0.0001);
+                    assertEquals(2, extractedLine.size(), "size of extract is 2");
+                    assertEquals(p0.x + (p1.x - p0.x) * i / 10, extractedLine.get(0).x, 0.0001, "x of 0");
+                    assertEquals(p0.y + (p1.y - p0.y) * i / 10, extractedLine.get(0).y, 0.0001, "y of 0");
+                    assertEquals(p0.x + (p1.x - p0.x) * j / 10, extractedLine.get(1).x, 0.0001, "x of 1");
+                    assertEquals(p0.y + (p1.y - p0.y) * j / 10, extractedLine.get(1).y, 0.0001, "y of 1");
                 }
             }
         }
@@ -812,31 +812,31 @@ public class OtsLine2dTest
                             line.extractFractional(1.0 * i / 110, 1.0 * j / 110)})
                     {
                         int expectedSize = i < 10 && j > 10 ? line.size() : 2;
-                        assertEquals("size is " + expectedSize, expectedSize, extractedLine.size());
+                        assertEquals(expectedSize, extractedLine.size(), "size is " + expectedSize);
                         if (i < 10)
                         {
-                            assertEquals("x of 0", p0.x + (p1.x - p0.x) * i / 10, extractedLine.get(0).x, 0.0001);
-                            assertEquals("y of 0", p0.y + (p1.y - p0.y) * i / 10, extractedLine.get(0).y, 0.0001);
+                            assertEquals(p0.x + (p1.x - p0.x) * i / 10, extractedLine.get(0).x, 0.0001, "x of 0");
+                            assertEquals(p0.y + (p1.y - p0.y) * i / 10, extractedLine.get(0).y, 0.0001, "y of 0");
                         }
                         else
                         {
-                            assertEquals("x of 0", p1.x + (p2.x - p1.x) * (i - 10) / 100, extractedLine.get(0).x, 0.0001);
-                            assertEquals("y of 0", p1.y + (p2.y - p1.y) * (i - 10) / 100, extractedLine.get(0).y, 0.0001);
+                            assertEquals(p1.x + (p2.x - p1.x) * (i - 10) / 100, extractedLine.get(0).x, 0.0001, "x of 0");
+                            assertEquals(p1.y + (p2.y - p1.y) * (i - 10) / 100, extractedLine.get(0).y, 0.0001, "y of 0");
                         }
                         if (j < 10)
                         {
-                            assertEquals("x of 1", p0.x + (p1.x - p0.x) * j / 10, extractedLine.get(1).x, 0.0001);
-                            assertEquals("y of 1", p0.y + (p1.y - p0.y) * j / 10, extractedLine.get(1).y, 0.0001);
+                            assertEquals(p0.x + (p1.x - p0.x) * j / 10, extractedLine.get(1).x, 0.0001, "x of 1");
+                            assertEquals(p0.y + (p1.y - p0.y) * j / 10, extractedLine.get(1).y, 0.0001, "y of 1");
                         }
                         else
                         {
-                            assertEquals("x of last", p1.x + (p2.x - p1.x) * (j - 10) / 100, extractedLine.getLast().x, 0.0001);
-                            assertEquals("y of last", p1.y + (p2.y - p1.y) * (j - 10) / 100, extractedLine.getLast().y, 0.0001);
+                            assertEquals(p1.x + (p2.x - p1.x) * (j - 10) / 100, extractedLine.getLast().x, 0.0001, "x of last");
+                            assertEquals(p1.y + (p2.y - p1.y) * (j - 10) / 100, extractedLine.getLast().y, 0.0001, "y of last");
                         }
                         if (extractedLine.size() > 2)
                         {
-                            assertEquals("x of mid", p1.x, extractedLine.get(1).x, 0.0001);
-                            assertEquals("y of mid", p1.y, extractedLine.get(1).y, 0.0001);
+                            assertEquals(p1.x, extractedLine.get(1).x, 0.0001, "x of mid");
+                            assertEquals(p1.y, extractedLine.get(1).y, 0.0001, "y of mid");
                         }
                     }
                 }
@@ -858,16 +858,16 @@ public class OtsLine2dTest
         for (int step = -5; step <= 5; step++)
         {
             OtsLine2d offsetLine = line.offsetLine(step);
-            assertEquals("Offset line of a single straight segment has two points", 2, offsetLine.size());
-            assertEquals("Distance between start points should be equal to offset", Math.abs(step),
-                    offsetLine.getFirst().distance(line.getFirst()), 0.0001);
-            assertEquals("Distance between end points should be equal to offset", Math.abs(step),
-                    offsetLine.getLast().distance(line.getLast()), 0.0001);
+            assertEquals(2, offsetLine.size(), "Offset line of a single straight segment has two points");
+            assertEquals(Math.abs(step), offsetLine.getFirst().distance(line.getFirst()),
+                    0.0001, "Distance between start points should be equal to offset");
+            assertEquals(Math.abs(step), offsetLine.getLast().distance(line.getLast()),
+                    0.0001, "Distance between end points should be equal to offset");
             // System.out.println("step: " + step);
             // System.out.println("reference: " + line);
             // System.out.println("offset: " + offsetLine);
-            assertEquals("Length of offset line of straight segment should equal length of reference line",
-                    lineLengthHorizontal, offsetLine.getLength().si, 0.001);
+            assertEquals(lineLengthHorizontal,
+                    offsetLine.getLength().si, 0.001, "Length of offset line of straight segment should equal length of reference line");
         }
         Point2d via = new Point2d(2.5, 2.5);
         line = new OtsLine2d(from, via, to);
@@ -877,11 +877,11 @@ public class OtsLine2dTest
             // System.out.println("step: " + step);
             // System.out.println("reference: " + line);
             // System.out.println("offset: " + offsetLine);
-            assertTrue("Offset line has > 2 points", 2 <= offsetLine.size());
-            assertEquals("Distance between start points should be equal to offset", Math.abs(step),
-                    offsetLine.getFirst().distance(line.getFirst()), 0.0001);
-            assertEquals("Distance between end points should be equal to offset", Math.abs(step),
-                    offsetLine.getLast().distance(line.getLast()), 0.0001);
+            assertTrue(2 <= offsetLine.size(), "Offset line has > 2 points");
+            assertEquals(Math.abs(step), offsetLine.getFirst().distance(line.getFirst()),
+                    0.0001, "Distance between start points should be equal to offset");
+            assertEquals(Math.abs(step), offsetLine.getLast().distance(line.getLast()),
+                    0.0001, "Distance between end points should be equal to offset");
         }
     }
 
@@ -938,13 +938,13 @@ public class OtsLine2dTest
                 }
                 if (e[i] >= 1e-3)
                 {
-                    assertTrue("Projection of point on outside of very slight bend was wrong with e=" + e[i] + " and d=" + d[j],
-                            Math.abs(fraction - 0.5) < 0.001);
+                    assertTrue(Math.abs(fraction - 0.5) < 0.001,
+                            "Projection of point on outside of very slight bend was wrong with e=" + e[i] + " and d=" + d[j]);
                 }
                 else
                 {
-                    assertTrue("Projection of point on outside of very slight bend was wrong with e=" + e[i] + " and d=" + d[j],
-                            fraction >= 0.0 && fraction <= 1.0);
+                    assertTrue(fraction >= 0.0 && fraction <= 1.0,
+                            "Projection of point on outside of very slight bend was wrong with e=" + e[i] + " and d=" + d[j]);
                 }
             }
         }
@@ -966,7 +966,7 @@ public class OtsLine2dTest
                     for (double y : new double[] {0, 1e-3, 1e-6, 1e-9, 1e-12})
                     {
                         double f = line.projectFractional(start, end, x, y, FractionalFallback.ORTHOGONAL);
-                        assertTrue("Fractional projection on circle is not between 0.0 and 1.0.", f >= 0.0 && f <= 1.0);
+                        assertTrue(f >= 0.0 && f <= 1.0, "Fractional projection on circle is not between 0.0 and 1.0.");
                     }
                 }
             }
@@ -991,14 +991,14 @@ public class OtsLine2dTest
                 for (double y = -1; y <= 2; y += 0.1)
                 {
                     double f = line.projectFractional(zeroDir, zeroDir, x, y, FractionalFallback.ORTHOGONAL);
-                    assertTrue("Fractional projection on random line is not between 0.0 and 1.0.", f >= 0.0 && f <= 1.0);
+                    assertTrue(f >= 0.0 && f <= 1.0, "Fractional projection on random line is not between 0.0 and 1.0.");
                 }
             }
         }
         // 2-point line
         line = new OtsLine2d(new Point2d(0, 0), new Point2d(1, 1));
         fraction = line.projectFractional(zeroDir, zeroDir, .5, 1, FractionalFallback.ORTHOGONAL);
-        assertTrue("Projection on line with single segment is not correct.", Math.abs(fraction - 0.5) < 0.001);
+        assertTrue(Math.abs(fraction - 0.5) < 0.001, "Projection on line with single segment is not correct.");
         // square test (THIS TEST IS NOT YET SUCCESSFUL, THE POINTS ARE PROJECTED ORTHOGONALLY TO BEFORE END!!!)
         // {@formatter:off}
         /*
@@ -1049,10 +1049,10 @@ public class OtsLine2dTest
         {
             double pos = i + 0.5;
             int index = (int) findMethod.invoke(line, pos);
-            assertTrue("segment starts before pos", line.get(index).x <= pos);
-            assertTrue("next segment starts after pos", line.get(index + 1).x >= pos);
+            assertTrue(line.get(index).x <= pos, "segment starts before pos");
+            assertTrue(line.get(index + 1).x >= pos, "next segment starts after pos");
         }
-        assertEquals("pos 0 returns index 0", 0, (int) findMethod.invoke(line, 0.0));
+        assertEquals(0, (int) findMethod.invoke(line, 0.0), "pos 0 returns index 0");
     }
 
     /**
@@ -1067,10 +1067,10 @@ public class OtsLine2dTest
         double length = from.distance(to);
         OtsLine2d line = new OtsLine2d(from, to);
         OtsLine2d truncatedLine = line.truncate(length);
-        assertEquals("Start of line truncated at full length is the same as start of the input line", truncatedLine.get(0),
-                from);
-        assertEquals("End of line truncated at full length is about the same as end of input line", 0,
-                truncatedLine.get(1).distance(to), 0.0001);
+        assertEquals(truncatedLine.get(0), from,
+                "Start of line truncated at full length is the same as start of the input line");
+        assertEquals(0, truncatedLine.get(1).distance(to),
+                0.0001, "End of line truncated at full length is about the same as end of input line");
         try
         {
             line.truncate(-0.1);
@@ -1090,23 +1090,23 @@ public class OtsLine2dTest
             // Ignore expected exception
         }
         truncatedLine = line.truncate(length / 2);
-        assertEquals("Start of truncated line is the same as start of the input line", truncatedLine.get(0), from);
+        assertEquals(truncatedLine.get(0), from, "Start of truncated line is the same as start of the input line");
         Point2d halfWay = new Point2d((from.x + to.x) / 2, (from.y + to.y) / 2);
-        assertEquals("End of 50%, truncated 2-point line should be at the half way point", 0,
-                halfWay.distance(truncatedLine.get(1)), 0.0001);
+        assertEquals(0, halfWay.distance(truncatedLine.get(1)),
+                0.0001, "End of 50%, truncated 2-point line should be at the half way point");
         Point2d intermediatePoint = new Point2d(20, 20);
         line = new OtsLine2d(from, intermediatePoint, to);
         length = from.distance(intermediatePoint) + intermediatePoint.distance(to);
         truncatedLine = line.truncate(length);
-        assertEquals("Start of line truncated at full length is the same as start of the input line", truncatedLine.get(0),
-                from);
-        assertEquals("End of line truncated at full length is about the same as end of input line", 0,
-                truncatedLine.get(2).distance(to), 0.0001);
+        assertEquals(truncatedLine.get(0), from,
+                "Start of line truncated at full length is the same as start of the input line");
+        assertEquals(0, truncatedLine.get(2).distance(to),
+                0.0001, "End of line truncated at full length is about the same as end of input line");
         truncatedLine = line.truncate(from.distance(intermediatePoint));
-        assertEquals("Start of line truncated at full length is the same as start of the input line", truncatedLine.get(0),
-                from);
-        assertEquals("Line truncated at intermediate point ends at that intermediate point", 0,
-                truncatedLine.get(1).distance(intermediatePoint), 0.0001);
+        assertEquals(truncatedLine.get(0), from,
+                "Start of line truncated at full length is the same as start of the input line");
+        assertEquals(0, truncatedLine.get(1).distance(intermediatePoint),
+                0.0001, "Line truncated at intermediate point ends at that intermediate point");
     }
 
     /**
@@ -1119,11 +1119,11 @@ public class OtsLine2dTest
         // Single segment line is always straight
         OtsLine2d line = new OtsLine2d(new Point2d[] {new Point2d(10, 20), new Point2d(20, 30)});
         Length radius = line.getProjectedRadius(0.5);
-        assertTrue("should be NaN", Double.isNaN(radius.getSI()));
+        assertTrue(Double.isNaN(radius.getSI()), "should be NaN");
         // Two segment line that is perfectly straight
         line = new OtsLine2d(new Point2d[] {new Point2d(10, 20), new Point2d(20, 30), new Point2d(30, 40)});
         radius = line.getProjectedRadius(0.5);
-        assertTrue("should be NaN", Double.isNaN(radius.getSI()));
+        assertTrue(Double.isNaN(radius.getSI()), "should be NaN");
         // Two segment line that is not straight
         line = new OtsLine2d(new Point2d[] {new Point2d(10, 30), new Point2d(20, 30), new Point2d(30, 40)});
         // for a 2-segment OtsLine2d, the result should be independent of the fraction
@@ -1131,7 +1131,7 @@ public class OtsLine2dTest
         {
             double fraction = step / 10.0;
             radius = line.getProjectedRadius(fraction);
-            assertEquals("radius should be about 12", 12, radius.si, 0.1);
+            assertEquals(12, radius.si, 0.1, "radius should be about 12");
         }
         System.out.println("radius is " + radius);
         // Now a bit harder
@@ -1149,11 +1149,11 @@ public class OtsLine2dTest
             // "At fraction " + fraction + " (point " + pointAtFraction + "), radius at fraction " + radiusAtFraction);
             if (fraction < boundary)
             {
-                assertEquals("in first segment radius should be about 12", 12, radiusAtFraction, 0.1);
+                assertEquals(12, radiusAtFraction, 0.1, "in first segment radius should be about 12");
             }
             else
             {
-                assertEquals("in other segments radius shoudl be about -2", -2, radiusAtFraction, 0.1);
+                assertEquals(-2, radiusAtFraction, 0.1, "in other segments radius shoudl be about -2");
             }
         }
     }

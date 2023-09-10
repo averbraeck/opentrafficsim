@@ -1,9 +1,9 @@
 package org.opentrafficsim.core.object;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.rmi.RemoteException;
 
@@ -13,7 +13,7 @@ import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.mock.MockSimulator;
 import org.opentrafficsim.core.network.Network;
@@ -77,29 +77,29 @@ public class StaticObjectTest implements EventListener
         Network network = new Network("Test network for static object test", MockSimulator.createMock());
         network.addListener(this, Network.OBJECT_ADD_EVENT);
         StaticObject so = new StaticObject(id, geometry, height);
-        assertNull("Constructor should not have fired an event", this.lastEvent);
+        assertNull(this.lastEvent, "Constructor should not have fired an event");
         network.addObject(so);
-        assertEquals("id", id, so.getId());
-        assertEquals("full id", id, so.getFullId());
-        assertEquals("geometry", geometry, so.getGeometry());
-        assertEquals("height", height, so.getHeight());
-        assertEquals("location", geometry.getBounds().midPoint(), so.getLocation());
+        assertEquals(id, so.getId(), "id");
+        assertEquals(id, so.getFullId(), "full id");
+        assertEquals(geometry, so.getGeometry(), "geometry");
+        assertEquals(height, so.getHeight(), "height");
+        assertEquals(geometry.getBounds().midPoint(), so.getLocation(), "location");
         // djutils PolyLine2d returns absolute bounds, StaticObject returns centered around (0, 0)
         //assertEquals("bounds", geometry.getBounds(), so.getBounds());
-        assertTrue("toString returns something descriptive", so.toString().startsWith("StaticObject"));
+        assertTrue(so.toString().startsWith("StaticObject"), "toString returns something descriptive");
         so.init();
-        assertNotNull("adding so to network should have fired an event", this.lastEvent);
-        assertEquals("Payload of event is the static object id", so.getId(), this.lastEvent.getContent());
+        assertNotNull(this.lastEvent, "adding so to network should have fired an event");
+        assertEquals(so.getId(), this.lastEvent.getContent(), "Payload of event is the static object id");
         this.lastEvent = null;
         StaticObject so2 = StaticObject.create(id, geometry, height);
-        assertEquals("id", id, so2.getId());
-        assertEquals("geometry", geometry, so2.getGeometry());
-        assertEquals("height", height, so2.getHeight());
-        assertNull("init should not have fired an event because there are no listeners", this.lastEvent);
+        assertEquals(id, so2.getId(), "id");
+        assertEquals(geometry, so2.getGeometry(), "geometry");
+        assertEquals(height, so2.getHeight(), "height");
+        assertNull(this.lastEvent, "init should not have fired an event because there are no listeners");
         so2 = StaticObject.create(id, geometry);
-        assertEquals("id", id, so2.getId());
-        assertEquals("geometry", geometry, so2.getGeometry());
-        assertEquals("height", Length.ZERO, so2.getHeight());
+        assertEquals(id, so2.getId(), "id");
+        assertEquals(geometry, so2.getGeometry(), "geometry");
+        assertEquals(Length.ZERO, so2.getHeight(), "height");
     }
 
     /**

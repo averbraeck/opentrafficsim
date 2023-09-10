@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.compatibility;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.HierarchicallyTyped;
 
 /**

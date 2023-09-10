@@ -1,11 +1,11 @@
 package org.opentrafficsim.core.egtf;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.Locale;
 
 import org.djutils.exceptions.Try;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.egtf.typed.TypedQuantity;
 
 /**
@@ -115,23 +115,23 @@ public class EgtfTest
         {
             for (int j = 0; j < t.length; j++)
             {
-                assertFalse("Speed filtered with detector data is not equal to uniform input speed",
-                        Math.abs(vDet[i][j] - vFree) > MARGIN);
-                assertFalse("Speed filtered with FCD data is above speed filtered with detector data",
-                        vCom1[i][j] > vDet[i][j]);
-                assertFalse("Speed filtered with FCD data is below minimum speed data", vCom1[i][j] < v);
-                assertFalse("Speed filtered with unreliable FCD data is below speed filtered FCD data",
-                        vCom12[i][j] < vCom1[i][j]);
-                assertFalse("Speed filtered with additional FCD data is above speed filtered FCD data",
-                        vCom2[i][j] > vCom1[i][j]);
-                assertFalse("Flow filtered with detector data is not equal to uniform input flow",
-                        Math.abs(qDet[i][j] - 0.5) > MARGIN);
-                assertFalse("Flow filtered with FCD data is not equal to uniform input flow",
-                        Math.abs(qCom1[i][j] - 0.5) > MARGIN);
-                assertFalse("Flow filtered with unreliable FCD data is not equal to uniform input flow",
-                        Math.abs(qCom12[i][j] - 0.5) > MARGIN);
-                assertFalse("Flow filtered with additional FCD data is not equal to uniform input flow",
-                        Math.abs(qCom2[i][j] - 0.5) > MARGIN);
+                assertFalse(Math.abs(vDet[i][j] - vFree) > MARGIN,
+                        "Speed filtered with detector data is not equal to uniform input speed");
+                assertFalse(vCom1[i][j] > vDet[i][j],
+                        "Speed filtered with FCD data is above speed filtered with detector data");
+                assertFalse(vCom1[i][j] < v, "Speed filtered with FCD data is below minimum speed data");
+                assertFalse(vCom12[i][j] < vCom1[i][j],
+                        "Speed filtered with unreliable FCD data is below speed filtered FCD data");
+                assertFalse(vCom2[i][j] > vCom1[i][j],
+                        "Speed filtered with additional FCD data is above speed filtered FCD data");
+                assertFalse(Math.abs(qDet[i][j] - 0.5) > MARGIN,
+                        "Flow filtered with detector data is not equal to uniform input flow");
+                assertFalse(Math.abs(qCom1[i][j] - 0.5) > MARGIN,
+                        "Flow filtered with FCD data is not equal to uniform input flow");
+                assertFalse(Math.abs(qCom12[i][j] - 0.5) > MARGIN,
+                        "Flow filtered with unreliable FCD data is not equal to uniform input flow");
+                assertFalse(Math.abs(qCom2[i][j] - 0.5) > MARGIN,
+                        "Flow filtered with additional FCD data is not equal to uniform input flow");
             }
         }
         // printMatrix(vDet, "vDet");

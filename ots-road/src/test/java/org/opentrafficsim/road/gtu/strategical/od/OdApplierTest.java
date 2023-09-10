@@ -1,8 +1,8 @@
 package org.opentrafficsim.road.gtu.strategical.od;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
 import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.draw.point.Point2d;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -258,7 +258,7 @@ public class OdApplierTest
                 Interpolation.STEPWISE, nodeA, nodeB, lane1, lane2);
         Map<String, GeneratorObjects> generatorObjects =
                 OdApplier.applyOd(this.network, od, odOptions, DefaultsRoadNl.ROAD_USERS);
-        assertEquals("Incorrect number of generator created or returned.", generatorObjects.size(), 2);
+        assertEquals(generatorObjects.size(), 2, "Incorrect number of generator created or returned.");
         for (String id : generatorObjects.keySet())
         {
             Generator<Duration> headwayGenerator = generatorObjects.get(id).getHeadwayGenerator();
@@ -294,7 +294,7 @@ public class OdApplierTest
         od = getOD(new double[] {100, 200, 300, 400, 500, 600}, new double[] {1000, 2000, 0, 0, 2000, 0}, Interpolation.LINEAR,
                 nodeA, nodeB, lane1, lane2);
         generatorObjects = OdApplier.applyOd(this.network, od, odOptions, DefaultsRoadNl.ROAD_USERS);
-        assertEquals("Incorrect number of generator created or returned.", generatorObjects.size(), 2);
+        assertEquals(generatorObjects.size(), 2, "Incorrect number of generator created or returned.");
         for (String id : generatorObjects.keySet())
         {
             Generator<Duration> headwayGenerator = generatorObjects.get(id).getHeadwayGenerator();
@@ -337,7 +337,7 @@ public class OdApplierTest
                     od = getOD(new double[] {1200, 2400, 3600, 4800, 6000, 7200}, new double[] {1000, 2000, 0, 0, 2000, 0},
                             interpolation, nodeA, nodeB, lane1, lane2);
                     generatorObjects = OdApplier.applyOd(this.network, od, odOptions, DefaultsRoadNl.ROAD_USERS);
-                    assertEquals("Incorrect number of generators created or returned.", generatorObjects.size(), 2);
+                    assertEquals(generatorObjects.size(), 2, "Incorrect number of generators created or returned.");
                     for (String id : generatorObjects.keySet())
                     {
                         Generator<Duration> headwayGenerator = generatorObjects.get(id).getHeadwayGenerator();
@@ -376,8 +376,8 @@ public class OdApplierTest
                         System.out.println(String.format(
                                 "A demand of %.2f resulted in %.0f vehicles (%s%.2f%%) as mean over %d simulations (%s demand, %s headways).",
                                 nDemand, n, p > 0 ? "+" : "", p, nSims, interpolation.name(), headwayRandomization.getName()));
-                        assertTrue(String.format("Demand generated with exponential headways was more than 5%% off (%s%.2f%%).",
-                                p > 0 ? "+" : "", p), Math.abs(p) < 5);
+                        assertTrue(Math.abs(p) < 5, String.format("Demand generated with exponential headways was more than 5%% off (%s%.2f%%).",
+                                        p > 0 ? "+" : "", p));
                     }
                 }
             }
@@ -490,7 +490,7 @@ public class OdApplierTest
      */
     private void assertAboutEqual(final String message, final Number num1, final Number num2)
     {
-        assertTrue(message, Math.abs(num1.doubleValue() - num2.doubleValue()) < 0.1);
+        assertTrue(Math.abs(num1.doubleValue() - num2.doubleValue()) < 0.1, message);
     }
 
     /**
@@ -541,12 +541,12 @@ public class OdApplierTest
                         fail("Vehicle generated from OD is of GtuType (" + type.getId() + ") that is not in the OD.");
                     }
                 }
-                assertTrue(String.format("Generated number of CARs (%d) deviates too much from the expected value (%d).",
-                        counts.get(DefaultsNl.CAR), nCar), Math.abs(counts.get(DefaultsNl.CAR) - nCar) < nTot * .05);
+                assertTrue(Math.abs(counts.get(DefaultsNl.CAR) - nCar) < nTot * .05, String.format("Generated number of CARs (%d) deviates too much from the expected value (%d).",
+                                counts.get(DefaultsNl.CAR), nCar));
                 assertTrue(
+                        Math.abs(counts.get(DefaultsNl.TRUCK) - nTruck) < nTot * .05,
                         String.format("Generated number of TRUCKs (%d) deviates too much from the expected value (%d).",
-                                counts.get(DefaultsNl.TRUCK), nTruck),
-                        Math.abs(counts.get(DefaultsNl.TRUCK) - nTruck) < nTot * .05);
+                                counts.get(DefaultsNl.TRUCK), nTruck));
                 System.out.println(String.format("Generated %d CARs for expected value %d.", counts.get(DefaultsNl.CAR), nCar));
                 System.out.println(
                         String.format("Generated %d TRUCKs for expected value %d.", counts.get(DefaultsNl.TRUCK), nTruck));

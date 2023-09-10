@@ -1,8 +1,8 @@
 package org.opentrafficsim.road.gtu;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.naming.NamingException;
 
@@ -14,7 +14,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.definitions.DefaultsNl;
@@ -246,14 +246,14 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
         urbanRoad.addCompatibleGtuType(truck.getGtuType());
 
         // Now we test all combinations
-        assertTrue("Passengers cars are allowed on a no trucks lane", trucksForbidden.isCompatible(passengerCar.getGtuType()));
-        assertFalse("Trucks are not allowed on a no trucks lane", trucksForbidden.isCompatible(truck.getGtuType()));
-        assertFalse("Passenger cars are not allowed on a trucks only lane", trucksOnly.isCompatible(passengerCar.getGtuType()));
-        assertTrue("Trucks are allowed on a trucks only lane", trucksOnly.isCompatible(truck.getGtuType()));
-        assertTrue("Passenger cars are allowed on an urban road", urbanRoad.isCompatible(passengerCar.getGtuType()));
-        assertTrue("Trucks are allowed on an urban road", urbanRoad.isCompatible(truck.getGtuType()));
-        assertFalse("Passenger cars are not allowed on a bicycle path", bicycleLane.isCompatible(passengerCar.getGtuType()));
-        assertFalse("Trucks are not allowed on an urban road", bicycleLane.isCompatible(truck.getGtuType()));
+        assertTrue(trucksForbidden.isCompatible(passengerCar.getGtuType()), "Passengers cars are allowed on a no trucks lane");
+        assertFalse(trucksForbidden.isCompatible(truck.getGtuType()), "Trucks are not allowed on a no trucks lane");
+        assertFalse(trucksOnly.isCompatible(passengerCar.getGtuType()), "Passenger cars are not allowed on a trucks only lane");
+        assertTrue(trucksOnly.isCompatible(truck.getGtuType()), "Trucks are allowed on a trucks only lane");
+        assertTrue(urbanRoad.isCompatible(passengerCar.getGtuType()), "Passenger cars are allowed on an urban road");
+        assertTrue(urbanRoad.isCompatible(truck.getGtuType()), "Trucks are allowed on an urban road");
+        assertFalse(bicycleLane.isCompatible(passengerCar.getGtuType()), "Passenger cars are not allowed on a bicycle path");
+        assertFalse(bicycleLane.isCompatible(truck.getGtuType()), "Trucks are not allowed on an urban road");
     }
 
     /**
@@ -274,12 +274,12 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeed)
             throws ProbabilityException, ParameterException, NamingException, GtuException
     {
-        assertTrue("Type should be " + gtuType, gtuType.equals(templateGtuType.getGtuType()));
+        assertTrue(gtuType.equals(templateGtuType.getGtuType()), "Type should be " + gtuType);
         LaneBasedGtuCharacteristics characteristics = templateGtuType.draw();
-        assertEquals("Length should be " + length, length.draw().getSI(), characteristics.getLength().getSI(), 0.0001);
-        assertEquals("Width should be " + width, width.draw().getSI(), characteristics.getWidth().getSI(), 0.0001);
-        assertEquals("Maximum speed should be " + maximumSpeed, maximumSpeed.draw().getSI(),
-                characteristics.getMaximumSpeed().getSI(), 0.0001);
+        assertEquals(length.draw().getSI(), characteristics.getLength().getSI(), 0.0001, "Length should be " + length);
+        assertEquals(width.draw().getSI(), characteristics.getWidth().getSI(), 0.0001, "Width should be " + width);
+        assertEquals(maximumSpeed.draw().getSI(), characteristics.getMaximumSpeed().getSI(),
+                0.0001, "Maximum speed should be " + maximumSpeed);
     }
 
     /**

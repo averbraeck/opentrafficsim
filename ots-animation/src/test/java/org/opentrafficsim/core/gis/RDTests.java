@@ -1,13 +1,13 @@
 package org.opentrafficsim.core.gis;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Locale;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the Dutch RD to and from WGS84 transformations.
@@ -37,7 +37,7 @@ public class RDTests
         System.out.println(String.format(Locale.US, "back:       (%9.2f,%9.2f)", back.getX(), back.getY()));
         double distance = rdIn.distance(back);
         System.out.println(String.format("difference: %8.6fm", distance));
-        assertTrue("Distance should be less than 0.5m", distance < 0.5);
+        assertTrue(distance < 0.5, "Distance should be less than 0.5m");
     }
 
     /**

@@ -1,6 +1,6 @@
 package org.opentrafficsim.xml.bindings;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.xml.bind.JAXBException;
 

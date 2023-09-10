@@ -1,9 +1,9 @@
 package org.opentrafficsim.road.gtu.following;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,7 +21,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.definitions.DefaultsNl;
@@ -78,32 +78,32 @@ public class GtuFollowingModelTest implements UNITS
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
 
         Acceleration maxSafeDeceleration = gtuFollowingModel.getMaximumSafeDeceleration();
-        assertNotNull("maximumSafeDeceleration must return non-null value", maxSafeDeceleration);
-        assertTrue("value of maximuSafeDeceleration must be positive", 0 < maxSafeDeceleration.getSI());
-        assertTrue("value of maximumSafeDeceleration must be less than g", maxSafeDeceleration.getSI() < 10);
+        assertNotNull(maxSafeDeceleration, "maximumSafeDeceleration must return non-null value");
+        assertTrue(0 < maxSafeDeceleration.getSI(), "value of maximuSafeDeceleration must be positive");
+        assertTrue(maxSafeDeceleration.getSI() < 10, "value of maximumSafeDeceleration must be less than g");
         Duration stepSize = gtuFollowingModel.getStepSize();
-        assertNotNull("stepSize must return non-null value", stepSize);
-        assertTrue("stepSize must be > 0", 0 < stepSize.getSI());
+        assertNotNull(stepSize, "stepSize must return non-null value");
+        assertTrue(0 < stepSize.getSI(), "stepSize must be > 0");
         String name = gtuFollowingModel.getName();
         // System.out.println("GtuFollowingModel " + name);
-        assertNotNull("getName must return non-null value", name);
-        assertTrue("getName result must not be the empty string", name.length() > 0);
+        assertNotNull(name, "getName must return non-null value");
+        assertTrue(name.length() > 0, "getName result must not be the empty string");
         String longName = gtuFollowingModel.getLongName();
-        assertNotNull("getLongName must return non-null value", longName);
-        assertTrue("getLongName result must not be the empty string", longName.length() > 0);
+        assertNotNull(longName, "getLongName must return non-null value");
+        assertTrue(longName.length() > 0, "getLongName result must not be the empty string");
         Speed speed = Speed.ZERO;
         Length precision = new Length(0.5, METER);
         Speed maxSpeed = new Speed(200, KM_PER_HOUR);
         Speed speedLimit = new Speed(100, KM_PER_HOUR);
         Length maxHeadway = new Length(250.0, LengthUnit.METER);
         Length minimumHeadway = gtuFollowingModel.minimumHeadway(speed, speed, precision, maxHeadway, speedLimit, maxSpeed);
-        assertNotNull("minimum headway at speed 0 should be non null", minimumHeadway);
-        assertTrue("minimum headway at speed 0 hould have value >= 0", 0 <= minimumHeadway.getSI());
+        assertNotNull(minimumHeadway, "minimum headway at speed 0 should be non null");
+        assertTrue(0 <= minimumHeadway.getSI(), "minimum headway at speed 0 hould have value >= 0");
         // System.out.println("minimum headway at speed " + speed + " is " + minimumHeadway);
         speed = new Speed(50, KM_PER_HOUR);
         minimumHeadway = gtuFollowingModel.minimumHeadway(speed, speed, precision, maxHeadway, speedLimit, maxSpeed);
-        assertNotNull("minimum headway at speed 0 should be non null", minimumHeadway);
-        assertTrue("minimum headway at speed 0 hould have value >= 0", 0 <= minimumHeadway.getSI());
+        assertNotNull(minimumHeadway, "minimum headway at speed 0 should be non null");
+        assertTrue(0 <= minimumHeadway.getSI(), "minimum headway at speed 0 hould have value >= 0");
         // System.out.println("minimum headway at speed " + speed + " is " + minimumHeadway);
         GtuType carType = DefaultsNl.CAR;
         LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
@@ -125,21 +125,21 @@ public class GtuFollowingModelTest implements UNITS
         Acceleration longerHeadwayAcceleration =
                 gtuFollowingModel.computeAcceleration(speed, maxSpeed, speed, longerHeadway, speedLimit);
         // System.out.println("acceleration at headway " + longerHeadway + " is " + longerHeadwayAcceleration);
-        assertTrue("deceleration with longer headway than minimum should be >= -maximumSafeDeceleration",
-                -maxSafeDeceleration.getSI() <= longerHeadwayAcceleration.getSI());
+        assertTrue(-maxSafeDeceleration.getSI() <= longerHeadwayAcceleration.getSI(),
+                "deceleration with longer headway than minimum should be >= -maximumSafeDeceleration");
         Length shorterHeadway = minimumHeadway.minus(precision);
         Acceleration shorterHeadwayAcceleration =
                 gtuFollowingModel.computeAcceleration(speed, maxSpeed, speed, shorterHeadway, speedLimit);
         // System.out.println("acceleration at headway " + shorterHeadway + " is " + shorterHeadwayAcceleration);
         gtuFollowingModel.computeAcceleration(speed, maxSpeed, speed, shorterHeadway, speedLimit);
-        assertTrue("deceleration with longer headway than minimum should be <= -maximumSafeDeceleration",
-                -maxSafeDeceleration.getSI() >= shorterHeadwayAcceleration.getSI());
+        assertTrue(-maxSafeDeceleration.getSI() >= shorterHeadwayAcceleration.getSI(),
+                "deceleration with longer headway than minimum should be <= -maximumSafeDeceleration");
         AccelerationStep noLeader = gtuFollowingModel.computeAccelerationStepWithNoLeader(gtu, maxHeadway, speedLimit);
         // System.out.println("noLeader is " + noLeader);
-        assertNotNull("result of computeAccelerationWithNoLeader is not null", noLeader);
-        assertEquals("result of computeAccelerationWithNoLeader is valid for " + stepSize, stepSize.getSI(),
-                noLeader.getValidUntil().getSI(), 0.001);
-        assertTrue("acceleration of stationary gtu with no leader should be > 0", 0 < noLeader.getAcceleration().getSI());
+        assertNotNull(noLeader, "result of computeAccelerationWithNoLeader is not null");
+        assertEquals(stepSize.getSI(), noLeader.getValidUntil().getSI(),
+                0.001, "result of computeAccelerationWithNoLeader is valid for " + stepSize);
+        assertTrue(0 < noLeader.getAcceleration().getSI(), "acceleration of stationary gtu with no leader should be > 0");
         precision = Length.ZERO;
         try
         {
@@ -299,20 +299,20 @@ public class GtuFollowingModelTest implements UNITS
     private void checkAccelerationStep(final String description, final DualAccelerationStep as, final Acceleration a0,
             final Acceleration a1, final Time validUntil)
     {
-        assertEquals(description + ": a leader should be " + a0, a0.getSI(), as.getLeaderAcceleration().getSI(), 0.001);
-        assertEquals(description + ": a leader should be " + a0, a0.getSI(),
-                as.getLeaderAccelerationStep().getAcceleration().getSI(), 0.001);
-        assertEquals(description + ": a leader should be valid until " + validUntil, validUntil.getSI(),
-                as.getLeaderValidUntil().getSI(), 0.001);
-        assertEquals(description + ": a leader should be valid until " + validUntil, validUntil.getSI(),
-                as.getLeaderAccelerationStep().getValidUntil().getSI(), 0.001);
-        assertEquals(description + ": a follower should be " + a1, a1.getSI(), as.getFollowerAcceleration().getSI(), 0.001);
-        assertEquals(description + ": a follower should be " + a1, a1.getSI(),
-                as.getFollowerAccelerationStep().getAcceleration().getSI(), 0.001);
-        assertEquals(description + ": a follower should be valid until " + validUntil, validUntil.getSI(),
-                as.getFollowerValidUntil().getSI(), 0.001);
-        assertEquals(description + ": a follower should be valid until " + validUntil, validUntil.getSI(),
-                as.getFollowerValidUntil().getSI(), 0.001);
+        assertEquals(a0.getSI(), as.getLeaderAcceleration().getSI(), 0.001, description + ": a leader should be " + a0);
+        assertEquals(a0.getSI(), as.getLeaderAccelerationStep().getAcceleration().getSI(),
+                0.001, description + ": a leader should be " + a0);
+        assertEquals(validUntil.getSI(), as.getLeaderValidUntil().getSI(),
+                0.001, description + ": a leader should be valid until " + validUntil);
+        assertEquals(validUntil.getSI(), as.getLeaderAccelerationStep().getValidUntil().getSI(),
+                0.001, description + ": a leader should be valid until " + validUntil);
+        assertEquals(a1.getSI(), as.getFollowerAcceleration().getSI(), 0.001, description + ": a follower should be " + a1);
+        assertEquals(a1.getSI(), as.getFollowerAccelerationStep().getAcceleration().getSI(),
+                0.001, description + ": a follower should be " + a1);
+        assertEquals(validUntil.getSI(), as.getFollowerValidUntil().getSI(),
+                0.001, description + ": a follower should be valid until " + validUntil);
+        assertEquals(validUntil.getSI(), as.getFollowerValidUntil().getSI(),
+                0.001, description + ": a follower should be valid until " + validUntil);
     }
 
     /**

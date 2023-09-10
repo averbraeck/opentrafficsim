@@ -1,11 +1,11 @@
 package org.opentrafficsim.road.gtu.perception;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
@@ -13,7 +13,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -93,8 +93,8 @@ public class HeadwayGtuTest
             }
         }
         // Verify that toString returns something
-        assertTrue("toString returns something", hg1.toString().length() > 10);
-        assertTrue("toString returns something", hg2.toString().length() > 10);
+        assertTrue(hg1.toString().length() > 10, "toString returns something");
+        assertTrue(hg2.toString().length() > 10, "toString returns something");
         try
         {
             new HeadwayGtuSimple(null, gtuType1, distance1, Length.ZERO, Length.ZERO, Speed.ZERO);
@@ -113,10 +113,10 @@ public class HeadwayGtuTest
         {
             // Ignore expected exception
         }
-        assertTrue("ObjectType is a GTU", hg1.getObjectType().isGtu());
-        assertFalse("ObjectType is traffic light", hg1.getObjectType().isTrafficLight());
-        assertFalse("ObjectType is some other object", hg1.getObjectType().isObject());
-        assertFalse("ObjectType is distance only", hg1.getObjectType().isDistanceOnly());
+        assertTrue(hg1.getObjectType().isGtu(), "ObjectType is a GTU");
+        assertFalse(hg1.getObjectType().isTrafficLight(), "ObjectType is traffic light");
+        assertFalse(hg1.getObjectType().isObject(), "ObjectType is some other object");
+        assertFalse(hg1.getObjectType().isDistanceOnly(), "ObjectType is distance only");
     }
 
     /**
@@ -146,124 +146,124 @@ public class HeadwayGtuTest
             final boolean breakingLights, final boolean hazardLights, final boolean honk, final boolean leftIndicator,
             final boolean rightIndicator, final boolean parallel)
     {
-        assertNotNull("headwayGTU should not be null", headwayGTU);
+        assertNotNull(headwayGTU, "headwayGTU should not be null");
         if (null == acceleration)
         {
-            assertNull("acceleration should be null", headwayGTU.getAcceleration());
+            assertNull(headwayGTU.getAcceleration(), "acceleration should be null");
         }
         else
         {
-            assertEquals("acceleration should be " + acceleration, acceleration.si, headwayGTU.getAcceleration().si,
-                    acceleration.si / 99999);
+            assertEquals(acceleration.si, headwayGTU.getAcceleration().si, acceleration.si / 99999,
+                    "acceleration should be " + acceleration);
         }
         if (null == distance)
         {
-            assertNull("distance should be null", headwayGTU.getDistance());
+            assertNull(headwayGTU.getDistance(), "distance should be null");
         }
         else
         {
-            assertEquals("distance should be " + distance, distance.si, headwayGTU.getDistance().si, distance.si / 99999);
+            assertEquals(distance.si, headwayGTU.getDistance().si, distance.si / 99999, "distance should be " + distance);
         }
-        assertEquals("GTU type should be " + gtuType, gtuType, headwayGTU.getGtuType());
-        assertEquals("Id should be " + id, id, headwayGTU.getId());
-        assertEquals("Object type should be " + objectType, objectType, headwayGTU.getObjectType());
+        assertEquals(gtuType, headwayGTU.getGtuType(), "GTU type should be " + gtuType);
+        assertEquals(id, headwayGTU.getId(), "Id should be " + id);
+        assertEquals(objectType, headwayGTU.getObjectType(), "Object type should be " + objectType);
         if (null == overlap)
         {
-            assertNull("overlap should be null", headwayGTU.getOverlap());
+            assertNull(headwayGTU.getOverlap(), "overlap should be null");
         }
         else
         {
-            assertEquals("overlap should be " + overlap, overlap.si, headwayGTU.getOverlap().si, overlap.si / 99999);
+            assertEquals(overlap.si, headwayGTU.getOverlap().si, overlap.si / 99999, "overlap should be " + overlap);
         }
         if (null == overlapFront)
         {
-            assertNull("overlapFront should be null", headwayGTU.getOverlapFront());
+            assertNull(headwayGTU.getOverlapFront(), "overlapFront should be null");
         }
         else
         {
-            assertEquals("overlapFront should be " + overlapFront, overlapFront.si, headwayGTU.getOverlapFront().si,
-                    overlapFront.si / 99999);
+            assertEquals(overlapFront.si, headwayGTU.getOverlapFront().si, overlapFront.si / 99999,
+                    "overlapFront should be " + overlapFront);
         }
         if (null == overlap)
         {
-            assertNull("overlapRear should be null", headwayGTU.getOverlapRear());
+            assertNull(headwayGTU.getOverlapRear(), "overlapRear should be null");
         }
         else
         {
-            assertEquals("overlapRear should be " + overlapRear, overlapRear.si, headwayGTU.getOverlapRear().si,
-                    overlapRear.si / 99999);
+            assertEquals(overlapRear.si, headwayGTU.getOverlapRear().si, overlapRear.si / 99999,
+                    "overlapRear should be " + overlapRear);
         }
         if (null == speed)
         {
-            assertNull("speed should be null", headwayGTU.getSpeed());
+            assertNull(headwayGTU.getSpeed(), "speed should be null");
         }
         else
         {
-            assertEquals("Speed should be " + speed, speed.si, headwayGTU.getSpeed().si, speed.si / 99999);
+            assertEquals(speed.si, headwayGTU.getSpeed().si, speed.si / 99999, "Speed should be " + speed);
         }
         if (ahead)
         {
-            assertTrue("ahead should be true", headwayGTU.isAhead());
+            assertTrue(headwayGTU.isAhead(), "ahead should be true");
         }
         else
         {
-            assertFalse("ahead should be false", headwayGTU.isAhead());
+            assertFalse(headwayGTU.isAhead(), "ahead should be false");
         }
         if (behind)
         {
-            assertTrue("behind should be true", headwayGTU.isBehind());
+            assertTrue(headwayGTU.isBehind(), "behind should be true");
         }
         else
         {
-            assertFalse("behind should be false", headwayGTU.isBehind());
+            assertFalse(headwayGTU.isBehind(), "behind should be false");
         }
         if (breakingLights)
         {
-            assertTrue("breaking lights should be on", headwayGTU.isBrakingLightsOn());
+            assertTrue(headwayGTU.isBrakingLightsOn(), "breaking lights should be on");
         }
         else
         {
-            assertFalse("breaking lights should be off", headwayGTU.isBrakingLightsOn());
+            assertFalse(headwayGTU.isBrakingLightsOn(), "breaking lights should be off");
         }
         if (hazardLights)
         {
-            assertTrue("hazard lights should be on", headwayGTU.isEmergencyLightsOn());
+            assertTrue(headwayGTU.isEmergencyLightsOn(), "hazard lights should be on");
         }
         else
         {
-            assertFalse("hazard lights should be off", headwayGTU.isEmergencyLightsOn());
+            assertFalse(headwayGTU.isEmergencyLightsOn(), "hazard lights should be off");
         }
         if (honk)
         {
-            assertTrue("GTU should be honking", headwayGTU.isHonking());
+            assertTrue(headwayGTU.isHonking(), "GTU should be honking");
         }
         else
         {
-            assertFalse("GTU should not be honking", headwayGTU.isHonking());
+            assertFalse(headwayGTU.isHonking(), "GTU should not be honking");
         }
         if (leftIndicator)
         {
-            assertTrue("Left indicator lights should be on", headwayGTU.isLeftTurnIndicatorOn());
+            assertTrue(headwayGTU.isLeftTurnIndicatorOn(), "Left indicator lights should be on");
         }
         else
         {
-            assertFalse("Left indicator lights should be off", headwayGTU.isLeftTurnIndicatorOn());
+            assertFalse(headwayGTU.isLeftTurnIndicatorOn(), "Left indicator lights should be off");
         }
         if (rightIndicator)
         {
-            assertTrue("Right indicator lights should be on", headwayGTU.isRightTurnIndicatorOn());
+            assertTrue(headwayGTU.isRightTurnIndicatorOn(), "Right indicator lights should be on");
         }
         else
         {
-            assertFalse("Right indicator lights should be off", headwayGTU.isRightTurnIndicatorOn());
+            assertFalse(headwayGTU.isRightTurnIndicatorOn(), "Right indicator lights should be off");
         }
         if (parallel)
         {
-            assertTrue("Parallel should be true", headwayGTU.isParallel());
+            assertTrue(headwayGTU.isParallel(), "Parallel should be true");
         }
         else
         {
-            assertFalse("Parallel should be false", headwayGTU.isParallel());
+            assertFalse(headwayGTU.isParallel(), "Parallel should be false");
         }
     }
 

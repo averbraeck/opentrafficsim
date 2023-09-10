@@ -1,11 +1,11 @@
 package org.opentrafficsim.core.gtu.perception;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Time;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.TimeStampedObject;
 
 /**
@@ -33,7 +33,7 @@ public class TimeStampedObjectTest
         TimeStampedObject<String> tso2 = new TimeStampedObject<String>(string2, time2);
         verifyFields(tso1, string1, time1);
         verifyFields(tso2, string2, time2);
-        assertTrue("the toString method returns something", tso1.toString().length() > 10);
+        assertTrue(tso1.toString().length() > 10, "the toString method returns something");
     }
 
     /**
@@ -44,7 +44,7 @@ public class TimeStampedObjectTest
      */
     private void verifyFields(final TimeStampedObject<String> tso, final String string, final Time time)
     {
-        assertEquals("object must be " + string, string, tso.getObject());
-        assertEquals("time must be " + time, time.si, tso.getTimestamp().si, time.si / 99999);
+        assertEquals(string, tso.getObject(), "object must be " + string);
+        assertEquals(time.si, tso.getTimestamp().si, time.si / 99999, "time must be " + time);
     }
 }

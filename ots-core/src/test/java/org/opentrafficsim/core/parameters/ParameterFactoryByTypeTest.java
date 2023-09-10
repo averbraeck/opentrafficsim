@@ -1,8 +1,8 @@
 package org.opentrafficsim.core.parameters;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
@@ -146,7 +146,7 @@ public final class ParameterFactoryByTypeTest
     {
         Parameters parameters = new ParameterSet();
         parameterFactory.setValues(parameters, gtuType);
-        assertEquals("Parameter does not have the correct value.", parameters.getParameter(parameterType), value);
+        assertEquals(parameters.getParameter(parameterType), value, "Parameter does not have the correct value.");
     }
 
     /**

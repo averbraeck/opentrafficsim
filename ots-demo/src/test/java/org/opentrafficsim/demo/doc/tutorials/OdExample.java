@@ -15,7 +15,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
 import org.djunits.value.vdouble.vector.data.DoubleVectorData;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.definitions.Defaults;

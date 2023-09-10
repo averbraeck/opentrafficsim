@@ -1,9 +1,9 @@
 package org.opentrafficsim.core.gtu;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.rmi.RemoteException;
 
@@ -16,7 +16,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.OrientedPoint2d;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.definitions.DefaultsNl;
@@ -133,12 +133,12 @@ public class GtuTest
             {
                 String gtuId = id + " " + gtuType.getId();
                 TestGtu gtu = new TestGtu(gtuId, gtuType, simulator, perceivableContext);
-                assertEquals("new GTU has correct id", gtuId, gtu.getId());
-                assertEquals("new GTU has correct GtuType", gtuType, gtu.getType());
-                assertEquals("new GTU has correct reference position", RelativePosition.REFERENCE_POSITION, gtu.getReference());
-                assertEquals("new GTU has correct simulator", simulator, gtu.getSimulator());
-                assertEquals("new GTU has odometer value 0", 0, gtu.getOdometer().si, 0);
-                assertTrue("new GTU is stored in the perceivable context", perceivableContext.getGTUs().contains(gtu));
+                assertEquals(gtuId, gtu.getId(), "new GTU has correct id");
+                assertEquals(gtuType, gtu.getType(), "new GTU has correct GtuType");
+                assertEquals(RelativePosition.REFERENCE_POSITION, gtu.getReference(), "new GTU has correct reference position");
+                assertEquals(simulator, gtu.getSimulator(), "new GTU has correct simulator");
+                assertEquals(0, gtu.getOdometer().si, 0, "new GTU has odometer value 0");
+                assertTrue(perceivableContext.getGTUs().contains(gtu), "new GTU is stored in the perceivable context");
                 lastGTU = gtu;
                 if (null == firstGTU)
                 {
@@ -146,12 +146,12 @@ public class GtuTest
                 }
             }
         }
-        assertFalse("first GTU and last GTU have different id", firstGTU.getId().equals(lastGTU.getId()));
-        assertFalse("first GTU and last GTU have different GtuType", firstGTU.getType().equals(lastGTU.getType()));
+        assertFalse(firstGTU.getId().equals(lastGTU.getId()), "first GTU and last GTU have different id");
+        assertFalse(firstGTU.getType().equals(lastGTU.getType()), "first GTU and last GTU have different GtuType");
         TestGtu gtu = new TestGtu("id3", gtuType1, simulator, perceivableContext);
-        assertEquals("perceivable context now contains 5 GTUs", 5, perceivableContext.getGTUs().size());
+        assertEquals(5, perceivableContext.getGTUs().size(), "perceivable context now contains 5 GTUs");
         gtu.destroy();
-        assertFalse("perceivable context no longer contains the destroyed GTU", perceivableContext.containsGTU(gtu));
+        assertFalse(perceivableContext.containsGTU(gtu), "perceivable context no longer contains the destroyed GTU");
         try
         {
             new TestGtu((String) null, gtuType1, simulator, perceivableContext);

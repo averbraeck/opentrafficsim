@@ -1,8 +1,8 @@
 package org.opentrafficsim.core.math;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.djunits.unit.AngleUnit;
 import org.djunits.unit.DirectionUnit;
@@ -11,7 +11,7 @@ import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.vector.base.DoubleVector;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the Direction3d and Angle3d classes. These classes are extremely similar. An Angle3d is a relative, a Direction is
@@ -86,7 +86,7 @@ public class Rotation3dTest
         {
             // Ignore expected exception
         }
-        assertTrue("toString contains class name", r3d.toString().contains("Rotation3d"));
+        assertTrue(r3d.toString().contains("Rotation3d"), "toString contains class name");
         Angle3d a3d = new Angle3d(roll, pitch, yaw, AngleUnit.RADIAN);
         checkRotation3d(a3d, roll, pitch, yaw);
         a3d = new Angle3d(DoubleVector.instantiate(new double[] {roll, pitch, yaw}, AngleUnit.RADIAN, StorageType.DENSE));
@@ -132,7 +132,7 @@ public class Rotation3dTest
         {
             // Ignore expected exception
         }
-        assertTrue("toString contains class name", a3d.toString().contains("Angle3d"));
+        assertTrue(a3d.toString().contains("Angle3d"), "toString contains class name");
     }
 
     /**
@@ -144,9 +144,9 @@ public class Rotation3dTest
      */
     private void checkRotation3d(final Direction3d r3da, final double roll, final double pitch, final double yaw)
     {
-        assertEquals("roll", roll, r3da.getRoll().si, 0.00001);
-        assertEquals("pitch", pitch, r3da.getPitch().si, 0.00001);
-        assertEquals("yaw", yaw, r3da.getYaw().si, 0.00001);
+        assertEquals(roll, r3da.getRoll().si, 0.00001, "roll");
+        assertEquals(pitch, r3da.getPitch().si, 0.00001, "pitch");
+        assertEquals(yaw, r3da.getYaw().si, 0.00001, "yaw");
     }
 
     /**
@@ -158,9 +158,9 @@ public class Rotation3dTest
      */
     private void checkRotation3d(final Angle3d r3dr, final double roll, final double pitch, final double yaw)
     {
-        assertEquals("roll", roll, r3dr.getRoll().si, 0.00001);
-        assertEquals("pitch", pitch, r3dr.getPitch().si, 0.00001);
-        assertEquals("yaw", yaw, r3dr.getYaw().si, 0.00001);
+        assertEquals(roll, r3dr.getRoll().si, 0.00001, "roll");
+        assertEquals(pitch, r3dr.getPitch().si, 0.00001, "pitch");
+        assertEquals(yaw, r3dr.getYaw().si, 0.00001, "yaw");
     }
 
 }

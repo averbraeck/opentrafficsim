@@ -1,11 +1,11 @@
 package org.opentrafficsim.core.geometry;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the B&eacute;zier class.
@@ -34,14 +34,14 @@ public class BezierTest
         for (int n : new int[] {2, 3, 4, 100})
         {
             OtsLine2d line = Bezier.cubic(n, from, control1, control2, to);
-            assertTrue("result has n points", line.size() == n);
-            assertTrue("result starts with from", line.get(0).equals(from));
-            assertTrue("result ends with to", line.get(line.size() - 1).equals(to));
+            assertTrue(line.size() == n, "result has n points");
+            assertTrue(line.get(0).equals(from), "result starts with from");
+            assertTrue(line.get(line.size() - 1).equals(to), "result ends with to");
             for (int i = 1; i < line.size() - 1; i++)
             {
                 Point2d p = line.get(i);
-                assertTrue("x of intermediate point has reasonable value", p.x > 0 && p.x < 15);
-                assertTrue("y of intermediate point has reasonable value", p.y > 0 && p.y < 15);
+                assertTrue(p.x > 0 && p.x < 15, "x of intermediate point has reasonable value");
+                assertTrue(p.y > 0 && p.y < 15, "y of intermediate point has reasonable value");
             }
         }
         for (int n = -1; n <= 1; n++)
@@ -67,16 +67,16 @@ public class BezierTest
                     for (int i = 1; i < line.size() - 1; i++)
                     {
                         Point2d p = line.get(i);
-                        assertTrue("x of intermediate point has reasonable value", p.x > 0 && p.x < 15);
-                        assertTrue("y of intermediate point has reasonable value", p.y > 0 && p.y < 15);
+                        assertTrue(p.x > 0 && p.x < 15, "x of intermediate point has reasonable value");
+                        assertTrue(p.y > 0 && p.y < 15, "y of intermediate point has reasonable value");
                     }
                 }
             }
         }
         // Pity that the value 64 is private in the Bezier class.
-        assertEquals("Number of points is 64", 64,
-                Bezier.cubic(new OrientedPoint2d(from.x, from.y, 0), new OrientedPoint2d(to.x, to.y, -Math.PI / 2)).size());
-        assertEquals("Number of points is 64", 64, Bezier.bezier(from, control1, control2, to).size());
+        assertEquals(64, Bezier.cubic(new OrientedPoint2d(from.x, from.y, 0), new OrientedPoint2d(to.x, to.y, -Math.PI / 2)).size(),
+                "Number of points is 64");
+        assertEquals(64, Bezier.bezier(from, control1, control2, to).size(), "Number of points is 64");
         control1 = new Point2d(5, 0);
         control2 = new Point2d(0, 5);
         for (int n : new int[] {2, 3, 4, 100})
@@ -86,8 +86,8 @@ public class BezierTest
             {
                 Point2d p = line.get(i);
                 // System.out.println("Point " + i + " of " + n + " is " + p);
-                assertTrue("x of intermediate point has reasonable value", p.x > 0 && p.x < 10);
-                assertTrue("y of intermediate point has reasonable value", p.y > 0 && p.y < 10);
+                assertTrue(p.x > 0 && p.x < 10, "x of intermediate point has reasonable value");
+                assertTrue(p.y > 0 && p.y < 10, "y of intermediate point has reasonable value");
             }
         }
         for (int n : new int[] {2, 3, 4, 100})
@@ -97,8 +97,8 @@ public class BezierTest
             for (int i = 1; i < line.size() - 1; i++)
             {
                 Point2d p = line.get(i);
-                assertTrue("x of intermediate point has reasonable value", p.x > 0 && p.x < 10);
-                assertTrue("y of intermediate point has reasonable value", p.y > 0 && p.y < 10);
+                assertTrue(p.x > 0 && p.x < 10, "x of intermediate point has reasonable value");
+                assertTrue(p.y > 0 && p.y < 10, "y of intermediate point has reasonable value");
             }
         }
     }

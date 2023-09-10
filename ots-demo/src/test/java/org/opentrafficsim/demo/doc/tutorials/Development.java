@@ -1,11 +1,11 @@
 package org.opentrafficsim.demo.doc.tutorials;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.profile.Profile;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -44,8 +44,8 @@ public class Development
         Parameters params = new ParameterSet().setDefaultParameters(ParameterTypes.class);
         try
         {
-            assertTrue("Default value is not correctly set.",
-                    params.getParameter(ParameterTypes.A).equals(ParameterTypes.A.getDefaultValue()));
+            assertTrue(params.getParameter(ParameterTypes.A).equals(ParameterTypes.A.getDefaultValue()),
+                    "Default value is not correctly set.");
         }
         catch (ParameterException exception)
         {

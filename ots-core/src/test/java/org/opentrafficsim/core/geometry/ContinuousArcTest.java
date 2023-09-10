@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.geometry;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.djunits.unit.AngleUnit;
 import org.djunits.value.vdouble.scalar.Angle;
@@ -9,7 +9,7 @@ import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.geometry.Flattener.MaxAngle;
 import org.opentrafficsim.core.geometry.Flattener.MaxDeviation;
 import org.opentrafficsim.core.geometry.Flattener.NumSegments;
@@ -57,12 +57,12 @@ public class ContinuousArcTest
 
         isApproximal(arc.getStartPoint(), 1.0, 0.0);
         isApproximal(arc.getEndPoint(), -1.0, 0.0);
-        assertEquals("Start direction is incorrect.", Math.PI / 2.0, arc.getStartDirection().si, MARGIN);
-        assertEquals("End direction is incorrect.", -Math.PI / 2.0, arc.getEndDirection().si, MARGIN);
-        assertEquals("Start radius is incorrect.", 1.0, arc.getStartRadius(), MARGIN);
-        assertEquals("End radius is incorrect.", 1.0, arc.getEndRadius(), MARGIN);
-        assertEquals("Start curvature is incorrect.", 1.0, arc.getStartCurvature(), MARGIN);
-        assertEquals("End curvature is incorrect.", 1.0, arc.getEndCurvature(), MARGIN);
+        assertEquals(Math.PI / 2.0, arc.getStartDirection().si, MARGIN, "Start direction is incorrect.");
+        assertEquals(-Math.PI / 2.0, arc.getEndDirection().si, MARGIN, "End direction is incorrect.");
+        assertEquals(1.0, arc.getStartRadius(), MARGIN, "Start radius is incorrect.");
+        assertEquals(1.0, arc.getEndRadius(), MARGIN, "End radius is incorrect.");
+        assertEquals(1.0, arc.getStartCurvature(), MARGIN, "Start curvature is incorrect.");
+        assertEquals(1.0, arc.getEndCurvature(), MARGIN, "End curvature is incorrect.");
     }
 
     /**
@@ -137,18 +137,18 @@ public class ContinuousArcTest
 
             // 10 degrees
             PolyLine2d line = arc.flatten(new MaxAngle(new Angle(10.0, AngleUnit.DEGREE).si));
-            assertEquals("Number of segments incorrect", numSegExpect(10.0, Math.PI), line.size());
+            assertEquals(numSegExpect(10.0, Math.PI), line.size(), "Number of segments incorrect");
 
             // 1 degree
             line = arc.flatten(new MaxAngle(new Angle(1.0, AngleUnit.DEGREE).si));
-            assertEquals("Number of segments incorrect", numSegExpect(1.0, Math.PI), line.size());
+            assertEquals(numSegExpect(1.0, Math.PI), line.size(), "Number of segments incorrect");
 
             // different spatial errors
             PolyLine2d line1 = arc.flatten(new MaxDeviation(0.1));
             PolyLine2d line2 = arc.flatten(new MaxDeviation(0.01));
             PolyLine2d line3 = arc.flatten(new MaxDeviation(0.001));
-            assertTrue("Reduced spatial error should result in more segments",
-                    line1.size() < line2.size() && line2.size() < line3.size());
+            assertTrue(line1.size() < line2.size() && line2.size() < line3.size(),
+                    "Reduced spatial error should result in more segments");
         }
     }
 
@@ -208,29 +208,29 @@ public class ContinuousArcTest
             // 10 degrees
             FractionalLengthData offsets = FractionalLengthData.of(0.0, -0.5);
             PolyLine2d line = arc.flattenOffset(offsets, new MaxAngle(new Angle(10.0, AngleUnit.DEGREE).si));
-            assertEquals("Number of segments incorrect", numSegExpect(10.0, Math.PI), line.size());
+            assertEquals(numSegExpect(10.0, Math.PI), line.size(), "Number of segments incorrect");
 
             // 1 degree
             MaxAngle maxAngle1 = new MaxAngle(new Angle(1.0, AngleUnit.DEGREE).si);
             line = arc.flattenOffset(offsets, maxAngle1);
             System.out.println(line.toExcel());
-            assertEquals("Number of segments incorrect", numSegExpect(1.0, Math.PI), line.size());
+            assertEquals(numSegExpect(1.0, Math.PI), line.size(), "Number of segments incorrect");
 
             // variable radius
             offsets = FractionalLengthData.of(0.0, -0.5, 1.0, 0.25);
             PolyLine2d line1 = arc.flattenOffset(offsets, maxAngle1);
             offsets = FractionalLengthData.of(0.0, 0.25, 1.0, -0.5);
             PolyLine2d line2 = arc.flattenOffset(offsets, maxAngle1);
-            assertEquals("Mirrored half circles result in the same number of segments, whereever it is on the arc",
-                    line1.size(), line2.size());
+            assertEquals(line1.size(),
+                    line2.size(), "Mirrored half circles result in the same number of segments, whereever it is on the arc");
 
             // different spatial errors
             offsets = FractionalLengthData.of(0.0, -0.5);
             line1 = arc.flattenOffset(offsets, new MaxDeviation(0.1));
             line2 = arc.flattenOffset(offsets, new MaxDeviation(0.01));
             PolyLine2d line3 = arc.flattenOffset(offsets, new MaxDeviation(0.001));
-            assertTrue("Reduced spatial error should result in more segments",
-                    line1.size() < line2.size() && line2.size() < line3.size());
+            assertTrue(line1.size() < line2.size() && line2.size() < line3.size(),
+                    "Reduced spatial error should result in more segments");
         }
     }
 
@@ -264,8 +264,8 @@ public class ContinuousArcTest
      */
     private void isApproximal(final Point2d point, final double x, final double y)
     {
-        assertEquals("Resulting x-coordinate is incorrect", x, point.x, MARGIN);
-        assertEquals("Resulting y-coordinate is incorrect", y, point.y, MARGIN);
+        assertEquals(x, point.x, MARGIN, "Resulting x-coordinate is incorrect");
+        assertEquals(y, point.y, MARGIN, "Resulting y-coordinate is incorrect");
     }
 
     /**
