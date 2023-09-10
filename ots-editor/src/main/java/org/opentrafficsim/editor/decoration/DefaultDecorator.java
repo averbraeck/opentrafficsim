@@ -89,7 +89,8 @@ public final class DefaultDecorator
         new StartEndNodeValidator(editor);
 
         new AutomaticLinkId(editor);
-        new NodeCreatedRemovedPrinter(editor);
+        
+        //new NodeCreatedRemovedPrinter(editor);
         new RoadLayoutEditor(editor);
         new OdEditor(editor);
         new RouteEditor(editor);
