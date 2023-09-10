@@ -1,6 +1,7 @@
 package org.opentrafficsim.editor.decoration.validation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -13,13 +14,13 @@ import org.opentrafficsim.editor.XsdTreeNode;
 import org.w3c.dom.Node;
 
 /**
- * Validator for xsd:key, xsd:keyref and xsd:unique. Functionality is very similar, with all allowing to define multiple
- * fields. They register with the right nodes in the same way. If no {@code KeyValidator} is given in the constructor, the
- * instance will behave as an xsd:key or xsd:unique. These check a range of values for uniqueness and officially only differ
- * in whether all values need to be present. Here this is ignored and they are treated the same. This class will maintain a
- * list of nodes (fed by an external listener) and validate against field uniqueness over those nodes. If another
- * {@code KeyValidator} is given in the constructor, the instance will behave as an xsd:keyref and validate that the field
- * values are, as a set, within the given {@code KeyValidator}.
+ * Validator for xsd:key, xsd:keyref and xsd:unique. Functionality is very similar, with all allowing to define multiple fields.
+ * They register with the right nodes in the same way. If no {@code KeyValidator} is given in the constructor, the instance will
+ * behave as an xsd:key or xsd:unique. These check a range of values for uniqueness and officially only differ in whether all
+ * values need to be present. Here this is ignored and they are treated the same. This class will maintain a list of nodes (fed
+ * by an external listener) and validate against field uniqueness over those nodes. If another {@code KeyValidator} is given in
+ * the constructor, the instance will behave as an xsd:keyref and validate that the field values are, as a set, within the given
+ * {@code KeyValidator}.
  * @author wjschakel
  */
 public class KeyValidator implements ValueValidator
@@ -115,17 +116,18 @@ public class KeyValidator implements ValueValidator
             }
             String name = this.attributeNames.isEmpty() ? (this.childNames.isEmpty() ? "node" : this.childNames.get(0))
                     : this.attributeNames.get(0);
-            return "Value " + value + " for " + name + " does not refer to a known " + this.refer.getTypeString()
-                    + " within " + this.keyPath + ".";
+            String[] types = this.refer.getTypeString();
+            String typeString = types.length == 1 ? types[0] : Arrays.asList(types).toString();
+            return "Value " + value + " for " + name + " does not refer to a known " + typeString + " within " + this.keyPath
+                    + ".";
         }
         values.removeIf((value) -> value.startsWith("{") && value.endsWith("}")); // expressions
-        return "Values " + values + " do not refer to a known " + this.refer.getTypeString() + " within " + this.keyPath
-                + ".";
+        return "Values " + values + " do not refer to a known " + this.refer.getTypeString() + " within " + this.keyPath + ".";
     }
 
     /**
-     * Adds node to this key. Nodes are stored per parent instance that defines the context at the level of the path at
-     * which the key was defined.
+     * Adds node to this key. Nodes are stored per parent instance that defines the context at the level of the path at which
+     * the key was defined.
      * @param node XsdTreeNode; node to add.
      */
     public void addNode(final XsdTreeNode node)
@@ -224,9 +226,9 @@ public class KeyValidator implements ValueValidator
     }
 
     /**
-     * Gathers all the field values, i.e. attribute or child element value. As validators are registered with the node that
-     * has the value, attributes are gathered from the given node, while element values are taken from the correctly named
-     * children of the parent.
+     * Gathers all the field values, i.e. attribute or child element value. As validators are registered with the node that has
+     * the value, attributes are gathered from the given node, while element values are taken from the correctly named children
+     * of the parent.
      * @param node XsdTreeNode; node for which to get the information.
      * @return List&lt;String&gt;; field values.
      */
@@ -266,10 +268,10 @@ public class KeyValidator implements ValueValidator
             return null;
         }
         /*
-         * The following is not robust. The field index might be wrong if 'field', which is the xsd-node name, is equal
-         * among attributes, child nodes, and the node itself. E.g. when we are at Route.Node.Node and field = "Node", do we
-         * need the value of Route.Node (the node itself), or of either a child node or attribute named "Node", which may
-         * also both exist?
+         * The following is not robust. The field index might be wrong if 'field', which is the xsd-node name, is equal among
+         * attributes, child nodes, and the node itself. E.g. when we are at Route.Node.Node and field = "Node", do we need the
+         * value of Route.Node (the node itself), or of either a child node or attribute named "Node", which may also both
+         * exist?
          */
         int fieldIndex = this.attributeNames.indexOf(field);
         if (fieldIndex < 0)
@@ -285,8 +287,8 @@ public class KeyValidator implements ValueValidator
             }
         }
         /*
-         * We gather values from the referred xsd:key, drawing the appropriate context from the node relevant to the
-         * xsd:keyref. Can the context of the referred xsd:key be different?
+         * We gather values from the referred xsd:key, drawing the appropriate context from the node relevant to the xsd:keyref.
+         * Can the context of the referred xsd:key be different?
          */
         int index = fieldIndex;
         List<List<String>> values = this.refer.getValues(node);

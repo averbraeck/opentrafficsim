@@ -162,6 +162,13 @@
       <xsd:selector xpath=".//ots:Demand/ots:ShortestRoute" />
       <xsd:field xpath="@Id" />
     </xsd:key>
+    
+    <!-- define the Route.Id|ShortestRoute.Id key -->
+
+    <xsd:key name="routeOrShortestRouteKey">
+      <xsd:selector xpath=".//ots:Demand/ots:Route|.//ots:Demand/ots:ShortestRoute" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
 
     <!-- define the RouteMix.Id key -->
 
@@ -533,6 +540,20 @@
     <xsd:keyref name="cellCategoryIdRef" refer="ots:categoryKey">
       <xsd:selector xpath=".//ots:Demand/ots:Od/ots:Cell" />
       <xsd:field xpath="@Category" />
+    </xsd:keyref>
+    
+    <!-- Od.Category.GtuType defined by GtuType.Od -->
+    
+    <xsd:keyref name="categoryGtuTypeIdRef" refer="ots:gtuTypeKey">
+      <xsd:selector xpath=".//ots:Demand/ots:Od/ots:Category" />
+      <xsd:field xpath="@GtuType" />
+    </xsd:keyref>
+    
+    <!-- Od.Category.Route defined by Route.Od|ShortestRoute.Id -->
+    
+    <xsd:keyref name="categoryRouteIdRef" refer="ots:routeOrShortestRouteKey">
+      <xsd:selector xpath=".//ots:Demand/ots:Od/ots:Category" />
+      <xsd:field xpath="@Route" />
     </xsd:keyref>
     
     <!-- Od.SinkType defined by DetectorType.Id -->

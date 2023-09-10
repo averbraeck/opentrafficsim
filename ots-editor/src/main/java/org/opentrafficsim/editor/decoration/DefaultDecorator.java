@@ -59,6 +59,7 @@ public final class DefaultDecorator
         editor.setCustomIcon("Ots.Demand.ShortestRoute.From", nodeIcon);
         editor.setCustomIcon("Ots.Demand.ShortestRoute.To", nodeIcon);
         editor.setCustomIcon("Ots.Demand.ShortestRoute.Via", nodeIcon);
+        editor.setCustomIcon("Ots.Demand.OdOptions.OdOptionsItem.Origin", nodeIcon);
         editor.setCustomIcon("Ots.Demand.Od", OtsEditor.loadIcon("./Table_blue.png", 16, 16, -1, -1));
         editor.setCustomIcon("Ots.Models", OtsEditor.loadIcon("./Component_blue.png", 16, 16, -1, -1));
         editor.setCustomIcon("Ots.Scenarios", OtsEditor.loadIcon("./Film.png", 14, 14, 16, 16));
