@@ -11,7 +11,7 @@ import org.djutils.event.EventType;
 import org.djutils.event.reference.ReferenceType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
-import org.opentrafficsim.editor.validation.KeyValidator;
+import org.opentrafficsim.editor.decoration.validation.KeyValidator;
 import org.w3c.dom.Node;
 
 /**

@@ -1,4 +1,4 @@
-package org.opentrafficsim.editor.decoration;
+package org.opentrafficsim.editor.decoration.string;
 
 import java.rmi.RemoteException;
 import java.util.function.Function;
@@ -19,7 +19,7 @@ public class ClassNameTypeStringFunction extends AbstractStringFunction
     /**
      * Constructor.
      * @param editor OtsEditor; editor.
-     * @throws RemoteException if an exception occurs while listening for new nodes.
+     * @throws RemoteException if an exception occurs while adding as a listener.
      */
     public ClassNameTypeStringFunction(final OtsEditor editor) throws RemoteException
     {

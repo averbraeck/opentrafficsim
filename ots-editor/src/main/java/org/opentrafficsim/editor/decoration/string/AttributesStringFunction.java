@@ -1,4 +1,4 @@
-package org.opentrafficsim.editor.decoration;
+package org.opentrafficsim.editor.decoration.string;
 
 import java.rmi.RemoteException;
 import java.util.function.Function;
@@ -27,7 +27,7 @@ public class AttributesStringFunction extends AbstractStringFunction
      * @param editor OtsEditor; editor.
      * @param path String; path of nodes to register a string function with, used in a {@code String.endsWith()} manner.
      * @param attributes String...; attributes to show in the node name.
-     * @throws RemoteException if an exception occurs while listening for new nodes.
+     * @throws RemoteException if an exception occurs while adding as a listener.
      */
     public AttributesStringFunction(final OtsEditor editor, final String path, final String... attributes)
             throws RemoteException

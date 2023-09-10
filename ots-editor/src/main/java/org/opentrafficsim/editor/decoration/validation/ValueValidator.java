@@ -1,4 +1,4 @@
-package org.opentrafficsim.editor.validation;
+package org.opentrafficsim.editor.decoration.validation;
 
 import java.io.File;
 import java.net.URI;

@@ -12,12 +12,15 @@ import org.djutils.event.EventListener;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
+import org.opentrafficsim.editor.decoration.string.AttributesStringFunction;
+import org.opentrafficsim.editor.decoration.string.ClassNameTypeStringFunction;
+import org.opentrafficsim.editor.decoration.string.XiIncludeStringFunction;
+import org.opentrafficsim.editor.decoration.validation.ParentValidator;
+import org.opentrafficsim.editor.decoration.validation.StartEndNodeValidator;
 import org.opentrafficsim.editor.extensions.OdEditor;
 import org.opentrafficsim.editor.extensions.RoadLayoutEditor;
 import org.opentrafficsim.editor.extensions.RouteEditor;
 import org.opentrafficsim.editor.extensions.TrafCodEditor;
-import org.opentrafficsim.editor.validation.ParentValidator;
-import org.opentrafficsim.editor.validation.StartEndNodeValidator;
 
 /**
  * Decorates the editor with custom icons, tabs, string functions and custom editors.
@@ -33,7 +36,7 @@ public final class DefaultDecorator
     {
 
     }
-    
+
     /**
      * Decorates the editor with custom icons, tabs, string functions and custom editors.
      * @param editor OtsEditor; editor.
@@ -70,21 +73,23 @@ public final class DefaultDecorator
         editor.addTab("Parameters", null, buildParameterPane(), null);
         editor.addTab("Text", null, buildTextPane(), null);
 
+        // string functions
         new AttributesStringFunction(editor, "Ots.Demand.Generator", "Link", "Lane");
         new AttributesStringFunction(editor, "Ots.Demand.Od.Cell", "Origin", "Destination").setSeparator(" > ");
         new AttributesStringFunction(editor, ".SpeedLimit", "GtuType", "LegalSpeedLimit");
         new AttributesStringFunction(editor, "Ots.Network.Link.LaneOverride", "Lane");
         new ClassNameTypeStringFunction(editor);
-        
-        editor.addListener(new ParentValidator("Ots.Definitions.GtuTypes.GtuType"), OtsEditor.NEW_FILE);
-        editor.addListener(new ParentValidator("Ots.Definitions.LinkTypes.LinkType"), OtsEditor.NEW_FILE);
-        editor.addListener(new ParentValidator("Ots.Definitions.LaneTypes.LaneType"), OtsEditor.NEW_FILE);
-        editor.addListener(new ParentValidator("Ots.Definitions.DetectorTypes.DetectorType"), OtsEditor.NEW_FILE);
-        editor.addListener(new StartEndNodeValidator(), OtsEditor.NEW_FILE);
+        new XiIncludeStringFunction(editor);
 
-        editor.addListener(new AutomaticLinkId(), OtsEditor.NEW_FILE);
-        editor.addListener(new XiIncludeStringFunction(), OtsEditor.NEW_FILE);
-        //editor.addListener(new NodeCreatedRemovedPrinter(), OtsEditor.NEW_FILE);
+        // validators
+        new ParentValidator(editor, "Ots.Definitions.GtuTypes.GtuType");
+        new ParentValidator(editor, "Ots.Definitions.LinkTypes.LinkType");
+        new ParentValidator(editor, "Ots.Definitions.LaneTypes.LaneType");
+        new ParentValidator(editor, "Ots.Definitions.DetectorTypes.DetectorType");
+        new StartEndNodeValidator(editor);
+
+        new AutomaticLinkId(editor);
+        new NodeCreatedRemovedPrinter(editor);
         new RoadLayoutEditor(editor);
         new OdEditor(editor);
         new RouteEditor(editor);
@@ -132,38 +137,33 @@ public final class DefaultDecorator
      * @author wjschakel
      */
     // Leave this class for debugging. It can be added by a line above that is commented out.
-    private static class NodeCreatedRemovedPrinter implements EventListener
+    private static class NodeCreatedRemovedPrinter extends AbstractNodeDecoratorRemove
     {
         /** */
-        private static final long serialVersionUID = 20230313L;
+        private static final long serialVersionUID = 20230910L;
+
+        /**
+         * Constructor.
+         * @param editor OtsEditor; editor.
+         * @throws RemoteException if an exception occurs while adding as a listener.
+         */
+        public NodeCreatedRemovedPrinter(final OtsEditor editor) throws RemoteException
+        {
+            super(editor);
+        }
 
         /** {@inheritDoc} */
         @Override
-        public void notify(final Event event) throws RemoteException
+        public void notifyCreated(final XsdTreeNode node)
         {
-            EventListener listener = new EventListener()
-            {
-                /** */
-                private static final long serialVersionUID = 20230313L;
-
-                /** {@inheritDoc} */
-                @Override
-                public void notify(final Event event) throws RemoteException
-                {
-                    XsdTreeNode node = (XsdTreeNode) event.getContent();
-                    if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
-                    {
-                        System.out.println("Created: " + node.getPathString());
-                    }
-                    else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
-                    {
-                        System.out.println("Removed: " + node.getPathString());
-                    }
-                }
-            };
-            XsdTreeNodeRoot root = (XsdTreeNodeRoot) event.getContent();
-            root.addListener(listener, XsdTreeNodeRoot.NODE_CREATED);
-            root.addListener(listener, XsdTreeNodeRoot.NODE_REMOVED);
+            System.out.println("Created: " + node.getPathString());
+        }
+        
+        /** {@inheritDoc} */
+        @Override
+        public void notifyRemoved(final XsdTreeNode node)
+        {
+            System.out.println("Removed: " + node.getPathString());
         }
     }
 

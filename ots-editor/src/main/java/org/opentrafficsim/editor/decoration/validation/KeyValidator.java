@@ -1,4 +1,4 @@
-package org.opentrafficsim.editor.validation;
+package org.opentrafficsim.editor.decoration.validation;
 
 import java.util.ArrayList;
 import java.util.Collections;

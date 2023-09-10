@@ -1,4 +1,4 @@
-package org.opentrafficsim.editor.validation;
+package org.opentrafficsim.editor.decoration.validation;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -6,16 +6,15 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.djutils.event.Event;
-import org.djutils.event.EventListener;
+import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
-import org.opentrafficsim.editor.XsdTreeNodeRoot;
+import org.opentrafficsim.editor.decoration.AbstractNodeDecoratorRemove;
 
 /**
  * Validates that the Parent attribute of a node does not refer to self, either directly or indirectly.
  * @author wjschakel
  */
-public class ParentValidator implements ValueValidator, EventListener
+public class ParentValidator extends AbstractNodeDecoratorRemove implements ValueValidator
 {
 
     /** */
@@ -29,10 +28,13 @@ public class ParentValidator implements ValueValidator, EventListener
 
     /**
      * Constructor.
+     * @param editor OtsEditor; editor.
      * @param path String; path of the nodes that have a Parent attribute referring to another node under the same path.
+     * @throws RemoteException if an exception occurs while adding as a listener.
      */
-    public ParentValidator(final String path)
+    public ParentValidator(final OtsEditor editor, final String path) throws RemoteException
     {
+        super(editor);
         this.path = path;
     }
 
@@ -93,39 +95,23 @@ public class ParentValidator implements ValueValidator, EventListener
 
     /** {@inheritDoc} */
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notifyCreated(final XsdTreeNode node)
     {
-        XsdTreeNodeRoot root = (XsdTreeNodeRoot) event.getContent();
-        EventListener listener = new EventListener()
+        if (node.isType(ParentValidator.this.path))
         {
-            /** */
-            private static final long serialVersionUID = 20230319L;
+            node.addAttributeValidator("Parent", ParentValidator.this);
+            ParentValidator.this.nodes.add(node);
+        }
+    }
 
-            /** {@inheritDoc} */
-            @Override
-            public void notify(final Event event) throws RemoteException
-            {
-                if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
-                {
-                    XsdTreeNode node = (XsdTreeNode) event.getContent();
-                    if (node.isType(ParentValidator.this.path))
-                    {
-                        node.addAttributeValidator("Parent", ParentValidator.this);
-                        ParentValidator.this.nodes.add(node);
-                    }
-                }
-                if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
-                {
-                    XsdTreeNode node = (XsdTreeNode) event.getContent();
-                    if (node.isType(ParentValidator.this.path))
-                    {
-                        ParentValidator.this.nodes.remove(node);
-                    }
-                }
-            }
-        };
-        root.addListener(listener, XsdTreeNodeRoot.NODE_CREATED);
-        root.addListener(listener, XsdTreeNodeRoot.NODE_REMOVED);
+    /** {@inheritDoc} */
+    @Override
+    public void notifyRemoved(final XsdTreeNode node)
+    {
+        if (node.isType(ParentValidator.this.path))
+        {
+            ParentValidator.this.nodes.remove(node);
+        }
     }
 
 }
