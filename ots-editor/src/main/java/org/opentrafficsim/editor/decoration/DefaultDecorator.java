@@ -14,7 +14,7 @@ import org.opentrafficsim.editor.decoration.string.ChoiceNodeStringFunction;
 import org.opentrafficsim.editor.decoration.string.ClassNameTypeStringFunction;
 import org.opentrafficsim.editor.decoration.string.XiIncludeStringFunction;
 import org.opentrafficsim.editor.decoration.validation.ParentValidator;
-import org.opentrafficsim.editor.decoration.validation.StartEndNodeValidator;
+import org.opentrafficsim.editor.decoration.validation.AttributesNotEqualValidator;
 import org.opentrafficsim.editor.extensions.OdEditor;
 import org.opentrafficsim.editor.extensions.RoadLayoutEditor;
 import org.opentrafficsim.editor.extensions.RouteEditor;
@@ -88,7 +88,8 @@ public final class DefaultDecorator
         new ParentValidator(editor, "Ots.Definitions.LinkTypes.LinkType");
         new ParentValidator(editor, "Ots.Definitions.LaneTypes.LaneType");
         new ParentValidator(editor, "Ots.Definitions.DetectorTypes.DetectorType");
-        new StartEndNodeValidator(editor);
+        new AttributesNotEqualValidator(editor, "Ots.Network.Link", "NodeStart", "NodeEnd");
+        new AttributesNotEqualValidator(editor, "Ots.Demand.Od.Cell", "Origin", "Destination");
 
         new AutomaticLinkId(editor);
 
