@@ -588,8 +588,8 @@ public class OtsEditor extends JFrame implements EventProducer
     }
 
     /**
-     * Sets a custom icon for nodes that comply to the path. The path may be an absolute path (e.g. "OTS.Network.CONNECTOR") or
-     * a relative path (e.g. ".NODE"). The image should be a filename relative in resources.
+     * Sets a custom icon for nodes that comply to the path. The path may be an absolute path (e.g. "Ots.Network.Connector") or
+     * a relative path (e.g. ".Node"). The image should be a filename relative in resources.
      * @param path String; path.
      * @param icon ImageIcon; image icon.
      */

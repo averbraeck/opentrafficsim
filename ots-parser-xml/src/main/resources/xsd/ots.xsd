@@ -111,6 +111,13 @@
       <xsd:selector xpath=".//ots:Network/ots:Centroid" />
       <xsd:field xpath="@Id" />
     </xsd:key>
+    
+    <!-- define the Node.Id|Centroid.Id key -->
+
+    <xsd:key name="nodeOrCentroidKey">
+      <xsd:selector xpath=".//ots:Network/ots:Node|.//ots:Network/ots:Centroid" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
 
     <!-- define the Connector.Id key -->
 
@@ -132,6 +139,13 @@
 
     <xsd:key name="odKey">
       <xsd:selector xpath=".//ots:Demand/ots:Od" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+    
+    <!-- define the Cetegory.Id key -->
+
+    <xsd:key name="categoryKey">
+      <xsd:selector xpath=".//ots:Demand/ots:Od/ots:Category" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -327,7 +341,7 @@
 
     <!-- Route.Node defined by Node.Id -->
 
-    <xsd:keyref name="routeNodeIdRef" refer="ots:nodeKey">
+    <xsd:keyref name="routeNodeIdRef" refer="ots:nodeOrCentroidKey">
       <xsd:selector xpath=".//ots:Demand/ots:Route/ots:Node" />
       <xsd:field xpath="." />
     </xsd:keyref>
@@ -341,14 +355,14 @@
 
 	<!-- ShortestRoute.From defined by Node.Id -->
 
-    <xsd:keyref name="shortestRouteFromNodeIdRef" refer="ots:nodeKey">
+    <xsd:keyref name="shortestRouteFromNodeIdRef" refer="ots:nodeOrCentroidKey">
       <xsd:selector xpath=".//ots:Demand/ots:ShortestRoute/ots:From" />
       <xsd:field xpath="@Node" />
     </xsd:keyref>
 
     <!-- ShortestRoute.To defined by Node.Id -->
 
-    <xsd:keyref name="shortestRouteToNodeIdRef" refer="ots:nodeKey">
+    <xsd:keyref name="shortestRouteToNodeIdRef" refer="ots:nodeOrCentroidKey">
       <xsd:selector xpath=".//ots:Demand/ots:ShortestRoute/ots:To" />
       <xsd:field xpath="@Node" />
     </xsd:keyref>
@@ -500,6 +514,27 @@
       <xsd:field xpath="ots:ShortestRouteMix" />
     </xsd:keyref>
     
+    <!-- Od.Cell.Origin defined by Node.Id -->
+
+    <xsd:keyref name="cellOriginIdRef" refer="ots:nodeOrCentroidKey">
+      <xsd:selector xpath=".//ots:Demand/ots:Od/ots:Cell" />
+      <xsd:field xpath="@Origin" />
+    </xsd:keyref>
+    
+    <!-- Od.Cell.Destination defined by Node.Id -->
+
+    <xsd:keyref name="cellDestinationIdRef" refer="ots:nodeOrCentroidKey">
+      <xsd:selector xpath=".//ots:Demand/ots:Od/ots:Cell" />
+      <xsd:field xpath="@Destination" />
+    </xsd:keyref>
+    
+    <!-- Od.Cell.Category defined by Cagtegory.Id -->
+
+    <xsd:keyref name="cellCategoryIdRef" refer="ots:categoryKey">
+      <xsd:selector xpath=".//ots:Demand/ots:Od/ots:Cell" />
+      <xsd:field xpath="@Category" />
+    </xsd:keyref>
+    
     <!-- Od.SinkType defined by DetectorType.Id -->
 
     <xsd:keyref name="odSinkTypeIdRef" refer="ots:detectorTypeKey">
@@ -542,18 +577,11 @@
       <xsd:field xpath="ots:LinkType" />
     </xsd:keyref>
     
-    <!-- Demand.OdOptions.OdOptionsItem.Origin.Node defined by Node.Id -->
+    <!-- Demand.OdOptions.OdOptionsItem.Origin defined by Node.Id -->
     
-    <xsd:keyref name="originNodeValueNodeRef" refer="ots:nodeKey">
+    <xsd:keyref name="originNodeValueNodeRef" refer="ots:nodeOrCentroidKey">
       <xsd:selector xpath=".//ots:Demand/ots:OdOptions/ots:OdOptionsItem/ots:Origin" />
-      <xsd:field xpath="ots:Node" />
-    </xsd:keyref>
-    
-    <!-- Demand.OdOptions.OdOptionsItem.Origin.Centroid defined by Centroid.Id -->
-    
-    <xsd:keyref name="originNodeValueCentroidRef" refer="ots:centroidKey">
-      <xsd:selector xpath=".//ots:Demand/ots:OdOptions/ots:OdOptionsItem/ots:Origin" />
-      <xsd:field xpath="ots:Centroid" />
+      <xsd:field xpath="." />
     </xsd:keyref>
     
     <!-- Demand.OdOptions.OdOptionsItem.Lane.Link defined by Link.Id -->

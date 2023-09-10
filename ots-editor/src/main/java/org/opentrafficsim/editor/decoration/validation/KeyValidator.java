@@ -130,8 +130,15 @@ public class KeyValidator implements ValueValidator
      */
     public void addNode(final XsdTreeNode node)
     {
-        String path = getPath().equals("Ots") ? getTypeString() : getPath() + "." + getTypeString();
-        boolean isType = node.isType(path);
+        boolean isType = false;
+        for (String path : getTypeString())
+        {
+            isType = node.isType(getPath().equals("Ots") ? path : getPath() + "." + path);
+            if (isType)
+            {
+                break;
+            }
+        }
         if (isType && this.refer == null)
         {
             XsdTreeNode context = getContext(node);
@@ -307,14 +314,14 @@ public class KeyValidator implements ValueValidator
     }
 
     /**
-     * Returns the type {@code String} for which the xsd:key or xsd:keyref applies, i.e. "GTUTYPES.GTUTYPE" for
-     * {@code <xsd:selector xpath=".//ots:GTUTYPES/ots:GTUTYPE" />}.
-     * @return String; type for which the xsd:key or xsd:keyref applies.
+     * Returns the type {@code String} for which the xsd:key or xsd:keyref applies, i.e. "GtuTypes.GtuType" for
+     * {@code <xsd:selector xpath=".//ots:GtuTypes/ots:GtuType" />}. Note that multiple paths may be defined separated by "|.
+     * @return String[]; type for which the xsd:key or xsd:keyref applies.
      */
-    public String getTypeString()
+    public String[] getTypeString()
     {
         return DocumentReader.getAttribute(DocumentReader.getChild(this.keyNode, "xsd:selector"), "xpath")
-                .replace(".//ots:", "").replace("ots:", "").replace("/", ".");
+                .replace(".//ots:", "").replace("ots:", "").replace("/", ".").split("\\|");
     }
 
 }
