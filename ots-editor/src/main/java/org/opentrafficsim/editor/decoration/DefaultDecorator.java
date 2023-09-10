@@ -33,7 +33,7 @@ public final class DefaultDecorator
     {
 
     }
-
+    
     /**
      * Decorates the editor with custom icons, tabs, string functions and custom editors.
      * @param editor OtsEditor; editor.
@@ -51,7 +51,7 @@ public final class DefaultDecorator
         editor.setCustomIcon("Ots.Network.Link.DefinedLayout", roadIcon);
         editor.setCustomIcon("Ots.Network", networkIcon);
         editor.setCustomIcon(".Node", nodeIcon);
-        editor.setCustomIcon("Ots.Network.Centroid", OtsEditor.loadIcon("./OTS_centroid.png", -1, -1, -1, -1));
+        editor.setCustomIcon(".Centroid", OtsEditor.loadIcon("./OTS_centroid.png", -1, -1, -1, -1));
         editor.setCustomIcon("Ots.Network.Connector", OtsEditor.loadIcon("./OTS_connector.png", -1, -1, -1, -1));
         editor.setCustomIcon(".Link", OtsEditor.loadIcon("./OTS_link.png", -1, -1, -1, -1));
         editor.setCustomIcon("Ots.Demand", OtsEditor.loadIcon("./Calendar.png", 16, 16, -1, -1));
@@ -70,10 +70,11 @@ public final class DefaultDecorator
         editor.addTab("Parameters", null, buildParameterPane(), null);
         editor.addTab("Text", null, buildTextPane(), null);
 
-        new GenericStringFunction(editor, "Ots.Demand.Generator", "Link", "Lane");
-        new GenericStringFunction(editor, "Ots.Demand.Od.Cell", "Origin", "Destination").setSeparator(" > ");
-        new GenericStringFunction(editor, ".SpeedLimit", "GtuType", "LegalSpeedLimit");
-        new GenericStringFunction(editor, "Ots.Network.Link.LaneOverride", "Lane");
+        new AttributesStringFunction(editor, "Ots.Demand.Generator", "Link", "Lane");
+        new AttributesStringFunction(editor, "Ots.Demand.Od.Cell", "Origin", "Destination").setSeparator(" > ");
+        new AttributesStringFunction(editor, ".SpeedLimit", "GtuType", "LegalSpeedLimit");
+        new AttributesStringFunction(editor, "Ots.Network.Link.LaneOverride", "Lane");
+        new ClassNameTypeStringFunction(editor);
         
         editor.addListener(new ParentValidator("Ots.Definitions.GtuTypes.GtuType"), OtsEditor.NEW_FILE);
         editor.addListener(new ParentValidator("Ots.Definitions.LinkTypes.LinkType"), OtsEditor.NEW_FILE);
