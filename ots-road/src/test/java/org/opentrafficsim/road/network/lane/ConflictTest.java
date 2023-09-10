@@ -1,8 +1,8 @@
 package org.opentrafficsim.road.network.lane;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsReplication;
@@ -155,7 +155,7 @@ public class ConflictTest implements EventListener
                 conflictBStart.si));
         System.out.println(String.format("c0,0,0 l%f,0", conflictBLength.si));
 
-        assertEquals("not events received yet", 0, this.collectedEvents.size());
+        assertEquals(0, this.collectedEvents.size(), "not events received yet");
 
         // That was a lot of code - just to prepare things to call generateConflictPair ...
         Conflict.generateConflictPair(ConflictType.CROSSING, new DefaultConflictRule(), false, laneA,
@@ -163,27 +163,27 @@ public class ConflictTest implements EventListener
                 geometry1, laneB, conflictBStart, conflictBLength, geometry2, simulator);
 
         // Check that two conflicts have been created
-        assertEquals("one conflict on lane A", 1, laneA.getLaneBasedObjects().size());
-        assertEquals("one conflict on lane B", 1, laneB.getLaneBasedObjects().size());
+        assertEquals(1, laneA.getLaneBasedObjects().size(), "one conflict on lane A");
+        assertEquals(1, laneB.getLaneBasedObjects().size(), "one conflict on lane B");
         // Get the Conflicts
         Conflict conflictA = (Conflict) laneA.getLaneBasedObjects().get(0);
         System.out.println("Conflict A: " + conflictA);
         Conflict conflictB = (Conflict) laneB.getLaneBasedObjects().get(0);
         System.out.println("Conflict B: " + conflictB);
 
-        assertEquals("the conflicts are each others counter part", conflictA, conflictB.getOtherConflict());
-        assertEquals("the conflicts are each others counter part", conflictB, conflictA.getOtherConflict());
-        assertEquals("longitudinal position", new Length(conflictStart.x, LengthUnit.SI), conflictA.getLongitudinalPosition());
-        assertEquals("longitudinal position", conflictBStart, conflictB.getLongitudinalPosition());
-        assertEquals("length", new Length(conflictEnd.x - conflictStart.x, LengthUnit.SI), conflictA.getLength());
-        assertEquals("length", conflictBLength, conflictB.getLength());
-        assertEquals("geometry", geometry1, conflictA.getGeometry());
-        assertEquals("geometry", geometry2, conflictB.getGeometry());
-        assertTrue("conflict rule", conflictA.getConflictRule() instanceof DefaultConflictRule);
-        assertTrue("conflict rule", conflictB.getConflictRule() instanceof DefaultConflictRule);
-        assertFalse("conflict A is not permitted", conflictA.isPermitted());
-        assertFalse("conflict B is not permitted", conflictB.isPermitted());
-        assertEquals("construction of two conflicts has generated two events", 2, this.collectedEvents.size());
+        assertEquals(conflictA, conflictB.getOtherConflict(), "the conflicts are each others counter part");
+        assertEquals(conflictB, conflictA.getOtherConflict(), "the conflicts are each others counter part");
+        assertEquals(new Length(conflictStart.x, LengthUnit.SI), conflictA.getLongitudinalPosition(), "longitudinal position");
+        assertEquals(conflictBStart, conflictB.getLongitudinalPosition(), "longitudinal position");
+        assertEquals(new Length(conflictEnd.x - conflictStart.x, LengthUnit.SI), conflictA.getLength(), "length");
+        assertEquals(conflictBLength, conflictB.getLength(), "length");
+        assertEquals(geometry1, conflictA.getGeometry(), "geometry");
+        assertEquals(geometry2, conflictB.getGeometry(), "geometry");
+        assertTrue(conflictA.getConflictRule() instanceof DefaultConflictRule, "conflict rule");
+        assertTrue(conflictB.getConflictRule() instanceof DefaultConflictRule, "conflict rule");
+        assertFalse(conflictA.isPermitted(), "conflict A is not permitted");
+        assertFalse(conflictB.isPermitted(), "conflict B is not permitted");
+        assertEquals(2, this.collectedEvents.size(), "construction of two conflicts has generated two events");
         // Not checking the contents of those events; these are subject to change; as they indirectly link to the Network
 
     }

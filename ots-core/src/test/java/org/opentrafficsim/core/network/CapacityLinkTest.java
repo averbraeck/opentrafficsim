@@ -1,11 +1,11 @@
 package org.opentrafficsim.core.network;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djutils.draw.point.Point2d;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine2d;
@@ -41,12 +41,12 @@ public class CapacityLinkTest
         Frequency initialCapacity = new Frequency(1234, FrequencyUnit.PER_HOUR);
         Frequency finalCapacity = new Frequency(1234, FrequencyUnit.PER_HOUR);
         CapacityLink link = new CapacityLink(network, "link", fromNode, toNode, linkType, designLine, null, initialCapacity);
-        assertTrue("from point matches", fromPoint.equals(link.getDesignLine().get(0)));
-        assertTrue("to point matches", toPoint.equals(link.getDesignLine().get(1)));
-        assertTrue("from node matches", fromNode.equals(link.getStartNode()));
-        assertTrue("to node matches", toNode.equals(link.getEndNode()));
-        assertTrue("capacity mathes", initialCapacity.equals(link.getCapacity()));
+        assertTrue(fromPoint.equals(link.getDesignLine().get(0)), "from point matches");
+        assertTrue(toPoint.equals(link.getDesignLine().get(1)), "to point matches");
+        assertTrue(fromNode.equals(link.getStartNode()), "from node matches");
+        assertTrue(toNode.equals(link.getEndNode()), "to node matches");
+        assertTrue(initialCapacity.equals(link.getCapacity()), "capacity mathes");
         link.setCapacity(finalCapacity);
-        assertTrue("capacity mathes", finalCapacity.equals(link.getCapacity()));
+        assertTrue(finalCapacity.equals(link.getCapacity()), "capacity mathes");
     }
 }

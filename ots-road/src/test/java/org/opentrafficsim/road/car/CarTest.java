@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.car;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -18,7 +18,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.Point2d;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
@@ -85,12 +85,12 @@ public class CarTest implements UNITS
         LaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedGtu referenceCar = makeReferenceCar("12345", gtuType, lane, initialPosition, initialSpeed, gtuFollowingModel,
                 laneChangeModel, network);
-        assertEquals("The car should store it's ID", "12345", referenceCar.getId());
-        assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getSI(),
-                referenceCar.position(lane, referenceCar.getReference(), initialTime).getSI(), 0.0001);
-        assertEquals("The car should store it's initial speed", initialSpeed.getSI(), referenceCar.getSpeed().getSI(), 0.00001);
-        assertEquals("The car should have an initial acceleration equal to 0", 0, referenceCar.getAcceleration().getSI(),
-                0.0001);
+        assertEquals("12345", referenceCar.getId(), "The car should store it's ID");
+        assertEquals(initialPosition.getSI(), referenceCar.position(lane, referenceCar.getReference(), initialTime).getSI(),
+                0.0001, "At t=initialTime the car should be at it's initial position");
+        assertEquals(initialSpeed.getSI(), referenceCar.getSpeed().getSI(), 0.00001, "The car should store it's initial speed");
+        assertEquals(0, referenceCar.getAcceleration().getSI(), 0.0001,
+                "The car should have an initial acceleration equal to 0");
         // TODO check with following model as part of tactical planner
         // assertEquals("The gtu following model should be " + gtuFollowingModel, gtuFollowingModel, referenceCar
         // .getBehavioralCharacteristics().getGtuFollowingModel());

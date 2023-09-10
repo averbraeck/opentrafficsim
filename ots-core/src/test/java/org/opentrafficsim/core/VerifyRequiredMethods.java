@@ -1,13 +1,13 @@
 package org.opentrafficsim.core;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Verify that all classes have a toString method (unless the class in non-instantiable, or an enum, or abstract. <br>

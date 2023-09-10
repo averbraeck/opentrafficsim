@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.network.lane.object.sensor;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -189,17 +189,17 @@ public class TrafficLightDetectorTest implements EventListener
                 TrafficLightDetector tls =
                         new TrafficLightDetector(sensorId, pA.getLane(), pA.getPosition(), pB.getLane(), pB.getPosition(),
                                 intermediateLanes, entryPosition, exitPosition, simulator, DefaultsRoadNl.TRAFFIC_LIGHT);
-                assertEquals("Id should match the provided id", sensorId, tls.getId());
-                assertEquals("Simulator should match", simulator, tls.getSimulator());
-                assertEquals("Entry position", entryPosition, tls.getPositionTypeEntry());
-                assertEquals("Exit position", exitPosition, tls.getPositionTypeExit());
-                assertEquals("Position a", pA.getPosition().si, tls.getLanePositionA().si, 0.00001);
-                assertEquals("Position b", pB.getPosition().si, tls.getLanePositionB().si, 0.00001);
+                assertEquals(sensorId, tls.getId(), "Id should match the provided id");
+                assertEquals(simulator, tls.getSimulator(), "Simulator should match");
+                assertEquals(entryPosition, tls.getPositionTypeEntry(), "Entry position");
+                assertEquals(exitPosition, tls.getPositionTypeExit(), "Exit position");
+                assertEquals(pA.getPosition().si, tls.getLanePositionA().si, 0.00001, "Position a");
+                assertEquals(pB.getPosition().si, tls.getLanePositionB().si, 0.00001, "Position b");
                 this.loggedEvents.clear();
-                assertEquals("event list is empty", 0, this.loggedEvents.size());
+                assertEquals(0, this.loggedEvents.size(), "event list is empty");
                 tls.addListener(this, TrafficLightDetector.TRAFFIC_LIGHT_DETECTOR_TRIGGER_ENTRY_EVENT);
                 tls.addListener(this, TrafficLightDetector.TRAFFIC_LIGHT_DETECTOR_TRIGGER_EXIT_EVENT);
-                assertEquals("event list is empty", 0, this.loggedEvents.size());
+                assertEquals(0, this.loggedEvents.size(), "event list is empty");
 
                 GtuType gtuType = DefaultsNl.TRUCK;
                 Length gtuLength = new Length(17, LengthUnit.METER);
@@ -226,7 +226,7 @@ public class TrafficLightDetectorTest implements EventListener
                 gtu.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
                 if (initialPosition.plus(gtuLength.divide(2)).lt(a) || initialPosition.minus(gtuLength.divide(2)).gt(b))
                 {
-                    assertEquals("event list is empty", 0, this.loggedEvents.size());
+                    assertEquals(0, this.loggedEvents.size(), "event list is empty");
                 }
                 else
                 {
@@ -246,11 +246,11 @@ public class TrafficLightDetectorTest implements EventListener
                 System.out.println("simulation time is now " + simulator);
                 if (initialPosition.minus(gtuLength.divide(2)).lt(b))
                 {
-                    assertEquals("event list contains 2 events", 2, this.loggedEvents.size());
+                    assertEquals(2, this.loggedEvents.size(), "event list contains 2 events");
                 }
                 else
                 {
-                    assertEquals("event list contains 0 events", 0, this.loggedEvents.size());
+                    assertEquals(0, this.loggedEvents.size(), "event list contains 0 events");
                 }
             }
         }

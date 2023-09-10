@@ -1,9 +1,9 @@
 package org.opentrafficsim.base.parameters;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.parameters.constraint.DualBound;
 
 /**
@@ -81,7 +81,7 @@ public class DualBoundConstraintsTest
             // }
             // assertEquals("lower bound", low, db.getLowerBound());
             // assertEquals("upper bound", high, db.getUpperBound());
-            assertTrue("toString returns something sensible", db.toString().indexOf("DualBound") >= 0);
+            assertTrue(db.toString().indexOf("DualBound") >= 0, "toString returns something sensible");
             for (double testValue : testValues)
             {
                 boolean actualResult = db.accept(testValue);
@@ -89,35 +89,35 @@ public class DualBoundConstraintsTest
                 // + actualResult);
                 if (testValue < low)
                 {
-                    assertFalse("test value below range should fail", actualResult);
+                    assertFalse(actualResult, "test value below range should fail");
                 }
                 if (testValue == low && includeLow && low != high)
                 {
-                    assertTrue("test value at low end of range should not fail", actualResult);
+                    assertTrue(actualResult, "test value at low end of range should not fail");
                 }
                 if (testValue == low && testValue != high && includeLow)
                 {
-                    assertTrue("test value at low end of range should not fail", actualResult);
+                    assertTrue(actualResult, "test value at low end of range should not fail");
                 }
                 if (testValue > low && testValue < high)
                 {
-                    assertTrue("test value within range should not fail", actualResult);
+                    assertTrue(actualResult, "test value within range should not fail");
                 }
                 if (testValue == high && testValue != low && includeHigh)
                 {
-                    assertTrue("test value at high end of range should not fail", actualResult);
+                    assertTrue(actualResult, "test value at high end of range should not fail");
                 }
                 if (testValue == high && includeHigh)
                 {
-                    assertTrue("test value at high end of range should not fail", actualResult);
+                    assertTrue(actualResult, "test value at high end of range should not fail");
                 }
                 if (testValue == high && !includeHigh && low != high)
                 {
-                    assertFalse("test value at high end of range should fail", actualResult);
+                    assertFalse(actualResult, "test value at high end of range should fail");
                 }
                 if (testValue > high)
                 {
-                    assertFalse("test value above range should fail", actualResult);
+                    assertFalse(actualResult, "test value above range should fail");
                 }
             }
         }

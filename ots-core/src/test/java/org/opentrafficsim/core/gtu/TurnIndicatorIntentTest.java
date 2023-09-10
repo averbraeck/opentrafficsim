@@ -1,9 +1,9 @@
 package org.opentrafficsim.core.gtu;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the TurnIndicatorIntent class
@@ -19,25 +19,25 @@ public class TurnIndicatorIntentTest
     @Test
     public void turnIndicatorIntentTest()
     {
-        assertTrue("NONE is none", TurnIndicatorIntent.NONE.isNone());
-        assertFalse("NONE is not left", TurnIndicatorIntent.NONE.isLeft());
-        assertFalse("NONE is not right", TurnIndicatorIntent.NONE.isRight());
-        assertFalse("NONE is not conflicting", TurnIndicatorIntent.NONE.isConflicting());
+        assertTrue(TurnIndicatorIntent.NONE.isNone(), "NONE is none");
+        assertFalse(TurnIndicatorIntent.NONE.isLeft(), "NONE is not left");
+        assertFalse(TurnIndicatorIntent.NONE.isRight(), "NONE is not right");
+        assertFalse(TurnIndicatorIntent.NONE.isConflicting(), "NONE is not conflicting");
 
-        assertFalse("LEFT is not none", TurnIndicatorIntent.LEFT.isNone());
-        assertTrue("LEFT is left", TurnIndicatorIntent.LEFT.isLeft());
-        assertFalse("LEFT is not right", TurnIndicatorIntent.LEFT.isRight());
-        assertFalse("LEFT is not conflicting", TurnIndicatorIntent.LEFT.isConflicting());
+        assertFalse(TurnIndicatorIntent.LEFT.isNone(), "LEFT is not none");
+        assertTrue(TurnIndicatorIntent.LEFT.isLeft(), "LEFT is left");
+        assertFalse(TurnIndicatorIntent.LEFT.isRight(), "LEFT is not right");
+        assertFalse(TurnIndicatorIntent.LEFT.isConflicting(), "LEFT is not conflicting");
 
-        assertFalse("RIGHT is not none", TurnIndicatorIntent.RIGHT.isNone());
-        assertFalse("RIGHT is not left", TurnIndicatorIntent.RIGHT.isLeft());
-        assertTrue("RIGHT is right", TurnIndicatorIntent.RIGHT.isRight());
-        assertFalse("RIGHT is not conflicting", TurnIndicatorIntent.RIGHT.isConflicting());
+        assertFalse(TurnIndicatorIntent.RIGHT.isNone(), "RIGHT is not none");
+        assertFalse(TurnIndicatorIntent.RIGHT.isLeft(), "RIGHT is not left");
+        assertTrue(TurnIndicatorIntent.RIGHT.isRight(), "RIGHT is right");
+        assertFalse(TurnIndicatorIntent.RIGHT.isConflicting(), "RIGHT is not conflicting");
 
-        assertFalse("CONFLICTING is not none", TurnIndicatorIntent.CONFLICTING.isNone());
-        assertFalse("CONFLICTING is not left", TurnIndicatorIntent.CONFLICTING.isLeft());
-        assertFalse("CONFLICTING is not right", TurnIndicatorIntent.CONFLICTING.isRight());
-        assertTrue("CONFLICTING is conflicting", TurnIndicatorIntent.CONFLICTING.isConflicting());
+        assertFalse(TurnIndicatorIntent.CONFLICTING.isNone(), "CONFLICTING is not none");
+        assertFalse(TurnIndicatorIntent.CONFLICTING.isLeft(), "CONFLICTING is not left");
+        assertFalse(TurnIndicatorIntent.CONFLICTING.isRight(), "CONFLICTING is not right");
+        assertTrue(TurnIndicatorIntent.CONFLICTING.isConflicting(), "CONFLICTING is conflicting");
 
     }
 

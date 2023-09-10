@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.gtu;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +18,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
@@ -93,11 +93,11 @@ public class GtuDumperTest implements OtsModelInterface
             for (String line : lines)
             {
                 // System.out.println(" " + line);
-                assertTrue("lines says something about our test GTU", line.startsWith("test GTU "));
+                assertTrue(line.startsWith("test GTU "), "lines says something about our test GTU");
             }
         }
 
-        assertTrue("toString method returns something descriptive", this.gtuDumper.toString().startsWith("GTUDumper"));
+        assertTrue(this.gtuDumper.toString().startsWith("GTUDumper"), "toString method returns something descriptive");
     }
 
     /**

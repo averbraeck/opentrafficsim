@@ -1,12 +1,12 @@
 package org.opentrafficsim.base;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the basics of the HierarchicalType class.
@@ -29,32 +29,32 @@ public class HierarchicalTypeTest
     public final void testBasics()
     {
         SubType st = new SubType("id");
-        assertEquals("id check", "id", st.getId());
-        assertNull("parent type is null", st.getParent());
-        assertTrue("type is type of st", st.isOfType(st));
-        assertFalse("type is not of type null", st.isOfType(null));
+        assertEquals("id", st.getId(), "id check");
+        assertNull(st.getParent(), "parent type is null");
+        assertTrue(st.isOfType(st), "type is type of st");
+        assertFalse(st.isOfType(null), "type is not of type null");
         SubType st2 = new SubType("id2", st);
-        assertEquals("id check", "id2", st2.getId());
-        assertEquals("parent type is null", st, st2.getParent());
-        assertTrue("parent is type of child", st2.isOfType(st));
-        assertFalse("childis not of type of parent", st.isOfType(st2));
-        assertTrue("hash codes should be different", st.hashCode() != st2.hashCode());
-        assertFalse("st not equals to some String", st.equals("String"));
+        assertEquals("id2", st2.getId(), "id check");
+        assertEquals(st, st2.getParent(), "parent type is null");
+        assertTrue(st2.isOfType(st), "parent is type of child");
+        assertFalse(st.isOfType(st2), "childis not of type of parent");
+        assertTrue(st.hashCode() != st2.hashCode(), "hash codes should be different");
+        assertFalse(st.equals("String"), "st not equals to some String");
         SubType st3 = new SubType("id3", st);
-        assertFalse("other subtype with different name is not equal", st2.equals(st3));
+        assertFalse(st2.equals(st3), "other subtype with different name is not equal");
         st3 = new SubType("id2", st);
-        assertTrue("other subtype with same name and parent is equal", st2.equals(st3));
+        assertTrue(st2.equals(st3), "other subtype with same name and parent is equal");
         st3 = new SubType("id2");
-        assertFalse("other subtype with same name but no parent is not equal", st2.equals(st3));
-        assertFalse("other subtype with same name but no parent is not equal", st3.equals(st2));
+        assertFalse(st2.equals(st3), "other subtype with same name but no parent is not equal");
+        assertFalse(st3.equals(st2), "other subtype with same name but no parent is not equal");
         st3 = new SubType("id3", st2);
         SubType different = new SubType("different");
-        assertNull("No common ancestor", different.commonAncestor(st3));
-        assertNull("No common ancestor", st3.commonAncestor(different));
+        assertNull(different.commonAncestor(st3), "No common ancestor");
+        assertNull(st3.commonAncestor(different), "No common ancestor");
         SubType common = new SubType("common", st2);
-        assertEquals("Common ancestor", st2, common.commonAncestor(st3));
-        assertEquals("Common ancestor", st2, st3.commonAncestor(common));
-        assertTrue("toString method returns something descriptive", common.toString().startsWith("SubType "));
+        assertEquals(st2, common.commonAncestor(st3), "Common ancestor");
+        assertEquals(st2, st3.commonAncestor(common), "Common ancestor");
+        assertTrue(common.toString().startsWith("SubType "), "toString method returns something descriptive");
         try
         {
             new SubType(null, common);

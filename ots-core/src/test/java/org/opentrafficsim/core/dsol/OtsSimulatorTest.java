@@ -1,8 +1,8 @@
 package org.opentrafficsim.core.dsol;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.naming.NamingException;
 
@@ -10,7 +10,7 @@ import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.dsol.AbstractOtsModelTest.OtsModel;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -44,10 +44,10 @@ public class OtsSimulatorTest
         Duration runLength = new Duration(500, DurationUnit.SECOND);
         OtsModel model = new OtsModel(simulator);
         simulator.initialize(startTime, warmupDuration, runLength, model);
-        assertEquals("startTime is returned", startTime, simulator.getStartTimeAbs());
-        assertEquals("warmupDuration is returned", warmupDuration, simulator.getReplication().getWarmupPeriod());
-        assertEquals("runLength is returned", runLength, simulator.getReplication().getRunLength());
-        assertTrue("toString returns something descriptive", simulator.toString().startsWith("OtsSimulator"));
+        assertEquals(startTime, simulator.getStartTimeAbs(), "startTime is returned");
+        assertEquals(warmupDuration, simulator.getReplication().getWarmupPeriod(), "warmupDuration is returned");
+        assertEquals(runLength, simulator.getReplication().getRunLength(), "runLength is returned");
+        assertTrue(simulator.toString().startsWith("OtsSimulator"), "toString returns something descriptive");
         String testArgument = "test argument";
         simulator.scheduleEventAbsTime(new Time(400, TimeUnit.BASE_SECOND), (short) 0, this, "eventReceiver", new Object[] {testArgument});
         simulator.start();
@@ -55,9 +55,9 @@ public class OtsSimulatorTest
         {
             Thread.sleep(100);
         }
-        assertFalse("simulator has stopped", simulator.isStartingOrRunning());
-        assertEquals("simulator time is runLength", runLength, simulator.getSimulatorAbsTime().minus(startTime));
-        assertEquals("event has been executed", testArgument, this.receivedArgument);
+        assertFalse(simulator.isStartingOrRunning(), "simulator has stopped");
+        assertEquals(runLength, simulator.getSimulatorAbsTime().minus(startTime), "simulator time is runLength");
+        assertEquals(testArgument, this.receivedArgument, "event has been executed");
     }
 
     /**

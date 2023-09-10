@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.gtu;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -56,14 +56,14 @@ public class GtuCharacteristicsTest implements OtsModelInterface
                 Acceleration.instantiateSI(3.0), Acceleration.instantiateSI(-8.0), lengthA.times(0.5));
         GtuCharacteristics gtucB = new GtuCharacteristics(gtuTypeB, lengthB, widthB, maximumSpeedB,
                 Acceleration.instantiateSI(3.0), Acceleration.instantiateSI(-8.0), lengthB.times(0.5));
-        assertEquals("gtuTypeA", gtuTypeA, gtucA.getGtuType());
-        assertEquals("gtuTypeB", gtuTypeB, gtucB.getGtuType());
-        assertEquals("lengthA", lengthA, gtucA.getLength());
-        assertEquals("lengthB", lengthB, gtucB.getLength());
-        assertEquals("widthA", widthA, gtucA.getWidth());
-        assertEquals("widthB", widthB, gtucB.getWidth());
-        assertEquals("maximumSpeedA", maximumSpeedA, gtucA.getMaximumSpeed());
-        assertEquals("maximumSpeedB", maximumSpeedB, gtucB.getMaximumSpeed());
+        assertEquals(gtuTypeA, gtucA.getGtuType(), "gtuTypeA");
+        assertEquals(gtuTypeB, gtucB.getGtuType(), "gtuTypeB");
+        assertEquals(lengthA, gtucA.getLength(), "lengthA");
+        assertEquals(lengthB, gtucB.getLength(), "lengthB");
+        assertEquals(widthA, gtucA.getWidth(), "widthA");
+        assertEquals(widthB, gtucB.getWidth(), "widthB");
+        assertEquals(maximumSpeedA, gtucA.getMaximumSpeed(), "maximumSpeedA");
+        assertEquals(maximumSpeedB, gtucB.getMaximumSpeed(), "maximumSpeedB");
     }
 
     /** ... */

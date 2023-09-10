@@ -1,8 +1,8 @@
 package org.opentrafficsim.sim0mq.swing;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -20,7 +20,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
 import org.djutils.serialization.SerializationException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.sim0mq.publisher.SubscriptionHandler;
 import org.sim0mq.Sim0MQException;
@@ -57,12 +57,12 @@ public class Sim0MQPublisherTest
             final String expectedDescription) throws Sim0MQException, SerializationException
     {
         Object[] objects = Sim0MQMessage.decodeToArray(got);
-        assertEquals("Field 5 of message echos the command", field5, objects[5]);
-        assertEquals("conversation id (field 6) matches", field6, objects[6]);
-        assertEquals("Response has 2 field payload", 10, objects.length);
-        assertTrue("First payload field is a boolean", objects[8] instanceof Boolean);
-        assertEquals("First payload field has the expected value", expectedValue, objects[8]);
-        assertTrue("Second (and last) payload field is a String", objects[9] instanceof String);
+        assertEquals(field5, objects[5], "Field 5 of message echos the command");
+        assertEquals(field6, objects[6], "conversation id (field 6) matches");
+        assertEquals(10, objects.length, "Response has 2 field payload");
+        assertTrue(objects[8] instanceof Boolean, "First payload field is a boolean");
+        assertEquals(expectedValue, objects[8], "First payload field has the expected value");
+        assertTrue(objects[9] instanceof String, "Second (and last) payload field is a String");
         if (!((String) objects[9]).startsWith(expectedDescription))
         {
             fail("Description of ACK/NACK does not start with \"" + expectedDescription + "\" instead it contains \""
@@ -87,7 +87,7 @@ public class Sim0MQPublisherTest
             throws Sim0MQException, SerializationException, InterruptedException
     {
         waitForReceivedMessages(receivedMessages, maximumSeconds);
-        assertEquals("Should have received one message", 1, receivedMessages.size());
+        assertEquals(1, receivedMessages.size(), "Should have received one message");
         verifyAckNack(receivedMessages.get(0), field5, field6, expectedValue, expectedDescription);
         receivedMessages.clear();
     }
@@ -144,13 +144,13 @@ public class Sim0MQPublisherTest
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "|GET_LIST", ++conversationId));
         waitForReceivedMessages(receivedMessages, 1);
-        assertEquals("Should have received one message", 1, receivedMessages.size());
+        assertEquals(1, receivedMessages.size(), "Should have received one message");
         Object[] commands = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
-        assertTrue("message decodes into more than 8 fields", commands.length > 8);
+        assertTrue(commands.length > 8, "message decodes into more than 8 fields");
         for (int index = 8; index < commands.length; index++)
         {
             receivedMessages.clear();
-            assertTrue("A service is identified by a String", commands[index] instanceof String);
+            assertTrue(commands[index] instanceof String, "A service is identified by a String");
             String service = (String) commands[index];
             System.out.println("Service " + service);
             sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
@@ -159,7 +159,7 @@ public class Sim0MQPublisherTest
             if (receivedMessages.size() > 0)
             {
                 Object[] result = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
-                assertTrue("result of GET_COMMANDS should be at least 8 long", result.length >= 8);
+                assertTrue(result.length >= 8, "result of GET_COMMANDS should be at least 8 long");
                 for (int i = 8; i < result.length; i++)
                 {
                     String command = (String) result[i];

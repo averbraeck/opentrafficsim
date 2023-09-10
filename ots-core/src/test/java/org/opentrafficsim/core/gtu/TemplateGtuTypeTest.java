@@ -1,8 +1,8 @@
 package org.opentrafficsim.core.gtu;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.Generator;
@@ -109,20 +109,20 @@ public class TemplateGtuTypeTest implements OtsModelInterface
         };
         GtuTemplate templateA = new GtuTemplate(gtuTypeA, lengthGeneratorA, widthGeneratorA, maximumSpeedGeneratorA);
         GtuTemplate templateB = new GtuTemplate(gtuTypeB, lengthGeneratorB, widthGeneratorB, maximumSpeedGeneratorB);
-        assertEquals("typenameA", gtuTypeA.getId(), templateA.getGtuType().getId());
-        assertEquals("typenameB", gtuTypeB.getId(), templateB.getGtuType().getId());
+        assertEquals(gtuTypeA.getId(), templateA.getGtuType().getId(), "typenameA");
+        assertEquals(gtuTypeB.getId(), templateB.getGtuType().getId(), "typenameB");
         GtuCharacteristics characteristicsA = templateA.draw();
         GtuCharacteristics characteristicsB = templateB.draw();
-        assertEquals("typenameA", gtuTypeA.getId(), characteristicsA.getGtuType().getId());
-        assertEquals("typenameB", gtuTypeB.getId(), characteristicsB.getGtuType().getId());
-        assertEquals("lengthA", lengthGeneratorA.draw(), characteristicsA.getLength());
-        assertEquals("lengthB", lengthGeneratorB.draw(), characteristicsB.getLength());
-        assertEquals("widthA", widthGeneratorA.draw(), characteristicsA.getWidth());
-        assertEquals("widthB", widthGeneratorB.draw(), characteristicsB.getWidth());
-        assertEquals("maximumSpeedA", maximumSpeedGeneratorA.draw(), characteristicsA.getMaximumSpeed());
-        assertEquals("maximumSpeedB", maximumSpeedGeneratorB.draw(), characteristicsB.getMaximumSpeed());
+        assertEquals(gtuTypeA.getId(), characteristicsA.getGtuType().getId(), "typenameA");
+        assertEquals(gtuTypeB.getId(), characteristicsB.getGtuType().getId(), "typenameB");
+        assertEquals(lengthGeneratorA.draw(), characteristicsA.getLength(), "lengthA");
+        assertEquals(lengthGeneratorB.draw(), characteristicsB.getLength(), "lengthB");
+        assertEquals(widthGeneratorA.draw(), characteristicsA.getWidth(), "widthA");
+        assertEquals(widthGeneratorB.draw(), characteristicsB.getWidth(), "widthB");
+        assertEquals(maximumSpeedGeneratorA.draw(), characteristicsA.getMaximumSpeed(), "maximumSpeedA");
+        assertEquals(maximumSpeedGeneratorB.draw(), characteristicsB.getMaximumSpeed(), "maximumSpeedB");
         // Ensure that toString returns non null
-        assertNotNull("toString should not return null", templateA.toString());
+        assertNotNull(templateA.toString(), "toString should not return null");
         // Test that the constructor throws the expected Exception when an argument is invalid
         try
         {

@@ -1,13 +1,13 @@
 package org.opentrafficsim.core.geometry;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.geometry.Flattener.NumSegments;
 
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -85,14 +85,14 @@ public class ContinuousClothoidTest
             ContinuousClothoid clothoid = new ContinuousClothoid(start, end);
             NumSegments numSegments64 = new NumSegments(64);
             PolyLine2d line = clothoid.flatten(numSegments64);
-            assertEquals("Clothoid between point on line did not become a straight", line.size(), 2);
+            assertEquals(line.size(), 2, "Clothoid between point on line did not become a straight");
 
             start = new OrientedPoint2d(x, y, ang + sign * tolerance * 1.1);
             end = new OrientedPoint2d(3 * x, 3 * y, ang + sign * tolerance * 1.1);
             sign *= -1.0;
             clothoid = new ContinuousClothoid(start, end);
             line = clothoid.flatten(numSegments64);
-            assertTrue("Clothoid between point just not on line should not become a straight", line.size() > 2);
+            assertTrue(line.size() > 2, "Clothoid between point just not on line should not become a straight");
         }
     }
 
@@ -158,29 +158,29 @@ public class ContinuousClothoidTest
     private void VerifyLine(final OrientedPoint2d start, final ContinuousClothoid clothoid, final PolyLine2d line,
             final LinearDensity startCurvature, final LinearDensity endCurvature, final Length a) throws OtsGeometryException
     {
-        assertEquals("Start location deviates", 0.0, Math.hypot(start.x - line.get(0).x, start.y - line.get(0).y),
-                DISTANCE_TOLERANCE);
-        assertEquals("End location deviates", 0.0, Math.hypot(clothoid.getEndPoint().x - line.get(line.size() - 1).x,
-                clothoid.getEndPoint().y - line.get(line.size() - 1).y), DISTANCE_TOLERANCE);
-        assertEquals("Start direction deviates", 0.0, normalizeAngle(start.dirZ - getAngle(line, 0)), ANGLE_TOLERANCE);
-        assertEquals("End direction deviates", 0.0,
-                normalizeAngle(clothoid.getEndPoint().dirZ - getAngle(line, line.size() - 2)), ANGLE_TOLERANCE);
+        assertEquals(0.0, Math.hypot(start.x - line.get(0).x, start.y - line.get(0).y), DISTANCE_TOLERANCE,
+                "Start location deviates");
+        assertEquals(0.0, Math.hypot(clothoid.getEndPoint().x - line.get(line.size() - 1).x,
+                clothoid.getEndPoint().y - line.get(line.size() - 1).y), DISTANCE_TOLERANCE, "End location deviates");
+        assertEquals(0.0, normalizeAngle(start.dirZ - getAngle(line, 0)), ANGLE_TOLERANCE, "Start direction deviates");
+        assertEquals(0.0, normalizeAngle(clothoid.getEndPoint().dirZ - getAngle(line, line.size() - 2)),
+                ANGLE_TOLERANCE, "End direction deviates");
         double lengthRatio = line.getLength() / clothoid.getLength();
-        assertEquals("Length is more than 1% shorter or longer than theoretical", 1.0, lengthRatio, 0.01);
+        assertEquals(1.0, lengthRatio, 0.01, "Length is more than 1% shorter or longer than theoretical");
         if (startCurvature != null)
         {
             double curveatureRatio = clothoid.getStartCurvature() / startCurvature.si;
-            assertEquals("Start curvature is more than 1% shorter or longer than theoretical", 1.0, curveatureRatio, 0.01);
+            assertEquals(1.0, curveatureRatio, 0.01, "Start curvature is more than 1% shorter or longer than theoretical");
         }
         if (endCurvature != null)
         {
             double curveatureRatio = clothoid.getEndCurvature() / endCurvature.si;
-            assertEquals("End curvature is more than 1% shorter or longer than theoretical", 1.0, curveatureRatio, 0.01);
+            assertEquals(1.0, curveatureRatio, 0.01, "End curvature is more than 1% shorter or longer than theoretical");
         }
         if (a != null)
         {
             double aRadius = clothoid.getA() / a.si;
-            assertEquals("A-value is more than 1% less or more than theoretical", 1.0, aRadius, 0.01);
+            assertEquals(1.0, aRadius, 0.01, "A-value is more than 1% less or more than theoretical");
         }
     }
 

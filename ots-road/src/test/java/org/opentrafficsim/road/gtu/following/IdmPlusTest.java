@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.following;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,7 +17,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
@@ -97,8 +97,8 @@ public class IdmPlusTest implements UNITS
         referenceCar10.getTacticalPlanner().getPerception().perceive();
         Speed speedLimit = new Speed(100, KM_PER_HOUR);
         AccelerationStep cfmr = carFollowingModel.computeAccelerationStepWithNoLeader(referenceCar10, lookAhead, speedLimit);
-        assertEquals("Standard time slice in IDM+ is 0.5s", 0.5, cfmr.getValidUntil().getSI(), 0.0001);
-        assertEquals("Acceleration should be maximum", 1.25, cfmr.getAcceleration().getSI(), 0.0001);
+        assertEquals(0.5, cfmr.getValidUntil().getSI(), 0.0001, "Standard time slice in IDM+ is 0.5s");
+        assertEquals(1.25, cfmr.getAcceleration().getSI(), 0.0001, "Acceleration should be maximum");
         // Create another car at exactly the stationary following distance
         // Check that the follower remains stationary
         Length leaderPosition = new Length(2 + referenceCar10.getLength().getSI()
@@ -128,7 +128,7 @@ public class IdmPlusTest implements UNITS
                 leaderCar11.getLength(), leaderCar11.getWidth(), leaderCar11.getSpeed(), leaderCar11.getAcceleration(), null);
         cfmr = carFollowingModel.computeAccelerationStep(referenceCar10, leaderCar11.getSpeed(), leader.getDistance(),
                 lookAhead, speedLimit);
-        assertEquals("Acceleration should be 0", 0, cfmr.getAcceleration().getSI(), 0.0001);
+        assertEquals(0, cfmr.getAcceleration().getSI(), 0.0001, "Acceleration should be 0");
         leaderPosition = new Length(1000 + (3 + referenceCar10.getLength().getSI()
                 + referenceCar10.position(lane, referenceCar10.getFront(), initialTime).getSI()), METER);
         leaderPositions = new LinkedHashSet<>(1);
@@ -153,13 +153,13 @@ public class IdmPlusTest implements UNITS
         leaders.add(leader);
         cfmr = carFollowingModel.computeDualAccelerationStep(referenceCar10, leaders, lookAhead, speedLimit)
                 .getLeaderAccelerationStep();
-        assertEquals("Acceleration should be 0", 0, cfmr.getAcceleration().getSI(), 0.0001);
+        assertEquals(0, cfmr.getAcceleration().getSI(), 0.0001, "Acceleration should be 0");
         leaders.clear();
         leaders.add(leader); // Put the 1st leader in first place
         leaders.add(leader2);
         cfmr = carFollowingModel.computeDualAccelerationStep(referenceCar10, leaders, lookAhead, speedLimit)
                 .getLeaderAccelerationStep();
-        assertEquals("Acceleration should be 0", 0, cfmr.getAcceleration().getSI(), 0.0001);
+        assertEquals(0, cfmr.getAcceleration().getSI(), 0.0001, "Acceleration should be 0");
         referenceCar10.destroy();
         leaderCar11.destroy();
         leaderCar12.destroy();
@@ -191,7 +191,7 @@ public class IdmPlusTest implements UNITS
         leaders.add(leader);
         cfmr = carFollowingModel.computeDualAccelerationStep(referenceCar20, leaders, lookAhead, speedLimit)
                 .getLeaderAccelerationStep();
-        assertEquals("Leader acceleration should be 1.25", 1.25, cfmr.getAcceleration().getSI(), 0.0001);
+        assertEquals(1.25, cfmr.getAcceleration().getSI(), 0.0001, "Leader acceleration should be 1.25");
         leaderCar21.destroy();
 
         // Check that the returned acceleration increases with the distance to the leader
@@ -220,12 +220,12 @@ public class IdmPlusTest implements UNITS
                     .getFollowerAccelerationStep();
             double acceleration = cfmr.getAcceleration().getSI();
             // System.out.println("Acceleration with stationary leader at " + spareDistance + " is " + acceleration);
-            assertTrue("acceleration should not decrease when distance to leader is increased",
-                    acceleration >= referenceAcceleration);
+            assertTrue(acceleration >= referenceAcceleration,
+                    "acceleration should not decrease when distance to leader is increased");
             referenceAcceleration = acceleration;
             leaderCar22.destroy();
         }
-        assertTrue("Highest acceleration should be less than max", referenceAcceleration <= 1.25);
+        assertTrue(referenceAcceleration <= 1.25, "Highest acceleration should be less than max");
         referenceCar20.destroy();
 
         // Test 3. Check that the returned acceleration increases with the speed of the leader
@@ -280,12 +280,12 @@ public class IdmPlusTest implements UNITS
                     .getFollowerAccelerationStep();
             double acceleration = cfmr.getAcceleration().getSI();
             // System.out.println("Acceleration with leader driving " + integerLeaderSpeed + " m/s is " + acceleration);
-            assertTrue("acceleration should not decrease when leader speed is increased",
-                    acceleration >= referenceAcceleration);
+            assertTrue(acceleration >= referenceAcceleration,
+                    "acceleration should not decrease when leader speed is increased");
             referenceAcceleration = acceleration;
             leaderCar31.destroy();
         }
-        assertTrue("Highest acceleration should be less than max", referenceAcceleration <= 1.25);
+        assertTrue(referenceAcceleration <= 1.25, "Highest acceleration should be less than max");
         referenceCar30.destroy();
 
         // Test 4. Check that a car that is 100m behind a stationary car accelerates, then decelerates and stops at
@@ -338,11 +338,11 @@ public class IdmPlusTest implements UNITS
             {
                 double position = referenceCar40.position(lane, referenceCar40.getFront()).getSI();
                 assertEquals(
-                        "After 20 seconds the referenceCar should now be very close to " + s0
-                                + " before the rear of the leader",
-                        leaderCar41.position(lane, referenceCar40.getRear()).getSI() - s0.getSI(), position, 0.2);
-                assertEquals("After 20 seconds the speed of the referenceCar should be almost 0", 0,
-                        referenceCar40.getSpeed().getSI(), 0.2);
+                        leaderCar41.position(lane, referenceCar40.getRear()).getSI() - s0.getSI(),
+                        position, 0.2, "After 20 seconds the referenceCar should now be very close to " + s0
+                                + " before the rear of the leader");
+                assertEquals(0, referenceCar40.getSpeed().getSI(),
+                        0.2, "After 20 seconds the speed of the referenceCar should be almost 0");
             }
         }
         referenceCar40.destroy();

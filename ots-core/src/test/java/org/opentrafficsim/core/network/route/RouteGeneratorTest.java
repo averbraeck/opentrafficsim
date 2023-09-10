@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.djutils.draw.point.Point2d;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;

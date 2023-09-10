@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.changing;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -19,7 +19,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.Point2d;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.definitions.DefaultsNl;
@@ -173,14 +173,14 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
 
         // Let's see if adjacent lanes are accessible
         // lanes: | 0 : 1 : 2 | in case of three lanes
-        assertEquals("Leftmost lane should not have accessible adjacent lanes on the LEFT side", 0,
-                lanes[0].accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtuType).size());
-        assertEquals("Leftmost lane should have one accessible adjacent lane on the RIGHT side", 1,
-                lanes[0].accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtuType).size());
-        assertEquals("Rightmost lane should have one accessible adjacent lane on the LEFT side", 1,
-                lanes[1].accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtuType).size());
-        assertEquals("Rightmost lane should not have accessible adjacent lanes on the RIGHT side", 0,
-                lanes[1].accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtuType).size());
+        assertEquals(0, lanes[0].accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtuType).size(),
+                "Leftmost lane should not have accessible adjacent lanes on the LEFT side");
+        assertEquals(1, lanes[0].accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtuType).size(),
+                "Leftmost lane should have one accessible adjacent lane on the RIGHT side");
+        assertEquals(1, lanes[1].accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtuType).size(),
+                "Rightmost lane should have one accessible adjacent lane on the LEFT side");
+        assertEquals(0, lanes[1].accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtuType).size(),
+                "Rightmost lane should not have accessible adjacent lanes on the RIGHT side");
 
         Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions.add(new LanePosition(lanes[1], new Length(100, METER)));
@@ -205,8 +205,8 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
                 preferredLaneGTUs, nonPreferredLaneGTUs, new Speed(100, KM_PER_HOUR), new Acceleration(0.3, METER_PER_SECOND_2),
                 new Acceleration(0.1, METER_PER_SECOND_2), new Acceleration(-0.3, METER_PER_SECOND_2));
         // System.out.println(laneChangeModelResult.toString());
-        assertEquals("Vehicle want to change to the right lane", LateralDirectionality.RIGHT,
-                laneChangeModelResult.getLaneChangeDirection());
+        assertEquals(LateralDirectionality.RIGHT, laneChangeModelResult.getLaneChangeDirection(),
+                "Vehicle want to change to the right lane");
         Length rear = car.position(lanes[0], car.getRear());
         Length front = car.position(lanes[0], car.getFront());
         Length reference = car.position(lanes[0], RelativePosition.REFERENCE_POSITION);
@@ -248,8 +248,8 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
                     nonPreferredLaneGTUs, new Speed(100, KM_PER_HOUR), new Acceleration(0.3, METER_PER_SECOND_2),
                     new Acceleration(0.1, METER_PER_SECOND_2), new Acceleration(-0.3, METER_PER_SECOND_2));
             // System.out.println(laneChangeModelResult.toString());
-            assertEquals("Vehicle cannot to change to the right lane because that would result in an immediate collision", null,
-                    laneChangeModelResult.getLaneChangeDirection());
+            assertEquals(null, laneChangeModelResult.getLaneChangeDirection(),
+                    "Vehicle cannot to change to the right lane because that would result in an immediate collision");
         }
         for (double pos = 0; pos < 180; pos += 5) // beyond 180m, a GTU gets a plan beyond the 200m long network
         {

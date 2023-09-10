@@ -1,6 +1,6 @@
 package org.opentrafficsim.xml.bindings;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Locale;
 
@@ -8,7 +8,7 @@ import javax.xml.bind.JAXBException;
 
 import org.djunits.unit.AngleUnit;
 import org.djunits.value.vdouble.scalar.Angle;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.xml.bindings.types.AngleType;
 
 /**

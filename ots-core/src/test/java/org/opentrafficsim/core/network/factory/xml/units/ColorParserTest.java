@@ -1,11 +1,11 @@
 package org.opentrafficsim.core.network.factory.xml.units;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.awt.Color;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -28,31 +28,31 @@ public class ColorParserTest
     @Test
     public final void testColors() throws NetworkException
     {
-        assertEquals("should be Red", Color.RED, Colors.parseColor("#ff0000"));
-        assertEquals("should be Green", Color.GREEN, Colors.parseColor("#00ff00"));
-        assertEquals("should be Blue", Color.BLUE, Colors.parseColor("#0000FF")); // Try caps as well
-        assertEquals("should be Black", Color.BLACK, Colors.parseColor("#0"));
-        assertEquals("should be White", Color.WHITE, Colors.parseColor("#ffffff"));
+        assertEquals(Color.RED, Colors.parseColor("#ff0000"), "should be Red");
+        assertEquals(Color.GREEN, Colors.parseColor("#00ff00"), "should be Green");
+        assertEquals(Color.BLUE, Colors.parseColor("#0000FF"), "should be Blue"); // Try caps as well
+        assertEquals(Color.BLACK, Colors.parseColor("#0"), "should be Black");
+        assertEquals(Color.WHITE, Colors.parseColor("#ffffff"), "should be White");
 
-        assertEquals("should be Red", Color.RED, Colors.parseColor("RGB ( 255 , 0 , 0 ) ")); // lots of extra spaces
-        assertEquals("should be Green", Color.GREEN, Colors.parseColor("RGB(0,255,0)"));
-        assertEquals("should be Blue", Color.BLUE, Colors.parseColor("RGB(0,0,255)"));
-        assertEquals("should be Black", Color.BLACK, Colors.parseColor("RGB(0,0,0)"));
-        assertEquals("should be White", Color.WHITE, Colors.parseColor("RGB(255,255,255)"));
+        assertEquals(Color.RED, Colors.parseColor("RGB ( 255 , 0 , 0 ) "), "should be Red"); // lots of extra spaces
+        assertEquals(Color.GREEN, Colors.parseColor("RGB(0,255,0)"), "should be Green");
+        assertEquals(Color.BLUE, Colors.parseColor("RGB(0,0,255)"), "should be Blue");
+        assertEquals(Color.BLACK, Colors.parseColor("RGB(0,0,0)"), "should be Black");
+        assertEquals(Color.WHITE, Colors.parseColor("RGB(255,255,255)"), "should be White");
 
-        assertEquals("name should be recognized", Color.BLACK, Colors.parseColor("BLACK"));
-        assertEquals("name should be recognized", Color.BLUE, Colors.parseColor("BLUE"));
-        assertEquals("name should be recognized", Color.CYAN, Colors.parseColor("CYAN"));
-        assertEquals("name should be recognized", Color.DARK_GRAY, Colors.parseColor("DARK_GRAY"));
-        assertEquals("name should be recognized", Color.GRAY, Colors.parseColor("GRAY"));
-        assertEquals("name should be recognized", Color.GREEN, Colors.parseColor("GREEN"));
-        assertEquals("name should be recognized", Color.LIGHT_GRAY, Colors.parseColor("LIGHT_GRAY"));
-        assertEquals("name should be recognized", Color.MAGENTA, Colors.parseColor("MAGENTA"));
-        assertEquals("name should be recognized", Color.ORANGE, Colors.parseColor("ORANGE"));
-        assertEquals("name should be recognized", Color.PINK, Colors.parseColor("PINK"));
-        assertEquals("name should be recognized", Color.RED, Colors.parseColor("RED"));
-        assertEquals("name should be recognized", Color.WHITE, Colors.parseColor("WHITE"));
-        assertEquals("name should be recognized", Color.YELLOW, Colors.parseColor("YELLOW"));
+        assertEquals(Color.BLACK, Colors.parseColor("BLACK"), "name should be recognized");
+        assertEquals(Color.BLUE, Colors.parseColor("BLUE"), "name should be recognized");
+        assertEquals(Color.CYAN, Colors.parseColor("CYAN"), "name should be recognized");
+        assertEquals(Color.DARK_GRAY, Colors.parseColor("DARK_GRAY"), "name should be recognized");
+        assertEquals(Color.GRAY, Colors.parseColor("GRAY"), "name should be recognized");
+        assertEquals(Color.GREEN, Colors.parseColor("GREEN"), "name should be recognized");
+        assertEquals(Color.LIGHT_GRAY, Colors.parseColor("LIGHT_GRAY"), "name should be recognized");
+        assertEquals(Color.MAGENTA, Colors.parseColor("MAGENTA"), "name should be recognized");
+        assertEquals(Color.ORANGE, Colors.parseColor("ORANGE"), "name should be recognized");
+        assertEquals(Color.PINK, Colors.parseColor("PINK"), "name should be recognized");
+        assertEquals(Color.RED, Colors.parseColor("RED"), "name should be recognized");
+        assertEquals(Color.WHITE, Colors.parseColor("WHITE"), "name should be recognized");
+        assertEquals(Color.YELLOW, Colors.parseColor("YELLOW"), "name should be recognized");
         try
         {
             Colors.parseColor("SOMEWHAT_YELLOWISH");

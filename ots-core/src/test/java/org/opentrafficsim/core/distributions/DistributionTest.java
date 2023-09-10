@@ -1,16 +1,16 @@
 package org.opentrafficsim.core.distributions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -57,7 +57,7 @@ public class DistributionTest
         }
 
         Distribution<TestObject> dist = new Distribution<TestObject>(generators, si);
-        assertEquals("size should be 0", 0, dist.size());
+        assertEquals(0, dist.size(), "size should be 0");
         try
         {
             dist.draw();
@@ -92,11 +92,11 @@ public class DistributionTest
         }
 
         dist.add(0, generator);
-        assertEquals("size should now be 1", 1, dist.size());
+        assertEquals(1, dist.size(), "size should now be 1");
         dist.remove(0);
-        assertEquals("size should be 0", 0, dist.size());
+        assertEquals(0, dist.size(), "size should be 0");
         dist.add(generator);
-        assertEquals("size should now be 1", 1, dist.size());
+        assertEquals(1, dist.size(), "size should now be 1");
         try
         {
             dist.remove(1);
@@ -120,7 +120,7 @@ public class DistributionTest
         for (int i = 0; i < 1000; i++)
         {
             TestObject to2 = dist.draw();
-            assertEquals("Result of draw() should be equal to to", to, to2);
+            assertEquals(to, to2, "Result of draw() should be equal to to");
         }
         try
         {
@@ -165,14 +165,14 @@ public class DistributionTest
 
         TestObject to2 = new TestObject();
         dist.add(new Distribution.FrequencyAndObject<TestObject>(10, to2));
-        assertEquals("element 0 should be to", to, dist.get(0).getObject());
-        assertEquals("element 1 should be to2", to2, dist.get(1).getObject());
-        assertEquals("frequency of element 0 should be 0", 0, dist.get(0).getFrequency(), 0.00001);
-        assertEquals("frequency of element 1 should be 10", 10, dist.get(1).getFrequency(), 0.00001);
+        assertEquals(to, dist.get(0).getObject(), "element 0 should be to");
+        assertEquals(to2, dist.get(1).getObject(), "element 1 should be to2");
+        assertEquals(0, dist.get(0).getFrequency(), 0.00001, "frequency of element 0 should be 0");
+        assertEquals(10, dist.get(1).getFrequency(), 0.00001, "frequency of element 1 should be 10");
         for (int i = 0; i < 1000; i++)
         {
             TestObject to3 = dist.draw();
-            assertEquals("Result of draw() should be equal to to2", to2, to3);
+            assertEquals(to2, to3, "Result of draw() should be equal to to2");
         }
         try
         {
@@ -214,10 +214,10 @@ public class DistributionTest
         }
         // With the seeded MersenneTwister observed contains the values 3385 and 6615
         // System.out.println("Observed frequencies: [" + observed[0] + ", " + observed[1] + "]");
-        assertEquals("Total number of draws should add up to 10000", 10000, observed[0] + observed[1]);
-        assertTrue("observed frequency of to should be about 3333", 2500 < observed[0] && observed[0] < 4000);
+        assertEquals(10000, observed[0] + observed[1], "Total number of draws should add up to 10000");
+        assertTrue(2500 < observed[0] && observed[0] < 4000, "observed frequency of to should be about 3333");
         dist.clear();
-        assertEquals("after clear the set should be empty", 0, dist.size());
+        assertEquals(0, dist.size(), "after clear the set should be empty");
         try
         {
             dist.draw();
@@ -232,10 +232,10 @@ public class DistributionTest
         generators.add(new FrequencyAndObject<DistributionTest.TestObject>(123, to));
         generators.add(new FrequencyAndObject<DistributionTest.TestObject>(456, to2));
         dist = new Distribution<TestObject>(generators, si);
-        assertEquals("element 0 should be to", to, dist.get(0).getObject());
-        assertEquals("element 1 should be to2", to2, dist.get(1).getObject());
-        assertEquals("frequency of element 0 should be 123", 123, dist.get(0).getFrequency(), 0.00001);
-        assertEquals("frequency of element 1 should be 456", 456, dist.get(1).getFrequency(), 0.00001);
+        assertEquals(to, dist.get(0).getObject(), "element 0 should be to");
+        assertEquals(to2, dist.get(1).getObject(), "element 1 should be to2");
+        assertEquals(123, dist.get(0).getFrequency(), 0.00001, "frequency of element 0 should be 123");
+        assertEquals(456, dist.get(1).getFrequency(), 0.00001, "frequency of element 1 should be 456");
         generators.set(1, new FrequencyAndObject<DistributionTest.TestObject>(-1, to2));
         try
         {
@@ -310,9 +310,9 @@ public class DistributionTest
         double badFrequency = badTotal - dist.get(0).getFrequency() - dist.get(1).getFrequency();
         double expectedIn0 = (dist.get(0).getFrequency() + badFrequency) / badTotal * 10000;
         // System.out.println("Observed frequencies: [" + observed[0] + ", " + observed[1] + "]; expected in 0 " + expectedIn0);
-        assertEquals("Total number of draws should add up to 10000", 10000, observed[0] + observed[1]);
-        assertTrue("observed frequency of to should be about " + expectedIn0,
-                expectedIn0 - 500 < observed[0] && observed[0] < expectedIn0 + 500);
+        assertEquals(10000, observed[0] + observed[1], "Total number of draws should add up to 10000");
+        assertTrue(expectedIn0 - 500 < observed[0] && observed[0] < expectedIn0 + 500,
+                "observed frequency of to should be about " + expectedIn0);
         // When frequency of element 0 is 0; the draw method should never return it; even if the cumulativeTotal is wrong
         dist.modifyFrequency(0, 0);
         try
@@ -345,8 +345,8 @@ public class DistributionTest
         }
         // System.out.println("dist is " + dist);
         // System.out.println("Observed frequencies: [" + observed[0] + ", " + observed[1] + "]; expected in 0 " + expectedIn0);
-        assertEquals("Total number of draws should add up to 10000", 10000, observed[0] + observed[1]);
-        assertEquals("observed frequency of to should be 0", 0, observed[0]);
+        assertEquals(10000, observed[0] + observed[1], "Total number of draws should add up to 10000");
+        assertEquals(0, observed[0], "observed frequency of to should be 0");
         try
         {
             dist.modifyFrequency(dist.size(), 0);
@@ -367,7 +367,7 @@ public class DistributionTest
 
         // Execute the clear method and verify that size is 0
         dist.clear();
-        assertEquals("after clear the set should be empty", 0, dist.size());
+        assertEquals(0, dist.size(), "after clear the set should be empty");
     }
 
     /** Object used as generic parameter. */
@@ -388,19 +388,19 @@ public class DistributionTest
         Distribution<Double> distribution = new Distribution<>(si);
         distribution.add(new FrequencyAndObject<Double>(Math.PI, 10d));
         distribution.add(new FrequencyAndObject<Double>(2 * Math.PI, 20d));
-        assertTrue("distribution is equal to itself", distribution.equals(distribution));
-        assertFalse("distribution is not equal to null", distribution.equals(null));
-        assertFalse("distribution is not equal to something totally different", distribution.equals("junk"));
+        assertTrue(distribution.equals(distribution), "distribution is equal to itself");
+        assertFalse(distribution.equals(null), "distribution is not equal to null");
+        assertFalse(distribution.equals("junk"), "distribution is not equal to something totally different");
         Distribution<Double> distribution2 = new Distribution<>(si);
-        assertFalse("Distribution is not equal to other distribution containing different set of frequency and object",
-                distribution.equals(distribution2));
+        assertFalse(distribution.equals(distribution2),
+                "Distribution is not equal to other distribution containing different set of frequency and object");
         distribution2.add(new FrequencyAndObject<Double>(Math.PI, 10d));
         distribution2.add(new FrequencyAndObject<Double>(2 * Math.PI, 20d));
         // TODO: Next test fails because the random field of the Distribution does not implement equals
         // assertTrue(
         // "Distributions is equal to other distribution containing exact same frequencies and objects and random source",
         // distribution.equals(distribution2));
-        assertTrue("The toString method returns something descriptive", distribution.toString().startsWith("Distribution"));
+        assertTrue(distribution.toString().startsWith("Distribution"), "The toString method returns something descriptive");
     }
 
     /**
@@ -411,30 +411,30 @@ public class DistributionTest
     public void frequencyAndObjectTest()
     {
         FrequencyAndObject<String> fao1 = new FrequencyAndObject<>(Math.PI, "One");
-        assertEquals("frequency matches", Math.PI, fao1.getFrequency(), 0);
-        assertEquals("object matchs", "One", fao1.getObject());
-        assertTrue("FreqencyAndObject is equal to itself", fao1.equals(fao1));
-        assertFalse("FrequencyAndObject is not equal to null", fao1.equals(null));
-        assertFalse("FrequencyAndObject is not equal to some totally unrelated object", fao1.equals("Bla"));
+        assertEquals(Math.PI, fao1.getFrequency(), 0, "frequency matches");
+        assertEquals("One", fao1.getObject(), "object matchs");
+        assertTrue(fao1.equals(fao1), "FreqencyAndObject is equal to itself");
+        assertFalse(fao1.equals(null), "FrequencyAndObject is not equal to null");
+        assertFalse(fao1.equals("Bla"), "FrequencyAndObject is not equal to some totally unrelated object");
         FrequencyAndObject<String> fao2 = new FrequencyAndObject<>(Math.PI, "One");
-        assertTrue("FrequencyAndObject is equal to another FrequencyAndObject with same frequency and same object",
-                fao1.equals(fao2));
-        assertEquals("FrequencyAndObject has same hashCode as another FrequencyAndObject with same frequency and same object",
-                fao1.hashCode(), fao2.hashCode());
+        assertTrue(fao1.equals(fao2),
+                "FrequencyAndObject is equal to another FrequencyAndObject with same frequency and same object");
+        assertEquals(fao1.hashCode(),
+                fao2.hashCode(), "FrequencyAndObject has same hashCode as another FrequencyAndObject with same frequency and same object");
         fao2 = new FrequencyAndObject<>(Math.PI, "Two");
-        assertFalse("FrequencyAndObject is not equal to another FrequencyAndObject with same frequency but other object",
-                fao1.equals(fao2));
+        assertFalse(fao1.equals(fao2),
+                "FrequencyAndObject is not equal to another FrequencyAndObject with same frequency but other object");
         fao2 = new FrequencyAndObject<>(Math.E, "One");
-        assertFalse("FrequencyAndObject is not equal to another FrequencyAndObject with different frequency but same object",
-                fao1.equals(fao2));
-        assertNotEquals("FrequencyAndObject has different hashCode than another FrequencyAndObject with different frequency "
-                + "and same object", fao1.hashCode(), fao2.hashCode());
+        assertFalse(fao1.equals(fao2),
+                "FrequencyAndObject is not equal to another FrequencyAndObject with different frequency but same object");
+        assertNotEquals(fao1.hashCode(), fao2.hashCode(), "FrequencyAndObject has different hashCode than another FrequencyAndObject with different frequency "
+                        + "and same object");
         fao2 = new FrequencyAndObject<>(Math.PI, null);
-        assertFalse("FrequencyAndObject is not equal to another FrequencyAndObject with same frequency but null object",
-                fao1.equals(fao2));
-        assertFalse("FrequencyAndObject is not equal to another FrequencyAndObject with same frequency but null object",
-                fao2.equals(fao1));
-        assertTrue("The toString methods returns something descriptive", fao1.toString().startsWith("FrequencyAndObject"));
+        assertFalse(fao1.equals(fao2),
+                "FrequencyAndObject is not equal to another FrequencyAndObject with same frequency but null object");
+        assertFalse(fao2.equals(fao1),
+                "FrequencyAndObject is not equal to another FrequencyAndObject with same frequency but null object");
+        assertTrue(fao1.toString().startsWith("FrequencyAndObject"), "The toString methods returns something descriptive");
     }
 
 }

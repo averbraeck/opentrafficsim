@@ -1,9 +1,9 @@
 package org.opentrafficsim.core.network;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.rmi.RemoteException;
 
@@ -13,7 +13,7 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.EventType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine2d;
@@ -59,77 +59,77 @@ public class LinkTest implements EventListener
         LinkType linkType = new LinkType("myLinkType", DefaultsNl.ROAD);
         OtsLine2d designLine = new OtsLine2d(startNode.getPoint(), endNode.getPoint());
         Link link = new Link(network, "link1", startNode, endNode, linkType, designLine, null);
-        assertTrue("network contains the newly constructed link", network.containsLink(link));
+        assertTrue(network.containsLink(link), "network contains the newly constructed link");
         // directionalityMap is currently empty
-        assertEquals("The link contains no GTUs", 0, link.getGTUCount());
-        assertEquals("The link contains zero GTUs", 0, link.getGTUs().size());
+        assertEquals(0, link.getGTUCount(), "The link contains no GTUs");
+        assertEquals(0, link.getGTUs().size(), "The link contains zero GTUs");
 
         link.addListener(this, Link.GTU_ADD_EVENT);
         link.addListener(this, Link.GTU_REMOVE_EVENT);
-        assertEquals("add counter is 0", 0, this.gtuAddedCount);
-        assertEquals("remove counter is 0", 0, this.gtuRemovedCount);
-        assertEquals("other event counter is 0", 0, this.otherEventCount);
+        assertEquals(0, this.gtuAddedCount, "add counter is 0");
+        assertEquals(0, this.gtuRemovedCount, "remove counter is 0");
+        assertEquals(0, this.otherEventCount, "other event counter is 0");
         MockGtu mockGtu1 = new MockGtu("gtu1");
         Gtu gtu1 = mockGtu1.getMock();
         MockGtu mockGtu2 = new MockGtu("gtu2");
         Gtu gtu2 = mockGtu2.getMock();
         link.addGTU(gtu1);
-        assertEquals("add counter is now 1", 1, this.gtuAddedCount);
-        assertEquals("remove counter is 0", 0, this.gtuRemovedCount);
-        assertEquals("other event counter is 0", 0, this.otherEventCount);
-        assertEquals("The link contains one GTU", 1, link.getGTUCount());
-        assertEquals("The link contains one GTU", 1, link.getGTUs().size());
-        assertEquals("The link contains our GTU", gtu1, link.getGTUs().iterator().next());
+        assertEquals(1, this.gtuAddedCount, "add counter is now 1");
+        assertEquals(0, this.gtuRemovedCount, "remove counter is 0");
+        assertEquals(0, this.otherEventCount, "other event counter is 0");
+        assertEquals(1, link.getGTUCount(), "The link contains one GTU");
+        assertEquals(1, link.getGTUs().size(), "The link contains one GTU");
+        assertEquals(gtu1, link.getGTUs().iterator().next(), "The link contains our GTU");
         link.addGTU(gtu2);
-        assertEquals("add counter is now 2", 2, this.gtuAddedCount);
-        assertEquals("remove counter is 0", 0, this.gtuRemovedCount);
-        assertEquals("other event counter is 0", 0, this.otherEventCount);
-        assertTrue("The link contains gtu1", link.getGTUs().contains(gtu1));
-        assertTrue("The link contains gtu2", link.getGTUs().contains(gtu2));
+        assertEquals(2, this.gtuAddedCount, "add counter is now 2");
+        assertEquals(0, this.gtuRemovedCount, "remove counter is 0");
+        assertEquals(0, this.otherEventCount, "other event counter is 0");
+        assertTrue(link.getGTUs().contains(gtu1), "The link contains gtu1");
+        assertTrue(link.getGTUs().contains(gtu2), "The link contains gtu2");
         link.addGTU(gtu1); // Add gtu again (should make no difference)
-        assertEquals("add counter is now 2", 2, this.gtuAddedCount);
-        assertEquals("remove counter is 0", 0, this.gtuRemovedCount);
-        assertEquals("other event counter is 0", 0, this.otherEventCount);
-        assertTrue("The link contains gtu1", link.getGTUs().contains(gtu1));
-        assertTrue("The link contains gtu2", link.getGTUs().contains(gtu2));
+        assertEquals(2, this.gtuAddedCount, "add counter is now 2");
+        assertEquals(0, this.gtuRemovedCount, "remove counter is 0");
+        assertEquals(0, this.otherEventCount, "other event counter is 0");
+        assertTrue(link.getGTUs().contains(gtu1), "The link contains gtu1");
+        assertTrue(link.getGTUs().contains(gtu2), "The link contains gtu2");
         link.removeGTU(gtu1);
-        assertEquals("add counter is now 2", 2, this.gtuAddedCount);
-        assertEquals("remove counter is 1", 1, this.gtuRemovedCount);
-        assertEquals("other event counter is 0", 0, this.otherEventCount);
-        assertFalse("The link no longer contains gtu1", link.getGTUs().contains(gtu1));
-        assertTrue("The link contains gtu2", link.getGTUs().contains(gtu2));
+        assertEquals(2, this.gtuAddedCount, "add counter is now 2");
+        assertEquals(1, this.gtuRemovedCount, "remove counter is 1");
+        assertEquals(0, this.otherEventCount, "other event counter is 0");
+        assertFalse(link.getGTUs().contains(gtu1), "The link no longer contains gtu1");
+        assertTrue(link.getGTUs().contains(gtu2), "The link contains gtu2");
         link.removeGTU(gtu1); // removing it again has no effect
-        assertEquals("add counter is now 2", 2, this.gtuAddedCount);
-        assertEquals("remove counter is 1", 1, this.gtuRemovedCount);
-        assertEquals("other event counter is 0", 0, this.otherEventCount);
-        assertFalse("The link no longer contains gtu1", link.getGTUs().contains(gtu1));
-        assertTrue("The link contains gtu2", link.getGTUs().contains(gtu2));
+        assertEquals(2, this.gtuAddedCount, "add counter is now 2");
+        assertEquals(1, this.gtuRemovedCount, "remove counter is 1");
+        assertEquals(0, this.otherEventCount, "other event counter is 0");
+        assertFalse(link.getGTUs().contains(gtu1), "The link no longer contains gtu1");
+        assertTrue(link.getGTUs().contains(gtu2), "The link contains gtu2");
         link.removeGTU(gtu2);
-        assertEquals("add counter is now 2", 2, this.gtuAddedCount);
-        assertEquals("remove counter is 2", 2, this.gtuRemovedCount);
-        assertEquals("other event counter is 0", 0, this.otherEventCount);
-        assertFalse("The link no longer contains gtu1", link.getGTUs().contains(gtu1));
-        assertFalse("The link no longer contains gtu2", link.getGTUs().contains(gtu2));
-        assertEquals("Network is correctly returned", network, link.getNetwork());
-        assertEquals("LinkType is correctly returned", linkType, link.getType());
+        assertEquals(2, this.gtuAddedCount, "add counter is now 2");
+        assertEquals(2, this.gtuRemovedCount, "remove counter is 2");
+        assertEquals(0, this.otherEventCount, "other event counter is 0");
+        assertFalse(link.getGTUs().contains(gtu1), "The link no longer contains gtu1");
+        assertFalse(link.getGTUs().contains(gtu2), "The link no longer contains gtu2");
+        assertEquals(network, link.getNetwork(), "Network is correctly returned");
+        assertEquals(linkType, link.getType(), "LinkType is correctly returned");
         Point2d location = link.getLocation();
         OrientedPoint2d expectedLocation = designLine.getLocationFraction(0.5);
-        assertEquals("location is at halfway point of design line (because design line contains only two points)",
-                expectedLocation.distance(location), 0.0, 0.1);
+        assertEquals(expectedLocation.distance(location),
+                0.0, 0.1, "location is at halfway point of design line (because design line contains only two points)");
         // RotZ of location is bogus; makes no sense to test that
         Bounds bounds = link.getBounds();
-        assertNotNull("bounds should not be null", bounds);
-        assertFalse("link is not equal to null", link.equals(null));
-        assertFalse("link is not equal to some other object", link.equals("Hello World!"));
+        assertNotNull(bounds, "bounds should not be null");
+        assertFalse(link.equals(null), "link is not equal to null");
+        assertFalse(link.equals("Hello World!"), "link is not equal to some other object");
         // Make another link to test the rest of equals
         Link otherLink = new Link(network, "link5", startNode, endNode, linkType, designLine, null);
-        assertFalse("link is not equal to extremely similar link with different id", link.equals(otherLink));
+        assertFalse(link.equals(otherLink), "link is not equal to extremely similar link with different id");
         // make a link with the same name in another network
         Network otherNetwork = new Network("other", MockSimulator.createMock());
         linkType = new LinkType("myLinkType", DefaultsNl.ROAD);
         otherLink = new Link(otherNetwork, "link1", new Node(otherNetwork, "start", new Point2d(10, 20)),
                 new Node(otherNetwork, "end", new Point2d(1000, 2000)), linkType, designLine, null);
-        assertTrue("link is equal to extremely similar link with same id but different network", link.equals(otherLink));
+        assertTrue(link.equals(otherLink), "link is equal to extremely similar link with same id but different network");
     }
 
     /** {@inheritDoc} */

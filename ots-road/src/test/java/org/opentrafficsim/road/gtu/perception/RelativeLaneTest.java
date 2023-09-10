@@ -1,12 +1,12 @@
 package org.opentrafficsim.road.gtu.perception;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 
@@ -79,106 +79,106 @@ public class RelativeLaneTest
             {
                 // System.out.println("Testing " + ld + ", with numLanes " + numLanes);
                 RelativeLane rl = new RelativeLane(ld, numLanes);
-                assertTrue("toString returns something descriptive", rl.toString().startsWith("RelativeLane"));
-                assertEquals("lateral directionality is returned", ld, rl.getLateralDirectionality());
-                assertEquals("numLanes is returned", numLanes, rl.getNumLanes());
+                assertTrue(rl.toString().startsWith("RelativeLane"), "toString returns something descriptive");
+                assertEquals(ld, rl.getLateralDirectionality(), "lateral directionality is returned");
+                assertEquals(numLanes, rl.getNumLanes(), "numLanes is returned");
                 if (numLanes == 0)
                 {
-                    assertEquals("ld should be CURRENT", RelativeLane.CURRENT, rl);
-                    assertTrue("ld is CURRENT", rl.isCurrent());
-                    assertTrue("toString contains the word CURRENT", rl.toString().contains("CURRENT"));
+                    assertEquals(RelativeLane.CURRENT, rl, "ld should be CURRENT");
+                    assertTrue(rl.isCurrent(), "ld is CURRENT");
+                    assertTrue(rl.toString().contains("CURRENT"), "toString contains the word CURRENT");
                 }
                 else
                 {
-                    assertNotEquals("ld is not CURRENT", RelativeLane.CURRENT, rl);
-                    assertFalse("ld is not CURRENT", rl.isCurrent());
+                    assertNotEquals(RelativeLane.CURRENT, rl, "ld is not CURRENT");
+                    assertFalse(rl.isCurrent(), "ld is not CURRENT");
                 }
                 if (numLanes == 1)
                 {
                     if (ld == LateralDirectionality.LEFT)
                     {
-                        assertEquals("ld is LEFT", RelativeLane.LEFT, rl);
-                        assertTrue("ld is LEFT", rl.isLeft());
+                        assertEquals(RelativeLane.LEFT, rl, "ld is LEFT");
+                        assertTrue(rl.isLeft(), "ld is LEFT");
                     }
                     else
                     {
-                        assertEquals("ld is RIGHT", RelativeLane.RIGHT, rl);
-                        assertTrue("ld is RIGHT", rl.isRight());
+                        assertEquals(RelativeLane.RIGHT, rl, "ld is RIGHT");
+                        assertTrue(rl.isRight(), "ld is RIGHT");
                     }
                 }
                 if (numLanes == 2)
                 {
                     if (ld == LateralDirectionality.LEFT)
                     {
-                        assertEquals("ld is SECOND_LEFT", RelativeLane.SECOND_LEFT, rl);
-                        assertTrue("ld is SECOND_LEFT", rl.isSecondLeft());
+                        assertEquals(RelativeLane.SECOND_LEFT, rl, "ld is SECOND_LEFT");
+                        assertTrue(rl.isSecondLeft(), "ld is SECOND_LEFT");
                     }
                     else
                     {
-                        assertEquals("ld is SECOND_RIGHT", RelativeLane.SECOND_RIGHT, rl);
-                        assertTrue("ld is SECOND_RIGHT", rl.isSecondRight());
+                        assertEquals(RelativeLane.SECOND_RIGHT, rl, "ld is SECOND_RIGHT");
+                        assertTrue(rl.isSecondRight(), "ld is SECOND_RIGHT");
                     }
                 }
                 if (ld == LateralDirectionality.LEFT)
                 {
-                    assertTrue("toString contains LEFT", rl.toString().contains("LEFT"));
+                    assertTrue(rl.toString().contains("LEFT"), "toString contains LEFT");
                 }
                 if (ld == LateralDirectionality.RIGHT)
                 {
-                    assertTrue("toString contains RIGHT", rl.toString().contains("RIGHT"));
+                    assertTrue(rl.toString().contains("RIGHT"), "toString contains RIGHT");
                 }
                 if (ld != LateralDirectionality.LEFT || numLanes != 1)
                 {
-                    assertNotEquals("ld is not LEFT", RelativeLane.LEFT, rl);
-                    assertFalse("ld is not LEFT", rl.isLeft());
+                    assertNotEquals(RelativeLane.LEFT, rl, "ld is not LEFT");
+                    assertFalse(rl.isLeft(), "ld is not LEFT");
                 }
                 if (ld != LateralDirectionality.LEFT || numLanes != 2)
                 {
-                    assertNotEquals("ld is not SECOND_LEFT", RelativeLane.SECOND_LEFT, rl);
-                    assertFalse("ld is not SECOND_LEFT", rl.isSecondLeft());
+                    assertNotEquals(RelativeLane.SECOND_LEFT, rl, "ld is not SECOND_LEFT");
+                    assertFalse(rl.isSecondLeft(), "ld is not SECOND_LEFT");
                 }
                 if (ld != LateralDirectionality.RIGHT || numLanes != 1)
                 {
-                    assertNotEquals("ld is not RIGHT", RelativeLane.RIGHT, rl);
-                    assertFalse("ld is not RIGHT", rl.isRight());
+                    assertNotEquals(RelativeLane.RIGHT, rl, "ld is not RIGHT");
+                    assertFalse(rl.isRight(), "ld is not RIGHT");
                 }
                 if (ld != LateralDirectionality.RIGHT || numLanes != 2)
                 {
-                    assertNotEquals("ld is not SECOND_RIGHT", RelativeLane.SECOND_RIGHT, rl);
-                    assertFalse("ld is not SECOND_RIGHT", rl.isSecondRight());
+                    assertNotEquals(RelativeLane.SECOND_RIGHT, rl, "ld is not SECOND_RIGHT");
+                    assertFalse(rl.isSecondRight(), "ld is not SECOND_RIGHT");
                 }
                 RelativeLane leftNeighbor = rl.getLeft();
                 if (numLanes == 0)
                 {
-                    assertEquals("left of CURRENT is LEFT", RelativeLane.LEFT, leftNeighbor);
+                    assertEquals(RelativeLane.LEFT, leftNeighbor, "left of CURRENT is LEFT");
                 }
                 if (numLanes == 1 && ld == LateralDirectionality.RIGHT)
                 {
-                    assertEquals("left of RIGHT is CURRENT", RelativeLane.CURRENT, leftNeighbor);
+                    assertEquals(RelativeLane.CURRENT, leftNeighbor, "left of RIGHT is CURRENT");
                 }
                 if (numLanes > 1 && ld == LateralDirectionality.RIGHT)
                 {
-                    assertEquals("left of right > 1 is right minus 1",
-                            new RelativeLane(LateralDirectionality.RIGHT, numLanes - 1), leftNeighbor);
+                    assertEquals(new RelativeLane(LateralDirectionality.RIGHT, numLanes - 1),
+                            leftNeighbor, "left of right > 1 is right minus 1");
                 }
-                assertNotEquals("hashCodes should be different for adjacent relative lanes", leftNeighbor.hashCode(),
-                        rl.hashCode());
+                assertNotEquals(leftNeighbor.hashCode(), rl.hashCode(),
+                        "hashCodes should be different for adjacent relative lanes");
                 RelativeLane rightNeighbor = rl.getRight();
                 if (numLanes == 0)
                 {
-                    assertEquals("right of CURRENT is RIGHT", RelativeLane.RIGHT, rightNeighbor);
+                    assertEquals(RelativeLane.RIGHT, rightNeighbor, "right of CURRENT is RIGHT");
                 }
                 if (numLanes == 1 && ld == LateralDirectionality.LEFT)
                 {
-                    assertEquals("right of LEFT is CURRENT", RelativeLane.CURRENT, rightNeighbor);
+                    assertEquals(RelativeLane.CURRENT, rightNeighbor, "right of LEFT is CURRENT");
                 }
                 if (numLanes > 1 && ld == LateralDirectionality.LEFT)
                 {
-                    assertEquals("right of LEFT > 1 is left minus 1",
-                            new RelativeLane(LateralDirectionality.LEFT, numLanes - 1), rightNeighbor);
+                    assertEquals(new RelativeLane(LateralDirectionality.LEFT, numLanes - 1),
+                            rightNeighbor, "right of LEFT > 1 is left minus 1");
                 }
-                assertNotEquals("hashCodes should be different for adjacent relative lanes", rightNeighbor.hashCode(),
-                        rl.hashCode());
+                assertNotEquals(rightNeighbor.hashCode(), rl.hashCode(),
+                        "hashCodes should be different for adjacent relative lanes");
                 for (int delta = -5; delta <= +5; delta++)
                 {
                     RelativeLane other = new RelativeLane(delta < 0 ? LateralDirectionality.LEFT
@@ -187,20 +187,20 @@ public class RelativeLaneTest
                     int diff = rank - delta;
                     if (diff > 0)
                     {
-                        assertTrue("compareTo returns > 0", rl.compareTo(other) > 0);
+                        assertTrue(rl.compareTo(other) > 0, "compareTo returns > 0");
                     }
                     if (diff == 0)
                     {
-                        assertTrue("compareTo returns 0", rl.compareTo(other) == 0);
+                        assertTrue(rl.compareTo(other) == 0, "compareTo returns 0");
                     }
                     if (diff < 0)
                     {
-                        assertTrue("compareTo returns < 0", rl.compareTo(other) < 0);
+                        assertTrue(rl.compareTo(other) < 0, "compareTo returns < 0");
                     }
                 }
-                assertFalse("Not equal to null", rl.equals(null));
-                assertFalse("Not equal to some unrelated object", rl.equals("NO WAY"));
-                assertEquals("Equal to itself", rl, rl);
+                assertFalse(rl.equals(null), "Not equal to null");
+                assertFalse(rl.equals("NO WAY"), "Not equal to some unrelated object");
+                assertEquals(rl, rl, "Equal to itself");
             }
         }
 

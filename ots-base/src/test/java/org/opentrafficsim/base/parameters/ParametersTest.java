@@ -1,11 +1,11 @@
 package org.opentrafficsim.base.parameters;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -20,7 +20,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.parameters.constraint.Constraint;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
 
@@ -46,8 +46,8 @@ public class ParametersTest implements ConstraintInterface
         Parameters params = new ParameterSet().setDefaultParameters(ParameterTypes.class);
         try
         {
-            assertTrue("Default value is not correctly set.",
-                    params.getParameter(ParameterTypes.A).equals(ParameterTypes.A.getDefaultValue()));
+            assertTrue(params.getParameter(ParameterTypes.A).equals(ParameterTypes.A.getDefaultValue()),
+                    "Default value is not correctly set.");
         }
         catch (ParameterException exception)
         {
@@ -63,7 +63,7 @@ public class ParametersTest implements ConstraintInterface
     {
         // Check Parameters constructor
         ParameterSet params = new ParameterSet();
-        assertNotNull("Default constructor should not return null.", params);
+        assertNotNull(params, "Default constructor should not return null.");
         if (!params.getParameters().isEmpty())
         {
             fail("Constructed Parameters has a non-empty parameter map.");
@@ -72,12 +72,12 @@ public class ParametersTest implements ConstraintInterface
         // Check ParameterType construction (id, description, class, defaultValue)
         Length defaultValue = new Length(1.0, LengthUnit.SI);
         ParameterTypeLength a = new ParameterTypeLength("a", "along", defaultValue);
-        assertEquals("Parameter type id not properly set.", "a", a.getId());
-        assertEquals("Parameter type description not properly set.", "along", a.getDescription());
-        assertTrue("has a default value", a.hasDefaultValue());
+        assertEquals("a", a.getId(), "Parameter type id not properly set.");
+        assertEquals("along", a.getDescription(), "Parameter type description not properly set.");
+        assertTrue(a.hasDefaultValue(), "has a default value");
         try
         {
-            assertEquals("Parameter type default value not properly set.", defaultValue, a.getDefaultValue());
+            assertEquals(defaultValue, a.getDefaultValue(), "Parameter type default value not properly set.");
         }
         catch (ParameterException exception)
         {
@@ -86,9 +86,9 @@ public class ParametersTest implements ConstraintInterface
 
         // Check ParameterType construction (id, description, class)
         ParameterTypeLength b = new ParameterTypeLength("b", "blong");
-        assertEquals("Parameter type id not properly set.", "b", b.getId());
-        assertEquals("Parameter type description not properly set.", "blong", b.getDescription());
-        assertFalse("does not have a default value", b.hasDefaultValue());
+        assertEquals("b", b.getId(), "Parameter type id not properly set.");
+        assertEquals("blong", b.getDescription(), "Parameter type description not properly set.");
+        assertFalse(b.hasDefaultValue(), "does not have a default value");
         try
         {
             b.getDefaultValue();
@@ -98,7 +98,7 @@ public class ParametersTest implements ConstraintInterface
         {
             // ignore expected exception
         }
-        assertTrue("toString returns something with ParameterType in it", b.toString().contains("ParameterType"));
+        assertTrue(b.toString().contains("ParameterType"), "toString returns something with ParameterType in it");
     }
 
     /**
@@ -378,7 +378,7 @@ public class ParametersTest implements ConstraintInterface
         params.setParameterResettable(a, 1);
         params.setParameterResettable(a, 2);
         params.resetParameter(a);
-        assertEquals("Value after reset should be the same as before last set.", 1.0, (double) params.getParameter(a), 0.0);
+        assertEquals(1.0, (double) params.getParameter(a), 0.0, "Value after reset should be the same as before last set.");
 
         // no reset after (none resettable) set
         params = new ParameterSet();
@@ -412,7 +412,7 @@ public class ParametersTest implements ConstraintInterface
         params.setParameter(a, 1);
         params.setParameterResettable(a, 2);
         params.resetParameter(a);
-        assertEquals("Value after reset should be the same as before last set.", 1.0, (double) params.getParameter(a), 0.0);
+        assertEquals(1.0, (double) params.getParameter(a), 0.0, "Value after reset should be the same as before last set.");
 
         // If null value is ever going to be allowed, use these tests to check proper set/reset.
         // // check null is not the same as 'no value': no value -> set(null) -> reset -> get
@@ -458,8 +458,8 @@ public class ParametersTest implements ConstraintInterface
         Parameters params2 = new ParameterSet();
         params1.setParameter(a1, 4.0);
         params2.setParameter(a2, 4.0);
-        assertEquals("Equal double values from different parameter types should be equal.", params1.getParameter(a1),
-                params2.getParameter(a2), 0.0);
+        assertEquals(params1.getParameter(a1), params2.getParameter(a2),
+                0.0, "Equal double values from different parameter types should be equal.");
 
         // equal DoubleScalar.Rel values should be equal from different characteristic sets
         ParameterTypeLinearDensity b1 = new ParameterTypeLinearDensity("b", "blong");
@@ -467,20 +467,20 @@ public class ParametersTest implements ConstraintInterface
         params1.setParameter(b1, new LinearDensity(4.0, LinearDensityUnit.SI));
         params2.setParameter(b2, new LinearDensity(4.0, LinearDensityUnit.SI));
         assertEquals(
-                "Equal DoubleScalar.Rel values from different parameter types and different characteristics should be equal.",
-                params1.getParameter(b1), params2.getParameter(b2));
+                params1.getParameter(b1),
+                params2.getParameter(b2), "Equal DoubleScalar.Rel values from different parameter types and different characteristics should be equal.");
 
         // equal DoubleScalar.Rel values should be equal from the same characteristic set
         params1.setParameter(b2, new LinearDensity(4.0, LinearDensityUnit.SI));
         assertEquals(
-                "Equal DoubleScalar.Rel values from different parameter types and the same characteristics should be equal.",
-                params1.getParameter(b1), params1.getParameter(b2));
+                params1.getParameter(b1),
+                params1.getParameter(b2), "Equal DoubleScalar.Rel values from different parameter types and the same characteristics should be equal.");
 
         // values of parameter types with different value classes are not equal
         params1.setParameter(a1, 4.0);
         params1.setParameter(b1, new LinearDensity(4.0, LinearDensityUnit.SI));
-        assertNotEquals("Values of different parameter type value classes should not be equal.", params1.getParameter(a1),
-                params1.getParameter(b1));
+        assertNotEquals(params1.getParameter(a1), params1.getParameter(b1),
+                "Values of different parameter type value classes should not be equal.");
 
     }
 
@@ -589,7 +589,7 @@ public class ParametersTest implements ConstraintInterface
         String toStringResult = ld.toString();
         // System.out.println("tostring yields \"" + toStringResult + "\"");
         // System.out.println("clazz is " + clazz.getSimpleName());
-        assertTrue("toString returns something with the class name in it ", toStringResult.contains(clazz.getSimpleName()));
+        assertTrue(toStringResult.contains(clazz.getSimpleName()), "toString returns something with the class name in it ");
 
         // none set, including default check
         if (!clazz.equals(ParameterTypeBoolean.class)) // boolean has no checks
@@ -692,12 +692,12 @@ public class ParametersTest implements ConstraintInterface
         ParameterSet paramsB = new ParameterSet();
         paramsB.setDefaultParameter(ParameterTypes.B);
         paramsB.setAllIn(paramsA);
-        assertTrue("When merging set B with set A, set A should contain the parameters of set B.",
-                paramsA.contains(ParameterTypes.B));
-        assertTrue("When merging set B with set A, parameter values should be equal.",
-                paramsA.getParameter(ParameterTypes.B).eq(paramsB.getParameter(ParameterTypes.B)));
-        assertFalse("When merging set B with set A, set B should not contain the parameters of set A.",
-                paramsB.contains(ParameterTypes.A));
+        assertTrue(paramsA.contains(ParameterTypes.B),
+                "When merging set B with set A, set A should contain the parameters of set B.");
+        assertTrue(paramsA.getParameter(ParameterTypes.B).eq(paramsB.getParameter(ParameterTypes.B)),
+                "When merging set B with set A, parameter values should be equal.");
+        assertFalse(paramsB.contains(ParameterTypes.A),
+                "When merging set B with set A, set B should not contain the parameters of set A.");
     }
 
 }
