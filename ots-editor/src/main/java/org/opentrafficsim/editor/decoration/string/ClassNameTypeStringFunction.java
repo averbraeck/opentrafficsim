@@ -7,7 +7,7 @@ import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 
 /**
- * In nodes with only a choice as child node, displays the chosen child value.
+ * Displays the simple class name in nodes of ClassNameType.
  * @author wjschakel
  */
 public class ClassNameTypeStringFunction extends AbstractStringFunction
