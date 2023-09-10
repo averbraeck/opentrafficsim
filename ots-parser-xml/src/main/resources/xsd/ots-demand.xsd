@@ -54,14 +54,7 @@
               <xsd:choice>
                 <xsd:element name="Global" type="ots:EmptyType" />
                 <xsd:element name="LinkType" type="ots:string" />
-                <xsd:element name="Origin">
-                  <xsd:complexType>
-                    <xsd:choice>
-                      <xsd:element name="Node" type="ots:string" />
-                      <xsd:element name="Centroid" type="ots:string" />
-                    </xsd:choice>
-                  </xsd:complexType>
-                </xsd:element>
+                <xsd:element name="Origin" type="ots:string" />
                 <xsd:element name="Lane" type="ots:LaneLinkType" />
               </xsd:choice>
               <xsd:element name="DefaultModel" minOccurs="0" maxOccurs="1">
