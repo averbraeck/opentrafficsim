@@ -261,22 +261,6 @@ public class OtsEditor extends JFrame implements EventProducer
         this.attributesTable.setDefaultRenderer(String.class,
                 new AttributeCellRenderer(loadIcon("./Info.png", 12, 12, 16, 16)));
         AttributesCellEditor editor = new AttributesCellEditor();
-        editor.addCellEditorListener(new CellEditorListener()
-        {
-            /** {@inheritDoc} */
-            @Override
-            public void editingStopped(final ChangeEvent e)
-            {
-                setUnsavedChanges(true);
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public void editingCanceled(final ChangeEvent e)
-            {
-                setUnsavedChanges(true);
-            }
-        });
         this.attributesTable.setDefaultEditor(String.class, editor);
         this.attributesTable.addMouseListener(new AttributesMouseListener());
         AttributesTableModel.applyColumnWidth(this.attributesTable);
@@ -423,22 +407,6 @@ public class OtsEditor extends JFrame implements EventProducer
         treeModel.setTreeTable(this.treeTable);
         this.treeTable.setDefaultRenderer(String.class, new StringCellRenderer(this.treeTable));
         ((DefaultCellEditor) this.treeTable.getDefaultEditor(String.class)).setClickCountToStart(1);
-        ((DefaultCellEditor) this.treeTable.getDefaultEditor(String.class)).addCellEditorListener(new CellEditorListener()
-        {
-            /** {@inheritDoc} */
-            @Override
-            public void editingStopped(final ChangeEvent e)
-            {
-                setUnsavedChanges(true);
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public void editingCanceled(final ChangeEvent e)
-            {
-                setUnsavedChanges(true);
-            }
-        });
         XsdTreeTableModel.applyColumnWidth(this.treeTable);
 
         addTreeTableListeners();
@@ -458,13 +426,18 @@ public class OtsEditor extends JFrame implements EventProducer
             @Override
             public void notify(final Event event) throws RemoteException
             {
+                if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
+                {
+                    XsdTreeNode node = (XsdTreeNode) event.getContent();
+                    node.addListener(this, XsdTreeNode.VALUE_CHANGED);
+                    node.addListener(this, XsdTreeNode.OPTION_CHANGED);
+                    node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+                }
                 setUnsavedChanges(true);
             }
         };
         root.addListener(listener, XsdTreeNodeRoot.NODE_CREATED);
         root.addListener(listener, XsdTreeNodeRoot.NODE_REMOVED);
-        root.addListener(listener, XsdTreeNodeRoot.OPTION_CHANGED);
-        root.addListener(listener, XsdTreeNodeRoot.ACTIVATION_CHANGED);
         fireEvent(NEW_FILE, root);
 
         setUnsavedChanges(false);

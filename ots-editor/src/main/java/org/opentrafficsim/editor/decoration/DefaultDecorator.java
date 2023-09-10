@@ -7,12 +7,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import org.djutils.event.Event;
-import org.djutils.event.EventListener;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
-import org.opentrafficsim.editor.XsdTreeNodeRoot;
 import org.opentrafficsim.editor.decoration.string.AttributesStringFunction;
+import org.opentrafficsim.editor.decoration.string.ChoiceNodeStringFunction;
 import org.opentrafficsim.editor.decoration.string.ClassNameTypeStringFunction;
 import org.opentrafficsim.editor.decoration.string.XiIncludeStringFunction;
 import org.opentrafficsim.editor.decoration.validation.ParentValidator;
@@ -80,6 +78,7 @@ public final class DefaultDecorator
         new AttributesStringFunction(editor, "Ots.Network.Link.LaneOverride", "Lane");
         new ClassNameTypeStringFunction(editor);
         new XiIncludeStringFunction(editor);
+        new ChoiceNodeStringFunction(editor);
 
         // validators
         new ParentValidator(editor, "Ots.Definitions.GtuTypes.GtuType");

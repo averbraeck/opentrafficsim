@@ -60,6 +60,16 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                     new ObjectDescriptor("Node", "Node with changed attribute value", XsdTreeNode.class),
                     new ObjectDescriptor("Attribute", "Name of the attribute", String.class)));
 
+    /** Event when an option is changed. */
+    public static final EventType OPTION_CHANGED = new EventType("OPTIONCHANGED", new MetaData("Option changed",
+            "Option changed on node", new ObjectDescriptor("Node", "Newly selected option node", XsdTreeNode.class)));
+
+    /** Event when an option is changed. */
+    public static final EventType ACTIVATION_CHANGED = new EventType("ACTIVATIONCHANGED",
+            new MetaData("Activation changed", "Activation changed on node",
+                    new ObjectDescriptor("Node", "Node with changed activation.", XsdTreeNode.class),
+                    new ObjectDescriptor("Activation", "New activation state.", Boolean.class)));
+
     /** Limit on displayed option name to avoid huge menu's. */
     private static final int MAX_OPTIONNAME_LENGTH = 64;
 
@@ -390,7 +400,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         this.choice.selected = node;
         int index = removeAnyFromParent();
         this.parent.children.add(index, node);
-        ((XsdTreeNodeRoot) getPath().get(0)).fireEvent(XsdTreeNodeRoot.OPTION_CHANGED, node);
+        node.fireEvent(XsdTreeNodeRoot.OPTION_CHANGED, node);
     }
 
     /**
@@ -687,14 +697,18 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     public void setAttributeValue(final String name, final String value)
     {
         assureAttributesAndDescription();
-        this.attributeValues.set(getAttributeIndexByName(name), value);
-        if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
+        int index = getAttributeIndexByName(name);
+        if (!XsdTreeNodeUtil.valuesAreEqual(this.attributeValues.get(index), value))
         {
-            removeChildren();
-            this.children = null;
-            assureChildren();
+            this.attributeValues.set(index, value);
+            if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
+            {
+                removeChildren();
+                this.children = null;
+                assureChildren();
+            }
+            fireEvent(ATTRIBUTE_CHANGED, new Object[] {this, name});
         }
-        fireEvent(ATTRIBUTE_CHANGED, new Object[] {this, name});
     }
 
     /**
@@ -793,8 +807,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             this.active = true;
             if (this.deactivated && !this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
             {
-                ((XsdTreeNodeRoot) getPath().get(0))
-                        .fireEvent(new Event(XsdTreeNodeRoot.ACTIVATION_CHANGED, new Object[] {this, true}));
+                fireEvent(new Event(XsdTreeNodeRoot.ACTIVATION_CHANGED, new Object[] {this, true}));
                 return; // deactivated from an active state in the past; all parts below are already in place
             }
             this.children = null;
@@ -814,7 +827,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                     }
                 }
             }
-            ((XsdTreeNodeRoot) getPath().get(0)).fireEvent(new Event(XsdTreeNodeRoot.OPTION_CHANGED, this, true));
+            fireEvent(new Event(XsdTreeNodeRoot.ACTIVATION_CHANGED, new Object[] {this, true}));
         }
     }
 
@@ -934,8 +947,11 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     {
         Throw.when(!isEditable(), IllegalStateException.class,
                 "Node is not an xsd:simpleType or xsd:complexType with xsd:simpleContent, hence no value is allowed.");
-        this.value = value;
-        fireEvent(new Event(VALUE_CHANGED, this));
+        if (!XsdTreeNodeUtil.valuesAreEqual(this.value, value))
+        {
+            this.value = value;
+            fireEvent(new Event(VALUE_CHANGED, this));
+        }
     }
 
     /**
@@ -1095,8 +1111,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         {
             this.deactivated = true;
             this.active = false;
-            ((XsdTreeNodeRoot) getPath().get(0))
-                    .fireEvent(new Event(XsdTreeNodeRoot.ACTIVATION_CHANGED, new Object[] {this, false}));
+            fireEvent(new Event(XsdTreeNodeRoot.ACTIVATION_CHANGED, new Object[] {this, false}));
             return;
         }
         if (this.ignoreRemove)
@@ -1488,7 +1503,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         return ValueValidator.getBaseType(this.attributeNodes.get(index), this.schema);
     }
-    
+
     /**
      * Returns whether this node is of the type defined by the path.
      * @param path String; path of the type in dotted xpath notation, e.g. "SignalGroup.TrafficLight".
