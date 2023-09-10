@@ -72,10 +72,12 @@ public final class DefaultDecorator
         editor.addTab("Text", null, buildTextPane(), null);
 
         // string functions
-        new AttributesStringFunction(editor, "Ots.Demand.Generator", "Link", "Lane");
-        new AttributesStringFunction(editor, "Ots.Demand.Od.Cell", "Origin", "Destination").setSeparator(" > ");
-        new AttributesStringFunction(editor, ".SpeedLimit", "GtuType", "LegalSpeedLimit");
         new AttributesStringFunction(editor, "Ots.Network.Link.LaneOverride", "Lane");
+        new AttributesStringFunction(editor, ".SpeedLimit", "GtuType", "LegalSpeedLimit");
+        new AttributesStringFunction(editor, "Ots.Demand.Od.Cell", "Origin", "Destination").setSeparator(" > ");
+        new AttributesStringFunction(editor, "Ots.Demand.OdOptions.OdOptionsItem.Markov.State", "GtuType", "Parent",
+                "Correlation");
+        new AttributesStringFunction(editor, "Ots.Demand.Generator", "Link", "Lane");
         new ClassNameTypeStringFunction(editor);
         new XiIncludeStringFunction(editor);
         new ChoiceNodeStringFunction(editor);
@@ -88,8 +90,8 @@ public final class DefaultDecorator
         new StartEndNodeValidator(editor);
 
         new AutomaticLinkId(editor);
-        
-        //new NodeCreatedRemovedPrinter(editor);
+
+        // new NodeCreatedRemovedPrinter(editor);
         new RoadLayoutEditor(editor);
         new OdEditor(editor);
         new RouteEditor(editor);
@@ -158,7 +160,7 @@ public final class DefaultDecorator
         {
             System.out.println("Created: " + node.getPathString());
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public void notifyRemoved(final XsdTreeNode node)
