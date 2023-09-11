@@ -48,9 +48,9 @@ public class KeyValidator implements ValueValidator
 
     /**
      * Constructor.
-     * @param keyNode Node; node defining the xsd:key or xsd:keyref.
+     * @param keyNode Node; node defining the xsd:key, xsd:unique or xsd:keyref.
      * @param keyPath String; path where the key was defined.
-     * @param refer KeyValidator; key that is referred to by an xsd:keyref, {@code null} for an xsd:key.
+     * @param refer KeyValidator; key that is referred to by an xsd:keyref, {@code null} for an xsd:key/xsd:unique.
      */
     public KeyValidator(final Node keyNode, final String keyPath, final KeyValidator refer)
     {
@@ -92,6 +92,33 @@ public class KeyValidator implements ValueValidator
         List<String> values = gatherFields(node);
         if (this.refer == null)
         {
+            if (this.keyNode.getNodeName().equals("xsd:key") && values.contains(null))
+            {
+                List<String> missing = new ArrayList<>();
+                for (int i = 0; i < values.size(); i++)
+                {
+                    if (values.get(i) == null)
+                    {
+                        if (i < this.attributeNames.size())
+                        {
+                            missing.add(this.attributeNames.get(i));
+                        }
+                        else if (i < this.attributeNames.size() + this.childNames.size())
+                        {
+                            missing.add(this.childNames.get(i - this.attributeNames.size()));
+                        }
+                        else
+                        {
+                            missing.add("Value");
+                        }
+                    }
+                }
+                if (missing.size() == 1)
+                {
+                    return "Insufficient number of values, missing " + missing.get(0) + ".";
+                }
+                return "Insufficient number of values, missing " + missing + ".";
+            }
             if (Collections.frequency(getValues(node), values) > 1)
             {
                 if (this.childNames.size() + this.attributeNames.size() == 1)
@@ -159,11 +186,13 @@ public class KeyValidator implements ValueValidator
         }
         for (String child : this.childNames)
         {
-            String fullPath = getTypeString() + "." + child;
-            isType = node.getPathString().endsWith(fullPath);
-            if (isType)
+            for (String path : getTypeString())
             {
-                node.addValueValidator(this);
+                String fullPath = path + "." + child;
+                if (node.getPathString().endsWith(fullPath))
+                {
+                    node.addValueValidator(this);
+                }
             }
         }
     }
@@ -206,20 +235,11 @@ public class KeyValidator implements ValueValidator
     {
         XsdTreeNode context = getContext(node);
         List<List<String>> list = new ArrayList<>();
-        boolean isKey = this.keyNode.getNodeName().equals("xsd:key");
         for (XsdTreeNode otherNode : this.nodes.computeIfAbsent(context, (key) -> new LinkedHashSet<>()))
         {
             if (otherNode.isActive())
             {
-                List<String> nodeList = gatherFields(otherNode);
-                List<String> filtered = new ArrayList<>(nodeList);
-                filtered.removeIf((val) -> val == null || val.isBlank());
-                if (filtered.size() < nodeList.size() && isKey)
-                {
-                    // xsd:key requires all fields to be present, with missing values we cannot compare with this node
-                    continue;
-                }
-                list.add(nodeList);
+                list.add(gatherFields(otherNode));
             }
         }
         return list;
@@ -228,7 +248,7 @@ public class KeyValidator implements ValueValidator
     /**
      * Gathers all the field values, i.e. attribute or child element value. As validators are registered with the node that has
      * the value, attributes are gathered from the given node, while element values are taken from the correctly named children
-     * of the parent.
+     * of the parent. Empty values are returned as {@code null}.
      * @param node XsdTreeNode; node for which to get the information.
      * @return List&lt;String&gt;; field values.
      */
@@ -256,6 +276,7 @@ public class KeyValidator implements ValueValidator
         {
             nodeList.add(node.getValue());
         }
+        nodeList.replaceAll((v) -> "".equals(v) ? null : v);
         return nodeList;
     }
 

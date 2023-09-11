@@ -1,0 +1,105 @@
+package org.opentrafficsim.editor.decoration.validation;
+
+import java.rmi.RemoteException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
+
+import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.XsdTreeNodeUtil;
+import org.opentrafficsim.editor.decoration.AbstractNodeDecorator;
+
+/**
+ * Validates that children nodes are not duplicate within their parent, this node.
+ * @author wjschakel
+ */
+public class NoDuplicateChildrenValidator extends AbstractNodeDecorator implements Function<XsdTreeNode, String>
+{
+
+    /** */
+    private static final long serialVersionUID = 20230910L;
+
+    /** Path location of nodes to attach to. */
+    private final String path;
+
+    /** First attribute to compare. */
+    private final List<String> children;
+
+    /**
+     * Constructor.
+     * @param editor OtsEditor; editor.
+     * @param path String; path location of nodes to attach to.
+     * @param children String...; children each of which may not have duplicates. Use none to check all children.
+     * @throws RemoteException if an exception occurs while adding as a listener.
+     */
+    public NoDuplicateChildrenValidator(final OtsEditor editor, final String path, final String... children)
+            throws RemoteException
+    {
+        super(editor);
+        this.path = path;
+        this.children = Arrays.asList(children);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void notifyCreated(final XsdTreeNode node)
+    {
+        if (this.children.isEmpty())
+        {
+            XsdTreeNode parent = node.getParent();
+            if (parent != null && parent.isType(this.path))
+            {
+                System.out.println("Adding validator to " + node.getPathString());
+                node.addNodeValidator(NoDuplicateChildrenValidator.this);
+            }
+        }
+        else
+        {
+            for (String child : this.children)
+            {
+                if (node.isType(this.path + "." + child))
+                {
+                    System.out.println("Adding validator to " + node.getPathString());
+                    node.addNodeValidator(NoDuplicateChildrenValidator.this);
+                }
+            }
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String apply(final XsdTreeNode node)
+    {
+        if (!node.isActive())
+        {
+            return null;
+        }
+        List<XsdTreeNode> childs = node.getParent().getChildren();
+        if (childs.stream().filter((n) -> nodesEqual(node, n)).count() > 1)
+        {
+            return "Duplicate elements " + node.getNodeName() + " is not allowed.";
+        }
+        return null;
+    }
+    
+    /**
+     * Returns whether the nodes are equal by path string and value.
+     * @param node1 XsdTreeNode; node 1.
+     * @param node2 XsdTreeNode; node 2.
+     * @return whether the nodes are equal by path string and value.
+     */
+    private final static boolean nodesEqual(final XsdTreeNode node1, final XsdTreeNode node2)
+    {
+        if (!node1.getPathString().equals(node2.getPathString()))
+        {
+            return false;
+        }
+        if (!XsdTreeNodeUtil.valuesAreEqual(node1.getValue(), node2.getValue()))
+        {
+            return false;
+        }
+        return true;
+    }
+
+}

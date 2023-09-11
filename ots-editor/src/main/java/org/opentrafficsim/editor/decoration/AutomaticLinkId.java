@@ -32,7 +32,7 @@ public class AutomaticLinkId extends AbstractNodeDecoratorAttribute
         String nodeStart = node.getAttributeValue("NodeStart");
         String nodeEnd = node.getAttributeValue("NodeEnd");
         String id = node.getAttributeValue("Id");
-        if (nodeStart != null && !nodeStart.isBlank() && nodeEnd != null && !nodeEnd.isBlank() && (id == null || id.isBlank()))
+        if (nodeStart != null && !nodeStart.isEmpty() && nodeEnd != null && !nodeEnd.isEmpty() && (id == null || id.isEmpty()))
         {
             node.setAttributeValue("Id", nodeStart + "-" + nodeEnd);
         }

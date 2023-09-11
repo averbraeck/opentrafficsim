@@ -51,12 +51,12 @@ public class AttributesNotEqualValidator extends AbstractNodeDecorator implement
             return null;
         }
         String startNode = node.getAttributeValue(this.attribute1);
-        if (startNode == null || startNode.isBlank())
+        if (startNode == null || startNode.isEmpty())
         {
             return null;
         }
         String endNode = node.getAttributeValue(this.attribute2);
-        if (endNode == null || endNode.isBlank() || !endNode.equals(startNode))
+        if (endNode == null || endNode.isEmpty() || !endNode.equals(startNode))
         {
             return null;
         }

@@ -59,7 +59,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
             String baseType = node.getAttributeBaseType(row);
             if ("xsd:boolean".equals(baseType))
             {
-                String message = node.reportInvalidAttributeValue(row);
+                String message = node.isSelfValid() ? null : node.reportInvalidAttributeValue(row);
                 if (message != null)
                 {
                     this.checkBox.setToolTipText(OtsEditor.limitTooltip(message));
@@ -127,7 +127,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
         setForeground(showingDefault ? OtsEditor.INACTIVE_COLOR : UIManager.getColor("Table.foreground"));
         if (table.convertColumnIndexToModel(column) == 1)
         {
-            String message = node.reportInvalidAttributeValue(row);
+            String message = node.isSelfValid() ? null : node.reportInvalidAttributeValue(row);
             if (message != null)
             {
                 setToolTipText(OtsEditor.limitTooltip(message));
@@ -135,7 +135,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
             }
             else
             {
-                setToolTipText(value == null || value.toString().isBlank() ? null : value.toString());
+                setToolTipText(value == null || value.toString().isEmpty() ? null : value.toString());
                 if (node.isInclude())
                 {
                     setBackground(UIManager.getColor("Panel.background"));

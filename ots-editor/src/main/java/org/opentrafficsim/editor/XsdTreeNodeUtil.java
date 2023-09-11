@@ -365,7 +365,7 @@ public final class XsdTreeNodeUtil
      * @param value2 String; value 2.
      * @return whether the two values are equal, where {@code null} is consider equal to an empty string.
      */
-    static boolean valuesAreEqual(final String value1, final String value2)
+    public static boolean valuesAreEqual(final String value1, final String value2)
     {
         boolean value1Empty = value1 == null || value1.isEmpty();
         boolean value2Empty = value2 == null || value2.isEmpty();

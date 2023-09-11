@@ -59,7 +59,7 @@ public interface ValueValidator
             // no children and no type, this is a plain tag, e.g. <Straight />, it needs no input.
             return null;
         }
-        if (value == null || value.isBlank())
+        if (value == null || value.isEmpty())
         {
             return "Value is empty.";
         }
@@ -74,7 +74,7 @@ public interface ValueValidator
      */
     static String reportInvalidInclude(final String value, final String directory)
     {
-        if (value == null || value.isBlank())
+        if (value == null || value.isEmpty())
         {
             return "Value is empty.";
         }
@@ -104,11 +104,11 @@ public interface ValueValidator
     static String reportInvalidAttributeValue(final Node xsdNode, final String value, final Schema schema)
     {
         String use = DocumentReader.getAttribute(xsdNode, "use");
-        if ("required".equals(use) && (value == null || value.isBlank()))
+        if ("required".equals(use) && (value == null || value.isEmpty()))
         {
             return "Required value is empty.";
         }
-        if (value == null || value.isBlank())
+        if (value == null || value.isEmpty())
         {
             return null;
         }

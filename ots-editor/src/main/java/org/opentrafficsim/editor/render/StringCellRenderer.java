@@ -57,8 +57,8 @@ public class StringCellRenderer extends JLabel implements TableCellRenderer
             int idColumn = this.treeTable.convertColumnIndexToView(1);
             int valueColumn = this.treeTable.convertColumnIndexToView(2);
             XsdTreeNode node = (XsdTreeNode) this.treeTable.getValueAt(row, treeColumn);
-            String message =
-                    column == idColumn ? node.reportInvalidId() : (column == valueColumn ? node.reportInvalidValue() : null);
+            String message = node.isSelfValid() ? null : (column == idColumn ? node.reportInvalidId()
+                    : (column == valueColumn ? node.reportInvalidValue() : null));
             if (this.treeTable.isCellEditable(row, column))
             {
                 if (message != null)
@@ -69,7 +69,7 @@ public class StringCellRenderer extends JLabel implements TableCellRenderer
                 else
                 {
                     setToolTipText(OtsEditor
-                            .limitTooltip(!val.isBlank() && (column == idColumn || column == valueColumn) ? val : null));
+                            .limitTooltip(!val.isEmpty() && (column == idColumn || column == valueColumn) ? val : null));
                     boolean expression = column == idColumn ? node.idIsExpression()
                             : (column == valueColumn ? node.valueIsExpression() : false);
                     if (expression)

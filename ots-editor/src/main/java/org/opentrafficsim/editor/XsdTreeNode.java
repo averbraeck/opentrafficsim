@@ -176,6 +176,9 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /** The description, may be {@code null}. */
     private String description;
 
+    /** Validators for the node itself, e.g. duplicate in parent check. */
+    private Set<Function<XsdTreeNode, String>> nodeValidators = new LinkedHashSet<>();
+
     /** Validators for the value. */
     private Set<ValueValidator> valueValidators = new LinkedHashSet<>();
 
@@ -503,7 +506,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         this.children = new ArrayList<>();
         if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
         {
-            if (this.attributeValues == null || this.attributeValues.get(0) == null || this.attributeValues.get(0).isBlank())
+            if (this.attributeValues == null || this.attributeValues.get(0) == null || this.attributeValues.get(0).isEmpty())
             {
                 return;
             }
@@ -558,6 +561,15 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 index++;
             }
         }
+    }
+
+    /**
+     * Returns the parent node.
+     * @return parent node, is {@code null} for the root.
+     */
+    public XsdTreeNode getParent()
+    {
+        return this.parent;
     }
 
     // ====== Attributes ======
@@ -1243,15 +1255,19 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
-     * Returns whether the node, and all its children recursively, is valid. This means all required values are supplied, and
-     * all supplied values comply to their respective types and constraints.
-     * @return boolean; whether the node is valid.
+     * Returns whether the contents of the attributes, value and other aspects of the node itself are valid. This excludes child
+     * nodes.
+     * @return whether the contents of the attributes, value and other aspects of the node itself are valid.
      */
-    public boolean isValid()
+    public boolean isSelfValid()
     {
         if (!this.active)
         {
             return true;
+        }
+        if (reportInvalidNode() != null)
+        {
+            return false;
         }
         if (reportInvalidValue() != null)
         {
@@ -1264,7 +1280,21 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 return false;
             }
         }
+        return true;
+    }
+
+    /**
+     * Returns whether the node, and all its children recursively, is valid. This means all required values are supplied, and
+     * all supplied values comply to their respective types and constraints.
+     * @return boolean; whether the node is valid.
+     */
+    public boolean isValid()
+    {
         // TODO: check whether node should have children if there are none; can we do this without already exploding the tree?
+        if (!isSelfValid())
+        {
+            return false;
+        }
         if (this.children != null)
         {
             for (XsdTreeNode child : this.children)
@@ -1342,6 +1372,15 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
+     * Adds a validator for the node.
+     * @param validator Function&lt;XsdTreeNode, String&gt;; validator.
+     */
+    public void addNodeValidator(final Function<XsdTreeNode, String> validator)
+    {
+        this.nodeValidators.add(validator);
+    }
+
+    /**
      * Adds a validator for the value.
      * @param validator ValueValidator; validator.
      */
@@ -1375,6 +1414,24 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
+     * Returns a message why the node is invalid, or {@code null} if it is valid. This only concerns validators on node level,
+     * i.e. not on attribute or value level. E.g. because the node is duplicate in its parent.
+     * @return String; message why the id is invalid, or {@code null} if it is valid.
+     */
+    public String reportInvalidNode()
+    {
+        for (Function<XsdTreeNode, String> validator : this.nodeValidators)
+        {
+            String message = validator.apply(this);
+            if (message != null)
+            {
+                return message;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Returns a message why the value is invalid, or {@code null} if it is valid.
      * @return String; message why the value is invalid, or {@code null} if it is valid.
      */
@@ -1384,7 +1441,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         {
             return null;
         }
-        if (this.value != null && !this.value.isBlank())
+        if (this.value != null && !this.value.isEmpty())
         {
             for (ValueValidator validator : this.valueValidators)
             {
@@ -1416,7 +1473,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         String attribute = DocumentReader.getAttribute(getAttributeNode(index), "name");
         String val = this.attributeValues.get(index);
-        if (val != null && !val.isBlank())
+        if (val != null && !val.isEmpty())
         {
             for (ValueValidator validator : this.attributeValidators.computeIfAbsent(attribute, (key) -> new LinkedHashSet<>()))
             {
@@ -1698,7 +1755,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         {
             Element element = document.createElement(getNodeName());
             xmlParent.appendChild(element);
-            if (this.attributeValues != null && this.attributeValues.get(0) != null && !this.attributeValues.get(0).isBlank())
+            if (this.attributeValues != null && this.attributeValues.get(0) != null && !this.attributeValues.get(0).isEmpty())
             {
                 element.setAttribute("href", this.attributeValues.get(0));
             }
@@ -1718,7 +1775,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         Element element = document.createElement("ots:" + getNodeName());
         xmlParent.appendChild(element);
 
-        if (this.value != null && !this.value.isBlank())
+        if (this.value != null && !this.value.isEmpty())
         {
             element.setTextContent(this.value);
         }
@@ -1726,7 +1783,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         for (int index = 0; index < this.attributeCount(); index++)
         {
             String attributeValue = this.attributeValues.get(index);
-            if (attributeValue != null && !attributeValue.isBlank())
+            if (attributeValue != null && !attributeValue.isEmpty())
             {
                 element.setAttribute(getAttributeNameByIndex(index), attributeValue);
             }
@@ -1762,7 +1819,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 }
             }
         }
-        if (!candidateValue.isBlank())
+        if (!candidateValue.isEmpty())
         {
             this.value = candidateValue;
         }

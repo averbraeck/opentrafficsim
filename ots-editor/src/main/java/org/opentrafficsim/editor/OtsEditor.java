@@ -56,8 +56,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.event.CellEditorListener;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.event.TreeExpansionEvent;
@@ -134,7 +132,7 @@ public class OtsEditor extends JFrame implements EventProducer
 
     /** Color for invalid nodes and values (background). */
     public static final Color INVALID_COLOR = new Color(255, 240, 240);
-    
+
     /** Color for expression nodes and values (background). */
     public static final Color EXPRESSION_COLOR = new Color(252, 250, 239);
 
@@ -505,6 +503,7 @@ public class OtsEditor extends JFrame implements EventProducer
         });
 
         // this listener makes sure that a choice popup can be presented again after a left-click on an expansion/collapse node
+        // it also shows the tooltip in tree nodes
         this.treeTable.addMouseMotionListener(new MouseMotionAdapter()
         {
             /** {@inheritDoc} */
@@ -512,6 +511,15 @@ public class OtsEditor extends JFrame implements EventProducer
             public void mouseMoved(final MouseEvent e)
             {
                 OtsEditor.this.mayPresentChoice = true;
+                
+                // ToolTip
+                int row = OtsEditor.this.treeTable.rowAtPoint(e.getPoint());
+                int col = OtsEditor.this.treeTable.convertColumnIndexToView(0); // columns may have been moved in view
+                XsdTreeNode treeNode = (XsdTreeNode) OtsEditor.this.treeTable.getValueAt(row, col);
+                if (!treeNode.isSelfValid())
+                {
+                    OtsEditor.this.treeTable.getTree().setToolTipText(treeNode.reportInvalidNode());
+                }
             }
         });
 
@@ -1084,7 +1092,7 @@ public class OtsEditor extends JFrame implements EventProducer
      */
     private static List<String> filterOptions(final List<String> options, final String currentValue)
     {
-        return options.stream().filter((val) -> currentValue == null || currentValue.isBlank() || val.startsWith(currentValue))
+        return options.stream().filter((val) -> currentValue == null || currentValue.isEmpty() || val.startsWith(currentValue))
                 .distinct().sorted().collect(Collectors.toList());
     }
 

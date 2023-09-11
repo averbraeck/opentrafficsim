@@ -37,7 +37,7 @@ public class ClassNameTypeStringFunction extends AbstractStringFunction
             public String apply(final XsdTreeNode node)
             {
                 String value = node.getValue();
-                if (value == null || value.isBlank())
+                if (value == null || value.isEmpty())
                 {
                     return "";
                 }

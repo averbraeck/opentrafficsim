@@ -80,7 +80,7 @@ public class AttributesCellEditor extends DefaultCellEditor
             XsdTreeNode node = ((AttributesTableModel) table.getModel()).getNode();
             if ("xsd:boolean".equals(node.getAttributeBaseType(row)))
             {
-                String message = node.reportInvalidAttributeValue(row);
+                String message = node.isSelfValid() ? null : node.reportInvalidAttributeValue(row);
                 if (message != null)
                 {
                     this.checkBox.setToolTipText(OtsEditor.limitTooltip(message));

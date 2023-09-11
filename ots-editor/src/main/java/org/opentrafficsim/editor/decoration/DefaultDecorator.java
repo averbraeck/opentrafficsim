@@ -13,8 +13,9 @@ import org.opentrafficsim.editor.decoration.string.AttributesStringFunction;
 import org.opentrafficsim.editor.decoration.string.ChoiceNodeStringFunction;
 import org.opentrafficsim.editor.decoration.string.ClassNameTypeStringFunction;
 import org.opentrafficsim.editor.decoration.string.XiIncludeStringFunction;
-import org.opentrafficsim.editor.decoration.validation.ParentValidator;
 import org.opentrafficsim.editor.decoration.validation.AttributesNotEqualValidator;
+import org.opentrafficsim.editor.decoration.validation.NoDuplicateChildrenValidator;
+import org.opentrafficsim.editor.decoration.validation.ParentValidator;
 import org.opentrafficsim.editor.extensions.OdEditor;
 import org.opentrafficsim.editor.extensions.RoadLayoutEditor;
 import org.opentrafficsim.editor.extensions.RouteEditor;
@@ -75,7 +76,7 @@ public final class DefaultDecorator
         // string functions
         new AttributesStringFunction(editor, "Ots.Network.Link.LaneOverride", "Lane");
         new AttributesStringFunction(editor, ".SpeedLimit", "GtuType", "LegalSpeedLimit");
-        new AttributesStringFunction(editor, "Ots.Demand.Od.Cell", "Origin", "Destination").setSeparator(" > ");
+        new AttributesStringFunction(editor, "Ots.Demand.Od.Cell", "Origin", "Category", "Destination").setSeparator(" > ");
         new AttributesStringFunction(editor, "Ots.Demand.OdOptions.OdOptionsItem.Markov.State", "GtuType", "Parent",
                 "Correlation");
         new AttributesStringFunction(editor, "Ots.Demand.Generator", "Link", "Lane");
@@ -89,7 +90,9 @@ public final class DefaultDecorator
         new ParentValidator(editor, "Ots.Definitions.LaneTypes.LaneType");
         new ParentValidator(editor, "Ots.Definitions.DetectorTypes.DetectorType");
         new AttributesNotEqualValidator(editor, "Ots.Network.Link", "NodeStart", "NodeEnd");
-        new AttributesNotEqualValidator(editor, "Ots.Demand.Od.Cell", "Origin", "Destination");
+        new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.MandatoryIncentives");
+        new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.VoluntaryIncentives");
+        new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.AccelerationIncentives");
 
         new AutomaticLinkId(editor);
 

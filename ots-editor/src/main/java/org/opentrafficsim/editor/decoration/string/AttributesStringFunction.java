@@ -61,7 +61,7 @@ public class AttributesStringFunction extends AbstractStringFunction
                 for (String attribute : AttributesStringFunction.this.attributes)
                 {
                     String value = node.getAttributeValue(attribute);
-                    if (value != null)
+                    if (value != null && !value.isEmpty())
                     {
                         out = out + sep + value;
                         sep = AttributesStringFunction.this.separator;
