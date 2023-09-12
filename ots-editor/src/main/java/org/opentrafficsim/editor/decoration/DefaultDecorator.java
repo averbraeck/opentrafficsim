@@ -12,6 +12,7 @@ import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.decoration.string.AttributesStringFunction;
 import org.opentrafficsim.editor.decoration.string.ChoiceNodeStringFunction;
 import org.opentrafficsim.editor.decoration.string.ClassNameTypeStringFunction;
+import org.opentrafficsim.editor.decoration.string.OdOptionsItemStringFunction;
 import org.opentrafficsim.editor.decoration.string.XiIncludeStringFunction;
 import org.opentrafficsim.editor.decoration.validation.AttributesNotEqualValidator;
 import org.opentrafficsim.editor.decoration.validation.NoDuplicateChildrenValidator;
@@ -83,6 +84,7 @@ public final class DefaultDecorator
         new ClassNameTypeStringFunction(editor);
         new XiIncludeStringFunction(editor);
         new ChoiceNodeStringFunction(editor);
+        new OdOptionsItemStringFunction(editor);
 
         // validators
         new ParentValidator(editor, "Ots.Definitions.GtuTypes.GtuType");
