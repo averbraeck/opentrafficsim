@@ -1815,7 +1815,11 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             {
                 if (nodeXml.getChildNodes().item(indexXml).getNodeName().equals("#text"))
                 {
-                    candidateValue += nodeXml.getChildNodes().item(indexXml).getNodeValue();
+                    String value = nodeXml.getChildNodes().item(indexXml).getNodeValue();
+                    if (!value.isBlank())
+                    {
+                        candidateValue += value;
+                    }
                 }
             }
         }
