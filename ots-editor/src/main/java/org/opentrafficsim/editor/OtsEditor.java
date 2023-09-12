@@ -24,6 +24,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -511,7 +514,7 @@ public class OtsEditor extends JFrame implements EventProducer
             public void mouseMoved(final MouseEvent e)
             {
                 OtsEditor.this.mayPresentChoice = true;
-                
+
                 // ToolTip
                 int row = OtsEditor.this.treeTable.rowAtPoint(e.getPoint());
                 int col = OtsEditor.this.treeTable.convertColumnIndexToView(0); // columns may have been moved in view
@@ -984,16 +987,7 @@ public class OtsEditor extends JFrame implements EventProducer
     private void saveFileAs()
     {
         FileDialog fileDialog = new FileDialog(this, "Save XML", FileDialog.SAVE);
-        fileDialog.setFile(this.lastFile == null ? "*.xml" : this.lastFile);
-        fileDialog.setFilenameFilter(new FilenameFilter()
-        {
-            /** {@inheritDoc} */
-            @Override
-            public boolean accept(final File dir, final String name)
-            {
-                return name.toLowerCase().endsWith(".xml");
-            }
-        });
+        fileDialog.setFile("*.xml");
         fileDialog.setVisible(true);
         String fileName = fileDialog.getFile();
         if (fileName == null)
@@ -1042,9 +1036,17 @@ public class OtsEditor extends JFrame implements EventProducer
 
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             transformer.transform(new DOMSource(document), result);
 
             fileOutputStream.close();
+            // this fixed a bug with missing new line
+            Path path = Path.of(directory, fileName);
+            String content = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+            content = content.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+                    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + System.lineSeparator());
+            Files.write(path, content.getBytes(StandardCharsets.UTF_8));
+            // end of fix
             setUnsavedChanges(false);
             root.setDirectory(this.lastDirectory);
         }
