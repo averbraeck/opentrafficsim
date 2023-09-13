@@ -718,7 +718,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         int index = getAttributeIndexByName(name);
         if (!XsdTreeNodeUtil.valuesAreEqual(this.attributeValues.get(index), value))
         {
-            this.attributeValues.set(index, value);
+            this.attributeValues.set(index, (value == null || value.isEmpty()) ? null : value);
             if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
             {
                 removeChildren();
@@ -970,7 +970,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 "Node is not an xsd:simpleType or xsd:complexType with xsd:simpleContent, hence no value is allowed.");
         if (!XsdTreeNodeUtil.valuesAreEqual(this.value, value))
         {
-            this.value = value;
+            this.value = (value == null || value.isEmpty()) ? null : value;
             invalidate();
             fireEvent(new Event(VALUE_CHANGED, this));
         }
@@ -1540,6 +1540,12 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public List<String> getValueRestrictions()
     {
+        Node relevantNode = this.referringXsdNode == null ? this.xsdNode : this.referringXsdNode;
+        if ("ots:boolean".equals(DocumentReader.getAttribute(relevantNode, "type"))
+                || "xsd:boolean".equals(DocumentReader.getAttribute(relevantNode, "type")))
+        {
+            return List.of("true", "false");
+        }
         List<String> valueOptions = getOptionsFromValidators(this.valueValidators, getNodeName()); // TODO: add "." or "ots:"
         if (!valueOptions.isEmpty())
         {
@@ -1555,6 +1561,10 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public List<String> getAttributeRestrictions(final int index)
     {
+        if ("ots:boolean".equals(DocumentReader.getAttribute(this.attributeNodes.get(index), "type")))
+        {
+            return List.of("true", "false");
+        }
         String field = getAttributeNameByIndex(index);
         List<String> valueOptions = getOptionsFromValidators(
                 this.attributeValidators.computeIfAbsent(field, (key) -> new LinkedHashSet<>()), field); // TODO: add "@"

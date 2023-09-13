@@ -74,7 +74,6 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
                     }
                     else if (node.attributeIsExpression(row))
                     {
-                        // TODO: we could never set an expression on a checkbox
                         this.checkBox.setBackground(OtsEditor.EXPRESSION_COLOR);
                     }
                     else
@@ -93,6 +92,15 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
                 {
                     this.checkBox.setSelected(value.toString().equalsIgnoreCase("true"));
                     this.checkBox.setText("");
+                }
+                // All xsd:boolean attributes under Ots.Definitions are 'Default' that should be disabled and false by default.
+                if (node.getPathString().startsWith("Ots.Definitions"))
+                {
+                    this.checkBox.setEnabled(false);
+                }
+                else
+                {
+                    this.checkBox.setEnabled(true);
                 }
                 return this.checkBox;
             }
