@@ -24,6 +24,7 @@ public class ClassNameTypeStringFunction extends AbstractStringFunction
     public ClassNameTypeStringFunction(final OtsEditor editor) throws RemoteException
     {
         super(editor, (node) -> node.isType("ClassNameType"));
+        this.overwrite = false;
     }
 
     /** {@inheritDoc} */

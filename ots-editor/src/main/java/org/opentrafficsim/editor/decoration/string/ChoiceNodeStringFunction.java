@@ -74,13 +74,13 @@ public class ChoiceNodeStringFunction extends AbstractNodeDecorator
         {
             node.setStringFunction(new Function<XsdTreeNode, String>()
             {
-
+                /** {@inheritDoc} */
                 @Override
                 public String apply(final XsdTreeNode node)
                 {
-                    return node.getChild(0).getNodeName();
+                    return node.getChild(0).toString();
                 }
-            });
+            }, false);
         }
     }
 

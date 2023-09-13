@@ -25,6 +25,7 @@ public class XiIncludeStringFunction extends AbstractStringFunction
     public XiIncludeStringFunction(final OtsEditor editor) throws RemoteException
     {
         super(editor, (node) -> node.getNodeName().equals("xi:include"));
+        this.overwrite = false;
     }
 
     /** {@inheritDoc} */

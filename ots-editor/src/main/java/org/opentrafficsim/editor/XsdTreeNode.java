@@ -1651,10 +1651,14 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * This function can be set externally and supplies an additional {@code String} to clarify this node in the tree.
      * @param stringFunction Function&lt;XsdTreeNode, String&gt; string function.
+     * @param overwrite boolean; overwrite existing. When {@code true}, a possible existing string function is overwritten. 
      */
-    public void setStringFunction(final Function<XsdTreeNode, String> stringFunction)
+    public void setStringFunction(final Function<XsdTreeNode, String> stringFunction, final boolean overwrite)
     {
-        this.stringFunction = stringFunction;
+        if (this.stringFunction == null || overwrite)
+        {
+            this.stringFunction = stringFunction;
+        }
     }
 
     /**

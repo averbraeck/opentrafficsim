@@ -81,10 +81,11 @@ public final class DefaultDecorator
         new AttributesStringFunction(editor, "Ots.Demand.OdOptions.OdOptionsItem.Markov.State", "GtuType", "Parent",
                 "Correlation");
         new AttributesStringFunction(editor, "Ots.Demand.Generator", "Link", "Lane");
+        new AttributesStringFunction(editor, ".LaneBias", "GtuType");
+        new OdOptionsItemStringFunction(editor);
         new ClassNameTypeStringFunction(editor);
         new XiIncludeStringFunction(editor);
         new ChoiceNodeStringFunction(editor);
-        new OdOptionsItemStringFunction(editor);
 
         // validators
         new ParentValidator(editor, "Ots.Definitions.GtuTypes.GtuType");

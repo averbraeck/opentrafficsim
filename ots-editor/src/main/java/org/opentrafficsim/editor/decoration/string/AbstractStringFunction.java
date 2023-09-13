@@ -20,6 +20,9 @@ public abstract class AbstractStringFunction extends AbstractNodeDecorator
 
     /** Predicate to accept nodes that should have this string function. */
     private final Predicate<XsdTreeNode> predicate;
+    
+    /** Overwrite existing string functions. */
+    protected boolean overwrite = true;
 
     /**
      * Constructor.
@@ -39,7 +42,7 @@ public abstract class AbstractStringFunction extends AbstractNodeDecorator
     {
         if (AbstractStringFunction.this.predicate.test(node))
         {
-            node.setStringFunction(getStringFunction());
+            node.setStringFunction(getStringFunction(), this.overwrite);
         }
     }
 
