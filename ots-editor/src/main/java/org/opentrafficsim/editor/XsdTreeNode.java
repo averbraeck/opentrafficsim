@@ -1540,6 +1540,12 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public List<String> getValueRestrictions()
     {
+        Node relevantNode = this.referringXsdNode == null ? this.xsdNode : this.referringXsdNode;
+        if ("ots:boolean".equals(DocumentReader.getAttribute(relevantNode, "type"))
+                || "xsd:boolean".equals(DocumentReader.getAttribute(relevantNode, "type")))
+        {
+            return List.of("true", "false");
+        }
         List<String> valueOptions = getOptionsFromValidators(this.valueValidators, getNodeName()); // TODO: add "." or "ots:"
         if (!valueOptions.isEmpty())
         {
@@ -1555,6 +1561,10 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public List<String> getAttributeRestrictions(final int index)
     {
+        if ("ots:boolean".equals(DocumentReader.getAttribute(this.attributeNodes.get(index), "type")))
+        {
+            return List.of("true", "false");
+        }
         String field = getAttributeNameByIndex(index);
         List<String> valueOptions = getOptionsFromValidators(
                 this.attributeValidators.computeIfAbsent(field, (key) -> new LinkedHashSet<>()), field); // TODO: add "@"

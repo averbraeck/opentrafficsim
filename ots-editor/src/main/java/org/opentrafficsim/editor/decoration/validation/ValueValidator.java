@@ -138,7 +138,7 @@ public interface ValueValidator
     {
         List<String> baseType = new ArrayList<>();
         reportTypeNonCompliance(xsdNode, xsdNode, "type", null, schema, null, baseType);
-        return baseType.get(0);
+        return baseType.get(baseType.size() - 1);
     }
 
     /**
