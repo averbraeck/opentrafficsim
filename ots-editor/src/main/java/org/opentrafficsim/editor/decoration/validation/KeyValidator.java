@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.djutils.event.Event;
@@ -63,6 +64,9 @@ public class KeyValidator implements ValueValidator, EventListener
 
     /** Key validators (xsd:keyref) that are using this key validator (xsd:key) to validate. */
     private Set<KeyValidator> listeningKeyrefValidators = new LinkedHashSet<>();
+
+    /** Mapping of keyref node in this key validator to the key node its coupled with in some other key validator. */
+    private Map<XsdTreeNode, XsdTreeNode> coupledKeyrefNodes = new LinkedHashMap<>();
 
     /**
      * Constructor.
@@ -143,7 +147,7 @@ public class KeyValidator implements ValueValidator, EventListener
                 return "Insufficient number of values, missing " + missing + ".";
             }
             // xsd:key or xsd:unique; all must be present allowing null==null on xsd:unique as was captured above for xsd:key.
-            if (Collections.frequency(getValues(node), values) > 1)
+            if (Collections.frequency(getValues(node).values(), values) > 1)
             {
                 if (this.childNames.size() + this.attributeNames.size() == 1)
                 {
@@ -155,10 +159,19 @@ public class KeyValidator implements ValueValidator, EventListener
             return null;
         }
         // xsd:keyref referred value is present ?
-        if (this.refer.getValues(node).contains(values))
+        Map<XsdTreeNode, List<String>> valueMap = this.refer.getValues(node);
+        if (valueMap.containsValue(values))
         {
+            for (Entry<XsdTreeNode, List<String>> entry : valueMap.entrySet())
+            {
+                if (values.equals(entry.getValue()))
+                {
+                    this.coupledKeyrefNodes.put(node, entry.getKey());
+                }
+            }
             return null;
         }
+        this.coupledKeyrefNodes.remove(node);
         if (values.size() == 1)
         {
             String value = values.get(0);
@@ -321,20 +334,20 @@ public class KeyValidator implements ValueValidator, EventListener
     /**
      * Returns the present values of the fields for each node within the given context.
      * @param node XsdTreeNode; node that is in the right context.
-     * @return List&lt;List&lt;String&gt;&gt;; list of all values.
+     * @return Map&lt;XsdTreeNode, List&lt;String&gt;&gt;; list of all values per key node.
      */
-    private List<List<String>> getValues(final XsdTreeNode node)
+    private Map<XsdTreeNode, List<String>> getValues(final XsdTreeNode node)
     {
         XsdTreeNode context = getContext(node);
-        List<List<String>> list = new ArrayList<>();
+        Map<XsdTreeNode, List<String>> map = new LinkedHashMap<>();
         for (XsdTreeNode otherNode : this.nodes.computeIfAbsent(context, (key) -> new LinkedHashSet<>()))
         {
             if (otherNode.isActive())
             {
-                list.add(gatherFields(otherNode));
+                map.put(otherNode, gatherFields(otherNode));
             }
         }
-        return list;
+        return map;
     }
 
     /**
@@ -386,9 +399,9 @@ public class KeyValidator implements ValueValidator, EventListener
          * Can the context of the referred xsd:key be different?
          */
         int index = getIndex(field);
-        List<List<String>> values = this.refer.getValues(node);
+        Map<XsdTreeNode, List<String>> values = this.refer.getValues(node);
         List<String> result = new ArrayList<>(values.size());
-        values.forEach((list) -> result.add(list.get(index)));
+        values.forEach((n, list) -> result.add(list.get(index)));
         result.removeIf((v) -> v == null || v.isEmpty());
         return result;
     }
@@ -465,6 +478,8 @@ public class KeyValidator implements ValueValidator, EventListener
             {
                 for (XsdTreeNode node : keyref.valueValidating)
                 {
+                    XsdTreeNode keyNode = (XsdTreeNode) ((Object[]) event.getContent())[0];
+                    updateReferringKeyrefs(keyNode, this.attributeNames.size() + this.childNames.size(), keyNode.getValue());
                     node.invalidate();
                 }
             }
@@ -479,7 +494,38 @@ public class KeyValidator implements ValueValidator, EventListener
                 {
                     for (XsdTreeNode node : keyref.attributeValidating.get(attribute))
                     {
+                        XsdTreeNode keyNode = (XsdTreeNode) content[0];
+                        String newValue = keyNode.getAttributeValue(attribute);
+                        int fieldIndex = this.attributeNames.indexOf(attribute);
+                        updateReferringKeyrefs(keyNode, fieldIndex, newValue);
                         node.invalidate();
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Update value in nodes that refer with xsd:keyref to a value that was changed.
+     * @param node XsdTreeNode; node on which the value was changed.
+     * @param fieldIndex int; index of field that was changed.
+     * @param newValue String; new value.
+     */
+    private void updateReferringKeyrefs(final XsdTreeNode node, final int fieldIndex, final String newValue)
+    {
+        for (KeyValidator validator : this.listeningKeyrefValidators)
+        {
+            for (Entry<XsdTreeNode, XsdTreeNode> entry : validator.coupledKeyrefNodes.entrySet())
+            {
+                if (entry.getValue().equals(node))
+                {
+                    if (fieldIndex < validator.attributeNames.size())
+                    {
+                        entry.getKey().setAttributeValue(validator.attributeNames.get(fieldIndex), newValue);
+                    }
+                    else
+                    {
+                        entry.getKey().setValue(newValue);
                     }
                 }
             }

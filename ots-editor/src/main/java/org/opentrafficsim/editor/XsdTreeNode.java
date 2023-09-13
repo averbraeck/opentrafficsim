@@ -1625,7 +1625,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         {
             if (this.parent == null)
             {
-                return false; // node was just deleted but still visible and thus validated
+                return false; // Node was deleted, but is still visible in the GUI tree for a moment
             }
             isType = isType(path.substring(dot + 1)) && this.parent.isType(path.substring(0, dot));
             if (isType)

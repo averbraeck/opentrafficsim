@@ -370,21 +370,21 @@
 
     <xsd:keyref name="shortestRouteFromNodeIdRef" refer="ots:nodeOrCentroidKey">
       <xsd:selector xpath=".//ots:Demand/ots:ShortestRoute/ots:From" />
-      <xsd:field xpath="@Node" />
+      <xsd:field xpath="." />
     </xsd:keyref>
 
     <!-- ShortestRoute.To defined by Node.Id -->
 
     <xsd:keyref name="shortestRouteToNodeIdRef" refer="ots:nodeOrCentroidKey">
       <xsd:selector xpath=".//ots:Demand/ots:ShortestRoute/ots:To" />
-      <xsd:field xpath="@Node" />
+      <xsd:field xpath="." />
     </xsd:keyref>
 
     <!-- ShortestRoute.Via defined by Node.Id -->
 
     <xsd:keyref name="shortestRouteViaNodeIdRef" refer="ots:nodeKey">
       <xsd:selector xpath=".//ots:Demand/ots:ShortestRoute/ots:Via" />
-      <xsd:field xpath="@Node" />
+      <xsd:field xpath="." />
     </xsd:keyref>
 
     <!-- ShortestRoute.GtuType defined by GtuType.Id -->

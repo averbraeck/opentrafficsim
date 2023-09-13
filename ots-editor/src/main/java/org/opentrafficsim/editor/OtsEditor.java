@@ -432,7 +432,16 @@ public class OtsEditor extends JFrame implements EventProducer
                     XsdTreeNode node = (XsdTreeNode) event.getContent();
                     node.addListener(this, XsdTreeNode.VALUE_CHANGED);
                     node.addListener(this, XsdTreeNode.OPTION_CHANGED);
+                    node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
                     node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+                }
+                else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
+                {
+                    XsdTreeNode node = (XsdTreeNode) event.getContent();
+                    node.removeListener(this, XsdTreeNode.VALUE_CHANGED);
+                    node.removeListener(this, XsdTreeNode.OPTION_CHANGED);
+                    node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+                    node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
                 }
                 setUnsavedChanges(true);
             }

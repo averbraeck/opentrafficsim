@@ -66,7 +66,6 @@ import org.opentrafficsim.xml.generated.GtuTemplateMix;
 import org.opentrafficsim.xml.generated.RouteMix;
 import org.opentrafficsim.xml.generated.ShortestRoute;
 import org.opentrafficsim.xml.generated.ShortestRoute.Cost;
-import org.opentrafficsim.xml.generated.ShortestRoute.Via;
 import org.opentrafficsim.xml.generated.ShortestRouteMix;
 import org.opentrafficsim.xml.generated.Sink;
 
@@ -136,18 +135,18 @@ public final class DemandParser
             Throw.when(gtuType == null, NetworkException.class, "GtuType %s not found in ShortestRoute %s",
                     shortestRouteTag.getGtuType(), shortestRouteTag.getId());
             Route route = new Route(shortestRouteTag.getId(), gtuType);
-            String nodeFromId = shortestRouteTag.getFrom().getNode().get(inputParameters);
+            String nodeFromId = shortestRouteTag.getFrom().get(inputParameters);
             Node nodeFrom = otsNetwork.getNode(nodeFromId);
             Throw.when(nodeFrom == null, NetworkException.class, "From Node %s not found in ShortestRoute", nodeFromId,
                     shortestRouteTag.getId());
-            String nodeToId = shortestRouteTag.getTo().getNode().get(inputParameters);
+            String nodeToId = shortestRouteTag.getTo().get(inputParameters);
             Node nodeTo = otsNetwork.getNode(nodeToId);
             Throw.when(nodeTo == null, NetworkException.class, "To Node %s not found in ShortestRoute", nodeToId,
                     shortestRouteTag.getId());
             List<Node> nodesVia = new ArrayList<>();
-            for (Via nodeViaTag : shortestRouteTag.getVia())
+            for (StringType nodeViaValue : shortestRouteTag.getVia())
             {
-                String nodeViaId = nodeViaTag.getNode().get(inputParameters);
+                String nodeViaId = nodeViaValue.get(inputParameters);
                 Node nodeVia = otsNetwork.getNode(nodeViaId);
                 Throw.when(nodeTo == null, NetworkException.class, "Via Node %s not found in ShortestRoute", nodeViaId,
                         shortestRouteTag.getId());
