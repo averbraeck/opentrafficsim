@@ -199,6 +199,7 @@ public class KeyValidator implements ValueValidator, EventListener
     public void addNode(final XsdTreeNode node)
     {
         boolean isType = false;
+        node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
         for (String path : getTypeString())
         {
             isType = node.isType(getPath().equals("Ots") ? path : getPath() + "." + path);
@@ -222,7 +223,6 @@ public class KeyValidator implements ValueValidator, EventListener
                 if (!this.listeningKeyrefValidators.isEmpty())
                 {
                     node.addListener(this, XsdTreeNode.VALUE_CHANGED);
-                    node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
                 }
             }
             for (String attribute : this.attributeNames)
@@ -232,7 +232,6 @@ public class KeyValidator implements ValueValidator, EventListener
                 if (!this.listeningKeyrefValidators.isEmpty())
                 {
                     node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
-                    node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
                 }
             }
         }
@@ -310,6 +309,18 @@ public class KeyValidator implements ValueValidator, EventListener
      */
     public void removeNode(final XsdTreeNode node)
     {
+        removeNodeKeepListening(node);
+        node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+    }
+
+    /**
+     * Remove node. It is removed from all contexts and listening keyrefs. This method is called by a listener that the root
+     * node has set up, for every removed node. This method is called internally for children of deactivated nodes, in which
+     * case we do not want to remove this validator as listener on the node, for when it gets activated later.
+     * @param node XsdTreeNode; node to remove.
+     */
+    private void removeNodeKeepListening(final XsdTreeNode node)
+    {
         for (KeyValidator keyref : this.listeningKeyrefValidators)
         {
             keyref.valueValidating.remove(node);
@@ -327,7 +338,6 @@ public class KeyValidator implements ValueValidator, EventListener
         {
             node.removeListener(this, XsdTreeNode.VALUE_CHANGED);
             node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
-            node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
         }
     }
 
@@ -470,6 +480,10 @@ public class KeyValidator implements ValueValidator, EventListener
     {
         if (XsdTreeNode.ACTIVATION_CHANGED.equals(event.getType()))
         {
+            Object[] content = (Object[]) event.getContent();
+            XsdTreeNode node = (XsdTreeNode) content[0];
+            boolean active = (boolean) content[1];
+            activationChanged(node, active, true);
             invalidateAllDependent();
         }
         else if (XsdTreeNode.VALUE_CHANGED.equals(event.getType()))
@@ -504,7 +518,34 @@ public class KeyValidator implements ValueValidator, EventListener
             }
         }
     }
-    
+
+    /**
+     * Recursively removes or adds the children from an activated or deactivated node to/from this key. Children of a
+     * deactivated node no longer have valid key values. Only active nodes are considered. However, when a node get
+     * deactivated, its children should be removed too. The argument {@code forceDoChildren} is {@code true} in that case.
+     * @param node XsdTreeNode; node to remove or add.
+     * @param active boolean; when node was activated, child nodes are add. Otherwise removed.
+     * @param forceDoChildren boolean; {@code true} on the originally (de)activated node.
+     */
+    private void activationChanged(final XsdTreeNode node, final boolean active, final boolean forceDoChildren)
+    {
+        if (active)
+        {
+            addNode(node);
+        }
+        else
+        {
+            removeNodeKeepListening(node);
+        }
+        if (node.isActive() || forceDoChildren)
+        {
+            for (XsdTreeNode child : node.getChildren())
+            {
+                activationChanged(child, active, false);
+            }
+        }
+    }
+
     /**
      * Update value in nodes that refer with xsd:keyref to a value that was changed.
      * @param node XsdTreeNode; node on which the value was changed.
