@@ -1303,7 +1303,13 @@ public class OtsEditor extends JFrame implements EventProducer
                 int col = OtsEditor.this.treeTable.columnAtPoint(e.getPoint());
                 if (OtsEditor.this.treeTable.isCellEditable(row, col))
                 {
-                    if (OtsEditor.this.treeTable.convertColumnIndexToModel(col) == 2)
+                    int colNumber = OtsEditor.this.treeTable.convertColumnIndexToModel(col);
+                    if (colNumber == 1 && treeNode.isIdentifiable())
+                    {
+                        List<String> allOptions = treeNode.getIdRestrictions();
+                        optionsPopup(allOptions, OtsEditor.this.treeTable, (t) -> treeNode.setId(t));
+                    }
+                    else if (colNumber == 2)
                     {
                         List<String> allOptions = treeNode.getValueRestrictions();
                         optionsPopup(allOptions, OtsEditor.this.treeTable, (t) -> treeNode.setValue(t));

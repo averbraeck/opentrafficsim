@@ -1577,6 +1577,16 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
+     * Returns all restrictions for Id attribute. These are not sorted and may contain duplicates. Id restrictions may be valid
+     * if the Id field point to another element.
+     * @return List&lt;String&gt;; list of restrictions for the Id.
+     */
+    public List<String> getIdRestrictions()
+    {
+        return getAttributeRestrictions(this.idIndex);
+    }
+
+    /**
      * Returns options based on a set of validators.
      * @param validators Set&lt;ValueValidator&gt;; validators.
      * @param field String; field, attribute or child element, for which to obtain the options.
@@ -1651,7 +1661,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * This function can be set externally and supplies an additional {@code String} to clarify this node in the tree.
      * @param stringFunction Function&lt;XsdTreeNode, String&gt; string function.
-     * @param overwrite boolean; overwrite existing. When {@code true}, a possible existing string function is overwritten. 
+     * @param overwrite boolean; overwrite existing. When {@code true}, a possible existing string function is overwritten.
      */
     public void setStringFunction(final Function<XsdTreeNode, String> stringFunction, final boolean overwrite)
     {
