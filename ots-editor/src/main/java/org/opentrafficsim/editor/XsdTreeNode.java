@@ -1354,7 +1354,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             this.parent.invalidate();
         }
     }
-    
+
     /**
      * Returns whether the value, any of the attributes, or any of the sub-elements, has an expression.
      * @return boolean; whether the node has an expression.
@@ -1904,17 +1904,22 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         assureChildren();
         if (nodeXml.getChildNodes() != null)
         {
-            int index = loadChildren(0, nodeXml.getChildNodes());
-            while (index < nodeXml.getChildNodes().getLength())
+            List<Integer> indices = new ArrayList<>();
+            indices.add(0);
+            indices.add(0);
+            loadChildren(indices, nodeXml.getChildNodes());
+            while (indices.get(0) < nodeXml.getChildNodes().getLength())
             {
-                System.err.println("Unable to load element with name " + nodeXml.getChildNodes().item(index).getNodeName());
-                index = loadChildren(index + 1, nodeXml.getChildNodes());
+                System.err.println(
+                        "Unable to load element with name " + nodeXml.getChildNodes().item(indices.get(0)).getNodeName() + ".");
+                indices.set(0, indices.get(0) + 1);
+                loadChildren(indices, nodeXml.getChildNodes());
             }
             // In included nodes, remove nodes that will not contain any of the loaded xml data. For example remove nodes that
             // are otherwise shown as inactive and allow a user to enable it, which makes no sense for imported nodes.
             if (this.isInclude)
             {
-                index = 0;
+                int index = 0;
                 while (index < this.children.size())
                 {
                     boolean relevantForAny = false;
@@ -1963,17 +1968,23 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * </ol>
      * Note that for case 3, the child content of a deeper {@code XsdChildNode} is defined at the same level in XML. Hence, only
      * some of the XML children may be loaded in the deeper level. To keep track of which XML child nodes are loaded where, the
-     * value {@code firstChild} is given as input (previous nodes have already been loaded at a higher level or in another
-     * choice sequence), and the index of the first XML child node that could not be loaded in the choice sequence is returned.
-     * @param firstChild int; index of the first XML child node to load in the the children of this node.
+     * value {@code indices[0]} is given as input (previous nodes have already been loaded at a higher level or in another
+     * choice sequence). In this value also the index of the first XML child node that could not be loaded in the choice
+     * sequence is returned.<br>
+     * <br>
+     * The parameter {@code indices} is also used when an XML node cannot be loaded at all because it does not comply with the
+     * XSD schema. This will cause the loading to run through all children to see whether it can be loaded there. The second
+     * value {@code indices[1]} is used as input to know where to continue in a second call to this method after an earlier call
+     * came across an XML node that could not be loaded. In {@code indices[1]} the index of the last child node in to which XML
+     * data was loaded is given.
+     * @param indices List&lt;Integer&gt;; index of the first XML child node to load, and first XsdTreeNode index to use.
      * @param childrenXml NodeList; list of XML child nodes as specified within one parent XML tag.
-     * @return int; index of the first XML child node that could not be parsed in the children nodes.
      */
-    protected int loadChildren(final int firstChild, final NodeList childrenXml)
+    protected void loadChildren(final List<Integer> indices, final NodeList childrenXml)
     {
-        int childIndex = 0;
+        int childIndex = indices.get(1);
         int indexXml;
-        for (indexXml = firstChild; indexXml < childrenXml.getLength(); indexXml++)
+        for (indexXml = indices.get(0); indexXml < childrenXml.getLength(); indexXml++)
         {
             Node childNodeXml = childrenXml.item(indexXml);
             if (childNodeXml.getNodeName().equals("#text"))
@@ -1985,7 +1996,10 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             String nameXml = childNodeXml.getNodeName().replace("ots:", "");
             if (childIndex > 0 && this.children.get(childIndex - 1).isRelevantNode(nameXml))
             {
-                this.children.get(childIndex - 1).add();
+                if (childIndex >= this.children.size() || !this.children.get(childIndex).isRelevantNode(nameXml))
+                {
+                    this.children.get(childIndex - 1).add();
+                }
             }
             else
             {
@@ -1995,7 +2009,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 }
                 if (childIndex >= this.children.size())
                 {
-                    return indexXml;
+                    indices.set(0, indexXml);
+                    return;
                 }
             }
 
@@ -2017,8 +2032,11 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                             if (child.isRelevantNode(nameXml))
                             {
                                 relevantChild.choice.setOption(option);
-                                indexXml = option.loadChildren(indexXml, childrenXml);
-                                indexXml--; // as loop will increase it
+                                List<Integer> optionIndeces = new ArrayList<>();
+                                optionIndeces.add(indexXml);
+                                optionIndeces.add(0);
+                                option.loadChildren(optionIndeces, childrenXml);
+                                optionIndeces.set(0, optionIndeces.get(0) - 1); // as loop will increase it
                                 optionSet = true;
                                 break;
                             }
@@ -2037,8 +2055,10 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 }
             }
             childIndex++;
+            indices.set(1, childIndex);
         }
-        return indexXml;
+        indices.set(0, indexXml);
+        return;
     }
 
     /**
