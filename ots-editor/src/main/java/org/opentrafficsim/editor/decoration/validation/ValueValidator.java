@@ -387,7 +387,7 @@ public interface ValueValidator
 
     /**
      * Report first encountered problem in validating the value by a restriction.
-     * @param appInfoNode Node; node having possible xsd:appinfo for a message.
+     * @param appInfoNode Node; node having possible xsd:appinfo for a message with source="pattern".
      * @param node Node; node, must be an xsd:restriction.
      * @param value String; value.
      * @return String; first encountered problem in validating the value by a restriction.

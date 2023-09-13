@@ -1,5 +1,6 @@
 package org.opentrafficsim.editor.decoration.validation;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -9,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
 import org.opentrafficsim.editor.DocumentReader;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.w3c.dom.Node;
@@ -23,8 +26,12 @@ import org.w3c.dom.Node;
  * {@code KeyValidator}.
  * @author wjschakel
  */
-public class KeyValidator implements ValueValidator
+public class KeyValidator implements ValueValidator, EventListener
 {
+
+    /** */
+    private static final long serialVersionUID = 20230912L;
+
     /** The node defining the xsd:key, xsd:keyref or xsd:unique. */
     private final Node keyNode;
 
@@ -45,6 +52,17 @@ public class KeyValidator implements ValueValidator
 
     /** Whether to include the value of the node itself (i.e. field reference "."). */
     private boolean includeSelfValue;
+
+    // Properties so an xsd:key change can be reported to an xsd:keyref
+
+    /** Nodes who's value has to match some field in this validator. */
+    private Set<XsdTreeNode> valueValidating = new LinkedHashSet<>();
+
+    /** Nodes who's attribute has to match some field in this validator, grouped per attribute name. */
+    private Map<String, Set<XsdTreeNode>> attributeValidating = new LinkedHashMap<>();
+
+    /** Key validators (xsd:keyref) that are using this key validator (xsd:key) to validate. */
+    private Set<KeyValidator> listeningKeyrefValidators = new LinkedHashSet<>();
 
     /**
      * Constructor.
@@ -79,6 +97,10 @@ public class KeyValidator implements ValueValidator
             throw new UnsupportedOperationException(
                     "Unable to validate keyref that does not point to an attribute (@) or OTS type (ots:).");
         }
+        if (refer != null)
+        {
+            refer.listeningKeyrefValidators.add(this);
+        }
     }
 
     /** {@inheritDoc} */
@@ -92,6 +114,7 @@ public class KeyValidator implements ValueValidator
         List<String> values = gatherFields(node);
         if (this.refer == null)
         {
+            // xsd:key; all must be present
             if (this.keyNode.getNodeName().equals("xsd:key") && values.contains(null))
             {
                 List<String> missing = new ArrayList<>();
@@ -119,6 +142,7 @@ public class KeyValidator implements ValueValidator
                 }
                 return "Insufficient number of values, missing " + missing + ".";
             }
+            // xsd:key or xsd:unique; all must be present allowing null==null on xsd:unique as was captured above for xsd:key.
             if (Collections.frequency(getValues(node), values) > 1)
             {
                 if (this.childNames.size() + this.attributeNames.size() == 1)
@@ -130,6 +154,7 @@ public class KeyValidator implements ValueValidator
             }
             return null;
         }
+        // xsd:keyref referred value is present ?
         if (this.refer.getValues(node).contains(values))
         {
             return null;
@@ -153,8 +178,9 @@ public class KeyValidator implements ValueValidator
     }
 
     /**
-     * Adds node to this key. Nodes are stored per parent instance that defines the context at the level of the path at which
-     * the key was defined.
+     * Adds node to this key, if applicable. Nodes are stored per parent instance that defines the context at the level of the
+     * path at which the key was defined. This method is called by a listener that the root node has set up, for every created
+     * node.
      * @param node XsdTreeNode; node to add.
      */
     public void addNode(final XsdTreeNode node)
@@ -172,16 +198,29 @@ public class KeyValidator implements ValueValidator
         {
             XsdTreeNode context = getContext(node);
             this.nodes.computeIfAbsent(context, (key) -> new LinkedHashSet<>()).add(node);
+            invalidateAllDependent();
         }
         if (isType)
         {
             if (this.includeSelfValue)
             {
                 node.addValueValidator(this);
+                registerValidating(node, null);
+                if (!this.listeningKeyrefValidators.isEmpty())
+                {
+                    node.addListener(this, XsdTreeNode.VALUE_CHANGED);
+                    node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+                }
             }
             for (String attribute : this.attributeNames)
             {
                 node.addAttributeValidator(attribute, this);
+                registerValidating(node, attribute);
+                if (!this.listeningKeyrefValidators.isEmpty())
+                {
+                    node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+                    node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+                }
             }
         }
         for (String child : this.childNames)
@@ -192,7 +231,41 @@ public class KeyValidator implements ValueValidator
                 if (node.getPathString().endsWith(fullPath))
                 {
                     node.addValueValidator(this);
+                    registerValidating(node, child);
+                    if (!this.listeningKeyrefValidators.isEmpty())
+                    {
+                        node.addListener(this, XsdTreeNode.VALUE_CHANGED);
+                        node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+                    }
                 }
+            }
+        }
+    }
+
+    /**
+     * Registers that this xsd:keyref validator validates the field in the given node using either a value or attribute in the
+     * referred xsd:key ({@code this.refer}). This is so the xsd:key can notify the nodes in case a value or attribute was
+     * changed, or the node was deleted.
+     * @param node XsdTreeNode; node that is validated by this validator.
+     * @param field String; field name in node.
+     */
+    private void registerValidating(final XsdTreeNode node, final String field)
+    {
+        if (this.refer != null)
+        {
+            int index = getIndex(field);
+            /*
+             * Index is the field index in this xsd:keyref. We need to figure out whether the field at this index in the xsd:key
+             * is either an attribute, or a value. Then we can be notified on relevant changes in in the xsd:key.
+             */
+            if (index < this.refer.attributeNames.size())
+            {
+                this.attributeValidating
+                        .computeIfAbsent(this.refer.attributeNames.get(index), (attribute) -> new LinkedHashSet<>()).add(node);
+            }
+            else
+            {
+                this.valueValidating.add(node);
             }
         }
     }
@@ -218,12 +291,31 @@ public class KeyValidator implements ValueValidator
     }
 
     /**
-     * Remove node. It is removed from all contexts.
+     * Remove node. It is removed from all contexts and listening keyrefs. This method is called by a listener that the root
+     * node has set up, for every removed node.
      * @param node XsdTreeNode; node to remove.
      */
     public void removeNode(final XsdTreeNode node)
     {
-        this.nodes.values().forEach((set) -> set.remove(node));
+        for (KeyValidator keyref : this.listeningKeyrefValidators)
+        {
+            keyref.valueValidating.remove(node);
+            keyref.attributeValidating.values().forEach((s) -> s.remove(node));
+        }
+        for (Set<XsdTreeNode> set : this.nodes.values())
+        {
+            if (set.contains(node))
+            {
+                invalidateAllDependent();
+                set.remove(node);
+            }
+        }
+        if (!this.listeningKeyrefValidators.isEmpty())
+        {
+            node.removeListener(this, XsdTreeNode.VALUE_CHANGED);
+            node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+            node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+        }
     }
 
     /**
@@ -288,34 +380,46 @@ public class KeyValidator implements ValueValidator
         {
             return null;
         }
-        /*
-         * The following is not robust. The field index might be wrong if 'field', which is the xsd-node name, is equal among
-         * attributes, child nodes, and the node itself. E.g. when we are at Route.Node.Node and field = "Node", do we need the
-         * value of Route.Node (the node itself), or of either a child node or attribute named "Node", which may also both
-         * exist?
-         */
-        int fieldIndex = this.attributeNames.indexOf(field);
-        if (fieldIndex < 0)
-        {
-            int deltaFieldIndex = this.childNames.indexOf(field);
-            if (deltaFieldIndex < 0)
-            {
-                fieldIndex = this.attributeNames.size() + this.childNames.size(); // value of node itself appended
-            }
-            else
-            {
-                fieldIndex = this.attributeNames.size() + deltaFieldIndex;
-            }
-        }
+
         /*
          * We gather values from the referred xsd:key, drawing the appropriate context from the node relevant to the xsd:keyref.
          * Can the context of the referred xsd:key be different?
          */
-        int index = fieldIndex;
+        int index = getIndex(field);
         List<List<String>> values = this.refer.getValues(node);
         List<String> result = new ArrayList<>(values.size());
         values.forEach((list) -> result.add(list.get(index)));
+        result.removeIf((v) -> v == null || v.isEmpty());
         return result;
+    }
+
+    /**
+     * Returns the index of the given field. Indices are based on [attribute field names, children field names, self] in order.
+     * @param field String; field name.
+     * @return index of the field.
+     */
+    private int getIndex(final String field)
+    {
+        /*
+         * The following is not robust. The field index might be wrong if 'field', which is the xsd-node name, is equal among
+         * attributes, child nodes, and the node itself. E.g. when we are at Route.Node.Node and field = "Node", do we need the
+         * value of Route.Node (the node itself), or either a child node or attribute named "Node", which may also both exist?
+         */
+        // TODO: remember ".", "@", "ots:" to distinguish node value, attribute, or child value
+        int index = this.attributeNames.indexOf(field);
+        if (index < 0)
+        {
+            int deltaIndex = this.childNames.indexOf(field);
+            if (deltaIndex < 0)
+            {
+                index = this.attributeNames.size() + this.childNames.size(); // value of node itself appended
+            }
+            else
+            {
+                index = this.attributeNames.size() + deltaIndex;
+            }
+        }
+        return index;
     }
 
     /**
@@ -345,6 +449,62 @@ public class KeyValidator implements ValueValidator
     {
         return DocumentReader.getAttribute(DocumentReader.getChild(this.keyNode, "xsd:selector"), "xpath")
                 .replace(".//ots:", "").replace("ots:", "").replace("/", ".").split("\\|");
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void notify(final Event event) throws RemoteException
+    {
+        if (XsdTreeNode.ACTIVATION_CHANGED.equals(event.getType()))
+        {
+            invalidateAllDependent();
+        }
+        else if (XsdTreeNode.VALUE_CHANGED.equals(event.getType()))
+        {
+            for (KeyValidator keyref : this.listeningKeyrefValidators)
+            {
+                for (XsdTreeNode node : keyref.valueValidating)
+                {
+                    node.invalidate();
+                }
+            }
+        }
+        else if (XsdTreeNode.ATTRIBUTE_CHANGED.equals(event.getType()))
+        {
+            Object[] content = (Object[]) event.getContent();
+            String attribute = (String) content[1];
+            for (KeyValidator keyref : this.listeningKeyrefValidators)
+            {
+                if (keyref.attributeValidating.containsKey(attribute))
+                {
+                    for (XsdTreeNode node : keyref.attributeValidating.get(attribute))
+                    {
+                        node.invalidate();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Invalidates all nodes that depend on this key, as a key node was added, removed, or made inactive.
+     */
+    private void invalidateAllDependent()
+    {
+        for (KeyValidator keyref : this.listeningKeyrefValidators)
+        {
+            for (XsdTreeNode node : keyref.valueValidating)
+            {
+                node.invalidate();
+            }
+            for (Set<XsdTreeNode> set : keyref.attributeValidating.values())
+            {
+                for (XsdTreeNode node : set)
+                {
+                    node.invalidate();
+                }
+            }
+        }
     }
 
 }

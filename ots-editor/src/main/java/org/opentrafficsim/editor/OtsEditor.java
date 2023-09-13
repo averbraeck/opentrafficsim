@@ -523,6 +523,10 @@ public class OtsEditor extends JFrame implements EventProducer
                 {
                     OtsEditor.this.treeTable.getTree().setToolTipText(treeNode.reportInvalidNode());
                 }
+                else
+                {
+                    OtsEditor.this.treeTable.getTree().setToolTipText(null);
+                }
             }
         });
 

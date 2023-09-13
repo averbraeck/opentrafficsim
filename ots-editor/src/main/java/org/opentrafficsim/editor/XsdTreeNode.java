@@ -185,6 +185,12 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /** Validators for each attribute. */
     private Map<String, Set<ValueValidator>> attributeValidators = new LinkedHashMap<>();
 
+    /** Stored valid status, excluding children. {@code null} means unknown and that it needs to be derived. */
+    private Boolean isSelfValid = null;
+
+    /** Stored valid status, including children. {@code null} means unknown and that it needs to be derived. */
+    private Boolean isValid = null;
+
     /**
      * Constructor for root node, based on an {@code XsdSchema}. Note: {@code XsdTreeNodeRoot} should be used for the root. The
      * {@code XsdSchema} that will be available to all nodes in the tree.
@@ -719,6 +725,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 this.children = null;
                 assureChildren();
             }
+            invalidate();
             fireEvent(ATTRIBUTE_CHANGED, new Object[] {this, name});
         }
     }
@@ -819,6 +826,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             this.active = true;
             if (this.deactivated && !this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
             {
+                invalidate();
                 fireEvent(new Event(XsdTreeNodeRoot.ACTIVATION_CHANGED, new Object[] {this, true}));
                 return; // deactivated from an active state in the past; all parts below are already in place
             }
@@ -839,6 +847,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                     }
                 }
             }
+            invalidate();
             fireEvent(new Event(XsdTreeNodeRoot.ACTIVATION_CHANGED, new Object[] {this, true}));
         }
     }
@@ -962,6 +971,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         if (!XsdTreeNodeUtil.valuesAreEqual(this.value, value))
         {
             this.value = value;
+            invalidate();
             fireEvent(new Event(VALUE_CHANGED, this));
         }
     }
@@ -1100,6 +1110,10 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public final void remove()
     {
+        if (this.ignoreRemove)
+        {
+            return;
+        }
         int numberOfTypeOrChoiceInParent;
         if (this.choice != null)
         {
@@ -1123,14 +1137,18 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         {
             this.deactivated = true;
             this.active = false;
-            fireEvent(new Event(XsdTreeNodeRoot.ACTIVATION_CHANGED, new Object[] {this, false}));
-            return;
-        }
-        if (this.ignoreRemove)
-        {
+            invalidate();
+            fireEvent(new Event(XsdTreeNode.ACTIVATION_CHANGED, new Object[] {this, false}));
             return;
         }
         this.ignoreRemove = true;
+        if (this.choice != null)
+        {
+            for (XsdTreeNode option : this.choice.options)
+            {
+                option.remove();
+            }
+        }
         removeChildren();
         this.parent.children.remove(this);
         XsdTreeNodeRoot root = (XsdTreeNodeRoot) getPath().get(0); // can't get path later as we set parent to null
@@ -1261,26 +1279,34 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public boolean isSelfValid()
     {
-        if (!this.active)
+        if (this.isSelfValid == null)
         {
-            return true;
-        }
-        if (reportInvalidNode() != null)
-        {
-            return false;
-        }
-        if (reportInvalidValue() != null)
-        {
-            return false;
-        }
-        for (int index = 0; index < attributeCount(); index++)
-        {
-            if (reportInvalidAttributeValue(index) != null)
+            if (!this.active)
             {
-                return false;
+                this.isSelfValid = true;
+            }
+            else if (reportInvalidNode() != null)
+            {
+                this.isSelfValid = false;
+            }
+            else if (reportInvalidValue() != null)
+            {
+                this.isSelfValid = false;
+            }
+            else
+            {
+                boolean attributesValid = true;
+                for (int index = 0; index < attributeCount(); index++)
+                {
+                    if (reportInvalidAttributeValue(index) != null)
+                    {
+                        attributesValid = false;
+                    }
+                }
+                this.isSelfValid = attributesValid;
             }
         }
-        return true;
+        return this.isSelfValid;
     }
 
     /**
@@ -1291,23 +1317,44 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     public boolean isValid()
     {
         // TODO: check whether node should have children if there are none; can we do this without already exploding the tree?
-        if (!isSelfValid())
+        if (this.isValid == null)
         {
-            return false;
-        }
-        if (this.children != null)
-        {
-            for (XsdTreeNode child : this.children)
+            if (!isSelfValid())
             {
-                if (!child.isValid())
+                this.isValid = false;
+            }
+            else
+            {
+                boolean childrenValid = true;
+                if (this.children != null)
                 {
-                    return false;
+                    for (XsdTreeNode child : this.children)
+                    {
+                        if (!child.isValid())
+                        {
+                            childrenValid = false;
+                        }
+                    }
                 }
+                this.isValid = childrenValid;
             }
         }
-        return true;
+        return this.isValid;
     }
 
+    /**
+     * Sets the valid status of this node and all parent nodes to unknown.
+     */
+    public void invalidate()
+    {
+        this.isSelfValid = null;
+        this.isValid = null;
+        if (this.parent != null)
+        {
+            this.parent.invalidate();
+        }
+    }
+    
     /**
      * Returns whether the value, any of the attributes, or any of the sub-elements, has an expression.
      * @return boolean; whether the node has an expression.
@@ -1493,7 +1540,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public List<String> getValueRestrictions()
     {
-        List<String> valueOptions = getOptionsFromValidators(this.valueValidators, getNodeName());
+        List<String> valueOptions = getOptionsFromValidators(this.valueValidators, getNodeName()); // TODO: add "." or "ots:"
         if (!valueOptions.isEmpty())
         {
             return valueOptions;
@@ -1510,7 +1557,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     {
         String field = getAttributeNameByIndex(index);
         List<String> valueOptions = getOptionsFromValidators(
-                this.attributeValidators.computeIfAbsent(field, (key) -> new LinkedHashSet<>()), field);
+                this.attributeValidators.computeIfAbsent(field, (key) -> new LinkedHashSet<>()), field); // TODO: add "@"
         if (!valueOptions.isEmpty() || this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
         {
             return valueOptions;
@@ -1576,6 +1623,10 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         int dot = path.lastIndexOf(".");
         if (dot > -1)
         {
+            if (this.parent == null)
+            {
+                return false; // node was just deleted but still visible and thus validated
+            }
             isType = isType(path.substring(dot + 1)) && this.parent.isType(path.substring(0, dot));
             if (isType)
             {

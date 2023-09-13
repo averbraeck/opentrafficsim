@@ -2,6 +2,7 @@ package org.opentrafficsim.editor.decoration.validation;
 
 import java.rmi.RemoteException;
 
+import org.djutils.event.Event;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.decoration.AbstractNodeDecorator;
@@ -71,7 +72,24 @@ public class AttributesNotEqualValidator extends AbstractNodeDecorator implement
         {
             node.addAttributeValidator(this.attribute1, AttributesNotEqualValidator.this);
             node.addAttributeValidator(this.attribute2, AttributesNotEqualValidator.this);
+            node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void notify(final Event event) throws RemoteException
+    {
+        if (XsdTreeNode.ATTRIBUTE_CHANGED.equals(event.getType()))
+        {
+            Object[] content = (Object[]) event.getContent();
+            String attribute = (String) content[1];
+            if (this.attribute1.equals(attribute) || this.attribute2.equals(attribute))
+            {
+                ((XsdTreeNode) content[0]).invalidate();
+            }
+        }
+        super.notify(event);
     }
 
 }

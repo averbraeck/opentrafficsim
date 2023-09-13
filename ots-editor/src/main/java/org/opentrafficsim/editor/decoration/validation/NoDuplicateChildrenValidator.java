@@ -2,19 +2,22 @@ package org.opentrafficsim.editor.decoration.validation;
 
 import java.rmi.RemoteException;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
+import org.djutils.event.Event;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeUtil;
-import org.opentrafficsim.editor.decoration.AbstractNodeDecorator;
+import org.opentrafficsim.editor.decoration.AbstractNodeDecoratorRemove;
 
 /**
  * Validates that children nodes are not duplicate within their parent, this node.
  * @author wjschakel
  */
-public class NoDuplicateChildrenValidator extends AbstractNodeDecorator implements Function<XsdTreeNode, String>
+public class NoDuplicateChildrenValidator extends AbstractNodeDecoratorRemove implements Function<XsdTreeNode, String>
 {
 
     /** */
@@ -25,6 +28,9 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecorator implemen
 
     /** First attribute to compare. */
     private final List<String> children;
+
+    /** All nodes this validator validates. */
+    private Set<XsdTreeNode> nodes = new LinkedHashSet<>();
 
     /**
      * Constructor.
@@ -50,7 +56,6 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecorator implemen
             XsdTreeNode parent = node.getParent();
             if (parent != null && parent.isType(this.path))
             {
-                System.out.println("Adding validator to " + node.getPathString());
                 node.addNodeValidator(NoDuplicateChildrenValidator.this);
             }
         }
@@ -60,10 +65,29 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecorator implemen
             {
                 if (node.isType(this.path + "." + child))
                 {
-                    System.out.println("Adding validator to " + node.getPathString());
                     node.addNodeValidator(NoDuplicateChildrenValidator.this);
                 }
             }
+        }
+        this.nodes.add(node);
+        node.addListener(this, XsdTreeNode.VALUE_CHANGED);
+        node.addListener(this, XsdTreeNode.OPTION_CHANGED);
+        node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+        node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+        this.nodes.forEach((n) -> n.invalidate());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void notifyRemoved(final XsdTreeNode node)
+    {
+        if (this.nodes.remove(node))
+        {
+            node.removeListener(this, XsdTreeNode.VALUE_CHANGED);
+            node.removeListener(this, XsdTreeNode.OPTION_CHANGED);
+            node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+            node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+            this.nodes.forEach((n) -> n.invalidate());
         }
     }
 
@@ -82,7 +106,7 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecorator implemen
         }
         return null;
     }
-    
+
     /**
      * Returns whether the nodes are equal by path string and value.
      * @param node1 XsdTreeNode; node 1.
@@ -100,6 +124,20 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecorator implemen
             return false;
         }
         return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void notify(final Event event) throws RemoteException
+    {
+        if (XsdTreeNode.VALUE_CHANGED.equals(event.getType()) || XsdTreeNode.OPTION_CHANGED.equals(event.getType())
+                || XsdTreeNode.ATTRIBUTE_CHANGED.equals(event.getType())
+                || XsdTreeNode.ACTIVATION_CHANGED.equals(event.getType()))
+        {
+            this.nodes.forEach((n) -> n.invalidate());
+            return;
+        }
+        super.notify(event);
     }
 
 }
