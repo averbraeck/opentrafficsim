@@ -138,6 +138,14 @@
               </xsd:element>
             </xsd:sequence>
           </xsd:complexType>
+          <xsd:key name="odOptionsItemMarkovStateGtuTypeKey">
+            <xsd:selector xpath=".//ots:Markov/ots:State" />
+            <xsd:field xpath="@GtuType" />
+          </xsd:key>
+          <xsd:key name="odOptionsItemLaneBiasGtuTypeKey">
+            <xsd:selector xpath=".//ots:LaneBiases/ots:LaneBias" />
+            <xsd:field xpath="@GtuType" />
+          </xsd:key>
         </xsd:element>
       </xsd:sequence>
       <xsd:attribute name="Id" type="xsd:string" />

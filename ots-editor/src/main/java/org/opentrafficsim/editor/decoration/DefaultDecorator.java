@@ -17,6 +17,7 @@ import org.opentrafficsim.editor.decoration.string.XiIncludeStringFunction;
 import org.opentrafficsim.editor.decoration.validation.AttributesNotEqualValidator;
 import org.opentrafficsim.editor.decoration.validation.NoDuplicateChildrenValidator;
 import org.opentrafficsim.editor.decoration.validation.ParentValidator;
+import org.opentrafficsim.editor.extensions.DefinitionsSaver;
 import org.opentrafficsim.editor.extensions.OdEditor;
 import org.opentrafficsim.editor.extensions.RoadLayoutEditor;
 import org.opentrafficsim.editor.extensions.RouteEditor;
@@ -92,12 +93,15 @@ public final class DefaultDecorator
         new ParentValidator(editor, "Ots.Definitions.LinkTypes.LinkType");
         new ParentValidator(editor, "Ots.Definitions.LaneTypes.LaneType");
         new ParentValidator(editor, "Ots.Definitions.DetectorTypes.DetectorType");
+        new ParentValidator(editor, "Ots.Demand.OdOptions.OdOptionsItem.Markov.State")
+                .setContext("Ots.Demand.OdOptions.OdOptionsItem").setIdAttribute("GtuType");
         new AttributesNotEqualValidator(editor, "Ots.Network.Link", "NodeStart", "NodeEnd");
         new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.MandatoryIncentives");
         new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.VoluntaryIncentives");
         new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.AccelerationIncentives");
 
         new AutomaticLinkId(editor);
+        new DefinitionsSaver(editor);
 
         // new NodeCreatedRemovedPrinter(editor);
         new RoadLayoutEditor(editor);

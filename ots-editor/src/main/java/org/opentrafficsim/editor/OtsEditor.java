@@ -127,7 +127,7 @@ public class OtsEditor extends JFrame implements EventProducer
             "Selection changed", new ObjectDescriptor("Selected node", "Selected node", XsdTreeNode.class)));
 
     /** Font. */
-    private static final Font FONT = new Font("Dialog", Font.PLAIN, 11);
+    private static final Font FONT = new Font("Dialog", Font.PLAIN, 12);
 
     /** Number of pixels between icons when they are combined. */
     private static final int ICON_MARGIN = 3;
@@ -376,7 +376,7 @@ public class OtsEditor extends JFrame implements EventProducer
             @Override
             public void actionPerformed(final ActionEvent e)
             {
-                saveFileAs();
+                saveFileAs((XsdTreeNodeRoot) OtsEditor.this.treeTable.getTree().getModel().getRoot());
             }
         });
         fileMenu.add(new JSeparator());
@@ -1058,18 +1058,20 @@ public class OtsEditor extends JFrame implements EventProducer
      */
     private void saveFile()
     {
+        XsdTreeNodeRoot root = (XsdTreeNodeRoot) OtsEditor.this.treeTable.getTree().getModel().getRoot();
         if (this.lastFile == null)
         {
-            saveFileAs();
+            saveFileAs(root);
             return;
         }
-        save(this.lastDirectory, this.lastFile);
+        save(this.lastDirectory, this.lastFile, root);
     }
 
     /**
      * Shows a dialog to define a file and saves in to it.
+     * @param root XsdTreeNode; root node of tree to save, can be a sub-tree of the full tree.
      */
-    private void saveFileAs()
+    public void saveFileAs(final XsdTreeNode root)
     {
         FileDialog fileDialog = new FileDialog(this, "Save XML", FileDialog.SAVE);
         fileDialog.setFile("*.xml");
@@ -1083,19 +1085,22 @@ public class OtsEditor extends JFrame implements EventProducer
         {
             fileName = fileName + ".xml";
         }
-        this.lastDirectory = fileDialog.getDirectory();
-        this.lastFile = fileName;
-        save(this.lastDirectory, this.lastFile);
+        if (root instanceof XsdTreeNodeRoot)
+        {
+            this.lastDirectory = fileDialog.getDirectory();
+            this.lastFile = fileName;
+        }
+        save(fileDialog.getDirectory(), fileName, root);
     }
 
     /**
      * Performs the actual saving, either from {@code saveFile()} or {@code saveFileAs()}.
      * @param directory String; directory. Must include a file separator at the end.
      * @param fileName String; file name.
+     * @param root XsdTreeNode; root node of tree to save, can be a sub-tree of the full tree.
      */
-    private void save(final String directory, final String fileName)
+    private void save(final String directory, final String fileName, final XsdTreeNode root)
     {
-        XsdTreeNodeRoot root = (XsdTreeNodeRoot) OtsEditor.this.treeTable.getTree().getModel().getRoot();
         try
         {
             DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -1111,8 +1116,8 @@ public class OtsEditor extends JFrame implements EventProducer
             Element xmlRoot = (Element) document.getChildNodes().item(0);
             xmlRoot.setAttribute("xmlns:ots", "http://www.opentrafficsim.org/ots");
             xmlRoot.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            xmlRoot.setAttribute("xsi:schemaLocation",
-                    "http://www.opentrafficsim.org/ots ../../../../../ots-parser-xml/src/main/resources/xsd/ots.xsd");
+            // xmlRoot.setAttribute("xsi:schemaLocation",
+            // "http://www.opentrafficsim.org/ots ../../../../../ots-parser-xml/src/main/resources/xsd/ots.xsd");
             xmlRoot.setAttribute("xmlns:xi", "http://www.w3.org/2001/XInclude");
 
             File file = new File(directory + fileName);
@@ -1132,8 +1137,11 @@ public class OtsEditor extends JFrame implements EventProducer
                     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + System.lineSeparator());
             Files.write(path, content.getBytes(StandardCharsets.UTF_8));
             // end of fix
-            setUnsavedChanges(false);
-            root.setDirectory(this.lastDirectory);
+            if (root instanceof XsdTreeNodeRoot)
+            {
+                setUnsavedChanges(false);
+                ((XsdTreeNodeRoot) root).setDirectory(this.lastDirectory);
+            }
         }
         catch (ParserConfigurationException | TransformerException | IOException exception)
         {

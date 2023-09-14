@@ -2,8 +2,10 @@ package org.opentrafficsim.editor.decoration.validation;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.opentrafficsim.editor.OtsEditor;
@@ -23,8 +25,17 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
     /** Path string for the nodes to validate. */
     private final String path;
 
+    /** Context level within which the parents may be found. */
+    private String contextPath;
+
+    /** Attribute defining a parent. */
+    private String idAttribute;
+
+    /** Attribute referring to a parent. */
+    private String parentAttribute;
+
     /** All nodes created under the path. */
-    private Set<XsdTreeNode> nodes = new LinkedHashSet<>();
+    private Map<XsdTreeNode, Set<XsdTreeNode>> nodes = new LinkedHashMap<>();
 
     /**
      * Constructor.
@@ -36,6 +47,43 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
     {
         super(editor);
         this.path = path;
+        this.contextPath = "Ots";
+        this.idAttribute = "Id";
+        this.parentAttribute = "Parent";
+    }
+
+    /**
+     * Sets the context path, which should refer to a higher level node relative to the nodes at the regular path. Default is
+     * "Ots".
+     * @param contextPath String; context level within which the parents may be found.
+     * @return this validator for method chaining.
+     */
+    public ParentValidator setContext(final String contextPath)
+    {
+        this.contextPath = contextPath;
+        return this;
+    }
+
+    /**
+     * Sets the attribute that is the defining attribute of a parent. Default is "Id".
+     * @param idAttribute String; attribute defining a parent.
+     * @return this validator for method chaining.
+     */
+    public ParentValidator setIdAttribute(final String idAttribute)
+    {
+        this.idAttribute = idAttribute;
+        return this;
+    }
+
+    /**
+     * Sets the attribute that refers to a parent. Default is "Parent".
+     * @param parentAttribute String; attribute defining a parent.
+     * @return this validator for method chaining.
+     */
+    public ParentValidator setParentAttribute(final String parentAttribute)
+    {
+        this.parentAttribute = parentAttribute;
+        return this;
     }
 
     /** {@inheritDoc} */
@@ -49,20 +97,21 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
         }
         List<XsdTreeNode> list = new ArrayList<>();
         list.add(node);
-        return validateParent(value, list);
+        return validateParent(getContext(node), value, list);
     }
 
     /**
      * Finds the parent node, checks whether it is referring to an exiting node in the list, and moves to the next parent.
+     * @param context Set&lt;XsdTreeNode&gt;; context, i.e. all relevant possible parent nodes.
      * @param parentId String; id of next parent node to find.
      * @param nodeList List&lt;XsdTreeNode&gt;; list of nodes so far, every next node is the parent of the previous.
      * @return String; message if the parent refers to self, directly or indirectly, or {@code null} otherwise.
      */
-    private String validateParent(final String parentId, final List<XsdTreeNode> nodeList)
+    private String validateParent(final Set<XsdTreeNode> context, final String parentId, final List<XsdTreeNode> nodeList)
     {
-        for (XsdTreeNode otherNode : this.nodes)
+        for (XsdTreeNode otherNode : context)
         {
-            if (otherNode.isActive() && parentId.equals(otherNode.getId()))
+            if (otherNode.isActive() && parentId.equals(otherNode.getAttributeValue(this.idAttribute)))
             {
                 int index = nodeList.indexOf(otherNode);
                 if (index == 0)
@@ -71,23 +120,23 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
                     String separator = "";
                     for (XsdTreeNode node : nodeList)
                     {
-                        str.append(separator).append(node.getId());
+                        str.append(separator).append(node.getAttributeValue(this.idAttribute));
                         separator = " > ";
                     }
-                    str.append(separator).append(otherNode.getId());
+                    str.append(separator).append(otherNode.getAttributeValue(this.idAttribute));
                     return str.toString();
                 }
                 else if (index > 0)
                 {
                     return null; // A > B > C > C > C ... report at C, not at A
                 }
-                String value = otherNode.getAttributeValue("Parent");
+                String value = otherNode.getAttributeValue(this.parentAttribute);
                 if (value == null || value.isEmpty())
                 {
                     return null;
                 }
                 nodeList.add(otherNode);
-                return validateParent(value, nodeList);
+                return validateParent(context, value, nodeList);
             }
         }
         return null;
@@ -100,7 +149,7 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
         if (node.isType(ParentValidator.this.path))
         {
             node.addAttributeValidator("Parent", ParentValidator.this);
-            ParentValidator.this.nodes.add(node);
+            getContext(node).add(node);
         }
     }
 
@@ -110,8 +159,23 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
     {
         if (node.isType(ParentValidator.this.path))
         {
-            ParentValidator.this.nodes.remove(node);
+            getContext(node).remove(node);
         }
+    }
+
+    /**
+     * Returns the context of the given node, i.e. all relevant possible parent nodes.
+     * @param node XsdTreeNode; node.
+     * @return Context of the given node, i.e. all relevant possible parent nodes.
+     */
+    private Set<XsdTreeNode> getContext(final XsdTreeNode node)
+    {
+        XsdTreeNode parent = node;
+        while (!parent.getPathString().equals(this.contextPath) && parent != null)
+        {
+            parent = parent.getParent();
+        }
+        return this.nodes.computeIfAbsent(parent, (p) -> new LinkedHashSet<>());
     }
 
 }

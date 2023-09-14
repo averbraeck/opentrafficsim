@@ -138,6 +138,13 @@
       <xsd:selector xpath=".//ots:Demand/ots:Od" />
       <xsd:field xpath="@Id" />
     </xsd:key>
+    
+    <!-- define the OdOptons.Id key -->
+
+    <xsd:key name="odOptionsKey">
+      <xsd:selector xpath=".//ots:Demand/ots:OdOptions" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
 
     <!-- define the Cetegory.Id key -->
 
@@ -616,6 +623,13 @@
     <xsd:keyref name="laneLinkRef" refer="ots:linkKey">
       <xsd:selector xpath=".//ots:Demand/ots:OdOptions/ots:OdOptionsItem/ots:Lane" />
       <xsd:field xpath="@Link" />
+    </xsd:keyref>
+    
+    <!-- Demand.Od.Options defined by OdOptions.Id -->
+
+    <xsd:keyref name="odOdOptionsRef" refer="ots:odOptionsKey">
+      <xsd:selector xpath=".//ots:Demand/ots:Od" />
+      <xsd:field xpath="@Options" />
     </xsd:keyref>
 
     <!-- TODO: other XPath checks in Od -->
