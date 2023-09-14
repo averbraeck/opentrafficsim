@@ -1,9 +1,11 @@
 package org.opentrafficsim.editor;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FileDialog;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
@@ -42,6 +44,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -55,8 +58,10 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.PopupMenuEvent;
@@ -121,6 +126,9 @@ public class OtsEditor extends JFrame implements EventProducer
     public static final EventType SELECTION_CHANGED = new EventType("SELECTIONCHANGED", new MetaData("Selection",
             "Selection changed", new ObjectDescriptor("Selected node", "Selected node", XsdTreeNode.class)));
 
+    /** Font. */
+    private static final Font FONT = new Font("Dialog", Font.PLAIN, 11);
+
     /** Number of pixels between icons when they are combined. */
     private static final int ICON_MARGIN = 3;
 
@@ -132,6 +140,9 @@ public class OtsEditor extends JFrame implements EventProducer
 
     /** Color for inactive nodes (text). */
     public static final Color INACTIVE_COLOR = new Color(160, 160, 160);
+
+    /** Color for status label. */
+    public static final Color STATUS_COLOR = new Color(128, 128, 128);
 
     /** Color for invalid nodes and values (background). */
     public static final Color INVALID_COLOR = new Color(255, 240, 240);
@@ -155,7 +166,7 @@ public class OtsEditor extends JFrame implements EventProducer
     private final EventListenerMap listenerMap = new EventListenerMap();
 
     /** Main left-right split pane. */
-    private final JSplitPane mainSplitPane;
+    // private final JSplitPane mainSplitPane;
 
     /** Main tabbed pane at the left-hand side. */
     private final JTabbedPane visualizationPane;
@@ -168,6 +179,9 @@ public class OtsEditor extends JFrame implements EventProducer
 
     /** Table for attributes at the bottom of the right-hand side. */
     private final JTable attributesTable;
+
+    /** Status label. */
+    private final JLabel statusLabel;
 
     /** Prevents a popup when an expand node is being clicked. */
     private boolean mayPresentChoice = true;
@@ -199,6 +213,16 @@ public class OtsEditor extends JFrame implements EventProducer
      */
     public OtsEditor() throws IOException
     {
+        UIManager.put("Label.font", FONT);
+        UIManager.put("Menu.font", FONT);
+        UIManager.put("MenuItem.font", FONT);
+        UIManager.put("TabbedPane.font", FONT);
+        UIManager.put("Table.font", FONT);
+        UIManager.put("TableHeader.font", FONT);
+        UIManager.put("TextField.font", FONT);
+        UIManager.put("Button.font", FONT);
+        // for full list: https://stackoverflow.com/questions/7434845/setting-the-default-font-of-swing-program
+
         setSize(1280, 720);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter()
@@ -212,14 +236,14 @@ public class OtsEditor extends JFrame implements EventProducer
         });
 
         // split panes
-        this.mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, UPDATE_SPLIT_WHILE_DRAGGING);
-        this.mainSplitPane.setDividerSize(DIVIDER_SIZE);
-        this.mainSplitPane.setResizeWeight(0.5);
-        add(this.mainSplitPane);
+        JSplitPane leftRightSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, UPDATE_SPLIT_WHILE_DRAGGING);
+        leftRightSplitPane.setDividerSize(DIVIDER_SIZE);
+        leftRightSplitPane.setResizeWeight(0.5);
+        add(leftRightSplitPane);
         this.rightSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, UPDATE_SPLIT_WHILE_DRAGGING);
         this.rightSplitPane.setDividerSize(DIVIDER_SIZE);
         this.rightSplitPane.setResizeWeight(0.5);
-        this.mainSplitPane.setRightComponent(this.rightSplitPane);
+        leftRightSplitPane.setRightComponent(this.rightSplitPane);
 
         setIconImage(ImageIO.read(Resource.getResourceAsStream("./OTS_merge.png")));
         this.questionIcon = loadIcon("./Question.png", -1, -1, -1, -1);
@@ -227,7 +251,7 @@ public class OtsEditor extends JFrame implements EventProducer
         // visualization pane
         this.visualizationPane = new JTabbedPane(JTabbedPane.BOTTOM, JTabbedPane.SCROLL_TAB_LAYOUT);
         this.visualizationPane.setPreferredSize(new Dimension(900, 900));
-        this.mainSplitPane.setLeftComponent(this.visualizationPane);
+        leftRightSplitPane.setLeftComponent(this.visualizationPane);
 
         // There is likely a better way to do this, but setting the icons specific on the tree is impossible for collapsed and
         // expanded. Also in that case after removal of a node, the tree appearance gets reset and java default icons appear.
@@ -269,10 +293,34 @@ public class OtsEditor extends JFrame implements EventProducer
 
         addMenuBar();
 
+        this.statusLabel = new JLabel();
+        this.statusLabel.setForeground(STATUS_COLOR);
+        this.statusLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        this.statusLabel.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        add(this.statusLabel, BorderLayout.SOUTH);
+        removeStatusLabel();
+
         // appear to the user
         setVisible(true);
-        this.mainSplitPane.setDividerLocation(0.65);
+        leftRightSplitPane.setDividerLocation(0.65);
         this.rightSplitPane.setDividerLocation(0.75);
+    }
+
+    /**
+     * Sets a status label.
+     * @param label String; status label.
+     */
+    private void setStatusLabel(final String label)
+    {
+        this.statusLabel.setText(label);
+    }
+
+    /**
+     * Removes the status label.
+     */
+    private void removeStatusLabel()
+    {
+        this.statusLabel.setText(" ");
     }
 
     /**
@@ -374,6 +422,7 @@ public class OtsEditor extends JFrame implements EventProducer
     {
         this.xsdDocument = xsdDocument;
         initializeTree();
+        setStatusLabel("Schema " + xsdDocument.getBaseURI() + " loaded");
     }
 
     /**
@@ -470,6 +519,28 @@ public class OtsEditor extends JFrame implements EventProducer
                 if (paths.length > 0)
                 {
                     XsdTreeNode node = (XsdTreeNode) paths[0].getLastPathComponent();
+                    removeStatusLabel();
+                    String status = null;
+                    if (!node.isSelfValid())
+                    {
+                        status = node.reportInvalidNode();
+                        if (status == null)
+                        {
+                            status = node.reportInvalidValue();
+                        }
+                        if (status == null)
+                        {
+                            status = node.reportInvalidId();
+                        }
+                    }
+                    if (status == null)
+                    {
+                        status = node.getDescription();
+                    }
+                    if (status != null)
+                    {
+                        setStatusLabel(status);
+                    }
                     // TODO: This does not solve multiple editors on the same value being open in parallel when the editing does
                     // not change the selection. Furthermore, editors in the main screen may change values too.
                     if (OtsEditor.this.attributesTable.isEditing())
@@ -979,6 +1050,7 @@ public class OtsEditor extends JFrame implements EventProducer
         {
             JOptionPane.showMessageDialog(this, "Unable to read file.", "Unable to read file.", JOptionPane.WARNING_MESSAGE);
         }
+        setStatusLabel("File loaded");
     }
 
     /**
@@ -1067,6 +1139,7 @@ public class OtsEditor extends JFrame implements EventProducer
         {
             JOptionPane.showMessageDialog(this, "Unable to save file.", "Unable to save file.", JOptionPane.WARNING_MESSAGE);
         }
+        setStatusLabel("Saved");
     }
 
     /**
@@ -1123,16 +1196,27 @@ public class OtsEditor extends JFrame implements EventProducer
         {
             // makes description appear when information icon was clicked
             int col = OtsEditor.this.attributesTable.columnAtPoint(e.getPoint());
-            if (OtsEditor.this.attributesTable.convertColumnIndexToModel(col) == 3)
+            int row = OtsEditor.this.attributesTable.rowAtPoint(e.getPoint());
+            XsdTreeNode node = ((AttributesTableModel) OtsEditor.this.attributesTable.getModel()).getNode();
+            String description = DocumentReader.getAnnotation(node.getAttributeNode(row), "xsd:documentation", "description");
+            if (OtsEditor.this.attributesTable.convertColumnIndexToModel(col) == 3
+                    && OtsEditor.this.attributesTable.getModel().getValueAt(row, col) != null)
             {
-                int row = OtsEditor.this.attributesTable.rowAtPoint(e.getPoint());
-                if (OtsEditor.this.attributesTable.getModel().getValueAt(row, col) != null)
-                {
-                    XsdTreeNode node = ((AttributesTableModel) OtsEditor.this.attributesTable.getModel()).getNode();
-                    String description =
-                            DocumentReader.getAnnotation(node.getAttributeNode(row), "xsd:documentation", "description");
-                    showDescription(description);
-                }
+                showDescription(description);
+            }
+            removeStatusLabel();
+            String status = null;
+            if (!node.isSelfValid())
+            {
+                status = node.reportInvalidAttributeValue(row);
+            }
+            if (status == null)
+            {
+                status = description;
+            }
+            if (status != null)
+            {
+                setStatusLabel(status);
             }
         }
 
