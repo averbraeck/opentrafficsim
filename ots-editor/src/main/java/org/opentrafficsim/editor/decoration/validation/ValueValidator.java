@@ -259,8 +259,8 @@ public interface ValueValidator extends Comparable<ValueValidator>
      * @param baseType List&lt;String&gt;; may be filled with 1 base type, e.g. xsd:double.
      * @return String; first encountered problem in validating the value by a type, {@code null} if there is no problem.
      */
-    private static String reportSingleTypeNonCompliance(final String type, final String value,
-            final Schema schema, final List<Node> restrictions, final List<String> baseType)
+    private static String reportSingleTypeNonCompliance(final String type, final String value, final Schema schema,
+            final List<Node> restrictions, final List<String> baseType)
     {
         boolean isNativeType = type != null && type.startsWith("xsd:");
         if (isNativeType)
@@ -471,19 +471,23 @@ public interface ValueValidator extends Comparable<ValueValidator>
     @Override
     default int compareTo(final ValueValidator o)
     {
+        /*
+         * KeyValidators are sorted first in a SortedSet. This is to prevent the following: i) another validator finds an
+         * attribute not valid, ii) the key validator is never called, if it would have been it would have matched a key and
+         * registered itself to the relevant key node, iii) the relevant key node value is changed, but the value pointing to it
+         * is not updated as the registration of the matched id was never done.
+         */
         if (this instanceof KeyValidator)
         {
             if (o != null && o instanceof KeyValidator)
             {
                 return 0;
             }
-            /*
-             * KeyValidators are sorted first in a SortedSet. This is to prevent the following: i) another validator finds an
-             * attribute not valid, ii) the key validator is never called, if it would have been it would have matched a key and
-             * registered itself to the relevant key node, iii) the relevant key node value is changed, but the value pointing
-             * to it is not updated as the registration of the matched id was never done.
-             */
             return -1;
+        }
+        if (o instanceof KeyValidator)
+        {
+            return 1;
         }
         return 0;
     }

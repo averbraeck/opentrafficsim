@@ -181,10 +181,10 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /** Validators for the node itself, e.g. duplicate in parent check. */
     private Set<Function<XsdTreeNode, String>> nodeValidators = new LinkedHashSet<>();
 
-    /** Validators for the value. */
+    /** Validators for the value, sorted so KeyValidators are first and couple to keys even for otherwise invalid nodes. */
     private SortedSet<ValueValidator> valueValidators = new TreeSet<>();
 
-    /** Validators for each attribute. */
+    /** Validators for each attribute, sorted so KeyValidators are first and couple to keys even for otherwise invalid nodes. */
     private Map<String, SortedSet<ValueValidator>> attributeValidators = new LinkedHashMap<>();
 
     /** Stored valid status, excluding children. {@code null} means unknown and that it needs to be derived. */
