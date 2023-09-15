@@ -39,6 +39,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
+import javax.swing.CellEditor;
 import javax.swing.DefaultCellEditor;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -285,7 +286,7 @@ public class OtsEditor extends JFrame implements EventProducer
         this.attributesTable.putClientProperty("terminateEditOnFocusLost", true);
         this.attributesTable.setDefaultRenderer(String.class,
                 new AttributeCellRenderer(loadIcon("./Info.png", 12, 12, 16, 16)));
-        AttributesCellEditor editor = new AttributesCellEditor();
+        AttributesCellEditor editor = new AttributesCellEditor(this.attributesTable);
         this.attributesTable.setDefaultEditor(String.class, editor);
         this.attributesTable.addMouseListener(new AttributesMouseListener());
         AttributesTableModel.applyColumnWidth(this.attributesTable);
@@ -508,6 +509,32 @@ public class OtsEditor extends JFrame implements EventProducer
      */
     private void addTreeTableListeners() throws IOException
     {
+        // this listener changes Id or node value values for each key being pressed
+        DefaultCellEditor editor = (DefaultCellEditor) this.treeTable.getDefaultEditor(String.class);
+        ((JTextField) editor.getComponent()).addKeyListener(new KeyAdapter()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public void keyReleased(final KeyEvent e)
+            {
+                int editorCol = OtsEditor.this.treeTable.convertColumnIndexToView(OtsEditor.this.treeTable.getSelectedColumn());
+                if (editorCol == 1 || editorCol == 2)
+                {
+                    int row = OtsEditor.this.treeTable.getSelectedRow();
+                    int col = OtsEditor.this.treeTable.convertColumnIndexToView(0); // columns may have been moved in view
+                    XsdTreeNode treeNode = (XsdTreeNode) OtsEditor.this.treeTable.getValueAt(row, col);
+                    if (editorCol == 1)
+                    {
+                        treeNode.setId(((JTextField) e.getComponent()).getText());
+                    }
+                    else if (editorCol == 2)
+                    {
+                        treeNode.setValue(((JTextField) e.getComponent()).getText());
+                    }
+                }
+            }
+        });
+
         // throws selection events and updates the attributes table
         this.treeTable.getTree().addTreeSelectionListener(new TreeSelectionListener()
         {
@@ -541,11 +568,10 @@ public class OtsEditor extends JFrame implements EventProducer
                     {
                         setStatusLabel(status);
                     }
-                    // TODO: This does not solve multiple editors on the same value being open in parallel when the editing does
-                    // not change the selection. Furthermore, editors in the main screen may change values too.
-                    if (OtsEditor.this.attributesTable.isEditing())
+                    CellEditor editor = OtsEditor.this.attributesTable.getCellEditor();
+                    if (editor != null)
                     {
-                        OtsEditor.this.attributesTable.editingCanceled(null);
+                        editor.stopCellEditing();
                     }
                     OtsEditor.this.attributesTable.setModel(new AttributesTableModel(node, OtsEditor.this.treeTable));
                     try
@@ -633,6 +659,11 @@ public class OtsEditor extends JFrame implements EventProducer
                     {
                         if (confirmNodeRemoval(node))
                         {
+                            CellEditor editor = OtsEditor.this.treeTable.getCellEditor();
+                            if (editor != null)
+                            {
+                                editor.stopCellEditing();
+                            }
                             int selected = OtsEditor.this.treeTable.getSelectedRow();
                             node.remove();
                             OtsEditor.this.treeTable.updateUI();
@@ -1427,6 +1458,7 @@ public class OtsEditor extends JFrame implements EventProducer
                     {
                         treeNode.setActive();
                         OtsEditor.this.treeTable.updateUI();
+                        OtsEditor.this.attributesTable.setModel(new AttributesTableModel(treeNode, OtsEditor.this.treeTable));
                     }
                     return;
                 }

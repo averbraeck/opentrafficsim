@@ -116,6 +116,11 @@ public class AttributesTableModel extends AbstractTableModel
         {
             return;
         }
+        if (this.node == null)
+        {
+            // node was deleted
+            return;
+        }
         this.node.setAttributeValue(rowIndex, aValue.toString());
         this.treeTable.updateUI();
         this.fireTableCellUpdated(rowIndex, columnIndex);

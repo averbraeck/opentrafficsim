@@ -1133,7 +1133,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         {
             numberOfTypeOrChoiceInParent = siblingPositions().size();
         }
-        if (this.minOccurs == 0 && numberOfTypeOrChoiceInParent == 1 && !this.isInclude)
+        if (this.minOccurs == 0 && numberOfTypeOrChoiceInParent == 1 && !this.isInclude && this.active)
         {
             this.deactivated = true;
             this.active = false;

@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
@@ -49,10 +51,27 @@ public class AttributesCellEditor extends DefaultCellEditor
 
     /**
      * Constructor.
+     * @param table JTable; table of the attributes.
      */
-    public AttributesCellEditor()
+    public AttributesCellEditor(final JTable table)
     {
         super(new JTextField());
+        getComponent().addKeyListener(new KeyAdapter()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public void keyReleased(final KeyEvent e)
+            {
+                int col = table.getSelectedColumn();
+                int editorCol = table.convertColumnIndexToView(col);
+                if (editorCol == 1)
+                {
+                    int row = table.getSelectedRow();
+                    String value = ((JTextField) e.getComponent()).getText();
+                    table.getModel().setValueAt(value, row, col);
+                }
+            }
+        });
         setClickCountToStart(1);
         this.checkBox.setBorder(new EmptyBorder(0, 0, 0, 0));
     }
