@@ -20,7 +20,7 @@ import org.w3c.dom.Node;
  * XSD schema.
  * @author wjschakel
  */
-public interface ValueValidator
+public interface ValueValidator extends Comparable<ValueValidator>
 {
 
     /** Set to store tags for which an error has been printed, to prevent repeated printing on repeated validation. */
@@ -465,6 +465,27 @@ public interface ValueValidator
             }
         }
         return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    default int compareTo(final ValueValidator o)
+    {
+        if (this instanceof KeyValidator)
+        {
+            if (o != null && o instanceof KeyValidator)
+            {
+                return 0;
+            }
+            /*
+             * KeyValidators are sorted first in a SortedSet. This is to prevent the following: i) another validator finds an
+             * attribute not valid, ii) the key validator is never called, if it would have been it would have matched a key and
+             * registered itself to the relevant key node, iii) the relevant key node value is changed, but the value pointing
+             * to it is not updated as the registration of the matched id was never done.
+             */
+            return -1;
+        }
+        return 0;
     }
 
 }

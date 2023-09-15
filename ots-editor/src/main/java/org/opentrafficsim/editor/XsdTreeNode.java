@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -180,10 +182,10 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     private Set<Function<XsdTreeNode, String>> nodeValidators = new LinkedHashSet<>();
 
     /** Validators for the value. */
-    private Set<ValueValidator> valueValidators = new LinkedHashSet<>();
+    private SortedSet<ValueValidator> valueValidators = new TreeSet<>();
 
     /** Validators for each attribute. */
-    private Map<String, Set<ValueValidator>> attributeValidators = new LinkedHashMap<>();
+    private Map<String, SortedSet<ValueValidator>> attributeValidators = new LinkedHashMap<>();
 
     /** Stored valid status, excluding children. {@code null} means unknown and that it needs to be derived. */
     private Boolean isSelfValid = null;
@@ -1443,7 +1445,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public void addAttributeValidator(final String attribute, final ValueValidator validator)
     {
-        this.attributeValidators.computeIfAbsent(attribute, (key) -> new LinkedHashSet<>()).add(validator);
+        this.attributeValidators.computeIfAbsent(attribute, (key) -> new TreeSet<>()).add(validator);
     }
 
     /**
@@ -1522,7 +1524,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         String val = this.attributeValues.get(index);
         if (val != null && !val.isEmpty())
         {
-            for (ValueValidator validator : this.attributeValidators.computeIfAbsent(attribute, (key) -> new LinkedHashSet<>()))
+            for (ValueValidator validator : this.attributeValidators.computeIfAbsent(attribute, (key) -> new TreeSet<>()))
             {
                 String message = validator.validate(this);
                 if (message != null)
@@ -1567,7 +1569,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         String field = getAttributeNameByIndex(index);
         List<String> valueOptions = getOptionsFromValidators(
-                this.attributeValidators.computeIfAbsent(field, (key) -> new LinkedHashSet<>()), field); // TODO: add "@"
+                this.attributeValidators.computeIfAbsent(field, (key) -> new TreeSet<>()), field); // TODO: add "@"
         if (!valueOptions.isEmpty() || this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
         {
             return valueOptions;
