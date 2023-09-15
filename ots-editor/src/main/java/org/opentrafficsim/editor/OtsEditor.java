@@ -1578,14 +1578,14 @@ public class OtsEditor extends JFrame implements EventProducer
                 });
                 add.setFont(OtsEditor.this.treeTable.getFont());
                 popup.add(add);
-                JMenuItem copy = new JMenuItem("Copy");
+                JMenuItem copy = new JMenuItem("Duplicate");
                 copy.addActionListener(new ActionListener()
                 {
                     /** {@inheritDoc} */
                     @Override
                     public void actionPerformed(final ActionEvent e)
                     {
-                        treeNode.copy();
+                        treeNode.duplicate();
                         OtsEditor.this.treeTable.updateUI();
                     }
                 });

@@ -336,55 +336,55 @@
   <ots:Demand>
 
     <ots:ShortestRoute Id="EN2" GtuType="NL.CAR">
-      <ots:From Node="E" />
-      <ots:To Node="N2" />
+      <ots:From>E</ots:From>
+      <ots:To>N2</ots:To>
     </ots:ShortestRoute>
     <ots:ShortestRoute Id="EW2" GtuType="NL.CAR">
-      <ots:From Node="E" />
-      <ots:To Node="W2" />
+      <ots:From>E</ots:From>
+      <ots:To>W2</ots:To>
     </ots:ShortestRoute>
     <ots:ShortestRoute Id="ES2" GtuType="NL.CAR">
-      <ots:From Node="E" />
-      <ots:To Node="S2" />
+      <ots:From>E</ots:From>
+      <ots:To>S2</ots:To>
     </ots:ShortestRoute>
 
     <ots:ShortestRoute Id="NW2" GtuType="NL.CAR">
-      <ots:From Node="N" />
-      <ots:To Node="W2" />
+      <ots:From>N</ots:From>
+      <ots:To>W2</ots:To>
     </ots:ShortestRoute>
     <ots:ShortestRoute Id="NS2" GtuType="NL.CAR">
-      <ots:From Node="N" />
-      <ots:To Node="S2" />
+      <ots:From>N</ots:From>
+      <ots:To>S2</ots:To>
     </ots:ShortestRoute>
     <ots:ShortestRoute Id="NE2" GtuType="NL.CAR">
-      <ots:From Node="N" />
-      <ots:To Node="E2" />
+      <ots:From>N</ots:From>
+      <ots:To>E2</ots:To>
     </ots:ShortestRoute>
 
     <ots:ShortestRoute Id="WS2" GtuType="NL.CAR">
-      <ots:From Node="W" />
-      <ots:To Node="S2" />
+      <ots:From>W</ots:From>
+      <ots:To>S2</ots:To>
     </ots:ShortestRoute>
     <ots:ShortestRoute Id="WE2" GtuType="NL.CAR">
-      <ots:From Node="W" />
-      <ots:To Node="E2" />
+      <ots:From>W</ots:From>
+      <ots:To>E2</ots:To>
     </ots:ShortestRoute>
     <ots:ShortestRoute Id="WN2" GtuType="NL.CAR">
-      <ots:From Node="W" />
-      <ots:To Node="N2" />
+      <ots:From>W</ots:From>
+      <ots:To>N2</ots:To>
     </ots:ShortestRoute>
 
     <ots:ShortestRoute Id="SE2" GtuType="NL.CAR">
-      <ots:From Node="S" />
-      <ots:To Node="E2" />
+      <ots:From>S</ots:From>
+      <ots:To>E2</ots:To>
     </ots:ShortestRoute>
     <ots:ShortestRoute Id="SN2" GtuType="NL.CAR">
-      <ots:From Node="S" />
-      <ots:To Node="N2" />
+      <ots:From>S</ots:From>
+      <ots:To>N2</ots:To>
     </ots:ShortestRoute>
     <ots:ShortestRoute Id="SW2" GtuType="NL.CAR">
-      <ots:From Node="S" />
-      <ots:To Node="W2" />
+      <ots:From>S</ots:From>
+      <ots:To>W2</ots:To>
     </ots:ShortestRoute>
 
     <ots:ShortestRouteMix Id="E" GtuType="NL.CAR">
