@@ -404,17 +404,18 @@ public class KeyValidator implements ValueValidator, EventListener
             return null;
         }
         /*
-         * We gather values from the referred xsd:key, drawing the appropriate context from the node relevant to the xsd:keyref.
-         * The xsd:keyref may not have a more specific scope than the xsd:key. If the xsd:keyref has a bigger scope, there may
-         * be only one instance of a more specific scope of the xsd:key. If both scopes are the same, this is trivially ok.
+         * We gather values from the referred xsd:key, drawing the appropriate context from the node relevant somewhere in the
+         * xsd:keyref context. The xsd:keyref may not have a more specific scope than the xsd:key. If the xsd:keyref has a
+         * bigger scope, there may be only one instance of a more specific scope of the xsd:key. If both scopes are the same,
+         * this is trivially ok.
          */
         XsdTreeNode contextKeyref = getContext(node);
-        XsdTreeNode contextKey = this.refer.getContext(node);
+        XsdTreeNode contextKey = this.refer.getContext(node); // can be null when out of scope
         boolean uniqueScope = contextKeyref.equals(contextKey);
         if (!uniqueScope)
         {
             List<XsdTreeNode> contextKeyPath = contextKey.getPath();
-            if (contextKeyPath.contains(contextKeyref)) // otherwise xsd:keyref more specific, or different context instance
+            if (contextKeyPath.contains(contextKeyref)) // xsd:key more specific, i.e. longer path
             {
                 contextKeyPath.removeAll(contextKeyref.getPath());
                 Set<XsdTreeNode> containedKeyScopes = new LinkedHashSet<>();
@@ -434,9 +435,9 @@ public class KeyValidator implements ValueValidator, EventListener
     }
 
     /**
-     * Gathers xsd:key-level scopes from a xsd:keyref context that is larger than the key's. 
+     * Gathers xsd:key-level scopes from a xsd:keyref context that is larger than the key's.
      * @param node XsdTreeNode; current node to browse the children of, or return in the set.
-     * @param remainingPath List&lt;XsdTreeNode&gt;; remaining intermediate nodes, starting with the sub-level of the keyref.
+     * @param remainingPath List&lt;XsdTreeNode&gt;; remaining intermediate levels, starting with the sub-level of the keyref.
      * @param set Set&lt;XsdTreeNode&gt;; set to gather scopes in.
      */
     private void gatherScopes(final XsdTreeNode node, final List<XsdTreeNode> remainingPath, final Set<XsdTreeNode> set)
