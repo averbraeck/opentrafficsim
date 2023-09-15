@@ -481,7 +481,7 @@ public interface ValueValidator extends Comparable<ValueValidator>
         {
             if (o != null && o instanceof KeyValidator)
             {
-                return 0;
+                return 1; // no matter
             }
             return -1;
         }
@@ -489,7 +489,7 @@ public interface ValueValidator extends Comparable<ValueValidator>
         {
             return 1;
         }
-        return 0;
+        return 1; // no matter
     }
 
 }

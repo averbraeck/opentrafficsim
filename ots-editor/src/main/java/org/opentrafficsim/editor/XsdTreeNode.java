@@ -1217,6 +1217,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                     if (XsdTreeNodeUtil.haveSameType(option, this.parent.children.get(index)))
                     {
                         siblingPositions.add(index);
+                        break;
                     }
                 }
             }

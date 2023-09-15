@@ -403,17 +403,59 @@ public class KeyValidator implements ValueValidator, EventListener
         {
             return null;
         }
-
         /*
          * We gather values from the referred xsd:key, drawing the appropriate context from the node relevant to the xsd:keyref.
-         * Can the context of the referred xsd:key be different?
+         * The xsd:keyref may not have a more specific scope than the xsd:key. If the xsd:keyref has a bigger scope, there may
+         * be only one instance of a more specific scope of the xsd:key. If both scopes are the same, this is trivially ok.
          */
-        int index = getIndex(field);
+        XsdTreeNode contextKeyref = getContext(node);
+        XsdTreeNode contextKey = this.refer.getContext(node);
+        boolean uniqueScope = contextKeyref.equals(contextKey);
+        if (!uniqueScope)
+        {
+            List<XsdTreeNode> contextKeyPath = contextKey.getPath();
+            if (contextKeyPath.contains(contextKeyref)) // otherwise xsd:keyref more specific, or different context instance
+            {
+                contextKeyPath.removeAll(contextKeyref.getPath());
+                Set<XsdTreeNode> containedKeyScopes = new LinkedHashSet<>();
+                gatherScopes(contextKeyref, contextKeyPath, containedKeyScopes);
+                uniqueScope = containedKeyScopes.size() == 1;
+            }
+        }
+        if (!uniqueScope)
+        {
+            return null;
+        }
         Map<XsdTreeNode, List<String>> values = this.refer.getValues(node);
         List<String> result = new ArrayList<>(values.size());
-        values.forEach((n, list) -> result.add(list.get(index)));
+        values.forEach((n, list) -> result.add(list.get(getIndex(field))));
         result.removeIf((v) -> v == null || v.isEmpty());
         return result;
+    }
+
+    /**
+     * Gathers xsd:key-level scopes from a xsd:keyref context that is larger than the key's. 
+     * @param node XsdTreeNode; current node to browse the children of, or return in the set.
+     * @param remainingPath List&lt;XsdTreeNode&gt;; remaining intermediate nodes, starting with the sub-level of the keyref.
+     * @param set Set&lt;XsdTreeNode&gt;; set to gather scopes in.
+     */
+    private void gatherScopes(final XsdTreeNode node, final List<XsdTreeNode> remainingPath, final Set<XsdTreeNode> set)
+    {
+        String path = node.getPathString() + "." + remainingPath.get(0);
+        for (XsdTreeNode child : node.getChildren())
+        {
+            if (child.getPathString().equals(path))
+            {
+                if (remainingPath.size() == 1)
+                {
+                    set.add(child);
+                }
+                else
+                {
+                    gatherScopes(child, remainingPath.subList(1, remainingPath.size()), set);
+                }
+            }
+        }
     }
 
     /**
@@ -521,8 +563,8 @@ public class KeyValidator implements ValueValidator, EventListener
 
     /**
      * Recursively removes or adds the children from an activated or deactivated node to/from this key. Children of a
-     * deactivated node no longer have valid key values. Only active nodes are considered. However, when a node get
-     * deactivated, its children should be removed too. The argument {@code forceDoChildren} is {@code true} in that case.
+     * deactivated node no longer have valid key values. Only active nodes are considered. However, when a node get deactivated,
+     * its children should be removed too. The argument {@code forceDoChildren} is {@code true} in that case.
      * @param node XsdTreeNode; node to remove or add.
      * @param active boolean; when node was activated, child nodes are add. Otherwise removed.
      * @param forceDoChildren boolean; {@code true} on the originally (de)activated node.
