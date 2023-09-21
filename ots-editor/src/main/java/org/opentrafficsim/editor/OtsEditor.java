@@ -30,12 +30,17 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -113,7 +118,6 @@ import de.javagl.treetable.JTreeTable;
  * @author wjschakel
  */
 // TODO: Allow sorting of elements.
-// TODO: auto-save, use System.getProperty("java.io.tmpdir")
 public class OtsEditor extends JFrame implements EventProducer
 {
 
@@ -133,6 +137,9 @@ public class OtsEditor extends JFrame implements EventProducer
 
     /** Width of the divider between parts of the screen. */
     private static final int DIVIDER_SIZE = 3;
+
+    /** Time between autosaves. */
+    private static final long AUTOSAVE_PERIOD_MS = 60000;
 
     /** Whether to update the windows as the split is being dragged. */
     private static final boolean UPDATE_SPLIT_WHILE_DRAGGING = true;
@@ -205,6 +212,9 @@ public class OtsEditor extends JFrame implements EventProducer
 
     /** Undo unit, storing all actions. */
     private Undo undo;
+
+    /** Auto save task. */
+    private TimerTask autosave;
 
     /**
      * Constructor.
@@ -525,6 +535,34 @@ public class OtsEditor extends JFrame implements EventProducer
         initializeTree();
         this.undo.clear();
         setStatusLabel("Schema " + xsdDocument.getBaseURI() + " loaded");
+
+        // check autosave
+        Path tmpPath = Paths.get(System.getProperty("java.io.tmpdir") + "ots" + File.separator);
+        File tmpDir = tmpPath.toFile();
+        if (!tmpDir.exists())
+        {
+            tmpDir.mkdir();
+        }
+        Iterator<Path> it = Files.newDirectoryStream(tmpPath, "autosave*.xml").iterator();
+        if (it.hasNext())
+        {
+            File file = it.next().toFile();
+            int userInput = JOptionPane.showConfirmDialog(this,
+                    "Autosave file " + file.getName() + " (" + new Date(file.lastModified())
+                            + ") detected. Do you want to load this file? ('No' removes the file)",
+                    "Autosave file detected", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+                    this.questionIcon);
+            if (userInput == JOptionPane.OK_OPTION)
+            {
+                loadFile(file, "Autosave file loaded");
+                setUnsavedChanges(true);
+                file.delete();
+            }
+            else if (userInput == JOptionPane.NO_OPTION)
+            {
+                file.delete();
+            }
+        }
     }
 
     /**
@@ -602,6 +640,28 @@ public class OtsEditor extends JFrame implements EventProducer
         fireEvent(NEW_FILE, root);
 
         setUnsavedChanges(false);
+        if (this.autosave != null)
+        {
+            this.autosave.cancel();
+        }
+        this.autosave = new TimerTask()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public void run()
+            {
+                if (OtsEditor.this.unsavedChanges)
+                {
+                    setStatusLabel("Autosaving...");
+                    File file = new File(System.getProperty("java.io.tmpdir") + "ots" + File.separator
+                            + (OtsEditor.this.lastFile == null ? "autosave.xml" : "autosave_" + OtsEditor.this.lastFile));
+                    save(file, root);
+                    file.deleteOnExit();
+                    setStatusLabel("Autosaved");
+                }
+            }
+        };
+        new Timer().scheduleAtFixedRate(this.autosave, AUTOSAVE_PERIOD_MS, AUTOSAVE_PERIOD_MS);
     }
 
     /**
@@ -1250,17 +1310,27 @@ public class OtsEditor extends JFrame implements EventProducer
         this.lastDirectory = fileDialog.getDirectory();
         this.lastFile = fileName;
         File file = new File(this.lastDirectory + this.lastFile);
+        loadFile(file, "File loaded");
+        ((XsdTreeNodeRoot) OtsEditor.this.treeTable.getTree().getModel().getRoot()).setDirectory(this.lastDirectory);
+    }
+
+    /**
+     * Load file.
+     * @param file File; file to load.
+     * @param status String; status message in status bar to show upon loading.
+     */
+    private void loadFile(final File file, final String status)
+    {
         try
         {
             Document document = DocumentReader.open(file.toURI());
             initializeTree();
             this.undo.setIgnoreChanges();
             XsdTreeNodeRoot root = (XsdTreeNodeRoot) OtsEditor.this.treeTable.getTree().getModel().getRoot();
-            root.setDirectory(this.lastDirectory);
             root.loadXmlNodes(document.getFirstChild());
             this.undo.clear();
             setUnsavedChanges(false);
-            setStatusLabel("File loaded");
+            setStatusLabel(status);
         }
         catch (SAXException | IOException | ParserConfigurationException exception)
         {
@@ -1279,7 +1349,9 @@ public class OtsEditor extends JFrame implements EventProducer
             saveFileAs(root);
             return;
         }
-        save(this.lastDirectory, this.lastFile, root);
+        save(new File(this.lastDirectory + this.lastFile), root);
+        setUnsavedChanges(false);
+        setStatusLabel("Saved");
     }
 
     /**
@@ -1305,16 +1377,21 @@ public class OtsEditor extends JFrame implements EventProducer
             this.lastDirectory = fileDialog.getDirectory();
             this.lastFile = fileName;
         }
-        save(fileDialog.getDirectory(), fileName, root);
+        save(new File(fileDialog.getDirectory() + fileName), root);
+        if (root instanceof XsdTreeNodeRoot)
+        {
+            setUnsavedChanges(false);
+            ((XsdTreeNodeRoot) root).setDirectory(this.lastDirectory);
+        }
+        setStatusLabel("Saved");
     }
 
     /**
      * Performs the actual saving, either from {@code saveFile()} or {@code saveFileAs()}.
-     * @param directory String; directory. Must include a file separator at the end.
-     * @param fileName String; file name.
+     * @param file File; file to save.
      * @param root XsdTreeNode; root node of tree to save, can be a sub-tree of the full tree.
      */
-    private void save(final String directory, final String fileName, final XsdTreeNode root)
+    private void save(final File file, final XsdTreeNode root)
     {
         try
         {
@@ -1335,7 +1412,6 @@ public class OtsEditor extends JFrame implements EventProducer
             // "http://www.opentrafficsim.org/ots ../../../../../ots-parser-xml/src/main/resources/xsd/ots.xsd");
             xmlRoot.setAttribute("xmlns:xi", "http://www.w3.org/2001/XInclude");
 
-            File file = new File(directory + fileName);
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             StreamResult result = new StreamResult(fileOutputStream);
 
@@ -1345,24 +1421,17 @@ public class OtsEditor extends JFrame implements EventProducer
             transformer.transform(new DOMSource(document), result);
 
             fileOutputStream.close();
-            // this fixed a bug with missing new line
-            Path path = Path.of(directory, fileName);
-            String content = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+            // this fixes a bug with missing new line
+            String content = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
             content = content.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
                     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + System.lineSeparator());
-            Files.write(path, content.getBytes(StandardCharsets.UTF_8));
+            Files.write(file.toPath(), content.getBytes(StandardCharsets.UTF_8));
             // end of fix
-            if (root instanceof XsdTreeNodeRoot)
-            {
-                setUnsavedChanges(false);
-                ((XsdTreeNodeRoot) root).setDirectory(this.lastDirectory);
-            }
         }
         catch (ParserConfigurationException | TransformerException | IOException exception)
         {
             JOptionPane.showMessageDialog(this, "Unable to save file.", "Unable to save file.", JOptionPane.WARNING_MESSAGE);
         }
-        setStatusLabel("Saved");
     }
 
     /**
