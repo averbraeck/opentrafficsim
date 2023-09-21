@@ -12,6 +12,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -61,6 +63,8 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.event.TreeExpansionEvent;
@@ -160,9 +164,6 @@ public class OtsEditor extends JFrame implements EventProducer
     /** Map of listeners for {@code EventProducer}. */
     private final EventListenerMap listenerMap = new EventListenerMap();
 
-    /** Main left-right split pane. */
-    // private final JSplitPane mainSplitPane;
-
     /** Main tabbed pane at the left-hand side. */
     private final JTabbedPane visualizationPane;
 
@@ -201,6 +202,9 @@ public class OtsEditor extends JFrame implements EventProducer
 
     /** Whether there is unsaved content. */
     private boolean unsavedChanges = false;
+
+    /** Undo unit, storing all actions. */
+    private Undo undo;
 
     /**
      * Constructor.
@@ -280,7 +284,7 @@ public class OtsEditor extends JFrame implements EventProducer
         this.attributesTable.putClientProperty("terminateEditOnFocusLost", true);
         this.attributesTable.setDefaultRenderer(String.class,
                 new AttributeCellRenderer(loadIcon("./Info.png", 12, 12, 16, 16)));
-        AttributesCellEditor editor = new AttributesCellEditor(this.attributesTable);
+        AttributesCellEditor editor = new AttributesCellEditor(this.attributesTable, this);
         this.attributesTable.setDefaultEditor(String.class, editor);
         this.attributesTable.addMouseListener(new AttributesMouseListener(this, this.attributesTable));
         AttributesTableModel.applyColumnWidth(this.attributesTable);
@@ -299,6 +303,73 @@ public class OtsEditor extends JFrame implements EventProducer
         setVisible(true);
         leftRightSplitPane.setDividerLocation(0.65);
         this.rightSplitPane.setDividerLocation(0.75);
+    }
+
+    /**
+     * Returns the undo unit.
+     * @return Undo; undo unit.
+     */
+    public Undo getUndo()
+    {
+        return this.undo;
+    }
+
+    /**
+     * Shows and selects the given node in the tree.
+     * @param node XsdTreeNode; node.
+     * @param attribute String; attribute name, may be {@code null} to just show the node.
+     */
+    public void show(final XsdTreeNode node, final String attribute)
+    {
+        if (node.getParent() == null)
+        {
+            return; // trying to show node that is in collapsed part of the tree
+        }
+        if (this.treeTable.isEditing())
+        {
+            CellEditor editor = this.treeTable.getCellEditor();
+            if (editor != null)
+            {
+                editor.cancelCellEditing();
+            }
+        }
+        if (this.attributesTable.isEditing())
+        {
+            CellEditor editor = this.attributesTable.getCellEditor();
+            if (editor != null)
+            {
+                editor.cancelCellEditing();
+            }
+        }
+        List<XsdTreeNode> nodePath = node.getPath();
+        TreePath partialPath = new TreePath(nodePath.subList(0, nodePath.size() - 1).toArray());
+        this.treeTable.getTree().expandPath(partialPath);
+        TreePath path = new TreePath(node.getPath().toArray());
+        this.treeTable.getTree().setSelectionPath(path);
+        this.treeTable.getTree().scrollPathToVisible(path);
+        this.treeTable.updateUI();
+        Rectangle bounds = this.treeTable.getTree().getPathBounds(path);
+        if (bounds == null)
+        {
+            return; // trying to show node that is in collapsed part of the tree
+        }
+        bounds.x += this.treeTable.getX();
+        bounds.y += this.treeTable.getY();
+        ((JComponent) this.treeTable.getParent()).scrollRectToVisible(bounds);
+
+        if (node.isActive())
+        {
+            this.attributesTable.setModel(new AttributesTableModel(node, this.treeTable));
+        }
+        else
+        {
+            this.attributesTable.setModel(new AttributesTableModel(null, this.treeTable));
+        }
+        if (attribute != null)
+        {
+            int index = node.getAttributeIndexByName(attribute);
+            this.attributesTable.setRowSelectionInterval(index, index);
+        }
     }
 
     /**
@@ -325,6 +396,7 @@ public class OtsEditor extends JFrame implements EventProducer
     {
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
+
         JMenu fileMenu = new JMenu("File");
         menuBar.add(fileMenu);
         JMenuItem newFile = new JMenuItem("New");
@@ -386,6 +458,40 @@ public class OtsEditor extends JFrame implements EventProducer
                 exit();
             }
         });
+
+        JMenu editMenu = new JMenu("Edit");
+        menuBar.add(editMenu);
+        JMenuItem undoItem = new JMenuItem("Undo");
+        undoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, ActionEvent.CTRL_MASK));
+        editMenu.add(undoItem);
+        undoItem.addActionListener(new ActionListener()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public void actionPerformed(final ActionEvent e)
+            {
+                if (undoItem.isEnabled())
+                {
+                    OtsEditor.this.undo.undo();
+                }
+            }
+        });
+        JMenuItem redoItem = new JMenuItem("Redo");
+        redoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, ActionEvent.CTRL_MASK));
+        editMenu.add(redoItem);
+        redoItem.addActionListener(new ActionListener()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public void actionPerformed(final ActionEvent e)
+            {
+                if (redoItem.isEnabled())
+                {
+                    OtsEditor.this.undo.redo();
+                }
+            }
+        });
+        this.undo = new Undo(this, undoItem, redoItem);
     }
 
     /**
@@ -417,6 +523,7 @@ public class OtsEditor extends JFrame implements EventProducer
     {
         this.xsdDocument = xsdDocument;
         initializeTree();
+        this.undo.clear();
         setStatusLabel("Schema " + xsdDocument.getBaseURI() + " loaded");
     }
 
@@ -473,7 +580,7 @@ public class OtsEditor extends JFrame implements EventProducer
             {
                 if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
                 {
-                    XsdTreeNode node = (XsdTreeNode) event.getContent();
+                    XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
                     node.addListener(this, XsdTreeNode.VALUE_CHANGED);
                     node.addListener(this, XsdTreeNode.OPTION_CHANGED);
                     node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
@@ -481,7 +588,7 @@ public class OtsEditor extends JFrame implements EventProducer
                 }
                 else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
                 {
-                    XsdTreeNode node = (XsdTreeNode) event.getContent();
+                    XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
                     node.removeListener(this, XsdTreeNode.VALUE_CHANGED);
                     node.removeListener(this, XsdTreeNode.OPTION_CHANGED);
                     node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
@@ -526,6 +633,42 @@ public class OtsEditor extends JFrame implements EventProducer
                         treeNode.setValue(((JTextField) e.getComponent()).getText());
                     }
                 }
+            }
+        });
+
+        // this listener starts a new undo event when the editor gets focus on the JTreeTable
+        ((JTextField) editor.getComponent()).addFocusListener(new FocusListener()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public void focusGained(final FocusEvent e)
+            {
+                startUndoActionOnTreeTable();
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public void focusLost(final FocusEvent e)
+            {
+                startUndoActionOnTreeTable();
+            }
+        });
+
+        // this listener may cause new undo actions when cells are navigated using the keyboard
+        editor.addCellEditorListener(new CellEditorListener()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public void editingStopped(final ChangeEvent e)
+            {
+                startUndoActionOnTreeTable();
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public void editingCanceled(final ChangeEvent e)
+            {
+                startUndoActionOnTreeTable();
             }
         });
 
@@ -659,6 +802,7 @@ public class OtsEditor extends JFrame implements EventProducer
                                 editor.stopCellEditing();
                             }
                             int selected = OtsEditor.this.treeTable.getSelectedRow();
+                            OtsEditor.this.undo.startAction("remove", node, null);
                             node.remove();
                             OtsEditor.this.treeTable.updateUI();
                             OtsEditor.this.treeTable.getSelectionModel().setSelectionInterval(selected, selected);
@@ -673,6 +817,23 @@ public class OtsEditor extends JFrame implements EventProducer
                 }
             }
         });
+    }
+
+    /**
+     * Creates a new undo action as the selection is changed in the tree table.
+     */
+    private void startUndoActionOnTreeTable()
+    {
+        XsdTreeNode node = (XsdTreeNode) this.treeTable.getValueAt(this.treeTable.getSelectedRow(), 0);
+        int col = this.treeTable.convertColumnIndexToView(this.treeTable.getSelectedColumn());
+        if (col == 1)
+        {
+            this.undo.startAction("id change", node, null);
+        }
+        else if (col == 2)
+        {
+            this.undo.startAction("value change", node, null);
+        }
     }
 
     /**
@@ -1093,16 +1254,18 @@ public class OtsEditor extends JFrame implements EventProducer
         {
             Document document = DocumentReader.open(file.toURI());
             initializeTree();
+            this.undo.setIgnoreChanges();
             XsdTreeNodeRoot root = (XsdTreeNodeRoot) OtsEditor.this.treeTable.getTree().getModel().getRoot();
             root.setDirectory(this.lastDirectory);
             root.loadXmlNodes(document.getFirstChild());
+            this.undo.clear();
             setUnsavedChanges(false);
+            setStatusLabel("File loaded");
         }
         catch (SAXException | IOException | ParserConfigurationException exception)
         {
             JOptionPane.showMessageDialog(this, "Unable to read file.", "Unable to read file.", JOptionPane.WARNING_MESSAGE);
         }
-        setStatusLabel("File loaded");
     }
 
     /**

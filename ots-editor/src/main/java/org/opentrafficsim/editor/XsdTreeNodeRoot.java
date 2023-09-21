@@ -34,15 +34,21 @@ public class XsdTreeNodeRoot extends XsdTreeNode
      * Event when a node is created. This event is always thrown by the root of the data structure. Listeners should register
      * with the root.
      */
-    public static final EventType NODE_CREATED = new EventType("NODECREATED", new MetaData("Node created", "Created tree node",
-            new ObjectDescriptor("Node created", "Created tree node", XsdTreeNode.class)));
+    public static final EventType NODE_CREATED = new EventType("NODECREATED",
+            new MetaData("Node created", "Created tree node",
+                    new ObjectDescriptor("Node created", "Created tree node", XsdTreeNode.class),
+                    new ObjectDescriptor("Parent", "Parent node", XsdTreeNode.class),
+                    new ObjectDescriptor("Index", "Index where it is in the parent", Integer.class)));
 
     /**
      * Event when a node is removed. Invoked for each individual node, including all child nodes of a node that a user removes.
      * This event is always thrown by the root of the data structure. Listeners should register with the root.
      */
-    public static final EventType NODE_REMOVED = new EventType("NODEREMOVEDD", new MetaData("Node removed", "Removed tree node",
-            new ObjectDescriptor("Node removed", "Removed tree node", XsdTreeNode.class)));
+    public static final EventType NODE_REMOVED = new EventType("NODEREMOVED",
+            new MetaData("Node removed", "Removed tree node",
+                    new ObjectDescriptor("Node removed", "Removed tree node", XsdTreeNode.class),
+                    new ObjectDescriptor("Parent", "Parent node", XsdTreeNode.class),
+                    new ObjectDescriptor("Index", "Index where it was in the parent", Integer.class)));
 
     /** Directory, relevant for relative paths in include nodes. */
     private String directory;
@@ -140,9 +146,9 @@ public class XsdTreeNodeRoot extends XsdTreeNode
             @Override
             public void notify(final Event event) throws RemoteException
             {
-                XsdTreeNode node = (XsdTreeNode) event.getContent();
                 int iteration = 0;
                 Set<KeyValidator> keysIteration = keys;
+                XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
                 while (iteration < 3)
                 {
                     for (KeyValidator key : keysIteration)

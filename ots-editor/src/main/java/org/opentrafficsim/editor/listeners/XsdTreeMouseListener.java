@@ -25,18 +25,18 @@ import de.javagl.treetable.JTreeTable;
  */
 public class XsdTreeMouseListener extends MouseAdapter
 {
-    
+
     /** Editor. */
     private final OtsEditor editor;
-    
+
     /** Tree table. */
     private final JTreeTable treeTable;
-    
+
     /** Attributes table. */
     private final JTable attributesTable;
-    
+
     /**
-     * Constructor. 
+     * Constructor.
      * @param editor OtsEditor; editor.
      * @param treeTable JTreeTable; tree table.
      * @param attributesTable JTable; attributes table.
@@ -65,12 +65,20 @@ public class XsdTreeMouseListener extends MouseAdapter
                 if (colNumber == 1 && treeNode.isIdentifiable())
                 {
                     List<String> allOptions = treeNode.getIdRestrictions();
-                    this.editor.optionsPopup(allOptions, this.treeTable, (t) -> treeNode.setId(t));
+                    this.editor.optionsPopup(allOptions, this.treeTable, (t) ->
+                    {
+                        this.editor.getUndo().startAction("id change", treeNode, "Id");
+                        treeNode.setId(t);
+                    });
                 }
                 else if (colNumber == 2)
                 {
                     List<String> allOptions = treeNode.getValueRestrictions();
-                    this.editor.optionsPopup(allOptions, this.treeTable, (t) -> treeNode.setValue(t));
+                    this.editor.optionsPopup(allOptions, this.treeTable, (t) ->
+                    {
+                        this.editor.getUndo().startAction("value change", treeNode, null);
+                        treeNode.setValue(t);
+                    });
                 }
             }
         }
@@ -83,14 +91,15 @@ public class XsdTreeMouseListener extends MouseAdapter
         // show choice popup
         if (e.getButton() == MouseEvent.BUTTON1)
         {
-            if (e.getClickCount() > 1 && this.treeTable
-                    .convertColumnIndexToModel(this.treeTable.columnAtPoint(e.getPoint())) == 0)
+            if (e.getClickCount() > 1
+                    && this.treeTable.convertColumnIndexToModel(this.treeTable.columnAtPoint(e.getPoint())) == 0)
             {
                 int row = this.treeTable.rowAtPoint(e.getPoint());
                 int col = this.treeTable.convertColumnIndexToView(0); // columns may have been moved in view
                 XsdTreeNode treeNode = (XsdTreeNode) this.treeTable.getValueAt(row, col);
                 if (!treeNode.isActive() && !treeNode.isInclude())
                 {
+                    this.editor.getUndo().startAction("activate", treeNode, null);
                     treeNode.setActive();
                     this.treeTable.updateUI();
                     this.attributesTable.setModel(new AttributesTableModel(treeNode, this.treeTable));
@@ -125,7 +134,7 @@ public class XsdTreeMouseListener extends MouseAdapter
                     if (!option.isSelected())
                     {
                         button.addActionListener(new ChoiceListener(option.getChoice(), option.getOptionNode(), row,
-                                this.treeTable, this.attributesTable));
+                                this.editor, this.treeTable, this.attributesTable));
                     }
                     button.setFont(this.treeTable.getFont());
                     popup.add(button);
@@ -153,8 +162,8 @@ public class XsdTreeMouseListener extends MouseAdapter
     }
 
     /**
-     * Creates a popup panel with options for a node. These contain active consumers (editors), moving up/down, and addition
-     * and removal.
+     * Creates a popup panel with options for a node. These contain active consumers (editors), moving up/down, and addition and
+     * removal.
      * @param e MouseEvent; mouse event.
      * @param treeNode XsdTreeNode; node that was clicked on.
      */
@@ -240,6 +249,7 @@ public class XsdTreeMouseListener extends MouseAdapter
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
+                    XsdTreeMouseListener.this.editor.getUndo().startAction("add", treeNode, null);
                     treeNode.add();
                     XsdTreeMouseListener.this.treeTable.updateUI();
                 }
@@ -253,6 +263,7 @@ public class XsdTreeMouseListener extends MouseAdapter
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
+                    XsdTreeMouseListener.this.editor.getUndo().startAction("duplicate", treeNode, null);
                     treeNode.duplicate();
                     XsdTreeMouseListener.this.treeTable.updateUI();
                 }
@@ -279,6 +290,7 @@ public class XsdTreeMouseListener extends MouseAdapter
                     if (XsdTreeMouseListener.this.editor.confirmNodeRemoval(treeNode))
                     {
                         int selected = XsdTreeMouseListener.this.treeTable.getTree().getLeadSelectionRow();
+                        XsdTreeMouseListener.this.editor.getUndo().startAction("remove", treeNode, null);
                         treeNode.remove();
                         XsdTreeMouseListener.this.treeTable.updateUI();
                         XsdTreeMouseListener.this.treeTable.getSelectionModel().setSelectionInterval(selected, selected);
@@ -313,6 +325,7 @@ public class XsdTreeMouseListener extends MouseAdapter
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
+                    XsdTreeMouseListener.this.editor.getUndo().startAction("move", treeNode, null);
                     treeNode.move(-1);
                     XsdTreeMouseListener.this.treeTable.updateUI();
                 }
@@ -335,6 +348,7 @@ public class XsdTreeMouseListener extends MouseAdapter
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
+                    XsdTreeMouseListener.this.editor.getUndo().startAction("move", treeNode, null);
                     treeNode.move(1);
                     XsdTreeMouseListener.this.treeTable.updateUI();
                 }

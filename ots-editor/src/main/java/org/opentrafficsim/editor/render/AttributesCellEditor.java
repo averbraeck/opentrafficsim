@@ -17,6 +17,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import org.opentrafficsim.editor.AttributesTableModel;
+import org.opentrafficsim.editor.DocumentReader;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 
@@ -48,12 +49,16 @@ public class AttributesCellEditor extends DefaultCellEditor
 
     /** Whether the editor is currently using a checkbox. */
     private boolean checkMode;
+    
+    /** Editor. */
+    private final OtsEditor editor;
 
     /**
      * Constructor.
      * @param table JTable; table of the attributes.
+     * @param editor OtsEditor; editor.
      */
-    public AttributesCellEditor(final JTable table)
+    public AttributesCellEditor(final JTable table, final OtsEditor editor)
     {
         super(new JTextField());
         getComponent().addKeyListener(new KeyAdapter()
@@ -74,6 +79,7 @@ public class AttributesCellEditor extends DefaultCellEditor
         });
         setClickCountToStart(1);
         this.checkBox.setBorder(new EmptyBorder(0, 0, 0, 0));
+        this.editor = editor;
     }
 
     /** {@inheritDoc} */
@@ -93,10 +99,12 @@ public class AttributesCellEditor extends DefaultCellEditor
     public Component getTableCellEditorComponent(final JTable table, final Object value, final boolean isSelected,
             final int row, final int column)
     {
+        XsdTreeNode node = ((AttributesTableModel) table.getModel()).getNode();
+        String attribute = DocumentReader.getAttribute(node.getAttributeNode(row), "name");
+        this.editor.getUndo().startAction("attribute change", node, attribute);
         if (table.convertColumnIndexToModel(column) == 1)
         {
             this.checkBox.setVisible(false);
-            XsdTreeNode node = ((AttributesTableModel) table.getModel()).getNode();
             if ("xsd:boolean".equals(node.getAttributeBaseType(row)))
             {
                 String message = node.isSelfValid() ? null : node.reportInvalidAttributeValue(row);

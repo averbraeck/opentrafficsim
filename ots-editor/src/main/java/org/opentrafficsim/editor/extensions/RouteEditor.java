@@ -61,7 +61,7 @@ public class RouteEditor implements EventListener, Consumer<XsdTreeNode>
         }
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
         {
-            XsdTreeNode node = (XsdTreeNode) event.getContent();
+            XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
             if (node.isType("Ots.Demand.Route"))
             {
                 node.addConsumer("Show in panel...", this);

@@ -48,7 +48,8 @@ public abstract class AbstractNodeDecoratorRemove extends AbstractNodeDecorator
                 {
                     if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
                     {
-                        AbstractNodeDecoratorRemove.this.notifyRemoved((XsdTreeNode) event.getContent());
+                        XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
+                        AbstractNodeDecoratorRemove.this.notifyRemoved(node);
                     }
                 }
             }, XsdTreeNodeRoot.NODE_REMOVED);

@@ -53,18 +53,23 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     private static final long serialVersionUID = 20230224L;
 
     /** Event when a node value is changed. */
-    public static final EventType VALUE_CHANGED = new EventType("VALUECHANGED", new MetaData("Value changed",
-            "Value changed on node", new ObjectDescriptor("Node", "Node with changed value", XsdTreeNode.class)));
+    public static final EventType VALUE_CHANGED = new EventType("VALUECHANGED",
+            new MetaData("Value changed", "Value changed on node",
+                    new ObjectDescriptor("Node", "Node with changed value", XsdTreeNode.class),
+                    new ObjectDescriptor("Previous", "Previous node value", String.class)));
 
     /** Event when an attribute value is changed. */
     public static final EventType ATTRIBUTE_CHANGED = new EventType("ATTRIBUTECHANGED",
             new MetaData("Attribute changed", "Attribute changed on node",
                     new ObjectDescriptor("Node", "Node with changed attribute value", XsdTreeNode.class),
-                    new ObjectDescriptor("Attribute", "Name of the attribute", String.class)));
+                    new ObjectDescriptor("Attribute", "Name of the attribute", String.class),
+                    new ObjectDescriptor("Previous", "Previous attribute value", String.class)));
 
     /** Event when an option is changed. */
-    public static final EventType OPTION_CHANGED = new EventType("OPTIONCHANGED", new MetaData("Option changed",
-            "Option changed on node", new ObjectDescriptor("Node", "Newly selected option node", XsdTreeNode.class)));
+    public static final EventType OPTION_CHANGED = new EventType("OPTIONCHANGED",
+            new MetaData("Option changed", "Option changed on node",
+                    new ObjectDescriptor("Node", "Newly selected option node", XsdTreeNode.class),
+                    new ObjectDescriptor("Previous", "Previously selected option node", XsdTreeNode.class)));
 
     /** Event when an option is changed. */
     public static final EventType ACTIVATION_CHANGED = new EventType("ACTIVATIONCHANGED",
@@ -72,11 +77,18 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                     new ObjectDescriptor("Node", "Node with changed activation.", XsdTreeNode.class),
                     new ObjectDescriptor("Activation", "New activation state.", Boolean.class)));
 
+    /** Event when a node is moved. */
+    public static final EventType MOVED = new EventType("MOVED",
+            new MetaData("Node moved", "Node moved", new ObjectDescriptor("Node", "Node that was moved.", XsdTreeNode.class),
+                    new ObjectDescriptor("OldIndex", "Old index.", Integer.class),
+                    new ObjectDescriptor("NewIndex", "New index.", Integer.class)));
+
     /** Limit on displayed option name to avoid huge menu's. */
     private static final int MAX_OPTIONNAME_LENGTH = 64;
 
     /** Parent node. */
-    private XsdTreeNode parent;
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    XsdTreeNode parent;
 
     /** Node from XSD that this {@code XsdTreeNode} represents. Most typically an xsd:element node. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -120,9 +132,6 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     @SuppressWarnings("checkstyle:visibilitymodifier")
     XsdTreeNode selected;
 
-    /** Prevents cyclical removal through choice nodes that remove all their options. */
-    private boolean ignoreRemove = false;
-
     // ====== Children ======
 
     /** Children nodes. */
@@ -140,7 +149,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     // ====== Properties to expose to the GUI ======
 
     /** Whether the node is active. Inactive nodes show the user what type of node can be created in its place. */
-    private boolean active;
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    boolean active;
 
     /**
      * When the node has been deactivated, activation should only set {@code active = true}. Other parts of the activation
@@ -277,7 +287,6 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         this.isInclude = parent.isInclude;
         this.value = referringXsdNode == null ? (xsdNode == null ? null : DocumentReader.getAttribute(xsdNode, "default"))
                 : DocumentReader.getAttribute(referringXsdNode, "default");
-        ((XsdTreeNodeRoot) getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED, this);
     }
 
     /**
@@ -408,10 +417,44 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         Throw.when(!isChoice(), IllegalStateException.class, "Setting option on node that is not (part of) a choice.");
         Throw.when(!this.choice.options.contains(node), IllegalStateException.class,
                 "Setting option on node that does not have this option.");
+        XsdTreeNode previous = this.choice.selected;
+        if (node.equals(previous))
+        {
+            return;
+        }
         this.choice.selected = node;
         int index = removeAnyFromParent();
         this.parent.children.add(index, node);
-        node.fireEvent(XsdTreeNodeRoot.OPTION_CHANGED, node);
+        node.invalidate();
+        node.fireEvent(XsdTreeNodeRoot.OPTION_CHANGED, new Object[] {node, previous});
+    }
+
+    /**
+     * Returns the selected option.
+     * @return XsdTreeNode; selected option.
+     */
+    public XsdTreeNode getOption()
+    {
+        return this.choice.selected;
+    }
+
+    /**
+     * Sets the given node as child of this node.
+     * @param index int; index to insert the node.
+     * @param child XsdTreeNode; child node.
+     */
+    public void setChild(final int index, final XsdTreeNode child)
+    {
+        if (index >= this.children.size())
+        {
+            this.children.add(child);
+        }
+        else
+        {
+            this.children.add(index, child);
+        }
+        child.parent = this;
+        child.invalidate();
     }
 
     /**
@@ -545,6 +588,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                         child.isInclude = true;
                         this.children.add(child);
                         child.loadXmlNodes(xsdIncludeNode);
+                        ((XsdTreeNodeRoot) child.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                                new Object[] {child, child.parent, child.parent.children.indexOf(child)});
                         return;
                     }
                 }
@@ -718,7 +763,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     {
         assureAttributesAndDescription();
         int index = getAttributeIndexByName(name);
-        if (!XsdTreeNodeUtil.valuesAreEqual(this.attributeValues.get(index), value))
+        String previous = this.attributeValues.get(index);
+        if (!XsdTreeNodeUtil.valuesAreEqual(previous, value))
         {
             this.attributeValues.set(index, (value == null || value.isEmpty()) ? null : value);
             if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
@@ -728,7 +774,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 assureChildren();
             }
             invalidate();
-            fireEvent(ATTRIBUTE_CHANGED, new Object[] {this, name});
+            fireEvent(ATTRIBUTE_CHANGED, new Object[] {this, name, previous});
         }
     }
 
@@ -773,7 +819,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * @param attribute String; attribute name.
      * @return int; index of the named attribute.
      */
-    private int getAttributeIndexByName(final String attribute)
+    public int getAttributeIndexByName(final String attribute)
     {
         if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE) && "href".equals(attribute))
         {
@@ -970,11 +1016,12 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     {
         Throw.when(!isEditable(), IllegalStateException.class,
                 "Node is not an xsd:simpleType or xsd:complexType with xsd:simpleContent, hence no value is allowed.");
-        if (!XsdTreeNodeUtil.valuesAreEqual(this.value, value))
+        String previous = this.value;
+        if (!XsdTreeNodeUtil.valuesAreEqual(previous, value))
         {
             this.value = (value == null || value.isEmpty()) ? null : value;
             invalidate();
-            fireEvent(new Event(VALUE_CHANGED, this));
+            fireEvent(new Event(VALUE_CHANGED, new Object[] {this, previous}));
         }
     }
 
@@ -1015,6 +1062,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             this.parent.children.remove(selectedOption); // needs to be at the right index
             this.parent.children.add(index, selectedOption);
             node.options.get(indexSelected).setActive();
+            ((XsdTreeNodeRoot) node.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED, new Object[] {selectedOption,
+                    selectedOption.parent, selectedOption.parent.children.indexOf(selectedOption)});
             return selectedOption;
         }
         else
@@ -1023,6 +1072,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             XsdTreeNode node = new XsdTreeNode(this.parent, this.xsdNode, this.hiddenNodes, this.referringXsdNode);
             this.parent.children.add(index, node);
             node.active = true;
+            ((XsdTreeNodeRoot) node.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                    new Object[] {node, node.parent, node.parent.children.indexOf(node)});
             return node;
         }
     }
@@ -1093,6 +1144,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         {
             this.children.get(index).duplicate(copyNode);
         }
+        ((XsdTreeNodeRoot) copyNode.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                new Object[] {copyNode, newParent, newParent.children.indexOf(copyNode)});
     }
 
     /**
@@ -1112,12 +1165,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public final void remove()
     {
-        if (this.ignoreRemove)
-        {
-            return;
-        }
         int numberOfTypeOrChoiceInParent;
-        if (this.choice != null)
+        if (this.choice != null && this.choice.selected.equals(this))
         {
             numberOfTypeOrChoiceInParent = 0;
             for (XsdTreeNode sibling : this.parent.children)
@@ -1140,22 +1189,29 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             this.deactivated = true;
             this.active = false;
             invalidate();
+            this.parent.invalidate();
             fireEvent(new Event(XsdTreeNode.ACTIVATION_CHANGED, new Object[] {this, false}));
             return;
         }
-        this.ignoreRemove = true;
-        if (this.choice != null)
+        if (this.choice != null && this.choice.selected.equals(this))
         {
             for (XsdTreeNode option : this.choice.options)
             {
-                option.remove();
+                if (!this.choice.selected.equals(this))
+                {
+                    option.remove();
+                }
             }
         }
         removeChildren();
+        XsdTreeNode parent = this.parent;
+        int index = this.parent.children.indexOf(this);
         this.parent.children.remove(this);
         XsdTreeNodeRoot root = (XsdTreeNodeRoot) getPath().get(0); // can't get path later as we set parent to null
         this.parent = null;
-        root.fireEvent(XsdTreeNodeRoot.NODE_REMOVED, this);
+        parent.children.forEach((c) -> c.invalidate());
+        parent.invalidate();
+        root.fireEvent(XsdTreeNodeRoot.NODE_REMOVED, new Object[] {this, parent, index});
     }
 
     /**
@@ -1241,9 +1297,11 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public void move(final int down)
     {
-        int index = this.parent.children.indexOf(this);
+        int oldIndex = this.parent.children.indexOf(this);
         this.parent.children.remove(this);
-        this.parent.children.add(index + down, this);
+        int newIndex = oldIndex + down;
+        this.parent.children.add(newIndex, this);
+        fireEvent(MOVED, new Object[] {this, oldIndex, newIndex});
     }
 
     /**
@@ -1322,7 +1380,11 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         // TODO: check whether node should have children if there are none; can we do this without already exploding the tree?
         if (this.isValid == null)
         {
-            if (!isSelfValid())
+            if (!isActive())
+            {
+                this.isValid = true;
+            }
+            else if (!isSelfValid())
             {
                 this.isValid = false;
             }
@@ -1569,8 +1631,10 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             return List.of("true", "false");
         }
         String field = getAttributeNameByIndex(index);
-        List<String> valueOptions = getOptionsFromValidators(
-                this.attributeValidators.computeIfAbsent(field, (key) -> new TreeSet<>()), field); // TODO: add "@"
+        List<String> valueOptions =
+                getOptionsFromValidators(this.attributeValidators.computeIfAbsent(field, (key) -> new TreeSet<>()), field); // TODO:
+                                                                                                                            // add
+                                                                                                                            // "@"
         if (!valueOptions.isEmpty() || this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
         {
             return valueOptions;

@@ -31,11 +31,11 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
     private static final Border EMPTY_BORDER = new EmptyBorder(0, 0, 0, 0);
 
     /** Info icon. */
-    private Icon infoIcon;
+    private final Icon infoIcon;
 
     /** Checkbox to use for boolean types. */
-    private JCheckBox checkBox = new JCheckBox();
-
+    private final JCheckBox checkBox = new JCheckBox();
+    
     /**
      * Constructor.
      * @param infoIcon Icon; info icon.

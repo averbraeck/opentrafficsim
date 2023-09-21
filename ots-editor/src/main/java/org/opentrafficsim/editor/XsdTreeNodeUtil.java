@@ -3,10 +3,8 @@ package org.opentrafficsim.editor;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.djutils.event.Event;
@@ -23,7 +21,7 @@ import org.w3c.dom.Node;
  */
 public final class XsdTreeNodeUtil
 {
-    
+
     /** Pattern for regular expression to split string by upper case without disregarding the upper case itself. */
     private static final Pattern UPPER_PATTERN = Pattern.compile("(?=\\p{Lu})");
 
@@ -108,6 +106,8 @@ public final class XsdTreeNodeUtil
                         element = new XsdTreeNode(parentNode, child, XsdTreeNodeUtil.append(hiddenNodes, node));
                     }
                     children.add(element);
+                    ((XsdTreeNodeRoot) element.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                            new Object[] {element, parentNode, parentNode.children.indexOf(element)});
                     break;
                 case "xsd:sequence":
                     if (children.size() == skipIndex)
@@ -208,9 +208,7 @@ public final class XsdTreeNodeUtil
     protected static void fireCreatedEventOnExistingNodes(final XsdTreeNode node, final EventListener listener)
             throws RemoteException
     {
-        Event event = new Event(XsdTreeNodeRoot.NODE_CREATED, node);
-        listener.notify(event);
-        Set<XsdTreeNode> subNodes = node.children == null ? new LinkedHashSet<>() : new LinkedHashSet<>(node.children);
+        List<XsdTreeNode> subNodes = node.children == null ? new ArrayList<>() : new ArrayList<>(node.children);
         // only selected node extends towards choice, otherwise infinite recursion
         if (node.choice != null && node.choice.selected.equals(node))
         {
@@ -222,6 +220,9 @@ public final class XsdTreeNodeUtil
         {
             fireCreatedEventOnExistingNodes(child, listener);
         }
+        Event event = new Event(XsdTreeNodeRoot.NODE_CREATED,
+                new Object[] {node, node.getParent(), subNodes.indexOf(node)});
+        listener.notify(event);
     }
 
     /**
@@ -336,9 +337,9 @@ public final class XsdTreeNodeUtil
         Throw.when(typeNode == null, RuntimeException.class, "Unable to load type for %s from XSD schema.", type);
         return typeNode;
     }
-    
+
     /**
-     * Adds a thin space before each capital character in a {@code String}, except the first. 
+     * Adds a thin space before each capital character in a {@code String}, except the first.
      * @param name String; name of node.
      * @return String; input string but with a thin space before each capital character, except the first.
      */
@@ -358,7 +359,7 @@ public final class XsdTreeNodeUtil
         }
         return stringBuilder.toString();
     }
-    
+
     /**
      * Returns whether the two values are equal, where {@code null} is consider equal to an empty string.
      * @param value1 String; value 1.

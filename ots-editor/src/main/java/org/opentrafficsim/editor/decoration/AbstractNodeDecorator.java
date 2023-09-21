@@ -47,7 +47,8 @@ public abstract class AbstractNodeDecorator implements EventListener
                 {
                     if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
                     {
-                        AbstractNodeDecorator.this.notifyCreated((XsdTreeNode) event.getContent());
+                        XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
+                        AbstractNodeDecorator.this.notifyCreated(node);
                     }
                 }
             }, XsdTreeNodeRoot.NODE_CREATED);
