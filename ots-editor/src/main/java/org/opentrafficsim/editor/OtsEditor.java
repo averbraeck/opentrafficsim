@@ -848,7 +848,29 @@ public class OtsEditor extends JFrame implements EventProducer
                     // prevents row i being removed, being replaced by i+1, and editing then setting the value of i+1 now at i
                     return;
                 }
-                if (e.getKeyCode() == KeyEvent.VK_DELETE)
+                else if (e.getKeyCode() == KeyEvent.VK_ADD && e.isControlDown() && e.isShiftDown())
+                {
+                    XsdTreeNode node =
+                            (XsdTreeNode) OtsEditor.this.treeTable.getTree().getSelectionPath().getLastPathComponent();
+                    if (node.isAddable())
+                    {
+                        OtsEditor.this.undo.startAction("duplicate", node, null);
+                        XsdTreeNode added = node.duplicate();
+                        show(added, null);
+                    }
+                }
+                else if (e.getKeyCode() == KeyEvent.VK_ADD && e.isControlDown())
+                {
+                    XsdTreeNode node =
+                            (XsdTreeNode) OtsEditor.this.treeTable.getTree().getSelectionPath().getLastPathComponent();
+                    if (node.isAddable())
+                    {
+                        OtsEditor.this.undo.startAction("add", node, null);
+                        XsdTreeNode added = node.add();
+                        show(added, null);
+                    }
+                }
+                else if (e.getKeyCode() == KeyEvent.VK_DELETE)
                 {
                     XsdTreeNode node =
                             (XsdTreeNode) OtsEditor.this.treeTable.getTree().getSelectionPath().getLastPathComponent();
@@ -874,6 +896,28 @@ public class OtsEditor extends JFrame implements EventProducer
                             }
                         }
                     }
+                }
+                else if (e.getKeyCode() == KeyEvent.VK_UP && e.isControlDown())
+                {
+                    XsdTreeNode node =
+                            (XsdTreeNode) OtsEditor.this.treeTable.getTree().getSelectionPath().getLastPathComponent();
+                    if (node.canMoveUp())
+                    {
+                        OtsEditor.this.undo.startAction("move", node, null);
+                        node.move(-1);
+                    }
+                    show(node, null);
+                }
+                else if (e.getKeyCode() == KeyEvent.VK_DOWN && e.isControlDown())
+                {
+                    XsdTreeNode node =
+                            (XsdTreeNode) OtsEditor.this.treeTable.getTree().getSelectionPath().getLastPathComponent();
+                    if (node.canMoveDown())
+                    {
+                        OtsEditor.this.undo.startAction("move", node, null);
+                        node.move(1);
+                    }
+                    show(node, null);
                 }
             }
         });

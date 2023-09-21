@@ -3,6 +3,7 @@ package org.opentrafficsim.editor.listeners;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -11,6 +12,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 
 import org.opentrafficsim.editor.AttributesTableModel;
 import org.opentrafficsim.editor.OtsEditor;
@@ -254,6 +256,7 @@ public class XsdTreeMouseListener extends MouseAdapter
                     XsdTreeMouseListener.this.treeTable.updateUI();
                 }
             });
+            add.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, KeyEvent.CTRL_DOWN_MASK));
             add.setFont(this.treeTable.getFont());
             popup.add(add);
             JMenuItem copy = new JMenuItem("Duplicate");
@@ -268,6 +271,7 @@ public class XsdTreeMouseListener extends MouseAdapter
                     XsdTreeMouseListener.this.treeTable.updateUI();
                 }
             });
+            copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK));
             copy.setFont(this.treeTable.getFont());
             popup.add(copy);
             anyAdded = true;
@@ -280,8 +284,8 @@ public class XsdTreeMouseListener extends MouseAdapter
                 separatorNeeded = false;
                 popup.add(new JSeparator());
             }
-            JMenuItem item = new JMenuItem("Remove");
-            item.addActionListener(new ActionListener()
+            JMenuItem remove = new JMenuItem("Remove");
+            remove.addActionListener(new ActionListener()
             {
                 /** {@inheritDoc} */
                 @Override
@@ -303,8 +307,9 @@ public class XsdTreeMouseListener extends MouseAdapter
                     }
                 }
             });
-            item.setFont(this.treeTable.getFont());
-            popup.add(item);
+            remove.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
+            remove.setFont(this.treeTable.getFont());
+            popup.add(remove);
             anyAdded = true;
             groupAdded = true;
         }
@@ -318,8 +323,8 @@ public class XsdTreeMouseListener extends MouseAdapter
                 separatorNeeded = false;
                 popup.add(new JSeparator());
             }
-            JMenuItem item = new JMenuItem("Move up");
-            item.addActionListener(new ActionListener()
+            JMenuItem moveUp = new JMenuItem("Move up");
+            moveUp.addActionListener(new ActionListener()
             {
                 /** {@inheritDoc} */
                 @Override
@@ -330,8 +335,9 @@ public class XsdTreeMouseListener extends MouseAdapter
                     XsdTreeMouseListener.this.treeTable.updateUI();
                 }
             });
-            item.setFont(this.treeTable.getFont());
-            popup.add(item);
+            moveUp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, KeyEvent.CTRL_DOWN_MASK));
+            moveUp.setFont(this.treeTable.getFont());
+            popup.add(moveUp);
             anyAdded = true;
         }
         if (treeNode.canMoveDown())
@@ -341,8 +347,8 @@ public class XsdTreeMouseListener extends MouseAdapter
                 separatorNeeded = false;
                 popup.add(new JSeparator());
             }
-            JMenuItem item = new JMenuItem("Move down");
-            item.addActionListener(new ActionListener()
+            JMenuItem moveDown = new JMenuItem("Move down");
+            moveDown.addActionListener(new ActionListener()
             {
                 /** {@inheritDoc} */
                 @Override
@@ -353,8 +359,9 @@ public class XsdTreeMouseListener extends MouseAdapter
                     XsdTreeMouseListener.this.treeTable.updateUI();
                 }
             });
-            item.setFont(this.treeTable.getFont());
-            popup.add(item);
+            moveDown.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, KeyEvent.CTRL_DOWN_MASK));
+            moveDown.setFont(this.treeTable.getFont());
+            popup.add(moveDown);
             anyAdded = true;
         }
         return anyAdded;

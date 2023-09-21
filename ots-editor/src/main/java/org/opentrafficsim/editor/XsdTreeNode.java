@@ -1080,17 +1080,19 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Creates a full copy of this node, next to this node under the same parent.
+     * @return XsdTreeNode; newly created node.
      */
-    public void duplicate()
+    public XsdTreeNode duplicate()
     {
-        duplicate(this.parent);
+        return duplicate(this.parent);
     }
 
     /**
      * Duplicates this node, but under the given parent node.
      * @param newParent XsdTreeNode; parent node.
+     * @return XsdTreeNode; newly created node.
      */
-    private void duplicate(final XsdTreeNode newParent)
+    private XsdTreeNode duplicate(final XsdTreeNode newParent)
     {
         // empty copy
         int indexOfNode = this.parent.children.indexOf(this);
@@ -1146,6 +1148,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         ((XsdTreeNodeRoot) copyNode.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                 new Object[] {copyNode, newParent, newParent.children.indexOf(copyNode)});
+        return copyNode;
     }
 
     /**
@@ -2035,6 +2038,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 }
             }
         }
+        invalidate();
     }
 
     /**
