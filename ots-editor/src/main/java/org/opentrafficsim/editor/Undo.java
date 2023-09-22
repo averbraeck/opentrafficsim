@@ -79,7 +79,7 @@ public class Undo implements EventListener
         this.cursor = 0;
         this.queue = new LinkedList<>();
     }
-    
+
     /**
      * Tells the undo unit to ignore all changes. Reset this by calling {@code clear()}. Useful during file loading.
      */
@@ -284,12 +284,13 @@ public class Undo implements EventListener
                 else
                 {
                     parent.setChild(index, node);
+                    node.getPath().get(0).fireEvent(XsdTreeNodeRoot.NODE_CREATED, new Object[] {node, parent, index});
                 }
-                node.getPath().get(0).fireEvent(XsdTreeNodeRoot.NODE_CREATED, new Object[] {node, parent, index});
             }, () ->
             {
+                node.parent.children.remove(node);
                 XsdTreeNode root = node.getPath().get(0);
-                node.remove();
+                node.parent = null;
                 root.fireEvent(XsdTreeNodeRoot.NODE_REMOVED, new Object[] {node, parent, index});
             }, "Remove " + node.getPathString()));
         }
@@ -300,11 +301,11 @@ public class Undo implements EventListener
             String value = node.getValue();
             add(new SubActionRunnable(() ->
             {
-                node.setValue((String) content[1]);
+                node.setValue((String) content[1]); // invokes event
                 node.invalidate();
             }, () ->
             {
-                node.setValue(value);
+                node.setValue(value); // invokes event
                 node.invalidate();
             }, "Change " + node.getPathString() + " value: " + value));
         }
@@ -316,11 +317,11 @@ public class Undo implements EventListener
             String value = node.getAttributeValue(attribute);
             add(new SubActionRunnable(() ->
             {
-                node.setAttributeValue(attribute, (String) content[2]);
+                node.setAttributeValue(attribute, (String) content[2]); // invokes event
                 node.invalidate();
             }, () ->
             {
-                node.setAttributeValue(attribute, value);
+                node.setAttributeValue(attribute, value); // invokes event
                 node.invalidate();
             }, "Create " + node.getPathString() + ".@" + attribute + ": " + value));
         }
@@ -331,24 +332,12 @@ public class Undo implements EventListener
             boolean activated = (boolean) content[1];
             add(new SubActionRunnable(() ->
             {
-                if (activated)
-                {
-                    node.active = false;
-                }
-                else
-                {
-                    node.active = true;
-                }
+                node.active = !activated;
+                node.fireEvent(XsdTreeNode.ACTIVATION_CHANGED, new Object[] {node, !activated});
             }, () ->
             {
-                if (activated)
-                {
-                    node.active = true;
-                }
-                else
-                {
-                    node.active = false;
-                }
+                node.active = activated;
+                node.fireEvent(XsdTreeNode.ACTIVATION_CHANGED, new Object[] {node, activated});
             }, "Activation " + node.getPathString() + " " + activated));
         }
         else if (event.getType().equals(XsdTreeNode.OPTION_CHANGED))
@@ -360,10 +349,10 @@ public class Undo implements EventListener
             {
                 add(new SubActionRunnable(() ->
                 {
-                    node.setOption(previous);
+                    node.setOption(previous); // invokes event
                 }, () ->
                 {
-                    node.setOption(node);
+                    previous.setOption(node); // invokes event
                 }, "Set option " + node.getPathString()));
             }
         }
