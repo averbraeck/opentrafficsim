@@ -256,7 +256,7 @@ public class XsdTreeMouseListener extends MouseAdapter
                     XsdTreeMouseListener.this.treeTable.updateUI();
                 }
             });
-            add.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, KeyEvent.CTRL_DOWN_MASK));
+            add.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, KeyEvent.CTRL_DOWN_MASK));
             add.setFont(this.treeTable.getFont());
             popup.add(add);
             JMenuItem copy = new JMenuItem("Duplicate");
@@ -271,7 +271,7 @@ public class XsdTreeMouseListener extends MouseAdapter
                     XsdTreeMouseListener.this.treeTable.updateUI();
                 }
             });
-            copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK));
+            copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK));
             copy.setFont(this.treeTable.getFont());
             popup.add(copy);
             anyAdded = true;
@@ -310,6 +310,75 @@ public class XsdTreeMouseListener extends MouseAdapter
             remove.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
             remove.setFont(this.treeTable.getFont());
             popup.add(remove);
+            anyAdded = true;
+            groupAdded = true;
+        }
+        List<XsdOption> options = treeNode.getOptions();
+        if (treeNode.isChoice() && options.size() > 1)
+        {
+            if (separatorNeeded)
+            {
+                separatorNeeded = false;
+                popup.add(new JSeparator());
+            }
+            JMenuItem revolve = new JMenuItem("Revolve option");
+            revolve.addActionListener(new ActionListener()
+            {
+                /** {@inheritDoc} */
+                @Override
+                public void actionPerformed(final ActionEvent e)
+                {
+                    int optionIndex = 0;
+                    for (int i = 0; i < options.size(); i++)
+                    {
+                        if (options.get(i).getOptionNode().equals(treeNode))
+                        {
+                            optionIndex = i + 1;
+                            break;
+                        }
+                    }
+                    if (optionIndex >= options.size())
+                    {
+                        optionIndex = 0;
+                    }
+                    XsdTreeMouseListener.this.editor.getUndo().startAction("option", treeNode, null);
+                    treeNode.setOption(options.get(optionIndex).getOptionNode());
+                    XsdTreeMouseListener.this.treeTable.updateUI();
+                }
+            });
+            revolve.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK));
+            revolve.setFont(this.treeTable.getFont());
+            popup.add(revolve);
+            anyAdded = true;
+            groupAdded = true;
+        }
+        if (treeNode.getChildCount() > 0)
+        {
+            if (separatorNeeded)
+            {
+                separatorNeeded = false;
+                popup.add(new JSeparator());
+            }
+            JMenuItem expand = new JMenuItem("Expand");
+            expand.addActionListener(new ActionListener()
+            {
+                /** {@inheritDoc} */
+                @Override
+                public void actionPerformed(final ActionEvent e)
+                {
+                    if (!treeNode.isActive())
+                    {
+                        XsdTreeMouseListener.this.editor.getUndo().startAction("activate", treeNode, null);
+                        treeNode.setActive();
+                    }
+                    XsdTreeMouseListener.this.treeTable.getTree()
+                            .expandPath(XsdTreeMouseListener.this.treeTable.getTree().getSelectionPath());
+                    XsdTreeMouseListener.this.editor.show(treeNode, null);
+                }
+            });
+            expand.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK));
+            expand.setFont(this.treeTable.getFont());
+            popup.add(expand);
             anyAdded = true;
             groupAdded = true;
         }

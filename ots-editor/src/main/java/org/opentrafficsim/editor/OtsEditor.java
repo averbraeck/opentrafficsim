@@ -848,18 +848,7 @@ public class OtsEditor extends JFrame implements EventProducer
                     // prevents row i being removed, being replaced by i+1, and editing then setting the value of i+1 now at i
                     return;
                 }
-                else if (e.getKeyCode() == KeyEvent.VK_ADD && e.isControlDown() && e.isShiftDown())
-                {
-                    XsdTreeNode node =
-                            (XsdTreeNode) OtsEditor.this.treeTable.getTree().getSelectionPath().getLastPathComponent();
-                    if (node.isAddable())
-                    {
-                        OtsEditor.this.undo.startAction("duplicate", node, null);
-                        XsdTreeNode added = node.duplicate();
-                        show(added, null);
-                    }
-                }
-                else if (e.getKeyCode() == KeyEvent.VK_ADD && e.isControlDown())
+                else if (e.getKeyCode() == KeyEvent.VK_W && e.isControlDown())
                 {
                     XsdTreeNode node =
                             (XsdTreeNode) OtsEditor.this.treeTable.getTree().getSelectionPath().getLastPathComponent();
@@ -867,6 +856,17 @@ public class OtsEditor extends JFrame implements EventProducer
                     {
                         OtsEditor.this.undo.startAction("add", node, null);
                         XsdTreeNode added = node.add();
+                        show(added, null);
+                    }
+                }
+                else if (e.getKeyCode() == KeyEvent.VK_D && e.isControlDown())
+                {
+                    XsdTreeNode node =
+                            (XsdTreeNode) OtsEditor.this.treeTable.getTree().getSelectionPath().getLastPathComponent();
+                    if (node.isAddable())
+                    {
+                        OtsEditor.this.undo.startAction("duplicate", node, null);
+                        XsdTreeNode added = node.duplicate();
                         show(added, null);
                     }
                 }
@@ -896,6 +896,44 @@ public class OtsEditor extends JFrame implements EventProducer
                             }
                         }
                     }
+                }
+                else if (e.getKeyCode() == KeyEvent.VK_R && e.isControlDown())
+                {
+                    XsdTreeNode node =
+                            (XsdTreeNode) OtsEditor.this.treeTable.getTree().getSelectionPath().getLastPathComponent();
+                    List<XsdOption> options = node.getOptions();
+                    if (node.isChoice() && options.size() > 1)
+                    {
+                        int optionIndex = 0;
+                        for (int i = 0; i < options.size(); i++)
+                        {
+                            if (options.get(i).getOptionNode().equals(node))
+                            {
+                                optionIndex = i + 1;
+                                break;
+                            }
+                        }
+                        if (optionIndex >= options.size())
+                        {
+                            optionIndex = 0;
+                        }
+                        OtsEditor.this.undo.startAction("option", node, null);
+                        XsdTreeNode next = options.get(optionIndex).getOptionNode();
+                        node.setOption(next);
+                        show(next, null);
+                    }
+                }
+                else if (e.getKeyCode() == KeyEvent.VK_E && e.isControlDown())
+                {
+                    XsdTreeNode node =
+                            (XsdTreeNode) OtsEditor.this.treeTable.getTree().getSelectionPath().getLastPathComponent();
+                    if (!node.isActive())
+                    {
+                        OtsEditor.this.undo.startAction("activate", node, null);
+                        node.setActive();
+                    }
+                    OtsEditor.this.treeTable.getTree().expandPath(OtsEditor.this.treeTable.getTree().getSelectionPath());
+                    show(node, null);
                 }
                 else if (e.getKeyCode() == KeyEvent.VK_UP && e.isControlDown())
                 {
@@ -1182,7 +1220,7 @@ public class OtsEditor extends JFrame implements EventProducer
                     CellEditor cellEditor = table.getCellEditor();
                     if (cellEditor != null)
                     {
-                         cellEditor.cancelCellEditing();
+                        cellEditor.cancelCellEditing();
                     }
                     OtsEditor.this.treeTable.updateUI();
                 }
@@ -1256,7 +1294,7 @@ public class OtsEditor extends JFrame implements EventProducer
                                             CellEditor cellEditor = table.getCellEditor();
                                             if (cellEditor != null)
                                             {
-                                                 cellEditor.cancelCellEditing();
+                                                cellEditor.cancelCellEditing();
                                             }
                                             OtsEditor.this.treeTable.updateUI();
                                         }
