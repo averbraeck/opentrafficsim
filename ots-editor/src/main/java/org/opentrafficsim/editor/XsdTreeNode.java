@@ -982,11 +982,32 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             }
             Node complexType = this.xsdNode.getNodeName().equals("xsd:complexType") ? this.xsdNode
                     : DocumentReader.getChild(this.xsdNode, "xsd:complexType");
-            if (complexType != null)
+            boolean isComplex = complexType != null;
+            while (complexType != null)
             {
                 Node simpleContent = DocumentReader.getChild(complexType, "xsd:simpleContent");
-                this.isEditable = simpleContent != null;
-                return this.isEditable;
+                if (simpleContent != null)
+                {
+                    this.isEditable = true;
+                    return this.isEditable;
+                }
+                Node complexContent = DocumentReader.getChild(complexType, "xsd:complexContent");
+                complexType = null;
+                if (complexContent != null)
+                {
+                    Node extension = DocumentReader.getChild(complexContent, "xsd:extension");
+                    if (extension != null)
+                    {
+                        String base = DocumentReader.getAttribute(extension, "base");
+                        complexType = this.schema.getType(base);
+                    }
+                }
+            }
+            if (isComplex)
+            {
+                // complex and never found simpleContent through extension
+                this.isEditable = false;
+                return false;
             }
             String type = DocumentReader.getAttribute(this.xsdNode, "type");
             if (this.xsdNode.getNodeName().equals("xsd:element") && (type == null || type.startsWith("xsd:")))

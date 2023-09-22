@@ -305,10 +305,10 @@ public final class XmlNetworkLaneParser implements Serializable
 
         Map<String, ParameterType<?>> parameterTypes = new LinkedHashMap<>();
         DefinitionsParser.parseParameterTypes(ots.getDefinitions(), parameterTypes, inputParameters);
-        Map<String, ParameterFactory> parameterFactories =
+        ParameterFactory parameterFactory =
                 ModelParser.parseParameters(definitions, models, inputParameters, parameterTypes, streamInformation);
         Map<String, LaneBasedStrategicalPlannerFactory<?>> factories = ModelParser.parseModel(otsNetwork, models,
-                inputParameters, parameterTypes, streamInformation, parameterFactories);
+                inputParameters, parameterTypes, streamInformation, parameterFactory);
         List<ScenarioType> scenarios = ots.getScenarios() == null ? new ArrayList<>() : ots.getScenarios().getScenario();
         Map<String, String> modelIdReferrals = ScenarioParser.parseModelIdReferral(scenarios, ots.getDemand(), inputParameters);
 

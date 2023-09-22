@@ -302,22 +302,18 @@
     <xsd:complexType>
       <xsd:sequence>
         <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:element name="String" type="ots:ParameterTypeString" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element name="Acceleration" type="ots:ParameterTypeAcceleration" minOccurs="0"
-            maxOccurs="unbounded" />
-          <xsd:element name="Boolean" type="ots:ParameterTypeBoolean" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element name="Class" type="ots:ParameterTypeClass" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element name="Double" type="ots:ParameterTypeDouble" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element name="Float" type="ots:ParameterTypeFloat" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element name="Long" type="ots:ParameterTypeLong" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element name="Duration" type="ots:ParameterTypeDuration" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element name="Fraction" type="ots:ParameterTypeFraction" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element name="Frequency" type="ots:ParameterTypeFrequency" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element name="Integer" type="ots:ParameterTypeInteger" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element name="Length" type="ots:ParameterTypeLength" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element name="LinearDensity" type="ots:ParameterTypeLinearDensity" minOccurs="0"
-            maxOccurs="unbounded" />
           <xsd:element name="Speed" type="ots:ParameterTypeSpeed" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element name="Acceleration" type="ots:ParameterTypeAcceleration" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element name="LinearDensity" type="ots:ParameterTypeLinearDensity" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element name="Frequency" type="ots:ParameterTypeFrequency" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element name="Double" type="ots:ParameterTypeDouble" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element name="Fraction" type="ots:ParameterTypeFraction" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element name="Integer" type="ots:ParameterTypeInteger" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element name="Boolean" type="ots:ParameterTypeBoolean" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element name="String" type="ots:ParameterTypeString" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element name="Class" type="ots:ParameterTypeClass" minOccurs="0" maxOccurs="unbounded" />
         </xsd:choice>
       </xsd:sequence>
     </xsd:complexType>

@@ -84,6 +84,90 @@
       <xsd:selector xpath=".//ots:Definitions/ots:LaneBiases/ots:LaneBias" />
       <xsd:field xpath="@GtuType" />
     </xsd:key>
+    
+    <!-- define the ParameterTypes.Duration.Id key -->
+
+    <xsd:key name="parameterTypesDurationKey">
+      <xsd:selector xpath=".//ots:ParameterTypes/ots:Duration" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+    
+    <!-- define the ParameterTypes.Length.Id key -->
+
+    <xsd:key name="parameterTypesLengthKey">
+      <xsd:selector xpath=".//ots:ParameterTypes/ots:Length" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+    
+    <!-- define the ParameterTypes.Speed.Id key -->
+
+    <xsd:key name="parameterTypesSpeedKey">
+      <xsd:selector xpath=".//ots:ParameterTypes/ots:Speed" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+    
+    <!-- define the ParameterTypes.Acceleration.Id key -->
+
+    <xsd:key name="parameterTypesAccelerationKey">
+      <xsd:selector xpath=".//ots:ParameterTypes/ots:Acceleration" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+    
+    <!-- define the ParameterTypes.LinearDensity.Id key -->
+
+    <xsd:key name="parameterTypesLinearDensityKey">
+      <xsd:selector xpath=".//ots:ParameterTypes/ots:LinearDensity" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+    
+    <!-- define the ParameterTypes.Frequency.Id key -->
+
+    <xsd:key name="parameterTypesFrequencyKey">
+      <xsd:selector xpath=".//ots:ParameterTypes/ots:Frequency" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+    
+    <!-- define the ParameterTypes.Double.Id key -->
+
+    <xsd:key name="parameterTypesDoubleKey">
+      <xsd:selector xpath=".//ots:ParameterTypes/ots:Double" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+    
+    <!-- define the ParameterTypes.Fraction.Id key -->
+
+    <xsd:key name="parameterTypesFractionKey">
+      <xsd:selector xpath=".//ots:ParameterTypes/ots:Fraction" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+    
+    <!-- define the ParameterTypes.Integer.Id key -->
+
+    <xsd:key name="parameterTypesIntegerKey">
+      <xsd:selector xpath=".//ots:ParameterTypes/ots:Integer" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+    
+    <!-- define the ParameterTypes.Boolean.Id key -->
+
+    <xsd:key name="parameterTypesBooleanKey">
+      <xsd:selector xpath=".//ots:ParameterTypes/ots:Boolean" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+    
+    <!-- define the ParameterTypes.String.Id key -->
+
+    <xsd:key name="parameterTypesStringKey">
+      <xsd:selector xpath=".//ots:ParameterTypes/ots:String" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+    
+    <!-- define the ParameterTypes.Class.Id key -->
+
+    <xsd:key name="parameterTypesClassKey">
+      <xsd:selector xpath=".//ots:ParameterTypes/ots:Class" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
 
     <!-- ======================================== UNIQUENESS, NO KEY ====================================== -->
 
@@ -305,7 +389,7 @@
       <xsd:selector xpath=".//ots:LaneBias" />
       <xsd:field xpath="@GtuType" />
     </xsd:keyref>
-
+    
     <!-- ========================================= CHECKS IN NETWORK ====================================== -->
 
     <!-- Link.NodeStart defined by Node.Id -->
@@ -651,6 +735,155 @@
     </xsd:keyref>
 
     <!-- TODO: other XPath checks in Control -->
+
+    <!-- ========================================== CHECKS IN MODEL ======================================= -->
+    
+    <!-- Model.GtuType defined by GtuType.Id -->
+
+    <xsd:keyref name="modelGtuTypeRef" refer="ots:gtuTypeKey">
+      <xsd:selector xpath=".//ots:Models/ots:Model" />
+      <xsd:field xpath="@GtuType" />
+    </xsd:keyref>
+    
+    <!-- ModelParameters.Duration.Id defined by ParameterTypes.Duration.Id -->
+
+    <xsd:keyref name="modelParametersDurationRef" refer="ots:parameterTypesDurationKey">
+      <xsd:selector xpath=".//ots:ModelParameters/ots:Duration" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+    
+    <!-- ModelParameters.DurationDist.Id defined by ParameterTypes.Duration.Id -->
+
+    <xsd:keyref name="modelParametersDurationDistRef" refer="ots:parameterTypesDurationKey">
+      <xsd:selector xpath=".//ots:ModelParameters/ots:DurationDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+    
+    <!-- ModelParameters.Length.Id defined by ParameterTypes.Length.Id -->
+
+    <xsd:keyref name="modelParametersLengthRef" refer="ots:parameterTypesLengthKey">
+      <xsd:selector xpath=".//ots:ModelParameters/ots:Length" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+    
+    <!-- ModelParameters.LengthDist.Id defined by ParameterTypes.Length.Id -->
+
+    <xsd:keyref name="modelParametersLengthDistRef" refer="ots:parameterTypesLengthKey">
+      <xsd:selector xpath=".//ots:ModelParameters/ots:LengthDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+    
+    <!-- ModelParameters.Speed.Id defined by ParameterTypes.Speed.Id -->
+
+    <xsd:keyref name="modelParametersSpeedRef" refer="ots:parameterTypesSpeedKey">
+      <xsd:selector xpath=".//ots:ModelParameters/ots:Speed" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+    
+    <!-- ModelParameters.SpeedDist.Id defined by ParameterTypes.Speed.Id -->
+
+    <xsd:keyref name="modelParametersSpeedDistRef" refer="ots:parameterTypesSpeedKey">
+      <xsd:selector xpath=".//ots:ModelParameters/ots:SpeedDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+    
+    <!-- ModelParameters.Acceleration.Id defined by ParameterTypes.Acceleration.Id -->
+
+    <xsd:keyref name="modelParametersAccelerationRef" refer="ots:parameterTypesAccelerationKey">
+      <xsd:selector xpath=".//ots:ModelParameters/ots:Acceleration" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+    
+    <!-- ModelParameters.AccelerationDist.Id defined by ParameterTypes.Acceleration.Id -->
+
+    <xsd:keyref name="modelParametersAccelerationDistRef" refer="ots:parameterTypesAccelerationKey">
+      <xsd:selector xpath=".//ots:ModelParameters/ots:AccelerationDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+    
+    <!-- ModelParameters.LinearDensity.Id defined by ParameterTypes.LinearDensity.Id -->
+
+    <xsd:keyref name="modelParametersLinearDensityRef" refer="ots:parameterTypesLinearDensityKey">
+      <xsd:selector xpath=".//ots:ModelParameters/ots:LinearDensity" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+    
+    <!-- ModelParameters.LinearDensityDist.Id defined by ParameterTypes.LinearDensity.Id -->
+
+    <xsd:keyref name="modelParametersLinearDensityDistRef" refer="ots:parameterTypesLinearDensityKey">
+      <xsd:selector xpath=".//ots:ModelParameters/ots:LinearDensityDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+    
+    <!-- ModelParameters.Frequency.Id defined by ParameterTypes.Frequency.Id -->
+
+    <xsd:keyref name="modelParametersFrequencyRef" refer="ots:parameterTypesFrequencyKey">
+      <xsd:selector xpath=".//ots:ModelParameters/ots:Frequency" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+    
+    <!-- ModelParameters.FrequencyDist.Id defined by ParameterTypes.Frequency.Id -->
+
+    <xsd:keyref name="modelParametersFrequencyDistRef" refer="ots:parameterTypesFrequencyKey">
+      <xsd:selector xpath=".//ots:ModelParameters/ots:FrequencyDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+    
+    <!-- ModelParameters.Double.Id defined by ParameterTypes.Double.Id -->
+
+    <xsd:keyref name="modelParametersDoubleRef" refer="ots:parameterTypesDoubleKey">
+      <xsd:selector xpath=".//ots:ModelParameters/ots:Double" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+    
+    <!-- ModelParameters.DoubleDist.Id defined by ParameterTypes.Double.Id -->
+
+    <xsd:keyref name="modelParametersDoubleDistRef" refer="ots:parameterTypesDoubleKey">
+      <xsd:selector xpath=".//ots:ModelParameters/ots:DoubleDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+    
+    <!-- ModelParameters.Fraction.Id defined by ParameterTypes.Fraction.Id -->
+
+    <xsd:keyref name="modelParametersFractionRef" refer="ots:parameterTypesFractionKey">
+      <xsd:selector xpath=".//ots:ModelParameters/ots:Fraction" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+    
+    <!-- ModelParameters.Integer.Id defined by ParameterTypes.Integer.Id -->
+
+    <xsd:keyref name="modelParametersIntegerRef" refer="ots:parameterTypesIntegerKey">
+      <xsd:selector xpath=".//ots:ModelParameters/ots:Integer" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+    
+    <!-- ModelParameters.IntegerDist.Id defined by ParameterTypes.Integer.Id -->
+
+    <xsd:keyref name="modelParametersIntegerDistRef" refer="ots:parameterTypesIntegerKey">
+      <xsd:selector xpath=".//ots:ModelParameters/ots:IntegerDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+    
+    <!-- ModelParameters.Boolean.Id defined by ParameterTypes.Boolean.Id -->
+
+    <xsd:keyref name="modelParametersBooleanRef" refer="ots:parameterTypesBooleanKey">
+      <xsd:selector xpath=".//ots:ModelParameters/ots:Boolean" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+    
+    <!-- ModelParameters.String.Id defined by ParameterTypes.String.Id -->
+
+    <xsd:keyref name="modelParametersStringRef" refer="ots:parameterTypesStringKey">
+      <xsd:selector xpath=".//ots:ModelParameters/ots:String" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+    
+    <!-- ModelParameters.Class.Id defined by ParameterTypes.Class.Id -->
+
+    <xsd:keyref name="modelParametersClassRef" refer="ots:parameterTypesClassKey">
+      <xsd:selector xpath=".//ots:ModelParameters/ots:Class" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
 
     <!-- ======================================== CHECKS IN ANIMATION ===================================== -->
 

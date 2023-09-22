@@ -50,184 +50,184 @@
       <xsd:element name="ModelParameters" minOccurs="0" maxOccurs="1">
         <xsd:complexType>
           <xsd:choice minOccurs="1" maxOccurs="unbounded">
-            <xsd:element name="String">
-              <xsd:complexType>
-                <xsd:complexContent>
-                  <xsd:extension base="ots:ParameterString">
-                    <xsd:attribute name="GtuType" type="ots:string" use="optional" />
-                  </xsd:extension>
-                </xsd:complexContent>
-              </xsd:complexType>
-            </xsd:element>
-            <xsd:element name="Acceleration">
-              <xsd:complexType>
-                <xsd:complexContent>
-                  <xsd:extension base="ots:ParameterAcceleration">
-                    <xsd:attribute name="GtuType" type="ots:string" use="optional" />
-                  </xsd:extension>
-                </xsd:complexContent>
-              </xsd:complexType>
-            </xsd:element>
-            <xsd:element name="AccelerationDist">
-              <xsd:complexType>
-                <xsd:complexContent>
-                  <xsd:extension base="ots:ParameterAccelerationDist">
-                    <xsd:attribute name="GtuType" type="ots:string" use="optional" />
-                  </xsd:extension>
-                </xsd:complexContent>
-              </xsd:complexType>
-            </xsd:element>
-            <xsd:element name="Boolean">
-              <xsd:complexType>
-                <xsd:complexContent>
-                  <xsd:extension base="ots:ParameterBoolean">
-                    <xsd:attribute name="GtuType" type="ots:string" use="optional" />
-                  </xsd:extension>
-                </xsd:complexContent>
-              </xsd:complexType>
-            </xsd:element>
-            <xsd:element name="Class">
-              <xsd:complexType>
-                <xsd:complexContent>
-                  <xsd:extension base="ots:ParameterClass">
-                    <xsd:attribute name="GtuType" type="ots:string" use="optional" />
-                  </xsd:extension>
-                </xsd:complexContent>
-              </xsd:complexType>
-            </xsd:element>
-            <xsd:element name="Double">
-              <xsd:complexType>
-                <xsd:complexContent>
-                  <xsd:extension base="ots:ParameterDouble">
-                    <xsd:attribute name="GtuType" type="ots:string" use="optional" />
-                  </xsd:extension>
-                </xsd:complexContent>
-              </xsd:complexType>
-            </xsd:element>
-            <xsd:element name="DoubleDist">
-              <xsd:complexType>
-                <xsd:complexContent>
-                  <xsd:extension base="ots:ParameterDoubleDist">
-                    <xsd:attribute name="GtuType" type="ots:string" use="optional" />
-                  </xsd:extension>
-                </xsd:complexContent>
-              </xsd:complexType>
-            </xsd:element>
             <xsd:element name="Duration">
               <xsd:complexType>
-                <xsd:complexContent>
-                  <xsd:extension base="ots:ParameterDuration">
-                    <xsd:attribute name="GtuType" type="ots:string" use="optional" />
+                <xsd:simpleContent>
+                  <xsd:extension base="ots:DurationType">
+                    <xsd:attribute name="Id" type="ots:IdType" use="optional" />
                   </xsd:extension>
-                </xsd:complexContent>
+                </xsd:simpleContent>
               </xsd:complexType>
             </xsd:element>
             <xsd:element name="DurationDist">
               <xsd:complexType>
                 <xsd:complexContent>
-                  <xsd:extension base="ots:ParameterDurationDist">
-                    <xsd:attribute name="GtuType" type="ots:string" use="optional" />
-                  </xsd:extension>
-                </xsd:complexContent>
-              </xsd:complexType>
-            </xsd:element>
-            <xsd:element name="Fraction">
-              <xsd:complexType>
-                <xsd:complexContent>
-                  <xsd:extension base="ots:ParameterFraction">
-                    <xsd:attribute name="GtuType" type="ots:string" use="optional" />
-                  </xsd:extension>
-                </xsd:complexContent>
-              </xsd:complexType>
-            </xsd:element>
-            <xsd:element name="Frequency">
-              <xsd:complexType>
-                <xsd:complexContent>
-                  <xsd:extension base="ots:ParameterFrequency">
-                    <xsd:attribute name="GtuType" type="ots:string" use="optional" />
-                  </xsd:extension>
-                </xsd:complexContent>
-              </xsd:complexType>
-            </xsd:element>
-            <xsd:element name="FrequencyDist">
-              <xsd:complexType>
-                <xsd:complexContent>
-                  <xsd:extension base="ots:ParameterFrequencyDist">
-                    <xsd:attribute name="GtuType" type="ots:string" use="optional" />
-                  </xsd:extension>
-                </xsd:complexContent>
-              </xsd:complexType>
-            </xsd:element>
-            <xsd:element name="Integer">
-              <xsd:complexType>
-                <xsd:complexContent>
-                  <xsd:extension base="ots:ParameterInteger">
-                    <xsd:attribute name="GtuType" type="ots:string" use="optional" />
-                  </xsd:extension>
-                </xsd:complexContent>
-              </xsd:complexType>
-            </xsd:element>
-            <xsd:element name="IntegerDist">
-              <xsd:complexType>
-                <xsd:complexContent>
-                  <xsd:extension base="ots:ParameterIntegerDist">
-                    <xsd:attribute name="GtuType" type="ots:string" use="optional" />
+                  <xsd:extension base="ots:DurationDistType">
+                    <xsd:attribute name="Id" type="ots:IdType" use="optional" />
                   </xsd:extension>
                 </xsd:complexContent>
               </xsd:complexType>
             </xsd:element>
             <xsd:element name="Length">
               <xsd:complexType>
-                <xsd:complexContent>
-                  <xsd:extension base="ots:ParameterLength">
-                    <xsd:attribute name="GtuType" type="ots:string" use="optional" />
+                <xsd:simpleContent>
+                  <xsd:extension base="ots:LengthType">
+                    <xsd:attribute name="Id" type="ots:IdType" use="optional" />
                   </xsd:extension>
-                </xsd:complexContent>
+                </xsd:simpleContent>
               </xsd:complexType>
             </xsd:element>
             <xsd:element name="LengthDist">
               <xsd:complexType>
                 <xsd:complexContent>
-                  <xsd:extension base="ots:ParameterLengthDist">
-                    <xsd:attribute name="GtuType" type="ots:string" use="optional" />
-                  </xsd:extension>
-                </xsd:complexContent>
-              </xsd:complexType>
-            </xsd:element>
-            <xsd:element name="LinearDensity">
-              <xsd:complexType>
-                <xsd:complexContent>
-                  <xsd:extension base="ots:ParameterLinearDensity">
-                    <xsd:attribute name="GtuType" type="ots:string" use="optional" />
-                  </xsd:extension>
-                </xsd:complexContent>
-              </xsd:complexType>
-            </xsd:element>
-            <xsd:element name="LinearDensityDist">
-              <xsd:complexType>
-                <xsd:complexContent>
-                  <xsd:extension base="ots:ParameterLinearDensityDist">
-                    <xsd:attribute name="GtuType" type="ots:string" use="optional" />
+                  <xsd:extension base="ots:LengthDistType">
+                    <xsd:attribute name="Id" type="ots:IdType" use="optional" />
                   </xsd:extension>
                 </xsd:complexContent>
               </xsd:complexType>
             </xsd:element>
             <xsd:element name="Speed">
               <xsd:complexType>
-                <xsd:complexContent>
-                  <xsd:extension base="ots:ParameterSpeed">
-                    <xsd:attribute name="GtuType" type="ots:string" use="optional" />
+                <xsd:simpleContent>
+                  <xsd:extension base="ots:SpeedType">
+                    <xsd:attribute name="Id" type="ots:IdType" use="optional" />
                   </xsd:extension>
-                </xsd:complexContent>
+                </xsd:simpleContent>
               </xsd:complexType>
             </xsd:element>
             <xsd:element name="SpeedDist">
               <xsd:complexType>
                 <xsd:complexContent>
-                  <xsd:extension base="ots:ParameterSpeedDist">
-                    <xsd:attribute name="GtuType" type="ots:string" use="optional" />
+                  <xsd:extension base="ots:SpeedDistType">
+                    <xsd:attribute name="Id" type="ots:IdType" use="optional" />
                   </xsd:extension>
                 </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="Acceleration">
+              <xsd:complexType>
+                <xsd:simpleContent>
+                  <xsd:extension base="ots:AccelerationType">
+                    <xsd:attribute name="Id" type="ots:IdType" use="optional" />
+                  </xsd:extension>
+                </xsd:simpleContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="AccelerationDist">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="ots:AccelerationDistType">
+                    <xsd:attribute name="Id" type="ots:IdType" use="optional" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="LinearDensity">
+              <xsd:complexType>
+                <xsd:simpleContent>
+                  <xsd:extension base="ots:LinearDensityType">
+                    <xsd:attribute name="Id" type="ots:IdType" use="optional" />
+                  </xsd:extension>
+                </xsd:simpleContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="LinearDensityDist">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="ots:LinearDensityDistType">
+                    <xsd:attribute name="Id" type="ots:IdType" use="optional" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="Frequency">
+              <xsd:complexType>
+                <xsd:simpleContent>
+                  <xsd:extension base="ots:FrequencyType">
+                    <xsd:attribute name="Id" type="ots:IdType" use="optional" />
+                  </xsd:extension>
+                </xsd:simpleContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="FrequencyDist">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="ots:FrequencyDistType">
+                    <xsd:attribute name="Id" type="ots:IdType" use="optional" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="Double">
+              <xsd:complexType>
+                <xsd:simpleContent>
+                  <xsd:extension base="ots:double">
+                    <xsd:attribute name="Id" type="ots:IdType" use="optional" />
+                  </xsd:extension>
+                </xsd:simpleContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="DoubleDist">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="ots:ConstantDistType">
+                    <xsd:attribute name="Id" type="ots:IdType" use="optional" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="Fraction">
+              <xsd:complexType>
+                <xsd:simpleContent>
+                  <xsd:extension base="ots:FractionType">
+                    <xsd:attribute name="Id" type="ots:IdType" use="optional" />
+                  </xsd:extension>
+                </xsd:simpleContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="Integer">
+              <xsd:complexType>
+                <xsd:simpleContent>
+                  <xsd:extension base="ots:integer">
+                    <xsd:attribute name="Id" type="ots:IdType" use="optional" />
+                  </xsd:extension>
+                </xsd:simpleContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="IntegerDist">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="ots:DiscreteDistType">
+                    <xsd:attribute name="Id" type="ots:IdType" use="optional" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="Boolean">
+              <xsd:complexType>
+                <xsd:simpleContent>
+                  <xsd:extension base="ots:boolean">
+                    <xsd:attribute name="Id" type="ots:IdType" use="optional" />
+                  </xsd:extension>
+                </xsd:simpleContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="String">
+              <xsd:complexType>
+                <xsd:simpleContent>
+                  <xsd:extension base="ots:string">
+                    <xsd:attribute name="Id" type="ots:IdType" use="optional" />
+                  </xsd:extension>
+                </xsd:simpleContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="Class">
+              <xsd:complexType>
+                <xsd:simpleContent>
+                  <xsd:extension base="ots:ClassNameType">
+                    <xsd:attribute name="Id" type="ots:IdType" use="optional" />
+                  </xsd:extension>
+                </xsd:simpleContent>
               </xsd:complexType>
             </xsd:element>
           </xsd:choice>
@@ -419,6 +419,7 @@
     </xsd:sequence>
     <xsd:attribute name="Id" type="xsd:string" />
     <xsd:attribute name="Parent" type="xsd:string" use="optional" />
+    <xsd:attribute name="GtuType" type="ots:string" />
   </xsd:complexType>
 
   <!-- Car-following model type for use in different tactical planners -->
