@@ -2166,6 +2166,10 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                     }
                     if (optionSet)
                     {
+                        for (XsdTreeNode otherOption : relevantChild.choice.options)
+                        {
+                            otherOption.setActive();
+                        }
                         break;
                     }
                 }
