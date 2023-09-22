@@ -19,6 +19,7 @@ import javax.swing.border.LineBorder;
 import org.opentrafficsim.editor.AttributesTableModel;
 import org.opentrafficsim.editor.DocumentReader;
 import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.Undo.ActionType;
 import org.opentrafficsim.editor.XsdTreeNode;
 
 /**
@@ -49,7 +50,7 @@ public class AttributesCellEditor extends DefaultCellEditor
 
     /** Whether the editor is currently using a checkbox. */
     private boolean checkMode;
-    
+
     /** Editor. */
     private final OtsEditor editor;
 
@@ -101,7 +102,7 @@ public class AttributesCellEditor extends DefaultCellEditor
     {
         XsdTreeNode node = ((AttributesTableModel) table.getModel()).getNode();
         String attribute = DocumentReader.getAttribute(node.getAttributeNode(row), "name");
-        this.editor.getUndo().startAction("attribute change", node, attribute);
+        this.editor.getUndo().startAction(ActionType.ATTRIBUTE_CHANGE, node, attribute);
         if (table.convertColumnIndexToModel(column) == 1)
         {
             this.checkBox.setVisible(false);

@@ -98,6 +98,7 @@ import org.djutils.event.EventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.Resource;
+import org.opentrafficsim.editor.Undo.ActionType;
 import org.opentrafficsim.editor.listeners.AttributesMouseListener;
 import org.opentrafficsim.editor.listeners.XsdTreeMouseListener;
 import org.opentrafficsim.editor.render.AttributeCellRenderer;
@@ -770,6 +771,11 @@ public class OtsEditor extends JFrame implements EventProducer
                     {
                         editor.stopCellEditing();
                     }
+                    editor = OtsEditor.this.treeTable.getCellEditor();
+                    if (editor != null)
+                    {
+                        editor.stopCellEditing();
+                    }
                     OtsEditor.this.attributesTable.setModel(new AttributesTableModel(node, OtsEditor.this.treeTable));
                     try
                     {
@@ -854,7 +860,7 @@ public class OtsEditor extends JFrame implements EventProducer
                             (XsdTreeNode) OtsEditor.this.treeTable.getTree().getSelectionPath().getLastPathComponent();
                     if (node.isAddable())
                     {
-                        OtsEditor.this.undo.startAction("add", node, null);
+                        OtsEditor.this.undo.startAction(ActionType.ADD, node, null);
                         XsdTreeNode added = node.add();
                         show(added, null);
                     }
@@ -865,7 +871,7 @@ public class OtsEditor extends JFrame implements EventProducer
                             (XsdTreeNode) OtsEditor.this.treeTable.getTree().getSelectionPath().getLastPathComponent();
                     if (node.isAddable())
                     {
-                        OtsEditor.this.undo.startAction("duplicate", node, null);
+                        OtsEditor.this.undo.startAction(ActionType.DUPLICATE, node, null);
                         XsdTreeNode added = node.duplicate();
                         show(added, null);
                     }
@@ -884,7 +890,7 @@ public class OtsEditor extends JFrame implements EventProducer
                                 editor.stopCellEditing();
                             }
                             int selected = OtsEditor.this.treeTable.getSelectedRow();
-                            OtsEditor.this.undo.startAction("remove", node, null);
+                            OtsEditor.this.undo.startAction(ActionType.REMOVE, node, null);
                             node.remove();
                             OtsEditor.this.treeTable.updateUI();
                             OtsEditor.this.treeTable.getSelectionModel().setSelectionInterval(selected, selected);
@@ -917,7 +923,7 @@ public class OtsEditor extends JFrame implements EventProducer
                         {
                             optionIndex = 0;
                         }
-                        OtsEditor.this.undo.startAction("option", node, null);
+                        OtsEditor.this.undo.startAction(ActionType.OPTION, node, null);
                         XsdTreeNode next = options.get(optionIndex).getOptionNode();
                         node.setOption(next);
                         show(next, null);
@@ -929,7 +935,7 @@ public class OtsEditor extends JFrame implements EventProducer
                             (XsdTreeNode) OtsEditor.this.treeTable.getTree().getSelectionPath().getLastPathComponent();
                     if (!node.isActive())
                     {
-                        OtsEditor.this.undo.startAction("activate", node, null);
+                        OtsEditor.this.undo.startAction(ActionType.ACTIVATE, node, null);
                         node.setActive();
                     }
                     OtsEditor.this.treeTable.getTree().expandPath(OtsEditor.this.treeTable.getTree().getSelectionPath());
@@ -941,7 +947,7 @@ public class OtsEditor extends JFrame implements EventProducer
                             (XsdTreeNode) OtsEditor.this.treeTable.getTree().getSelectionPath().getLastPathComponent();
                     if (node.canMoveUp())
                     {
-                        OtsEditor.this.undo.startAction("move", node, null);
+                        OtsEditor.this.undo.startAction(ActionType.MOVE, node, null);
                         node.move(-1);
                     }
                     show(node, null);
@@ -952,10 +958,16 @@ public class OtsEditor extends JFrame implements EventProducer
                             (XsdTreeNode) OtsEditor.this.treeTable.getTree().getSelectionPath().getLastPathComponent();
                     if (node.canMoveDown())
                     {
-                        OtsEditor.this.undo.startAction("move", node, null);
+                        OtsEditor.this.undo.startAction(ActionType.MOVE, node, null);
                         node.move(1);
                     }
                     show(node, null);
+                }
+                else if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN
+                        || e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT
+                        || e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_TAB)
+                {
+                    startUndoActionOnTreeTable();
                 }
             }
         });
@@ -970,11 +982,11 @@ public class OtsEditor extends JFrame implements EventProducer
         int col = this.treeTable.convertColumnIndexToView(this.treeTable.getSelectedColumn());
         if (col == 1)
         {
-            this.undo.startAction("id change", node, null);
+            this.undo.startAction(ActionType.ID_CHANGE, node, null);
         }
         else if (col == 2)
         {
-            this.undo.startAction("value change", node, null);
+            this.undo.startAction(ActionType.VALUE_CHANGE, node, null);
         }
     }
 

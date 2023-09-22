@@ -7,6 +7,7 @@ import javax.swing.JTable;
 
 import org.opentrafficsim.editor.AttributesTableModel;
 import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.Undo.ActionType;
 import org.opentrafficsim.editor.XsdTreeNode;
 
 import de.javagl.treetable.JTreeTable;
@@ -59,7 +60,7 @@ public class ChoiceListener implements ActionListener
     @Override
     public void actionPerformed(final ActionEvent e)
     {
-        this.editor.getUndo().startAction("option", this.option.getOption(), null);
+        this.editor.getUndo().startAction(ActionType.OPTION, this.option.getOption(), null);
         this.choiceNode.setOption(this.option);
         this.treeTable.setRowSelectionInterval(this.reselectionRow, this.reselectionRow);
         this.treeTable.updateUI();

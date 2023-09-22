@@ -90,15 +90,20 @@ public class Undo implements EventListener
 
     /**
      * Starts a new action, which groups all sub-actions until a new action is started.
-     * @param name String; user-friendly action name.
+     * @param type ActionType; action type.
      * @param node XsdTreeNode; node on which the action is applied, i.e. node that should be selected on undo/redo.
      * @param attribute String; attribute name, may be {@null} for actions that are not an attribute value change.
      */
-    public void startAction(final String name, final XsdTreeNode node, final String attribute)
+    public void startAction(final ActionType type, final XsdTreeNode node, final String attribute)
     {
-        if (this.ignoreChanges || (this.currentSet != null && this.currentSet.isEmpty()))
+        if (this.ignoreChanges)
         {
             return;
+        }
+        if (this.currentSet != null && this.currentSet.isEmpty())
+        {
+            // last action set never resulted in any sub-action, overwrite it
+            this.queue.pollLast();
         }
 
         // remove any possible redos fresher in the queue than our current pointer
@@ -109,14 +114,14 @@ public class Undo implements EventListener
 
         // add new entry in queue
         this.currentSet = new ArrayDeque<>();
-        this.queue.add(new Action(name, this.currentSet, node, node.parent, node.parent.children.indexOf(node), attribute));
+        this.queue.add(new Action(type, this.currentSet, node, node.parent, node.parent.children.indexOf(node), attribute));
         while (this.queue.size() > MAX_UNDO)
         {
             this.queue.pollFirst();
         }
 
-        // set pointer to last element
-        this.cursor = this.queue.size() - 1;
+        // set pointer to last non-empty element
+        this.cursor = this.queue.size() - 2;
         updateButtons();
     }
 
@@ -128,6 +133,10 @@ public class Undo implements EventListener
     {
         Throw.when(this.currentSet == null, IllegalStateException.class,
                 "Adding undo action without having called startUndoAction()");
+        if (this.currentSet.isEmpty())
+        {
+            this.cursor++; // now the latest undo actually has content
+        }
         this.currentSet.add(subAction);
     }
 
@@ -159,6 +168,7 @@ public class Undo implements EventListener
             return;
         }
         this.ignoreChanges = true;
+
         Action action = this.queue.get(this.cursor);
         Iterator<SubAction> iterator = action.subActions.descendingIterator();
         while (iterator.hasNext())
@@ -202,9 +212,9 @@ public class Undo implements EventListener
     private void updateButtons()
     {
         this.undoItem.setEnabled(canUndo());
-        this.undoItem.setText(canUndo() ? ("Undo " + this.queue.get(this.cursor).name) : "Undo");
+        this.undoItem.setText(canUndo() ? ("Undo " + this.queue.get(this.cursor).type) : "Undo");
         this.redoItem.setEnabled(canRedo());
-        this.redoItem.setText(canRedo() ? ("Redo " + this.queue.get(this.cursor + 1).name) : "Redo");
+        this.redoItem.setText(canRedo() ? ("Redo " + this.queue.get(this.cursor + 1).type) : "Redo");
     }
 
     /** {@inheritDoc} */
@@ -466,7 +476,7 @@ public class Undo implements EventListener
     private class Action
     {
         /** Name of the action, as presented with the undo/redo buttons. */
-        final String name;
+        final ActionType type;
 
         /** Queue of sub actions. */
         final Deque<SubAction> subActions;
@@ -485,17 +495,17 @@ public class Undo implements EventListener
 
         /**
          * Constructor.
-         * @param name String; name of the action, as presented with the undo/redo buttons.
+         * @param type ActionType; type of the action, as presented with the undo/redo buttons.
          * @param subActions Deque&lt;SubAction&gt;; queue of sub actions.
          * @param node XsdTreeNode; node involved in the action.
          * @param parent XsdTreeNode; parent node of the node involved in the action.
          * @param indexInParent int; index under the parent of the node involved in the action.
          * @param attribute String; attribute for an attribute change, {@code null} otherwise.
          */
-        public Action(final String name, final Deque<SubAction> subActions, final XsdTreeNode node, final XsdTreeNode parent,
-                final int indexInParent, final String attribute)
+        public Action(final ActionType type, final Deque<SubAction> subActions, final XsdTreeNode node,
+                final XsdTreeNode parent, final int indexInParent, final String attribute)
         {
-            this.name = name;
+            this.type = type;
             this.subActions = subActions;
             this.node = node;
             this.parent = parent;
@@ -510,6 +520,52 @@ public class Undo implements EventListener
         public XsdTreeNode getShowNode()
         {
             return this.parent.children.contains(this.node) ? this.node : this.parent.children.get(this.indexInParent);
+        }
+    }
+
+    /**
+     * Type of actions for undo.
+     * <p>
+     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     */
+    public enum ActionType
+    {
+        /** Node activated. */
+        ACTIVATE,
+
+        /** Node added. */
+        ADD,
+
+        /** Attribute changed. */
+        ATTRIBUTE_CHANGE,
+
+        /** Node duplicated. */
+        DUPLICATE,
+
+        /** Id changed. */
+        ID_CHANGE,
+
+        /** Node moved. */
+        MOVE,
+
+        /** Option set. */
+        OPTION,
+
+        /** Node removed. */
+        REMOVE,
+
+        /** Node value changed. */
+        VALUE_CHANGE;
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return name().toLowerCase().replace("_", " ");
         }
     }
 

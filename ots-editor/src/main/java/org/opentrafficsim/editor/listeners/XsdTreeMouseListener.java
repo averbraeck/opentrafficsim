@@ -16,6 +16,7 @@ import javax.swing.KeyStroke;
 
 import org.opentrafficsim.editor.AttributesTableModel;
 import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.Undo.ActionType;
 import org.opentrafficsim.editor.XsdOption;
 import org.opentrafficsim.editor.XsdTreeNode;
 
@@ -69,7 +70,7 @@ public class XsdTreeMouseListener extends MouseAdapter
                     List<String> allOptions = treeNode.getIdRestrictions();
                     this.editor.optionsPopup(allOptions, this.treeTable, (t) ->
                     {
-                        this.editor.getUndo().startAction("id change", treeNode, "Id");
+                        this.editor.getUndo().startAction(ActionType.ID_CHANGE, treeNode, "Id");
                         treeNode.setId(t);
                     });
                 }
@@ -78,7 +79,7 @@ public class XsdTreeMouseListener extends MouseAdapter
                     List<String> allOptions = treeNode.getValueRestrictions();
                     this.editor.optionsPopup(allOptions, this.treeTable, (t) ->
                     {
-                        this.editor.getUndo().startAction("value change", treeNode, null);
+                        this.editor.getUndo().startAction(ActionType.VALUE_CHANGE, treeNode, null);
                         treeNode.setValue(t);
                     });
                 }
@@ -101,7 +102,7 @@ public class XsdTreeMouseListener extends MouseAdapter
                 XsdTreeNode treeNode = (XsdTreeNode) this.treeTable.getValueAt(row, col);
                 if (!treeNode.isActive() && !treeNode.isInclude())
                 {
-                    this.editor.getUndo().startAction("activate", treeNode, null);
+                    this.editor.getUndo().startAction(ActionType.ACTIVATE, treeNode, null);
                     treeNode.setActive();
                     this.treeTable.updateUI();
                     this.attributesTable.setModel(new AttributesTableModel(treeNode, this.treeTable));
@@ -251,7 +252,7 @@ public class XsdTreeMouseListener extends MouseAdapter
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
-                    XsdTreeMouseListener.this.editor.getUndo().startAction("add", treeNode, null);
+                    XsdTreeMouseListener.this.editor.getUndo().startAction(ActionType.ADD, treeNode, null);
                     treeNode.add();
                     XsdTreeMouseListener.this.treeTable.updateUI();
                 }
@@ -266,7 +267,7 @@ public class XsdTreeMouseListener extends MouseAdapter
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
-                    XsdTreeMouseListener.this.editor.getUndo().startAction("duplicate", treeNode, null);
+                    XsdTreeMouseListener.this.editor.getUndo().startAction(ActionType.DUPLICATE, treeNode, null);
                     treeNode.duplicate();
                     XsdTreeMouseListener.this.treeTable.updateUI();
                 }
@@ -294,7 +295,7 @@ public class XsdTreeMouseListener extends MouseAdapter
                     if (XsdTreeMouseListener.this.editor.confirmNodeRemoval(treeNode))
                     {
                         int selected = XsdTreeMouseListener.this.treeTable.getTree().getLeadSelectionRow();
-                        XsdTreeMouseListener.this.editor.getUndo().startAction("remove", treeNode, null);
+                        XsdTreeMouseListener.this.editor.getUndo().startAction(ActionType.REMOVE, treeNode, null);
                         treeNode.remove();
                         XsdTreeMouseListener.this.treeTable.updateUI();
                         XsdTreeMouseListener.this.treeTable.getSelectionModel().setSelectionInterval(selected, selected);
@@ -341,7 +342,7 @@ public class XsdTreeMouseListener extends MouseAdapter
                     {
                         optionIndex = 0;
                     }
-                    XsdTreeMouseListener.this.editor.getUndo().startAction("option", treeNode, null);
+                    XsdTreeMouseListener.this.editor.getUndo().startAction(ActionType.OPTION, treeNode, null);
                     treeNode.setOption(options.get(optionIndex).getOptionNode());
                     XsdTreeMouseListener.this.treeTable.updateUI();
                 }
@@ -368,7 +369,7 @@ public class XsdTreeMouseListener extends MouseAdapter
                 {
                     if (!treeNode.isActive())
                     {
-                        XsdTreeMouseListener.this.editor.getUndo().startAction("activate", treeNode, null);
+                        XsdTreeMouseListener.this.editor.getUndo().startAction(ActionType.ACTIVATE, treeNode, null);
                         treeNode.setActive();
                     }
                     XsdTreeMouseListener.this.treeTable.getTree()
@@ -399,7 +400,7 @@ public class XsdTreeMouseListener extends MouseAdapter
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
-                    XsdTreeMouseListener.this.editor.getUndo().startAction("move", treeNode, null);
+                    XsdTreeMouseListener.this.editor.getUndo().startAction(ActionType.MOVE, treeNode, null);
                     treeNode.move(-1);
                     XsdTreeMouseListener.this.treeTable.updateUI();
                 }
@@ -423,7 +424,7 @@ public class XsdTreeMouseListener extends MouseAdapter
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
-                    XsdTreeMouseListener.this.editor.getUndo().startAction("move", treeNode, null);
+                    XsdTreeMouseListener.this.editor.getUndo().startAction(ActionType.MOVE, treeNode, null);
                     treeNode.move(1);
                     XsdTreeMouseListener.this.treeTable.updateUI();
                 }
