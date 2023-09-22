@@ -184,7 +184,7 @@ public final class OdParser
                     modelIdReferrals, streamMap, odOptionsMap, od, categorization, inputParameters);
 
             // Invoke OdApplier
-            DetectorType detectorType = definitions.get(DetectorType.class, od.getSinkType());
+            DetectorType detectorType = definitions.get(DetectorType.class, od.getSinkType().get(inputParameters));
             Map<String, GeneratorObjects> output =
                     Try.assign(() -> OdApplier.applyOd(otsNetwork, odMatrix, odOptions, detectorType), XmlParserException.class,
                             "Simulator time should be zero when parsing an OD.");

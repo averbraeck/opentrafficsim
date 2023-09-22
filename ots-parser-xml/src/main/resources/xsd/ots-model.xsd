@@ -417,8 +417,8 @@
       </xsd:element>
 
     </xsd:sequence>
-    <xsd:attribute name="Id" type="xsd:string" />
-    <xsd:attribute name="Parent" type="xsd:string" use="optional" />
+    <xsd:attribute name="Id" type="ots:IdType" />
+    <xsd:attribute name="Parent" type="ots:string" use="optional" />
     <xsd:attribute name="GtuType" type="ots:string" />
   </xsd:complexType>
 

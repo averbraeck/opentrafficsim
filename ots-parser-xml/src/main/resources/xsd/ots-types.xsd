@@ -1316,7 +1316,7 @@
   </xsd:simpleType>
 
   <xsd:complexType name="ModelIdReferralType">
-    <xsd:attribute name="Id" type="xsd:string" />
+    <xsd:attribute name="Id" type="ots:IdType" />
     <xsd:attribute name="ModelId" type="ots:string" />
   </xsd:complexType>
 
@@ -1529,32 +1529,6 @@
     </xsd:restriction>
   </xsd:simpleType>
 
-  <!-- This type does not used ots:XXX types as we do not allow expressions in input parameters themselves. -->
-  <xsd:complexType name="InputParameterType">
-    <xsd:attribute name="Type" use="required">
-      <xsd:simpleType>
-        <xsd:restriction base="xsd:string">
-          <xsd:enumeration value="CLASS" />
-          <xsd:enumeration value="STRING" />
-          <xsd:enumeration value="DOUBLE" />
-          <xsd:enumeration value="INTEGER" />
-          <xsd:enumeration value="LENGTH" />
-          <xsd:enumeration value="POSITION" />
-          <xsd:enumeration value="DURATION" />
-          <xsd:enumeration value="TIME" />
-          <xsd:enumeration value="SPEED" />
-          <xsd:enumeration value="ACCELERATION" />
-          <xsd:enumeration value="FREQUENCY" />
-          <xsd:enumeration value="LINEARDENSITY" />
-          <xsd:enumeration value="FRACTION" />
-        </xsd:restriction>
-      </xsd:simpleType>
-    </xsd:attribute>
-    <xsd:attribute name="Value" type="xsd:string" use="required" />
-    <xsd:attribute name="Id" type="xsd:string" use="required" />
-    <xsd:attribute name="Class" type="ots:ClassNameType" use="optional" />
-  </xsd:complexType>
-  
   <xsd:complexType name="EmptyType" />
   
   <xsd:complexType name="RandomStreamSource">
@@ -1772,7 +1746,7 @@
   <!-- ========================================================================================= -->
 
   <xsd:complexType name="ParameterType">
-    <xsd:attribute name="Id" type="xsd:string" use="required" />
+    <xsd:attribute name="Id" type="ots:IdType" use="required" />
     <xsd:attribute name="Field" type="ots:StaticFieldNameType" use="required" />
     <xsd:attribute name="Description" type="ots:string" use="optional" />
   </xsd:complexType>

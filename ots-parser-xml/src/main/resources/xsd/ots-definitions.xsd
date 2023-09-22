@@ -16,7 +16,7 @@
   <!-- ================================================================================================== -->
 
   <xsd:complexType name="HierarchicalType">
-    <xsd:attribute name="Id" type="xsd:string" use="required" />
+    <xsd:attribute name="Id" type="ots:IdType" use="required" />
     <xsd:attribute name="Parent" type="ots:string" use="optional" />
     <xsd:attribute name="Default" type="xsd:boolean" use="optional" default="false" />
   </xsd:complexType>
@@ -57,7 +57,7 @@
         <xsd:element name="MaxAccelerationDist" type="ots:AccelerationDistType" minOccurs="0" />
         <xsd:element name="MaxDecelerationDist" type="ots:AccelerationDistType" minOccurs="0" />
       </xsd:sequence>
-      <xsd:attribute name="Id" type="xsd:string" use="required" />
+      <xsd:attribute name="Id" type="ots:IdType" use="required" />
       <xsd:attribute name="GtuType" type="ots:string" use="required" />
       <xsd:attribute name="Default" type="xsd:boolean" use="optional" default="false" />
       <!-- xsd:attribute ref="xml:base" / -->
@@ -215,7 +215,7 @@
         <xsd:sequence>
           <xsd:element ref="ots:SpeedLimit" minOccurs="0" maxOccurs="unbounded" />
         </xsd:sequence>
-        <xsd:attribute name="Id" type="xsd:string" use="required" />
+        <xsd:attribute name="Id" type="ots:IdType" use="required" />
         <xsd:attribute name="LaneType" type="ots:string" use="required" />
       </xsd:extension>
     </xsd:complexContent>
@@ -224,7 +224,7 @@
   <xsd:complexType name="CseNoTrafficLane">
     <xsd:complexContent>
       <xsd:extension base="ots:CrossSectionElement">
-        <xsd:attribute name="Id" type="xsd:string" use="optional" />
+        <xsd:attribute name="Id" type="ots:IdType" use="optional" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -232,7 +232,7 @@
   <xsd:complexType name="CseShoulder">
     <xsd:complexContent>
       <xsd:extension base="ots:CrossSectionElement">
-        <xsd:attribute name="Id" type="xsd:string" use="optional" />
+        <xsd:attribute name="Id" type="ots:IdType" use="optional" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -248,7 +248,7 @@
       </xsd:choice>
       <xsd:element name="DrawingWidth" type="ots:PositiveLengthType" minOccurs="0" maxOccurs="1" />
     </xsd:sequence>
-    <xsd:attribute name="Id" type="xsd:string" use="optional" />
+    <xsd:attribute name="Id" type="ots:IdType" use="optional" />
     <xsd:attribute name="Type" type="ots:StripeType" use="required" />
   </xsd:complexType>
 
@@ -286,7 +286,7 @@
     <xsd:complexType>
       <xsd:complexContent>
         <xsd:extension base="ots:BasicRoadLayout">
-          <xsd:attribute name="Id" type="xsd:string" use="required" />
+          <xsd:attribute name="Id" type="ots:IdType" use="required" />
           <xsd:attribute name="LinkType" type="ots:string" use="required" />
         </xsd:extension>
       </xsd:complexContent>

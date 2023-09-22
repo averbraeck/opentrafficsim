@@ -31,8 +31,8 @@
         </xsd:element>
         <xsd:element name="RandomStream" type="ots:RandomStreamSource" minOccurs="0" />
       </xsd:sequence>
-      <xsd:attribute name="Id" type="xsd:string" use="required" />
-      <xsd:attribute name="SinkType" type="xsd:string" use="required" />
+      <xsd:attribute name="Id" type="ots:IdType" use="required" />
+      <xsd:attribute name="SinkType" type="ots:string" use="required" />
       <xsd:attribute name="GlobalInterpolation" type="ots:InterpolationType" use="optional" default="LINEAR" />
       <xsd:attribute name="GlobalFactor" type="ots:PositiveFactor" use="optional" default="1.0" />
       <xsd:attribute name="Options" type="ots:string" use="optional" />
@@ -138,17 +138,17 @@
               </xsd:element>
             </xsd:sequence>
           </xsd:complexType>
-          <xsd:key name="odOptionsItemMarkovStateGtuTypeKey">
+          <xsd:unique name="odOptionsItemMarkovStateGtuTypeKey">
             <xsd:selector xpath=".//ots:Markov/ots:State" />
             <xsd:field xpath="@GtuType" />
-          </xsd:key>
-          <xsd:key name="odOptionsItemLaneBiasGtuTypeKey">
+          </xsd:unique>
+          <xsd:unique name="odOptionsItemLaneBiasGtuTypeKey">
             <xsd:selector xpath=".//ots:LaneBiases/ots:LaneBias" />
             <xsd:field xpath="@GtuType" />
-          </xsd:key>
+          </xsd:unique>
         </xsd:element>
       </xsd:sequence>
-      <xsd:attribute name="Id" type="xsd:string" />
+      <xsd:attribute name="Id" type="ots:IdType" />
     </xsd:complexType>
   </xsd:element>
 
@@ -157,13 +157,13 @@
       <xsd:sequence>
         <xsd:element name="GtuTemplate" minOccurs="1" maxOccurs="unbounded">
           <xsd:complexType>
-            <xsd:attribute name="Id" type="xsd:string" use="required" />
+            <xsd:attribute name="Id" type="ots:IdType" use="required" />
             <xsd:attribute name="Weight" type="ots:DoublePositiveInclusive" use="required" />
           </xsd:complexType>
         </xsd:element>
         <xsd:element name="RandomStream" type="ots:RandomStreamSource" minOccurs="0" />
       </xsd:sequence>
-      <xsd:attribute name="Id" type="xsd:string" use="required" />
+      <xsd:attribute name="Id" type="ots:IdType" use="required" />
       <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
@@ -173,7 +173,7 @@
       <xsd:sequence>
         <xsd:element name="Node" type="ots:string" minOccurs="2" maxOccurs="unbounded" />
       </xsd:sequence>
-      <xsd:attribute name="Id" type="xsd:string" use="required" />
+      <xsd:attribute name="Id" type="ots:IdType" use="required" />
       <xsd:attribute name="GtuType" type="ots:string" use="required" />
       <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
@@ -200,7 +200,7 @@
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
-      <xsd:attribute name="Id" type="xsd:string" use="required" />
+      <xsd:attribute name="Id" type="ots:IdType" use="required" />
       <xsd:attribute name="GtuType" type="ots:string" use="required" />
       <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
@@ -217,7 +217,7 @@
         </xsd:element>
         <xsd:element name="RandomStream" type="ots:RandomStreamSource" minOccurs="0" />
       </xsd:sequence>
-      <xsd:attribute name="Id" type="xsd:string" use="required" />
+      <xsd:attribute name="Id" type="ots:IdType" use="required" />
       <xsd:attribute name="GtuType" type="ots:string" use="required" />
       <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
@@ -234,7 +234,7 @@
         </xsd:element>
         <xsd:element name="RandomStream" type="ots:RandomStreamSource" minOccurs="0" />
       </xsd:sequence>
-      <xsd:attribute name="Id" type="xsd:string" use="required" />
+      <xsd:attribute name="Id" type="ots:IdType" use="required" />
       <xsd:attribute name="GtuType" type="ots:string" use="required" />
       <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
@@ -354,7 +354,7 @@
     <xsd:sequence>
       <xsd:element name="Lane" type="ots:LaneLinkType" minOccurs="0" />
     </xsd:sequence>
-    <xsd:attribute name="Id" type="xsd:string" use="required" />
+    <xsd:attribute name="Id" type="ots:IdType" use="required" />
     <xsd:attribute name="GtuType" type="ots:string" use="optional" />
     <xsd:attribute name="Route" type="ots:string" use="optional" />
     <xsd:attribute name="Factor" type="ots:PositiveFactor" use="optional" default="1.0" />

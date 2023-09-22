@@ -21,7 +21,7 @@
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
-      <xsd:attribute name="Id" type="xsd:string" use="required" />
+      <xsd:attribute name="Id" type="ots:IdType" use="required" />
     </xsd:complexType>
   </xsd:element>
 

@@ -206,7 +206,7 @@
     <!-- Keys and keyrefs for input parameters -->
 
     <xsd:key name="inputParameterAccelerationId">
-      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Acceleration" />
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Acceleration|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -216,7 +216,7 @@
     </xsd:keyref>
 
     <xsd:key name="inputParameterAccelerationDistId">
-      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:AccelerationDist" />
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:AccelerationDist|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -226,7 +226,7 @@
     </xsd:keyref>
 
     <xsd:key name="inputParameterBooleanId">
-      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Boolean" />
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Boolean|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -236,7 +236,7 @@
     </xsd:keyref>
 
     <xsd:key name="inputParameterClassId">
-      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Class" />
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Class|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -246,7 +246,7 @@
     </xsd:keyref>
 
     <xsd:key name="inputParameterDoubleId">
-      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Double" />
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Double|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -256,7 +256,7 @@
     </xsd:keyref>
 
     <xsd:key name="inputParameterDoubleDistId">
-      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:DoubleDist" />
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:DoubleDist|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -266,7 +266,7 @@
     </xsd:keyref>
 
     <xsd:key name="inputParameterDurationId">
-      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Duration" />
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Duration|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -276,7 +276,7 @@
     </xsd:keyref>
 
     <xsd:key name="inputParameterDurationDistId">
-      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:DurationDist" />
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:DurationDist|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -286,7 +286,7 @@
     </xsd:keyref>
 
     <xsd:key name="inputParameterFloatId">
-      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Float" />
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Float|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -296,7 +296,7 @@
     </xsd:keyref>
 
     <xsd:key name="inputParameterFloatDistId">
-      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:FloatDist" />
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:FloatDist|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -306,7 +306,7 @@
     </xsd:keyref>
 
     <xsd:key name="inputParameterFractionId">
-      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Fraction" />
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Fraction|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -316,7 +316,7 @@
     </xsd:keyref>
 
     <xsd:key name="inputParameterFrequencyId">
-      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Frequency" />
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Frequency|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -326,7 +326,7 @@
     </xsd:keyref>
 
     <xsd:key name="inputParameterFrequencyDistId">
-      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:FrequencyDist" />
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:FrequencyDist|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -336,7 +336,7 @@
     </xsd:keyref>
 
     <xsd:key name="inputParameterIntegerId">
-      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Integer" />
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Integer|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -346,7 +346,7 @@
     </xsd:keyref>
 
     <xsd:key name="inputParameterIntegerDistId">
-      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:IntegerDist" />
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:IntegerDist|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -356,7 +356,7 @@
     </xsd:keyref>
 
     <xsd:key name="inputParameterLengthId">
-      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Length" />
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Length|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -366,7 +366,7 @@
     </xsd:keyref>
 
     <xsd:key name="inputParameterLengthDistId">
-      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:LengthDist" />
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:LengthDist|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -376,7 +376,7 @@
     </xsd:keyref>
 
     <xsd:key name="inputParameterLinearDensityId">
-      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:LinearDensity" />
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:LinearDensity|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -386,7 +386,7 @@
     </xsd:keyref>
 
     <xsd:key name="inputParameterLinearDensityDistId">
-      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:LinearDensityDist" />
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:LinearDensityDist|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -396,7 +396,7 @@
     </xsd:keyref>
 
     <xsd:key name="inputParameterLongId">
-      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Long" />
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Long|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -406,7 +406,7 @@
     </xsd:keyref>
 
     <xsd:key name="inputParameterLongDistId">
-      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:LongDist" />
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:LongDist|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -416,7 +416,7 @@
     </xsd:keyref>
 
     <xsd:key name="inputParameterSpeedId">
-      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Speed" />
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Speed|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -426,7 +426,7 @@
     </xsd:keyref>
 
     <xsd:key name="inputParameterSpeedDistId">
-      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:SpeedDist" />
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:SpeedDist|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -436,7 +436,7 @@
     </xsd:keyref>
 
     <xsd:key name="inputParameterStringId">
-      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:String" />
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:String|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -475,7 +475,7 @@
       <xsd:element name="ModelIdReferral" type="ots:ModelIdReferralType" minOccurs="0" maxOccurs="unbounded" />
 
     </xsd:sequence>
-    <xsd:attribute name="Id" type="xsd:string" />
+    <xsd:attribute name="Id" type="ots:IdType" />
   </xsd:complexType>
 
 </xsd:schema>

@@ -24,11 +24,11 @@
               </xsd:complexType>
             </xsd:element>
           </xsd:sequence>
-          <xsd:attribute name="Id" type="xsd:string" use="required" />
+          <xsd:attribute name="Id" type="ots:IdType" use="required" />
         </xsd:complexType>
       </xsd:element>
     </xsd:sequence>
-    <xsd:attribute name="Id" type="xsd:string" use="required" />
+    <xsd:attribute name="Id" type="ots:IdType" use="required" />
     <xsd:attribute name="StartTime" type="ots:string" use="optional" />
     <xsd:attribute name="EndTime" type="ots:string" use="optional" />
   </xsd:complexType>
@@ -65,7 +65,7 @@
                   </xsd:complexType>
                 </xsd:element>
               </xsd:choice>
-              <xsd:attribute name="Id" type="xsd:string" use="required" />
+              <xsd:attribute name="Id" type="ots:IdType" use="required" />
               <xsd:attribute name="Type" type="ots:string" use="required" />
             </xsd:complexType>
           </xsd:element>
