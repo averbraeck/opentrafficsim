@@ -297,6 +297,15 @@
       <xsd:field xpath="@Id" />
     </xsd:key>
 
+    <!-- ========================================== SCENARIO KEYS ========================================= -->
+
+    <!-- define the Scenario.Id key -->
+
+    <xsd:unique name="scenarioKey">
+      <xsd:selector xpath=".//ots:Scenarios/ots:Scenario" />
+      <xsd:field xpath="@Id" />
+    </xsd:unique>
+    
     <!-- ============================================= RUN KEYS =========================================== -->
 
     <!-- define the RandomStream.Id key -->
