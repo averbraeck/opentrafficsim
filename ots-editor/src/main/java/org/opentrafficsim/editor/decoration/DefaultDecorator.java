@@ -101,6 +101,7 @@ public final class DefaultDecorator
         new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.AccelerationIncentives");
 
         new AutomaticLinkId(editor);
+        new AutomaticConnectorId(editor);
         new DefinitionsSaver(editor);
 
         // new NodeCreatedRemovedPrinter(editor);

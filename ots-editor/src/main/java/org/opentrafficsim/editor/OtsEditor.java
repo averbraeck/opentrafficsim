@@ -1178,8 +1178,12 @@ public class OtsEditor extends JFrame implements EventProducer
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
-                    table.editingCanceled(null);
                     action.accept(option);
+                    CellEditor cellEditor = table.getCellEditor();
+                    if (cellEditor != null)
+                    {
+                         cellEditor.cancelCellEditing();
+                    }
                     OtsEditor.this.treeTable.updateUI();
                 }
             });
@@ -1248,8 +1252,12 @@ public class OtsEditor extends JFrame implements EventProducer
                                         @Override
                                         public void actionPerformed(final ActionEvent e)
                                         {
-                                            table.editingCanceled(null);
                                             action.accept(currentValue);
+                                            CellEditor cellEditor = table.getCellEditor();
+                                            if (cellEditor != null)
+                                            {
+                                                 cellEditor.cancelCellEditing();
+                                            }
                                             OtsEditor.this.treeTable.updateUI();
                                         }
                                     });
@@ -1518,6 +1526,15 @@ public class OtsEditor extends JFrame implements EventProducer
     {
         return options.stream().filter((val) -> currentValue == null || currentValue.isEmpty() || val.startsWith(currentValue))
                 .distinct().sorted().collect(Collectors.toList());
+    }
+
+    /**
+     * Adds a listener to the cell editor of the attributes table.
+     * @param listener CellEditorListener; listener to the cell editor of the attributes table.
+     */
+    public void addAttributeCellEditorListener(final CellEditorListener listener)
+    {
+        this.attributesTable.getDefaultEditor(String.class).addCellEditorListener(listener);
     }
 
 }
