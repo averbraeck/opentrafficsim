@@ -25,7 +25,7 @@
   <ots:Duration Id="Tr" Description="Reaction time" Field="org.opentrafficsim.base.parameters.ParameterTypes.TR" />
   
   <!-- IDM parameters -->
-  <ots:Double Id="delta" Description="Acceleration flattening exponent towards desired speed" Field="org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM.DELTA" />
+  <ots:Double Id="delta" Description="Acceleration flattening exponent towards desired speed" Field="org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm.DELTA" />
   
   <!-- LMRS parameters -->
   <!-- dFree < dSync < dCoop -->
@@ -65,9 +65,9 @@
   <ots:Duration Id="td CACC" Description="User defined time headway in CACC mode" Field="org.opentrafficsim.road.gtu.lane.control.AbstractActuatedControl.TDCACC" />
   <ots:Length Id="x0 (C)ACC" Description="Stopping distance (C)ACC" Field="org.opentrafficsim.road.gtu.lane.control.AbstractActuatedControl.X0" />
   <ots:Double Id="kf" Description="Desired speed error gain" Field="org.opentrafficsim.road.gtu.lane.control.AbstractLinearFreeControl.KF" />
-  <ots:Double Id="ks" Description="Gap error gain" Field="org.opentrafficsim.road.gtu.lane.control.LinearCACC.KS" />
-  <ots:Double Id="kv" Description="Speed error gain" Field="org.opentrafficsim.road.gtu.lane.control.LinearCACC.KV" />
-  <ots:Double Id="ka" Description="Acceleration error gain" Field="org.opentrafficsim.road.gtu.lane.control.LinearCACC.KA" />
-  <ots:Double Id="kd" Description="Gap error derivative gain" Field="org.opentrafficsim.road.gtu.lane.control.PloegCACC.KD" />
+  <ots:Double Id="ks" Description="Gap error gain" Field="org.opentrafficsim.road.gtu.lane.control.LinearCacc.KS" />
+  <ots:Double Id="kv" Description="Speed error gain" Field="org.opentrafficsim.road.gtu.lane.control.LinearCacc.KV" />
+  <ots:Double Id="ka" Description="Acceleration error gain" Field="org.opentrafficsim.road.gtu.lane.control.LinearCacc.KA" />
+  <ots:Double Id="kd" Description="Gap error derivative gain" Field="org.opentrafficsim.road.gtu.lane.control.PloegCacc.KD" />
 
 </ots:ParameterTypes>
