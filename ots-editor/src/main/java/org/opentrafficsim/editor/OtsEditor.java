@@ -619,7 +619,7 @@ public class OtsEditor extends JFrame implements EventProducer
     public void setSchema(final Document xsdDocument) throws IOException
     {
         this.xsdDocument = xsdDocument;
-        this.undo.ignoreChanges = true;
+        this.undo.setIgnoreChanges();
         initializeTree();
         this.undo.clear();
         setStatusLabel("Schema " + xsdDocument.getBaseURI() + " loaded");
@@ -1330,8 +1330,8 @@ public class OtsEditor extends JFrame implements EventProducer
         try
         {
             Document document = DocumentReader.open(file.toURI());
-            initializeTree();
             this.undo.setIgnoreChanges();
+            initializeTree();
             XsdTreeNodeRoot root = (XsdTreeNodeRoot) OtsEditor.this.treeTable.getTree().getModel().getRoot();
             root.loadXmlNodes(document.getFirstChild());
             this.undo.clear();

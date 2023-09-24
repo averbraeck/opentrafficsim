@@ -64,7 +64,10 @@ public class AttributesListSelectionListener implements ListSelectionListener, E
         {
             this.listening.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
         }
-        node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+        if (node != null)
+        {
+            node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+        }
         this.listening = node;
     }
 
