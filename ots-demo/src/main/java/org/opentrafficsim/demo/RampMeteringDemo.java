@@ -97,7 +97,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
-import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Incentive;
@@ -500,7 +499,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
                             set.setDefaultParameter(ParameterTypes.DT);
                             set.setDefaultParameter(ParameterTypes.VCONG);
                             set.setDefaultParameter(ParameterTypes.T0);
-                            set.setDefaultParameter(TrafficLightUtil.B_YELLOW);
+                            set.setDefaultParameter(ParameterTypes.BCRIT);
                             set.setDefaultParameters(LmrsParameters.class);
                             set.setDefaultParameters(AbstractIdm.class);
                             return set;
