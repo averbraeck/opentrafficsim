@@ -9,7 +9,6 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterableSet;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -26,9 +25,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 public final class TrafficLightUtil
 {
     /** Maximum deceleration for stopping for yellow traffic light. */
-    public static final ParameterTypeAcceleration B_YELLOW =
-            new ParameterTypeAcceleration("bYellow", "Maximum deceleration for stopping for yellow traffic light",
-                    new Acceleration(3.5, AccelerationUnit.SI), ConstraintInterface.POSITIVE);
+    public static final ParameterTypeAcceleration BCRIT = ParameterTypes.BCRIT;
 
     /**
      * Do not instantiate.
@@ -114,7 +111,7 @@ public final class TrafficLightUtil
                 a = Acceleration.max(a, aConstant);
             }
             // return a if a > -b
-            if (a.gt(parameters.getParameter(B_YELLOW).neg()))
+            if (a.gt(parameters.getParameter(BCRIT).neg()))
             {
                 return a;
             }

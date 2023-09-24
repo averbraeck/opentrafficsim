@@ -3,71 +3,66 @@
   xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions.xsd">
 
   <!-- Most common parameters, for LMRS and other models -->
-  <ots:Duration Id="dt" Description="Fixed model time step" Field="org.opentrafficsim.base.parameters.ParameterTypes.DT" />
-  <ots:Length Id="s0" Description="Car-following stopping distance" Field="org.opentrafficsim.base.parameters.ParameterTypes.S0" />
-  <ots:Acceleration Id="a" Description="Maximum (desired) car-following acceleration" Field="org.opentrafficsim.base.parameters.ParameterTypes.A" />
+  <ots:Duration Id="dt" Description="Fixed model time step" Field="org.opentrafficsim.base.parameters.ParameterTypes.DT" Default="0.5 s" />
+  <ots:Length Id="s0" Description="Car-following stopping distance" Field="org.opentrafficsim.base.parameters.ParameterTypes.S0" Default="3.0 m" />
+  <ots:Acceleration Id="a" Description="Maximum (desired) car-following acceleration" Field="org.opentrafficsim.base.parameters.ParameterTypes.A" Default="1.25 m/s2" />
   <!-- b0 < b < bCrit -->
-  <ots:Acceleration Id="b" Description="Maximum comfortable car-following deceleration" Field="org.opentrafficsim.base.parameters.ParameterTypes.B" />
-  <ots:Acceleration Id="bCrit" Description="Maximum critical deceleration, e.g. stop/go at traffic light" Field="org.opentrafficsim.base.parameters.ParameterTypes.BCRIT" />
-  <ots:Acceleration Id="b0" Description="Maximum adjustment deceleration, e.g. when speed limit drops" Field="org.opentrafficsim.base.parameters.ParameterTypes.B0" />
-  <ots:Duration Id="T" Description="Current car-following headway" Field="org.opentrafficsim.base.parameters.ParameterTypes.T" />
+  <ots:Acceleration Id="b" Description="Maximum comfortable car-following deceleration" Field="org.opentrafficsim.base.parameters.ParameterTypes.B" Default="2.09 m/s2" />
+  <ots:Acceleration Id="bCrit" Description="Maximum critical deceleration, e.g. stop/go at traffic light" Field="org.opentrafficsim.base.parameters.ParameterTypes.BCRIT" Default="3.5 m/s2" />
+  <ots:Acceleration Id="b0" Description="Maximum adjustment deceleration, e.g. when speed limit drops" Field="org.opentrafficsim.base.parameters.ParameterTypes.B0" Default="0.5 m/s2" />
+  <ots:Duration Id="T" Description="Current car-following headway" Field="org.opentrafficsim.base.parameters.ParameterTypes.T" Default="1.2 s" />
   <!-- Tmin < Tmax -->
-  <ots:Duration Id="Tmin" Description="Minimum car-following headway" Field="org.opentrafficsim.base.parameters.ParameterTypes.TMIN" />
-  <ots:Duration Id="Tmax" Description="Maximum car-following headway" Field="org.opentrafficsim.base.parameters.ParameterTypes.TMAX" />
-  <ots:Duration Id="tau" Description="Headway relaxation time" Field="org.opentrafficsim.base.parameters.ParameterTypes.TAU" />
-  <ots:Duration Id="t0" Description="Look-ahead time for mandatory lane changes" Field="org.opentrafficsim.base.parameters.ParameterTypes.T0" />
-  <ots:Length Id="Look-ahead" Description="Look-ahead distance" Field="org.opentrafficsim.base.parameters.ParameterTypes.LOOKAHEAD" />
-  <ots:Length Id="Look-back" Description="Look-back distance" Field="org.opentrafficsim.base.parameters.ParameterTypes.LOOKBACK" />
-  <ots:Double Id="fSpeed" Description="Speed limit adherence factor" Field="org.opentrafficsim.base.parameters.ParameterTypes.FSPEED" />
-  <ots:Speed Id="vCong" Description="Speed threshold below which traffic is considered congested" Field="org.opentrafficsim.base.parameters.ParameterTypes.VCONG" />
-  <ots:Duration Id="lcDur" Description="Regular lane change duration" Field="org.opentrafficsim.base.parameters.ParameterTypes.LCDUR" />
-  <ots:Length Id="perception" Description="Mental map length" Field="org.opentrafficsim.base.parameters.ParameterTypes.PERCEPTION" />
-  <ots:Duration Id="Tr" Description="Reaction time" Field="org.opentrafficsim.base.parameters.ParameterTypes.TR" />
+  <ots:Duration Id="Tmin" Description="Minimum car-following headway" Field="org.opentrafficsim.base.parameters.ParameterTypes.TMIN" Default="0.56 s" />
+  <ots:Duration Id="Tmax" Description="Maximum car-following headway" Field="org.opentrafficsim.base.parameters.ParameterTypes.TMAX" Default="1.2 s" />
+  <ots:Duration Id="tau" Description="Headway relaxation time" Field="org.opentrafficsim.base.parameters.ParameterTypes.TAU" Default="25.0 s" />
+  <ots:Duration Id="t0" Description="Look-ahead time for mandatory lane changes" Field="org.opentrafficsim.base.parameters.ParameterTypes.T0" Default="43.0 s" />
+  <ots:Length Id="Look-ahead" Description="Look-ahead distance" Field="org.opentrafficsim.base.parameters.ParameterTypes.LOOKAHEAD" Default="295 m" />
+  <ots:Length Id="Look-back" Description="Look-back distance" Field="org.opentrafficsim.base.parameters.ParameterTypes.LOOKBACK" Default="200 m" />
+  <ots:Double Id="fSpeed" Description="Speed limit adherence factor" Field="org.opentrafficsim.base.parameters.ParameterTypes.FSPEED" Default="1.0" />
+  <ots:Speed Id="vCong" Description="Speed threshold below which traffic is considered congested" Field="org.opentrafficsim.base.parameters.ParameterTypes.VCONG" Default="60.0 km/h" />
+  <ots:Duration Id="lcDur" Description="Regular lane change duration" Field="org.opentrafficsim.base.parameters.ParameterTypes.LCDUR" Default="3.0 s" />
+  <ots:Length Id="perception" Description="Mental map length" Field="org.opentrafficsim.base.parameters.ParameterTypes.PERCEPTION" Default="2.0 km" />
+  <ots:Duration Id="Tr" Description="Reaction time" Field="org.opentrafficsim.base.parameters.ParameterTypes.TR" Default="0.5 s" />
   
   <!-- IDM parameters -->
-  <ots:Double Id="delta" Description="Acceleration flattening exponent towards desired speed" Field="org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm.DELTA" />
+  <ots:Double Id="delta" Description="Acceleration flattening exponent towards desired speed" Field="org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm.DELTA" Default="4.0" />
   
   <!-- LMRS parameters -->
   <!-- dFree < dSync < dCoop -->
-  <ots:Double Id="dFree" Description="Free lane change desire threshold" Field="org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters.DFREE" />
-  <ots:Double Id="dSync" Description="Synchronized lane change desire threshold" Field="org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters.DSYNC" />
-  <ots:Double Id="dCoop" Description="Cooperative lane change desire threshold" Field="org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters.DCOOP" />
-  <ots:Speed Id="vGain" Description="Anticipation speed difference at full lane change desire" Field="org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters.VGAIN" />
-  <ots:Double Id="courtesy" Description="Courtesy level for courtesy lane changes" Field="org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters.COURTESY" />
-  <ots:Double Id="socio" Description="Sensitivity level for speed of others" Field="org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters.SOCIO" />
-  <ots:Double Id="rho" Description="Social pressure" Field="org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating.RHO" />
+  <ots:Double Id="dFree" Description="Free lane change desire threshold" Field="org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters.DFREE" Default="0.365" />
+  <ots:Double Id="dSync" Description="Synchronized lane change desire threshold" Field="org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters.DSYNC" Default="0.577" />
+  <ots:Double Id="dCoop" Description="Cooperative lane change desire threshold" Field="org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters.DCOOP" Default="0.788" />
+  <ots:Speed Id="vGain" Description="Anticipation speed difference at full lane change desire" Field="org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters.VGAIN" Default="69.6 km/h" />
+  <ots:Double Id="socio" Description="Sensitivity level for speed of others" Field="org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters.SOCIO" Default="1.0" />
+  <ots:Double Id="rho" Description="Social pressure" Field="org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating.RHO" Default="0.0" />
   
   <!-- Perception parameters -->
-  <ots:Double Id="SA" Description="Situational awareness" Field="org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness.SA" />
+  <ots:Double Id="SA" Description="Situational awareness" Field="org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness.SA" Default="1.0" />
   <!-- SAmin < SAmax -->
-  <ots:Double Id="SAmin" Description="Min. situational awareness"
-    Field="org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness.SA_MIN" />
-  <ots:Double Id="SAmax" Description="Max. situational awareness"
-    Field="org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness.SA_MAX" />
-  <ots:Duration Id="TRmax" Description="Maximum reaction time"
-    Field="org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness.TR_MAX" />
-  <ots:Double Id="TC" Description="Task capability" Field="org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.TC" />
-  <ots:Double Id="TS" Description="Task saturation" Field="org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.TS" />
+  <ots:Double Id="SAmin" Description="Min. situational awareness" Field="org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness.SA_MIN" Default="0.5" />
+  <ots:Double Id="SAmax" Description="Max. situational awareness" Field="org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness.SA_MAX" Default="1.0" />
+  <ots:Duration Id="TRmax" Description="Maximum reaction time" Field="org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness.TR_MAX" Default="2.0 s" />
+  <ots:Double Id="TC" Description="Task capability" Field="org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.TC" Default="1.0" />
+  <ots:Double Id="TS" Description="Task saturation" Field="org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.TS" Default="0.0" />
   <!-- TScrit < TSmax -->
-  <ots:Double Id="TScrit" Description="Critical task saturation" Field="org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.TS_CRIT" />
-  <ots:Double Id="TSmax" Description="Maximum task saturation" Field="org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.TS_MAX" />
+  <ots:Double Id="TScrit" Description="Critical task saturation" Field="org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.TS_CRIT" Default="0.8" />
+  <ots:Double Id="TSmax" Description="Maximum task saturation" Field="org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.TS_MAX" Default="2.0" />
   
   <!-- Intersection parameters -->
-  <ots:Duration Id="minGap" Description="Minimum gap for conflicts" Field="org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil.MIN_GAP" />
-  <ots:Length Id="s0conf" Description="Stopping distance at conflicts" Field="org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil.S0_CONF" />
-  <ots:Double Id="timeFactor" Description="Safety factor on estimated time" Field="org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil.TIME_FACTOR" />
-  <ots:Double Id="stopArea" Description="Area before stop line where one is considered arrived at the intersection" Field="org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil.STOP_AREA" />
-  <ots:Double Id="ti" Description="Indicator time before bus departure" Field="org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil.TI" />
-  <ots:Acceleration Id="bYellow" Description="Maximum deceleration for stopping for yellow traffic light" Field="org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil.B_YELLOW" />
+  <ots:Duration Id="minGap" Description="Minimum gap for conflicts" Field="org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil.MIN_GAP" Default="1e-6 s" />
+  <ots:Length Id="s0conf" Description="Stopping distance at conflicts" Field="org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil.S0_CONF" Default="1.5 m" />
+  <ots:Double Id="timeFactor" Description="Safety factor on estimated time" Field="org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil.TIME_FACTOR" Default="1.25" />
+  <ots:Length Id="stopArea" Description="Area before stop line where one is considered arrived at the intersection" Field="org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil.STOP_AREA" Default="4.0 m" />
+  <ots:Duration Id="ti" Description="Indicator time before bus departure" Field="org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil.TI" Default="3.0 s" />
 
   <!-- (C)ACC parameters -->
-  <ots:Duration Id="td ACC" Description="User defined time headway in ACC mode" Field="org.opentrafficsim.road.gtu.lane.control.AbstractActuatedControl.TDACC" />
-  <ots:Duration Id="td CACC" Description="User defined time headway in CACC mode" Field="org.opentrafficsim.road.gtu.lane.control.AbstractActuatedControl.TDCACC" />
-  <ots:Length Id="x0 (C)ACC" Description="Stopping distance (C)ACC" Field="org.opentrafficsim.road.gtu.lane.control.AbstractActuatedControl.X0" />
-  <ots:Double Id="kf" Description="Desired speed error gain" Field="org.opentrafficsim.road.gtu.lane.control.AbstractLinearFreeControl.KF" />
-  <ots:Double Id="ks" Description="Gap error gain" Field="org.opentrafficsim.road.gtu.lane.control.LinearCacc.KS" />
-  <ots:Double Id="kv" Description="Speed error gain" Field="org.opentrafficsim.road.gtu.lane.control.LinearCacc.KV" />
-  <ots:Double Id="ka" Description="Acceleration error gain" Field="org.opentrafficsim.road.gtu.lane.control.LinearCacc.KA" />
-  <ots:Double Id="kd" Description="Gap error derivative gain" Field="org.opentrafficsim.road.gtu.lane.control.PloegCacc.KD" />
+  <ots:Duration Id="td ACC" Description="User defined time headway in ACC mode" Field="org.opentrafficsim.road.gtu.lane.control.AbstractActuatedControl.TDACC" Default="1.2 s" />
+  <ots:Duration Id="td CACC" Description="User defined time headway in CACC mode" Field="org.opentrafficsim.road.gtu.lane.control.AbstractActuatedControl.TDCACC" Default="0.5 s" />
+  <ots:Length Id="x0 (C)ACC" Description="Stopping distance (C)ACC" Field="org.opentrafficsim.road.gtu.lane.control.AbstractActuatedControl.X0" Default="3.0 m" />
+  <ots:Double Id="kf" Description="Desired speed error gain" Field="org.opentrafficsim.road.gtu.lane.control.AbstractLinearFreeControl.KF" Default="0.075" />
+  <ots:Double Id="ks" Description="Gap error gain" Field="org.opentrafficsim.road.gtu.lane.control.LinearCacc.KS" Default="0.2" />
+  <ots:Double Id="kv" Description="Speed error gain" Field="org.opentrafficsim.road.gtu.lane.control.LinearCacc.KV" Default="0.4" />
+  <ots:Double Id="ka" Description="Acceleration error gain" Field="org.opentrafficsim.road.gtu.lane.control.LinearCacc.KA" Default="1.0" />
+  <ots:Double Id="kd" Description="Gap error derivative gain" Field="org.opentrafficsim.road.gtu.lane.control.PloegCacc.KD" Default="0.7" />
 
 </ots:ParameterTypes>
