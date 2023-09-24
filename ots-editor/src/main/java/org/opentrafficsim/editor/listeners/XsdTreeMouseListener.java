@@ -13,6 +13,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
+import javax.swing.table.TableCellEditor;
 
 import org.opentrafficsim.editor.AttributesTableModel;
 import org.opentrafficsim.editor.OtsEditor;
@@ -57,6 +58,16 @@ public class XsdTreeMouseListener extends MouseAdapter
     {
         if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1)
         {
+            TableCellEditor editor = this.attributesTable.getCellEditor();
+            if (editor != null)
+            {
+                // This prevents a null pointer when editing in the attributes and clicking on the table:
+                // Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException: Cannot invoke
+                // "javax.swing.JTree.getToggleClickCount()" because "this.tree" is null at
+                // java.desktop/javax.swing.plaf.basic.BasicTreeUI.isToggleEvent(BasicTreeUI.java:2697)
+                editor.stopCellEditing();
+            }
+
             // show value options popup
             int row = this.treeTable.rowAtPoint(e.getPoint());
             int treeCol = this.treeTable.convertColumnIndexToView(0); // columns may have been moved in view

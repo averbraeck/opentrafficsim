@@ -14,9 +14,9 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 
 /**
- * Undo unit for the OTS editor. This class stores an internal queue of actions. All changes to the tree of XsdTreeNodes should
- * result in an action. Changes should be grouped per single user input. This class will listen to changes in the tree, but most
- * actions (groups of sub-actions) need to be initiated externally.
+ * Undo unit for the OTS editor. This class stores an internal queue of actions. Changes to XsdTreeNodes should be grouped per
+ * single user input in an action. All actions need to be initiated externally using {@code startAction()}. This class will
+ * itself listen to all relevant changes in the tree and add incoming sub-actions under the started action.
  * <p>
  * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -36,7 +36,7 @@ public class Undo implements EventListener
     private LinkedList<Action> queue = new LinkedList<>();
 
     /** Location of most recent undo action. */
-    private int cursor = 0;
+    private int cursor = -1;
 
     /** Current queue of sub-actions from a single user input. */
     private Deque<SubAction> currentSet;
@@ -51,7 +51,7 @@ public class Undo implements EventListener
     private final AbstractButton redoItem;
 
     /** Boolean to ignore changes during undo/redo, so no new undo/redo is made. */
-    private boolean ignoreChanges = false;
+    boolean ignoreChanges = false;
 
     /**
      * Constructor.
@@ -76,7 +76,7 @@ public class Undo implements EventListener
     {
         this.ignoreChanges = false;
         this.currentSet = null;
-        this.cursor = 0;
+        this.cursor = -1;
         this.queue = new LinkedList<>();
     }
 
@@ -155,7 +155,7 @@ public class Undo implements EventListener
      */
     public boolean canRedo()
     {
-        return this.cursor < this.queue.size() - 1;
+        return this.cursor < this.queue.size() - 1 && !this.queue.get(this.cursor + 1).subActions.isEmpty();
     }
 
     /**
@@ -195,9 +195,10 @@ public class Undo implements EventListener
         this.ignoreChanges = true;
         this.cursor++;
         Action action = this.queue.get(this.cursor);
-        for (SubAction subAction : action.subActions)
+        Iterator<SubAction> iterator = action.subActions.iterator();
+        while (iterator.hasNext())
         {
-            subAction.redo();
+            iterator.next().redo(); 
         }
         action.parent.children.forEach((n) -> n.invalidate());
         action.parent.invalidate();
@@ -209,7 +210,7 @@ public class Undo implements EventListener
     /**
      * Update the enabled state and text of the undo and redo button.
      */
-    private void updateButtons()
+    public void updateButtons()
     {
         this.undoItem.setEnabled(canUndo());
         this.undoItem.setText(canUndo() ? ("Undo " + this.queue.get(this.cursor).type) : "Undo");
@@ -260,20 +261,20 @@ public class Undo implements EventListener
             XsdTreeNode node = (XsdTreeNode) content[0];
             XsdTreeNode parent = (XsdTreeNode) content[1];
             int index = (int) content[2];
-            if (index < 0)
-            {
-                return; // non-selected choice node
-            }
+            XsdTreeNode root = node.getPath().get(0);
             add(new SubActionRunnable(() ->
             {
-                node.parent.children.remove(node);
-                XsdTreeNode root = node.getPath().get(0);
+                parent.children.remove(node);
                 node.parent = null;
                 root.fireEvent(XsdTreeNodeRoot.NODE_REMOVED, new Object[] {node, parent, index});
             }, () ->
             {
-                parent.setChild(index, node);
-                node.getPath().get(0).fireEvent(XsdTreeNodeRoot.NODE_CREATED, new Object[] {node, parent, index});
+                if (index >= 0)
+                {
+                    parent.setChild(index, node);
+                }
+                node.parent = parent;
+                root.fireEvent(XsdTreeNodeRoot.NODE_CREATED, new Object[] {node, parent, index});
             }, "Create " + node.getPathString()));
         }
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
@@ -282,24 +283,24 @@ public class Undo implements EventListener
             XsdTreeNode node = (XsdTreeNode) content[0];
             XsdTreeNode parent = (XsdTreeNode) content[1];
             int index = (int) content[2];
+            XsdTreeNode root = node.getPath().get(0);
             add(new SubActionRunnable(() ->
             {
                 if (index < 0)
                 {
                     // non selected choice node
                     node.parent = parent;
-                    node.getPath().get(0).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                    root.fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                             new Object[] {node, parent, parent.children.indexOf(node)});
                 }
                 else
                 {
                     parent.setChild(index, node);
-                    node.getPath().get(0).fireEvent(XsdTreeNodeRoot.NODE_CREATED, new Object[] {node, parent, index});
+                    root.fireEvent(XsdTreeNodeRoot.NODE_CREATED, new Object[] {node, parent, index});
                 }
             }, () ->
             {
                 node.parent.children.remove(node);
-                XsdTreeNode root = node.getPath().get(0);
                 node.parent = null;
                 root.fireEvent(XsdTreeNodeRoot.NODE_REMOVED, new Object[] {node, parent, index});
             }, "Remove " + node.getPathString()));
@@ -325,6 +326,11 @@ public class Undo implements EventListener
             XsdTreeNode node = (XsdTreeNode) content[0];
             String attribute = (String) content[1];
             String value = node.getAttributeValue(attribute);
+            // for include nodes, setAttributeValue will trigger addition and removal of nodes, we can ignore these events
+            if (node.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
+            {
+                this.currentSet.clear();
+            }
             add(new SubActionRunnable(() ->
             {
                 node.setAttributeValue(attribute, (String) content[2]); // invokes event

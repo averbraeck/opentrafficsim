@@ -123,7 +123,10 @@ public final class XsdTreeNodeUtil
                     else
                     {
                         // add sequence as option, 'children' is a list of options for a choice
-                        children.add(new XsdTreeNode(parentNode, child, XsdTreeNodeUtil.append(hiddenNodes, node)));
+                        XsdTreeNode sequence = new XsdTreeNode(parentNode, child, XsdTreeNodeUtil.append(hiddenNodes, node));
+                        children.add(sequence);
+                        ((XsdTreeNodeRoot) sequence.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                                new Object[] {sequence, parentNode, parentNode.children.indexOf(sequence)});
                     }
                     break;
                 case "xsd:choice":
@@ -133,6 +136,8 @@ public final class XsdTreeNodeUtil
                         break;
                     }
                     XsdTreeNode choice = new XsdTreeNode(parentNode, child, XsdTreeNodeUtil.append(hiddenNodes, node));
+                    ((XsdTreeNodeRoot) choice.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                            new Object[] {choice, parentNode, parentNode.children.indexOf(choice)});
                     choice.createOptions();
                     /*
                      * We add the choice node, which is usually overwritten by the consecutive setting of an option. But not if
@@ -149,7 +154,10 @@ public final class XsdTreeNodeUtil
                         skipIndex = -1;
                         break;
                     }
-                    children.add(new XsdTreeNode(parentNode, child, XsdTreeNodeUtil.append(hiddenNodes, node)));
+                    XsdTreeNode extension = new XsdTreeNode(parentNode, child, XsdTreeNodeUtil.append(hiddenNodes, node));
+                    ((XsdTreeNodeRoot) extension.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                            new Object[] {extension, parentNode, parentNode.children.indexOf(extension)});
+                    children.add(extension);
                     break;
                 case "xsd:attribute":
                 case "xsd:annotation":

@@ -160,15 +160,17 @@ public class KeyValidator implements ValueValidator, EventListener
         }
         // xsd:keyref referred value is present ?
         Map<XsdTreeNode, List<String>> valueMap = this.refer.getValues(node);
-        if (valueMap.containsValue(values))
+        boolean matched = false;
+        for (Entry<XsdTreeNode, List<String>> entry : valueMap.entrySet())
         {
-            for (Entry<XsdTreeNode, List<String>> entry : valueMap.entrySet())
+            if (values.equals(entry.getValue()))
             {
-                if (values.equals(entry.getValue()))
-                {
-                    this.coupledKeyrefNodes.put(node, entry.getKey());
-                }
+                matched = true;
+                this.coupledKeyrefNodes.put(node, entry.getKey());
             }
+        }
+        if (matched)
+        {
             return null;
         }
         this.coupledKeyrefNodes.remove(node);
@@ -631,6 +633,16 @@ public class KeyValidator implements ValueValidator, EventListener
                 }
             }
         }
+    }
+    
+    /**
+     * Returns the key node to which the given keyref node is coupled.
+     * @param node XsdTreeNode; node with value that is bounded by a keyref.
+     * @return XsdTreeNode; key node to which the given keyref node is coupled.
+     */
+    public XsdTreeNode getCoupledKeyrefNode(final XsdTreeNode node)
+    {
+        return this.coupledKeyrefNodes.get(node);
     }
 
 }

@@ -21,7 +21,7 @@ public class AttributesMouseListener extends MouseAdapter
     /** Editor. */
     private final OtsEditor editor;
     
-    /** Table witha ttributes. */
+    /** Table with attributes. */
     private final JTable attributesTable;
     
     /**
