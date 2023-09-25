@@ -247,14 +247,10 @@ public final class XmlParser implements Serializable
         CategoryLogger.setLogCategories(Cat.PARSER);
         CategoryLogger.setAllLogLevel(Level.TRACE);
 
+        // run and input parameters
+        StreamSeedInformation streamInformation = RunParser.parseStreams(ots.getRun());
         Map<String, Supplier<?>> defaultsMap = new LinkedHashMap<>();
         ParameterWrapper defaults = new ParameterWrapper(null, defaultsMap);
-
-        StreamSeedInformation streamInformation = new StreamSeedInformation();
-        ExperimentRunControl<Duration> runControl =
-                RunParser.parseRun(otsNetwork.getId(), ots.getRun(), streamInformation, otsNetwork.getSimulator(), defaults);
-
-        // TODO: Streams depend on input parameters, input parameters depend on streams...
         if (ots.getScenarios() != null)
         {
             parseInputParameters(ots.getScenarios().getDefaultInputParameters(), streamInformation, defaults, defaultsMap);
@@ -264,16 +260,18 @@ public final class XmlParser implements Serializable
         {
             if (scenarioTag.getId().equals(scenario))
             {
-                Map<String, Supplier<?>> inputParametersMap = new LinkedHashMap<>();
-                inputParameters = new ParameterWrapper(defaults, inputParametersMap);
                 if (scenarioTag.getInputParameters() != null)
                 {
+                    Map<String, Supplier<?>> inputParametersMap = new LinkedHashMap<>();
+                    inputParameters = new ParameterWrapper(defaults, inputParametersMap);
                     parseInputParameters(scenarioTag.getInputParameters(), streamInformation, inputParameters,
                             inputParametersMap);
                 }
                 break;
             }
         }
+        ExperimentRunControl<Duration> runControl =
+                RunParser.parseRun(otsNetwork.getId(), ots.getRun(), streamInformation, otsNetwork.getSimulator(), defaults);
 
         // definitions
         Map<String, RoadLayout> roadLayoutMap = new LinkedHashMap<>();

@@ -33,27 +33,16 @@ public final class RunParser
     {
         // utility class
     }
-
+    
     /**
-     * Parse the Run tag in the OTS XML file.
-     * @param run Run; the Run tag
-     * @param networkId String; id of the network or the model
-     * @param streamInformation StreamSeedInformation; the stream information that will be passed to the model
-     * @param simulator OtsSimulatorInterface; the simulator to defined the experiment for
-     * @param inputParameters InputParameters; input parameters.
-     * @return experiment on the basis of the information in the Run tag
-     * @throws XmlParserException on parsing error
+     * Parse random number streams.
+     * @param run Run; run tag.
+     * @return stream information.
      */
-    public static ExperimentRunControl<Duration> parseRun(final String networkId, final Run run,
-            final StreamSeedInformation streamInformation, final OtsSimulatorInterface simulator,
-            final InputParameters inputParameters) throws XmlParserException
+    public static StreamSeedInformation parseStreams(final Run run)
     {
-        int numberReplications = run.getNumberReplications() == null ? 1 : run.getNumberReplications().get(inputParameters);
-        Time startTime = run.getStartTime() == null ? Time.ZERO : run.getStartTime().get(inputParameters);
-        Duration warmupPeriod = run.getWarmupPeriod() == null ? Duration.ZERO : run.getWarmupPeriod().get(inputParameters);
-        Duration runLength =
-                run.getRunLength() == null ? new Duration(1.0, DurationUnit.HOUR) : run.getRunLength().get(inputParameters);
-
+        StreamSeedInformation streamInformation = new StreamSeedInformation();
+        int numberReplications = run.getNumberReplications() == null ? 1 : run.getNumberReplications().intValue();
         if (run.getRandomStreams() != null)
         {
             for (RandomStream streamTag : run.getRandomStreams().getRandomStream())
@@ -62,7 +51,7 @@ public final class RunParser
                 Map<Integer, Long> seedMap = new LinkedHashMap<>();
                 for (Replication rep : streamTag.getReplication())
                 {
-                    seedMap.put(rep.getId().get(inputParameters), rep.getSeed().get(inputParameters));
+                    seedMap.put(rep.getId().intValue(), rep.getSeed().longValue());
                 }
                 if (seedMap.containsKey(0))
                 {
@@ -88,6 +77,28 @@ public final class RunParser
                 streamInformation.putSeedMap(streamId, seedMap);
             }
         }
+        return streamInformation;
+    }
+
+    /**
+     * Parse the Run tag in the OTS XML file.
+     * @param run Run; the Run tag
+     * @param networkId String; id of the network or the model
+     * @param streamInformation StreamSeedInformation; the stream information that will be passed to the model
+     * @param simulator OtsSimulatorInterface; the simulator to defined the experiment for
+     * @param inputParameters InputParameters; input parameters.
+     * @return experiment on the basis of the information in the Run tag
+     * @throws XmlParserException on parsing error
+     */
+    public static ExperimentRunControl<Duration> parseRun(final String networkId, final Run run,
+            final StreamSeedInformation streamInformation, final OtsSimulatorInterface simulator,
+            final InputParameters inputParameters) throws XmlParserException
+    {
+        int numberReplications = run.getNumberReplications() == null ? 1 : run.getNumberReplications().intValue();
+        Time startTime = run.getStartTime() == null ? Time.ZERO : run.getStartTime().get(inputParameters);
+        Duration warmupPeriod = run.getWarmupPeriod() == null ? Duration.ZERO : run.getWarmupPeriod().get(inputParameters);
+        Duration runLength =
+                run.getRunLength() == null ? new Duration(1.0, DurationUnit.HOUR) : run.getRunLength().get(inputParameters);
 
         // TODO: do we want a real Time here or a Duration?
         // If it should be a Time, create an ExperimentRunControl that can take a Time as first argument
