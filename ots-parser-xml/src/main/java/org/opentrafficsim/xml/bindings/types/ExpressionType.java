@@ -82,8 +82,23 @@ public abstract class ExpressionType<T>
      */
     public T get(final InputParameters inputParameters)
     {
-        // TODO: rather than "(T) null", evaluate expression with DJUTILS evaluator using input parameters
-        return this.expression == null ? this.value : (T) null;
+        // TODO: rather than "eval()", evaluate expression with DJUTILS evaluator using input parameters
+        return this.expression == null ? this.value : (T) eval(inputParameters);
+    }
+    
+    /**
+     * Return value, or "1 - value".
+     * @param inputParameters InputParameters; input parameters.
+     * @return value of expression.
+     */
+    @Deprecated
+    private Object eval(final InputParameters inputParameters)
+    {
+        if (this.expression.startsWith("1.0 - "))
+        {
+            return 1.0 - (double) inputParameters.getValue(this.expression.substring(6));
+        }
+        return inputParameters.getValue(this.expression);
     }
 
     /**

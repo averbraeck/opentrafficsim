@@ -29,12 +29,11 @@ import org.opentrafficsim.core.object.NonLocatedObject;
 import org.opentrafficsim.demo.trafficcontrol.TrafCodDemo2.TrafCodModel;
 import org.opentrafficsim.draw.core.OtsDrawingException;
 import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCod;
-import org.opentrafficsim.xml.generated.Ots;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.swing.gui.TabbedContentPane;
@@ -189,8 +188,8 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
             try
             {
                 this.network = new RoadNetwork(getShortName(), getSimulator());
-                Ots ots = XmlNetworkLaneParser.parseXml(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)));
-                XmlNetworkLaneParser.build(ots, this.network, false);
+                new XmlParser(this.network).setStream(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)))
+                        .build();
             }
             catch (Exception exception)
             {

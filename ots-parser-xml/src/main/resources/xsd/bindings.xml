@@ -53,6 +53,8 @@
     <!-- Djunits units -->
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.AccelerationUnitType"
       xmlType="ots:AccelerationUnitType" adapter="org.opentrafficsim.xml.bindings.AccelerationUnitAdapter" />
+    <xjc:javaType name="org.opentrafficsim.xml.bindings.types.DurationUnitType" xmlType="ots:DurationUnitType"
+      adapter="org.opentrafficsim.xml.bindings.DurationUnitAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.FrequencyUnitType" xmlType="ots:FrequencyUnitType"
       adapter="org.opentrafficsim.xml.bindings.FrequencyUnitAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.LengthUnitType" xmlType="ots:LengthUnitType"

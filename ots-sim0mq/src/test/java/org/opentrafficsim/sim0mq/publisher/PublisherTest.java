@@ -29,7 +29,7 @@ import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
 import org.sim0mq.Sim0MQException;
@@ -232,8 +232,8 @@ public class PublisherTest implements OtsModelInterface
             this.network = new RoadNetwork(getShortName(), getSimulator());
             try
             {
-                XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,
-                        false);
+                new XmlParser(this.network).setStream(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)))
+                        .build();
                 LaneCombinationList ignoreList = new LaneCombinationList();
                 LaneCombinationList permittedList = new LaneCombinationList();
                 ConflictBuilder.buildConflictsParallel(this.network, getSimulator(),

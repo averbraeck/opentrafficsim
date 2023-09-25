@@ -168,7 +168,8 @@ public class ModelParser
                     {
                         org.opentrafficsim.xml.generated.ModelType.ModelParameters.String p =
                                 (org.opentrafficsim.xml.generated.ModelType.ModelParameters.String) parameter;
-                        parameterFactory.addParameter(gtuType, (ParameterType<String>) parameterTypes.get(p.getId()),
+                        parameterFactory.addParameter(gtuType,
+                                (ParameterType<String>) parameterTypes.get(p.getId().get(inputParameters)),
                                 p.getValue().get(inputParameters));
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.ModelType.ModelParameters.Acceleration)
@@ -176,14 +177,14 @@ public class ModelParser
                         org.opentrafficsim.xml.generated.ModelType.ModelParameters.Acceleration p =
                                 (org.opentrafficsim.xml.generated.ModelType.ModelParameters.Acceleration) parameter;
                         parameterFactory.addParameter(gtuType,
-                                (ParameterTypeNumeric<Acceleration>) parameterTypes.get(p.getId()),
+                                (ParameterTypeNumeric<Acceleration>) parameterTypes.get(p.getId().get(inputParameters)),
                                 p.getValue().get(inputParameters));
                     }
                     else if (parameter instanceof AccelerationDist)
                     {
                         AccelerationDist p = (AccelerationDist) parameter;
                         parameterFactory.addParameter(gtuType,
-                                (ParameterTypeNumeric<Acceleration>) parameterTypes.get(p.getId()),
+                                (ParameterTypeNumeric<Acceleration>) parameterTypes.get(p.getId().get(inputParameters)),
                                 ParseDistribution.parseContinuousDist(streamMap, p,
                                         p.getAccelerationUnit().get(inputParameters), inputParameters));
                     }
@@ -191,46 +192,53 @@ public class ModelParser
                     {
                         org.opentrafficsim.xml.generated.ModelType.ModelParameters.Boolean p =
                                 (org.opentrafficsim.xml.generated.ModelType.ModelParameters.Boolean) parameter;
-                        parameterFactory.addParameter(gtuType, (ParameterType<Boolean>) parameterTypes.get(p.getId()),
+                        parameterFactory.addParameter(gtuType,
+                                (ParameterType<Boolean>) parameterTypes.get(p.getId().get(inputParameters)),
                                 p.getValue().get(inputParameters));
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.ModelType.ModelParameters.Class)
                     {
                         org.opentrafficsim.xml.generated.ModelType.ModelParameters.Class p =
                                 (org.opentrafficsim.xml.generated.ModelType.ModelParameters.Class) parameter;
-                        parameterFactory.addParameter(gtuType, (ParameterType<Class<?>>) parameterTypes.get(p.getId()),
+                        parameterFactory.addParameter(gtuType,
+                                (ParameterType<Class<?>>) parameterTypes.get(p.getId().get(inputParameters)),
                                 p.getValue().get(inputParameters));
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.ModelType.ModelParameters.Double)
                     {
                         org.opentrafficsim.xml.generated.ModelType.ModelParameters.Double p =
                                 (org.opentrafficsim.xml.generated.ModelType.ModelParameters.Double) parameter;
-                        parameterFactory.addParameter(gtuType, (ParameterTypeNumeric<Double>) parameterTypes.get(p.getId()),
+                        parameterFactory.addParameter(gtuType,
+                                (ParameterTypeNumeric<Double>) parameterTypes.get(p.getId().get(inputParameters)),
                                 p.getValue().get(inputParameters));
                     }
                     else if (parameter instanceof DoubleDist)
                     {
                         DoubleDist p = (DoubleDist) parameter;
-                        parameterFactory.addParameter(gtuType, (ParameterTypeNumeric<Double>) parameterTypes.get(p.getId()),
+                        parameterFactory.addParameter(gtuType,
+                                (ParameterTypeNumeric<Double>) parameterTypes.get(p.getId().get(inputParameters)),
                                 ParseDistribution.makeDistContinuous(streamMap, p, inputParameters));
                     }
                     else if (parameter instanceof Fraction)
                     {
                         Fraction p = (Fraction) parameter;
-                        parameterFactory.addParameter(gtuType, (ParameterTypeNumeric<Double>) parameterTypes.get(p.getId()),
+                        parameterFactory.addParameter(gtuType,
+                                (ParameterTypeNumeric<Double>) parameterTypes.get(p.getId().get(inputParameters)),
                                 p.getValue().get(inputParameters));
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.ModelType.ModelParameters.Frequency)
                     {
                         org.opentrafficsim.xml.generated.ModelType.ModelParameters.Frequency p =
                                 (org.opentrafficsim.xml.generated.ModelType.ModelParameters.Frequency) parameter;
-                        parameterFactory.addParameter(gtuType, (ParameterTypeNumeric<Frequency>) parameterTypes.get(p.getId()),
+                        parameterFactory.addParameter(gtuType,
+                                (ParameterTypeNumeric<Frequency>) parameterTypes.get(p.getId().get(inputParameters)),
                                 p.getValue().get(inputParameters));
                     }
                     else if (parameter instanceof FrequencyDist)
                     {
                         FrequencyDist p = (FrequencyDist) parameter;
-                        parameterFactory.addParameter(gtuType, (ParameterTypeNumeric<Frequency>) parameterTypes.get(p.getId()),
+                        parameterFactory.addParameter(gtuType,
+                                (ParameterTypeNumeric<Frequency>) parameterTypes.get(p.getId().get(inputParameters)),
                                 ParseDistribution.parseContinuousDist(streamMap, p, p.getFrequencyUnit().get(inputParameters),
                                         inputParameters));
                     }
@@ -238,26 +246,30 @@ public class ModelParser
                     {
                         org.opentrafficsim.xml.generated.ModelType.ModelParameters.Integer p =
                                 (org.opentrafficsim.xml.generated.ModelType.ModelParameters.Integer) parameter;
-                        parameterFactory.addParameter(gtuType, (ParameterTypeNumeric<Integer>) parameterTypes.get(p.getId()),
+                        parameterFactory.addParameter(gtuType,
+                                (ParameterTypeNumeric<Integer>) parameterTypes.get(p.getId().get(inputParameters)),
                                 p.getValue().get(inputParameters).intValue());
                     }
                     else if (parameter instanceof IntegerDist)
                     {
                         IntegerDist p = (IntegerDist) parameter;
-                        parameterFactory.addParameter(gtuType, (ParameterTypeNumeric<Integer>) parameterTypes.get(p.getId()),
+                        parameterFactory.addParameter(gtuType,
+                                (ParameterTypeNumeric<Integer>) parameterTypes.get(p.getId().get(inputParameters)),
                                 ParseDistribution.makeDistDiscrete(streamMap, p, inputParameters));
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.ModelType.ModelParameters.Length)
                     {
                         org.opentrafficsim.xml.generated.ModelType.ModelParameters.Length p =
                                 (org.opentrafficsim.xml.generated.ModelType.ModelParameters.Length) parameter;
-                        parameterFactory.addParameter(gtuType, (ParameterTypeNumeric<Length>) parameterTypes.get(p.getId()),
+                        parameterFactory.addParameter(gtuType,
+                                (ParameterTypeNumeric<Length>) parameterTypes.get(p.getId().get(inputParameters)),
                                 p.getValue().get(inputParameters));
                     }
                     else if (parameter instanceof LengthDist)
                     {
                         LengthDist p = (LengthDist) parameter;
-                        parameterFactory.addParameter(gtuType, (ParameterTypeNumeric<Length>) parameterTypes.get(p.getId()),
+                        parameterFactory.addParameter(gtuType,
+                                (ParameterTypeNumeric<Length>) parameterTypes.get(p.getId().get(inputParameters)),
                                 ParseDistribution.parseContinuousDist(streamMap, p, p.getLengthUnit().get(inputParameters),
                                         inputParameters));
                     }
@@ -266,14 +278,14 @@ public class ModelParser
                         org.opentrafficsim.xml.generated.ModelType.ModelParameters.LinearDensity p =
                                 (org.opentrafficsim.xml.generated.ModelType.ModelParameters.LinearDensity) parameter;
                         parameterFactory.addParameter(gtuType,
-                                (ParameterTypeNumeric<LinearDensity>) parameterTypes.get(p.getId()),
+                                (ParameterTypeNumeric<LinearDensity>) parameterTypes.get(p.getId().get(inputParameters)),
                                 p.getValue().get(inputParameters));
                     }
                     else if (parameter instanceof LinearDensityDist)
                     {
                         LinearDensityDist p = (LinearDensityDist) parameter;
                         parameterFactory.addParameter(gtuType,
-                                (ParameterTypeNumeric<LinearDensity>) parameterTypes.get(p.getId()),
+                                (ParameterTypeNumeric<LinearDensity>) parameterTypes.get(p.getId().get(inputParameters)),
                                 ParseDistribution.parseContinuousDist(streamMap, p,
                                         p.getLinearDensityUnit().get(inputParameters), inputParameters));
                     }
@@ -281,13 +293,15 @@ public class ModelParser
                     {
                         org.opentrafficsim.xml.generated.ModelType.ModelParameters.Speed p =
                                 (org.opentrafficsim.xml.generated.ModelType.ModelParameters.Speed) parameter;
-                        parameterFactory.addParameter(gtuType, (ParameterTypeNumeric<Speed>) parameterTypes.get(p.getId()),
+                        parameterFactory.addParameter(gtuType,
+                                (ParameterTypeNumeric<Speed>) parameterTypes.get(p.getId().get(inputParameters)),
                                 p.getValue().get(inputParameters));
                     }
                     else if (parameter instanceof SpeedDist)
                     {
                         SpeedDist p = (SpeedDist) parameter;
-                        parameterFactory.addParameter(gtuType, (ParameterTypeNumeric<Speed>) parameterTypes.get(p.getId()),
+                        parameterFactory.addParameter(gtuType,
+                                (ParameterTypeNumeric<Speed>) parameterTypes.get(p.getId().get(inputParameters)),
                                 ParseDistribution.parseContinuousDist(streamMap, p, p.getSpeedUnit().get(inputParameters),
                                         inputParameters));
                     }

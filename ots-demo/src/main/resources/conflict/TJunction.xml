@@ -255,8 +255,8 @@
 		</ots:ShortestRouteMix>
 
 		<ots:ShortestRouteMix Id="S" GtuType="NL.CAR">
-			<ots:ShortestRoute Weight="0.5" Id="SW" />
-			<ots:ShortestRoute Weight="0.5" Id="SE" />
+			<ots:ShortestRoute Weight="{sw}" Id="SW" />
+			<ots:ShortestRoute Weight="{1.0 - sw}" Id="SE" />
 		</ots:ShortestRouteMix>
 
 		<ots:Generator Link="EE3" Lane="LANE" Position="10m">
@@ -283,6 +283,18 @@
 		<ots:Sink Type="NL.ROAD_USERS" Link="WCW" Position="END-20m" Lane="LANE" />
 
 	</ots:Demand>
+  
+    <ots:Scenarios>
+      <ots:DefaultInputParameters>
+        <ots:Fraction Id="{sw}">0.5</ots:Fraction>
+      </ots:DefaultInputParameters>
+      <ots:Scenario Id="1" />
+      <ots:Scenario Id="2">
+        <ots:InputParameters>
+          <ots:Fraction Id="{sw}">0.05</ots:Fraction>
+        </ots:InputParameters>
+      </ots:Scenario>
+    </ots:Scenarios>
 
 	<ots:Run>
 		<ots:RunLength>1h</ots:RunLength>

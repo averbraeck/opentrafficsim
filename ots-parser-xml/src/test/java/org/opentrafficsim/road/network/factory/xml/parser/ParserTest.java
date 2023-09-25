@@ -82,7 +82,7 @@ public class ParserTest
             {
                 URL xmlURL = URLResource.getResource("/resources/test-network.xml");
                 this.network = new RoadNetwork("Test", getSimulator());
-                XmlNetworkLaneParser.build(xmlURL, this.network, false);
+                new XmlParser(this.network).setUrl(xmlURL).build();
             }
             catch (Exception exception)
             {

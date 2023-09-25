@@ -36,13 +36,13 @@ import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.object.NonLocatedObject;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
-import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
 import org.opentrafficsim.sim0mq.publisher.IncomingDataHandler;
@@ -527,8 +527,7 @@ class Sim0mqOtsModel extends AbstractOtsModel
     {
         try
         {
-            XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,
-                    false);
+            new XmlParser(this.network).setStream(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8))).build();
             // TODO: obtain relevant GTU type from xml
             ConflictBuilder.buildConflictsParallel(this.network, getSimulator(),
                     new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)), new LaneCombinationList(),
