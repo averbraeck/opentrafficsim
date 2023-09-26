@@ -21,7 +21,7 @@
           </xsd:simpleContent>
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="DurationDist">
+      <!--xsd:element name="DurationDist">
         <xsd:complexType>
           <xsd:complexContent>
             <xsd:extension base="ots:DurationDistType">
@@ -29,7 +29,7 @@
             </xsd:extension>
           </xsd:complexContent>
         </xsd:complexType>
-      </xsd:element>
+      </xsd:element-->
       <xsd:element name="Length">
         <xsd:complexType>
           <xsd:simpleContent>
@@ -39,7 +39,7 @@
           </xsd:simpleContent>
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="LengthDist">
+      <!--xsd:element name="LengthDist">
         <xsd:complexType>
           <xsd:complexContent>
             <xsd:extension base="ots:LengthDistType">
@@ -47,7 +47,7 @@
             </xsd:extension>
           </xsd:complexContent>
         </xsd:complexType>
-      </xsd:element>
+      </xsd:element-->
       <xsd:element name="Speed">
         <xsd:complexType>
           <xsd:simpleContent>
@@ -57,7 +57,7 @@
           </xsd:simpleContent>
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="SpeedDist">
+      <!--xsd:element name="SpeedDist">
         <xsd:complexType>
           <xsd:complexContent>
             <xsd:extension base="ots:SpeedDistType">
@@ -65,7 +65,7 @@
             </xsd:extension>
           </xsd:complexContent>
         </xsd:complexType>
-      </xsd:element>
+      </xsd:element-->
       <xsd:element name="Acceleration">
         <xsd:complexType>
           <xsd:simpleContent>
@@ -75,7 +75,7 @@
           </xsd:simpleContent>
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="AccelerationDist">
+      <!--xsd:element name="AccelerationDist">
         <xsd:complexType>
           <xsd:complexContent>
             <xsd:extension base="ots:AccelerationDistType">
@@ -83,7 +83,7 @@
             </xsd:extension>
           </xsd:complexContent>
         </xsd:complexType>
-      </xsd:element>
+      </xsd:element-->
       <xsd:element name="LinearDensity">
         <xsd:complexType>
           <xsd:simpleContent>
@@ -93,7 +93,7 @@
           </xsd:simpleContent>
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="LinearDensityDist">
+      <!--xsd:element name="LinearDensityDist">
         <xsd:complexType>
           <xsd:complexContent>
             <xsd:extension base="ots:LinearDensityDistType">
@@ -101,7 +101,7 @@
             </xsd:extension>
           </xsd:complexContent>
         </xsd:complexType>
-      </xsd:element>
+      </xsd:element-->
       <xsd:element name="Frequency">
         <xsd:complexType>
           <xsd:simpleContent>
@@ -111,7 +111,7 @@
           </xsd:simpleContent>
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="FrequencyDist">
+      <!--xsd:element name="FrequencyDist">
         <xsd:complexType>
           <xsd:complexContent>
             <xsd:extension base="ots:FrequencyDistType">
@@ -119,7 +119,7 @@
             </xsd:extension>
           </xsd:complexContent>
         </xsd:complexType>
-      </xsd:element>
+      </xsd:element-->
       <xsd:element name="Double">
         <xsd:complexType>
           <xsd:simpleContent>
@@ -129,7 +129,7 @@
           </xsd:simpleContent>
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="DoubleDist">
+      <!--xsd:element name="DoubleDist">
         <xsd:complexType>
           <xsd:complexContent>
             <xsd:extension base="ots:ConstantDistType">
@@ -137,7 +137,7 @@
             </xsd:extension>
           </xsd:complexContent>
         </xsd:complexType>
-      </xsd:element>
+      </xsd:element-->
       <xsd:element name="Fraction">
         <xsd:complexType>
           <xsd:simpleContent>
@@ -156,7 +156,7 @@
           </xsd:simpleContent>
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="IntegerDist">
+      <!--xsd:element name="IntegerDist">
         <xsd:complexType>
           <xsd:complexContent>
             <xsd:extension base="ots:DiscreteDistType">
@@ -164,7 +164,7 @@
             </xsd:extension>
           </xsd:complexContent>
         </xsd:complexType>
-      </xsd:element>
+      </xsd:element-->
       <xsd:element name="Boolean">
         <xsd:complexType>
           <xsd:simpleContent>

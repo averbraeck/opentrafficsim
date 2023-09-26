@@ -37,12 +37,13 @@ public final class RunParser
     /**
      * Parse random number streams.
      * @param run Run; run tag.
+     * @param eval Eval; expression evaluator.
      * @return stream information.
      */
-    public static StreamSeedInformation parseStreams(final Run run)
+    public static StreamSeedInformation parseStreams(final Run run, final Eval eval)
     {
         StreamSeedInformation streamInformation = new StreamSeedInformation();
-        int numberReplications = run.getNumberReplications() == null ? 1 : run.getNumberReplications().intValue();
+        int numberReplications = run.getNumberReplications() == null ? 1 : run.getNumberReplications().get(eval);
         if (run.getRandomStreams() != null)
         {
             for (RandomStream streamTag : run.getRandomStreams().getRandomStream())
@@ -94,7 +95,7 @@ public final class RunParser
             final StreamSeedInformation streamInformation, final OtsSimulatorInterface simulator,
             final Eval eval) throws XmlParserException
     {
-        int numberReplications = run.getNumberReplications() == null ? 1 : run.getNumberReplications().intValue();
+        int numberReplications = run.getNumberReplications() == null ? 1 : run.getNumberReplications().get(eval);
         Time startTime = run.getStartTime() == null ? Time.ZERO : run.getStartTime().get(eval);
         Duration warmupPeriod = run.getWarmupPeriod() == null ? Duration.ZERO : run.getWarmupPeriod().get(eval);
         Duration runLength =
