@@ -6,9 +6,7 @@ import java.util.List;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.value.ValueRuntimeException;
-import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.matrix.DurationMatrix;
-import org.djunits.value.vdouble.matrix.base.DoubleMatrix;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
@@ -54,7 +52,7 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
         {
             try
             {
-                return DoubleMatrix.instantiate(filteredData, DurationUnit.SI, StorageType.DENSE);
+                return new DurationMatrix(filteredData, DurationUnit.SI);
             }
             catch (ValueRuntimeException exception)
             {

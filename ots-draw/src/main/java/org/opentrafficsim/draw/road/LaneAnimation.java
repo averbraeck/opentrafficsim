@@ -20,8 +20,8 @@ import org.opentrafficsim.draw.core.TextAnimation;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2dInterface;
 import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -32,7 +32,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  */
-public class LaneAnimation extends Renderable2D<Lane> implements Renderable2DInterface<Lane>, Serializable
+public class LaneAnimation extends Renderable2d<Lane> implements Renderable2dInterface<Lane>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20141017L;
@@ -142,8 +142,8 @@ public class LaneAnimation extends Renderable2D<Lane> implements Renderable2DInt
     /**
      * Animation for center line of a lane.
      */
-    public static class CenterLineAnimation extends Renderable2D<CenterLine>
-            implements Renderable2DInterface<CenterLine>, Serializable
+    public static class CenterLineAnimation extends Renderable2d<CenterLine>
+            implements Renderable2dInterface<CenterLine>, Serializable
     {
         /** Drawing color for the center line. */
         private static final Color COLOR = Color.MAGENTA.darker().darker();

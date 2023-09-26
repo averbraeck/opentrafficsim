@@ -89,7 +89,7 @@
 
     <dependency>
       <groupId>org.djutils</groupId>
-      <artifactId>djutils</artifactId>
+      <artifactId>djutils-base</artifactId>
     </dependency>
 
     <dependency>

@@ -27,7 +27,7 @@ import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.language.DSOLException;
+import nl.tudelft.simulation.language.DsolException;
 
 /**
  * <p>
@@ -82,7 +82,7 @@ public class TJunctionDemo extends OtsSimulationApplication<TJunctionModel>
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DSOLException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DsolException exception)
         {
             exception.printStackTrace();
         }

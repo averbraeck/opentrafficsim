@@ -17,7 +17,7 @@ import org.opentrafficsim.draw.core.TextAnimation;
 import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2dInterface;
 import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -32,7 +32,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
 public class DetectorAnimation extends AbstractLineAnimation<LaneDetector>
-        implements Renderable2DInterface<LaneDetector>, Serializable
+        implements Renderable2dInterface<LaneDetector>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150130L;

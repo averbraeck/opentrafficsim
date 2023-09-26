@@ -12,7 +12,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.draw.core.PaintPolygons;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 
 /**
  * <p>
@@ -21,7 +21,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  */
-public class CrossSectionElementAnimation extends Renderable2D<CrossSectionElement> implements Serializable
+public class CrossSectionElementAnimation extends Renderable2d<CrossSectionElement> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20141017L;

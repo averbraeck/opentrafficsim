@@ -15,7 +15,7 @@ import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 import nl.tudelft.simulation.language.d2.Angle;
 
 /**
@@ -28,7 +28,7 @@ import nl.tudelft.simulation.language.d2.Angle;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class GtuGeneratorPositionAnimation extends Renderable2D<GtuGeneratorPosition>
+public class GtuGeneratorPositionAnimation extends Renderable2d<GtuGeneratorPosition>
 {
 
     /** */

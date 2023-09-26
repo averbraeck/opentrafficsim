@@ -16,7 +16,7 @@ import org.opentrafficsim.draw.core.TextAnimation;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2dInterface;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
@@ -29,7 +29,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
 public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLight>
-        implements Renderable2DInterface<TrafficLight>, Serializable
+        implements Renderable2dInterface<TrafficLight>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20160000L;

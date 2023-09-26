@@ -14,7 +14,6 @@ import java.util.SortedMap;
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.PositionUnit;
-import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -22,7 +21,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.PositionVector;
-import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
@@ -597,8 +595,7 @@ public class LaneBasedGtu extends Gtu
 
             fireTimedEvent(LaneBasedGtu.LANEBASED_MOVE_EVENT,
                     new Object[] {getId(),
-                            DoubleVector.instantiate(new double[] {fromLocation.x, fromLocation.y}, PositionUnit.METER,
-                                    StorageType.DENSE),
+                            new PositionVector(new double[] {fromLocation.x, fromLocation.y}, PositionUnit.METER),
                             new Direction(fromLocation.getDirZ(), DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
                             getTurnIndicatorStatus().name(), getOdometer(), dlp.getLane().getLink().getId(),
                             dlp.getLane().getId(), dlp.getPosition()},
@@ -1462,9 +1459,7 @@ public class LaneBasedGtu extends Gtu
         {
             Lane referenceLane = dlp.getLane();
             fireTimedEvent(LaneBasedGtu.LANEBASED_DESTROY_EVENT,
-                    new Object[] {getId(),
-                            DoubleVector.instantiate(new double[] {location.x, location.y}, PositionUnit.METER,
-                                    StorageType.DENSE),
+                    new Object[] {getId(), new PositionVector(new double[] {location.x, location.y}, PositionUnit.METER),
                             new Direction(location.getDirZ(), DirectionUnit.EAST_RADIAN), getOdometer(),
                             referenceLane.getLink().getId(), referenceLane.getId(), dlp.getPosition()},
                     getSimulator().getSimulatorTime());
@@ -1472,9 +1467,7 @@ public class LaneBasedGtu extends Gtu
         else
         {
             fireTimedEvent(LaneBasedGtu.LANEBASED_DESTROY_EVENT,
-                    new Object[] {getId(),
-                            DoubleVector.instantiate(new double[] {location.x, location.y}, PositionUnit.METER,
-                                    StorageType.DENSE),
+                    new Object[] {getId(), new PositionVector(new double[] {location.x, location.y}, PositionUnit.METER),
                             new Direction(location.getDirZ(), DirectionUnit.EAST_RADIAN), getOdometer(), null, null, null},
                     getSimulator().getSimulatorTime());
         }

@@ -3,6 +3,7 @@ package org.opentrafficsim.core.units.distributions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.djunits.quantity.Quantity;
 import org.djunits.unit.AbsoluteLinearUnit;
 import org.djunits.unit.AbsoluteTemperatureUnit;
 import org.djunits.unit.AbsorbedDoseUnit;
@@ -46,15 +47,14 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.unit.TorqueUnit;
 import org.djunits.unit.Unit;
 import org.djunits.unit.VolumeUnit;
-import org.djunits.unit.quantity.Quantity;
 import org.djunits.unit.scale.IdentityScale;
 import org.djunits.unit.scale.OffsetLinearScale;
 import org.djunits.unit.si.SIPrefixes;
 import org.djunits.unit.unitsystem.UnitSystem;
-import org.djunits.value.vdouble.scalar.base.AbstractDoubleScalarAbs;
-import org.djunits.value.vdouble.scalar.base.AbstractDoubleScalarRel;
-import org.djunits.value.vfloat.scalar.base.AbstractFloatScalarAbs;
-import org.djunits.value.vfloat.scalar.base.AbstractFloatScalarRel;
+import org.djunits.value.vdouble.scalar.base.DoubleScalarAbs;
+import org.djunits.value.vdouble.scalar.base.DoubleScalarRel;
+import org.djunits.value.vfloat.scalar.base.FloatScalarAbs;
+import org.djunits.value.vfloat.scalar.base.FloatScalarRel;
 import org.junit.jupiter.api.Test;
 
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
@@ -188,7 +188,7 @@ public class DistributionsTest
     {
         ContinuousDistDoubleScalar.Abs dist = new ContinuousDistDoubleScalar.Abs(distribution, unit);
         this.nextDoubleResult = 123.456;
-        AbstractDoubleScalarAbs result = dist.draw();
+        DoubleScalarAbs result = dist.draw();
         assertEquals(unit, result.getDisplayUnit(), "Unit matches");
         assertEquals(this.nextDoubleResult, result.si, 0.0001, "Value matches");
         this.nextDoubleResult = 23.456;
@@ -214,7 +214,7 @@ public class DistributionsTest
     {
         ContinuousDistDoubleScalar.Rel dist = new ContinuousDistDoubleScalar.Rel(distribution, unit);
         this.nextDoubleResult = 123.456;
-        AbstractDoubleScalarRel result = dist.draw();
+        DoubleScalarRel result = dist.draw();
         assertEquals(unit, result.getDisplayUnit(), "Unit matches");
         assertEquals(this.nextDoubleResult, result.si, 0.0001, "Value matches");
         this.nextDoubleResult = 23.456;
@@ -240,7 +240,7 @@ public class DistributionsTest
     {
         DiscreteDistDoubleScalar.Abs dist = new DiscreteDistDoubleScalar.Abs(distribution, unit);
         this.nextDoubleResult = 123.456;
-        AbstractDoubleScalarAbs result = dist.draw();
+        DoubleScalarAbs result = dist.draw();
         assertEquals(unit, result.getDisplayUnit(), "Unit matches");
         assertEquals(this.nextLongResult, result.si, 0.0001, "Value matches");
         this.nextDoubleResult = 23.456;
@@ -266,7 +266,7 @@ public class DistributionsTest
     {
         DiscreteDistDoubleScalar.Rel dist = new DiscreteDistDoubleScalar.Rel(distribution, unit);
         this.nextDoubleResult = 123.456;
-        AbstractDoubleScalarRel result = dist.draw();
+        DoubleScalarRel result = dist.draw();
         assertEquals(unit, result.getDisplayUnit(), "Unit matches");
         assertEquals(this.nextLongResult, result.si, 0.0001, "Value matches");
         this.nextDoubleResult = 23.456;
@@ -292,7 +292,7 @@ public class DistributionsTest
     {
         ContinuousDistFloatScalar.Abs dist = new ContinuousDistFloatScalar.Abs(distribution, unit);
         this.nextDoubleResult = 123.456;
-        AbstractFloatScalarAbs result = dist.draw();
+        FloatScalarAbs result = dist.draw();
         assertEquals(unit, result.getDisplayUnit(), "Unit matches");
         assertEquals(this.nextDoubleResult, result.si, 0.0001, "Value matches");
         this.nextDoubleResult = 23.456;
@@ -318,7 +318,7 @@ public class DistributionsTest
     {
         ContinuousDistFloatScalar.Rel dist = new ContinuousDistFloatScalar.Rel(distribution, unit);
         this.nextDoubleResult = 123.456;
-        AbstractFloatScalarRel result = dist.draw();
+        FloatScalarRel result = dist.draw();
         assertEquals(unit, result.getDisplayUnit(), "Unit matches");
         assertEquals(this.nextDoubleResult, result.si, 0.0001, "Value matches");
         this.nextDoubleResult = 23.456;
@@ -344,7 +344,7 @@ public class DistributionsTest
     {
         DiscreteDistFloatScalar.Abs dist = new DiscreteDistFloatScalar.Abs(distribution, unit);
         this.nextDoubleResult = 123.456;
-        AbstractFloatScalarAbs result = dist.draw();
+        FloatScalarAbs result = dist.draw();
         assertEquals(unit, result.getDisplayUnit(), "Unit matches");
         assertEquals(this.nextLongResult, result.si, 0.0001, "Value matches");
         this.nextDoubleResult = 23.456;
@@ -370,7 +370,7 @@ public class DistributionsTest
     {
         DiscreteDistFloatScalar.Rel dist = new DiscreteDistFloatScalar.Rel(distribution, unit);
         this.nextDoubleResult = 123.456;
-        AbstractFloatScalarRel result = dist.draw();
+        FloatScalarRel result = dist.draw();
         assertEquals(unit, result.getDisplayUnit(), "Unit matches");
         assertEquals(this.nextLongResult, result.si, 0.0001, "Value matches");
         this.nextDoubleResult = 23.456;

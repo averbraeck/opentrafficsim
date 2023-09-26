@@ -51,7 +51,7 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 
 /**
  * DefaultAnimationFactory.java.
@@ -76,13 +76,13 @@ public class DefaultAnimationFactory implements EventListener
     private final GtuColorer gtuColorer;
 
     /** Rendered gtus. */
-    private Map<LaneBasedGtu, Renderable2D<LaneBasedGtu>> animatedGTUs = Collections.synchronizedMap(new LinkedHashMap<>());
+    private Map<LaneBasedGtu, Renderable2d<LaneBasedGtu>> animatedGTUs = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** Rendered located objects. */
-    private Map<Locatable, Renderable2D<?>> animatedLocatedObjects = Collections.synchronizedMap(new LinkedHashMap<>());
+    private Map<Locatable, Renderable2d<?>> animatedLocatedObjects = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** Rendered non-located objects. */
-    private Map<NonLocatedObject, Renderable2D<?>> animatedNonLocatedObjects =
+    private Map<NonLocatedObject, Renderable2d<?>> animatedNonLocatedObjects =
             Collections.synchronizedMap(new LinkedHashMap<>());
 
     /**
@@ -144,7 +144,7 @@ public class DefaultAnimationFactory implements EventListener
 
             for (Gtu gtu : network.getGTUs())
             {
-                Renderable2D<LaneBasedGtu> gtuAnimation =
+                Renderable2d<LaneBasedGtu> gtuAnimation =
                         new DefaultCarAnimation((LaneBasedGtu) gtu, this.simulator, this.gtuColorer);
                 this.animatedGTUs.put((LaneBasedGtu) gtu, gtuAnimation);
             }
@@ -255,7 +255,7 @@ public class DefaultAnimationFactory implements EventListener
     {
         try
         {
-            Renderable2D<LaneBasedGtu> gtuAnimation = new DefaultCarAnimation(gtu, this.simulator, this.gtuColorer);
+            Renderable2d<LaneBasedGtu> gtuAnimation = new DefaultCarAnimation(gtu, this.simulator, this.gtuColorer);
             this.animatedGTUs.put(gtu, gtuAnimation);
         }
         catch (RemoteException | NamingException exception)
@@ -275,14 +275,14 @@ public class DefaultAnimationFactory implements EventListener
             if (object instanceof SinkDetector)
             {
                 SinkDetector detector = (SinkDetector) object;
-                // Renderable2D<SinkSensor> objectAnimation = new SinkAnimation(detector, this.simulator);
-                Renderable2D<LaneDetector> objectAnimation = new DetectorAnimation(detector, this.simulator, Color.ORANGE);
+                // Renderable2d<SinkSensor> objectAnimation = new SinkAnimation(detector, this.simulator);
+                Renderable2d<LaneDetector> objectAnimation = new DetectorAnimation(detector, this.simulator, Color.ORANGE);
                 this.animatedLocatedObjects.put(object, objectAnimation);
             }
             else if (object instanceof TrafficLightDetector)
             {
                 TrafficLightDetector trafficLigthDetector = (TrafficLightDetector) object;
-                Renderable2D<TrafficLightDetector> objectAnimation =
+                Renderable2d<TrafficLightDetector> objectAnimation =
                         new TrafficLightDetectorAnimation(trafficLigthDetector, this.simulator);
                 this.animatedLocatedObjects.put(object, objectAnimation);
             }
@@ -294,31 +294,31 @@ public class DefaultAnimationFactory implements EventListener
             else if (object instanceof LaneDetector)
             {
                 LaneDetector detector = (LaneDetector) object;
-                Renderable2D<LaneDetector> objectAnimation = new DetectorAnimation(detector, this.simulator, Color.BLACK);
+                Renderable2d<LaneDetector> objectAnimation = new DetectorAnimation(detector, this.simulator, Color.BLACK);
                 this.animatedLocatedObjects.put(object, objectAnimation);
             }
             else if (object instanceof Conflict)
             {
                 Conflict conflict = (Conflict) object;
-                Renderable2D<Conflict> objectAnimation = new ConflictAnimation(conflict, this.simulator);
+                Renderable2d<Conflict> objectAnimation = new ConflictAnimation(conflict, this.simulator);
                 this.animatedLocatedObjects.put(object, objectAnimation);
             }
             else if (object instanceof TrafficLight)
             {
                 TrafficLight trafficLight = (TrafficLight) object;
-                Renderable2D<TrafficLight> objectAnimation = new TrafficLightAnimation(trafficLight, this.simulator);
+                Renderable2d<TrafficLight> objectAnimation = new TrafficLightAnimation(trafficLight, this.simulator);
                 this.animatedLocatedObjects.put(object, objectAnimation);
             }
             else if (object instanceof SpeedSign)
             {
                 SpeedSign speedSign = (SpeedSign) object;
-                Renderable2D<SpeedSign> objectAnimation = new SpeedSignAnimation(speedSign, this.simulator);
+                Renderable2d<SpeedSign> objectAnimation = new SpeedSignAnimation(speedSign, this.simulator);
                 this.animatedLocatedObjects.put(object, objectAnimation);
             }
             else if (object instanceof BusStop)
             {
                 BusStop busStop = (BusStop) object;
-                Renderable2D<BusStop> objectAnimation = new BusStopAnimation(busStop, this.simulator);
+                Renderable2d<BusStop> objectAnimation = new BusStopAnimation(busStop, this.simulator);
                 this.animatedLocatedObjects.put(object, objectAnimation);
             }
         }
@@ -341,7 +341,7 @@ public class DefaultAnimationFactory implements EventListener
                 LaneBasedGtuGenerator generator = (LaneBasedGtuGenerator) object;
                 for (GtuGeneratorPosition position : generator.getPositions())
                 {
-                    Renderable2D<GtuGeneratorPosition> objectAnimation =
+                    Renderable2d<GtuGeneratorPosition> objectAnimation =
                             new GtuGeneratorPositionAnimation(position, this.simulator);
                     this.animatedLocatedObjects.put(position, objectAnimation);
                 }

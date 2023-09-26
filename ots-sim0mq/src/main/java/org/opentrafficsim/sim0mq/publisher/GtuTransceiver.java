@@ -4,9 +4,8 @@ import java.rmi.RemoteException;
 
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.PositionUnit;
-import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Direction;
-import org.djunits.value.vdouble.vector.base.DoubleVector;
+import org.djunits.value.vdouble.vector.PositionVector;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
@@ -86,7 +85,7 @@ public class GtuTransceiver extends AbstractEventTransceiver
         }
         OrientedPoint2d gtuPosition = gtu.getLocation();
         return new Object[] {gtu.getId(), gtu.getType().getId(),
-                DoubleVector.instantiate(new double[] {gtuPosition.x, gtuPosition.y}, PositionUnit.METER, StorageType.DENSE),
+                new PositionVector(new double[] {gtuPosition.x, gtuPosition.y}, PositionUnit.METER),
                 new Direction(gtuPosition.getDirZ(), DirectionUnit.EAST_DEGREE), gtu.getSpeed(), gtu.getAcceleration()};
     }
 

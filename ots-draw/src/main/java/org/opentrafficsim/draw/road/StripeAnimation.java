@@ -18,8 +18,8 @@ import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.draw.core.PaintPolygons;
 import org.opentrafficsim.road.network.lane.Stripe;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2dInterface;
 
 /**
  * Draw road stripes.
@@ -29,7 +29,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  */
-public class StripeAnimation extends Renderable2D<Stripe> implements Renderable2DInterface<Stripe>, Serializable
+public class StripeAnimation extends Renderable2d<Stripe> implements Renderable2dInterface<Stripe>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20141017L;

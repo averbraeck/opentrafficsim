@@ -2,7 +2,7 @@ package org.opentrafficsim.sim0mq.publisher;
 
 import java.rmi.RemoteException;
 
-import org.djunits.Throw;
+import org.djutils.exceptions.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.base.Identifiable;

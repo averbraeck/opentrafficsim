@@ -15,7 +15,7 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.base.AbstractDoubleScalarRel;
+import org.djunits.value.vdouble.scalar.base.DoubleScalarRel;
 import org.djutils.exceptions.Throw;
 import org.jgrapht.alg.interfaces.AStarAdmissibleHeuristic;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -599,7 +599,7 @@ public final class DemandParser
      * @return the generator
      * @throws XmlParserException on parse error
      */
-    private static <T extends AbstractDoubleScalarRel<U, T>, U extends Unit<U>> Generator<T> makeGenerator(
+    private static <T extends DoubleScalarRel<U, T>, U extends Unit<U>> Generator<T> makeGenerator(
             final StreamInformation streamMap, final ConstantDistType distribution, final U unit,
             final InputParameters inputParameters) throws XmlParserException
     {

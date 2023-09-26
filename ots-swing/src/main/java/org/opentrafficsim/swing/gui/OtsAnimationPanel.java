@@ -50,14 +50,14 @@ import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Network;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2dInterface;
 import nl.tudelft.simulation.dsol.animation.gis.GisMapInterface;
-import nl.tudelft.simulation.dsol.animation.gis.GisRenderable2D;
+import nl.tudelft.simulation.dsol.animation.gis.GisRenderable2d;
 import nl.tudelft.simulation.dsol.experiment.Replication;
-import nl.tudelft.simulation.dsol.swing.animation.D2.AnimationPanel;
-import nl.tudelft.simulation.dsol.swing.animation.D2.VisualizationPanel;
-import nl.tudelft.simulation.dsol.swing.animation.D2.InputListener;
-import nl.tudelft.simulation.language.DSOLException;
+import nl.tudelft.simulation.dsol.swing.animation.d2.AnimationPanel;
+import nl.tudelft.simulation.dsol.swing.animation.d2.VisualizationPanel;
+import nl.tudelft.simulation.dsol.swing.animation.d2.InputListener;
+import nl.tudelft.simulation.language.DsolException;
 
 /**
  * Animation panel with various controls.
@@ -153,11 +153,11 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
      * @param gtuColorer GtuColorer; the colorer to use for the GTUs.
      * @param network Network; network
      * @throws RemoteException when notification of the animation panel fails
-     * @throws DSOLException when simulator does not implement AnimatorInterface
+     * @throws DsolException when simulator does not implement AnimatorInterface
      */
     public OtsAnimationPanel(final Rectangle2D extent, final Dimension size, final OtsAnimator simulator,
             final OtsModelInterface otsModel, final GtuColorer gtuColorer, final Network network)
-            throws RemoteException, DSOLException
+            throws RemoteException, DsolException
     {
         super(simulator, otsModel);
 
@@ -385,10 +385,10 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
     /**
      * Add buttons for toggling all GIS layers on or off.
      * @param header String; the name of the group of layers
-     * @param gisMap GisRenderable2D; the GIS map for which the toggles have to be added
+     * @param gisMap GisRenderable2d; the GIS map for which the toggles have to be added
      * @param toolTipText String; the tool tip text to show when hovering over the button
      */
-    public final void addAllToggleGISButtonText(final String header, final GisRenderable2D gisMap, final String toolTipText)
+    public final void addAllToggleGISButtonText(final String header, final GisRenderable2d gisMap, final String toolTipText)
     {
         addToggleText(" ");
         addToggleText(header);
@@ -409,10 +409,10 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
      * Add a button to toggle a GIS Layer on or off.
      * @param layerName String; the name of the layer
      * @param displayName String; the name to display next to the tick box
-     * @param gisMap GisRenderable2D; the map
+     * @param gisMap GisRenderable2d; the map
      * @param toolTipText String; the tool tip text
      */
-    public final void addToggleGISButtonText(final String layerName, final String displayName, final GisRenderable2D gisMap,
+    public final void addToggleGISButtonText(final String layerName, final String displayName, final GisRenderable2d gisMap,
             final String toolTipText)
     {
         JToggleButton button;
@@ -877,10 +877,10 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
          * @param simulator SimulatorInterface&lt;?, ?, ?&gt;; simulator
          * @param network Network; network
          * @throws RemoteException on remote animation error
-         * @throws DSOLException when simulator does not implement AnimatorInterface
+         * @throws DsolException when simulator does not implement AnimatorInterface
          */
         AutoAnimationPanel(final Rectangle2D extent, final Dimension size, final OtsSimulatorInterface simulator,
-                final Network network) throws RemoteException, DSOLException
+                final Network network) throws RemoteException, DsolException
         {
             super(new Bounds2d(extent.getMinX(), extent.getMaxX(), extent.getMinY(), extent.getMaxY()), simulator);
             this.network = network;
@@ -967,7 +967,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
             // TODO allow vertical and horizontal zoom when DSOL supports it in getScreenCoordinates() and getWorldCoordinates()
             this.zoom(factor, mouseX, mouseY);
             // double minX = this.extent.getMinX();
-            // Point2D mwc = Renderable2DInterface.Util.getWorldCoordinates(new Point2D.Double(mouseX, mouseY), this.extent,
+            // Point2D mwc = Renderable2dInterface.Util.getWorldCoordinates(new Point2D.Double(mouseX, mouseY), this.extent,
             // this.getSize());
             // double minY = mwc.getY() - (mwc.getY() - this.extent.getMinY()) * factor;
             // double w = this.extent.getWidth();
@@ -987,7 +987,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         {
             this.zoom(factor, mouseX, mouseY);
             // double minY = this.extent.getMinY();
-            // Point2D mwc = Renderable2DInterface.Util.getWorldCoordinates(new Point2D.Double(mouseX, mouseY), this.extent,
+            // Point2D mwc = Renderable2dInterface.Util.getWorldCoordinates(new Point2D.Double(mouseX, mouseY), this.extent,
             // this.getSize());
             // double minX = mwc.getX() - (mwc.getX() - this.extent.getMinX()) * factor;
             // double w = this.extent.getWidth() * factor;
@@ -1007,7 +1007,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         {
             List<Gtu> targets = new ArrayList<>();
             Point2d point = getRenderableScale().getWorldCoordinates(mousePoint, getExtent(), getSize());
-            for (Renderable2DInterface<?> renderable : getElements())
+            for (Renderable2dInterface<?> renderable : getElements())
             {
                 if (isShowElement(renderable) && renderable.contains(point, getExtent()))
                 {

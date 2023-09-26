@@ -40,7 +40,7 @@ import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.AbstractInputField;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.InputField;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialog;
-import nl.tudelft.simulation.language.DSOLException;
+import nl.tudelft.simulation.language.DsolException;
 
 /**
  * Simplest contour plots demonstration.
@@ -113,7 +113,7 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
                 }
             }
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DSOLException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DsolException exception)
         {
             exception.printStackTrace();
         }

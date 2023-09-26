@@ -4,8 +4,8 @@ import java.util.Arrays;
 
 import org.djunits.unit.Unit;
 import org.djunits.value.ValueRuntimeException;
-import org.djunits.value.vfloat.scalar.base.AbstractFloatScalar;
-import org.djunits.value.vfloat.vector.base.AbstractFloatVector;
+import org.djunits.value.vfloat.scalar.base.FloatScalar;
+import org.djunits.value.vfloat.vector.base.FloatVector;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.sampling.SamplingException;
@@ -24,8 +24,8 @@ import org.opentrafficsim.kpi.sampling.SamplingException;
  * @param <O> vector type
  * @param <G> gtu data type
  */
-public abstract class ExtendedDataFloat<U extends Unit<U>, T extends AbstractFloatScalar<U, T>,
-        O extends AbstractFloatVector<U, T, O>, G extends GtuData> extends ExtendedDataType<T, O, float[], G>
+public abstract class ExtendedDataFloat<U extends Unit<U>, T extends FloatScalar<U, T>,
+        O extends FloatVector<U, T, O>, G extends GtuData> extends ExtendedDataType<T, O, float[], G>
 {
     /**
      * Constructor setting the id.

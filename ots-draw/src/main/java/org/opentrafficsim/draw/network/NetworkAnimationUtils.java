@@ -11,7 +11,7 @@ import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkUtils;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2dInterface;
 import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 import nl.tudelft.simulation.naming.context.ContextInterface;
 import nl.tudelft.simulation.naming.context.util.ContextUtil;
@@ -40,18 +40,18 @@ public final class NetworkAnimationUtils
     @SuppressWarnings("checkstyle:designforextension")
     public static void destroy(final Network network, final OtsSimulatorInterface simulator)
     {
-        Set<Renderable2DInterface<?>> animationObjects = new LinkedHashSet<>();
+        Set<Renderable2dInterface<?>> animationObjects = new LinkedHashSet<>();
         try
         {
             ContextInterface context =
                     ContextUtil.lookupOrCreateSubContext(simulator.getReplication().getContext(), "animation/2D");
             for (Object element : context.values())
             {
-                Renderable2DInterface<?> animationObject = (Renderable2DInterface<?>) element;
+                Renderable2dInterface<?> animationObject = (Renderable2dInterface<?>) element;
                 animationObjects.add(animationObject);
             }
 
-            for (Renderable2DInterface<?> ao : animationObjects)
+            for (Renderable2dInterface<?> ao : animationObjects)
             {
                 try
                 {
@@ -91,7 +91,7 @@ public final class NetworkAnimationUtils
                     ContextUtil.lookupOrCreateSubContext(oldSimulator.getReplication().getContext(), "animation/2D");
             for (Object element : context.values())
             {
-                Renderable2DInterface<?> animationObject = (Renderable2DInterface<?>) element;
+                Renderable2dInterface<?> animationObject = (Renderable2dInterface<?>) element;
                 Locatable locatable = animationObject.getSource();
                 if (clazz.isAssignableFrom(locatable.getClass()))
                 {

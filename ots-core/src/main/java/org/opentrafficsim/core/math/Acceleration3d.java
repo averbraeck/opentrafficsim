@@ -6,11 +6,9 @@ import java.util.Locale;
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DirectionUnit;
 import org.djunits.value.ValueRuntimeException;
-import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.vector.AccelerationVector;
-import org.djunits.value.vdouble.vector.base.DoubleVector;
 
 /**
  * A 3D acceleration vector, decomposed in X, Y, and Z-acceleration with easy conversion from and to a spherical coordinate
@@ -60,7 +58,7 @@ public class Acceleration3d implements Serializable
      */
     public Acceleration3d(final Acceleration x, final Acceleration y, final Acceleration z) throws ValueRuntimeException
     {
-        this.acceleration = DoubleVector.instantiate(new Acceleration[] {x, y, z}, AccelerationUnit.SI, StorageType.DENSE);
+        this.acceleration = new AccelerationVector(new Acceleration[] {x, y, z}, AccelerationUnit.SI);
     }
 
     /**
@@ -74,7 +72,7 @@ public class Acceleration3d implements Serializable
     public Acceleration3d(final double x, final double y, final double z, final AccelerationUnit unit)
             throws ValueRuntimeException
     {
-        this.acceleration = DoubleVector.instantiate(new double[] {x, y, z}, unit, StorageType.DENSE);
+        this.acceleration = new AccelerationVector(new double[] {x, y, z}, AccelerationUnit.SI);
     }
 
     /**
@@ -88,7 +86,7 @@ public class Acceleration3d implements Serializable
             throws ValueRuntimeException
     {
         double[] xyz = Scalar3d.polarToCartesian(acceleration.getInUnit(), theta.si, phi.si);
-        this.acceleration = DoubleVector.instantiate(xyz, acceleration.getDisplayUnit(), StorageType.DENSE);
+        this.acceleration = new AccelerationVector(xyz, acceleration.getDisplayUnit());
     }
 
     /**

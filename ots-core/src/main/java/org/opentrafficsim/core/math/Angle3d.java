@@ -5,10 +5,8 @@ import java.util.Locale;
 
 import org.djunits.unit.AngleUnit;
 import org.djunits.value.ValueRuntimeException;
-import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.vector.AngleVector;
-import org.djunits.value.vdouble.vector.base.DoubleVector;
 
 /**
  * 3D-rotation, RPY coded (longitudinal roll along the x-axis, lateral pitch along the y-axis and vertical yaw along the
@@ -50,7 +48,7 @@ public class Angle3d implements Serializable
      */
     public Angle3d(final Angle roll, final Angle pitch, final Angle yaw) throws ValueRuntimeException
     {
-        this.rotation = DoubleVector.instantiate(new Angle[] {roll, pitch, yaw}, AngleUnit.SI, StorageType.DENSE);
+        this.rotation = new AngleVector(new Angle[] {roll, pitch, yaw}, AngleUnit.SI);
     }
 
     /**
@@ -62,7 +60,7 @@ public class Angle3d implements Serializable
      */
     public Angle3d(final double roll, final double pitch, final double yaw, final AngleUnit unit) throws ValueRuntimeException
     {
-        this.rotation = DoubleVector.instantiate(new double[] {roll, pitch, yaw}, unit, StorageType.DENSE);
+        this.rotation = new AngleVector(new double[] {roll, pitch, yaw}, unit);
     }
 
     /**

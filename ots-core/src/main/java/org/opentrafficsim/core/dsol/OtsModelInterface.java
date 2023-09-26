@@ -3,7 +3,7 @@ package org.opentrafficsim.core.dsol;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.core.network.Network;
 
-import nl.tudelft.simulation.dsol.model.DSOLModel;
+import nl.tudelft.simulation.dsol.model.DsolModel;
 
 /**
  * OtsModelInterface described the generic properties of an OtsModel such as the network and the model name.
@@ -13,7 +13,7 @@ import nl.tudelft.simulation.dsol.model.DSOLModel;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  */
-public interface OtsModelInterface extends DSOLModel<Duration, OtsSimulatorInterface>
+public interface OtsModelInterface extends DsolModel<Duration, OtsSimulatorInterface>
 {
     /**
      * Return the traffic network for the simulation.

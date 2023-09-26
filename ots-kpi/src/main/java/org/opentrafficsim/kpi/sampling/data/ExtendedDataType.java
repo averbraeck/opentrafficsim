@@ -3,9 +3,13 @@ package org.opentrafficsim.kpi.sampling.data;
 import org.djunits.unit.AbsoluteLinearUnit;
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.base.DoubleScalar;
-import org.djunits.value.vdouble.scalar.base.DoubleScalarInterface;
+import org.djunits.value.vdouble.scalar.base.DoubleScalarAbs;
+import org.djunits.value.vdouble.scalar.base.DoubleScalarRel;
+import org.djunits.value.vdouble.scalar.base.DoubleScalarRelWithAbs;
 import org.djunits.value.vfloat.scalar.base.FloatScalar;
-import org.djunits.value.vfloat.scalar.base.FloatScalarInterface;
+import org.djunits.value.vfloat.scalar.base.FloatScalarAbs;
+import org.djunits.value.vfloat.scalar.base.FloatScalarRel;
+import org.djunits.value.vfloat.scalar.base.FloatScalarRelWithAbs;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.kpi.interfaces.GtuData;
@@ -33,7 +37,7 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuData> implements Id
 
     /** Id. */
     private final String id;
-    
+
     /** Description. */
     private final String description;
 
@@ -62,7 +66,7 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuData> implements Id
     {
         return this.id;
     }
-    
+
     /**
      * Returns the description.
      * @return String; description.
@@ -153,28 +157,28 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuData> implements Id
      * @return interpolated value
      */
     @SuppressWarnings({"unchecked", "checkstyle:designforextension"})
-    public <AU extends AbsoluteLinearUnit<AU, RU>, RU extends Unit<RU>, R extends DoubleScalarInterface.Rel<RU, R>,
-            RA extends DoubleScalarInterface.RelWithAbs<AU, A, RU, RA>, A extends DoubleScalarInterface.Abs<AU, A, RU, RA>,
-            FR extends FloatScalarInterface.Rel<RU, FR>, FRA extends FloatScalarInterface.RelWithAbs<AU, FA, RU, FRA>,
-            FA extends FloatScalarInterface.Abs<AU, FA, RU, FRA>> T interpolate(final T value0, final T value1, final double f)
+    public <AU extends AbsoluteLinearUnit<AU, RU>, RU extends Unit<RU>, R extends DoubleScalarRel<RU, R>,
+            RA extends DoubleScalarRelWithAbs<AU, A, RU, RA>, A extends DoubleScalarAbs<AU, A, RU, RA>,
+            FR extends FloatScalarRel<RU, FR>, FRA extends FloatScalarRelWithAbs<AU, FA, RU, FRA>,
+            FA extends FloatScalarAbs<AU, FA, RU, FRA>> T interpolate(final T value0, final T value1, final double f)
     {
         Throw.whenNull(value0, "Values to interpolate may not be null.");
         Throw.whenNull(value1, "Values to interpolate may not be null.");
-        if (value0 instanceof DoubleScalarInterface.Rel<?, ?>)
+        if (value0 instanceof DoubleScalarRel<?, ?>)
         {
-            return (T) DoubleScalar.interpolate((R) value0, (R) value1, f);
+            return (T) DoubleScalarRel.interpolate((R) value0, (R) value1, f);
         }
-        if (value0 instanceof DoubleScalarInterface.Abs<?, ?, ?, ?>)
+        if (value0 instanceof DoubleScalarAbs<?, ?, ?, ?>)
         {
-            return (T) DoubleScalar.interpolate((A) value0, (A) value1, f);
+            return (T) DoubleScalarAbs.interpolate((A) value0, (A) value1, f);
         }
-        if (value0 instanceof FloatScalarInterface.Rel<?, ?>)
+        if (value0 instanceof FloatScalarRel<?, ?>)
         {
-            return (T) FloatScalar.interpolate((FR) value0, (FR) value1, (float) f);
+            return (T) FloatScalarRel.interpolate((FR) value0, (FR) value1, (float) f);
         }
-        if (value0 instanceof FloatScalarInterface.Abs<?, ?, ?, ?>)
+        if (value0 instanceof FloatScalarAbs<?, ?, ?, ?>)
         {
-            return (T) FloatScalar.interpolate((FA) value0, (FA) value1, (float) f);
+            return (T) FloatScalarAbs.interpolate((FA) value0, (FA) value1, (float) f);
         }
         if (value0 instanceof Double)
         {
@@ -231,7 +235,7 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuData> implements Id
         }
         return true;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String toString()

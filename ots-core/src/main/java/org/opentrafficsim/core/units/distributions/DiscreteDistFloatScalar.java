@@ -33,7 +33,6 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.unit.TorqueUnit;
 import org.djunits.unit.Unit;
 import org.djunits.unit.VolumeUnit;
-import org.djunits.value.Absolute;
 import org.djunits.value.vfloat.scalar.FloatAbsoluteTemperature;
 import org.djunits.value.vfloat.scalar.FloatAcceleration;
 import org.djunits.value.vfloat.scalar.FloatAngle;
@@ -63,9 +62,10 @@ import org.djunits.value.vfloat.scalar.FloatTemperature;
 import org.djunits.value.vfloat.scalar.FloatTime;
 import org.djunits.value.vfloat.scalar.FloatTorque;
 import org.djunits.value.vfloat.scalar.FloatVolume;
-import org.djunits.value.vfloat.scalar.base.AbstractFloatScalarAbs;
-import org.djunits.value.vfloat.scalar.base.AbstractFloatScalarRel;
 import org.djunits.value.vfloat.scalar.base.FloatScalar;
+import org.djunits.value.vfloat.scalar.base.FloatScalarAbs;
+import org.djunits.value.vfloat.scalar.base.FloatScalarRel;
+import org.opentrafficsim.core.distributions.Generator;
 
 import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
 
@@ -84,8 +84,8 @@ public interface DiscreteDistFloatScalar
      * @param <AU> The absolute unit type used
      * @param <RU> The relative unit type belonging to AU
      */
-    class Abs<T extends AbstractFloatScalarAbs<AU, T, RU, ?>, AU extends AbsoluteLinearUnit<AU, RU>, RU extends Unit<RU>>
-            extends AbstractDiscreteDistScalar implements Absolute, Serializable
+    class Abs<T extends FloatScalarAbs<AU, T, RU, ?>, AU extends AbsoluteLinearUnit<AU, RU>, RU extends Unit<RU>>
+            extends AbstractDiscreteDistScalar implements Serializable, Generator<T>
     {
         /** */
         private static final long serialVersionUID = 20150000L;
@@ -109,8 +109,10 @@ public interface DiscreteDistFloatScalar
         }
 
         /**
-         * @return a drawn number from the distribution in the given unit.
+         * {@inheritDoc}
+         * @throws IllegalStateException when the unit is not of a known type
          */
+        @Override
         @SuppressWarnings("unchecked")
         public final T draw()
         {
@@ -130,7 +132,7 @@ public interface DiscreteDistFloatScalar
                     return (T) new FloatTime((float) getDistribution().draw(), (TimeUnit) getUnit());
 
                 default:
-                    return (T) FloatScalar.instantiate(getDistribution().draw(), (AU) getUnit());
+                    throw new IllegalStateException("Unable to draw value for absolute scalar with unit " + getUnit());
             }
         }
 
@@ -147,8 +149,8 @@ public interface DiscreteDistFloatScalar
      * @param <T> The absolute float scalar type
      * @param <U> The unit type used
      */
-    class Rel<T extends AbstractFloatScalarRel<U, T>, U extends Unit<U>> extends AbstractDiscreteDistScalar
-            implements Serializable
+    class Rel<T extends FloatScalarRel<U, T>, U extends Unit<U>> extends AbstractDiscreteDistScalar
+            implements Serializable, Generator<T>
     {
         /** */
         private static final long serialVersionUID = 20150000L;
@@ -172,8 +174,10 @@ public interface DiscreteDistFloatScalar
         }
 
         /**
-         * @return a drawn number from the distribution in the given unit.
+         * {@inheritDoc}
+         * @throws IllegalStateException when the unit is not of a known type
          */
+        @Override
         @SuppressWarnings("unchecked")
         public final T draw()
         {
@@ -257,7 +261,7 @@ public interface DiscreteDistFloatScalar
                     return (T) new FloatVolume((float) getDistribution().draw(), (VolumeUnit) getUnit());
 
                 default:
-                    return (T) FloatScalar.instantiate(getDistribution().draw(), (U) getUnit());
+                    throw new IllegalStateException("Unable to draw value for relative scalar with unit " + getUnit());
             }
         }
 

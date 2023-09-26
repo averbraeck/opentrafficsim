@@ -47,10 +47,10 @@
 
     <ots.version>${project.version}</ots.version>
     <tinylog.version>1.3.6</tinylog.version>
-    <djunits.version>5.0.2</djunits.version>
-    <djutils.version>2.1.8</djutils.version>
-    <dsol.version>4.1.2</dsol.version>
-    <sim0mq.version>2.1.0</sim0mq.version>
+    <djunits.version>5.1.2</djunits.version>
+    <djutils.version>2.2.0</djutils.version>
+    <dsol.version>4.2.1</dsol.version>
+    <sim0mq.version>2.1.1</sim0mq.version>
     <jts.version>1.19.0</jts.version>
     <jfreechart.version>1.5.0</jfreechart.version>
     <apache.poi.version>5.2.3</apache.poi.version>
@@ -136,7 +136,7 @@
 
       <dependency>
         <groupId>org.djutils</groupId>
-        <artifactId>djutils</artifactId>
+        <artifactId>djutils-base</artifactId>
         <version>${djutils.version}</version>
       </dependency>
 
@@ -155,6 +155,12 @@
       <dependency>
         <groupId>org.djutils</groupId>
         <artifactId>djutils-draw</artifactId>
+        <version>${djutils.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.djutils</groupId>
+        <artifactId>djutils-eval</artifactId>
         <version>${djutils.version}</version>
       </dependency>
 

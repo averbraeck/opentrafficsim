@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.network.factory.xml.utils;
 
 import org.djunits.unit.Unit;
-import org.djunits.value.vdouble.scalar.base.AbstractDoubleScalarRel;
+import org.djunits.value.vdouble.scalar.base.DoubleScalarRel;
 import org.opentrafficsim.core.parameters.InputParameters;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
@@ -59,7 +59,7 @@ public final class ParseDistribution
      * @return a typed continuous random distribution.
      * @throws XmlParserException in case of a parse error.
      */
-    public static <T extends AbstractDoubleScalarRel<U, T>,
+    public static <T extends DoubleScalarRel<U, T>,
             U extends Unit<U>> ContinuousDistDoubleScalar.Rel<T, U> parseContinuousDist(final StreamInformation streamMap,
                     final ConstantDistType distribution, final U unit, final InputParameters inputParameters)
                     throws XmlParserException

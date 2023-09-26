@@ -3,7 +3,7 @@ package org.opentrafficsim.sim0mq.publisher;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.djunits.Throw;
+import org.djutils.exceptions.Throw;
 import org.djutils.serialization.SerializationException;
 import org.djutils.serialization.SerializationRuntimeException;
 import org.sim0mq.Sim0MQException;

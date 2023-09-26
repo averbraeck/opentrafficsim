@@ -4,7 +4,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.exceptions.Throw;
 
 import nl.tudelft.simulation.dsol.experiment.StreamInformation;
-import nl.tudelft.simulation.dsol.model.AbstractDSOLModel;
+import nl.tudelft.simulation.dsol.model.AbstractDsolModel;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 
 /**
@@ -15,7 +15,7 @@ import nl.tudelft.simulation.jstats.streams.MersenneTwister;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public abstract class AbstractOtsModel extends AbstractDSOLModel<Duration, OtsSimulatorInterface> implements OtsModelInterface
+public abstract class AbstractOtsModel extends AbstractDsolModel<Duration, OtsSimulatorInterface> implements OtsModelInterface
 {
     /** */
     private static final long serialVersionUID = 1L;

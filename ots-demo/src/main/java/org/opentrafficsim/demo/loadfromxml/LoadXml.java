@@ -46,7 +46,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
-import nl.tudelft.simulation.language.DSOLException;
+import nl.tudelft.simulation.language.DsolException;
 
 /**
  * Select a OTS-network XML file, load it and run it.
@@ -81,10 +81,10 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
      * @throws OtsSimulationException when an error occurs during simulation
      * @throws NamingException when a name collision is detected
      * @throws SimRuntimeException should never happen
-     * @throws DSOLException when simulator does not implement AnimatorInterface
+     * @throws DsolException when simulator does not implement AnimatorInterface
      */
     public static void main(final String[] args) throws IOException, SimRuntimeException, NamingException,
-            OtsSimulationException, InputParameterException, DSOLException
+            OtsSimulationException, InputParameterException, DsolException
     {
         String fileName;
         String xml;

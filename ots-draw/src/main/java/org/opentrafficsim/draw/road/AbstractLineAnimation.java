@@ -11,7 +11,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 
 /**
  * Abstract class for objects that draw a line perpendicular on the lane.
@@ -24,7 +24,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <T> the LaneBasedObject class of the source that indicates the location of the Renderable on the screen
  */
-public abstract class AbstractLineAnimation<T extends LaneBasedObject> extends Renderable2D<T>
+public abstract class AbstractLineAnimation<T extends LaneBasedObject> extends Renderable2d<T>
 {
 
     /** Rectangle to color. */

@@ -5,9 +5,7 @@ import java.util.List;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.ValueRuntimeException;
-import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.matrix.AccelerationMatrix;
-import org.djunits.value.vdouble.matrix.base.DoubleMatrix;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
@@ -43,7 +41,7 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
                 {
                     try
                     {
-                        return DoubleMatrix.instantiate(filteredData, AccelerationUnit.SI, StorageType.DENSE);
+                        return new AccelerationMatrix(filteredData, AccelerationUnit.SI);
                     }
                     catch (ValueRuntimeException exception)
                     {

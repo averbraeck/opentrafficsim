@@ -11,7 +11,6 @@ import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.vector.AccelerationVector;
-import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -37,13 +36,13 @@ public class Acceleration3dTest
         double z = 5.5;
         Acceleration3d a3d = new Acceleration3d(x, y, z, AccelerationUnit.SI);
         checkAcceleration(a3d, x, y, z);
-        AccelerationVector sv = DoubleVector.instantiate(new double[] {x, y, z}, AccelerationUnit.SI, StorageType.DENSE);
+        AccelerationVector sv = new AccelerationVector(new double[] {x, y, z}, AccelerationUnit.SI);
         a3d = new Acceleration3d(sv);
         checkAcceleration(a3d, x, y, z);
-        sv = DoubleVector.instantiate(new double[] {x, y, z}, AccelerationUnit.SI, StorageType.SPARSE);
+        sv = new AccelerationVector(new double[] {x, y, z}, AccelerationUnit.SI, StorageType.SPARSE);
         a3d = new Acceleration3d(sv);
         checkAcceleration(a3d, x, y, z);
-        sv = DoubleVector.instantiate(new double[] {x, y}, AccelerationUnit.SI, StorageType.DENSE);
+        sv = new AccelerationVector(new double[] {x, y}, AccelerationUnit.SI);
         try
         {
             new Acceleration3d(sv);
@@ -53,7 +52,7 @@ public class Acceleration3dTest
         {
             // Ignore expected exception
         }
-        sv = DoubleVector.instantiate(new double[] {x, y, z, x}, AccelerationUnit.SI, StorageType.DENSE);
+        sv = new AccelerationVector(new double[] {x, y, z, x}, AccelerationUnit.SI);
         try
         {
             new Acceleration3d(sv);
@@ -63,7 +62,7 @@ public class Acceleration3dTest
         {
             // Ignore expected exception
         }
-        sv = DoubleVector.instantiate(new double[] {x, y}, AccelerationUnit.SI, StorageType.SPARSE);
+        sv = new AccelerationVector(new double[] {x, y}, AccelerationUnit.SI, StorageType.SPARSE);
         try
         {
             new Acceleration3d(sv);
@@ -73,7 +72,7 @@ public class Acceleration3dTest
         {
             // Ignore expected exception
         }
-        sv = DoubleVector.instantiate(new double[] {x, y, z, x}, AccelerationUnit.SI, StorageType.SPARSE);
+        sv = new AccelerationVector(new double[] {x, y, z, x}, AccelerationUnit.SI, StorageType.SPARSE);
         try
         {
             new Acceleration3d(sv);

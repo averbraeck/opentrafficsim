@@ -2,14 +2,14 @@ package org.opentrafficsim.core.egtf.typed;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.Unit;
-import org.djunits.value.AbstractScalar;
-import org.djunits.value.vdouble.matrix.base.DoubleMatrixInterface;
+import org.djunits.value.base.Scalar;
+import org.djunits.value.vdouble.matrix.base.DoubleMatrix;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.LengthVector;
-import org.djunits.value.vdouble.vector.base.DoubleVectorInterface;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.opentrafficsim.core.egtf.DataStream;
 import org.opentrafficsim.core.egtf.Egtf;
 import org.opentrafficsim.core.egtf.KernelShape;
@@ -78,7 +78,7 @@ public class TypedEgtf extends Egtf
      * @param <Z> value type
      * @throws IllegalStateException if data was added with a data stream previously
      */
-    public synchronized <U extends Unit<U>, Z extends AbstractScalar<U, Z>> void addPointData(final Quantity<Z, ?> quantity,
+    public synchronized <U extends Unit<U>, Z extends Scalar<U, Z>> void addPointData(final Quantity<Z, ?> quantity,
             final Length location, final Duration time, final Z value)
     {
         addPointDataSI(quantity, location.si, time.si, value.doubleValue());
@@ -94,7 +94,7 @@ public class TypedEgtf extends Egtf
      * @param <Z> value type
      * @throws IllegalStateException if data was added with a quantity previously
      */
-    public synchronized <U extends Unit<U>, Z extends AbstractScalar<U, Z>> void addPointData(final DataStream<Z> dataStream,
+    public synchronized <U extends Unit<U>, Z extends Scalar<U, Z>> void addPointData(final DataStream<Z> dataStream,
             final Length location, final Duration time, final Z value)
     {
         addPointDataSI(dataStream, location.si, time.si, value.doubleValue());
@@ -110,8 +110,8 @@ public class TypedEgtf extends Egtf
      * @param <Z> value type
      * @throws IllegalStateException if data was added with a data stream previously
      */
-    public synchronized <U extends Unit<U>, Z extends AbstractScalar<U, Z>> void addVectorData(final Quantity<Z, ?> quantity,
-            final LengthVector location, final DurationVector time, final DoubleVectorInterface<U, ?, ?> values)
+    public synchronized <U extends Unit<U>, Z extends Scalar<U, Z>> void addVectorData(final Quantity<Z, ?> quantity,
+            final LengthVector location, final DurationVector time, final DoubleVector<U, ?, ?> values)
     {
         addVectorDataSI(quantity, location.getValuesSI(), time.getValuesSI(), values.getValuesSI());
     }
@@ -126,8 +126,8 @@ public class TypedEgtf extends Egtf
      * @param <Z> value type
      * @throws IllegalStateException if data was added with a quantity previously
      */
-    public synchronized <U extends Unit<U>, Z extends AbstractScalar<U, Z>> void addVectorData(final DataStream<Z> dataStream,
-            final LengthVector location, final DurationVector time, final DoubleVectorInterface<U, ?, ?> values)
+    public synchronized <U extends Unit<U>, Z extends Scalar<U, Z>> void addVectorData(final DataStream<Z> dataStream,
+            final LengthVector location, final DurationVector time, final DoubleVector<U, ?, ?> values)
     {
         addVectorDataSI(dataStream, location.getValuesSI(), time.getValuesSI(), values.getValuesSI());
     }
@@ -142,8 +142,8 @@ public class TypedEgtf extends Egtf
      * @param <Z> value type
      * @throws IllegalStateException if data was added with a data stream previously
      */
-    public synchronized <U extends Unit<U>, Z extends AbstractScalar<U, Z>> void addGridData(final Quantity<Z, ?> quantity,
-            final LengthVector location, final DurationVector time, final DoubleMatrixInterface<U, ?, ?, ?> values)
+    public synchronized <U extends Unit<U>, Z extends Scalar<U, Z>> void addGridData(final Quantity<Z, ?> quantity,
+            final LengthVector location, final DurationVector time, final DoubleMatrix<U, ?, ?, ?> values)
     {
         addGridDataSI(quantity, location.getValuesSI(), time.getValuesSI(), values.getValuesSI());
     }
@@ -158,8 +158,8 @@ public class TypedEgtf extends Egtf
      * @param <Z> value type
      * @throws IllegalStateException if data was added with a quantity previously
      */
-    public synchronized <U extends Unit<U>, Z extends AbstractScalar<U, Z>> void addGridData(final DataStream<Z> dataStream,
-            final LengthVector location, final DurationVector time, final DoubleMatrixInterface<U, ?, ?, ?> values)
+    public synchronized <U extends Unit<U>, Z extends Scalar<U, Z>> void addGridData(final DataStream<Z> dataStream,
+            final LengthVector location, final DurationVector time, final DoubleMatrix<U, ?, ?, ?> values)
     {
         addGridDataSI(dataStream, location.getValuesSI(), time.getValuesSI(), values.getValuesSI());
     }

@@ -16,7 +16,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.AccelerationVector;
-import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
@@ -104,8 +103,7 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
 
     /** {@inheritDoc} */
     @Override
-    public final OperationalPlan generateOperationalPlan(final Time startTime,
-            final OrientedPoint2d locationAtStartTime)
+    public final OperationalPlan generateOperationalPlan(final Time startTime, final OrientedPoint2d locationAtStartTime)
             throws OperationalPlanException, NetworkException, GtuException, ParameterException
     {
         try
@@ -159,9 +157,8 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
             final Acceleration defaultRightLaneIncentive =
                     preferred.isRight() ? PREFERREDLANEINCENTIVE : NONPREFERREDLANEINCENTIVE;
 
-            AccelerationVector defaultLaneIncentives =
-                    DoubleVector.instantiate(new double[] {defaultLeftLaneIncentive.getSI(), STAYINCURRENTLANEINCENTIVE.getSI(),
-                            defaultRightLaneIncentive.getSI()}, AccelerationUnit.SI, StorageType.DENSE);
+            AccelerationVector defaultLaneIncentives = new AccelerationVector(new double[] {defaultLeftLaneIncentive.getSI(),
+                    STAYINCURRENTLANEINCENTIVE.getSI(), defaultRightLaneIncentive.getSI()}, AccelerationUnit.SI);
             AccelerationVector laneIncentives = laneIncentives(laneBasedGTU, defaultLaneIncentives);
             LaneMovementStep lcmr = this.laneChangeModel.computeLaneChangeAndAcceleration(laneBasedGTU, sameLaneTraffic,
                     rightLaneTraffic, leftLaneTraffic, speedLimit,
@@ -233,19 +230,16 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
                 && currentSuitability == NOLANECHANGENEEDED
                 && (rightSuitability == NOLANECHANGENEEDED || rightSuitability == GETOFFTHISLANENOW))
         {
-            return checkLaneDrops(gtu,
-                    DoubleVector.instantiate(new double[] {acceleration(gtu, leftSuitability),
-                            defaultLaneIncentives.get(1).getSI(), acceleration(gtu, rightSuitability)}, AccelerationUnit.SI,
-                            StorageType.DENSE));
+            return checkLaneDrops(gtu, new AccelerationVector(new double[] {acceleration(gtu, leftSuitability),
+                    defaultLaneIncentives.get(1).getSI(), acceleration(gtu, rightSuitability)}, AccelerationUnit.SI));
         }
         if (currentSuitability == NOLANECHANGENEEDED)
         {
-            return DoubleVector.instantiate(new double[] {acceleration(gtu, leftSuitability),
-                    defaultLaneIncentives.get(1).getSI(), acceleration(gtu, rightSuitability)}, AccelerationUnit.SI,
-                    StorageType.DENSE);
+            return new AccelerationVector(new double[] {acceleration(gtu, leftSuitability),
+                    defaultLaneIncentives.get(1).getSI(), acceleration(gtu, rightSuitability)}, AccelerationUnit.SI);
         }
-        return DoubleVector.instantiate(new double[] {acceleration(gtu, leftSuitability), acceleration(gtu, currentSuitability),
-                acceleration(gtu, rightSuitability)}, AccelerationUnit.SI, StorageType.DENSE);
+        return new AccelerationVector(new double[] {acceleration(gtu, leftSuitability), acceleration(gtu, currentSuitability),
+                acceleration(gtu, rightSuitability)}, AccelerationUnit.SI);
     }
 
     /**
@@ -279,24 +273,23 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
         // @formatter:on
         if (currentSuitability == NOLANECHANGENEEDED)
         {
-            return DoubleVector.instantiate(new double[] {acceleration(gtu, leftSuitability),
-                    defaultLaneIncentives.get(1).getSI(), acceleration(gtu, rightSuitability)}, AccelerationUnit.SI,
-                    StorageType.DENSE);
+            return new AccelerationVector(new double[] {acceleration(gtu, leftSuitability),
+                    defaultLaneIncentives.get(1).getSI(), acceleration(gtu, rightSuitability)}, AccelerationUnit.SI);
         }
         if (currentSuitability.le(leftSuitability))
         {
-            return DoubleVector.instantiate(
+            return new AccelerationVector(
                     new double[] {PREFERREDLANEINCENTIVE.getSI(), NONPREFERREDLANEINCENTIVE.getSI(), GETOFFTHISLANENOW.getSI()},
-                    AccelerationUnit.SI, StorageType.DENSE);
+                    AccelerationUnit.SI);
         }
         if (currentSuitability.le(rightSuitability))
         {
-            return DoubleVector.instantiate(
+            return new AccelerationVector(
                     new double[] {GETOFFTHISLANENOW.getSI(), NONPREFERREDLANEINCENTIVE.getSI(), PREFERREDLANEINCENTIVE.getSI()},
                     AccelerationUnit.SI, StorageType.DENSE);
         }
-        return DoubleVector.instantiate(new double[] {acceleration(gtu, leftSuitability), acceleration(gtu, currentSuitability),
-                acceleration(gtu, rightSuitability)}, AccelerationUnit.SI, StorageType.DENSE);
+        return new AccelerationVector(new double[] {acceleration(gtu, leftSuitability), acceleration(gtu, currentSuitability),
+                acceleration(gtu, rightSuitability)}, AccelerationUnit.SI);
     }
 
     /**
@@ -534,8 +527,7 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
                 {
                     for (Lane connectingLane : l.nextLanes(gtu.getType()))
                     {
-                        if (connectingLane.getLink() == linkAfterBranch
-                                && connectingLane.getType().isCompatible(gtu.getType()))
+                        if (connectingLane.getLink() == linkAfterBranch && connectingLane.getType().isCompatible(gtu.getType()))
                         {
                             Length currentValue = suitabilityOfLanesBeforeBranch.get(l);
                             // Use recursion to find out HOW suitable this continuation lane is, but don't revert back

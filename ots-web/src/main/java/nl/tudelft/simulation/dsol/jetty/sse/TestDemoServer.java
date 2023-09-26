@@ -14,8 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djunits.value.vdouble.scalar.base.AbstractDoubleScalar;
-import org.djunits.value.vfloat.scalar.base.AbstractFloatScalar;
+import org.djunits.value.vdouble.scalar.base.DoubleScalar;
+import org.djunits.value.vfloat.scalar.base.FloatScalar;
 import org.djutils.io.URLResource;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
@@ -422,7 +422,7 @@ public class TestDemoServer
          * @return default value in the unit
          */
         private <U extends Unit<U>,
-                T extends AbstractDoubleScalar<U, T>> String getValueInUnit(final InputParameterDoubleScalar<U, T> parameter)
+                T extends DoubleScalar<U, T>> String getValueInUnit(final InputParameterDoubleScalar<U, T> parameter)
         {
             return "" + parameter.getDefaultTypedValue().getInUnit(parameter.getDefaultTypedValue().getDisplayUnit());
         }
@@ -432,7 +432,7 @@ public class TestDemoServer
          * @return abbreviations for the units
          */
         private <U extends Unit<U>,
-                T extends AbstractDoubleScalar<U, T>> List<String> getUnits(final InputParameterDoubleScalar<U, T> parameter)
+                T extends DoubleScalar<U, T>> List<String> getUnits(final InputParameterDoubleScalar<U, T> parameter)
         {
             List<String> unitList = new ArrayList<>();
             for (String option : parameter.getUnitParameter().getOptions().keySet())
@@ -447,7 +447,7 @@ public class TestDemoServer
          * @return default value in the unit
          */
         private <U extends Unit<U>,
-                T extends AbstractFloatScalar<U, T>> String getValueInUnit(final InputParameterFloatScalar<U, T> parameter)
+                T extends FloatScalar<U, T>> String getValueInUnit(final InputParameterFloatScalar<U, T> parameter)
         {
             return "" + parameter.getDefaultTypedValue().getInUnit(parameter.getDefaultTypedValue().getDisplayUnit());
         }
@@ -457,7 +457,7 @@ public class TestDemoServer
          * @return abbreviations for the units
          */
         private <U extends Unit<U>,
-                T extends AbstractFloatScalar<U, T>> List<String> getUnits(final InputParameterFloatScalar<U, T> parameter)
+                T extends FloatScalar<U, T>> List<String> getUnits(final InputParameterFloatScalar<U, T> parameter)
         {
             List<String> unitList = new ArrayList<>();
             for (String option : parameter.getUnitParameter().getOptions().keySet())

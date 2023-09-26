@@ -11,12 +11,12 @@ import org.djunits.unit.SpeedUnit;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 
 // Note: there is also a SpeedSignAnimation in ots-draw. This class simply exists to notify required changes in the manual code.
 
 // @docs/08-tutorials/visualization.md#how-to-add-an-animation
-public class SpeedSignAnimation extends Renderable2D<SpeedSign>
+public class SpeedSignAnimation extends Renderable2d<SpeedSign>
 {
     private static final double RADIUS = 1.6;
 

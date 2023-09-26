@@ -1,6 +1,6 @@
 package org.opentrafficsim.xml.bindings;
 
-import org.djunits.value.vdouble.scalar.base.DoubleScalarInterface;
+import org.djunits.value.vdouble.scalar.base.DoubleScalar;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.xml.bindings.types.ExpressionType;
 
@@ -15,7 +15,7 @@ import org.opentrafficsim.xml.bindings.types.ExpressionType;
  * @param <S> unit type
  * @param <E> expression type
  */
-public abstract class ScalarAdapter<S extends DoubleScalarInterface<?, S>, E extends ExpressionType<S>>
+public abstract class ScalarAdapter<S extends DoubleScalar<?, S>, E extends ExpressionType<S>>
         extends ExpressionAdapter<S, E>
 {
 

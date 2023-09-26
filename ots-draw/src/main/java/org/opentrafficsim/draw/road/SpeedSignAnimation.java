@@ -15,7 +15,7 @@ import org.djunits.unit.SpeedUnit;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 
 /**
  * <p>
@@ -27,7 +27,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 
-public class SpeedSignAnimation extends Renderable2D<SpeedSign> implements Serializable
+public class SpeedSignAnimation extends Renderable2d<SpeedSign> implements Serializable
 {
 
     /** */

@@ -14,7 +14,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.object.StaticObject;
 import org.opentrafficsim.draw.core.PaintPolygons;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 
 /**
  * <p>
@@ -23,7 +23,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  */
-public class StaticObjectAnimation extends Renderable2D<StaticObject> implements Serializable
+public class StaticObjectAnimation extends Renderable2d<StaticObject> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20160400L;

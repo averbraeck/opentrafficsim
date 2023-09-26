@@ -73,12 +73,12 @@ Multiple colorers can be used by combining them in a `SwitchableGtuColorer`.
 
 ## How to add an animation
 
-Animation in OTS is based on DSOL, which in term is based on the standard java tools for graphics and user interfaces. Animation in OTS is two-dimensional and (virtual) world objects are animated one at a time. In fact, each animated object is animated by some animation object. For instance, a `Lane` is animated by a `LaneAnimation`. The `Lane` is not aware of the `LaneAnimation`, but the `LaneAnimation` does use the `Lane` to obtain information for visualization. Animations should extend `Renderable2D<T>`, where `T` is a sub class of `Locatable`. This means that animated objects should be able to report their position and bounds.
+Animation in OTS is based on DSOL, which in term is based on the standard java tools for graphics and user interfaces. Animation in OTS is two-dimensional and (virtual) world objects are animated one at a time. In fact, each animated object is animated by some animation object. For instance, a `Lane` is animated by a `LaneAnimation`. The `Lane` is not aware of the `LaneAnimation`, but the `LaneAnimation` does use the `Lane` to obtain information for visualization. Animations should extend `Renderable2d<T>`, where `T` is a sub class of `Locatable`. This means that animated objects should be able to report their position and bounds.
 
-In this tutorial an example is shown for a speed sign animation. The class structure is given below. By extending `Renderable2D` the implementation does not have to be concerned with scaling, rotating, etc. This class only has the task to draw the animation around point (0, 0) without rotation. Any rotation as given by the location (`Locatable`) and flipping, translations and scaling (i.e. panning and zooming by the user) is taken care of through transformations in `Renderable2D`. The net unit that the class needs to draw with is meters.
+In this tutorial an example is shown for a speed sign animation. The class structure is given below. By extending `Renderable2d` the implementation does not have to be concerned with scaling, rotating, etc. This class only has the task to draw the animation around point (0, 0) without rotation. Any rotation as given by the location (`Locatable`) and flipping, translations and scaling (i.e. panning and zooming by the user) is taken care of through transformations in `Renderable2d`. The net unit that the class needs to draw with is meters.
 
 ```java
-    public class SpeedSignAnimation extends Renderable2D<SpeedSign>
+    public class SpeedSignAnimation extends Renderable2d<SpeedSign>
     {
     
         private static final double RADIUS = 1.6;

@@ -8,8 +8,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.djunits.Throw;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableSortedSet;
 import org.djutils.immutablecollections.ImmutableTreeSet;
 import org.djutils.multikeymap.MultiKeyMap;

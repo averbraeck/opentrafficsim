@@ -22,7 +22,7 @@ import org.opentrafficsim.road.gtu.lane.perception.RollingLaneStructure;
 import org.opentrafficsim.road.gtu.lane.perception.RollingLaneStructureRecord;
 import org.opentrafficsim.road.gtu.lane.perception.RollingLaneStructureRecord.RecordLink;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 
 /**
  * LaneStructureAnimation.java.
@@ -32,7 +32,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class LaneStructureAnimation extends Renderable2D<LaneStructureLocatable>
+public class LaneStructureAnimation extends Renderable2d<LaneStructureLocatable>
 {
     /** Destroyed. */
     private boolean isDestroyed = false;

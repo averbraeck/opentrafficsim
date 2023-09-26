@@ -12,7 +12,6 @@ import java.util.Set;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -21,7 +20,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
-import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.cli.CliUtil;
 import org.djutils.data.csv.CsvData;
 import org.djutils.data.serialization.TextSerializationException;
@@ -216,12 +214,9 @@ public class RampMeteringDemo extends AbstractSimulationScript
         RampMeteringDemo demo = new RampMeteringDemo();
         CliUtil.changeOptionDefault(demo, "simulationTime", "4200s");
         CliUtil.execute(demo, args);
-        demo.mainDemand =
-                DoubleVector.instantiate(arrayFromString(demo.mainDemandString), FrequencyUnit.PER_HOUR, StorageType.DENSE);
-        demo.rampDemand =
-                DoubleVector.instantiate(arrayFromString(demo.rampDemandString), FrequencyUnit.PER_HOUR, StorageType.DENSE);
-        demo.demandTime =
-                DoubleVector.instantiate(arrayFromString(demo.demandTimeString), TimeUnit.BASE_MINUTE, StorageType.DENSE);
+        demo.mainDemand = new FrequencyVector(arrayFromString(demo.mainDemandString), FrequencyUnit.PER_HOUR);
+        demo.rampDemand = new FrequencyVector(arrayFromString(demo.rampDemandString), FrequencyUnit.PER_HOUR);
+        demo.demandTime = new TimeVector(arrayFromString(demo.demandTimeString), TimeUnit.BASE_MINUTE);
         demo.start();
     }
 
@@ -607,8 +602,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
         /** {@inheritDoc} */
         @Override
-        public OperationalPlan generateOperationalPlan(final Time startTime,
-                final OrientedPoint2d locationAtStartTime)
+        public OperationalPlan generateOperationalPlan(final Time startTime, final OrientedPoint2d locationAtStartTime)
                 throws OperationalPlanException, GtuException, NetworkException, ParameterException
         {
             // get some general input

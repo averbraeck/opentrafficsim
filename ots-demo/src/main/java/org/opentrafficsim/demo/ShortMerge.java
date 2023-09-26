@@ -41,9 +41,9 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactory;
@@ -98,7 +98,7 @@ import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.distributions.DistUniform;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
-import nl.tudelft.simulation.language.DSOLException;
+import nl.tudelft.simulation.language.DsolException;
 
 /**
  * <p>
@@ -190,7 +190,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             animationPanel.enableSimulationControlButtons();
         }
         catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | IndexOutOfBoundsException
-                | DSOLException exception)
+                | DsolException exception)
         {
             exception.printStackTrace();
         }

@@ -16,7 +16,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-import org.djunits.Throw;
+import org.djutils.exceptions.Throw;
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;

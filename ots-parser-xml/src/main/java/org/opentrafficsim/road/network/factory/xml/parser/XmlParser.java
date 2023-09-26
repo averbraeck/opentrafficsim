@@ -256,18 +256,21 @@ public final class XmlParser implements Serializable
             parseInputParameters(ots.getScenarios().getDefaultInputParameters(), streamInformation, defaults, defaultsMap);
         }
         ParameterWrapper inputParameters = defaults;
-        for (ScenarioType scenarioTag : ots.getScenarios().getScenario())
+        if (ots.getScenarios() != null)
         {
-            if (scenarioTag.getId().equals(scenario))
+            for (ScenarioType scenarioTag : ots.getScenarios().getScenario())
             {
-                if (scenarioTag.getInputParameters() != null)
+                if (scenarioTag.getId().equals(scenario))
                 {
-                    Map<String, Supplier<?>> inputParametersMap = new LinkedHashMap<>();
-                    inputParameters = new ParameterWrapper(defaults, inputParametersMap);
-                    parseInputParameters(scenarioTag.getInputParameters(), streamInformation, inputParameters,
-                            inputParametersMap);
+                    if (scenarioTag.getInputParameters() != null)
+                    {
+                        Map<String, Supplier<?>> inputParametersMap = new LinkedHashMap<>();
+                        inputParameters = new ParameterWrapper(defaults, inputParametersMap);
+                        parseInputParameters(scenarioTag.getInputParameters(), streamInformation, inputParameters,
+                                inputParametersMap);
+                    }
+                    break;
                 }
-                break;
             }
         }
         ExperimentRunControl<Duration> runControl =

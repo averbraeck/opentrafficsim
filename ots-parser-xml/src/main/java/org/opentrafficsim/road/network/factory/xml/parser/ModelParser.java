@@ -17,7 +17,7 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.base.AbstractDoubleScalarRel;
+import org.djunits.value.vdouble.scalar.base.DoubleScalarRel;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.reflection.ClassUtil;
@@ -149,7 +149,7 @@ public class ModelParser
      * @throws XmlParserException unknown value, missing constructor, etc.
      */
     @SuppressWarnings("unchecked")
-    public static <U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>, K> ParameterFactory parseParameters(
+    public static <U extends Unit<U>, T extends DoubleScalarRel<U, T>, K> ParameterFactory parseParameters(
             final Definitions definitions, final List<ModelType> models, final InputParameters inputParameters,
             final Map<String, ParameterType<?>> parameterTypes, final StreamInformation streamMap) throws XmlParserException
     {
@@ -325,7 +325,7 @@ public class ModelParser
      * @return Map&lt;String, LaneBasedStrategicalPlannerFactory&lt;?&gt;&gt;; strategical planner factories by model ID
      * @throws XmlParserException unknown value, missing constructor, etc.
      */
-    public static <U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>,
+    public static <U extends Unit<U>, T extends DoubleScalarRel<U, T>,
             K> Map<String, LaneBasedStrategicalPlannerFactory<?>> parseModel(final RoadNetwork otsNetwork,
                     final List<ModelType> models, final InputParameters inputParameters,
                     final Map<String, ParameterType<?>> parameterTypes, final StreamInformation streamInformation,

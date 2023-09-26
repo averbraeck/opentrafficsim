@@ -15,7 +15,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 
 /**
  * Traffic light detector animation.
@@ -27,7 +27,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class TrafficLightDetectorAnimation extends Renderable2D<TrafficLightDetector> implements Serializable
+public class TrafficLightDetectorAnimation extends Renderable2d<TrafficLightDetector> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20150130L;

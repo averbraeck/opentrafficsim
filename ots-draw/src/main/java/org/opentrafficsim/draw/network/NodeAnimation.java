@@ -21,8 +21,8 @@ import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2dInterface;
 import nl.tudelft.simulation.introspection.DelegateIntrospection;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -34,8 +34,8 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  */
 @SuppressWarnings("rawtypes")
-public class NodeAnimation extends Renderable2D<NodeAnimation.ElevatedNode>
-        implements Renderable2DInterface<NodeAnimation.ElevatedNode>, Serializable
+public class NodeAnimation extends Renderable2d<NodeAnimation.ElevatedNode>
+        implements Renderable2dInterface<NodeAnimation.ElevatedNode>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20140000L;

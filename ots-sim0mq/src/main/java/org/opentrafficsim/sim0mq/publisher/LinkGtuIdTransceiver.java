@@ -2,7 +2,7 @@ package org.opentrafficsim.sim0mq.publisher;
 
 import java.util.Set;
 
-import org.djunits.Throw;
+import org.djutils.exceptions.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;

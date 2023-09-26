@@ -30,7 +30,7 @@ import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.language.DSOLException;
+import nl.tudelft.simulation.language.DsolException;
 
 /**
  * Unit tests. This requires half of OTS in the imports because it sets up a simulation and runs that for a couple of seconds.
@@ -97,7 +97,7 @@ public class Sim0MQPublisherTest
      * @throws IOException if that happens uncaught; this test has failed
      * @throws NamingException if that happens uncaught; this test has failed
      * @throws SimRuntimeException if that happens uncaught; this test has failed
-     * @throws DSOLException if that happens uncaught; this test has failed
+     * @throws DsolException if that happens uncaught; this test has failed
      * @throws OtsDrawingException if that happens uncaught; this test has failed
      * @throws SerializationException if that happens uncaught; this test has failed
      * @throws Sim0MQException if that happens uncaught; this test has failed
@@ -105,7 +105,7 @@ public class Sim0MQPublisherTest
      * @throws URISyntaxException if network.xml file not found
      */
     // FIXME: The test has null pointer exceptions... @Test
-    public void testSim0MQPublisher() throws IOException, SimRuntimeException, NamingException, DSOLException,
+    public void testSim0MQPublisher() throws IOException, SimRuntimeException, NamingException, DsolException,
             OtsDrawingException, Sim0MQException, SerializationException, InterruptedException, URISyntaxException
     {
         ZContext zContext = new ZContext(5); // 5 IO threads - how many is reasonable? It actually works with 1 IO thread.

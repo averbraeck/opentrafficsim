@@ -7,7 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.djunits.Throw;
+import org.djutils.exceptions.Throw;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.EventProducer;

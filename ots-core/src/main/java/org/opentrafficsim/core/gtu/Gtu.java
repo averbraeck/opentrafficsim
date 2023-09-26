@@ -13,7 +13,6 @@ import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.PositionUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -21,7 +20,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.PositionVector;
-import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
@@ -346,8 +344,7 @@ public class Gtu extends LocalEventProducer
     {
         OrientedPoint2d location = getLocation();
         fireTimedEvent(Gtu.DESTROY_EVENT,
-                new Object[] {getId(),
-                        DoubleVector.instantiate(new double[] {location.x, location.y}, PositionUnit.METER, StorageType.DENSE),
+                new Object[] {getId(), new PositionVector(new double[] {location.x, location.y}, PositionUnit.METER),
                         new Direction(location.getDirZ(), DirectionUnit.EAST_RADIAN), getOdometer()},
                 this.simulator.getSimulatorTime());
 
@@ -443,8 +440,7 @@ public class Gtu extends LocalEventProducer
             this.simulator.scheduleEvent(this.nextMoveEvent);
             fireTimedEvent(Gtu.MOVE_EVENT,
                     new Object[] {getId(),
-                            DoubleVector.instantiate(new double[] {fromLocation.x, fromLocation.y}, PositionUnit.METER,
-                                    StorageType.DENSE),
+                            new PositionVector(new double[] {fromLocation.x, fromLocation.y}, PositionUnit.METER),
                             new Direction(fromLocation.getDirZ(), DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
                             getOdometer()},
                     this.simulator.getSimulatorTime());

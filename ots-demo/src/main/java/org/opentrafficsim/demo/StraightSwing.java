@@ -31,7 +31,7 @@ import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialog;
-import nl.tudelft.simulation.language.DSOLException;
+import nl.tudelft.simulation.language.DsolException;
 
 /**
  * Simplest contour plots demonstration.
@@ -102,7 +102,7 @@ public class StraightSwing extends OtsSimulationApplication<StraightModel> imple
                 }
             }
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DSOLException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DsolException exception)
         {
             exception.printStackTrace();
         }

@@ -349,7 +349,7 @@ public final class Trajectory<G extends GtuData>
     {
         try
         {
-            return FloatVector.instantiate(getX(), LengthUnit.SI, StorageType.DENSE);
+            return new FloatLengthVector(getX(), LengthUnit.SI);
         }
         catch (ValueRuntimeException exception)
         {
@@ -366,7 +366,7 @@ public final class Trajectory<G extends GtuData>
     {
         try
         {
-            return FloatVector.instantiate(getV(), SpeedUnit.SI, StorageType.DENSE);
+            return new FloatSpeedVector(getV(), SpeedUnit.SI);
         }
         catch (ValueRuntimeException exception)
         {
@@ -383,7 +383,7 @@ public final class Trajectory<G extends GtuData>
     {
         try
         {
-            return FloatVector.instantiate(getA(), AccelerationUnit.SI, StorageType.DENSE);
+            return new FloatAccelerationVector(getA(), AccelerationUnit.SI);
         }
         catch (ValueRuntimeException exception)
         {
@@ -400,7 +400,7 @@ public final class Trajectory<G extends GtuData>
     {
         try
         {
-            return FloatVector.instantiate(getT(), TimeUnit.BASE_SECOND, StorageType.DENSE);
+            return new FloatTimeVector(getT(), TimeUnit.BASE_SECOND);
         }
         catch (ValueRuntimeException exception)
         {

@@ -5,13 +5,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.djunits.Throw;
+import org.djutils.exceptions.Throw;
 import org.djutils.event.EventProducer;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;

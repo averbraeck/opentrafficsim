@@ -157,7 +157,7 @@ public final class OdParser
                     timeList.add(time.getValue().get(inputParameters));
                 }
                 Collections.sort(timeList);
-                globalTimeVector = Try.assign(() -> DoubleVector.instantiateList(timeList, TimeUnit.DEFAULT, StorageType.DENSE),
+                globalTimeVector = Try.assign(() -> new TimeVector(timeList, TimeUnit.DEFAULT),
                         XmlParserException.class, "Global time has no values.");
             }
 
@@ -396,9 +396,7 @@ public final class OdParser
                         demandRaw[i] = parseLevel(baseDemand.get(i).getValue(), factor * (factors == null ? 1.0
                                 : new PositiveFactorAdapter().unmarshal(factors.get(i).getValue()).get(inputParameters)));
                     }
-                    FrequencyVector demandVector =
-                            Try.assign(() -> DoubleVector.instantiate(demandRaw, FrequencyUnit.SI, StorageType.DENSE),
-                                    XmlParserException.class, "Unexpected empty demand.");
+                    FrequencyVector demandVector = new FrequencyVector(demandRaw, FrequencyUnit.SI);
 
                     // Finally, add the demand
                     odMatrix.putDemandVector(origin, destination, category, demandVector, timeVector, interpolation);
@@ -705,8 +703,7 @@ public final class OdParser
             timeList.add(time.getTime().get(inputParameters));
         }
         Collections.sort(timeList);
-        return Try.assign(() -> DoubleVector.instantiateList(timeList, TimeUnit.DEFAULT, StorageType.DENSE),
-                XmlParserException.class, "Global time has no values.");
+        return new TimeVector(timeList, TimeUnit.DEFAULT);
     }
 
     /**

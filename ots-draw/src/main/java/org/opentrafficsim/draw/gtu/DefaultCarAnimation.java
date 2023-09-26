@@ -22,8 +22,8 @@ import org.opentrafficsim.draw.core.TextAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2dInterface;
 import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -36,7 +36,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class DefaultCarAnimation extends Renderable2D<LaneBasedGtu> implements Renderable2DInterface<LaneBasedGtu>, Serializable
+public class DefaultCarAnimation extends Renderable2d<LaneBasedGtu> implements Renderable2dInterface<LaneBasedGtu>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150000L;

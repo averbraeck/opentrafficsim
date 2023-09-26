@@ -10,13 +10,10 @@ import java.util.TreeMap;
 
 import javax.naming.NamingException;
 
-import org.djunits.value.ValueRuntimeException;
-import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
-import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.WeightedMeanAndSum;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -279,7 +276,8 @@ public abstract class Platoons<T>
     {
         if (!this.queue.isEmpty())
         {
-            this.simulator.scheduleEventAbsTime(this.queue.peek().getTime(), this, "placeGtu", new Object[] {this.queue.poll()});
+            this.simulator.scheduleEventAbsTime(this.queue.peek().getTime(), this, "placeGtu",
+                    new Object[] {this.queue.poll()});
         }
     }
 
@@ -300,57 +298,50 @@ public abstract class Platoons<T>
         Throw.whenNull(time, "Time may not be null.");
         Throw.whenNull(interpolation, "Interpolation may not be null.");
         Throw.when(demand.size() != time.size(), IllegalArgumentException.class, "Demand and time have unequal length.");
-        try
+        WeightedMeanAndSum<Double, Double> weightedSumLost = new WeightedMeanAndSum<>();
+        for (Map.Entry<Time, Time> entry : this.periods.entrySet())
         {
-            WeightedMeanAndSum<Double, Double> weightedSumLost = new WeightedMeanAndSum<>();
-            for (Map.Entry<Time, Time> entry : this.periods.entrySet())
-            {
-                Time start = entry.getKey();
-                Time end = entry.getValue();
-                for (int i = 0; i < demand.size() - 1; i++)
-                {
-                    Time s = Time.max(start, time.get(i));
-                    Time e = Time.min(end, time.get(i + 1));
-                    if (s.lt(e))
-                    {
-                        Frequency fStart = interpolation.interpolateVector(s, demand, time, true);
-                        // TODO: end time of platoon may be in next demand period, which makes the demand non-linear
-                        Frequency fEnd = interpolation.interpolateVector(e, demand, time, false);
-                        weightedSumLost.add((fStart.si + fEnd.si) / 2, e.si - s.si);
-                    }
-                }
-            }
-            WeightedMeanAndSum<Double, Double> weightedSumTotal = new WeightedMeanAndSum<>();
+            Time start = entry.getKey();
+            Time end = entry.getValue();
             for (int i = 0; i < demand.size() - 1; i++)
             {
-                Frequency fStart = interpolation.interpolateVector(time.get(i), demand, time, true);
-                Frequency fEnd = interpolation.interpolateVector(time.get(i + 1), demand, time, false);
-                weightedSumTotal.add((fStart.si + fEnd.si) / 2, time.getSI(i + 1) - time.getSI(i));
-
+                Time s = Time.max(start, time.get(i));
+                Time e = Time.min(end, time.get(i + 1));
+                if (s.lt(e))
+                {
+                    Frequency fStart = interpolation.interpolateVector(s, demand, time, true);
+                    // TODO: end time of platoon may be in next demand period, which makes the demand non-linear
+                    Frequency fEnd = interpolation.interpolateVector(e, demand, time, false);
+                    weightedSumLost.add((fStart.si + fEnd.si) / 2, e.si - s.si);
+                }
             }
-            // calculate factor
-            double lost = weightedSumLost.getSum();
-            double total = weightedSumTotal.getSum();
-            int platooning = this.numberOfGtus.getOrDefault(category, 0);
-            double factor = (total - platooning) / (total - lost);
-            if (factor < 0.0)
-            {
-                this.simulator.getLogger().always().warn("Reducing demand of {} by {}, demand is set to 0.", total,
-                        total - factor * total);
-                factor = 0.0;
-            }
-            // create and return factor copy
-            double[] array = new double[demand.size()];
-            for (int i = 0; i < array.length - 1; i++)
-            {
-                array[i] = demand.getInUnit(i) * factor;
-            }
-            return DoubleVector.instantiate(array, demand.getDisplayUnit(), StorageType.DENSE);
         }
-        catch (ValueRuntimeException exception)
+        WeightedMeanAndSum<Double, Double> weightedSumTotal = new WeightedMeanAndSum<>();
+        for (int i = 0; i < demand.size() - 1; i++)
         {
-            throw new RuntimeException("Unexpected exception while looping vector.", exception);
+            Frequency fStart = interpolation.interpolateVector(time.get(i), demand, time, true);
+            Frequency fEnd = interpolation.interpolateVector(time.get(i + 1), demand, time, false);
+            weightedSumTotal.add((fStart.si + fEnd.si) / 2, time.getSI(i + 1) - time.getSI(i));
+
         }
+        // calculate factor
+        double lost = weightedSumLost.getSum();
+        double total = weightedSumTotal.getSum();
+        int platooning = this.numberOfGtus.getOrDefault(category, 0);
+        double factor = (total - platooning) / (total - lost);
+        if (factor < 0.0)
+        {
+            this.simulator.getLogger().always().warn("Reducing demand of {} by {}, demand is set to 0.", total,
+                    total - factor * total);
+            factor = 0.0;
+        }
+        // create and return factor copy
+        double[] array = new double[demand.size()];
+        for (int i = 0; i < array.length - 1; i++)
+        {
+            array[i] = demand.getInUnit(i) * factor;
+        }
+        return new FrequencyVector(array, demand.getDisplayUnit());
     }
 
     /**

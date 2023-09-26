@@ -27,7 +27,7 @@ import org.opentrafficsim.web.animation.WebAnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2dInterface;
 import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 import nl.tudelft.simulation.dsol.simulators.DevsRealTimeAnimator;
@@ -377,7 +377,7 @@ public class OtsWebModel implements EventListener
                         {
                             Point2d point = animationPanel.getRenderableScale().getWorldCoordinates(new Point2D.Double(x, y),
                                     animationPanel.getExtent(), animationPanel.getSize());
-                            for (Renderable2DInterface<?> renderable : animationPanel.getElements())
+                            for (Renderable2dInterface<?> renderable : animationPanel.getElements())
                             {
                                 if (animationPanel.isShowElement(renderable)
                                         && renderable.contains(point, animationPanel.getExtent()))

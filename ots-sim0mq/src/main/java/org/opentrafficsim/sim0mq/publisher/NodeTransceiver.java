@@ -4,10 +4,8 @@ import java.rmi.RemoteException;
 
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.PositionUnit;
-import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.vector.PositionVector;
-import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
@@ -72,7 +70,7 @@ public class NodeTransceiver extends AbstractTransceiver
         }
         OrientedPoint2d nodeLocation = node.getLocation();
         return new Object[] {node.getId(),
-                DoubleVector.instantiate(new double[] {nodeLocation.x, nodeLocation.y}, PositionUnit.METER, StorageType.DENSE),
+                new PositionVector(new double[] {nodeLocation.x, nodeLocation.y}, PositionUnit.METER),
                 new Direction(nodeLocation.getDirZ(), DirectionUnit.EAST_DEGREE), node.getLinks().size()};
     }
 

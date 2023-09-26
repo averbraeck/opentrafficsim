@@ -464,7 +464,7 @@ if (simulator instanceof AnimatorInterface)
       </action>
       <action dev="averbraeck" type="fix">
         The destroy() method of DefaultCarAnimation is repaired to not call
-        Renderable2D.destroy() twice.
+        Renderable2d.destroy() twice.
       </action>
       <action dev="averbraeck" type="add">
         A program called ParamComments has been added in ots-build-tools to help
@@ -619,7 +619,7 @@ if (simulator instanceof AnimatorInterface)
         OTS-359. Add origin and destination to strategical planner
       </action>
       <action issue="OTS-360" type="fix">
-        OTS-360. Clean up GTU Renderable2D raw code
+        OTS-360. Clean up GTU Renderable2d raw code
       </action>
       <action issue="OTS-361" type="add">
         OTS-361. No lane change distance in LaneBasedGTUGenerator and ODOptions
@@ -820,7 +820,7 @@ if (simulator instanceof AnimatorInterface)
         Default jog4j-2 configuration file added.
       </action>
       <action type="update">
-        Updated to use DSOL version 3.01.03, which allows to override the Renderable2D.destroy()
+        Updated to use DSOL version 3.01.03, which allows to override the Renderable2d.destroy()
         function.
       </action>
     </release>
