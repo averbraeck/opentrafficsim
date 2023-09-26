@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.logger.CategoryLogger;
@@ -18,7 +19,6 @@ import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
-import org.opentrafficsim.core.parameters.InputParameters;
 import org.opentrafficsim.road.definitions.DefaultsRoad;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.RoadPosition;
@@ -58,14 +58,14 @@ public final class DefinitionsParser
      * @param gtuTemplates map of GTU templates for the OD and/or Generators
      * @param laneBiases map of lane biases for the OD parser
      * @param linkTypeSpeedLimitMap map with speed limit information per link type
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return the parsed definitions
      * @throws XmlParserException on parsing error
      */
     public static Definitions parseDefinitions(final org.opentrafficsim.xml.generated.Definitions definitions,
             final Map<String, RoadLayout> roadLayoutMap, final Map<String, GtuTemplate> gtuTemplates,
             final Map<String, LaneBias> laneBiases, final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap,
-            final InputParameters inputParameters) throws XmlParserException
+            final Eval eval) throws XmlParserException
     {
         Definitions parsedDefinitions = new Definitions();
 
@@ -82,8 +82,8 @@ public final class DefinitionsParser
                 for (SpeedLimit speedLimitTag : linkTag.getSpeedLimit())
                 {
                     GtuType gtuType = getDefinition(GtuType.class, parsedDefinitions, speedLimitTag.getGtuType(),
-                            "LinkType(.SpeedLimit)", linkTag.getId(), "GtuType", inputParameters);
-                    map.put(gtuType, speedLimitTag.getLegalSpeedLimit().get(inputParameters));
+                            "LinkType(.SpeedLimit)", linkTag.getId(), "GtuType", eval);
+                    map.put(gtuType, speedLimitTag.getLegalSpeedLimit().get(eval));
                 }
             }
         };
@@ -95,7 +95,7 @@ public final class DefinitionsParser
                     throws XmlParserException
             {
                 getDefinition(GtuType.class, parsedDefinitions, templateTag.getGtuType(), "GtuTemplate", templateTag.getId(),
-                        "GtuType", inputParameters);
+                        "GtuType", eval);
                 gtuTemplates.put(templateTag.getId(), templateTag);
             }
         };
@@ -115,27 +115,27 @@ public final class DefinitionsParser
             public void accept(final org.opentrafficsim.xml.generated.LaneBias biasTag, final Object dummy)
                     throws XmlParserException
             {
-                GtuType gtuType = getDefinition(GtuType.class, parsedDefinitions, biasTag.getGtuType(), "LaneBias", "",
-                        "gtuType", inputParameters);
-                laneBiases.put(gtuType.getId(), parseLaneBias(biasTag, inputParameters));
+                GtuType gtuType =
+                        getDefinition(GtuType.class, parsedDefinitions, biasTag.getGtuType(), "LaneBias", "", "gtuType", eval);
+                laneBiases.put(gtuType.getId(), parseLaneBias(biasTag, eval));
             }
         };
 
         parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.GtuTypes.class,
-                org.opentrafficsim.xml.generated.GtuType.class, GtuType.class, null, inputParameters);
+                org.opentrafficsim.xml.generated.GtuType.class, GtuType.class, null, eval);
         parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.LinkTypes.class,
-                org.opentrafficsim.xml.generated.LinkType.class, LinkType.class, linkTypeConsumer, inputParameters);
+                org.opentrafficsim.xml.generated.LinkType.class, LinkType.class, linkTypeConsumer, eval);
         parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.LaneTypes.class,
-                org.opentrafficsim.xml.generated.LaneType.class, LaneType.class, null, inputParameters);
+                org.opentrafficsim.xml.generated.LaneType.class, LaneType.class, null, eval);
         parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.DetectorTypes.class,
-                org.opentrafficsim.xml.generated.DetectorType.class, DetectorType.class, null, inputParameters);
+                org.opentrafficsim.xml.generated.DetectorType.class, DetectorType.class, null, eval);
 
         parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.GtuTemplates.class,
-                org.opentrafficsim.xml.generated.GtuTemplate.class, GtuType.class, gtuTemplateConsumer, inputParameters);
+                org.opentrafficsim.xml.generated.GtuTemplate.class, GtuType.class, gtuTemplateConsumer, eval);
         parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.RoadLayouts.class,
-                org.opentrafficsim.xml.generated.RoadLayout.class, GtuType.class, roadLayoutConsumer, inputParameters);
+                org.opentrafficsim.xml.generated.RoadLayout.class, GtuType.class, roadLayoutConsumer, eval);
         parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.LaneBiases.class,
-                org.opentrafficsim.xml.generated.LaneBias.class, GtuType.class, biasConsumer, inputParameters);
+                org.opentrafficsim.xml.generated.LaneBias.class, GtuType.class, biasConsumer, eval);
 
         // The latter three use GtuType.class as a dummy to comply to T extends HierarchicalType<T, ?>
 
@@ -161,7 +161,7 @@ public final class DefinitionsParser
      * @param typeTagClass Class&lt;G&gt;; generated class of XML tag defining type instance, e.g. LaneType (generated).
      * @param typeClass Class&lt;T&gt;; OTS class of type, e.g. LaneType (from ots-road).
      * @param consumer BiConsumer&lt;G, ? super T&gt;; consumer for specific parsing of the type, may be {@code null}.
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @param <L> generated class type of XML tag containing type tags, e.g. LaneTypes (generated).
      * @param <G> generated class type of XML tag defining type instance, e.g. LaneType (generated).
      * @param <T> OTS class type of type, e.g. LaneType (from ots-road).
@@ -171,7 +171,7 @@ public final class DefinitionsParser
     private static <L, G, T extends HierarchicalType<T, ?>> void parseDefinitionType(
             final org.opentrafficsim.xml.generated.Definitions definitions, final Definitions parsedDefinitions,
             final Class<L> typesTagClass, final Class<G> typeTagClass, final Class<T> typeClass,
-            final BiConsumerThrows<G, ? super T> consumer, final InputParameters inputParameters) throws XmlParserException
+            final BiConsumerThrows<G, ? super T> consumer, final Eval eval) throws XmlParserException
     {
         for (L typesTag : ParseUtil.getObjectsOfType(definitions.getIncludeAndGtuTypesAndGtuTemplates(), typesTagClass))
         {
@@ -194,7 +194,7 @@ public final class DefinitionsParser
                     {
                         // Create new type with id and existing parent
                         T parent = getDefinition(typeClass, parsedDefinitions, h.getParent(), typeClass.getSimpleName(),
-                                h.getId(), "parent", inputParameters);
+                                h.getId(), "parent", eval);
                         t = Try.assign(
                                 () -> ((Constructor<T>) ClassUtil.resolveConstructor(typeClass,
                                         new Class[] {String.class, typeClass})).newInstance(h.getId(), parent),
@@ -223,8 +223,8 @@ public final class DefinitionsParser
                         for (Compatibility compTag : c.getCompatibility())
                         {
                             GtuType gtuType = getDefinition(GtuType.class, parsedDefinitions, compTag.getGtuType(),
-                                    typeClass.getSimpleName() + "(.Compatibility)", c.getId(), "GtuType", inputParameters);
-                            if (compTag.getCompatible().get(inputParameters))
+                                    typeClass.getSimpleName() + "(.Compatibility)", c.getId(), "GtuType", eval);
+                            if (compTag.getCompatible().get(eval))
                             {
                                 compatibleType.addCompatibleGtuType(gtuType);
                             }
@@ -247,13 +247,12 @@ public final class DefinitionsParser
     /**
      * Parse a single lane bias from XML.
      * @param laneBias org.opentrafficsim.xml.generated.LaneBias; lane bias to parse.
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return LaneBias; parsed lane bias.
      */
-    public static LaneBias parseLaneBias(final org.opentrafficsim.xml.generated.LaneBias laneBias,
-            final InputParameters inputParameters)
+    public static LaneBias parseLaneBias(final org.opentrafficsim.xml.generated.LaneBias laneBias, final Eval eval)
     {
-        double bias = laneBias.getBias().get(inputParameters);
+        double bias = laneBias.getBias().get(eval);
         int stickyLanes;
         if (laneBias.getStickyLanes() == null)
         {
@@ -261,28 +260,27 @@ public final class DefinitionsParser
         }
         else
         {
-            if (laneBias.getStickyLanes().get(inputParameters).compareTo(Integer.MAX_VALUE) > 0)
+            if (laneBias.getStickyLanes().get(eval).compareTo(Integer.MAX_VALUE) > 0)
             {
                 stickyLanes = Integer.MAX_VALUE;
             }
             else
             {
-                stickyLanes = laneBias.getStickyLanes().get(inputParameters);
+                stickyLanes = laneBias.getStickyLanes().get(eval);
             }
         }
         RoadPosition roadPosition;
         if (laneBias.getFromRight() != null)
         {
-            roadPosition = new RoadPosition.ByValue(laneBias.getFromRight().get(inputParameters));
+            roadPosition = new RoadPosition.ByValue(laneBias.getFromRight().get(eval));
         }
         else if (laneBias.getFromLeft() != null)
         {
-            roadPosition = new RoadPosition.ByValue(1.0 - laneBias.getFromLeft().get(inputParameters));
+            roadPosition = new RoadPosition.ByValue(1.0 - laneBias.getFromLeft().get(eval));
         }
         else
         {
-            roadPosition = new RoadPosition.BySpeed(laneBias.getLeftSpeed().get(inputParameters),
-                    laneBias.getRightSpeed().get(inputParameters));
+            roadPosition = new RoadPosition.BySpeed(laneBias.getLeftSpeed().get(eval), laneBias.getRightSpeed().get(eval));
         }
         return new LaneBias(roadPosition, bias, stickyLanes);
     }
@@ -295,17 +293,17 @@ public final class DefinitionsParser
      * @param type String; definition type being parsed, e.g. LaneType.
      * @param elementId String; id of element being parsed.
      * @param field String; field in element being obtained, e.g. GtuType or Parent.
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @param <T> element type
      * @return parsed element.
      * @throws XmlParserException when the desired element is not in the parsed definitions.
      */
     private static <T extends HierarchicalType<T, ?>> T getDefinition(final Class<T> clazz, final Definitions parsedDefinitions,
-            final StringType stringType, final String type, final String elementId, final String field,
-            final InputParameters inputParameters) throws XmlParserException
+            final StringType stringType, final String type, final String elementId, final String field, final Eval eval)
+            throws XmlParserException
     {
         Throw.when(stringType == null, XmlParserException.class, "%s %s %s not defined", type, elementId, field);
-        T t = parsedDefinitions.get(clazz, stringType.get(inputParameters));
+        T t = parsedDefinitions.get(clazz, stringType.get(eval));
         Throw.when(t == null, XmlParserException.class, "%s %s %s not found", type, elementId, field);
         return t;
     }
@@ -333,19 +331,18 @@ public final class DefinitionsParser
      * Parse the ParameterType tags in the OTS XML file.
      * @param definitions Definitions; the Definitions tag
      * @param parameterMap map to store parameter type by id
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @throws XmlParserException if the field in a ParameterType does not refer to a ParameterType&lt;?&gt;
      */
     public static void parseParameterTypes(final org.opentrafficsim.xml.generated.Definitions definitions,
-            final Map<String, ParameterType<?>> parameterMap, final InputParameters inputParameters) throws XmlParserException
+            final Map<String, ParameterType<?>> parameterMap, final Eval eval) throws XmlParserException
     {
         for (org.opentrafficsim.xml.generated.ParameterType parameterType : ParseUtil.getObjectsOfType(
                 definitions.getIncludeAndGtuTypesAndGtuTemplates(), org.opentrafficsim.xml.generated.ParameterType.class))
         {
             try
             {
-                parameterMap.put(parameterType.getId(),
-                        (ParameterType<?>) parameterType.getField().get(inputParameters).get(null));
+                parameterMap.put(parameterType.getId(), (ParameterType<?>) parameterType.getField().get(eval).get(null));
             }
             catch (ClassCastException exception)
             {

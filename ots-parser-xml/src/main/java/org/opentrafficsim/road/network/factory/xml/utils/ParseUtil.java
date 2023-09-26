@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.parameters.InputParameters;
+import org.djutils.eval.Eval;
 import org.opentrafficsim.road.gtu.generator.CfBaRoomChecker;
 import org.opentrafficsim.road.gtu.generator.CfRoomChecker;
-import org.opentrafficsim.road.gtu.generator.TtcRoomChecker;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
+import org.opentrafficsim.road.gtu.generator.TtcRoomChecker;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.xml.bindings.types.LengthBeginEndType.LengthBeginEnd;
 import org.opentrafficsim.xml.generated.RandomStreamSource;
@@ -60,12 +60,12 @@ public final class ParseUtil
      * Find and return the stream belonging to te streamId.
      * @param streamInformation the map with streams from the RUN tag
      * @param streamSource the stream source
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return the stream belonging to te streamId
      * @throws XmlParserException when the stream could not be found
      */
     public static StreamInterface findStream(final StreamInformation streamInformation, final RandomStreamSource streamSource,
-            final InputParameters inputParameters) throws XmlParserException
+            final Eval eval) throws XmlParserException
     {
         String streamId;
         if (streamSource == null || streamSource.getDefault() == null)
@@ -78,7 +78,7 @@ public final class ParseUtil
         }
         else
         {
-            streamId = streamSource.getDefined().get(inputParameters);
+            streamId = streamSource.getDefined().get(eval);
         }
         if (streamInformation.getStream(streamId) == null)
         {
@@ -111,10 +111,10 @@ public final class ParseUtil
     /**
      * Parse room checker.
      * @param roomChecker RoomCheckerType; room checker type
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return RoomChecker; parsed room checker
      */
-    public static RoomChecker parseRoomChecker(final RoomCheckerType roomChecker, final InputParameters inputParameters)
+    public static RoomChecker parseRoomChecker(final RoomCheckerType roomChecker, final Eval eval)
     {
         if (roomChecker == null || roomChecker.getCf() != null)
         {
@@ -124,6 +124,6 @@ public final class ParseUtil
         {
             return new CfBaRoomChecker();
         }
-        return new TtcRoomChecker(roomChecker.getTtc().get(inputParameters));
+        return new TtcRoomChecker(roomChecker.getTtc().get(eval));
     }
 }

@@ -16,6 +16,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.base.DoubleScalarRel;
+import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
 import org.jgrapht.alg.interfaces.AStarAdmissibleHeuristic;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -34,7 +35,6 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.core.parameters.InputParameters;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
@@ -94,22 +94,22 @@ public final class DemandParser
      * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
      * @param definitions Definitions; parsed definitions
      * @param demand Demand; the Demand tag
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
     static void parseRoutes(final RoadNetwork otsNetwork, final Definitions definitions, final Demand demand,
-            final InputParameters inputParameters) throws NetworkException
+            final Eval eval) throws NetworkException
     {
         for (org.opentrafficsim.xml.generated.Route routeTag : demand.getRoute())
         {
-            String gtuTypeString = routeTag.getGtuType().get(inputParameters);
+            String gtuTypeString = routeTag.getGtuType().get(eval);
             GtuType gtuType = definitions.get(GtuType.class, gtuTypeString);
             Route route = new Route(routeTag.getId(), gtuType);
             Throw.when(gtuType == null, NetworkException.class, "GtuType %s not found in Route %s", gtuTypeString,
                     routeTag.getId());
             for (StringType nodeTag : routeTag.getNode())
             {
-                Node node = otsNetwork.getNode(nodeTag.get(inputParameters));
+                Node node = otsNetwork.getNode(nodeTag.get(eval));
                 Throw.when(node == null, NetworkException.class, "Node %s not found in Route %s", nodeTag, routeTag.getId());
                 route.addNode(node);
             }
@@ -122,31 +122,31 @@ public final class DemandParser
      * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
      * @param definitions Definitions; parsed definitions
      * @param demand Demand; the Demand tag
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
     static void parseShortestRoutes(final RoadNetwork otsNetwork, final Definitions definitions, final Demand demand,
-            final InputParameters inputParameters) throws NetworkException
+            final Eval eval) throws NetworkException
     {
         for (ShortestRoute shortestRouteTag : demand.getShortestRoute())
         {
-            String gtuTypeId = shortestRouteTag.getGtuType().get(inputParameters);
+            String gtuTypeId = shortestRouteTag.getGtuType().get(eval);
             GtuType gtuType = definitions.get(GtuType.class, gtuTypeId);
             Throw.when(gtuType == null, NetworkException.class, "GtuType %s not found in ShortestRoute %s",
                     shortestRouteTag.getGtuType(), shortestRouteTag.getId());
             Route route = new Route(shortestRouteTag.getId(), gtuType);
-            String nodeFromId = shortestRouteTag.getFrom().get(inputParameters);
+            String nodeFromId = shortestRouteTag.getFrom().get(eval);
             Node nodeFrom = otsNetwork.getNode(nodeFromId);
             Throw.when(nodeFrom == null, NetworkException.class, "From Node %s not found in ShortestRoute", nodeFromId,
                     shortestRouteTag.getId());
-            String nodeToId = shortestRouteTag.getTo().get(inputParameters);
+            String nodeToId = shortestRouteTag.getTo().get(eval);
             Node nodeTo = otsNetwork.getNode(nodeToId);
             Throw.when(nodeTo == null, NetworkException.class, "To Node %s not found in ShortestRoute", nodeToId,
                     shortestRouteTag.getId());
             List<Node> nodesVia = new ArrayList<>();
             for (StringType nodeViaValue : shortestRouteTag.getVia())
             {
-                String nodeViaId = nodeViaValue.get(inputParameters);
+                String nodeViaId = nodeViaValue.get(eval);
                 Node nodeVia = otsNetwork.getNode(nodeViaId);
                 Throw.when(nodeTo == null, NetworkException.class, "Via Node %s not found in ShortestRoute", nodeViaId,
                         shortestRouteTag.getId());
@@ -191,8 +191,8 @@ public final class DemandParser
             else if (cost.getDistanceAndFreeFlowTime() != null)
             {
                 // Balance time and distance
-                LinearDensity perDistance = cost.getDistanceAndFreeFlowTime().getDistanceCost().get(inputParameters);
-                Frequency perTime = cost.getDistanceAndFreeFlowTime().getTimeCost().get(inputParameters);
+                LinearDensity perDistance = cost.getDistanceAndFreeFlowTime().getDistanceCost().get(eval);
+                Frequency perTime = cost.getDistanceAndFreeFlowTime().getTimeCost().get(eval);
                 Speed maxSpeed = new Speed(250.0, SpeedUnit.KM_PER_HOUR);
                 AStarAdmissibleHeuristic<Node> aStarHeuristicTime = getTimeAStarHeuristic(maxSpeed);
                 linkWeight = new LinkWeight()
@@ -311,12 +311,12 @@ public final class DemandParser
      * Parse the RouteMix tags.
      * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
      * @param demand Demand; the Demand tag
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return id-based Map of routemix objects as FrequencyAndObject lists
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
     static Map<String, List<FrequencyAndObject<Route>>> parseRouteMix(final RoadNetwork otsNetwork, final Demand demand,
-            final InputParameters inputParameters) throws NetworkException
+            final Eval eval) throws NetworkException
     {
         Map<String, List<FrequencyAndObject<Route>>> routeMixMap = new LinkedHashMap<>();
         for (RouteMix routeMixTag : demand.getRouteMix())
@@ -324,8 +324,8 @@ public final class DemandParser
             List<FrequencyAndObject<Route>> probRoutes = new ArrayList<>();
             for (RouteMix.Route mixRoute : routeMixTag.getRoute())
             {
-                String routeName = mixRoute.getId().get(inputParameters);
-                double weight = mixRoute.getWeight().get(inputParameters);
+                String routeName = mixRoute.getId().get(eval);
+                double weight = mixRoute.getWeight().get(eval);
                 Route route = otsNetwork.getRoute(routeName);
                 Throw.when(route == null, NetworkException.class, "Parsing RouteMix %s -- Route %s not found",
                         routeMixTag.getId(), routeName);
@@ -340,12 +340,12 @@ public final class DemandParser
      * Parse the ShortestRouteMix tags.
      * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
      * @param demand Demand; the Demand tag
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return id-based Map of routemix objects as FrequencyAndObject lists
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
     static Map<String, List<FrequencyAndObject<Route>>> parseShortestRouteMix(final RoadNetwork otsNetwork, final Demand demand,
-            final InputParameters inputParameters) throws NetworkException
+            final Eval eval) throws NetworkException
     {
         Map<String, List<FrequencyAndObject<Route>>> shortestRouteMixMap = new LinkedHashMap<>();
         for (ShortestRouteMix routeMixTag : demand.getShortestRouteMix())
@@ -353,8 +353,8 @@ public final class DemandParser
             List<FrequencyAndObject<Route>> probRoutes = new ArrayList<>();
             for (ShortestRouteMix.ShortestRoute mixRoute : routeMixTag.getShortestRoute())
             {
-                String routeName = mixRoute.getId().get(inputParameters);
-                double weight = mixRoute.getWeight().get(inputParameters);
+                String routeName = mixRoute.getId().get(eval);
+                double weight = mixRoute.getWeight().get(eval);
                 Route route = otsNetwork.getRoute(routeName);
                 Throw.when(route == null, NetworkException.class, "Parsing ShortestRouteMix %s -- ShortestRoute %s not found",
                         routeMixTag.getId(), routeName);
@@ -374,7 +374,7 @@ public final class DemandParser
      * @param routeMixMap map with route mix entries
      * @param shortestRouteMixMap map with shortest route mix entries
      * @param streamInformation map with stream information
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return list of created GTU generators
      * @throws XmlParserException when the objects cannot be inserted into the network due to inconsistencies
      */
@@ -382,7 +382,7 @@ public final class DemandParser
             final Demand demand, final Map<String, GtuTemplate> gtuTemplates,
             final Map<String, List<FrequencyAndObject<Route>>> routeMixMap,
             final Map<String, List<FrequencyAndObject<Route>>> shortestRouteMixMap, final StreamInformation streamInformation,
-            final InputParameters inputParameters) throws XmlParserException
+            final Eval eval) throws XmlParserException
     {
         OtsSimulatorInterface simulator = otsNetwork.getSimulator();
         List<LaneBasedGtuGenerator> generators = new ArrayList<>();
@@ -391,15 +391,15 @@ public final class DemandParser
             for (org.opentrafficsim.xml.generated.Generator generatorTag : demand.getGenerator())
             {
                 StreamInterface stream =
-                        ParseUtil.findStream(streamInformation, generatorTag.getRandomStream(), inputParameters);
+                        ParseUtil.findStream(streamInformation, generatorTag.getRandomStream(), eval);
 
-                String linkId = generatorTag.getLink().get(inputParameters);
-                String laneId = generatorTag.getLane().get(inputParameters);
+                String linkId = generatorTag.getLink().get(eval);
+                String laneId = generatorTag.getLane().get(eval);
 
                 Generator<Route> routeGenerator;
                 if (generatorTag.getRoute() != null)
                 {
-                    String routeId = generatorTag.getRoute().get(inputParameters);
+                    String routeId = generatorTag.getRoute().get(eval);
                     Route route = otsNetwork.getRoute(routeId);
                     Throw.when(route == null, XmlParserException.class, "Generator for Lane %s.%s: Route %s not found", linkId,
                             laneId, routeId);
@@ -408,7 +408,7 @@ public final class DemandParser
 
                 else if (generatorTag.getRouteMix() != null)
                 {
-                    String routeMixId = generatorTag.getRouteMix().get(inputParameters);
+                    String routeMixId = generatorTag.getRouteMix().get(eval);
                     List<FrequencyAndObject<Route>> routeMix = routeMixMap.get(routeMixId);
                     Throw.when(routeMix == null, XmlParserException.class, "Generator for Lane %s.%s: RouteMix %s not found",
                             linkId, laneId, routeMixId);
@@ -422,7 +422,7 @@ public final class DemandParser
                     }
                     Throw.when(routeMixXml == null, XmlParserException.class, "Route mix '%s' not defined.", routeMixId);
                     StreamInterface routeMixStream =
-                            ParseUtil.findStream(streamInformation, routeMixXml.getRandomStream(), inputParameters);
+                            ParseUtil.findStream(streamInformation, routeMixXml.getRandomStream(), eval);
                     try
                     {
                         routeGenerator = new ProbabilisticRouteGenerator(routeMix, routeMixStream);
@@ -436,7 +436,7 @@ public final class DemandParser
 
                 else if (generatorTag.getShortestRoute() != null)
                 {
-                    String shortestRouteId = generatorTag.getShortestRoute().get(inputParameters);
+                    String shortestRouteId = generatorTag.getShortestRoute().get(eval);
                     Route shortestRoute = otsNetwork.getRoute(shortestRouteId);
                     Throw.when(shortestRoute == null, XmlParserException.class,
                             "Generator for Lane %s.%s: ShortestRoute %s not found", linkId, laneId, shortestRouteId);
@@ -445,7 +445,7 @@ public final class DemandParser
 
                 else if (generatorTag.getShortestRouteMix() != null)
                 {
-                    String shortestRouteMixId = generatorTag.getShortestRouteMix().get(inputParameters);
+                    String shortestRouteMixId = generatorTag.getShortestRouteMix().get(eval);
                     List<FrequencyAndObject<Route>> shortestRouteMix = shortestRouteMixMap.get(shortestRouteMixId);
                     Throw.when(shortestRouteMix == null, XmlParserException.class,
                             "Generator for Lane %s.%s: ShortestRouteMix %s not found", linkId, laneId, shortestRouteMixId);
@@ -460,7 +460,7 @@ public final class DemandParser
                     Throw.when(shortestRouteMixXml == null, XmlParserException.class, "Shortest route mix '%s' not defined.",
                             shortestRouteMixId);
                     StreamInterface shortestRouteMixStream =
-                            ParseUtil.findStream(streamInformation, shortestRouteMixXml.getRandomStream(), inputParameters);
+                            ParseUtil.findStream(streamInformation, shortestRouteMixXml.getRandomStream(), eval);
                     try
                     {
                         routeGenerator = new ProbabilisticRouteGenerator(shortestRouteMix, shortestRouteMixStream);
@@ -488,17 +488,17 @@ public final class DemandParser
                 if (generatorTag.getGtuTemplate() != null)
                 {
                     gtuTypeDistribution = new Distribution<>(stream);
-                    String gtuTemplateId = generatorTag.getGtuTemplate().get(inputParameters);
+                    String gtuTemplateId = generatorTag.getGtuTemplate().get(eval);
                     GtuTemplate templateTag = gtuTemplates.get(gtuTemplateId);
                     Throw.when(templateTag == null, XmlParserException.class, "GtuTemplate %s in generator not defined",
                             gtuTemplateId);
                     LaneBasedGtuTemplate templateGtuType = parseGtuTemplate(templateTag, definitions, streamInformation,
-                            gtuTemplateId, routeGenerator, strategicalFactory, inputParameters);
+                            gtuTemplateId, routeGenerator, strategicalFactory, eval);
                     gtuTypeDistribution.add(new FrequencyAndObject<>(1.0, templateGtuType));
                 }
                 else if (generatorTag.getGtuTemplateMix() != null)
                 {
-                    String gtuTemplateMixId = generatorTag.getGtuTemplateMix().get(inputParameters);
+                    String gtuTemplateMixId = generatorTag.getGtuTemplateMix().get(eval);
                     Throw.when(demand.getGtuTemplateMix() == null, XmlParserException.class,
                             "GtuTemplateMix %s cannot be found, there are no mixes defined.", gtuTemplateMixId);
                     GtuTemplateMix gtuTemplateMix = null;
@@ -513,16 +513,16 @@ public final class DemandParser
                     Throw.when(gtuTemplateMix == null, XmlParserException.class, "GtuTemplateMix %s is not defined.",
                             gtuTemplateMixId);
                     StreamInterface mixStream = gtuTemplateMix.getRandomStream() == null ? stream
-                            : ParseUtil.findStream(streamInformation, gtuTemplateMix.getRandomStream(), inputParameters);
+                            : ParseUtil.findStream(streamInformation, gtuTemplateMix.getRandomStream(), eval);
                     gtuTypeDistribution = new Distribution<>(mixStream);
                     for (org.opentrafficsim.xml.generated.GtuTemplateMix.GtuTemplate template : gtuTemplateMix.getGtuTemplate())
                     {
                         Throw.when(!gtuTemplates.containsKey(template.getId()), XmlParserException.class,
                                 "GtuTemplate %s is not defined.", template.getId());
                         LaneBasedGtuTemplate templateGtuType = parseGtuTemplate(gtuTemplates.get(template.getId()), definitions,
-                                streamInformation, gtuTemplateMixId, routeGenerator, strategicalFactory, inputParameters);
+                                streamInformation, gtuTemplateMixId, routeGenerator, strategicalFactory, eval);
                         gtuTypeDistribution.add(new FrequencyAndObject<LaneBasedGtuTemplate>(
-                                template.getWeight().get(inputParameters), templateGtuType));
+                                template.getWeight().get(eval), templateGtuType));
                     }
                 }
                 else
@@ -530,15 +530,15 @@ public final class DemandParser
                     throw new XmlParserException("No GTU information in Generator");
                 }
 
-                RoomChecker roomChecker = ParseUtil.parseRoomChecker(generatorTag.getRoomChecker(), inputParameters);
+                RoomChecker roomChecker = ParseUtil.parseRoomChecker(generatorTag.getRoomChecker(), eval);
 
                 Generator<Duration> headwayGenerator =
-                        new HeadwayGenerator(generatorTag.getFrequency().get(inputParameters), stream);
+                        new HeadwayGenerator(generatorTag.getFrequency().get(eval), stream);
 
                 CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(linkId);
                 Lane lane = (Lane) link.getCrossSectionElement(laneId);
                 Length position =
-                        ParseUtil.parseLengthBeginEnd(generatorTag.getPosition().get(inputParameters), lane.getLength());
+                        ParseUtil.parseLengthBeginEnd(generatorTag.getPosition().get(eval), lane.getLength());
                 Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
                 initialLongitudinalPositions.add(new LanePosition(lane, position));
 
@@ -566,25 +566,25 @@ public final class DemandParser
      * @param gtuTemplateId String; id of GTU template.
      * @param routeGenerator Generator&lt;Route&gt;; route generator.
      * @param strategicalFactory LaneBasedStrategicalRoutePlannerFactory; strategical factory.
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return LaneBasedGtuTemplate; parsed GTU template.
      * @throws XmlParserException if the GtuType is not defined.
      */
     private static LaneBasedGtuTemplate parseGtuTemplate(final GtuTemplate templateTag, final Definitions definitions,
             final StreamInformation streamInformation, final String gtuTemplateId, final Generator<Route> routeGenerator,
-            final LaneBasedStrategicalRoutePlannerFactory strategicalFactory, final InputParameters inputParameters)
+            final LaneBasedStrategicalRoutePlannerFactory strategicalFactory, final Eval eval)
             throws XmlParserException
     {
-        String gtuTypeId = templateTag.getGtuType().get(inputParameters);
+        String gtuTypeId = templateTag.getGtuType().get(eval);
         GtuType gtuType = definitions.get(GtuType.class, gtuTypeId);
         Throw.when(gtuType == null, XmlParserException.class, "GtuType %s in GtuTemplate %s not defined", gtuTypeId,
                 gtuTemplateId);
         Generator<Length> lengthGenerator = makeGenerator(streamInformation, templateTag.getLengthDist(),
-                templateTag.getLengthDist().getLengthUnit().get(inputParameters), inputParameters);
+                templateTag.getLengthDist().getLengthUnit().get(eval), eval);
         Generator<Length> widthGenerator = makeGenerator(streamInformation, templateTag.getWidthDist(),
-                templateTag.getWidthDist().getLengthUnit().get(inputParameters), inputParameters);
+                templateTag.getWidthDist().getLengthUnit().get(eval), eval);
         Generator<Speed> maximumSpeedGenerator = makeGenerator(streamInformation, templateTag.getMaxSpeedDist(),
-                templateTag.getMaxSpeedDist().getSpeedUnit().get(inputParameters), inputParameters);
+                templateTag.getMaxSpeedDist().getSpeedUnit().get(eval), eval);
         LaneBasedGtuTemplate templateGtuType = new LaneBasedGtuTemplate(gtuType, lengthGenerator, widthGenerator,
                 maximumSpeedGenerator, strategicalFactory, routeGenerator);
         return templateGtuType;
@@ -595,18 +595,18 @@ public final class DemandParser
      * @param streamMap StreamInformation; the map with predefined streams
      * @param distribution ConstantDistType; the tag to parse (sub class of ConstantDistType)
      * @param unit U; unit as taken from the tag
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return the generator
      * @throws XmlParserException on parse error
      */
     private static <T extends DoubleScalarRel<U, T>, U extends Unit<U>> Generator<T> makeGenerator(
             final StreamInformation streamMap, final ConstantDistType distribution, final U unit,
-            final InputParameters inputParameters) throws XmlParserException
+            final Eval eval) throws XmlParserException
     {
         try
         {
             final ContinuousDistDoubleScalar.Rel<T, U> dist =
-                    ParseDistribution.parseContinuousDist(streamMap, distribution, unit, inputParameters);
+                    ParseDistribution.parseContinuousDist(streamMap, distribution, unit, eval);
             Generator<T> generator = new Generator<T>()
             {
                 /** {@inheritDoc} */
@@ -637,19 +637,19 @@ public final class DemandParser
      * @param demand Network; the Network tag
      * @param simulator OtsSimulatorInterface; the simulator
      * @param definitions Definitions; type definitions.
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
     public static void parseSinks(final RoadNetwork otsNetwork, final Demand demand, final OtsSimulatorInterface simulator,
-            final Definitions definitions, final InputParameters inputParameters) throws NetworkException
+            final Definitions definitions, final Eval eval) throws NetworkException
     {
         for (Sink sinkTag : demand.getSink())
         {
-            CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(sinkTag.getLink().get(inputParameters));
-            Lane lane = (Lane) link.getCrossSectionElement(sinkTag.getLane().get(inputParameters));
-            Length position = ParseUtil.parseLengthBeginEnd(sinkTag.getPosition().get(inputParameters), lane.getLength());
-            DetectorType detectorType = definitions.get(DetectorType.class, sinkTag.getType().get(inputParameters));
-            if (sinkTag.getDestination().get(inputParameters))
+            CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(sinkTag.getLink().get(eval));
+            Lane lane = (Lane) link.getCrossSectionElement(sinkTag.getLane().get(eval));
+            Length position = ParseUtil.parseLengthBeginEnd(sinkTag.getPosition().get(eval), lane.getLength());
+            DetectorType detectorType = definitions.get(DetectorType.class, sinkTag.getType().get(eval));
+            if (sinkTag.getDestination().get(eval))
             {
                 new SinkDetector(lane, position, simulator, detectorType, SinkDetector.DESTINATION);
             }

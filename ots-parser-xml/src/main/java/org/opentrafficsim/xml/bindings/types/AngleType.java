@@ -1,5 +1,7 @@
 package org.opentrafficsim.xml.bindings.types;
 
+import java.util.function.Function;
+
 import org.djunits.value.vdouble.scalar.Angle;
 
 /**
@@ -13,13 +15,16 @@ import org.djunits.value.vdouble.scalar.Angle;
 public class AngleType extends ExpressionType<Angle>
 {
 
+    /** Function to convert output from expression to the right type. */
+    private static final Function<Object, Angle> TO_TYPE = (o) -> Angle.instantiateSI(((Number) o).doubleValue());
+
     /**
      * Constructor with value.
      * @param value Angle; value, may be {@code null}.
      */
     public AngleType(final Angle value)
     {
-        super(value);
+        super(value, TO_TYPE);
     }
 
     /**
@@ -28,7 +33,7 @@ public class AngleType extends ExpressionType<Angle>
      */
     public AngleType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
     }
 
 }

@@ -2,7 +2,7 @@ package org.opentrafficsim.road.network.factory.xml.utils;
 
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.base.DoubleScalarRel;
-import org.opentrafficsim.core.parameters.InputParameters;
+import org.djutils.eval.Eval;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.xml.generated.ConstantDistType;
@@ -55,60 +55,58 @@ public final class ParseDistribution
      * @param streamMap StreamInformation; the map with streams from the RUN tag
      * @param distribution ConstantDistType; the tag to parse, a sub type of ConstantDistType
      * @param unit U; unit
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return a typed continuous random distribution.
      * @throws XmlParserException in case of a parse error.
      */
-    public static <T extends DoubleScalarRel<U, T>,
-            U extends Unit<U>> ContinuousDistDoubleScalar.Rel<T, U> parseContinuousDist(final StreamInformation streamMap,
-                    final ConstantDistType distribution, final U unit, final InputParameters inputParameters)
-                    throws XmlParserException
+    public static <T extends DoubleScalarRel<U, T>, U extends Unit<U>> ContinuousDistDoubleScalar.Rel<T, U> parseContinuousDist(
+            final StreamInformation streamMap, final ConstantDistType distribution, final U unit, final Eval eval)
+            throws XmlParserException
     {
-        return new ContinuousDistDoubleScalar.Rel<T, U>(makeDistContinuous(streamMap, distribution, inputParameters), unit);
+        return new ContinuousDistDoubleScalar.Rel<T, U>(makeDistContinuous(streamMap, distribution, eval), unit);
     }
 
     /**
      * Parse a discrete distribution.
      * @param streamMap StreamInformation; map with stream information
      * @param distType DiscreteDistType; the distribution to parse
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return the generated distribution.
      * @throws XmlParserException in case distribution unknown or parameter number does not match.
      */
     public static DistDiscrete makeDistDiscrete(final StreamInformation streamMap, final DiscreteDistType distType,
-            final InputParameters inputParameters) throws XmlParserException
+            final Eval eval) throws XmlParserException
     {
-        StreamInterface stream = ParseUtil.findStream(streamMap, distType.getRandomStream(), inputParameters);
+        StreamInterface stream = ParseUtil.findStream(streamMap, distType.getRandomStream(), eval);
         if (distType.getBernoulliI() != null)
         {
-            return new DistBernoulli(stream, distType.getBernoulliI().getP().get(inputParameters));
+            return new DistBernoulli(stream, distType.getBernoulliI().getP().get(eval));
         }
         else if (distType.getBinomial() != null)
         {
-            return new DistBinomial(stream, distType.getBinomial().getN().get(inputParameters),
-                    distType.getBinomial().getP().get(inputParameters));
+            return new DistBinomial(stream, distType.getBinomial().getN().get(eval), distType.getBinomial().getP().get(eval));
         }
         else if (distType.getConstant() != null)
         {
-            return new DistDiscreteConstant(stream, distType.getConstant().getC().get(inputParameters));
+            return new DistDiscreteConstant(stream, distType.getConstant().getC().get(eval));
         }
         else if (distType.getGeometric() != null)
         {
-            return new DistGeometric(stream, distType.getGeometric().getP().get(inputParameters));
+            return new DistGeometric(stream, distType.getGeometric().getP().get(eval));
         }
         else if (distType.getNegBinomial() != null)
         {
-            return new DistNegBinomial(stream, (int) distType.getNegBinomial().getN().get(inputParameters),
-                    distType.getGeometric().getP().get(inputParameters));
+            return new DistNegBinomial(stream, (int) distType.getNegBinomial().getN().get(eval),
+                    distType.getGeometric().getP().get(eval));
         }
         else if (distType.getPoisson() != null)
         {
-            return new DistPoisson(stream, distType.getPoisson().getLambda().get(inputParameters));
+            return new DistPoisson(stream, distType.getPoisson().getLambda().get(eval));
         }
         else if (distType.getUniform() != null)
         {
-            return new DistDiscreteUniform(stream, distType.getUniform().getMin().get(inputParameters),
-                    distType.getUniform().getMax().get(inputParameters));
+            return new DistDiscreteUniform(stream, distType.getUniform().getMin().get(eval),
+                    distType.getUniform().getMax().get(eval));
         }
         throw new XmlParserException("makeDistDiscrete - unknown distribution function " + distType);
     }
@@ -117,80 +115,72 @@ public final class ParseDistribution
      * Parse a continuous distribution.
      * @param streamMap StreamInformation; map with stream information
      * @param distType ConstantDistType; the distribution to parse
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return the generated distribution.
      * @throws XmlParserException in case distribution unknown or parameter number does not match.
      */
     public static DistContinuous makeDistContinuous(final StreamInformation streamMap, final ConstantDistType distType,
-            final InputParameters inputParameters) throws XmlParserException
+            final Eval eval) throws XmlParserException
     {
-        StreamInterface stream = ParseUtil.findStream(streamMap, distType.getRandomStream(), inputParameters);
+        StreamInterface stream = ParseUtil.findStream(streamMap, distType.getRandomStream(), eval);
         if (distType.getConstant() != null)
         {
-            return new DistConstant(stream, distType.getConstant().getC().get(inputParameters));
+            return new DistConstant(stream, distType.getConstant().getC().get(eval));
         }
         else if (distType.getExponential() != null)
         {
-            return new DistExponential(stream, distType.getExponential().getLambda().get(inputParameters));
+            return new DistExponential(stream, distType.getExponential().getLambda().get(eval));
         }
         else if (distType.getTriangular() != null)
         {
-            return new DistTriangular(stream, distType.getTriangular().getMin().get(inputParameters),
-                    distType.getTriangular().getMode().get(inputParameters),
-                    distType.getTriangular().getMax().get(inputParameters));
+            return new DistTriangular(stream, distType.getTriangular().getMin().get(eval),
+                    distType.getTriangular().getMode().get(eval), distType.getTriangular().getMax().get(eval));
         }
         else if (distType.getNormal() != null)
         {
-            return new DistNormal(stream, distType.getNormal().getMu().get(inputParameters),
-                    distType.getNormal().getSigma().get(inputParameters));
+            return new DistNormal(stream, distType.getNormal().getMu().get(eval), distType.getNormal().getSigma().get(eval));
         }
         else if (distType.getNormal() != null)
         {
-            return new DistNormalTrunc(stream, distType.getNormalTrunc().getMu().get(inputParameters),
-                    distType.getNormalTrunc().getSigma().get(inputParameters),
-                    distType.getNormalTrunc().getMin().get(inputParameters),
-                    distType.getNormalTrunc().getMax().get(inputParameters));
+            return new DistNormalTrunc(stream, distType.getNormalTrunc().getMu().get(eval),
+                    distType.getNormalTrunc().getSigma().get(eval), distType.getNormalTrunc().getMin().get(eval),
+                    distType.getNormalTrunc().getMax().get(eval));
         }
         else if (distType.getBeta() != null)
         {
-            return new DistBeta(stream, distType.getBeta().getAlpha1().get(inputParameters),
-                    distType.getBeta().getAlpha2().get(inputParameters));
+            return new DistBeta(stream, distType.getBeta().getAlpha1().get(eval), distType.getBeta().getAlpha2().get(eval));
         }
         else if (distType.getErlang() != null)
         {
-            return new DistErlang(stream, distType.getErlang().getMean().get(inputParameters),
-                    distType.getErlang().getK().get(inputParameters));
+            return new DistErlang(stream, distType.getErlang().getMean().get(eval), distType.getErlang().getK().get(eval));
         }
         else if (distType.getGamma() != null)
         {
-            return new DistGamma(stream, distType.getGamma().getAlpha().get(inputParameters),
-                    distType.getGamma().getBeta().get(inputParameters));
+            return new DistGamma(stream, distType.getGamma().getAlpha().get(eval), distType.getGamma().getBeta().get(eval));
         }
         else if (distType.getLogNormal() != null)
         {
-            return new DistLogNormal(stream, distType.getLogNormal().getMu().get(inputParameters),
-                    distType.getLogNormal().getSigma().get(inputParameters));
+            return new DistLogNormal(stream, distType.getLogNormal().getMu().get(eval),
+                    distType.getLogNormal().getSigma().get(eval));
         }
         else if (distType.getPearson5() != null)
         {
-            return new DistPearson5(stream, distType.getPearson5().getAlpha().get(inputParameters),
-                    distType.getPearson5().getBeta().get(inputParameters));
+            return new DistPearson5(stream, distType.getPearson5().getAlpha().get(eval),
+                    distType.getPearson5().getBeta().get(eval));
         }
         else if (distType.getPearson6() != null)
         {
-            return new DistPearson6(stream, distType.getPearson6().getAlpha1().get(inputParameters),
-                    distType.getPearson6().getAlpha2().get(inputParameters),
-                    distType.getPearson6().getBeta().get(inputParameters));
+            return new DistPearson6(stream, distType.getPearson6().getAlpha1().get(eval),
+                    distType.getPearson6().getAlpha2().get(eval), distType.getPearson6().getBeta().get(eval));
         }
         else if (distType.getUniform() != null)
         {
-            return new DistUniform(stream, distType.getUniform().getMin().get(inputParameters),
-                    distType.getUniform().getMax().get(inputParameters));
+            return new DistUniform(stream, distType.getUniform().getMin().get(eval), distType.getUniform().getMax().get(eval));
         }
         else if (distType.getWeibull() != null)
         {
-            return new DistWeibull(stream, distType.getWeibull().getAlpha().get(inputParameters),
-                    distType.getWeibull().getBeta().get(inputParameters));
+            return new DistWeibull(stream, distType.getWeibull().getAlpha().get(eval),
+                    distType.getWeibull().getBeta().get(eval));
         }
         throw new XmlParserException("makeDistContinuous - unknown distribution function " + distType);
     }

@@ -1,9 +1,10 @@
 package org.opentrafficsim.xml.bindings.types;
 
 import java.util.Objects;
+import java.util.function.Function;
 
+import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.parameters.InputParameters;
 
 /**
  * ExpressionType is the parent class for all types in XML that need to be parsed with the JAXB generated classes, and which may
@@ -22,27 +23,49 @@ import org.opentrafficsim.core.parameters.InputParameters;
 public abstract class ExpressionType<T>
 {
 
+    /** Function to forward expression output as is. */
+    private static final Function<Object, ?> AS_IS = (o) -> o;
+
     /** The value, when given. */
     private final T value;
 
     /** The expression, when given. */
     private final String expression;
 
+    /** Function to convert output from expression to the right type. */
+    private final Function<Object, T> toType;
+
     /**
      * Constructor with value.
      * @param value T; value.
      */
+    @SuppressWarnings("unchecked")
     public ExpressionType(final T value)
     {
         // value may be null
         this.value = value;
         this.expression = null;
+        this.toType = (Function<Object, T>) AS_IS;
+    }
+
+    /**
+     * Constructor with value and type function.
+     * @param value T; value.
+     * @param toType Function&lt;Object, T&gt;; function to convert output from expression to the right type.
+     */
+    public ExpressionType(final T value, final Function<Object, T> toType)
+    {
+        // value may be null
+        this.value = value;
+        this.expression = null;
+        this.toType = toType;
     }
 
     /**
      * Constructor with expression.
      * @param expression String; expression, without { }.
      */
+    @SuppressWarnings("unchecked")
     public ExpressionType(final String expression)
     {
         Throw.whenNull(expression, "Expression may not be null. Consider using constructor with value.");
@@ -50,6 +73,22 @@ public abstract class ExpressionType<T>
                 "Expression should not have { }.");
         this.value = null;
         this.expression = expression;
+        this.toType = (Function<Object, T>) AS_IS;
+    }
+
+    /**
+     * Constructor with expression and type function.
+     * @param expression String; expression, without { }.
+     * @param toType Function&lt;Object, T&gt;; function to convert output from expression to the right type.
+     */
+    public ExpressionType(final String expression, final Function<Object, T> toType)
+    {
+        Throw.whenNull(expression, "Expression may not be null. Consider using constructor with value.");
+        Throw.when(expression.contains("{") || expression.contains("}"), IllegalArgumentException.class,
+                "Expression should not have { }.");
+        this.value = null;
+        this.expression = expression;
+        this.toType = toType;
     }
 
     /**
@@ -73,32 +112,17 @@ public abstract class ExpressionType<T>
             this.value = (T) input;
             this.expression = null;
         }
+        this.toType = (o) -> (T) o.toString();
     }
 
     /**
      * Returns the value, either directly, or from an internal expression and using the input parameters.
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return value, either directly, or from an internal expression and using the input parameters
      */
-    public T get(final InputParameters inputParameters)
+    public T get(final Eval eval)
     {
-        // TODO: rather than "eval()", evaluate expression with DJUTILS evaluator using input parameters
-        return this.expression == null ? this.value : (T) eval(inputParameters);
-    }
-    
-    /**
-     * Return value, or "1 - value".
-     * @param inputParameters InputParameters; input parameters.
-     * @return value of expression.
-     */
-    @Deprecated
-    private Object eval(final InputParameters inputParameters)
-    {
-        if (this.expression.startsWith("1.0 - "))
-        {
-            return 1.0 - (double) inputParameters.getValue(this.expression.substring(6));
-        }
-        return inputParameters.getValue(this.expression);
+        return this.expression == null ? this.value : this.toType.apply(eval.evaluate(this.expression));
     }
 
     /**

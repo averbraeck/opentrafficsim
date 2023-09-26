@@ -20,9 +20,12 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
 
+import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.eval.Eval;
+import org.djutils.eval.RetrieveValue;
 import org.djutils.exceptions.Throw;
 import org.djutils.io.URLResource;
 import org.djutils.logger.CategoryLogger;
@@ -39,7 +42,6 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.core.parameters.InputParameters;
 import org.opentrafficsim.core.parameters.ParameterFactory;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
@@ -251,9 +253,10 @@ public final class XmlParser implements Serializable
         StreamSeedInformation streamInformation = RunParser.parseStreams(ots.getRun());
         Map<String, Supplier<?>> defaultsMap = new LinkedHashMap<>();
         ParameterWrapper defaults = new ParameterWrapper(null, defaultsMap);
+        Eval eval = new Eval().setRetrieveValue(defaults);
         if (ots.getScenarios() != null)
         {
-            parseInputParameters(ots.getScenarios().getDefaultInputParameters(), streamInformation, defaults, defaultsMap);
+            parseInputParameters(ots.getScenarios().getDefaultInputParameters(), streamInformation, eval, defaultsMap);
         }
         ParameterWrapper inputParameters = defaults;
         if (ots.getScenarios() != null)
@@ -266,15 +269,15 @@ public final class XmlParser implements Serializable
                     {
                         Map<String, Supplier<?>> inputParametersMap = new LinkedHashMap<>();
                         inputParameters = new ParameterWrapper(defaults, inputParametersMap);
-                        parseInputParameters(scenarioTag.getInputParameters(), streamInformation, inputParameters,
-                                inputParametersMap);
+                        eval.setRetrieveValue(inputParameters);
+                        parseInputParameters(scenarioTag.getInputParameters(), streamInformation, eval, inputParametersMap);
                     }
                     break;
                 }
             }
         }
         ExperimentRunControl<Duration> runControl =
-                RunParser.parseRun(otsNetwork.getId(), ots.getRun(), streamInformation, otsNetwork.getSimulator(), defaults);
+                RunParser.parseRun(otsNetwork.getId(), ots.getRun(), streamInformation, otsNetwork.getSimulator(), eval);
 
         // definitions
         Map<String, RoadLayout> roadLayoutMap = new LinkedHashMap<>();
@@ -282,33 +285,32 @@ public final class XmlParser implements Serializable
         Map<String, LaneBias> laneBiases = new LinkedHashMap<>();
         Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap = new LinkedHashMap<>();
         Definitions definitions = DefinitionsParser.parseDefinitions(ots.getDefinitions(), roadLayoutMap, gtuTemplates,
-                laneBiases, linkTypeSpeedLimitMap, inputParameters);
+                laneBiases, linkTypeSpeedLimitMap, eval);
 
         // network
         Network network = ots.getNetwork();
-        Map<String, Direction> nodeDirections = NetworkParser.calculateNodeAngles(otsNetwork, network, inputParameters);
-        NetworkParser.parseNodes(otsNetwork, network, nodeDirections, inputParameters);
+        Map<String, Direction> nodeDirections = NetworkParser.calculateNodeAngles(otsNetwork, network, eval);
+        NetworkParser.parseNodes(otsNetwork, network, nodeDirections, eval);
         Map<String, ContinuousLine> designLines = new LinkedHashMap<>();
         NetworkParser.parseLinks(otsNetwork, definitions, network, nodeDirections, otsNetwork.getSimulator(), designLines,
-                inputParameters);
+                eval);
         NetworkParser.applyRoadLayout(otsNetwork, definitions, network, otsNetwork.getSimulator(), roadLayoutMap,
-                linkTypeSpeedLimitMap, designLines, inputParameters);
-        NetworkParser.buildConflicts(otsNetwork, network, inputParameters);
+                linkTypeSpeedLimitMap, designLines, eval);
+        NetworkParser.buildConflicts(otsNetwork, network, eval);
 
         // routes, generators and sinks
         Demand demand = ots.getDemand();
         if (demand != null)
         {
-            DemandParser.parseRoutes(otsNetwork, definitions, demand, inputParameters);
-            DemandParser.parseShortestRoutes(otsNetwork, definitions, demand, inputParameters);
-            Map<String, List<FrequencyAndObject<Route>>> routeMixMap =
-                    DemandParser.parseRouteMix(otsNetwork, demand, inputParameters);
+            DemandParser.parseRoutes(otsNetwork, definitions, demand, eval);
+            DemandParser.parseShortestRoutes(otsNetwork, definitions, demand, eval);
+            Map<String, List<FrequencyAndObject<Route>>> routeMixMap = DemandParser.parseRouteMix(otsNetwork, demand, eval);
             Map<String, List<FrequencyAndObject<Route>>> shortestRouteMixMap =
-                    DemandParser.parseShortestRouteMix(otsNetwork, demand, inputParameters);
+                    DemandParser.parseShortestRouteMix(otsNetwork, demand, eval);
             List<LaneBasedGtuGenerator> generators = DemandParser.parseGenerators(otsNetwork, definitions, demand, gtuTemplates,
-                    routeMixMap, shortestRouteMixMap, streamInformation, inputParameters);
+                    routeMixMap, shortestRouteMixMap, streamInformation, eval);
             System.out.println("Created " + generators.size() + " generators based on explicit generator definitions");
-            DemandParser.parseSinks(otsNetwork, demand, otsNetwork.getSimulator(), definitions, inputParameters);
+            DemandParser.parseSinks(otsNetwork, demand, otsNetwork.getSimulator(), definitions, eval);
         }
 
         // models and parameters
@@ -316,23 +318,23 @@ public final class XmlParser implements Serializable
         List<ModelType> models = ots.getModels() == null ? new ArrayList<>() : ots.getModels().getModel();
 
         Map<String, ParameterType<?>> parameterTypes = new LinkedHashMap<>();
-        DefinitionsParser.parseParameterTypes(ots.getDefinitions(), parameterTypes, inputParameters);
+        DefinitionsParser.parseParameterTypes(ots.getDefinitions(), parameterTypes, eval);
         ParameterFactory parameterFactory =
-                ModelParser.parseParameters(definitions, models, inputParameters, parameterTypes, streamInformation);
-        Map<String, LaneBasedStrategicalPlannerFactory<?>> factories = ModelParser.parseModel(otsNetwork, models,
-                inputParameters, parameterTypes, streamInformation, parameterFactory);
+                ModelParser.parseParameters(definitions, models, eval, parameterTypes, streamInformation);
+        Map<String, LaneBasedStrategicalPlannerFactory<?>> factories =
+                ModelParser.parseModel(otsNetwork, models, eval, parameterTypes, streamInformation, parameterFactory);
         List<ScenarioType> scenarios = ots.getScenarios() == null ? new ArrayList<>() : ots.getScenarios().getScenario();
-        Map<String, String> modelIdReferrals = ScenarioParser.parseModelIdReferral(scenarios, ots.getDemand(), inputParameters);
+        Map<String, String> modelIdReferrals = ScenarioParser.parseModelIdReferral(scenarios, ots.getDemand(), eval);
 
         // OD generators
         List<LaneBasedGtuGenerator> generators = OdParser.parseDemand(otsNetwork, definitions, demand, gtuTemplates, laneBiases,
-                factories, modelIdReferrals, streamInformation, inputParameters);
+                factories, modelIdReferrals, streamInformation, eval);
         System.out.println("Created " + generators.size() + " generators based on origin destination matrices");
 
         // control
         if (ots.getControl() != null)
         {
-            ControlParser.parseControl(otsNetwork, otsNetwork.getSimulator(), ots.getControl(), definitions, inputParameters);
+            ControlParser.parseControl(otsNetwork, otsNetwork.getSimulator(), ots.getControl(), definitions, eval);
         }
 
         return runControl;
@@ -347,7 +349,7 @@ public final class XmlParser implements Serializable
      * </p>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    private static class ParameterWrapper implements InputParameters
+    private static class ParameterWrapper implements RetrieveValue
     {
         /** Default input parameters. */
         private final ParameterWrapper defaults;
@@ -368,17 +370,22 @@ public final class XmlParser implements Serializable
 
         /** {@inheritDoc} */
         @Override
-        public Object getValue(final String parameter)
+        public Object lookup(final String name)
         {
-            if (this.map.containsKey(parameter))
+            if (this.map.containsKey(name))
             {
-                return this.map.get(parameter).get();
+                Object value = this.map.get(name).get();
+                if (value instanceof Double)
+                {
+                    return Dimensionless.instantiateSI((Double) value);
+                }
+                return value;
             }
             if (this.defaults == null)
             {
-                throw new RuntimeException("Parameter " + parameter + " not available.");
+                throw new RuntimeException("Parameter " + name + " not available.");
             }
-            return this.defaults.getValue(parameter);
+            return this.defaults.lookup(name);
         }
     }
 
@@ -386,13 +393,13 @@ public final class XmlParser implements Serializable
      * Parse input parameters.
      * @param inputParametersXml InputParameters; xml tag.
      * @param streamInformation StreamInformation; stream information.
-     * @param inputParameters InputParameters; for expressions
+     * @param eval Eval; expression evaluator.
      * @param map Map&lt;String, Supplier&lt;?&gt;&gt;; map that underlines inputParameters.
      * @throws XmlParserException when there is circular dependency between parameters.
      */
     private static void parseInputParameters(final org.opentrafficsim.xml.generated.InputParameters inputParametersXml,
-            final StreamInformation streamInformation, final InputParameters inputParameters,
-            final Map<String, Supplier<?>> map) throws XmlParserException
+            final StreamInformation streamInformation, final Eval eval, final Map<String, Supplier<?>> map)
+            throws XmlParserException
     {
         boolean failed = true;
         int pass = 1;
@@ -408,84 +415,84 @@ public final class XmlParser implements Serializable
                     {
                         org.opentrafficsim.xml.generated.InputParameters.Duration p =
                                 (org.opentrafficsim.xml.generated.InputParameters.Duration) parameter;
-                        map.put(trim(p.getId()), () -> p.getValue().get(inputParameters));
+                        map.put(trim(p.getId()), () -> p.getValue().get(eval));
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.InputParameters.DurationDist)
                     {
                         org.opentrafficsim.xml.generated.InputParameters.DurationDist p =
                                 (org.opentrafficsim.xml.generated.InputParameters.DurationDist) parameter;
                         ContinuousDistDoubleScalar.Rel<?, ?> d = ParseDistribution.parseContinuousDist(streamInformation, p,
-                                p.getDurationUnit().get(inputParameters), inputParameters);
+                                p.getDurationUnit().get(eval), eval);
                         map.put(trim(p.getId()), () -> d.draw());
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.InputParameters.Length)
                     {
                         org.opentrafficsim.xml.generated.InputParameters.Length p =
                                 (org.opentrafficsim.xml.generated.InputParameters.Length) parameter;
-                        map.put(trim(p.getId()), () -> p.getValue().get(inputParameters));
+                        map.put(trim(p.getId()), () -> p.getValue().get(eval));
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.InputParameters.LengthDist)
                     {
                         org.opentrafficsim.xml.generated.InputParameters.LengthDist p =
                                 (org.opentrafficsim.xml.generated.InputParameters.LengthDist) parameter;
-                        ContinuousDistDoubleScalar.Rel<?, ?> d = ParseDistribution.parseContinuousDist(streamInformation, p,
-                                p.getLengthUnit().get(inputParameters), inputParameters);
+                        ContinuousDistDoubleScalar.Rel<?, ?> d =
+                                ParseDistribution.parseContinuousDist(streamInformation, p, p.getLengthUnit().get(eval), eval);
                         map.put(trim(p.getId()), () -> d.draw());
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.InputParameters.Speed)
                     {
                         org.opentrafficsim.xml.generated.InputParameters.Speed p =
                                 (org.opentrafficsim.xml.generated.InputParameters.Speed) parameter;
-                        map.put(trim(p.getId()), () -> p.getValue().get(inputParameters));
+                        map.put(trim(p.getId()), () -> p.getValue().get(eval));
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.InputParameters.SpeedDist)
                     {
                         org.opentrafficsim.xml.generated.InputParameters.SpeedDist p =
                                 (org.opentrafficsim.xml.generated.InputParameters.SpeedDist) parameter;
-                        ContinuousDistDoubleScalar.Rel<?, ?> d = ParseDistribution.parseContinuousDist(streamInformation, p,
-                                p.getSpeedUnit().get(inputParameters), inputParameters);
+                        ContinuousDistDoubleScalar.Rel<?, ?> d =
+                                ParseDistribution.parseContinuousDist(streamInformation, p, p.getSpeedUnit().get(eval), eval);
                         map.put(trim(p.getId()), () -> d.draw());
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.InputParameters.Acceleration)
                     {
                         org.opentrafficsim.xml.generated.InputParameters.Acceleration p =
                                 (org.opentrafficsim.xml.generated.InputParameters.Acceleration) parameter;
-                        map.put(trim(p.getId()), () -> p.getValue().get(inputParameters));
+                        map.put(trim(p.getId()), () -> p.getValue().get(eval));
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.InputParameters.AccelerationDist)
                     {
                         org.opentrafficsim.xml.generated.InputParameters.AccelerationDist p =
                                 (org.opentrafficsim.xml.generated.InputParameters.AccelerationDist) parameter;
                         ContinuousDistDoubleScalar.Rel<?, ?> d = ParseDistribution.parseContinuousDist(streamInformation, p,
-                                p.getAccelerationUnit().get(inputParameters), inputParameters);
+                                p.getAccelerationUnit().get(eval), eval);
                         map.put(trim(p.getId()), () -> d.draw());
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.InputParameters.LinearDensity)
                     {
                         org.opentrafficsim.xml.generated.InputParameters.LinearDensity p =
                                 (org.opentrafficsim.xml.generated.InputParameters.LinearDensity) parameter;
-                        map.put(trim(p.getId()), () -> p.getValue().get(inputParameters));
+                        map.put(trim(p.getId()), () -> p.getValue().get(eval));
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.InputParameters.LinearDensityDist)
                     {
                         org.opentrafficsim.xml.generated.InputParameters.LinearDensityDist p =
                                 (org.opentrafficsim.xml.generated.InputParameters.LinearDensityDist) parameter;
                         ContinuousDistDoubleScalar.Rel<?, ?> d = ParseDistribution.parseContinuousDist(streamInformation, p,
-                                p.getLinearDensityUnit().get(inputParameters), inputParameters);
+                                p.getLinearDensityUnit().get(eval), eval);
                         map.put(trim(p.getId()), () -> d.draw());
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.InputParameters.Frequency)
                     {
                         org.opentrafficsim.xml.generated.InputParameters.Frequency p =
                                 (org.opentrafficsim.xml.generated.InputParameters.Frequency) parameter;
-                        map.put(trim(p.getId()), () -> p.getValue().get(inputParameters));
+                        map.put(trim(p.getId()), () -> p.getValue().get(eval));
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.InputParameters.FrequencyDist)
                     {
                         org.opentrafficsim.xml.generated.InputParameters.FrequencyDist p =
                                 (org.opentrafficsim.xml.generated.InputParameters.FrequencyDist) parameter;
                         ContinuousDistDoubleScalar.Rel<?, ?> d = ParseDistribution.parseContinuousDist(streamInformation, p,
-                                p.getFrequencyUnit().get(inputParameters), inputParameters);
+                                p.getFrequencyUnit().get(eval), eval);
                         map.put(trim(p.getId()), () -> d.draw());
                     }
 
@@ -493,13 +500,13 @@ public final class XmlParser implements Serializable
                     {
                         org.opentrafficsim.xml.generated.InputParameters.Double p =
                                 (org.opentrafficsim.xml.generated.InputParameters.Double) parameter;
-                        map.put(trim(p.getId()), () -> p.getValue().get(inputParameters));
+                        map.put(trim(p.getId()), () -> p.getValue().get(eval));
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.InputParameters.DoubleDist)
                     {
                         org.opentrafficsim.xml.generated.InputParameters.DoubleDist p =
                                 (org.opentrafficsim.xml.generated.InputParameters.DoubleDist) parameter;
-                        DistContinuous d = ParseDistribution.makeDistContinuous(streamInformation, p, inputParameters);
+                        DistContinuous d = ParseDistribution.makeDistContinuous(streamInformation, p, eval);
                         map.put(trim(p.getId()), () -> d.draw());
                     }
 
@@ -507,20 +514,20 @@ public final class XmlParser implements Serializable
                     {
                         org.opentrafficsim.xml.generated.InputParameters.Fraction p =
                                 (org.opentrafficsim.xml.generated.InputParameters.Fraction) parameter;
-                        map.put(trim(p.getId()), () -> p.getValue().get(inputParameters));
+                        map.put(trim(p.getId()), () -> p.getValue().get(eval));
                     }
 
                     else if (parameter instanceof org.opentrafficsim.xml.generated.InputParameters.Integer)
                     {
                         org.opentrafficsim.xml.generated.InputParameters.Integer p =
                                 (org.opentrafficsim.xml.generated.InputParameters.Integer) parameter;
-                        map.put(trim(p.getId()), () -> p.getValue().get(inputParameters));
+                        map.put(trim(p.getId()), () -> p.getValue().get(eval));
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.InputParameters.IntegerDist)
                     {
                         org.opentrafficsim.xml.generated.InputParameters.IntegerDist p =
                                 (org.opentrafficsim.xml.generated.InputParameters.IntegerDist) parameter;
-                        DistDiscrete d = ParseDistribution.makeDistDiscrete(streamInformation, p, inputParameters);
+                        DistDiscrete d = ParseDistribution.makeDistDiscrete(streamInformation, p, eval);
                         map.put(trim(p.getId()), () -> d.draw());
                     }
 
@@ -528,21 +535,21 @@ public final class XmlParser implements Serializable
                     {
                         org.opentrafficsim.xml.generated.InputParameters.Boolean p =
                                 (org.opentrafficsim.xml.generated.InputParameters.Boolean) parameter;
-                        map.put(trim(p.getId()), () -> p.getValue().get(inputParameters));
+                        map.put(trim(p.getId()), () -> p.getValue().get(eval));
                     }
 
                     else if (parameter instanceof org.opentrafficsim.xml.generated.InputParameters.String)
                     {
                         org.opentrafficsim.xml.generated.InputParameters.String p =
                                 (org.opentrafficsim.xml.generated.InputParameters.String) parameter;
-                        map.put(trim(p.getId()), () -> p.getValue().get(inputParameters));
+                        map.put(trim(p.getId()), () -> p.getValue().get(eval));
                     }
 
                     else if (parameter instanceof org.opentrafficsim.xml.generated.InputParameters.Class)
                     {
                         org.opentrafficsim.xml.generated.InputParameters.Class p =
                                 (org.opentrafficsim.xml.generated.InputParameters.Class) parameter;
-                        map.put(trim(p.getId()), () -> p.getValue().get(inputParameters));
+                        map.put(trim(p.getId()), () -> p.getValue().get(eval));
                     }
                 }
                 catch (XmlParserException e) // TODO: catch eval exception

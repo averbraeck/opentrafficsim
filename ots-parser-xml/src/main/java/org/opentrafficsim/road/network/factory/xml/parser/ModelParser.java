@@ -18,6 +18,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.base.DoubleScalarRel;
+import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.reflection.ClassUtil;
@@ -32,7 +33,6 @@ import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.gtu.perception.PerceptionCategory;
-import org.opentrafficsim.core.parameters.InputParameters;
 import org.opentrafficsim.core.parameters.ParameterFactory;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -139,7 +139,7 @@ public class ModelParser
      * Parse parameter factories.
      * @param definitions Definitions; parsed definitions.
      * @param models List&lt;MODEL&gt;; models
-     * @param inputParameters InputParameters; input parameters
+     * @param eval Eval; expression evaluator
      * @param parameterTypes Map&lt;String, ParameterType&lt;?&gt;&gt;; parameter types
      * @param streamMap Map&lt;String, StreamInformation&gt;; stream information
      * @param <U> a unit
@@ -150,13 +150,13 @@ public class ModelParser
      */
     @SuppressWarnings("unchecked")
     public static <U extends Unit<U>, T extends DoubleScalarRel<U, T>, K> ParameterFactory parseParameters(
-            final Definitions definitions, final List<ModelType> models, final InputParameters inputParameters,
+            final Definitions definitions, final List<ModelType> models, final Eval eval,
             final Map<String, ParameterType<?>> parameterTypes, final StreamInformation streamMap) throws XmlParserException
     {
         ParameterFactoryByType parameterFactory = new ParameterFactoryByType();
         for (ModelType model : models)
         {
-            GtuType gtuType = definitions.get(GtuType.class, model.getGtuType().get(inputParameters));
+            GtuType gtuType = definitions.get(GtuType.class, model.getGtuType().get(eval));
             // Parameter factory
 
             // set model parameters
@@ -168,142 +168,130 @@ public class ModelParser
                     {
                         org.opentrafficsim.xml.generated.ModelType.ModelParameters.String p =
                                 (org.opentrafficsim.xml.generated.ModelType.ModelParameters.String) parameter;
-                        parameterFactory.addParameter(gtuType,
-                                (ParameterType<String>) parameterTypes.get(p.getId().get(inputParameters)),
-                                p.getValue().get(inputParameters));
+                        parameterFactory.addParameter(gtuType, (ParameterType<String>) parameterTypes.get(p.getId().get(eval)),
+                                p.getValue().get(eval));
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.ModelType.ModelParameters.Acceleration)
                     {
                         org.opentrafficsim.xml.generated.ModelType.ModelParameters.Acceleration p =
                                 (org.opentrafficsim.xml.generated.ModelType.ModelParameters.Acceleration) parameter;
                         parameterFactory.addParameter(gtuType,
-                                (ParameterTypeNumeric<Acceleration>) parameterTypes.get(p.getId().get(inputParameters)),
-                                p.getValue().get(inputParameters));
+                                (ParameterTypeNumeric<Acceleration>) parameterTypes.get(p.getId().get(eval)),
+                                p.getValue().get(eval));
                     }
                     else if (parameter instanceof AccelerationDist)
                     {
                         AccelerationDist p = (AccelerationDist) parameter;
                         parameterFactory.addParameter(gtuType,
-                                (ParameterTypeNumeric<Acceleration>) parameterTypes.get(p.getId().get(inputParameters)),
-                                ParseDistribution.parseContinuousDist(streamMap, p,
-                                        p.getAccelerationUnit().get(inputParameters), inputParameters));
+                                (ParameterTypeNumeric<Acceleration>) parameterTypes.get(p.getId().get(eval)),
+                                ParseDistribution.parseContinuousDist(streamMap, p, p.getAccelerationUnit().get(eval), eval));
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.ModelType.ModelParameters.Boolean)
                     {
                         org.opentrafficsim.xml.generated.ModelType.ModelParameters.Boolean p =
                                 (org.opentrafficsim.xml.generated.ModelType.ModelParameters.Boolean) parameter;
-                        parameterFactory.addParameter(gtuType,
-                                (ParameterType<Boolean>) parameterTypes.get(p.getId().get(inputParameters)),
-                                p.getValue().get(inputParameters));
+                        parameterFactory.addParameter(gtuType, (ParameterType<Boolean>) parameterTypes.get(p.getId().get(eval)),
+                                p.getValue().get(eval));
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.ModelType.ModelParameters.Class)
                     {
                         org.opentrafficsim.xml.generated.ModelType.ModelParameters.Class p =
                                 (org.opentrafficsim.xml.generated.ModelType.ModelParameters.Class) parameter;
                         parameterFactory.addParameter(gtuType,
-                                (ParameterType<Class<?>>) parameterTypes.get(p.getId().get(inputParameters)),
-                                p.getValue().get(inputParameters));
+                                (ParameterType<Class<?>>) parameterTypes.get(p.getId().get(eval)), p.getValue().get(eval));
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.ModelType.ModelParameters.Double)
                     {
                         org.opentrafficsim.xml.generated.ModelType.ModelParameters.Double p =
                                 (org.opentrafficsim.xml.generated.ModelType.ModelParameters.Double) parameter;
                         parameterFactory.addParameter(gtuType,
-                                (ParameterTypeNumeric<Double>) parameterTypes.get(p.getId().get(inputParameters)),
-                                p.getValue().get(inputParameters));
+                                (ParameterTypeNumeric<Double>) parameterTypes.get(p.getId().get(eval)), p.getValue().get(eval));
                     }
                     else if (parameter instanceof DoubleDist)
                     {
                         DoubleDist p = (DoubleDist) parameter;
                         parameterFactory.addParameter(gtuType,
-                                (ParameterTypeNumeric<Double>) parameterTypes.get(p.getId().get(inputParameters)),
-                                ParseDistribution.makeDistContinuous(streamMap, p, inputParameters));
+                                (ParameterTypeNumeric<Double>) parameterTypes.get(p.getId().get(eval)),
+                                ParseDistribution.makeDistContinuous(streamMap, p, eval));
                     }
                     else if (parameter instanceof Fraction)
                     {
                         Fraction p = (Fraction) parameter;
                         parameterFactory.addParameter(gtuType,
-                                (ParameterTypeNumeric<Double>) parameterTypes.get(p.getId().get(inputParameters)),
-                                p.getValue().get(inputParameters));
+                                (ParameterTypeNumeric<Double>) parameterTypes.get(p.getId().get(eval)), p.getValue().get(eval));
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.ModelType.ModelParameters.Frequency)
                     {
                         org.opentrafficsim.xml.generated.ModelType.ModelParameters.Frequency p =
                                 (org.opentrafficsim.xml.generated.ModelType.ModelParameters.Frequency) parameter;
                         parameterFactory.addParameter(gtuType,
-                                (ParameterTypeNumeric<Frequency>) parameterTypes.get(p.getId().get(inputParameters)),
-                                p.getValue().get(inputParameters));
+                                (ParameterTypeNumeric<Frequency>) parameterTypes.get(p.getId().get(eval)),
+                                p.getValue().get(eval));
                     }
                     else if (parameter instanceof FrequencyDist)
                     {
                         FrequencyDist p = (FrequencyDist) parameter;
                         parameterFactory.addParameter(gtuType,
-                                (ParameterTypeNumeric<Frequency>) parameterTypes.get(p.getId().get(inputParameters)),
-                                ParseDistribution.parseContinuousDist(streamMap, p, p.getFrequencyUnit().get(inputParameters),
-                                        inputParameters));
+                                (ParameterTypeNumeric<Frequency>) parameterTypes.get(p.getId().get(eval)),
+                                ParseDistribution.parseContinuousDist(streamMap, p, p.getFrequencyUnit().get(eval), eval));
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.ModelType.ModelParameters.Integer)
                     {
                         org.opentrafficsim.xml.generated.ModelType.ModelParameters.Integer p =
                                 (org.opentrafficsim.xml.generated.ModelType.ModelParameters.Integer) parameter;
                         parameterFactory.addParameter(gtuType,
-                                (ParameterTypeNumeric<Integer>) parameterTypes.get(p.getId().get(inputParameters)),
-                                p.getValue().get(inputParameters).intValue());
+                                (ParameterTypeNumeric<Integer>) parameterTypes.get(p.getId().get(eval)),
+                                p.getValue().get(eval).intValue());
                     }
                     else if (parameter instanceof IntegerDist)
                     {
                         IntegerDist p = (IntegerDist) parameter;
                         parameterFactory.addParameter(gtuType,
-                                (ParameterTypeNumeric<Integer>) parameterTypes.get(p.getId().get(inputParameters)),
-                                ParseDistribution.makeDistDiscrete(streamMap, p, inputParameters));
+                                (ParameterTypeNumeric<Integer>) parameterTypes.get(p.getId().get(eval)),
+                                ParseDistribution.makeDistDiscrete(streamMap, p, eval));
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.ModelType.ModelParameters.Length)
                     {
                         org.opentrafficsim.xml.generated.ModelType.ModelParameters.Length p =
                                 (org.opentrafficsim.xml.generated.ModelType.ModelParameters.Length) parameter;
                         parameterFactory.addParameter(gtuType,
-                                (ParameterTypeNumeric<Length>) parameterTypes.get(p.getId().get(inputParameters)),
-                                p.getValue().get(inputParameters));
+                                (ParameterTypeNumeric<Length>) parameterTypes.get(p.getId().get(eval)), p.getValue().get(eval));
                     }
                     else if (parameter instanceof LengthDist)
                     {
                         LengthDist p = (LengthDist) parameter;
                         parameterFactory.addParameter(gtuType,
-                                (ParameterTypeNumeric<Length>) parameterTypes.get(p.getId().get(inputParameters)),
-                                ParseDistribution.parseContinuousDist(streamMap, p, p.getLengthUnit().get(inputParameters),
-                                        inputParameters));
+                                (ParameterTypeNumeric<Length>) parameterTypes.get(p.getId().get(eval)),
+                                ParseDistribution.parseContinuousDist(streamMap, p, p.getLengthUnit().get(eval), eval));
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.ModelType.ModelParameters.LinearDensity)
                     {
                         org.opentrafficsim.xml.generated.ModelType.ModelParameters.LinearDensity p =
                                 (org.opentrafficsim.xml.generated.ModelType.ModelParameters.LinearDensity) parameter;
                         parameterFactory.addParameter(gtuType,
-                                (ParameterTypeNumeric<LinearDensity>) parameterTypes.get(p.getId().get(inputParameters)),
-                                p.getValue().get(inputParameters));
+                                (ParameterTypeNumeric<LinearDensity>) parameterTypes.get(p.getId().get(eval)),
+                                p.getValue().get(eval));
                     }
                     else if (parameter instanceof LinearDensityDist)
                     {
                         LinearDensityDist p = (LinearDensityDist) parameter;
                         parameterFactory.addParameter(gtuType,
-                                (ParameterTypeNumeric<LinearDensity>) parameterTypes.get(p.getId().get(inputParameters)),
-                                ParseDistribution.parseContinuousDist(streamMap, p,
-                                        p.getLinearDensityUnit().get(inputParameters), inputParameters));
+                                (ParameterTypeNumeric<LinearDensity>) parameterTypes.get(p.getId().get(eval)),
+                                ParseDistribution.parseContinuousDist(streamMap, p, p.getLinearDensityUnit().get(eval), eval));
                     }
                     else if (parameter instanceof org.opentrafficsim.xml.generated.ModelType.ModelParameters.Speed)
                     {
                         org.opentrafficsim.xml.generated.ModelType.ModelParameters.Speed p =
                                 (org.opentrafficsim.xml.generated.ModelType.ModelParameters.Speed) parameter;
                         parameterFactory.addParameter(gtuType,
-                                (ParameterTypeNumeric<Speed>) parameterTypes.get(p.getId().get(inputParameters)),
-                                p.getValue().get(inputParameters));
+                                (ParameterTypeNumeric<Speed>) parameterTypes.get(p.getId().get(eval)), p.getValue().get(eval));
                     }
                     else if (parameter instanceof SpeedDist)
                     {
                         SpeedDist p = (SpeedDist) parameter;
                         parameterFactory.addParameter(gtuType,
-                                (ParameterTypeNumeric<Speed>) parameterTypes.get(p.getId().get(inputParameters)),
-                                ParseDistribution.parseContinuousDist(streamMap, p, p.getSpeedUnit().get(inputParameters),
-                                        inputParameters));
+                                (ParameterTypeNumeric<Speed>) parameterTypes.get(p.getId().get(eval)),
+                                ParseDistribution.parseContinuousDist(streamMap, p, p.getSpeedUnit().get(eval), eval));
                     }
                 }
             }
@@ -315,7 +303,7 @@ public class ModelParser
      * Creates strategical planner factories for models.
      * @param otsNetwork RoadNetwork; network
      * @param models List&lt;MODEL&gt;; models
-     * @param inputParameters InputParameters; input parameters
+     * @param eval Eval; expression evaluator
      * @param parameterTypes Map&lt;String, ParameterType&lt;?&gt;&gt;; parameter types
      * @param streamInformation Map&lt;String, StreamInformation&gt;; stream information
      * @param parameterFactory ParameterFactory; parameter factories
@@ -327,9 +315,9 @@ public class ModelParser
      */
     public static <U extends Unit<U>, T extends DoubleScalarRel<U, T>,
             K> Map<String, LaneBasedStrategicalPlannerFactory<?>> parseModel(final RoadNetwork otsNetwork,
-                    final List<ModelType> models, final InputParameters inputParameters,
-                    final Map<String, ParameterType<?>> parameterTypes, final StreamInformation streamInformation,
-                    final ParameterFactory parameterFactory) throws XmlParserException
+                    final List<ModelType> models, final Eval eval, final Map<String, ParameterType<?>> parameterTypes,
+                    final StreamInformation streamInformation, final ParameterFactory parameterFactory)
+                    throws XmlParserException
     {
         Map<String, LaneBasedStrategicalPlannerFactory<?>> factories = new LinkedHashMap<>();
         for (ModelType model : models)
@@ -340,8 +328,7 @@ public class ModelParser
             {
                 if (model.getTacticalPlanner().getLmrs() != null)
                 {
-                    tacticalPlannerFactory =
-                            parseLmrs(model.getTacticalPlanner().getLmrs(), streamInformation, inputParameters);
+                    tacticalPlannerFactory = parseLmrs(model.getTacticalPlanner().getLmrs(), streamInformation, eval);
                 }
                 else
                 {
@@ -377,29 +364,28 @@ public class ModelParser
      * Parse Lmrs model.
      * @param lmrs org.opentrafficsim.xml.generated.ModelType.TacticalPlanner.Lmrs; Lmrs information
      * @param streamInformation Map&lt;String, StreamInformation&gt;; stream information
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return LaneBasedTacticalPlannerFactory&lt;Lmrs&gt;; Lmrs factory
      * @throws XmlParserException unknown value, missing constructor, etc.
      */
     @SuppressWarnings("unchecked")
     private static LaneBasedTacticalPlannerFactory<Lmrs> parseLmrs(
             final org.opentrafficsim.xml.generated.ModelType.TacticalPlanner.Lmrs lmrs,
-            final StreamInformation streamInformation, final InputParameters inputParameters) throws XmlParserException
+            final StreamInformation streamInformation, final Eval eval) throws XmlParserException
     {
         // Synchronization
         Synchronization synchronization =
-                lmrs.getSynchronization() != null ? lmrs.getSynchronization().get(inputParameters) : Synchronization.PASSIVE;
+                lmrs.getSynchronization() != null ? lmrs.getSynchronization().get(eval) : Synchronization.PASSIVE;
 
         // Cooperation
-        Cooperation cooperation =
-                lmrs.getCooperation() != null ? lmrs.getCooperation().get(inputParameters) : Cooperation.PASSIVE;
+        Cooperation cooperation = lmrs.getCooperation() != null ? lmrs.getCooperation().get(eval) : Cooperation.PASSIVE;
 
         // Gap-acceptance
         GapAcceptance gapAcceptance =
-                lmrs.getGapAcceptance() != null ? lmrs.getGapAcceptance().get(inputParameters) : GapAcceptance.INFORMED;
+                lmrs.getGapAcceptance() != null ? lmrs.getGapAcceptance().get(eval) : GapAcceptance.INFORMED;
 
         // Tailgating
-        Tailgating tailgating = lmrs.getTailgating() != null ? lmrs.getTailgating().get(inputParameters) : Tailgating.NONE;
+        Tailgating tailgating = lmrs.getTailgating() != null ? lmrs.getTailgating().get(eval) : Tailgating.NONE;
 
         // Mandatory incentives
         Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
@@ -419,13 +405,13 @@ public class ModelParser
         {
             try
             {
-                mandatoryIncentives.add((MandatoryIncentive) ClassUtil
-                        .resolveConstructor(classType.get(inputParameters), new Class<?>[0]).newInstance());
+                mandatoryIncentives.add(
+                        (MandatoryIncentive) ClassUtil.resolveConstructor(classType.get(eval), new Class<?>[0]).newInstance());
             }
             catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                     | NoSuchMethodException | ClassCastException exception)
             {
-                throw new XmlParserException("Class " + classType.get(inputParameters)
+                throw new XmlParserException("Class " + classType.get(eval)
                         + " does not have a valid empty contructor, or is not a MandatoryIncentive.");
             }
         }
@@ -460,13 +446,13 @@ public class ModelParser
         {
             try
             {
-                voluntaryIncentives.add((VoluntaryIncentive) ClassUtil
-                        .resolveConstructor(classType.get(inputParameters), new Class<?>[0]).newInstance());
+                voluntaryIncentives.add(
+                        (VoluntaryIncentive) ClassUtil.resolveConstructor(classType.get(eval), new Class<?>[0]).newInstance());
             }
             catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                     | NoSuchMethodException | ClassCastException exception)
             {
-                throw new XmlParserException("Class " + classType.get(inputParameters)
+                throw new XmlParserException("Class " + classType.get(eval)
                         + " does not have a valid empty contructor, or is not a VoluntaryIncentive.");
             }
         }
@@ -498,22 +484,22 @@ public class ModelParser
             try
             {
                 accelerationIncentives.add((AccelerationIncentive) ClassUtil
-                        .resolveConstructor(classType.get(inputParameters), new Class<?>[0]).newInstance());
+                        .resolveConstructor(classType.get(eval), new Class<?>[0]).newInstance());
             }
             catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                     | NoSuchMethodException | ClassCastException exception)
             {
-                throw new XmlParserException("Class " + classType.get(inputParameters)
+                throw new XmlParserException("Class " + classType.get(eval)
                         + " does not have a valid empty contructor, or is not a AccelerationIncentive.");
             }
         }
 
         // Perception
-        PerceptionFactory perceptionFactory = parsePerception(lmrs.getPerception(), inputParameters);
+        PerceptionFactory perceptionFactory = parsePerception(lmrs.getPerception(), eval);
 
         // Car-following model
         CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory =
-                parseCarFollowingModel(lmrs.getCarFollowingModel(), streamInformation, inputParameters);
+                parseCarFollowingModel(lmrs.getCarFollowingModel(), streamInformation, eval);
 
         // Lmrs factory
         return new LmrsFactory(carFollowingModelFactory, perceptionFactory, synchronization, cooperation, gapAcceptance,
@@ -524,13 +510,13 @@ public class ModelParser
      * Parse car-following model.
      * @param carFollowingModel CarFollowingModelType; car-following model information
      * @param streamInformation Map&lt;String, StreamInformation&gt;; stream information
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return CarFollowingModelFactory&lt;? extends CarFollowingModel&gt;; car-following model factory
      * @throws XmlParserException unknown value, missing constructor, etc.
      */
     private static CarFollowingModelFactory<? extends CarFollowingModel> parseCarFollowingModel(
-            final CarFollowingModelType carFollowingModel, final StreamInformation streamInformation,
-            final InputParameters inputParameters) throws XmlParserException
+            final CarFollowingModelType carFollowingModel, final StreamInformation streamInformation, final Eval eval)
+            throws XmlParserException
     {
         // This method works for either IDM or IDM+; for other car-following models the structure needs to be elaborated
         BiFunction<DesiredHeadwayModel, DesiredSpeedModel, CarFollowingModel> carFollowingModelFunction;
@@ -539,18 +525,15 @@ public class ModelParser
         if (carFollowingModel.getIdm() != null)
         {
             carFollowingModelFunction = (headway, speed) -> new Idm(headway, speed);
-            desiredHeadwayModelFactory =
-                    parseDesiredHeadwayModel(carFollowingModel.getIdm().getDesiredHeadwayModel(), inputParameters);
-            desiredSpeedModelFactory =
-                    parseDesiredSpeedModel(carFollowingModel.getIdm().getDesiredSpeedModel(), inputParameters);
+            desiredHeadwayModelFactory = parseDesiredHeadwayModel(carFollowingModel.getIdm().getDesiredHeadwayModel(), eval);
+            desiredSpeedModelFactory = parseDesiredSpeedModel(carFollowingModel.getIdm().getDesiredSpeedModel(), eval);
         }
         else if (carFollowingModel.getIdmPlus() != null)
         {
             carFollowingModelFunction = (headway, speed) -> new IdmPlus(headway, speed);
             desiredHeadwayModelFactory =
-                    parseDesiredHeadwayModel(carFollowingModel.getIdmPlus().getDesiredHeadwayModel(), inputParameters);
-            desiredSpeedModelFactory =
-                    parseDesiredSpeedModel(carFollowingModel.getIdmPlus().getDesiredSpeedModel(), inputParameters);
+                    parseDesiredHeadwayModel(carFollowingModel.getIdmPlus().getDesiredHeadwayModel(), eval);
+            desiredSpeedModelFactory = parseDesiredSpeedModel(carFollowingModel.getIdmPlus().getDesiredSpeedModel(), eval);
         }
         else
         {
@@ -585,13 +568,13 @@ public class ModelParser
     /**
      * Parse desired headway model.
      * @param desiredHeadwayModel DesiredHeadwayModelType; desired headway model tag.
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return Factory for desired headway model.
      * @throws XmlParserException when no supported tag is provided.
      */
     @SuppressWarnings("unchecked")
     private static Factory<DesiredHeadwayModel> parseDesiredHeadwayModel(final DesiredHeadwayModelType desiredHeadwayModel,
-            final InputParameters inputParameters) throws XmlParserException
+            final Eval eval) throws XmlParserException
     {
         if (desiredHeadwayModel.getIdm() != null)
         {
@@ -614,7 +597,7 @@ public class ModelParser
         }
         else if (desiredHeadwayModel.getClazz() != null)
         {
-            return getFactoryForClass((Class<DesiredHeadwayModel>) desiredHeadwayModel.getClazz().get(inputParameters));
+            return getFactoryForClass((Class<DesiredHeadwayModel>) desiredHeadwayModel.getClazz().get(eval));
         }
         throw new XmlParserException("Desired headway model has unsupported value.");
     }
@@ -622,13 +605,13 @@ public class ModelParser
     /**
      * Parse desired speed model.
      * @param desiredSpeedModel DesiredSpeedModelType; desired speed model tag.
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return Factory for desired headway model.
      * @throws XmlParserException when no supported tag is provided.
      */
     @SuppressWarnings("unchecked")
     private static Factory<DesiredSpeedModel> parseDesiredSpeedModel(final DesiredSpeedModelType desiredSpeedModel,
-            final InputParameters inputParameters) throws XmlParserException
+            final Eval eval) throws XmlParserException
     {
         if (desiredSpeedModel.getIdm() != null)
         {
@@ -653,7 +636,7 @@ public class ModelParser
         {
             Throw.when(desiredSpeedModel.getSocio().getSocio() != null, XmlParserException.class,
                     "Socio desired speed model wraps another socio desired speed model. This is not allowed.");
-            Factory<DesiredSpeedModel> wrapped = parseDesiredSpeedModel(desiredSpeedModel.getSocio(), inputParameters);
+            Factory<DesiredSpeedModel> wrapped = parseDesiredSpeedModel(desiredSpeedModel.getSocio(), eval);
             return new Factory<>()
             {
                 /** {@inheritDoc} */
@@ -676,7 +659,7 @@ public class ModelParser
         }
         else if (desiredSpeedModel.getClazz() != null)
         {
-            return getFactoryForClass((Class<DesiredSpeedModel>) desiredSpeedModel.getClazz().get(inputParameters));
+            return getFactoryForClass((Class<DesiredSpeedModel>) desiredSpeedModel.getClazz().get(eval));
         }
         throw new XmlParserException("Desired speed model has unsupported value.");
     }
@@ -738,13 +721,13 @@ public class ModelParser
     /**
      * Parse perception for any tactical planner that has PerceptionType to support perception.
      * @param perception PerceptionType; perception xml information
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return PerceptionFactory; parsed perception factory
      * @throws XmlParserException unknown value, missing constructor, etc.
      */
     @SuppressWarnings("unchecked")
-    private static <G extends Gtu> PerceptionFactory parsePerception(final PerceptionType perception,
-            final InputParameters inputParameters) throws XmlParserException
+    private static <G extends Gtu> PerceptionFactory parsePerception(final PerceptionType perception, final Eval eval)
+            throws XmlParserException
     {
         // Headway GTU type
         HeadwayGtuType headwayGtuType;
@@ -755,10 +738,9 @@ public class ModelParser
         else if (perception.getHeadwayGtuType().getPerceived() != null)
         {
             Perceived perceived = perception.getHeadwayGtuType().getPerceived();
-            Estimation estimation =
-                    perceived.getEstimation() == null ? Estimation.NONE : perceived.getEstimation().get(inputParameters);
+            Estimation estimation = perceived.getEstimation() == null ? Estimation.NONE : perceived.getEstimation().get(eval);
             Anticipation anticipation =
-                    perceived.getAnticipation() == null ? Anticipation.NONE : perceived.getAnticipation().get(inputParameters);
+                    perceived.getAnticipation() == null ? Anticipation.NONE : perceived.getAnticipation().get(eval);
             headwayGtuType = new PerceivedHeadwayGtuType(estimation, anticipation);
         }
         else
@@ -807,7 +789,7 @@ public class ModelParser
             }
             for (ClassType classType : perception.getCategories().getClazz())
             {
-                Class<? extends PerceptionCategory<?, ?>> clazz = classType.get(inputParameters);
+                Class<? extends PerceptionCategory<?, ?>> clazz = classType.get(eval);
                 Constructor<? extends PerceptionCategory<?, ?>> constructor;
                 try
                 {
@@ -852,7 +834,7 @@ public class ModelParser
             Set<Task> tasks = new LinkedHashSet<>();
             for (ClassType taskClass : fuller.getTask())
             {
-                Class<?> clazz = taskClass.get(inputParameters);
+                Class<?> clazz = taskClass.get(eval);
                 componentClasses.add(clazz);
                 try
                 {
@@ -885,7 +867,7 @@ public class ModelParser
             }
             for (ClassType classType : fuller.getBehavioralAdaptations().getClazz())
             {
-                Class<?> clazz = classType.get(inputParameters);
+                Class<?> clazz = classType.get(eval);
                 componentClasses.add(clazz);
                 try
                 {
@@ -913,7 +895,7 @@ public class ModelParser
             }
             else
             {
-                switch (fuller.getTaskManager().get(inputParameters))
+                switch (fuller.getTaskManager().get(eval))
                 {
                     case "SUMMATIVE":
                         taskManager = new SummativeTaskManager();

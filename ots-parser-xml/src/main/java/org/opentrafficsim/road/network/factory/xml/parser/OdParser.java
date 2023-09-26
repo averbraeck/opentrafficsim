@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
@@ -19,7 +18,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
-import org.djunits.value.vdouble.vector.base.DoubleVector;
+import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.multikeymap.MultiKeyMap;
@@ -32,7 +31,6 @@ import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.core.parameters.InputParameters;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
@@ -101,15 +99,15 @@ public final class OdParser
      * @param factories Map&lt;String, LaneBasedStrategicalPlannerFactory&lt;?&gt;&gt;; factories from model parser
      * @param modelIdReferrals Map&lt;String, String&gt;; model id referrals
      * @param streamMap Map&lt;String, StreamInformation&gt;; stream map
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return List&lt;LaneBasedGtuGenerator&gt;; generators
      * @throws XmlParserException if the OD contains an inconsistency or error
      */
     public static List<LaneBasedGtuGenerator> parseDemand(final RoadNetwork otsNetwork, final Definitions definitions,
             final Demand demand, final Map<String, org.opentrafficsim.xml.generated.GtuTemplate> gtuTemplates,
             final Map<String, LaneBias> definedLaneBiases, final Map<String, LaneBasedStrategicalPlannerFactory<?>> factories,
-            final Map<String, String> modelIdReferrals, final StreamInformation streamMap,
-            final InputParameters inputParameters) throws XmlParserException
+            final Map<String, String> modelIdReferrals, final StreamInformation streamMap, final Eval eval)
+            throws XmlParserException
     {
         List<LaneBasedGtuGenerator> generators = new ArrayList<>();
 
@@ -127,14 +125,14 @@ public final class OdParser
             List<Node> destinations = new ArrayList<>();
             for (Cell cell : od.getCell())
             {
-                String originId = cell.getOrigin().get(inputParameters);
+                String originId = cell.getOrigin().get(eval);
                 if (!origins.contains(otsNetwork.getNode(originId)))
                 {
                     Node originNode = otsNetwork.getNode(originId);
                     Throw.whenNull(originNode, "Parse demand: cannot find origin %s", originId);
                     origins.add(originNode);
                 }
-                String destinationId = cell.getDestination().get(inputParameters);
+                String destinationId = cell.getDestination().get(eval);
                 if (!destinations.contains(otsNetwork.getNode(destinationId)))
                 {
                     Node destinationNode = otsNetwork.getNode(destinationId);
@@ -145,7 +143,7 @@ public final class OdParser
 
             // Create categorization
             Map<String, Category> categories = new LinkedHashMap<>();
-            Categorization categorization = parseCategories(otsNetwork, definitions, od, categories, inputParameters);
+            Categorization categorization = parseCategories(otsNetwork, definitions, od, categories, eval);
 
             // Global time vector
             TimeVector globalTimeVector = null;
@@ -154,15 +152,15 @@ public final class OdParser
                 List<Time> timeList = new ArrayList<>();
                 for (org.opentrafficsim.xml.generated.GlobalTimeType.Time time : od.getGlobalTime().getTime())
                 {
-                    timeList.add(time.getValue().get(inputParameters));
+                    timeList.add(time.getValue().get(eval));
                 }
                 Collections.sort(timeList);
-                globalTimeVector = Try.assign(() -> new TimeVector(timeList, TimeUnit.DEFAULT),
-                        XmlParserException.class, "Global time has no values.");
+                globalTimeVector = Try.assign(() -> new TimeVector(timeList, TimeUnit.DEFAULT), XmlParserException.class,
+                        "Global time has no values.");
             }
 
-            Interpolation globalInterpolation = od.getGlobalInterpolation().get(inputParameters);
-            double globalFactor = od.getGlobalFactor().get(inputParameters);
+            Interpolation globalInterpolation = od.getGlobalInterpolation().get(eval);
+            double globalFactor = od.getGlobalFactor().get(eval);
 
             // Create the OD matrix
             OdMatrix odMatrix =
@@ -172,19 +170,19 @@ public final class OdParser
             MultiKeyMap<Set<Cell>> demandPerOD = new MultiKeyMap<>(Node.class, Node.class);
             for (Cell cell : od.getCell())
             {
-                Node origin = otsNetwork.getNode(cell.getOrigin().get(inputParameters));
-                Node destination = otsNetwork.getNode(cell.getDestination().get(inputParameters));
+                Node origin = otsNetwork.getNode(cell.getOrigin().get(eval));
+                Node destination = otsNetwork.getNode(cell.getDestination().get(eval));
                 demandPerOD.get(() -> new LinkedHashSet<>(), origin, destination).add(cell);
             }
-            addDemand(categories, globalFactor, odMatrix, demandPerOD, inputParameters);
+            addDemand(categories, globalFactor, odMatrix, demandPerOD, eval);
 
             // OD options
-            Set<GtuTemplate> templates = parseGtuTemplates(definitions, gtuTemplates, streamMap, inputParameters);
+            Set<GtuTemplate> templates = parseGtuTemplates(definitions, gtuTemplates, streamMap, eval);
             OdOptions odOptions = parseOdOptions(otsNetwork, definitions, templates, definedLaneBiases, factories,
-                    modelIdReferrals, streamMap, odOptionsMap, od, categorization, inputParameters);
+                    modelIdReferrals, streamMap, odOptionsMap, od, categorization, eval);
 
             // Invoke OdApplier
-            DetectorType detectorType = definitions.get(DetectorType.class, od.getSinkType().get(inputParameters));
+            DetectorType detectorType = definitions.get(DetectorType.class, od.getSinkType().get(eval));
             Map<String, GeneratorObjects> output =
                     Try.assign(() -> OdApplier.applyOd(otsNetwork, odMatrix, odOptions, detectorType), XmlParserException.class,
                             "Simulator time should be zero when parsing an OD.");
@@ -205,12 +203,12 @@ public final class OdParser
      * @param definitions Definitions; definitions to get GTU types in categories.
      * @param od Od; OD with categories.
      * @param categories Map&lt;String, Category&gt;; map to store categories in.
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return Categorization
      * @throws XmlParserException when a category does not match the categorization.
      */
     private static Categorization parseCategories(final RoadNetwork otsNetwork, final Definitions definitions, final Od od,
-            final Map<String, Category> categories, final InputParameters inputParameters) throws XmlParserException
+            final Map<String, Category> categories, final Eval eval) throws XmlParserException
     {
         Categorization categorization;
         Map<String, Double> categoryFactors = new LinkedHashMap<>();
@@ -261,22 +259,21 @@ public final class OdParser
                 List<Object> objects = new ArrayList<>();
                 if (categorization.entails(GtuType.class))
                 {
-                    objects.add(definitions.get(GtuType.class, category.getGtuType().get(inputParameters)));
+                    objects.add(definitions.get(GtuType.class, category.getGtuType().get(eval)));
                 }
                 if (categorization.entails(Route.class))
                 {
-                    objects.add(otsNetwork.getRoute(category.getRoute().get(inputParameters)));
+                    objects.add(otsNetwork.getRoute(category.getRoute().get(eval)));
                 }
                 if (categorization.entails(Lane.class))
                 {
-                    CrossSectionLink link =
-                            (CrossSectionLink) otsNetwork.getLink(category.getLane().getLink().get(inputParameters));
-                    Lane lane = (Lane) link.getCrossSectionElement(category.getLane().getLane().get(inputParameters));
+                    CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(category.getLane().getLink().get(eval));
+                    Lane lane = (Lane) link.getCrossSectionElement(category.getLane().getLane().get(eval));
                     objects.add(lane);
                 }
                 categories.put(category.getId(), new Category(categorization, objects.get(0),
                         objects.subList(1, objects.size()).toArray(new Object[objects.size() - 1])));
-                categoryFactors.put(category.getId(), category.getFactor().get(inputParameters));
+                categoryFactors.put(category.getId(), category.getFactor().get(eval));
             }
         }
         return categorization;
@@ -288,11 +285,11 @@ public final class OdParser
      * @param globalFactor double; factor on entire OD.
      * @param odMatrix OdMatrix; OD matrix to set demand data in.
      * @param demandPerOD MultiKeyMap&lt;Set&lt;Cell&gt;&gt;; cell tags per origin and destination node.
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @throws XmlParserException when data in inconsistently defined.
      */
     private static void addDemand(final Map<String, Category> categories, final double globalFactor, final OdMatrix odMatrix,
-            final MultiKeyMap<Set<Cell>> demandPerOD, final InputParameters inputParameters) throws XmlParserException
+            final MultiKeyMap<Set<Cell>> demandPerOD, final Eval eval) throws XmlParserException
     {
         Categorization categorization = odMatrix.getCategorization();
         TimeVector globalTimeVector = odMatrix.getGlobalTimeVector();
@@ -339,23 +336,23 @@ public final class OdParser
 
                     // TimeVector: cell > main > global
                     TimeVector timeVector = cell.getLevel() != null && cell.getLevel().get(0).getTime() != null
-                            ? parseTimeVector(cell.getLevel(), inputParameters)
+                            ? parseTimeVector(cell.getLevel(), eval)
                             : (main != null && main.getLevel() != null && main.getLevel().get(0).getTime() != null
-                                    ? parseTimeVector(main.getLevel(), inputParameters) : globalTimeVector);
+                                    ? parseTimeVector(main.getLevel(), eval) : globalTimeVector);
 
                     // Interpolation: cell > main > global
-                    Interpolation interpolation = cell.getInterpolation() != null ? cell.getInterpolation().get(inputParameters)
-                            : (main != null && main.getInterpolation() != null ? main.getInterpolation().get(inputParameters)
+                    Interpolation interpolation = cell.getInterpolation() != null ? cell.getInterpolation().get(eval)
+                            : (main != null && main.getInterpolation() != null ? main.getInterpolation().get(eval)
                                     : globalInterpolation);
 
                     // Category
                     Category category = categorization.equals(Categorization.UNCATEGORIZED) ? Category.UNCATEGORIZED
-                            : categories.get(cell.getCategory().get(inputParameters));
+                            : categories.get(cell.getCategory().get(eval));
 
                     // Factor: (global * main * cell)
                     double factor = globalFactor;
-                    factor = main == null ? factor : factor * main.getFactor().get(inputParameters);
-                    factor = cell.getFactor() == null ? factor : factor * cell.getFactor().get(inputParameters);
+                    factor = main == null ? factor : factor * main.getFactor().get(eval);
+                    factor = cell.getFactor() == null ? factor : factor * cell.getFactor().get(eval);
 
                     // Figure out where the base demand, and optional factors are
                     Frequency[] demandRaw = new Frequency[timeVector.size()];
@@ -378,23 +375,22 @@ public final class OdParser
                         factors = cell.getLevel();
                     }
                     // sort
-                    sortLevelTime(baseDemand, inputParameters);
+                    sortLevelTime(baseDemand, eval);
                     if (factors != null)
                     {
-                        sortLevelTime(factors, inputParameters);
+                        sortLevelTime(factors, eval);
                     }
                     // fill array, include factors
                     for (int i = 0; i < baseDemand.size(); i++)
                     {
                         Throw.when(
                                 baseDemand.get(i).getTime() != null && factors != null && factors.get(i).getTime() != null
-                                        && !baseDemand.get(i).getTime().get(inputParameters)
-                                                .eq(factors.get(i).getTime().get(inputParameters)),
+                                        && !baseDemand.get(i).getTime().get(eval).eq(factors.get(i).getTime().get(eval)),
                                 XmlParserException.class, "Demand from %s to %s is specified with factors that have "
                                         + "different time from the base demand.",
                                 origin, destination);
                         demandRaw[i] = parseLevel(baseDemand.get(i).getValue(), factor * (factors == null ? 1.0
-                                : new PositiveFactorAdapter().unmarshal(factors.get(i).getValue()).get(inputParameters)));
+                                : new PositiveFactorAdapter().unmarshal(factors.get(i).getValue()).get(eval)));
                     }
                     FrequencyVector demandVector = new FrequencyVector(demandRaw, FrequencyUnit.SI);
 
@@ -417,7 +413,7 @@ public final class OdParser
      * @param odOptionsMap Map&lt;String, org.opentrafficsim.xml.generated.OdOptions&gt;; gathered OdOptions tags.
      * @param od Od; OD tag.
      * @param categorization Categorization; categorization.
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return OdOptions.
      * @throws XmlParserException when options in OD are not defined, or Markov chain not well defined.
      */
@@ -425,7 +421,7 @@ public final class OdParser
             final Set<GtuTemplate> templates, final Map<String, LaneBias> definedLaneBiases,
             final Map<String, LaneBasedStrategicalPlannerFactory<?>> factories, final Map<String, String> modelIdReferrals,
             final StreamInformation streamMap, final Map<String, org.opentrafficsim.xml.generated.OdOptions> odOptionsMap,
-            final Od od, final Categorization categorization, final InputParameters inputParameters) throws XmlParserException
+            final Od od, final Categorization categorization, final Eval eval) throws XmlParserException
     {
         OdOptions odOptions =
                 new OdOptions().set(OdOptions.GTU_ID, new IdGenerator("")).set(OdOptions.NO_LC_DIST, Length.instantiateSI(1.0));
@@ -440,9 +436,9 @@ public final class OdParser
         // other options
         if (od.getOptions() != null)
         {
-            Throw.when(!odOptionsMap.containsKey(od.getOptions().get(inputParameters)), XmlParserException.class,
+            Throw.when(!odOptionsMap.containsKey(od.getOptions().get(eval)), XmlParserException.class,
                     "OD options in OD %s not defined.", od.getId());
-            for (OdOptionsItem option : odOptionsMap.get(od.getOptions().get(inputParameters)).getOdOptionsItem())
+            for (OdOptionsItem option : odOptionsMap.get(od.getOptions().get(eval)).getOdOptionsItem())
             {
                 /*
                  * The current 'options' is valid within a single context, i.e. global, link type, origin or lane. All option
@@ -455,25 +451,24 @@ public final class OdParser
 
                 // GTU type (model)
                 parseModelOption(otsNetwork, definitions, factories, modelIdReferrals, odOptions, templates, defaultLmrsFactory,
-                        option, inputParameters);
+                        option, eval);
 
                 // no lc
                 if (option.getNoLaneChange() != null)
                 {
-                    setOption(odOptions, OdOptions.NO_LC_DIST, option.getNoLaneChange().get(inputParameters), option,
-                            otsNetwork, definitions, inputParameters);
+                    setOption(odOptions, OdOptions.NO_LC_DIST, option.getNoLaneChange().get(eval), option, otsNetwork,
+                            definitions, eval);
                 }
 
                 // room checker
-                setOption(odOptions, OdOptions.ROOM_CHECKER,
-                        ParseUtil.parseRoomChecker(option.getRoomChecker(), inputParameters), option, otsNetwork, definitions,
-                        inputParameters);
+                setOption(odOptions, OdOptions.ROOM_CHECKER, ParseUtil.parseRoomChecker(option.getRoomChecker(), eval), option,
+                        otsNetwork, definitions, eval);
 
                 // headway distribution
                 if (option.getHeadwayDist() != null)
                 {
-                    setOption(odOptions, OdOptions.HEADWAY_DIST, option.getHeadwayDist().get(inputParameters), option,
-                            otsNetwork, definitions, inputParameters);
+                    setOption(odOptions, OdOptions.HEADWAY_DIST, option.getHeadwayDist().get(eval), option, otsNetwork,
+                            definitions, eval);
                 }
 
                 // markov
@@ -486,19 +481,19 @@ public final class OdParser
                     MarkovCorrelation<GtuType, Frequency> markov = new MarkovCorrelation<>();
                     for (State state : option.getMarkov().getState())
                     {
-                        GtuType gtuType = definitions.get(GtuType.class, state.getGtuType().get(inputParameters));
-                        double correlation = state.getCorrelation().get(inputParameters);
+                        GtuType gtuType = definitions.get(GtuType.class, state.getGtuType().get(eval));
+                        double correlation = state.getCorrelation().get(eval);
                         if (state.getParent() == null)
                         {
                             markov.addState(gtuType, correlation);
                         }
                         else
                         {
-                            GtuType parentType = definitions.get(GtuType.class, state.getParent().get(inputParameters));
+                            GtuType parentType = definitions.get(GtuType.class, state.getParent().get(eval));
                             markov.addState(parentType, gtuType, correlation);
                         }
                     }
-                    setOption(odOptions, OdOptions.MARKOV, markov, option, otsNetwork, definitions, inputParameters);
+                    setOption(odOptions, OdOptions.MARKOV, markov, option, otsNetwork, definitions, eval);
                 }
 
                 // lane biases
@@ -507,19 +502,19 @@ public final class OdParser
                     LaneBiases laneBiases = new LaneBiases();
                     for (org.opentrafficsim.xml.generated.LaneBias laneBiasType : option.getLaneBiases().getLaneBias())
                     {
-                        String gtuTypeId = laneBiasType.getGtuType().get(inputParameters);
+                        String gtuTypeId = laneBiasType.getGtuType().get(eval);
                         GtuType gtuType = definitions.get(GtuType.class, gtuTypeId);
                         Throw.whenNull(gtuType, "GTU type %s in lane bias does not exist.", gtuTypeId);
-                        laneBiases.addBias(gtuType, DefinitionsParser.parseLaneBias(laneBiasType, inputParameters));
+                        laneBiases.addBias(gtuType, DefinitionsParser.parseLaneBias(laneBiasType, eval));
                     }
                     for (DefinedLaneBias definedLaneBias : option.getLaneBiases().getDefinedLaneBias())
                     {
-                        String gtuTypeId = definedLaneBias.getGtuType().get(inputParameters);
+                        String gtuTypeId = definedLaneBias.getGtuType().get(eval);
                         GtuType gtuType = definitions.get(GtuType.class, gtuTypeId);
                         Throw.whenNull(gtuType, "GTU type %s in defined lane bias does not exist.", gtuTypeId);
-                        laneBiases.addBias(gtuType, definedLaneBiases.get(definedLaneBias.getGtuType().get(inputParameters)));
+                        laneBiases.addBias(gtuType, definedLaneBiases.get(definedLaneBias.getGtuType().get(eval)));
                     }
-                    setOption(odOptions, OdOptions.LANE_BIAS, laneBiases, option, otsNetwork, definitions, inputParameters);
+                    setOption(odOptions, OdOptions.LANE_BIAS, laneBiases, option, otsNetwork, definitions, eval);
                 }
 
             }
@@ -537,14 +532,14 @@ public final class OdParser
      * @param templates Set&lt;GtuTemplate&gt;; parsed GTU templates.
      * @param defaultLmrsFactory LaneBasedStrategicalRoutePlannerFactory; default LMRS factory.
      * @param option OdOptionItem; OD option item tag.
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @throws XmlParserException when a non-existent model is referred.
      */
     private static void parseModelOption(final RoadNetwork otsNetwork, final Definitions definitions,
             final Map<String, LaneBasedStrategicalPlannerFactory<?>> factories, final Map<String, String> modelIdReferrals,
             final OdOptions odOptions, final Set<GtuTemplate> templates,
-            final LaneBasedStrategicalRoutePlannerFactory defaultLmrsFactory, final OdOptionsItem option,
-            final InputParameters inputParameters) throws XmlParserException
+            final LaneBasedStrategicalRoutePlannerFactory defaultLmrsFactory, final OdOptionsItem option, final Eval eval)
+            throws XmlParserException
     {
         Factory characteristicsGeneratorFactory;
         if (option.getDefaultModel() != null || (option.getModel() != null && !option.getModel().isEmpty()))
@@ -553,7 +548,7 @@ public final class OdParser
             if (option.getDefaultModel() != null)
             {
                 // TODO: model id referral
-                String modelId = OdParser.getModelId(option.getDefaultModel(), modelIdReferrals, inputParameters);
+                String modelId = OdParser.getModelId(option.getDefaultModel(), modelIdReferrals, eval);
                 Throw.when(!factories.containsKey(modelId), XmlParserException.class,
                         "OD option DefaultModel refers to a non-existent model with ID %s.", modelId);
                 defaultFactory = factories.get(modelId);
@@ -568,10 +563,10 @@ public final class OdParser
             {
                 for (Model model : option.getModel())
                 {
-                    GtuType gtuType = definitions.get(GtuType.class, model.getGtuType().get(inputParameters));
+                    GtuType gtuType = definitions.get(GtuType.class, model.getGtuType().get(eval));
                     Throw.when(!factories.containsKey(model.getId()), XmlParserException.class,
                             "OD option Model refers to a non existent-model with ID %s.", model.getId());
-                    gtuTypeFactoryMap.put(gtuType, factories.get(getModelId(model, modelIdReferrals, inputParameters)));
+                    gtuTypeFactoryMap.put(gtuType, factories.get(getModelId(model, modelIdReferrals, eval)));
                 }
             }
 
@@ -600,7 +595,7 @@ public final class OdParser
                     };
             characteristicsGeneratorFactory = new Factory(factoryByGtuType).setTemplates(templates);
             setOption(odOptions, OdOptions.GTU_TYPE, characteristicsGeneratorFactory.create(), option, otsNetwork, definitions,
-                    inputParameters);
+                    eval);
         }
     }
 
@@ -608,25 +603,24 @@ public final class OdParser
      * @param definitions Definitions; definitions to get GTU types in categories.
      * @param gtuTemplates Map&lt;String, org.opentrafficsim.xml.generated.GtuTemplate&gt;; GTU template tags.
      * @param streamMap StreamInformation; random streams.
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return GTU templates.
      * @throws XmlParserException when a distribution cannot be parsed.
      */
     private static Set<GtuTemplate> parseGtuTemplates(final Definitions definitions,
             final Map<String, org.opentrafficsim.xml.generated.GtuTemplate> gtuTemplates, final StreamInformation streamMap,
-            final InputParameters inputParameters) throws XmlParserException
+            final Eval eval) throws XmlParserException
     {
         Set<GtuTemplate> templates = new LinkedHashSet<>();
         for (org.opentrafficsim.xml.generated.GtuTemplate template : gtuTemplates.values())
         {
-            GtuType gtuType = definitions.get(GtuType.class, template.getGtuType().get(inputParameters));
+            GtuType gtuType = definitions.get(GtuType.class, template.getGtuType().get(eval));
             Generator<Length> lengthGenerator = ParseDistribution.parseContinuousDist(streamMap, template.getLengthDist(),
-                    template.getLengthDist().getLengthUnit().get(inputParameters), inputParameters);
+                    template.getLengthDist().getLengthUnit().get(eval), eval);
             Generator<Length> widthGenerator = ParseDistribution.parseContinuousDist(streamMap, template.getWidthDist(),
-                    template.getWidthDist().getLengthUnit().get(inputParameters), inputParameters);
-            Generator<Speed> maximumSpeedGenerator =
-                    ParseDistribution.parseContinuousDist(streamMap, template.getMaxSpeedDist(),
-                            template.getMaxSpeedDist().getSpeedUnit().get(inputParameters), inputParameters);
+                    template.getWidthDist().getLengthUnit().get(eval), eval);
+            Generator<Speed> maximumSpeedGenerator = ParseDistribution.parseContinuousDist(streamMap,
+                    template.getMaxSpeedDist(), template.getMaxSpeedDist().getSpeedUnit().get(eval), eval);
             if (template.getMaxAccelerationDist() == null || template.getMaxDecelerationDist() == null)
             {
                 templates.add(new GtuTemplate(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator));
@@ -635,10 +629,10 @@ public final class OdParser
             {
                 Generator<Acceleration> maxAccelerationGenerator =
                         ParseDistribution.parseContinuousDist(streamMap, template.getMaxAccelerationDist(),
-                                template.getMaxAccelerationDist().getAccelerationUnit().get(inputParameters), inputParameters);
+                                template.getMaxAccelerationDist().getAccelerationUnit().get(eval), eval);
                 Generator<Acceleration> maxDecelerationGenerator =
                         ParseDistribution.parseContinuousDist(streamMap, template.getMaxDecelerationDist(),
-                                template.getMaxDecelerationDist().getAccelerationUnit().get(inputParameters), inputParameters);
+                                template.getMaxDecelerationDist().getAccelerationUnit().get(eval), eval);
                 templates.add(new GtuTemplate(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator,
                         maxAccelerationGenerator, maxDecelerationGenerator));
             }
@@ -660,9 +654,9 @@ public final class OdParser
     /**
      * Sorts LevelTimeType in a list by the time value, if any.
      * @param levelTime List&lt;LevelTimeType&gt;; sorted list
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      */
-    private static void sortLevelTime(final List<LevelTimeType> levelTime, final InputParameters inputParameters)
+    private static void sortLevelTime(final List<LevelTimeType> levelTime, final Eval eval)
     {
         Collections.sort(levelTime, new Comparator<LevelTimeType>()
         {
@@ -682,7 +676,7 @@ public final class OdParser
                 {
                     return 1;
                 }
-                return o1.getTime().get(inputParameters).compareTo(o2.getTime().get(inputParameters));
+                return o1.getTime().get(eval).compareTo(o2.getTime().get(eval));
             }
         });
     }
@@ -690,17 +684,16 @@ public final class OdParser
     /**
      * Parse a list of {@code LevelTimeType} to a {@code TimeVector}.
      * @param list List&lt;LevelTimeType&gt;; list of time information
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return TimeVector; time vector
      * @throws XmlParserException if global time has no values
      */
-    private static TimeVector parseTimeVector(final List<LevelTimeType> list, final InputParameters inputParameters)
-            throws XmlParserException
+    private static TimeVector parseTimeVector(final List<LevelTimeType> list, final Eval eval) throws XmlParserException
     {
         List<Time> timeList = new ArrayList<>();
         for (LevelTimeType time : list)
         {
-            timeList.add(time.getTime().get(inputParameters));
+            timeList.add(time.getTime().get(eval));
         }
         Collections.sort(timeList);
         return new TimeVector(timeList, TimeUnit.DEFAULT);
@@ -714,28 +707,26 @@ public final class OdParser
      * @param options OdOptionsItem; used to set the option on the right level (Link type, origin node, lane
      * @param otsNetwork RoadNetwork; to get the link type, origin node or lane from
      * @param definitions Definitions; parsed definitions.
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @param <T> option value type
      */
     private static <T> void setOption(final OdOptions odOptions, final Option<T> option, final T value,
-            final OdOptionsItem options, final RoadNetwork otsNetwork, final Definitions definitions,
-            final InputParameters inputParameters)
+            final OdOptionsItem options, final RoadNetwork otsNetwork, final Definitions definitions, final Eval eval)
     {
         if (value != null)
         {
             if (options.getLinkType() != null)
             {
-                odOptions.set(definitions.get(LinkType.class, options.getLinkType().get(inputParameters)), option, value);
+                odOptions.set(definitions.get(LinkType.class, options.getLinkType().get(eval)), option, value);
             }
             else if (options.getOrigin() != null)
             {
-                odOptions.set(otsNetwork.getNode(options.getOrigin().get(inputParameters)), option, value);
+                odOptions.set(otsNetwork.getNode(options.getOrigin().get(eval)), option, value);
             }
             else if (options.getLane() != null)
             {
-                CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(options.getLane().getLink().get(inputParameters));
-                odOptions.set((Lane) link.getCrossSectionElement(options.getLane().getLane().get(inputParameters)), option,
-                        value);
+                CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(options.getLane().getLink().get(eval));
+                odOptions.set((Lane) link.getCrossSectionElement(options.getLane().getLane().get(eval)), option, value);
             }
             else
             {
@@ -748,34 +739,32 @@ public final class OdParser
      * Returns the ID of a default model, referred if there is a referral specified.
      * @param model String; model
      * @param modelIdReferrals String; model ID
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return ID of a model, referred if there is a referral specified
      */
-    private static String getModelId(final DefaultModel model, final Map<String, String> modelIdReferrals,
-            final InputParameters inputParameters)
+    private static String getModelId(final DefaultModel model, final Map<String, String> modelIdReferrals, final Eval eval)
     {
         if (model.getModelIdReferral() != null)
         {
-            return modelIdReferrals.get(model.getModelIdReferral().get(inputParameters));
+            return modelIdReferrals.get(model.getModelIdReferral().get(eval));
         }
-        return model.getId().get(inputParameters);
+        return model.getId().get(eval);
     }
 
     /**
      * Returns the ID of a model, referred if there is a referral specified.
      * @param model String; model
      * @param modelIdReferrals String; model ID
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return ID of a model, referred if there is a referral specified
      */
-    private static String getModelId(final Model model, final Map<String, String> modelIdReferrals,
-            final InputParameters inputParameters)
+    private static String getModelId(final Model model, final Map<String, String> modelIdReferrals, final Eval eval)
     {
         if (model.getModelIdReferral() != null)
         {
-            return modelIdReferrals.get(model.getModelIdReferral().get(inputParameters));
+            return modelIdReferrals.get(model.getModelIdReferral().get(eval));
         }
-        return model.getId().get(inputParameters);
+        return model.getId().get(eval);
     }
 
 }

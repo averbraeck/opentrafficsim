@@ -1,5 +1,7 @@
 package org.opentrafficsim.xml.bindings.types;
 
+import java.util.function.Function;
+
 import org.djunits.value.vdouble.scalar.Frequency;
 
 /**
@@ -13,13 +15,16 @@ import org.djunits.value.vdouble.scalar.Frequency;
 public class FrequencyType extends ExpressionType<Frequency>
 {
 
+    /** Function to convert output from expression to the right type. */
+    private static final Function<Object, Frequency> TO_TYPE = (o) -> Frequency.instantiateSI(((Number) o).doubleValue());
+
     /**
      * Constructor with value.
      * @param value Frequency; value, may be {@code null}.
      */
     public FrequencyType(final Frequency value)
     {
-        super(value);
+        super(value, TO_TYPE);
     }
 
     /**
@@ -28,7 +33,7 @@ public class FrequencyType extends ExpressionType<Frequency>
      */
     public FrequencyType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
     }
 
 }

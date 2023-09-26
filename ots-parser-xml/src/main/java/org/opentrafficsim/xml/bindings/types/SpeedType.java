@@ -1,5 +1,7 @@
 package org.opentrafficsim.xml.bindings.types;
 
+import java.util.function.Function;
+
 import org.djunits.value.vdouble.scalar.Speed;
 
 /**
@@ -13,13 +15,16 @@ import org.djunits.value.vdouble.scalar.Speed;
 public class SpeedType extends ExpressionType<Speed>
 {
 
+    /** Function to convert output from expression to the right type. */
+    private static final Function<Object, Speed> TO_TYPE = (o) -> Speed.instantiateSI(((Number) o).doubleValue());
+
     /**
      * Constructor with value.
      * @param value Speed; value, may be {@code null}.
      */
     public SpeedType(final Speed value)
     {
-        super(value);
+        super(value, TO_TYPE);
     }
 
     /**
@@ -28,7 +33,7 @@ public class SpeedType extends ExpressionType<Speed>
      */
     public SpeedType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
     }
 
 }

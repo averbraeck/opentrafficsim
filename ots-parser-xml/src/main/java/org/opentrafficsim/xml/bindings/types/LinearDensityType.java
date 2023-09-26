@@ -1,5 +1,7 @@
 package org.opentrafficsim.xml.bindings.types;
 
+import java.util.function.Function;
+
 import org.djunits.value.vdouble.scalar.LinearDensity;
 
 /**
@@ -13,13 +15,17 @@ import org.djunits.value.vdouble.scalar.LinearDensity;
 public class LinearDensityType extends ExpressionType<LinearDensity>
 {
 
+    /** Function to convert output from expression to the right type. */
+    private static final Function<Object, LinearDensity> TO_TYPE =
+            (o) -> LinearDensity.instantiateSI(((Number) o).doubleValue());
+
     /**
      * Constructor with value.
      * @param value LinearDensity; value, may be {@code null}.
      */
     public LinearDensityType(final LinearDensity value)
     {
-        super(value);
+        super(value, TO_TYPE);
     }
 
     /**
@@ -28,7 +34,7 @@ public class LinearDensityType extends ExpressionType<LinearDensity>
      */
     public LinearDensityType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
     }
 
 }

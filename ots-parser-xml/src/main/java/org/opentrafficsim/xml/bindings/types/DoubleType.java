@@ -1,5 +1,7 @@
 package org.opentrafficsim.xml.bindings.types;
 
+import java.util.function.Function;
+
 /**
  * Expression type with Double value.
  * <p>
@@ -11,13 +13,16 @@ package org.opentrafficsim.xml.bindings.types;
 public class DoubleType extends ExpressionType<Double>
 {
 
+    /** Function to convert output from expression to the right type. */
+    private static final Function<Object, Double> TO_TYPE = (o) -> ((Number) o).doubleValue();
+
     /**
      * Constructor with value.
      * @param value Double; value, may be {@code null}.
      */
     public DoubleType(final Double value)
     {
-        super(value);
+        super(value, TO_TYPE);
     }
 
     /**
@@ -26,7 +31,7 @@ public class DoubleType extends ExpressionType<Double>
      */
     public DoubleType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
     }
 
 }

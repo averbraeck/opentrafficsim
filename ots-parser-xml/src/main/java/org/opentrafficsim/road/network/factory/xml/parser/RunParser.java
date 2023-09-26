@@ -6,8 +6,8 @@ import java.util.Map;
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.eval.Eval;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.parameters.InputParameters;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.xml.generated.RandomStream;
 import org.opentrafficsim.xml.generated.RandomStream.Replication;
@@ -86,19 +86,19 @@ public final class RunParser
      * @param networkId String; id of the network or the model
      * @param streamInformation StreamSeedInformation; the stream information that will be passed to the model
      * @param simulator OtsSimulatorInterface; the simulator to defined the experiment for
-     * @param inputParameters InputParameters; input parameters.
+     * @param eval Eval; expression evaluator.
      * @return experiment on the basis of the information in the Run tag
      * @throws XmlParserException on parsing error
      */
     public static ExperimentRunControl<Duration> parseRun(final String networkId, final Run run,
             final StreamSeedInformation streamInformation, final OtsSimulatorInterface simulator,
-            final InputParameters inputParameters) throws XmlParserException
+            final Eval eval) throws XmlParserException
     {
         int numberReplications = run.getNumberReplications() == null ? 1 : run.getNumberReplications().intValue();
-        Time startTime = run.getStartTime() == null ? Time.ZERO : run.getStartTime().get(inputParameters);
-        Duration warmupPeriod = run.getWarmupPeriod() == null ? Duration.ZERO : run.getWarmupPeriod().get(inputParameters);
+        Time startTime = run.getStartTime() == null ? Time.ZERO : run.getStartTime().get(eval);
+        Duration warmupPeriod = run.getWarmupPeriod() == null ? Duration.ZERO : run.getWarmupPeriod().get(eval);
         Duration runLength =
-                run.getRunLength() == null ? new Duration(1.0, DurationUnit.HOUR) : run.getRunLength().get(inputParameters);
+                run.getRunLength() == null ? new Duration(1.0, DurationUnit.HOUR) : run.getRunLength().get(eval);
 
         // TODO: do we want a real Time here or a Duration?
         // If it should be a Time, create an ExperimentRunControl that can take a Time as first argument

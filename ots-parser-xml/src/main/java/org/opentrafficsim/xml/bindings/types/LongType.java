@@ -1,5 +1,7 @@
 package org.opentrafficsim.xml.bindings.types;
 
+import java.util.function.Function;
+
 /**
  * Expression type with Long value.
  * <p>
@@ -11,13 +13,16 @@ package org.opentrafficsim.xml.bindings.types;
 public class LongType extends ExpressionType<Long>
 {
 
+    /** Function to convert output from expression to the right type. */
+    private static final Function<Object, Long> TO_TYPE = (o) -> ((Number) o).longValue();
+    
     /**
      * Constructor with value.
      * @param value Long; value, may be {@code null}.
      */
     public LongType(final Long value)
     {
-        super(value);
+        super(value, TO_TYPE);
     }
 
     /**
@@ -26,7 +31,7 @@ public class LongType extends ExpressionType<Long>
      */
     public LongType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
     }
 
 }

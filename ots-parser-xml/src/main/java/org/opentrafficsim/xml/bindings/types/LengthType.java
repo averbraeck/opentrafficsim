@@ -1,5 +1,7 @@
 package org.opentrafficsim.xml.bindings.types;
 
+import java.util.function.Function;
+
 import org.djunits.value.vdouble.scalar.Length;
 
 /**
@@ -13,13 +15,16 @@ import org.djunits.value.vdouble.scalar.Length;
 public class LengthType extends ExpressionType<Length>
 {
 
+    /** Function to convert output from expression to the right type. */
+    private static final Function<Object, Length> TO_TYPE = (o) -> Length.instantiateSI(((Number) o).doubleValue());
+
     /**
      * Constructor with value.
      * @param value Length; value, may be {@code null}.
      */
     public LengthType(final Length value)
     {
-        super(value);
+        super(value, TO_TYPE);
     }
 
     /**
@@ -28,7 +33,7 @@ public class LengthType extends ExpressionType<Length>
      */
     public LengthType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
     }
 
 }

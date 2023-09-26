@@ -1,5 +1,7 @@
 package org.opentrafficsim.xml.bindings.types;
 
+import java.util.function.Function;
+
 import org.djunits.value.vdouble.scalar.Direction;
 
 /**
@@ -13,13 +15,16 @@ import org.djunits.value.vdouble.scalar.Direction;
 public class DirectionType extends ExpressionType<Direction>
 {
 
+    /** Function to convert output from expression to the right type. */
+    private static final Function<Object, Direction> TO_TYPE = (o) -> Direction.instantiateSI(((Number) o).doubleValue());
+
     /**
      * Constructor with value.
      * @param value Direction; value, may be {@code null}.
      */
     public DirectionType(final Direction value)
     {
-        super(value);
+        super(value, TO_TYPE);
     }
 
     /**
@@ -28,7 +33,7 @@ public class DirectionType extends ExpressionType<Direction>
      */
     public DirectionType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
     }
 
 }
