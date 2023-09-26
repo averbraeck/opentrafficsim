@@ -11,7 +11,6 @@ import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.SpeedVector;
-import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -38,13 +37,13 @@ public class Speed3dTest
         double z = 5.5;
         Speed3d s3d = new Speed3d(x, y, z, SpeedUnit.SI);
         checkSpeed(s3d, x, y, z);
-        SpeedVector sv = DoubleVector.instantiate(new double[] {x, y, z}, SpeedUnit.SI, StorageType.DENSE);
+        SpeedVector sv = new SpeedVector(new double[] {x, y, z}, SpeedUnit.SI);
         s3d = new Speed3d(sv);
         checkSpeed(s3d, x, y, z);
-        sv = DoubleVector.instantiate(new double[] {x, y, z}, SpeedUnit.SI, StorageType.SPARSE);
+        sv = new SpeedVector(new double[] {x, y, z}, SpeedUnit.SI, StorageType.SPARSE);
         s3d = new Speed3d(sv);
         checkSpeed(s3d, x, y, z);
-        sv = DoubleVector.instantiate(new double[] {x, y}, SpeedUnit.SI, StorageType.DENSE);
+        sv = new SpeedVector(new double[] {x, y}, SpeedUnit.SI);
         try
         {
             new Speed3d(sv);
@@ -54,7 +53,7 @@ public class Speed3dTest
         {
             // Ignore expected exception
         }
-        sv = DoubleVector.instantiate(new double[] {x, y, z, x}, SpeedUnit.SI, StorageType.DENSE);
+        sv = new SpeedVector(new double[] {x, y, z, x}, SpeedUnit.SI);
         try
         {
             new Speed3d(sv);
@@ -64,7 +63,7 @@ public class Speed3dTest
         {
             // Ignore expected exception
         }
-        sv = DoubleVector.instantiate(new double[] {x, y}, SpeedUnit.SI, StorageType.SPARSE);
+        sv = new SpeedVector(new double[] {x, y}, SpeedUnit.SI, StorageType.SPARSE);
         try
         {
             new Speed3d(sv);
@@ -74,7 +73,7 @@ public class Speed3dTest
         {
             // Ignore expected exception
         }
-        sv = DoubleVector.instantiate(new double[] {x, y, z, x}, SpeedUnit.SI, StorageType.SPARSE);
+        sv = new SpeedVector(new double[] {x, y, z, x}, SpeedUnit.SI, StorageType.SPARSE);
         try
         {
             new Speed3d(sv);
