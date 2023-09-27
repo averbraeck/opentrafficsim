@@ -10,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -827,6 +828,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * Returns the index of the named attribute.
      * @param attribute String; attribute name.
      * @return int; index of the named attribute.
+     * @throws NoSuchElementException when the attribute is not in this node.
      */
     public int getAttributeIndexByName(final String attribute)
     {
@@ -844,7 +846,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 return index;
             }
         }
-        throw new IllegalStateException("Attribute " + attribute + " is not in node " + getNodeName() + ".");
+        throw new NoSuchElementException("Attribute " + attribute + " is not in node " + getNodeName() + ".");
     }
 
     /**
@@ -1454,7 +1456,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             this.parent.invalidate();
         }
     }
-    
+
     /**
      * Invalidates entire tree in a nested manner. Triggered after the path of the current file changes in the root node.
      * @param node XsdTreeNode; node to nest through.
@@ -2086,8 +2088,16 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                         } // else its an include file
                         continue;
                     default:
-                        int attributeIndex = getAttributeIndexByName(attributeNode.getNodeName());
-                        this.attributeValues.set(attributeIndex, attributeNode.getNodeValue());
+                        try
+                        {
+                            int attributeIndex = getAttributeIndexByName(attributeNode.getNodeName());
+                            this.attributeValues.set(attributeIndex, attributeNode.getNodeValue());
+                        }
+                        catch (NoSuchElementException e)
+                        {
+                            System.err.println(
+                                    "Unable to load attribute " + attributeNode.getNodeName() + " in " + getShortString());
+                        }
                 }
             }
         }
@@ -2195,7 +2205,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 indexXml++;
                 continue;
             }
-            
+
             // find relevant node: previous node, or skip to next until we find the relevant node
             if (childIndex > 0 && this.children.get(childIndex - 1).isRelevantNode(nameXml))
             {
