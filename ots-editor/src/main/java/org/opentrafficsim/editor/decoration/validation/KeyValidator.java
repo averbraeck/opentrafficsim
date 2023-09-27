@@ -18,13 +18,12 @@ import org.opentrafficsim.editor.XsdTreeNode;
 import org.w3c.dom.Node;
 
 /**
- * Validator for xsd:key, xsd:keyref and xsd:unique. Functionality is very similar, with all allowing to define multiple fields.
- * They register with the right nodes in the same way. If no {@code KeyValidator} is given in the constructor, the instance will
- * behave as an xsd:key or xsd:unique. These check a range of values for uniqueness and officially only differ in whether all
- * values need to be present. Here this is ignored and they are treated the same. This class will maintain a list of nodes (fed
- * by an external listener) and validate against field uniqueness over those nodes. If another {@code KeyValidator} is given in
- * the constructor, the instance will behave as an xsd:keyref and validate that the field values are, as a set, within the given
- * {@code KeyValidator}.
+ * Validator for xsd:key, xsd:keyref and xsd:unique. Functionality these are very similar, with all allowing to define multiple
+ * fields. They register with the right nodes in the same way. If no {@code KeyValidator} is given in the constructor, the
+ * instance will behave as an xsd:key or xsd:unique. These check a range of values for uniqueness and only differ in whether all
+ * values need to be present. This class will maintain a list of nodes (fed by an external listener) and validate against field
+ * uniqueness over those nodes. If another {@code KeyValidator} is given in the constructor, the instance will behave as an
+ * xsd:keyref and validate that the field values are, as a set, within the given {@code KeyValidator}.
  * @author wjschakel
  */
 public class KeyValidator implements ValueValidator, EventListener
@@ -266,7 +265,7 @@ public class KeyValidator implements ValueValidator, EventListener
             int index = getIndex(field);
             /*
              * Index is the field index in this xsd:keyref. We need to figure out whether the field at this index in the xsd:key
-             * is either an attribute, or a value. Then we can be notified on relevant changes in in the xsd:key.
+             * is either an attribute, or a value. Then we can be notified on relevant changes in the xsd:key.
              */
             if (index < this.refer.attributeNames.size())
             {
@@ -281,9 +280,10 @@ public class KeyValidator implements ValueValidator, EventListener
     }
 
     /**
-     * Returns a node that represent the proper context.
-     * @param node XsdTreeNode; any node somewhere in the context.
-     * @return XsdTreeNode; node that represent the proper context.
+     * Returns a node that represent the proper context. This is a parent node of the given node, at the level where the key was
+     * defined.
+     * @param node XsdTreeNode; any node somewhere in the context, i.e. subtree.
+     * @return XsdTreeNode; node that represents the proper context.
      */
     private XsdTreeNode getContext(final XsdTreeNode node)
     {
@@ -312,9 +312,9 @@ public class KeyValidator implements ValueValidator, EventListener
     }
 
     /**
-     * Remove node. It is removed from all contexts and listening keyrefs. This method is called by a listener that the root
-     * node has set up, for every removed node. This method is called internally for children of deactivated nodes, in which
-     * case we do not want to remove this validator as listener on the node, for when it gets activated later.
+     * Remove node. It is removed from all contexts and listening keyrefs. This method is called indorectly by a listener that
+     * the root node has set up, for every removed node. This method is called internally for children of deactivated nodes, in
+     * which case we do not want to remove this validator as listener on the node, for when it gets activated later.
      * @param node XsdTreeNode; node to remove.
      */
     private void removeNodeKeepListening(final XsdTreeNode node)
@@ -359,9 +359,9 @@ public class KeyValidator implements ValueValidator, EventListener
     }
 
     /**
-     * Gathers all the field values, i.e. attribute or child element value. As validators are registered with the node that has
-     * the value, attributes are gathered from the given node, while element values are taken from the correctly named children
-     * of the parent. Empty values are returned as {@code null}.
+     * Gathers all the field values, i.e. attribute, child element value, or own value. As validators are registered with the
+     * node that has the value, attributes are gathered from the given node, while element values are taken from the correctly
+     * named children of the parent. Empty values are returned as {@code null}.
      * @param node XsdTreeNode; node for which to get the information.
      * @return List&lt;String&gt;; field values.
      */
@@ -403,12 +403,12 @@ public class KeyValidator implements ValueValidator, EventListener
         }
         /*
          * We gather values from the referred xsd:key, drawing the appropriate context from the node relevant somewhere in the
-         * xsd:keyref context. The xsd:keyref may not have a more specific scope than the xsd:key. If the xsd:keyref has a
-         * bigger scope, there may be only one instance of a more specific scope of the xsd:key. If both scopes are the same,
-         * this is trivially ok.
+         * xsd:keyref context. The xsd:keyref may not have a more specific context than the xsd:key. If the xsd:keyref has a
+         * bigger context, there may be only one instance of a more specific context of the xsd:key. If both contexts are the
+         * same, this is trivially ok.
          */
         XsdTreeNode contextKeyref = getContext(node);
-        XsdTreeNode contextKey = this.refer.getContext(node); // can be null when out of scope
+        XsdTreeNode contextKey = this.refer.getContext(node); // can be null when out of context
         boolean uniqueScope = contextKeyref.equals(contextKey);
         if (!uniqueScope)
         {
@@ -427,16 +427,17 @@ public class KeyValidator implements ValueValidator, EventListener
         }
         Map<XsdTreeNode, List<String>> values = this.refer.getValues(node);
         List<String> result = new ArrayList<>(values.size());
-        values.forEach((n, list) -> result.add(list.get(getIndex(field))));
+        int index = getIndex(field);
+        values.forEach((n, list) -> result.add(list.get(index)));
         result.removeIf((v) -> v == null || v.isEmpty());
         return result;
     }
 
     /**
-     * Gathers xsd:key-level scopes from a xsd:keyref context that is larger than the key's.
+     * Gathers xsd:key-level contexts from an xsd:keyref context that is larger than the key's.
      * @param node XsdTreeNode; current node to browse the children of, or return in the set.
      * @param remainingPath List&lt;XsdTreeNode&gt;; remaining intermediate levels, starting with the sub-level of the keyref.
-     * @param set Set&lt;XsdTreeNode&gt;; set to gather scopes in.
+     * @param set Set&lt;XsdTreeNode&gt;; set to gather contexts in.
      */
     private void gatherScopes(final XsdTreeNode node, final List<XsdTreeNode> remainingPath, final Set<XsdTreeNode> set)
     {
@@ -506,7 +507,7 @@ public class KeyValidator implements ValueValidator, EventListener
 
     /**
      * Returns the type {@code String} for which the xsd:key or xsd:keyref applies, i.e. "GtuTypes.GtuType" for
-     * {@code <xsd:selector xpath=".//ots:GtuTypes/ots:GtuType" />}. Note that multiple paths may be defined separated by "|.
+     * {@code <xsd:selector xpath=".//ots:GtuTypes/ots:GtuType" />}. Note that multiple paths may be defined separated by "|".
      * @return String[]; type for which the xsd:key or xsd:keyref applies.
      */
     public String[] getTypeString()
@@ -562,8 +563,8 @@ public class KeyValidator implements ValueValidator, EventListener
 
     /**
      * Recursively removes or adds the children from an activated or deactivated node to/from this key. Children of a
-     * deactivated node no longer have valid key values. Only active nodes are considered. However, when a node get deactivated,
-     * its children should be removed too. The argument {@code forceDoChildren} is {@code true} in that case.
+     * deactivated node no longer have valid key values. Only active nodes are considered. However, when a node gets
+     * deactivated, its children should be removed too. The argument {@code forceDoChildren} is {@code true} in that case.
      * @param node XsdTreeNode; node to remove or add.
      * @param active boolean; when node was activated, child nodes are add. Otherwise removed.
      * @param forceDoChildren boolean; {@code true} on the originally (de)activated node.
@@ -634,10 +635,10 @@ public class KeyValidator implements ValueValidator, EventListener
             }
         }
     }
-    
+
     /**
      * Returns the key node to which the given keyref node is coupled.
-     * @param node XsdTreeNode; node with value that is bounded by a keyref.
+     * @param node XsdTreeNode; node with attribute or value that is bounded by a keyref, represented by this key validator.
      * @return XsdTreeNode; key node to which the given keyref node is coupled.
      */
     public XsdTreeNode getCoupledKeyrefNode(final XsdTreeNode node)

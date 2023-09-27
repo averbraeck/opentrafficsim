@@ -1422,8 +1422,14 @@ public class OtsEditor extends JFrame implements EventProducer
             Element xmlRoot = (Element) document.getChildNodes().item(0);
             xmlRoot.setAttribute("xmlns:ots", "http://www.opentrafficsim.org/ots");
             xmlRoot.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            // xmlRoot.setAttribute("xsi:schemaLocation",
-            // "http://www.opentrafficsim.org/ots ../../../../../ots-parser-xml/src/main/resources/xsd/ots.xsd");
+            if (root instanceof XsdTreeNodeRoot)
+            {
+                XsdTreeNodeRoot otsRoot = (XsdTreeNodeRoot) root;
+                if (otsRoot.getSchemaLocation() != null)
+                {
+                    xmlRoot.setAttribute("xsi:schemaLocation", otsRoot.getSchemaLocation());
+                }
+            }
             xmlRoot.setAttribute("xmlns:xi", "http://www.w3.org/2001/XInclude");
 
             FileOutputStream fileOutputStream = new FileOutputStream(file);

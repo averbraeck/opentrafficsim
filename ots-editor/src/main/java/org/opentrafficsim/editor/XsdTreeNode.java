@@ -832,7 +832,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     {
         if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
         {
-            // this is a bit dirty, at loading attribute 'name' and later attribute 'File' are mapped to 0
+            // this is a bit dirty, at loading attribute 'href' and later attribute 'File' are mapped to 0
+            // attribute 'Fallback' is explicitly set from child nodes (that are otherwise skipped) during loading
             return "Fallback".equals(attribute) ? 1 : 0;
         }
         for (int index = 0; index < this.attributeCount(); index++)
@@ -2077,7 +2078,12 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                     case "xmlns:ots":
                     case "xmlns:xi":
                     case "xmlns:xsi":
+                        continue;
                     case "xsi:schemaLocation":
+                        if (this instanceof XsdTreeNodeRoot)
+                        {
+                            ((XsdTreeNodeRoot) this).setSchemaLocation(attributeNode.getNodeValue());
+                        } // else its an include file
                         continue;
                     default:
                         int attributeIndex = getAttributeIndexByName(attributeNode.getNodeName());

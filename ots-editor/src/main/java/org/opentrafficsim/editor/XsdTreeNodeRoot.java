@@ -30,6 +30,9 @@ public class XsdTreeNodeRoot extends XsdTreeNode
 
     /** */
     private static final long serialVersionUID = 20230224L;
+    
+    /** Schema location. This can't be set in the editor, but when it is given within a loaded file, we also save it. */
+    private String schemaLocation;
 
     /**
      * Event when a node is created. This event is always thrown by the root of the data structure. Listeners should register
@@ -177,6 +180,24 @@ public class XsdTreeNodeRoot extends XsdTreeNode
 
         addListener(listener, NODE_CREATED);
         addListener(listener, NODE_REMOVED);
+    }
+
+    /**
+     * Sets the scehame location. This can't happen through the editor, but it may be set when loading a file.
+     * @param schemaLocation String; schema location.
+     */
+    public void setSchemaLocation(final String schemaLocation)
+    {
+        this.schemaLocation = schemaLocation;
+    }
+    
+    /**
+     * Returns the schema location. If it is not {@code null} it was set during file loading, and will be saved too. 
+     * @return String; schema location.
+     */
+    public String getSchemaLocation()
+    {
+        return this.schemaLocation;
     }
 
 }
