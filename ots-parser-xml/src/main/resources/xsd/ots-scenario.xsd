@@ -16,7 +16,7 @@
         <xsd:complexType>
           <xsd:simpleContent>
             <xsd:extension base="ots:DurationType">
-              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="optional" />
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
             </xsd:extension>
           </xsd:simpleContent>
         </xsd:complexType>
@@ -25,7 +25,7 @@
         <xsd:complexType>
           <xsd:complexContent>
             <xsd:extension base="ots:DurationDistType">
-              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="optional" />
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
             </xsd:extension>
           </xsd:complexContent>
         </xsd:complexType>
@@ -34,7 +34,7 @@
         <xsd:complexType>
           <xsd:simpleContent>
             <xsd:extension base="ots:LengthType">
-              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="optional" />
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
             </xsd:extension>
           </xsd:simpleContent>
         </xsd:complexType>
@@ -43,7 +43,7 @@
         <xsd:complexType>
           <xsd:complexContent>
             <xsd:extension base="ots:LengthDistType">
-              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="optional" />
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
             </xsd:extension>
           </xsd:complexContent>
         </xsd:complexType>
@@ -52,7 +52,7 @@
         <xsd:complexType>
           <xsd:simpleContent>
             <xsd:extension base="ots:SpeedType">
-              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="optional" />
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
             </xsd:extension>
           </xsd:simpleContent>
         </xsd:complexType>
@@ -61,7 +61,7 @@
         <xsd:complexType>
           <xsd:complexContent>
             <xsd:extension base="ots:SpeedDistType">
-              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="optional" />
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
             </xsd:extension>
           </xsd:complexContent>
         </xsd:complexType>
@@ -70,7 +70,7 @@
         <xsd:complexType>
           <xsd:simpleContent>
             <xsd:extension base="ots:AccelerationType">
-              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="optional" />
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
             </xsd:extension>
           </xsd:simpleContent>
         </xsd:complexType>
@@ -79,7 +79,7 @@
         <xsd:complexType>
           <xsd:complexContent>
             <xsd:extension base="ots:AccelerationDistType">
-              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="optional" />
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
             </xsd:extension>
           </xsd:complexContent>
         </xsd:complexType>
@@ -88,7 +88,7 @@
         <xsd:complexType>
           <xsd:simpleContent>
             <xsd:extension base="ots:LinearDensityType">
-              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="optional" />
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
             </xsd:extension>
           </xsd:simpleContent>
         </xsd:complexType>
@@ -97,7 +97,7 @@
         <xsd:complexType>
           <xsd:complexContent>
             <xsd:extension base="ots:LinearDensityDistType">
-              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="optional" />
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
             </xsd:extension>
           </xsd:complexContent>
         </xsd:complexType>
@@ -106,7 +106,7 @@
         <xsd:complexType>
           <xsd:simpleContent>
             <xsd:extension base="ots:FrequencyType">
-              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="optional" />
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
             </xsd:extension>
           </xsd:simpleContent>
         </xsd:complexType>
@@ -115,7 +115,7 @@
         <xsd:complexType>
           <xsd:complexContent>
             <xsd:extension base="ots:FrequencyDistType">
-              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="optional" />
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
             </xsd:extension>
           </xsd:complexContent>
         </xsd:complexType>
@@ -124,7 +124,7 @@
         <xsd:complexType>
           <xsd:simpleContent>
             <xsd:extension base="ots:double">
-              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="optional" />
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
             </xsd:extension>
           </xsd:simpleContent>
         </xsd:complexType>
@@ -133,7 +133,7 @@
         <xsd:complexType>
           <xsd:complexContent>
             <xsd:extension base="ots:ConstantDistType">
-              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="optional" />
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
             </xsd:extension>
           </xsd:complexContent>
         </xsd:complexType>
@@ -142,7 +142,7 @@
         <xsd:complexType>
           <xsd:simpleContent>
             <xsd:extension base="ots:FractionType">
-              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="optional" />
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
             </xsd:extension>
           </xsd:simpleContent>
         </xsd:complexType>
@@ -151,7 +151,7 @@
         <xsd:complexType>
           <xsd:simpleContent>
             <xsd:extension base="ots:integer">
-              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="optional" />
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
             </xsd:extension>
           </xsd:simpleContent>
         </xsd:complexType>
@@ -160,7 +160,7 @@
         <xsd:complexType>
           <xsd:complexContent>
             <xsd:extension base="ots:DiscreteDistType">
-              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="optional" />
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
             </xsd:extension>
           </xsd:complexContent>
         </xsd:complexType>
@@ -169,7 +169,7 @@
         <xsd:complexType>
           <xsd:simpleContent>
             <xsd:extension base="ots:boolean">
-              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="optional" />
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
             </xsd:extension>
           </xsd:simpleContent>
         </xsd:complexType>
@@ -178,7 +178,7 @@
         <xsd:complexType>
           <xsd:simpleContent>
             <xsd:extension base="ots:string">
-              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="optional" />
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
             </xsd:extension>
           </xsd:simpleContent>
         </xsd:complexType>
@@ -187,7 +187,7 @@
         <xsd:complexType>
           <xsd:simpleContent>
             <xsd:extension base="ots:ClassNameType">
-              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="optional" />
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
             </xsd:extension>
           </xsd:simpleContent>
         </xsd:complexType>

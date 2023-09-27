@@ -38,7 +38,7 @@ public class AutomaticConnectorId extends AutomaticLinkId
                 && id == null)
         {
             this.lastNode = node;
-            this.lastId = "true".equalsIgnoreCase(outbound) ? (centroid + "-" + nodeId) : (nodeId + "-" + centroid);
+            this.lastId = debrace("true".equalsIgnoreCase(outbound) ? (centroid + "-" + nodeId) : (nodeId + "-" + centroid));
         }
         else
         {

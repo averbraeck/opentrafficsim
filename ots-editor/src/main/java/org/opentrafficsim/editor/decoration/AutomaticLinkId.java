@@ -60,7 +60,7 @@ public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements C
         if (nodeStart != null && nodeEnd != null && id == null)
         {
             this.lastNode = node;
-            this.lastId = nodeStart + "-" + nodeEnd;
+            this.lastId = debrace(nodeStart + "-" + nodeEnd);
         }
         else
         {
@@ -91,5 +91,15 @@ public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements C
             this.lastNode = null;
             this.lastId = null;
         }
+    }
+    
+    /**
+     * Returns a string with the { and } removed.
+     * @param value String; candidate value.
+     * @return String; string with the { and } removed
+     */
+    protected String debrace(final String value)
+    {
+        return value.replace("{", "").replace("}", "");
     }
 }
