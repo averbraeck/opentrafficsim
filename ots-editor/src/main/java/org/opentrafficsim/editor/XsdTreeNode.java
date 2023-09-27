@@ -558,7 +558,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         this.children = new ArrayList<>();
         if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
         {
-            if (this.attributeValues == null || this.attributeValues.get(0) == null || this.attributeValues.get(0).isEmpty())
+            if (this.attributeValues == null || (this.attributeValues.get(0) == null && this.attributeValues.get(1) == null))
             {
                 return;
             }
@@ -566,6 +566,14 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             if (!file.isAbsolute())
             {
                 file = new File(((XsdTreeNodeRoot) getPath().get(0)).getDirectory() + this.attributeValues.get(0));
+            }
+            if (!file.exists() && this.attributeValues.get(1) != null)
+            {
+                file = new File(this.attributeValues.get(1));
+                if (!file.isAbsolute())
+                {
+                    file = new File(((XsdTreeNodeRoot) getPath().get(0)).getDirectory() + this.attributeValues.get(1));
+                }
             }
             if (file.exists())
             {
@@ -822,9 +830,10 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public int getAttributeIndexByName(final String attribute)
     {
-        if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE) && "href".equals(attribute))
+        if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
         {
-            return 0;
+            // this is a bit dirty, at loading attribute 'name' and later attribute 'File' are mapped to 0
+            return "Fallback".equals(attribute) ? 1 : 0;
         }
         for (int index = 0; index < this.attributeCount(); index++)
         {
@@ -1077,8 +1086,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             int index = this.parent.children.indexOf(this) + 1;
             XsdTreeNode node = new XsdTreeNode(this.choice.parent, this.choice.xsdNode, this.choice.hiddenNodes,
                     this.choice.referringXsdNode);
-            ((XsdTreeNodeRoot) node.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED, new Object[] {node,
-                    node.parent, node.parent.children.indexOf(node)});
+            ((XsdTreeNodeRoot) node.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                    new Object[] {node, node.parent, node.parent.children.indexOf(node)});
             node.createOptions();
             int indexSelected = this.choice.options.indexOf(this.choice.selected);
             XsdTreeNode selectedOption = node.options.get(indexSelected);
@@ -1444,6 +1453,28 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             this.parent.invalidate();
         }
     }
+    
+    /**
+     * Invalidates entire tree in a nested manner. Triggered after the path of the current file changes in the root node.
+     * @param node XsdTreeNode; node to nest through.
+     */
+    void invalidateAll(final XsdTreeNode node)
+    {
+        if (node.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
+        {
+            node.removeChildren();
+            node.children = null;
+            node.assureChildren();
+        }
+        else if (node.children != null)
+        {
+            for (XsdTreeNode child : node.children)
+            {
+                invalidateAll(child);
+            }
+        }
+        node.invalidate();
+    }
 
     /**
      * Returns whether the value, any of the attributes, or any of the sub-elements, has an expression.
@@ -1605,7 +1636,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
         {
-            return ValueValidator.reportInvalidInclude(this.attributeValues.get(0),
+            return ValueValidator.reportInvalidInclude(this.attributeValues.get(0), this.attributeValues.get(1),
                     ((XsdTreeNodeRoot) getPath().get(0)).getDirectory());
         }
         String attribute = DocumentReader.getAttribute(getAttributeNode(index), "name");
@@ -1953,9 +1984,17 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         {
             Element element = document.createElement(getNodeName());
             xmlParent.appendChild(element);
-            if (this.attributeValues != null && this.attributeValues.get(0) != null && !this.attributeValues.get(0).isEmpty())
+            if (this.attributeValues != null && this.attributeValues.get(0) != null)
             {
                 element.setAttribute("href", this.attributeValues.get(0));
+                if (this.attributeValues.get(1) != null)
+                {
+                    Element fallback = document.createElement("xi:fallback");
+                    element.appendChild(fallback);
+                    Element include = document.createElement("xi:include");
+                    fallback.appendChild(include);
+                    include.setAttribute("href", this.attributeValues.get(1));
+                }
             }
             return;
         }
@@ -2131,17 +2170,27 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     protected void loadChildren(final List<Integer> indices, final NodeList childrenXml)
     {
         int childIndex = indices.get(1);
-        int indexXml;
-        for (indexXml = indices.get(0); indexXml < childrenXml.getLength(); indexXml++)
+        int indexXml = indices.get(0);
+        while (indexXml < childrenXml.getLength())
         {
             Node childNodeXml = childrenXml.item(indexXml);
             if (childNodeXml.getNodeName().equals("#text"))
             {
+                indexXml++;
                 continue;
             }
 
-            // find relevant node: previous node, or skip to next until we find the relevant node
+            // catch fallback
             String nameXml = childNodeXml.getNodeName().replace("ots:", "");
+            if (this.xsdNode == XiIncludeNode.XI_INCLUDE && "xi:fallback".equals(nameXml))
+            {
+                String fallback = childNodeXml.getChildNodes().item(1).getAttributes().getNamedItem("href").getNodeValue();
+                this.setAttributeValue(1, fallback);
+                indexXml++;
+                continue;
+            }
+            
+            // find relevant node: previous node, or skip to next until we find the relevant node
             if (childIndex > 0 && this.children.get(childIndex - 1).isRelevantNode(nameXml))
             {
                 if (childIndex >= this.children.size() || !this.children.get(childIndex).isRelevantNode(nameXml))
@@ -2180,11 +2229,11 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                             if (child.isRelevantNode(nameXml))
                             {
                                 relevantChild.choice.setOption(option);
-                                List<Integer> optionIndeces = new ArrayList<>();
-                                optionIndeces.add(indexXml);
-                                optionIndeces.add(0);
-                                option.loadChildren(optionIndeces, childrenXml);
-                                optionIndeces.set(0, optionIndeces.get(0) - 1); // as loop will increase it
+                                List<Integer> optionIndices = new ArrayList<>();
+                                optionIndices.add(indexXml);
+                                optionIndices.add(0);
+                                option.loadChildren(optionIndices, childrenXml);
+                                indexXml = optionIndices.get(0) - 1; // will be increased at end of loop
                                 optionSet = true;
                                 break;
                             }
@@ -2211,9 +2260,9 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             }
             childIndex++;
             indices.set(1, childIndex);
+            indexXml++;
         }
         indices.set(0, indexXml);
-        return;
     }
 
     /**

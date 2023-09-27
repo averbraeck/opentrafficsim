@@ -19,10 +19,10 @@ public final class XiIncludeNode implements Node
     public static final Node XI_INCLUDE = new XiIncludeNode();
 
     /** Child node that represents the 'File' attribute. */
-    private static final Node FILE_CHILD = new FileNode();
+    private static final Node FILE_CHILD = new FileNode(new Attributes("File"));
     
-    /** Attributes to contain 'File'. */
-    private static final Attributes ATTRIBUTES = new Attributes();
+    /** Child node that represents the 'Fallback' attribute. */
+    private static final Node FALLBACK_CHILD = new FileNode(new Attributes("Fallback"));
     
     /**
      * Private constructor.
@@ -80,6 +80,10 @@ public final class XiIncludeNode implements Node
                 {
                     return FILE_CHILD;
                 }
+                if (index == 1)
+                {
+                    return FALLBACK_CHILD;
+                }
                 return null;
             }
 
@@ -87,7 +91,7 @@ public final class XiIncludeNode implements Node
             @Override
             public int getLength()
             {
-                return 1;
+                return 2;
             }
         };
     }
@@ -103,7 +107,7 @@ public final class XiIncludeNode implements Node
     @Override
     public Node getLastChild()
     {
-        return FILE_CHILD;
+        return FALLBACK_CHILD;
     }
 
     /** {@inheritDoc} */
@@ -313,6 +317,18 @@ public final class XiIncludeNode implements Node
     private static class FileNode implements Node
     {
 
+        /** Attributes. */
+        private final Attributes attributes;
+        
+        /**
+         * Constructor.
+         * @param attributes Attributes; attributes.
+         */
+        public FileNode(final Attributes attributes)
+        {
+            this.attributes = attributes;
+        }
+        
         /** {@inheritDoc} */
         @Override
         public String getNodeName()
@@ -386,7 +402,7 @@ public final class XiIncludeNode implements Node
         @Override
         public NamedNodeMap getAttributes()
         {
-            return ATTRIBUTES;
+            return this.attributes;
         }
 
         /** {@inheritDoc} */
@@ -577,6 +593,18 @@ public final class XiIncludeNode implements Node
     private static class Attributes implements NamedNodeMap
     {
 
+        /** Attribute name in GUI. */
+        private final String name;
+        
+        /**
+         * Constructor.
+         * @param name String; attribute name in GUI.
+         */
+        public Attributes(final String name)
+        {
+            this.name = name;
+        }
+        
         /** File node. */
         private Node file = new Node()
         {
@@ -592,7 +620,7 @@ public final class XiIncludeNode implements Node
             @Override
             public String getNodeValue() throws DOMException
             {
-                return "File";
+                return Attributes.this.name;
             }
 
             /** {@inheritDoc} */

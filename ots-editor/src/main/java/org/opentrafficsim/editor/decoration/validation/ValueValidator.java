@@ -68,32 +68,41 @@ public interface ValueValidator extends Comparable<ValueValidator>
 
     /**
      * Validates an includes file by checking whether it can be found.
-     * @param value String; file name and path, possibly relative.
+     * @param fileName String; file name and path, possibly relative.
+     * @param fallback String; fallback file name and path, possibly relative.
      * @param directory String; base directory for relative paths.
      * @return String; first encountered problem in validating the value of the include, {@code null} if there is no problem.
      */
-    static String reportInvalidInclude(final String value, final String directory)
+    static String reportInvalidInclude(final String fileName, final String fallback, final String directory)
     {
-        if (value == null || value.isEmpty())
+        if (fileName == null && fallback == null)
         {
             return "Value is empty.";
         }
-        File file = new File(value);
+        if (fileName == null)
+        {
+            return "Fallback may only be provided if a file is also provided.";
+        }
+        File file = new File(fileName);
         if (!file.isAbsolute())
         {
             if (directory == null)
             {
                 return "Relative path defined but directory unknown. Try saving your work.";
             }
-            file = new File(directory + value);
+            file = new File(directory + fileName);
         }
         if (!file.exists())
         {
-            return "The file cannot be found.";
+            if (fallback == null)
+            {
+                return "The file cannot be found.";
+            }
+            return reportInvalidInclude(fallback, null, directory);
         }
         return null;
     }
-
+    
     /**
      * Report first encountered problem in validating the attribute value.
      * @param xsdNode Node; node, should be an xsd:attribute.

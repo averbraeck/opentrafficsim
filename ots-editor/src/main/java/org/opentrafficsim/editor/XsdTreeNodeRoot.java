@@ -3,6 +3,7 @@ package org.opentrafficsim.editor;
 import java.rmi.RemoteException;
 import java.util.LinkedHashSet;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import org.djutils.event.Event;
@@ -80,7 +81,13 @@ public class XsdTreeNodeRoot extends XsdTreeNode
      */
     public void setDirectory(final String directory)
     {
+        if (Objects.equals(this.directory, directory))
+        {
+            return;
+        }
         this.directory = directory;
+        // invalidate entire tree, as saving may trigger relative paths to includes to become ok, causing types to be found
+        invalidateAll(this);
     }
 
     /**

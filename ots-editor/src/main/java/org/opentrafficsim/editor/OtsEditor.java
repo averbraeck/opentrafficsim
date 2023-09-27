@@ -644,6 +644,7 @@ public class OtsEditor extends JFrame implements EventProducer
             {
                 loadFile(file, "Autosave file loaded");
                 setUnsavedChanges(true);
+                this.treeTable.updateUI();
                 file.delete();
             }
             else if (userInput == JOptionPane.NO_OPTION)
@@ -1317,7 +1318,6 @@ public class OtsEditor extends JFrame implements EventProducer
         this.lastFile = fileName;
         File file = new File(this.lastDirectory + this.lastFile);
         loadFile(file, "File loaded");
-        ((XsdTreeNodeRoot) OtsEditor.this.treeTable.getTree().getModel().getRoot()).setDirectory(this.lastDirectory);
     }
 
     /**
@@ -1333,6 +1333,7 @@ public class OtsEditor extends JFrame implements EventProducer
             this.undo.setIgnoreChanges();
             initializeTree();
             XsdTreeNodeRoot root = (XsdTreeNodeRoot) OtsEditor.this.treeTable.getTree().getModel().getRoot();
+            root.setDirectory(this.lastDirectory);
             root.loadXmlNodes(document.getFirstChild());
             this.undo.clear();
             setUnsavedChanges(false);
@@ -1341,6 +1342,7 @@ public class OtsEditor extends JFrame implements EventProducer
             this.backItem.setEnabled(false);
             this.coupledItem.setEnabled(false);
             this.coupledItem.setText("Go to coupled item");
+            this.treeTable.updateUI(); // knowing/changing the directory may change validation status
         }
         catch (SAXException | IOException | ParserConfigurationException exception)
         {
@@ -1390,8 +1392,10 @@ public class OtsEditor extends JFrame implements EventProducer
         save(new File(fileDialog.getDirectory() + fileName), root);
         if (root instanceof XsdTreeNodeRoot)
         {
-            setUnsavedChanges(false);
             ((XsdTreeNodeRoot) root).setDirectory(this.lastDirectory);
+            this.treeTable.updateUI();
+            this.attributesTable.updateUI();
+            setUnsavedChanges(false);
         }
         setStatusLabel("Saved");
     }
