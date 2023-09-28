@@ -12,8 +12,9 @@ import org.opentrafficsim.base.Identifiable;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @param <L> lane data type
  */
-public interface LaneData extends Identifiable
+public interface LaneData<L extends LaneData<L>> extends Identifiable
 {
 
     /**
@@ -26,6 +27,6 @@ public interface LaneData extends Identifiable
      * Returns the parent link of the lane.
      * @return parent link of the lane
      */
-    LinkData getLinkData();
+    LinkData<L> getLinkData();
 
 }

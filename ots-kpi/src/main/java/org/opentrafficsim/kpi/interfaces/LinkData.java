@@ -16,7 +16,7 @@ import org.opentrafficsim.base.Identifiable;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <L> lane data type
  */
-public interface LinkData<L extends LaneData> extends Identifiable
+public interface LinkData<L extends LaneData<L>> extends Identifiable
 {
 
     /**
