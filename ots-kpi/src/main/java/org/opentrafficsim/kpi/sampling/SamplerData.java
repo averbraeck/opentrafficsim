@@ -16,7 +16,6 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-import org.djutils.exceptions.Throw;
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
@@ -32,6 +31,7 @@ import org.djutils.data.Row;
 import org.djutils.data.Table;
 import org.djutils.data.csv.CsvData;
 import org.djutils.data.serialization.TextSerializationException;
+import org.djutils.exceptions.Throw;
 import org.djutils.io.CompressedFileWriter;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.interfaces.LaneData;
@@ -55,7 +55,7 @@ public class SamplerData<G extends GtuData> extends Table
 {
 
     /** Base columns. */
-    private static Collection<Column<?>> baseColumns = new LinkedHashSet<>();
+    private static Collection<Column<?>> BASE_COLUMNS = new LinkedHashSet<>();
 
     /** Extended data types, in order of relevant columns. */
     private final List<ExtendedDataType<?, ?, ?, G>> extendedDataTypes;
@@ -68,14 +68,14 @@ public class SamplerData<G extends GtuData> extends Table
 
     static
     {
-        baseColumns.add(new Column<>("traj#", "Trajectory number", Integer.class, null));
-        baseColumns.add(new Column<>("linkId", "Link id", String.class, null));
-        baseColumns.add(new Column<>("laneId", "Lane id", String.class, null));
-        baseColumns.add(new Column<>("gtuId", "GTU id", String.class, null));
-        baseColumns.add(new Column<>("t", "Simulation time", FloatDuration.class, DurationUnit.SI.getId()));
-        baseColumns.add(new Column<>("x", "Position on the lane", FloatLength.class, LengthUnit.SI.getId()));
-        baseColumns.add(new Column<>("v", "Speed", FloatSpeed.class, SpeedUnit.SI.getId()));
-        baseColumns.add(new Column<>("a", "Acceleration", FloatAcceleration.class, AccelerationUnit.SI.getId()));
+        BASE_COLUMNS.add(new Column<>("traj#", "Trajectory number", Integer.class, null));
+        BASE_COLUMNS.add(new Column<>("linkId", "Link id", String.class, null));
+        BASE_COLUMNS.add(new Column<>("laneId", "Lane id", String.class, null));
+        BASE_COLUMNS.add(new Column<>("gtuId", "GTU id", String.class, null));
+        BASE_COLUMNS.add(new Column<>("t", "Simulation time", FloatDuration.class, DurationUnit.SI.getId()));
+        BASE_COLUMNS.add(new Column<>("x", "Position on the lane", FloatLength.class, LengthUnit.SI.getId()));
+        BASE_COLUMNS.add(new Column<>("v", "Speed", FloatSpeed.class, SpeedUnit.SI.getId()));
+        BASE_COLUMNS.add(new Column<>("a", "Acceleration", FloatAcceleration.class, AccelerationUnit.SI.getId()));
     }
 
     /**
@@ -91,7 +91,7 @@ public class SamplerData<G extends GtuData> extends Table
          * The order in which we add them needs to be consistent with the columns generated, where we skip the 8 base columns.
          */
         this.extendedDataTypes = new ArrayList<>(extendedDataTypes.size());
-        for (int i = 8; i < 8 + extendedDataTypes.size(); i++)
+        for (int i = BASE_COLUMNS.size(); i < BASE_COLUMNS.size() + extendedDataTypes.size(); i++)
         {
             String columnId = getColumn(i).getId();
             for (ExtendedDataType<?, ?, ?, G> extendedDataType : extendedDataTypes)
@@ -103,7 +103,8 @@ public class SamplerData<G extends GtuData> extends Table
             }
         }
         this.filterDataTypes = new ArrayList<>(filterDataTypes.size());
-        for (int i = 8 + extendedDataTypes.size(); i < 8 + extendedDataTypes.size() + filterDataTypes.size(); i++)
+        for (int i = BASE_COLUMNS.size() + extendedDataTypes.size(); i < BASE_COLUMNS.size() + extendedDataTypes.size()
+                + filterDataTypes.size(); i++)
         {
             String columnId = getColumn(i).getId();
             for (FilterDataType<?> filterType : filterDataTypes)
@@ -126,8 +127,8 @@ public class SamplerData<G extends GtuData> extends Table
             final Set<? extends ExtendedDataType<?, ?, ?, ? extends GtuData>> extendedDataTypes,
             final Set<FilterDataType<?>> filterDataTypes)
     {
-        Collection<Column<?>> out = new ArrayList<>(baseColumns.size() + extendedDataTypes.size() + filterDataTypes.size());
-        out.addAll(baseColumns);
+        Collection<Column<?>> out = new ArrayList<>(BASE_COLUMNS.size() + extendedDataTypes.size() + filterDataTypes.size());
+        out.addAll(BASE_COLUMNS);
         for (ExtendedDataType<?, ?, ?, ?> extendedDataType : extendedDataTypes)
         {
             out.add(new Column<>(extendedDataType.getId(), extendedDataType.getDescription(), extendedDataType.getType(),
@@ -334,7 +335,7 @@ public class SamplerData<G extends GtuData> extends Table
             {
                 // base data
                 Object[] data = getBaseData(trajectoryIndex);
-                int dataIndex = 8;
+                int dataIndex = BASE_COLUMNS.size();
 
                 // extended data
                 for (int i = 0; i < SamplerData.this.extendedDataTypes.size(); i++)
@@ -371,7 +372,7 @@ public class SamplerData<G extends GtuData> extends Table
         {
             Object[] data = new Object[SamplerData.this.getNumberOfColumns()];
             int dataIndex = 0;
-            for (Column<?> column : baseColumns)
+            for (Column<?> column : BASE_COLUMNS)
             {
                 switch (column.getId())
                 {
@@ -400,7 +401,7 @@ public class SamplerData<G extends GtuData> extends Table
                         data[dataIndex] = FloatAcceleration.instantiateSI(this.currentTrajectory.getA(trajectoryIndex));
                         break;
                     default:
-                        
+
                 }
                 dataIndex++;
             }
