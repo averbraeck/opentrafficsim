@@ -64,7 +64,7 @@ public class SamplerData<G extends GtuData> extends Table
     private final List<FilterDataType<?>> filterDataTypes;
 
     /** Map with all sampling data. */
-    private final Map<LaneData, TrajectoryGroup<G>> trajectories = new LinkedHashMap<>();
+    private final Map<LaneData<?>, TrajectoryGroup<G>> trajectories = new LinkedHashMap<>();
 
     static
     {
@@ -169,7 +169,7 @@ public class SamplerData<G extends GtuData> extends Table
      * @param lane LaneData; lane direction
      * @param trajectoryGroup trajectory group for given lane direction
      */
-    protected final void putTrajectoryGroup(final LaneData lane, final TrajectoryGroup<G> trajectoryGroup)
+    protected final void putTrajectoryGroup(final LaneData<?> lane, final TrajectoryGroup<G> trajectoryGroup)
     {
         this.trajectories.put(lane, trajectoryGroup);
     }
@@ -178,7 +178,7 @@ public class SamplerData<G extends GtuData> extends Table
      * Returns the set of lane directions.
      * @return Set&lt;LaneData&gt;; lane directions
      */
-    public final Set<LaneData> getLanes()
+    public final Set<LaneData<?>> getLanes()
     {
         return this.trajectories.keySet();
     }
@@ -188,7 +188,7 @@ public class SamplerData<G extends GtuData> extends Table
      * @param lane LaneData; lane
      * @return whether there is data for the give lane
      */
-    public final boolean contains(final LaneData lane)
+    public final boolean contains(final LaneData<?> lane)
     {
         return this.trajectories.containsKey(lane);
     }
@@ -198,7 +198,7 @@ public class SamplerData<G extends GtuData> extends Table
      * @param lane LaneData; lane
      * @return trajectory group of given lane, {@code null} if none
      */
-    public final TrajectoryGroup<G> getTrajectoryGroup(final LaneData lane)
+    public final TrajectoryGroup<G> getTrajectoryGroup(final LaneData<?> lane)
     {
         return this.trajectories.get(lane);
     }
@@ -276,11 +276,11 @@ public class SamplerData<G extends GtuData> extends Table
     private final class SamplerDataIterator implements Iterator<Row>
     {
         /** Iterator over the sampled lanes. */
-        private Iterator<Entry<LaneData, TrajectoryGroup<G>>> laneIterator =
+        private Iterator<Entry<LaneData<?>, TrajectoryGroup<G>>> laneIterator =
                 SamplerData.this.trajectories.entrySet().iterator();
 
         /** Current lane. */
-        private LaneData currentLane;
+        private LaneData<?> currentLane;
 
         /** Iterator over trajectories on a lane. */
         private Iterator<Trajectory<G>> trajectoryIterator = Collections.emptyIterator();
@@ -309,7 +309,7 @@ public class SamplerData<G extends GtuData> extends Table
                     {
                         return false;
                     }
-                    Entry<LaneData, TrajectoryGroup<G>> entry = this.laneIterator.next();
+                    Entry<LaneData<?>, TrajectoryGroup<G>> entry = this.laneIterator.next();
                     this.currentLane = entry.getKey();
                     this.trajectoryIterator = entry.getValue().iterator();
                 }

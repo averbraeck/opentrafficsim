@@ -16,7 +16,7 @@ import org.opentrafficsim.kpi.interfaces.LaneData;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <L> lane data type
  */
-public class SpaceTimeRegion<L extends LaneData>
+public class SpaceTimeRegion<L extends LaneData<L>>
 {
 
     /** Lane. */

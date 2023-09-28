@@ -34,7 +34,7 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
     private final Length endPosition;
 
     /** Direction for which the trajectories have been sampled. */
-    private final LaneData lane;
+    private final LaneData<?> lane;
 
     /** Trajectories. */
     private final List<Trajectory<G>> trajectories = new ArrayList<>();
@@ -42,9 +42,9 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
     /**
      * Constructor without length specification. The complete lane will be used.
      * @param startTime Time; start time of trajectories
-     * @param lane LaneData; lane
+     * @param lane LaneData&lt;?&gt;; lane
      */
-    public TrajectoryGroup(final Time startTime, final LaneData lane)
+    public TrajectoryGroup(final Time startTime, final LaneData<?> lane)
     {
         this(startTime, Length.ZERO, lane == null ? null : lane.getLength(), lane);
     }
@@ -53,10 +53,10 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
      * @param startTime Time; start time of trajectory group
      * @param startPosition Length; start position
      * @param endPosition Length; end position
-     * @param lane LaneData; the lane
+     * @param lane LaneData&lt;?&gt;; the lane
      */
     public TrajectoryGroup(final Time startTime, final Length startPosition, final Length endPosition,
-            final LaneData lane)
+            final LaneData<?> lane)
     {
         Throw.whenNull(startTime, "Start time may not be null.");
         // keep before position check; prevents "End position may not be null" due to missing direction in other constructor
@@ -183,7 +183,7 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
      * Returns the lane.
      * @return lane
      */
-    public final LaneData getLane()
+    public final LaneData<?> getLane()
     {
         return this.lane;
     }

@@ -37,7 +37,7 @@ import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
  * @param <G> gtu data type
  * @param <L> lane data type
  */
-public final class Query<G extends GtuData, L extends LaneData> implements Identifiable
+public final class Query<G extends GtuData, L extends LaneData<L>> implements Identifiable
 {
     /** unique id. */
     private final String id;
