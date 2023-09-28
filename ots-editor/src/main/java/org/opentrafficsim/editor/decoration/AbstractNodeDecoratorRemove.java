@@ -11,7 +11,11 @@ import org.opentrafficsim.editor.XsdTreeNodeRoot;
 /**
  * General implementation of node decorators, such as validators and string functions, that also need to trigger on removed
  * nodes. This class will listen to events of the editor, and trigger on nodes being created and removed.
- * @author wjschakel
+ * <p>
+ * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 public abstract class AbstractNodeDecoratorRemove extends AbstractNodeDecorator
 {

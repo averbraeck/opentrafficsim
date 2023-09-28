@@ -46,7 +46,11 @@ import org.xml.sax.SAXException;
  * Therefore the xsd:sequence becomes a node visible in the tree, when it's an option under a choice. Furthermore, for each
  * xsd:choice node an {@code XsdTreeNode} is created that is not visible in the tree. It stores all options
  * {@code XsdTreeNode}'s and knows what option is selected. Only one options is ever in the list of children of the parent node.
- * @author wjschakel
+ * <p>
+ * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 public class XsdTreeNode extends LocalEventProducer implements Serializable
 {
@@ -914,6 +918,21 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
+     * Deactivates this node.
+     */
+    public void setInactive()
+    {
+        if (this.active)
+        {
+            this.deactivated = true;
+            this.active = false;
+            invalidate();
+            this.parent.invalidate();
+            fireEvent(new Event(XsdTreeNode.ACTIVATION_CHANGED, new Object[] {this, false}));
+        }
+    }
+
+    /**
      * Returns whether this node has an attribute named "Id".
      * @return boolean; whether this node has an attribute named "Id".
      */
@@ -1129,6 +1148,30 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     private XsdTreeNode duplicate(final XsdTreeNode newParent)
     {
         // empty copy
+        XsdTreeNode copyNode = emptyCopy(newParent);
+        copyNode.active = this.active;
+        copyInto(copyNode);
+        ((XsdTreeNodeRoot) copyNode.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                new Object[] {copyNode, newParent, newParent.children.indexOf(copyNode)});
+        return copyNode;
+    }
+
+    /**
+     * Creates an empty copy of this node, i.e. without children, options, attributes.
+     * @return XsdTreeNode; empty copy.
+     */
+    public XsdTreeNode emptyCopy()
+    {
+        return emptyCopy(this.parent);
+    }
+
+    /**
+     * Returns an empty copy of this node under the given parent.
+     * @param newParent XsdTreeNode; new parent.
+     * @return XsdTreeNode; empty copy.
+     */
+    private XsdTreeNode emptyCopy(final XsdTreeNode newParent)
+    {
         int indexOfNode = this.parent.children.indexOf(this);
         if (newParent.equals(this.parent))
         {
@@ -1141,18 +1184,41 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         newParent.children.add(indexOfNode, copyNode);
         copyNode.parent = newParent;
-        copyNode.active = this.active;
+        return copyNode;
+    }
+
+    /**
+     * Copies the active status, value, choice, attributes and children of this node in to the given node.
+     * @param copyNode XsdTreeNode; node to copy data in to.
+     */
+    public void copyInto(final XsdTreeNode copyNode)
+    {
+        if (this.equals(copyNode))
+        {
+            return;
+        }
+        if (copyNode.children != null)
+        {
+            for (XsdTreeNode child : copyNode.getChildren())
+            {
+                int index = copyNode.children.indexOf(child);
+                copyNode.children.remove(index);
+                child.parent = null;
+                ((XsdTreeNodeRoot) copyNode.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_REMOVED,
+                        new Object[] {child, copyNode, index});
+            }
+        }
         copyNode.value = this.value;
         // copy choice
         if (this.choice != null)
         {
-            XsdTreeNode choiceNode =
-                    new XsdTreeNode(newParent, this.choice.xsdNode, this.choice.hiddenNodes, this.choice.referringXsdNode);
+            XsdTreeNode choiceNode = new XsdTreeNode(copyNode.parent, this.choice.xsdNode, this.choice.hiddenNodes,
+                    this.choice.referringXsdNode);
             choiceNode.choice = choiceNode;
             // populate options, but skip the copyNode option that was created above, insert it afterwards
             int selectedIndex = this.choice.options.indexOf(this);
             choiceNode.options = new ArrayList<>();
-            XsdTreeNodeUtil.addChildren(this.choice.xsdNode, newParent, choiceNode.options, this.choice.hiddenNodes,
+            XsdTreeNodeUtil.addChildren(this.choice.xsdNode, copyNode.parent, choiceNode.options, this.choice.hiddenNodes,
                     this.schema, false, selectedIndex);
             choiceNode.options.add(selectedIndex, copyNode);
             choiceNode.selected = choiceNode.options.get(selectedIndex);
@@ -1176,13 +1242,13 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             copyNode.attributeValues.set(index, this.attributeValues.get(index));
         }
         // copy children, recursive
-        for (int index = 0; index < getChildCount(); index++)
+        if (this.children != null)
         {
-            this.children.get(index).duplicate(copyNode);
+            for (int index = 0; index < this.children.size(); index++)
+            {
+                this.children.get(index).duplicate(copyNode);
+            }
         }
-        ((XsdTreeNodeRoot) copyNode.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
-                new Object[] {copyNode, newParent, newParent.children.indexOf(copyNode)});
-        return copyNode;
     }
 
     /**
@@ -1223,11 +1289,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         if (this.minOccurs == 0 && numberOfTypeOrChoiceInParent == 1 && !this.isInclude && this.active)
         {
-            this.deactivated = true;
-            this.active = false;
-            invalidate();
-            this.parent.invalidate();
-            fireEvent(new Event(XsdTreeNode.ACTIVATION_CHANGED, new Object[] {this, false}));
+            setInactive();
             return;
         }
         if (this.choice != null && this.choice.selected.equals(this))
@@ -1811,6 +1873,20 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             }
         }
         return this.schema.isType(this.xsdNode, path);
+    }
+
+    /**
+     * Returns whether this node can contain the information of the given node. This only check equivalence of the underlying
+     * XSD node. The referring node may be different, as two elements may refer to the same type.
+     * @param copied XsdTreeNode; node that was copied, and may be pasted/inserted here.
+     * @return boolean; whether this node can contain the information of the given node.
+     */
+    public boolean canContain(final XsdTreeNode copied)
+    {
+        return this.xsdNode == copied.xsdNode || (this.referringXsdNode != null && copied.referringXsdNode != null
+                && DocumentReader.getAttribute(this.referringXsdNode, "type") != null
+                && DocumentReader.getAttribute(this.referringXsdNode, "type")
+                        .equals(DocumentReader.getAttribute(copied.referringXsdNode, "type")));
     }
 
     // ====== Interaction with visualization ======

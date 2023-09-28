@@ -35,7 +35,11 @@ import org.opentrafficsim.editor.XsdTreeNode;
  * thus ending editing mode, the checked-status of the checkbox should be returned as "true" or "false", if it was the last
  * component for editing returned.</li>
  * </ul>
- * @author wjschakel
+ * <p>
+ * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 public class AttributesCellEditor extends DefaultCellEditor
 {

@@ -114,7 +114,7 @@ public class Undo implements EventListener
 
         // add new entry in queue
         this.currentSet = new ArrayDeque<>();
-        this.queue.add(new Action(type, this.currentSet, node, node.parent, node.parent.children.indexOf(node), attribute));
+        this.queue.add(new Action(type, this.currentSet, node, node.parent, attribute));
         while (this.queue.size() > MAX_UNDO)
         {
             this.queue.pollFirst();
@@ -136,6 +136,7 @@ public class Undo implements EventListener
         if (this.currentSet.isEmpty())
         {
             this.cursor++; // now the latest undo actually has content
+            updateButtons();
         }
         this.currentSet.add(subAction);
     }
@@ -177,7 +178,7 @@ public class Undo implements EventListener
         }
         action.parent.children.forEach((n) -> n.invalidate());
         action.parent.invalidate();
-        this.editor.show(action.getShowNode(), action.attribute);
+        this.editor.show(action.node, action.attribute);
         this.cursor--;
         updateButtons();
         this.ignoreChanges = false;
@@ -202,7 +203,7 @@ public class Undo implements EventListener
         }
         action.parent.children.forEach((n) -> n.invalidate());
         action.parent.invalidate();
-        this.editor.show(action.getShowNode(), action.attribute);
+        this.editor.show(action.postActionShowNode, action.attribute);
         updateButtons();
         this.ignoreChanges = false;
     }
@@ -392,6 +393,15 @@ public class Undo implements EventListener
 
         }
     }
+    
+    /**
+     * Sets the node to show in the tree after the action.
+     * @param node XsdTreeNode; node to show in the tree after the action.
+     */
+    public void setPostActionShowNode(final XsdTreeNode node)
+    {
+        this.queue.get(this.cursor).postActionShowNode = node;
+    }
 
     /**
      * Interface for any sub-action reflecting any change.
@@ -493,11 +503,11 @@ public class Undo implements EventListener
         /** Parent node of the node involved in the action. */
         final XsdTreeNode parent;
 
-        /** Index under the parent of the node involved in the action. */
-        final int indexInParent;
-
         /** Attribute for an attribute change, {@code null} otherwise. */
         final String attribute;
+        
+        /** Node to gain focus after the action. */
+        XsdTreeNode postActionShowNode;
 
         /**
          * Constructor.
@@ -505,27 +515,17 @@ public class Undo implements EventListener
          * @param subActions Deque&lt;SubAction&gt;; queue of sub actions.
          * @param node XsdTreeNode; node involved in the action.
          * @param parent XsdTreeNode; parent node of the node involved in the action.
-         * @param indexInParent int; index under the parent of the node involved in the action.
          * @param attribute String; attribute for an attribute change, {@code null} otherwise.
          */
         public Action(final ActionType type, final Deque<SubAction> subActions, final XsdTreeNode node,
-                final XsdTreeNode parent, final int indexInParent, final String attribute)
+                final XsdTreeNode parent, final String attribute)
         {
             this.type = type;
             this.subActions = subActions;
             this.node = node;
             this.parent = parent;
-            this.indexInParent = indexInParent;
             this.attribute = attribute;
-        }
-
-        /**
-         * Returns the relevant node to shown as selected in the GUI to indicate where the change occurred.
-         * @return XsdTreeNode; relevant node to shown as selected in the GUI to indicate where the change occurred.
-         */
-        public XsdTreeNode getShowNode()
-        {
-            return this.parent.children.contains(this.node) ? this.node : this.parent.children.get(this.indexInParent);
+            this.postActionShowNode = node;
         }
     }
 
@@ -548,6 +548,9 @@ public class Undo implements EventListener
 
         /** Attribute changed. */
         ATTRIBUTE_CHANGE,
+        
+        /** Cut. */
+        CUT,
 
         /** Node duplicated. */
         DUPLICATE,
@@ -555,11 +558,17 @@ public class Undo implements EventListener
         /** Id changed. */
         ID_CHANGE,
 
+        /** INSERT. */
+        INSERT,
+        
         /** Node moved. */
         MOVE,
 
         /** Option set. */
         OPTION,
+        
+        /** Paste. */
+        PASTE,
 
         /** Node removed. */
         REMOVE,

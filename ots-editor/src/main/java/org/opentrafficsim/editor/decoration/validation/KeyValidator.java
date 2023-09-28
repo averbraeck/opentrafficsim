@@ -24,7 +24,11 @@ import org.w3c.dom.Node;
  * values need to be present. This class will maintain a list of nodes (fed by an external listener) and validate against field
  * uniqueness over those nodes. If another {@code KeyValidator} is given in the constructor, the instance will behave as an
  * xsd:keyref and validate that the field values are, as a set, within the given {@code KeyValidator}.
- * @author wjschakel
+ * <p>
+ * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 public class KeyValidator implements ValueValidator, EventListener
 {

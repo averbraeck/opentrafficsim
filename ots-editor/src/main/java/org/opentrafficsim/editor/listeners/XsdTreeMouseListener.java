@@ -14,6 +14,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.table.TableCellEditor;
+import javax.swing.tree.TreePath;
 
 import org.opentrafficsim.editor.AttributesTableModel;
 import org.opentrafficsim.editor.OtsEditor;
@@ -25,7 +26,11 @@ import de.javagl.treetable.JTreeTable;
 
 /**
  * Listener for mouse events on the tree.
- * @author wjschakel
+ * <p>
+ * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 public class XsdTreeMouseListener extends MouseAdapter
 {
@@ -222,7 +227,7 @@ public class XsdTreeMouseListener extends MouseAdapter
             anyAdded = true;
         }
 
-        if (treeNode.isActive() && !treeNode.isInclude())
+        if (!treeNode.isInclude())
         {
             anyAdded = addDefaultActions(treeNode, popup, anyAdded);
         }
@@ -249,7 +254,12 @@ public class XsdTreeMouseListener extends MouseAdapter
         boolean separatorNeeded = anyAdded;
         boolean groupAdded = false;
 
-        if (treeNode.isAddable())
+        /*
+         * The accelerators are added so they are shown in the menu as shortcuts. However, they will only trigger on key events
+         * when the right-click menu is actually shown. Therefore XsdTreeKeyListener also implements the responses for when keys
+         * are pressed. The below code executes when a menu item is clicked, or the accelerator is used while the menu shows.
+         */
+        if (treeNode.isActive() && treeNode.isAddable())
         {
             if (separatorNeeded)
             {
@@ -263,33 +273,29 @@ public class XsdTreeMouseListener extends MouseAdapter
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
-                    XsdTreeMouseListener.this.editor.getUndo().startAction(ActionType.ADD, treeNode, null);
-                    treeNode.add();
-                    XsdTreeMouseListener.this.treeTable.updateUI();
+                    XsdTreeMouseListener.this.editor.getNodeActions().add(treeNode);
                 }
             });
             add.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, KeyEvent.CTRL_DOWN_MASK));
             add.setFont(this.treeTable.getFont());
             popup.add(add);
-            JMenuItem copy = new JMenuItem("Duplicate");
-            copy.addActionListener(new ActionListener()
+            JMenuItem duplicate = new JMenuItem("Duplicate");
+            duplicate.addActionListener(new ActionListener()
             {
                 /** {@inheritDoc} */
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
-                    XsdTreeMouseListener.this.editor.getUndo().startAction(ActionType.DUPLICATE, treeNode, null);
-                    treeNode.duplicate();
-                    XsdTreeMouseListener.this.treeTable.updateUI();
+                    XsdTreeMouseListener.this.editor.getNodeActions().duplicate(treeNode);
                 }
             });
-            copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK));
-            copy.setFont(this.treeTable.getFont());
-            popup.add(copy);
+            duplicate.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK));
+            duplicate.setFont(this.treeTable.getFont());
+            popup.add(duplicate);
             anyAdded = true;
             groupAdded = true;
         }
-        if (treeNode.isRemovable())
+        if (treeNode.isActive() && treeNode.isRemovable())
         {
             if (separatorNeeded)
             {
@@ -305,17 +311,7 @@ public class XsdTreeMouseListener extends MouseAdapter
                 {
                     if (XsdTreeMouseListener.this.editor.confirmNodeRemoval(treeNode))
                     {
-                        int selected = XsdTreeMouseListener.this.treeTable.getTree().getLeadSelectionRow();
-                        XsdTreeMouseListener.this.editor.getUndo().startAction(ActionType.REMOVE, treeNode, null);
-                        treeNode.remove();
-                        XsdTreeMouseListener.this.treeTable.updateUI();
-                        XsdTreeMouseListener.this.treeTable.getSelectionModel().setSelectionInterval(selected, selected);
-                        int column = XsdTreeMouseListener.this.treeTable.convertColumnIndexToView(0);
-                        if (XsdTreeMouseListener.this.treeTable.getValueAt(selected, column).equals(treeNode))
-                        {
-                            XsdTreeMouseListener.this.attributesTable
-                                    .setModel(new AttributesTableModel(null, XsdTreeMouseListener.this.treeTable));
-                        }
+                        XsdTreeMouseListener.this.editor.getNodeActions().remove(treeNode);
                     }
                 }
             });
@@ -325,8 +321,108 @@ public class XsdTreeMouseListener extends MouseAdapter
             anyAdded = true;
             groupAdded = true;
         }
+        if (treeNode.isActive() && (treeNode.isRemovable() || treeNode.isAddable()))
+        {
+            if (separatorNeeded)
+            {
+                separatorNeeded = false;
+                popup.add(new JSeparator());
+            }
+            JMenuItem copy = new JMenuItem("Copy");
+            copy.addActionListener(new ActionListener()
+            {
+                /** {@inheritDoc} */
+                @Override
+                public void actionPerformed(final ActionEvent e)
+                {
+                    XsdTreeMouseListener.this.editor.getNodeActions().copy(treeNode);
+                }
+            });
+            copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK));
+            copy.setFont(this.treeTable.getFont());
+            popup.add(copy);
+            anyAdded = true;
+            groupAdded = true;
+        }
+        if (treeNode.isActive() && treeNode.isRemovable())
+        {
+            if (separatorNeeded)
+            {
+                separatorNeeded = false;
+                popup.add(new JSeparator());
+            }
+            JMenuItem cut = new JMenuItem("Cut");
+            cut.addActionListener(new ActionListener()
+            {
+                /** {@inheritDoc} */
+                @Override
+                public void actionPerformed(final ActionEvent e)
+                {
+                    XsdTreeMouseListener.this.editor.getNodeActions().cut(treeNode);
+                }
+            });
+            cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK));
+            cut.setFont(this.treeTable.getFont());
+            popup.add(cut);
+            anyAdded = true;
+            groupAdded = true;
+        }
+
+        if (this.editor.getClipboard() != null && treeNode.canContain(this.editor.getClipboard()))
+        {
+            if (treeNode.isActive() && treeNode.isAddable())
+            {
+                if (separatorNeeded)
+                {
+                    separatorNeeded = false;
+                    popup.add(new JSeparator());
+                }
+                JMenuItem cut = new JMenuItem("Insert");
+                cut.addActionListener(new ActionListener()
+                {
+                    /** {@inheritDoc} */
+                    @Override
+                    public void actionPerformed(final ActionEvent e)
+                    {
+                        XsdTreeMouseListener.this.editor.getNodeActions().insert(treeNode);
+                    }
+                });
+                cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, 0));
+                cut.setFont(this.treeTable.getFont());
+                popup.add(cut);
+                anyAdded = true;
+                groupAdded = true;
+            }
+            if (!treeNode.isActive() || treeNode.isAddable())
+            {
+                if (separatorNeeded)
+                {
+                    separatorNeeded = false;
+                    popup.add(new JSeparator());
+                }
+                JMenuItem cut = new JMenuItem("Paste");
+                cut.addActionListener(new ActionListener()
+                {
+                    /** {@inheritDoc} */
+                    @Override
+                    public void actionPerformed(final ActionEvent e)
+                    {
+                        XsdTreeMouseListener.this.editor.getNodeActions().paste(treeNode);
+                    }
+                });
+                cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK));
+                cut.setFont(this.treeTable.getFont());
+                popup.add(cut);
+                anyAdded = true;
+                groupAdded = true;
+            }
+        }
+
+        separatorNeeded = groupAdded;
+        groupAdded = false;
+
         List<XsdOption> options = treeNode.getOptions();
-        if (treeNode.isChoice() && options.size() > 1)
+        if (treeNode.isActive() && treeNode.isChoice() && options.size() > 1)
         {
             if (separatorNeeded)
             {
@@ -340,22 +436,7 @@ public class XsdTreeMouseListener extends MouseAdapter
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
-                    int optionIndex = 0;
-                    for (int i = 0; i < options.size(); i++)
-                    {
-                        if (options.get(i).getOptionNode().equals(treeNode))
-                        {
-                            optionIndex = i + 1;
-                            break;
-                        }
-                    }
-                    if (optionIndex >= options.size())
-                    {
-                        optionIndex = 0;
-                    }
-                    XsdTreeMouseListener.this.editor.getUndo().startAction(ActionType.OPTION, treeNode, null);
-                    treeNode.setOption(options.get(optionIndex).getOptionNode());
-                    XsdTreeMouseListener.this.treeTable.updateUI();
+                    XsdTreeMouseListener.this.editor.getNodeActions().revolveOption(treeNode, options);
                 }
             });
             revolve.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK));
@@ -364,28 +445,23 @@ public class XsdTreeMouseListener extends MouseAdapter
             anyAdded = true;
             groupAdded = true;
         }
-        if (treeNode.getChildCount() > 0)
+        if (!treeNode.isActive() || treeNode.getChildCount() > 0)
         {
             if (separatorNeeded)
             {
                 separatorNeeded = false;
                 popup.add(new JSeparator());
             }
-            JMenuItem expand = new JMenuItem("Expand");
+            TreePath path = XsdTreeMouseListener.this.treeTable.getTree().getSelectionPath();
+            boolean expanded = XsdTreeMouseListener.this.treeTable.getTree().isExpanded(path);
+            JMenuItem expand = new JMenuItem(expanded ? "Collapse" : "Expand");
             expand.addActionListener(new ActionListener()
             {
                 /** {@inheritDoc} */
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
-                    if (!treeNode.isActive())
-                    {
-                        XsdTreeMouseListener.this.editor.getUndo().startAction(ActionType.ACTIVATE, treeNode, null);
-                        treeNode.setActive();
-                    }
-                    XsdTreeMouseListener.this.treeTable.getTree()
-                            .expandPath(XsdTreeMouseListener.this.treeTable.getTree().getSelectionPath());
-                    XsdTreeMouseListener.this.editor.show(treeNode, null);
+                    XsdTreeMouseListener.this.editor.getNodeActions().expand(treeNode, path, expanded);
                 }
             });
             expand.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK));
@@ -397,7 +473,7 @@ public class XsdTreeMouseListener extends MouseAdapter
 
         separatorNeeded = groupAdded;
 
-        if (treeNode.canMoveUp())
+        if (treeNode.isActive() && treeNode.canMoveUp())
         {
             if (separatorNeeded)
             {
@@ -411,9 +487,7 @@ public class XsdTreeMouseListener extends MouseAdapter
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
-                    XsdTreeMouseListener.this.editor.getUndo().startAction(ActionType.MOVE, treeNode, null);
-                    treeNode.move(-1);
-                    XsdTreeMouseListener.this.treeTable.updateUI();
+                    XsdTreeMouseListener.this.editor.getNodeActions().move(treeNode, -1);
                 }
             });
             moveUp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, KeyEvent.CTRL_DOWN_MASK));
@@ -421,7 +495,7 @@ public class XsdTreeMouseListener extends MouseAdapter
             popup.add(moveUp);
             anyAdded = true;
         }
-        if (treeNode.canMoveDown())
+        if (treeNode.isActive() && treeNode.canMoveDown())
         {
             if (separatorNeeded)
             {
@@ -435,9 +509,7 @@ public class XsdTreeMouseListener extends MouseAdapter
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
-                    XsdTreeMouseListener.this.editor.getUndo().startAction(ActionType.MOVE, treeNode, null);
-                    treeNode.move(1);
-                    XsdTreeMouseListener.this.treeTable.updateUI();
+                    XsdTreeMouseListener.this.editor.getNodeActions().move(treeNode, 1);
                 }
             });
             moveDown.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, KeyEvent.CTRL_DOWN_MASK));

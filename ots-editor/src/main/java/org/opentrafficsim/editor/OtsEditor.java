@@ -118,7 +118,11 @@ import de.javagl.treetable.JTreeTable;
  * Schema for the XML (XSD).<br>
  * <br>
  * This functionality is currently in development.
- * @author wjschakel
+ * <p>
+ * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 // TODO: Allow sorting of elements.
 public class OtsEditor extends JFrame implements EventProducer
@@ -219,6 +223,8 @@ public class OtsEditor extends JFrame implements EventProducer
     /** Auto save task. */
     private TimerTask autosave;
 
+    // navigate
+    
     /** Menu item for jumping back from coupled node. */
     private JMenuItem backItem;
 
@@ -239,6 +245,17 @@ public class OtsEditor extends JFrame implements EventProducer
 
     /** Key node that is coupled to from a keyref node, may be {@code null}. */
     private XsdTreeNode coupledNode;
+    
+    // copy/paste
+    
+    /** Node in clipboard (sort of...). */
+    private XsdTreeNode clipboard;
+
+    /** Whether the node in the clipboard was cut. */
+    private boolean cut;
+    
+    /** Node actions. */
+    private NodeActions nodeActions;
 
     /**
      * Constructor.
@@ -682,6 +699,7 @@ public class OtsEditor extends JFrame implements EventProducer
         // tree table
         XsdTreeTableModel treeModel = new XsdTreeTableModel(this.xsdDocument);
         this.treeTable = new JTreeTable(treeModel);
+        this.nodeActions = new NodeActions(this, this.treeTable);
         this.treeTable.putClientProperty("terminateEditOnFocusLost", true);
         treeModel.setTreeTable(this.treeTable);
         this.treeTable.setDefaultRenderer(String.class, new StringCellRenderer(this.treeTable));
@@ -875,7 +893,7 @@ public class OtsEditor extends JFrame implements EventProducer
         this.treeTable.addMouseListener(new XsdTreeMouseListener(this, this.treeTable, this.attributesTable));
 
         // this listener removes the selected node, if it is removable
-        this.treeTable.addKeyListener(new XsdTreeKeyListener(this, this.treeTable, this.attributesTable));
+        this.treeTable.addKeyListener(new XsdTreeKeyListener(this, this.treeTable));
     }
 
     /**
@@ -1503,6 +1521,50 @@ public class OtsEditor extends JFrame implements EventProducer
     public void addAttributeCellEditorListener(final CellEditorListener listener)
     {
         this.attributesTable.getDefaultEditor(String.class).addCellEditorListener(listener);
+    }
+    
+    /**
+     * Sets a node in the clipboard.
+     * @param clipboard XsdTreeNode; node to set in the clipboard.
+     * @param cut boolean; whether the node was cut.
+     */
+    public void setClipboard(final XsdTreeNode clipboard, final boolean cut)
+    {
+        this.clipboard = clipboard;
+        this.cut = cut;
+    }
+    
+    /**
+     * Returns the clipboard node.
+     * @return XsdTreeNode; clipboard node.
+     */
+    public XsdTreeNode getClipboard()
+    {
+        return this.clipboard;
+    }
+    
+    /**
+     * Remove node that was cut.
+     */
+    public void removeClipboardWhenCut()
+    {
+        if (this.clipboard != null && this.cut)
+        {
+            if (this.clipboard.isRemovable())
+            {
+                this.clipboard.remove();
+            }
+            this.clipboard = null;
+        }
+    }
+    
+    /**
+     * Returns the node actions.
+     * @return NodeActions; node actions.
+     */
+    public NodeActions getNodeActions()
+    {
+        return this.nodeActions;
     }
 
 }
