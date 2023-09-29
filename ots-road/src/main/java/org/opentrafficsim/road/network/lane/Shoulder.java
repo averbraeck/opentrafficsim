@@ -39,13 +39,6 @@ public class Shoulder extends CrossSectionElement
 
     /** {@inheritDoc} */
     @Override
-    public final double getZ()
-    {
-        return -0.0004;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {

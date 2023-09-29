@@ -32,7 +32,7 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
     private final SamplerData<?> samplerData;
 
     /** KPI lane directions registered in the sampler. */
-    private final GraphPath<? extends LaneData> path;
+    private final GraphPath<? extends LaneData<?>> path;
 
     /** Time when trajectories were last updated per series in the path. */
     private List<Time> lastUpdateTime = new ArrayList<>();
@@ -50,7 +50,7 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
      * @param delay Duration; amount of time that chart runs behind simulation to prevent gaps in the charted data
      */
     public AbstractSamplerPlot(final String caption, final Duration updateInterval, final OtsSimulatorInterface simulator,
-            final SamplerData<?> samplerData, final GraphPath<? extends LaneData> path, final Duration delay)
+            final SamplerData<?> samplerData, final GraphPath<? extends LaneData<?>> path, final Duration delay)
     {
         super(caption, updateInterval, simulator, delay, DEFAULT_INITIAL_UPPER_TIME_BOUND);
         this.samplerData = samplerData;
@@ -72,7 +72,7 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
         if (this.lastUpdateTime.get(series) == null || this.lastUpdateTime.get(series).lt(getUpdateTime()))
         {
             List<TrajectoryGroup<?>> cache = new ArrayList<>();
-            for (Section<? extends LaneData> section : getPath().getSections())
+            for (Section<? extends LaneData<?>> section : getPath().getSections())
             {
                 cache.add(this.samplerData.getTrajectoryGroup(section.getSource(series)));
             }
@@ -86,7 +86,7 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
      * Returns the path.
      * @return GraphPath&lt;? extends LaneData&gt;; the path
      */
-    public final GraphPath<? extends LaneData> getPath()
+    public final GraphPath<? extends LaneData<?>> getPath()
     {
         return this.path;
     }

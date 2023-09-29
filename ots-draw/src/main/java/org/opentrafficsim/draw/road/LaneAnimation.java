@@ -5,19 +5,21 @@ import java.awt.Graphics2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.List;
 
 import javax.naming.NamingException;
 
+import org.djutils.base.Identifiable;
 import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.draw.core.PaintLine;
 import org.opentrafficsim.draw.core.PaintPolygons;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
-import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.draw.road.LaneAnimation.LaneData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
@@ -26,13 +28,15 @@ import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
+ * Draws LaneData.
  * <p>
  * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LaneAnimation extends Renderable2d<Lane> implements Renderable2dInterface<Lane>, Serializable
+public class LaneAnimation extends Renderable2d<LaneData> implements Renderable2dInterface<LaneData>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20141017L;
@@ -45,20 +49,19 @@ public class LaneAnimation extends Renderable2d<Lane> implements Renderable2dInt
 
     /**
      * Animate a Lane.
-     * @param lane Lane; the lane
-     * @param simulator OtsSimulatorInterface; the simulator
+     * @param lane LaneData; the lane
+     * @param contextualized Contextualized; context provider
      * @param color Color; Color of the lane.
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public LaneAnimation(final Lane lane, final OtsSimulatorInterface simulator, final Color color)
+    public LaneAnimation(final LaneData lane, final Contextualized contextualized, final Color color)
             throws NamingException, RemoteException
     {
-        super(lane, simulator);
+        super(lane, contextualized);
         this.color = color;
-        this.text = new Text(lane, lane.getLink().getId() + "." + lane.getId(), 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK,
-                simulator);
-        new CenterLineAnimation(new CenterLine(lane.getCenterLine()), simulator);
+        this.text = new Text(lane, lane.getId(), 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, contextualized);
+        new CenterLineAnimation(new CenterLine(lane.getCenterLine()), contextualized);
     }
 
     /**
@@ -73,10 +76,10 @@ public class LaneAnimation extends Renderable2d<Lane> implements Renderable2dInt
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        Lane lane = getSource();
+        LaneData lane = getSource();
         if (this.color != null)
         {
-            PaintPolygons.paintMultiPolygon(graphics, this.color, lane.getLocation(), lane.getContour().getPointList(), true);
+            PaintPolygons.paintMultiPolygon(graphics, this.color, lane.getLocation(), lane.getContour(), true);
         }
     }
 
@@ -101,7 +104,7 @@ public class LaneAnimation extends Renderable2d<Lane> implements Renderable2dInt
     public static class CenterLine implements Locatable
     {
         /** The center line. */
-        private final OtsLine2d centerLine;
+        private final PolyLine2d centerLine;
 
         /** Bounds. */
         private final Bounds2d bounds;
@@ -110,18 +113,20 @@ public class LaneAnimation extends Renderable2d<Lane> implements Renderable2dInt
          * Construct a new CenterLine.
          * @param centerLine OtsLine2d; the center line of a lane
          */
-        CenterLine(final OtsLine2d centerLine)
+        CenterLine(final PolyLine2d centerLine)
         {
             this.centerLine = centerLine;
             this.bounds = new Bounds2d(centerLine.getBounds().getDeltaX(), centerLine.getBounds().getDeltaY());
         }
 
+        /** {@inheritDoc} */
         @Override
         public final Point2d getLocation()
         {
-            return this.centerLine.getLocation();
+            return this.centerLine.getBounds().midPoint();
         }
 
+        /** {@inheritDoc} */
         @Override
         public final Bounds2d getBounds()
         {
@@ -132,11 +137,10 @@ public class LaneAnimation extends Renderable2d<Lane> implements Renderable2dInt
          * Retrieve the center line.
          * @return OtsLine2d; the center line
          */
-        public OtsLine2d getCenterLine()
+        public PolyLine2d getCenterLine()
         {
             return this.centerLine;
         }
-
     }
 
     /**
@@ -154,14 +158,14 @@ public class LaneAnimation extends Renderable2d<Lane> implements Renderable2dInt
         /**
          * Construct a new CenterLineAnimation.
          * @param centerLine CemterLine; the center line of a lane
-         * @param simulator OtsSimulatorInterface; the simulator
+         * @param contextualized Contextualized; context provider
          * @throws NamingException when the name of this object is not unique
          * @throws RemoteException when communication with a remote process fails
          */
-        public CenterLineAnimation(final CenterLine centerLine, final OtsSimulatorInterface simulator)
+        public CenterLineAnimation(final CenterLine centerLine, final Contextualized contextualized)
                 throws NamingException, RemoteException
         {
-            super(centerLine, simulator);
+            super(centerLine, contextualized);
         }
 
         @Override
@@ -195,15 +199,15 @@ public class LaneAnimation extends Renderable2d<Lane> implements Renderable2dInt
          * @param dy float; the vertical movement of the text, in meters
          * @param textPlacement TextAlignment; where to place the text
          * @param color Color; the color of the text
-         * @param simulator OtsSimulatorInterface; the simulator
+         * @param contextualized Contextualized; context provider
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
         public Text(final Locatable source, final String text, final float dx, final float dy,
-                final TextAlignment textPlacement, final Color color, final OtsSimulatorInterface simulator)
+                final TextAlignment textPlacement, final Color color, final Contextualized contextualized)
                 throws RemoteException, NamingException
         {
-            super(source, text, dx, dy, textPlacement, color, simulator, TextAnimation.RENDERALWAYS);
+            super(source, text, dx, dy, textPlacement, color, contextualized, TextAnimation.RENDERALWAYS);
         }
 
         /** {@inheritDoc} */
@@ -212,8 +216,8 @@ public class LaneAnimation extends Renderable2d<Lane> implements Renderable2dInt
         public OrientedPoint2d getLocation()
         {
             // draw always on top.
-            OrientedPoint2d p = ((Lane) getSource()).getCenterLine().getLocationFractionExtended(0.5);
-            double a = Angle.normalizePi(p.getDirZ());
+            Ray2d p = ((LaneData) getSource()).getCenterLine().getLocationFractionExtended(0.5);
+            double a = Angle.normalizePi(p.getPhi());
             if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
             {
                 a += Math.PI;
@@ -228,6 +232,34 @@ public class LaneAnimation extends Renderable2d<Lane> implements Renderable2dInt
             return "Text []";
         }
 
+    }
+
+    /**
+     * LaneData provides the information required to draw a lane.
+     * <p>
+     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     */
+    public interface LaneData extends Locatable, Identifiable
+    {
+        /**
+         * Returns the center line.
+         * @return PolyLine2d; center line.
+         */
+        PolyLine2d getCenterLine();
+
+        /**
+         * Returns the contour.
+         * @return List&lt;Point2d&gt;; points.
+         */
+        List<Point2d> getContour();
+
+        /** {@inheritDoc} */
+        @Override
+        Point2d getLocation();
     }
 
 }

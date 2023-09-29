@@ -65,7 +65,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
     private final GraphUpdater<Time> graphUpdater;
 
     /** Counter of the number of trajectories imported per lane. */
-    private final Map<LaneData, Integer> knownTrajectories = new LinkedHashMap<>();
+    private final Map<LaneData<?>, Integer> knownTrajectories = new LinkedHashMap<>();
 
     /** Per lane, mapping from series rank number to trajectory. */
     private List<List<OffsetTrajectory>> curves = new ArrayList<>();
@@ -101,7 +101,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
      * @param path GraphPath&lt;? extends LaneData&gt;; path
      */
     public TrajectoryPlot(final String caption, final Duration updateInterval, final OtsSimulatorInterface simulator,
-            final SamplerData<?> samplerData, final GraphPath<? extends LaneData> path)
+            final SamplerData<?> samplerData, final GraphPath<? extends LaneData<?>> path)
     {
         super(caption, updateInterval, simulator, samplerData, path, Duration.ZERO);
         for (int i = 0; i < path.getNumberOfSeries(); i++)
@@ -116,12 +116,12 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
         // setup updater to do the actual work in another thread
         this.graphUpdater = new GraphUpdater<>("Trajectories worker", Thread.currentThread(), (t) ->
         {
-            for (Section<? extends LaneData> section : path.getSections())
+            for (Section<? extends LaneData<?>> section : path.getSections())
             {
                 Length startDistance = path.getStartDistance(section);
                 for (int i = 0; i < path.getNumberOfSeries(); i++)
                 {
-                    LaneData lane = section.getSource(i);
+                    LaneData<?> lane = section.getSource(i);
                     if (lane == null)
                     {
                         continue; // lane is not part of this section, e.g. after a lane-drop

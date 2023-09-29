@@ -454,7 +454,7 @@ public class TestFixedTimeController
             TrafficLightColor expectedColor = null;
             if (phase < sg.getPreGreen().si)
             {
-                expectedColor = TrafficLightColor.PreGreen;
+                expectedColor = TrafficLightColor.PREGREEN;
             }
             else if (phase < sg.getPreGreen().plus(sg.getGreen()).si)
             {

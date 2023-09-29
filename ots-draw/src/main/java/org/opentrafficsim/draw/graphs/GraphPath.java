@@ -12,7 +12,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
-import org.opentrafficsim.base.WeightedMeanAndSum;
+import org.djutils.means.ArithmeticMean;
 import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;
@@ -78,7 +78,7 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
             cumulativeLength = cumulativeLength.plus(section.getLength());
         }
         this.totalLength = cumulativeLength;
-        WeightedMeanAndSum<Double, Double> mean = new WeightedMeanAndSum<>();
+        ArithmeticMean<Double, Double> mean = new ArithmeticMean<>();
         for (Section<S> section : sections)
         {
             mean.add(section.getSpeedLimit().si, section.getLength().si);
@@ -205,7 +205,7 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
      * @param path GraphPath&lt;L&gt;; path
      * @param <L> lane data type
      */
-    public static <L extends LaneData> void initRecording(final Sampler<?, L> sampler, final GraphPath<L> path)
+    public static <L extends LaneData<L>> void initRecording(final Sampler<?, L> sampler, final GraphPath<L> path)
     {
         for (Section<L> section : path.getSections())
         {

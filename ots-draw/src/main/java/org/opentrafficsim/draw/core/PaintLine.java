@@ -8,10 +8,6 @@ import java.awt.geom.Path2D;
 
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.Point;
-import org.djutils.draw.point.Point2d;
-import org.djutils.logger.CategoryLogger;
-import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine2d;
 
 /**
  * Paint a line as a Path2D.Double
@@ -53,40 +49,6 @@ public final class PaintLine
         }
         graphics.draw(path);
         graphics.setStroke(oldStroke);
-    }
-
-    /**
-     * Paint line.
-     * @param graphics Graphics2D; the graphics environment
-     * @param color Color; the color to use
-     * @param width double; the width to use
-     * @param referencePoint DirectedPoint; the reference point
-     * @param line OtsLine2d; array of points
-     */
-    public static void paintLine(final Graphics2D graphics, final Color color, final double width,
-            final Point<?> referencePoint, final OtsLine2d line)
-    {
-        try
-        {
-            graphics.setColor(color);
-            Stroke oldStroke = graphics.getStroke();
-            // Setting cap and join to make perfectly visible where a line begins and ends.
-            graphics.setStroke(new BasicStroke((float) width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
-            Path2D.Double path = new Path2D.Double();
-            Point2d point = line.get(0);
-            path.moveTo(point.x - referencePoint.getX(), -point.y + referencePoint.getY());
-            for (int index = 1; index < line.size(); index++)
-            {
-                Point2d p = line.get(index);
-                path.lineTo(p.x - referencePoint.getX(), -p.y + referencePoint.getY());
-            }
-            graphics.draw(path);
-            graphics.setStroke(oldStroke);
-        }
-        catch (OtsGeometryException e)
-        {
-            CategoryLogger.always().warn(e);
-        }
     }
 
 }

@@ -21,9 +21,6 @@ import org.opentrafficsim.draw.graphs.ContourDataSource.ContourDataType;
 public class ContourPlotSpeed extends AbstractContourPlot<Speed>
 {
 
-    /** */
-    private static final long serialVersionUID = 20181004L;
-
     /**
      * Constructor.
      * @param caption String; caption

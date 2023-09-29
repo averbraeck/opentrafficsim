@@ -90,13 +90,6 @@ public class Stripe extends CrossSectionElement
         return this.overruleType == null ? this.type : this.overruleType;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final double getZ()
-    {
-        return -0.0002;
-    }
-
     /**
      * Add lateral permeability for a GTU type in the direction of the design line of the overarching CrossSectionLink. Add NONE
      * to prevent lane changes relative to the stripe type. Add LEFT or RIGHT, or both in two calls, to enable lane changes

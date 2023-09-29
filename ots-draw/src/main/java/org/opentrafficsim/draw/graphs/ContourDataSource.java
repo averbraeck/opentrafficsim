@@ -105,7 +105,7 @@ public class ContourDataSource
     private final Duration delay;
 
     /** Path. */
-    private final GraphPath<? extends LaneData> path;
+    private final GraphPath<? extends LaneData<?>> path;
 
     /** Space axis. */
     final Axis spaceAxis;
@@ -194,7 +194,7 @@ public class ContourDataSource
      * @param samplerData SamplerData&lt;?&gt;; sampler data
      * @param path GraphPath&lt;? extends LaneData&gt;; path
      */
-    public ContourDataSource(final SamplerData<?> samplerData, final GraphPath<? extends LaneData> path)
+    public ContourDataSource(final SamplerData<?> samplerData, final GraphPath<? extends LaneData<?>> path)
     {
         this(samplerData, Duration.instantiateSI(1.0), path, DEFAULT_SPACE_GRANULARITIES, DEFAULT_SPACE_GRANULARITY_INDEX,
                 DEFAULT_TIME_GRANULARITIES, DEFAULT_TIME_GRANULARITY_INDEX, DEFAULT_LOWER_TIME_BOUND,
@@ -214,7 +214,7 @@ public class ContourDataSource
      * @param initialEnd Time; initial end time of plots, will be expanded if simulation time exceeds it
      */
     @SuppressWarnings("parameternumber")
-    public ContourDataSource(final SamplerData<?> samplerData, final Duration delay, final GraphPath<? extends LaneData> path,
+    public ContourDataSource(final SamplerData<?> samplerData, final Duration delay, final GraphPath<? extends LaneData<?>> path,
             final double[] spaceGranularity, final int initSpaceIndex, final double[] timeGranularity, final int initTimeIndex,
             final Time start, final Time initialEnd)
     {
@@ -268,7 +268,7 @@ public class ContourDataSource
      * Returns the path for an {@code AbstractContourPlot} using this {@code ContourDataSource}.
      * @return GraphPath&lt;? extends LaneData&gt;; the path
      */
-    final GraphPath<? extends LaneData> getPath()
+    final GraphPath<? extends LaneData<?>> getPath()
     {
         return this.path;
     }
@@ -691,7 +691,7 @@ public class ContourDataSource
                 {
                     // obtain trajectories
                     List<TrajectoryGroup<?>> trajectories = new ArrayList<>();
-                    for (Section<? extends LaneData> section : getPath().getSections())
+                    for (Section<? extends LaneData<?>> section : getPath().getSections())
                     {
                         TrajectoryGroup<?> trajectoryGroup = this.samplerData.getTrajectoryGroup(section.getSource(series));
                         if (null == trajectoryGroup)
@@ -708,7 +708,7 @@ public class ContourDataSource
                     for (int k = 0; k < trajectories.size(); k++)
                     {
                         TrajectoryGroup<?> trajectoryGroup = trajectories.get(k);
-                        LaneData lane = trajectoryGroup.getLane();
+                        LaneData<?> lane = trajectoryGroup.getLane();
                         Length startDistance = this.path.getStartDistance(this.path.get(k));
                         if (startDistance.si + this.path.get(k).getLength().si > spaceTicks[i]
                                 && startDistance.si < spaceTicks[i + 1])

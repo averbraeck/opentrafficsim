@@ -8,15 +8,18 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.List;
 
 import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.draw.core.PaintPolygons;
-import org.opentrafficsim.road.network.lane.conflict.Conflict;
-import org.opentrafficsim.road.network.lane.conflict.ConflictType;
+import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
+import org.opentrafficsim.draw.road.ConflictAnimation.ConflictData;
+
+import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
  * Animate a conflict.
@@ -28,49 +31,30 @@ import org.opentrafficsim.road.network.lane.conflict.ConflictType;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class ConflictAnimation extends AbstractLineAnimation<Conflict> implements Serializable
+public class ConflictAnimation extends AbstractLineAnimation<ConflictData> implements Serializable
 {
 
     /** */
     private static final long serialVersionUID = 20161207L;
 
     /**
-     * @param source Conflict; the conflict to draw
-     * @param simulator OtsSimulatorInterface; the simulator to schedule on
+     * @param source ConflictData; the conflict to draw
+     * @param contextualized Contextualized; context provider
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public ConflictAnimation(final Conflict source, final OtsSimulatorInterface simulator)
+    public ConflictAnimation(final ConflictData source, final Contextualized contextualized)
             throws NamingException, RemoteException
     {
-        super(source, simulator, .9, new Length(0.5, LengthUnit.SI));
+        super(source, contextualized, .9, new Length(0.5, LengthUnit.SI));
     }
 
     /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        Conflict conflict = this.getSource();
-        Color fillColor;
-        switch (conflict.conflictPriority())
-        {
-            case SPLIT:
-                fillColor = Color.blue;
-                break;
-
-            case PRIORITY:
-                fillColor = Color.green;
-                break;
-
-            case YIELD:
-                fillColor = Color.orange;
-                break;
-
-            default:
-                // STOP, ALL_STOP, TURN_ON_RED
-                fillColor = Color.red;
-                break;
-        }
+        ConflictData conflict = (ConflictData) this.getSource();
+        Color fillColor = conflict.getColor();
 
         graphics.setColor(fillColor);
         super.paint(graphics, observer);
@@ -79,7 +63,7 @@ public class ConflictAnimation extends AbstractLineAnimation<Conflict> implement
 
         BasicStroke stroke;
         float factor = conflict.isPermitted() ? .5f : 1f;
-        if (conflict.getConflictType().equals(ConflictType.CROSSING))
+        if (conflict.isCrossing())
         {
             stroke = new BasicStroke(.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
                     new float[] {factor * 1.0f, factor * 2.0f}, 0.0f);
@@ -96,10 +80,9 @@ public class ConflictAnimation extends AbstractLineAnimation<Conflict> implement
         {
             graphics.rotate(-angle);
         }
-        if (conflict.getGeometry() != null)
+        if (conflict.getContour() != null)
         {
-            PaintPolygons.paintMultiPolygon(graphics, fillColor, conflict.getLocation(), conflict.getGeometry().getPointList(),
-                    false);
+            PaintPolygons.paintMultiPolygon(graphics, fillColor, conflict.getLocation(), conflict.getContour(), false);
 
             /*- This code may be used to visually check conflicts are correctly paired
             if (conflict.conflictPriority().isPriority())
@@ -125,6 +108,42 @@ public class ConflictAnimation extends AbstractLineAnimation<Conflict> implement
     public final String toString()
     {
         return "ConflictAnimation [getSource()=" + getSource() + "]";
+    }
+
+    /**
+     * ConflictData provides the information required to draw a conflict.
+     * <p>
+     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     */
+    public interface ConflictData extends LaneBasedObjectData
+    {
+        /**
+         * Returns the conflict color.
+         * @return Color; conflict color.
+         */
+        Color getColor();
+
+        /**
+         * Returns the contour.
+         * @return List&lt;Point2d&gt;; points.
+         */
+        List<Point2d> getContour();
+
+        /**
+         * Whether the conflict is a crossing.
+         * @return boolean; whether the conflict is a crossing.
+         */
+        boolean isCrossing();
+
+        /**
+         * Whether the conflict is a permitted conflict.
+         * @return boolean; whether the conflict is a permitted conflict.
+         */
+        boolean isPermitted();
     }
 
 }

@@ -42,7 +42,6 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.draw.graphs.GraphPath.Section;
-import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.SamplerData;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
@@ -80,15 +79,15 @@ public class ContourPlotTest implements UNITS
 
     /** Mocked GraphPath. */
     @SuppressWarnings("unchecked")
-    GraphPath<LaneData> mockedPath = Mockito.mock(GraphPath.class);
+    GraphPath<LaneData<?>> mockedPath = Mockito.mock(GraphPath.class);
 
-    Section<LaneData> section0 = Mockito.mock(Section.class);
+    Section<LaneData<?>> section0 = Mockito.mock(Section.class);
 
-    Section<LaneData> section1 = Mockito.mock(Section.class);
+    Section<LaneData<?>> section1 = Mockito.mock(Section.class);
 
-    LaneData mockedLane0 = Mockito.mock(LaneData.class);
+    LaneData<?> mockedLane0 = Mockito.mock(LaneData.class);
 
-    LaneData mockedLane1 = Mockito.mock(LaneData.class);
+    LaneData<?> mockedLane1 = Mockito.mock(LaneData.class);
 
     SamplerData mockedSamplerData = Mockito.mock(SamplerData.class);
 
@@ -100,7 +99,7 @@ public class ContourPlotTest implements UNITS
      * Create a network and a path for the tests.
      * @param simulator OtsSimulatorInterface; the simulator
      * @param network RoadNetwork; the network
-     * @return GraphPath&lt;LaneData&gt;; the dummy path
+     * @return GraphPath&lt;LaneDataRoad&gt;; the dummy path
      * @throws Exception when something goes wrong (should not happen)
      */
     private GraphPath<LaneDataRoad> dummyPath(final OtsSimulatorInterface simulator, final RoadNetwork network) throws Exception
@@ -131,15 +130,15 @@ public class ContourPlotTest implements UNITS
         Mockito.when(this.mockedPath.getStartDistance(this.section0)).thenReturn(Length.ZERO);
         Mockito.when(this.mockedPath.getStartDistance(this.section1)).thenReturn(Length.valueOf("1234m"));
         Mockito.when(this.mockedPath.getSpeedLimit()).thenReturn(Speed.valueOf("100 km/h"));
-        List<Section<LaneData>> sectionList = new ArrayList<>();
+        List<Section<LaneData<?>>> sectionList = new ArrayList<>();
         sectionList.add(this.section0);
         sectionList.add(this.section1);
         Mockito.when(this.mockedLane0.getLength()).thenReturn(Length.valueOf("1234m"));
         Mockito.when(this.mockedLane1.getLength()).thenReturn(Length.valueOf("766m"));
-        Set<LaneData> set0 = new HashSet<>();
+        Set<LaneData<?>> set0 = new HashSet<>();
         set0.add(this.mockedLane0);
         Mockito.when(this.section0.iterator()).thenReturn(set0.iterator());
-        Set<LaneData> set1 = new HashSet<>();
+        Set<LaneData<?>> set1 = new HashSet<>();
         set1.add(this.mockedLane1);
         Mockito.when(this.section0.iterator()).thenReturn(set0.iterator());
         Mockito.when(this.section1.iterator()).thenReturn(set1.iterator());

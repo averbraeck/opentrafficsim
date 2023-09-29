@@ -10,10 +10,10 @@
   <description>Editor for Open Traffic Sim</description>
 
   <dependencies>
-    <dependency>
+    <!--dependency>
       <groupId>org.opentrafficsim</groupId>
       <artifactId>ots-swing</artifactId>
-    </dependency>
+    </dependency-->
 
     <dependency>
       <groupId>org.opentrafficsim</groupId>

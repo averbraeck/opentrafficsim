@@ -47,7 +47,7 @@ import java.util.stream.IntStream;
  * <li>{@code EGTF}: <i>cCong</i>, <i>cFree</i>, <i>deltaV</i> and <i>vc</i>, defining the overall traffic flow properties.</li>
  * <li>{@code Kernel}: <i>tMax</i> and <i>xMax</i>, defining the maximum range to consider.</li>
  * <li>{@code KernelShape}: <i>sigma</i> and <i>tau</i>, determining the decay of weights for further measurements in space and
- * time.</li>
+ * time. (Specifically {@code GaussKernelShape})</li>
  * <li>{@code DataStream}: <i>thetaCong</i> and <i>thetaFree</i>, defining the reliability by the standard deviation of measured
  * data in free flow and congestion from a particular data stream.</li>
  * </ul>

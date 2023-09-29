@@ -10,13 +10,14 @@ import javax.naming.NamingException;
 
 import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.gtu.GtuGenerator.GtuGeneratorPosition;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
+import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 import nl.tudelft.simulation.language.d2.Angle;
+import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
  * Animates a GtuGeneratorPosition.
@@ -28,7 +29,7 @@ import nl.tudelft.simulation.language.d2.Angle;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class GtuGeneratorPositionAnimation extends Renderable2d<GtuGeneratorPosition>
+public class GtuGeneratorPositionAnimation extends Renderable2d<GtuGeneratorPositionData>
 {
 
     /** */
@@ -64,12 +65,12 @@ public class GtuGeneratorPositionAnimation extends Renderable2d<GtuGeneratorPosi
 
     /**
      * Constructor.
-     * @param source GtuGeneratorPosition; source.
+     * @param source GtuGeneratorPositionData; source.
      * @param contextProvider OtsSimulatorInterface; simulator.
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException when remote context cannot be found
      */
-    public GtuGeneratorPositionAnimation(final GtuGeneratorPosition source, final OtsSimulatorInterface contextProvider)
+    public GtuGeneratorPositionAnimation(final GtuGeneratorPositionData source, final OtsSimulatorInterface contextProvider)
             throws RemoteException, NamingException
     {
         super(source, contextProvider);
@@ -103,13 +104,13 @@ public class GtuGeneratorPositionAnimation extends Renderable2d<GtuGeneratorPosi
         /**
          * Constructor.
          * @param source Locatable; source.
-         * @param simulator OtsSimulatorInterface; simulator.
+         * @param contextualized Contextualized; context provider
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException when remote context cannot be found
          */
-        public Queue(final Locatable source, final OtsSimulatorInterface simulator) throws RemoteException, NamingException
+        public Queue(final Locatable source, final Contextualized contextualized) throws RemoteException, NamingException
         {
-            super(source, "", 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, 3.0f, 12.0f, 50f, simulator, null,
+            super(source, "", 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, 3.0f, 12.0f, 50f, contextualized, null,
                     TextAnimation.RENDERALWAYS);
         }
 
@@ -132,9 +133,27 @@ public class GtuGeneratorPositionAnimation extends Renderable2d<GtuGeneratorPosi
         @Override
         public void paint(final Graphics2D graphics, final ImageObserver observer)
         {
-            setText(Integer.toString(((GtuGeneratorPosition) getSource()).getQueueCount()));
+            setText(Integer.toString(((GtuGeneratorPositionData) getSource()).getQueueCount()));
             super.paint(graphics, observer);
         }
+    }
+
+    /**
+     * GtuGeneratorPositionData provides the information required to draw a GTU generator position.
+     * <p>
+     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     */
+    public interface GtuGeneratorPositionData extends Locatable
+    {
+        /**
+         * Returns the queue count.
+         * @return int; queue count.
+         */
+        int getQueueCount();
     }
 
 }

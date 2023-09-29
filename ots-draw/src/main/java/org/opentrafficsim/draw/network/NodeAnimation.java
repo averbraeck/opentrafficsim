@@ -12,30 +12,28 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import org.djutils.draw.bounds.Bounds;
-import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.base.Identifiable;
 import org.djutils.draw.point.OrientedPoint2d;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
+import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2dInterface;
-import nl.tudelft.simulation.introspection.DelegateIntrospection;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
+ * Draws NodeData.
  * <p>
  * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-@SuppressWarnings("rawtypes")
-public class NodeAnimation extends Renderable2d<NodeAnimation.ElevatedNode>
-        implements Renderable2dInterface<NodeAnimation.ElevatedNode>, Serializable
+public class NodeAnimation extends Renderable2d<NodeData>
+        implements Renderable2dInterface<NodeData>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20140000L;
@@ -43,19 +41,16 @@ public class NodeAnimation extends Renderable2d<NodeAnimation.ElevatedNode>
     /** the Text object to destroy when the animation is destroyed. */
     private Text text;
 
-    /** Ensure that node animations are slightly above lane surface. */
-    public static final double ZOFFSET = 0.01;
-
     /**
-     * @param node Node; n
-     * @param simulator OtsSimulatorInterface; s
+     * @param node NodeData; node data.
+     * @param contextualized Contextualized; context provider
      * @throws NamingException when animation context cannot be found.
      * @throws RemoteException on communication failure
      */
-    public NodeAnimation(final Node node, final OtsSimulatorInterface simulator) throws NamingException, RemoteException
+    public NodeAnimation(final NodeData node, final Contextualized contextualized) throws NamingException, RemoteException
     {
-        super(new ElevatedNode(node), simulator);
-        this.text = new Text(node, node.getId(), 0.0f, 3.0f, TextAlignment.CENTER, Color.BLACK, simulator,
+        super(node, contextualized);
+        this.text = new Text(node, node.getId(), 0.0f, 3.0f, TextAlignment.CENTER, Color.BLACK, contextualized,
                 TextAnimation.RENDERWHEN10);
     }
 
@@ -92,60 +87,6 @@ public class NodeAnimation extends Renderable2d<NodeAnimation.ElevatedNode>
         return "NodeAnimation [node=" + super.getSource() + "]";
     }
 
-    /** Class for elevating the node for animation purposes. */
-    public static class ElevatedNode implements Locatable, DelegateIntrospection
-    {
-        /** the node for introspection. */
-        private final Node node;
-
-        /** the location of the node to which the animation belongs. */
-        private OrientedPoint2d location;
-
-        /** the bounds of the node to which the animation belongs. */
-        private Bounds2d bounds;
-
-        /**
-         * @param node Node; the node to which the animation belongs
-         */
-        public ElevatedNode(final Node node)
-        {
-            this.node = node;
-            OrientedPoint2d p = node.getLocation();
-            this.location = new OrientedPoint2d(p.x, p.y, p.getDirZ());
-            this.bounds = node.getBounds();
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public OrientedPoint2d getLocation()
-        {
-            return this.location;
-        }
-
-        /**
-         * @return node
-         */
-        public Node getNode()
-        {
-            return this.node;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Bounds2d getBounds() throws RemoteException
-        {
-            return this.bounds;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Object getParentIntrospectionObject()
-        {
-            return this.node;
-        }
-
-    }
-
     /**
      * Text animation for the Node. Separate class to be able to turn it on and off...
      * <p>
@@ -169,17 +110,17 @@ public class NodeAnimation extends Renderable2d<NodeAnimation.ElevatedNode>
          * @param dy float; the vertical movement of the text, in meters
          * @param textPlacement TextAlignment; where to place the text
          * @param color Color; the color of the text
-         * @param simulator OtsSimulatorInterface; the simulator
+         * @param contextualized Contextualized; context provider
          * @param scaleDependentRendering ScaleDependendentRendering; size limiter for text animation
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
         @SuppressWarnings("checkstyle:parameternumber")
         public Text(final Locatable source, final String text, final float dx, final float dy,
-                final TextAlignment textPlacement, final Color color, final OtsSimulatorInterface simulator,
+                final TextAlignment textPlacement, final Color color, final Contextualized contextualized,
                 final ScaleDependentRendering scaleDependentRendering) throws RemoteException, NamingException
         {
-            super(source, text, dx, dy, textPlacement, color, 2.0f, 12.0f, 50f, simulator, scaleDependentRendering);
+            super(source, text, dx, dy, textPlacement, color, 2.0f, 12.0f, 50f, contextualized, scaleDependentRendering);
             setFlip(false);
             setRotate(false);
         }
@@ -190,6 +131,21 @@ public class NodeAnimation extends Renderable2d<NodeAnimation.ElevatedNode>
         {
             return "NodeAnimation.Text []";
         }
+    }
+    
+    /**
+     * NodeData provides the information required to draw a node.
+     * <p>
+     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     */
+    public interface NodeData extends Locatable, Identifiable
+    {
+        /** {@inheritDoc} */
+        @Override
+        OrientedPoint2d getLocation();
     }
 
 }

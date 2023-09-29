@@ -40,8 +40,6 @@ import org.opentrafficsim.road.network.sampling.data.ReferenceSpeed;
  */
 public class ContourPlotDelay extends AbstractContourPlot<Duration>
 {
-    /** */
-    private static final long serialVersionUID = 20181010L;
 
     /** Quantity for the EGTF. */
     private static final Quantity<Duration, DurationMatrix> QUANTITY = new Quantity<>("delay", new Converter<DurationMatrix>()

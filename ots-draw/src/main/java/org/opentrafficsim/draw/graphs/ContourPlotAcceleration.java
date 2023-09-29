@@ -9,7 +9,7 @@ import org.djunits.value.vdouble.matrix.AccelerationMatrix;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.WeightedMeanAndSum;
+import org.djutils.means.ArithmeticMean;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.egtf.Converter;
 import org.opentrafficsim.core.egtf.Quantity;
@@ -53,19 +53,19 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
             });
 
     /** Contour data type. */
-    private static final ContourDataType<Acceleration, WeightedMeanAndSum<Double, Double>> CONTOUR_DATA_TYPE =
-            new ContourDataType<Acceleration, WeightedMeanAndSum<Double, Double>>()
+    private static final ContourDataType<Acceleration, ArithmeticMean<Double, Double>> CONTOUR_DATA_TYPE =
+            new ContourDataType<Acceleration, ArithmeticMean<Double, Double>>()
             {
                 /** {@inheritDoc} */
                 @Override
-                public WeightedMeanAndSum<Double, Double> identity()
+                public ArithmeticMean<Double, Double> identity()
                 {
-                    return new WeightedMeanAndSum<>();
+                    return new ArithmeticMean<>();
                 }
 
                 /** {@inheritDoc} */
                 @Override
-                public WeightedMeanAndSum<Double, Double> processSeries(final WeightedMeanAndSum<Double, Double> intermediate,
+                public ArithmeticMean<Double, Double> processSeries(final ArithmeticMean<Double, Double> intermediate,
                         final List<TrajectoryGroup<?>> trajectories, final List<Length> xFrom, final List<Length> xTo,
                         final Time tFrom, final Time tTo)
                 {
@@ -91,7 +91,7 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
 
                 /** {@inheritDoc} */
                 @Override
-                public Acceleration finalize(final WeightedMeanAndSum<Double, Double> intermediate)
+                public Acceleration finalize(final ArithmeticMean<Double, Double> intermediate)
                 {
                     return Acceleration.instantiateSI(intermediate.getMean());
                 }
@@ -153,7 +153,7 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
 
     /** {@inheritDoc} */
     @Override
-    protected ContourDataType<Acceleration, WeightedMeanAndSum<Double, Double>> getContourDataType()
+    protected ContourDataType<Acceleration, ArithmeticMean<Double, Double>> getContourDataType()
     {
         return CONTOUR_DATA_TYPE;
     }

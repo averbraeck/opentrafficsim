@@ -15,7 +15,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.base.WeightedMeanAndSum;
+import org.djutils.means.ArithmeticMean;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -298,7 +298,7 @@ public abstract class Platoons<T>
         Throw.whenNull(time, "Time may not be null.");
         Throw.whenNull(interpolation, "Interpolation may not be null.");
         Throw.when(demand.size() != time.size(), IllegalArgumentException.class, "Demand and time have unequal length.");
-        WeightedMeanAndSum<Double, Double> weightedSumLost = new WeightedMeanAndSum<>();
+        ArithmeticMean<Double, Double> weightedSumLost = new ArithmeticMean<>();
         for (Map.Entry<Time, Time> entry : this.periods.entrySet())
         {
             Time start = entry.getKey();
@@ -316,7 +316,7 @@ public abstract class Platoons<T>
                 }
             }
         }
-        WeightedMeanAndSum<Double, Double> weightedSumTotal = new WeightedMeanAndSum<>();
+        ArithmeticMean<Double, Double> weightedSumTotal = new ArithmeticMean<>();
         for (int i = 0; i < demand.size() - 1; i++)
         {
             Frequency fStart = interpolation.interpolateVector(time.get(i), demand, time, true);

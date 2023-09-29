@@ -1459,14 +1459,6 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public double getZ()
-    {
-        return -0.0003;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final String toString()
     {
         CrossSectionLink link = getLink();
