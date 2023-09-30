@@ -42,7 +42,7 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.TimedEvent;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
+import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;

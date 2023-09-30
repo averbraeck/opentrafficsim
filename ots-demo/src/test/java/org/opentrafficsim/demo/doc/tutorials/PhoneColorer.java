@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
+import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.gtu.Gtu;
 
 // @docs/08-tutorials/visualization.md#how-to-add-a-gtu-colorer

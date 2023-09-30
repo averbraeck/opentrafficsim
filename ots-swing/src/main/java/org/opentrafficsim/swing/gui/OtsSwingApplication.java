@@ -33,9 +33,9 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.opentrafficsim.animation.gtu.colorer.DefaultSwitchableGtuColorer;
+import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.base.Resource;
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 
 import nl.tudelft.simulation.dsol.swing.animation.d2.AnimationPanel;
