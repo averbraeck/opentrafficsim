@@ -1,5 +1,6 @@
 package org.opentrafficsim.sim0mq.kpi;
 
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 
 /**
@@ -69,6 +70,13 @@ public class GtuDataSim0 implements GtuData
         return this.route.getId();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public Speed getReferenceSpeed()
+    {
+        return null; // WS 30-09-2023 this project seems broken and I don't know what to return here; there is no network
+    }
+    
     /** {@inheritDoc} */
     @Override
     public int hashCode()

@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.network.sampling.indicator;
+package org.opentrafficsim.kpi.sampling.indicator;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,8 +15,7 @@ import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
-import org.opentrafficsim.kpi.sampling.indicator.AbstractIndicator;
-import org.opentrafficsim.road.network.sampling.data.ReferenceSpeed;
+import org.opentrafficsim.kpi.sampling.data.ReferenceSpeed;
 
 /**
  * Delay based on reference speed.
@@ -32,7 +31,7 @@ public class TotalDelayReference extends AbstractIndicator<Duration>
 {
 
     /** Reference speed extended data type. */
-    private static final ReferenceSpeed REF_SPEED_TYPE = new ReferenceSpeed();
+    private static final ReferenceSpeed REF_SPEED_TYPE = ReferenceSpeed.INSTANCE;
 
     /** {@inheritDoc} */
     @Override

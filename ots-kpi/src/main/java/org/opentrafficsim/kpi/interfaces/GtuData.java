@@ -1,5 +1,6 @@
 package org.opentrafficsim.kpi.interfaces;
 
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.Identifiable;
 
 /**
@@ -38,5 +39,11 @@ public interface GtuData extends Identifiable
      * @return route id of the gtu
      */
     String getRouteId();
+
+    /**
+     * Returns the reference speed.
+     * @return reference speed
+     */
+    Speed getReferenceSpeed();
 
 }

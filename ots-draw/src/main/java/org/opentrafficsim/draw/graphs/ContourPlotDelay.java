@@ -18,7 +18,7 @@ import org.opentrafficsim.draw.graphs.ContourDataSource.ContourDataType;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
-import org.opentrafficsim.road.network.sampling.data.ReferenceSpeed;
+import org.opentrafficsim.kpi.sampling.data.ReferenceSpeed;
 
 /**
  * Contour plot for delay.
