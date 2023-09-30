@@ -615,12 +615,7 @@ public class ContourDataSource
                         {
                             // plots need to be redone
                             event.interrupt(); // stop the EGTF
-                            setStatusLabel(" "); // reset status label so no "ASM at 12.6%" remains there
-                            return;
                         }
-                        String status =
-                                event.getProgress() >= 1.0 ? " " : String.format("ASM at %.2f%%", event.getProgress() * 100);
-                        setStatusLabel(status);
                     }
                 });
             }
@@ -874,18 +869,6 @@ public class ContourDataSource
             {
                 raw[i][j + rawCol] = (float) smoothed[i][j];
             }
-        }
-    }
-
-    /**
-     * Helper method used by an {@code EgtfListener} to present the filter progress.
-     * @param status String; progress report
-     */
-    private void setStatusLabel(final String status)
-    {
-        for (AbstractContourPlot<?> plot : ContourDataSource.this.plots)
-        {
-            // TODO what shall we do this this? plot.setStatusLabel(status);
         }
     }
 

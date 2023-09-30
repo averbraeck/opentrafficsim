@@ -12,7 +12,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 
 import org.opentrafficsim.draw.graphs.AbstractContourPlot;
-import org.opentrafficsim.draw.graphs.AbstractSpaceTimePlot;
 import org.opentrafficsim.draw.graphs.ContourDataSource.Dimension;
 
 /**
@@ -44,9 +43,9 @@ public class SwingContourPlot extends SwingSpaceTimePlot
 
     /**
      * Create a new SwingContourPlot with embedded plot.
-     * @param plot AbstractSpaceTimePlot; the plot to embed
+     * @param plot AbstractContourPlot&lt;?&gt;; the plot to embed
      */
-    public SwingContourPlot(final AbstractSpaceTimePlot plot)
+    public SwingContourPlot(final AbstractContourPlot<?> plot)
     {
         super(plot);
     }
