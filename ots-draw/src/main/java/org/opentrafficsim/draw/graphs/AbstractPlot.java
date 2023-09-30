@@ -13,6 +13,7 @@ import java.util.UUID;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.base.Identifiable;
 import org.djutils.event.EventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
@@ -24,7 +25,6 @@ import org.jfree.data.general.Dataset;
 import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
-import org.opentrafficsim.base.Identifiable;
 
 /**
  * Super class of all plots. This schedules regular updates, creates menus and deals with listeners. There are a number of

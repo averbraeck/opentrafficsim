@@ -1,4 +1,4 @@
-package org.opentrafficsim.draw.factory;
+package org.opentrafficsim.core.animation;
 
 import java.awt.Color;
 import java.awt.geom.Ellipse2D;
@@ -24,7 +24,6 @@ import org.djutils.event.EventListener;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuGenerator.GtuGeneratorPosition;
 import org.opentrafficsim.core.network.Link;

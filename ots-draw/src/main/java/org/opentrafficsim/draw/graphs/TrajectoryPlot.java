@@ -27,8 +27,8 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.DomainOrder;
 import org.jfree.data.xy.XYDataset;
-import org.opentrafficsim.core.animation.gtu.colorer.IdGtuColorer;
 import org.opentrafficsim.draw.core.BoundsPaintScale;
+import org.opentrafficsim.draw.core.Colors;
 import org.opentrafficsim.draw.graphs.GraphPath.Section;
 import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.SamplerData;
@@ -378,7 +378,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
                     Character c = gtuId.charAt(pos);
                     if (Character.isDigit(c))
                     {
-                        return IdGtuColorer.LEGEND.get(c - '0').getColor();
+                        return Colors.get(c - '0');
                     }
                 }
             }

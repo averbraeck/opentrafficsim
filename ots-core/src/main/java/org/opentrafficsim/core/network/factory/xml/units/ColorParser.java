@@ -11,10 +11,10 @@ import org.opentrafficsim.core.network.NetworkException;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  */
-public final class Colors
+public final class ColorParser
 {
     /** Utility class. */
-    private Colors()
+    private ColorParser()
     {
         // do not instantiate
     }

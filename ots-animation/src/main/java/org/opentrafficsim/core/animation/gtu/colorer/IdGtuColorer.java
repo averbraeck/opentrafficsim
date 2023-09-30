@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.draw.core.Colors;
 
 /**
  * Color GTUs based on their id. If the id ends on one or more digits, the value that those digits constitute is used.
@@ -27,16 +28,10 @@ public class IdGtuColorer implements GtuColorer
     static
     {
         LEGEND = new ArrayList<LegendEntry>();
-        LEGEND.add(new LegendEntry(Color.BLACK, "black", "black"));
-        LEGEND.add(new LegendEntry(new Color(0xa5, 0x2a, 0x2a), "brown", "brown"));
-        LEGEND.add(new LegendEntry(Color.RED, "red", "red"));
-        LEGEND.add(new LegendEntry(Color.ORANGE, "orange", "orange"));
-        LEGEND.add(new LegendEntry(Color.YELLOW, "yellow", "yellow"));
-        LEGEND.add(new LegendEntry(Color.GREEN, "green", "green"));
-        LEGEND.add(new LegendEntry(Color.BLUE, "blue", "blue"));
-        LEGEND.add(new LegendEntry(Color.MAGENTA, "magenta", "magenta"));
-        LEGEND.add(new LegendEntry(Color.GRAY, "gray", "gray"));
-        LEGEND.add(new LegendEntry(Color.WHITE, "white", "white"));
+        for (int i = 0; i < Colors.COLORS.length; i++)
+        {
+            LEGEND.add(new LegendEntry(Colors.COLORS[i], Colors.NAMES[i], Colors.NAMES[i]));
+        }
     }
 
     /** {@inheritDoc} */

@@ -187,7 +187,13 @@
         <artifactId>dsol-core</artifactId>
         <version>${dsol.version}</version>
       </dependency>
-
+      
+      <dependency>
+        <groupId>nl.tudelft.simulation</groupId>
+        <artifactId>dsol-draw</artifactId>
+        <version>${dsol.version}</version>
+      </dependency>
+      
       <dependency>
         <groupId>nl.tudelft.simulation</groupId>
         <artifactId>dsol-animation</artifactId>

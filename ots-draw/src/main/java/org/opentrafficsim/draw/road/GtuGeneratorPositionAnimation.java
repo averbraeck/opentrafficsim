@@ -9,7 +9,6 @@ import java.rmi.RemoteException;
 import javax.naming.NamingException;
 
 import org.djutils.draw.point.OrientedPoint2d;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
 import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
@@ -70,7 +69,7 @@ public class GtuGeneratorPositionAnimation extends Renderable2d<GtuGeneratorPosi
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException when remote context cannot be found
      */
-    public GtuGeneratorPositionAnimation(final GtuGeneratorPositionData source, final OtsSimulatorInterface contextProvider)
+    public GtuGeneratorPositionAnimation(final GtuGeneratorPositionData source, final Contextualized contextProvider)
             throws RemoteException, NamingException
     {
         super(source, contextProvider);

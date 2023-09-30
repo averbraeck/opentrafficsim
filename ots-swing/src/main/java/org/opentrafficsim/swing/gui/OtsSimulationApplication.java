@@ -1,8 +1,8 @@
 package org.opentrafficsim.swing.gui;
 
+import org.opentrafficsim.core.animation.DefaultAnimationFactory;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.draw.core.OtsDrawingException;
-import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 
 /**
  * Extension of a swing application with standard preparation.

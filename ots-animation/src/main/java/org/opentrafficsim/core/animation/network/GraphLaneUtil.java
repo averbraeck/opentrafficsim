@@ -1,4 +1,4 @@
-package org.opentrafficsim.draw.graphs;
+package org.opentrafficsim.core.animation.network;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,6 +17,8 @@ import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkPosition;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.draw.graphs.GraphCrossSection;
+import org.opentrafficsim.draw.graphs.GraphPath;
 import org.opentrafficsim.draw.graphs.GraphPath.Section;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;

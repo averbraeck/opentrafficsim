@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.animation;
+package org.opentrafficsim.draw.core;
 
 import java.awt.Color;
 

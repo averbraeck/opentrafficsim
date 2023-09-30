@@ -21,7 +21,7 @@
     
     <dependency>
       <groupId>org.opentrafficsim</groupId>
-      <artifactId>ots-draw</artifactId>
+      <artifactId>ots-animation</artifactId>
     </dependency>
     
     <dependency>

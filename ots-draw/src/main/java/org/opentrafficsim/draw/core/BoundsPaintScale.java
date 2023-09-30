@@ -6,7 +6,6 @@ import java.util.Arrays;
 
 import org.djutils.exceptions.Throw;
 import org.djutils.logger.CategoryLogger;
-import org.opentrafficsim.core.animation.ColorInterpolator;
 
 /**
  * Paint scale interpolating between colors at values.

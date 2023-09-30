@@ -5,8 +5,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opentrafficsim.core.animation.ColorInterpolator;
 import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
+import org.opentrafficsim.draw.core.ColorInterpolator;
 
 /**
  * Super class with default coloring of left and right desire value.

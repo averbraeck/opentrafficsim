@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.animation.ColorInterpolator;
 import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.draw.core.ColorInterpolator;
 
 /**
  * Colors the reaction time.
