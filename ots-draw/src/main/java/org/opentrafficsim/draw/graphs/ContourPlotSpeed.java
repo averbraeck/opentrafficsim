@@ -4,7 +4,6 @@ import java.awt.Color;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.draw.core.BoundsPaintScale;
 import org.opentrafficsim.draw.graphs.ContourDataSource.ContourDataType;
 
@@ -24,12 +23,12 @@ public class ContourPlotSpeed extends AbstractContourPlot<Speed>
     /**
      * Constructor.
      * @param caption String; caption
-     * @param simulator OtsSimulatorInterface; simulator
+     * @param scheduler PlotScheduler; scheduler.
      * @param dataPool ContourDataSource; data pool
      */
-    public ContourPlotSpeed(final String caption, final OtsSimulatorInterface simulator, final ContourDataSource dataPool)
+    public ContourPlotSpeed(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool)
     {
-        super(caption, simulator, dataPool, createPaintScale(), new Speed(30.0, SpeedUnit.KM_PER_HOUR), "%.0fkm/h",
+        super(caption, scheduler, dataPool, createPaintScale(), new Speed(30.0, SpeedUnit.KM_PER_HOUR), "%.0fkm/h",
                 "speed %.1f km/h");
     }
 

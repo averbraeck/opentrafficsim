@@ -6,7 +6,6 @@ import java.util.List;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.draw.graphs.GraphPath.Section;
 import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.SamplerData;
@@ -44,15 +43,15 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
      * Constructor.
      * @param caption String; caption
      * @param updateInterval Duration; regular update interval (simulation time)
-     * @param simulator OtsSimulatorInterface; simulator
+     * @param scheduler PlotScheduler; scheduler.
      * @param samplerData SamplerData&lt;?&gt;; sampler data
      * @param path GraphPath&lt;? extends LaneData&gt;; path
      * @param delay Duration; amount of time that chart runs behind simulation to prevent gaps in the charted data
      */
-    public AbstractSamplerPlot(final String caption, final Duration updateInterval, final OtsSimulatorInterface simulator,
+    public AbstractSamplerPlot(final String caption, final Duration updateInterval, final PlotScheduler scheduler,
             final SamplerData<?> samplerData, final GraphPath<? extends LaneData<?>> path, final Duration delay)
     {
-        super(caption, updateInterval, simulator, delay, DEFAULT_INITIAL_UPPER_TIME_BOUND);
+        super(caption, updateInterval, scheduler, delay, DEFAULT_INITIAL_UPPER_TIME_BOUND);
         this.samplerData = samplerData;
         this.path = path;
         for (int i = 0; i < path.getNumberOfSeries(); i++)

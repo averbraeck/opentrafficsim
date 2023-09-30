@@ -19,9 +19,11 @@ import org.opentrafficsim.draw.graphs.ContourPlotFlow;
 import org.opentrafficsim.draw.graphs.ContourPlotSpeed;
 import org.opentrafficsim.draw.graphs.GraphLaneUtil;
 import org.opentrafficsim.draw.graphs.GraphPath;
+import org.opentrafficsim.draw.graphs.PlotScheduler;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
 import org.opentrafficsim.road.network.sampling.LaneDataRoad;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
+import org.opentrafficsim.swing.graphs.OtsPlotScheduler;
 import org.opentrafficsim.swing.graphs.SwingContourPlot;
 import org.opentrafficsim.swing.graphs.SwingPlot;
 import org.opentrafficsim.swing.graphs.SwingTrajectoryPlot;
@@ -129,21 +131,22 @@ public class StraightSwing extends OtsSimulationApplication<StraightModel> imple
         ContourDataSource dataPool = new ContourDataSource(sampler.getSamplerData(), path);
         TablePanel charts = new TablePanel(3, 2);
         SwingPlot plot = null;
-
+        PlotScheduler scheduler = new OtsPlotScheduler(simulator);
+        
         plot = new SwingTrajectoryPlot(
-                new TrajectoryPlot("TrajectoryPlot", Duration.instantiateSI(10.0), simulator, sampler.getSamplerData(), path));
+                new TrajectoryPlot("TrajectoryPlot", Duration.instantiateSI(10.0), scheduler, sampler.getSamplerData(), path));
         charts.setCell(plot.getContentPane(), 0, 0);
 
-        plot = new SwingContourPlot(new ContourPlotDensity("DensityPlot", simulator, dataPool));
+        plot = new SwingContourPlot(new ContourPlotDensity("DensityPlot", scheduler, dataPool));
         charts.setCell(plot.getContentPane(), 1, 0);
 
-        plot = new SwingContourPlot(new ContourPlotSpeed("SpeedPlot", simulator, dataPool));
+        plot = new SwingContourPlot(new ContourPlotSpeed("SpeedPlot", scheduler, dataPool));
         charts.setCell(plot.getContentPane(), 2, 0);
 
-        plot = new SwingContourPlot(new ContourPlotFlow("FlowPlot", simulator, dataPool));
+        plot = new SwingContourPlot(new ContourPlotFlow("FlowPlot", scheduler, dataPool));
         charts.setCell(plot.getContentPane(), 1, 1);
 
-        plot = new SwingContourPlot(new ContourPlotAcceleration("AccelerationPlot", simulator, dataPool));
+        plot = new SwingContourPlot(new ContourPlotAcceleration("AccelerationPlot", scheduler, dataPool));
         charts.setCell(plot.getContentPane(), 2, 1);
 
         getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "statistics ", charts);

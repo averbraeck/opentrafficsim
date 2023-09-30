@@ -93,6 +93,8 @@ public class ContourPlotTest implements UNITS
 
     OtsSimulatorInterface mockedSimulator = Mockito.mock(OtsSimulatorInterface.class);
 
+    PlotScheduler mockedScheduler = Mockito.mock(PlotScheduler.class);
+
     SimEventInterface<Duration> lastScheduledEvent = null;
 
     /**
@@ -161,6 +163,7 @@ public class ContourPlotTest implements UNITS
         OtsModelInterface model = Mockito.mock(OtsModelInterface.class);
         OtsReplication replication = new OtsReplication("test", Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0));
         Mockito.when(this.mockedSimulator.getReplication()).thenReturn(replication);
+        Mockito.when(this.mockedScheduler.getTime()).thenReturn(Time.ZERO);
     }
 
     /**
@@ -172,7 +175,7 @@ public class ContourPlotTest implements UNITS
     {
         setUp();
         ContourDataSource dataPool = new ContourDataSource(this.mockedSamplerData, this.mockedPath);
-        ContourPlotAcceleration acp = new ContourPlotAcceleration("acceleration", this.mockedSimulator, dataPool);
+        ContourPlotAcceleration acp = new ContourPlotAcceleration("acceleration", this.mockedScheduler, dataPool);
         assertEquals("acceleration", acp.getSeriesKey(0), "SeriesKey should be \"acceleration\"");
         standardContourTests(this.mockedSimulator, acp, this.mockedPath, Double.NaN, 0);
     }
@@ -190,7 +193,7 @@ public class ContourPlotTest implements UNITS
         GraphPath<LaneDataRoad> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(network);
         ContourDataSource dataPool = new ContourDataSource(sampler.getSamplerData(), path);
-        ContourPlotDensity dcp = new ContourPlotDensity("density", simulator, dataPool);
+        ContourPlotDensity dcp = new ContourPlotDensity("density", this.mockedScheduler, dataPool);
         assertTrue(null != dcp, "newly created DensityContourPlot should not be null");
         assertEquals("density", dcp.getSeriesKey(0), "SeriesKey should be \"density\"");
         standardContourTests(simulator, dcp, path, Double.NaN, Double.NaN);
@@ -209,7 +212,7 @@ public class ContourPlotTest implements UNITS
         GraphPath<LaneDataRoad> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(network);
         ContourDataSource dataPool = new ContourDataSource(sampler.getSamplerData(), path);
-        ContourPlotFlow fcp = new ContourPlotFlow("flow", simulator, dataPool);
+        ContourPlotFlow fcp = new ContourPlotFlow("flow", this.mockedScheduler, dataPool);
         assertTrue(null != fcp, "newly created DensityContourPlot should not be null");
         assertEquals("flow", fcp.getSeriesKey(0), "SeriesKey should be \"flow\"");
         standardContourTests(simulator, fcp, path, Double.NaN, Double.NaN);
@@ -228,7 +231,7 @@ public class ContourPlotTest implements UNITS
         GraphPath<LaneDataRoad> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(network);
         ContourDataSource dataPool = new ContourDataSource(sampler.getSamplerData(), path);
-        ContourPlotSpeed scp = new ContourPlotSpeed("speed", simulator, dataPool);
+        ContourPlotSpeed scp = new ContourPlotSpeed("speed", this.mockedScheduler, dataPool);
         assertTrue(null != scp, "newly created DensityContourPlot should not be null");
         assertEquals("speed", scp.getSeriesKey(0), "SeriesKey should be \"speed\"");
         standardContourTests(simulator, scp, path, Double.NaN, 50);
@@ -336,12 +339,12 @@ public class ContourPlotTest implements UNITS
                     assertTrue(x <= AbstractPlot.DEFAULT_INITIAL_UPPER_TIME_BOUND.getSI(),
                             "X should be <= " + initialUpperTimeBoundString);
                     Number alternateX = cp.getX(0, item);
-                    assertEquals(x, alternateX.doubleValue(),
-                            0.000001, "getXValue and getX should return things that have the same value");
+                    assertEquals(x, alternateX.doubleValue(), 0.000001,
+                            "getXValue and getX should return things that have the same value");
                     double y = cp.getYValue(0, item);
                     Number alternateY = cp.getY(0, item);
-                    assertEquals(y, alternateY.doubleValue(),
-                            0.000001, "getYValue and getY should return things that have the same value");
+                    assertEquals(y, alternateY.doubleValue(), 0.000001,
+                            "getYValue and getY should return things that have the same value");
                     double z = cp.getZValue(0, item);
                     if (Double.isNaN(expectedZValue))
                     {

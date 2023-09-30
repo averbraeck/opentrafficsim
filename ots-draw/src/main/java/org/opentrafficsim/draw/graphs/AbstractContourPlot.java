@@ -12,7 +12,6 @@ import org.jfree.chart.LegendItemCollection;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.DomainOrder;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.draw.core.BoundsPaintScale;
 import org.opentrafficsim.draw.graphs.ContourDataSource.ContourDataType;
 import org.opentrafficsim.draw.graphs.ContourDataSource.Dimension;
@@ -55,17 +54,17 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
     /**
      * Constructor with specified paint scale.
      * @param caption String; caption
-     * @param simulator OtsSimulatorInterface; simulator
+     * @param scheduler PlotScheduler; scheduler.
      * @param dataPool ContourDataSource; data pool
      * @param paintScale BoundsPaintScale; paint scale
      * @param legendStep Z; increment between color legend entries
      * @param legendFormat String; format string for the captions in the color legend
      * @param valueFormat String; format string used to create status label (under the mouse)
      */
-    public AbstractContourPlot(final String caption, final OtsSimulatorInterface simulator, final ContourDataSource dataPool,
+    public AbstractContourPlot(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool,
             final BoundsPaintScale paintScale, final Z legendStep, final String legendFormat, final String valueFormat)
     {
-        super(caption, dataPool.getUpdateInterval(), simulator, dataPool.getSamplerData(), dataPool.getPath(),
+        super(caption, dataPool.getUpdateInterval(), scheduler, dataPool.getSamplerData(), dataPool.getPath(),
                 dataPool.getDelay());
         dataPool.registerContourPlot(this);
         this.dataPool = dataPool;
@@ -83,7 +82,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
     /**
      * Constructor with default paint scale.
      * @param caption String; caption
-     * @param simulator OtsSimulatorInterface; simulator
+     * @param scheduler PlotScheduler; scheduler.
      * @param dataPool ContourDataSource; data pool
      * @param legendStep Z; increment between color legend entries
      * @param legendFormat String; format string for the captions in the color legend
@@ -92,10 +91,10 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      * @param valueFormat String; format string used to create status label (under the mouse)
      */
     @SuppressWarnings("parameternumber")
-    public AbstractContourPlot(final String caption, final OtsSimulatorInterface simulator, final ContourDataSource dataPool,
+    public AbstractContourPlot(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool,
             final Z legendStep, final String legendFormat, final Z minValue, final Z maxValue, final String valueFormat)
     {
-        this(caption, simulator, dataPool, createPaintScale(minValue, maxValue), legendStep, legendFormat, valueFormat);
+        this(caption, scheduler, dataPool, createPaintScale(minValue, maxValue), legendStep, legendFormat, valueFormat);
     }
 
     /**

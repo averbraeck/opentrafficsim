@@ -11,7 +11,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vfloat.vector.FloatSpeedVector;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.egtf.Converter;
 import org.opentrafficsim.core.egtf.Quantity;
 import org.opentrafficsim.draw.core.BoundsPaintScale;
@@ -127,12 +126,12 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
      * Constructor. In case this plot is created live, the sampler of the sample data in the data source needs to have the
      * extended data type {@code ReferenceSpeed.INSTANCE} registered.
      * @param caption String; caption
-     * @param simulator OtsSimulatorInterface; simulator
+     * @param scheduler PlotScheduler; scheduler.
      * @param dataPool ContourDataSource; data pool
      */
-    public ContourPlotDelay(final String caption, final OtsSimulatorInterface simulator, final ContourDataSource dataPool)
+    public ContourPlotDelay(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool)
     {
-        super(caption, simulator, dataPool, createPaintScale(), new Duration(0.05, DurationUnit.SI), "%.1f/km",
+        super(caption, scheduler, dataPool, createPaintScale(), new Duration(0.05, DurationUnit.SI), "%.1f/km",
                 "delay %.1f /km");
     }
 

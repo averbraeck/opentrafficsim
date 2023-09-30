@@ -443,11 +443,6 @@ public class ContourDataSource
             synchronized (this)
             {
                 this.smooth = smooth;
-                for (AbstractContourPlot<?> contourPlot : ContourDataSource.this.plots)
-                {
-                    System.out.println("not notifying plot " + contourPlot);
-                    // TODO work out what to do with this: contourPlot.setSmoothing(smooth);
-                }
                 invalidate(null);
             }
         }

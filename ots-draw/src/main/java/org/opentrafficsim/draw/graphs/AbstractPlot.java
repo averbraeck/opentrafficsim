@@ -25,10 +25,6 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 
 /**
  * Super class of all plots. This schedules regular updates, creates menus and deals with listeners. There are a number of
@@ -61,8 +57,8 @@ public abstract class AbstractPlot implements Identifiable, Dataset
     /** Initial upper bound for the time scale. */
     public static final Time DEFAULT_INITIAL_UPPER_TIME_BOUND = Time.instantiateSI(300.0);
 
-    /** Simulator. */
-    private final OtsSimulatorInterface simulator;
+    /** Scheduler. */
+    private final PlotScheduler scheduler;
 
     /** Unique ID of the chart. */
     private final String id = UUID.randomUUID().toString();
@@ -88,24 +84,21 @@ public abstract class AbstractPlot implements Identifiable, Dataset
     /** Update interval. */
     private Duration updateInterval;
 
-    /** Event of next update. */
-    private SimEventInterface<Duration> updateEvent;
-
     /**
      * Constructor.
-     * @param simulator OtsSimulatorInterface; simulator
+     * @param scheduler PlotScheduler; scheduler.
      * @param caption String; caption
      * @param updateInterval Duration; regular update interval (simulation time)
      * @param delay Duration; amount of time that chart runs behind simulation to prevent gaps in the charted data
      */
-    public AbstractPlot(final OtsSimulatorInterface simulator, final String caption, final Duration updateInterval,
+    public AbstractPlot(final PlotScheduler scheduler, final String caption, final Duration updateInterval,
             final Duration delay)
     {
-        this.simulator = simulator;
+        this.scheduler = scheduler;
         this.caption = caption;
         this.updateInterval = updateInterval;
         this.delay = delay;
-        this.updates = (int) (simulator.getSimulatorTime().si / updateInterval.si); // when creating plot during simulation
+        this.updates = (int) (scheduler.getTime().si / updateInterval.si); // when creating plot during simulation
         update(); // start redraw chain
     }
 
@@ -259,25 +252,13 @@ public abstract class AbstractPlot implements Identifiable, Dataset
     }
 
     /**
-     * Retrieve the simulator.
-     * @return OtsSimulatorInterface; the simulator
-     */
-    public OtsSimulatorInterface getSimulator()
-    {
-        return this.simulator;
-    }
-
-    /**
      * Sets a new update interval.
      * @param interval Duration; update interval
      */
     public final void setUpdateInterval(final Duration interval)
     {
-        if (this.updateEvent != null)
-        {
-            this.simulator.cancelEvent(this.updateEvent);
-        }
-        this.updates = (int) (this.simulator.getSimulatorTime().si / interval.si);
+        this.scheduler.cancelEvent(this);
+        this.updates = (int) (this.scheduler.getTime().si / interval.si);
         this.updateInterval = interval;
         this.updateTime = Time.instantiateSI(this.updates * this.updateInterval.si);
         scheduleNextUpdateEvent();
@@ -297,8 +278,8 @@ public abstract class AbstractPlot implements Identifiable, Dataset
      */
     protected void update()
     {
-        // TODO: next event may be scheduled in the past if the simulator is running fast during these few calls
-        this.updateTime = this.simulator.getSimulatorAbsTime();
+        // TODO: next event may be scheduled in the past if the scheduler is running fast during these few calls
+        this.updateTime = this.scheduler.getTime();
         increaseTime(this.updateTime.minus(this.delay));
         notifyPlotChange();
         scheduleNextUpdateEvent();
@@ -309,17 +290,9 @@ public abstract class AbstractPlot implements Identifiable, Dataset
      */
     private void scheduleNextUpdateEvent()
     {
-        try
-        {
-            this.updates++;
-            // events are scheduled slightly later, so all influencing movements have occurred
-            this.updateEvent = this.simulator.scheduleEventAbsTime(
-                    Time.instantiateSI(this.updateInterval.si * this.updates + this.delay.si), this, "update", null);
-        }
-        catch (SimRuntimeException exception)
-        {
-            throw new RuntimeException("Unexpected exception while updating plot.", exception);
-        }
+        this.updates++;
+        // events are scheduled slightly later, so all influencing movements have occurred
+        this.scheduler.scheduleUpdate(Time.instantiateSI(this.updateInterval.si * this.updates + this.delay.si), this);
     }
 
     /**

@@ -28,7 +28,6 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.DomainOrder;
 import org.jfree.data.xy.XYDataset;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.SamplingException;
@@ -91,14 +90,14 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
      * @param caption String; caption
      * @param domainQuantity Quantity; initial quantity on the domain axis
      * @param rangeQuantity Quantity; initial quantity on the range axis
-     * @param simulator OtsSimulatorInterface; simulator
+     * @param scheduler PlotScheduler; scheduler.
      * @param source FdSource; source providing the data
      * @param fdLine fundamental diagram line, may be {@code null}
      */
     public FundamentalDiagram(final String caption, final Quantity domainQuantity, final Quantity rangeQuantity,
-            final OtsSimulatorInterface simulator, final FdSource source, final FdLine fdLine)
+            final PlotScheduler scheduler, final FdSource source, final FdLine fdLine)
     {
-        super(simulator, caption, source.getUpdateInterval(), source.getDelay());
+        super(scheduler, caption, source.getUpdateInterval(), source.getDelay());
         Throw.when(domainQuantity.equals(rangeQuantity), IllegalArgumentException.class,
                 "Domain and range quantity should not be equal.");
         this.fdLine = fdLine;
