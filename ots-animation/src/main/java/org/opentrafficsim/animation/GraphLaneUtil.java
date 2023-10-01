@@ -1,4 +1,4 @@
-package org.opentrafficsim.animation.network;
+package org.opentrafficsim.animation;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -40,7 +40,7 @@ import org.djutils.cli.CliUtil;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
 import org.djutils.means.HarmonicMean;
-import org.opentrafficsim.animation.network.GraphLaneUtil;
+import org.opentrafficsim.animation.GraphLaneUtil;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
