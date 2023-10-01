@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.perception.mental;
 
-import org.opentrafficsim.base.Identifiable;
+import org.djutils.base.Identifiable;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;

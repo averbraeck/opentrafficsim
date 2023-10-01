@@ -3,10 +3,10 @@ package org.opentrafficsim.core.object;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.base.Identifiable;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.event.EventProducer;
-import org.opentrafficsim.base.Identifiable;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 
@@ -21,6 +21,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  */
 public interface LocatedObject extends Locatable, Identifiable, EventProducer, Serializable
 {
+    
     /** @return the outline geometry of the object. */
     PolyLine2d getGeometry();
 

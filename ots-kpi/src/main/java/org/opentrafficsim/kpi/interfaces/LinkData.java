@@ -3,7 +3,7 @@ package org.opentrafficsim.kpi.interfaces;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.base.Identifiable;
+import org.djutils.base.Identifiable;
 
 /**
  * Represents a link for sampling.

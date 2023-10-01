@@ -9,6 +9,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.base.Identifiable;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableSortedSet;
 import org.djutils.immutablecollections.ImmutableTreeSet;
@@ -16,7 +17,6 @@ import org.djutils.multikeymap.MultiKeyMap;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
-import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;

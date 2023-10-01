@@ -2,7 +2,7 @@ package org.opentrafficsim.core.perception;
 
 import java.util.Set;
 
-import org.opentrafficsim.base.Identifiable;
+import org.djutils.base.Identifiable;
 import org.opentrafficsim.core.gtu.Gtu;
 
 /**

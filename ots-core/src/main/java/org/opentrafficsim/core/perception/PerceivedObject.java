@@ -2,7 +2,7 @@ package org.opentrafficsim.core.perception;
 
 import java.io.Serializable;
 
-import org.opentrafficsim.base.Identifiable;
+import org.djutils.base.Identifiable;
 
 /**
  * Information about a perceived object, which can be a GTU, a road sign, a traffic light, or an obstacle.

@@ -3,7 +3,6 @@ package org.opentrafficsim.core.object;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.bounds.Bounds2d;
@@ -11,7 +10,6 @@ import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.network.NetworkException;
 
@@ -25,7 +23,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class StaticObject extends LocalEventProducer implements LocatedObject, Serializable, Identifiable, Drawable
+public class StaticObject extends LocalEventProducer implements LocatedObject, Drawable
 {
     /** */
     private static final long serialVersionUID = 20160400L;

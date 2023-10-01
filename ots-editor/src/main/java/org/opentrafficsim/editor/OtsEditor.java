@@ -8,7 +8,6 @@ import java.awt.FileDialog;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -126,7 +125,6 @@ import de.javagl.treetable.JTreeTable;
  * </p>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-// TODO: Allow sorting of elements.
 public class OtsEditor extends JFrame implements EventProducer
 {
 

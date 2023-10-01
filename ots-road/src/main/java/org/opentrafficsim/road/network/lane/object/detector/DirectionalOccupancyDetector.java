@@ -2,10 +2,10 @@ package org.opentrafficsim.road.network.lane.object.detector;
 
 import java.io.Serializable;
 
+import org.djutils.base.Identifiable;
 import org.djutils.event.EventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
-import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;

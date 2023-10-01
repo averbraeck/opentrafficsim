@@ -1,7 +1,7 @@
 package org.opentrafficsim.kpi.interfaces;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.base.Identifiable;
+import org.djutils.base.Identifiable;
 
 /**
  * Represents a lane for sampling.

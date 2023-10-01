@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.djutils.base.Identifiable;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.base.Identifiable;
 
 /**
  * A categorization determines for what part of traffic certain demand data is applicable. By default, this is always for a

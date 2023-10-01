@@ -27,7 +27,6 @@ import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.AStarShortestPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
-import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -47,7 +46,7 @@ import org.opentrafficsim.core.perception.PerceivableContext;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class Network extends LocalEventProducer implements PerceivableContext, Serializable, EventProducer, Identifiable
+public class Network extends LocalEventProducer implements PerceivableContext, Serializable, EventProducer
 {
     /** */
     private static final long serialVersionUID = 20150722;

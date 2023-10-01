@@ -2,7 +2,7 @@ package org.opentrafficsim.core.object;
 
 import java.io.Serializable;
 
-import org.opentrafficsim.base.Identifiable;
+import org.djutils.base.Identifiable;
 import org.opentrafficsim.core.animation.Drawable;
 
 /**

@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.generator;
 
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -30,7 +29,6 @@ import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
-import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
@@ -69,7 +67,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LaneBasedGtuGenerator extends LocalEventProducer implements Serializable, Identifiable, GtuGenerator
+public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGenerator
 {
     /** */
     private static final long serialVersionUID = 20160000L;

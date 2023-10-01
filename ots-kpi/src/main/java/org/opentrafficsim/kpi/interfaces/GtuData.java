@@ -1,7 +1,7 @@
 package org.opentrafficsim.kpi.interfaces;
 
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.base.Identifiable;
+import org.djutils.base.Identifiable;
 
 /**
  * Represents a GTU for sampling.
