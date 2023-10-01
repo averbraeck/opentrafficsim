@@ -1,12 +1,23 @@
 package org.opentrafficsim.editor.decoration;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.List;
 
+import javax.naming.NamingException;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
+import org.djutils.draw.bounds.Bounds;
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.point.Point2d;
+import org.djutils.event.EventListenerMap;
+import org.djutils.event.EventProducer;
+import org.opentrafficsim.draw.road.LaneAnimation;
+import org.opentrafficsim.draw.road.LaneAnimation.LaneData;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.decoration.string.AttributesStringFunction;
@@ -22,6 +33,11 @@ import org.opentrafficsim.editor.extensions.OdEditor;
 import org.opentrafficsim.editor.extensions.RoadLayoutEditor;
 import org.opentrafficsim.editor.extensions.RouteEditor;
 import org.opentrafficsim.editor.extensions.TrafCodEditor;
+
+import nl.tudelft.simulation.dsol.swing.animation.d2.VisualizationPanel;
+import nl.tudelft.simulation.naming.context.ContextInterface;
+import nl.tudelft.simulation.naming.context.Contextualized;
+import nl.tudelft.simulation.naming.context.JvmContext;
 
 /**
  * Decorates the editor with custom icons, tabs, string functions and custom editors.
@@ -46,8 +62,9 @@ public final class DefaultDecorator
      * Decorates the editor with custom icons, tabs, string functions and custom editors.
      * @param editor OtsEditor; editor.
      * @throws IOException if a resource cannot be loaded.
+     * @throws NamingException when registering objects does not work
      */
-    public static void decorate(final OtsEditor editor) throws IOException
+    public static void decorate(final OtsEditor editor) throws IOException, NamingException
     {
         ImageIcon roadIcon = OtsEditor.loadIcon("./OTS_road.png", -1, -1, -1, -1);
         ImageIcon networkIcon = OtsEditor.loadIcon("./OTS_network.png", -1, -1, -1, -1);
@@ -75,7 +92,7 @@ public final class DefaultDecorator
         editor.setCustomIcon("Ots.Animation", OtsEditor.loadIcon("./Play.png", 14, 14, 16, 16));
         editor.setCustomIcon("Ots.Output", OtsEditor.loadIcon("./Report.png", 14, 14, 16, 16)); // does not exist yet
 
-        editor.addTab("Map", networkIcon, buildMapPane(), null);
+        editor.addTab("Map", networkIcon, buildMapPane(), "Map editor");
         editor.addTab("Parameters", null, buildParameterPane(), null);
         editor.addTab("Text", null, buildTextPane(), null);
 
@@ -118,13 +135,71 @@ public final class DefaultDecorator
     /**
      * Temporary stub to create map pane.
      * @return JComponent; component.
+     * @throws RemoteException on error when remote panel and producer cannot connect
+     * @throws NamingException when registering objects does not work
      */
-    private static JComponent buildMapPane()
+    private static JComponent buildMapPane() throws RemoteException, NamingException
     {
-        JLabel map = new JLabel("map");
-        map.setOpaque(true);
-        map.setHorizontalAlignment(JLabel.CENTER);
-        return map;
+        Contextualized contextualized = new Contextualized()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public ContextInterface getContext()
+            {
+                return new JvmContext("Ots");
+            }
+        };
+        VisualizationPanel panel = new VisualizationPanel(new Bounds2d(500, 500), new EventProducer()
+        {
+            /** */
+            private static final long serialVersionUID = 20231001L;
+
+            /** {@inheritDoc} */
+            @Override
+            public EventListenerMap getEventListenerMap() throws RemoteException
+            {
+                return new EventListenerMap();
+            }
+        }, contextualized.getContext());
+        panel.setBackground(Color.GRAY);
+        panel.objectAdded(new LaneAnimation(new LaneData()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public String getId()
+            {
+                return "MyLane";
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public Bounds<?, ?, ?> getBounds() throws RemoteException
+            {
+                return new Bounds2d(-50, 50, -50, 50);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public Point2d getLocation()
+            {
+                return new Point2d(0.0, 0.0);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public List<Point2d> getContour()
+            {
+                return List.of(new Point2d(-50, -47.5), new Point2d(47.5, 50), new Point2d(50, 47.5), new Point2d(-47.5, -50));
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public PolyLine2d getCenterLine()
+            {
+                return new PolyLine2d(List.of(new Point2d(-50, -50), new Point2d(50, 50)));
+            }
+        }, contextualized, Color.DARK_GRAY.brighter()));
+        return panel;
     }
 
     /**
@@ -154,10 +229,11 @@ public final class DefaultDecorator
     /**
      * Prints nodes that are created or removed.
      * <p>
- * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
- * </p>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
     // Leave this class for debugging. It can be added by a line above that is commented out.
     private static class NodeCreatedRemovedPrinter extends AbstractNodeDecoratorRemove

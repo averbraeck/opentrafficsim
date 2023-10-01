@@ -8,6 +8,7 @@ import java.awt.FileDialog;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -69,6 +70,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.PopupMenuEvent;
@@ -299,8 +301,10 @@ public class OtsEditor extends JFrame implements EventProducer
         this.questionIcon = loadIcon("./Question.png", -1, -1, -1, -1);
 
         // visualization pane
+        UIManager.getInsets("TabbedPane.contentBorderInsets").set(-1, -1, 1, -1);
         this.visualizationPane = new JTabbedPane(JTabbedPane.BOTTOM, JTabbedPane.SCROLL_TAB_LAYOUT);
         this.visualizationPane.setPreferredSize(new Dimension(900, 900));
+        this.visualizationPane.setBorder(new LineBorder(Color.BLACK, 0));
         leftRightSplitPane.setLeftComponent(this.visualizationPane);
 
         // There is likely a better way to do this, but setting the icons specific on the tree is impossible for collapsed and

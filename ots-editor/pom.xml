@@ -10,14 +10,19 @@
   <description>Editor for Open Traffic Sim</description>
 
   <dependencies>
-    <!--dependency>
+    <dependency>
       <groupId>org.opentrafficsim</groupId>
-      <artifactId>ots-swing</artifactId>
-    </dependency-->
+      <artifactId>ots-draw</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.opentrafficsim</groupId>
       <artifactId>ots-parser-xml</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>nl.tudelft.simulation</groupId>
+      <artifactId>dsol-swing</artifactId>
     </dependency>
 
     <dependency>
