@@ -23,18 +23,8 @@ import org.opentrafficsim.editor.Undo.ActionType;
 import org.opentrafficsim.editor.XsdTreeNode;
 
 /**
- * Editor for attribute table cells. Extends the default cell editor with checkboxes for boolean attributes. This involves the
- * following:
- * <ul>
- * <li>It must return a {@code JCheckBox} as editor for boolean-typed attributes in {@code getTableCellEditorComponent()}.</li>
- * <li>Changing the checked status should directly set the value, even though we remain in editor mode. If the user e.g. clicks
- * on another node, setting the whole attributes window for that other node, we want the changed checkmark to have a lasting
- * effect. This is different from a {@code JTextField} active in editing mode. Then, clicking away during typing can be regarded
- * as a cancel action.</li>
- * <li>When the table system requests {@code getCellEditorValue()} as a response of the user clicking elsewhere in the table and
- * thus ending editing mode, the checked-status of the checkbox should be returned as "true" or "false", if it was the last
- * component for editing returned.</li>
- * </ul>
+ * Editor for attribute table cells. Extends the default cell editor with checkboxes for boolean attributes (those that cannot
+ * be specified with an expression).
  * <p>
  * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.

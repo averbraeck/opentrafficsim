@@ -18,7 +18,8 @@ import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 
 /**
- * Renderer for cells in the attributes table. Provides a {JCheckBox} for boolean-type attributes.
+ * Renderer for cells in the attributes table. Provides a {@code JCheckBox} for boolean-type attributes (those that cannot be
+ * specified with an expression).
  * <p>
  * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -39,7 +40,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
 
     /** Checkbox to use for boolean types. */
     private final JCheckBox checkBox = new JCheckBox();
-    
+
     /**
      * Constructor.
      * @param infoIcon Icon; info icon.

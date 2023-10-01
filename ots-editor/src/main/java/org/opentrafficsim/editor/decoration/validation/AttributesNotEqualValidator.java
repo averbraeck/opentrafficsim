@@ -2,10 +2,9 @@ package org.opentrafficsim.editor.decoration.validation;
 
 import java.rmi.RemoteException;
 
-import org.djutils.event.Event;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
-import org.opentrafficsim.editor.decoration.AbstractNodeDecorator;
+import org.opentrafficsim.editor.decoration.AbstractNodeDecoratorAttribute;
 
 /**
  * Validates that the two attributes of a node are not the same.
@@ -15,14 +14,11 @@ import org.opentrafficsim.editor.decoration.AbstractNodeDecorator;
  * </p>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class AttributesNotEqualValidator extends AbstractNodeDecorator implements ValueValidator
+public class AttributesNotEqualValidator extends AbstractNodeDecoratorAttribute implements ValueValidator
 {
 
     /** */
     private static final long serialVersionUID = 20230910L;
-
-    /** Path location of nodes to attach to. */
-    private final String path;
 
     /** First attribute to compare. */
     private final String attribute1;
@@ -41,8 +37,7 @@ public class AttributesNotEqualValidator extends AbstractNodeDecorator implement
     public AttributesNotEqualValidator(final OtsEditor editor, final String path, final String attribute1,
             final String attribute2) throws RemoteException
     {
-        super(editor);
-        this.path = path;
+        super(editor, (n) -> n.isType(path), attribute1, attribute2);
         this.attribute1 = attribute1;
         this.attribute2 = attribute2;
     }
@@ -55,13 +50,13 @@ public class AttributesNotEqualValidator extends AbstractNodeDecorator implement
         {
             return null;
         }
-        String startNode = node.getAttributeValue(this.attribute1);
-        if (startNode == null || startNode.isEmpty())
+        String attribute1 = node.getAttributeValue(this.attribute1);
+        if (attribute1 == null)
         {
             return null;
         }
-        String endNode = node.getAttributeValue(this.attribute2);
-        if (endNode == null || endNode.isEmpty() || !endNode.equals(startNode))
+        String attribute2 = node.getAttributeValue(this.attribute2);
+        if (attribute2 == null || !attribute2.equals(attribute1))
         {
             return null;
         }
@@ -72,28 +67,15 @@ public class AttributesNotEqualValidator extends AbstractNodeDecorator implement
     @Override
     public void notifyCreated(final XsdTreeNode node)
     {
-        if (node.isType(this.path))
-        {
-            node.addAttributeValidator(this.attribute1, AttributesNotEqualValidator.this);
-            node.addAttributeValidator(this.attribute2, AttributesNotEqualValidator.this);
-            node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
-        }
+        node.addAttributeValidator(this.attribute1, AttributesNotEqualValidator.this);
+        node.addAttributeValidator(this.attribute2, AttributesNotEqualValidator.this);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notifyAttributeChanged(final XsdTreeNode node, final String attribute)
     {
-        if (XsdTreeNode.ATTRIBUTE_CHANGED.equals(event.getType()))
-        {
-            Object[] content = (Object[]) event.getContent();
-            String attribute = (String) content[1];
-            if (this.attribute1.equals(attribute) || this.attribute2.equals(attribute))
-            {
-                ((XsdTreeNode) content[0]).invalidate();
-            }
-        }
-        super.notify(event);
+        node.invalidate();
     }
 
 }
