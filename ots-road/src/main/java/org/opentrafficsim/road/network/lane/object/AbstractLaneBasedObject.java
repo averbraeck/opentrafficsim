@@ -34,9 +34,6 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
     /** The position (between 0.0 and the length of the Lane) of the sensor on the design line of the lane. */
     private final Length longitudinalPosition;
 
-    /** The OrientedPoint2d that indicates the location on the lane. */
-    private final OrientedPoint2d location;
-
     /**
      * Construct a new AbstractLanebasedObject with the required fields.
      * @param id String; the id of the new object
@@ -51,7 +48,7 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
     protected AbstractLaneBasedObject(final String id, final Lane lane, final Length longitudinalPosition,
             final PolyLine2d geometry, final Length height) throws NetworkException
     {
-        super(id, geometry, height);
+        super(id, getPoint(lane, longitudinalPosition), geometry, height);
 
         Throw.whenNull(lane, "lane is null");
         Throw.whenNull(longitudinalPosition, "longitudinal position is null");
@@ -60,8 +57,17 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
 
         this.lane = lane;
         this.longitudinalPosition = longitudinalPosition;
-        OrientedPoint2d p = lane.getCenterLine().getLocationExtended(this.longitudinalPosition);
-        this.location = new OrientedPoint2d(p.x, p.y, p.getDirZ());
+    }
+    
+    /**
+     * Returns the oriented point of the position on a lane.
+     * @param lane Lane; lane.
+     * @param longitudinalPosition Length; longitudinal position.
+     * @return OrientedPoint2d; oriented point of the position on a lane.
+     */
+    private static OrientedPoint2d getPoint(final Lane lane, final Length longitudinalPosition)
+    {
+        return lane.getCenterLine().getLocationExtended(longitudinalPosition);
     }
 
     /**
@@ -118,7 +124,7 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
     @SuppressWarnings("checkstyle:designforextension")
     public OrientedPoint2d getLocation()
     {
-        return this.location;
+        return (OrientedPoint2d) super.getLocation();
     }
 
     /** {@inheritDoc} */

@@ -15,8 +15,9 @@ import javax.naming.NamingException;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.point.OrientedPoint2d;
-import org.opentrafficsim.draw.core.TextAlignment;
-import org.opentrafficsim.draw.core.TextAnimation;
+import org.opentrafficsim.draw.DrawLevel;
+import org.opentrafficsim.draw.TextAlignment;
+import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -299,7 +300,6 @@ public class DefaultCarAnimation extends Renderable2d<GtuData> implements Render
      */
     public interface GtuData extends Locatable, Identifiable
     {
-
         /**
          * Returns the GTU color.
          * @return Color; GTU color.
@@ -360,7 +360,13 @@ public class DefaultCarAnimation extends Renderable2d<GtuData> implements Render
         /** {@inheritDoc} */
         @Override
         OrientedPoint2d getLocation();
-
+        
+        /** {@inheritDoc} */
+        @Override
+        default double getZ()
+        {
+            return DrawLevel.GTU.getZ();
+        }
     }
 
 }

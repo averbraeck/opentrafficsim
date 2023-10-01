@@ -21,7 +21,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
 import org.djutils.serialization.SerializationException;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.draw.core.OtsDrawingException;
+import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.sim0mq.publisher.SubscriptionHandler;
 import org.sim0mq.Sim0MQException;
 import org.sim0mq.message.Sim0MQMessage;

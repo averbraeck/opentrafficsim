@@ -4,7 +4,7 @@ import java.awt.Color;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.draw.core.BoundsPaintScale;
+import org.opentrafficsim.draw.BoundsPaintScale;
 import org.opentrafficsim.draw.graphs.ContourDataSource.ContourDataType;
 
 /**

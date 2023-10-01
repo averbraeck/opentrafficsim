@@ -15,10 +15,12 @@ import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.draw.core.PaintLine;
-import org.opentrafficsim.draw.core.PaintPolygons;
-import org.opentrafficsim.draw.core.TextAlignment;
-import org.opentrafficsim.draw.core.TextAnimation;
+import org.opentrafficsim.draw.ClickableBounds;
+import org.opentrafficsim.draw.DrawLevel;
+import org.opentrafficsim.draw.PaintLine;
+import org.opentrafficsim.draw.PaintPolygons;
+import org.opentrafficsim.draw.TextAlignment;
+import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation.LaneData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -61,7 +63,7 @@ public class LaneAnimation extends Renderable2d<LaneData> implements Renderable2
         super(lane, contextualized);
         this.color = color;
         this.text = new Text(lane, lane.getId(), 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, contextualized);
-        new CenterLineAnimation(new CenterLine(lane.getCenterLine()), contextualized);
+        new CenterLineAnimation(new CenterLine(lane.getCenterLine(), lane.getId()), contextualized);
     }
 
     /**
@@ -109,14 +111,19 @@ public class LaneAnimation extends Renderable2d<LaneData> implements Renderable2
         /** Bounds. */
         private final Bounds2d bounds;
 
+        /** Lane id. */
+        private final String laneId;
+
         /**
          * Construct a new CenterLine.
          * @param centerLine OtsLine2d; the center line of a lane
+         * @param laneId String; lane id.
          */
-        CenterLine(final PolyLine2d centerLine)
+        CenterLine(final PolyLine2d centerLine, final String laneId)
         {
             this.centerLine = centerLine;
             this.bounds = new Bounds2d(centerLine.getBounds().getDeltaX(), centerLine.getBounds().getDeltaY());
+            this.laneId = laneId;
         }
 
         /** {@inheritDoc} */
@@ -130,7 +137,7 @@ public class LaneAnimation extends Renderable2d<LaneData> implements Renderable2
         @Override
         public final Bounds2d getBounds()
         {
-            return this.bounds;
+            return ClickableBounds.get(this.bounds);
         }
 
         /**
@@ -140,6 +147,20 @@ public class LaneAnimation extends Renderable2d<LaneData> implements Renderable2
         public PolyLine2d getCenterLine()
         {
             return this.centerLine;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public double getZ()
+        {
+            return DrawLevel.LINE.getZ();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "Center line " + this.laneId;
         }
     }
 
@@ -260,6 +281,13 @@ public class LaneAnimation extends Renderable2d<LaneData> implements Renderable2
         /** {@inheritDoc} */
         @Override
         Point2d getLocation();
+
+        /** {@inheritDoc} */
+        @Override
+        default double getZ()
+        {
+            return DrawLevel.LANE.getZ();
+        }
     }
 
 }

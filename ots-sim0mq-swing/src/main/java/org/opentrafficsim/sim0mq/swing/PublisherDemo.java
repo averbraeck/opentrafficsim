@@ -14,7 +14,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.serialization.SerializationException;
-import org.opentrafficsim.draw.core.OtsDrawingException;
+import org.opentrafficsim.draw.OtsDrawingException;
 import org.sim0mq.Sim0MQException;
 import org.sim0mq.message.Sim0MQMessage;
 import org.zeromq.SocketType;

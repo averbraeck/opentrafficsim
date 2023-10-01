@@ -1,4 +1,4 @@
-package org.opentrafficsim.draw.core;
+package org.opentrafficsim.draw;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -143,8 +143,8 @@ public abstract class TextAnimation implements Locatable, Serializable
     @SuppressWarnings("checkstyle:parameternumber")
     public TextAnimation(final Locatable source, final String text, final float dx, final float dy,
             final TextAlignment textAlignment, final Color color, final float fontSize, final float minFontSize,
-            final float maxFontSize, final Contextualized contextualized,
-            final ScaleDependentRendering scaleDependentRendering) throws RemoteException, NamingException
+            final float maxFontSize, final Contextualized contextualized, final ScaleDependentRendering scaleDependentRendering)
+            throws RemoteException, NamingException
     {
         this(source, text, dx, dy, textAlignment, color, fontSize, minFontSize, maxFontSize, contextualized, null,
                 scaleDependentRendering);
@@ -299,6 +299,13 @@ public abstract class TextAnimation implements Locatable, Serializable
         this.dy = y;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public double getZ() throws RemoteException
+    {
+        return DrawLevel.LABEL.getZ();
+    }
+
     /**
      * Retrieve the text alignment.
      * @return TextAlignment; the text alignment
@@ -440,7 +447,7 @@ public abstract class TextAnimation implements Locatable, Serializable
     }
 
     /**
-     * The implementation of the text animation. Cloning will be taken care of by the overarching TextAnimation-derived class.
+     * The implementation of the text animation.
      * <p>
      * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
@@ -488,7 +495,6 @@ public abstract class TextAnimation implements Locatable, Serializable
         {
             return "TextAnimation.AnimationImpl []";
         }
-
     }
 
     /**
@@ -529,7 +535,7 @@ public abstract class TextAnimation implements Locatable, Serializable
     /** Always render the Text. */
     public static final ScaleDependentRendering RENDERALWAYS = new ScaleDependentRendering()
     {
-
+        /** {@inheritDoc} */
         @Override
         public boolean isRendered(final double scale)
         {
@@ -540,7 +546,7 @@ public abstract class TextAnimation implements Locatable, Serializable
     /** Don't render texts when smaller than 1. */
     public static final ScaleDependentRendering RENDERWHEN1 = new ScaleDependentRendering()
     {
-
+        /** {@inheritDoc} */
         @Override
         public boolean isRendered(final double scale)
         {
@@ -551,7 +557,7 @@ public abstract class TextAnimation implements Locatable, Serializable
     /** Don't render texts when smaller than 2. */
     public static final ScaleDependentRendering RENDERWHEN10 = new ScaleDependentRendering()
     {
-
+        /** {@inheritDoc} */
         @Override
         public boolean isRendered(final double scale)
         {
@@ -562,7 +568,7 @@ public abstract class TextAnimation implements Locatable, Serializable
     /** Don't render texts when smaller than 2. */
     public static final ScaleDependentRendering RENDERWHEN100 = new ScaleDependentRendering()
     {
-
+        /** {@inheritDoc} */
         @Override
         public boolean isRendered(final double scale)
         {

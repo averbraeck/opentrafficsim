@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.draw.core.Colors;
+import org.opentrafficsim.draw.Colors;
 
 /**
  * Color GTUs based on their id. If the id ends on one or more digits, the value that those digits constitute is used.

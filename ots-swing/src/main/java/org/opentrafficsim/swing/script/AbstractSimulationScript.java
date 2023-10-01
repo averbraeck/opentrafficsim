@@ -24,7 +24,7 @@ import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
-import org.opentrafficsim.draw.core.OtsDrawingException;
+import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;

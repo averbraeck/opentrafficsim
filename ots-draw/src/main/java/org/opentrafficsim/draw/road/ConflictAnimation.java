@@ -15,7 +15,7 @@ import javax.naming.NamingException;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.draw.core.PaintPolygons;
+import org.opentrafficsim.draw.PaintPolygons;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 import org.opentrafficsim.draw.road.ConflictAnimation.ConflictData;
 

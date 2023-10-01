@@ -9,7 +9,7 @@ import java.util.List;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.draw.core.ColorInterpolator;
+import org.opentrafficsim.draw.ColorInterpolator;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
 /**

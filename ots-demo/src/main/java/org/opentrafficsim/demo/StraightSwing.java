@@ -12,7 +12,7 @@ import org.opentrafficsim.animation.network.GraphLaneUtil;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.draw.core.OtsDrawingException;
+import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.draw.graphs.ContourDataSource;
 import org.opentrafficsim.draw.graphs.ContourPlotAcceleration;
 import org.opentrafficsim.draw.graphs.ContourPlotDensity;

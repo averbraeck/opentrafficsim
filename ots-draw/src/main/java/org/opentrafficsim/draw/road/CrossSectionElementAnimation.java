@@ -10,7 +10,7 @@ import java.util.List;
 import javax.naming.NamingException;
 
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.draw.core.PaintPolygons;
+import org.opentrafficsim.draw.PaintPolygons;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;

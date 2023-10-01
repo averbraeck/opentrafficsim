@@ -26,7 +26,7 @@ import org.jfree.chart.renderer.xy.XYItemRendererState;
 import org.jfree.chart.ui.RectangleAnchor;
 import org.jfree.chart.ui.Size2D;
 import org.jfree.data.xy.XYDataset;
-import org.opentrafficsim.draw.core.ColorPaintScale;
+import org.opentrafficsim.draw.ColorPaintScale;
 
 /**
  * Renderer for blocks that are filled with bidirectionally interpolated colors. It extends a {@code XYBlockRenderer} and

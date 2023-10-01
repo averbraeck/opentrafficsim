@@ -11,7 +11,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vfloat.vector.FloatSpeedVector;
-import org.opentrafficsim.draw.core.BoundsPaintScale;
+import org.opentrafficsim.draw.BoundsPaintScale;
 import org.opentrafficsim.draw.egtf.Converter;
 import org.opentrafficsim.draw.egtf.Quantity;
 import org.opentrafficsim.draw.graphs.ContourDataSource.ContourDataType;

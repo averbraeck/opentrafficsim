@@ -14,9 +14,10 @@ import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point;
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.draw.core.PaintLine;
-import org.opentrafficsim.draw.core.TextAlignment;
-import org.opentrafficsim.draw.core.TextAnimation;
+import org.opentrafficsim.draw.DrawLevel;
+import org.opentrafficsim.draw.PaintLine;
+import org.opentrafficsim.draw.TextAlignment;
+import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -193,6 +194,13 @@ public class LinkAnimation extends Renderable2d<LinkData> implements Renderable2
         /** {@inheritDoc} */
         @Override
         Point<?> getLocation();
+
+        /** {@inheritDoc} */
+        @Override
+        default double getZ()
+        {
+            return DrawLevel.LINE.getZ();
+        }
     }
 
 }

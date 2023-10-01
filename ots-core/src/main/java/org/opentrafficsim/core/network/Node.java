@@ -400,15 +400,12 @@ public class Node implements HierarchicallyTyped<NodeType, Node>, SpatialObject,
         return this.point;
     }
 
-    /** Margin around node in m when computing bounding sphere. */
-    public static final double BOUNDINGRADIUS = 10.0;
-
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public Bounds2d getBounds()
     {
-        return new Bounds2d(-BOUNDINGRADIUS, BOUNDINGRADIUS, -BOUNDINGRADIUS, BOUNDINGRADIUS);
+        return new Bounds2d(0.0, 0.0, 0.0, 0.0);
     }
 
     /** {@inheritDoc} */

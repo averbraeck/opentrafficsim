@@ -10,6 +10,7 @@ import javax.naming.NamingException;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -98,7 +99,7 @@ public abstract class AbstractLineAnimation<T extends LaneBasedObjectData> exten
         @Override
         default double getZ() throws RemoteException
         {
-            return -0.0001;
+            return DrawLevel.OBJECT.getZ();
         }
     }
 

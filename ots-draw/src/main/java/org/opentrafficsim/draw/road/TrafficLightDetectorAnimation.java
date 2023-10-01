@@ -13,8 +13,9 @@ import javax.naming.NamingException;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
-import org.opentrafficsim.draw.core.TextAlignment;
-import org.opentrafficsim.draw.core.TextAnimation;
+import org.opentrafficsim.draw.DrawLevel;
+import org.opentrafficsim.draw.TextAlignment;
+import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.road.TrafficLightDetectorAnimation.TrafficLightDetectorData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -176,6 +177,13 @@ public class TrafficLightDetectorAnimation extends Renderable2d<TrafficLightDete
         /** {@inheritDoc} */
         @Override
         OrientedPoint2d getLocation();
+        
+        /** {@inheritDoc} */
+        @Override
+        default double getZ()
+        {
+            return DrawLevel.OBJECT.getZ();
+        }
     }
 
 }

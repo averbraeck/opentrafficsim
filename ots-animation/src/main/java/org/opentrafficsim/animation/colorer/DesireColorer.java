@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
-import org.opentrafficsim.draw.core.ColorInterpolator;
+import org.opentrafficsim.draw.ColorInterpolator;
 
 /**
  * Super class with default coloring of left and right desire value.

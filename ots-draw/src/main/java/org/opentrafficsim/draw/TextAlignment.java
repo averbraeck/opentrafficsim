@@ -1,11 +1,7 @@
-package org.opentrafficsim.draw.core;
-
-import java.awt.Color;
-
-import org.jfree.chart.renderer.PaintScale;
+package org.opentrafficsim.draw;
 
 /**
- * Paint scale that forces the output to be a color. This is used inside XYInterpolatedBlockRenderer.
+ * Location of the text in the explanation.
  * <p>
  * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -14,11 +10,15 @@ import org.jfree.chart.renderer.PaintScale;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public interface ColorPaintScale extends PaintScale
+public enum TextAlignment
 {
+    /** left. */
+    LEFT,
 
-    /** {@inheritDoc} */
-    @Override
-    Color getPaint(double value);
+    /** center. */
+    CENTER,
+
+    /** right. */
+    RIGHT,
 
 }

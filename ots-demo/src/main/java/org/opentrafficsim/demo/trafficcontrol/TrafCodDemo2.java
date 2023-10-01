@@ -27,7 +27,7 @@ import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.object.NonLocatedObject;
 import org.opentrafficsim.demo.trafficcontrol.TrafCodDemo2.TrafCodModel;
-import org.opentrafficsim.draw.core.OtsDrawingException;
+import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;

@@ -4,7 +4,7 @@ import java.awt.Color;
 
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.value.vdouble.scalar.LinearDensity;
-import org.opentrafficsim.draw.core.BoundsPaintScale;
+import org.opentrafficsim.draw.BoundsPaintScale;
 import org.opentrafficsim.draw.graphs.ContourDataSource.ContourDataType;
 
 /**

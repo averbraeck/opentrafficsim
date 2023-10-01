@@ -9,8 +9,9 @@ import java.rmi.RemoteException;
 import javax.naming.NamingException;
 
 import org.djutils.draw.point.OrientedPoint2d;
-import org.opentrafficsim.draw.core.TextAlignment;
-import org.opentrafficsim.draw.core.TextAnimation;
+import org.opentrafficsim.draw.DrawLevel;
+import org.opentrafficsim.draw.TextAlignment;
+import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -153,6 +154,13 @@ public class GtuGeneratorPositionAnimation extends Renderable2d<GtuGeneratorPosi
          * @return int; queue count.
          */
         int getQueueCount();
+        
+        /** {@inheritDoc} */
+        @Override
+        default double getZ()
+        {
+            return DrawLevel.OBJECT.getZ();
+        }
     }
 
 }

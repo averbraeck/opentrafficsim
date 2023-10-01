@@ -345,20 +345,19 @@ public class NetworkTest implements EventListener
         // Add one node
         new Node(network, "node1", new Point2d(10, 20));
         extent = network.getExtent();
-        double margin = Node.BOUNDINGRADIUS * (1.0 + Network.EXTENT_MARGIN);
-        assertEquals(10 - margin, extent.getMinX(), 0.01, "extend left");
-        assertEquals(20 - margin, extent.getMinY(), 0.01, "extend bottom");
-        assertEquals(10 + margin, extent.getMaxX(), 0.01, "extend right");
-        assertEquals(20 + margin, extent.getMaxY(), 0.01, "extend top");
+        assertEquals(10, extent.getMinX(), 0.01, "extend left");
+        assertEquals(20, extent.getMinY(), 0.01, "extend bottom");
+        assertEquals(10, extent.getMaxX(), 0.01, "extend right");
+        assertEquals(20, extent.getMaxY(), 0.01, "extend top");
         // Add another node
         new Node(network, "node2", new Point2d(110, 220));
         extent = network.getExtent();
-        double xMargin = (100 + 2 * Node.BOUNDINGRADIUS) * Network.EXTENT_MARGIN / 2;
-        double yMargin = (200 + 2 * Node.BOUNDINGRADIUS) * Network.EXTENT_MARGIN / 2;
-        assertEquals(10 - Node.BOUNDINGRADIUS - xMargin, extent.getMinX(), 0.01, "extend left");
-        assertEquals(20 - Node.BOUNDINGRADIUS - yMargin, extent.getMinY(), 0.01, "extend bottom");
-        assertEquals(110 + Node.BOUNDINGRADIUS + xMargin, extent.getMaxX(), 0.01, "extend right");
-        assertEquals(220 + Node.BOUNDINGRADIUS + yMargin, extent.getMaxY(), 0.01, "extend top");
+        double xMargin = 100 * Network.EXTENT_MARGIN / 2;
+        double yMargin = 200 * Network.EXTENT_MARGIN / 2;
+        assertEquals(10 - xMargin, extent.getMinX(), 0.01, "extend left");
+        assertEquals(20 - yMargin, extent.getMinY(), 0.01, "extend bottom");
+        assertEquals(110 + xMargin, extent.getMaxX(), 0.01, "extend right");
+        assertEquals(220 + yMargin, extent.getMaxY(), 0.01, "extend top");
     }
 
     /** {@inheritDoc} */

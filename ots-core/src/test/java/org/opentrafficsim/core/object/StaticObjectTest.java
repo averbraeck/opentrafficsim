@@ -10,6 +10,7 @@ import java.rmi.RemoteException;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
@@ -76,14 +77,14 @@ public class StaticObjectTest implements EventListener
         this.lastEvent = null;
         Network network = new Network("Test network for static object test", MockSimulator.createMock());
         network.addListener(this, Network.OBJECT_ADD_EVENT);
-        StaticObject so = new StaticObject(id, geometry, height);
+        StaticObject so = StaticObject.create(id, geometry, height);
         assertNull(this.lastEvent, "Constructor should not have fired an event");
         network.addObject(so);
         assertEquals(id, so.getId(), "id");
         assertEquals(id, so.getFullId(), "full id");
         assertEquals(geometry, so.getGeometry(), "geometry");
         assertEquals(height, so.getHeight(), "height");
-        assertEquals(geometry.getBounds().midPoint(), so.getLocation(), "location");
+        assertEquals(new OrientedPoint2d(geometry.getBounds().midPoint(), 0.0), so.getLocation(), "location");
         // djutils PolyLine2d returns absolute bounds, StaticObject returns centered around (0, 0)
         //assertEquals("bounds", geometry.getBounds(), so.getBounds());
         assertTrue(so.toString().startsWith("StaticObject"), "toString returns something descriptive");

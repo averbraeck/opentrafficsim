@@ -1,11 +1,14 @@
 package org.opentrafficsim.core.object;
 
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.point.Point2d;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.Identifiable;
@@ -34,7 +37,7 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, S
     private final PolyLine2d geometry;
 
     /** Location. */
-    private final Point2d location;
+    private final OrientedPoint2d location;
 
     /** Bounds. */
     private final Bounds2d bounds;
@@ -44,10 +47,11 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, S
 
     /**
      * @param id String; the id
+     * @param location OrientedPoint2d; location.
      * @param geometry PolyLine2d; the top-level 2D outline of the object
      * @param height Length; the height of the object
      */
-    protected StaticObject(final String id, final PolyLine2d geometry, final Length height)
+    protected StaticObject(final String id, final OrientedPoint2d location, final PolyLine2d geometry, final Length height)
     {
         Throw.whenNull(id, "object id cannot be null");
         Throw.whenNull(geometry, "geometry cannot be null");
@@ -55,8 +59,13 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, S
 
         this.id = id;
         this.geometry = geometry;
-        this.location = geometry.getBounds().midPoint();
-        this.bounds = new Bounds2d(geometry.getBounds().getDeltaX(), geometry.getBounds().getDeltaY());
+        this.location = location;
+
+        AffineTransform transform = AffineTransform.getRotateInstance(-location.dirZ, 0.0, 0.0);
+        transform.concatenate(AffineTransform.getTranslateInstance(-location.x, -location.y));
+        Shape path = transform.createTransformedShape(geometry.toPath2D());
+        Rectangle2D rect = path.getBounds2D();
+        this.bounds = new Bounds2d(rect.getMinX(), rect.getMaxX(), rect.getMinY(), rect.getMaxY());
         this.height = height;
     }
 
@@ -83,7 +92,8 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, S
      */
     public static StaticObject create(final String id, final PolyLine2d geometry, final Length height) throws NetworkException
     {
-        StaticObject staticObject = new StaticObject(id, geometry, height);
+        OrientedPoint2d point = new OrientedPoint2d(geometry.getBounds().midPoint(), 0.0);
+        StaticObject staticObject = new StaticObject(id, point, geometry, height);
         staticObject.init();
         return staticObject;
     }
@@ -132,7 +142,7 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, S
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Point2d getLocation()
+    public OrientedPoint2d getLocation()
     {
         return this.location;
     }

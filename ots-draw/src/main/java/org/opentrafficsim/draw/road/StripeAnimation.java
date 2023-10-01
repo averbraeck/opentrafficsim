@@ -14,7 +14,8 @@ import javax.naming.NamingException;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.draw.core.PaintPolygons;
+import org.opentrafficsim.draw.DrawLevel;
+import org.opentrafficsim.draw.PaintPolygons;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -45,8 +46,7 @@ public class StripeAnimation extends Renderable2d<StripeData> implements Rendera
      * @throws NamingException ne
      * @throws RemoteException on communication failure
      */
-    public StripeAnimation(final StripeData source, final Contextualized contextualized)
-            throws NamingException, RemoteException
+    public StripeAnimation(final StripeData source, final Contextualized contextualized) throws NamingException, RemoteException
     {
         super(source, contextualized);
         List<Point2d> list = makePoints(source);
@@ -162,7 +162,7 @@ public class StripeAnimation extends Renderable2d<StripeData> implements Rendera
 
             case SOLID:// | - Draw single solid line. This (regretfully) involves copying everything twice...
                 List<Point2d> result = new ArrayList<>(stripe.getContour().size());
-                stripe.getContour().getPoints().forEachRemaining(result::add);
+                stripe.getContour().iterator().forEachRemaining(result::add);
                 return result;
 
             default:
@@ -215,18 +215,25 @@ public class StripeAnimation extends Renderable2d<StripeData> implements Rendera
          * @return Type; stripe type.
          */
         Type getType();
-        
+
         /**
          * Returns the line width.
          * @return Length; line width.
          */
         Length getWidth();
-        
+
         /**
          * Returns the contour.
          * @return PolyLine2d; contour.
          */
-        PolyLine2d getContour();
+        List<Point2d> getContour();
+
+        /** {@inheritDoc} */
+        @Override
+        default double getZ()
+        {
+            return DrawLevel.MARKING.getZ();
+        }
 
         /**
          * Stripe type (same fields as org.opentrafficsim.road.network.lane.Stripe.Type).

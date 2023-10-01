@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.draw.core.ColorInterpolator;
+import org.opentrafficsim.draw.ColorInterpolator;
 
 /**
  * Color GTUs based on their current acceleration.

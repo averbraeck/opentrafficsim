@@ -1,4 +1,4 @@
-package org.opentrafficsim.draw.core;
+package org.opentrafficsim.draw;
 
 import java.awt.font.TextAttribute;
 

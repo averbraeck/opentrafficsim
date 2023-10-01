@@ -523,7 +523,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
                 @Override
                 public Bounds<?, ?, ?> getBounds() throws RemoteException
                 {
-                    return new Bounds2d(-2.0, 2.0, -2.0, 2.0);
+                    return new Bounds2d(0.0, 0.0, 0.0, 0.0);
                 }
 
                 /** {@inheritDoc} */

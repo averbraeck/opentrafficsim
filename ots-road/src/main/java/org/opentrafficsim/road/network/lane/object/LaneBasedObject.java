@@ -6,7 +6,6 @@ import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.object.LocatedObject;
 import org.opentrafficsim.road.network.lane.Lane;
 

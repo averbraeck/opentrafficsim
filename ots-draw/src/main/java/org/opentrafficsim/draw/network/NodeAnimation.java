@@ -14,8 +14,9 @@ import javax.naming.NamingException;
 
 import org.djutils.base.Identifiable;
 import org.djutils.draw.point.OrientedPoint2d;
-import org.opentrafficsim.draw.core.TextAlignment;
-import org.opentrafficsim.draw.core.TextAnimation;
+import org.opentrafficsim.draw.DrawLevel;
+import org.opentrafficsim.draw.TextAlignment;
+import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -146,6 +147,13 @@ public class NodeAnimation extends Renderable2d<NodeData>
         /** {@inheritDoc} */
         @Override
         OrientedPoint2d getLocation();
+        
+        /** {@inheritDoc} */
+        @Override
+        default double getZ()
+        {
+            return DrawLevel.NODE.getZ();
+        }
     }
 
 }

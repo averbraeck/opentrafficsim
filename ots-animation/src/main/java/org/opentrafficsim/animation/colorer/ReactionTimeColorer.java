@@ -8,7 +8,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.draw.core.ColorInterpolator;
+import org.opentrafficsim.draw.ColorInterpolator;
 
 /**
  * Colors the reaction time.

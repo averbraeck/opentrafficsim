@@ -20,7 +20,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.LinkPosition;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.draw.core.OtsDrawingException;
+import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.draw.graphs.ContourDataSource;
 import org.opentrafficsim.draw.graphs.ContourPlotAcceleration;
 import org.opentrafficsim.draw.graphs.ContourPlotDensity;

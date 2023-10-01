@@ -13,6 +13,7 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.road.SpeedSignAnimation.SpeedSignData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -85,7 +86,7 @@ public class SpeedSignAnimation extends Renderable2d<SpeedSignData> implements S
     {
         return "SpeedSignAnimation";
     }
-    
+
     /**
      * LinkData provides the information required to draw a link.
      * <p>
@@ -102,6 +103,13 @@ public class SpeedSignAnimation extends Renderable2d<SpeedSignData> implements S
          * @return Speed; speed.
          */
         Speed getSpeed();
+
+        /** {@inheritDoc} */
+        @Override
+        default double getZ()
+        {
+            return DrawLevel.OBJECT.getZ();
+        }
     }
 
 }
