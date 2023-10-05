@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.network.factory.xml.units;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
@@ -13,7 +13,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Position;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 
@@ -52,56 +52,56 @@ public class DistributionsTest
     {
         // Test the various quantities
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist = Distributions.parseLengthDist("UNIFORM(1, 3) m");
-        assertEquals("unit is length", LengthUnit.METER, lengthDist.getDisplayUnit());
-        assertEquals("distribution is uniform", DistUniform.class, lengthDist.getDistribution().getClass());
+        assertEquals(LengthUnit.METER, lengthDist.getDisplayUnit(), "unit is length");
+        assertEquals(DistUniform.class, lengthDist.getDistribution().getClass(), "distribution is uniform");
         ContinuousDistDoubleScalar.Abs<Position, PositionUnit, LengthUnit> positionDist =
                 Distributions.parsePositionDist("UNIFORM(1, 3) m");
-        assertEquals("unit is position", PositionUnit.METER, positionDist.getDisplayUnit());
-        assertEquals("distribution is uniform", DistUniform.class, positionDist.getDistribution().getClass());
+        assertEquals(PositionUnit.METER, positionDist.getDisplayUnit(), "unit is position");
+        assertEquals(DistUniform.class, positionDist.getDistribution().getClass(), "distribution is uniform");
         ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> durationDist =
                 Distributions.parseDurationDist("UNIFORM(1, 3) s");
-        assertEquals("unit is duration", DurationUnit.SI, durationDist.getDisplayUnit());
-        assertEquals("distribution is uniform", DistUniform.class, durationDist.getDistribution().getClass());
+        assertEquals(DurationUnit.SI, durationDist.getDisplayUnit(), "unit is duration");
+        assertEquals(DistUniform.class, durationDist.getDistribution().getClass(), "distribution is uniform");
         ContinuousDistDoubleScalar.Abs<Time, TimeUnit, DurationUnit> timeDist = Distributions.parseTimeDist("UNIFORM(1, 3) s");
-        assertEquals("unit is time", TimeUnit.DEFAULT, timeDist.getDisplayUnit());
-        assertEquals("distribution is uniform", DistUniform.class, positionDist.getDistribution().getClass());
+        assertEquals(TimeUnit.DEFAULT, timeDist.getDisplayUnit(), "unit is time");
+        assertEquals(DistUniform.class, positionDist.getDistribution().getClass(), "distribution is uniform");
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedDist = Distributions.parseSpeedDist("UNIFORM(1, 3) m/s");
-        assertEquals("unit is speed", SpeedUnit.METER_PER_SECOND, speedDist.getDisplayUnit());
-        assertEquals("distribution is uniform", DistUniform.class, speedDist.getDistribution().getClass());
+        assertEquals(SpeedUnit.METER_PER_SECOND, speedDist.getDisplayUnit(), "unit is speed");
+        assertEquals(DistUniform.class, speedDist.getDistribution().getClass(), "distribution is uniform");
         // Test the various distributions
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> dist = Distributions.parseLengthDist("CONST(123) m");
-        assertEquals("distribution is constant", DistConstant.class, dist.getDistribution().getClass());
+        assertEquals(DistConstant.class, dist.getDistribution().getClass(), "distribution is constant");
         dist = Distributions.parseLengthDist("CONSTANT(456) km");
-        assertEquals("distribution is constant", DistConstant.class, dist.getDistribution().getClass());
-        assertEquals("Const value in SI", 456000, dist.draw().si, 0);
+        assertEquals(DistConstant.class, dist.getDistribution().getClass(), "distribution is constant");
+        assertEquals(456000, dist.draw().si, 0, "Const value in SI");
         dist = Distributions.parseLengthDist("EXPO(456) km");
-        assertEquals("distribution is exponential", DistExponential.class, dist.getDistribution().getClass());
+        assertEquals(DistExponential.class, dist.getDistribution().getClass(), "distribution is exponential");
         dist = Distributions.parseLengthDist("EXPONENTIAL(456) km");
-        assertEquals("distribution is exponential", DistExponential.class, dist.getDistribution().getClass());
+        assertEquals(DistExponential.class, dist.getDistribution().getClass(), "distribution is exponential");
         dist = Distributions.parseLengthDist("TRIA(1, 3, 4) km");
-        assertEquals("distribution is triangular", DistTriangular.class, dist.getDistribution().getClass());
+        assertEquals(DistTriangular.class, dist.getDistribution().getClass(), "distribution is triangular");
         dist = Distributions.parseLengthDist("TRIANGULAR( 1 , 3 , 4) km"); // also play a bit with extra spaces
-        assertEquals("distribution is triangular", DistTriangular.class, dist.getDistribution().getClass());
+        assertEquals(DistTriangular.class, dist.getDistribution().getClass(), "distribution is triangular");
         dist = Distributions.parseLengthDist("NORM(1,3) km"); // also play a bit with no spaces
-        assertEquals("distribution is normal", DistNormal.class, dist.getDistribution().getClass());
+        assertEquals(DistNormal.class, dist.getDistribution().getClass(), "distribution is normal");
         dist = Distributions.parseLengthDist("NORMAL(1,3) km");
-        assertEquals("distribution is normal", DistNormal.class, dist.getDistribution().getClass());
+        assertEquals(DistNormal.class, dist.getDistribution().getClass(), "distribution is normal");
         dist = Distributions.parseLengthDist("BETA(1,3) km");
-        assertEquals("distribution is Beta", DistBeta.class, dist.getDistribution().getClass());
+        assertEquals(DistBeta.class, dist.getDistribution().getClass(), "distribution is Beta");
         dist = Distributions.parseLengthDist("ERLANG(1,3) km");
-        assertEquals("distribution is Erlang", DistErlang.class, dist.getDistribution().getClass());
+        assertEquals(DistErlang.class, dist.getDistribution().getClass(), "distribution is Erlang");
         dist = Distributions.parseLengthDist("GAMMA(1,3) km");
-        assertEquals("distribution is Gamma", DistGamma.class, dist.getDistribution().getClass());
+        assertEquals(DistGamma.class, dist.getDistribution().getClass(), "distribution is Gamma");
         dist = Distributions.parseLengthDist("LOGNORMAL(1,3) km");
-        assertEquals("distribution is lognormal", DistLogNormal.class, dist.getDistribution().getClass());
+        assertEquals(DistLogNormal.class, dist.getDistribution().getClass(), "distribution is lognormal");
         dist = Distributions.parseLengthDist("PEARSON5(1,3) km");
-        assertEquals("distribution is Pearson5", DistPearson5.class, dist.getDistribution().getClass());
+        assertEquals(DistPearson5.class, dist.getDistribution().getClass(), "distribution is Pearson5");
         dist = Distributions.parseLengthDist("PEARSON6(1,3, 5) km");
-        assertEquals("distribution is Pearson6", DistPearson6.class, dist.getDistribution().getClass());
+        assertEquals(DistPearson6.class, dist.getDistribution().getClass(), "distribution is Pearson6");
         dist = Distributions.parseLengthDist("WEIB(1,3, 5) km");
-        assertEquals("distribution is Weibull", DistWeibull.class, dist.getDistribution().getClass());
+        assertEquals(DistWeibull.class, dist.getDistribution().getClass(), "distribution is Weibull");
         dist = Distributions.parseLengthDist("WEIBULL(1,3, 5) km");
-        assertEquals("distribution is Weibull", DistWeibull.class, dist.getDistribution().getClass());
+        assertEquals(DistWeibull.class, dist.getDistribution().getClass(), "distribution is Weibull");
         // FIXME: non-integer first argument for ERLANG is quietly rounded to nearest integer value
         // Test the various exceptions
         try

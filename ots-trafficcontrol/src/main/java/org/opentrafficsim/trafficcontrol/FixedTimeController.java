@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.base.Identifiable;
 import org.djutils.event.Event;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
@@ -19,7 +20,6 @@ import org.djutils.immutablecollections.ImmutableHashSet;
 import org.djutils.immutablecollections.ImmutableList;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.immutablecollections.ImmutableSet;
-import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -132,7 +132,7 @@ public class FixedTimeController extends AbstractTrafficController
                     double preGreenDuration = sg.getPreGreen().si;
                     if (preGreenDuration > 0)
                     {
-                        flanks.add(new Flank(sgOffset % this.cycleTime.si, TrafficLightColor.PreGreen));
+                        flanks.add(new Flank(sgOffset % this.cycleTime.si, TrafficLightColor.PREGREEN));
                         sgOffset += preGreenDuration;
                     }
                     flanks.add(new Flank(sgOffset % this.cycleTime.si, TrafficLightColor.GREEN));
@@ -456,7 +456,7 @@ public class FixedTimeController extends AbstractTrafficController
             }
             else if (inCycleTime.lt(this.preGreen))
             {
-                this.currentColor = TrafficLightColor.PreGreen;
+                this.currentColor = TrafficLightColor.PREGREEN;
                 duration = this.preGreen.minus(inCycleTime);
             }
             else if (inCycleTime.lt(this.preGreen.plus(this.green)))
@@ -491,7 +491,7 @@ public class FixedTimeController extends AbstractTrafficController
                 {
                     switch (color)
                     {
-                        case PreGreen:
+                        case PREGREEN:
                             color = TrafficLightColor.GREEN;
                             duration = this.green;
                             break;
@@ -504,7 +504,7 @@ public class FixedTimeController extends AbstractTrafficController
                             duration = this.red;
                             break;
                         case RED:
-                            color = TrafficLightColor.PreGreen;
+                            color = TrafficLightColor.PREGREEN;
                             duration = this.preGreen;
                             break;
                         default:

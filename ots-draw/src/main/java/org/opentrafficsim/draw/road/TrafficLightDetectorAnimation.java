@@ -10,12 +10,18 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector;
+import org.djutils.base.Identifiable;
+import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.draw.DrawLevel;
+import org.opentrafficsim.draw.TextAlignment;
+import org.opentrafficsim.draw.TextAnimation;
+import org.opentrafficsim.draw.road.TrafficLightDetectorAnimation.TrafficLightDetectorData;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
+import nl.tudelft.simulation.language.d2.Angle;
+import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
  * Traffic light detector animation.
@@ -27,37 +33,41 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class TrafficLightDetectorAnimation extends Renderable2D<TrafficLightDetector> implements Serializable
+public class TrafficLightDetectorAnimation extends Renderable2d<TrafficLightDetectorData> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20150130L;
 
     /** The traffic light detector. */
-    private final TrafficLightDetector detector;
+    private final TrafficLightDetectorData detector;
 
     /** Path of the detector. */
     private final Path2D.Float polygon;
+    
+    /** the Text object to destroy when the animation is destroyed. */
+    private final Text text;
 
     /**
      * Construct a TrafficLightDetectorAnimation.
      * @param detector TrafficLightSensor; the traffic light detector that will be animated
-     * @param simulator OtsSimulatorInterface; the simulator to schedule on
+     * @param contextualized Contextualized; context provider
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
-     * @throws OtsGeometryException when the geometry is bad
      */
-    public TrafficLightDetectorAnimation(final TrafficLightDetector detector, final OtsSimulatorInterface simulator)
-            throws NamingException, RemoteException, OtsGeometryException
+    public TrafficLightDetectorAnimation(final TrafficLightDetectorData detector, final Contextualized contextualized)
+            throws NamingException, RemoteException
     {
-        super(detector, simulator);
+        super(detector, contextualized);
         this.detector = detector;
-        OtsLine3d coordinates = this.detector.getGeometry();
+        PolyLine2d coordinates = this.detector.getGeometry();
         this.polygon = new Path2D.Float();
         this.polygon.moveTo(coordinates.get(0).x, coordinates.get(0).y);
         for (int i = 1; i < coordinates.size(); i++)
         {
             this.polygon.lineTo(coordinates.get(i).x, coordinates.get(i).y);
         }
+        this.text = new Text(detector, detector.getId(), 0.0f, 0.5f + 0.2f, TextAlignment.CENTER, //getHalfLength() + 0.2f
+                Color.BLACK, contextualized);
     }
 
     /** {@inheritDoc} */
@@ -68,12 +78,112 @@ public class TrafficLightDetectorAnimation extends Renderable2D<TrafficLightDete
         graphics.setStroke(new BasicStroke(0.2f));
         graphics.draw(this.polygon);
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void destroy(final Contextualized contextProvider)
+    {
+        super.destroy(contextProvider);
+        this.text.destroy(contextProvider);
+    }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
         return "TrafficLightDetectorAnimation [getSource()=" + this.getSource() + "]";
+    }
+
+    /**
+     * Text animation for the Detector. Separate class to be able to turn it on and off...
+     * <p>
+     * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     */
+    public class Text extends TextAnimation implements DetectorData.Text
+    {
+        /** */
+        private static final long serialVersionUID = 20161211L;
+
+        /**
+         * @param source Locatable; the object for which the text is displayed
+         * @param text String; the text to display
+         * @param dx float; the horizontal movement of the text, in meters
+         * @param dy float; the vertical movement of the text, in meters
+         * @param textPlacement TextAlignment; where to place the text
+         * @param color Color; the color of the text
+         * @param contextualized Contextualized; context provider
+         * @throws NamingException when animation context cannot be created or retrieved
+         * @throws RemoteException - when remote context cannot be found
+         */
+        public Text(final Locatable source, final String text, final float dx, final float dy,
+                final TextAlignment textPlacement, final Color color, final Contextualized contextualized)
+                throws RemoteException, NamingException
+        {
+            super(source, text, dx, dy, textPlacement, color, contextualized, TextAnimation.RENDERALWAYS);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        @SuppressWarnings("checkstyle:designforextension")
+        public OrientedPoint2d getLocation()
+        {
+            // draw always on top, and not upside down.
+            OrientedPoint2d p = ((TrafficLightDetectorData) getSource()).getLocation();
+            double a = Angle.normalizePi(p.getDirZ());
+            if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
+            {
+                a += Math.PI;
+            }
+            return new OrientedPoint2d(p.x, p.y, a);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "Text []";
+        }
+    }
+
+    /**
+     * TrafficLightDetectorData provides the information required to draw a traffic light detector.
+     * <p>
+     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     */
+    public interface TrafficLightDetectorData extends DetectorData, Identifiable
+    {
+        /**
+         * Returns the geometry.
+         * @return PolyLine2d; geometry.
+         */
+        PolyLine2d getGeometry();
+
+        /**
+         * Returns whether the detector is occupied.
+         * @return boolean; whether the detector is occupied.
+         */
+        boolean getOccupancy();
+
+        /** {@inheritDoc} */
+        @Override
+        OrientedPoint2d getLocation();
+        
+        /** {@inheritDoc} */
+        @Override
+        default double getZ()
+        {
+            return DrawLevel.OBJECT.getZ();
+        }
     }
 
 }

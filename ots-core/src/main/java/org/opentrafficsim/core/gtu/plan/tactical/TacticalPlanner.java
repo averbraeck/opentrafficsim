@@ -1,9 +1,9 @@
 package org.opentrafficsim.core.gtu.plan.tactical;
 
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeClass;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.perception.Perception;
@@ -52,7 +52,7 @@ public interface TacticalPlanner<G extends Gtu, P extends Perception<G>>
     /**
      * generate an operational plan, for now or for in the future.
      * @param startTime Time; the time from which the new operational plan has to be operational
-     * @param locationAtStartTime DirectedPoint; the location of the GTU at the start time of the new plan
+     * @param locationAtStartTime OrientedPoint2d; the location of the GTU at the start time of the new plan
      * @return a new operational plan
      * @throws OperationalPlanException when there is a problem planning a path in the network
      * @throws GtuException when there is a problem with the state of the GTU when planning a path
@@ -60,7 +60,7 @@ public interface TacticalPlanner<G extends Gtu, P extends Perception<G>>
      * @throws ParameterException when there is a problem with a parameter
      */
     // @docs/06-behavior/tactical-planner.md
-    OperationalPlan generateOperationalPlan(Time startTime, DirectedPoint locationAtStartTime)
+    OperationalPlan generateOperationalPlan(Time startTime, OrientedPoint2d locationAtStartTime)
             throws OperationalPlanException, GtuException, NetworkException, ParameterException;
 
     /** @return the perception unit belonging to this tactical planner. */

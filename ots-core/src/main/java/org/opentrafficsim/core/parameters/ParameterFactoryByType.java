@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.djunits.unit.Unit;
-import org.djunits.value.vdouble.scalar.base.AbstractDoubleScalarRel;
+import org.djunits.value.vdouble.scalar.base.DoubleScalarRel;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
@@ -221,7 +221,7 @@ public class ParameterFactoryByType implements ParameterFactory
      * @param <U> unit type
      * @param <T> parameter value type
      */
-    public <U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>> void addParameter(final GtuType gtuType,
+    public <U extends Unit<U>, T extends DoubleScalarRel<U, T>> void addParameter(final GtuType gtuType,
             final ParameterTypeNumeric<T> parameterType, final ContinuousDistDoubleScalar.Rel<T, U> distribution)
     {
         assureTypeInMap(gtuType);
@@ -279,7 +279,7 @@ public class ParameterFactoryByType implements ParameterFactory
      * @param <U> unit type
      * @param <T> parameter value type
      */
-    public <U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>> void addParameter(
+    public <U extends Unit<U>, T extends DoubleScalarRel<U, T>> void addParameter(
             final ParameterTypeNumeric<T> parameterType, final ContinuousDistDoubleScalar.Rel<T, U> distribution)
     {
         addParameter(null, parameterType, distribution);
@@ -449,7 +449,7 @@ public class ParameterFactoryByType implements ParameterFactory
      * @param <U> unit type
      * @param <T> value type
      */
-    private final class DistributedEntry<U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>>
+    private final class DistributedEntry<U extends Unit<U>, T extends DoubleScalarRel<U, T>>
             implements ParameterEntry<T>, Serializable
     {
         /** */

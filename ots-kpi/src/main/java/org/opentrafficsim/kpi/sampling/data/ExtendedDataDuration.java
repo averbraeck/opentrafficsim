@@ -2,10 +2,8 @@ package org.opentrafficsim.kpi.sampling.data;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.ValueRuntimeException;
-import org.djunits.value.storage.StorageType;
 import org.djunits.value.vfloat.scalar.FloatDuration;
 import org.djunits.value.vfloat.vector.FloatDurationVector;
-import org.djunits.value.vfloat.vector.base.FloatVector;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 
 /**
@@ -44,7 +42,7 @@ public abstract class ExtendedDataDuration<G extends GtuData>
     @Override
     protected final FloatDurationVector convert(final float[] storage) throws ValueRuntimeException
     {
-        return FloatVector.instantiate(storage, DurationUnit.SI, StorageType.DENSE);
+        return new FloatDurationVector(storage, DurationUnit.SI);
     }
 
     /** {@inheritDoc} */

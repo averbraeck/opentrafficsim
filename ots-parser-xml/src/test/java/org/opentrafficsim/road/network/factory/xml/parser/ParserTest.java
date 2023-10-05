@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.network.factory.xml.parser;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.URL;
 
@@ -9,7 +9,7 @@ import javax.naming.NamingException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -82,7 +82,7 @@ public class ParserTest
             {
                 URL xmlURL = URLResource.getResource("/resources/test-network.xml");
                 this.network = new RoadNetwork("Test", getSimulator());
-                XmlNetworkLaneParser.build(xmlURL, this.network, false);
+                new XmlParser(this.network).setUrl(xmlURL).build();
             }
             catch (Exception exception)
             {

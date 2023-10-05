@@ -2,6 +2,7 @@ package org.opentrafficsim.xml.bindings;
 
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.xml.bindings.types.TimeType;
 
 /**
  * TimeAdapter converts between the XML String for a Time and the DJUnits Time.
@@ -10,16 +11,22 @@ import org.djutils.logger.CategoryLogger;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class TimeAdapter extends UnitAdapter<Time>
+public class TimeAdapter extends ScalarAdapter<Time, TimeType>
 {
+
     /** {@inheritDoc} */
     @Override
-    public Time unmarshal(final String field) throws IllegalArgumentException
+    public TimeType unmarshal(final String field)
     {
+        if (isExpression(field))
+        {
+            return new TimeType(trimBrackets(field));
+        }
         try
         {
-            return Time.valueOf(field);
+            return new TimeType(Time.valueOf(field));
         }
         catch (Exception exception)
         {

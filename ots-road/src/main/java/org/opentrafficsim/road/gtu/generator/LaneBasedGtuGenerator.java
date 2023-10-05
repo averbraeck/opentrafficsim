@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.generator;
 
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -23,19 +22,18 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.bounds.Bounds;
 import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
-import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuErrorHandler;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -69,7 +67,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LaneBasedGtuGenerator extends LocalEventProducer implements Serializable, Identifiable, GtuGenerator
+public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGenerator
 {
     /** */
     private static final long serialVersionUID = 20160000L;
@@ -509,7 +507,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
         Set<GtuGeneratorPosition> set = new LinkedHashSet<>();
         for (GeneratorLanePosition lanePosition : this.generatorPositions.getAllPositions())
         {
-            DirectedPoint p = lanePosition.getPosition().iterator().next().getLocation();
+            OrientedPoint2d p = lanePosition.getPosition().iterator().next().getLocation();
             set.add(new GtuGeneratorPosition()
             {
                 /** {@inheritDoc} */
@@ -523,7 +521,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements Seriali
                 @Override
                 public Bounds<?, ?, ?> getBounds() throws RemoteException
                 {
-                    return new Bounds2d(-2.0, 2.0, -2.0, 2.0);
+                    return new Bounds2d(0.0, 0.0, 0.0, 0.0);
                 }
 
                 /** {@inheritDoc} */

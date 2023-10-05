@@ -121,7 +121,7 @@ public interface GeneratorPositions
         Map<Link, Set<LanePosition>> linkSplit = new LinkedHashMap<>();
         for (LanePosition position : positions)
         {
-            linkSplit.computeIfAbsent(position.getLane().getParentLink(), (link) -> new LinkedHashSet<>()).add(position);
+            linkSplit.computeIfAbsent(position.getLane().getLink(), (link) -> new LinkedHashSet<>()).add(position);
         }
 
         // create list of GeneratorLinkPositions

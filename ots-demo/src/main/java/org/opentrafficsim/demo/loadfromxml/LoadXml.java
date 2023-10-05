@@ -30,10 +30,10 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.draw.core.OtsDrawingException;
+import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
-import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
@@ -46,7 +46,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
-import nl.tudelft.simulation.language.DSOLException;
+import nl.tudelft.simulation.language.DsolException;
 
 /**
  * Select a OTS-network XML file, load it and run it.
@@ -81,10 +81,10 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
      * @throws OtsSimulationException when an error occurs during simulation
      * @throws NamingException when a name collision is detected
      * @throws SimRuntimeException should never happen
-     * @throws DSOLException when simulator does not implement AnimatorInterface
+     * @throws DsolException when simulator does not implement AnimatorInterface
      */
     public static void main(final String[] args) throws IOException, SimRuntimeException, NamingException,
-            OtsSimulationException, InputParameterException, DSOLException
+            OtsSimulationException, InputParameterException, DsolException
     {
         String fileName;
         String xml;
@@ -185,8 +185,8 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
             this.network = new RoadNetwork(getShortName(), getSimulator());
             try
             {
-                XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,
-                        false);
+                new XmlParser(this.network).setStream(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)))
+                        .build();
                 LaneCombinationList ignoreList = new LaneCombinationList();
                 try
                 {

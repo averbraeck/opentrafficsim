@@ -15,7 +15,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
 import org.djunits.value.vdouble.vector.data.DoubleVectorData;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.definitions.Defaults;
@@ -57,7 +57,6 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 public class OdExample
 {
     
-    @Test
     public void howToCreateAnOdMatrixAndAddDemandData()
     {
         Node nodeA = Mockito.mock(Node.class);

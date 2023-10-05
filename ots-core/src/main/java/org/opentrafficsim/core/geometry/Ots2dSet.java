@@ -7,19 +7,22 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.logger.CategoryLogger;
 
 /**
- * Set of OtsShape objects and provides methods for fast selection of those objects that intersect an OtsShape. <br>
- * An Ots2dSet internally stores the OtsShapes in a quad tree. At time of construction the minimum cell size is defined. Node
+ * Set of Polygon2d objects and provides methods for fast selection of those objects that intersect a Polygon2d. <br>
+ * An Ots2dSet internally stores the Polygon2ds in a quad tree. At time of construction the minimum cell size is defined. Node
  * expansion is never performed on nodes that are smaller than this limit. <br>
- * Each node (even the non-leaf nodes) store a set of OtsShape. Non-leaf nodes locally store those shapes that completely cover
- * the rectangular area of the node. Such shapes are <b>not</b> also stored in leaf nodes below that node. OtsShapes that
- * partially cover a non-leaf node are stored in each of the leaf nodes below that node that those OtsShapes (partially) cover.
- * Leaf nodes that cannot be expanded (because they are too small) also store all OtsShapes that partially cover the area of the
- * node. <br>
- * If removal of an OtsShape objects results in a leaf becoming empty, that leaf is removed from its parent (which may then
+ * Each node (even the non-leaf nodes) store a set of Polygon2d. Non-leaf nodes locally store those shapes that completely cover
+ * the rectangular area of the node. Such shapes are <b>not</b> also stored in leaf nodes below that node. Polygon2ds that
+ * partially cover a non-leaf node are stored in each of the leaf nodes below that node that those Polygon2ds (partially) cover.
+ * Leaf nodes that cannot be expanded (because they are too small) also store all Polygon2ds that partially cover the area of
+ * the node. <br>
+ * If removal of a Polygon2d objects results in a leaf becoming empty, that leaf is removed from its parent (which may then
  * itself become empty and removed in turn).
  * <p>
  * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -29,32 +32,32 @@ import org.djutils.logger.CategoryLogger;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class Ots2dSet implements Set<OtsShape>, Serializable
+public class Ots2dSet implements Set<Polygon2d>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20170400L;
 
     /** Set of all shapes used for iterators, etc. */
-    private final Set<OtsShape> allShapes = new LinkedHashSet<OtsShape>();
+    private final Set<Polygon2d> allShapes = new LinkedHashSet<Polygon2d>();
 
     /** How fine will this quad tree divide. This one is copied to each sub-node which is somewhat inefficient. */
     private final double minimumCellSize;
 
-    /** Spatial storage for the OtsShapes. */
+    /** Spatial storage for the Polygon2ds. */
     private QuadTreeNode quadTree;
 
     /**
      * Construct an empty Ots2dSet for a rectangular region. Objects that do not intersect this region will never be stored in
-     * this Ots2dSet. (Trying to add such an OtsShape is <b>not</b> an error; the <code>add</code> method will return false,
+     * this Ots2dSet. (Trying to add such a Polygon2d is <b>not</b> an error; the <code>add</code> method will return false,
      * indicating that the set has not been modified.)
      * @param boundingBox Rectangle2D; the region
      * @param minimumCellSize double; resolution of the underlying quad tree
      * @throws OtsGeometryException when the bounding box covers no surface
      */
-    public Ots2dSet(final Rectangle2D boundingBox, final double minimumCellSize) throws OtsGeometryException
+    public Ots2dSet(final Bounds2d boundingBox, final double minimumCellSize) throws OtsGeometryException
     {
         Throw.when(null == boundingBox, NullPointerException.class, "The boundingBox may not be null");
-        Throw.when(boundingBox.getWidth() <= 0 || boundingBox.getHeight() <= 0, OtsGeometryException.class,
+        Throw.when(boundingBox.getDeltaX() <= 0 || boundingBox.getDeltaY() <= 0, OtsGeometryException.class,
                 "The boundingBox must have nonzero surface (got %s", boundingBox);
         Throw.when(minimumCellSize <= 0, OtsGeometryException.class, "The minimumCellSize must be > 0 (got %f)",
                 minimumCellSize);
@@ -85,7 +88,7 @@ public class Ots2dSet implements Set<OtsShape>, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final Iterator<OtsShape> iterator()
+    public final Iterator<Polygon2d> iterator()
     {
         return new QuadTreeIterator();
     }
@@ -106,7 +109,7 @@ public class Ots2dSet implements Set<OtsShape>, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final boolean add(final OtsShape e)
+    public final boolean add(final Polygon2d e)
     {
         if (!this.quadTree.intersects(e))
         {
@@ -131,7 +134,7 @@ public class Ots2dSet implements Set<OtsShape>, Serializable
         {
             return false;
         }
-        if (!this.quadTree.remove((OtsShape) o))
+        if (!this.quadTree.remove((Polygon2d) o))
         {
             CategoryLogger.always().error("remove: ERROR object could not be removed from the quad tree");
         }
@@ -154,10 +157,10 @@ public class Ots2dSet implements Set<OtsShape>, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final boolean addAll(final Collection<? extends OtsShape> c)
+    public final boolean addAll(final Collection<? extends Polygon2d> c)
     {
         boolean result = false;
-        for (OtsShape s : c)
+        for (Polygon2d s : c)
         {
             if (add(s))
             {
@@ -172,9 +175,9 @@ public class Ots2dSet implements Set<OtsShape>, Serializable
     public final boolean retainAll(final Collection<?> c)
     {
         boolean result = false;
-        for (Iterator<OtsShape> it = iterator(); it.hasNext();)
+        for (Iterator<Polygon2d> it = iterator(); it.hasNext();)
         {
-            OtsShape shape = it.next();
+            Polygon2d shape = it.next();
             if (!c.contains(shape))
             {
                 it.remove();
@@ -189,9 +192,9 @@ public class Ots2dSet implements Set<OtsShape>, Serializable
     public final boolean removeAll(final Collection<?> c)
     {
         boolean result = false;
-        for (Iterator<OtsShape> it = iterator(); it.hasNext();)
+        for (Iterator<Polygon2d> it = iterator(); it.hasNext();)
         {
-            OtsShape shape = it.next();
+            Polygon2d shape = it.next();
             if (c.contains(shape))
             {
                 it.remove();
@@ -212,9 +215,9 @@ public class Ots2dSet implements Set<OtsShape>, Serializable
     /**
      * Return the set of all shapes in this Ots2dSet that intersect the given rectangle.
      * @param rectangle Rectangle2D; the rectangle
-     * @return Set&lt;OtsShape&gt;; the shapes that intersect the rectangle
+     * @return Set&lt;Polygon2d&gt;; the shapes that intersect the rectangle
      */
-    public final Set<OtsShape> intersectingShapes(final Rectangle2D rectangle)
+    public final Set<Polygon2d> intersectingShapes(final Bounds2d rectangle)
     {
         return this.quadTree.intersectingShapes(rectangle);
     }
@@ -238,16 +241,16 @@ public class Ots2dSet implements Set<OtsShape>, Serializable
     }
 
     /**
-     * Return all OtsShapes in this Ots2dSet that intersect a given OtsShape.
-     * @param shape OtsShape; the given OtsShape
-     * @return Set&lt;OtsShape&gt;; all OtsShapes in this Ots2dSet that intersect <code>shape</code>
+     * Return all Polygon2ds in this Ots2dSet that intersect a given Polygon2d.
+     * @param shape Polygon2d; the given Polygon2d
+     * @return Set&lt;Polygon2d&gt;; all Polygon2ds in this Ots2dSet that intersect <code>shape</code>
      */
-    public final Set<OtsShape> intersectingShapes(final OtsShape shape)
+    public final Set<Polygon2d> intersectingShapes(final Polygon2d shape)
     {
-        Bounds envelope = shape.getEnvelope();
-        Set<OtsShape> result = intersectingShapes(
-                new Rectangle2D.Double(envelope.getMinX(), envelope.getMinY(), envelope.getDeltaX(), envelope.getDeltaY()));
-        for (Iterator<OtsShape> it = result.iterator(); it.hasNext();)
+        Bounds2d bounds = shape.getBounds();
+        Set<Polygon2d> result =
+                intersectingShapes(new Bounds2d(bounds.getMinX(), bounds.getMinY(), bounds.getDeltaX(), bounds.getDeltaY()));
+        for (Iterator<Polygon2d> it = result.iterator(); it.hasNext();)
         {
             if (!it.next().intersects(shape))
             {
@@ -270,17 +273,17 @@ public class Ots2dSet implements Set<OtsShape>, Serializable
     /**
      * Iterator for quad tree. Shall iterate over the local set of shapes and the (up to four) non-null leave nodes.
      */
-    class QuadTreeIterator implements Iterator<OtsShape>, Serializable
+    class QuadTreeIterator implements Iterator<Polygon2d>, Serializable
     {
         /** */
         private static final long serialVersionUID = 20170400L;
 
         /** Underlying iterator that traverses the allShapes Set. */
         @SuppressWarnings("synthetic-access")
-        private final Iterator<OtsShape> theIterator = Ots2dSet.this.allShapes.iterator();
+        private final Iterator<Polygon2d> theIterator = Ots2dSet.this.allShapes.iterator();
 
         /** Remember the last returned result so we can remove it when requested. */
-        private OtsShape lastResult = null;
+        private Polygon2d lastResult = null;
 
         /** {@inheritDoc} */
         @Override
@@ -291,7 +294,7 @@ public class Ots2dSet implements Set<OtsShape>, Serializable
 
         /** {@inheritDoc} */
         @Override
-        public final OtsShape next()
+        public final Polygon2d next()
         {
             this.lastResult = this.theIterator.next();
             return this.lastResult;
@@ -320,21 +323,21 @@ public class Ots2dSet implements Set<OtsShape>, Serializable
     }
 
     /**
-     * Spatial-aware storage for a set of OtsShape objects.
+     * Spatial-aware storage for a set of Polygon2d objects.
      */
     class QuadTreeNode implements Serializable
     {
         /** */
         private static final long serialVersionUID = 20170400L;
 
-        /** The OtsShapes stored at this node. */
-        private Set<OtsShape> shapes = new LinkedHashSet<OtsShape>();
+        /** The Polygon2ds stored at this node. */
+        private Set<Polygon2d> shapes = new LinkedHashSet<Polygon2d>();
 
         /** The bounding box of this QuadTreeNode. */
-        private final Rectangle2D boundingBox;
+        private final Bounds2d boundingBox;
 
-        /** The bounding box of this QuadTreeNode as an OtsShape. */
-        private final OtsShape boundingShape;
+        /** The bounding box of this QuadTreeNode as a Polygon2d. */
+        private final Polygon2d boundingShape;
 
         /**
          * The four leaves of this node in the quad tree. An empty sub tree may be represented by null. If this field is
@@ -347,22 +350,22 @@ public class Ots2dSet implements Set<OtsShape>, Serializable
          * @param boundingBox Rectangle2D; the bounding box of the area of the new QuadTreeNode
          */
         @SuppressWarnings("synthetic-access")
-        QuadTreeNode(final Rectangle2D boundingBox)
+        QuadTreeNode(final Bounds2d boundingBox)
         {
             this.boundingBox = boundingBox;
             this.boundingShape = rectangleShape(boundingBox);
-            this.leaves = boundingBox.getWidth() > Ots2dSet.this.minimumCellSize
-                    || boundingBox.getHeight() > Ots2dSet.this.minimumCellSize ? new QuadTreeNode[4] : null;
+            this.leaves = boundingBox.getDeltaY() > Ots2dSet.this.minimumCellSize
+                    || boundingBox.getDeltaX() > Ots2dSet.this.minimumCellSize ? new QuadTreeNode[4] : null;
         }
 
         /**
-         * Return a Set containing all OtsShapes in this QuadTreeNode that intersect a rectangular area.
-         * @param rectangle Rectangle2D; the area
-         * @return Set&lt;OtsShape&gt;; the set
+         * Return a Set containing all Polygon2ds in this QuadTreeNode that intersect a rectangular area.
+         * @param rectangle Bounds2d; the area
+         * @return Set&lt;Polygon2d&gt;; the set
          */
-        public Set<OtsShape> intersectingShapes(final Rectangle2D rectangle)
+        public Set<Polygon2d> intersectingShapes(final Bounds2d rectangle)
         {
-            Set<OtsShape> result = new LinkedHashSet<OtsShape>();
+            Set<Polygon2d> result = new LinkedHashSet<Polygon2d>();
             if (!this.boundingBox.intersects(rectangle))
             {
                 return result;
@@ -378,9 +381,9 @@ public class Ots2dSet implements Set<OtsShape>, Serializable
                     result.addAll(leaf.intersectingShapes(rectangle));
                 }
             }
-            for (OtsShape shape : this.shapes)
+            for (Polygon2d shape : this.shapes)
             {
-                OtsShape rectangleShape = rectangleShape(rectangle);
+                Polygon2d rectangleShape = rectangleShape(rectangle);
                 if (rectangleShape.intersects(shape))
                 {
                     result.add(shape);
@@ -391,16 +394,16 @@ public class Ots2dSet implements Set<OtsShape>, Serializable
 
         /**
          * Test if this QuadTreeNode intersects a rectangular area.
-         * @param rectangle Rectangle2D; the rectangular area
+         * @param rectangle Bounds2d; the rectangular area
          * @return boolean; true if the rectangular area intersects this QuadTreeNode; false otherwise
          */
-        private boolean intersects(final Rectangle2D rectangle)
+        private boolean intersects(final Bounds2d rectangle)
         {
             return this.boundingBox.intersects(rectangle);
         }
 
         /**
-         * Remove all OtsShapes from this QuadTreeNode and cut off all leaves.
+         * Remove all Polygon2ds from this QuadTreeNode and cut off all leaves.
          */
         public void clear()
         {
@@ -412,17 +415,17 @@ public class Ots2dSet implements Set<OtsShape>, Serializable
         }
 
         /**
-         * Remove an OtsShape from this QuadTreeNode.
-         * @param shape OtsShape; the shape that must be removed.
+         * Remove a Polygon2d from this QuadTreeNode.
+         * @param shape Polygon2d; the shape that must be removed.
          * @return boolean; true if this node (or a sub-node) was altered; false otherwise
          */
-        public boolean remove(final OtsShape shape)
+        public boolean remove(final Polygon2d shape)
         {
             if (!this.boundingShape.intersects(shape))
             {
                 return false;
             }
-            for (OtsShape s : this.shapes)
+            for (Polygon2d s : this.shapes)
             {
                 if (shape.equals(s))
                 {
@@ -474,44 +477,36 @@ public class Ots2dSet implements Set<OtsShape>, Serializable
         }
 
         /**
-         * Test if the area of this QuadTree intersects an OtsShape.
-         * @param shape OtsShape; the shape
+         * Test if the area of this QuadTree intersects a Polygon2d.
+         * @param shape Polygon2d; the shape
          * @return boolean; true if the area of this QuadTree intersects the shape; false otherwise
          */
-        public boolean intersects(final OtsShape shape)
+        public boolean intersects(final Polygon2d shape)
         {
             return this.boundingShape.intersects(shape);
         }
 
         /**
-         * Construct a OtsShape from a Rectangle2D.
+         * Construct a Polygon2d from a Rectangle2D.
          * @param rectangle Rectangle2D; the rectangle
-         * @return OtsShape; a new OtsShape
+         * @return Polygon2d; a new Polygon2d
          */
-        private OtsShape rectangleShape(final Rectangle2D rectangle)
+        private Polygon2d rectangleShape(final Bounds2d rectangle)
         {
             double left = rectangle.getMinX();
             double bottom = rectangle.getMinY();
             double right = rectangle.getMaxX();
             double top = rectangle.getMaxY();
-            try
-            {
-                return new OtsShape(new OtsPoint3d(left, bottom), new OtsPoint3d(right, bottom), new OtsPoint3d(right, top),
-                        new OtsPoint3d(left, top));
-            }
-            catch (OtsGeometryException exception)
-            {
-                CategoryLogger.always().error(exception);
-                return null;
-            }
+            return new Polygon2d(new Point2d(left, bottom), new Point2d(right, bottom), new Point2d(right, top),
+                    new Point2d(left, top));
         }
 
         /**
-         * Add an OtsShape to this QuadTreeNode.
-         * @param shape OtsShape; the shape
+         * Add a Polygon2d to this QuadTreeNode.
+         * @param shape Polygon2d; the shape
          * @return boolean; true if this QuadTreeNode changed as a result of this operation
          */
-        public final boolean add(final OtsShape shape)
+        public final boolean add(final Polygon2d shape)
         {
             if (!this.boundingShape.intersects(shape))
             {
@@ -528,17 +523,17 @@ public class Ots2dSet implements Set<OtsShape>, Serializable
             {
                 if (null == this.leaves[index])
                 {
-                    double subWidth = this.boundingBox.getWidth() / 2;
-                    double subHeight = this.boundingBox.getHeight() / 2;
+                    double subWidth = this.boundingBox.getDeltaX() / 2;
+                    double subHeight = this.boundingBox.getDeltaY() / 2;
                     if (0 == subWidth)
                     {
                         // loss of precision; degenerate into a binary tree
-                        subWidth = this.boundingBox.getWidth();
+                        subWidth = this.boundingBox.getDeltaX();
                     }
                     if (0 == subHeight)
                     {
                         // loss of precision; degenerate into a binary tree
-                        subHeight = this.boundingBox.getHeight();
+                        subHeight = this.boundingBox.getDeltaY();
                     }
                     double left = this.boundingBox.getMinX();
                     if (0 != index / 2)
@@ -550,7 +545,7 @@ public class Ots2dSet implements Set<OtsShape>, Serializable
                     {
                         bottom += subHeight;
                     }
-                    Rectangle2D subBox = new Rectangle2D.Double(left, bottom, subWidth, subHeight);
+                    Bounds2d subBox = new Bounds2d(left, left + subWidth, bottom, bottom + subHeight);
                     if (rectangleShape(subBox).intersects(shape))
                     {
                         // Expand this node by adding a sub node.

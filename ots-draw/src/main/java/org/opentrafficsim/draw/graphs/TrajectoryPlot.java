@@ -27,9 +27,8 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.DomainOrder;
 import org.jfree.data.xy.XYDataset;
-import org.opentrafficsim.core.animation.gtu.colorer.IdGtuColorer;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.draw.core.BoundsPaintScale;
+import org.opentrafficsim.draw.BoundsPaintScale;
+import org.opentrafficsim.draw.Colors;
 import org.opentrafficsim.draw.graphs.GraphPath.Section;
 import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.SamplerData;
@@ -65,7 +64,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
     private final GraphUpdater<Time> graphUpdater;
 
     /** Counter of the number of trajectories imported per lane. */
-    private final Map<LaneData, Integer> knownTrajectories = new LinkedHashMap<>();
+    private final Map<LaneData<?>, Integer> knownTrajectories = new LinkedHashMap<>();
 
     /** Per lane, mapping from series rank number to trajectory. */
     private List<List<OffsetTrajectory>> curves = new ArrayList<>();
@@ -96,14 +95,14 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
      * Constructor.
      * @param caption String; caption
      * @param updateInterval Duration; regular update interval (simulation time)
-     * @param simulator OtsSimulatorInterface; simulator
+     * @param scheduler PlotScheduler; scheduler.
      * @param samplerData SamplerData&lt;?&gt;; sampler data
      * @param path GraphPath&lt;? extends LaneData&gt;; path
      */
-    public TrajectoryPlot(final String caption, final Duration updateInterval, final OtsSimulatorInterface simulator,
-            final SamplerData<?> samplerData, final GraphPath<? extends LaneData> path)
+    public TrajectoryPlot(final String caption, final Duration updateInterval, final PlotScheduler scheduler,
+            final SamplerData<?> samplerData, final GraphPath<? extends LaneData<?>> path)
     {
-        super(caption, updateInterval, simulator, samplerData, path, Duration.ZERO);
+        super(caption, updateInterval, scheduler, samplerData, path, Duration.ZERO);
         for (int i = 0; i < path.getNumberOfSeries(); i++)
         {
             this.curves.add(new ArrayList<>());
@@ -116,12 +115,12 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
         // setup updater to do the actual work in another thread
         this.graphUpdater = new GraphUpdater<>("Trajectories worker", Thread.currentThread(), (t) ->
         {
-            for (Section<? extends LaneData> section : path.getSections())
+            for (Section<? extends LaneData<?>> section : path.getSections())
             {
                 Length startDistance = path.getStartDistance(section);
                 for (int i = 0; i < path.getNumberOfSeries(); i++)
                 {
-                    LaneData lane = section.getSource(i);
+                    LaneData<?> lane = section.getSource(i);
                     if (lane == null)
                     {
                         continue; // lane is not part of this section, e.g. after a lane-drop
@@ -379,7 +378,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
                     Character c = gtuId.charAt(pos);
                     if (Character.isDigit(c))
                     {
-                        return IdGtuColorer.LEGEND.get(c - '0').getColor();
+                        return Colors.get(c - '0');
                     }
                 }
             }

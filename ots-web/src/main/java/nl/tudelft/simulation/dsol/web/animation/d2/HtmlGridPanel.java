@@ -15,7 +15,7 @@ import java.text.NumberFormat;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.Point2d;
 
-import nl.tudelft.simulation.dsol.animation.D2.RenderableScale;
+import nl.tudelft.simulation.dsol.animation.d2.RenderableScale;
 import nl.tudelft.simulation.dsol.web.animation.HtmlGraphics2d;
 
 /**

@@ -2,11 +2,9 @@ package org.opentrafficsim.road.gtu.lane.perception.headway;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.ValueRuntimeException;
-import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.LengthVector;
-import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -422,8 +420,7 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
             Throw.whenNull(endWidth, "End width may not be null.");
             try
             {
-                return new Width(new double[] {0.0, 1.0},
-                        DoubleVector.instantiate(new Length[] {startWidth, endWidth}, LengthUnit.SI, StorageType.DENSE));
+                return new Width(new double[] {0.0, 1.0}, new LengthVector(new Length[] {startWidth, endWidth}, LengthUnit.SI));
             }
             catch (ValueRuntimeException exception)
             {

@@ -179,7 +179,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
             {
                 // Payload: Object[] {String gtuId, Lane source}
                 notify(new TimedEvent<>(Lane.GTU_ADD_EVENT,
-                        new Object[] {gtu.getId(), count, roadLane.getId(), roadLane.getParentLink().getId()},
+                        new Object[] {gtu.getId(), count, roadLane.getId(), roadLane.getLink().getId()},
                         gtu.getSimulator().getSimulatorTime()));
                 count++;
             }

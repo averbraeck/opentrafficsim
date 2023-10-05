@@ -2,10 +2,8 @@ package org.opentrafficsim.kpi.sampling.data;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.ValueRuntimeException;
-import org.djunits.value.storage.StorageType;
 import org.djunits.value.vfloat.scalar.FloatSpeed;
 import org.djunits.value.vfloat.vector.FloatSpeedVector;
-import org.djunits.value.vfloat.vector.base.FloatVector;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 
 /**
@@ -19,8 +17,7 @@ import org.opentrafficsim.kpi.interfaces.GtuData;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <G> gtu data type
  */
-public abstract class ExtendedDataSpeed<G extends GtuData>
-        extends ExtendedDataFloat<SpeedUnit, FloatSpeed, FloatSpeedVector, G>
+public abstract class ExtendedDataSpeed<G extends GtuData> extends ExtendedDataFloat<SpeedUnit, FloatSpeed, FloatSpeedVector, G>
 {
 
     /**
@@ -44,7 +41,7 @@ public abstract class ExtendedDataSpeed<G extends GtuData>
     @Override
     protected final FloatSpeedVector convert(final float[] storage) throws ValueRuntimeException
     {
-        return FloatVector.instantiate(storage, SpeedUnit.SI, StorageType.DENSE);
+        return new FloatSpeedVector(storage, SpeedUnit.SI);
     }
 
     /** {@inheritDoc} */

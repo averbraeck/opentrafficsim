@@ -1,12 +1,12 @@
 package org.opentrafficsim.core.dsol;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.djutils.exceptions.Throw;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the GTUException class.
@@ -26,30 +26,30 @@ public class OtsSimulationExceptionTest
     public final void otsSimulationExceptionTest()
     {
         OtsSimulationException e = new OtsSimulationException();
-        assertNotNull("result should not be null", e);
+        assertNotNull(e, "result should not be null");
         String message = "test message";
         e = new OtsSimulationException(message);
-        assertEquals("message should be " + message, message, e.getMessage());
+        assertEquals(message, e.getMessage(), "message should be " + message);
         String causeMessage = "cause message";
         Throwable cause = new Throwable(causeMessage);
         e = new OtsSimulationException(cause);
-        assertEquals("cause message should be" + causeMessage, causeMessage, e.getCause().getMessage());
+        assertEquals(causeMessage, e.getCause().getMessage(), "cause message should be" + causeMessage);
         e = new OtsSimulationException(message, cause);
-        assertEquals("message should be " + message, message, e.getMessage());
-        assertEquals("cause message should be" + causeMessage, causeMessage, e.getCause().getMessage());
+        assertEquals(message, e.getMessage(), "message should be " + message);
+        assertEquals(causeMessage, e.getCause().getMessage(), "cause message should be" + causeMessage);
         e = new OtsSimulationException(message, cause, false, false);
-        assertEquals("message should be " + message, message, e.getMessage());
-        assertEquals("cause message should be" + causeMessage, causeMessage, e.getCause().getMessage());
+        assertEquals(message, e.getMessage(), "message should be " + message);
+        assertEquals(causeMessage, e.getCause().getMessage(), "cause message should be" + causeMessage);
         // TODO check that the values of enableSuppresion and writableStackTrace are correctly reflected in e
         e = new OtsSimulationException(message, cause, false, true);
-        assertEquals("message should be " + message, message, e.getMessage());
-        assertEquals("cause message should be" + causeMessage, causeMessage, e.getCause().getMessage());
+        assertEquals(message, e.getMessage(), "message should be " + message);
+        assertEquals(causeMessage, e.getCause().getMessage(), "cause message should be" + causeMessage);
         e = new OtsSimulationException(message, cause, true, false);
-        assertEquals("message should be " + message, message, e.getMessage());
-        assertEquals("cause message should be" + causeMessage, causeMessage, e.getCause().getMessage());
+        assertEquals(message, e.getMessage(), "message should be " + message);
+        assertEquals(causeMessage, e.getCause().getMessage(), "cause message should be" + causeMessage);
         e = new OtsSimulationException(message, cause, true, true);
-        assertEquals("message should be " + message, message, e.getMessage());
-        assertEquals("cause message should be" + causeMessage, causeMessage, e.getCause().getMessage());
+        assertEquals(message, e.getMessage(), "message should be " + message);
+        assertEquals(causeMessage, e.getCause().getMessage(), "cause message should be" + causeMessage);
     }
 
     /**

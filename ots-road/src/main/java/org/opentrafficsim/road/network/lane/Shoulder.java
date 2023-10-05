@@ -1,8 +1,9 @@
 package org.opentrafficsim.road.network.lane;
 
-import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import java.util.List;
+
+import org.djutils.draw.line.Polygon2d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -22,35 +23,18 @@ public class Shoulder extends CrossSectionElement
     private static final long serialVersionUID = 20140819L;
 
     /**
-     * Creates a shoulder element.
-     * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
-     * @param id String; the id of the lane. Should be unique within the parentLink.
-     * @param lateralPositionStart Length; the lateral start position compared to the linear geometry of the Cross Section Link.
-     * @param lateralPositionEnd Length; the lateral end position compared to the linear geometry of the Cross Section Link
-     * @param beginWidth Length; start width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral start position.
-     * @param endWidth Length; end width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral end position.
-     * @param fixGradualLateralOffset boolean; true if gradualLateralOffset needs to be fixed
-     * @throws OtsGeometryException when creation of the center line or contour geometry fails
-     * @throws NetworkException when id equal to null or not unique
+     * Constructor specifying geometry.s
+     * @param link CrossSectionLink; link.
+     * @param id String; the id of this lane within the link; should be unique within the link.
+     * @param centerLine OtsLine2d; center line.
+     * @param contour Polygon2d; contour shape.
+     * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
+     * @throws NetworkException when no cross-section slice is defined.
      */
-    public Shoulder(final CrossSectionLink parentLink, final String id, final Length lateralPositionStart,
-            final Length lateralPositionEnd, final Length beginWidth, final Length endWidth,
-            final boolean fixGradualLateralOffset) throws OtsGeometryException, NetworkException
+    public Shoulder(final CrossSectionLink link, final String id, final OtsLine2d centerLine, final Polygon2d contour,
+            final List<CrossSectionSlice> crossSectionSlices) throws NetworkException
     {
-        super(parentLink, id, lateralPositionStart, lateralPositionEnd, beginWidth, endWidth, false);
-    }
-
-    public Shoulder(final CrossSectionLink parentLink, final String id, OtsLine3d centerLine, final Length offsetStart, final Length offsetEnd,
-                    final Length beginWidth, final Length endWidth) throws OtsGeometryException, NetworkException
-    {
-        super(parentLink, id, centerLine, offsetStart, offsetEnd, beginWidth, endWidth);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final double getZ()
-    {
-        return -0.0004;
+        super(link, id, centerLine, contour, crossSectionSlices);
     }
 
     /** {@inheritDoc} */

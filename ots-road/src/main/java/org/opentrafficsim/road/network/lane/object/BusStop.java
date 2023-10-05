@@ -119,7 +119,7 @@ public class BusStop extends AbstractLaneBasedObject
                 int numLanes = 0;
                 for (Lane nextLane : downstreamLanes)
                 {
-                    if (nextLane.getParentLink().getPriority().isBusStop())
+                    if (nextLane.getLink().getPriority().isBusStop())
                     {
                         numLanes++;
                         lane = nextLane;

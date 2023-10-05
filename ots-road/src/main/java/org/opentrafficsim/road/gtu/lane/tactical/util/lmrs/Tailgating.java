@@ -44,6 +44,13 @@ public interface Tailgating
         {
             //
         }
+        
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "NONE";
+        }
     };
 
     /** No tailgating, but social pressure exists. */
@@ -74,6 +81,13 @@ public interface Tailgating
             {
                 throw new RuntimeException("Could not obtain or set parameter value.", exception);
             }
+        }
+        
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "RHO_ONLY";
         }
     };
 
@@ -113,6 +127,13 @@ public interface Tailgating
             {
                 throw new RuntimeException("Could not obtain or set parameter value.", exception);
             }
+        }
+        
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "PRESSURE";
         }
     };
 

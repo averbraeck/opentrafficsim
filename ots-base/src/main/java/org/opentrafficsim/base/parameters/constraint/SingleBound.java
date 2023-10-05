@@ -1,14 +1,14 @@
 package org.opentrafficsim.base.parameters.constraint;
 
-import org.djunits.value.vdouble.scalar.base.AbstractDoubleScalar;
+import org.djunits.value.vdouble.scalar.base.DoubleScalar;
 import org.djutils.exceptions.Throw;
 
 /**
- * Continuous constraints with a single bound. To allow both {@code Double} and {@code AbstractDoubleScalar<?, ?>} constraints,
+ * Continuous constraints with a single bound. To allow both {@code Double} and {@code DoubleScalar<?, ?>} constraints,
  * the generic type is restricted to {@code Number}. However, that also allows other subclasses of {@code Number}, e.g.
  * {@code Integer}. Due to rounding and value limits from the type (e.g. {@code Integer.MAX_VALEU}), bounds may not function
  * correctly after a call to {@code Number.doubleValue()}. To restrict the usage, the constructor is private and static factory
- * methods for {@code Double} and {@code AbstractDoubleScalar<?, ?>} are supplied.
+ * methods for {@code Double} and {@code DoubleScalar<?, ?>} are supplied.
  * <p>
  * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -43,7 +43,7 @@ public class SingleBound<T extends Number> implements Constraint<T>
      * @param <T> value type
      * @return lower inclusive bound
      */
-    public static final <T extends AbstractDoubleScalar<?, ?>> SingleBound<T> lowerInclusive(final T bound)
+    public static final <T extends DoubleScalar<?, ?>> SingleBound<T> lowerInclusive(final T bound)
     {
         return createLowerInclusive(bound);
     }
@@ -76,7 +76,7 @@ public class SingleBound<T extends Number> implements Constraint<T>
      * @param <T> value type
      * @return lower exclusive bound
      */
-    public static final <T extends AbstractDoubleScalar<?, ?>> SingleBound<T> lowerExclusive(final T bound)
+    public static final <T extends DoubleScalar<?, ?>> SingleBound<T> lowerExclusive(final T bound)
     {
         return createLowerExclusive(bound);
     }
@@ -108,7 +108,7 @@ public class SingleBound<T extends Number> implements Constraint<T>
      * @return upper inclusive bound
      * @param <T> value type
      */
-    public static final <T extends AbstractDoubleScalar<?, ?>> SingleBound<T> upperInclusive(final T bound)
+    public static final <T extends DoubleScalar<?, ?>> SingleBound<T> upperInclusive(final T bound)
     {
         return createUpperInclusive(bound);
     }
@@ -141,7 +141,7 @@ public class SingleBound<T extends Number> implements Constraint<T>
      * @param <T> value type
      * @return upper exclusive bound
      */
-    public static final <T extends AbstractDoubleScalar<?, ?>> SingleBound<T> upperExclusive(final T bound)
+    public static final <T extends DoubleScalar<?, ?>> SingleBound<T> upperExclusive(final T bound)
     {
         return createUpperExclusive(bound);
     }

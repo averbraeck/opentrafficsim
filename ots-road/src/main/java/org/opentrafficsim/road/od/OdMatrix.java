@@ -14,14 +14,12 @@ import java.util.TreeMap;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.ValueRuntimeException;
-import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
-import org.djunits.value.vdouble.vector.base.DoubleVector;
+import org.djutils.base.Identifiable;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
@@ -330,7 +328,7 @@ public class OdMatrix implements Serializable, Identifiable
             }
             try
             {
-                demandScaled = DoubleVector.instantiate(scaled, demand.getDisplayUnit(), demand.getStorageType());
+                demandScaled = new FrequencyVector(scaled, demand.getDisplayUnit(), demand.getStorageType());
             }
             catch (ValueRuntimeException exception)
             {
@@ -376,7 +374,7 @@ public class OdMatrix implements Serializable, Identifiable
         FrequencyVector demandScaled;
         try
         {
-            demandScaled = DoubleVector.instantiate(scaled, demand.getDisplayUnit(), demand.getStorageType());
+            demandScaled = new FrequencyVector(scaled, demand.getDisplayUnit(), demand.getStorageType());
         }
         catch (ValueRuntimeException exception)
         {
@@ -579,8 +577,7 @@ public class OdMatrix implements Serializable, Identifiable
                         - timeVector.get(i).getInUnit(TimeUnit.BASE_HOUR));
             }
             // last value can remain zero as initialized
-            putDemandVector(origin, destination, category,
-                    DoubleVector.instantiate(flow, FrequencyUnit.PER_HOUR, StorageType.DENSE), timeVector,
+            putDemandVector(origin, destination, category, new FrequencyVector(flow, FrequencyUnit.PER_HOUR), timeVector,
                     Interpolation.STEPWISE);
         }
         catch (ValueRuntimeException exception)
@@ -691,8 +688,8 @@ public class OdMatrix implements Serializable, Identifiable
             Throw.when(dem[periodIndex] < -additionalDemand, UnsupportedOperationException.class,
                     "Demand may not become negative.");
             dem[periodIndex] += additionalDemand;
-            putDemandVector(origin, destination, category,
-                    DoubleVector.instantiate(dem, FrequencyUnit.PER_HOUR, StorageType.DENSE), time, Interpolation.STEPWISE);
+            putDemandVector(origin, destination, category, new FrequencyVector(dem, FrequencyUnit.PER_HOUR), time,
+                    Interpolation.STEPWISE);
         }
         catch (ValueRuntimeException exception)
         {

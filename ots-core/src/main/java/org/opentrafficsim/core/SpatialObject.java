@@ -1,6 +1,6 @@
 package org.opentrafficsim.core;
 
-import org.opentrafficsim.core.geometry.OtsShape;
+import org.djutils.draw.line.Polygon2d;
 
 /**
  * SpatialObject indicates that an object has a shape that can be requested. A spatial object can therefore be stored in a
@@ -19,6 +19,6 @@ public interface SpatialObject
      * Return the shape of the object.
      * @return OtsShape; the shape of the object
      */
-    OtsShape getShape();
+    Polygon2d getShape();
 
 }

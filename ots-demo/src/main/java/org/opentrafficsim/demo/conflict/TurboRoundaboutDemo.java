@@ -13,16 +13,16 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
+import org.opentrafficsim.animation.gtu.colorer.DefaultSwitchableGtuColorer;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.demo.conflict.TurboRoundaboutDemo.TurboRoundaboutModel;
-import org.opentrafficsim.draw.core.OtsDrawingException;
+import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -31,7 +31,7 @@ import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.language.DSOLException;
+import nl.tudelft.simulation.language.DsolException;
 
 /**
  * <p>
@@ -87,7 +87,7 @@ public class TurboRoundaboutDemo extends OtsSimulationApplication<TurboRoundabou
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DSOLException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DsolException exception)
         {
             exception.printStackTrace();
         }
@@ -120,7 +120,7 @@ public class TurboRoundaboutDemo extends OtsSimulationApplication<TurboRoundabou
             {
                 URL xmlURL = URLResource.getResource("/resources/conflict/TurboRoundabout.xml");
                 this.network = new RoadNetwork("TurboRoundabout", getSimulator());
-                XmlNetworkLaneParser.build(xmlURL, this.network, true);
+                new XmlParser(this.network).setUrl(xmlURL).build();
 
                 // add trafficlights
                 for (Lane lane : ((CrossSectionLink) this.network.getLink("SEXITS2")).getLanes())

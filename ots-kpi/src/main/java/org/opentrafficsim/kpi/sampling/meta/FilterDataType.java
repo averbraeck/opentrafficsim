@@ -2,8 +2,8 @@ package org.opentrafficsim.kpi.sampling.meta;
 
 import java.util.Set;
 
+import org.djutils.base.Identifiable;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.sampling.TrajectoryAcceptList;
 

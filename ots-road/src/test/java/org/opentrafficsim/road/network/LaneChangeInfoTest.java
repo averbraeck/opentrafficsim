@@ -1,8 +1,8 @@
 package org.opentrafficsim.road.network;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -14,15 +14,15 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.point.Point2d;
 import org.djutils.immutablecollections.ImmutableSortedSet;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
@@ -85,16 +85,16 @@ public class LaneChangeInfoTest
          */
 
         // Nodes
-        Node nodeA = new Node(network, "A", new OtsPoint3d(0, 0, 0), Direction.ZERO);
-        Node nodeB = new Node(network, "B", new OtsPoint3d(200, 0, 0), Direction.ZERO);
-        Node nodeC = new Node(network, "C", new OtsPoint3d(500, 0, 0), Direction.ZERO);
-        Node nodeD = new Node(network, "D", new OtsPoint3d(900, 0, 0), Direction.ZERO);
-        Node nodeE = new Node(network, "E", new OtsPoint3d(1400, 0, 0), Direction.ZERO);
-        Node nodeF = new Node(network, "F", new OtsPoint3d(2000, 0, 0), Direction.ZERO);
-        Node nodeF2 = new Node(network, "F2", new OtsPoint3d(2000, -3.5, 0), Direction.ZERO);
-        Node nodeG = new Node(network, "G", new OtsPoint3d(2700, 0, 0), Direction.ZERO);
-        Node nodeH = new Node(network, "H", new OtsPoint3d(3500, 0, 0), Direction.ZERO);
-        Node nodeH2 = new Node(network, "H2", new OtsPoint3d(3500, 3.5, 0), Direction.ZERO);
+        Node nodeA = new Node(network, "A", new Point2d(0, 0), Direction.ZERO);
+        Node nodeB = new Node(network, "B", new Point2d(200, 0), Direction.ZERO);
+        Node nodeC = new Node(network, "C", new Point2d(500, 0), Direction.ZERO);
+        Node nodeD = new Node(network, "D", new Point2d(900, 0), Direction.ZERO);
+        Node nodeE = new Node(network, "E", new Point2d(1400, 0), Direction.ZERO);
+        Node nodeF = new Node(network, "F", new Point2d(2000, 0), Direction.ZERO);
+        Node nodeF2 = new Node(network, "F2", new Point2d(2000, -3.5), Direction.ZERO);
+        Node nodeG = new Node(network, "G", new Point2d(2700, 0), Direction.ZERO);
+        Node nodeH = new Node(network, "H", new Point2d(3500, 0), Direction.ZERO);
+        Node nodeH2 = new Node(network, "H2", new Point2d(3500, 3.5), Direction.ZERO);
 
         // Lanes
         List<Lane> lanesAB = new LaneFactory(network, nodeA, nodeB, freeway, simulator, policy, DefaultsNl.VEHICLE)

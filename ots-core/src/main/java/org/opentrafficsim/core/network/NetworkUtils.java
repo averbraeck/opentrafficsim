@@ -31,7 +31,6 @@ public final class NetworkUtils
 
         network.getRawNodeMap().clear();
         network.getRawLinkMap().clear();
-        network.getRawLinkGraphs().clear();
         network.getRawRouteMap().clear();
     }
 

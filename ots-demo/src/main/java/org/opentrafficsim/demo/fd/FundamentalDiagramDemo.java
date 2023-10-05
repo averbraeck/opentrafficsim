@@ -37,8 +37,10 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.cli.CliUtil;
+import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
 import org.djutils.means.HarmonicMean;
+import org.opentrafficsim.animation.GraphLaneUtil;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
@@ -47,7 +49,6 @@ import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuErrorHandler;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -66,8 +67,8 @@ import org.opentrafficsim.draw.graphs.FundamentalDiagram.FdSource;
 import org.opentrafficsim.draw.graphs.FundamentalDiagram.Quantity;
 import org.opentrafficsim.draw.graphs.GraphCrossSection;
 import org.opentrafficsim.draw.graphs.GraphPath;
+import org.opentrafficsim.draw.graphs.PlotScheduler;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
-import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.generator.CfBaRoomChecker;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
@@ -100,6 +101,7 @@ import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 import org.opentrafficsim.road.network.sampling.LaneDataRoad;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
+import org.opentrafficsim.swing.graphs.OtsPlotScheduler;
 import org.opentrafficsim.swing.graphs.SwingFundamentalDiagram;
 import org.opentrafficsim.swing.graphs.SwingTrajectoryPlot;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
@@ -172,6 +174,9 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
     /** Panel of trajectory graph. */
     private Container trajectoryPanel;
 
+    /** Plot scheduler. */
+    private PlotScheduler scheduler;
+
     /**
      * Constructor.
      */
@@ -210,9 +215,9 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         GtuType.registerTemplateSupplier(car, Defaults.NL);
         GtuType.registerTemplateSupplier(truck, Defaults.NL);
 
-        Node nodeA = new Node(network, "Origin", new OtsPoint3d(0.0, 0.0), Direction.ZERO);
-        Node nodeB = new Node(network, "Lane-drop", new OtsPoint3d(1500.0, 0.0), Direction.ZERO);
-        Node nodeC = new Node(network, "Destination", new OtsPoint3d(2500.0, 0.0), Direction.ZERO);
+        Node nodeA = new Node(network, "Origin", new Point2d(0.0, 0.0), Direction.ZERO);
+        Node nodeB = new Node(network, "Lane-drop", new Point2d(1500.0, 0.0), Direction.ZERO);
+        Node nodeC = new Node(network, "Destination", new Point2d(2500.0, 0.0), Direction.ZERO);
 
         LinkType linkType = DefaultsNl.FREEWAY;
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;
@@ -349,7 +354,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             public void actionPerformed(final ActionEvent e)
             {
                 FundamentalDiagramDemo.this.absoluteCrossSection1 =
-                        (String) ((JComboBox<String>) e.getSource()).getSelectedItem();
+                        ((String) ((JComboBox<String>) e.getSource()).getSelectedItem()).replace(",", ".");
                 createFundamentalDiagramsForCrossSections();
             }
         });
@@ -372,7 +377,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             public void actionPerformed(final ActionEvent e)
             {
                 FundamentalDiagramDemo.this.absoluteCrossSection2 =
-                        (String) ((JComboBox<String>) e.getSource()).getSelectedItem();
+                        ((String) ((JComboBox<String>) e.getSource()).getSelectedItem()).replace(",", ".");
                 createFundamentalDiagramsForCrossSections();
             }
         });
@@ -389,7 +394,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             public void actionPerformed(final ActionEvent e)
             {
                 FundamentalDiagramDemo.this.absoluteCrossSection3 =
-                        (String) ((JComboBox<String>) e.getSource()).getSelectedItem();
+                        ((String) ((JComboBox<String>) e.getSource()).getSelectedItem()).replace(",", ".");
                 createFundamentalDiagramsForCrossSections();
             }
         });
@@ -564,6 +569,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         controlPanel.add(vSlider);
 
         // Initiate graphs
+        this.scheduler = new OtsPlotScheduler(getSimulator());
         clearDataAndGraphs();
     }
 
@@ -624,7 +630,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             }
             Duration aggregationTime = Duration.instantiateSI(30.0);
             FdSource source = FundamentalDiagram.sourceFromSampler(this.sampler, crossSection, true, aggregationTime, false);
-            this.fdSourceMap.put(String.format("%.2f", i / 1000.0), source);
+            this.fdSourceMap.put(String.format("%.2f", i / 1000.0).replace(",", "."), source);
         }
 
         // create sampler plot
@@ -638,7 +644,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             firstLanes.add(lane);
         }
         GraphPath<LaneDataRoad> path = Try.assign(() -> GraphLaneUtil.createPath(names, firstLanes), "");
-        TrajectoryPlot trajectoryPlot = new TrajectoryPlot("Trajectories", Duration.instantiateSI(5.0), getSimulator(),
+        TrajectoryPlot trajectoryPlot = new TrajectoryPlot("Trajectories", Duration.instantiateSI(5.0), this.scheduler,
                 this.sampler.getSamplerData(), path);
         trajectoryPlot.updateFixedDomainRange(true);
         SwingTrajectoryPlot swingTrajectoryPlot = new SwingTrajectoryPlot(trajectoryPlot)
@@ -699,6 +705,10 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         if (this.absoluteCrossSection2.equals("None") && this.absoluteCrossSection3.equals("None"))
         {
             source = this.fdSourceMap.get(this.absoluteCrossSection1);
+            if (source == null)
+            {
+                source = this.fdSourceMap.get(this.absoluteCrossSection1);
+            }
             source.clearFundamentalDiagrams();
         }
         else
@@ -725,11 +735,11 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
 
         // create the fundamental diagrams
         FundamentalDiagram fdPlota =
-                new FundamentalDiagram("Density-speed", Quantity.DENSITY, Quantity.SPEED, getSimulator(), source, this.fdLine);
+                new FundamentalDiagram("Density-speed", Quantity.DENSITY, Quantity.SPEED, this.scheduler, source, this.fdLine);
         FundamentalDiagram fdPlotb =
-                new FundamentalDiagram("Density-flow", Quantity.DENSITY, Quantity.FLOW, getSimulator(), source, this.fdLine);
+                new FundamentalDiagram("Density-flow", Quantity.DENSITY, Quantity.FLOW, this.scheduler, source, this.fdLine);
         FundamentalDiagram fdPlotc =
-                new FundamentalDiagram("Flow-speed", Quantity.FLOW, Quantity.SPEED, getSimulator(), source, this.fdLine);
+                new FundamentalDiagram("Flow-speed", Quantity.FLOW, Quantity.SPEED, this.scheduler, source, this.fdLine);
 
         // recalculate over past data
         source.recalculate(getSimulator().getSimulatorAbsTime());

@@ -6,22 +6,19 @@ import java.util.List;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.value.ValueRuntimeException;
-import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.matrix.DurationMatrix;
-import org.djunits.value.vdouble.matrix.base.DoubleMatrix;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vfloat.vector.FloatSpeedVector;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.egtf.Converter;
-import org.opentrafficsim.core.egtf.Quantity;
-import org.opentrafficsim.draw.core.BoundsPaintScale;
+import org.opentrafficsim.draw.BoundsPaintScale;
+import org.opentrafficsim.draw.egtf.Converter;
+import org.opentrafficsim.draw.egtf.Quantity;
 import org.opentrafficsim.draw.graphs.ContourDataSource.ContourDataType;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
-import org.opentrafficsim.road.network.sampling.data.ReferenceSpeed;
+import org.opentrafficsim.kpi.sampling.data.ReferenceSpeed;
 
 /**
  * Contour plot for delay.
@@ -42,8 +39,6 @@ import org.opentrafficsim.road.network.sampling.data.ReferenceSpeed;
  */
 public class ContourPlotDelay extends AbstractContourPlot<Duration>
 {
-    /** */
-    private static final long serialVersionUID = 20181010L;
 
     /** Quantity for the EGTF. */
     private static final Quantity<Duration, DurationMatrix> QUANTITY = new Quantity<>("delay", new Converter<DurationMatrix>()
@@ -54,7 +49,7 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
         {
             try
             {
-                return DoubleMatrix.instantiate(filteredData, DurationUnit.SI, StorageType.DENSE);
+                return new DurationMatrix(filteredData, DurationUnit.SI);
             }
             catch (ValueRuntimeException exception)
             {
@@ -131,12 +126,12 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
      * Constructor. In case this plot is created live, the sampler of the sample data in the data source needs to have the
      * extended data type {@code ReferenceSpeed.INSTANCE} registered.
      * @param caption String; caption
-     * @param simulator OtsSimulatorInterface; simulator
+     * @param scheduler PlotScheduler; scheduler.
      * @param dataPool ContourDataSource; data pool
      */
-    public ContourPlotDelay(final String caption, final OtsSimulatorInterface simulator, final ContourDataSource dataPool)
+    public ContourPlotDelay(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool)
     {
-        super(caption, simulator, dataPool, createPaintScale(), new Duration(0.05, DurationUnit.SI), "%.1f/km",
+        super(caption, scheduler, dataPool, createPaintScale(), new Duration(0.05, DurationUnit.SI), "%.1f/km",
                 "delay %.1f /km");
     }
 

@@ -51,9 +51,9 @@ public class BusStopConflictRule implements ConflictRule
         boolean requestingFromBusStop;
         Conflict busConflict;
         // conflict builder enforces that only one of the two links has priority BUS_STOP
-        if (conflict.getLane().getParentLink().getPriority().equals(Priority.BUS_STOP))
+        if (conflict.getLane().getLink().getPriority().equals(Priority.BUS_STOP))
         {
-            Throw.when(conflict.getOtherConflict().getLane().getParentLink().getPriority().equals(Priority.BUS_STOP),
+            Throw.when(conflict.getOtherConflict().getLane().getLink().getPriority().equals(Priority.BUS_STOP),
                     IllegalArgumentException.class,
                     "BusStopConflictRule does not support a conflict between two links with priority BUS_STOP.");
             requestingFromBusStop = true;
@@ -81,7 +81,7 @@ public class BusStopConflictRule implements ConflictRule
                     {
                         lane = set.iterator().next();
                         // only on bus stop
-                        if (lane.getParentLink().getPriority().isBusStop())
+                        if (lane.getLink().getPriority().isBusStop())
                         {
                             pos = lane.getLength();
                         }

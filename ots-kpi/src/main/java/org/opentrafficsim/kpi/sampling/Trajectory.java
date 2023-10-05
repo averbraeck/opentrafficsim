@@ -11,7 +11,6 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.ValueRuntimeException;
-import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -21,7 +20,6 @@ import org.djunits.value.vfloat.vector.FloatAccelerationVector;
 import org.djunits.value.vfloat.vector.FloatLengthVector;
 import org.djunits.value.vfloat.vector.FloatSpeedVector;
 import org.djunits.value.vfloat.vector.FloatTimeVector;
-import org.djunits.value.vfloat.vector.base.FloatVector;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.interfaces.LaneData;
@@ -76,16 +74,16 @@ public final class Trajectory<G extends GtuData>
     private final Map<ExtendedDataType<?, ?, ?, G>, Object> extendedData = new LinkedHashMap<>();
 
     /** Lane of travel. */
-    private final LaneData lane;
+    private final LaneData<?> lane;
 
     /**
      * @param gtu GtuData; GTU of this trajectory, only the id is stored.
      * @param filterData Map&lt;FilterDataType&lt;?&gt;, Object&gt;; filter data
      * @param extendedData Set&lt;ExtendedDataType&lt;?,?,?,G&gt;&gt;; types of extended data
-     * @param lane LaneData; lane of travel
+     * @param lane LaneData&lt;?&gt;; lane of travel
      */
     public Trajectory(final GtuData gtu, final Map<FilterDataType<?>, Object> filterData,
-            final Set<ExtendedDataType<?, ?, ?, G>> extendedData, final LaneData lane)
+            final Set<ExtendedDataType<?, ?, ?, G>> extendedData, final LaneData<?> lane)
     {
         this(gtu == null ? null : gtu.getId(), filterData, extendedData, lane);
     }
@@ -95,10 +93,10 @@ public final class Trajectory<G extends GtuData>
      * @param gtuId String; GTU id
      * @param filterData Map&lt;FilterDataType&lt;?&gt;, Object&gt;; filter data
      * @param extendedData Set&lt;ExtendedDataType&lt;?,?,?,G&gt;&gt;; types of extended data
-     * @param lane LaneData; lane of travel
+     * @param lane LaneData&lt;?&gt;; lane of travel
      */
     private Trajectory(final String gtuId, final Map<FilterDataType<?>, Object> filterData,
-            final Set<ExtendedDataType<?, ?, ?, G>> extendedData, final LaneData lane)
+            final Set<ExtendedDataType<?, ?, ?, G>> extendedData, final LaneData<?> lane)
     {
         Throw.whenNull(gtuId, "GTU may not be null.");
         Throw.whenNull(filterData, "Filter data may not be null.");
@@ -349,7 +347,7 @@ public final class Trajectory<G extends GtuData>
     {
         try
         {
-            return FloatVector.instantiate(getX(), LengthUnit.SI, StorageType.DENSE);
+            return new FloatLengthVector(getX(), LengthUnit.SI);
         }
         catch (ValueRuntimeException exception)
         {
@@ -366,7 +364,7 @@ public final class Trajectory<G extends GtuData>
     {
         try
         {
-            return FloatVector.instantiate(getV(), SpeedUnit.SI, StorageType.DENSE);
+            return new FloatSpeedVector(getV(), SpeedUnit.SI);
         }
         catch (ValueRuntimeException exception)
         {
@@ -383,7 +381,7 @@ public final class Trajectory<G extends GtuData>
     {
         try
         {
-            return FloatVector.instantiate(getA(), AccelerationUnit.SI, StorageType.DENSE);
+            return new FloatAccelerationVector(getA(), AccelerationUnit.SI);
         }
         catch (ValueRuntimeException exception)
         {
@@ -400,7 +398,7 @@ public final class Trajectory<G extends GtuData>
     {
         try
         {
-            return FloatVector.instantiate(getT(), TimeUnit.BASE_SECOND, StorageType.DENSE);
+            return new FloatTimeVector(getT(), TimeUnit.BASE_SECOND);
         }
         catch (ValueRuntimeException exception)
         {

@@ -3,10 +3,8 @@ package org.opentrafficsim.editor;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.djutils.event.Event;
@@ -19,11 +17,15 @@ import org.w3c.dom.Node;
 
 /**
  * This class exists to keep {@code XsdTreeNode} at manageable size. It houses all static methods used in {@code XsdTreeNode}.
- * @author wjschakel
+ * <p>
+ * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 public final class XsdTreeNodeUtil
 {
-    
+
     /** Pattern for regular expression to split string by upper case without disregarding the upper case itself. */
     private static final Pattern UPPER_PATTERN = Pattern.compile("(?=\\p{Lu})");
 
@@ -108,6 +110,8 @@ public final class XsdTreeNodeUtil
                         element = new XsdTreeNode(parentNode, child, XsdTreeNodeUtil.append(hiddenNodes, node));
                     }
                     children.add(element);
+                    ((XsdTreeNodeRoot) element.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                            new Object[] {element, parentNode, parentNode.children.indexOf(element)});
                     break;
                 case "xsd:sequence":
                     if (children.size() == skipIndex)
@@ -123,7 +127,10 @@ public final class XsdTreeNodeUtil
                     else
                     {
                         // add sequence as option, 'children' is a list of options for a choice
-                        children.add(new XsdTreeNode(parentNode, child, XsdTreeNodeUtil.append(hiddenNodes, node)));
+                        XsdTreeNode sequence = new XsdTreeNode(parentNode, child, XsdTreeNodeUtil.append(hiddenNodes, node));
+                        children.add(sequence);
+                        ((XsdTreeNodeRoot) sequence.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                                new Object[] {sequence, parentNode, parentNode.children.indexOf(sequence)});
                     }
                     break;
                 case "xsd:choice":
@@ -133,6 +140,8 @@ public final class XsdTreeNodeUtil
                         break;
                     }
                     XsdTreeNode choice = new XsdTreeNode(parentNode, child, XsdTreeNodeUtil.append(hiddenNodes, node));
+                    ((XsdTreeNodeRoot) choice.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                            new Object[] {choice, parentNode, parentNode.children.indexOf(choice)});
                     choice.createOptions();
                     /*
                      * We add the choice node, which is usually overwritten by the consecutive setting of an option. But not if
@@ -149,13 +158,17 @@ public final class XsdTreeNodeUtil
                         skipIndex = -1;
                         break;
                     }
-                    children.add(new XsdTreeNode(parentNode, child, XsdTreeNodeUtil.append(hiddenNodes, node)));
+                    XsdTreeNode extension = new XsdTreeNode(parentNode, child, XsdTreeNodeUtil.append(hiddenNodes, node));
+                    ((XsdTreeNodeRoot) extension.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                            new Object[] {extension, parentNode, parentNode.children.indexOf(extension)});
+                    children.add(extension);
                     break;
                 case "xsd:attribute":
                 case "xsd:annotation":
                 case "xsd:simpleType": // only defines xsd:restriction with xsd:pattern/xsd:enumeration
                 case "xsd:restriction":
                 case "xsd:simpleContent": // bit of a late capture, followed "type" attribute and did not check what it was
+                case "xsd:union":
                 case "#text":
                     // nothing, not even report ignoring, these are not relevant regarding element structure
                     break;
@@ -194,20 +207,6 @@ public final class XsdTreeNodeUtil
             {
                 options.add(DocumentReader.getAttribute(enumeration, "value"));
             }
-            // TODO: This is temporary, xsd:enumeration should be used for regular option selection.
-            Node pattern = DocumentReader.getChild(restriction, "xsd:pattern");
-            if (pattern != null)
-            {
-                String patt = DocumentReader.getAttribute(pattern, "value");
-                if (Pattern.matches("([A-Z]*\\|)*[A-Z]+", patt))
-                {
-                    String[] values = patt.split("\\|");
-                    for (String value : values)
-                    {
-                        options.add(value);
-                    }
-                }
-            }
         }
         return options;
     }
@@ -221,9 +220,7 @@ public final class XsdTreeNodeUtil
     protected static void fireCreatedEventOnExistingNodes(final XsdTreeNode node, final EventListener listener)
             throws RemoteException
     {
-        Event event = new Event(XsdTreeNodeRoot.NODE_CREATED, node);
-        listener.notify(event);
-        Set<XsdTreeNode> subNodes = node.children == null ? new LinkedHashSet<>() : new LinkedHashSet<>(node.children);
+        List<XsdTreeNode> subNodes = node.children == null ? new ArrayList<>() : new ArrayList<>(node.children);
         // only selected node extends towards choice, otherwise infinite recursion
         if (node.choice != null && node.choice.selected.equals(node))
         {
@@ -235,6 +232,9 @@ public final class XsdTreeNodeUtil
         {
             fireCreatedEventOnExistingNodes(child, listener);
         }
+        Event event = new Event(XsdTreeNodeRoot.NODE_CREATED,
+                new Object[] {node, node.getParent(), subNodes.indexOf(node)});
+        listener.notify(event);
     }
 
     /**
@@ -349,9 +349,9 @@ public final class XsdTreeNodeUtil
         Throw.when(typeNode == null, RuntimeException.class, "Unable to load type for %s from XSD schema.", type);
         return typeNode;
     }
-    
+
     /**
-     * Adds a thin space before each capital character in a {@code String}, except the first. 
+     * Adds a thin space before each capital character in a {@code String}, except the first.
      * @param name String; name of node.
      * @return String; input string but with a thin space before each capital character, except the first.
      */
@@ -370,6 +370,19 @@ public final class XsdTreeNodeUtil
             separator = " ";
         }
         return stringBuilder.toString();
+    }
+
+    /**
+     * Returns whether the two values are equal, where {@code null} is consider equal to an empty string.
+     * @param value1 String; value 1.
+     * @param value2 String; value 2.
+     * @return whether the two values are equal, where {@code null} is consider equal to an empty string.
+     */
+    public static boolean valuesAreEqual(final String value1, final String value2)
+    {
+        boolean value1Empty = value1 == null || value1.isEmpty();
+        boolean value2Empty = value2 == null || value2.isEmpty();
+        return (value1Empty && value2Empty) || (value1 != null && value1.equals(value2));
     }
 
 }

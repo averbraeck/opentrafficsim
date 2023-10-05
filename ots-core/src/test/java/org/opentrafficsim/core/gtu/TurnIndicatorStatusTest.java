@@ -1,9 +1,9 @@
 package org.opentrafficsim.core.gtu;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the TurnIndicatorStatus class
@@ -20,40 +20,40 @@ public class TurnIndicatorStatusTest
     @Test
     public void turnIndicatorStatusTest()
     {
-        assertTrue("NONE is none", TurnIndicatorStatus.NONE.isNone());
-        assertFalse("NONE is not left", TurnIndicatorStatus.NONE.isLeft());
-        assertFalse("NONE is not left or both", TurnIndicatorStatus.NONE.isLeftOrBoth());
-        assertFalse("NONE is not right", TurnIndicatorStatus.NONE.isRight());
-        assertFalse("NONE is not right or both", TurnIndicatorStatus.NONE.isRightOrBoth());
-        assertFalse("NONE is not hazard", TurnIndicatorStatus.NONE.isHazard());
+        assertTrue(TurnIndicatorStatus.NONE.isNone(), "NONE is none");
+        assertFalse(TurnIndicatorStatus.NONE.isLeft(), "NONE is not left");
+        assertFalse(TurnIndicatorStatus.NONE.isLeftOrBoth(), "NONE is not left or both");
+        assertFalse(TurnIndicatorStatus.NONE.isRight(), "NONE is not right");
+        assertFalse(TurnIndicatorStatus.NONE.isRightOrBoth(), "NONE is not right or both");
+        assertFalse(TurnIndicatorStatus.NONE.isHazard(), "NONE is not hazard");
 
-        assertFalse("LEFT is not none", TurnIndicatorStatus.LEFT.isNone());
-        assertTrue("LEFT is left", TurnIndicatorStatus.LEFT.isLeft());
-        assertTrue("LEFT is left or both", TurnIndicatorStatus.LEFT.isLeftOrBoth());
-        assertFalse("LEFT is not right", TurnIndicatorStatus.LEFT.isRight());
-        assertFalse("LEFT is not right or both", TurnIndicatorStatus.LEFT.isRightOrBoth());
-        assertFalse("LEFT is not hazard", TurnIndicatorStatus.LEFT.isHazard());
+        assertFalse(TurnIndicatorStatus.LEFT.isNone(), "LEFT is not none");
+        assertTrue(TurnIndicatorStatus.LEFT.isLeft(), "LEFT is left");
+        assertTrue(TurnIndicatorStatus.LEFT.isLeftOrBoth(), "LEFT is left or both");
+        assertFalse(TurnIndicatorStatus.LEFT.isRight(), "LEFT is not right");
+        assertFalse(TurnIndicatorStatus.LEFT.isRightOrBoth(), "LEFT is not right or both");
+        assertFalse(TurnIndicatorStatus.LEFT.isHazard(), "LEFT is not hazard");
 
-        assertFalse("RIGHT is not none", TurnIndicatorStatus.RIGHT.isNone());
-        assertFalse("RIGHT is not left", TurnIndicatorStatus.RIGHT.isLeft());
-        assertFalse("RIGHT is not left or both", TurnIndicatorStatus.RIGHT.isLeftOrBoth());
-        assertTrue("RIGHT is right", TurnIndicatorStatus.RIGHT.isRight());
-        assertTrue("RIGHT is right or both", TurnIndicatorStatus.RIGHT.isRightOrBoth());
-        assertFalse("RIGHT is not hazard", TurnIndicatorStatus.RIGHT.isHazard());
+        assertFalse(TurnIndicatorStatus.RIGHT.isNone(), "RIGHT is not none");
+        assertFalse(TurnIndicatorStatus.RIGHT.isLeft(), "RIGHT is not left");
+        assertFalse(TurnIndicatorStatus.RIGHT.isLeftOrBoth(), "RIGHT is not left or both");
+        assertTrue(TurnIndicatorStatus.RIGHT.isRight(), "RIGHT is right");
+        assertTrue(TurnIndicatorStatus.RIGHT.isRightOrBoth(), "RIGHT is right or both");
+        assertFalse(TurnIndicatorStatus.RIGHT.isHazard(), "RIGHT is not hazard");
 
-        assertFalse("HAZARD is not none", TurnIndicatorStatus.HAZARD.isNone());
-        assertFalse("HAZARD is not left", TurnIndicatorStatus.HAZARD.isLeft());
-        assertTrue("HAZARD is not left or both", TurnIndicatorStatus.HAZARD.isLeftOrBoth());
-        assertFalse("HAZARD is not right", TurnIndicatorStatus.HAZARD.isRight());
-        assertTrue("HAZARD is not right or both", TurnIndicatorStatus.HAZARD.isRightOrBoth());
-        assertTrue("HAZARD is not hazard", TurnIndicatorStatus.HAZARD.isHazard());
+        assertFalse(TurnIndicatorStatus.HAZARD.isNone(), "HAZARD is not none");
+        assertFalse(TurnIndicatorStatus.HAZARD.isLeft(), "HAZARD is not left");
+        assertTrue(TurnIndicatorStatus.HAZARD.isLeftOrBoth(), "HAZARD is not left or both");
+        assertFalse(TurnIndicatorStatus.HAZARD.isRight(), "HAZARD is not right");
+        assertTrue(TurnIndicatorStatus.HAZARD.isRightOrBoth(), "HAZARD is not right or both");
+        assertTrue(TurnIndicatorStatus.HAZARD.isHazard(), "HAZARD is not hazard");
 
-        assertFalse("NOTPRESENT is not none", TurnIndicatorStatus.NOTPRESENT.isNone());
-        assertFalse("NOTPRESENT is not left", TurnIndicatorStatus.NOTPRESENT.isLeft());
-        assertFalse("NOTPRESENT is not left or both", TurnIndicatorStatus.NOTPRESENT.isLeftOrBoth());
-        assertFalse("NOTPRESENT is not right", TurnIndicatorStatus.NOTPRESENT.isRight());
-        assertFalse("NOTPRESENT is not right or both", TurnIndicatorStatus.NOTPRESENT.isRightOrBoth());
-        assertFalse("NOTPRESENT is not hazard", TurnIndicatorStatus.NOTPRESENT.isHazard());
+        assertFalse(TurnIndicatorStatus.NOTPRESENT.isNone(), "NOTPRESENT is not none");
+        assertFalse(TurnIndicatorStatus.NOTPRESENT.isLeft(), "NOTPRESENT is not left");
+        assertFalse(TurnIndicatorStatus.NOTPRESENT.isLeftOrBoth(), "NOTPRESENT is not left or both");
+        assertFalse(TurnIndicatorStatus.NOTPRESENT.isRight(), "NOTPRESENT is not right");
+        assertFalse(TurnIndicatorStatus.NOTPRESENT.isRightOrBoth(), "NOTPRESENT is not right or both");
+        assertFalse(TurnIndicatorStatus.NOTPRESENT.isHazard(), "NOTPRESENT is not hazard");
 
     }
 

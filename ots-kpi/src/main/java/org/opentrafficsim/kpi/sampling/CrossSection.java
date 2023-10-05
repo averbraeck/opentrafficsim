@@ -50,7 +50,7 @@ public class CrossSection implements Serializable
     {
         Throw.whenNull(link, "Link lane positions may not be null.");
         this.lanePositions = new LinkedHashSet<>();
-        for (LaneData lane : link.getLaneDatas())
+        for (LaneData<?> lane : link.getLaneDatas())
         {
             LanePosition lanePosition = new LanePosition(lane, lane.getLength().times(fraction));
             this.lanePositions.add(lanePosition);

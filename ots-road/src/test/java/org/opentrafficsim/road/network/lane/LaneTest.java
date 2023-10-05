@@ -1,10 +1,9 @@
 package org.opentrafficsim.road.network.lane;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.awt.geom.Point2D;
 import java.rmi.RemoteException;
@@ -23,23 +22,19 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.bounds.Bounds;
+import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
-import org.junit.Test;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.Bounds;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -75,14 +70,14 @@ public class LaneTest implements UNITS
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         // First we need two Nodes
-        Node nodeFrom = new Node(network, "A", new OtsPoint3d(0, 0, 0), Direction.ZERO);
-        Node nodeTo = new Node(network, "B", new OtsPoint3d(1000, 0, 0), Direction.ZERO);
+        Node nodeFrom = new Node(network, "A", new Point2d(0, 0), Direction.ZERO);
+        Node nodeTo = new Node(network, "B", new Point2d(1000, 0), Direction.ZERO);
         // Now we can make a Link
-        OtsPoint3d[] coordinates = new OtsPoint3d[2];
-        coordinates[0] = new OtsPoint3d(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
-        coordinates[1] = new OtsPoint3d(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
+        Point2d[] coordinates = new Point2d[2];
+        coordinates[0] = nodeFrom.getPoint();
+        coordinates[1] = nodeTo.getPoint();
         CrossSectionLink link = new CrossSectionLink(network, "A to B", nodeFrom, nodeTo, DefaultsNl.FREEWAY,
-                new OtsLine3d(coordinates), LaneKeepingPolicy.KEEPRIGHT);
+                new OtsLine2d(coordinates), null, LaneKeepingPolicy.KEEPRIGHT);
         Length startLateralPos = new Length(2, METER);
         Length endLateralPos = new Length(5, METER);
         Length startWidth = new Length(3, METER);
@@ -95,59 +90,61 @@ public class LaneTest implements UNITS
         speedMap.put(DefaultsNl.VEHICLE, new Speed(100, KM_PER_HOUR));
         // Now we can construct a Lane
         // FIXME what overtaking conditions do we want to test in this unit test?
-        Lane lane = new Lane(link, "lane", startLateralPos, endLateralPos, startWidth, endWidth, laneType, speedMap, false);
+        Lane lane = LaneGeometryUtil.createStraightLane(link, "lane", startLateralPos, endLateralPos, startWidth, endWidth,
+                laneType, speedMap);
         // Verify the easy bits
-        assertEquals("Link returns network", network, link.getNetwork());
-        assertEquals("Lane returns network", network, lane.getNetwork());
-        assertEquals("PrevLanes should be empty", 0, lane.prevLanes(gtuTypeCar).size()); // this one caught a bug!
-        assertEquals("NextLanes should be empty", 0, lane.nextLanes(gtuTypeCar).size());
+        assertEquals(network, link.getNetwork(), "Link returns network");
+        assertEquals(network, lane.getNetwork(), "Lane returns network");
+        assertEquals(0, lane.prevLanes(gtuTypeCar).size(), "PrevLanes should be empty"); // this one caught a bug!
+        assertEquals(0, lane.nextLanes(gtuTypeCar).size(), "NextLanes should be empty");
         double approximateLengthOfContour =
-                2 * nodeFrom.getPoint().distanceSI(nodeTo.getPoint()) + startWidth.getSI() + endWidth.getSI();
-        assertEquals("Length of contour is approximately " + approximateLengthOfContour, approximateLengthOfContour,
-                lane.getContour().getLengthSI(), 0.1);
-        assertEquals("SpeedLimit should be " + (new Speed(100, KM_PER_HOUR)), new Speed(100, KM_PER_HOUR),
-                lane.getSpeedLimit(DefaultsNl.VEHICLE));
-        assertEquals("There should be no GTUs on the lane", 0, lane.getGtuList().size());
-        assertEquals("LaneType should be " + laneType, laneType, lane.getType());
+                2 * nodeFrom.getPoint().distance(nodeTo.getPoint()) + startWidth.getSI() + endWidth.getSI();
+        assertEquals(approximateLengthOfContour, lane.getContour().getLength(),
+                0.1, "Length of contour is approximately " + approximateLengthOfContour);
+        assertEquals(new Speed(100, KM_PER_HOUR), lane.getSpeedLimit(DefaultsNl.VEHICLE),
+                "SpeedLimit should be " + (new Speed(100, KM_PER_HOUR)));
+        assertEquals(0, lane.getGtuList().size(), "There should be no GTUs on the lane");
+        assertEquals(laneType, lane.getType(), "LaneType should be " + laneType);
         // TODO: This test for expectedLateralCenterOffset fails
         for (int i = 0; i < 10; i++)
         {
             double expectedLateralCenterOffset =
                     startLateralPos.getSI() + (endLateralPos.getSI() - startLateralPos.getSI()) * i / 10;
-            assertEquals(String.format("Lateral offset at %d%% should be %.3fm", 10 * i, expectedLateralCenterOffset),
-                    expectedLateralCenterOffset, lane.getLateralCenterPosition(i / 10.0).getSI(), 0.01);
+            assertEquals(expectedLateralCenterOffset,
+                    lane.getLateralCenterPosition(i / 10.0).getSI(), 0.01, String.format("Lateral offset at %d%% should be %.3fm", 10 * i, expectedLateralCenterOffset));
             Length longitudinalPosition = new Length(lane.getLength().getSI() * i / 10, METER);
-            assertEquals("Lateral offset at " + longitudinalPosition + " should be " + expectedLateralCenterOffset,
-                    expectedLateralCenterOffset, lane.getLateralCenterPosition(longitudinalPosition).getSI(), 0.01);
+            assertEquals(expectedLateralCenterOffset,
+                    lane.getLateralCenterPosition(longitudinalPosition).getSI(), 0.01, "Lateral offset at " + longitudinalPosition + " should be " + expectedLateralCenterOffset);
             double expectedWidth = startWidth.getSI() + (endWidth.getSI() - startWidth.getSI()) * i / 10;
-            assertEquals(String.format("Width at %d%% should be %.3fm", 10 * i, expectedWidth), expectedWidth,
-                    lane.getWidth(i / 10.0).getSI(), 0.0001);
-            assertEquals("Width at " + longitudinalPosition + " should be " + expectedWidth, expectedWidth,
-                    lane.getWidth(longitudinalPosition).getSI(), 0.0001);
+            assertEquals(expectedWidth, lane.getWidth(i / 10.0).getSI(),
+                    0.0001, String.format("Width at %d%% should be %.3fm", 10 * i, expectedWidth));
+            assertEquals(expectedWidth, lane.getWidth(longitudinalPosition).getSI(),
+                    0.0001, "Width at " + longitudinalPosition + " should be " + expectedWidth);
             double expectedLeftOffset = expectedLateralCenterOffset - expectedWidth / 2;
             // The next test caught a bug
-            assertEquals(String.format("Left edge at %d%% should be %.3fm", 10 * i, expectedLeftOffset), expectedLeftOffset,
-                    lane.getLateralBoundaryPosition(LateralDirectionality.LEFT, i / 10.0).getSI(), 0.001);
-            assertEquals("Left edge at " + longitudinalPosition + " should be " + expectedLeftOffset, expectedLeftOffset,
-                    lane.getLateralBoundaryPosition(LateralDirectionality.LEFT, longitudinalPosition).getSI(), 0.001);
+            assertEquals(expectedLeftOffset, lane.getLateralBoundaryPosition(LateralDirectionality.LEFT, i / 10.0).getSI(),
+                    0.001, String.format("Left edge at %d%% should be %.3fm", 10 * i, expectedLeftOffset));
+            assertEquals(expectedLeftOffset, lane.getLateralBoundaryPosition(LateralDirectionality.LEFT, longitudinalPosition).getSI(),
+                    0.001, "Left edge at " + longitudinalPosition + " should be " + expectedLeftOffset);
             double expectedRightOffset = expectedLateralCenterOffset + expectedWidth / 2;
-            assertEquals(String.format("Right edge at %d%% should be %.3fm", 10 * i, expectedRightOffset), expectedRightOffset,
-                    lane.getLateralBoundaryPosition(LateralDirectionality.RIGHT, i / 10.0).getSI(), 0.001);
-            assertEquals("Right edge at " + longitudinalPosition + " should be " + expectedRightOffset, expectedRightOffset,
-                    lane.getLateralBoundaryPosition(LateralDirectionality.RIGHT, longitudinalPosition).getSI(), 0.001);
+            assertEquals(expectedRightOffset, lane.getLateralBoundaryPosition(LateralDirectionality.RIGHT, i / 10.0).getSI(),
+                    0.001, String.format("Right edge at %d%% should be %.3fm", 10 * i, expectedRightOffset));
+            assertEquals(expectedRightOffset, lane.getLateralBoundaryPosition(LateralDirectionality.RIGHT, longitudinalPosition).getSI(),
+                    0.001, "Right edge at " + longitudinalPosition + " should be " + expectedRightOffset);
         }
 
         // Harder case; create a Link with form points along the way
         // System.out.println("Constructing Link and Lane with one form point");
-        coordinates = new OtsPoint3d[3];
-        coordinates[0] = new OtsPoint3d(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
-        coordinates[1] = new OtsPoint3d(200, 100);
-        coordinates[2] = new OtsPoint3d(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
+        coordinates = new Point2d[3];
+        coordinates[0] = new Point2d(nodeFrom.getPoint().x, nodeFrom.getPoint().y);
+        coordinates[1] = new Point2d(200, 100);
+        coordinates[2] = new Point2d(nodeTo.getPoint().x, nodeTo.getPoint().y);
         link = new CrossSectionLink(network, "A to B with Kink", nodeFrom, nodeTo, DefaultsNl.FREEWAY,
-                new OtsLine3d(coordinates), LaneKeepingPolicy.KEEPRIGHT);
-        lane = new Lane(link, "lane.1", startLateralPos, endLateralPos, startWidth, endWidth, laneType, speedMap, false);
+                new OtsLine2d(coordinates), null, LaneKeepingPolicy.KEEPRIGHT);
+        lane = LaneGeometryUtil.createStraightLane(link, "lane.1", startLateralPos, endLateralPos, startWidth, endWidth,
+                laneType, speedMap);
         // Verify the easy bits
-        
+
         // XXX: This is not correct...
         /*-
         assertEquals("PrevLanes should contain one lane from the other link", 1, lane.prevLanes(gtuTypeCar).size());
@@ -175,11 +172,14 @@ public class LaneTest implements UNITS
         assertEquals("There should be no GTUs on the lane", 0, lane2.getGtuList().size());
         assertEquals("LaneType should be " + laneType, laneType, lane2.getType());
         */
-        
+
         // Construct a lane using CrossSectionSlices
+        OtsLine2d centerLine = new OtsLine2d(new Point2d(0.0, 0.0), new Point2d(100.0, 0.0));
+        Polygon2d contour = new Polygon2d(new Point2d(0.0, -1.75), new Point2d(100.0, -1.75), new Point2d(100.0, 1.75),
+                new Point2d(0.0, -1.75));
         try
         {
-            new Lane(link, "lanex", null, laneType, speedMap);
+            new Lane(link, "lanex", centerLine, contour, null, laneType, speedMap);
             fail("null pointer for CrossSectionSlices should have thrown a NullPointerException");
         }
         catch (NullPointerException npe)
@@ -189,7 +189,7 @@ public class LaneTest implements UNITS
         List<CrossSectionSlice> crossSectionSlices = new ArrayList<>();
         try
         {
-            new Lane(link, "lanex", crossSectionSlices, laneType, speedMap);
+            new Lane(link, "lanex", centerLine, contour, crossSectionSlices, laneType, speedMap);
             fail("empty CrossSectionSlices should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -197,7 +197,7 @@ public class LaneTest implements UNITS
             // Ignore expected exception
         }
         crossSectionSlices.add(new CrossSectionSlice(Length.ZERO, startLateralPos, startWidth));
-        lane = new Lane(link, "lanex", crossSectionSlices, laneType, speedMap);
+        lane = new Lane(link, "lanex", centerLine, contour, crossSectionSlices, laneType, speedMap);
         sensorTest(lane);
     }
 
@@ -208,58 +208,58 @@ public class LaneTest implements UNITS
      */
     public final void sensorTest(final Lane lane) throws NetworkException
     {
-        assertEquals("List of sensor is initially empty", 0, lane.getDetectors().size());
+        assertEquals(0, lane.getDetectors().size(), "List of sensor is initially empty");
         Listener listener = new Listener();
         double length = lane.getLength().si;
         lane.addListener(listener, Lane.DETECTOR_ADD_EVENT);
         lane.addListener(listener, Lane.DETECTOR_REMOVE_EVENT);
-        assertEquals("event list is initially empty", 0, listener.events.size());
+        assertEquals(0, listener.events.size(), "event list is initially empty");
         LaneDetector sensor1 = new MockSensor("sensor1", Length.instantiateSI(length / 4)).getMock();
         lane.addDetector(sensor1);
-        assertEquals("event list now contains one event", 1, listener.events.size());
-        assertEquals("event indicates that a sensor got added", listener.events.get(0).getType(), Lane.DETECTOR_ADD_EVENT);
-        assertEquals("lane now contains one sensor", 1, lane.getDetectors().size());
-        assertEquals("sensor on lane is sensor1", sensor1, lane.getDetectors().get(0));
+        assertEquals(1, listener.events.size(), "event list now contains one event");
+        assertEquals(listener.events.get(0).getType(), Lane.DETECTOR_ADD_EVENT, "event indicates that a sensor got added");
+        assertEquals(1, lane.getDetectors().size(), "lane now contains one sensor");
+        assertEquals(sensor1, lane.getDetectors().get(0), "sensor on lane is sensor1");
         LaneDetector sensor2 = new MockSensor("sensor2", Length.instantiateSI(length / 2)).getMock();
         lane.addDetector(sensor2);
-        assertEquals("event list now contains two events", 2, listener.events.size());
-        assertEquals("event indicates that a sensor got added", listener.events.get(1).getType(), Lane.DETECTOR_ADD_EVENT);
+        assertEquals(2, listener.events.size(), "event list now contains two events");
+        assertEquals(listener.events.get(1).getType(), Lane.DETECTOR_ADD_EVENT, "event indicates that a sensor got added");
         List<LaneDetector> sensors = lane.getDetectors();
-        assertEquals("lane now contains two sensors", 2, sensors.size());
-        assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
-        assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
+        assertEquals(2, sensors.size(), "lane now contains two sensors");
+        assertTrue(sensors.contains(sensor1), "sensor list contains sensor1");
+        assertTrue(sensors.contains(sensor2), "sensor list contains sensor2");
         sensors = lane.getDetectors(Length.ZERO, Length.instantiateSI(length / 3), DefaultsNl.VEHICLE);
-        assertEquals("first third of lane contains 1 sensor", 1, sensors.size());
-        assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
+        assertEquals(1, sensors.size(), "first third of lane contains 1 sensor");
+        assertTrue(sensors.contains(sensor1), "sensor list contains sensor1");
         sensors = lane.getDetectors(Length.instantiateSI(length / 3), Length.instantiateSI(length), DefaultsNl.VEHICLE);
-        assertEquals("last two-thirds of lane contains 1 sensor", 1, sensors.size());
-        assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
+        assertEquals(1, sensors.size(), "last two-thirds of lane contains 1 sensor");
+        assertTrue(sensors.contains(sensor2), "sensor list contains sensor2");
         sensors = lane.getDetectors(DefaultsNl.VEHICLE);
         // NB. The mocked sensor is compatible with all GTU types in all directions.
-        assertEquals("sensor list contains two sensors", 2, sensors.size());
-        assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
-        assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
+        assertEquals(2, sensors.size(), "sensor list contains two sensors");
+        assertTrue(sensors.contains(sensor1), "sensor list contains sensor1");
+        assertTrue(sensors.contains(sensor2), "sensor list contains sensor2");
         sensors = lane.getDetectors(DefaultsNl.VEHICLE);
         // NB. The mocked sensor is compatible with all GTU types in all directions.
-        assertEquals("sensor list contains two sensors", 2, sensors.size());
-        assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
-        assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
+        assertEquals(2, sensors.size(), "sensor list contains two sensors");
+        assertTrue(sensors.contains(sensor1), "sensor list contains sensor1");
+        assertTrue(sensors.contains(sensor2), "sensor list contains sensor2");
         SortedMap<Double, List<LaneDetector>> sensorMap = lane.getDetectorMap(DefaultsNl.VEHICLE);
-        assertEquals("sensor map contains two entries", 2, sensorMap.size());
+        assertEquals(2, sensorMap.size(), "sensor map contains two entries");
         for (Double d : sensorMap.keySet())
         {
             List<LaneDetector> sensorsAtD = sensorMap.get(d);
-            assertEquals("There is one sensor at position d", 1, sensorsAtD.size());
-            assertEquals("Sensor map contains the correct sensor at the correct distance", d < length / 3 ? sensor1 : sensor2,
-                    sensorsAtD.get(0));
+            assertEquals(1, sensorsAtD.size(), "There is one sensor at position d");
+            assertEquals(d < length / 3 ? sensor1 : sensor2, sensorsAtD.get(0),
+                    "Sensor map contains the correct sensor at the correct distance");
         }
 
         lane.removeDetector(sensor1);
-        assertEquals("event list now contains three events", 3, listener.events.size());
-        assertEquals("event indicates that a sensor got removed", listener.events.get(2).getType(), Lane.DETECTOR_REMOVE_EVENT);
+        assertEquals(3, listener.events.size(), "event list now contains three events");
+        assertEquals(listener.events.get(2).getType(), Lane.DETECTOR_REMOVE_EVENT, "event indicates that a sensor got removed");
         sensors = lane.getDetectors();
-        assertEquals("lane now contains one sensor", 1, sensors.size());
-        assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
+        assertEquals(1, sensors.size(), "lane now contains one sensor");
+        assertTrue(sensors.contains(sensor2), "sensor list contains sensor2");
         try
         {
             lane.removeDetector(sensor1);
@@ -300,40 +300,40 @@ public class LaneTest implements UNITS
         }
         lane.removeDetector(sensor2);
         List<LaneBasedObject> lboList = lane.getLaneBasedObjects();
-        assertEquals("lane initially contains zero lane based objects", 0, lboList.size());
+        assertEquals(0, lboList.size(), "lane initially contains zero lane based objects");
         LaneBasedObject lbo1 = new MockLaneBasedObject("lbo1", Length.instantiateSI(length / 4)).getMock();
         listener.getEvents().clear();
         lane.addListener(listener, Lane.OBJECT_ADD_EVENT);
         lane.addListener(listener, Lane.OBJECT_REMOVE_EVENT);
         lane.addLaneBasedObject(lbo1);
-        assertEquals("adding a lane based object cause the lane to emit an event", 1, listener.getEvents().size());
-        assertEquals("The emitted event was a OBJECT_ADD_EVENT", Lane.OBJECT_ADD_EVENT, listener.getEvents().get(0).getType());
+        assertEquals(1, listener.getEvents().size(), "adding a lane based object cause the lane to emit an event");
+        assertEquals(Lane.OBJECT_ADD_EVENT, listener.getEvents().get(0).getType(), "The emitted event was a OBJECT_ADD_EVENT");
         LaneBasedObject lbo2 = new MockLaneBasedObject("lbo2", Length.instantiateSI(3 * length / 4)).getMock();
         lane.addLaneBasedObject(lbo2);
         lboList = lane.getLaneBasedObjects();
-        assertEquals("lane based object list now contains two objects", 2, lboList.size());
-        assertTrue("lane base object list contains lbo1", lboList.contains(lbo1));
-        assertTrue("lane base object list contains lbo2", lboList.contains(lbo2));
+        assertEquals(2, lboList.size(), "lane based object list now contains two objects");
+        assertTrue(lboList.contains(lbo1), "lane base object list contains lbo1");
+        assertTrue(lboList.contains(lbo2), "lane base object list contains lbo2");
         lboList = lane.getLaneBasedObjects(Length.ZERO, Length.instantiateSI(length / 2));
-        assertEquals("first half of lane contains one object", 1, lboList.size());
-        assertEquals("object in first haf of lane is lbo1", lbo1, lboList.get(0));
+        assertEquals(1, lboList.size(), "first half of lane contains one object");
+        assertEquals(lbo1, lboList.get(0), "object in first haf of lane is lbo1");
         lboList = lane.getLaneBasedObjects(Length.instantiateSI(length / 2), Length.instantiateSI(length));
-        assertEquals("second half of lane contains one object", 1, lboList.size());
-        assertEquals("object in second haf of lane is lbo2", lbo2, lboList.get(0));
+        assertEquals(1, lboList.size(), "second half of lane contains one object");
+        assertEquals(lbo2, lboList.get(0), "object in second haf of lane is lbo2");
         SortedMap<Double, List<LaneBasedObject>> sortedMap = lane.getLaneBasedObjectMap();
-        assertEquals("sorted map contains two objects", 2, sortedMap.size());
+        assertEquals(2, sortedMap.size(), "sorted map contains two objects");
         for (Double d : sortedMap.keySet())
         {
             List<LaneBasedObject> objectsAtD = sortedMap.get(d);
-            assertEquals("There is one object at position d", 1, objectsAtD.size());
-            assertEquals("Object at position d is the expected one", d < length / 2 ? lbo1 : lbo2, objectsAtD.get(0));
+            assertEquals(1, objectsAtD.size(), "There is one object at position d");
+            assertEquals(d < length / 2 ? lbo1 : lbo2, objectsAtD.get(0), "Object at position d is the expected one");
         }
 
         for (double fraction : new double[] {-0.5, 0, 0.2, 0.5, 0.9, 1.0, 2})
         {
             double positionSI = length * fraction;
             double fractionSI = lane.fractionSI(positionSI);
-            assertEquals("fractionSI matches fraction", fraction, fractionSI, 0.0001);
+            assertEquals(fraction, fractionSI, 0.0001, "fractionSI matches fraction");
 
             LaneBasedObject nextObject = positionSI < lbo1.getLongitudinalPosition().si ? lbo1
                     : positionSI < lbo2.getLongitudinalPosition().si ? lbo2 : null;
@@ -344,7 +344,7 @@ public class LaneTest implements UNITS
                 expected.add(nextObject);
             }
             List<LaneBasedObject> got = lane.getObjectAhead(Length.instantiateSI(positionSI));
-            assertEquals("First bunch of objects ahead of d", expected, got);
+            assertEquals(expected, got, "First bunch of objects ahead of d");
 
             nextObject = positionSI > lbo2.getLongitudinalPosition().si ? lbo2
                     : positionSI > lbo1.getLongitudinalPosition().si ? lbo1 : null;
@@ -355,13 +355,13 @@ public class LaneTest implements UNITS
                 expected.add(nextObject);
             }
             got = lane.getObjectBehind(Length.instantiateSI(positionSI));
-            assertEquals("First bunch of objects behind d", expected, got);
+            assertEquals(expected, got, "First bunch of objects behind d");
         }
 
         lane.removeLaneBasedObject(lbo1);
-        assertEquals("removing a lane based object caused the lane to emit an event", 3, listener.getEvents().size());
-        assertEquals("removing a lane based object caused the lane to emit OBJECT_REMOVE_EVENT", Lane.OBJECT_REMOVE_EVENT,
-                listener.getEvents().get(2).getType());
+        assertEquals(3, listener.getEvents().size(), "removing a lane based object caused the lane to emit an event");
+        assertEquals(Lane.OBJECT_REMOVE_EVENT, listener.getEvents().get(2).getType(),
+                "removing a lane based object caused the lane to emit OBJECT_REMOVE_EVENT");
         try
         {
             lane.removeLaneBasedObject(lbo1);
@@ -554,8 +554,8 @@ public class LaneTest implements UNITS
     @Test
     public final void lateralOffsetTest() throws NetworkException, SimRuntimeException, NamingException, OtsGeometryException
     {
-        OtsPoint3d from = new OtsPoint3d(10, 10, 0);
-        OtsPoint3d to = new OtsPoint3d(1010, 10, 0);
+        Point2d from = new Point2d(10, 10);
+        Point2d to = new Point2d(1010, 10);
         OtsSimulatorInterface simulator = new OtsSimulator("LaneTest");
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
@@ -566,52 +566,53 @@ public class LaneTest implements UNITS
         speedMap.put(DefaultsNl.VEHICLE, new Speed(50, KM_PER_HOUR));
         Node start = new Node(network, "start", from, Direction.ZERO);
         Node end = new Node(network, "end", to, Direction.ZERO);
-        OtsPoint3d[] coordinates = new OtsPoint3d[2];
+        Point2d[] coordinates = new Point2d[2];
         coordinates[0] = start.getPoint();
         coordinates[1] = end.getPoint();
-        OtsLine3d line = new OtsLine3d(coordinates);
+        OtsLine2d line = new OtsLine2d(coordinates);
         CrossSectionLink link =
-                new CrossSectionLink(network, "A to B", start, end, DefaultsNl.ROAD, line, LaneKeepingPolicy.KEEPRIGHT);
+                new CrossSectionLink(network, "A to B", start, end, DefaultsNl.ROAD, line, null, LaneKeepingPolicy.KEEPRIGHT);
         Length offsetAtStart = Length.instantiateSI(5);
         Length offsetAtEnd = Length.instantiateSI(15);
         Length width = Length.instantiateSI(4);
-        Lane lane = new Lane(link, "lane", offsetAtStart, offsetAtEnd, width, width, laneType, speedMap, true);
-        OtsLine3d laneCenterLine = lane.getCenterLine();
+        Lane lane =
+                LaneGeometryUtil.createStraightLane(link, "lane", offsetAtStart, offsetAtEnd, width, width, laneType, speedMap);
+        OtsLine2d laneCenterLine = lane.getCenterLine();
         // System.out.println("Center line is " + laneCenterLine);
-        OtsPoint3d[] points = laneCenterLine.getPoints();
+        Point2d[] points = laneCenterLine.getPoints();
         double prev = offsetAtStart.si + from.y;
         double prevRatio = 0;
         double prevDirection = 0;
         for (int i = 0; i < points.length; i++)
         {
-            OtsPoint3d p = points[i];
+            Point2d p = points[i];
             double relativeLength = p.x - from.x;
             double ratio = relativeLength / (to.x - from.x);
             double actualOffset = p.y;
             if (0 == i)
             {
-                assertEquals("first point must have offset at start", offsetAtStart.si + from.y, actualOffset, 0.001);
+                assertEquals(offsetAtStart.si + from.y, actualOffset, 0.001, "first point must have offset at start");
             }
             if (points.length - 1 == i)
             {
-                assertEquals("last point must have offset at end", offsetAtEnd.si + from.y, actualOffset, 0.001);
+                assertEquals(offsetAtEnd.si + from.y, actualOffset, 0.001, "last point must have offset at end");
             }
             // Other offsets must grow smoothly
             double delta = actualOffset - prev;
-            assertTrue("delta must be nonnegative", delta >= 0);
+            assertTrue(delta >= 0, "delta must be nonnegative");
             if (i > 0)
             {
-                OtsPoint3d prevPoint = points[i - 1];
+                Point2d prevPoint = points[i - 1];
                 double direction = Math.atan2(p.y - prevPoint.y, p.x - prevPoint.x);
                 // System.out.println(String.format("p=%30s: ratio=%7.5f, direction=%10.7f", p, ratio, direction));
-                assertTrue("Direction of lane center line is > 0", direction > 0);
+                assertTrue(direction > 0, "Direction of lane center line is > 0");
                 if (ratio < 0.5)
                 {
-                    assertTrue("in first half direction is increasing", direction > prevDirection);
+                    assertTrue(direction > prevDirection, "in first half direction is increasing");
                 }
                 else if (prevRatio > 0.5)
                 {
-                    assertTrue("in second half direction is decreasing", direction < prevDirection);
+                    assertTrue(direction < prevDirection, "in second half direction is decreasing");
                 }
                 prevDirection = direction;
                 prevRatio = ratio;
@@ -645,18 +646,16 @@ public class LaneTest implements UNITS
                     laneType.addCompatibleGtuType(DefaultsNl.VEHICLE);
                     Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
                     speedMap.put(DefaultsNl.VEHICLE, new Speed(50, KM_PER_HOUR));
-                    Node start =
-                            new Node(network, "start", new OtsPoint3d(xStart, yStart), Direction.instantiateSI(angle));
+                    Node start = new Node(network, "start", new Point2d(xStart, yStart), Direction.instantiateSI(angle));
                     double linkLength = 1000;
                     double xEnd = xStart + linkLength * Math.cos(angle);
                     double yEnd = yStart + linkLength * Math.sin(angle);
-                    Node end =
-                            new Node(network, "end", new OtsPoint3d(xEnd, yEnd), Direction.instantiateSI(angle));
-                    OtsPoint3d[] coordinates = new OtsPoint3d[2];
+                    Node end = new Node(network, "end", new Point2d(xEnd, yEnd), Direction.instantiateSI(angle));
+                    Point2d[] coordinates = new Point2d[2];
                     coordinates[0] = start.getPoint();
                     coordinates[1] = end.getPoint();
-                    OtsLine3d line = new OtsLine3d(coordinates);
-                    CrossSectionLink link = new CrossSectionLink(network, "A to B", start, end, DefaultsNl.ROAD, line,
+                    OtsLine2d line = new OtsLine2d(coordinates);
+                    CrossSectionLink link = new CrossSectionLink(network, "A to B", start, end, DefaultsNl.ROAD, line, null,
                             LaneKeepingPolicy.KEEPRIGHT);
                     final int[] lateralOffsets = {-10, -3, -1, 0, 1, 3, 10};
                     for (int startLateralOffset : lateralOffsets)
@@ -668,13 +667,15 @@ public class LaneTest implements UNITS
                             {
                                 // Now we can construct a Lane
                                 // FIXME what overtaking conditions do we want to test in this unit test?
-                                Lane lane = new Lane(link, "lane." + ++laneNum, new Length(startLateralOffset, METER),
-                                        new Length(endLateralOffset, METER), new Length(startWidth, METER),
-                                        new Length(endWidth, METER), laneType, speedMap, false);
-                                final Geometry geometry = lane.getContour().getLineString();
-                                assertNotNull("geometry of the lane should not be null", geometry);
+                                Lane lane = LaneGeometryUtil.createStraightLane(link, "lane." + ++laneNum,
+                                        new Length(startLateralOffset, METER), new Length(endLateralOffset, METER),
+                                        new Length(startWidth, METER), new Length(endWidth, METER), laneType, speedMap);
                                 // Verify a couple of points that should be inside the contour of the Lane
                                 // One meter along the lane design line
+                                if (startLateralOffset == -3 && endLateralOffset == -1 && endWidth == 4)
+                                {
+                                    System.out.println("hmmm");
+                                }
                                 checkInside(lane, 1, startLateralOffset, true);
                                 // One meter before the end along the lane design line
                                 checkInside(lane, link.getLength().getSI() - 1, endLateralOffset, true);
@@ -691,7 +692,7 @@ public class LaneTest implements UNITS
                                 // One meter before the end, right outside the lane
                                 checkInside(lane, link.getLength().getSI() - 1, endLateralOffset + endWidth / 2 + 1, false);
                                 // Check the result of getBounds.
-                                DirectedPoint l = lane.getLocation();
+                                Point2d l = lane.getLocation();
                                 Bounds bb = lane.getBounds();
                                 // System.out.println("bb is " + bb);
                                 // System.out.println("l is " + l.x + "," + l.y + "," + l.z);
@@ -731,10 +732,10 @@ public class LaneTest implements UNITS
                                 double boundsMinY = bb.getMinY() + l.y;
                                 double boundsMaxX = bb.getMaxX() + l.x;
                                 double boundsMaxY = bb.getMaxY() + l.y;
-                                assertEquals("low x boundary", minX, boundsMinX, 0.1);
-                                assertEquals("low y boundary", minY, boundsMinY, 0.1);
-                                assertEquals("high x boundary", maxX, boundsMaxX, 0.1);
-                                assertEquals("high y boundary", maxY, boundsMaxY, 0.1);
+                                assertEquals(minX, boundsMinX, 0.1, "low x boundary");
+                                assertEquals(minY, boundsMinY, 0.1, "low y boundary");
+                                assertEquals(maxX, boundsMaxX, 0.1, "high x boundary");
+                                assertEquals(maxY, boundsMaxY, 0.1, "high y boundary");
                             }
                         }
                     }
@@ -757,7 +758,7 @@ public class LaneTest implements UNITS
      */
     private void checkInside(final Lane lane, final double longitudinal, final double lateral, final boolean expectedResult)
     {
-        CrossSectionLink parentLink = lane.getParentLink();
+        CrossSectionLink parentLink = lane.getLink();
         Node start = parentLink.getStartNode();
         Node end = parentLink.getEndNode();
         double startX = start.getPoint().x;
@@ -771,46 +772,56 @@ public class LaneTest implements UNITS
         double lateralAngle = Math.atan2(endY - startY, endX - startX) + Math.PI / 2;
         double px = designLineX + lateral * Math.cos(lateralAngle);
         double py = designLineY + lateral * Math.sin(lateralAngle);
-        Geometry contour = lane.getContour().getLineString();
-        GeometryFactory factory = new GeometryFactory();
-        Geometry p = factory.createPoint(new Coordinate(px, py));
+        Polygon2d contour = lane.getContour();
+        // GeometryFactory factory = new GeometryFactory();
+        // Geometry p = factory.createPoint(new Coordinate(px, py));
+        Point2d p = new Point2d(px, py);
         // CrossSectionElement.printCoordinates("contour: ", contour);
         // System.out.println("p: " + p);
-        boolean result = contour.contains(p);
-        Coordinate[] polygon = contour.getCoordinates();
-        result = pointInsidePolygon(new Coordinate(px, py), polygon);
+        boolean result2 = contour.contains(p);
+        boolean result = contains(contour, p);
         if (expectedResult)
         {
-            assertTrue("Point at " + longitudinal + " along and " + lateral + " lateral is within lane", result);
+            assertTrue(result, "Point at " + longitudinal + " along and " + lateral + " lateral is within lane");
         }
         else
         {
-            assertFalse("Point at " + longitudinal + " along and " + lateral + " lateral is outside lane", result);
+            assertFalse(result, "Point at " + longitudinal + " along and " + lateral + " lateral is outside lane");
         }
     }
 
-    /**
-     * Algorithm of W. Randolph Franklin http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html, found via
-     * stackoverflow.com: https://stackoverflow.com/questions/217578/point-in-polygon-aka-hit-test.
-     * @param point Coordinate; the point
-     * @param polygon OtsPoint3d[]; the polygon (last coordinate is allowed to be identical to the first, but his is not a
-     *            requirement)
-     * @return boolean; true if the point is inside the polygon; false if it is outside the polygon; if the point lies <b>on</b>
-     *         an vertex or edge of the polygon the result is (of course) undefined
+    /*
+     * TODO: remove this method Pending djutils issue #15, this method should be removed. Then, 'result2' above should become
+     * 'result' instead.
      */
-    private boolean pointInsidePolygon(final Coordinate point, final Coordinate[] polygon)
+    private boolean contains(final Polygon2d contour, final Point2d p)
     {
-        boolean result = false;
-        for (int i = 0, j = polygon.length - 1; i < polygon.length; j = i++)
+        if (!contour.getBounds().contains(p.x, p.y))
         {
-            if ((polygon[i].y > point.y) != (polygon[j].y > point.y)
-                    && point.x < (polygon[j].x - polygon[i].x) * (point.y - polygon[i].y) / (polygon[j].y - polygon[i].y)
-                            + polygon[i].x)
-            {
-                result = !result;
-            }
+            return false;
         }
-        return result;
+        int counter = 0;
+        // Unlike Paul Bourke, we initialize prevPoint to the last point of the polygon (so we never have to wrap around)
+        double prevPointX = contour.getX(contour.size() - 1);
+        double prevPointY = contour.getY(contour.size() - 1);
+        for (int i = 0; i < contour.size(); i++)
+        {
+            double curPointX = contour.getX(i);
+            double curPointY = contour.getY(i);
+            // Combined 4 if statements into one; I trust that the java compiler will short-circuit this nicely
+            if (p.y >= Math.min(prevPointY, curPointY) && p.y < Math.max(prevPointY, curPointY)
+                    && p.x <= Math.max(prevPointX, curPointX) && prevPointY != curPointY)
+            {
+                double xIntersection = (p.y - prevPointY) * (curPointX - prevPointX) / (curPointY - prevPointY) + prevPointX;
+                if (prevPointX == curPointX || p.x <= xIntersection)
+                {
+                    counter++;
+                }
+            }
+            prevPointX = curPointX;
+            prevPointY = curPointY;
+        }
+        return counter % 2 != 0;
     }
 
     /** The helper model. */

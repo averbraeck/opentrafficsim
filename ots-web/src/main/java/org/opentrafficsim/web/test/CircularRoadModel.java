@@ -13,12 +13,12 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -174,24 +174,23 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
 
             GtuType gtuType = DefaultsNl.CAR;
             LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
-            Node start =
-                    new Node(this.network, "Start", new OtsPoint3d(radius, 0, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
-            Node halfway = new Node(this.network, "Halfway", new OtsPoint3d(-radius, 0, 0),
-                    new Direction(-90, DirectionUnit.EAST_DEGREE));
+            Node start = new Node(this.network, "Start", new Point2d(radius, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
+            Node halfway =
+                    new Node(this.network, "Halfway", new Point2d(-radius, 0), new Direction(-90, DirectionUnit.EAST_DEGREE));
 
-            OtsPoint3d[] coordsHalf1 = new OtsPoint3d[127];
+            Point2d[] coordsHalf1 = new Point2d[127];
             for (int i = 0; i < coordsHalf1.length; i++)
             {
                 double angle = Math.PI * (1 + i) / (1 + coordsHalf1.length);
-                coordsHalf1[i] = new OtsPoint3d(radius * Math.cos(angle), radius * Math.sin(angle), 0);
+                coordsHalf1[i] = new Point2d(radius * Math.cos(angle), radius * Math.sin(angle));
             }
             Lane[] lanes1 = LaneFactory.makeMultiLane(this.network, "FirstHalf", start, halfway, coordsHalf1, laneCount,
                     laneType, this.speedLimit, this.simulator, DefaultsNl.VEHICLE);
-            OtsPoint3d[] coordsHalf2 = new OtsPoint3d[127];
+            Point2d[] coordsHalf2 = new Point2d[127];
             for (int i = 0; i < coordsHalf2.length; i++)
             {
                 double angle = Math.PI + Math.PI * (1 + i) / (1 + coordsHalf2.length);
-                coordsHalf2[i] = new OtsPoint3d(radius * Math.cos(angle), radius * Math.sin(angle), 0);
+                coordsHalf2[i] = new Point2d(radius * Math.cos(angle), radius * Math.sin(angle));
             }
             Lane[] lanes2 = LaneFactory.makeMultiLane(this.network, "SecondHalf", halfway, start, coordsHalf2, laneCount,
                     laneType, this.speedLimit, this.simulator, DefaultsNl.VEHICLE);

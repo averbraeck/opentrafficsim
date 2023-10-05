@@ -1,10 +1,10 @@
 package org.opentrafficsim.core.dsol;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.Serializable;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.network.Network;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -30,23 +30,23 @@ public class AbstractOtsModelTest
         String shortName = "shortName";
         String description = "description";
         AbstractOtsModel model = new OtsModel(simulator, shortName, description);
-        assertEquals("simulator is returned", simulator, model.getSimulator());
-        assertEquals("short name is returned", shortName, model.getShortName());
-        assertEquals("description is returned", description, model.getDescription());
+        assertEquals(simulator, model.getSimulator(), "simulator is returned");
+        assertEquals(shortName, model.getShortName(), "short name is returned");
+        assertEquals(description, model.getDescription(), "description is returned");
         model = new OtsModel(simulator);
-        assertEquals("simulator is returned", simulator, model.getSimulator());
-        assertEquals("short name is name of the extending class", "OtsModel", model.getShortName());
-        assertEquals("description is name of the extending class", "OtsModel", model.getDescription());
+        assertEquals(simulator, model.getSimulator(), "simulator is returned");
+        assertEquals("OtsModel", model.getShortName(), "short name is name of the extending class");
+        assertEquals("OtsModel", model.getDescription(), "description is name of the extending class");
         String newShortName = "newShortName";
         model.setShortName(newShortName);
-        assertEquals("simulator is returned", simulator, model.getSimulator());
-        assertEquals("short name is new short name", newShortName, model.getShortName());
-        assertEquals("description is name of the extending class", "OtsModel", model.getDescription());
+        assertEquals(simulator, model.getSimulator(), "simulator is returned");
+        assertEquals(newShortName, model.getShortName(), "short name is new short name");
+        assertEquals("OtsModel", model.getDescription(), "description is name of the extending class");
         String newDescription = "newDescription";
         model.setDescription(newDescription);
-        assertEquals("simulator is returned", simulator, model.getSimulator());
-        assertEquals("short name is new short name", newShortName, model.getShortName());
-        assertEquals("description is new description", newDescription, model.getDescription());
+        assertEquals(simulator, model.getSimulator(), "simulator is returned");
+        assertEquals(newShortName, model.getShortName(), "short name is new short name");
+        assertEquals(newDescription, model.getDescription(), "description is new description");
 
     }
 

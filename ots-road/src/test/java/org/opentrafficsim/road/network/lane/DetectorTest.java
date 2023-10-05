@@ -12,14 +12,14 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.junit.Test;
+import org.djutils.draw.point.Point2d;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -63,9 +63,9 @@ public class DetectorTest implements UNITS
         RoadNetwork network = new RoadNetwork("sensor test network", simulator);
         // Now we need a set of Lanes
         // To create Lanes we need Nodes and a LaneType
-        Node nodeAFrom = new Node(network, "AFrom", new OtsPoint3d(0, 0, 0), Direction.ZERO);
-        Node nodeATo = new Node(network, "ATo", new OtsPoint3d(1000, 0, 0), Direction.ZERO);
-        Node nodeBTo = new Node(network, "BTo", new OtsPoint3d(20000, 0, 0), Direction.ZERO);
+        Node nodeAFrom = new Node(network, "AFrom", new Point2d(0, 0), Direction.ZERO);
+        Node nodeATo = new Node(network, "ATo", new Point2d(1000, 0), Direction.ZERO);
+        Node nodeBTo = new Node(network, "BTo", new Point2d(20000, 0), Direction.ZERO);
         // so car won't run off lane B in 100 s.
         GtuType gtuType = DefaultsNl.CAR;
         LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
-  xmlns:ots="http://www.opentrafficsim.org/ots" 
-  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  elementFormDefault="qualified">
+  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" elementFormDefault="qualified">
 
   <xsd:include schemaLocation="ots-types.xsd" />
 
@@ -11,63 +10,598 @@
   <!-- http://www.w3.org/2001/xinclude.xsd -->
   <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="ref/xinclude.xsd" />
 
+  <xsd:complexType name="InputParameters">
+    <xsd:choice minOccurs="1" maxOccurs="unbounded">
+      <xsd:element name="Duration">
+        <xsd:complexType>
+          <xsd:simpleContent>
+            <xsd:extension base="ots:DurationType">
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
+            </xsd:extension>
+          </xsd:simpleContent>
+        </xsd:complexType>
+      </xsd:element>
+      <!--xsd:element name="DurationDist">
+        <xsd:complexType>
+          <xsd:complexContent>
+            <xsd:extension base="ots:DurationDistType">
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
+            </xsd:extension>
+          </xsd:complexContent>
+        </xsd:complexType>
+      </xsd:element-->
+      <xsd:element name="Length">
+        <xsd:complexType>
+          <xsd:simpleContent>
+            <xsd:extension base="ots:LengthType">
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
+            </xsd:extension>
+          </xsd:simpleContent>
+        </xsd:complexType>
+      </xsd:element>
+      <!--xsd:element name="LengthDist">
+        <xsd:complexType>
+          <xsd:complexContent>
+            <xsd:extension base="ots:LengthDistType">
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
+            </xsd:extension>
+          </xsd:complexContent>
+        </xsd:complexType>
+      </xsd:element-->
+      <xsd:element name="Speed">
+        <xsd:complexType>
+          <xsd:simpleContent>
+            <xsd:extension base="ots:SpeedType">
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
+            </xsd:extension>
+          </xsd:simpleContent>
+        </xsd:complexType>
+      </xsd:element>
+      <!--xsd:element name="SpeedDist">
+        <xsd:complexType>
+          <xsd:complexContent>
+            <xsd:extension base="ots:SpeedDistType">
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
+            </xsd:extension>
+          </xsd:complexContent>
+        </xsd:complexType>
+      </xsd:element-->
+      <xsd:element name="Acceleration">
+        <xsd:complexType>
+          <xsd:simpleContent>
+            <xsd:extension base="ots:AccelerationType">
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
+            </xsd:extension>
+          </xsd:simpleContent>
+        </xsd:complexType>
+      </xsd:element>
+      <!--xsd:element name="AccelerationDist">
+        <xsd:complexType>
+          <xsd:complexContent>
+            <xsd:extension base="ots:AccelerationDistType">
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
+            </xsd:extension>
+          </xsd:complexContent>
+        </xsd:complexType>
+      </xsd:element-->
+      <xsd:element name="LinearDensity">
+        <xsd:complexType>
+          <xsd:simpleContent>
+            <xsd:extension base="ots:LinearDensityType">
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
+            </xsd:extension>
+          </xsd:simpleContent>
+        </xsd:complexType>
+      </xsd:element>
+      <!--xsd:element name="LinearDensityDist">
+        <xsd:complexType>
+          <xsd:complexContent>
+            <xsd:extension base="ots:LinearDensityDistType">
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
+            </xsd:extension>
+          </xsd:complexContent>
+        </xsd:complexType>
+      </xsd:element-->
+      <xsd:element name="Frequency">
+        <xsd:complexType>
+          <xsd:simpleContent>
+            <xsd:extension base="ots:FrequencyType">
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
+            </xsd:extension>
+          </xsd:simpleContent>
+        </xsd:complexType>
+      </xsd:element>
+      <!--xsd:element name="FrequencyDist">
+        <xsd:complexType>
+          <xsd:complexContent>
+            <xsd:extension base="ots:FrequencyDistType">
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
+            </xsd:extension>
+          </xsd:complexContent>
+        </xsd:complexType>
+      </xsd:element-->
+      <xsd:element name="Double">
+        <xsd:complexType>
+          <xsd:simpleContent>
+            <xsd:extension base="ots:double">
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
+            </xsd:extension>
+          </xsd:simpleContent>
+        </xsd:complexType>
+      </xsd:element>
+      <!--xsd:element name="DoubleDist">
+        <xsd:complexType>
+          <xsd:complexContent>
+            <xsd:extension base="ots:ConstantDistType">
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
+            </xsd:extension>
+          </xsd:complexContent>
+        </xsd:complexType>
+      </xsd:element-->
+      <xsd:element name="Fraction">
+        <xsd:complexType>
+          <xsd:simpleContent>
+            <xsd:extension base="ots:FractionType">
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
+            </xsd:extension>
+          </xsd:simpleContent>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Integer">
+        <xsd:complexType>
+          <xsd:simpleContent>
+            <xsd:extension base="ots:integer">
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
+            </xsd:extension>
+          </xsd:simpleContent>
+        </xsd:complexType>
+      </xsd:element>
+      <!--xsd:element name="IntegerDist">
+        <xsd:complexType>
+          <xsd:complexContent>
+            <xsd:extension base="ots:DiscreteDistType">
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
+            </xsd:extension>
+          </xsd:complexContent>
+        </xsd:complexType>
+      </xsd:element-->
+      <xsd:element name="Boolean">
+        <xsd:complexType>
+          <xsd:simpleContent>
+            <xsd:extension base="ots:boolean">
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
+            </xsd:extension>
+          </xsd:simpleContent>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="String">
+        <xsd:complexType>
+          <xsd:simpleContent>
+            <xsd:extension base="ots:string">
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
+            </xsd:extension>
+          </xsd:simpleContent>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Class">
+        <xsd:complexType>
+          <xsd:simpleContent>
+            <xsd:extension base="ots:ClassNameType">
+              <xsd:attribute name="Id" type="ots:InputParameterIdType" use="required" />
+            </xsd:extension>
+          </xsd:simpleContent>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:choice>
+  </xsd:complexType>
+
   <xsd:element name="Scenarios">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="Scenario" type="ots:ScenarioType" minOccurs="1" maxOccurs="unbounded" />
+        <xsd:element name="DefaultInputParameters" type="ots:InputParameters" minOccurs="0" maxOccurs="1" />
+        <xsd:element name="Scenario" type="ots:ScenarioType" minOccurs="1" maxOccurs="unbounded">
+
+          <xsd:unique name="inputParameterAccelerationId">
+            <xsd:selector xpath=".//ots:InputParameters/ots:Acceleration" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+          <xsd:unique name="inputParameterAccelerationDistId">
+            <xsd:selector xpath=".//ots:InputParameters/ots:AccelerationDist" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+          <xsd:unique name="inputParameterBooleanId">
+            <xsd:selector xpath=".//ots:InputParameters/ots:Boolean" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+          <xsd:unique name="inputParameterClassId">
+            <xsd:selector xpath=".//ots:InputParameters/ots:Class" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+          <xsd:unique name="inputParameterDoubleId">
+            <xsd:selector xpath=".//ots:InputParameters/ots:Double" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+          <xsd:unique name="inputParameterDoubleDistId">
+            <xsd:selector xpath=".//ots:InputParameters/ots:DoubleDist" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+          <xsd:unique name="inputParameterDurationId">
+            <xsd:selector xpath=".//ots:InputParameters/ots:Duration" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+          <xsd:unique name="inputParameterDurationDistId">
+            <xsd:selector xpath=".//ots:InputParameters/ots:DurationDist" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+          <xsd:unique name="inputParameterFloatId">
+            <xsd:selector xpath=".//ots:InputParameters/ots:Float" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+          <xsd:unique name="inputParameterFloatDistId">
+            <xsd:selector xpath=".//ots:InputParameters/ots:FloatDist" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+          <xsd:unique name="inputParameterFractionId">
+            <xsd:selector xpath=".//ots:InputParameters/ots:Fraction" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+          <xsd:unique name="inputParameterFrequencyId">
+            <xsd:selector xpath=".//ots:InputParameters/ots:Frequency" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+          <xsd:unique name="inputParameterFrequencyDistId">
+            <xsd:selector xpath=".//ots:InputParameters/ots:FrequencyDist" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+          <xsd:unique name="inputParameterIntegerId">
+            <xsd:selector xpath=".//ots:InputParameters/ots:Integer" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+          <xsd:unique name="inputParameterIntegerDistId">
+            <xsd:selector xpath=".//ots:InputParameters/ots:IntegerDist" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+          <xsd:unique name="inputParameterLengthId">
+            <xsd:selector xpath=".//ots:InputParameters/ots:Length" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+          <xsd:unique name="inputParameterLengthDistId">
+            <xsd:selector xpath=".//ots:InputParameters/ots:LengthDist" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+          <xsd:unique name="inputParameterLinearDensityId">
+            <xsd:selector xpath=".//ots:InputParameters/ots:LinearDensity" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+          <xsd:unique name="inputParameterLinearDensityDistId">
+            <xsd:selector xpath=".//ots:InputParameters/ots:LinearDensityDist" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+          <xsd:unique name="inputParameterLongId">
+            <xsd:selector xpath=".//ots:InputParameters/ots:Long" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+          <xsd:unique name="inputParameterLongDistId">
+            <xsd:selector xpath=".//ots:InputParameters/ots:LongDist" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+          <xsd:unique name="inputParameterSpeedId">
+            <xsd:selector xpath=".//ots:InputParameters/ots:Speed" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+          <xsd:unique name="inputParameterSpeedDistId">
+            <xsd:selector xpath=".//ots:InputParameters/ots:SpeedDist" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+          <xsd:unique name="inputParameterStringId">
+            <xsd:selector xpath=".//ots:InputParameters/ots:String" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+        </xsd:element>
       </xsd:sequence>
     </xsd:complexType>
+
+    <!-- Keys and keyrefs for input parameters -->
+
+    <xsd:key name="defaultInputParameterAccelerationId">
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Acceleration" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+
+    <xsd:keyref name="defaultInputParameterAccelerationRef" refer="ots:defaultInputParameterAccelerationId">
+      <xsd:selector xpath=".//ots:Scenario/ots:InputParameters/ots:Acceleration" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+
+    <xsd:key name="defaultInputParameterAccelerationDistId">
+      <xsd:selector
+        xpath=".//ots:DefaultInputParameters/ots:AccelerationDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+
+    <xsd:keyref name="defaultInputParameterAccelerationDistRef" refer="ots:defaultInputParameterAccelerationDistId">
+      <xsd:selector xpath=".//ots:Scenario/ots:InputParameters/ots:AccelerationDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+
+    <xsd:key name="defaultInputParameterBooleanId">
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Boolean" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+
+    <xsd:keyref name="defaultInputParameterBooleanRef" refer="ots:defaultInputParameterBooleanId">
+      <xsd:selector xpath=".//ots:Scenario/ots:InputParameters/ots:Boolean" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+
+    <xsd:key name="defaultInputParameterClassId">
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Class" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+
+    <xsd:keyref name="defaultInputParameterClassRef" refer="ots:defaultInputParameterClassId">
+      <xsd:selector xpath=".//ots:Scenario/ots:InputParameters/ots:Class" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+
+    <xsd:key name="defaultInputParameterDoubleId">
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Double" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+
+    <xsd:keyref name="defaultInputParameterDoubleRef" refer="ots:defaultInputParameterDoubleId">
+      <xsd:selector xpath=".//ots:Scenario/ots:InputParameters/ots:Double" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+
+    <xsd:key name="defaultInputParameterDoubleDistId">
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:DoubleDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+
+    <xsd:keyref name="defaultInputParameterDoubleDistRef" refer="ots:defaultInputParameterDoubleDistId">
+      <xsd:selector xpath=".//ots:Scenario/ots:InputParameters/ots:DoubleDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+
+    <xsd:key name="defaultInputParameterDurationId">
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Duration" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+
+    <xsd:keyref name="defaultInputParameterDurationRef" refer="ots:defaultInputParameterDurationId">
+      <xsd:selector xpath=".//ots:Scenario/ots:InputParameters/ots:Duration" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+
+    <xsd:key name="defaultInputParameterDurationDistId">
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:DurationDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+
+    <xsd:keyref name="defaultInputParameterDurationDistRef" refer="ots:defaultInputParameterDurationDistId">
+      <xsd:selector xpath=".//ots:Scenario/ots:InputParameters/ots:DurationDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+
+    <xsd:key name="defaultInputParameterFloatId">
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Float" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+
+    <xsd:keyref name="defaultInputParameterFloatRef" refer="ots:defaultInputParameterFloatId">
+      <xsd:selector xpath=".//ots:Scenario/ots:InputParameters/ots:Float" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+
+    <xsd:key name="defaultInputParameterFloatDistId">
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:FloatDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+
+    <xsd:keyref name="defaultInputParameterFloatDistRef" refer="ots:defaultInputParameterFloatDistId">
+      <xsd:selector xpath=".//ots:Scenario/ots:InputParameters/ots:FloatDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+
+    <xsd:key name="defaultInputParameterFractionId">
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Fraction" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+
+    <xsd:keyref name="defaultInputParameterFractionRef" refer="ots:defaultInputParameterFractionId">
+      <xsd:selector xpath=".//ots:Scenario/ots:InputParameters/ots:Fraction" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+
+    <xsd:key name="defaultInputParameterFrequencyId">
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Frequency" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+
+    <xsd:keyref name="defaultInputParameterFrequencyRef" refer="ots:defaultInputParameterFrequencyId">
+      <xsd:selector xpath=".//ots:Scenario/ots:InputParameters/ots:Frequency" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+
+    <xsd:key name="defaultInputParameterFrequencyDistId">
+      <xsd:selector
+        xpath=".//ots:DefaultInputParameters/ots:FrequencyDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+
+    <xsd:keyref name="defaultInputParameterFrequencyDistRef" refer="ots:defaultInputParameterFrequencyDistId">
+      <xsd:selector xpath=".//ots:Scenario/ots:InputParameters/ots:FrequencyDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+
+    <xsd:key name="defaultInputParameterIntegerId">
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Integer" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+
+    <xsd:keyref name="defaultInputParameterIntegerRef" refer="ots:defaultInputParameterIntegerId">
+      <xsd:selector xpath=".//ots:Scenario/ots:InputParameters/ots:Integer" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+
+    <xsd:key name="defaultInputParameterIntegerDistId">
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:IntegerDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+
+    <xsd:keyref name="defaultInputParameterIntegerDistRef" refer="ots:defaultInputParameterIntegerDistId">
+      <xsd:selector xpath=".//ots:Scenario/ots:InputParameters/ots:IntegerDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+
+    <xsd:key name="defaultInputParameterLengthId">
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Length" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+
+    <xsd:keyref name="defaultInputParameterLengthRef" refer="ots:defaultInputParameterLengthId">
+      <xsd:selector xpath=".//ots:Scenario/ots:InputParameters/ots:Length" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+
+    <xsd:key name="defaultInputParameterLengthDistId">
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:LengthDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+
+    <xsd:keyref name="defaultInputParameterLengthDistRef" refer="ots:defaultInputParameterLengthDistId">
+      <xsd:selector xpath=".//ots:Scenario/ots:InputParameters/ots:LengthDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+
+    <xsd:key name="defaultInputParameterLinearDensityId">
+      <xsd:selector
+        xpath=".//ots:DefaultInputParameters/ots:LinearDensity" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+
+    <xsd:keyref name="defaultInputParameterLinearDensityRef" refer="ots:defaultInputParameterLinearDensityId">
+      <xsd:selector xpath=".//ots:Scenario/ots:InputParameters/ots:LinearDensity" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+
+    <xsd:key name="defaultInputParameterLinearDensityDistId">
+      <xsd:selector
+        xpath=".//ots:DefaultInputParameters/ots:LinearDensityDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+
+    <xsd:keyref name="defaultInputParameterLinearDensityDistRef" refer="ots:defaultInputParameterLinearDensityDistId">
+      <xsd:selector xpath=".//ots:Scenario/ots:InputParameters/ots:LinearDensityDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+
+    <xsd:key name="defaultInputParameterLongId">
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Long" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+
+    <xsd:keyref name="defaultInputParameterLongRef" refer="ots:defaultInputParameterLongId">
+      <xsd:selector xpath=".//ots:Scenario/ots:InputParameters/ots:Long" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+
+    <xsd:key name="defaultInputParameterLongDistId">
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:LongDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+
+    <xsd:keyref name="defaultInputParameterLongDistRef" refer="ots:defaultInputParameterLongDistId">
+      <xsd:selector xpath=".//ots:Scenario/ots:InputParameters/ots:LongDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+
+    <xsd:key name="defaultInputParameterSpeedId">
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:Speed" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+
+    <xsd:keyref name="defaultInputParameterSpeedRef" refer="ots:defaultInputParameterSpeedId">
+      <xsd:selector xpath=".//ots:Scenario/ots:InputParameters/ots:Speed" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+
+    <xsd:key name="defaultInputParameterSpeedDistId">
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:SpeedDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+
+    <xsd:keyref name="defaultInputParameterSpeedDistRef" refer="ots:defaultInputParameterSpeedDistId">
+      <xsd:selector xpath=".//ots:Scenario/ots:InputParameters/ots:SpeedDist" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+
+    <xsd:key name="defaultInputParameterStringId">
+      <xsd:selector xpath=".//ots:DefaultInputParameters/ots:String" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+
+    <xsd:keyref name="defaultInputParameterStringRef" refer="ots:defaultInputParameterStringId">
+      <xsd:selector xpath=".//ots:Scenario/ots:InputParameters/ots:String" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+
   </xsd:element>
+
+  <xsd:simpleType name="InputParameterIdType">
+    <xsd:annotation>
+      <xsd:appinfo source="pattern">Provide an alpha-numeric name between { }, not starting with a number.</xsd:appinfo>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\{[A-Za-z][A-Za-z0-9_\.]*\}" />
+    </xsd:restriction>
+  </xsd:simpleType>
 
   <xsd:complexType name="ScenarioType">
     <xsd:sequence>
-      <xsd:element name="InputParameter" minOccurs="0" maxOccurs="1">
-        <xsd:complexType>
-          <xsd:choice minOccurs="1" maxOccurs="unbounded">
-            <xsd:element name="Acceleration" type="ots:ParameterAcceleration" />
-            <xsd:element name="AccelerationDist" type="ots:ParameterAccelerationDist" />
-            <xsd:element name="Boolean" type="ots:ParameterBoolean" />
-            <xsd:element name="Class" type="ots:ParameterClass" />
-            <xsd:element name="Double" type="ots:ParameterDouble" />
-            <xsd:element name="DoubleDist" type="ots:ParameterDoubleDist" />
-            <xsd:element name="Duration" type="ots:ParameterDuration" />
-            <xsd:element name="DurationDist" type="ots:ParameterDurationDist" />
-            <xsd:element name="Float" type="ots:ParameterFloat" />
-            <xsd:element name="FloatDist" type="ots:ParameterFloatDist" />
-            <xsd:element name="Fraction" type="ots:ParameterFraction" />
-            <xsd:element name="Frequency" type="ots:ParameterFrequency" />
-            <xsd:element name="FrequencyDist" type="ots:ParameterFrequencyDist" />
-            <xsd:element name="Integer" type="ots:ParameterInteger" />
-            <xsd:element name="IntegerDist" type="ots:ParameterIntegerDist" />
-            <xsd:element name="Length" type="ots:ParameterLength" />
-            <xsd:element name="LengthDist" type="ots:ParameterLengthDist" />
-            <xsd:element name="LinearDensity" type="ots:ParameterLinearDensity" />
-            <xsd:element name="LinearDensityDist" type="ots:ParameterLinearDensityDist" />
-            <xsd:element name="Long" type="ots:ParameterLong" />
-            <xsd:element name="LongDist" type="ots:ParameterLongDist" />
-            <xsd:element name="Speed" type="ots:ParameterSpeed" />
-            <xsd:element name="SpeedDist" type="ots:ParameterSpeedDist" />
-            <xsd:element name="String" type="ots:ParameterString" />
-          </xsd:choice>
-        </xsd:complexType>
-      </xsd:element>
+      <xsd:element name="InputParameters" type="ots:InputParameters" minOccurs="0" maxOccurs="1" />
 
       <xsd:element name="Od" minOccurs="0" maxOccurs="unbounded">
         <xsd:complexType>
-          <xsd:attribute name="Id" type="xsd:string" use="required" />
+          <xsd:attribute name="Id" type="ots:string" use="required" />
         </xsd:complexType>
       </xsd:element>
 
       <xsd:element name="Control" minOccurs="0" maxOccurs="unbounded">
         <xsd:complexType>
-          <xsd:attribute name="Id" type="xsd:string" use="required" />
+          <xsd:attribute name="Id" type="ots:string" use="required" />
         </xsd:complexType>
       </xsd:element>
 
       <xsd:element name="ModelIdReferral" type="ots:ModelIdReferralType" minOccurs="0" maxOccurs="unbounded" />
 
     </xsd:sequence>
-    <xsd:attribute name="Id" type="xsd:string" />
+    <xsd:attribute name="Id" type="ots:IdType" />
   </xsd:complexType>
 
 </xsd:schema>

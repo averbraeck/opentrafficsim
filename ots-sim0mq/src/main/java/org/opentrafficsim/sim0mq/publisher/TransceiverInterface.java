@@ -2,10 +2,10 @@ package org.opentrafficsim.sim0mq.publisher;
 
 import java.rmi.RemoteException;
 
-import org.djunits.Throw;
+import org.djutils.base.Identifiable;
+import org.djutils.exceptions.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.serialization.SerializationException;
-import org.opentrafficsim.base.Identifiable;
 import org.sim0mq.Sim0MQException;
 
 /**
@@ -36,7 +36,7 @@ public interface TransceiverInterface extends Identifiable
      * @throws SerializationException when the ReturnWrapper fails
      * @throws Sim0MQException when the ReturnWrapper fails
      */
-    default TransceiverInterface getIdSource(int addressLevel, ReturnWrapper returnWrapper)
+    default TransceiverInterface getIdSource(final int addressLevel, final ReturnWrapper returnWrapper)
             throws Sim0MQException, SerializationException
     {
         // There is no id source by default. Override this method (and the hasIdSource method) if there is one.

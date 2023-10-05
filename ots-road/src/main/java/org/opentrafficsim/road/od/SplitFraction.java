@@ -7,10 +7,8 @@ import java.util.TreeMap;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.ValueRuntimeException;
-import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.vector.DurationVector;
-import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -81,7 +79,7 @@ public class SplitFraction
         {
             double[] t = new double[2];
             t[1] = Double.MAX_VALUE;
-            time = DoubleVector.instantiate(t, DurationUnit.SI, StorageType.DENSE);
+            time = new DurationVector(t, DurationUnit.SI);
         }
         catch (ValueRuntimeException exception)
         {

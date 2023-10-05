@@ -1,6 +1,6 @@
 package org.opentrafficsim.kpi.sampling.indicator;
 
-import org.djunits.value.vdouble.scalar.base.AbstractDoubleScalarRel;
+import org.djunits.value.vdouble.scalar.base.DoubleScalarRel;
 
 /**
  * Wrapper class for two typed values that represent a confidence interval.
@@ -13,7 +13,7 @@ import org.djunits.value.vdouble.scalar.base.AbstractDoubleScalarRel;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <T> type of the values
  */
-public class ConfidenceInterval<T extends AbstractDoubleScalarRel<?, T>>
+public class ConfidenceInterval<T extends DoubleScalarRel<?, T>>
 {
 
     /** Lower confidence value. */

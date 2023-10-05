@@ -15,9 +15,9 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.base.Identifiable;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableIterator;
-import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.interfaces.LinkData;
@@ -37,7 +37,7 @@ import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
  * @param <G> gtu data type
  * @param <L> lane data type
  */
-public final class Query<G extends GtuData, L extends LaneData> implements Identifiable
+public final class Query<G extends GtuData, L extends LaneData<L>> implements Identifiable
 {
     /** unique id. */
     private final String id;
@@ -366,9 +366,9 @@ public final class Query<G extends GtuData, L extends LaneData> implements Ident
         while (iterator.hasNext())
         {
             String gtuId = iterator.next();
-            TrajectoryAcceptList trajectoryAcceptListCombined = copyTrajectoryAcceptList(trajectoryAcceptLists.get(gtuId));
+            TrajectoryAcceptList trajectoryAcceptListCombined = trajectoryAcceptLists.get(gtuId);
             trajectoryAcceptListCombined.acceptAll(); // refuse only if any filter data type refuses
-            for (FilterDataType<?> filterDataType : this.filterDataSet.getMetaDataTypes())
+            for (FilterDataType<?> filterDataType : this.filterDataSet.getFilterDataTypes())
             {
                 // create safe copy per filter data type, with defaults accepts = false
                 TrajectoryAcceptList trajectoryAcceptListCopy = copyTrajectoryAcceptList(trajectoryAcceptLists.get(gtuId));

@@ -2,7 +2,6 @@ package org.opentrafficsim.sim0mq.kpi;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.kpi.interfaces.LaneData;
-import org.opentrafficsim.kpi.interfaces.LinkData;
 
 /**
  * <p>
@@ -13,7 +12,7 @@ import org.opentrafficsim.kpi.interfaces.LinkData;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LaneDataSim0 implements LaneData
+public class LaneDataSim0 implements LaneData<LaneDataSim0>
 {
     /** Corresponding Link. */
     private LinkDataSim0 linkData;
@@ -46,7 +45,7 @@ public class LaneDataSim0 implements LaneData
 
     /** {@inheritDoc} */
     @Override
-    public final LinkData getLinkData()
+    public final LinkDataSim0 getLinkData()
     {
         return this.linkData;
     }
@@ -69,7 +68,7 @@ public class LaneDataSim0 implements LaneData
     /**
      * @param linkData LinkData; set linkData
      */
-    public final void setLinkData(LinkDataSim0 linkData)
+    public final void setLinkData(final LinkDataSim0 linkData)
     {
         this.linkData = linkData;
     }
@@ -86,7 +85,7 @@ public class LaneDataSim0 implements LaneData
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
         if (this == obj)
             return true;

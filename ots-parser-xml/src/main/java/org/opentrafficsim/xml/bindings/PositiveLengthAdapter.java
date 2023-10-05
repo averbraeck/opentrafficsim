@@ -1,30 +1,35 @@
 package org.opentrafficsim.xml.bindings;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.exceptions.Throw;
 import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.xml.bindings.types.LengthType;
 
 /**
- * LengthAdapter converts between the XML String for a Length and the DJUnits Length. The length should be positive.
+ * LengthAdapter converts between the XML String for a Length and the DJUnits Length (positive).
  * <p>
  * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class PositiveLengthAdapter extends UnitAdapter<Length>
+public class PositiveLengthAdapter extends ScalarAdapter<Length, LengthType>
 {
+
     /** {@inheritDoc} */
     @Override
-    public Length unmarshal(final String field) throws IllegalArgumentException
+    public LengthType unmarshal(final String field)
     {
-        if (field.trim().startsWith("-"))
+        if (isExpression(field))
         {
-            CategoryLogger.always().error("PositiveLength cannot be negative '" + field + "'");
-            throw new IllegalArgumentException("PositiveLength cannot be negative: " + field);
+            return new LengthType(trimBrackets(field));
         }
         try
         {
-            return Length.valueOf(field);
+            Length value = Length.valueOf(field);
+            Throw.when(value.lt0(), IllegalArgumentException.class, "PositiveLength value %s is not a positive value.", value);
+            return new LengthType(value);
         }
         catch (Exception exception)
         {
@@ -35,14 +40,11 @@ public class PositiveLengthAdapter extends UnitAdapter<Length>
 
     /** {@inheritDoc} */
     @Override
-    public String marshal(final Length length) throws IllegalArgumentException
+    public String marshal(final LengthType value)
     {
-        if (length.lt(Length.ZERO))
-        {
-            CategoryLogger.always().error("PositiveLength cannot be negative: " + length);
-            throw new IllegalArgumentException("PositiveLength cannot be negative: " + length);
-        }
-        return super.marshal(length);
+        Throw.when(!value.isExpression() && value.getValue().lt0(), IllegalArgumentException.class,
+                "PositiveLength value %s is not a positive value.", value.getValue());
+        return super.marshal(value);
     }
 
 }

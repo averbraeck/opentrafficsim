@@ -30,7 +30,7 @@ When the table is given to `Injections`, additional input may be required depend
 
 ## Injection file
 
-An injection file can be read in to an injection `Table` using various formats. Here the csv format is described. Translations to other formats are per `Table` functionality in DJUTILS. For csv, use `CsvData.readData(...)`. Two files are required for csv, one with the actual data, and a header file describing the columns. The data file may look as seen below. The first line gives column id's. On the second line we see a GTU injection a 2 {s}, with GTU id "car1", GTU type "CAR", an initial speed of 50 {km/h}, destination node "TRW", generation position 10 {m} on lane "LANE" on link "EE3", with a length of 1 {m}.
+An injection file can be read in to an injection `Table` using various formats. Here the csv format is described. Translations to other formats are per `Table` functionality in DJUTILS. For csv, use `CsvData.readData(...)`. Two files are required for csv, one with the actual data, and a header file describing the columns. The data file may look as seen below. The first line gives column id's. On the second line we see a GTU injection at 2 {s}, with GTU id "car1", GTU type "CAR", an initial speed of 50 {km/h}, destination node "TRW", generation position 10 {m} on lane "LANE" on link "EE3", with a length of 1 {m}.
 
 <pre>
 time,id,gtuType,speed,destination,position,lane,link,length

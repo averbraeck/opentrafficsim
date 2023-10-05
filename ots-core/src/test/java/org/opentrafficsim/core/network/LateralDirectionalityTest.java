@@ -1,10 +1,10 @@
 package org.opentrafficsim.core.network;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the methods in the LateralDirectionality enum.
@@ -26,19 +26,19 @@ public class LateralDirectionalityTest
         LateralDirectionality right = LateralDirectionality.RIGHT;
         LateralDirectionality none = LateralDirectionality.NONE;
 
-        assertTrue("left is left", left.isLeft());
-        assertTrue("right is right", right.isRight());
-        assertFalse("left is not right", left.isRight());
-        assertFalse("right is not left", right.isLeft());
-        assertFalse("none is not left", none.isLeft());
-        assertFalse("none is not right", none.isRight());
-        assertFalse("left is not none", left.isNone());
-        assertFalse("right is not none", right.isNone());
-        assertTrue("none is none", none.isNone());
+        assertTrue(left.isLeft(), "left is left");
+        assertTrue(right.isRight(), "right is right");
+        assertFalse(left.isRight(), "left is not right");
+        assertFalse(right.isLeft(), "right is not left");
+        assertFalse(none.isLeft(), "none is not left");
+        assertFalse(none.isRight(), "none is not right");
+        assertFalse(left.isNone(), "left is not none");
+        assertFalse(right.isNone(), "right is not none");
+        assertTrue(none.isNone(), "none is none");
 
-        assertEquals("flip of left is right", right, left.flip());
-        assertEquals("flip of right is left", left, right.flip());
-        assertEquals("flip of none is none", none, none.flip());
+        assertEquals(right, left.flip(), "flip of left is right");
+        assertEquals(left, right.flip(), "flip of right is left");
+        assertEquals(none, none.flip(), "flip of none is none");
     }
 
 }

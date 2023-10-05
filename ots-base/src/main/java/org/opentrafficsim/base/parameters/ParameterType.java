@@ -2,8 +2,8 @@ package org.opentrafficsim.base.parameters;
 
 import java.io.Serializable;
 
+import org.djutils.base.Identifiable;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.Type;
 import org.opentrafficsim.base.parameters.constraint.Constraint;
 

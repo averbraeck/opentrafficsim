@@ -1,9 +1,9 @@
 package org.opentrafficsim.sim0mq.publisher;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -20,7 +20,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.serialization.SerializationException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
@@ -29,7 +29,7 @@ import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
 import org.sim0mq.Sim0MQException;
@@ -82,29 +82,29 @@ public class PublisherTest implements OtsModelInterface
         OtsSimulatorInterface simulator = new OtsSimulator("test simulator for PublisherTest");
         RoadNetwork network = new RoadNetwork("test network for PublisherTest", simulator);
         Publisher publisher = new Publisher(network);
-        assertTrue("id of publisher contains id of network", publisher.getId().contains(network.getId()));
+        assertTrue(publisher.getId().contains(network.getId()), "id of publisher contains id of network");
         TransceiverInterface transceiverInterface = publisher.getIdSource(0, storeLastResult);
-        assertNotNull("result of getIdSource should not be null", transceiverInterface);
+        assertNotNull(transceiverInterface, "result of getIdSource should not be null");
         Object[] transceiverNames = transceiverInterface.get(null, storeLastResult);
-        assertTrue("result of getIdSource should not be empty", transceiverNames.length > 0);
+        assertTrue(transceiverNames.length > 0, "result of getIdSource should not be empty");
         for (Object o : transceiverNames)
         {
-            assertTrue("transceiver name is a String", o instanceof String);
+            assertTrue(o instanceof String, "transceiver name is a String");
             // System.out.println("transceiver: " + o);
         }
         // See if we can obtain the GtuIdTransceiver
         Object[] subscriptionHandler = publisher.get(new Object[] {"GTUs in network"}, storeLastResult);
-        assertNotNull("result of get should not be null", subscriptionHandler);
-        assertEquals("result should contain one elements", 1, subscriptionHandler.length);
+        assertNotNull(subscriptionHandler, "result of get should not be null");
+        assertEquals(1, subscriptionHandler.length, "result should contain one elements");
         System.out.println(subscriptionHandler[0]);
-        assertTrue("Result should contain a String", subscriptionHandler[0] instanceof SubscriptionHandler);
+        assertTrue(subscriptionHandler[0] instanceof SubscriptionHandler, "Result should contain a String");
         this.lastResult = null;
-        assertNull("request for non existent transceiver should return null",
-                publisher.get(new Object[] {"No such transceiver"}, storeLastResult));
+        assertNull(publisher.get(new Object[] {"No such transceiver"}, storeLastResult),
+                "request for non existent transceiver should return null");
         checkLastResult("No transceiver with name \"No such transceiver\"");
-        assertNull("getIdSource with wrong index returns null", publisher.getIdSource(1, storeLastResult));
+        assertNull(publisher.getIdSource(1, storeLastResult), "getIdSource with wrong index returns null");
         checkLastResult("Address should be 0");
-        assertNull("getIdSource with wrong index returns null", publisher.getIdSource(-1, storeLastResult));
+        assertNull(publisher.getIdSource(-1, storeLastResult), "getIdSource with wrong index returns null");
         checkLastResult("Address should be 0");
     }
 
@@ -115,9 +115,9 @@ public class PublisherTest implements OtsModelInterface
      */
     public void checkLastResult(final String expectedText)
     {
-        assertNotNull("returnWrapper has stored something", this.lastResult);
-        assertEquals("returnWrapper has stored one object error message", 1, this.lastResult.length);
-        assertEquals("Stored result is expected string", expectedText, this.lastResult[0]);
+        assertNotNull(this.lastResult, "returnWrapper has stored something");
+        assertEquals(1, this.lastResult.length, "returnWrapper has stored one object error message");
+        assertEquals(expectedText, this.lastResult[0], "Stored result is expected string");
         this.lastResult = null;
     }
 
@@ -232,8 +232,8 @@ public class PublisherTest implements OtsModelInterface
             this.network = new RoadNetwork(getShortName(), getSimulator());
             try
             {
-                XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,
-                        false);
+                new XmlParser(this.network).setStream(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)))
+                        .build();
                 LaneCombinationList ignoreList = new LaneCombinationList();
                 LaneCombinationList permittedList = new LaneCombinationList();
                 ConflictBuilder.buildConflictsParallel(this.network, getSimulator(),

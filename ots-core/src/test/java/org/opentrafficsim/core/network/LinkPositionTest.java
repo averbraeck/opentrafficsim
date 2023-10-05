@@ -1,15 +1,15 @@
 package org.opentrafficsim.core.network;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.junit.Test;
+import org.djutils.draw.point.Point2d;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.mock.MockSimulator;
 
 /**
@@ -31,10 +31,10 @@ public class LinkPositionTest
     public void linkPositionTest() throws NetworkException, OtsGeometryException
     {
         Network network = new Network("test network for LinkPosition test", MockSimulator.createMock());
-        Node nodeA = new Node(network, "A", new OtsPoint3d(10, 10, 10));
-        Node nodeB = new Node(network, "B", new OtsPoint3d(110, 10, 10));
+        Node nodeA = new Node(network, "A", new Point2d(10, 10));
+        Node nodeB = new Node(network, "B", new Point2d(110, 10));
         Link link = new Link(network, "A to B", nodeA, nodeB, DefaultsNl.ROAD,
-                new OtsLine3d(nodeA.getPoint(), nodeB.getPoint()));
+                new OtsLine2d(nodeA.getPoint(), nodeB.getPoint()), null);
         double linkLength = link.getLength().si;
         // Apparently (reading the source), LinkPosition is not restricted to the length-range of the link
         for (double fraction : new double[] {-10, 0, 0.1, 0.5, 0.9, 1.0, 11.0})
@@ -42,32 +42,32 @@ public class LinkPositionTest
             Length length = new Length(fraction * linkLength, LengthUnit.METER);
             LinkPosition lp = new LinkPosition(link, length);
             System.out.println(lp);
-            assertEquals("link can be retrieved", link, lp.getLink());
-            assertEquals("fraction can be retrieved", fraction, lp.getFractionalLongitudinalPosition(), 0.001);
-            assertEquals("length can be retrieved", link.getLength(), lp.getLinkLength());
-            assertEquals("longitudinal position can be retrieved", length.si, lp.getLongitudinalPosition().si, 0.001);
-            assertTrue("toString returns something descriptive", lp.toString().startsWith("LinkPosition"));
+            assertEquals(link, lp.getLink(), "link can be retrieved");
+            assertEquals(fraction, lp.getFractionalLongitudinalPosition(), 0.001, "fraction can be retrieved");
+            assertEquals(link.getLength(), lp.getLinkLength(), "length can be retrieved");
+            assertEquals(length.si, lp.getLongitudinalPosition().si, 0.001, "longitudinal position can be retrieved");
+            assertTrue(lp.toString().startsWith("LinkPosition"), "toString returns something descriptive");
             lp = new LinkPosition(link, length);
             System.out.println(lp);
-            assertEquals("link can be retrieved", link, lp.getLink());
-            assertEquals("fraction can be retrieved", fraction, lp.getFractionalLongitudinalPosition(), 0.001);
-            assertEquals("length can be retrieved", link.getLength(), lp.getLinkLength());
-            assertEquals("longitudinal position can be retrieved", length.si, lp.getLongitudinalPosition().si, 0.001);
-            assertTrue("toString returns something descriptive", lp.toString().startsWith("LinkPosition"));
+            assertEquals(link, lp.getLink(), "link can be retrieved");
+            assertEquals(fraction, lp.getFractionalLongitudinalPosition(), 0.001, "fraction can be retrieved");
+            assertEquals(link.getLength(), lp.getLinkLength(), "length can be retrieved");
+            assertEquals(length.si, lp.getLongitudinalPosition().si, 0.001, "longitudinal position can be retrieved");
+            assertTrue(lp.toString().startsWith("LinkPosition"), "toString returns something descriptive");
             lp = new LinkPosition(link, fraction);
             System.out.println(lp);
-            assertEquals("link can be retrieved", link, lp.getLink());
-            assertEquals("fraction can be retrieved", fraction, lp.getFractionalLongitudinalPosition(), 0.001);
-            assertEquals("length can be retrieved", link.getLength(), lp.getLinkLength());
-            assertEquals("longitudinal position can be retrieved", length.si, lp.getLongitudinalPosition().si, 0.001);
-            assertTrue("toString returns something descriptive", lp.toString().startsWith("LinkPosition"));
+            assertEquals(link, lp.getLink(), "link can be retrieved");
+            assertEquals(fraction, lp.getFractionalLongitudinalPosition(), 0.001, "fraction can be retrieved");
+            assertEquals(link.getLength(), lp.getLinkLength(), "length can be retrieved");
+            assertEquals(length.si, lp.getLongitudinalPosition().si, 0.001, "longitudinal position can be retrieved");
+            assertTrue(lp.toString().startsWith("LinkPosition"), "toString returns something descriptive");
             lp = new LinkPosition(link, fraction);
             System.out.println(lp);
-            assertEquals("link can be retrieved", link, lp.getLink());
-            assertEquals("fraction can be retrieved", fraction, lp.getFractionalLongitudinalPosition(), 0.001);
-            assertEquals("length can be retrieved", link.getLength(), lp.getLinkLength());
-            assertEquals("longitudinal position can be retrieved", length.si, lp.getLongitudinalPosition().si, 0.001);
-            assertTrue("toString returns something descriptive", lp.toString().startsWith("LinkPosition"));
+            assertEquals(link, lp.getLink(), "link can be retrieved");
+            assertEquals(fraction, lp.getFractionalLongitudinalPosition(), 0.001, "fraction can be retrieved");
+            assertEquals(link.getLength(), lp.getLinkLength(), "length can be retrieved");
+            assertEquals(length.si, lp.getLongitudinalPosition().si, 0.001, "longitudinal position can be retrieved");
+            assertTrue(lp.toString().startsWith("LinkPosition"), "toString returns something descriptive");
         }
     }
 

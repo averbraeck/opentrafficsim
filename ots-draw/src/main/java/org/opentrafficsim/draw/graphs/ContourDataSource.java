@@ -15,15 +15,15 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.logger.CategoryLogger;
-import org.opentrafficsim.core.egtf.Converter;
-import org.opentrafficsim.core.egtf.DataSource;
-import org.opentrafficsim.core.egtf.DataStream;
-import org.opentrafficsim.core.egtf.Egtf;
-import org.opentrafficsim.core.egtf.EgtfEvent;
-import org.opentrafficsim.core.egtf.EgtfListener;
-import org.opentrafficsim.core.egtf.Filter;
-import org.opentrafficsim.core.egtf.Quantity;
-import org.opentrafficsim.core.egtf.typed.TypedQuantity;
+import org.opentrafficsim.draw.egtf.Converter;
+import org.opentrafficsim.draw.egtf.DataSource;
+import org.opentrafficsim.draw.egtf.DataStream;
+import org.opentrafficsim.draw.egtf.Egtf;
+import org.opentrafficsim.draw.egtf.EgtfEvent;
+import org.opentrafficsim.draw.egtf.EgtfListener;
+import org.opentrafficsim.draw.egtf.Filter;
+import org.opentrafficsim.draw.egtf.Quantity;
+import org.opentrafficsim.draw.egtf.typed.TypedQuantity;
 import org.opentrafficsim.draw.graphs.GraphPath.Section;
 import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.SamplerData;
@@ -105,7 +105,7 @@ public class ContourDataSource
     private final Duration delay;
 
     /** Path. */
-    private final GraphPath<? extends LaneData> path;
+    private final GraphPath<? extends LaneData<?>> path;
 
     /** Space axis. */
     final Axis spaceAxis;
@@ -194,7 +194,7 @@ public class ContourDataSource
      * @param samplerData SamplerData&lt;?&gt;; sampler data
      * @param path GraphPath&lt;? extends LaneData&gt;; path
      */
-    public ContourDataSource(final SamplerData<?> samplerData, final GraphPath<? extends LaneData> path)
+    public ContourDataSource(final SamplerData<?> samplerData, final GraphPath<? extends LaneData<?>> path)
     {
         this(samplerData, Duration.instantiateSI(1.0), path, DEFAULT_SPACE_GRANULARITIES, DEFAULT_SPACE_GRANULARITY_INDEX,
                 DEFAULT_TIME_GRANULARITIES, DEFAULT_TIME_GRANULARITY_INDEX, DEFAULT_LOWER_TIME_BOUND,
@@ -214,7 +214,7 @@ public class ContourDataSource
      * @param initialEnd Time; initial end time of plots, will be expanded if simulation time exceeds it
      */
     @SuppressWarnings("parameternumber")
-    public ContourDataSource(final SamplerData<?> samplerData, final Duration delay, final GraphPath<? extends LaneData> path,
+    public ContourDataSource(final SamplerData<?> samplerData, final Duration delay, final GraphPath<? extends LaneData<?>> path,
             final double[] spaceGranularity, final int initSpaceIndex, final double[] timeGranularity, final int initTimeIndex,
             final Time start, final Time initialEnd)
     {
@@ -268,7 +268,7 @@ public class ContourDataSource
      * Returns the path for an {@code AbstractContourPlot} using this {@code ContourDataSource}.
      * @return GraphPath&lt;? extends LaneData&gt;; the path
      */
-    final GraphPath<? extends LaneData> getPath()
+    final GraphPath<? extends LaneData<?>> getPath()
     {
         return this.path;
     }
@@ -443,11 +443,6 @@ public class ContourDataSource
             synchronized (this)
             {
                 this.smooth = smooth;
-                for (AbstractContourPlot<?> contourPlot : ContourDataSource.this.plots)
-                {
-                    System.out.println("not notifying plot " + contourPlot);
-                    // TODO work out what to do with this: contourPlot.setSmoothing(smooth);
-                }
                 invalidate(null);
             }
         }
@@ -620,12 +615,7 @@ public class ContourDataSource
                         {
                             // plots need to be redone
                             event.interrupt(); // stop the EGTF
-                            setStatusLabel(" "); // reset status label so no "ASM at 12.6%" remains there
-                            return;
                         }
-                        String status =
-                                event.getProgress() >= 1.0 ? " " : String.format("ASM at %.2f%%", event.getProgress() * 100);
-                        setStatusLabel(status);
                     }
                 });
             }
@@ -691,7 +681,7 @@ public class ContourDataSource
                 {
                     // obtain trajectories
                     List<TrajectoryGroup<?>> trajectories = new ArrayList<>();
-                    for (Section<? extends LaneData> section : getPath().getSections())
+                    for (Section<? extends LaneData<?>> section : getPath().getSections())
                     {
                         TrajectoryGroup<?> trajectoryGroup = this.samplerData.getTrajectoryGroup(section.getSource(series));
                         if (null == trajectoryGroup)
@@ -708,7 +698,7 @@ public class ContourDataSource
                     for (int k = 0; k < trajectories.size(); k++)
                     {
                         TrajectoryGroup<?> trajectoryGroup = trajectories.get(k);
-                        LaneData lane = trajectoryGroup.getLane();
+                        LaneData<?> lane = trajectoryGroup.getLane();
                         Length startDistance = this.path.getStartDistance(this.path.get(k));
                         if (startDistance.si + this.path.get(k).getLength().si > spaceTicks[i]
                                 && startDistance.si < spaceTicks[i + 1])
@@ -879,18 +869,6 @@ public class ContourDataSource
             {
                 raw[i][j + rawCol] = (float) smoothed[i][j];
             }
-        }
-    }
-
-    /**
-     * Helper method used by an {@code EgtfListener} to present the filter progress.
-     * @param status String; progress report
-     */
-    private void setStatusLabel(final String status)
-    {
-        for (AbstractContourPlot<?> plot : ContourDataSource.this.plots)
-        {
-            // TODO what shall we do this this? plot.setStatusLabel(status);
         }
     }
 

@@ -3,7 +3,6 @@ package org.opentrafficsim.demo;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.net.URL;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -11,23 +10,13 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.core.dsol.AbstractOtsModel;
-import org.opentrafficsim.core.dsol.OtsModelInterface;
-import org.opentrafficsim.core.dsol.OtsSimulator;
-import org.opentrafficsim.core.network.Network;
-import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
  * ParseXml.java.

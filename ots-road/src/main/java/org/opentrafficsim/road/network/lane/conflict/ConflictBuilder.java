@@ -13,13 +13,14 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.RoadNetwork;
@@ -136,8 +137,8 @@ public final class ConflictBuilder
         long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
         simulator.getLogger().always().trace("GENERATING CONFLICTS (NON-PARALLEL MODE). {} COMBINATIONS", totalCombinations);
         long lastReported = 0;
-        Map<Lane, OtsLine3d> leftEdges = new LinkedHashMap<>();
-        Map<Lane, OtsLine3d> rightEdges = new LinkedHashMap<>();
+        Map<Lane, OtsLine2d> leftEdges = new LinkedHashMap<>();
+        Map<Lane, OtsLine2d> rightEdges = new LinkedHashMap<>();
 
         for (int i = 0; i < lanes.size(); i++)
         {
@@ -240,8 +241,8 @@ public final class ConflictBuilder
      * @param permitted boolean; conflict permitted by traffic control
      * @param simulator OtsSimulatorInterface; simulator
      * @param widthGenerator WidthGenerator; width generator
-     * @param leftEdges Map&lt;Lane, OtsLine3d&gt;; cache of left edge lines
-     * @param rightEdges Map&lt;Lane, OtsLine3d&gt;; cache of right edge lines
+     * @param leftEdges Map&lt;Lane, OtsLine2d&gt;; cache of left edge lines
+     * @param rightEdges Map&lt;Lane, OtsLine2d&gt;; cache of right edge lines
      * @param intersectionCheck indicate whether we have to do a contour intersection check still
      * @param conflictId String; identification of the conflict (may be null)
      * @throws OtsGeometryException in case of geometry exception
@@ -250,7 +251,7 @@ public final class ConflictBuilder
     @SuppressWarnings({"checkstyle:parameternumber", "checkstyle:methodlength"})
     static void buildConflicts(final Lane lane1, final Set<Lane> down1, final Set<Lane> up1, final Lane lane2,
             final Set<Lane> down2, final Set<Lane> up2, final boolean permitted, final OtsSimulatorInterface simulator,
-            final WidthGenerator widthGenerator, final Map<Lane, OtsLine3d> leftEdges, final Map<Lane, OtsLine3d> rightEdges,
+            final WidthGenerator widthGenerator, final Map<Lane, OtsLine2d> leftEdges, final Map<Lane, OtsLine2d> rightEdges,
             final boolean intersectionCheck, final String conflictId) throws OtsGeometryException, NetworkException
     {
         // Quick contour check, skip if not overlapping -- Don't repeat if it has taken place
@@ -266,13 +267,13 @@ public final class ConflictBuilder
 
         String paddedConflictId = null == conflictId ? "" : (" in conflict group " + conflictId);
         // Get left and right lines at specified width
-        OtsLine3d left1;
-        OtsLine3d right1;
+        OtsLine2d left1;
+        OtsLine2d right1;
         synchronized (lane1)
         {
             left1 = leftEdges.get(lane1);
             right1 = rightEdges.get(lane1);
-            OtsLine3d line1 = lane1.getCenterLine();
+            OtsLine2d line1 = lane1.getCenterLine();
             if (null == left1)
             {
                 left1 = line1.offsetLine(widthGenerator.getWidth(lane1, 0.0) / 2, widthGenerator.getWidth(lane1, 1.0) / 2);
@@ -285,13 +286,13 @@ public final class ConflictBuilder
             }
         }
 
-        OtsLine3d left2;
-        OtsLine3d right2;
+        OtsLine2d left2;
+        OtsLine2d right2;
         synchronized (lane2)
         {
             left2 = leftEdges.get(lane2);
             right2 = rightEdges.get(lane2);
-            OtsLine3d line2 = lane2.getCenterLine();
+            OtsLine2d line2 = lane2.getCenterLine();
             if (null == left2)
             {
                 left2 = line2.offsetLine(widthGenerator.getWidth(lane2, 0.0) / 2, widthGenerator.getWidth(lane2, 1.0) / 2);
@@ -411,7 +412,7 @@ public final class ConflictBuilder
         }
 
         // Create crossings
-        if (!lane1.getParentLink().equals(lane2.getParentLink())) // tight inner-curves with dedicated Bezier ignored
+        if (!lane1.getLink().equals(lane2.getLink())) // tight inner-curves with dedicated Bezier ignored
         {
             boolean[] crossed = new boolean[4];
             Iterator<Intersection> iterator = intersections.iterator();
@@ -479,14 +480,14 @@ public final class ConflictBuilder
         Length length2 = lane2.getLength().times(Math.abs(f2end - f2start));
 
         // Get geometries
-        OtsLine3d geometry1 = getGeometry(lane1, f1start, f1end, widthGenerator);
-        OtsLine3d geometry2 = getGeometry(lane2, f2start, f2end, widthGenerator);
+        PolyLine2d geometry1 = getGeometry(lane1, f1start, f1end, widthGenerator);
+        PolyLine2d geometry2 = getGeometry(lane2, f2start, f2end, widthGenerator);
 
         // Determine conflict rule
         ConflictRule conflictRule;
-        if (lane1.getParentLink().getPriority().isBusStop() || lane2.getParentLink().getPriority().isBusStop())
+        if (lane1.getLink().getPriority().isBusStop() || lane2.getLink().getPriority().isBusStop())
         {
-            Throw.when(lane1.getParentLink().getPriority().isBusStop() && lane2.getParentLink().getPriority().isBusStop(),
+            Throw.when(lane1.getLink().getPriority().isBusStop() && lane2.getLink().getPriority().isBusStop(),
                     IllegalArgumentException.class, "Merge conflict between two links with bus stop priority not supported.");
             // TODO: handle bus priority on the model side
             conflictRule = new BusStopConflictRule(simulator, DefaultsNl.BUS);
@@ -531,8 +532,8 @@ public final class ConflictBuilder
         Length length2 = lane2.getLength().times(Math.abs(f2end - f2start));
 
         // Get geometries
-        OtsLine3d geometry1 = getGeometry(lane1, f1start, f1end, widthGenerator);
-        OtsLine3d geometry2 = getGeometry(lane2, f2start, f2end, widthGenerator);
+        PolyLine2d geometry1 = getGeometry(lane1, f1start, f1end, widthGenerator);
+        PolyLine2d geometry2 = getGeometry(lane2, f2start, f2end, widthGenerator);
 
         // Make conflict
         Conflict.generateConflictPair(ConflictType.SPLIT, new SplitConflictRule(), false, lane1, longitudinalPosition1, length1,
@@ -589,14 +590,14 @@ public final class ConflictBuilder
         Length length2 = lane2.getLength().times(Math.abs(f2end - f2start));
 
         // Get geometries
-        OtsLine3d geometry1 = getGeometry(lane1, f1start, f1end, widthGenerator);
-        OtsLine3d geometry2 = getGeometry(lane2, f2start, f2end, widthGenerator);
+        PolyLine2d geometry1 = getGeometry(lane1, f1start, f1end, widthGenerator);
+        PolyLine2d geometry2 = getGeometry(lane2, f2start, f2end, widthGenerator);
 
         // Determine conflict rule
         ConflictRule conflictRule;
-        if (lane1.getParentLink().getPriority().isBusStop() || lane2.getParentLink().getPriority().isBusStop())
+        if (lane1.getLink().getPriority().isBusStop() || lane2.getLink().getPriority().isBusStop())
         {
-            Throw.when(lane1.getParentLink().getPriority().isBusStop() && lane2.getParentLink().getPriority().isBusStop(),
+            Throw.when(lane1.getLink().getPriority().isBusStop() && lane2.getLink().getPriority().isBusStop(),
                     IllegalArgumentException.class, "Merge conflict between two links with bus stop priority not supported.");
             // TODO: handle bus priority on the model side
             conflictRule = new BusStopConflictRule(simulator, DefaultsNl.BUS);
@@ -622,7 +623,7 @@ public final class ConflictBuilder
      * @return geometry for conflict
      * @throws OtsGeometryException in case of geometry exception
      */
-    private static OtsLine3d getGeometry(final Lane lane, final double fStart, final double fEnd,
+    private static PolyLine2d getGeometry(final Lane lane, final double fStart, final double fEnd,
             final WidthGenerator widthGenerator) throws OtsGeometryException
     {
         // extractFractional needs ordered fractions, irrespective of driving direction
@@ -640,7 +641,7 @@ public final class ConflictBuilder
         }
         if (Math.abs(f1 - f2) < 1E-8)
         {
-            lane.getParentLink().getSimulator().getLogger().always()
+            lane.getLink().getSimulator().getLogger().always()
                     .debug("f1 (" + f1 + ") equals f2 (" + f2 + "); problematic lane is " + lane.toString());
             // Fix up
             if (f1 > 0)
@@ -652,14 +653,14 @@ public final class ConflictBuilder
                 f2 = f2 + f2 / 1000;
             }
         }
-        OtsLine3d centerLine = lane.getCenterLine().extractFractional(f1, f2);
-        OtsLine3d left = centerLine.offsetLine(widthGenerator.getWidth(lane, f1) / 2, widthGenerator.getWidth(lane, f2) / 2);
-        OtsLine3d right =
+        OtsLine2d centerLine = lane.getCenterLine().extractFractional(f1, f2);
+        OtsLine2d left = centerLine.offsetLine(widthGenerator.getWidth(lane, f1) / 2, widthGenerator.getWidth(lane, f2) / 2);
+        OtsLine2d right =
                 centerLine.offsetLine(-widthGenerator.getWidth(lane, f1) / 2, -widthGenerator.getWidth(lane, f2) / 2).reverse();
-        OtsPoint3d[] points = new OtsPoint3d[left.size() + right.size()];
+        Point2d[] points = new Point2d[left.size() + right.size()];
         System.arraycopy(left.getPoints(), 0, points, 0, left.size());
         System.arraycopy(right.getPoints(), 0, points, left.size(), right.size());
-        return new OtsLine3d(points);
+        return new PolyLine2d(points);
     }
 
     /**
@@ -788,13 +789,13 @@ public final class ConflictBuilder
 
         /**
          * Returns a set of intersections, sorted by the fraction on line 1.
-         * @param line1 OtsLine3d; line 1
-         * @param line2 OtsLine3d; line 2
+         * @param line1 OtsLine2d; line 1
+         * @param line2 OtsLine2d; line 2
          * @param combo int; edge combination number
          * @return set of intersections, sorted by the fraction on line 1
          * @throws OtsGeometryException in case of geometry exception
          */
-        public static SortedSet<Intersection> getIntersectionList(final OtsLine3d line1, final OtsLine3d line2, final int combo)
+        public static SortedSet<Intersection> getIntersectionList(final OtsLine2d line1, final OtsLine2d line2, final int combo)
                 throws OtsGeometryException
         {
             SortedSet<Intersection> out = new TreeSet<>();
@@ -803,43 +804,43 @@ public final class ConflictBuilder
             // return out;
             // }
             double cumul1 = 0.0;
-            OtsPoint3d start1 = null;
-            OtsPoint3d end1 = line1.get(0);
+            Point2d start1 = null;
+            Point2d end1 = line1.get(0);
             for (int i = 0; i < line1.size() - 1; i++)
             {
                 start1 = end1;
                 end1 = line1.get(i + 1);
 
                 double cumul2 = 0.0;
-                OtsPoint3d start2 = null;
-                OtsPoint3d end2 = line2.get(0);
+                Point2d start2 = null;
+                Point2d end2 = line2.get(0);
 
                 for (int j = 0; j < line2.size() - 1; j++)
                 {
                     start2 = end2;
                     end2 = line2.get(j + 1);
 
-                    OtsPoint3d p = OtsPoint3d.intersectionOfLineSegments(start1, end1, start2, end2);
+                    Point2d p = Point2d.intersectionOfLineSegments(start1, end1, start2, end2);
                     if (p != null)
                     {
                         // Segments intersect
                         double dx = p.x - start1.x;
                         double dy = p.y - start1.y;
-                        double length1 = cumul1 + Math.sqrt(dx * dx + dy * dy);
+                        double length1 = cumul1 + Math.hypot(dx, dy);
                         dx = p.x - start2.x;
                         dy = p.y - start2.y;
-                        double length2 = cumul2 + Math.sqrt(dx * dx + dy * dy);
-                        out.add(new Intersection(length1 / line1.getLengthSI(), length2 / line2.getLengthSI(), combo));
+                        double length2 = cumul2 + Math.hypot(dx, dy);
+                        out.add(new Intersection(length1 / line1.getLength().si, length2 / line2.getLength().si, combo));
                     }
 
                     double dx = end2.x - start2.x;
                     double dy = end2.y - start2.y;
-                    cumul2 += Math.sqrt(dx * dx + dy * dy);
+                    cumul2 += Math.hypot(dx, dy);
                 }
 
                 double dx = end1.x - start1.x;
                 double dy = end1.y - start1.y;
-                cumul1 += Math.sqrt(dx * dx + dy * dy);
+                cumul1 += Math.hypot(dx, dy);
             }
 
             return out;
@@ -1046,14 +1047,8 @@ public final class ConflictBuilder
         long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
         System.out.println("PARALLEL GENERATING OF CONFLICTS (SMALL JOBS). " + totalCombinations + " COMBINATIONS");
         long lastReported = 0;
-        Map<Lane, OtsLine3d> leftEdges = new LinkedHashMap<>();
-        Map<Lane, OtsLine3d> rightEdges = new LinkedHashMap<>();
-
-        // force the envelopes to be built first
-        for (Lane lane : lanes)
-        {
-            lane.getContour().getEnvelope();
-        }
+        Map<Lane, OtsLine2d> leftEdges = new LinkedHashMap<>();
+        Map<Lane, OtsLine2d> rightEdges = new LinkedHashMap<>();
 
         // make a threadpool and execute buildConflicts for all records
         int cores = Runtime.getRuntime().availableProcessors();
@@ -1064,7 +1059,7 @@ public final class ConflictBuilder
 
         for (int i = 0; i < lanes.size(); i++)
         {
-            long combinationsDone = totalCombinations - ((long) (lanes.size() - i)) * ((long) (lanes.size() - i)) / 2;
+            long combinationsDone = totalCombinations - ((long) (lanes.size() - i)) * ((long) (lanes.size() - i - 1)) / 2;
             if (combinationsDone / 100000000 > lastReported)
             {
                 simulator.getLogger().always()
@@ -1173,14 +1168,8 @@ public final class ConflictBuilder
         long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
         System.out.println("PARALLEL GENERATING OF CONFLICTS (BIG JOBS). " + totalCombinations + " COMBINATIONS");
         long lastReported = 0;
-        Map<Lane, OtsLine3d> leftEdges = new LinkedHashMap<>();
-        Map<Lane, OtsLine3d> rightEdges = new LinkedHashMap<>();
-
-        // force the envelopes to be built first
-        for (Lane lane : lanes)
-        {
-            lane.getContour().getEnvelope();
-        }
+        Map<Lane, OtsLine2d> leftEdges = new LinkedHashMap<>();
+        Map<Lane, OtsLine2d> rightEdges = new LinkedHashMap<>();
 
         // make a threadpool and execute buildConflicts for all records
         int cores = Runtime.getRuntime().availableProcessors();
@@ -1191,7 +1180,7 @@ public final class ConflictBuilder
 
         for (int i = 0; i < lanes.size(); i++)
         {
-            long combinationsDone = totalCombinations - ((long) (lanes.size() - i)) * ((long) (lanes.size() - i)) / 2;
+            long combinationsDone = totalCombinations - ((long) (lanes.size() - i)) * ((long) (lanes.size() - i - 1)) / 2;
             if (combinationsDone / 100000000 > lastReported)
             {
                 simulator.getLogger().always()
@@ -1381,10 +1370,10 @@ public final class ConflictBuilder
         final WidthGenerator widthGenerator;
 
         /** */
-        final Map<Lane, OtsLine3d> leftEdges;
+        final Map<Lane, OtsLine2d> leftEdges;
 
         /** */
-        final Map<Lane, OtsLine3d> rightEdges;
+        final Map<Lane, OtsLine2d> rightEdges;
 
         /**
          * Stores conflicts about a single lane pair.
@@ -1397,14 +1386,14 @@ public final class ConflictBuilder
          * @param permitted boolean; conflict permitted by traffic control
          * @param simulator OtsSimulatorInterface; simulator
          * @param widthGenerator WidthGenerator; width generator
-         * @param leftEdges Map&lt;Lane, OtsLine3d&gt;; cache of left edge lines
-         * @param rightEdges Map&lt;Lane, OtsLine3d&gt;; cache of right edge lines
+         * @param leftEdges Map&lt;Lane, OtsLine2d&gt;; cache of left edge lines
+         * @param rightEdges Map&lt;Lane, OtsLine2d&gt;; cache of right edge lines
          */
         @SuppressWarnings("checkstyle:parameternumber")
         ConflictBuilderRecordSmall(final Lane lane1, final Set<Lane> down1, final Set<Lane> up1, final Lane lane2,
                 final Set<Lane> down2, final Set<Lane> up2, final boolean permitted, final OtsSimulatorInterface simulator,
-                final WidthGenerator widthGenerator, final Map<Lane, OtsLine3d> leftEdges,
-                final Map<Lane, OtsLine3d> rightEdges)
+                final WidthGenerator widthGenerator, final Map<Lane, OtsLine2d> leftEdges,
+                final Map<Lane, OtsLine2d> rightEdges)
         {
             this.lane1 = lane1;
             this.down1 = down1;
@@ -1480,7 +1469,7 @@ public final class ConflictBuilder
                     }
                     catch (NetworkException | OtsGeometryException ne)
                     {
-                        lane2.getParentLink().getSimulator().getLogger().always().error(ne,
+                        lane2.getLink().getSimulator().getLogger().always().error(ne,
                                 "Conflict build with bad combination of types / rules.");
                     }
                 }
@@ -1526,10 +1515,10 @@ public final class ConflictBuilder
         final WidthGenerator widthGenerator;
 
         /** */
-        final Map<Lane, OtsLine3d> leftEdges;
+        final Map<Lane, OtsLine2d> leftEdges;
 
         /** */
-        final Map<Lane, OtsLine3d> rightEdges;
+        final Map<Lane, OtsLine2d> rightEdges;
 
         /**
          * Stores conflicts about a single lane pair.
@@ -1542,14 +1531,14 @@ public final class ConflictBuilder
          * @param up1 Set&lt;Lane&gt;; upstream lanes 1
          * @param simulator OtsSimulatorInterface; simulator
          * @param widthGenerator WidthGenerator; width generator
-         * @param leftEdges Map&lt;Lane, OtsLine3d&gt;; cache of left edge lines
-         * @param rightEdges Map&lt;Lane, OtsLine3d&gt;; cache of right edge lines
+         * @param leftEdges Map&lt;Lane, OtsLine2d&gt;; cache of left edge lines
+         * @param rightEdges Map&lt;Lane, OtsLine2d&gt;; cache of right edge lines
          */
         @SuppressWarnings("checkstyle:parameternumber")
         ConflictBuilderRecordBig(final int starti, final List<Lane> lanes, final LaneCombinationList ignoreList,
                 final LaneCombinationList permittedList, final Lane lane1, final Set<Lane> down1, final Set<Lane> up1,
                 final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator,
-                final Map<Lane, OtsLine3d> leftEdges, final Map<Lane, OtsLine3d> rightEdges)
+                final Map<Lane, OtsLine2d> leftEdges, final Map<Lane, OtsLine2d> rightEdges)
         {
             this.starti = starti;
             this.lanes = lanes;

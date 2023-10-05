@@ -4,17 +4,17 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.EventType;
-import org.djutils.exceptions.Try;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
-import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
+import org.opentrafficsim.core.geometry.FractionalLengthData;
+import org.opentrafficsim.core.geometry.OtsLine2d;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
@@ -46,10 +46,10 @@ public class CrossSectionLink extends Link implements Serializable
     private Priority priority = Priority.NONE;
 
     /** Line over which GTUs enter or leave the link at the start node. */
-    private OtsLine3d startLine;
+    private PolyLine2d startLine;
 
     /** Line over which GTUs enter or leave the link at the end node. */
-    private OtsLine3d endLine;
+    private PolyLine2d endLine;
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the addition of a Lane to a CrossSectionLink. <br>
@@ -82,17 +82,18 @@ public class CrossSectionLink extends Link implements Serializable
      * @param startNode Node; the start node (directional).
      * @param endNode Node; the end node (directional).
      * @param linkType LinkType; the link type
-     * @param designLine OtsLine3d; the design line of the Link
+     * @param designLine OtsLine2d; the design line of the Link
+     * @param elevation FractionalLengthData; elevation given over fractional length, may be {@code null}.
      * @param laneKeepingPolicy LaneKeepingPolicy; the policy to generally keep left, keep right, or keep lane
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public CrossSectionLink(final RoadNetwork network, final String id, final Node startNode,
-            final Node endNode, final LinkType linkType, final OtsLine3d designLine,
+    public CrossSectionLink(final RoadNetwork network, final String id, final Node startNode, final Node endNode,
+            final LinkType linkType, final OtsLine2d designLine, final FractionalLengthData elevation,
             final LaneKeepingPolicy laneKeepingPolicy) throws NetworkException
     {
-        super(network, id, startNode, endNode, linkType, designLine);
+        super(network, id, startNode, endNode, linkType, designLine, elevation);
         this.laneKeepingPolicy = laneKeepingPolicy;
     }
 
@@ -181,9 +182,9 @@ public class CrossSectionLink extends Link implements Serializable
 
     /**
      * Returns the line over which GTUs enter and leave the link at the start node.
-     * @return OtsLine3d; line over which GTUs enter and leave the link at the start node
+     * @return PolyLine2d; line over which GTUs enter and leave the link at the start node
      */
-    public OtsLine3d getStartLine()
+    public PolyLine2d getStartLine()
     {
         if (this.startLine == null)
         {
@@ -203,22 +204,22 @@ public class CrossSectionLink extends Link implements Serializable
                     right = lane.getDesignLineOffsetAtBegin().si - half;
                 }
             }
-            OtsPoint3d start = getStartNode().getPoint();
+            Point2d start = getDesignLine().getFirst();
             double heading = getStartNode().getHeading().si + .5 * Math.PI;
             double cosHeading = Math.cos(heading);
             double sinHeading = Math.sin(heading);
-            OtsPoint3d leftPoint = new OtsPoint3d(start.x + cosHeading * left, start.y + sinHeading * left);
-            OtsPoint3d rightPoint = new OtsPoint3d(start.x - cosHeading * right, start.y - sinHeading * right);
-            this.startLine = Try.assign(() -> new OtsLine3d(leftPoint, rightPoint), "Invalid startline on CrossSectionLink.");
+            Point2d leftPoint = new Point2d(start.x + cosHeading * left, start.y + sinHeading * left);
+            Point2d rightPoint = new Point2d(start.x - cosHeading * right, start.y - sinHeading * right);
+            this.startLine = new PolyLine2d(leftPoint, rightPoint);
         }
         return this.startLine;
     }
 
     /**
      * Returns the line over which GTUs enter and leave the link at the end node.
-     * @return OtsLine3d; line over which GTUs enter and leave the link at the end node
+     * @return PolyLine2d; line over which GTUs enter and leave the link at the end node
      */
-    public OtsLine3d getEndLine()
+    public PolyLine2d getEndLine()
     {
         if (this.endLine == null)
         {
@@ -238,14 +239,13 @@ public class CrossSectionLink extends Link implements Serializable
                     right = lane.getDesignLineOffsetAtEnd().si - half;
                 }
             }
-            OtsPoint3d start = getEndNode().getPoint();
-            DirectedPoint p = Try.assign(() -> getEndNode().getLocation(), "Unexpected remote exception.");
-            double heading = p.getRotZ() + .5 * Math.PI;
+            Point2d start = getDesignLine().getLast();
+            double heading = getEndNode().getHeading().si + .5 * Math.PI;
             double cosHeading = Math.cos(heading);
             double sinHeading = Math.sin(heading);
-            OtsPoint3d leftPoint = new OtsPoint3d(start.x + cosHeading * left, start.y + sinHeading * left);
-            OtsPoint3d rightPoint = new OtsPoint3d(start.x + cosHeading * right, start.y + sinHeading * right);
-            this.endLine = Try.assign(() -> new OtsLine3d(leftPoint, rightPoint), "Invalid endline on CrossSectionLink.");
+            Point2d leftPoint = new Point2d(start.x + cosHeading * left, start.y + sinHeading * left);
+            Point2d rightPoint = new Point2d(start.x + cosHeading * right, start.y + sinHeading * right);
+            this.endLine = new PolyLine2d(leftPoint, rightPoint);
         }
         return this.endLine;
     }

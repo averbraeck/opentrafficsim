@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.event.EventProducer;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
@@ -21,13 +22,12 @@ import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.logger.CategoryLogger;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.djutils.multikeymap.MultiKeyMap;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.AStarShortestPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
-import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.route.Route;
@@ -46,7 +46,7 @@ import org.opentrafficsim.core.perception.PerceivableContext;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class Network extends LocalEventProducer implements PerceivableContext, Serializable, EventProducer, Identifiable
+public class Network extends LocalEventProducer implements PerceivableContext, Serializable, EventProducer
 {
     /** */
     private static final long serialVersionUID = 20150722;
@@ -69,8 +69,9 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
     /** Map of Routes. */
     private Map<GtuType, Map<String, Route>> routeMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
-    /** Graphs to calculate shortest paths per GtuType. */
-    private Map<GtuType, SimpleDirectedWeightedGraph<Node, Link>> linkGraphs = new LinkedHashMap<>();
+    /** Graphs to calculate shortest paths per GtuType and LinkWeight. */
+    private MultiKeyMap<SimpleDirectedWeightedGraph<Node, Link>> linkGraphs =
+            new MultiKeyMap<>(GtuType.class, LinkWeight.class);
 
     /** GTUs registered in this network. */
     private Map<String, Gtu> gtuMap = Collections.synchronizedMap(new LinkedHashMap<>());
@@ -894,22 +895,11 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
      */
     private SimpleDirectedWeightedGraph<Node, Link> getGraph(final GtuType gtuType, final LinkWeight linkWeight)
     {
-        // TODO: this code makes no sense, properly cache per LinkWeight and GtuType, where LinkWeight must be static
-        SimpleDirectedWeightedGraph<Node, Link> graph;
-        if (linkWeight.equals(LinkWeight.LENGTH))
+        if (linkWeight.isStatic())
         {
-            // stored default
-            if (!this.linkGraphs.containsKey(gtuType))
-            {
-                this.linkGraphs.put(gtuType, buildGraph(gtuType, LinkWeight.LENGTH_NO_CONNECTORS));
-            }
-            graph = this.linkGraphs.get(gtuType);
+            return this.linkGraphs.get(() -> buildGraph(gtuType, linkWeight), gtuType, linkWeight);
         }
-        else
-        {
-            graph = buildGraph(gtuType, linkWeight);
-        }
-        return graph;
+        return buildGraph(gtuType, linkWeight);
     }
 
     /**
@@ -935,22 +925,6 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
     public final void setRawRouteMap(final Map<GtuType, Map<String, Route>> newRouteMap)
     {
         this.routeMap = newRouteMap;
-    }
-
-    /**
-     * @return linkGraphs; only to be used in the 'network' package for cloning.
-     */
-    public final ImmutableMap<GtuType, SimpleDirectedWeightedGraph<Node, Link>> getLinkGraphs()
-    {
-        return new ImmutableHashMap<>(this.linkGraphs, Immutable.WRAP);
-    }
-
-    /**
-     * @return linkGraphs; only to be used in the 'network' package for cloning.
-     */
-    final Map<GtuType, SimpleDirectedWeightedGraph<Node, Link>> getRawLinkGraphs()
-    {
-        return this.linkGraphs;
     }
 
     /***************************************************************************************/
@@ -1031,7 +1005,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
         {
             for (Node node : this.nodeMap.values())
             {
-                Bounds b = node.getBounds();
+                Bounds2d b = node.getBounds();
                 minX = Math.min(minX, node.getLocation().getX() + b.getMinX());
                 minY = Math.min(minY, node.getLocation().getY() + b.getMinY());
                 maxX = Math.max(maxX, node.getLocation().getX() + b.getMaxX());
@@ -1040,7 +1014,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
             }
             for (Link link : this.linkMap.values())
             {
-                Bounds b = link.getBounds();
+                Bounds2d b = link.getBounds();
                 minX = Math.min(minX, link.getLocation().getX() + b.getMinX());
                 minY = Math.min(minY, link.getLocation().getY() + b.getMinY());
                 maxX = Math.max(maxX, link.getLocation().getX() + b.getMaxX());
@@ -1049,7 +1023,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
             }
             for (LocatedObject object : this.objectMap.values())
             {
-                Bounds b = new Bounds(object.getBounds());
+                Bounds2d b = object.getBounds();
                 minX = Math.min(minX, object.getLocation().getX() + b.getMinX());
                 minY = Math.min(minY, object.getLocation().getY() + b.getMinY());
                 maxX = Math.max(maxX, object.getLocation().getX() + b.getMaxX());

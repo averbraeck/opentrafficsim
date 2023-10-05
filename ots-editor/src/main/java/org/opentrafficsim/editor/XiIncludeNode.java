@@ -10,7 +10,11 @@ import org.w3c.dom.UserDataHandler;
 /**
  * Singleton at {@code XiIncludeNode.XI_INCLUDE} to use for xi:include nodes in an {@code XsdTreeNode}. Most methods return
  * {@code null} or do nothing. The attributes contain one attribute named 'File'.
- * @author wjschakel
+ * <p>
+ * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 public final class XiIncludeNode implements Node
 {
@@ -19,10 +23,10 @@ public final class XiIncludeNode implements Node
     public static final Node XI_INCLUDE = new XiIncludeNode();
 
     /** Child node that represents the 'File' attribute. */
-    private static final Node FILE_CHILD = new FileNode();
+    private static final Node FILE_CHILD = new FileNode(new Attributes("File"));
     
-    /** Attributes to contain 'File'. */
-    private static final Attributes ATTRIBUTES = new Attributes();
+    /** Child node that represents the 'Fallback' attribute. */
+    private static final Node FALLBACK_CHILD = new FileNode(new Attributes("Fallback"));
     
     /**
      * Private constructor.
@@ -80,6 +84,10 @@ public final class XiIncludeNode implements Node
                 {
                     return FILE_CHILD;
                 }
+                if (index == 1)
+                {
+                    return FALLBACK_CHILD;
+                }
                 return null;
             }
 
@@ -87,7 +95,7 @@ public final class XiIncludeNode implements Node
             @Override
             public int getLength()
             {
-                return 1;
+                return 2;
             }
         };
     }
@@ -103,7 +111,7 @@ public final class XiIncludeNode implements Node
     @Override
     public Node getLastChild()
     {
-        return FILE_CHILD;
+        return FALLBACK_CHILD;
     }
 
     /** {@inheritDoc} */
@@ -308,11 +316,27 @@ public final class XiIncludeNode implements Node
 
     /**
      * Implementation of {@code Node} to provide the 'File' attribute child node.
-     * @author wjschakel
+     * <p>
+ * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
     private static class FileNode implements Node
     {
 
+        /** Attributes. */
+        private final Attributes attributes;
+        
+        /**
+         * Constructor.
+         * @param attributes Attributes; attributes.
+         */
+        public FileNode(final Attributes attributes)
+        {
+            this.attributes = attributes;
+        }
+        
         /** {@inheritDoc} */
         @Override
         public String getNodeName()
@@ -386,7 +410,7 @@ public final class XiIncludeNode implements Node
         @Override
         public NamedNodeMap getAttributes()
         {
-            return ATTRIBUTES;
+            return this.attributes;
         }
 
         /** {@inheritDoc} */
@@ -572,11 +596,27 @@ public final class XiIncludeNode implements Node
     
     /**
      * Implementation of {@code NamedNodeMap} to provide the 'File' attribute.
-     * @author wjschakel
+     * <p>
+ * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
     private static class Attributes implements NamedNodeMap
     {
 
+        /** Attribute name in GUI. */
+        private final String name;
+        
+        /**
+         * Constructor.
+         * @param name String; attribute name in GUI.
+         */
+        public Attributes(final String name)
+        {
+            this.name = name;
+        }
+        
         /** File node. */
         private Node file = new Node()
         {
@@ -592,7 +632,7 @@ public final class XiIncludeNode implements Node
             @Override
             public String getNodeValue() throws DOMException
             {
-                return "File";
+                return Attributes.this.name;
             }
 
             /** {@inheritDoc} */

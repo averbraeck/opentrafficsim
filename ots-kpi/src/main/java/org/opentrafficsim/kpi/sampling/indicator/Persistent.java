@@ -1,7 +1,7 @@
 package org.opentrafficsim.kpi.sampling.indicator;
 
 import org.djunits.unit.Unit;
-import org.djunits.value.vdouble.scalar.base.AbstractDoubleScalarRel;
+import org.djunits.value.vdouble.scalar.base.DoubleScalarRel;
 import org.djutils.exceptions.Throw;
 
 /**
@@ -16,7 +16,7 @@ import org.djutils.exceptions.Throw;
  * @param <T> class of the value
  * @param <W> weight class
  */
-public class Persistent<U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>, W extends Number>
+public class Persistent<U extends Unit<U>, T extends DoubleScalarRel<U, T>, W extends Number>
 {
     /** Unit. */
     private final U displayUnit;

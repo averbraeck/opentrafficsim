@@ -18,6 +18,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.line.Polygon2d;
 import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
@@ -29,8 +30,7 @@ import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.HierarchicallyTyped;
 import org.opentrafficsim.core.SpatialObject;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsShape;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -43,7 +43,6 @@ import org.opentrafficsim.core.perception.collections.HistoricalArrayList;
 import org.opentrafficsim.core.perception.collections.HistoricalList;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
-import org.opentrafficsim.road.network.lane.object.detector.DestinationDetector;
 import org.opentrafficsim.road.network.lane.object.detector.Detector;
 import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
@@ -75,9 +74,6 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /** Type of lane to deduce compatibility with GTU types. */
     private final LaneType laneType;
-
-    /** the shape in absolute coordinates (getContour() returns relative coordinates). */
-    private OtsShape shape = null;
 
     /**
      * The speed limit of this lane, which can differ per GTU type. Cars might be allowed to drive 120 km/h and trucks 90 km/h.
@@ -193,86 +189,24 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             "Object", new ObjectDescriptor("GTU", "The lane-based GTU", LaneBasedObject.class)));
 
     /**
-     * Construct a new Lane.
-     * @param parentLink CrossSectionLink; the link to which the new Lane will belong (must be constructed first)
+     * Constructor specifying geometry.
+     * @param link CrossSectionLink; link.
      * @param id String; the id of this lane within the link; should be unique within the link.
-     * @param lateralOffsetAtStart Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
-     *            design line of the parent Link at the start of the parent Link
-     * @param lateralOffsetAtEnd Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
-     *            design line of the parent Link at the end of the parent Link
-     * @param beginWidth Length; start width, positioned <i>symmetrically around</i> the design line
-     * @param endWidth Length; end width, positioned <i>symmetrically around</i> the design line
-     * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
-     * @param speedLimitMap Map&lt;GtuType, Speed&gt;; speed limit on this lane, specified per GTU Type
-     * @param fixGradualLateralOffset boolean; true if gradualLateralOffset needs to be fixed
-     * @throws OtsGeometryException when creation of the center line or contour geometry fails
-     * @throws NetworkException when id equal to null or not unique
+     * @param centerLine OtsLine2d; center line.
+     * @param contour Polygon2d; contour shape.
+     * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
+     * @param laneType LaneType; lane type.
+     * @param speedLimitMap Map&lt;GtuType, Speed&gt;; the speed limit on this lane, specified per GTU Type.
+     * @throws NetworkException when no cross-section slice is defined.
      */
-    @SuppressWarnings("checkstyle:parameternumber")
-    public Lane(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtStart,
-            final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth, final LaneType laneType,
-            final Map<GtuType, Speed> speedLimitMap, final boolean fixGradualLateralOffset)
-            throws OtsGeometryException, NetworkException
+    public Lane(final CrossSectionLink link, final String id, final OtsLine2d centerLine, final Polygon2d contour,
+            final List<CrossSectionSlice> crossSectionSlices, final LaneType laneType, final Map<GtuType, Speed> speedLimitMap)
+            throws NetworkException
     {
-        super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, fixGradualLateralOffset);
+        super(link, id, centerLine, contour, crossSectionSlices);
         this.laneType = laneType;
         this.speedLimitMap.putAll(speedLimitMap);
-        this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
-    }
-
-    public Lane(final CrossSectionLink parentLink, final String id, OtsLine3d centerLine, final Length offsetStart, final Length offsetEnd,
-                final Length beginWidth, final Length endWidth,  final LaneType laneType, final Map<GtuType, Speed> speedLimitMap)
-            throws OtsGeometryException, NetworkException
-    {
-        super(parentLink, id, centerLine, offsetStart, offsetEnd, beginWidth, endWidth);
-        this.laneType = laneType;
-        this.speedLimitMap.putAll(speedLimitMap);
-        this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
-    }
-
-    /**
-     * Construct a new Lane.
-     * @param parentLink CrossSectionLink; the link to which the element will belong (must be constructed first)
-     * @param id String; the id of this lane within the link; should be unique within the link.
-     * @param lateralOffset Length; the lateral offset of the design line of the new CrossSectionLink with respect to the design
-     *            line of the parent Link
-     * @param width Length; width, positioned <i>symmetrically around</i> the design line
-     * @param laneType LaneType; type of lane to deduce compatibility with GTU types
-     * @param speedLimitMap Map&lt;GtuType, Speed&gt;; the speed limit on this lane, specified per GTU Type
-     * @throws OtsGeometryException when creation of the center line or contour geometry fails
-     * @throws NetworkException when id equal to null or not unique
-     */
-    @SuppressWarnings("checkstyle:parameternumber")
-    public Lane(final CrossSectionLink parentLink, final String id, final Length lateralOffset, final Length width,
-            final LaneType laneType, final Map<GtuType, Speed> speedLimitMap) throws OtsGeometryException, NetworkException
-    {
-        super(parentLink, id, lateralOffset, width);
-        this.laneType = laneType;
-        this.speedLimitMap.putAll(speedLimitMap);
-        this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
-    }
-
-    /**
-     * Construct a new Lane.
-     * @param parentLink CrossSectionLink; the link to which the element belongs (must be constructed first)
-     * @param id String; the id of this lane within the link; should be unique within the link.
-     * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; the offsets and widths at positions along the line, relative to
-     *            the design line of the parent link. If there is just one with and offset, there should just be one element in
-     *            the list with Length = 0. If there are more slices, the last one should be at the length of the design line.
-     *            If not, a NetworkException is thrown.
-     * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
-     * @param speedLimitMap Map&lt;GtuType, Speed&gt;; the speed limit on this lane, specified per GTU Type
-     * @throws OtsGeometryException when creation of the center line or contour geometry fails
-     * @throws NetworkException when id equal to null or not unique
-     */
-    @SuppressWarnings("checkstyle:parameternumber")
-    public Lane(final CrossSectionLink parentLink, final String id, final List<CrossSectionSlice> crossSectionSlices,
-            final LaneType laneType, final Map<GtuType, Speed> speedLimitMap) throws OtsGeometryException, NetworkException
-    {
-        super(parentLink, id, crossSectionSlices);
-        this.laneType = laneType;
-        this.speedLimitMap.putAll(speedLimitMap);
-        this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
+        this.gtuList = new HistoricalArrayList<>(getManager(link));
     }
 
     /**
@@ -303,7 +237,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         return cache.get(() ->
         {
             Set<Lane> lanes = new LinkedHashSet<>(1);
-            for (CrossSectionElement cse : this.parentLink.getCrossSectionElementList())
+            for (CrossSectionElement cse : this.link.getCrossSectionElementList())
             {
                 if (cse instanceof Lane && !cse.equals(this))
                 {
@@ -354,7 +288,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                 // look at stripes between the two lanes
                 if (legal)
                 {
-                    for (CrossSectionElement cse : this.parentLink.getCrossSectionElementList())
+                    for (CrossSectionElement cse : this.link.getCrossSectionElementList())
                     {
                         if (cse instanceof Stripe)
                         {
@@ -394,7 +328,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                 // look at stripes between the two lanes
                 if (legal)
                 {
-                    for (CrossSectionElement cse : this.parentLink.getCrossSectionElementList())
+                    for (CrossSectionElement cse : this.link.getCrossSectionElementList())
                     {
                         if (cse instanceof Stripe)
                         {
@@ -437,7 +371,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             throw new NetworkException(
                     "Illegal position for detector " + position + " valid range is 0.." + getLength().getSI());
         }
-        if (this.parentLink.getNetwork().containsObject(detector.getFullId()))
+        if (this.link.getNetwork().containsObject(detector.getFullId()))
         {
             throw new NetworkException("Network already contains an object with the name " + detector.getFullId());
         }
@@ -448,7 +382,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             this.detectors.put(position, detectorList);
         }
         detectorList.add(detector);
-        this.parentLink.getNetwork().addObject(detector);
+        this.link.getNetwork().addObject(detector);
         fireTimedEvent(Lane.DETECTOR_ADD_EVENT, new Object[] {detector.getId(), detector},
                 detector.getSimulator().getSimulatorTime());
     }
@@ -472,7 +406,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         {
             this.detectors.remove(detector.getLongitudinalPosition().si);
         }
-        this.parentLink.getNetwork().removeObject(detector);
+        this.link.getNetwork().removeObject(detector);
     }
 
     /**
@@ -582,7 +516,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @throws NetworkException when GTU not on this lane.
      * @throws SimRuntimeException when method cannot be scheduled.
      */
-    public final void scheduleDetectorrTriggers(final LaneBasedGtu gtu, final double referenceStartSI,
+    public final void scheduleDetectorTriggers(final LaneBasedGtu gtu, final double referenceStartSI,
             final double referenceMoveSI) throws NetworkException, SimRuntimeException
     {
         double minPos = referenceStartSI + gtu.getRear().getDx().si;
@@ -622,10 +556,9 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                         gtu.getSimulator().scheduleEvent(event);
                         gtu.addTrigger(this, event);
                     }
-                    else if (detector.getLongitudinalPosition().si < minPos
-                            && (detector instanceof SinkDetector || detector instanceof DestinationDetector))
+                    else if (detector.getLongitudinalPosition().si < minPos && detector instanceof SinkDetector)
                     {
-                        // TODO this is a hack for when sink detector aren't perfectly adjacent or the GTU overshoots with nose
+                        // TODO this is a hack for when sink detectors aren't perfectly adjacent or the GTU overshoots with nose
                         // due to curvature
                         SimEvent<Duration> event = new SimEvent<>(new Duration(gtu.getSimulator().getSimulatorTime()), detector,
                                 "trigger", new Object[] {gtu});
@@ -651,7 +584,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             throw new NetworkException(
                     "Illegal position for laneBasedObject " + position + " valid range is 0.." + getLength().getSI());
         }
-        if (this.parentLink.getNetwork().containsObject(laneBasedObject.getFullId()))
+        if (this.link.getNetwork().containsObject(laneBasedObject.getFullId()))
         {
             throw new NetworkException("Network already contains an object with the name " + laneBasedObject.getFullId());
         }
@@ -662,9 +595,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             this.laneBasedObjects.put(position, laneBasedObjectList);
         }
         laneBasedObjectList.add(laneBasedObject);
-        this.parentLink.getNetwork().addObject(laneBasedObject);
-        fireTimedEvent(Lane.OBJECT_ADD_EVENT, new Object[] {laneBasedObject},
-                getParentLink().getSimulator().getSimulatorTime());
+        this.link.getNetwork().addObject(laneBasedObject);
+        fireTimedEvent(Lane.OBJECT_ADD_EVENT, new Object[] {laneBasedObject}, getLink().getSimulator().getSimulatorTime());
     }
 
     /**
@@ -674,8 +606,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      */
     public final synchronized void removeLaneBasedObject(final LaneBasedObject laneBasedObject) throws NetworkException
     {
-        fireTimedEvent(Lane.OBJECT_REMOVE_EVENT, new Object[] {laneBasedObject},
-                getParentLink().getSimulator().getSimulatorTime());
+        fireTimedEvent(Lane.OBJECT_REMOVE_EVENT, new Object[] {laneBasedObject}, getLink().getSimulator().getSimulatorTime());
         List<LaneBasedObject> laneBasedObjectList =
                 this.laneBasedObjects.get(laneBasedObject.getLongitudinalPosition().getSI());
         if (null == laneBasedObjectList)
@@ -687,7 +618,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         {
             this.laneBasedObjects.remove(laneBasedObject.getLongitudinalPosition().doubleValue());
         }
-        this.parentLink.getNetwork().removeObject(laneBasedObject);
+        this.link.getNetwork().removeObject(laneBasedObject);
     }
 
     /**
@@ -760,11 +691,11 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      */
     public final Length position(final double fraction)
     {
-        if (this.length.getDisplayUnit().isBaseSIUnit())
+        if (getLength().getDisplayUnit().isBaseSIUnit())
         {
-            return new Length(this.length.si * fraction, LengthUnit.SI);
+            return new Length(getLength().si * fraction, LengthUnit.SI);
         }
-        return new Length(this.length.getInUnit() * fraction, this.length.getDisplayUnit());
+        return new Length(getLength().getInUnit() * fraction, getLength().getDisplayUnit());
     }
 
     /**
@@ -774,7 +705,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      */
     public final double positionSI(final double fraction)
     {
-        return this.length.si * fraction;
+        return getLength().si * fraction;
     }
 
     /**
@@ -784,7 +715,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      */
     public final double fraction(final Length position)
     {
-        return position.si / this.length.si;
+        return position.si / getLength().si;
     }
 
     /**
@@ -794,12 +725,12 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      */
     public final double fractionSI(final double positionSI)
     {
-        return positionSI / this.length.si;
+        return positionSI / getLength().si;
     }
 
     /** {@inheritDoc} */
     @Override
-    public OtsShape getShape()
+    public Polygon2d getShape()
     {
         return getContour();
     }
@@ -842,10 +773,10 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             this.gtuList.add(index, gtu);
         }
         // @docs/02-model-structure/djutils.md#event-producers-and-listeners
-        fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] {gtu.getId(), this.gtuList.size(), getId(), getParentLink().getId()},
+        fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] {gtu.getId(), this.gtuList.size(), getId(), getLink().getId()},
                 gtu.getSimulator().getSimulatorTime());
         // @end
-        getParentLink().addGTU(gtu);
+        getLink().addGTU(gtu);
         return index;
     }
 
@@ -876,13 +807,13 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         {
             // @docs/02-model-structure/djutils.md#event-producers-and-listeners
             fireTimedEvent(Lane.GTU_REMOVE_EVENT,
-                    new Object[] {gtu.getId(), gtu, this.gtuList.size(), position, getId(), getParentLink().getId()},
+                    new Object[] {gtu.getId(), gtu, this.gtuList.size(), position, getId(), getLink().getId()},
                     gtu.getSimulator().getSimulatorTime());
             // @end
         }
         if (removeFromParentLink)
         {
-            this.parentLink.removeGTU(gtu);
+            this.link.removeGTU(gtu);
         }
     }
 
@@ -1013,7 +944,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         else
         {
             int low = 0;
-            int mid = (int) ((listSize - 1) * position / this.length.si);
+            int mid = (int) ((listSize - 1) * position / getLength().si);
             mid = mid < 0 ? 0 : mid >= listSize ? listSize - 1 : mid;
             int high = listSize - 1;
             while (high - low > 1)
@@ -1116,19 +1047,19 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             if (gtuType == null)
             {
                 // Construct (and cache) the result.
-                for (Link link : getParentLink().getEndNode().getLinks())
+                for (Link link : getLink().getEndNode().getLinks())
                 {
-                    if (!(link.equals(this.getParentLink())) && link instanceof CrossSectionLink)
+                    if (!(link.equals(this.getLink())) && link instanceof CrossSectionLink)
                     {
                         for (CrossSectionElement cse : ((CrossSectionLink) link).getCrossSectionElementList())
                         {
                             if (cse instanceof Lane)
                             {
                                 Lane lane = (Lane) cse;
-                                Length jumpToStart = this.getCenterLine().getLast().distance(lane.getCenterLine().getFirst());
-                                Length jumpToEnd = this.getCenterLine().getLast().distance(lane.getCenterLine().getLast());
-                                if (jumpToStart.lt(MARGIN) && jumpToStart.lt(jumpToEnd)
-                                        && link.getStartNode().equals(getParentLink().getEndNode()))
+                                double jumpToStart = this.getCenterLine().getLast().distance(lane.getCenterLine().getFirst());
+                                double jumpToEnd = this.getCenterLine().getLast().distance(lane.getCenterLine().getLast());
+                                if (jumpToStart < MARGIN.si && jumpToStart < jumpToEnd
+                                        && link.getStartNode().equals(getLink().getEndNode()))
                                 {
                                     // TODO And is it aligned with its next lane?
                                     laneSet.add(lane);
@@ -1184,19 +1115,19 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             // Construct (and cache) the result.
             if (gtuType == null)
             {
-                for (Link link : getParentLink().getStartNode().getLinks())
+                for (Link link : getLink().getStartNode().getLinks())
                 {
-                    if (!(link.equals(this.getParentLink())) && link instanceof CrossSectionLink)
+                    if (!(link.equals(this.getLink())) && link instanceof CrossSectionLink)
                     {
                         for (CrossSectionElement cse : ((CrossSectionLink) link).getCrossSectionElementList())
                         {
                             if (cse instanceof Lane)
                             {
                                 Lane lane = (Lane) cse;
-                                Length jumpToStart = this.getCenterLine().getFirst().distance(lane.getCenterLine().getFirst());
-                                Length jumpToEnd = this.getCenterLine().getFirst().distance(lane.getCenterLine().getLast());
-                                if (jumpToEnd.lt(MARGIN) && jumpToEnd.lt(jumpToStart)
-                                        && link.getEndNode().equals(getParentLink().getStartNode()))
+                                double jumpToStart = this.getCenterLine().getFirst().distance(lane.getCenterLine().getFirst());
+                                double jumpToEnd = this.getCenterLine().getFirst().distance(lane.getCenterLine().getLast());
+                                if (jumpToEnd < MARGIN.si && jumpToEnd < jumpToStart
+                                        && link.getEndNode().equals(getLink().getStartNode()))
                                 {
                                     // TODO And is it aligned with its next lane?
                                     laneSet.add(lane);
@@ -1528,17 +1459,9 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public double getZ()
-    {
-        return -0.0003;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final String toString()
     {
-        CrossSectionLink link = getParentLink();
+        CrossSectionLink link = getLink();
         return String.format("Lane %s of %s", getId(), link.getId());
     }
 
@@ -1608,24 +1531,20 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * Creates a no-traffic, i.e. a {@code Lane} returning a z-value for drawing of -0.00005 with zero speed for all traffic.
      * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
      * @param id String; the id of the lane. Should be unique within the parentLink.
-     * @param lateralOffsetAtStart Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
-     *            design line of the parent Link at the start of the parent Link
-     * @param lateralOffsetAtEnd Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
-     *            design line of the parent Link at the end of the parent Link
-     * @param beginWidth Length; start width, positioned <i>symmetrically around</i> the design line
-     * @param endWidth Length; end width, positioned <i>symmetrically around</i> the design line
-     * @param fixGradualLateralOffset boolean; true if gradualLateralOffset needs to be fixed
+     * @param centerLine OtsLine2d; center line.
+     * @param contour Polygon2d; contour shape.
+     * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
      * @return Lane; lane representing a no-traffic lane.
      * @throws OtsGeometryException when creation of the geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public static Lane noTrafficLane(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtStart,
-            final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth,
-            final boolean fixGradualLateralOffset) throws OtsGeometryException, NetworkException
+    public static Lane noTrafficLane(final CrossSectionLink parentLink, final String id, final OtsLine2d centerLine,
+            final Polygon2d contour, final List<CrossSectionSlice> crossSectionSlices)
+            throws OtsGeometryException, NetworkException
     {
-        return new Lane(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth,
-                new LaneType("NO_TRAFFIC"), new LinkedHashMap<>(), fixGradualLateralOffset)
+        return new Lane(parentLink, id, centerLine, contour, crossSectionSlices, new LaneType("NO_TRAFFIC"),
+                new LinkedHashMap<>())
         {
             /** */
             private static final long serialVersionUID = 20230116L;

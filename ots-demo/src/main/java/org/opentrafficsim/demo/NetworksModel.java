@@ -20,6 +20,10 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.base.DoubleScalar;
+import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.EventType;
@@ -31,15 +35,18 @@ import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.opentrafficsim.core.geometry.ContinuousLine;
+import org.opentrafficsim.core.geometry.ContinuousStraight;
+import org.opentrafficsim.core.geometry.FractionalLengthData;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
@@ -59,7 +66,9 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerF
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.CrossSectionSlice;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
@@ -196,20 +205,20 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
             this.strategicalPlannerFactoryTrucks = new LaneBasedStrategicalRoutePlannerFactory(
                     new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()), params);
 
-            OtsPoint3d pFrom2a = new OtsPoint3d(0, -50, 0);
-            OtsPoint3d pFrom2b = new OtsPoint3d(490, -0.5, 0);
-            Direction onrampDirection = pFrom2a.horizontalDirection(pFrom2b);
-            Node from = new Node(this.network, "From", new OtsPoint3d(0, 0, 0), Direction.ZERO);
-            Node end = new Node(this.network, "End", new OtsPoint3d(2000, 0, 0), Direction.ZERO);
+            Point2d pFrom2a = new Point2d(0, -50);
+            Point2d pFrom2b = new Point2d(490, -0.5);
+            Direction onrampDirection = Direction.instantiateSI(pFrom2a.directionTo(pFrom2b));
+            Node from = new Node(this.network, "From", new Point2d(0, 0), Direction.ZERO);
+            Node end = new Node(this.network, "End", new Point2d(2000, 0), Direction.ZERO);
             Node from2a = new Node(this.network, "From2a", pFrom2a, onrampDirection);
             Node from2b = new Node(this.network, "From2b", pFrom2b, onrampDirection);
-            Node firstVia = new Node(this.network, "Via1", new OtsPoint3d(500, 0, 0), Direction.ZERO);
-            OtsPoint3d pEnd2a = new OtsPoint3d(1020, -0.5, 0);
-            OtsPoint3d pEnd2b = new OtsPoint3d(2000, -50, 0);
-            Direction offrampDirection = pEnd2a.horizontalDirection(pEnd2b);
+            Node firstVia = new Node(this.network, "Via1", new Point2d(500, 0), Direction.ZERO);
+            Point2d pEnd2a = new Point2d(1020, -0.5);
+            Point2d pEnd2b = new Point2d(2000, -50);
+            Direction offrampDirection = Direction.instantiateSI(pEnd2a.directionTo(pEnd2b));
             Node end2a = new Node(this.network, "End2a", pEnd2a, offrampDirection);
             Node end2b = new Node(this.network, "End2b", pEnd2b, offrampDirection);
-            Node secondVia = new Node(this.network, "Via2", new OtsPoint3d(1000, 0, 0), Direction.ZERO);
+            Node secondVia = new Node(this.network, "Via2", new Point2d(1000, 0), Direction.ZERO);
 
             String networkType = getInputParameter("generic.network").toString();
             boolean merge = networkType.startsWith("M");
@@ -455,7 +464,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
                 return maximumSpeedDistribution.draw();
             }
         }, strategicalPlannerFactory,
-                lane.getParentLink().getStartNode().getId().equals("From") ? this.routeGeneratorMain : this.routeGeneratorRamp);
+                lane.getLink().getStartNode().getId().equals("From") ? this.routeGeneratorMain : this.routeGeneratorRamp);
 
     }
 
@@ -469,21 +478,32 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
      */
     private Lane[] setupSink(final Lane[] lanes, final LaneType laneType) throws NetworkException, OtsGeometryException
     {
-        CrossSectionLink link = lanes[0].getParentLink();
+        CrossSectionLink link = lanes[0].getLink();
         Node to = (Node) link.getEndNode();
         Node from = (Node) link.getStartNode();
         double endLinkLength = 50; // [m]
         double endX = to.getPoint().x + (endLinkLength / link.getLength().getSI()) * (to.getPoint().x - from.getPoint().x);
         double endY = to.getPoint().y + (endLinkLength / link.getLength().getSI()) * (to.getPoint().y - from.getPoint().y);
-        Node end = new Node(this.network, link.getId() + "END", new OtsPoint3d(endX, endY, to.getPoint().z),
+        Node end = new Node(this.network, link.getId() + "END", new Point2d(endX, endY),
                 Direction.instantiateSI(Math.atan2(to.getPoint().y - from.getPoint().y, to.getPoint().x - from.getPoint().x)));
+        double dir = Math.atan2(to.getPoint().y - from.getPoint().y, to.getPoint().x - from.getPoint().x);
+        OrientedPoint2d startPoint = new OrientedPoint2d(to.getPoint().x, to.getPoint().y, dir);
+        ContinuousLine designLine = new ContinuousStraight(startPoint, endLinkLength);
         CrossSectionLink endLink = LaneFactory.makeLink(this.network, link.getId() + "endLink", to, end, null, this.simulator);
         for (Lane lane : lanes)
         {
+            double offset = lane.getLateralCenterPosition(1.0).si;
+            double width = lane.getWidth(1.0).si;
+            PolyLine2d centerLine = designLine.flattenOffset(FractionalLengthData.of(0.0, offset), null);
+            PolyLine2d leftEdge = designLine.flattenOffset(FractionalLengthData.of(0.0, offset + .5 * width), null);
+            PolyLine2d rightEdge = designLine.flattenOffset(FractionalLengthData.of(0.0, offset - .5 * width), null);
+            Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
+            List<CrossSectionSlice> crossSections =
+                    LaneGeometryUtil.getSlices(designLine, Length.instantiateSI(offset), Length.instantiateSI(width));
+
             // Overtaking left and right allowed on the sinkLane
-            Lane sinkLane = new Lane(endLink, lane.getId() + "." + "sinkLane", lane.getLateralCenterPosition(1.0),
-                    lane.getLateralCenterPosition(1.0), lane.getWidth(1.0), lane.getWidth(1.0), laneType,
-                    Map.of(DefaultsNl.VEHICLE, this.speedLimit), false);
+            Lane sinkLane = new Lane(endLink, lane.getId() + "." + "sinkLane", new OtsLine2d(centerLine), contour,
+                    crossSections, laneType, Map.of(DefaultsNl.VEHICLE, this.speedLimit));
             new SinkDetector(sinkLane, new Length(10.0, METER), this.simulator, DefaultsRoadNl.ROAD_USERS);
         }
         return lanes;

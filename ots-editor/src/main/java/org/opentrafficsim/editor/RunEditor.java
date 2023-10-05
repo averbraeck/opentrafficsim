@@ -3,14 +3,20 @@ package org.opentrafficsim.editor;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import javax.naming.NamingException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.opentrafficsim.base.Resource;
+import org.opentrafficsim.editor.decoration.DefaultDecorator;
 import org.xml.sax.SAXException;
 
 /**
  * Runs the editor with default decoration and built-in XML schema.
- * @author wjschakel
+ * <p>
+ * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 public final class RunEditor
 {
@@ -31,9 +37,10 @@ public final class RunEditor
      * @throws ParserConfigurationException exception
      * @throws InterruptedException exception
      * @throws URISyntaxException exception
+     * @throws NamingException exception
      */
-    public static void main(final String[] args)
-            throws IOException, SAXException, ParserConfigurationException, InterruptedException, URISyntaxException
+    public static void main(final String[] args) throws IOException, SAXException, ParserConfigurationException,
+            InterruptedException, URISyntaxException, NamingException
     {
         OtsEditor editor = new OtsEditor();
         DefaultDecorator.decorate(editor);

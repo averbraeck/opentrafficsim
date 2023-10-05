@@ -14,7 +14,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
@@ -130,25 +130,9 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         Lane lastLane = lane;
         laneListForward.add(lastLane);
         Length distanceToEndOfLane;
-        OtsLine3d path;
-        try
-        {
-            distanceToEndOfLane = lane.getLength().minus(position);
-            path = lane.getCenterLine().extract(position, lane.getLength());
-        }
-        catch (OtsGeometryException exception)
-        {
-            // System.err.println(gtu + ": " + exception.getMessage());
-            // System.err.println(lane + ", len=" + lane.getLength());
-            // System.err.println(position);
-            // throw new GTUException(exception);
-
-            // section on current lane too short, floating point operations cause only a single point at the end of the lane
-            path = null;
-            distanceToEndOfLane = Length.ZERO;
-            laneListForward.clear();
-            startPosition = Length.ZERO;
-        }
+        OtsLine2d path;
+        distanceToEndOfLane = lane.getLength().minus(position);
+        path = lane.getCenterLine().extract(position, lane.getLength());
 
         while (distanceToEndOfLane.lt(maxHeadway))
         {
@@ -162,9 +146,9 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             {
                 // Ask the strategical planner what the next link should be (if known), because the strategical planner knows
                 // best!
-                Link link = gtu.getStrategicalPlanner().nextLink(lane.getParentLink(), gtu.getType());
+                Link link = gtu.getStrategicalPlanner().nextLink(lane.getLink(), gtu.getType());
                 lane = lanes.iterator().next();
-                if (link != null && !lane.getParentLink().equals(link))
+                if (link != null && !lane.getLink().equals(link))
                 {
                     // Lane not on route anymore. return with the list as is.
                     return new LanePathInfo(path, laneListForward, startPosition);
@@ -177,7 +161,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                 Link link;
                 try
                 {
-                    link = gtu.getStrategicalPlanner().nextLink(lane.getParentLink(), gtu.getType());
+                    link = gtu.getStrategicalPlanner().nextLink(lane.getLink(), gtu.getType());
                 }
                 catch (NetworkException ne)
                 {
@@ -188,7 +172,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                 Lane newLane = null;
                 for (Lane nextLane : lanes)
                 {
-                    if (nextLane.getParentLink().equals(nextLink))
+                    if (nextLane.getLink().equals(nextLink))
                     {
                         newLane = nextLane;
                         break;
@@ -208,7 +192,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             try
             {
                 path = concatenateNull(path, lane.getCenterLine());
-                // path = OtsLine3d.concatenate(Lane.MARGIN.si, path, lane.getCenterLine());
+                // path = OtsLine2d.concatenate(Lane.MARGIN.si, path, lane.getCenterLine());
             }
             catch (OtsGeometryException exception)
             {
@@ -224,18 +208,18 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
 
     /**
      * Concatenate two paths, where the first may be {@code null}.
-     * @param path OtsLine3d; path, may be {@code null}
-     * @param centerLine OtsLine3d; center line of lane to add
+     * @param path OtsLine2d; path, may be {@code null}
+     * @param centerLine OtsLine2d; center line of lane to add
      * @return concatenated line
      * @throws OtsGeometryException when lines are degenerate or too distant
      */
-    public static OtsLine3d concatenateNull(final OtsLine3d path, final OtsLine3d centerLine) throws OtsGeometryException
+    public static OtsLine2d concatenateNull(final OtsLine2d path, final OtsLine2d centerLine) throws OtsGeometryException
     {
         if (path == null)
         {
             return centerLine;
         }
-        return OtsLine3d.concatenate(Lane.MARGIN.si, path, centerLine);
+        return OtsLine2d.concatenate(Lane.MARGIN.si, path, centerLine);
     }
 
     /**
@@ -256,10 +240,10 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         LanePosition dlp = gtu.getReferencePosition();
         Lane referenceLane = dlp.getLane();
         double refFrac = dlp.getPosition().si / referenceLane.getLength().si;
-        Link lastLink = referenceLane.getParentLink();
+        Link lastLink = referenceLane.getLink();
         Length position = dlp.getPosition();
         Length lengthForward = referenceLane.getLength().minus(position);
-        Node lastNode = referenceLane.getParentLink().getEndNode();
+        Node lastNode = referenceLane.getLink().getEndNode();
 
         // see if we have a split within maxHeadway distance
         while (lengthForward.lt(maxHeadway) && nextSplitNode == null)
@@ -299,7 +283,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                 nextSplitNode = lastNode;
                 // which lane(s) we are registered on and adjacent lanes link to a lane
                 // that does not drop?
-                for (CrossSectionElement cse : referenceLane.getParentLink().getCrossSectionElementList())
+                for (CrossSectionElement cse : referenceLane.getLink().getCrossSectionElementList())
                 {
                     if (cse instanceof Lane)
                     {
@@ -320,7 +304,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                 Link nextLink = gtu.getStrategicalPlanner().nextLink(lastLink, gtu.getType());
                 // which lane(s) we are registered on and adjacent lanes link to a lane
                 // that is on the route at the next split?
-                for (CrossSectionElement cse : referenceLane.getParentLink().getCrossSectionElementList())
+                for (CrossSectionElement cse : referenceLane.getLink().getCrossSectionElementList())
                 {
                     if (cse instanceof Lane)
                     {
@@ -408,7 +392,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         List<Lane> lanes = buildLanePathInfo(gtu, maxHeadway, startLane, startLanePosition).getLaneList();
         for (Lane lane : lanes)
         {
-            if (lane.getParentLink().equals(linkAfterSplit))
+            if (lane.getLink().equals(linkAfterSplit))
             {
                 return true;
             }
@@ -452,11 +436,11 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         List<Link> linkList = new ArrayList<>();
         LanePosition dlp = gtu.getReferencePosition();
         Lane referenceLane = dlp.getLane();
-        Link lastLink = referenceLane.getParentLink();
+        Link lastLink = referenceLane.getLink();
         linkList.add(lastLink);
         Length position = dlp.getPosition();
         Length lengthForward = referenceLane.getLength().minus(position);
-        Node lastNode = referenceLane.getParentLink().getEndNode();
+        Node lastNode = referenceLane.getLink().getEndNode();
 
         // see if we have a split within maxHeadway distance
         while (lengthForward.lt(maxHeadway))

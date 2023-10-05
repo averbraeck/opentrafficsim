@@ -893,7 +893,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
         for (Lane l : getGtu().positions(getGtu().getReference()).keySet())
         {
             // only take lanes that we can compare based on a shared design line
-            if (l.getParentLink().equals(lane.getParentLink()))
+            if (l.getLink().equals(lane.getLink()))
             {
                 // compare based on fractional positions.
                 double posFractionRef = getGtu().fractionalPosition(l, getGtu().getReference(), when);
@@ -1066,7 +1066,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
             Lane adjLane = null;
             for (Lane lane : accessibleLanes)
             {
-                if (lane.getParentLink().equals(li.getParentLink()))
+                if (lane.getLink().equals(li.getLink()))
                 {
                     adjLane = lane;
                 }

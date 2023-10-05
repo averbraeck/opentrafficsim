@@ -17,17 +17,18 @@ import javax.swing.JRadioButton;
 import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.animation.GraphLaneUtil;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.draw.core.OtsDrawingException;
+import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.draw.graphs.GraphPath;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
-import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.sampling.LaneDataRoad;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
+import org.opentrafficsim.swing.graphs.OtsPlotScheduler;
 import org.opentrafficsim.swing.graphs.SwingPlot;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
@@ -40,7 +41,7 @@ import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.AbstractInputField;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.InputField;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialog;
-import nl.tudelft.simulation.language.DSOLException;
+import nl.tudelft.simulation.language.DsolException;
 
 /**
  * Simplest contour plots demonstration.
@@ -113,7 +114,7 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
                 }
             }
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DSOLException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DsolException exception)
         {
             exception.printStackTrace();
         }
@@ -146,7 +147,7 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
             }
             GraphPath.initRecording(sampler, path);
             SwingPlot plot = new SwingPlot(new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1), updateInterval,
-                    simulator, sampler.getSamplerData(), path));
+                    new OtsPlotScheduler(simulator), sampler.getSamplerData(), path));
             charts.setCell(plot.getContentPane(), graphIndex % columns, graphIndex / columns);
         }
 

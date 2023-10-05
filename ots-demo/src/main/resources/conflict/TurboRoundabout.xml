@@ -63,14 +63,14 @@
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>-3.5m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Lane Id="RIGHT" DesignDirection="true" LaneType="URBAN">
+        <ots:Lane Id="RIGHT" LaneType="URBAN">
           <ots:CenterOffset>-1.75m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
         <ots:Stripe Type="DASHED">
           <ots:CenterOffset>0.0m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Lane Id="LEFT" DesignDirection="true" LaneType="URBAN">
+        <ots:Lane Id="LEFT" LaneType="URBAN">
           <ots:CenterOffset>1.75m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
@@ -91,14 +91,14 @@
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>-3.5m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Lane Id="RIGHT" DesignDirection="true" LaneType="URBAN">
+        <ots:Lane Id="RIGHT" LaneType="URBAN">
           <ots:CenterOffset>-1.75m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
         <ots:Stripe Type="DASHED">
           <ots:CenterOffset>0.0m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Lane Id="LEFT" DesignDirection="true" LaneType="URBAN">
+        <ots:Lane Id="LEFT" LaneType="URBAN">
           <ots:CenterOffset>1.75m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
@@ -119,14 +119,14 @@
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>-3.5m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Lane Id="RIGHT" DesignDirection="true" LaneType="URBAN">
+        <ots:Lane Id="RIGHT" LaneType="URBAN">
           <ots:CenterOffset>-1.75m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>0m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Lane Id="LEFT" DesignDirection="true" LaneType="URBAN">
+        <ots:Lane Id="LEFT" LaneType="URBAN">
           <ots:CenterOffset>1.75m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
@@ -147,7 +147,7 @@
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>-3.5m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Lane Id="LANE" DesignDirection="true" LaneType="URBAN">
+        <ots:Lane Id="LANE" LaneType="URBAN">
           <ots:CenterOffset>-1.75m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
@@ -168,7 +168,7 @@
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>0m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Lane Id="LANE" DesignDirection="true" LaneType="URBAN">
+        <ots:Lane Id="LANE" LaneType="URBAN">
           <ots:CenterOffset>1.75m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
@@ -246,12 +246,12 @@
     </ots:Link>
 
     <!-- Roundabout itself, generated code -->
-    <ots:Node Id="EENTER" Coordinate="(44.0000,5.2500)" Direction="180.0000 deg(E)" />
-    <ots:Node Id="EEXIT" Coordinate="(44.0000,-1.7500)" Direction="360.0000 deg(E)" />
+    <ots:Node Id="EENTER" Coordinate="(29.0000,5.2500)" Direction="180.0000 deg(E)" />
+    <ots:Node Id="EEXIT" Coordinate="(29.0000,-1.7500)" Direction="360.0000 deg(E)" />
     <ots:Node Id="EA" Coordinate="(15.9460,12.0808)" Direction="122.9377 deg(E)" />
     <ots:Node Id="EB" Coordinate="(10.3308,17.6960)" Direction="147.0623 deg(E)" />
     <ots:Link Id="EENTEREA" NodeStart="EENTER" NodeEnd="EA" Type="URBAN">
-      <ots:Bezier Shape="1.1" Weighted="true" />
+      <ots:Bezier Shape="0.8" Weighted="true" />
       <ots:DefinedLayout>2LANE</ots:DefinedLayout>
     </ots:Link>
     <ots:Link Id="EAEB" NodeStart="EA" NodeEnd="EB" Type="URBAN">
@@ -266,12 +266,12 @@
       <ots:Bezier Shape="1.1" Weighted="true" />
       <ots:DefinedLayout>2LANE</ots:DefinedLayout>
     </ots:Link>
-    <ots:Node Id="NENTER" Coordinate="(-5.2500,44.0000)" Direction="270.0000 deg(E)" />
-    <ots:Node Id="NEXIT" Coordinate="(5.2500,44.0000)" Direction="90.0000 deg(E)" />
+    <ots:Node Id="NENTER" Coordinate="(-5.2500,29.0000)" Direction="270.0000 deg(E)" />
+    <ots:Node Id="NEXIT" Coordinate="(5.2500,29.0000)" Direction="90.0000 deg(E)" />
     <ots:Node Id="NA" Coordinate="(-10.3308,14.1960)" Direction="212.9377 deg(E)" />
     <ots:Node Id="NB" Coordinate="(-15.9460,8.5808)" Direction="237.0623 deg(E)" />
     <ots:Link Id="NENTERNA" NodeStart="NENTER" NodeEnd="NA" Type="URBAN">
-      <ots:Bezier Shape="1.1" Weighted="true" />
+      <ots:Bezier Shape="0.8" Weighted="true" />
       <ots:DefinedLayout>2LANE</ots:DefinedLayout>
     </ots:Link>
     <ots:Link Id="NANB" NodeStart="NA" NodeEnd="NB" Type="URBAN">
@@ -286,12 +286,12 @@
       <ots:Bezier Shape="1.1" Weighted="true" />
       <ots:DefinedLayout>1LEFT</ots:DefinedLayout>
     </ots:Link>
-    <ots:Node Id="WENTER" Coordinate="(-44.0000,-5.2500)" Direction="0 deg(E)" />
-    <ots:Node Id="WEXIT" Coordinate="(-44.0000,1.7500)" Direction="180.0000 deg(E)" />
+    <ots:Node Id="WENTER" Coordinate="(-29.0000,-5.2500)" Direction="0 deg(E)" />
+    <ots:Node Id="WEXIT" Coordinate="(-29.0000,1.7500)" Direction="180.0000 deg(E)" />
     <ots:Node Id="WA" Coordinate="(-15.9460,-12.0808)" Direction="302.9377 deg(E)" />
     <ots:Node Id="WB" Coordinate="(-10.3308,-17.6960)" Direction="327.0623 deg(E)" />
     <ots:Link Id="WENTERWA" NodeStart="WENTER" NodeEnd="WA" Type="URBAN">
-      <ots:Bezier Shape="1.1" Weighted="true" />
+      <ots:Bezier Shape="0.8" Weighted="true" />
       <ots:DefinedLayout>2LANE</ots:DefinedLayout>
     </ots:Link>
     <ots:Link Id="WAWB" NodeStart="WA" NodeEnd="WB" Type="URBAN">
@@ -306,12 +306,12 @@
       <ots:Bezier Shape="1.1" Weighted="true" />
       <ots:DefinedLayout>2LANE</ots:DefinedLayout>
     </ots:Link>
-    <ots:Node Id="SENTER" Coordinate="(5.2500,-44.0000)" Direction="90.0000 deg(E)" />
-    <ots:Node Id="SEXIT" Coordinate="(-5.2500,-44.0000)" Direction="270.0000 deg(E)" />
+    <ots:Node Id="SENTER" Coordinate="(5.2500,-29.0000)" Direction="90.0000 deg(E)" />
+    <ots:Node Id="SEXIT" Coordinate="(-5.2500,-29.0000)" Direction="270.0000 deg(E)" />
     <ots:Node Id="SA" Coordinate="(10.3308,-14.1960)" Direction="392.9377 deg(E)" />
     <ots:Node Id="SB" Coordinate="(15.9460,-8.5808)" Direction="417.0623 deg(E)" />
     <ots:Link Id="SENTERSA" NodeStart="SENTER" NodeEnd="SA" Type="URBAN">
-      <ots:Bezier Shape="1.1" Weighted="true" />
+      <ots:Bezier Shape="0.9" Weighted="true" />
       <ots:DefinedLayout>2LANE</ots:DefinedLayout>
     </ots:Link>
     <ots:Link Id="SASB" NodeStart="SA" NodeEnd="SB" Type="URBAN">
@@ -326,73 +326,65 @@
       <ots:Bezier Shape="1.1" Weighted="true" />
       <ots:DefinedLayout>1LEFT</ots:DefinedLayout>
     </ots:Link>
-
+    
+    <ots:Conflicts>
+      <ots:DefaultWidth />
+    </ots:Conflicts>
+    
   </ots:Network>
 
   <ots:Demand>
 
     <ots:ShortestRoute Id="EN2" GtuType="NL.CAR">
-      <ots:From Node="E" />
-      <ots:To Node="N2" />
-      <ots:DistanceCost>1/m</ots:DistanceCost>
+      <ots:From>E</ots:From>
+      <ots:To>N2</ots:To>
     </ots:ShortestRoute>
     <ots:ShortestRoute Id="EW2" GtuType="NL.CAR">
-      <ots:From Node="E" />
-      <ots:To Node="W2" />
-      <ots:DistanceCost>1/m</ots:DistanceCost>
+      <ots:From>E</ots:From>
+      <ots:To>W2</ots:To>
     </ots:ShortestRoute>
     <ots:ShortestRoute Id="ES2" GtuType="NL.CAR">
-      <ots:From Node="E" />
-      <ots:To Node="S2" />
-      <ots:DistanceCost>1/m</ots:DistanceCost>
+      <ots:From>E</ots:From>
+      <ots:To>S2</ots:To>
     </ots:ShortestRoute>
 
     <ots:ShortestRoute Id="NW2" GtuType="NL.CAR">
-      <ots:From Node="N" />
-      <ots:To Node="W2" />
-      <ots:DistanceCost>1/m</ots:DistanceCost>
+      <ots:From>N</ots:From>
+      <ots:To>W2</ots:To>
     </ots:ShortestRoute>
     <ots:ShortestRoute Id="NS2" GtuType="NL.CAR">
-      <ots:From Node="N" />
-      <ots:To Node="S2" />
-      <ots:DistanceCost>1/m</ots:DistanceCost>
+      <ots:From>N</ots:From>
+      <ots:To>S2</ots:To>
     </ots:ShortestRoute>
     <ots:ShortestRoute Id="NE2" GtuType="NL.CAR">
-      <ots:From Node="N" />
-      <ots:To Node="E2" />
-      <ots:DistanceCost>1/m</ots:DistanceCost>
+      <ots:From>N</ots:From>
+      <ots:To>E2</ots:To>
     </ots:ShortestRoute>
 
     <ots:ShortestRoute Id="WS2" GtuType="NL.CAR">
-      <ots:From Node="W" />
-      <ots:To Node="S2" />
-      <ots:DistanceCost>1/m</ots:DistanceCost>
+      <ots:From>W</ots:From>
+      <ots:To>S2</ots:To>
     </ots:ShortestRoute>
     <ots:ShortestRoute Id="WE2" GtuType="NL.CAR">
-      <ots:From Node="W" />
-      <ots:To Node="E2" />
-      <ots:DistanceCost>1/m</ots:DistanceCost>
+      <ots:From>W</ots:From>
+      <ots:To>E2</ots:To>
     </ots:ShortestRoute>
     <ots:ShortestRoute Id="WN2" GtuType="NL.CAR">
-      <ots:From Node="W" />
-      <ots:To Node="N2" />
-      <ots:DistanceCost>1/m</ots:DistanceCost>
+      <ots:From>W</ots:From>
+      <ots:To>N2</ots:To>
     </ots:ShortestRoute>
 
     <ots:ShortestRoute Id="SE2" GtuType="NL.CAR">
-      <ots:From Node="S" />
-      <ots:To Node="E2" />
-      <ots:DistanceCost>1/m</ots:DistanceCost>
+      <ots:From>S</ots:From>
+      <ots:To>E2</ots:To>
     </ots:ShortestRoute>
     <ots:ShortestRoute Id="SN2" GtuType="NL.CAR">
-      <ots:From Node="S" />
-      <ots:To Node="N2" />
-      <ots:DistanceCost>1/m</ots:DistanceCost>
+      <ots:From>S</ots:From>
+      <ots:To>N2</ots:To>
     </ots:ShortestRoute>
     <ots:ShortestRoute Id="SW2" GtuType="NL.CAR">
-      <ots:From Node="S" />
-      <ots:To Node="W2" />
-      <ots:DistanceCost>1/m</ots:DistanceCost>
+      <ots:From>S</ots:From>
+      <ots:To>W2</ots:To>
     </ots:ShortestRoute>
 
     <ots:ShortestRouteMix Id="E" GtuType="NL.CAR">
@@ -423,42 +415,42 @@
       <ots:GtuTemplate>CAR</ots:GtuTemplate>
       <ots:ShortestRouteMix>E</ots:ShortestRouteMix>
       <ots:Frequency>25/min</ots:Frequency>
-      <ots:RoomChecker>CF</ots:RoomChecker>
+      <ots:RoomChecker><ots:Cf/></ots:RoomChecker>
     </ots:Generator>
 
     <ots:Generator Link="NNENTER" Lane="LEFT" Position="10m">
       <ots:GtuTemplate>CAR</ots:GtuTemplate>
       <ots:ShortestRouteMix>N</ots:ShortestRouteMix>
       <ots:Frequency>12.5/min</ots:Frequency>
-      <ots:RoomChecker>CF</ots:RoomChecker>
+      <ots:RoomChecker><ots:Cf/></ots:RoomChecker>
     </ots:Generator>
 
     <ots:Generator Link="NNENTER" Lane="RIGHT" Position="10m">
       <ots:GtuTemplate>CAR</ots:GtuTemplate>
       <ots:ShortestRouteMix>N</ots:ShortestRouteMix>
       <ots:Frequency>12.5/min</ots:Frequency>
-      <ots:RoomChecker>CF</ots:RoomChecker>
+      <ots:RoomChecker><ots:Cf/></ots:RoomChecker>
     </ots:Generator>
 
     <ots:Generator Link="WWP" Lane="LANE" Position="10m">
       <ots:GtuTemplate>CAR</ots:GtuTemplate>
       <ots:ShortestRouteMix>W</ots:ShortestRouteMix>
       <ots:Frequency>25/min</ots:Frequency>
-      <ots:RoomChecker>CF</ots:RoomChecker>
+      <ots:RoomChecker><ots:Cf/></ots:RoomChecker>
     </ots:Generator>
 
     <ots:Generator Link="SSENTER" Lane="LEFT" Position="10m">
       <ots:GtuTemplate>CAR</ots:GtuTemplate>
       <ots:ShortestRouteMix>S</ots:ShortestRouteMix>
       <ots:Frequency>12.5/min</ots:Frequency>
-      <ots:RoomChecker>CF</ots:RoomChecker>
+      <ots:RoomChecker><ots:Cf/></ots:RoomChecker>
     </ots:Generator>
 
     <ots:Generator Link="SSENTER" Lane="RIGHT" Position="10m">
       <ots:GtuTemplate>CAR</ots:GtuTemplate>
       <ots:ShortestRouteMix>S</ots:ShortestRouteMix>
       <ots:Frequency>12.5/min</ots:Frequency>
-      <ots:RoomChecker>CF</ots:RoomChecker>
+      <ots:RoomChecker><ots:Cf/></ots:RoomChecker>
     </ots:Generator>
 
     <ots:Sink Type="NL.ROAD_USERS" Link="EEXITE2" Lane="LANE" Position="END-20m" />

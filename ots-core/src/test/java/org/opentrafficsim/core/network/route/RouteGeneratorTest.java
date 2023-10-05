@@ -3,12 +3,11 @@ package org.opentrafficsim.core.network.route;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
+import org.djutils.draw.point.Point2d;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.Node;
 
 /**
@@ -33,9 +32,9 @@ public class RouteGeneratorTest
         TODO THE ROUTE CLASSES HAVE CHANGED SO THE TESTS HAVE TO BE ADAPTED
          
         List<Node> nodes = new ArrayList<Node>();
-        nodes.add(new Node("n1", new OtsPoint3d(0, 0, 0)));
-        nodes.add(new Node("n2", new OtsPoint3d(1000, 0, 0)));
-        nodes.add(new Node("n3", new OtsPoint3d(1000, 1000, 0)));
+        nodes.add(new Node("n1", new Point2d(0, 0, 0)));
+        nodes.add(new Node("n2", new Point2d(1000, 0, 0)));
+        nodes.add(new Node("n3", new Point2d(1000, 1000, 0)));
         FixedRouteGenerator frg = new FixedRouteGenerator(nodes);
         assertNotNull("The new FixedRouteGenerator should not be null", frg);
         Route r1 = frg.generateRoute();
@@ -146,10 +145,10 @@ public class RouteGeneratorTest
     private FixedRouteGenerator createRouteGenerator(final Network network, final String endNodeName) throws NetworkException
     {
         List<Node> nodes = new ArrayList<Node>();
-        nodes.add(new Node(network, "n1", new OtsPoint3d(0, 0, 0)));
-        nodes.add(new Node(network, "n2", new OtsPoint3d(1000, 0, 0)));
-        nodes.add(new Node(network, "n3", new OtsPoint3d(1000, 1000, 0)));
-        nodes.add(new Node(network, endNodeName, new OtsPoint3d(2000, 1000, 0)));
+        nodes.add(new Node(network, "n1", new Point2d(0, 0)));
+        nodes.add(new Node(network, "n2", new Point2d(1000, 0)));
+        nodes.add(new Node(network, "n3", new Point2d(1000, 1000)));
+        nodes.add(new Node(network, endNodeName, new Point2d(2000, 1000)));
         return new FixedRouteGenerator(new Route("fixed route", DefaultsNl.VEHICLE, nodes));
     }
 }

@@ -17,14 +17,14 @@ import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.reflection.ClassUtil;
-import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
+import org.opentrafficsim.animation.DefaultAnimationFactory;
+import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
-import org.opentrafficsim.draw.core.OtsDrawingException;
-import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
+import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
@@ -187,7 +187,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
         Throw.when(this.warmupTime.si < 0.0, IllegalArgumentException.class, "Warm-up time should be positive");
         Throw.when(this.simulationTime.si < 0.0, IllegalArgumentException.class, "Simulation time should be positive");
         Throw.when(this.simulationTime.si < this.warmupTime.si, IllegalArgumentException.class,
-                "Simulation time should be longer than warmp-up time");
+                "Simulation time should be longer than warm-up time");
     }
 
     /**

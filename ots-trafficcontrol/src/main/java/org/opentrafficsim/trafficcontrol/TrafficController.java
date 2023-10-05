@@ -5,7 +5,6 @@ import org.djutils.event.EventProducer;
 import org.djutils.event.EventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
-import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.object.NonLocatedObject;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 
@@ -19,7 +18,7 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColo
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public interface TrafficController extends EventProducer, EventListener, NonLocatedObject, Identifiable
+public interface TrafficController extends EventProducer, EventListener, NonLocatedObject
 {
     /**
      * Retrieve the Id of the traffic light controller.
@@ -127,8 +126,8 @@ public interface TrafficController extends EventProducer, EventListener, NonLoca
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the update of a traced control program variable. <br>
-     * Payload: Object[] {String trafficControllerId, String variableId, Short trafficStream, Double oldValue, Double
-     * newValue, String expressionOrDescription} <br>
+     * Payload: Object[] {String trafficControllerId, String variableId, Short trafficStream, Double oldValue, Double newValue,
+     * String expressionOrDescription} <br>
      * Remark 1: for variable that are not associated with a particular traffic stream, the trafficStream value shall be
      * <code>NO_STREAM</code> <br>
      * Remark 2: if the variable is a timer that has just been initialized; newValue will reflect the duration in seconds

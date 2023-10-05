@@ -15,11 +15,11 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.opentrafficsim.base.Identifiable;
+import org.djutils.base.Identifiable;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.Node;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 

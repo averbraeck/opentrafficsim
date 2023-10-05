@@ -2,7 +2,20 @@ package org.opentrafficsim.road.network.factory.xml.utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
+
+import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.eval.Eval;
+import org.opentrafficsim.road.gtu.generator.CfBaRoomChecker;
+import org.opentrafficsim.road.gtu.generator.CfRoomChecker;
+import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
+import org.opentrafficsim.road.gtu.generator.TtcRoomChecker;
+import org.opentrafficsim.road.network.factory.xml.XmlParserException;
+import org.opentrafficsim.xml.bindings.types.LengthBeginEndType.LengthBeginEnd;
+import org.opentrafficsim.xml.generated.RandomStreamSource;
+import org.opentrafficsim.xml.generated.RoomCheckerType;
+
+import nl.tudelft.simulation.dsol.experiment.StreamInformation;
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
  * Parser - Utility class for parsing using JAXB generated classes.
@@ -11,6 +24,7 @@ import java.util.function.Predicate;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 public final class ParseUtil
 {
@@ -21,7 +35,8 @@ public final class ParseUtil
     }
 
     /**
-     * Returns all objects of given type from the list of all objects.
+     * Returns all objects of given type from the list of all objects. The returned list may be altered as it is not backed by
+     * the input list.
      * @param objectList List&lt;?&gt;; list of objects
      * @param clazz Class&lt;T&gt;; class of type of objects to return
      * @param <T> type
@@ -42,46 +57,73 @@ public final class ParseUtil
     }
 
     /**
-     * Select object of given type by predicate.
-     * @param objectList List&lt;?&gt;; list of objects
-     * @param clazz Class&lt;T&gt;; class of type of objects to return
-     * @param predicate Predicate&lt;T&gt;; predicate
-     * @param <T> type
-     * @return (first) object of given type that matches the predicate
+     * Find and return the stream belonging to te streamId.
+     * @param streamInformation the map with streams from the RUN tag
+     * @param streamSource the stream source
+     * @param eval Eval; expression evaluator.
+     * @return the stream belonging to te streamId
+     * @throws XmlParserException when the stream could not be found
      */
-    public static <T> T findObject(final List<?> objectList, final Class<T> clazz, final Predicate<T> predicate)
+    public static StreamInterface findStream(final StreamInformation streamInformation, final RandomStreamSource streamSource,
+            final Eval eval) throws XmlParserException
     {
-        for (Object object : objectList)
+        String streamId;
+        if (streamSource == null || streamSource.getDefault() == null)
         {
-            if (clazz.isAssignableFrom(object.getClass()))
-            {
-                @SuppressWarnings("unchecked")
-                T t = (T) object;
-                if (predicate.test(t))
-                {
-                    return t;
-                }
-            }
+            streamId = "default";
         }
-        throw new RuntimeException(String.format("Object of type %s could not be found.", clazz));
+        else if (streamSource.getGeneration() == null)
+        {
+            streamId = "generation";
+        }
+        else
+        {
+            streamId = streamSource.getDefined().get(eval);
+        }
+        if (streamInformation.getStream(streamId) == null)
+        {
+            throw new XmlParserException("Could not find stream with Id=" + streamId);
+        }
+        return streamInformation.getStream(streamId);
+    }
+    
+    /**
+     * Parse LengthBeginEnd for a Lane.
+     * @param lbe LengthBeginEnd; the begin, end, fraction, or offset from begin or end on the lane
+     * @param laneLength Length; the length of the lane
+     * @return the offset on the lane
+     */
+    public static Length parseLengthBeginEnd(final LengthBeginEnd lbe, final Length laneLength)
+    {
+        if (lbe.isAbsolute())
+        {
+            if (lbe.isBegin())
+                return lbe.getOffset();
+            else
+                return laneLength.minus(lbe.getOffset());
+        }
+        else
+        {
+            return laneLength.times(lbe.getFraction());
+        }
     }
 
     /**
-     * Select object of given type by predicate.
-     * @param objectList List&lt;T&gt;; list of objects
-     * @param predicate Predicate&lt;T&gt;; predicate
-     * @param <T> type
-     * @return (first) object of given type that matches the predicate
+     * Parse room checker.
+     * @param roomChecker RoomCheckerType; room checker type
+     * @param eval Eval; expression evaluator.
+     * @return RoomChecker; parsed room checker
      */
-    public static <T> T findObject(final List<T> objectList, final Predicate<T> predicate)
+    public static RoomChecker parseRoomChecker(final RoomCheckerType roomChecker, final Eval eval)
     {
-        for (T object : objectList)
+        if (roomChecker == null || roomChecker.getCf() != null)
         {
-            if (predicate.test(object))
-            {
-                return object;
-            }
+            return new CfRoomChecker();
         }
-        throw new RuntimeException("Object with predicate not be found.");
+        else if (roomChecker.getCfBa() != null)
+        {
+            return new CfBaRoomChecker();
+        }
+        return new TtcRoomChecker(roomChecker.getTtc().get(eval));
     }
 }

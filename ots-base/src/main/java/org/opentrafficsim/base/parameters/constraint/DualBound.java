@@ -1,14 +1,14 @@
 package org.opentrafficsim.base.parameters.constraint;
 
-import org.djunits.value.vdouble.scalar.base.AbstractDoubleScalar;
+import org.djunits.value.vdouble.scalar.base.DoubleScalar;
 import org.djutils.exceptions.Throw;
 
 /**
- * Continuous constraints with a dual bound. To allow both {@code Double} and {@code AbstractDoubleScalar<?, ?>} constraints,
+ * Continuous constraints with a dual bound. To allow both {@code Double} and {@code DoubleScalar<?, ?>} constraints,
  * the generic type is restricted to {@code Number}. However, that also allows other subclasses of {@code Number}, e.g.
  * {@code Integer}. Due to rounding and value limits from the type (e.g. {@code Integer.MAX_VALEU}), bounds may not function
  * correctly after a call to {@code Number.doubleValue()}. To restrict the usage, the constructor is private and static factory
- * methods for {@code Double} and {@code AbstractDoubleScalar<?, ?>} are supplied.
+ * methods for {@code Double} and {@code DoubleScalar<?, ?>} are supplied.
  * <p>
  * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -23,7 +23,7 @@ public final class DualBound<T extends Number> extends SingleBound<T>
 
     /**
      * Standard dual bound on the unit interval [0...1]. This can be used for both {@code Double} and
-     * {@code AbstractDoubleScalar<?, ?>} parameters.
+     * {@code DoubleScalar<?, ?>} parameters.
      */
     public static final DualBound<Number> UNITINTERVAL = createClosed(0.0, 1.0);
 
@@ -48,7 +48,7 @@ public final class DualBound<T extends Number> extends SingleBound<T>
      * @param <T> value type
      * @return closed dual bound
      */
-    public static <T extends AbstractDoubleScalar<?, ?>> DualBound<T> closed(final T lowerBound, final T upperBound)
+    public static <T extends DoubleScalar<?, ?>> DualBound<T> closed(final T lowerBound, final T upperBound)
     {
         return createClosed(lowerBound, upperBound);
     }
@@ -86,7 +86,7 @@ public final class DualBound<T extends Number> extends SingleBound<T>
      * @param <T> value type
      * @return open dual bound
      */
-    public static <T extends AbstractDoubleScalar<?, ?>> DualBound<T> open(final T lowerBound, final T upperBound)
+    public static <T extends DoubleScalar<?, ?>> DualBound<T> open(final T lowerBound, final T upperBound)
     {
         return createOpen(lowerBound, upperBound);
     }
@@ -125,7 +125,7 @@ public final class DualBound<T extends Number> extends SingleBound<T>
      * @param <T> value type
      * @return dual bound; excluding the lower bound and including the upper bound
      */
-    public static <T extends AbstractDoubleScalar<?, ?>> DualBound<T> leftOpenRightClosed(final T lowerBound,
+    public static <T extends DoubleScalar<?, ?>> DualBound<T> leftOpenRightClosed(final T lowerBound,
             final T upperBound)
     {
         return createLeftOpenRightClosed(lowerBound, upperBound);
@@ -166,7 +166,7 @@ public final class DualBound<T extends Number> extends SingleBound<T>
      * @param <T> value type
      * @return dual bound; including the lower bound and excluding the upper bound
      */
-    public static <T extends AbstractDoubleScalar<?, ?>> DualBound<T> leftClosedRightOpen(final T lowerBound,
+    public static <T extends DoubleScalar<?, ?>> DualBound<T> leftClosedRightOpen(final T lowerBound,
             final T upperBound)
     {
         return createLeftClosedRightOpen(lowerBound, upperBound);

@@ -21,7 +21,11 @@ import org.xml.sax.SAXException;
 /**
  * Reads the XML Schema in XSD format for OTS. This class contains various methods that the editor can use to present relevant
  * structure and information to the user.
- * @author wjschakel
+ * <p>
+ * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 public class Schema
 {
@@ -479,7 +483,11 @@ public class Schema
 
     /**
      * Stores the information to read in a queue.
-     * @author wjschakel
+     * <p>
+ * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
     private class RecursionElement
     {
@@ -572,24 +580,24 @@ public class Schema
                         xpathField = xpathField.substring(1); // removes '@'
                         if (!hasElementAttribute(selected, xpathField))
                         {
-                            System.out.println("Keyref " + keyref + " (" + getXpath(node) + ") points to non existing field "
-                                    + xpathField + ".");
+                            System.out.println("Keyref " + keyref + " (" + getXpath(node) + ") points to non existing field '"
+                                    + xpathField + "'.");
                         }
                     }
                     else if (xpathField.equals("."))
                     {
                         if (!this.elements.containsKey(getXpath(node).replace("ots:", "")))
                         {
-                            System.out.println("Keyref " + keyref + " (" + getXpath(node) + ") points to non existing field "
-                                    + xpathField + ".");
+                            System.out
+                                    .println("Keyref " + keyref + " (" + getXpath(node) + ") points to non existing field '.'.");
                         }
                     }
                     else
                     {
                         if (!this.elements.containsKey((getXpath(node) + "." + xpathField).replace("ots:", "")))
                         {
-                            System.out.println("Keyref " + keyref + " (" + getXpath(node) + ") points to non existing field "
-                                    + xpathField + ".");
+                            System.out.println("Keyref " + keyref + " (" + getXpath(node) + ") points to non existing field '"
+                                    + xpathField + "'.");
                         }
                     }
                 }
@@ -815,15 +823,20 @@ public class Schema
         this.uniques.forEach((key, value) -> map.put(value, this.uniquesPath.get(key)));
         return map;
     }
-    
+
     /**
      * Return whether the given node is of the type.
      * @param node Node; node.
-     * @param path String; path of the type in dotted xpath notation, e.g. "SignalGroup.TrafficLight". 
+     * @param path String; path of the type in dotted xpath notation, e.g. "SignalGroup.TrafficLight".
      * @return boolean; whether the given node is of the type.
      */
     public boolean isType(final Node node, final String path)
     {
+        String name = DocumentReader.getAttribute(node, "name");
+        if (path.equals(name))
+        {
+            return true;
+        }
         Node nodeUse = node;
         if (nodeUse.getNodeName().equals("xsd:element"))
         {

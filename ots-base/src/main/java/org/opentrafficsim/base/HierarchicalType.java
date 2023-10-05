@@ -4,6 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import org.djutils.base.Identifiable;
 import org.djutils.exceptions.Throw;
 
 /**

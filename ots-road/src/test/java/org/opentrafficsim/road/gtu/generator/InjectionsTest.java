@@ -1,9 +1,9 @@
 package org.opentrafficsim.road.gtu.generator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.Map;
@@ -23,10 +23,11 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.data.Column;
 import org.djutils.data.ListTable;
 import org.djutils.data.Table;
+import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.definitions.Defaults;
@@ -36,13 +37,12 @@ import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.GeneratorLanePosition;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.Placement;
@@ -52,7 +52,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -193,29 +193,31 @@ public class InjectionsTest
         OtsSimulatorInterface simulator = new OtsSimulator("net");
         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ONE, Mockito.mock(OtsModelInterface.class));
         RoadNetwork network = new RoadNetwork("network", simulator);
-        Node nodeA = new Node(network, "A", new OtsPoint3d(0.0, 0.0, 0.0), Direction.ZERO);
-        Node nodeB = new Node(network, "B", new OtsPoint3d(100.0, 0.0, 0.0), Direction.ZERO);
+        Node nodeA = new Node(network, "A", new Point2d(0.0, 0.0), Direction.ZERO);
+        Node nodeB = new Node(network, "B", new Point2d(100.0, 0.0), Direction.ZERO);
         CrossSectionLink linkAB = new CrossSectionLink(network, "AB", nodeA, nodeB, DefaultsNl.FREEWAY,
-                new OtsLine3d(nodeA.getPoint(), nodeB.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
+                new OtsLine2d(nodeA.getPoint(), nodeB.getPoint()), null, LaneKeepingPolicy.KEEPRIGHT);
         Length laneWidth = Length.instantiateSI(3.5);
-        new Lane(linkAB, "Lane1", Length.ZERO, laneWidth, DefaultsRoadNl.FREEWAY, Collections.emptyMap());
-        new Lane(linkAB, "Lane2", laneWidth, laneWidth, DefaultsRoadNl.FREEWAY, Collections.emptyMap());
+        LaneGeometryUtil.createStraightLane(linkAB, "Lane1", Length.ZERO, laneWidth, DefaultsRoadNl.FREEWAY,
+                Collections.emptyMap());
+        LaneGeometryUtil.createStraightLane(linkAB, "Lane2", laneWidth, laneWidth, DefaultsRoadNl.FREEWAY,
+                Collections.emptyMap());
         // -- table
         Table arrivals2 = new ListTable("id", "", Set.of(time, length)); // no GTU type column
         Try.testFail(() -> fullInjections(arrivals2, network).asLaneBasedGtuCharacteristicsGenerator(),
                 IllegalStateException.class);
         arrivals = new ListTable("id", "", Set.of(time, gtu, length, position, lane, link));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(1.0), gtu, "CAR", length, Length.instantiateSI(1.0), position,
+        arrivals.addRow(Map.of(time, Duration.instantiateSI(1.0), gtu, "NL.CAR", length, Length.instantiateSI(1.0), position,
                 Length.instantiateSI(10.0), lane, "Lane1", link, "AB"));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(2.0), gtu, "CAR", length, Length.instantiateSI(2.0), position,
+        arrivals.addRow(Map.of(time, Duration.instantiateSI(2.0), gtu, "NL.CAR", length, Length.instantiateSI(2.0), position,
                 Length.instantiateSI(20.0), lane, "Lane2", link, "AB"));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(3.0), gtu, "CAR", length, Length.instantiateSI(3.0), position,
+        arrivals.addRow(Map.of(time, Duration.instantiateSI(3.0), gtu, "NL.CAR", length, Length.instantiateSI(3.0), position,
                 Length.instantiateSI(30.0), lane, "Lane1", link, "AB"));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(4.0), gtu, "CAR", length, Length.instantiateSI(4.0), position,
+        arrivals.addRow(Map.of(time, Duration.instantiateSI(4.0), gtu, "NL.CAR", length, Length.instantiateSI(4.0), position,
                 Length.instantiateSI(40.0), lane, "Lane2", link, "AB"));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(5.0), gtu, "TRUCK", length, Length.instantiateSI(5.0), position,
+        arrivals.addRow(Map.of(time, Duration.instantiateSI(5.0), gtu, "NL.TRUCK", length, Length.instantiateSI(5.0), position,
                 Length.instantiateSI(50.0), lane, "Lane1", link, "AB"));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(6.0), gtu, "TRUCK", length, Length.instantiateSI(6.0), position,
+        arrivals.addRow(Map.of(time, Duration.instantiateSI(6.0), gtu, "NL.TRUCK", length, Length.instantiateSI(6.0), position,
                 Length.instantiateSI(60.0), lane, "Lane2", link, "AB"));
         // -- the test
         Injections full = fullInjections(arrivals, network);

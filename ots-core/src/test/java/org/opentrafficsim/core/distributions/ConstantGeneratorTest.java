@@ -1,9 +1,9 @@
 package org.opentrafficsim.core.distributions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the ConstantGenerator class.
@@ -25,11 +25,11 @@ public class ConstantGeneratorTest
             ConstantGenerator<Double> cg = new ConstantGenerator<>(testValue);
             for (int attempt = 0; attempt < 10; attempt++)
             {
-                assertEquals("Constant generator returns constant", testValue, cg.draw(), 0);
+                assertEquals(testValue, cg.draw(), 0, "Constant generator returns constant");
             }
-            assertEquals("getValue returns the value", testValue, cg.getValue(), 0);
-            assertTrue("The toString method of the ConstantGenerator returns something descriptive",
-                    cg.toString().startsWith("ConstantGenerator"));
+            assertEquals(testValue, cg.getValue(), 0, "getValue returns the value");
+            assertTrue(cg.toString().startsWith("ConstantGenerator"),
+                    "The toString method of the ConstantGenerator returns something descriptive");
         }
     }
 

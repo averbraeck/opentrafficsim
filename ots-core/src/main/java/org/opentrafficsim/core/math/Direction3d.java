@@ -5,10 +5,8 @@ import java.util.Locale;
 
 import org.djunits.unit.DirectionUnit;
 import org.djunits.value.ValueRuntimeException;
-import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.vector.DirectionVector;
-import org.djunits.value.vdouble.vector.base.DoubleVector;
 
 /**
  * 3D-rotation, RPY coded (longitudinal roll along the x-axis, lateral pitch along the y-axis and vertical yaw along the
@@ -50,7 +48,7 @@ public class Direction3d implements Serializable
      */
     public Direction3d(final Direction roll, final Direction pitch, final Direction yaw) throws ValueRuntimeException
     {
-        this.rotation = DoubleVector.instantiate(new Direction[] {roll, pitch, yaw}, roll.getDisplayUnit(), StorageType.DENSE);
+        this.rotation = new DirectionVector(new Direction[] {roll, pitch, yaw}, roll.getDisplayUnit());
     }
 
     /**
@@ -63,7 +61,7 @@ public class Direction3d implements Serializable
     public Direction3d(final double roll, final double pitch, final double yaw, final DirectionUnit unit)
             throws ValueRuntimeException
     {
-        this.rotation = DoubleVector.instantiate(new double[] {roll, pitch, yaw}, unit, StorageType.DENSE);
+        this.rotation = new DirectionVector(new double[] {roll, pitch, yaw}, unit);
     }
 
     /**

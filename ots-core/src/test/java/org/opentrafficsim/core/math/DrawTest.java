@@ -1,15 +1,15 @@
 package org.opentrafficsim.core.math;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import nl.tudelft.simulation.jstats.streams.StreamException;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -88,27 +88,27 @@ public class DrawTest
 
         for (int step = 0; step < 100; step++)
         {
-            assertEquals("result should be 1", 1, Draw.drawWeighted(population, new FixedStream(0.01 * step)), 0);
+            assertEquals(1, Draw.drawWeighted(population, new FixedStream(0.01 * step)), 0, "result should be 1");
         }
-        assertEquals("If rounding errors cause no element to be selected; last element with nonzero probability is returned", 1,
-                Draw.drawWeighted(population, new FixedStream(1.01)), 0);
+        assertEquals(1, Draw.drawWeighted(population, new FixedStream(1.01)),
+                0, "If rounding errors cause no element to be selected; last element with nonzero probability is returned");
         population.put(2, 0.9);
         for (int step = 0; step < 100; step++)
         {
             int result = Draw.drawWeighted(population, new FixedStream(0.01 * step));
             if (step == 10)
             {
-                assertTrue("result is either 1, or 2", result == 1 || result == 2);
+                assertTrue(result == 1 || result == 2, "result is either 1, or 2");
             }
             else
             {
                 int expected = step < 10 ? 1 : 2;
-                assertEquals("result should be " + expected, expected, result, 0);
+                assertEquals(expected, result, 0, "result should be " + expected);
             }
         }
         population.clear();
         population.put(4, 2d);
-        assertEquals("Result should be 4", 4, Draw.drawWeighted(population, new FixedStream(0)), 0);
+        assertEquals(4, Draw.drawWeighted(population, new FixedStream(0)), 0, "Result should be 4");
 
         try
         {
@@ -141,7 +141,7 @@ public class DrawTest
             // Ignore expected exception
         }
         options.add(0);
-        assertEquals("result is 0", 0, Draw.draw(options, new FixedStream(0)), 0);
+        assertEquals(0, Draw.draw(options, new FixedStream(0)), 0, "result is 0");
         options.clear();
         for (int i = 0; i < 10; i++)
         {
@@ -151,7 +151,7 @@ public class DrawTest
         {
             int result = Draw.draw(options, new FixedStream(0.01 * step));
             int expected = step / 10;
-            assertEquals("result should be " + expected, expected, result, 0);
+            assertEquals(expected, result, 0, "result should be " + expected);
         }
     }
 

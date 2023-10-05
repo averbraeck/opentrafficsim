@@ -7,18 +7,17 @@ import java.util.Map;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Direction;
+import org.djutils.base.Identifiable;
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableHashSet;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.base.HierarchicallyTyped;
-import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.SpatialObject;
 import org.opentrafficsim.core.animation.Drawable;
-import org.opentrafficsim.core.geometry.Bounds;
-import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
-import org.opentrafficsim.core.geometry.OtsShape;
 import org.opentrafficsim.core.gtu.GtuType;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -46,13 +45,10 @@ public class Node implements HierarchicallyTyped<NodeType, Node>, SpatialObject,
     private final String id;
 
     /** The point. */
-    private final OtsPoint3d point;
+    private final OrientedPoint2d point;
 
     /** the shape. */
-    private final OtsShape shape;
-
-    /** Heading. */
-    private final Direction heading;
+    private final Polygon2d shape;
 
     /** The links connected to the Node. */
     private final Set<Link> links = new LinkedHashSet<>();
@@ -69,27 +65,38 @@ public class Node implements HierarchicallyTyped<NodeType, Node>, SpatialObject,
     private Map<GtuType, Map<Link, Set<Link>>> connections = null;
 
     /**
-     * Construction of a Node.
+     * Construction of a Node. Direction will be 0.0.
      * @param network Network; the network.
      * @param id String; the id of the Node.
-     * @param point OtsPoint3d; the point with usually an x and y setting.
+     * @param point Point2d; the point with usually an x and y setting.
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
-    public Node(final Network network, final String id, final OtsPoint3d point) throws NetworkException
+    public Node(final Network network, final String id, final Point2d point) throws NetworkException
     {
-        this(network, id, point, Direction.instantiateSI(0.0));
+        this(network, id, new OrientedPoint2d(point.x, point.y, 0.0));
     }
 
     /**
      * Construction of a Node.
      * @param network Network; the network.
      * @param id String; the id of the Node.
-     * @param point OtsPoint3d; the point with usually an x and y setting.
+     * @param point Point2d; the point with usually an x and y setting.
      * @param heading Direction; heading
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
-    public Node(final Network network, final String id, final OtsPoint3d point, final Direction heading)
-            throws NetworkException
+    public Node(final Network network, final String id, final Point2d point, final Direction heading) throws NetworkException
+    {
+        this(network, id, new OrientedPoint2d(point.x, point.y, heading.si));
+    }
+
+    /**
+     * Construction of a Node.
+     * @param network Network; the network.
+     * @param id String; the id of the Node.
+     * @param point OrientedPoint2d; the point with usually an x and y setting.
+     * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
+     */
+    public Node(final Network network, final String id, final OrientedPoint2d point) throws NetworkException
     {
         Throw.whenNull(network, "network cannot be null");
         Throw.whenNull(id, "id cannot be null");
@@ -97,21 +104,12 @@ public class Node implements HierarchicallyTyped<NodeType, Node>, SpatialObject,
 
         this.network = network;
         this.id = id;
-        this.point = new OtsPoint3d(point.x, point.y, point.z);
-        this.heading = heading;
+        this.point = point;
 
         double x = this.point.x;
         double y = this.point.y;
-        double z = this.point.z;
-        try
-        {
-            this.shape = new OtsShape(new OtsPoint3d(x - 0.5, y - 0.5, z), new OtsPoint3d(x - 0.5, y + 0.5, z),
-                    new OtsPoint3d(x + 0.5, y + 0.5, z), new OtsPoint3d(x + 0.5, y - 0.5, z));
-        }
-        catch (OtsGeometryException exception)
-        {
-            throw new NetworkException(exception);
-        }
+        this.shape = new Polygon2d(new Point2d(x - 0.5, y - 0.5), new Point2d(x - 0.5, y + 0.5), new Point2d(x + 0.5, y + 0.5),
+                new Point2d(x + 0.5, y - 0.5));
 
         this.network.addNode(this);
     }
@@ -134,16 +132,16 @@ public class Node implements HierarchicallyTyped<NodeType, Node>, SpatialObject,
 
     /**
      * Returns the point without direction.
-     * @return OtsPoint3d; point.
+     * @return Point2d; point.
      */
-    public OtsPoint3d getPoint()
+    public OrientedPoint2d getPoint()
     {
         return this.point;
     }
 
     /** {@inheritDoc} */
     @Override
-    public OtsShape getShape()
+    public Polygon2d getShape()
     {
         return this.shape;
     }
@@ -154,7 +152,7 @@ public class Node implements HierarchicallyTyped<NodeType, Node>, SpatialObject,
      */
     public Direction getHeading()
     {
-        return this.heading;
+        return Direction.instantiateSI(this.point.dirZ);
     }
 
     /**
@@ -397,20 +395,17 @@ public class Node implements HierarchicallyTyped<NodeType, Node>, SpatialObject,
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public DirectedPoint getLocation()
+    public OrientedPoint2d getLocation()
     {
-        return new DirectedPoint(this.point.x, this.point.y, this.point.z, 0.0, 0.0, this.heading.si);
+        return this.point;
     }
-
-    /** Margin around node in m when computing bounding sphere. */
-    public static final double BOUNDINGRADIUS = 10.0;
 
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Bounds getBounds()
+    public Bounds2d getBounds()
     {
-        return new Bounds(-BOUNDINGRADIUS, BOUNDINGRADIUS, -BOUNDINGRADIUS, BOUNDINGRADIUS, -BOUNDINGRADIUS, BOUNDINGRADIUS);
+        return new Bounds2d(0.0, 0.0, 0.0, 0.0);
     }
 
     /** {@inheritDoc} */

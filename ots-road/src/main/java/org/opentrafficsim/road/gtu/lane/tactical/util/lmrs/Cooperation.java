@@ -34,6 +34,7 @@ public interface Cooperation extends LmrsParameters
     /** Simple passive cooperation. */
     Cooperation PASSIVE = new Cooperation()
     {
+        /** {@inheritDoc} */
         @Override
         public Acceleration cooperate(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final LateralDirectionality lat, final Desire ownDesire)
@@ -65,11 +66,19 @@ public interface Cooperation extends LmrsParameters
             }
             return Acceleration.max(a, b.neg());
         }
+        
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "PASSIVE";
+        }
     };
 
     /** Same as passive cooperation, except that cooperation is fully ignored if the potential lane changer brakes heavily. */
     Cooperation PASSIVE_MOVING = new Cooperation()
     {
+        /** {@inheritDoc} */
         @Override
         public Acceleration cooperate(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final LateralDirectionality lat, final Desire ownDesire)
@@ -81,7 +90,6 @@ public interface Cooperation extends LmrsParameters
                 return new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
             }
             Acceleration bCrit = params.getParameter(ParameterTypes.BCRIT);
-            Acceleration b = params.getParameter(ParameterTypes.B);
             Acceleration a = new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
             double dCoop = params.getParameter(DCOOP);
             Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
@@ -109,11 +117,19 @@ public interface Cooperation extends LmrsParameters
             }
             return Acceleration.max(a, bCrit.neg());
         }
+        
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "PASSIVE_MOVING";
+        }
     };
 
     /** Cooperation similar to the default, with nuanced differences of when to ignore. */
     Cooperation ACTIVE = new Cooperation()
     {
+        /** {@inheritDoc} */
         @Override
         public Acceleration cooperate(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final LateralDirectionality lat, final Desire ownDesire)
@@ -145,6 +161,13 @@ public interface Cooperation extends LmrsParameters
                 }
             }
             return a;
+        }
+        
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "ACTIVE";
         }
     };
 

@@ -1,14 +1,11 @@
 package org.opentrafficsim.road.gtu.lane.tactical;
 
-import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.exceptions.Try;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -54,7 +51,8 @@ public class LaneBasedGtuFollowingTacticalPlanner extends AbstractLaneBasedTacti
 
     /** {@inheritDoc} */
     @Override
-    public final OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
+    public final OperationalPlan generateOperationalPlan(final Time startTime,
+            final OrientedPoint2d locationAtStartTime)
             throws OperationalPlanException, NetworkException, GtuException, ParameterException
     {
         // ask Perception for the local situation
@@ -112,7 +110,7 @@ public class LaneBasedGtuFollowingTacticalPlanner extends AbstractLaneBasedTacti
         {
             return OperationalPlan.standStill(getGtu(), getGtu().getLocation(), startTime, Duration.ONE);
         }
-        OtsLine3d path = lanePathInfo.getPath();
+        OtsLine2d path = lanePathInfo.getPath();
         OperationalPlan op = new OperationalPlan(getGtu(), path, startTime,
                 Segments.off(getGtu().getSpeed(), accelerationStep.getDuration(), accelerationStep.getAcceleration()));
         return op;

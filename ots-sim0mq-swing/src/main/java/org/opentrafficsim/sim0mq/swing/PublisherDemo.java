@@ -14,7 +14,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.serialization.SerializationException;
-import org.opentrafficsim.draw.core.OtsDrawingException;
+import org.opentrafficsim.draw.OtsDrawingException;
 import org.sim0mq.Sim0MQException;
 import org.sim0mq.message.Sim0MQMessage;
 import org.zeromq.SocketType;
@@ -22,7 +22,7 @@ import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.language.DSOLException;
+import nl.tudelft.simulation.language.DsolException;
 
 /**
  * Experiment with the Sim0MQPublisher.
@@ -47,13 +47,13 @@ public final class PublisherDemo
      * @throws IOException ...
      * @throws NamingException ...
      * @throws SimRuntimeException ...
-     * @throws DSOLException ...
+     * @throws DsolException ...
      * @throws OtsDrawingException ...
      * @throws SerializationException ...
      * @throws Sim0MQException ...
      * @throws InterruptedException ...
      */
-    public static void main(final String[] args) throws IOException, SimRuntimeException, NamingException, DSOLException,
+    public static void main(final String[] args) throws IOException, SimRuntimeException, NamingException, DsolException,
             OtsDrawingException, Sim0MQException, SerializationException, InterruptedException
     {
         ZContext zContext = new ZContext(5); // 5 IO threads - how many is reasonable? It actually works with 1 IO thread.

@@ -5,9 +5,9 @@ import java.io.PrintWriter;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.network.Network;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -36,9 +36,9 @@ public class GtuDumper
             PrintWriter pw = new PrintWriter(new File(fileName));
             for (Gtu gtu : this.network.getGTUs())
             {
-                DirectedPoint dp = gtu.getOperationalPlan().getLocation(now);
+                OrientedPoint2d dp = gtu.getOperationalPlan().getLocation(now);
                 pw.format("%s position %.3f,%.3f dir=%5.1f speed %s\n", gtu.toString(), dp.x, dp.y,
-                        Math.toDegrees(dp.getRotZ()), gtu.getSpeed());
+                        Math.toDegrees(dp.getDirZ()), gtu.getSpeed());
             }
             pw.close();
             this.simulator.scheduleEventRel(this.interval, this, "dump", new Object[] {});

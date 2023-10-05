@@ -14,7 +14,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LaneDataRoad implements LaneData
+public class LaneDataRoad implements LaneData<LaneDataRoad>
 {
 
     /** Wrapped lane. */
@@ -47,7 +47,7 @@ public class LaneDataRoad implements LaneData
     @Override
     public final LinkDataRoad getLinkData()
     {
-        return new LinkDataRoad(this.lane.getParentLink());
+        return new LinkDataRoad(this.lane.getLink());
     }
 
     /** {@inheritDoc} */

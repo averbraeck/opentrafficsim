@@ -6,11 +6,9 @@ import java.util.Locale;
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.ValueRuntimeException;
-import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.SpeedVector;
-import org.djunits.value.vdouble.vector.base.DoubleVector;
 
 /**
  * A 3D speed vector, decomposed in X, Y, and Z-speed with easy conversion from and to a spherical coordinate system. <br>
@@ -59,7 +57,7 @@ public class Speed3d implements Serializable
      */
     public Speed3d(final Speed x, final Speed y, final Speed z) throws ValueRuntimeException
     {
-        this.speed = DoubleVector.instantiate(new Speed[] {x, y, z}, x.getDisplayUnit(), StorageType.DENSE);
+        this.speed = new SpeedVector(new Speed[] {x, y, z}, x.getDisplayUnit());
     }
 
     /**
@@ -72,7 +70,7 @@ public class Speed3d implements Serializable
      */
     public Speed3d(final double x, final double y, final double z, final SpeedUnit unit) throws ValueRuntimeException
     {
-        this.speed = DoubleVector.instantiate(new double[] {x, y, z}, unit, StorageType.DENSE);
+        this.speed = new SpeedVector(new double[] {x, y, z}, unit);
     }
 
     /**
@@ -85,7 +83,7 @@ public class Speed3d implements Serializable
     public Speed3d(final Speed speed, final Direction theta, final Direction phi) throws ValueRuntimeException
     {
         double[] xyz = Scalar3d.polarToCartesian(speed.getInUnit(), theta.si, phi.si);
-        this.speed = DoubleVector.instantiate(xyz, speed.getDisplayUnit(), StorageType.DENSE);
+        this.speed = new SpeedVector(xyz, speed.getDisplayUnit());
     }
 
     /**

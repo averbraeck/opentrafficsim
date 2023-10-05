@@ -12,7 +12,6 @@ import java.util.Set;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -21,31 +20,31 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
-import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.cli.CliUtil;
 import org.djutils.data.csv.CsvData;
 import org.djutils.data.serialization.TextSerializationException;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.io.CompressedFileWriter;
+import org.opentrafficsim.animation.colorer.GtuTypeColorer;
+import org.opentrafficsim.animation.gtu.colorer.AccelerationGtuColorer;
+import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
+import org.opentrafficsim.animation.gtu.colorer.IdGtuColorer;
+import org.opentrafficsim.animation.gtu.colorer.SpeedGtuColorer;
+import org.opentrafficsim.animation.gtu.colorer.SwitchableGtuColorer;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
-import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGtuColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.IdGtuColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.SpeedGtuColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGtuColorer;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -57,13 +56,12 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
-import org.opentrafficsim.road.gtu.colorer.GtuTypeColorer;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.characteristics.DefaultLaneBasedGtuCharacteristicsGeneratorOd;
@@ -97,7 +95,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
-import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Incentive;
@@ -118,7 +115,6 @@ import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Type;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.object.detector.LoopDetector;
-import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
@@ -161,8 +157,8 @@ public class RampMeteringDemo extends AbstractSimulationScript
     private boolean output;
 
     /** Accepted gap. */
-    @Option(names = "--acceptedGap", description = "Accepted gap.", defaultValue = "0.5s")
-    private Duration acceptedGap;
+    @Option(names = "--acceptedGap", description = "Accepted gap.") // , defaultValue = "0.5s")
+    private Duration acceptedGap = Duration.instantiateSI(0.5);
 
     /** Main demand. */
     private FrequencyVector mainDemand;
@@ -218,12 +214,9 @@ public class RampMeteringDemo extends AbstractSimulationScript
         RampMeteringDemo demo = new RampMeteringDemo();
         CliUtil.changeOptionDefault(demo, "simulationTime", "4200s");
         CliUtil.execute(demo, args);
-        demo.mainDemand =
-                DoubleVector.instantiate(arrayFromString(demo.mainDemandString), FrequencyUnit.PER_HOUR, StorageType.DENSE);
-        demo.rampDemand =
-                DoubleVector.instantiate(arrayFromString(demo.rampDemandString), FrequencyUnit.PER_HOUR, StorageType.DENSE);
-        demo.demandTime =
-                DoubleVector.instantiate(arrayFromString(demo.demandTimeString), TimeUnit.BASE_MINUTE, StorageType.DENSE);
+        demo.mainDemand = new FrequencyVector(arrayFromString(demo.mainDemandString), FrequencyUnit.PER_HOUR);
+        demo.rampDemand = new FrequencyVector(arrayFromString(demo.rampDemandString), FrequencyUnit.PER_HOUR);
+        demo.demandTime = new TimeVector(arrayFromString(demo.demandTimeString), TimeUnit.BASE_MINUTE);
         demo.start();
     }
 
@@ -276,12 +269,12 @@ public class RampMeteringDemo extends AbstractSimulationScript
         StreamInterface stream = sim.getModel().getStream("generation");
         this.parameterFactory.addParameter(ParameterTypes.FSPEED, new DistNormal(stream, 123.7 / 120.0, 12.0 / 1200));
 
-        Node nodeA = new Node(network, "A", new OtsPoint3d(0, 0), Direction.ZERO);
-        Node nodeB = new Node(network, "B", new OtsPoint3d(3000, 0), Direction.ZERO);
-        Node nodeC = new Node(network, "C", new OtsPoint3d(3250, 0), Direction.ZERO);
-        Node nodeD = new Node(network, "D", new OtsPoint3d(6000, 0), Direction.ZERO);
-        Node nodeE = new Node(network, "E", new OtsPoint3d(2000, -25), Direction.ZERO);
-        Node nodeF = new Node(network, "F", new OtsPoint3d(2750, 0.0), Direction.ZERO);
+        Node nodeA = new Node(network, "A", new Point2d(0, 0), Direction.ZERO);
+        Node nodeB = new Node(network, "B", new Point2d(3000, 0), Direction.ZERO);
+        Node nodeC = new Node(network, "C", new Point2d(3250, 0), Direction.ZERO);
+        Node nodeD = new Node(network, "D", new Point2d(6000, 0), Direction.ZERO);
+        Node nodeE = new Node(network, "E", new Point2d(2000, -25), Direction.ZERO);
+        Node nodeF = new Node(network, "F", new Point2d(2750, 0.0), Direction.ZERO);
 
         LinkType freeway = DefaultsNl.FREEWAY;
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;
@@ -303,10 +296,6 @@ public class RampMeteringDemo extends AbstractSimulationScript
         List<Lane> lanesFB = new LaneFactory(network, nodeF, nodeB, freeway, sim, policy, DefaultsNl.VEHICLE)
                 .setOffsetStart(laneWidth.times(1.5).neg()).setOffsetEnd(laneWidth.times(1.5).neg())
                 .leftToRight(0.5, laneWidth, freewayLane, speedLimit).addLanes().getLanes();
-        for (Lane lane : lanesCD)
-        {
-            new SinkDetector(lane, lane.getLength().minus(Length.instantiateSI(50)), sim, DefaultsRoadNl.ROAD_USERS);
-        }
         // detectors
         Duration agg = Duration.instantiateSI(60.0);
         // TODO: detector length affects occupancy, which length to use?
@@ -505,7 +494,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
                             set.setDefaultParameter(ParameterTypes.DT);
                             set.setDefaultParameter(ParameterTypes.VCONG);
                             set.setDefaultParameter(ParameterTypes.T0);
-                            set.setDefaultParameter(TrafficLightUtil.B_YELLOW);
+                            set.setDefaultParameter(ParameterTypes.BCRIT);
                             set.setDefaultParameters(LmrsParameters.class);
                             set.setDefaultParameters(AbstractIdm.class);
                             return set;
@@ -613,7 +602,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
         /** {@inheritDoc} */
         @Override
-        public OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
+        public OperationalPlan generateOperationalPlan(final Time startTime, final OrientedPoint2d locationAtStartTime)
                 throws OperationalPlanException, GtuException, NetworkException, ParameterException
         {
             // get some general input

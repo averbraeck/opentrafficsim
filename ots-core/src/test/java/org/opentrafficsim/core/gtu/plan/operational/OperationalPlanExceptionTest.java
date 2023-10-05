@@ -1,11 +1,11 @@
 package org.opentrafficsim.core.gtu.plan.operational;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Test the OperationalPlanException class. */
 public class OperationalPlanExceptionTest
@@ -93,14 +93,14 @@ public class OperationalPlanExceptionTest
                     }
                     catch (Exception e1)
                     {
-                        assertTrue("Stack trace should be writable", writableStackTrace);
+                        assertTrue(writableStackTrace, "Stack trace should be writable");
                         continue;
                     }
                     // You wouldn't believe it, but a call to setStackTrace if non-writable is silently ignored
                     StackTraceElement[] retrievedStackTrace = e.getStackTrace();
                     if (retrievedStackTrace.length > 0)
                     {
-                        assertTrue("stack trace should be writable", writableStackTrace);
+                        assertTrue(writableStackTrace, "stack trace should be writable");
                     }
                 }
                 catch (Exception exception)

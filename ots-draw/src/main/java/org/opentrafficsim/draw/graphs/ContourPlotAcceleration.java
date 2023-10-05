@@ -5,17 +5,14 @@ import java.util.List;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.ValueRuntimeException;
-import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.matrix.AccelerationMatrix;
-import org.djunits.value.vdouble.matrix.base.DoubleMatrix;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.WeightedMeanAndSum;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.egtf.Converter;
-import org.opentrafficsim.core.egtf.Quantity;
-import org.opentrafficsim.draw.core.BoundsPaintScale;
+import org.djutils.means.ArithmeticMean;
+import org.opentrafficsim.draw.BoundsPaintScale;
+import org.opentrafficsim.draw.egtf.Converter;
+import org.opentrafficsim.draw.egtf.Quantity;
 import org.opentrafficsim.draw.graphs.ContourDataSource.ContourDataType;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
@@ -43,7 +40,7 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
                 {
                     try
                     {
-                        return DoubleMatrix.instantiate(filteredData, AccelerationUnit.SI, StorageType.DENSE);
+                        return new AccelerationMatrix(filteredData, AccelerationUnit.SI);
                     }
                     catch (ValueRuntimeException exception)
                     {
@@ -55,19 +52,19 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
             });
 
     /** Contour data type. */
-    private static final ContourDataType<Acceleration, WeightedMeanAndSum<Double, Double>> CONTOUR_DATA_TYPE =
-            new ContourDataType<Acceleration, WeightedMeanAndSum<Double, Double>>()
+    private static final ContourDataType<Acceleration, ArithmeticMean<Double, Double>> CONTOUR_DATA_TYPE =
+            new ContourDataType<Acceleration, ArithmeticMean<Double, Double>>()
             {
                 /** {@inheritDoc} */
                 @Override
-                public WeightedMeanAndSum<Double, Double> identity()
+                public ArithmeticMean<Double, Double> identity()
                 {
-                    return new WeightedMeanAndSum<>();
+                    return new ArithmeticMean<>();
                 }
 
                 /** {@inheritDoc} */
                 @Override
-                public WeightedMeanAndSum<Double, Double> processSeries(final WeightedMeanAndSum<Double, Double> intermediate,
+                public ArithmeticMean<Double, Double> processSeries(final ArithmeticMean<Double, Double> intermediate,
                         final List<TrajectoryGroup<?>> trajectories, final List<Length> xFrom, final List<Length> xTo,
                         final Time tFrom, final Time tTo)
                 {
@@ -93,7 +90,7 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
 
                 /** {@inheritDoc} */
                 @Override
-                public Acceleration finalize(final WeightedMeanAndSum<Double, Double> intermediate)
+                public Acceleration finalize(final ArithmeticMean<Double, Double> intermediate)
                 {
                     return Acceleration.instantiateSI(intermediate.getMean());
                 }
@@ -111,13 +108,12 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
     /**
      * Constructor.
      * @param caption String; caption
-     * @param simulator OtsSimulatorInterface; simulator
+     * @param scheduler PlotScheduler; scheduler.
      * @param dataPool ContourDataSource; data pool
      */
-    public ContourPlotAcceleration(final String caption, final OtsSimulatorInterface simulator,
-            final ContourDataSource dataPool)
+    public ContourPlotAcceleration(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool)
     {
-        super(caption, simulator, dataPool, createPaintScale(), new Acceleration(1.0, AccelerationUnit.SI), "%.0fm/s\u00B2",
+        super(caption, scheduler, dataPool, createPaintScale(), new Acceleration(1.0, AccelerationUnit.SI), "%.0fm/s\u00B2",
                 "acceleration %.2f m/s\u00B2");
     }
 
@@ -155,7 +151,7 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
 
     /** {@inheritDoc} */
     @Override
-    protected ContourDataType<Acceleration, WeightedMeanAndSum<Double, Double>> getContourDataType()
+    protected ContourDataType<Acceleration, ArithmeticMean<Double, Double>> getContourDataType()
     {
         return CONTOUR_DATA_TYPE;
     }

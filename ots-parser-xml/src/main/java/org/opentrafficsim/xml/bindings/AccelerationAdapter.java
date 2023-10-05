@@ -2,6 +2,7 @@ package org.opentrafficsim.xml.bindings;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.xml.bindings.types.AccelerationType;
 
 /**
  * AccelerationAdapter converts between the XML String for an Acceleration and the DJUnits Acceleration.
@@ -10,16 +11,22 @@ import org.djutils.logger.CategoryLogger;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class AccelerationAdapter extends UnitAdapter<Acceleration>
+public class AccelerationAdapter extends ScalarAdapter<Acceleration, AccelerationType>
 {
+    
     /** {@inheritDoc} */
     @Override
-    public Acceleration unmarshal(final String field) throws IllegalArgumentException
+    public AccelerationType unmarshal(final String field)
     {
+        if (isExpression(field))
+        {
+            return new AccelerationType(trimBrackets(field));
+        }
         try
         {
-            return Acceleration.valueOf(field);
+            return new AccelerationType(Acceleration.valueOf(field));
         }
         catch (Exception exception)
         {
@@ -27,4 +34,5 @@ public class AccelerationAdapter extends UnitAdapter<Acceleration>
             throw exception;
         }
     }
+    
 }

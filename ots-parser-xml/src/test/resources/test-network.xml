@@ -60,7 +60,7 @@
 					<ots:CenterOffset>-2.75m</ots:CenterOffset>
 					<ots:Width>2m</ots:Width>
 				</ots:Shoulder>
-				<ots:Lane Id="LANE" DesignDirection="true" LaneType="URBAN">
+				<ots:Lane Id="LANE" LaneType="URBAN">
 					<ots:CenterOffset>0.0m</ots:CenterOffset>
 					<ots:Width>3.5m</ots:Width>
 				</ots:Lane>
@@ -75,14 +75,14 @@
 					<ots:CenterOffset>-2.75m</ots:CenterOffset>
 					<ots:Width>2m</ots:Width>
 				</ots:Shoulder>
-				<ots:Lane Id="LANE" DesignDirection="true" LaneType="URBAN">
+				<ots:Lane Id="LANE" LaneType="URBAN">
 					<ots:CenterOffset>0.0m</ots:CenterOffset>
 					<ots:Width>3.5m</ots:Width>
 				</ots:Lane>
 				<ots:Stripe Type="DASHED">
 					<ots:CenterOffset>2.75m</ots:CenterOffset>
 				</ots:Stripe>
-				<ots:Lane Id="TURNLANE" DesignDirection="true" LaneType="URBAN">
+				<ots:Lane Id="TURNLANE" LaneType="URBAN">
 					<ots:CenterOffset>3.5m</ots:CenterOffset>
 					<ots:Width>3.5m</ots:Width>
 				</ots:Lane>
@@ -97,14 +97,14 @@
 					<ots:CenterOffset>-2.75m</ots:CenterOffset>
 					<ots:Width>2m</ots:Width>
 				</ots:Shoulder>
-				<ots:Lane Id="LANE" DesignDirection="true" LaneType="URBAN">
+				<ots:Lane Id="LANE" LaneType="URBAN">
 					<ots:CenterOffset>0.0m</ots:CenterOffset>
 					<ots:Width>3.5m</ots:Width>
 				</ots:Lane>
 				<ots:Stripe Type="DASHED">
 					<ots:CenterOffset>2.25m</ots:CenterOffset>
 				</ots:Stripe>
-				<ots:Lane Id="TURNLANE" DesignDirection="true" LaneType="URBAN">
+				<ots:Lane Id="TURNLANE" LaneType="URBAN">
 					<ots:CenterOffsetStart>0.0m</ots:CenterOffsetStart>
 					<ots:CenterOffsetEnd>3.5m</ots:CenterOffsetEnd>
 					<ots:Width>3.5m</ots:Width>
@@ -265,19 +265,19 @@
 			<ots:GtuTemplate>CAR</ots:GtuTemplate>
 			<ots:ShortestRouteMix>E</ots:ShortestRouteMix>
 			<ots:Frequency>15/min</ots:Frequency>
-			<ots:RoomChecker>CF</ots:RoomChecker>
+			<ots:RoomChecker><ots:Cf/></ots:RoomChecker>
 		</ots:Generator>
 		<ots:Generator Link="SSC" Lane="LANE" Position="10m">
 			<ots:GtuTemplate>CAR</ots:GtuTemplate>
 			<ots:ShortestRouteMix>S</ots:ShortestRouteMix>
 			<ots:Frequency>6/min</ots:Frequency>
-			<ots:RoomChecker>CF</ots:RoomChecker>
+			<ots:RoomChecker><ots:Cf/></ots:RoomChecker>
 		</ots:Generator>
 		<ots:Generator Link="WWC" Lane="LANE" Position="10m">
 			<ots:GtuTemplate>CAR</ots:GtuTemplate>
 			<ots:ShortestRouteMix>W</ots:ShortestRouteMix>
 			<ots:Frequency>6/min</ots:Frequency>
-			<ots:RoomChecker>CF</ots:RoomChecker>
+			<ots:RoomChecker><ots:Cf/></ots:RoomChecker>
 		</ots:Generator>
 
 		<ots:Sink Type="NL.ROAD_USERS" Link="ECE" Position="END-20m" Lane="LANE" />

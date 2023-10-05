@@ -1,23 +1,24 @@
 package org.opentrafficsim.core.object;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.rmi.RemoteException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.mock.MockSimulator;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.NetworkException;
 
 /**
  * Test the StaticObject class.
@@ -44,8 +45,8 @@ public class StaticObjectTest implements EventListener
     public void staticObjectTest() throws OtsGeometryException, NetworkException
     {
         String id = "id of static object";
-        OtsLine3d geometry = new OtsLine3d(new OtsPoint3d[] {new OtsPoint3d(0, 0, 0), new OtsPoint3d(1, 0, 0),
-                new OtsPoint3d(1, 1, 0), new OtsPoint3d(0, 1, 0)});
+        PolyLine2d geometry =
+                new PolyLine2d(new Point2d[] {new Point2d(0, 0), new Point2d(1, 0), new Point2d(1, 1), new Point2d(0, 1)});
         Length height = new Length(1, LengthUnit.METER);
         try
         {
@@ -76,29 +77,30 @@ public class StaticObjectTest implements EventListener
         this.lastEvent = null;
         Network network = new Network("Test network for static object test", MockSimulator.createMock());
         network.addListener(this, Network.OBJECT_ADD_EVENT);
-        StaticObject so = new StaticObject(id, geometry, height);
-        assertNull("Constructor should not have fired an event", this.lastEvent);
+        StaticObject so = StaticObject.create(id, geometry, height);
+        assertNull(this.lastEvent, "Constructor should not have fired an event");
         network.addObject(so);
-        assertEquals("id", id, so.getId());
-        assertEquals("full id", id, so.getFullId());
-        assertEquals("geometry", geometry, so.getGeometry());
-        assertEquals("height", height, so.getHeight());
-        assertEquals("location", geometry.getLocation(), so.getLocation());
-        assertEquals("bounds", geometry.getBounds(), so.getBounds());
-        assertTrue("toString returns something descriptive", so.toString().startsWith("StaticObject"));
+        assertEquals(id, so.getId(), "id");
+        assertEquals(id, so.getFullId(), "full id");
+        assertEquals(geometry, so.getGeometry(), "geometry");
+        assertEquals(height, so.getHeight(), "height");
+        assertEquals(new OrientedPoint2d(geometry.getBounds().midPoint(), 0.0), so.getLocation(), "location");
+        // djutils PolyLine2d returns absolute bounds, StaticObject returns centered around (0, 0)
+        //assertEquals("bounds", geometry.getBounds(), so.getBounds());
+        assertTrue(so.toString().startsWith("StaticObject"), "toString returns something descriptive");
         so.init();
-        assertNotNull("adding so to network should have fired an event", this.lastEvent);
-        assertEquals("Payload of event is the static object id", so.getId(), this.lastEvent.getContent());
+        assertNotNull(this.lastEvent, "adding so to network should have fired an event");
+        assertEquals(so.getId(), this.lastEvent.getContent(), "Payload of event is the static object id");
         this.lastEvent = null;
         StaticObject so2 = StaticObject.create(id, geometry, height);
-        assertEquals("id", id, so2.getId());
-        assertEquals("geometry", geometry, so2.getGeometry());
-        assertEquals("height", height, so2.getHeight());
-        assertNull("init should not have fired an event because there are no listeners", this.lastEvent);
+        assertEquals(id, so2.getId(), "id");
+        assertEquals(geometry, so2.getGeometry(), "geometry");
+        assertEquals(height, so2.getHeight(), "height");
+        assertNull(this.lastEvent, "init should not have fired an event because there are no listeners");
         so2 = StaticObject.create(id, geometry);
-        assertEquals("id", id, so2.getId());
-        assertEquals("geometry", geometry, so2.getGeometry());
-        assertEquals("height", Length.ZERO, so2.getHeight());
+        assertEquals(id, so2.getId(), "id");
+        assertEquals(geometry, so2.getGeometry(), "geometry");
+        assertEquals(Length.ZERO, so2.getHeight(), "height");
     }
 
     /**

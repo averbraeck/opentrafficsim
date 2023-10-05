@@ -1,8 +1,8 @@
 package org.opentrafficsim.road.gtu.strategical.od;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -18,7 +18,6 @@ import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.ValueRuntimeException;
-import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -26,8 +25,8 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
-import org.djunits.value.vdouble.vector.base.DoubleVector;
-import org.junit.Test;
+import org.djutils.draw.point.Point2d;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -39,8 +38,7 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -55,6 +53,7 @@ import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.He
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.od.Categorization;
 import org.opentrafficsim.road.od.Category;
@@ -66,7 +65,7 @@ import org.opentrafficsim.road.od.OdOptions;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.SingleReplication;
-import nl.tudelft.simulation.dsol.model.DSOLModel;
+import nl.tudelft.simulation.dsol.model.DsolModel;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
@@ -95,7 +94,7 @@ public class OdApplierTest
     private OtsSimulatorInterface simulator;
 
     /** Mockup model. */
-    private DSOLModel model;
+    private DsolModel model;
 
     /** Network. */
     private RoadNetwork network;
@@ -138,9 +137,9 @@ public class OdApplierTest
     /**
      * @return a mock of the model
      */
-    private DSOLModel createModelMock()
+    private DsolModel createModelMock()
     {
-        DSOLModel modelMock = Mockito.mock(DSOLModel.class);
+        DsolModel modelMock = Mockito.mock(DsolModel.class);
         Mockito.when(modelMock.getStream("generation")).thenReturn(new MersenneTwister(1L));
         Mockito.when(modelMock.getStream("default")).thenReturn(new MersenneTwister(2L));
         return modelMock;
@@ -173,20 +172,20 @@ public class OdApplierTest
     private void makeNetwork() throws NetworkException, OtsGeometryException
     {
         this.network = new RoadNetwork("ODApplierExample", this.simulator);
-        OtsPoint3d pointA = new OtsPoint3d(0, 0, 0);
-        OtsPoint3d pointB = new OtsPoint3d(1000, 0, 0);
+        Point2d pointA = new Point2d(0, 0);
+        Point2d pointB = new Point2d(1000, 0);
         Node nodeA = new Node(this.network, "A", pointA, Direction.ZERO);
         Node nodeB = new Node(this.network, "B", pointB, Direction.ZERO);
         CrossSectionLink linkAB = new CrossSectionLink(this.network, "AB", nodeA, nodeB, DefaultsNl.ROAD,
-                new OtsLine3d(pointA, pointB), LaneKeepingPolicy.KEEPRIGHT);
+                new OtsLine2d(pointA, pointB), null, LaneKeepingPolicy.KEEPRIGHT);
         this.lanes.put("lane1",
-                new Lane(linkAB, "lane1", Length.instantiateSI(1.75), Length.instantiateSI(1.75), Length.instantiateSI(3.5),
-                        Length.instantiateSI(3.5), DefaultsRoadNl.HIGHWAY,
-                        Map.of(DefaultsNl.VEHICLE, new Speed(120, SpeedUnit.KM_PER_HOUR)), false));
+                LaneGeometryUtil.createStraightLane(linkAB, "lane1", Length.instantiateSI(1.75), Length.instantiateSI(1.75),
+                        Length.instantiateSI(3.5), Length.instantiateSI(3.5), DefaultsRoadNl.HIGHWAY,
+                        Map.of(DefaultsNl.VEHICLE, new Speed(120, SpeedUnit.KM_PER_HOUR))));
         this.lanes.put("lane2",
-                new Lane(linkAB, "lane2", Length.instantiateSI(-1.75), Length.instantiateSI(-1.75), Length.instantiateSI(3.5),
-                        Length.instantiateSI(3.5), DefaultsRoadNl.HIGHWAY,
-                        Map.of(DefaultsNl.VEHICLE, new Speed(120, SpeedUnit.KM_PER_HOUR)), false));
+                LaneGeometryUtil.createStraightLane(linkAB, "lane2", Length.instantiateSI(-1.75), Length.instantiateSI(-1.75),
+                        Length.instantiateSI(3.5), Length.instantiateSI(3.5), DefaultsRoadNl.HIGHWAY,
+                        Map.of(DefaultsNl.VEHICLE, new Speed(120, SpeedUnit.KM_PER_HOUR))));
         Set<GtuType> gtuTypes = new LinkedHashSet<>();
         gtuTypes.add(DefaultsNl.VEHICLE);
     }
@@ -257,7 +256,7 @@ public class OdApplierTest
                 Interpolation.STEPWISE, nodeA, nodeB, lane1, lane2);
         Map<String, GeneratorObjects> generatorObjects =
                 OdApplier.applyOd(this.network, od, odOptions, DefaultsRoadNl.ROAD_USERS);
-        assertEquals("Incorrect number of generator created or returned.", generatorObjects.size(), 2);
+        assertEquals(generatorObjects.size(), 2, "Incorrect number of generator created or returned.");
         for (String id : generatorObjects.keySet())
         {
             Generator<Duration> headwayGenerator = generatorObjects.get(id).getHeadwayGenerator();
@@ -293,7 +292,7 @@ public class OdApplierTest
         od = getOD(new double[] {100, 200, 300, 400, 500, 600}, new double[] {1000, 2000, 0, 0, 2000, 0}, Interpolation.LINEAR,
                 nodeA, nodeB, lane1, lane2);
         generatorObjects = OdApplier.applyOd(this.network, od, odOptions, DefaultsRoadNl.ROAD_USERS);
-        assertEquals("Incorrect number of generator created or returned.", generatorObjects.size(), 2);
+        assertEquals(generatorObjects.size(), 2, "Incorrect number of generator created or returned.");
         for (String id : generatorObjects.keySet())
         {
             Generator<Duration> headwayGenerator = generatorObjects.get(id).getHeadwayGenerator();
@@ -336,7 +335,7 @@ public class OdApplierTest
                     od = getOD(new double[] {1200, 2400, 3600, 4800, 6000, 7200}, new double[] {1000, 2000, 0, 0, 2000, 0},
                             interpolation, nodeA, nodeB, lane1, lane2);
                     generatorObjects = OdApplier.applyOd(this.network, od, odOptions, DefaultsRoadNl.ROAD_USERS);
-                    assertEquals("Incorrect number of generators created or returned.", generatorObjects.size(), 2);
+                    assertEquals(generatorObjects.size(), 2, "Incorrect number of generators created or returned.");
                     for (String id : generatorObjects.keySet())
                     {
                         Generator<Duration> headwayGenerator = generatorObjects.get(id).getHeadwayGenerator();
@@ -375,8 +374,9 @@ public class OdApplierTest
                         System.out.println(String.format(
                                 "A demand of %.2f resulted in %.0f vehicles (%s%.2f%%) as mean over %d simulations (%s demand, %s headways).",
                                 nDemand, n, p > 0 ? "+" : "", p, nSims, interpolation.name(), headwayRandomization.getName()));
-                        assertTrue(String.format("Demand generated with exponential headways was more than 5%% off (%s%.2f%%).",
-                                p > 0 ? "+" : "", p), Math.abs(p) < 5);
+                        assertTrue(Math.abs(p) < 5,
+                                String.format("Demand generated with exponential headways was more than 5%% off (%s%.2f%%).",
+                                        p > 0 ? "+" : "", p));
                     }
                 }
             }
@@ -406,9 +406,9 @@ public class OdApplierTest
         origins.add(nodeA);
         List<Node> destinations = new ArrayList<>();
         destinations.add(nodeB);
-        TimeVector timeVector = DoubleVector.instantiate(timeVec, TimeUnit.DEFAULT, StorageType.DENSE);
+        TimeVector timeVector = new TimeVector(timeVec, TimeUnit.DEFAULT);
         OdMatrix od = new OdMatrix("ODExample", origins, destinations, categorization, timeVector, interpolation);
-        FrequencyVector demand = DoubleVector.instantiate(demandVec, FrequencyUnit.PER_HOUR, StorageType.DENSE);
+        FrequencyVector demand = new FrequencyVector(demandVec, FrequencyUnit.PER_HOUR);
         GtuType gtuType = DefaultsNl.CAR;
         Route route = new Route("AB", gtuType).addNode(nodeA).addNode(nodeB);
         Category category = new Category(categorization, lane1, DefaultsNl.CAR, route);
@@ -489,7 +489,7 @@ public class OdApplierTest
      */
     private void assertAboutEqual(final String message, final Number num1, final Number num2)
     {
-        assertTrue(message, Math.abs(num1.doubleValue() - num2.doubleValue()) < 0.1);
+        assertTrue(Math.abs(num1.doubleValue() - num2.doubleValue()) < 0.1, message);
     }
 
     /**
@@ -540,12 +540,12 @@ public class OdApplierTest
                         fail("Vehicle generated from OD is of GtuType (" + type.getId() + ") that is not in the OD.");
                     }
                 }
-                assertTrue(String.format("Generated number of CARs (%d) deviates too much from the expected value (%d).",
-                        counts.get(DefaultsNl.CAR), nCar), Math.abs(counts.get(DefaultsNl.CAR) - nCar) < nTot * .05);
-                assertTrue(
+                assertTrue(Math.abs(counts.get(DefaultsNl.CAR) - nCar) < nTot * .05,
+                        String.format("Generated number of CARs (%d) deviates too much from the expected value (%d).",
+                                counts.get(DefaultsNl.CAR), nCar));
+                assertTrue(Math.abs(counts.get(DefaultsNl.TRUCK) - nTruck) < nTot * .05,
                         String.format("Generated number of TRUCKs (%d) deviates too much from the expected value (%d).",
-                                counts.get(DefaultsNl.TRUCK), nTruck),
-                        Math.abs(counts.get(DefaultsNl.TRUCK) - nTruck) < nTot * .05);
+                                counts.get(DefaultsNl.TRUCK), nTruck));
                 System.out.println(String.format("Generated %d CARs for expected value %d.", counts.get(DefaultsNl.CAR), nCar));
                 System.out.println(
                         String.format("Generated %d TRUCKs for expected value %d.", counts.get(DefaultsNl.TRUCK), nTruck));

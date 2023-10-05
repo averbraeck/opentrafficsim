@@ -87,7 +87,7 @@ public class FilterDataSet
      * Returns the filter data types.
      * @return set of filter data types
      */
-    public final Set<FilterDataType<?>> getMetaDataTypes()
+    public final Set<FilterDataType<?>> getFilterDataTypes()
     {
         return new LinkedHashSet<>(this.filterDataMap.keySet());
     }

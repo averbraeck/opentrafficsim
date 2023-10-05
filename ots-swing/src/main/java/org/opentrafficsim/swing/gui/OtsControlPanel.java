@@ -50,6 +50,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.Resource;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -784,11 +785,9 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         TimeWarpPanel(final double minimum, final double maximum, final double initialValue, final int ticksPerDecade,
                 final OtsSimulatorInterface simulator)
         {
-            if (minimum <= 0 || minimum > initialValue || initialValue > maximum)
-            {
-                throw new RuntimeException("Bad (combination of) minimum, maximum and initialValue; "
-                        + "(restrictions: 0 < minimum <= initialValue <= maximum)");
-            }
+            Throw.when(minimum <= 0 || minimum > initialValue || initialValue > maximum || maximum > 9999,
+                    RuntimeException.class, "Bad (combination of) minimum, maximum and initialValue; "
+                            + "(restrictions: 0 < minimum <= initialValue <= maximum <= 9999)");
             switch (ticksPerDecade)
             {
                 case 1:
@@ -803,44 +802,51 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 default:
                     throw new RuntimeException("Bad ticksPerDecade value (must be 1, 2 or 3)");
             }
-            int minimumTick = (int) Math.floor(Math.log10(minimum / initialValue) * ticksPerDecade);
-            int maximumTick = (int) Math.ceil(Math.log10(maximum / initialValue) * ticksPerDecade);
+            Hashtable<Integer, JLabel> labels = new Hashtable<>();
+            int maximumTick = -1;
+            int minimumTick = 0;
+            int ratioIndex = 0;
+            int scale = 0;
+            while (this.ratios[ratioIndex] * Math.pow(10, scale) <= maximum)
+            {
+                maximumTick++;
+                this.tickValues.put(maximumTick, this.ratios[ratioIndex] * Math.pow(10, scale));
+                StringBuilder text = new StringBuilder();
+                text.append(this.ratios[ratioIndex]);
+                for (int i = 0; i < scale; i++)
+                {
+                    text.append("0");
+                }
+                labels.put(maximumTick, new JLabel(text.toString().replace("000", "K")));
+                ratioIndex++;
+                if (ratioIndex == this.ratios.length)
+                {
+                    ratioIndex = 0;
+                    scale += 1;
+                }
+            }
+            ratioIndex = this.ratios.length - 1;
+            scale = 1;
+            while (this.ratios[ratioIndex] * Math.pow(0.1, scale) >= minimum)
+            {
+                minimumTick--;
+                this.tickValues.put(minimumTick, this.ratios[ratioIndex] * Math.pow(0.1, scale));
+                StringBuilder text = new StringBuilder("0").append(OtsControlPanel.this.decimalSeparator);
+                for (int i = 1; i < scale; i++)
+                {
+                    text.append("0");
+                }
+                text.append(this.ratios[ratioIndex]);
+                labels.put(minimumTick, new JLabel(text.toString()));
+                ratioIndex--;
+                if (ratioIndex < 0)
+                {
+                    ratioIndex = this.ratios.length - 1;
+                    scale += 1;
+                }
+            }
             this.slider = new JSlider(SwingConstants.HORIZONTAL, minimumTick, maximumTick + 1, 0);
             this.slider.setPreferredSize(new Dimension(350, 45));
-            Hashtable<Integer, JLabel> labels = new Hashtable<>();
-            for (int step = 0; step <= maximumTick; step++)
-            {
-                StringBuilder text = new StringBuilder();
-                text.append(this.ratios[step % this.ratios.length]);
-                for (int decade = 0; decade < step / this.ratios.length; decade++)
-                {
-                    text.append("0");
-                }
-                this.tickValues.put(step, Double.parseDouble(text.toString()));
-                labels.put(step, new JLabel(text.toString().replace("000", "K")));
-                // System.out.println("Label " + step + " is \"" + text.toString() + "\"");
-            }
-            // Figure out the DecimalSymbol
-            for (int step = -1; step >= minimumTick; step--)
-            {
-                StringBuilder text = new StringBuilder();
-                text.append("0");
-                text.append(OtsControlPanel.this.decimalSeparator);
-                int magnitude = 1;
-                for (int decade = (step + 1) / this.ratios.length; decade < 0; decade++)
-                {
-                    magnitude *= 10;
-                    text.append("0");
-                }
-                int index = step % this.ratios.length;
-                if (index < 0)
-                {
-                    index += this.ratios.length;
-                }
-                text.append(this.ratios[index]);
-                labels.put(step, new JLabel(text.toString()));
-                this.tickValues.put(step, 1.0 / (magnitude * this.ratios[index]));
-            }
             labels.put(maximumTick + 1, new JLabel("\u221E"));
             this.tickValues.put(maximumTick + 1, 1E9);
             this.slider.setLabelTable(labels);

@@ -1,9 +1,9 @@
 package org.opentrafficsim.road.network.lane.object;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OtsLine3d;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.object.StaticObject;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -34,9 +34,6 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
     /** The position (between 0.0 and the length of the Lane) of the sensor on the design line of the lane. */
     private final Length longitudinalPosition;
 
-    /** The DirectedPoint that indicates the location on the lane. */
-    private final DirectedPoint location;
-
     /**
      * Construct a new AbstractLanebasedObject with the required fields.
      * @param id String; the id of the new object
@@ -44,24 +41,33 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
      *            on the lane
      * @param longitudinalPosition Length; The position (between 0.0 and the length of the Lane) of the sensor on the design
      *            line of the lane
-     * @param geometry OtsLine3d; the geometry of the object, which provides its location and bounds as well
+     * @param geometry PolyLine2d; the geometry of the object, which provides its location and bounds as well
      * @param height Length; the height of the object, in case it is a 3D object
      * @throws NetworkException when the position on the lane is out of bounds
      */
     protected AbstractLaneBasedObject(final String id, final Lane lane, final Length longitudinalPosition,
-            final OtsLine3d geometry, final Length height) throws NetworkException
+            final PolyLine2d geometry, final Length height) throws NetworkException
     {
-        super(id, geometry, height);
+        super(id, getPoint(lane, longitudinalPosition), geometry, height);
 
         Throw.whenNull(lane, "lane is null");
         Throw.whenNull(longitudinalPosition, "longitudinal position is null");
-        Throw.when(longitudinalPosition.si < 0.0 || longitudinalPosition.si > lane.getCenterLine().getLengthSI(),
+        Throw.when(longitudinalPosition.si < 0.0 || longitudinalPosition.si > lane.getCenterLine().getLength().si,
                 NetworkException.class, "Position of the object on the lane is out of bounds");
 
         this.lane = lane;
         this.longitudinalPosition = longitudinalPosition;
-        DirectedPoint p = lane.getCenterLine().getLocationExtended(this.longitudinalPosition);
-        this.location = new DirectedPoint(p.x, p.y, p.z + 0.01, p.getRotX(), p.getRotY(), p.getRotZ());
+    }
+    
+    /**
+     * Returns the oriented point of the position on a lane.
+     * @param lane Lane; lane.
+     * @param longitudinalPosition Length; longitudinal position.
+     * @return OrientedPoint2d; oriented point of the position on a lane.
+     */
+    private static OrientedPoint2d getPoint(final Lane lane, final Length longitudinalPosition)
+    {
+        return lane.getCenterLine().getLocationExtended(longitudinalPosition);
     }
 
     /**
@@ -70,11 +76,11 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
      * @param lane Lane; The lane for which this is a sensor
      * @param longitudinalPosition Length; The position (between 0.0 and the length of the Lane) of the sensor on the design
      *            line of the lane
-     * @param geometry OtsLine3d; the geometry of the object, which provides its location and bounds as well
+     * @param geometry PolyLine2d; the geometry of the object, which provides its location and bounds as well
      * @throws NetworkException when the position on the lane is out of bounds
      */
     protected AbstractLaneBasedObject(final String id, final Lane lane, final Length longitudinalPosition,
-            final OtsLine3d geometry) throws NetworkException
+            final PolyLine2d geometry) throws NetworkException
     {
         this(id, lane, longitudinalPosition, geometry, Length.ZERO);
     }
@@ -116,9 +122,9 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public DirectedPoint getLocation()
+    public OrientedPoint2d getLocation()
     {
-        return this.location;
+        return (OrientedPoint2d) super.getLocation();
     }
 
     /** {@inheritDoc} */

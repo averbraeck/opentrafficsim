@@ -2,6 +2,7 @@ package org.opentrafficsim.xml.bindings;
 
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.xml.bindings.types.DirectionType;
 
 /**
  * DirectionAdapter converts between the XML String for an Direction and the DJUnits Direction. EAST is taken as zero degrees,
@@ -12,13 +13,19 @@ import org.djutils.logger.CategoryLogger;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class DirectionAdapter extends UnitAdapter<Direction>
+public class DirectionAdapter extends ScalarAdapter<Direction, DirectionType>
 {
+    
     /** {@inheritDoc} */
     @Override
-    public Direction unmarshal(final String field) throws IllegalArgumentException
+    public DirectionType unmarshal(final String field)
     {
+        if (isExpression(field))
+        {
+            return new DirectionType(trimBrackets(field));
+        }
         try
         {
             String direction = field;
@@ -28,11 +35,11 @@ public class DirectionAdapter extends UnitAdapter<Direction>
             }
             if (direction.trim().endsWith("rad"))
             {
-                direction = direction.replace("deg", "rad(E)");
+                direction = direction.replace("rad", "rad(E)");
             }
             direction = direction.replace("East", "E");
             direction = direction.replace("North", "N");
-            return Direction.valueOf(direction);
+            return new DirectionType(Direction.valueOf(direction));
         }
         catch (Exception exception)
         {
@@ -42,3 +49,4 @@ public class DirectionAdapter extends UnitAdapter<Direction>
     }
 
 }
+

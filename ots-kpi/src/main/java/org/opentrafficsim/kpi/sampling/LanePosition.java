@@ -14,6 +14,7 @@ import org.opentrafficsim.kpi.interfaces.LaneData;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 public class LanePosition implements Serializable
 {
@@ -21,17 +22,17 @@ public class LanePosition implements Serializable
     private static final long serialVersionUID = 20151111L;
 
     /** The lane for the position. */
-    private final LaneData lane;
+    private final LaneData<?> lane;
 
     /** The position on the lane, relative to the cross section link (design line). */
     private final Length position;
 
     /**
      * Construct a new LanePosition.
-     * @param lane LaneData; the lane for the position
+     * @param lane LaneData&lt;?&gt;; the lane for the position
      * @param position Length; the position on the lane, relative to the cross section link (design line)
      */
-    public LanePosition(final LaneData lane, final Length position)
+    public LanePosition(final LaneData<?> lane, final Length position)
     {
         Throw.whenNull(lane, "lane is null");
         Throw.whenNull(position, "position is null");
@@ -41,9 +42,9 @@ public class LanePosition implements Serializable
 
     /**
      * Retrieve the lane.
-     * @return LaneData; the lane for the position
+     * @return LaneData&lt;?&gt;; the lane for the position
      */
-    public final LaneData getLaneData()
+    public final LaneData<?> getLaneData()
     {
         return this.lane;
     }

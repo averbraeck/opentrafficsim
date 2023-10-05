@@ -173,14 +173,14 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     @Override
     public final Node getFromNode()
     {
-        return this.lane.getParentLink().getStartNode();
+        return this.lane.getLink().getStartNode();
     }
 
     /** {@inheritDoc} */
     @Override
     public final Node getToNode()
     {
-        return this.lane.getParentLink().getEndNode();
+        return this.lane.getLink().getEndNode();
     }
 
     /**
@@ -324,7 +324,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
                     if (to == route.getNodes().size() - 2)
                     {
                         // check connector
-                        for (Link link : laneRecord.getToNode().nextLinks(gtuType, laneRecord.getLane().getParentLink()))
+                        for (Link link : laneRecord.getToNode().nextLinks(gtuType, laneRecord.getLane().getLink()))
                         {
                             if (link.isConnector())
                             {
@@ -386,7 +386,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
             // reached a link on the route where all lanes can be reached?
             int nLanesOnNextLink = 0;
             LaneStructureRecord nextRecord = nextSet.iterator().next();
-            for (Lane l : nextRecord.getLane().getParentLink().getLanes())
+            for (Lane l : nextRecord.getLane().getLink().getLanes())
             {
                 nLanesOnNextLink++;
             }

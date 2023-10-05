@@ -1,8 +1,8 @@
 package org.opentrafficsim.core.math;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.SpeedUnit;
@@ -11,8 +11,7 @@ import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.SpeedVector;
-import org.djunits.value.vdouble.vector.base.DoubleVector;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the Speed3d class.
@@ -38,13 +37,13 @@ public class Speed3dTest
         double z = 5.5;
         Speed3d s3d = new Speed3d(x, y, z, SpeedUnit.SI);
         checkSpeed(s3d, x, y, z);
-        SpeedVector sv = DoubleVector.instantiate(new double[] {x, y, z}, SpeedUnit.SI, StorageType.DENSE);
+        SpeedVector sv = new SpeedVector(new double[] {x, y, z}, SpeedUnit.SI);
         s3d = new Speed3d(sv);
         checkSpeed(s3d, x, y, z);
-        sv = DoubleVector.instantiate(new double[] {x, y, z}, SpeedUnit.SI, StorageType.SPARSE);
+        sv = new SpeedVector(new double[] {x, y, z}, SpeedUnit.SI, StorageType.SPARSE);
         s3d = new Speed3d(sv);
         checkSpeed(s3d, x, y, z);
-        sv = DoubleVector.instantiate(new double[] {x, y}, SpeedUnit.SI, StorageType.DENSE);
+        sv = new SpeedVector(new double[] {x, y}, SpeedUnit.SI);
         try
         {
             new Speed3d(sv);
@@ -54,7 +53,7 @@ public class Speed3dTest
         {
             // Ignore expected exception
         }
-        sv = DoubleVector.instantiate(new double[] {x, y, z, x}, SpeedUnit.SI, StorageType.DENSE);
+        sv = new SpeedVector(new double[] {x, y, z, x}, SpeedUnit.SI);
         try
         {
             new Speed3d(sv);
@@ -64,7 +63,7 @@ public class Speed3dTest
         {
             // Ignore expected exception
         }
-        sv = DoubleVector.instantiate(new double[] {x, y}, SpeedUnit.SI, StorageType.SPARSE);
+        sv = new SpeedVector(new double[] {x, y}, SpeedUnit.SI, StorageType.SPARSE);
         try
         {
             new Speed3d(sv);
@@ -74,7 +73,7 @@ public class Speed3dTest
         {
             // Ignore expected exception
         }
-        sv = DoubleVector.instantiate(new double[] {x, y, z, x}, SpeedUnit.SI, StorageType.SPARSE);
+        sv = new SpeedVector(new double[] {x, y, z, x}, SpeedUnit.SI, StorageType.SPARSE);
         try
         {
             new Speed3d(sv);
@@ -96,7 +95,7 @@ public class Speed3dTest
                 new Direction(phi, DirectionUnit.EAST_RADIAN));
         checkSpeed(s3d, length * Math.cos(phi) * Math.sin(theta), length * Math.sin(phi) * Math.sin(theta),
                 length * Math.cos(theta));
-        assertTrue("toString output contains class name", s3d.toString().contains("Speed3d"));
+        assertTrue(s3d.toString().contains("Speed3d"), "toString output contains class name");
     }
 
     /**
@@ -108,11 +107,11 @@ public class Speed3dTest
      */
     private void checkSpeed(final Speed3d s3d, final double x, final double y, final double z)
     {
-        assertEquals("x", x, s3d.getX().si, 0.00001);
-        assertEquals("y", y, s3d.getY().si, 0.00001);
-        assertEquals("z", z, s3d.getZ().si, 0.00001);
-        assertEquals("phi", Math.atan2(y, x), s3d.getPhi().si, 0.00001);
-        assertEquals("theta", Math.atan2(Math.sqrt(y * y + x * x), z), s3d.getTheta().si, 0.00001);
-        assertEquals("norm", Math.sqrt(x * x + y * y + z * z), s3d.getSpeed().si, 0.001);
+        assertEquals(x, s3d.getX().si, 0.00001, "x");
+        assertEquals(y, s3d.getY().si, 0.00001, "y");
+        assertEquals(z, s3d.getZ().si, 0.00001, "z");
+        assertEquals(Math.atan2(y, x), s3d.getPhi().si, 0.00001, "phi");
+        assertEquals(Math.atan2(Math.sqrt(y * y + x * x), z), s3d.getTheta().si, 0.00001, "theta");
+        assertEquals(Math.sqrt(x * x + y * y + z * z), s3d.getSpeed().si, 0.001, "norm");
     }
 }

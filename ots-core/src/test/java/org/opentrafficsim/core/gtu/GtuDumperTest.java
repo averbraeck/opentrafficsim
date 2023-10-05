@@ -1,12 +1,13 @@
 package org.opentrafficsim.core.gtu;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +18,8 @@ import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -43,9 +43,9 @@ public class GtuDumperTest implements OtsModelInterface
     /** ... */
     private static final long serialVersionUID = 1L;
 
-    /** Temporary directory that should be deleted by Junit at end of test. */
-    @Rule
-    public TemporaryFolder testDir = new TemporaryFolder();
+    /** Temporary directory that should be deleted by JUnit at end of test. */
+    @TempDir
+    private Path testDir;
 
     /** Director where GTUDumper will create files. */
     private File containerDir;
@@ -70,12 +70,14 @@ public class GtuDumperTest implements OtsModelInterface
     public void testGTUDumper() throws SimRuntimeException, NamingException, InterruptedException, IOException
     {
         // System.out.println("testdir is " + this.testDir.getRoot());
-        this.containerDir = this.testDir.newFolder("subfolder");
+        Path containerPath = Files.createDirectory(Paths.get(this.testDir.toString() + File.separator + "subfolder"));
+        this.containerDir = containerPath.toFile();
         // System.out.println("containerDir is " + this.containerDir);
         this.simulator = new OtsSimulator("Simulator for testing GTUDumper class");
         this.network = new Network("Network for testing GTUDumper class", this.simulator);
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this);
-        // TODO this.simulator.scheduleEventAbsTime(new Time(40, TimeUnit.BASE_SECOND), this, "createGtuDeprecated", new Object[] {});
+        // TODO this.simulator.scheduleEventAbsTime(new Time(40, TimeUnit.BASE_SECOND), this, "createGtuDeprecated", new
+        // Object[] {});
         this.simulator.start();
         while (this.simulator.isStartingOrRunning())
         {
@@ -93,11 +95,11 @@ public class GtuDumperTest implements OtsModelInterface
             for (String line : lines)
             {
                 // System.out.println(" " + line);
-                assertTrue("lines says something about our test GTU", line.startsWith("test GTU "));
+                assertTrue(line.startsWith("test GTU "), "lines says something about our test GTU");
             }
         }
 
-        assertTrue("toString method returns something descriptive", this.gtuDumper.toString().startsWith("GTUDumper"));
+        assertTrue(this.gtuDumper.toString().startsWith("GTUDumper"), "toString method returns something descriptive");
     }
 
     /**
@@ -106,20 +108,12 @@ public class GtuDumperTest implements OtsModelInterface
     public void createGtuDeprecated()
     {
         /*
-        Gtu gtu = new Gtu()
-        {
-
-            @Override
-            public DirectedPoint getLocation()
-            {
-                // This GTU travels a circle around 100, 20, elevation 10, radius 20, angular velocity 0.1 radial / second
-                double timeSI = GtuDumperTest.this.simulator.getSimulatorTime().si;
-                double angle = timeSI / 10;
-                return new DirectedPoint(100 + 20 * Math.cos(angle), 20 + 20 * Math.sin(angle), 10, 0, 0, angle + Math.PI / 2);
-            }
-
-        };
-        */
+         * Gtu gtu = new Gtu() {
+         * @Override public DirectedPoint getLocation() { // This GTU travels a circle around 100, 20, elevation 10, radius 20,
+         * angular velocity 0.1 radial / second double timeSI = GtuDumperTest.this.simulator.getSimulatorTime().si; double angle
+         * = timeSI / 10; return new DirectedPoint(100 + 20 * Math.cos(angle), 20 + 20 * Math.sin(angle), 10, 0, 0, angle +
+         * Math.PI / 2); } };
+         */
         Gtu gtu = null;
         this.network.addGTU(gtu);
     }
@@ -199,7 +193,8 @@ public class GtuDumperTest implements OtsModelInterface
     @Test
     public void testArgumentChecks() throws SimRuntimeException, IOException, NamingException
     {
-        this.containerDir = this.testDir.newFolder("subfolder");
+        Path containerPath = Files.createDirectory(Paths.get(this.testDir.toString() + File.separator + "subfolder"));
+        this.containerDir = containerPath.toFile();
         this.simulator = new OtsSimulator("Simulator for testing GTUDumper class");
         this.network = new Network("Network for testing GTUDumper class", this.simulator);
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this);

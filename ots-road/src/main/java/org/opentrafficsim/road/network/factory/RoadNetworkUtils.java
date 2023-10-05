@@ -9,7 +9,7 @@ import org.opentrafficsim.road.network.lane.object.detector.Detector;
 
 import com.thoughtworks.xstream.XStream;
 
-import nl.tudelft.simulation.naming.context.JVMContext;
+import nl.tudelft.simulation.naming.context.JvmContext;
 
 /**
  * <p>
@@ -49,8 +49,8 @@ public final class RoadNetworkUtils
         XStream xstream = new XStream();
         xstream.omitField(RoadNetwork.class, "gtuMap"); // no GTUs
         xstream.omitField(EventProducer.class, "listeners"); // no listeners
-        xstream.omitField(JVMContext.class, "atomicName"); // no JVMContext
-        xstream.omitField(JVMContext.class, "elements"); // no JVMContext
+        xstream.omitField(JvmContext.class, "atomicName"); // no JvmContext
+        xstream.omitField(JvmContext.class, "elements"); // no JvmContext
         xstream.omitField(Detector.class, "simulator"); // no reference to a simulator
         return xstream.toXML(network);
     }

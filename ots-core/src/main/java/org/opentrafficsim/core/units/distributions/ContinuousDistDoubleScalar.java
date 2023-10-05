@@ -33,7 +33,6 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.unit.TorqueUnit;
 import org.djunits.unit.Unit;
 import org.djunits.unit.VolumeUnit;
-import org.djunits.value.Absolute;
 import org.djunits.value.vdouble.scalar.AbsoluteTemperature;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Angle;
@@ -63,9 +62,8 @@ import org.djunits.value.vdouble.scalar.Temperature;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.scalar.Torque;
 import org.djunits.value.vdouble.scalar.Volume;
-import org.djunits.value.vdouble.scalar.base.AbstractDoubleScalarAbs;
-import org.djunits.value.vdouble.scalar.base.AbstractDoubleScalarRel;
-import org.djunits.value.vdouble.scalar.base.DoubleScalar;
+import org.djunits.value.vdouble.scalar.base.DoubleScalarAbs;
+import org.djunits.value.vdouble.scalar.base.DoubleScalarRel;
 import org.opentrafficsim.core.distributions.Generator;
 
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
@@ -85,8 +83,8 @@ public interface ContinuousDistDoubleScalar
      * @param <AU> The absolute unit type used
      * @param <RU> The relative unit type belonging to AU
      */
-    class Abs<T extends AbstractDoubleScalarAbs<AU, T, RU, ?>, AU extends AbsoluteLinearUnit<AU, RU>, RU extends Unit<RU>>
-            extends AbstractContinuousDistScalar implements Absolute, Serializable, Generator<T>
+    class Abs<T extends DoubleScalarAbs<AU, T, RU, ?>, AU extends AbsoluteLinearUnit<AU, RU>, RU extends Unit<RU>>
+            extends AbstractContinuousDistScalar implements Serializable, Generator<T>
     {
         /** */
         private static final long serialVersionUID = 20150000L;
@@ -110,7 +108,8 @@ public interface ContinuousDistDoubleScalar
         }
 
         /**
-         * @return a drawn number from the distribution in the given unit.
+         * {@inheritDoc}
+         * @throws IllegalStateException when the unit is not of a known type
          */
         @Override
         @SuppressWarnings("unchecked")
@@ -131,7 +130,7 @@ public interface ContinuousDistDoubleScalar
                     return (T) new Time(getDistribution().draw(), (TimeUnit) getDisplayUnit());
 
                 default:
-                    return (T) DoubleScalar.instantiate(getDistribution().draw(), (AU) getDisplayUnit());
+                    throw new IllegalStateException("Unable to draw value for absolute scalar with unit " + getDisplayUnit());
             }
         }
 
@@ -149,7 +148,7 @@ public interface ContinuousDistDoubleScalar
      * @param <T> The absolute DoubleScalar type
      * @param <U> The unit type used
      */
-    class Rel<T extends AbstractDoubleScalarRel<U, T>, U extends Unit<U>> extends AbstractContinuousDistScalar
+    class Rel<T extends DoubleScalarRel<U, T>, U extends Unit<U>> extends AbstractContinuousDistScalar
             implements Serializable, Generator<T>
     {
         /** */
@@ -174,7 +173,8 @@ public interface ContinuousDistDoubleScalar
         }
 
         /**
-         * @return a drawn number from the distribution in the given unit.
+         * {@inheritDoc}
+         * @throws IllegalStateException when the unit is not of a known type
          */
         @Override
         @SuppressWarnings("unchecked")
@@ -258,7 +258,7 @@ public interface ContinuousDistDoubleScalar
                     return (T) new Volume(getDistribution().draw(), (VolumeUnit) getDisplayUnit());
 
                 default:
-                    return (T) DoubleScalar.instantiate(getDistribution().draw(), (U) getDisplayUnit());
+                    throw new IllegalStateException("Unable to draw value for relative scalar with unit " + getDisplayUnit());
             }
         }
 

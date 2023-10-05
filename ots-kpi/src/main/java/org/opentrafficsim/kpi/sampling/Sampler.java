@@ -28,7 +28,7 @@ import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
  * @param <G> gtu data type
  * @param <L> lane data type
  */
-public abstract class Sampler<G extends GtuData, L extends LaneData>
+public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
 {
 
     /** Sampler data. */

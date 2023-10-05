@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.changing;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -18,7 +18,8 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.junit.Test;
+import org.djutils.draw.point.Point2d;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.definitions.DefaultsNl;
@@ -26,8 +27,7 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -50,6 +50,7 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -98,11 +99,11 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
     {
         // TODO create a LinkAnimation if the simulator is compatible with that.
         // FIXME The current LinkAnimation is too bad to use...
-        OtsPoint3d[] coordinates = new OtsPoint3d[] {new OtsPoint3d(from.getPoint().x, from.getPoint().y, 0),
-                new OtsPoint3d(to.getPoint().x, to.getPoint().y, 0)};
-        OtsLine3d line = new OtsLine3d(coordinates);
+        Point2d[] coordinates = new Point2d[] {new Point2d(from.getPoint().x, from.getPoint().y),
+                new Point2d(to.getPoint().x, to.getPoint().y)};
+        OtsLine2d line = new OtsLine2d(coordinates);
         CrossSectionLink link =
-                new CrossSectionLink(network, name, from, to, DefaultsNl.ROAD, line, LaneKeepingPolicy.KEEPRIGHT);
+                new CrossSectionLink(network, name, from, to, DefaultsNl.ROAD, line, null, LaneKeepingPolicy.KEEPRIGHT);
         return link;
     }
 
@@ -122,8 +123,8 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
             final Length width) throws NamingException, NetworkException, OtsGeometryException
     {
         // XXX Decide what type of overtaking conditions we want in this test
-        Lane result = new Lane(link, id, latPos, latPos, width, width, laneType,
-                Map.of(DefaultsNl.VEHICLE, new Speed(100, KM_PER_HOUR)), false);
+        Lane result = LaneGeometryUtil.createStraightLane(link, id, latPos, latPos, width, width, laneType,
+                Map.of(DefaultsNl.VEHICLE, new Speed(100, KM_PER_HOUR)));
         return result;
     }
 
@@ -167,19 +168,19 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
         int laneCount = 2;
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), this);
         Lane[] lanes = makeMultiLane(this.network, "Road with two lanes",
-                new Node(this.network, "From", new OtsPoint3d(0, 0, 0), Direction.ZERO),
-                new Node(this.network, "To", new OtsPoint3d(200, 0, 0), Direction.ZERO), laneType, laneCount, this.simulator);
+                new Node(this.network, "From", new Point2d(0, 0), Direction.ZERO),
+                new Node(this.network, "To", new Point2d(200, 0), Direction.ZERO), laneType, laneCount, this.simulator);
 
         // Let's see if adjacent lanes are accessible
         // lanes: | 0 : 1 : 2 | in case of three lanes
-        assertEquals("Leftmost lane should not have accessible adjacent lanes on the LEFT side", 0,
-                lanes[0].accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtuType).size());
-        assertEquals("Leftmost lane should have one accessible adjacent lane on the RIGHT side", 1,
-                lanes[0].accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtuType).size());
-        assertEquals("Rightmost lane should have one accessible adjacent lane on the LEFT side", 1,
-                lanes[1].accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtuType).size());
-        assertEquals("Rightmost lane should not have accessible adjacent lanes on the RIGHT side", 0,
-                lanes[1].accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtuType).size());
+        assertEquals(0, lanes[0].accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtuType).size(),
+                "Leftmost lane should not have accessible adjacent lanes on the LEFT side");
+        assertEquals(1, lanes[0].accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtuType).size(),
+                "Leftmost lane should have one accessible adjacent lane on the RIGHT side");
+        assertEquals(1, lanes[1].accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtuType).size(),
+                "Rightmost lane should have one accessible adjacent lane on the LEFT side");
+        assertEquals(0, lanes[1].accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtuType).size(),
+                "Rightmost lane should not have accessible adjacent lanes on the RIGHT side");
 
         Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions.add(new LanePosition(lanes[1], new Length(100, METER)));
@@ -204,8 +205,8 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
                 preferredLaneGTUs, nonPreferredLaneGTUs, new Speed(100, KM_PER_HOUR), new Acceleration(0.3, METER_PER_SECOND_2),
                 new Acceleration(0.1, METER_PER_SECOND_2), new Acceleration(-0.3, METER_PER_SECOND_2));
         // System.out.println(laneChangeModelResult.toString());
-        assertEquals("Vehicle want to change to the right lane", LateralDirectionality.RIGHT,
-                laneChangeModelResult.getLaneChangeDirection());
+        assertEquals(LateralDirectionality.RIGHT, laneChangeModelResult.getLaneChangeDirection(),
+                "Vehicle want to change to the right lane");
         Length rear = car.position(lanes[0], car.getRear());
         Length front = car.position(lanes[0], car.getFront());
         Length reference = car.position(lanes[0], RelativePosition.REFERENCE_POSITION);
@@ -247,8 +248,8 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
                     nonPreferredLaneGTUs, new Speed(100, KM_PER_HOUR), new Acceleration(0.3, METER_PER_SECOND_2),
                     new Acceleration(0.1, METER_PER_SECOND_2), new Acceleration(-0.3, METER_PER_SECOND_2));
             // System.out.println(laneChangeModelResult.toString());
-            assertEquals("Vehicle cannot to change to the right lane because that would result in an immediate collision", null,
-                    laneChangeModelResult.getLaneChangeDirection());
+            assertEquals(null, laneChangeModelResult.getLaneChangeDirection(),
+                    "Vehicle cannot to change to the right lane because that would result in an immediate collision");
         }
         for (double pos = 0; pos < 180; pos += 5) // beyond 180m, a GTU gets a plan beyond the 200m long network
         {

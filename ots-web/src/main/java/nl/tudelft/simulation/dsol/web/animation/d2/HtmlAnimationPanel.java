@@ -17,14 +17,14 @@ import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.Point;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
-import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
+import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2DComparator;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2dComparator;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2dInterface;
 import nl.tudelft.simulation.dsol.animation.gis.GisMapInterface;
-import nl.tudelft.simulation.dsol.animation.gis.GisRenderable2D;
+import nl.tudelft.simulation.dsol.animation.gis.GisRenderable2d;
 import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.web.animation.HtmlGraphics2d;
 import nl.tudelft.simulation.naming.context.ContextInterface;
@@ -45,8 +45,8 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
     private static final long serialVersionUID = 1L;
 
     /** the elements of this panel. */
-    private SortedSet<Renderable2DInterface<? extends Locatable>> elements =
-            new TreeSet<Renderable2DInterface<? extends Locatable>>(new Renderable2DComparator());
+    private SortedSet<Renderable2dInterface<? extends Locatable>> elements =
+            new TreeSet<Renderable2dInterface<? extends Locatable>>(new Renderable2dComparator());
 
     /** filter for types to be shown or not. */
     private Map<Class<? extends Locatable>, Boolean> visibilityMap = new LinkedHashMap<>();
@@ -70,7 +70,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
     private boolean dragLineEnabled = false;
 
     /** List of drawable objects. */
-    private List<Renderable2DInterface<? extends Locatable>> elementList = new ArrayList<>();
+    private List<Renderable2dInterface<? extends Locatable>> elementList = new ArrayList<>();
 
     /** dirty flag for the list. */
     private boolean dirtyElements = false;
@@ -129,7 +129,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
         }
 
         // draw the animation elements.
-        for (Renderable2DInterface<? extends Locatable> element : this.elementList)
+        for (Renderable2dInterface<? extends Locatable> element : this.elementList)
         {
             // destroy has been called?
             if (element.getSource() == null)
@@ -155,10 +155,10 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
 
     /**
      * Test whether the element needs to be shown on the screen or not.
-     * @param element Renderable2DInterface&lt;? extends Locatable&gt;; the renderable element to test
+     * @param element Renderable2dInterface&lt;? extends Locatable&gt;; the renderable element to test
      * @return whether the element needs to be shown or not
      */
-    public boolean isShowElement(final Renderable2DInterface<? extends Locatable> element)
+    public boolean isShowElement(final Renderable2dInterface<? extends Locatable> element)
     {
         return element.getSource() == null ? false : isShowClass(element.getSource().getClass());
     }
@@ -211,12 +211,12 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
     {
         if (event.getType().equals(ContextInterface.OBJECT_ADDED_EVENT))
         {
-            objectAdded((Renderable2DInterface<? extends Locatable>) ((Object[]) event.getContent())[2]);
+            objectAdded((Renderable2dInterface<? extends Locatable>) ((Object[]) event.getContent())[2]);
         }
 
         else if (event.getType().equals(ContextInterface.OBJECT_REMOVED_EVENT))
         {
-            objectRemoved((Renderable2DInterface<? extends Locatable>) ((Object[]) event.getContent())[2]);
+            objectRemoved((Renderable2dInterface<? extends Locatable>) ((Object[]) event.getContent())[2]);
         }
 
         else if // (this.simulator.getSourceId().equals(event.getSourceId()) &&
@@ -239,7 +239,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
                     this.context.addListener(this, ContextInterface.OBJECT_REMOVED_EVENT);
                     for (Object element : this.context.values())
                     {
-                        objectAdded((Renderable2DInterface<? extends Locatable>) element);
+                        objectAdded((Renderable2dInterface<? extends Locatable>) element);
                     }
                     this.repaint();
                 }
@@ -253,9 +253,9 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
 
     /**
      * Add a locatable object to the animation.
-     * @param element Renderable2DInterface&lt;? extends Locatable&gt;; the element to add to the animation
+     * @param element Renderable2dInterface&lt;? extends Locatable&gt;; the element to add to the animation
      */
-    public void objectAdded(final Renderable2DInterface<? extends Locatable> element)
+    public void objectAdded(final Renderable2dInterface<? extends Locatable> element)
     {
         synchronized (this.elementList)
         {
@@ -266,9 +266,9 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
 
     /**
      * Remove a locatable object from the animation.
-     * @param element Renderable2DInterface&lt;? extends Locatable&gt;; the element to add to the animation
+     * @param element Renderable2dInterface&lt;? extends Locatable&gt;; the element to add to the animation
      */
-    public void objectRemoved(final Renderable2DInterface<? extends Locatable> element)
+    public void objectRemoved(final Renderable2dInterface<? extends Locatable> element)
     {
         synchronized (this.elementList)
         {
@@ -289,7 +289,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
         double maxY = -Double.MAX_VALUE;
         try
         {
-            for (Renderable2DInterface<? extends Locatable> renderable : this.elementList)
+            for (Renderable2dInterface<? extends Locatable> renderable : this.elementList)
             {
                 if (renderable.getSource() == null)
                 {
@@ -372,7 +372,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
     /**
      * @return the set of animation elements.
      */
-    public final SortedSet<Renderable2DInterface<? extends Locatable>> getElements()
+    public final SortedSet<Renderable2dInterface<? extends Locatable>> getElements()
     {
         return this.elements;
     }
@@ -460,10 +460,10 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
     /**
      * Add buttons for toggling all GIS layers on or off.
      * @param header String; the name of the group of layers
-     * @param gisMap GisRenderable2D; the GIS map for which the toggles have to be added
+     * @param gisMap GisRenderable2d; the GIS map for which the toggles have to be added
      * @param toolTipText String; the tool tip text to show when hovering over the button
      */
-    public final void addAllToggleGISButtonText(final String header, final GisRenderable2D gisMap, final String toolTipText)
+    public final void addAllToggleGISButtonText(final String header, final GisRenderable2d gisMap, final String toolTipText)
     {
         addToggleText(" ");
         addToggleText(header);
@@ -484,10 +484,10 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
      * Add a button to toggle a GIS Layer on or off.
      * @param layerName String; the name of the layer
      * @param displayName String; the name to display next to the tick box
-     * @param gisMap GisRenderable2D; the map
+     * @param gisMap GisRenderable2d; the map
      * @param toolTipText String; the tool tip text
      */
-    public final void addToggleGISButtonText(final String layerName, final String displayName, final GisRenderable2D gisMap,
+    public final void addToggleGISButtonText(final String layerName, final String displayName, final GisRenderable2d gisMap,
             final String toolTipText)
     {
         ToggleButtonInfo.Gis buttonInfo = new ToggleButtonInfo.Gis(displayName, layerName, toolTipText, true);

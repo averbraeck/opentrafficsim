@@ -1,13 +1,13 @@
 package org.opentrafficsim.core;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Verify that all classes have a toString method (unless the class in non-instantiable, or an enum, or abstract. <br>
@@ -29,9 +29,14 @@ public class VerifyRequiredMethods
     @Test
     public final void toStringTest()
     {
+        try {
         Collection<Class<?>> classList = ClassList.classList("org.opentrafficsim", true);
         for (Class<?> c : classList)
         {
+            if (c.getName().contains("DirectedPoint"))
+            {
+                System.out.println("hmmm");
+            }
             if (Exception.class.isAssignableFrom(c))
             {
                 continue;
@@ -104,6 +109,10 @@ public class VerifyRequiredMethods
                     System.err.println("Class " + c.getName() + " does not (but should) override toString");
                 }
             }
+        }
+        }catch(Exception e)
+        {
+            System.out.println("hmmm");
         }
     }
 

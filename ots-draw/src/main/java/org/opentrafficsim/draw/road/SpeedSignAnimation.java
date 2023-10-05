@@ -12,10 +12,13 @@ import java.rmi.RemoteException;
 import javax.naming.NamingException;
 
 import org.djunits.unit.SpeedUnit;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.road.network.lane.object.SpeedSign;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.draw.DrawLevel;
+import org.opentrafficsim.draw.road.SpeedSignAnimation.SpeedSignData;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
+import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
  * <p>
@@ -27,7 +30,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 
-public class SpeedSignAnimation extends Renderable2D<SpeedSign> implements Serializable
+public class SpeedSignAnimation extends Renderable2d<SpeedSignData> implements Serializable
 {
 
     /** */
@@ -40,15 +43,15 @@ public class SpeedSignAnimation extends Renderable2D<SpeedSign> implements Seria
     private static final double EDGE = 1.3;
 
     /**
-     * @param source SpeedSign; speed sign
-     * @param simulator OtsSimulatorInterface; simulator
+     * @param source SpeedSignData; speed sign
+     * @param contextualized Contextualized; context provider
      * @throws NamingException ne
      * @throws RemoteException on communication failure
      */
-    public SpeedSignAnimation(final SpeedSign source, final OtsSimulatorInterface simulator)
+    public SpeedSignAnimation(final SpeedSignData source, final Contextualized contextualized)
             throws NamingException, RemoteException
     {
-        super(source, simulator);
+        super(source, contextualized);
         setRotate(false);
     }
 
@@ -82,6 +85,31 @@ public class SpeedSignAnimation extends Renderable2D<SpeedSign> implements Seria
     public final String toString()
     {
         return "SpeedSignAnimation";
+    }
+
+    /**
+     * LinkData provides the information required to draw a link.
+     * <p>
+     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     */
+    public interface SpeedSignData extends Locatable
+    {
+        /**
+         * Returns the speed.
+         * @return Speed; speed.
+         */
+        Speed getSpeed();
+
+        /** {@inheritDoc} */
+        @Override
+        default double getZ()
+        {
+            return DrawLevel.OBJECT.getZ();
+        }
     }
 
 }

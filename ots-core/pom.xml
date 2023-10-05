@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.opentrafficsim</groupId>
     <artifactId>ots</artifactId>
-    <version>1.7.1</version>
+    <version>1.7.3</version>
   </parent>
 
   <artifactId>ots-core</artifactId>
@@ -31,18 +31,6 @@
     <dependency>
       <groupId>org.jgrapht</groupId>
       <artifactId>jgrapht-core</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.locationtech.jts</groupId>
-      <artifactId>jts-core</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
     </dependency>
 
   </dependencies>

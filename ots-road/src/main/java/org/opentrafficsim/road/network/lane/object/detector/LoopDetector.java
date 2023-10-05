@@ -630,7 +630,7 @@ public class LoopDetector extends LaneDetector
                     {
                         LoopDetector detector = iterator.next();
                         return new Row(table(), new Object[] {detector.getId(), detector.getLane().getId(),
-                                detector.getLane().getParentLink().getId(), detector.getLongitudinalPosition()});
+                                detector.getLane().getLink().getId(), detector.getLongitudinalPosition()});
                     }
                 };
             }

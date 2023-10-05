@@ -1,7 +1,8 @@
 package org.opentrafficsim.core.network;
 
 import org.djunits.value.vdouble.scalar.Frequency;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.FractionalLengthData;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 
 /**
  * A link with a maximum capacity, expressed as the maximum number of GTUs per time unit that the link can handle.
@@ -27,16 +28,18 @@ public class CapacityLink extends Link implements Capacity
      * @param startNode Node; start node (directional)
      * @param endNode Node; end node (directional)
      * @param linkType LinkType; Link type to indicate compatibility with GTU types
-     * @param designLine OtsLine3d; the OtsLine3d design line of the Link
+     * @param designLine OtsLine2d; the OtsLine2d design line of the Link
+     * @param elevation FractionalLengthData; elevation given over fractional length, may be {@code null}.
      * @param capacity Frequency; link capacity in GTUs per hour // XXX per direction? which GtuType?
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public CapacityLink(final Network network, final String id, final Node startNode, final Node endNode,
-            final LinkType linkType, final OtsLine3d designLine, final Frequency capacity) throws NetworkException
+            final LinkType linkType, final OtsLine2d designLine, final FractionalLengthData elevation, final Frequency capacity)
+            throws NetworkException
     {
-        super(network, id, startNode, endNode, linkType, designLine);
+        super(network, id, startNode, endNode, linkType, designLine, elevation);
         this.capacity = capacity;
     }
 

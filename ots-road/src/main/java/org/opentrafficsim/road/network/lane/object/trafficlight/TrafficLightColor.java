@@ -22,7 +22,7 @@ public enum TrafficLightColor
     GREEN,
 
     /** Pre-green indication. */
-    PreGreen,
+    PREGREEN, // not really a color, is it...
 
     /** Traffic light is not working. */
     BLACK;
@@ -54,7 +54,7 @@ public enum TrafficLightColor
     /** @return whether the light is pre-green. */
     public final boolean isPreGreen()
     {
-        return this.equals(PreGreen);
+        return this.equals(PREGREEN);
     }
 
     /** @return whether the light is black (off). */

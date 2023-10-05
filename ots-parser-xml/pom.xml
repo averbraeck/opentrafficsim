@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.opentrafficsim</groupId>
     <artifactId>ots</artifactId>
-    <version>1.7.1</version>
+    <version>1.7.3</version>
   </parent>
 
   <artifactId>ots-parser-xml</artifactId>
@@ -37,6 +37,17 @@
           <specVersion>2.3</specVersion>
           <verbose>true</verbose>
           <extension>true</extension>
+          <!-- -Xsimplify & jaxb2-basics can simplify heterogeneous elements with List<JAXBElement<?>> to a few List<Type> -->
+          <args>
+            <arg>-Xsimplify</arg>
+          </args>
+          <plugins>
+            <plugin>
+              <groupId>org.jvnet.jaxb2_commons</groupId>
+              <artifactId>jaxb2-basics</artifactId>
+              <version>${maven-jaxb2-basics.version}</version>
+            </plugin>
+          </plugins>
           <bindingDirectory>src/main/resources/xsd</bindingDirectory>
           <bindingIncludes>
             <bindingInclude>bindings.xml</bindingInclude>
@@ -67,23 +78,23 @@
     </dependency>
 
     <dependency>
-      <groupId>org.opentrafficsim</groupId>
-      <artifactId>ots-draw</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>org.djunits</groupId>
       <artifactId>djunits</artifactId>
     </dependency>
 
     <dependency>
       <groupId>org.djutils</groupId>
-      <artifactId>djutils</artifactId>
+      <artifactId>djutils-base</artifactId>
     </dependency>
 
     <dependency>
       <groupId>org.djutils</groupId>
       <artifactId>djutils-draw</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.djutils</groupId>
+      <artifactId>djutils-eval</artifactId>
     </dependency>
 
     <dependency>

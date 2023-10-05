@@ -1,16 +1,16 @@
 package org.opentrafficsim.core.network;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.junit.Test;
+import org.djutils.draw.point.Point2d;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.mock.MockSimulator;
 
 /**
@@ -33,42 +33,42 @@ public class LinkLocationTest
     @Test
     public final void testLinkLocation() throws NetworkException, OtsGeometryException
     {
-        OtsPoint3d fromPoint = new OtsPoint3d(100, 200, 300);
-        OtsPoint3d toPoint = new OtsPoint3d(1000, 2000, 330);
+        Point2d fromPoint = new Point2d(100, 200);
+        Point2d toPoint = new Point2d(1000, 2000);
         Network network = new Network("testNetworkForCapacityOTSLink", MockSimulator.createMock());
         Node fromNode = new Node(network, "startNode", fromPoint);
         Node toNode = new Node(network, "endNode", toPoint);
         LinkType linkType = DefaultsNl.ROAD;
-        OtsLine3d designLine = new OtsLine3d(fromPoint, toPoint);
-        Link link = new Link(network, "link", fromNode, toNode, linkType, designLine);
+        OtsLine2d designLine = new OtsLine2d(fromPoint, toPoint);
+        Link link = new Link(network, "link", fromNode, toNode, linkType, designLine, null);
         Length linkLength = link.getLength();
         // Create an unrelated link
-        OtsPoint3d a = new OtsPoint3d(1, 2, 3);
-        OtsPoint3d b = new OtsPoint3d(11, 12, 13);
+        Point2d a = new Point2d(1, 2);
+        Point2d b = new Point2d(11, 12);
         Link otherLink = new Link(network, "otherLink", new Node(network, "a", a), new Node(network, "b", b), linkType,
-                new OtsLine3d(a, b));
+                new OtsLine2d(a, b), null);
         for (int percentage = 0; percentage <= 100; percentage += 10)
         {
             double fraction = percentage / 100.0;
             LinkLocation ll = new LinkLocation(link, fraction);
-            assertTrue("link must match", link.equals(ll.getLink()));
-            assertEquals("fraction must match", fraction, ll.getFractionalLongitudinalPosition(), 0.0001);
-            assertEquals("position must match", linkLength.si * fraction, ll.getLongitudinalPosition().si, 0.1);
+            assertTrue(link.equals(ll.getLink()), "link must match");
+            assertEquals(fraction, ll.getFractionalLongitudinalPosition(), 0.0001, "fraction must match");
+            assertEquals(linkLength.si * fraction, ll.getLongitudinalPosition().si, 0.1, "position must match");
             // Alternate constructor
             Length distance = new Length(linkLength.si * fraction, LengthUnit.SI);
             ll = new LinkLocation(link, distance);
-            assertTrue("link must match", link.equals(ll.getLink()));
-            assertEquals("fraction must match", fraction, ll.getFractionalLongitudinalPosition(), 0.0001);
-            assertEquals("position must match", linkLength.si * fraction, ll.getLongitudinalPosition().si, 0.1);
+            assertTrue(link.equals(ll.getLink()), "link must match");
+            assertEquals(fraction, ll.getFractionalLongitudinalPosition(), 0.0001, "fraction must match");
+            assertEquals(linkLength.si * fraction, ll.getLongitudinalPosition().si, 0.1, "position must match");
             // Create another LinkLocation and check the distance between this and that one
             for (int otherPercentage = 0; otherPercentage <= 100; otherPercentage += 25)
             {
                 double otherFraction = otherPercentage / 100.0;
                 LinkLocation otherLL = new LinkLocation(link, otherFraction);
-                assertEquals("distance must match", (otherFraction - fraction) * linkLength.si, ll.distance(otherLL).si, 0.1);
+                assertEquals((otherFraction - fraction) * linkLength.si, ll.distance(otherLL).si, 0.1, "distance must match");
             }
             LinkLocation otherLinkLocation = new LinkLocation(otherLink, 0.5);
-            assertNull("Distance to unrelated link must be null", ll.distance(otherLinkLocation));
+            assertNull(ll.distance(otherLinkLocation), "Distance to unrelated link must be null");
             assertTrue(ll.toString().contains(link.getId()));
         }
     }

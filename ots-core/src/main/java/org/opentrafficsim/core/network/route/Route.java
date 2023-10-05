@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import org.djutils.base.Identifiable;
 import org.djutils.logger.CategoryLogger;
-import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;

@@ -8,10 +8,14 @@ import java.rmi.RemoteException;
 import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
+import org.djutils.base.Identifiable;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.draw.DrawLevel;
+import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
+import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
  * Abstract class for objects that draw a line perpendicular on the lane.
@@ -24,8 +28,11 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <T> the LaneBasedObject class of the source that indicates the location of the Renderable on the screen
  */
-public abstract class AbstractLineAnimation<T extends LaneBasedObject> extends Renderable2D<T>
+public abstract class AbstractLineAnimation<T extends LaneBasedObjectData> extends Renderable2d<T>
 {
+
+    /** */
+    private static final long serialVersionUID = 20230929L;
 
     /** Rectangle to color. */
     private final Rectangle2D rectangle;
@@ -36,17 +43,17 @@ public abstract class AbstractLineAnimation<T extends LaneBasedObject> extends R
     /**
      * Construct the line animation.
      * @param source T; source
-     * @param simulator OtsSimulatorInterface; the simulator to schedule on
+     * @param contextualized Contextualized; context provider
      * @param length double; length of the line, as fraction of the lane width
      * @param width Length; line width
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
-    public AbstractLineAnimation(final T source, final OtsSimulatorInterface simulator, final double length, final Length width)
+    public AbstractLineAnimation(final T source, final Contextualized contextualized, final double length, final Length width)
             throws NamingException, RemoteException
     {
-        super(source, simulator);
-        this.halfLength = .5 * length * source.getLane().getWidth(0.0).getSI();
+        super(source, contextualized);
+        this.halfLength = .5 * length * source.getLaneWidth().si;
         this.rectangle = new Rectangle2D.Double(-.5 * width.si, -this.halfLength, width.si, 2 * this.halfLength);
     }
 
@@ -65,6 +72,35 @@ public abstract class AbstractLineAnimation<T extends LaneBasedObject> extends R
     public void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         graphics.fill(this.rectangle);
+    }
+
+    /**
+     * LaneBasedObjectData provides the information required to draw a lane based object.
+     * <p>
+     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     */
+    public interface LaneBasedObjectData extends Locatable, Identifiable
+    {
+        /**
+         * Returns the width of the lane.
+         * @return Length; width of the lane.
+         */
+        Length getLaneWidth();
+
+        /** {@inheritDoc} */
+        @Override
+        OrientedPoint2d getLocation();
+
+        /** {@inheritDoc} */
+        @Override
+        default double getZ() throws RemoteException
+        {
+            return DrawLevel.OBJECT.getZ();
+        }
     }
 
 }

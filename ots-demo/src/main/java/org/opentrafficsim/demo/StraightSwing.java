@@ -8,20 +8,22 @@ import javax.naming.NamingException;
 import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.animation.GraphLaneUtil;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.draw.core.OtsDrawingException;
+import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.draw.graphs.ContourDataSource;
 import org.opentrafficsim.draw.graphs.ContourPlotAcceleration;
 import org.opentrafficsim.draw.graphs.ContourPlotDensity;
 import org.opentrafficsim.draw.graphs.ContourPlotFlow;
 import org.opentrafficsim.draw.graphs.ContourPlotSpeed;
 import org.opentrafficsim.draw.graphs.GraphPath;
+import org.opentrafficsim.draw.graphs.PlotScheduler;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
-import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.road.network.sampling.LaneDataRoad;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
+import org.opentrafficsim.swing.graphs.OtsPlotScheduler;
 import org.opentrafficsim.swing.graphs.SwingContourPlot;
 import org.opentrafficsim.swing.graphs.SwingPlot;
 import org.opentrafficsim.swing.graphs.SwingTrajectoryPlot;
@@ -31,7 +33,7 @@ import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialog;
-import nl.tudelft.simulation.language.DSOLException;
+import nl.tudelft.simulation.language.DsolException;
 
 /**
  * Simplest contour plots demonstration.
@@ -102,7 +104,7 @@ public class StraightSwing extends OtsSimulationApplication<StraightModel> imple
                 }
             }
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DSOLException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DsolException exception)
         {
             exception.printStackTrace();
         }
@@ -129,21 +131,22 @@ public class StraightSwing extends OtsSimulationApplication<StraightModel> imple
         ContourDataSource dataPool = new ContourDataSource(sampler.getSamplerData(), path);
         TablePanel charts = new TablePanel(3, 2);
         SwingPlot plot = null;
-
+        PlotScheduler scheduler = new OtsPlotScheduler(simulator);
+        
         plot = new SwingTrajectoryPlot(
-                new TrajectoryPlot("TrajectoryPlot", Duration.instantiateSI(10.0), simulator, sampler.getSamplerData(), path));
+                new TrajectoryPlot("TrajectoryPlot", Duration.instantiateSI(10.0), scheduler, sampler.getSamplerData(), path));
         charts.setCell(plot.getContentPane(), 0, 0);
 
-        plot = new SwingContourPlot(new ContourPlotDensity("DensityPlot", simulator, dataPool));
+        plot = new SwingContourPlot(new ContourPlotDensity("DensityPlot", scheduler, dataPool));
         charts.setCell(plot.getContentPane(), 1, 0);
 
-        plot = new SwingContourPlot(new ContourPlotSpeed("SpeedPlot", simulator, dataPool));
+        plot = new SwingContourPlot(new ContourPlotSpeed("SpeedPlot", scheduler, dataPool));
         charts.setCell(plot.getContentPane(), 2, 0);
 
-        plot = new SwingContourPlot(new ContourPlotFlow("FlowPlot", simulator, dataPool));
+        plot = new SwingContourPlot(new ContourPlotFlow("FlowPlot", scheduler, dataPool));
         charts.setCell(plot.getContentPane(), 1, 1);
 
-        plot = new SwingContourPlot(new ContourPlotAcceleration("AccelerationPlot", simulator, dataPool));
+        plot = new SwingContourPlot(new ContourPlotAcceleration("AccelerationPlot", scheduler, dataPool));
         charts.setCell(plot.getContentPane(), 2, 1);
 
         getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "statistics ", charts);

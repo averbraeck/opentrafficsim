@@ -3,10 +3,10 @@ package org.opentrafficsim.core.object;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.base.Identifiable;
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.PolyLine2d;
 import org.djutils.event.EventProducer;
-import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.core.geometry.Bounds;
-import org.opentrafficsim.core.geometry.OtsLine3d;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 
@@ -21,8 +21,9 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  */
 public interface LocatedObject extends Locatable, Identifiable, EventProducer, Serializable
 {
+    
     /** @return the outline geometry of the object. */
-    OtsLine3d getGeometry();
+    PolyLine2d getGeometry();
 
     /** @return the height of the object (can be Length.ZERO). */
     Length getHeight();
@@ -31,6 +32,6 @@ public interface LocatedObject extends Locatable, Identifiable, EventProducer, S
     String getFullId();
 
     @Override
-    Bounds getBounds();
+    Bounds2d getBounds();
 
 }

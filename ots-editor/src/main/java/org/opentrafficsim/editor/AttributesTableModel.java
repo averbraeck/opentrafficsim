@@ -10,7 +10,11 @@ import de.javagl.treetable.JTreeTable;
 
 /**
  * Model for a {@code JTable} to display the attributes of a {@code XsdTreeNode}.
- * @author wjschakel
+ * <p>
+ * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 public class AttributesTableModel extends AbstractTableModel
 {
@@ -76,6 +80,11 @@ public class AttributesTableModel extends AbstractTableModel
     @Override
     public boolean isCellEditable(final int rowIndex, final int columnIndex)
     {
+        if (this.node.getPathString().startsWith("Ots.Definitions")
+                && "xsd:boolean".equals(this.node.getAttributeBaseType(rowIndex)))
+        {
+            return false;
+        }
         return columnIndex == 1 && !this.node.isInclude();
     }
 
@@ -105,10 +114,19 @@ public class AttributesTableModel extends AbstractTableModel
     @Override
     public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex)
     {
-        this.treeTable.updateUI();
         Throw.when(columnIndex != 1, IllegalStateException.class,
                 "Attribute table model requested to set a value from a column that does not represent the attribute value.");
+        if (aValue == null)
+        {
+            return;
+        }
+        if (this.node == null)
+        {
+            // node was deleted
+            return;
+        }
         this.node.setAttributeValue(rowIndex, aValue.toString());
+        this.treeTable.updateUI();
         this.fireTableCellUpdated(rowIndex, columnIndex);
     }
 

@@ -3,7 +3,7 @@ package org.opentrafficsim.kpi.sampling.indicator;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Time;
-import org.djunits.value.vdouble.scalar.base.DoubleScalarInterface;
+import org.djunits.value.vdouble.scalar.base.DoubleScalar;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.sampling.Query;
@@ -21,7 +21,7 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <T> class of the value
  */
-public abstract class AbstractIndicator<T extends DoubleScalarInterface<?, ?>>
+public abstract class AbstractIndicator<T extends DoubleScalar<?, ?>>
 {
 
     /** Last query. */

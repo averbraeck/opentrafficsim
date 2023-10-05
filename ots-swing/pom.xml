@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.opentrafficsim</groupId>
     <artifactId>ots</artifactId>
-    <version>1.7.1</version>
+    <version>1.7.3</version>
   </parent>
 
   <artifactId>ots-swing</artifactId>
@@ -21,7 +21,7 @@
     
     <dependency>
       <groupId>org.opentrafficsim</groupId>
-      <artifactId>ots-draw</artifactId>
+      <artifactId>ots-animation</artifactId>
     </dependency>
     
     <dependency>

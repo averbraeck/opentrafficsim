@@ -71,7 +71,7 @@ public interface AccelerationIncentive
                 {
                     return true; // when there is no route, we are always on it...
                 }
-                Link link = t.getLane().getParentLink();
+                Link link = t.getLane().getLink();
                 if (route.contains(link.getStartNode()) && route.contains(link.getEndNode()))
                 {
                     return route.indexOf(link.getEndNode()) - route.indexOf(link.getStartNode()) == 1;

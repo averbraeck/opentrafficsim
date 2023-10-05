@@ -10,15 +10,23 @@ import javax.naming.NamingException;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
-import org.opentrafficsim.core.geometry.DirectedPoint;
+import org.opentrafficsim.core.geometry.ContinuousBezierCubic;
+import org.opentrafficsim.core.geometry.ContinuousLine;
+import org.opentrafficsim.core.geometry.ContinuousPolyLine;
+import org.opentrafficsim.core.geometry.ContinuousStraight;
+import org.opentrafficsim.core.geometry.Flattener.NumSegments;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
+import org.opentrafficsim.core.geometry.OtsGeometryUtil;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
@@ -26,9 +34,10 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.CrossSectionSlice;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Type;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -46,8 +55,14 @@ public final class LaneFactory
     /** Angle above which a Bezier curve is used over a straight line. */
     private static final double BEZIER_MARGIN = Math.toRadians(0.5);
 
+    /** Number of segments to use. */
+    private static final NumSegments SEGMENTS = new NumSegments(64);
+
     /** Link. */
     private final CrossSectionLink link;
+
+    /** Design line. */
+    private final ContinuousLine line;
 
     /** Offset for next cross section elements. Left side of lane when building left to right, and vice versa. */
     private Length offset;
@@ -102,14 +117,16 @@ public final class LaneFactory
      * @param simulator OtsSimulatorInterface; simulator
      * @param policy LaneKeepingPolicy; lane keeping policy
      * @param gtuType GtuType; parent GTU type of relevant GTUs.
-     * @param line OtsLine3d; line
+     * @param line ContinuousLine; line
      * @throws NetworkException if the link exists, or a node does not exist, in the network
      */
     public LaneFactory(final RoadNetwork network, final Node from, final Node to, final LinkType type,
-            final OtsSimulatorInterface simulator, final LaneKeepingPolicy policy, final GtuType gtuType, final OtsLine3d line)
-            throws NetworkException
+            final OtsSimulatorInterface simulator, final LaneKeepingPolicy policy, final GtuType gtuType,
+            final ContinuousLine line) throws NetworkException
     {
-        this.link = new CrossSectionLink(network, from.getId() + to.getId(), from, to, type, line, policy);
+        this.link = new CrossSectionLink(network, from.getId() + to.getId(), from, to, type,
+                new OtsLine2d(line.flatten(SEGMENTS)), null, policy);
+        this.line = line;
         this.gtuType = gtuType;
     }
 
@@ -118,14 +135,13 @@ public final class LaneFactory
      * Otherwise a default Bezier curve is created.
      * @param from Node; from node
      * @param to Node; to node
-     * @return OtsLine3d; line
-     * @throws OtsGeometryException if no valid line can be created
+     * @return ContinuousLine; design line
      */
-    private static OtsLine3d makeLine(final Node from, final Node to) throws OtsGeometryException
+    private static ContinuousLine makeLine(final Node from, final Node to)
     {
         // Straight or bezier?
         double rotCrow = Math.atan2(to.getLocation().y - from.getLocation().y, to.getLocation().x - from.getLocation().x);
-        double dRot = from.getLocation().getRotZ() - rotCrow;
+        double dRot = from.getLocation().getDirZ() - rotCrow;
         while (dRot < -Math.PI)
         {
             dRot += 2.0 * Math.PI;
@@ -134,14 +150,15 @@ public final class LaneFactory
         {
             dRot -= 2.0 * Math.PI;
         }
-        OtsLine3d line;
-        if (from.getLocation().getRotZ() != to.getLocation().getRotZ() || Math.abs(dRot) > BEZIER_MARGIN)
+        ContinuousLine line;
+        if (from.getLocation().getDirZ() != to.getLocation().getDirZ() || Math.abs(dRot) > BEZIER_MARGIN)
         {
-            line = Bezier.cubic(from.getLocation(), to.getLocation());
+            Point2d[] points = Bezier.cubicControlPoints(from.getLocation(), to.getLocation(), 1.0, false);
+            line = new ContinuousBezierCubic(points[0], points[1], points[2], points[3]);
         }
         else
         {
-            line = new OtsLine3d(from.getPoint(), to.getPoint());
+            line = new ContinuousStraight(from.getLocation(), from.getPoint().distance(to.getPoint()));
         }
         return line;
     }
@@ -162,11 +179,13 @@ public final class LaneFactory
         this.laneType0 = laneType;
         this.speedLimit0 = speedLimit;
         Length width = getWidth(Type.SOLID);
-        this.firstStripe =
-                Try.assign(
-                        () -> new Stripe(Type.SOLID, this.link, this.offset.plus(this.offsetStart),
-                                this.offset.plus(this.offsetEnd), width, width, false),
-                        "Unexpected exception while building link.");
+        List<CrossSectionSlice> slices = LaneGeometryUtil.getSlices(this.line, this.offset.plus(this.offsetStart), width);
+        PolyLine2d centerLine = this.line.flattenOffset(LaneGeometryUtil.getCenterOffsets(this.line, slices), SEGMENTS);
+        PolyLine2d leftEdge = this.line.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(this.line, slices), SEGMENTS);
+        PolyLine2d rightEdge = this.line.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(this.line, slices), SEGMENTS);
+        Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
+        this.firstStripe = Try.assign(() -> new Stripe(Type.SOLID, this.link, new OtsLine2d(centerLine), contour, slices),
+                "Unexpected exception while building link.");
         return this;
     }
 
@@ -185,7 +204,13 @@ public final class LaneFactory
         this.laneWidth0 = laneWidth;
         this.laneType0 = laneType;
         this.speedLimit0 = speedLimit;
-        this.firstStripe = Try.assign(() -> new Stripe(Type.SOLID, this.link, this.offset, getWidth(Type.SOLID)),
+        Length width = getWidth(Type.SOLID);
+        List<CrossSectionSlice> slices = LaneGeometryUtil.getSlices(this.line, this.offset.plus(this.offsetStart), width);
+        PolyLine2d centerLine = this.line.flattenOffset(LaneGeometryUtil.getCenterOffsets(this.line, slices), SEGMENTS);
+        PolyLine2d leftEdge = this.line.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(this.line, slices), SEGMENTS);
+        PolyLine2d rightEdge = this.line.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(this.line, slices), SEGMENTS);
+        Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
+        this.firstStripe = Try.assign(() -> new Stripe(Type.SOLID, this.link, new OtsLine2d(centerLine), contour, slices),
                 "Unexpected exception while building link.");
         return this;
     }
@@ -245,17 +270,29 @@ public final class LaneFactory
             Length startOffset = this.offset.plus(this.laneWidth0.times(0.5)).plus(this.offsetStart);
             Length endOffset = this.offset.plus(this.laneWidth0.times(0.5)).plus(this.offsetEnd);
 
+            List<CrossSectionSlice> slices =
+                    LaneGeometryUtil.getSlices(this.line, startOffset, endOffset, this.laneWidth0.abs(), this.laneWidth0.abs());
+            PolyLine2d centerLine = this.line.flattenOffset(LaneGeometryUtil.getCenterOffsets(this.line, slices), SEGMENTS);
+            PolyLine2d leftEdge = this.line.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(this.line, slices), SEGMENTS);
+            PolyLine2d rightEdge = this.line.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(this.line, slices), SEGMENTS);
+            Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
+
             this.lanes.add(Try.assign(
-                    () -> new Lane(this.link, "Lane " + (this.lanes.size() + 1), startOffset, endOffset, this.laneWidth0.abs(),
-                            this.laneWidth0.abs(), this.laneType0, Map.of(this.gtuType, this.speedLimit0), false),
+                    () -> new Lane(this.link, "Lane " + (this.lanes.size() + 1), new OtsLine2d(centerLine), contour, slices,
+                            this.laneType0, Map.of(this.gtuType, this.speedLimit0)),
                     "Unexpected exception while building link."));
             this.offset = this.offset.plus(this.laneWidth0);
+
             Length width = getWidth(type);
-            stripeList
-                    .add(Try.assign(
-                            () -> new Stripe(type, this.link, this.offset.plus(this.offsetStart),
-                                    this.offset.plus(this.offsetEnd), width, width, false),
-                            "Unexpected exception while building link."));
+            startOffset = this.offset.plus(this.offsetStart);
+            endOffset = this.offset.plus(this.offsetEnd);
+            List<CrossSectionSlice> slices2 = LaneGeometryUtil.getSlices(this.line, startOffset, endOffset, width, width);
+            PolyLine2d centerLine2 = this.line.flattenOffset(LaneGeometryUtil.getCenterOffsets(this.line, slices2), SEGMENTS);
+            leftEdge = this.line.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(this.line, slices2), SEGMENTS);
+            rightEdge = this.line.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(this.line, slices2), SEGMENTS);
+            Polygon2d contour2 = LaneGeometryUtil.getContour(leftEdge, rightEdge);
+            stripeList.add(Try.assign(() -> new Stripe(type, this.link, new OtsLine2d(centerLine2), contour2, slices2),
+                    "Unexpected exception while building link."));
         }
         return this;
     }
@@ -311,7 +348,7 @@ public final class LaneFactory
             }
             Length start = startOffset.plus(width.times(0.5));
             Length end = endOffset.plus(width.times(0.5));
-            Try.assign(() -> new Shoulder(this.link, "Left shoulder", start, end, width, width, false),
+            Try.assign(() -> LaneGeometryUtil.createStraightShoulder(this.link, "Left shoulder", start, end, width, width),
                     "Unexpected exception while building link.");
         }
         if (lat == null || lat.isNone() || lat.isRight())
@@ -332,7 +369,7 @@ public final class LaneFactory
             }
             Length start = startOffset.minus(width.times(0.5));
             Length end = endOffset.minus(width.times(0.5));
-            Try.assign(() -> new Shoulder(this.link, "Right shoulder", start, end, width, width, false),
+            Try.assign(() -> LaneGeometryUtil.createStraightShoulder(this.link, "Right shoulder", start, end, width, width),
                     "Unexpected exception while building link.");
         }
         return this;
@@ -353,8 +390,8 @@ public final class LaneFactory
      * @param name String; name of the new Link
      * @param from Node; start Node of the new Link
      * @param to Node; end Node of the new Link
-     * @param intermediatePoints OtsPoint3d[]; array of intermediate coordinates (may be null); the intermediate points may
-     *            contain the coordinates of the from node and to node
+     * @param intermediatePoints Point2d[]; array of intermediate coordinates (may be null in which case the node points are
+     *            used)
      * @param simulator OtsSimulatorInterface; the simulator for this network
      * @return Link; the newly constructed Link
      * @throws OtsGeometryException when the design line is degenerate (only one point or duplicate point)
@@ -362,51 +399,14 @@ public final class LaneFactory
      *             or the end node of the link are not registered in the network.
      */
     public static CrossSectionLink makeLink(final RoadNetwork network, final String name, final Node from, final Node to,
-            final OtsPoint3d[] intermediatePoints, final OtsSimulatorInterface simulator)
+            final Point2d[] intermediatePoints, final OtsSimulatorInterface simulator)
             throws OtsGeometryException, NetworkException
     {
-        List<OtsPoint3d> pointList =
-                intermediatePoints == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(intermediatePoints));
-        if (pointList.size() == 0 || !from.getPoint().equals(pointList.get(0)))
-        {
-            pointList.add(0, from.getPoint());
-        }
-        if (pointList.size() == 0 || !to.getPoint().equals(pointList.get(pointList.size() - 1)))
-        {
-            pointList.add(to.getPoint());
-        }
-
-        /*-
-        // see if an intermediate point needs to be created to the start of the link in the right direction
-        OtsPoint3d s1 = pointList.get(0);
-        OtsPoint3d s2 = pointList.get(1);
-        double dy = s2.y - s1.y;
-        double dx = s2.x - s1.x;
-        double a = from.getLocation().getRotZ();
-        if (Math.abs(a - Math.atan2(dy, dx)) > 1E-6)
-        {
-            double r = Math.min(1.0, Math.sqrt(dy * dy + dx * dx) / 4.0); 
-            OtsPoint3d extra = new OtsPoint3d(s1.x + r * Math.cos(a), s1.y + r * Math.sin(a), s1.z);
-            pointList.add(1, extra);
-        }
-        
-        // see if an intermediate point needs to be created to the end of the link in the right direction
-        s1 = pointList.get(pointList.size() - 2);
-        s2 = pointList.get(pointList.size() - 1);
-        dy = s2.y - s1.y;
-        dx = s2.x - s1.x;
-        a = to.getLocation().getRotZ() - Math.PI;
-        if (Math.abs(a - Math.atan2(dy, dx)) > 1E-6)
-        {
-            double r = Math.min(1.0, Math.sqrt(dy * dy + dx * dx) / 4.0); 
-            OtsPoint3d extra = new OtsPoint3d(s2.x + r * Math.cos(a), s2.y + r * Math.sin(a), s2.z);
-            pointList.add(pointList.size() - 2, extra);
-        }
-         */
-
-        OtsLine3d designLine = new OtsLine3d(pointList);
+        List<Point2d> pointList = intermediatePoints == null ? List.of(from.getPoint(), to.getPoint())
+                : new ArrayList<>(Arrays.asList(intermediatePoints));
+        OtsLine2d designLine = new OtsLine2d(pointList);
         CrossSectionLink link =
-                new CrossSectionLink(network, name, from, to, DefaultsNl.ROAD, designLine, LaneKeepingPolicy.KEEPRIGHT);
+                new CrossSectionLink(network, name, from, to, DefaultsNl.ROAD, designLine, null, LaneKeepingPolicy.KEEPRIGHT);
         return link;
     }
 
@@ -432,9 +432,21 @@ public final class LaneFactory
             final Length latPosAtStart, final Length latPosAtEnd, final Length width, final Speed speedLimit,
             final OtsSimulatorInterface simulator, final GtuType gtuType) throws NetworkException, OtsGeometryException
     {
-        Lane result =
-                new Lane(link, id, latPosAtStart, latPosAtEnd, width, width, laneType, Map.of(gtuType, speedLimit), false);
-        return result;
+        ContinuousLine line = new ContinuousPolyLine(link.getDesignLine().getLine2d(), link.getStartNode().getLocation(),
+                link.getEndNode().getLocation());
+        List<CrossSectionSlice> slices = new ArrayList<>();
+        slices.add(new CrossSectionSlice(Length.ZERO, latPosAtStart, width));
+        slices.add(new CrossSectionSlice(link.getLength(), latPosAtEnd, width));
+        PolyLine2d center = line.flattenOffset(LaneGeometryUtil.getCenterOffsets(line, slices), SEGMENTS);
+        PolyLine2d left = line.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(line, slices), SEGMENTS);
+        PolyLine2d right = line.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(line, slices), SEGMENTS);
+
+        List<Point2d> points = new ArrayList<>();
+        left.getPoints().forEachRemaining(points::add);
+        right.reverse().getPoints().forEachRemaining(points::add);
+        Polygon2d contour = new Polygon2d(points);
+
+        return new Lane(link, id, new OtsLine2d(center), contour, slices, laneType, Map.of(gtuType, speedLimit));
     }
 
     /**
@@ -443,8 +455,8 @@ public final class LaneFactory
      * @param name String; name of the Lane (and also of the Link that owns it)
      * @param from Node; starting node of the new Lane
      * @param to Node; ending node of the new Lane
-     * @param intermediatePoints OtsPoint3d[]; intermediate coordinates or null to create a straight road; the intermediate
-     *            points may contain the coordinates of the from node and to node
+     * @param intermediatePoints Point2d[]; intermediate coordinates or null to create a straight road; the intermediate points
+     *            may contain the coordinates of the from node and to node
      * @param laneType LaneType; type of the new Lane
      * @param speedLimit Speed; the speed limit on the new Lane
      * @param simulator OtsSimulatorInterface; the simulator
@@ -455,7 +467,7 @@ public final class LaneFactory
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane makeLane(final RoadNetwork network, final String name, final Node from, final Node to,
-            final OtsPoint3d[] intermediatePoints, final LaneType laneType, final Speed speedLimit,
+            final Point2d[] intermediatePoints, final LaneType laneType, final Speed speedLimit,
             final OtsSimulatorInterface simulator, final GtuType gtuType) throws NetworkException, OtsGeometryException
     {
         Length width = new Length(4.0, LengthUnit.METER);
@@ -472,8 +484,8 @@ public final class LaneFactory
      * @param name String; name of the Link
      * @param from Node; starting node of the new Lane
      * @param to Node; ending node of the new Lane
-     * @param intermediatePoints OtsPoint3d[]; intermediate coordinates or null to create a straight road; the intermediate
-     *            points may contain the coordinates of the from node and to node
+     * @param intermediatePoints Point2d[]; intermediate coordinates or null to create a straight road; the intermediate points
+     *            may contain the coordinates of the from node and to node
      * @param laneCount int; number of lanes in the road
      * @param laneOffsetAtStart int; extra offset from design line in lane widths at start of link
      * @param laneOffsetAtEnd int; extra offset from design line in lane widths at end of link
@@ -487,7 +499,7 @@ public final class LaneFactory
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane[] makeMultiLane(final RoadNetwork network, final String name, final Node from, final Node to,
-            final OtsPoint3d[] intermediatePoints, final int laneCount, final int laneOffsetAtStart, final int laneOffsetAtEnd,
+            final Point2d[] intermediatePoints, final int laneCount, final int laneOffsetAtStart, final int laneOffsetAtEnd,
             final LaneType laneType, final Speed speedLimit, final OtsSimulatorInterface simulator, final GtuType gtuType)
             throws NetworkException, OtsGeometryException
     {
@@ -513,8 +525,8 @@ public final class LaneFactory
      * @param name String; name of the Link
      * @param from Node; starting node of the new Lane
      * @param to Node; ending node of the new Lane
-     * @param intermediatePoints OtsPoint3d[]; intermediate coordinates or null to create a straight road; the intermediate
-     *            points may contain the coordinates of the from node and to node
+     * @param intermediatePoints Point2d[]; intermediate coordinates or null to create a straight road; the intermediate points
+     *            may contain the coordinates of the from node and to node
      * @param laneCount int; number of lanes in the road
      * @param laneType LaneType; type of the new Lanes
      * @param speedLimit Speed; Speed the speed limit (applies to all generated lanes)
@@ -527,7 +539,7 @@ public final class LaneFactory
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane[] makeMultiLane(final RoadNetwork network, final String name, final Node from, final Node to,
-            final OtsPoint3d[] intermediatePoints, final int laneCount, final LaneType laneType, final Speed speedLimit,
+            final Point2d[] intermediatePoints, final int laneCount, final LaneType laneType, final Speed speedLimit,
             final OtsSimulatorInterface simulator, final GtuType gtuType)
             throws NamingException, NetworkException, OtsGeometryException
     {
@@ -563,17 +575,36 @@ public final class LaneFactory
             final LaneType laneType, final Speed speedLimit, final OtsSimulatorInterface simulator, final GtuType gtuType)
             throws NamingException, NetworkException, OtsGeometryException
     {
-        OtsLine3d bezier = makeBezier(n1, n2, n3, n4);
-        final CrossSectionLink link = makeLink(network, name, n2, n3, bezier.getPoints(), simulator);
-        Lane[] result = new Lane[laneCount];
+        OrientedPoint2d dp1 = new OrientedPoint2d(n2.getPoint().x, n2.getPoint().y,
+                Math.atan2(n2.getPoint().y - n1.getPoint().y, n2.getPoint().x - n1.getPoint().x));
+        OrientedPoint2d dp2 = new OrientedPoint2d(n3.getPoint().x, n3.getPoint().y,
+                Math.atan2(n4.getPoint().y - n3.getPoint().y, n4.getPoint().x - n3.getPoint().x));
+
         Length width = new Length(4.0, LengthUnit.METER);
+        dp1 = OtsGeometryUtil.offsetPoint(dp1, (-0.5 - laneOffsetAtStart) * width.getSI());
+        dp2 = OtsGeometryUtil.offsetPoint(dp2, (-0.5 - laneOffsetAtStart) * width.getSI());
+
+        Point2d[] controlPoints = Bezier.cubicControlPoints(dp1, dp2, 0.5, false);
+        ContinuousBezierCubic designLine =
+                new ContinuousBezierCubic(controlPoints[0], controlPoints[1], controlPoints[2], controlPoints[3]);
+        final CrossSectionLink link = makeLink(network, name, n2, n3,
+                designLine.flatten(SEGMENTS).getPointList().toArray(new Point2d[65]), simulator);
+        Lane[] result = new Lane[laneCount];
+
         for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
         {
             // Be ware! LEFT is lateral positive, RIGHT is lateral negative.
-            Length latPosAtStart = new Length((-0.5 - laneIndex - laneOffsetAtStart) * width.getSI(), LengthUnit.SI);
-            Length latPosAtEnd = new Length((-0.5 - laneIndex - laneOffsetAtEnd) * width.getSI(), LengthUnit.SI);
-            result[laneIndex] = makeLane(link, "lane." + laneIndex, laneType, latPosAtStart, latPosAtEnd, width, speedLimit,
-                    simulator, gtuType);
+            // Length latPosAtStart = new Length((-0.5 - laneIndex - laneOffsetAtStart) * width.getSI(), LengthUnit.SI);
+            // Length latPosAtEnd = new Length((-0.5 - laneIndex - laneOffsetAtEnd) * width.getSI(), LengthUnit.SI);
+            Length latPosAtStart = new Length(-laneIndex * width.getSI(), LengthUnit.SI);
+            Length latPosAtEnd = new Length(-laneIndex * width.getSI(), LengthUnit.SI);
+            List<CrossSectionSlice> slices = LaneGeometryUtil.getSlices(designLine, latPosAtStart, latPosAtEnd, width, width);
+            PolyLine2d centerLine = designLine.flattenOffset(LaneGeometryUtil.getCenterOffsets(designLine, slices), SEGMENTS);
+            PolyLine2d leftEdge = designLine.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(designLine, slices), SEGMENTS);
+            PolyLine2d rightEdge = designLine.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(designLine, slices), SEGMENTS);
+            Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
+            result[laneIndex] = new Lane(link, "lane." + laneIndex, new OtsLine2d(centerLine), contour, slices, laneType,
+                    Map.of(gtuType, speedLimit));
         }
         return result;
     }
@@ -586,14 +617,14 @@ public final class LaneFactory
      * @return line between n2 and n3 with start-direction n1--&gt;n2 and end-direction n3--&gt;n4
      * @throws OtsGeometryException on failure of Bezier curve creation
      */
-    public static OtsLine3d makeBezier(final Node n1, final Node n2, final Node n3, final Node n4) throws OtsGeometryException
+    public static OtsLine2d makeBezier(final Node n1, final Node n2, final Node n3, final Node n4) throws OtsGeometryException
     {
-        OtsPoint3d p1 = n1.getPoint();
-        OtsPoint3d p2 = n2.getPoint();
-        OtsPoint3d p3 = n3.getPoint();
-        OtsPoint3d p4 = n4.getPoint();
-        DirectedPoint dp1 = new DirectedPoint(p2.x, p2.y, p2.z, 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
-        DirectedPoint dp2 = new DirectedPoint(p3.x, p3.y, p3.z, 0.0, 0.0, Math.atan2(p4.y - p3.y, p4.x - p3.x));
+        Point2d p1 = n1.getPoint();
+        Point2d p2 = n2.getPoint();
+        Point2d p3 = n3.getPoint();
+        Point2d p4 = n4.getPoint();
+        OrientedPoint2d dp1 = new OrientedPoint2d(p2.x, p2.y, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+        OrientedPoint2d dp2 = new OrientedPoint2d(p3.x, p3.y, Math.atan2(p4.y - p3.y, p4.x - p3.x));
         return Bezier.cubic(dp1, dp2);
     }
 }

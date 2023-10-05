@@ -4,8 +4,7 @@ import java.awt.Color;
 
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.value.vdouble.scalar.LinearDensity;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.draw.core.BoundsPaintScale;
+import org.opentrafficsim.draw.BoundsPaintScale;
 import org.opentrafficsim.draw.graphs.ContourDataSource.ContourDataType;
 
 /**
@@ -24,12 +23,12 @@ public class ContourPlotDensity extends AbstractContourPlot<LinearDensity>
     /**
      * Constructor.
      * @param caption String; caption
-     * @param simulator OtsSimulatorInterface; simulator
+     * @param scheduler PlotScheduler; scheduler.
      * @param dataPool ContourDataSource; data pool
      */
-    public ContourPlotDensity(final String caption, final OtsSimulatorInterface simulator, final ContourDataSource dataPool)
+    public ContourPlotDensity(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool)
     {
-        super(caption, simulator, dataPool, createPaintScale(), new LinearDensity(30.0, LinearDensityUnit.PER_KILOMETER),
+        super(caption, scheduler, dataPool, createPaintScale(), new LinearDensity(30.0, LinearDensityUnit.PER_KILOMETER),
                 "%.0f/km", "density %.1f veh/km");
     }
 

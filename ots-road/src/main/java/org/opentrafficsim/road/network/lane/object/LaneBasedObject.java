@@ -1,12 +1,11 @@
 package org.opentrafficsim.road.network.lane.object;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.geometry.Bounds;
-import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
 import org.opentrafficsim.core.object.LocatedObject;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -30,17 +29,17 @@ public interface LaneBasedObject extends LocatedObject
 
     /**
      * Return the location without throwing a RemoteException.
-     * @return DirectedPoint; the location
+     * @return OrientedPoint2d; the location
      */
     @Override
-    DirectedPoint getLocation();
+    OrientedPoint2d getLocation();
 
     /**
      * Return the bounds without throwing a RemoteException.
      * @return Bounds; the (usually rectangular) bounds of the object
      */
     @Override
-    Bounds getBounds();
+    Bounds2d getBounds();
 
     /**
      * Make a geometry perpendicular to the center line of the lane at the given position.
@@ -48,23 +47,16 @@ public interface LaneBasedObject extends LocatedObject
      * @param position Length; The length of the object in the longitudinal direction, on the center line of the lane
      * @return a geometry perpendicular to the center line that describes the sensor
      */
-    static OtsLine3d makeGeometry(final Lane lane, final Length position)
+    static PolyLine2d makeGeometry(final Lane lane, final Length position)
     {
         Throw.whenNull(lane, "lane is null");
         Throw.whenNull(position, "position is null");
-        DirectedPoint sp = lane.getCenterLine().getLocationExtended(position);
+        OrientedPoint2d sp = lane.getCenterLine().getLocationExtended(position);
         double w45 = 0.45 * lane.getWidth(position).si;
-        double a = sp.getRotZ() + Math.PI / 2.0;
-        OtsPoint3d p1 = new OtsPoint3d(sp.x + w45 * Math.cos(a), sp.y - w45 * Math.sin(a), sp.z + 0.0001);
-        OtsPoint3d p2 = new OtsPoint3d(sp.x - w45 * Math.cos(a), sp.y + w45 * Math.sin(a), sp.z + 0.0001);
-        try
-        {
-            return new OtsLine3d(p1, p2);
-        }
-        catch (OtsGeometryException exception)
-        {
-            throw new RuntimeException(exception);
-        }
+        double a = sp.getDirZ() + Math.PI / 2.0;
+        Point2d p1 = new Point2d(sp.x + w45 * Math.cos(a), sp.y - w45 * Math.sin(a));
+        Point2d p2 = new Point2d(sp.x - w45 * Math.cos(a), sp.y + w45 * Math.sin(a));
+        return new PolyLine2d(p1, p2);
     }
 
 }

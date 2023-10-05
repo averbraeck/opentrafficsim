@@ -41,8 +41,8 @@ The autorun parameter triggers animation when false. These, and other, parameter
             throws NullPointerException, DrawRuntimeException, NetworkException, OtsGeometryException
     {
         RoadNetwork network = new RoadNetwork("Simple network", sim);
-        OtsPoint3d pointA = new OtsPoint3d(0, 0, 0);
-        OtsPoint3d pointB = new OtsPoint3d(500, 0, 0);
+        Point2d pointA = new Point2d(0, 0);
+        Point2d pointB = new Point2d(500, 0);
         Node nodeA = new Node(network, "A", pointA, Direction.ZERO);
         Node nodeB = new Node(network, "B", pointB, Direction.ZERO);
         GtuType car = DefaultsNl.CAR;
@@ -50,14 +50,14 @@ The autorun parameter triggers animation when false. These, and other, parameter
         LinkType freewayLink = DefaultsNl.FREEWAY;
         LaneType freewayLane = DefaultsRoadNl.FREEWAY;
         CrossSectionLink link = new CrossSectionLink(network, "AB", nodeA, nodeB, freewayLink, new OtsLine3d(pointA, pointB),
-                LaneKeepingPolicy.KEEPRIGHT);
-        new Lane(link, "Left", Length.instantiateSI(1.75), Length.instantiateSI(3.5), freewayLane,
+                null, LaneKeepingPolicy.KEEPRIGHT);
+        LaneGeometryUtil.createStraightLane(link, "Left", Length.instantiateSI(1.75), Length.instantiateSI(3.5), freewayLane,
                 Map.of(car, new Speed(120, SpeedUnit.KM_PER_HOUR)));
-        new Lane(link, "Right", Length.instantiateSI(-1.75), Length.instantiateSI(3.5), freewayLane,
+        LaneGeometryUtil.createStraightLane(link, "Right", Length.instantiateSI(-1.75), Length.instantiateSI(3.5), freewayLane,
                 Map.of(car, new Speed(120, SpeedUnit.KM_PER_HOUR)));
-        new Stripe(Type.SOLID, link, Length.instantiateSI(3.5), Length.instantiateSI(0.2));
-        new Stripe(Type.DASHED, link, Length.instantiateSI(0.0), Length.instantiateSI(0.2));
-        new Stripe(Type.SOLID, link, Length.instantiateSI(-3.5), Length.instantiateSI(0.2));
+        LaneGeometryUtil.createStraightStripe(Type.SOLID, link, Length.instantiateSI(3.5), Length.instantiateSI(0.2));
+        LaneGeometryUtil.createStraightStripe(Type.DASHED, link, Length.instantiateSI(0.0), Length.instantiateSI(0.2));
+        LaneGeometryUtil.createStraightStripe(Type.SOLID, link, Length.instantiateSI(-3.5), Length.instantiateSI(0.2));
         return network;
     }
 ```

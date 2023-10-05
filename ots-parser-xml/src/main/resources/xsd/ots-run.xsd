@@ -21,7 +21,7 @@
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
-      <xsd:attribute name="Id" type="xsd:string" use="required" />
+      <xsd:attribute name="Id" type="ots:IdType" use="required" />
     </xsd:complexType>
   </xsd:element>
 
@@ -30,7 +30,7 @@
       <xsd:sequence>
         <xsd:element ref="ots:RandomStream" minOccurs="1" maxOccurs="unbounded" />
       </xsd:sequence>
-      <xsd:attribute ref="xml:base" />
+      <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
 
@@ -40,10 +40,10 @@
         <xsd:element name="StartTime" type="ots:PositiveTimeType" minOccurs="0" default="0s" />
         <xsd:element name="WarmupPeriod" type="ots:PositiveDurationType" minOccurs="0" default="0s" />
         <xsd:element name="RunLength" type="ots:PositiveDurationType" minOccurs="1" default="1h" />
-        <xsd:element name="NumberReplications" type="ots:IntAtLeastOne" minOccurs="0" default="1" />
+        <xsd:element name="NumberReplications" type="ots:positiveInteger" minOccurs="0" default="1" />
         <xsd:element ref="ots:RandomStreams" minOccurs="0" maxOccurs="1" />
       </xsd:sequence>
-      <xsd:attribute ref="xml:base" />
+      <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
 

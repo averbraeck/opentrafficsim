@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.network.route;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**

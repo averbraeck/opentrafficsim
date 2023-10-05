@@ -1,11 +1,11 @@
 package org.opentrafficsim.sim0mq.publisher;
 
-import org.djunits.Throw;
+import org.djutils.base.Identifiable;
+import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
-import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.network.Network;
 import org.sim0mq.Sim0MQException;
 

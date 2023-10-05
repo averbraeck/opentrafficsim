@@ -5,9 +5,7 @@ import org.opentrafficsim.core.object.LocatedObject;
 
 /**
  * Interface for detectors. This can be a lane-based object, classes using lane-based helper objects, or objects that detect in
- * a completely different manner. This interface is mainly used to toggle animation of all detector objects. In order to disable
- * drawing of the helper objects, no animations should be created for these types. If a default animation factory is used, that
- * may need to be extended to ignore such types.
+ * a completely different manner.
  * <p>
  * Copyright (c) 2022-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.

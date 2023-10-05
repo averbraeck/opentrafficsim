@@ -16,19 +16,18 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.demo.conflict.TJunctionDemo.TJunctionModel;
-import org.opentrafficsim.draw.core.OtsDrawingException;
+import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.language.DSOLException;
+import nl.tudelft.simulation.language.DsolException;
 
 /**
  * <p>
@@ -83,7 +82,7 @@ public class TJunctionDemo extends OtsSimulationApplication<TJunctionModel>
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DSOLException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DsolException exception)
         {
             exception.printStackTrace();
         }
@@ -116,18 +115,11 @@ public class TJunctionDemo extends OtsSimulationApplication<TJunctionModel>
             {
                 URL xmlURL = URLResource.getResource("/resources/conflict/TJunction.xml");
                 this.network = new RoadNetwork("TJunction", getSimulator());
-                XmlNetworkLaneParser.build(xmlURL, this.network, false);
-
-                // add conflicts
-                // ((CrossSectionLink) this.network.getLink("SCEC")).setPriority(Priority.STOP);
-                // ((CrossSectionLink) this.network.getLink("SCWC")).setPriority(Priority.STOP);
-                ConflictBuilder.buildConflicts(this.network, this.simulator,
-                        new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
+                new XmlParser(this.network).setUrl(xmlURL).setScenario("1").build();
 
                 // add trafficlight after
                 Lane lane = ((CrossSectionLink) this.network.getLink("ECE")).getLanes().get(0);
-                TrafficLight trafficLight =
-                        new TrafficLight("light", lane, new Length(50.0, LengthUnit.SI), this.simulator);
+                TrafficLight trafficLight = new TrafficLight("light", lane, new Length(50.0, LengthUnit.SI), this.simulator);
 
                 trafficLight.setTrafficLightColor(TrafficLightColor.RED);
                 changePhase(trafficLight);

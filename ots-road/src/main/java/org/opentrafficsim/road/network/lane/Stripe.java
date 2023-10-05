@@ -7,10 +7,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.draw.line.Polygon2d;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsLine3d;
+import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -39,68 +38,18 @@ public class Stripe extends CrossSectionElement
     private final Map<GtuType, Set<LateralDirectionality>> permeabilityMap = new LinkedHashMap<>();
 
     /**
-     * Constructor allowing difference at start at end.
-     * @param type Type; strip type defining appearance and default permeability.
-     * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
-     * @param startCenterPosition Length; the lateral start position compared to the linear geometry of the Cross Section Link
-     *            at the start of the road marker.
-     * @param endCenterPosition Length; the lateral end position compared to the linear geometry of the Cross Section Link at
-     *            the end of the road marker.
-     * @param beginWidth Length; start width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral start position.
-     * @param endWidth Length; end width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral end position.
-     * @param fixGradualLateralOffset boolean; true if gradualLateralOffset needs to be fixed
-     * @throws OtsGeometryException when creation of the center line or contour geometry fails
-     * @throws NetworkException when id equal to null or not unique
+     * Constructor specifying geometry.
+     * @param type Type; stripe type defining appearance and default permeability.
+     * @param link CrossSectionLink; link.
+     * @param centerLine OtsLine2d; center line.
+     * @param contour Polygon2d; contour shape.
+     * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
+     * @throws NetworkException when no cross-section slice is defined.
      */
-    public Stripe(final Type type, final CrossSectionLink parentLink, final Length startCenterPosition,
-            final Length endCenterPosition, final Length beginWidth, final Length endWidth,
-            final boolean fixGradualLateralOffset) throws OtsGeometryException, NetworkException
+    public Stripe(final Type type, final CrossSectionLink link, final OtsLine2d centerLine, final Polygon2d contour,
+            final List<CrossSectionSlice> crossSectionSlices) throws NetworkException
     {
-        super(parentLink, UUID.randomUUID().toString(), startCenterPosition, endCenterPosition, beginWidth, endWidth,
-                fixGradualLateralOffset);
-        Throw.whenNull(type, "Type may not be null.");
-        this.type = type;
-    }
-
-    public Stripe(final Type type, final CrossSectionLink parentLink, OtsLine3d centerLine, final Length offsetStart, final Length offsetEnd,
-                  final Length beginWidth, final Length endWidth ) throws OtsGeometryException, NetworkException
-    {
-        super(parentLink, UUID.randomUUID().toString(), centerLine, offsetStart, offsetEnd, beginWidth, endWidth);
-        Throw.whenNull(type, "Type may not be null.");
-        this.type = type;
-    }
-
-    /**
-     * Constructor for constant properties along the length.
-     * @param type Type; strip type defining appearance and default permeability.
-     * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
-     * @param lateralCenterPosition Length; the lateral start position compared to the linear geometry of the Cross Section
-     *            Link.
-     * @param width Length; start width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral start position.
-     * @throws OtsGeometryException when creation of the center line or contour geometry fails
-     * @throws NetworkException when id equal to null or not unique
-     */
-    public Stripe(final Type type, final CrossSectionLink parentLink, final Length lateralCenterPosition, final Length width)
-            throws OtsGeometryException, NetworkException
-    {
-        this(type, parentLink, lateralCenterPosition, lateralCenterPosition, width, width, false);
-    }
-
-    /**
-     * Constructor for elaborate longitudinal property changes.
-     * @param type Type; strip type defining appearance and default permeability.
-     * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
-     * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; The offsets and widths at positions along the line, relative to
-     *            the design line of the parent link. If there is just one with and offset, there should just be one element in
-     *            the list with Length = 0. If there are more slices, the last one should be at the length of the design line.
-     *            If not, a NetworkException is thrown.
-     * @throws OtsGeometryException when creation of the center line or contour geometry fails
-     * @throws NetworkException when id equal to null or not unique
-     */
-    public Stripe(final Type type, final CrossSectionLink parentLink, final List<CrossSectionSlice> crossSectionSlices)
-            throws OtsGeometryException, NetworkException
-    {
-        super(parentLink, UUID.randomUUID().toString(), crossSectionSlices);
+        super(link, UUID.randomUUID().toString(), centerLine, contour, crossSectionSlices);
         Throw.whenNull(type, "Type may not be null.");
         this.type = type;
     }
@@ -139,13 +88,6 @@ public class Stripe extends CrossSectionElement
     private Type activeType()
     {
         return this.overruleType == null ? this.type : this.overruleType;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final double getZ()
-    {
-        return -0.0002;
     }
 
     /**
