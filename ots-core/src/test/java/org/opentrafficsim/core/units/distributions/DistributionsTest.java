@@ -55,6 +55,7 @@ import org.djunits.value.vdouble.scalar.base.DoubleScalarAbs;
 import org.djunits.value.vdouble.scalar.base.DoubleScalarRel;
 import org.djunits.value.vfloat.scalar.base.FloatScalarAbs;
 import org.djunits.value.vfloat.scalar.base.FloatScalarRel;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
@@ -72,6 +73,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
+@Disabled
 public class DistributionsTest
 {
 

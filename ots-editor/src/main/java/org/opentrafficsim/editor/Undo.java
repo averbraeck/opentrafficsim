@@ -92,7 +92,7 @@ public class Undo implements EventListener
      * Starts a new action, which groups all sub-actions until a new action is started.
      * @param type ActionType; action type.
      * @param node XsdTreeNode; node on which the action is applied, i.e. node that should be selected on undo/redo.
-     * @param attribute String; attribute name, may be {@null} for actions that are not an attribute value change.
+     * @param attribute String; attribute name, may be null for actions that are not an attribute value change.
      */
     public void startAction(final ActionType type, final XsdTreeNode node, final String attribute)
     {

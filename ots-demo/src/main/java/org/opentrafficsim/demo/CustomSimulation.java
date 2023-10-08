@@ -1,66 +1,18 @@
 package org.opentrafficsim.demo;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.jstats.streams.MersenneTwister;
-import nl.tudelft.simulation.jstats.streams.StreamInterface;
-import nl.tudelft.simulation.language.DSOLException;
-import org.djunits.unit.DurationUnit;
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.*;
-import org.djutils.io.URLResource;
-import org.opentrafficsim.core.definitions.DefaultsNl;
-import org.opentrafficsim.core.distributions.ConstantGenerator;
-import org.opentrafficsim.core.distributions.Distribution;
-import org.opentrafficsim.core.distributions.Generator;
+import nl.tudelft.simulation.language.DsolException;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OtsGeometryException;
-import org.opentrafficsim.core.geometry.OtsPoint3d;
-import org.opentrafficsim.core.idgenerator.IdGenerator;
-import org.opentrafficsim.core.network.LinkType;
-import org.opentrafficsim.core.network.Network;
-import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.route.FixedRouteGenerator;
-import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.draw.core.OtsDrawingException;
-import org.opentrafficsim.road.definitions.DefaultsRoadNl;
-import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
-import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
-import org.opentrafficsim.road.gtu.generator.TtcRoomChecker;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplate;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplateDistribution;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
-import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
-import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.factory.LaneFactory;
-import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
-import org.opentrafficsim.road.network.lane.*;
-import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
-import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
-import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
+import org.locationtech.jts.linearref.LengthIndexedLine;
 
-import javax.naming.NamingException;
 import java.awt.*;
-import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
-import static org.djunits.unit.LengthUnit.METER;
 
 public class CustomSimulation extends OtsSimulationApplication<CustomSimulation.CustomModel>{
     /** */
@@ -93,7 +45,7 @@ public class CustomSimulation extends OtsSimulationApplication<CustomSimulation.
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();
         }
-        catch (SimRuntimeException | RemoteException | OtsDrawingException | DSOLException exception)
+        catch (SimRuntimeException | RemoteException | OtsDrawingException | DsolException exception)
         {
             exception.printStackTrace();
         }
