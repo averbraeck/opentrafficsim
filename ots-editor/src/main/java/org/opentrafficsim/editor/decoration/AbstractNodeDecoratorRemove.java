@@ -3,7 +3,6 @@ package org.opentrafficsim.editor.decoration;
 import java.rmi.RemoteException;
 
 import org.djutils.event.Event;
-import org.djutils.event.EventListener;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
@@ -38,24 +37,18 @@ public abstract class AbstractNodeDecoratorRemove extends AbstractNodeDecorator
     {
         if (event.getType().equals(OtsEditor.NEW_FILE))
         {
-            super.notify(event); // NODE_CREATED
+            super.notify(event); // NODE_CREATED registration
             XsdTreeNodeRoot root = (XsdTreeNodeRoot) event.getContent();
-            root.addListener(new EventListener()
-            {
-                /** */
-                private static final long serialVersionUID = 20230910L;
-
-                /** {@inheritDoc} */
-                @Override
-                public void notify(final Event event) throws RemoteException
-                {
-                    if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
-                    {
-                        XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
-                        AbstractNodeDecoratorRemove.this.notifyRemoved(node);
-                    }
-                }
-            }, XsdTreeNodeRoot.NODE_REMOVED);
+            root.addListener(this, XsdTreeNodeRoot.NODE_REMOVED);
+        }
+        else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
+        {
+            XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
+            notifyRemoved(node);
+        }
+        else
+        {
+            super.notify(event); // NODE_CREATED
         }
     }
 

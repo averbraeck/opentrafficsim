@@ -39,22 +39,12 @@ public abstract class AbstractNodeDecorator implements EventListener
         if (event.getType().equals(OtsEditor.NEW_FILE))
         {
             XsdTreeNodeRoot root = (XsdTreeNodeRoot) event.getContent();
-            root.addListener(new EventListener()
-            {
-                /** */
-                private static final long serialVersionUID = 20230910L;
-
-                /** {@inheritDoc} */
-                @Override
-                public void notify(final Event event) throws RemoteException
-                {
-                    if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
-                    {
-                        XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
-                        AbstractNodeDecorator.this.notifyCreated(node);
-                    }
-                }
-            }, XsdTreeNodeRoot.NODE_CREATED);
+            root.addListener(this, XsdTreeNodeRoot.NODE_CREATED);
+        }
+        else if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
+        {
+            XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
+            AbstractNodeDecorator.this.notifyCreated(node);
         }
     }
 

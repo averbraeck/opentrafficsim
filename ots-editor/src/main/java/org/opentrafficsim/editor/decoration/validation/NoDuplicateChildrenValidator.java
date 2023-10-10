@@ -14,7 +14,8 @@ import org.opentrafficsim.editor.XsdTreeNodeUtil;
 import org.opentrafficsim.editor.decoration.AbstractNodeDecoratorRemove;
 
 /**
- * Validates that children nodes are not duplicate within their parent, this node.
+ * Validates that children nodes are not duplicate within their parent. Nodes are considered equal if their path string and
+ * value are equal, where null values are also considered.
  * <p>
  * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -39,7 +40,7 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecoratorRemove im
     /**
      * Constructor.
      * @param editor OtsEditor; editor.
-     * @param path String; path location of nodes to attach to.
+     * @param path String; path location of nodes to attach to, i.e. the parent of the nodes that are potentially duplicate.
      * @param children String...; children each of which may not have duplicates. Use none to check all children.
      */
     public NoDuplicateChildrenValidator(final OtsEditor editor, final String path, final String... children)
@@ -53,11 +54,13 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecoratorRemove im
     @Override
     public void notifyCreated(final XsdTreeNode node)
     {
+        boolean added = false;
         if (this.children.isEmpty())
         {
             XsdTreeNode parent = node.getParent();
             if (parent != null && parent.isType(this.path))
             {
+                added = true;
                 node.addNodeValidator(NoDuplicateChildrenValidator.this);
             }
         }
@@ -67,16 +70,21 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecoratorRemove im
             {
                 if (node.isType(this.path + "." + child))
                 {
+                    added = true;
                     node.addNodeValidator(NoDuplicateChildrenValidator.this);
+                    break;
                 }
             }
         }
-        this.nodes.add(node);
-        node.addListener(this, XsdTreeNode.VALUE_CHANGED);
-        node.addListener(this, XsdTreeNode.OPTION_CHANGED);
-        node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
-        node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
-        this.nodes.forEach((n) -> n.invalidate());
+        if (added)
+        {
+            this.nodes.add(node);
+            node.addListener(this, XsdTreeNode.VALUE_CHANGED);
+            node.addListener(this, XsdTreeNode.OPTION_CHANGED);
+            node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+            node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+            this.nodes.forEach((n) -> n.invalidate());
+        }
     }
 
     /** {@inheritDoc} */
