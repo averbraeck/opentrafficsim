@@ -103,15 +103,16 @@ public class GtuGeneratorPositionAnimation extends Renderable2d<GtuGeneratorPosi
 
         /**
          * Constructor.
-         * @param source Locatable; source.
+         * @param source GtuGeneratorPositionData; source.
          * @param contextualized Contextualized; context provider
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException when remote context cannot be found
          */
-        public Queue(final Locatable source, final Contextualized contextualized) throws RemoteException, NamingException
+        public Queue(final GtuGeneratorPositionData source, final Contextualized contextualized)
+                throws RemoteException, NamingException
         {
-            super(source, "", 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, 3.0f, 12.0f, 50f, contextualized, null,
-                    TextAnimation.RENDERALWAYS);
+            super(source, () -> Integer.toString(source.getQueueCount()), 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, 3.0f,
+                    12.0f, 50f, contextualized, null, TextAnimation.RENDERALWAYS);
         }
 
         /** {@inheritDoc} */
@@ -133,7 +134,6 @@ public class GtuGeneratorPositionAnimation extends Renderable2d<GtuGeneratorPosi
         @Override
         public void paint(final Graphics2D graphics, final ImageObserver observer)
         {
-            setText(Integer.toString(((GtuGeneratorPositionData) getSource()).getQueueCount()));
             super.paint(graphics, observer);
         }
     }
@@ -154,7 +154,7 @@ public class GtuGeneratorPositionAnimation extends Renderable2d<GtuGeneratorPosi
          * @return int; queue count.
          */
         int getQueueCount();
-        
+
         /** {@inheritDoc} */
         @Override
         default double getZ()

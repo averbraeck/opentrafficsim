@@ -8,6 +8,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.function.Supplier;
 
 import javax.naming.NamingException;
 
@@ -41,7 +42,7 @@ public abstract class TextAnimation implements Locatable, Serializable
     private final Locatable source;
 
     /** The text to display. */
-    private String text;
+    private Supplier<String> text;
 
     /** The horizontal movement of the text, in meters. */
     private float dx;
@@ -73,16 +74,13 @@ public abstract class TextAnimation implements Locatable, Serializable
     /** Access to the current background color. */
     private final ContrastToBackground background;
 
-    /** The font rectangle. */
-    private Rectangle2D fontRectangle = null;
-
     /** Render dependent on font scale. */
     private final ScaleDependentRendering scaleDependentRendering;
 
     /**
      * Construct a new TextAnimation.
      * @param source Locatable; the object for which the text is displayed
-     * @param text String; the text to display
+     * @param text Supplier&lt;String&gt;; the text to display
      * @param dx float; the horizontal movement of the text, in meters
      * @param dy float; the vertical movement of the text, in meters
      * @param textAlignment TextAlignment; where to place the text
@@ -98,7 +96,7 @@ public abstract class TextAnimation implements Locatable, Serializable
      * @throws RemoteException when remote context cannot be found
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public TextAnimation(final Locatable source, final String text, final float dx, final float dy,
+    public TextAnimation(final Locatable source, final Supplier<String> text, final float dx, final float dy,
             final TextAlignment textAlignment, final Color color, final float fontSize, final float minFontSize,
             final float maxFontSize, final Contextualized contextualized, final ContrastToBackground background,
             final ScaleDependentRendering scaleDependentRendering) throws RemoteException, NamingException
@@ -127,7 +125,7 @@ public abstract class TextAnimation implements Locatable, Serializable
     /**
      * Construct a new TextAnimation without contrast to background protection and no minimum font scale.
      * @param source Locatable; the object for which the text is displayed
-     * @param text String; the text to display
+     * @param text Supplier&lt;String&gt;; the text to display
      * @param dx float; the horizontal movement of the text, in meters
      * @param dy float; the vertical movement of the text, in meters
      * @param textAlignment TextAlignment; where to place the text
@@ -141,7 +139,7 @@ public abstract class TextAnimation implements Locatable, Serializable
      * @throws RemoteException when remote context cannot be found
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public TextAnimation(final Locatable source, final String text, final float dx, final float dy,
+    public TextAnimation(final Locatable source, final Supplier<String> text, final float dx, final float dy,
             final TextAlignment textAlignment, final Color color, final float fontSize, final float minFontSize,
             final float maxFontSize, final Contextualized contextualized, final ScaleDependentRendering scaleDependentRendering)
             throws RemoteException, NamingException
@@ -152,7 +150,7 @@ public abstract class TextAnimation implements Locatable, Serializable
 
     /**
      * @param source Locatable; the object for which the text is displayed
-     * @param text String; the text to display
+     * @param text Supplier&lt;String&gt;; the text to display
      * @param dx float; the horizontal movement of the text, in meters
      * @param dy float; the vertical movement of the text, in meters
      * @param textAlignment TextAlignment; where to place the text
@@ -162,7 +160,7 @@ public abstract class TextAnimation implements Locatable, Serializable
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException when remote context cannot be found
      */
-    public TextAnimation(final Locatable source, final String text, final float dx, final float dy,
+    public TextAnimation(final Locatable source, final Supplier<String> text, final float dx, final float dy,
             final TextAlignment textAlignment, final Color color, final Contextualized contextualized,
             final ScaleDependentRendering scaleDependentRendering) throws RemoteException, NamingException
     {
@@ -203,6 +201,7 @@ public abstract class TextAnimation implements Locatable, Serializable
     {
         double scale = Math.sqrt(graphics.getTransform().getDeterminant());
         Rectangle2D scaledFontRectangle;
+        String str = this.text.get();
         synchronized (this.font)
         {
             if (!this.scaleDependentRendering.isRendered(scale))
@@ -213,23 +212,19 @@ public abstract class TextAnimation implements Locatable, Serializable
             {
                 graphics.setFont(this.font.deriveFont((float) (this.minFontSize / scale)));
                 FontMetrics fm = graphics.getFontMetrics();
-                scaledFontRectangle = fm.getStringBounds(this.text, graphics);
+                scaledFontRectangle = fm.getStringBounds(str, graphics);
             }
             else if (scale > this.maxFontSize / this.fontSize)
             {
                 graphics.setFont(this.font.deriveFont((float) (this.maxFontSize / scale)));
                 FontMetrics fm = graphics.getFontMetrics();
-                scaledFontRectangle = fm.getStringBounds(this.text, graphics);
+                scaledFontRectangle = fm.getStringBounds(str, graphics);
             }
             else
             {
                 graphics.setFont(this.font);
-                if (this.fontRectangle == null)
-                {
-                    FontMetrics fm = graphics.getFontMetrics();
-                    this.fontRectangle = fm.getStringBounds(this.text, graphics);
-                }
-                scaledFontRectangle = this.fontRectangle;
+                FontMetrics fm = graphics.getFontMetrics();
+                scaledFontRectangle = fm.getStringBounds(str, graphics);
             }
             Color useColor = this.color;
             if (null != this.background && useColor.equals(this.background.getBackgroundColor()))
@@ -248,7 +243,7 @@ public abstract class TextAnimation implements Locatable, Serializable
             float dxText =
                     this.textAlignment.equals(TextAlignment.LEFT) ? 0.0f : this.textAlignment.equals(TextAlignment.CENTER)
                             ? (float) -scaledFontRectangle.getWidth() / 2.0f : (float) -scaledFontRectangle.getWidth();
-            graphics.drawString(this.text, dxText + this.dx, -this.dy);
+            graphics.drawString(str, dxText + this.dx, -this.dy);
         }
     }
 
@@ -339,20 +334,16 @@ public abstract class TextAnimation implements Locatable, Serializable
      */
     protected final String getText()
     {
-        return this.text;
+        return this.text.get();
     }
 
     /**
      * Update the text.
-     * @param text String; the new text
+     * @param text Supplier&lt;String&gt;; the new text
      */
-    protected final void setText(final String text)
+    public final void setText(final Supplier<String> text)
     {
         this.text = text;
-        synchronized (this.font)
-        {
-            this.fontRectangle = null;
-        }
     }
 
     /**

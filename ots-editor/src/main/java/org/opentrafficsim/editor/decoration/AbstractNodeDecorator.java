@@ -26,9 +26,8 @@ public abstract class AbstractNodeDecorator implements EventListener
     /**
      * Constructor.
      * @param editor OtsEditor; editor.
-     * @throws RemoteException if an exception occurs while adding as a listener.
      */
-    public AbstractNodeDecorator(final OtsEditor editor) throws RemoteException
+    public AbstractNodeDecorator(final OtsEditor editor)
     {
         editor.addListener(this, OtsEditor.NEW_FILE);
     }

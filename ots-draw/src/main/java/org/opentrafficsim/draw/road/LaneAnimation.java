@@ -6,6 +6,7 @@ import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.function.Supplier;
 
 import javax.naming.NamingException;
 
@@ -62,7 +63,7 @@ public class LaneAnimation extends Renderable2d<LaneData> implements Renderable2
     {
         super(lane, contextualized);
         this.color = color;
-        this.text = new Text(lane, lane.getId(), 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, contextualized);
+        this.text = new Text(lane, lane::getId, 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, contextualized);
         new CenterLineAnimation(new CenterLine(lane.getCenterLine(), lane.getId()), contextualized);
     }
 
@@ -215,7 +216,7 @@ public class LaneAnimation extends Renderable2d<LaneData> implements Renderable2
 
         /**
          * @param source Locatable; the object for which the text is displayed
-         * @param text String; the text to display
+         * @param text Supplier&lt;String&gt;; the text to display
          * @param dx float; the horizontal movement of the text, in meters
          * @param dy float; the vertical movement of the text, in meters
          * @param textPlacement TextAlignment; where to place the text
@@ -224,7 +225,7 @@ public class LaneAnimation extends Renderable2d<LaneData> implements Renderable2
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
-        public Text(final Locatable source, final String text, final float dx, final float dy,
+        public Text(final Locatable source, final Supplier<String> text, final float dx, final float dy,
                 final TextAlignment textPlacement, final Color color, final Contextualized contextualized)
                 throws RemoteException, NamingException
         {

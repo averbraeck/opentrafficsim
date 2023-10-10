@@ -9,6 +9,7 @@ import java.awt.geom.RectangularShape;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.function.Supplier;
 
 import javax.naming.NamingException;
 
@@ -79,7 +80,7 @@ public class DefaultCarAnimation extends Renderable2d<GtuData> implements Render
     {
         super(gtu, contextualized);
         this.hashCode = gtu.hashCode();
-        this.text = new Text(gtu, gtu.getId(), 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, contextualized,
+        this.text = new Text(gtu, gtu::getId, 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, contextualized,
                 new TextAnimation.ContrastToBackground()
                 {
                     /** {@inheritDoc} */
@@ -227,7 +228,7 @@ public class DefaultCarAnimation extends Renderable2d<GtuData> implements Render
 
         /**
          * @param source Locatable; the object for which the text is displayed
-         * @param text String; the text to display
+         * @param text Supplier&lt;String&gr;; the text to display
          * @param dx float; the horizontal movement of the text, in meters
          * @param dy float; the vertical movement of the text, in meters
          * @param textAlignment TextAlignment; where to place the text
@@ -236,7 +237,7 @@ public class DefaultCarAnimation extends Renderable2d<GtuData> implements Render
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
-        public Text(final Locatable source, final String text, final float dx, final float dy,
+        public Text(final Locatable source, final Supplier<String> text, final float dx, final float dy,
                 final TextAlignment textAlignment, final Color color, final Contextualized contextualized)
                 throws RemoteException, NamingException
         {
@@ -245,7 +246,7 @@ public class DefaultCarAnimation extends Renderable2d<GtuData> implements Render
 
         /**
          * @param source GtuData; the object for which the text is displayed
-         * @param text String; the text to display
+         * @param text Supplier&lt;String&gr;; the text to display
          * @param dx float; the horizontal movement of the text, in meters
          * @param dy float; the vertical movement of the text, in meters
          * @param textAlignment TextAlignment; where to place the text
@@ -256,7 +257,7 @@ public class DefaultCarAnimation extends Renderable2d<GtuData> implements Render
          * @throws RemoteException - when remote context cannot be found
          */
         @SuppressWarnings("parameternumber")
-        public Text(final GtuData source, final String text, final float dx, final float dy, final TextAlignment textAlignment,
+        public Text(final GtuData source, final Supplier<String> text, final float dx, final float dy, final TextAlignment textAlignment,
                 final Color color, final Contextualized contextualized, final TextAnimation.ContrastToBackground background)
                 throws RemoteException, NamingException
         {

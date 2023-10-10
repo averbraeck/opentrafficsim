@@ -9,6 +9,7 @@ import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.function.Supplier;
 
 import javax.naming.NamingException;
 
@@ -33,8 +34,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class NodeAnimation extends Renderable2d<NodeData>
-        implements Renderable2dInterface<NodeData>, Serializable
+public class NodeAnimation extends Renderable2d<NodeData> implements Renderable2dInterface<NodeData>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20140000L;
@@ -51,7 +51,7 @@ public class NodeAnimation extends Renderable2d<NodeData>
     public NodeAnimation(final NodeData node, final Contextualized contextualized) throws NamingException, RemoteException
     {
         super(node, contextualized);
-        this.text = new Text(node, node.getId(), 0.0f, 3.0f, TextAlignment.CENTER, Color.BLACK, contextualized,
+        this.text = new Text(node, node::getId, 0.0f, 3.0f, TextAlignment.CENTER, Color.BLACK, contextualized,
                 TextAnimation.RENDERWHEN10);
     }
 
@@ -106,7 +106,7 @@ public class NodeAnimation extends Renderable2d<NodeData>
 
         /**
          * @param source Locatable; the object for which the text is displayed
-         * @param text String; the text to display
+         * @param text Supplier&lt;String&gr;; the text to display
          * @param dx float; the horizontal movement of the text, in meters
          * @param dy float; the vertical movement of the text, in meters
          * @param textPlacement TextAlignment; where to place the text
@@ -117,7 +117,7 @@ public class NodeAnimation extends Renderable2d<NodeData>
          * @throws RemoteException - when remote context cannot be found
          */
         @SuppressWarnings("checkstyle:parameternumber")
-        public Text(final Locatable source, final String text, final float dx, final float dy,
+        public Text(final Locatable source, final Supplier<String> text, final float dx, final float dy,
                 final TextAlignment textPlacement, final Color color, final Contextualized contextualized,
                 final ScaleDependentRendering scaleDependentRendering) throws RemoteException, NamingException
         {
@@ -133,11 +133,12 @@ public class NodeAnimation extends Renderable2d<NodeData>
             return "NodeAnimation.Text []";
         }
     }
-    
+
     /**
      * NodeData provides the information required to draw a node.
      * <p>
-     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
@@ -147,7 +148,7 @@ public class NodeAnimation extends Renderable2d<NodeData>
         /** {@inheritDoc} */
         @Override
         OrientedPoint2d getLocation();
-        
+
         /** {@inheritDoc} */
         @Override
         default double getZ()

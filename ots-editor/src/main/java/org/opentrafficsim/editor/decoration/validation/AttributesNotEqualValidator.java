@@ -1,7 +1,5 @@
 package org.opentrafficsim.editor.decoration.validation;
 
-import java.rmi.RemoteException;
-
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.decoration.AbstractNodeDecoratorAttribute;
@@ -32,10 +30,9 @@ public class AttributesNotEqualValidator extends AbstractNodeDecoratorAttribute 
      * @param path String; path location of nodes to attach to.
      * @param attribute1 String; first attribute to compare.
      * @param attribute2 String; second attribute to compare.
-     * @throws RemoteException if an exception occurs while adding as a listener.
      */
     public AttributesNotEqualValidator(final OtsEditor editor, final String path, final String attribute1,
-            final String attribute2) throws RemoteException
+            final String attribute2)
     {
         super(editor, (n) -> n.isType(path), attribute1, attribute2);
         this.attribute1 = attribute1;

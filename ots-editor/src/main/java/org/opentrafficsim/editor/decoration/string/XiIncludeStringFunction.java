@@ -1,7 +1,6 @@
 package org.opentrafficsim.editor.decoration.string;
 
 import java.io.File;
-import java.rmi.RemoteException;
 import java.util.function.Function;
 
 import org.opentrafficsim.editor.OtsEditor;
@@ -25,9 +24,8 @@ public class XiIncludeStringFunction extends AbstractStringFunction
     /**
      * Constructor.
      * @param editor OtsEditor; editor.
-     * @throws RemoteException if an exception occurs while adding as a listener.
      */
-    public XiIncludeStringFunction(final OtsEditor editor) throws RemoteException
+    public XiIncludeStringFunction(final OtsEditor editor)
     {
         super(editor, (node) -> node.getNodeName().equals("xi:include"));
         this.overwrite = false;

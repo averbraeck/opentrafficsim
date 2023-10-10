@@ -242,7 +242,7 @@ public final class XmlParser implements Serializable
         CategoryLogger.setAllLogLevel(Level.TRACE);
 
         // input parameters
-        Eval eval = ScenarioParser.parseInputParameters(ots, scenario);
+        Eval eval = ScenarioParser.parseInputParameters(ots.getScenarios(), scenario);
 
         // run
         StreamSeedInformation streamInformation = RunParser.parseStreams(ots.getRun(), eval);

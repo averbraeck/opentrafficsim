@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.function.Supplier;
 
 import javax.naming.NamingException;
 
@@ -58,7 +59,7 @@ public class LinkAnimation extends Renderable2d<LinkData> implements Renderable2
     {
         super(link, contextualized);
         this.width = width;
-        this.text = new Text(link, link.getId(), 0.0f, 1.5f, TextAlignment.CENTER, Color.BLACK, contextualized,
+        this.text = new Text(link, link::getId, 0.0f, 1.5f, TextAlignment.CENTER, Color.BLACK, contextualized,
                 TextAnimation.RENDERWHEN10);
     }
 
@@ -128,7 +129,7 @@ public class LinkAnimation extends Renderable2d<LinkData> implements Renderable2
 
         /**
          * @param source Locatable; the object for which the text is displayed
-         * @param text String; the text to display
+         * @param text Supplier&lt;String&gr;; the text to display
          * @param dx float; the horizontal movement of the text, in meters
          * @param dy float; the vertical movement of the text, in meters
          * @param textPlacement TextAlignment; where to place the text
@@ -138,7 +139,7 @@ public class LinkAnimation extends Renderable2d<LinkData> implements Renderable2
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
-        public Text(final Locatable source, final String text, final float dx, final float dy,
+        public Text(final Locatable source, final Supplier<String> text, final float dx, final float dy,
                 final TextAlignment textPlacement, final Color color, final Contextualized contextualized,
                 final ScaleDependentRendering scaleDependentRendering) throws RemoteException, NamingException
         {

@@ -1,23 +1,12 @@
 package org.opentrafficsim.editor.decoration;
 
-import java.awt.Color;
 import java.io.IOException;
-import java.rmi.RemoteException;
-import java.util.List;
 
 import javax.naming.NamingException;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import org.djutils.draw.bounds.Bounds;
-import org.djutils.draw.bounds.Bounds2d;
-import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.point.Point2d;
-import org.djutils.event.EventListenerMap;
-import org.djutils.event.EventProducer;
-import org.opentrafficsim.draw.road.LaneAnimation;
-import org.opentrafficsim.draw.road.LaneAnimation.LaneData;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.decoration.string.AttributesStringFunction;
@@ -33,11 +22,7 @@ import org.opentrafficsim.editor.extensions.OdEditor;
 import org.opentrafficsim.editor.extensions.RoadLayoutEditor;
 import org.opentrafficsim.editor.extensions.RouteEditor;
 import org.opentrafficsim.editor.extensions.TrafCodEditor;
-
-import nl.tudelft.simulation.dsol.swing.animation.d2.VisualizationPanel;
-import nl.tudelft.simulation.naming.context.ContextInterface;
-import nl.tudelft.simulation.naming.context.Contextualized;
-import nl.tudelft.simulation.naming.context.JvmContext;
+import org.opentrafficsim.editor.extensions.map.Map;
 
 /**
  * Decorates the editor with custom icons, tabs, string functions and custom editors.
@@ -92,7 +77,7 @@ public final class DefaultDecorator
         editor.setCustomIcon("Ots.Animation", OtsEditor.loadIcon("./Play.png", 14, 14, 16, 16));
         editor.setCustomIcon("Ots.Output", OtsEditor.loadIcon("./Report.png", 14, 14, 16, 16)); // does not exist yet
 
-        editor.addTab("Map", networkIcon, buildMapPane(), "Map editor");
+        editor.addTab("Map", networkIcon, Map.build(editor), "Map editor");
         editor.addTab("Parameters", null, buildParameterPane(), null);
         editor.addTab("Text", null, buildTextPane(), null);
 
@@ -130,76 +115,6 @@ public final class DefaultDecorator
         new OdEditor(editor);
         new RouteEditor(editor);
         new TrafCodEditor(editor);
-    }
-
-    /**
-     * Temporary stub to create map pane.
-     * @return JComponent; component.
-     * @throws RemoteException on error when remote panel and producer cannot connect
-     * @throws NamingException when registering objects does not work
-     */
-    private static JComponent buildMapPane() throws RemoteException, NamingException
-    {
-        Contextualized contextualized = new Contextualized()
-        {
-            /** {@inheritDoc} */
-            @Override
-            public ContextInterface getContext()
-            {
-                return new JvmContext("Ots");
-            }
-        };
-        VisualizationPanel panel = new VisualizationPanel(new Bounds2d(500, 500), new EventProducer()
-        {
-            /** */
-            private static final long serialVersionUID = 20231001L;
-
-            /** {@inheritDoc} */
-            @Override
-            public EventListenerMap getEventListenerMap() throws RemoteException
-            {
-                return new EventListenerMap();
-            }
-        }, contextualized.getContext());
-        panel.setBackground(Color.GRAY);
-        panel.objectAdded(new LaneAnimation(new LaneData()
-        {
-            /** {@inheritDoc} */
-            @Override
-            public String getId()
-            {
-                return "MyLane";
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public Bounds<?, ?, ?> getBounds() throws RemoteException
-            {
-                return new Bounds2d(-50, 50, -50, 50);
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public Point2d getLocation()
-            {
-                return new Point2d(0.0, 0.0);
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public List<Point2d> getContour()
-            {
-                return List.of(new Point2d(-50, -47.5), new Point2d(47.5, 50), new Point2d(50, 47.5), new Point2d(-47.5, -50));
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public PolyLine2d getCenterLine()
-            {
-                return new PolyLine2d(List.of(new Point2d(-50, -50), new Point2d(50, 50)));
-            }
-        }, contextualized, Color.DARK_GRAY.brighter()));
-        return panel;
     }
 
     /**
@@ -244,9 +159,8 @@ public final class DefaultDecorator
         /**
          * Constructor.
          * @param editor OtsEditor; editor.
-         * @throws RemoteException if an exception occurs while adding as a listener.
          */
-        public NodeCreatedRemovedPrinter(final OtsEditor editor) throws RemoteException
+        public NodeCreatedRemovedPrinter(final OtsEditor editor)
         {
             super(editor);
         }

@@ -74,7 +74,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /** Event when an option is changed. */
     public static final EventType OPTION_CHANGED = new EventType("OPTIONCHANGED",
             new MetaData("Option changed", "Option changed on node",
-                    new ObjectDescriptor("Node", "Newly selected option node", XsdTreeNode.class),
+                    new ObjectDescriptor("Node", "Node on which the event is called", XsdTreeNode.class),
+                    new ObjectDescriptor("Selected", "Newly selected option node", XsdTreeNode.class),
                     new ObjectDescriptor("Previous", "Previously selected option node", XsdTreeNode.class)));
 
     /** Event when an option is changed. */
@@ -432,7 +433,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         int index = removeAnyFromParent();
         this.parent.children.add(index, node);
         node.invalidate();
-        node.fireEvent(XsdTreeNodeRoot.OPTION_CHANGED, new Object[] {node, previous});
+        this.choice.options.forEach((n) -> n.fireEvent(XsdTreeNodeRoot.OPTION_CHANGED, new Object[] {n, node, previous}));
     }
 
     /**
@@ -841,6 +842,14 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             // this is a bit dirty, at loading attribute 'href' and later attribute 'File' are mapped to 0
             // attribute 'Fallback' is explicitly set from child nodes (that are otherwise skipped) during loading
             return "Fallback".equals(attribute) ? 1 : 0;
+        }
+        for (int index = 0; index < this.attributeCount(); index++)
+        {
+            Node attr = this.attributeNodes.get(index);
+            if (DocumentReader.getAttribute(attr, "name").equals(attribute))
+            {
+                return index;
+            }
         }
         for (int index = 0; index < this.attributeCount(); index++)
         {
@@ -2121,7 +2130,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public void loadXmlNodes(final Node nodeXml)
     {
-        this.active = true;
+        setActive();
 
         // value
         String candidateValue = "";
@@ -2166,8 +2175,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                     default:
                         try
                         {
-                            int attributeIndex = getAttributeIndexByName(attributeNode.getNodeName());
-                            this.attributeValues.set(attributeIndex, attributeNode.getNodeValue());
+                            setAttributeValue(attributeNode.getNodeName(), attributeNode.getNodeValue());
                         }
                         catch (NoSuchElementException e)
                         {
@@ -2185,14 +2193,14 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             List<Integer> indices = new ArrayList<>();
             indices.add(0);
             indices.add(0);
-            loadChildren(indices, nodeXml.getChildNodes());
-            while (indices.get(0) < nodeXml.getChildNodes().getLength())
-            {
-                System.err.println(
-                        "Unable to load element with name " + nodeXml.getChildNodes().item(indices.get(0)).getNodeName() + ".");
-                indices.set(0, indices.get(0) + 1);
-                loadChildren(indices, nodeXml.getChildNodes());
-            }
+            loadChildren(indices, nodeXml.getChildNodes(), false);
+            // while (indices.get(0) < nodeXml.getChildNodes().getLength())
+            // {
+            // System.err.println(
+            // "Unable to load element with name " + nodeXml.getChildNodes().item(indices.get(0)).getNodeName() + ".");
+            // indices.set(0, indices.get(0) + 1);
+            // loadChildren(indices, nodeXml.getChildNodes());
+            // }
             // In included nodes, remove nodes that will not contain any of the loaded xml data. For example remove nodes that
             // are otherwise shown as inactive and allow a user to enable it, which makes no sense for imported nodes.
             if (this.isInclude)
@@ -2258,11 +2266,30 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * data was loaded is given.
      * @param indices List&lt;Integer&gt;; index of the first XML child node to load, and first XsdTreeNode index to use.
      * @param childrenXml NodeList; list of XML child nodes as specified within one parent XML tag.
+     * @param loadingSubSequence boolean; whether this call is loading children as a sub-sequence.
      */
-    protected void loadChildren(final List<Integer> indices, final NodeList childrenXml)
+    protected void loadChildren(final List<Integer> indices, final NodeList childrenXml, final boolean loadingSubSequence)
     {
-        int childIndex = indices.get(1);
+        List<XsdTreeNode> loadedChildren = new ArrayList<>();
+        int passes = 0;
+        int maxPasses = 1;
+        int loadedDuringPass = 0;
+        Node complexType = DocumentReader.getChild(this.xsdNode, "xsd:complexType");
+        if (complexType != null)
+        {
+            Node sequence = DocumentReader.getChild(complexType, "xsd:sequence");
+            if (sequence != null)
+            {
+                String maxOccurs = DocumentReader.getAttribute(sequence, "maxOccurs");
+                if (maxOccurs != null)
+                {
+                    maxPasses = maxOccurs.equalsIgnoreCase("unbounded") ? Integer.MAX_VALUE : Integer.valueOf(maxOccurs);
+                }
+            }
+        }
+
         int indexXml = indices.get(0);
+        int childIndex = indices.get(1);
         while (indexXml < childrenXml.getLength())
         {
             Node childNodeXml = childrenXml.item(indexXml);
@@ -2277,7 +2304,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             if (this.xsdNode == XiIncludeNode.XI_INCLUDE && "xi:fallback".equals(nameXml))
             {
                 String fallback = childNodeXml.getChildNodes().item(1).getAttributes().getNamedItem("href").getNodeValue();
-                this.setAttributeValue(1, fallback);
+                setAttributeValue(1, fallback);
                 indexXml++;
                 continue;
             }
@@ -2292,14 +2319,32 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             }
             else
             {
-                while (childIndex < this.children.size() && !this.children.get(childIndex).isRelevantNode(nameXml))
+                while (childIndex < this.children.size() && (!this.children.get(childIndex).isRelevantNode(nameXml)
+                        || loadedChildren.contains(this.children.get(childIndex))))
                 {
                     childIndex++;
                 }
                 if (childIndex >= this.children.size())
                 {
-                    indices.set(0, indexXml);
-                    return;
+                    if (loadedDuringPass == 0)
+                    {
+                        System.out.println("Failing to load " + nameXml + ", it is not a valid node.");
+                    }
+                    else
+                    {
+                        passes++;
+                        if (passes >= maxPasses)
+                        {
+                            if (!loadingSubSequence)
+                            {
+                                System.out.println("Failing to load " + nameXml + ", maximum number of passes reached.");
+                            }
+                            indices.set(0, indexXml);
+                            return;
+                        }
+                    }
+                    childIndex = 0; // start next pass
+                    loadedDuringPass = 0;
                 }
             }
 
@@ -2308,6 +2353,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             if (relevantChild.choice == null)
             {
                 relevantChild.loadXmlNodes(childNodeXml);
+                loadedChildren.add(relevantChild);
             }
             else
             {
@@ -2324,8 +2370,11 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                                 List<Integer> optionIndices = new ArrayList<>();
                                 optionIndices.add(indexXml);
                                 optionIndices.add(0);
-                                option.loadChildren(optionIndices, childrenXml);
-                                indexXml = optionIndices.get(0) - 1; // will be increased at end of loop
+                                // option.loadChildren(optionIndices, childrenXml, new ArrayList<>());
+                                option.loadChildren(optionIndices, childrenXml, true);
+                                loadedChildren.add(option);
+                                //childIndex = optionIndices.get(1);
+                                indexXml = optionIndices.get(0) - 1;
                                 optionSet = true;
                                 break;
                             }
@@ -2350,6 +2399,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                     }
                 }
             }
+            loadedDuringPass++;
             childIndex++;
             indices.set(1, childIndex);
             indexXml++;

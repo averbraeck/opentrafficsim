@@ -41,10 +41,8 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecoratorRemove im
      * @param editor OtsEditor; editor.
      * @param path String; path location of nodes to attach to.
      * @param children String...; children each of which may not have duplicates. Use none to check all children.
-     * @throws RemoteException if an exception occurs while adding as a listener.
      */
     public NoDuplicateChildrenValidator(final OtsEditor editor, final String path, final String... children)
-            throws RemoteException
     {
         super(editor);
         this.path = path;

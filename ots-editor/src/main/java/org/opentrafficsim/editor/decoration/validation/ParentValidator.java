@@ -1,6 +1,5 @@
 package org.opentrafficsim.editor.decoration.validation;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -45,9 +44,8 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
      * Constructor.
      * @param editor OtsEditor; editor.
      * @param path String; path of the nodes that have a Parent attribute referring to another node under the same path.
-     * @throws RemoteException if an exception occurs while adding as a listener.
      */
-    public ParentValidator(final OtsEditor editor, final String path) throws RemoteException
+    public ParentValidator(final OtsEditor editor, final String path)
     {
         super(editor);
         this.path = path;

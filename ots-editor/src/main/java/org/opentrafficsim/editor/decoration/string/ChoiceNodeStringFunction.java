@@ -25,9 +25,8 @@ public class ChoiceNodeStringFunction extends AbstractNodeDecorator
     /**
      * Constructor.
      * @param editor OtsEditor; editor.
-     * @throws RemoteException if an exception occurs while adding as a listener.
      */
-    public ChoiceNodeStringFunction(final OtsEditor editor) throws RemoteException
+    public ChoiceNodeStringFunction(final OtsEditor editor)
     {
         super(editor);
     }

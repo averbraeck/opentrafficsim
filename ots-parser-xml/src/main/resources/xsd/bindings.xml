@@ -102,7 +102,7 @@
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.LengthBeginEndType" xmlType="ots:LengthBeginEndType"
       adapter="org.opentrafficsim.xml.bindings.LengthBeginEndAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.ClassType" xmlType="ots:ClassNameType"
-      adapter="org.opentrafficsim.xml.bindings.ClassNameAdapter" />
+      adapter="org.opentrafficsim.xml.bindings.ClassAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.InterpolationType" xmlType="ots:InterpolationType"
       adapter="org.opentrafficsim.xml.bindings.InterpolationAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.GraphicsTypeType" xmlType="ots:GraphicsType"

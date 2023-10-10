@@ -601,7 +601,7 @@
       <xsd:element name="ModelIdReferral" type="ots:ModelIdReferralType" minOccurs="0" maxOccurs="unbounded" />
 
     </xsd:sequence>
-    <xsd:attribute name="Id" type="ots:IdType" />
+    <xsd:attribute name="Id" type="ots:IdType" use="required" />
   </xsd:complexType>
 
 </xsd:schema>

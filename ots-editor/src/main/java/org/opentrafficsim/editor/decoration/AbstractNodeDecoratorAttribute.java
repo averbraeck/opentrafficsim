@@ -35,10 +35,9 @@ public abstract class AbstractNodeDecoratorAttribute extends AbstractNodeDecorat
      * @param editor OtsEditor; editor.
      * @param predicate Predicate&lt;XsdTreeNode&gt;; predicate to accept nodes that should have this attribute decorator.
      * @param attributes String...; attributes to trigger on.
-     * @throws RemoteException if an exception occurs while adding as a listener.
      */
     public AbstractNodeDecoratorAttribute(final OtsEditor editor, final Predicate<XsdTreeNode> predicate,
-            final String... attributes) throws RemoteException
+            final String... attributes)
     {
         super(editor);
         this.predicate = predicate;

@@ -1,6 +1,5 @@
 package org.opentrafficsim.editor.decoration.string;
 
-import java.rmi.RemoteException;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -24,7 +23,7 @@ public abstract class AbstractStringFunction extends AbstractNodeDecorator
 
     /** Predicate to accept nodes that should have this string function. */
     private final Predicate<XsdTreeNode> predicate;
-    
+
     /** Overwrite existing string functions. */
     protected boolean overwrite = true;
 
@@ -32,9 +31,8 @@ public abstract class AbstractStringFunction extends AbstractNodeDecorator
      * Constructor.
      * @param editor OtsEditor; editor.
      * @param predicate Predicate&lt;XsdTreeNode&gt;; predicate to accept nodes that should have this string function.
-     * @throws RemoteException if an exception occurs while adding as a listener.
      */
-    public AbstractStringFunction(final OtsEditor editor, final Predicate<XsdTreeNode> predicate) throws RemoteException
+    public AbstractStringFunction(final OtsEditor editor, final Predicate<XsdTreeNode> predicate)
     {
         super(editor);
         this.predicate = predicate;

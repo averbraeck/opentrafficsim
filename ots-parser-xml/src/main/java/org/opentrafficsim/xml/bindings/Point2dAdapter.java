@@ -2,7 +2,6 @@ package org.opentrafficsim.xml.bindings;
 
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
-import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.xml.bindings.types.Point2dType;
 
 /**
@@ -16,7 +15,7 @@ import org.opentrafficsim.xml.bindings.types.Point2dType;
  */
 public class Point2dAdapter extends ExpressionAdapter<Point2d, Point2dType>
 {
-    
+
     /** {@inheritDoc} */
     @Override
     public Point2dType unmarshal(final String field) throws IllegalArgumentException
@@ -42,7 +41,6 @@ public class Point2dAdapter extends ExpressionAdapter<Point2d, Point2dType>
         }
         catch (Exception exception)
         {
-            CategoryLogger.always().error(exception, "Problem parsing coordinate '" + field + "'");
             throw new IllegalArgumentException("Error parsing coordinate" + field, exception);
         }
     }

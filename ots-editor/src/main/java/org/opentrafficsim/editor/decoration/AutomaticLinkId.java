@@ -1,6 +1,5 @@
 package org.opentrafficsim.editor.decoration;
 
-import java.rmi.RemoteException;
 import java.util.function.Predicate;
 
 import javax.swing.event.CellEditorListener;
@@ -32,9 +31,8 @@ public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements C
     /**
      * Constructor.
      * @param editor OtsEditor; editor.
-     * @throws RemoteException if an exception occurs while adding as a listener.
      */
-    public AutomaticLinkId(final OtsEditor editor) throws RemoteException
+    public AutomaticLinkId(final OtsEditor editor)
     {
         super(editor, (node) -> node.isType("Ots.Network.Link"), "NodeStart", "NodeEnd");
         editor.addAttributeCellEditorListener(this);
@@ -45,10 +43,8 @@ public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements C
      * @param editor OtsEditor; editor.
      * @param predicate Predicate&lt;XsdTreeNode&gt;; predicate to accept nodes that should have this attribute decorator.
      * @param attributes String...; attributes to trigger on.
-     * @throws RemoteException if an exception occurs while adding as a listener.
      */
     protected AutomaticLinkId(final OtsEditor editor, final Predicate<XsdTreeNode> predicate, final String... attributes)
-            throws RemoteException
     {
         super(editor, predicate, attributes);
         editor.addAttributeCellEditorListener(this);
@@ -96,7 +92,7 @@ public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements C
             this.lastId = null;
         }
     }
-    
+
     /**
      * Returns a string with the { and } removed.
      * @param value String; candidate value.

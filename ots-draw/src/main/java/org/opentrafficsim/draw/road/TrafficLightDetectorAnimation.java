@@ -7,6 +7,7 @@ import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.function.Supplier;
 
 import javax.naming.NamingException;
 
@@ -43,7 +44,7 @@ public class TrafficLightDetectorAnimation extends Renderable2d<TrafficLightDete
 
     /** Path of the detector. */
     private final Path2D.Float polygon;
-    
+
     /** the Text object to destroy when the animation is destroyed. */
     private final Text text;
 
@@ -66,7 +67,7 @@ public class TrafficLightDetectorAnimation extends Renderable2d<TrafficLightDete
         {
             this.polygon.lineTo(coordinates.get(i).x, coordinates.get(i).y);
         }
-        this.text = new Text(detector, detector.getId(), 0.0f, 0.5f + 0.2f, TextAlignment.CENTER, //getHalfLength() + 0.2f
+        this.text = new Text(detector, detector::getId, 0.0f, 0.5f + 0.2f, TextAlignment.CENTER, // getHalfLength() + 0.2f
                 Color.BLACK, contextualized);
     }
 
@@ -78,7 +79,7 @@ public class TrafficLightDetectorAnimation extends Renderable2d<TrafficLightDete
         graphics.setStroke(new BasicStroke(0.2f));
         graphics.draw(this.polygon);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public void destroy(final Contextualized contextProvider)
@@ -112,7 +113,7 @@ public class TrafficLightDetectorAnimation extends Renderable2d<TrafficLightDete
 
         /**
          * @param source Locatable; the object for which the text is displayed
-         * @param text String; the text to display
+         * @param text Supplier&lt;String&gt;; the text to display
          * @param dx float; the horizontal movement of the text, in meters
          * @param dy float; the vertical movement of the text, in meters
          * @param textPlacement TextAlignment; where to place the text
@@ -121,7 +122,7 @@ public class TrafficLightDetectorAnimation extends Renderable2d<TrafficLightDete
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
-        public Text(final Locatable source, final String text, final float dx, final float dy,
+        public Text(final Locatable source, final Supplier<String> text, final float dx, final float dy,
                 final TextAlignment textPlacement, final Color color, final Contextualized contextualized)
                 throws RemoteException, NamingException
         {
@@ -177,7 +178,7 @@ public class TrafficLightDetectorAnimation extends Renderable2d<TrafficLightDete
         /** {@inheritDoc} */
         @Override
         OrientedPoint2d getLocation();
-        
+
         /** {@inheritDoc} */
         @Override
         default double getZ()
