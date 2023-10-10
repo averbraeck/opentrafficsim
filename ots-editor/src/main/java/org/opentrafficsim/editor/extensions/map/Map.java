@@ -1,6 +1,7 @@
 package org.opentrafficsim.editor.extensions.map;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.rmi.RemoteException;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -18,6 +19,7 @@ import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
 
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
+import nl.tudelft.simulation.dsol.animation.d2.RenderableScale;
 import nl.tudelft.simulation.dsol.swing.animation.d2.AnimationUpdaterThread;
 import nl.tudelft.simulation.dsol.swing.animation.d2.VisualizationPanel;
 import nl.tudelft.simulation.naming.context.ContextInterface;
@@ -25,7 +27,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
 import nl.tudelft.simulation.naming.context.JvmContext;
 
 /**
- * Editor map. 
+ * Editor map.
  * <p>
  * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -34,24 +36,33 @@ import nl.tudelft.simulation.naming.context.JvmContext;
  */
 public class Map extends VisualizationPanel
 {
-    
+
     /** */
     private static final long serialVersionUID = 20231010L;
 
     /** All types that are valid to show in the map. */
-    static Set<String> TYPES = Set.of("Ots.Network.Node", "Ots.Network.Link");
+    private static final Set<String> TYPES = Set.of("Ots.Network.Node", "Ots.Network.Link");
 
     /** Context provider. */
-    private Contextualized contextualized;
+    private final Contextualized contextualized;
 
     /** Editor. */
-    private OtsEditor editor;
+    private final OtsEditor editor;
 
     /** All map data's drawn (or hidden as they are invalid). */
-    LinkedHashMap<XsdTreeNode, MapData> datas = new LinkedHashMap<>();
+    private final LinkedHashMap<XsdTreeNode, MapData> datas = new LinkedHashMap<>();
 
     /** Animation objects of all data's drawn. */
-    LinkedHashMap<XsdTreeNode, Renderable2d<?>> animations = new LinkedHashMap<>();
+    private final LinkedHashMap<XsdTreeNode, Renderable2d<?>> animations = new LinkedHashMap<>();
+
+    /** Last x-scale. */
+    private Double lastXScale = null;
+
+    /** Last y-scale. */
+    private Double lastYScale = null;
+
+    /** Last screen size. */
+    private Dimension lastScreen = null;
 
     /**
      * Constructor.
@@ -69,6 +80,59 @@ public class Map extends VisualizationPanel
         this.editor = editor;
         setBackground(Color.GRAY);
         editor.addListener(this, OtsEditor.NEW_FILE);
+        setRenderableScale(new RenderableScale()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public Bounds2d computeVisibleExtent(final Bounds2d extent, final Dimension screen)
+            {
+                // overriden to preserve zoom scale, otherwise dragging the split screen may pump up the zoom factor
+                double xScale = getXScale(extent, screen);
+                double yScale = getYScale(extent, screen);
+                Bounds2d result;
+                if (Map.this.lastYScale != null && yScale == Map.this.lastYScale)
+                {
+                    result = new Bounds2d(extent.midPoint().getX() - 0.5 * screen.getWidth() * yScale,
+                            extent.midPoint().getX() + 0.5 * screen.getWidth() * yScale, extent.getMinY(), extent.getMaxY());
+                    xScale = yScale;
+                }
+                else if (Map.this.lastXScale != null && xScale == Map.this.lastXScale)
+                {
+                    result = new Bounds2d(extent.getMinX(), extent.getMaxX(),
+                            extent.midPoint().getY() - 0.5 * screen.getHeight() * xScale * getYScaleRatio(),
+                            extent.midPoint().getY() + 0.5 * screen.getHeight() * xScale * getYScaleRatio());
+                    yScale = xScale;
+                }
+                else
+                {
+                    double scale = Map.this.lastXScale == null ? Math.min(xScale, yScale)
+                            : Map.this.lastXScale * Map.this.lastScreen.getWidth() / screen.getWidth();
+                    result = new Bounds2d(extent.midPoint().getX() - 0.5 * screen.getWidth() * scale,
+                            extent.midPoint().getX() + 0.5 * screen.getWidth() * scale,
+                            extent.midPoint().getY() - 0.5 * screen.getHeight() * scale * getYScaleRatio(),
+                            extent.midPoint().getY() + 0.5 * screen.getHeight() * scale * getYScaleRatio());
+                    yScale = scale;
+                    xScale = scale;
+                }
+                Map.this.lastXScale = xScale;
+                Map.this.lastYScale = yScale;
+                Map.this.lastScreen = screen;
+                return result;
+            }
+        });
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setExtent(final Bounds2d extent)
+    {
+        if (this.lastScreen != null)
+        {
+            // this prevents zoom being undone when resizing the screen afterwards
+            Map.this.lastXScale = getRenderableScale().getXScale(extent, this.lastScreen);
+            Map.this.lastYScale = getRenderableScale().getYScale(extent, this.lastScreen);
+        }
+        super.setExtent(extent);
     }
 
     /**
