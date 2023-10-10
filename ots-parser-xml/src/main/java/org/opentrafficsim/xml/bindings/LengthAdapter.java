@@ -30,7 +30,6 @@ public class LengthAdapter extends ScalarAdapter<Length, LengthType>
         }
         catch (Exception exception)
         {
-            CategoryLogger.always().error(exception, "Problem parsing Length '" + field + "'");
             throw exception;
         }
     }

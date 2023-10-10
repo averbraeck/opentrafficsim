@@ -43,7 +43,6 @@ public class DirectionAdapter extends ScalarAdapter<Direction, DirectionType>
         }
         catch (Exception exception)
         {
-            CategoryLogger.always().error(exception, "Problem parsing Direction '" + field + "'");
             throw exception;
         }
     }

@@ -2,17 +2,22 @@ package org.opentrafficsim.editor.extensions.map;
 
 import java.rmi.RemoteException;
 
+import org.djunits.value.vdouble.scalar.Direction;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.bounds.Bounds;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
+import org.opentrafficsim.core.geometry.OtsGeometryUtil;
 import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.road.network.factory.xml.parser.ScenarioParser;
+import org.opentrafficsim.xml.bindings.DirectionAdapter;
+import org.opentrafficsim.xml.bindings.LengthAdapter;
 import org.opentrafficsim.xml.bindings.Point2dAdapter;
 
 /**
@@ -32,6 +37,12 @@ public class MapLinkData extends MapData implements LinkData, EventListener
     /** Point adapter. */
     private final static Point2dAdapter POINT_ADAPTER = new Point2dAdapter();
 
+    /** Direction adapter. */
+    private final static DirectionAdapter DIRECTION_ADAPTER = new DirectionAdapter();
+    
+    /** Length adapter. */
+    private final static LengthAdapter LENGTH_ADAPTER = new LengthAdapter();
+
     /** String attribute. */
     private String id = "";
 
@@ -40,6 +51,18 @@ public class MapLinkData extends MapData implements LinkData, EventListener
 
     /** Tree node of end. */
     private XsdTreeNode nodeEnd;
+    
+    /** Start direction. */
+    private Direction directionStart = Direction.ZERO;
+
+    /** End direction. */
+    private Direction directionEnd = Direction.ZERO;
+
+    /** Start offset. */
+    private Length offsetStart;
+
+    /** End offset. */
+    private Length offsetEnd;
 
     /** From point. */
     private Point2d from;
@@ -69,8 +92,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener
             if (getNode().isActive())
             {
                 notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Id", null}));
-                this.nodeStart = replace(this.nodeStart, linkNode.getCoupledKeyrefNode("NodeStart"));
-                this.nodeEnd = replace(this.nodeEnd, linkNode.getCoupledKeyrefNode("NodeEnd"));
+                this.nodeStart = replaceNode(this.nodeStart, linkNode.getCoupledKeyrefNode("NodeStart"));
+                this.nodeEnd = replaceNode(this.nodeEnd, linkNode.getCoupledKeyrefNode("NodeEnd"));
             }
         }
         catch (RemoteException e)
@@ -130,13 +153,26 @@ public class MapLinkData extends MapData implements LinkData, EventListener
         }
         else if ("NodeStart".equals(attribute))
         {
-            this.nodeStart = replace(this.nodeStart, getNode().getCoupledKeyrefNode("NodeStart"));
+            this.nodeStart = replaceNode(this.nodeStart, getNode().getCoupledKeyrefNode("NodeStart"));
         }
         else if ("NodeEnd".equals(attribute))
         {
-            this.nodeEnd = replace(this.nodeEnd, getNode().getCoupledKeyrefNode("NodeEnd"));
+            this.nodeEnd = replaceNode(this.nodeEnd, getNode().getCoupledKeyrefNode("NodeEnd"));
+        }
+        else if ("OffsetStart".equals(attribute))
+        {
+            setValue((v) -> this.offsetStart = v, LENGTH_ADAPTER, getNode(), attribute);
+        }
+        else if ("OffsetEnd".equals(attribute))
+        {
+            setValue((v) -> this.offsetEnd = v, LENGTH_ADAPTER, getNode(), attribute);
         }
         else if ("Coordinate".equals(attribute))
+        {
+            // this pertains to either of the nodes, to which this class also listens
+            buildDesignLine();
+        }
+        else if ("Direction".equals(attribute))
         {
             // this pertains to either of the nodes, to which this class also listens
             buildDesignLine();
@@ -156,7 +192,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener
      * @param newNode XsdTreeNode; new node.
      * @return XsdTreeNode; the actual new node (Ots.Network.Node).
      */
-    private XsdTreeNode replace(final XsdTreeNode oldNode, final XsdTreeNode newNode)
+    private XsdTreeNode replaceNode(final XsdTreeNode oldNode, final XsdTreeNode newNode)
     {
         if (oldNode != null)
         {
@@ -239,7 +275,19 @@ public class MapLinkData extends MapData implements LinkData, EventListener
             setInvalid();
             return;
         }
-        this.designLine = new PolyLine2d(this.from, this.to);
+        Point2d from = this.from;
+        Point2d to = this.to;
+        if (this.offsetStart != null)
+        {
+            setValue((v) -> this.directionStart = v, DIRECTION_ADAPTER, this.nodeStart, "Direction");
+            from = OtsGeometryUtil.offsetPoint(new OrientedPoint2d(from, this.directionStart.si), this.offsetStart.si);
+        }
+        if (this.offsetEnd != null)
+        {
+            setValue((v) -> this.directionEnd = v, DIRECTION_ADAPTER, this.nodeEnd, "Direction");
+            to = OtsGeometryUtil.offsetPoint(new OrientedPoint2d(to, this.directionEnd.si), this.offsetEnd.si);
+        }
+        this.designLine = new PolyLine2d(from, to);
         setValid();
     }
 
@@ -255,8 +303,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener
     public void evalChanged()
     {
         this.id = getNode().getId() == null ? "" : getNode().getId();
-        this.nodeStart = replace(this.nodeStart, getNode().getCoupledKeyrefNode("NodeStart"));
-        this.nodeEnd = replace(this.nodeEnd, getNode().getCoupledKeyrefNode("NodeEnd"));
+        this.nodeStart = replaceNode(this.nodeStart, getNode().getCoupledKeyrefNode("NodeStart"));
+        this.nodeEnd = replaceNode(this.nodeEnd, getNode().getCoupledKeyrefNode("NodeEnd"));
         buildDesignLine();
     }
 

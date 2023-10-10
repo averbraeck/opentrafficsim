@@ -86,7 +86,7 @@ public class Map extends VisualizationPanel
             @Override
             public Bounds2d computeVisibleExtent(final Bounds2d extent, final Dimension screen)
             {
-                // overriden to preserve zoom scale, otherwise dragging the split screen may pump up the zoom factor
+                // overridden to preserve zoom scale, otherwise dragging the split screen may pump up the zoom factor
                 double xScale = getXScale(extent, screen);
                 double yScale = getYScale(extent, screen);
                 Bounds2d result;
