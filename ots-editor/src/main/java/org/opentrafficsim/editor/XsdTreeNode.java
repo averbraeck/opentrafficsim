@@ -21,8 +21,11 @@ import java.util.stream.Collectors;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djutils.event.Event;
+import org.djutils.event.EventListener;
+import org.djutils.event.EventListenerMap;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
+import org.djutils.event.reference.Reference;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
@@ -2373,7 +2376,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                                 // option.loadChildren(optionIndices, childrenXml, new ArrayList<>());
                                 option.loadChildren(optionIndices, childrenXml, true);
                                 loadedChildren.add(option);
-                                //childIndex = optionIndices.get(1);
+                                // childIndex = optionIndices.get(1);
                                 indexXml = optionIndices.get(0) - 1;
                                 optionSet = true;
                                 break;
@@ -2458,6 +2461,34 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             }
         }
         return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean addListener(final EventListener listener, final EventType eventType)
+    {
+        boolean result = super.addListener(listener, eventType);
+        /*
+         * Prioritizes KeyValidators: when an Id attribute is changed this will update any referring nodes to the new value
+         * first, before any other listener may break the coupling. Coupling is broken when for example validation is performed
+         * with the new Id value, to obtain the coupled node.
+         */
+        if (eventType.equals(XsdTreeNode.ATTRIBUTE_CHANGED))
+        {
+            EventListenerMap map = getEventListenerMap();
+            List<Reference<EventListener>> list = map.get(eventType);
+            List<Reference<EventListener>> keys = new ArrayList<>();
+            for (Reference<EventListener> listen : list)
+            {
+                if (listen.get() instanceof KeyValidator)
+                {
+                    keys.add(listen);
+                }
+            }
+            list.removeAll(keys);
+            list.addAll(0, keys);
+        }
+        return result;
     }
 
 }

@@ -754,7 +754,10 @@ public class OtsEditor extends JFrame implements EventProducer
         {
             try
             {
+                XsdTreeNode node = (XsdTreeNode) this.treeTable.getTree().getModel().getRoot();
+                this.undo.startAction(ActionType.ADD, node, null);
                 initializeTree();
+                this.undo.clear();
             }
             catch (IOException exception)
             {

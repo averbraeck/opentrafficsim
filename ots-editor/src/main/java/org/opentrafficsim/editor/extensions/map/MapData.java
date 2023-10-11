@@ -85,8 +85,9 @@ public abstract class MapData implements EvalListener
     }
 
     /**
-     * Generic method to set a value based on a changed attribute. If the value is an invalid expression, or the value cannot be
-     * unmarshalled by the adapter, no change is made.
+     * Generic method to set a value based on a changed attribute. If the new value is {@code null}, the setter is invoked to
+     * set a {@code null} value. If the value is an invalid expression, or the value cannot be unmarshalled by the adapter, no
+     * change is made.
      * @param <T> type of the value to set.
      * @param setter Consumer&lt;T&gt;; setter that receives a successfully derived value.
      * @param adapter ExpressionAdapter&lt;T, ?&gt;; adapter.
@@ -98,7 +99,13 @@ public abstract class MapData implements EvalListener
     {
         try
         {
-            T value = adapter.unmarshal(node.getAttributeValue(attribute)).get(getEval());
+            String stringValue = node.getAttributeValue(attribute);
+            if (stringValue == null)
+            {
+                setter.accept(null);
+                return;
+            }
+            T value = adapter.unmarshal(stringValue).get(getEval());
             setter.accept(value);
         }
         catch (RuntimeException ex)

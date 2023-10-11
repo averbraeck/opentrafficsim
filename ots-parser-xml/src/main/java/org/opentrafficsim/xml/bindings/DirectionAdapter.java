@@ -1,7 +1,6 @@
 package org.opentrafficsim.xml.bindings;
 
 import org.djunits.value.vdouble.scalar.Direction;
-import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.xml.bindings.types.DirectionType;
 
 /**
@@ -17,7 +16,7 @@ import org.opentrafficsim.xml.bindings.types.DirectionType;
  */
 public class DirectionAdapter extends ScalarAdapter<Direction, DirectionType>
 {
-    
+
     /** {@inheritDoc} */
     @Override
     public DirectionType unmarshal(final String field)
@@ -48,4 +47,3 @@ public class DirectionAdapter extends ScalarAdapter<Direction, DirectionType>
     }
 
 }
-

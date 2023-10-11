@@ -1,7 +1,6 @@
 package org.opentrafficsim.xml.bindings;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.xml.bindings.types.LengthType;
 
 /**

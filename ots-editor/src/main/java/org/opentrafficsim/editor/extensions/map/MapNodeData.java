@@ -125,6 +125,7 @@ public class MapNodeData extends MapData implements NodeData, EventListener
     @Override
     public void destroy()
     {
+        super.destroy();
         this.getNode().removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
     }
 

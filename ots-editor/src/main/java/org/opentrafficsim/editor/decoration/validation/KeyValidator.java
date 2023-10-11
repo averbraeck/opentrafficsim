@@ -166,7 +166,7 @@ public class KeyValidator implements ValueValidator, EventListener
         boolean matched = false;
         for (Entry<XsdTreeNode, List<String>> entry : valueMap.entrySet())
         {
-            if (values.equals(entry.getValue()))
+            if (values.equals(entry.getValue()) && !values.contains(null))
             {
                 matched = true;
                 this.coupledKeyrefNodes.put(node, entry.getKey());

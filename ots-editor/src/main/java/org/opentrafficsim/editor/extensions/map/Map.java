@@ -6,6 +6,7 @@ import java.rmi.RemoteException;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 import javax.naming.NamingException;
 
@@ -51,6 +52,9 @@ public class Map extends VisualizationPanel
 
     /** All map data's drawn (or hidden as they are invalid). */
     private final LinkedHashMap<XsdTreeNode, MapData> datas = new LinkedHashMap<>();
+
+    /** Weak references to all created link data's. */
+    private final WeakHashMap<MapLinkData, Object> links = new WeakHashMap<>();
 
     /** Animation objects of all data's drawn. */
     private final LinkedHashMap<XsdTreeNode, Renderable2d<?>> animations = new LinkedHashMap<>();
@@ -169,7 +173,7 @@ public class Map extends VisualizationPanel
             {
                 remove(node);
             }
-            this.animations.values().forEach((animation) -> objectRemoved(animation));
+            this.links.clear();
             this.animations.clear();
             this.datas.clear();
             XsdTreeNodeRoot root = (XsdTreeNodeRoot) event.getContent();
@@ -231,6 +235,13 @@ public class Map extends VisualizationPanel
                 {
                     add(selected);
                 }
+            }
+        }
+        else if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED))
+        {
+            for (MapLinkData linkData : this.links.keySet())
+            {
+                linkData.notifyNodeIdChanged(linkData.getNode());
             }
         }
         else
@@ -302,13 +313,16 @@ public class Map extends VisualizationPanel
     private void add(final XsdTreeNode node) throws RemoteException
     {
         MapData data;
-        if (node.isType("Ots.Network.Node"))
+        if (node.getPathString().equals("Ots.Network.Node"))
         {
             data = new MapNodeData(this, node, this.editor);
+            node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
         }
-        else if (node.isType("Ots.Network.Link"))
+        else if (node.getPathString().equals("Ots.Network.Link"))
         {
-            data = new MapLinkData(this, node, this.editor);
+            MapLinkData linkData = new MapLinkData(this, node, this.editor);
+            data = linkData;
+            this.links.put(linkData, null);
         }
         else
         {
@@ -323,6 +337,10 @@ public class Map extends VisualizationPanel
      */
     private void remove(final XsdTreeNode node)
     {
+        if (node.getPathString().equals("Ots.Network.Node"))
+        {
+            node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+        }
         MapData data = this.datas.remove(node);
         if (data != null)
         {

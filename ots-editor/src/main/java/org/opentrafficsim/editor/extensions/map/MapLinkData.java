@@ -39,7 +39,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener
 
     /** Direction adapter. */
     private final static DirectionAdapter DIRECTION_ADAPTER = new DirectionAdapter();
-    
+
     /** Length adapter. */
     private final static LengthAdapter LENGTH_ADAPTER = new LengthAdapter();
 
@@ -51,7 +51,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener
 
     /** Tree node of end. */
     private XsdTreeNode nodeEnd;
-    
+
     /** Start direction. */
     private Direction directionStart = Direction.ZERO;
 
@@ -247,8 +247,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener
             {
                 for (XsdTreeNode networkElement : child.getChildren())
                 {
-                    if ((networkElement.isType("Node") || networkElement.isType("Centroid"))
-                            && networkElement.getId().equals(nodeId))
+                    if (networkElement.isType("Node") && networkElement.getId().equals(nodeId))
                     {
                         return networkElement;
                     }
@@ -280,12 +279,14 @@ public class MapLinkData extends MapData implements LinkData, EventListener
         if (this.offsetStart != null)
         {
             setValue((v) -> this.directionStart = v, DIRECTION_ADAPTER, this.nodeStart, "Direction");
-            from = OtsGeometryUtil.offsetPoint(new OrientedPoint2d(from, this.directionStart.si), this.offsetStart.si);
+            double dir = this.directionStart == null ? 0.0 : this.directionStart.si;
+            from = OtsGeometryUtil.offsetPoint(new OrientedPoint2d(from, dir), this.offsetStart.si);
         }
         if (this.offsetEnd != null)
         {
             setValue((v) -> this.directionEnd = v, DIRECTION_ADAPTER, this.nodeEnd, "Direction");
-            to = OtsGeometryUtil.offsetPoint(new OrientedPoint2d(to, this.directionEnd.si), this.offsetEnd.si);
+            double dir = this.directionEnd == null ? 0.0 : this.directionEnd.si;
+            to = OtsGeometryUtil.offsetPoint(new OrientedPoint2d(to, dir), this.offsetEnd.si);
         }
         this.designLine = new PolyLine2d(from, to);
         setValid();
@@ -295,6 +296,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener
     @Override
     public void destroy()
     {
+        super.destroy();
         this.getNode().removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
     }
 
@@ -306,6 +308,15 @@ public class MapLinkData extends MapData implements LinkData, EventListener
         this.nodeStart = replaceNode(this.nodeStart, getNode().getCoupledKeyrefNode("NodeStart"));
         this.nodeEnd = replaceNode(this.nodeEnd, getNode().getCoupledKeyrefNode("NodeEnd"));
         buildDesignLine();
+    }
+
+    /**
+     * Notification from the Map that a node (Ots.Network.Node) id was changed.
+     * @param node XsdTreeNode; node.
+     */
+    public void notifyNodeIdChanged(final XsdTreeNode node)
+    {
+        evalChanged(); // same effect
     }
 
 }
