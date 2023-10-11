@@ -1601,6 +1601,14 @@
 	        <xsd:attribute name="Sigma" type="ots:DoublePositive" use="required" />
 	      </xsd:complexType>
 	    </xsd:element>
+        <xsd:element name="LogNormalTrunc">
+          <xsd:complexType>
+            <xsd:attribute name="Mu" type="ots:double" use="required" />
+            <xsd:attribute name="Sigma" type="ots:DoublePositive" use="required" />
+            <xsd:attribute name="Min" type="ots:double" use="required" />
+            <xsd:attribute name="Max" type="ots:double" use="required" />
+          </xsd:complexType>
+        </xsd:element>
 	    <xsd:element name="Pearson5">
 	      <xsd:complexType>
 	        <xsd:attribute name="Alpha" type="ots:DoublePositive" use="required" />

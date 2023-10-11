@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.network.factory.xml.units;
+package org.opentrafficsim.road.network.factory.xml.utils;
 
 import java.awt.Color;
 

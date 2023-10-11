@@ -22,6 +22,7 @@ import nl.tudelft.simulation.jstats.distributions.DistExponential;
 import nl.tudelft.simulation.jstats.distributions.DistGamma;
 import nl.tudelft.simulation.jstats.distributions.DistGeometric;
 import nl.tudelft.simulation.jstats.distributions.DistLogNormal;
+import nl.tudelft.simulation.jstats.distributions.DistLogNormalTrunc;
 import nl.tudelft.simulation.jstats.distributions.DistNegBinomial;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.distributions.DistNormalTrunc;
@@ -162,6 +163,12 @@ public final class ParseDistribution
         {
             return new DistLogNormal(stream, distType.getLogNormal().getMu().get(eval),
                     distType.getLogNormal().getSigma().get(eval));
+        }
+        else if (distType.getLogNormalTrunc() != null)
+        {
+            return new DistLogNormalTrunc(stream, distType.getLogNormalTrunc().getMu().get(eval),
+                    distType.getLogNormalTrunc().getSigma().get(eval), distType.getLogNormalTrunc().getMin().get(eval),
+                    distType.getLogNormalTrunc().getMax().get(eval));
         }
         else if (distType.getPearson5() != null)
         {

@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.network.factory.xml.units;
+package org.opentrafficsim.road.network.factory.xml.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -7,6 +7,7 @@ import java.awt.Color;
 
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.network.factory.xml.utils.ColorParser;
 
 /**
  * Test that color parser works as expected.
