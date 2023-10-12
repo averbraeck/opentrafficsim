@@ -21,8 +21,8 @@
     </dependency>
     
     <dependency>
-      <groupId>nl.tudelft.simulation</groupId>
-      <artifactId>dsol-swing</artifactId>
+      <groupId>org.opentrafficsim</groupId>
+      <artifactId>ots-swing</artifactId>
     </dependency>
 
     <dependency>

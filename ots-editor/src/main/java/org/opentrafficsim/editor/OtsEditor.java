@@ -443,22 +443,35 @@ public class OtsEditor extends JFrame implements EventProducer
     /**
      * Run a single simulation run.
      */
-    protected void runSingle()
+    private void runSingle()
     {
         if (!((XsdTreeNode) this.treeTable.getTree().getModel().getRoot()).isValid())
         {
             showInvalidMessage();
             return;
         }
+        File file;
+        try
+        {
+            file = File.createTempFile("ots_", ".xml");
+        }
+        catch (IOException exception)
+        {
+            showUnableToRun();
+            return;
+        }
+        save(file, (XsdTreeNodeRoot) this.treeTable.getTree().getModel().getRoot());
         int index = this.scenario.getSelectedIndex();
         if (index == 0)
         {
-            System.out.println("Running run of the default scenario.");
+            OtsRunner.runSingle(file, null);
         }
         else
         {
-            System.out.println("Running run of scenario " + this.scenario.getItemAt(index) + ".");
+            String scenario = this.scenario.getItemAt(index).getScenarioNode().getId();
+            OtsRunner.runSingle(file, scenario);
         }
+        file.delete();
     }
 
     /**
@@ -1190,6 +1203,14 @@ public class OtsEditor extends JFrame implements EventProducer
     public void showCircularInputParameters()
     {
         JOptionPane.showMessageDialog(OtsEditor.this, "Input parameters have a circular dependency.");
+    }
+    
+    /**
+     * Show unable to run.
+     */
+    public void showUnableToRun()
+    {
+        JOptionPane.showMessageDialog(OtsEditor.this, "Unable to run, temporary file could not be saved.");
     }
 
     /**
