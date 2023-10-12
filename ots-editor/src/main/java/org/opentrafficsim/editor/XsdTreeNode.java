@@ -1121,7 +1121,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             XsdTreeNode node = new XsdTreeNode(this.choice.parent, this.choice.xsdNode, this.choice.hiddenNodes,
                     this.choice.referringXsdNode);
             ((XsdTreeNodeRoot) node.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
-                    new Object[] {node, node.parent, node.parent.children.indexOf(node)});
+                    new Object[] {node, node.parent, node.parent.children.indexOf(this) + 1});
             node.createOptions();
             int indexSelected = this.choice.options.indexOf(this.choice.selected);
             XsdTreeNode selectedOption = node.options.get(indexSelected);

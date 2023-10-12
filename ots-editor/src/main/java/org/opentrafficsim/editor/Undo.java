@@ -135,7 +135,7 @@ public class Undo implements EventListener
                 "Adding undo action without having called startUndoAction()");
         if (this.currentSet.isEmpty())
         {
-            this.cursor++; // now the latest undo actually has content
+            this.cursor = this.queue.size() - 1; // now the latest undo actually has content
             updateButtons();
         }
         this.currentSet.add(subAction);
@@ -199,7 +199,7 @@ public class Undo implements EventListener
         Iterator<SubAction> iterator = action.subActions.iterator();
         while (iterator.hasNext())
         {
-            iterator.next().redo(); 
+            iterator.next().redo();
         }
         action.parent.children.forEach((n) -> n.invalidate());
         action.parent.invalidate();
@@ -291,8 +291,7 @@ public class Undo implements EventListener
                 {
                     // non selected choice node
                     node.parent = parent;
-                    root.fireEvent(XsdTreeNodeRoot.NODE_CREATED,
-                            new Object[] {node, parent, parent.children.indexOf(node)});
+                    root.fireEvent(XsdTreeNodeRoot.NODE_CREATED, new Object[] {node, parent, parent.children.indexOf(node)});
                 }
                 else
                 {
@@ -393,7 +392,7 @@ public class Undo implements EventListener
 
         }
     }
-    
+
     /**
      * Sets the node to show in the tree after the action.
      * @param node XsdTreeNode; node to show in the tree after the action.
@@ -505,7 +504,7 @@ public class Undo implements EventListener
 
         /** Attribute for an attribute change, {@code null} otherwise. */
         final String attribute;
-        
+
         /** Node to gain focus after the action. */
         XsdTreeNode postActionShowNode;
 
@@ -548,7 +547,7 @@ public class Undo implements EventListener
 
         /** Attribute changed. */
         ATTRIBUTE_CHANGE,
-        
+
         /** Cut. */
         CUT,
 
@@ -560,13 +559,13 @@ public class Undo implements EventListener
 
         /** INSERT. */
         INSERT,
-        
+
         /** Node moved. */
         MOVE,
 
         /** Option set. */
         OPTION,
-        
+
         /** Paste. */
         PASTE,
 
