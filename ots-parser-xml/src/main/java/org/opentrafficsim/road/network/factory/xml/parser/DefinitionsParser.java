@@ -337,22 +337,25 @@ public final class DefinitionsParser
     public static void parseParameterTypes(final org.opentrafficsim.xml.generated.Definitions definitions,
             final Map<String, ParameterType<?>> parameterMap, final Eval eval) throws XmlParserException
     {
-        for (org.opentrafficsim.xml.generated.ParameterType parameterType : ParseUtil.getObjectsOfType(
-                definitions.getIncludeAndGtuTypesAndGtuTemplates(), org.opentrafficsim.xml.generated.ParameterType.class))
+        for (org.opentrafficsim.xml.generated.ParameterTypes parameterTypes : ParseUtil.getObjectsOfType(
+                definitions.getIncludeAndGtuTypesAndGtuTemplates(), org.opentrafficsim.xml.generated.ParameterTypes.class))
         {
-            try
+            for (org.opentrafficsim.xml.generated.ParameterType parameterType : parameterTypes.getDurationOrLengthOrSpeed())
             {
-                parameterMap.put(parameterType.getId(), (ParameterType<?>) parameterType.getField().get(eval).get(null));
-            }
-            catch (ClassCastException exception)
-            {
-                throw new XmlParserException("Parameter type with id " + parameterType.getId()
-                        + " refers to a static field that is not a ParameterType<?>.");
-            }
-            catch (IllegalAccessException exception)
-            {
-                throw new XmlParserException("Parameter type with id " + parameterType.getId()
-                        + " refers to a static field that is not accessible.");
+                try
+                {
+                    parameterMap.put(parameterType.getId(), (ParameterType<?>) parameterType.getField().get(eval).get(null));
+                }
+                catch (ClassCastException exception)
+                {
+                    throw new XmlParserException("Parameter type with id " + parameterType.getId()
+                            + " refers to a static field that is not a ParameterType<?>.");
+                }
+                catch (IllegalAccessException exception)
+                {
+                    throw new XmlParserException("Parameter type with id " + parameterType.getId()
+                            + " refers to a static field that is not accessible.");
+                }
             }
         }
     }

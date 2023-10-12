@@ -564,7 +564,7 @@ public final class OdParser
                 for (Model model : option.getModel())
                 {
                     GtuType gtuType = definitions.get(GtuType.class, model.getGtuType().get(eval));
-                    Throw.when(!factories.containsKey(model.getId()), XmlParserException.class,
+                    Throw.when(!factories.containsKey(model.getId().get(eval)), XmlParserException.class,
                             "OD option Model refers to a non existent-model with ID %s.", model.getId());
                     gtuTypeFactoryMap.put(gtuType, factories.get(getModelId(model, modelIdReferrals, eval)));
                 }

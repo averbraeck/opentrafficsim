@@ -893,6 +893,69 @@
       <xsd:selector xpath=".//ots:ModelParameters/ots:Class" />
       <xsd:field xpath="@Id" />
     </xsd:keyref>
+    
+    <!-- Correlation.Duration defined by ParameterTypes.Duration.Id -->
+    
+    <xsd:keyref name="modelCorrelationDurationRef" refer="ots:parameterTypesDurationKey">
+      <xsd:selector xpath=".//ots:CorrelationParameterType/ots:Duration" />
+      <xsd:field xpath="." />
+    </xsd:keyref>
+    
+    <!-- Correlation.Length defined by ParameterTypes.Length.Id -->
+    
+    <xsd:keyref name="modelCorrelationLengthRef" refer="ots:parameterTypesLengthKey">
+      <xsd:selector xpath=".//ots:CorrelationParameterType/ots:Length" />
+      <xsd:field xpath="." />
+    </xsd:keyref>
+    
+    <!-- Correlation.Speed defined by ParameterTypes.Speed.Id -->
+    
+    <xsd:keyref name="modelCorrelationSpeedRef" refer="ots:parameterTypesSpeedKey">
+      <xsd:selector xpath=".//ots:CorrelationParameterType/ots:Speed" />
+      <xsd:field xpath="." />
+    </xsd:keyref>
+    
+    <!-- Correlation.Acceleration defined by ParameterTypes.Acceleration.Id -->
+    
+    <xsd:keyref name="modelCorrelationAccelerationRef" refer="ots:parameterTypesAccelerationKey">
+      <xsd:selector xpath=".//ots:CorrelationParameterType/ots:Acceleration" />
+      <xsd:field xpath="." />
+    </xsd:keyref>
+    
+    <!-- Correlation.LinearDensity defined by ParameterTypes.LinearDensity.Id -->
+    
+    <xsd:keyref name="modelCorrelationLinearDensityRef" refer="ots:parameterTypesLinearDensityKey">
+      <xsd:selector xpath=".//ots:CorrelationParameterType/ots:LinearDensity" />
+      <xsd:field xpath="." />
+    </xsd:keyref>
+    
+    <!-- Correlation.Frequency defined by ParameterTypes.Frequency.Id -->
+    
+    <xsd:keyref name="modelCorrelationFrequencyRef" refer="ots:parameterTypesFrequencyKey">
+      <xsd:selector xpath=".//ots:CorrelationParameterType/ots:Frequency" />
+      <xsd:field xpath="." />
+    </xsd:keyref>
+    
+    <!-- Correlation.Double defined by ParameterTypes.Double.Id -->
+    
+    <xsd:keyref name="modelCorrelationDoubleRef" refer="ots:parameterTypesDoubleKey">
+      <xsd:selector xpath=".//ots:CorrelationParameterType/ots:Double" />
+      <xsd:field xpath="." />
+    </xsd:keyref>
+    
+    <!-- Correlation.Fraction defined by ParameterTypes.Fraction.Id -->
+    
+    <xsd:keyref name="modelCorrelationFractionRef" refer="ots:parameterTypesFractionKey">
+      <xsd:selector xpath=".//ots:CorrelationParameterType/ots:Fraction" />
+      <xsd:field xpath="." />
+    </xsd:keyref>
+    
+    <!-- Correlation.Integer defined by ParameterTypes.Integer.Id -->
+    
+    <xsd:keyref name="modelCorrelationIntegerRef" refer="ots:parameterTypesIntegerKey">
+      <xsd:selector xpath=".//ots:CorrelationParameterType/ots:Integer" />
+      <xsd:field xpath="." />
+    </xsd:keyref>
 
     <!-- ======================================== CHECKS IN ANIMATION ===================================== -->
 
