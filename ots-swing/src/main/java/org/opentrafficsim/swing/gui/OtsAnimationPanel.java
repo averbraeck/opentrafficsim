@@ -1,6 +1,7 @@
 package org.opentrafficsim.swing.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -55,8 +56,8 @@ import nl.tudelft.simulation.dsol.animation.gis.GisMapInterface;
 import nl.tudelft.simulation.dsol.animation.gis.GisRenderable2d;
 import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.swing.animation.d2.AnimationPanel;
-import nl.tudelft.simulation.dsol.swing.animation.d2.VisualizationPanel;
 import nl.tudelft.simulation.dsol.swing.animation.d2.InputListener;
+import nl.tudelft.simulation.dsol.swing.animation.d2.VisualizationPanel;
 import nl.tudelft.simulation.language.DsolException;
 
 /**
@@ -175,6 +176,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         this.colorControlPanel = new ColorControlPanel(this.gtuColorer);
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
+        buttonPanel.setPreferredSize(new Dimension(200, 35));
         this.borderPanel.add(buttonPanel, BorderLayout.NORTH);
         buttonPanel.add(this.colorControlPanel);
 
@@ -219,8 +221,8 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         setGtuCountText();
 
         // Tell the animation to build the list of animation objects.
-        this.animationPanel.notify(
-                new TimedEvent<>(Replication.START_REPLICATION_EVENT, null, getSimulator().getSimulatorTime()));
+        this.animationPanel
+                .notify(new TimedEvent<>(Replication.START_REPLICATION_EVENT, null, getSimulator().getSimulatorTime()));
 
         // switch off the X and Y coordinates in a tooltip.
         this.animationPanel.setShowToolTip(false);
@@ -964,17 +966,13 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
          */
         final synchronized void zoomVertical(final double factor, final int mouseX, final int mouseY)
         {
-            // TODO allow vertical and horizontal zoom when DSOL supports it in getScreenCoordinates() and getWorldCoordinates()
-            this.zoom(factor, mouseX, mouseY);
-            // double minX = this.extent.getMinX();
-            // Point2D mwc = Renderable2dInterface.Util.getWorldCoordinates(new Point2D.Double(mouseX, mouseY), this.extent,
-            // this.getSize());
-            // double minY = mwc.getY() - (mwc.getY() - this.extent.getMinY()) * factor;
-            // double w = this.extent.getWidth();
-            // double h = this.extent.getHeight() * factor;
-            //
-            // this.extent.setRect(minX, minY, w, h);
-            // this.repaint();
+            double minX = getExtent().getMinX();
+            Point2d mwc =
+                    getRenderableScale().getWorldCoordinates(new Point2D.Double(mouseX, mouseY), getExtent(), this.getSize());
+            double minY = mwc.getY() - (mwc.getY() - getExtent().getMinY()) * factor;
+            double w = getExtent().getDeltaX();
+            double h = getExtent().getDeltaY() * factor;
+            setExtent(new Bounds2d(minX, minX + w, minY, minY + h));
         }
 
         /**
@@ -985,16 +983,13 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
          */
         final synchronized void zoomHorizontal(final double factor, final int mouseX, final int mouseY)
         {
-            this.zoom(factor, mouseX, mouseY);
-            // double minY = this.extent.getMinY();
-            // Point2D mwc = Renderable2dInterface.Util.getWorldCoordinates(new Point2D.Double(mouseX, mouseY), this.extent,
-            // this.getSize());
-            // double minX = mwc.getX() - (mwc.getX() - this.extent.getMinX()) * factor;
-            // double w = this.extent.getWidth() * factor;
-            // double h = this.extent.getHeight();
-            //
-            // this.extent.setRect(minX, minY, w, h);
-            // this.repaint();
+            double minY = getExtent().getMinY();
+            Point2d mwc =
+                    getRenderableScale().getWorldCoordinates(new Point2D.Double(mouseX, mouseY), getExtent(), this.getSize());
+            double minX = mwc.getX() - (mwc.getX() - getExtent().getMinX()) * factor;
+            double w = getExtent().getDeltaX() * factor;
+            double h = getExtent().getDeltaY();
+            setExtent(new Bounds2d(minX, minX + w, minY, minY + h));
         }
 
         /**
