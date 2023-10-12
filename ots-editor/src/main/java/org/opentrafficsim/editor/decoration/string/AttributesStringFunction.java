@@ -51,25 +51,20 @@ public class AttributesStringFunction extends AbstractStringFunction
     @Override
     public Function<XsdTreeNode, String> getStringFunction()
     {
-        return new Function<XsdTreeNode, String>()
+        return (node) ->
         {
-            /** {@inheritDoc} */
-            @Override
-            public String apply(final XsdTreeNode node)
+            String sep = "";
+            String out = "";
+            for (String attribute : AttributesStringFunction.this.attributes)
             {
-                String sep = "";
-                String out = "";
-                for (String attribute : AttributesStringFunction.this.attributes)
+                String value = node.getAttributeValue(attribute);
+                if (value != null && !value.isEmpty())
                 {
-                    String value = node.getAttributeValue(attribute);
-                    if (value != null && !value.isEmpty())
-                    {
-                        out = out + sep + value;
-                        sep = AttributesStringFunction.this.separator;
-                    }
+                    out = out + sep + value;
+                    sep = AttributesStringFunction.this.separator;
                 }
-                return out;
             }
+            return out;
         };
     }
 

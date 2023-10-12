@@ -35,35 +35,30 @@ public class XiIncludeStringFunction extends AbstractStringFunction
     @Override
     public Function<XsdTreeNode, String> getStringFunction()
     {
-        return new Function<XsdTreeNode, String>()
+        return (node) ->
         {
-            /** {@inheritDoc} */
-            @Override
-            public String apply(final XsdTreeNode t)
+            if (node.getAttributeValue(0) == null)
             {
-                if (t.getAttributeValue(0) == null)
-                {
-                    return "";
-                }
-                File file = new File(t.getAttributeValue(0));
-                if (!file.isAbsolute())
-                {
-                    file = new File(((XsdTreeNodeRoot) t.getPath().get(0)).getDirectory() + t.getAttributeValue(0));
-                }
-                if (!file.exists() && t.getAttributeValue(1) != null)
-                {
-                    File file2 = new File(t.getAttributeValue(1));
-                    if (!file2.isAbsolute())
-                    {
-                        file2 = new File(((XsdTreeNodeRoot) t.getPath().get(0)).getDirectory() + t.getAttributeValue(1));
-                    }
-                    if (file2.exists())
-                    {
-                        return file2.getName() + " [fallback]";
-                    }
-                }
-                return file.getName();
+                return "";
             }
+            File file = new File(node.getAttributeValue(0));
+            if (!file.isAbsolute())
+            {
+                file = new File(((XsdTreeNodeRoot) node.getPath().get(0)).getDirectory() + node.getAttributeValue(0));
+            }
+            if (!file.exists() && node.getAttributeValue(1) != null)
+            {
+                File file2 = new File(node.getAttributeValue(1));
+                if (!file2.isAbsolute())
+                {
+                    file2 = new File(((XsdTreeNodeRoot) node.getPath().get(0)).getDirectory() + node.getAttributeValue(1));
+                }
+                if (file2.exists())
+                {
+                    return file2.getName() + " [fallback]";
+                }
+            }
+            return file.getName();
         };
     }
 }

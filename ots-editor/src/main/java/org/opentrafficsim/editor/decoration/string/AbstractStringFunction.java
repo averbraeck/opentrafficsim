@@ -27,6 +27,9 @@ public abstract class AbstractStringFunction extends AbstractNodeDecorator
     /** Overwrite existing string functions. */
     protected boolean overwrite = true;
 
+    /** Cached string function, to prevented repeated creation in getStringFunction(). */
+    private Function<XsdTreeNode, String> stringFunction;
+
     /**
      * Constructor.
      * @param editor OtsEditor; editor.
@@ -44,7 +47,11 @@ public abstract class AbstractStringFunction extends AbstractNodeDecorator
     {
         if (AbstractStringFunction.this.predicate.test(node))
         {
-            node.setStringFunction(getStringFunction(), this.overwrite);
+            if (this.stringFunction == null)
+            {
+                this.stringFunction = getStringFunction();
+            }
+            node.setStringFunction(this.stringFunction, this.overwrite);
         }
     }
 

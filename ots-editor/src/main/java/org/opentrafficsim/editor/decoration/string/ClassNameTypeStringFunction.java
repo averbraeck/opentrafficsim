@@ -33,24 +33,19 @@ public class ClassNameTypeStringFunction extends AbstractStringFunction
     @Override
     public Function<XsdTreeNode, String> getStringFunction()
     {
-        return new Function<XsdTreeNode, String>()
+        return (node) ->
         {
-            /** {@inheritDoc} */
-            @Override
-            public String apply(final XsdTreeNode node)
+            String value = node.getValue();
+            if (value == null || value.isEmpty())
             {
-                String value = node.getValue();
-                if (value == null || value.isEmpty())
-                {
-                    return "";
-                }
-                int dot = value.lastIndexOf(".");
-                if (dot < 0 || dot == value.length() - 1)
-                {
-                    return value;
-                }
-                return value.substring(dot + 1, value.length());
+                return "";
             }
+            int dot = value.lastIndexOf(".");
+            if (dot < 0 || dot == value.length() - 1)
+            {
+                return value;
+            }
+            return value.substring(dot + 1, value.length());
         };
     }
 

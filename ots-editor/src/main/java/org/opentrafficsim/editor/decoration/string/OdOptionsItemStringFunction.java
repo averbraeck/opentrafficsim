@@ -32,44 +32,39 @@ public class OdOptionsItemStringFunction extends AbstractStringFunction
     @Override
     public Function<XsdTreeNode, String> getStringFunction()
     {
-        return new Function<XsdTreeNode, String>()
+        return (node) ->
         {
-            /** {@inheritDoc} */
-            @Override
-            public String apply(final XsdTreeNode node)
+            for (XsdTreeNode child : node.getChildren())
             {
-                for (XsdTreeNode child : node.getChildren())
+                if ("Global".equals(child.getNodeName()))
                 {
-                    if ("Global".equals(child.getNodeName()))
-                    {
-                        return "Global";
-                    }
-                    if ("LinkType".equals(child.getNodeName()) || "Origin".equals(child.getNodeName()))
-                    {
-                        return child.getValue() == null || child.getValue().isEmpty() ? child.getNodeName()
-                                : child.getNodeName() + " " + child.getValue();
-                    }
-                    if ("Lane".equals(child.getNodeName()))
-                    {
-                        String link = child.getAttributeValue("Link");
-                        String lane = child.getAttributeValue("Lane");
-                        if (link == null || link.isEmpty())
-                        {
-                            if (lane == null || lane.isEmpty())
-                            {
-                                return "Lane";
-                            }
-                            return "Lane " + child.getAttributeValue("Lane");
-                        }
-                        else if (lane == null || lane.isEmpty())
-                        {
-                            return "Lane " + child.getAttributeValue("Link") + ".";
-                        }
-                        return "Lane " + child.getAttributeValue("Link") + "." + child.getAttributeValue("Lane");
-                    }
+                    return "Global";
                 }
-                return null;
+                if ("LinkType".equals(child.getNodeName()) || "Origin".equals(child.getNodeName()))
+                {
+                    return child.getValue() == null || child.getValue().isEmpty() ? child.getNodeName()
+                            : child.getNodeName() + " " + child.getValue();
+                }
+                if ("Lane".equals(child.getNodeName()))
+                {
+                    String link = child.getAttributeValue("Link");
+                    String lane = child.getAttributeValue("Lane");
+                    if (link == null || link.isEmpty())
+                    {
+                        if (lane == null || lane.isEmpty())
+                        {
+                            return "Lane";
+                        }
+                        return "Lane " + child.getAttributeValue("Lane");
+                    }
+                    else if (lane == null || lane.isEmpty())
+                    {
+                        return "Lane " + child.getAttributeValue("Link") + ".";
+                    }
+                    return "Lane " + child.getAttributeValue("Link") + "." + child.getAttributeValue("Lane");
+                }
             }
+            return null;
         };
     }
 
