@@ -9,8 +9,8 @@
   </parent>
 
   <artifactId>ots-animation</artifactId>
-  <name>OTS generic animation classes</name>
-  <description>OTS generic animation classes that are independent of Swing, Web, or other implementations</description>
+  <name>OTS animation classes</name>
+  <description>OTS animation classes that present OTS objects as drawable data</description>
   
   <dependencies>
 
