@@ -1,7 +1,6 @@
 package org.opentrafficsim.swing.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -26,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -186,11 +186,11 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         this.borderPanel.add(this.togglePanel, BorderLayout.WEST);
 
         // add the buttons for home, zoom all, grid, and mouse coordinates
-        buttonPanel.add(new JLabel("   "));
+        buttonPanel.add(Box.createHorizontalStrut(10));
         buttonPanel.add(makeButton("allButton", "/Expand.png", "ZoomAll", "Zoom whole network", true));
         buttonPanel.add(makeButton("homeButton", "/Home.png", "Home", "Zoom to original extent", true));
         buttonPanel.add(makeButton("gridButton", "/Grid.png", "Grid", "Toggle grid on/off", true));
-        buttonPanel.add(new JLabel("   "));
+        buttonPanel.add(Box.createHorizontalStrut(10));
 
         // add info labels next to buttons
         JPanel infoTextPanel = new JPanel();

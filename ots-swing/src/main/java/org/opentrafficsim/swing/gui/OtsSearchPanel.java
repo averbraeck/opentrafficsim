@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -57,8 +58,9 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
     {
         this.otsAnimationPanel = otsAnimationPanel;
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        this.add(new JLabel("    ")); // insert some white space in the GUI
+        this.add(Box.createHorizontalStrut(10));
         this.add(new JLabel(OtsControlPanel.loadIcon("/View.png")));
+        this.add(Box.createHorizontalStrut(5));
         ObjectKind<?>[] objectKinds = new ObjectKind[] {new ObjectKind<Gtu>("GTU")
         {
             @Override
@@ -115,7 +117,7 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
         this.idTextField = new AppearanceControlTextField();
         this.idTextField.setPreferredSize(new Dimension(100, 0));
         this.add(this.idTextField);
-        this.trackObject = new JCheckBox("track");
+        this.trackObject = new JCheckBox("Track");
         this.add(this.trackObject);
         this.trackObject.setActionCommand("Tracking status changed");
         this.idTextField.setActionCommand("Id changed");

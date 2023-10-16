@@ -286,6 +286,8 @@ public class OtsEditor extends JFrame implements EventProducer
         UIManager.put("TableHeader.font", FONT);
         UIManager.put("TextField.font", FONT);
         UIManager.put("Button.font", FONT);
+        UIManager.put("ComboBox.font", FONT);
+        UIManager.put("CheckBox.font", FONT);
         // for full list: https://stackoverflow.com/questions/7434845/setting-the-default-font-of-swing-program
 
         setSize(1280, 720);
@@ -322,10 +324,10 @@ public class OtsEditor extends JFrame implements EventProducer
         controlsContainer.setMinimumSize(new Dimension(200, 28));
         controlsContainer.setPreferredSize(new Dimension(200, 28));
         JLabel scenarioLabel = new JLabel("Scenario: ");
-        scenarioLabel.setFont(FONT);
+        //scenarioLabel.setFont(FONT);
         controlsContainer.add(scenarioLabel);
         this.scenario = new JComboBox<>();
-        this.scenario.setFont(FONT);
+        //this.scenario.setFont(FONT);
         this.scenario.addItem(new ScenarioWrapper(null));
         this.scenario.setMinimumSize(new Dimension(50, 22));
         this.scenario.setMaximumSize(new Dimension(250, 22));

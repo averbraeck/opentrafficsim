@@ -170,12 +170,15 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         }
         JLabel speedLabel = new AppearanceControlLabel();
         this.clockPanel = new ClockLabel(speedLabel);
-        this.clockPanel.setMaximumSize(new Dimension(133, 35));
+        this.clockPanel.setPreferredSize(new Dimension(125, 35));
+        this.clockPanel.setMaximumSize(new Dimension(125, 35));
         buttonPanel.add(this.clockPanel);
-        speedLabel.setMaximumSize(new Dimension(66, 35));
+        speedLabel.setPreferredSize(new Dimension(85, 35));
+        speedLabel.setMaximumSize(new Dimension(85, 35));
         buttonPanel.add(speedLabel);
         this.timeEdit = new TimeEdit(new Time(0, TimeUnit.DEFAULT));
-        this.timeEdit.setMaximumSize(new Dimension(133, 35));
+        this.timeEdit.setPreferredSize(new Dimension(135, 30));
+        this.timeEdit.setMaximumSize(new Dimension(135, 30));
         this.timeEdit.addPropertyChangeListener("value", this);
         buttonPanel.add(this.timeEdit);
         this.add(buttonPanel);
@@ -681,7 +684,6 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
     /**
      * @return simulator.
      */
-    @SuppressWarnings("unchecked")
     public final OtsSimulatorInterface getSimulator()
     {
         return this.simulator;
@@ -864,6 +866,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             // initial value of simulation speed
             if (simulator instanceof DevsRealTimeAnimator)
             {
+                @SuppressWarnings("unchecked")
                 DevsRealTimeAnimator<Duration> clock = (DevsRealTimeAnimator<Duration>) simulator;
                 clock.setSpeedFactor(TimeWarpPanel.this.tickValues.get(this.slider.getValue()));
             }
@@ -877,6 +880,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                     JSlider source = (JSlider) ce.getSource();
                     if (!source.getValueIsAdjusting() && simulator instanceof DevsRealTimeAnimator)
                     {
+                        @SuppressWarnings("unchecked")
                         DevsRealTimeAnimator<Duration> clock = (DevsRealTimeAnimator<Duration>) simulator;
                         clock.setSpeedFactor(((TimeWarpPanel) source.getParent()).getTickValues().get(source.getValue()));
                     }

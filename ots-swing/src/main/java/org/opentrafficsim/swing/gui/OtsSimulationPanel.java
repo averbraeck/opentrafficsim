@@ -1,6 +1,7 @@
 package org.opentrafficsim.swing.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.Insets;
 import java.rmi.RemoteException;
 
@@ -30,6 +31,9 @@ public class OtsSimulationPanel extends JPanel
     /** */
     private static final long serialVersionUID = 20150617L;
 
+    /** Font. */
+    private static final Font FONT = new Font("Dialog", Font.PLAIN, 12);
+    
     /** The simulator. */
     private final OtsSimulatorInterface simulator;
 
@@ -49,7 +53,7 @@ public class OtsSimulationPanel extends JPanel
     }
 
     /** The tabbed pane that contains the different (default) screens. */
-    private final TabbedContentPane tabbedPane = new AppearanceControlTabbedContentPane(SwingConstants.BOTTOM);
+    private final TabbedContentPane tabbedPane;
 
     /**
      * Construct a panel that looks like the DSOLPanel for quick building of OTS applications.
@@ -59,6 +63,19 @@ public class OtsSimulationPanel extends JPanel
      */
     public OtsSimulationPanel(final OtsSimulatorInterface simulator, final OtsModelInterface otsModel) throws RemoteException
     {
+        UIManager.put("Label.font", FONT);
+        UIManager.put("Menu.font", FONT);
+        UIManager.put("MenuItem.font", FONT);
+        UIManager.put("TabbedPane.font", FONT);
+        UIManager.put("Table.font", FONT);
+        UIManager.put("TableHeader.font", FONT);
+        UIManager.put("TextField.font", FONT);
+        UIManager.put("Button.font", FONT);
+        UIManager.put("ComboBox.font", FONT);
+        UIManager.put("CheckBox.font", FONT);
+        UIManager.put("CheckBoxMenuItem.font", FONT);
+        // for full list: https://stackoverflow.com/questions/7434845/setting-the-default-font-of-swing-program
+        
         this.simulator = simulator;
         this.otsModel = otsModel;
 
@@ -69,6 +86,7 @@ public class OtsSimulationPanel extends JPanel
         this.add(this.otsControlPanel, BorderLayout.NORTH);
 
         // Let's display our tabbed contentPane
+        this.tabbedPane = new AppearanceControlTabbedContentPane(SwingConstants.BOTTOM);
         this.add(this.tabbedPane, BorderLayout.CENTER);
 
         // put a status bar at the bottom

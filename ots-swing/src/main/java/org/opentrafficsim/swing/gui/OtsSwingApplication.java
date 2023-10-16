@@ -100,7 +100,7 @@ public class OtsSwingApplication<T extends OtsModelInterface> extends JFrame
         //////////////////////
         ///// Appearance /////
         //////////////////////
-        
+
         try
         {
             setIconImage(ImageIO.read(Resource.getResourceAsStream("/OTS_merge.png")));
