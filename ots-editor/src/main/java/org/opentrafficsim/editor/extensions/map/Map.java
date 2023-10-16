@@ -1,5 +1,6 @@
 package org.opentrafficsim.editor.extensions.map;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.rmi.RemoteException;
@@ -9,13 +10,18 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import javax.naming.NamingException;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.event.Event;
+import org.djutils.event.EventListener;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation;
 import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
 
@@ -35,20 +41,32 @@ import nl.tudelft.simulation.naming.context.JvmContext;
  * </p>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class Map extends VisualizationPanel
+public class Map extends JPanel implements EventListener
 {
 
     /** */
     private static final long serialVersionUID = 20231010L;
+    
+    /** Color for toolbar and toggle bar. */
+    private static final Color BAR_COLOR = Color.LIGHT_GRAY;
 
     /** All types that are valid to show in the map. */
-    private static final Set<String> TYPES = Set.of("Ots.Network.Node", "Ots.Network.Link");
+    private static final Set<String> TYPES = Set.of(XsdPaths.NODE, XsdPaths.LINK);
 
     /** Context provider. */
     private final Contextualized contextualized;
 
     /** Editor. */
     private final OtsEditor editor;
+
+    /** Panel to draw in. */
+    private final VisualizationPanel drawPanel;
+    
+    /** Panel with tools. */
+    private final JPanel toolPanel;
+    
+    /** Panel with toggles. */
+    private final JPanel togglePanel;
 
     /** All map data's drawn (or hidden as they are invalid). */
     private final LinkedHashMap<XsdTreeNode, MapData> datas = new LinkedHashMap<>();
@@ -79,12 +97,30 @@ public class Map extends VisualizationPanel
     private Map(final AnimationUpdaterThread animator, final Contextualized contextualized, final OtsEditor editor)
             throws RemoteException, NamingException
     {
-        super(new Bounds2d(500, 500), animator, contextualized.getContext());
+        super(new BorderLayout());
         this.contextualized = contextualized;
         this.editor = editor;
-        setBackground(Color.GRAY);
+        this.drawPanel = new VisualizationPanel(new Bounds2d(500, 500), animator, contextualized.getContext())
+        {
+            /** */
+            private static final long serialVersionUID = 20231016L;
+
+            /** {@inheritDoc} */
+            @Override
+            public void setExtent(final Bounds2d extent)
+            {
+                if (Map.this.lastScreen != null)
+                {
+                    // this prevents zoom being undone when resizing the screen afterwards
+                    Map.this.lastXScale = this.getRenderableScale().getXScale(extent, Map.this.lastScreen);
+                    Map.this.lastYScale = this.getRenderableScale().getYScale(extent, Map.this.lastScreen);
+                }
+                super.setExtent(extent);
+            }
+        };
+        this.drawPanel.setBackground(Color.GRAY);
         editor.addListener(this, OtsEditor.NEW_FILE);
-        setRenderableScale(new RenderableScale()
+        this.drawPanel.setRenderableScale(new RenderableScale()
         {
             /** {@inheritDoc} */
             @Override
@@ -124,19 +160,19 @@ public class Map extends VisualizationPanel
                 return result;
             }
         });
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setExtent(final Bounds2d extent)
-    {
-        if (this.lastScreen != null)
-        {
-            // this prevents zoom being undone when resizing the screen afterwards
-            Map.this.lastXScale = getRenderableScale().getXScale(extent, this.lastScreen);
-            Map.this.lastYScale = getRenderableScale().getYScale(extent, this.lastScreen);
-        }
-        super.setExtent(extent);
+        add(this.drawPanel, BorderLayout.CENTER);
+        
+        this.toolPanel = new JPanel();
+        this.toolPanel.setBackground(BAR_COLOR);
+        this.toolPanel.add(new JLabel("tools")); // TODO: temporary while empty
+        this.toolPanel.setLayout(new BoxLayout(this.toolPanel, BoxLayout.X_AXIS));
+        add(this.toolPanel, BorderLayout.NORTH);
+        
+        this.togglePanel = new JPanel();
+        this.togglePanel.setBackground(BAR_COLOR);
+        this.togglePanel.add(new JLabel("toggles")); // TODO: temporary while empty
+        this.togglePanel.setLayout(new BoxLayout(this.togglePanel, BoxLayout.Y_AXIS));
+        add(this.togglePanel, BorderLayout.WEST);
     }
 
     /**
@@ -244,10 +280,6 @@ public class Map extends VisualizationPanel
                 linkData.notifyNodeIdChanged(linkData.getNode());
             }
         }
-        else
-        {
-            super.notify(event);
-        }
     }
 
     /**
@@ -279,11 +311,11 @@ public class Map extends VisualizationPanel
             return;
         }
         Renderable2d<?> animation;
-        if (node.isType("Ots.Network.Node"))
+        if (node.getPathString().equals(XsdPaths.NODE))
         {
             animation = Try.assign(() -> new NodeAnimation((MapNodeData) data, this.contextualized), "");
         }
-        else if (node.isType("Ots.Network.Link"))
+        else if (node.getPathString().equals(XsdPaths.LINK))
         {
             animation = Try.assign(() -> new LinkAnimation((MapLinkData) data, this.contextualized, 0.5f), "");
         }
@@ -313,12 +345,12 @@ public class Map extends VisualizationPanel
     private void add(final XsdTreeNode node) throws RemoteException
     {
         MapData data;
-        if (node.getPathString().equals("Ots.Network.Node"))
+        if (node.getPathString().equals(XsdPaths.NODE))
         {
             data = new MapNodeData(this, node, this.editor);
             node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
         }
-        else if (node.getPathString().equals("Ots.Network.Link"))
+        else if (node.getPathString().equals(XsdPaths.LINK))
         {
             MapLinkData linkData = new MapLinkData(this, node, this.editor);
             data = linkData;
@@ -337,7 +369,7 @@ public class Map extends VisualizationPanel
      */
     private void remove(final XsdTreeNode node)
     {
-        if (node.getPathString().equals("Ots.Network.Node"))
+        if (node.getPathString().equals(XsdPaths.NODE))
         {
             node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
         }
@@ -349,7 +381,7 @@ public class Map extends VisualizationPanel
         Renderable2d<?> animation = this.animations.remove(node);
         if (animation != null)
         {
-            objectRemoved(animation);
+            this.drawPanel.objectRemoved(animation);
             animation.destroy(this.contextualized);
         }
     }

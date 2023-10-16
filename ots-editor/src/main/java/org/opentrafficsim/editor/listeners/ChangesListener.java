@@ -8,6 +8,7 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.ScenarioWrapper;
+import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
 
@@ -68,7 +69,7 @@ public class ChangesListener implements EventListener
             node.addListener(this, XsdTreeNode.OPTION_CHANGED);
             node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
             node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
-            if (node.getPathString().equals("Ots.Scenarios.Scenario"))
+            if (node.getPathString().equals(XsdPaths.SCENARIO))
             {
                 insertScenario(node);
             }
@@ -81,7 +82,7 @@ public class ChangesListener implements EventListener
             node.removeListener(this, XsdTreeNode.OPTION_CHANGED);
             node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
             node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
-            if (node.getPathString().equals("Ots.Scenarios.Scenario"))
+            if (node.getPathString().equals(XsdPaths.SCENARIO))
             {
                 removeScenario(node);
             }
@@ -89,7 +90,7 @@ public class ChangesListener implements EventListener
         else if (event.getType().equals(XsdTreeNode.MOVED))
         {
             XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
-            if (node.getPathString().equals("Ots.Scenarios.Scenario"))
+            if (node.getPathString().equals(XsdPaths.SCENARIO))
             {
                 for (int i = 0; i < this.scenario.getItemCount(); i++)
                 {
@@ -109,7 +110,7 @@ public class ChangesListener implements EventListener
         {
             Object[] content = ((Object[]) event.getContent());
             XsdTreeNode node = (XsdTreeNode) content[0];
-            if (node.getPathString().equals("Ots.Scenarios"))
+            if (node.getPathString().equals(XsdPaths.SCENARIOS))
             {
                 boolean activated = (boolean) content[1];
                 for (XsdTreeNode child : node.getChildren())
@@ -141,7 +142,7 @@ public class ChangesListener implements EventListener
         ScenarioWrapper itemOfNode = null;
         for (XsdTreeNode child : node.getParent().getChildren())
         {
-            if (child.getPathString().equals("Ots.Scenarios.Scenario"))
+            if (child.getPathString().equals(XsdPaths.SCENARIO))
             {
                 index++;
                 ScenarioWrapper item = this.scenario.getItemAt(index);

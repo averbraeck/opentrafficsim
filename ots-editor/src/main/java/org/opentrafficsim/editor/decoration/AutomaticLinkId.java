@@ -6,6 +6,7 @@ import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 
 import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 
 /**
@@ -34,7 +35,7 @@ public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements C
      */
     public AutomaticLinkId(final OtsEditor editor)
     {
-        super(editor, (node) -> node.isType("Ots.Network.Link"), "NodeStart", "NodeEnd");
+        super(editor, (node) -> node.isType(XsdPaths.LINK), "NodeStart", "NodeEnd");
         editor.addAttributeCellEditorListener(this);
     }
 

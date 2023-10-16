@@ -3,6 +3,7 @@ package org.opentrafficsim.editor.decoration.string;
 import java.util.function.Function;
 
 import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 
 /**
@@ -25,7 +26,7 @@ public class OdOptionsItemStringFunction extends AbstractStringFunction
      */
     public OdOptionsItemStringFunction(final OtsEditor editor)
     {
-        super(editor, (node) -> node.isType("Ots.Demand.OdOptions.OdOptionsItem"));
+        super(editor, (node) -> node.getPathString().equals(XsdPaths.OD_OPTIONS_ITEM));
     }
 
     /** {@inheritDoc} */

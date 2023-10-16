@@ -1435,9 +1435,9 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
-     * Returns the path string of this element, e.g. "OTS.Definitions.RoadLayouts". This is used to identify each unique type of
+     * Returns the path string of this element, e.g. "Ots.Definitions.RoadLayouts". This is used to identify each unique type of
      * element.
-     * @return String; path string of this element, e.g. "OTS.Definitions.RoadLayouts".
+     * @return String; path string of this element, e.g. "Ots.Definitions.RoadLayouts".
      */
     public String getPathString()
     {
@@ -2373,10 +2373,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                                 List<Integer> optionIndices = new ArrayList<>();
                                 optionIndices.add(indexXml);
                                 optionIndices.add(0);
-                                // option.loadChildren(optionIndices, childrenXml, new ArrayList<>());
                                 option.loadChildren(optionIndices, childrenXml, true);
                                 loadedChildren.add(option);
-                                // childIndex = optionIndices.get(1);
                                 indexXml = optionIndices.get(0) - 1;
                                 optionSet = true;
                                 break;

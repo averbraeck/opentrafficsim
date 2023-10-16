@@ -80,7 +80,7 @@ public class AttributesTableModel extends AbstractTableModel
     @Override
     public boolean isCellEditable(final int rowIndex, final int columnIndex)
     {
-        if (this.node.getPathString().startsWith("Ots.Definitions")
+        if (this.node.getPathString().startsWith(XsdPaths.DEFINITIONS)
                 && "xsd:boolean".equals(this.node.getAttributeBaseType(rowIndex)))
         {
             return false;

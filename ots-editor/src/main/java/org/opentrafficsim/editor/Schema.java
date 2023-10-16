@@ -314,7 +314,7 @@ public class Schema
 
     /**
      * Checks for recursion. This is recognized as the some end of the path, is duplicated in an equal sub-path before that end.
-     * For example CARFOLLOWINGMODEL{.SOCIO}{.SOCIO} or CARFOLLOWINGMODEL{.SOCIO.PARENT}{.SOCIO.PARENT}.
+     * For example CarFollowingModel{.Socio}{.Socio} or CarFollowingModel{.Socio.Parent}{.Socio.Parent}.
      * @param path String; node path.
      * @return boolean; true if the path contains recursion.
      */
@@ -484,10 +484,11 @@ public class Schema
     /**
      * Stores the information to read in a queue.
      * <p>
- * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
- * </p>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
     private class RecursionElement
     {
@@ -588,8 +589,8 @@ public class Schema
                     {
                         if (!this.elements.containsKey(getXpath(node).replace("ots:", "")))
                         {
-                            System.out
-                                    .println("Keyref " + keyref + " (" + getXpath(node) + ") points to non existing field '.'.");
+                            System.out.println(
+                                    "Keyref " + keyref + " (" + getXpath(node) + ") points to non existing field '.'.");
                         }
                     }
                     else

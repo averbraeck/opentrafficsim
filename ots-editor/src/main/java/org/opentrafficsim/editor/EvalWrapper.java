@@ -35,7 +35,7 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
 
     /** */
     private static final long serialVersionUID = 20231005L;
-    
+
     /** Mask of full class names where type adapters are to be found, depending on node name for %s. */
     private static final String ADAPTER_MASK = "org.opentrafficsim.xml.bindings.%sAdapter";
 
@@ -130,18 +130,18 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
     @Override
     public void notifyCreated(final XsdTreeNode node)
     {
-        if (node.getPathString().equals("Ots.Scenarios.Scenario"))
+        if (node.getPathString().equals(XsdPaths.SCENARIO))
         {
             this.scenarioParameters.put(node, new ArrayList<>());
             setDirty();
         }
-        else if (node.getPathString().equals("Ots.Scenarios.Scenario.InputParameters")
-                || node.getPathString().equals("Ots.Scenarios.DefaultInputParameters"))
+        else if (node.getPathString().equals(XsdPaths.INPUT_PARAMETERS)
+                || node.getPathString().equals(XsdPaths.DEFAULT_INPUT_PARAMETERS))
         {
             node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
         }
-        else if ((node.getPathString().startsWith("Ots.Scenarios.DefaultInputParameters.")
-                || node.getPathString().startsWith("Ots.Scenarios.Scenario.InputParameters."))
+        else if ((node.getPathString().startsWith(XsdPaths.INPUT_PARAMETERS + ".")
+                || node.getPathString().startsWith(XsdPaths.DEFAULT_INPUT_PARAMETERS + "."))
                 && !node.getNodeName().equals("xsd:choice"))
         {
             node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
@@ -156,24 +156,24 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
     @Override
     public void notifyRemoved(final XsdTreeNode node)
     {
-        if (node.getPathString().equals("Ots.Scenarios.Scenario"))
+        if (node.getPathString().equals(XsdPaths.SCENARIO))
         {
             this.scenarioParameters.remove(node);
             setDirty();
         }
-        else if (node.getPathString().equals("Ots.Scenarios.Scenario.InputParameters")
-                || node.getPathString().equals("Ots.Scenarios.DefaultInputParameters"))
+        else if (node.getPathString().equals(XsdPaths.INPUT_PARAMETERS)
+                || node.getPathString().equals(XsdPaths.DEFAULT_INPUT_PARAMETERS))
         {
             node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
         }
-        else if (node.getPathString().startsWith("Ots.Scenarios.DefaultInputParameters."))
+        else if (node.getPathString().startsWith(XsdPaths.DEFAULT_INPUT_PARAMETERS + "."))
         {
             this.defaultParamaters.remove(this.parameterMap.remove(node));
             node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
             node.removeListener(this, XsdTreeNode.VALUE_CHANGED);
             setDirty();
         }
-        else if (node.getPathString().startsWith("Ots.Scenarios.Scenario.InputParameters."))
+        else if (node.getPathString().startsWith(XsdPaths.INPUT_PARAMETERS + "."))
         {
             this.scenarioParameters.forEach((s, list) -> list.remove(this.parameterMap.remove(node)));
             node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
@@ -197,8 +197,8 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
             Object[] content = (Object[]) event.getContent();
             XsdTreeNode node = (XsdTreeNode) content[0];
             boolean activated = (boolean) content[1];
-            if (node.getPathString().equals("Ots.Scenarios.Scenario.InputParameters")
-                    || node.getPathString().equals("Ots.Scenarios.DefaultInputParameters"))
+            if (node.getPathString().equals(XsdPaths.INPUT_PARAMETERS)
+                    || node.getPathString().equals(XsdPaths.DEFAULT_INPUT_PARAMETERS))
             {
                 if (activated)
                 {
@@ -209,8 +209,8 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
                     node.getChildren().forEach((child) -> notifyRemoved(child));
                 }
             }
-            else if ((node.getPathString().startsWith("Ots.Scenarios.DefaultInputParameters.")
-                    || node.getPathString().startsWith("Ots.Scenarios.Scenario.InputParameters."))
+            else if ((node.getPathString().startsWith(XsdPaths.INPUT_PARAMETERS + ".")
+                    || node.getPathString().startsWith(XsdPaths.DEFAULT_INPUT_PARAMETERS + "."))
                     && !node.getNodeName().equals("xsd:choice"))
             {
                 if (activated)
@@ -235,7 +235,7 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
      */
     private void registerParameter(final XsdTreeNode node)
     {
-        if (node.getPathString().startsWith("Ots.Scenarios.DefaultInputParameters."))
+        if (node.getPathString().startsWith(XsdPaths.DEFAULT_INPUT_PARAMETERS + "."))
         {
             this.defaultParamaters.remove(this.parameterMap.remove(node));
             if (node.isValid())
@@ -245,7 +245,7 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
                 this.defaultParamaters.add(parameter);
             }
         }
-        else if (node.getPathString().startsWith("Ots.Scenarios.Scenario.InputParameters."))
+        else if (node.getPathString().startsWith(XsdPaths.INPUT_PARAMETERS + "."))
         {
             this.scenarioParameters.forEach((s, list) -> list.remove(this.parameterMap.remove(node)));
             if (node.isValid())

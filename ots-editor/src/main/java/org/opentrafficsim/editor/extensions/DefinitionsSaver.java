@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
 
@@ -48,8 +49,8 @@ public class DefinitionsSaver implements EventListener, Consumer<XsdTreeNode>
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
         {
             XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
-            if (!node.isType("Ots.Definitions.xi:include") && node.getParent() != null
-                    && node.getParent().isType("Ots.Definitions"))
+            if (!node.getPathString().equals(XsdPaths.DEFINITIONS + ".xi:include") && node.getParent() != null
+                    && node.getParent().getPathString().equals(XsdPaths.DEFINITIONS))
             {
                 node.addConsumer("Save as include file...", this);
             }

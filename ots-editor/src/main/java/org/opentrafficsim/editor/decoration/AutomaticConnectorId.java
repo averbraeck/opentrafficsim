@@ -1,6 +1,7 @@
 package org.opentrafficsim.editor.decoration;
 
 import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 
 /**
@@ -23,7 +24,7 @@ public class AutomaticConnectorId extends AutomaticLinkId
      */
     public AutomaticConnectorId(final OtsEditor editor)
     {
-        super(editor, (node) -> node.isType("Ots.Network.Connector"), "Node", "Centroid", "Outbound");
+        super(editor, (node) -> node.isType(XsdPaths.CONNECTOR), "Node", "Centroid", "Outbound");
         editor.addAttributeCellEditorListener(this);
     }
 

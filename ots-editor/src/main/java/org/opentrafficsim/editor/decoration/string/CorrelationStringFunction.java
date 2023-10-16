@@ -3,6 +3,7 @@ package org.opentrafficsim.editor.decoration.string;
 import java.util.function.Function;
 
 import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 
 /**
@@ -25,7 +26,7 @@ public class CorrelationStringFunction extends AbstractStringFunction
      */
     public CorrelationStringFunction(final OtsEditor editor)
     {
-        super(editor, (node) -> node.getPathString().equals("Ots.Models.Model.ModelParameters.Correlation"));
+        super(editor, (node) -> node.getPathString().equals(XsdPaths.CORRELATION));
     }
 
     /** {@inheritDoc} */

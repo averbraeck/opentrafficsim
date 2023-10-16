@@ -14,6 +14,7 @@ import org.opentrafficsim.core.geometry.OtsGeometryUtil;
 import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
 import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.road.network.factory.xml.parser.ScenarioParser;
 import org.opentrafficsim.xml.bindings.DirectionAdapter;
@@ -197,7 +198,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener
         if (oldNode != null)
         {
             oldNode.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
-            if (oldNode.getPathString().equals("Ots.Scenarios.DefaultInputParameters.String"))
+            if (oldNode.getPathString().equals(XsdPaths.DEFAULT_INPUT_PARAMETER_STRING))
             {
                 XsdTreeNode node = getInputNode(newNode);
                 if (node != null)
@@ -209,7 +210,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener
         if (newNode != null)
         {
             newNode.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
-            if (newNode.getPathString().equals("Ots.Scenarios.DefaultInputParameters.String"))
+            if (newNode.getPathString().equals("XsdPaths.DEFAULT_INPUT_PARAMETER_STRING"))
             {
                 XsdTreeNode node = getInputNode(newNode);
                 if (node != null)
@@ -243,7 +244,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener
         XsdTreeNode ots = inputParameter.getPath().get(0);
         for (XsdTreeNode child : ots.getChildren())
         {
-            if (child.getPathString().equals("Ots.Network"))
+            if (child.getPathString().equals(XsdPaths.NETWORK))
             {
                 for (XsdTreeNode networkElement : child.getChildren())
                 {

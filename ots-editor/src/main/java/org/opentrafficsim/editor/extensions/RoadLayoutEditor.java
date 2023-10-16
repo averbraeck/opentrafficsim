@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
 
@@ -71,8 +72,8 @@ public class RoadLayoutEditor implements EventListener, Consumer<XsdTreeNode>
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
         {
             XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
-            if (node.isType("Ots.Definitions.RoadLayouts.RoadLayout")
-                    || node.isType("Ots.Network.Link.RoadLayout"))
+            if (node.getPathString().equals(XsdPaths.DEFINED_ROADLAYOUT)
+                    || node.getPathString().equals(XsdPaths.ROADLAYOUT))
             {
                 node.addConsumer("Edit...", this);
             }
