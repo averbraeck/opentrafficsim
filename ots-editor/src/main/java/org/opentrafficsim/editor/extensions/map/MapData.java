@@ -62,6 +62,7 @@ public abstract class MapData implements EvalListener
 
     /**
      * Destroy this data object, e.g. remove self as listener. Override and call super if subclasses remove their own listeners.
+     * Using weak references for listeners is another option to deal with obsolete listening.
      */
     public void destroy()
     {

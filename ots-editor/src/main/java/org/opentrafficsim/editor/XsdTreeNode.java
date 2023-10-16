@@ -2182,8 +2182,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                         }
                         catch (NoSuchElementException e)
                         {
-                            System.err.println(
-                                    "Unable to load attribute " + attributeNode.getNodeName() + " in " + getShortString());
+                            System.err.println("Unable to load attribute " + attributeNode.getNodeName() + "=\""
+                                    + attributeNode.getNodeValue() + "\" in " + getShortString());
                         }
                 }
             }
@@ -2331,7 +2331,10 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 {
                     if (loadedDuringPass == 0)
                     {
-                        System.out.println("Failing to load " + nameXml + ", it is not a valid node.");
+                        System.err.println("Failing to load " + nameXml + ", it is not a valid node.");
+                        indexXml++;
+                        childIndex = 0; // start next pass
+                        continue;
                     }
                     else
                     {
@@ -2340,7 +2343,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                         {
                             if (!loadingSubSequence)
                             {
-                                System.out.println("Failing to load " + nameXml + ", maximum number of passes reached.");
+                                System.err.println("Failing to load " + nameXml + ", maximum number of passes reached.");
                             }
                             indices.set(0, indexXml);
                             return;
@@ -2348,6 +2351,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                     }
                     childIndex = 0; // start next pass
                     loadedDuringPass = 0;
+                    continue;
                 }
             }
 

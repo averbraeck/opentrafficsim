@@ -9,6 +9,7 @@ import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
+import org.djutils.event.reference.ReferenceType;
 import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
 import org.opentrafficsim.editor.OtsEditor;
@@ -57,7 +58,7 @@ public class MapNodeData extends MapData implements NodeData, EventListener
     public MapNodeData(final Map map, final XsdTreeNode nodeNode, final OtsEditor editor)
     {
         super(map, nodeNode, editor);
-        getNode().addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+        getNode().addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
         // for when node is duplicated, set data immediately
         try
         {
@@ -119,14 +120,6 @@ public class MapNodeData extends MapData implements NodeData, EventListener
             return;
         }
         setLocation();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void destroy()
-    {
-        super.destroy();
-        this.getNode().removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
     }
 
     /** {@inheritDoc} */

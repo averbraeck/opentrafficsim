@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.rmi.RemoteException;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -46,7 +47,7 @@ public class Map extends JPanel implements EventListener
 
     /** */
     private static final long serialVersionUID = 20231010L;
-    
+
     /** Color for toolbar and toggle bar. */
     private static final Color BAR_COLOR = Color.LIGHT_GRAY;
 
@@ -61,10 +62,10 @@ public class Map extends JPanel implements EventListener
 
     /** Panel to draw in. */
     private final VisualizationPanel drawPanel;
-    
+
     /** Panel with tools. */
     private final JPanel toolPanel;
-    
+
     /** Panel with toggles. */
     private final JPanel togglePanel;
 
@@ -161,13 +162,13 @@ public class Map extends JPanel implements EventListener
             }
         });
         add(this.drawPanel, BorderLayout.CENTER);
-        
+
         this.toolPanel = new JPanel();
         this.toolPanel.setBackground(BAR_COLOR);
         this.toolPanel.add(new JLabel("tools")); // TODO: temporary while empty
         this.toolPanel.setLayout(new BoxLayout(this.toolPanel, BoxLayout.X_AXIS));
         add(this.toolPanel, BorderLayout.NORTH);
-        
+
         this.togglePanel = new JPanel();
         this.togglePanel.setBackground(BAR_COLOR);
         this.togglePanel.add(new JLabel("toggles")); // TODO: temporary while empty
@@ -372,6 +373,18 @@ public class Map extends JPanel implements EventListener
         if (node.getPathString().equals(XsdPaths.NODE))
         {
             node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+        }
+        if (node.getPathString().equals(XsdPaths.LINK))
+        {
+            Iterator<MapLinkData> it = this.links.keySet().iterator();
+            while (it.hasNext())
+            {
+                MapLinkData link = it.next();
+                if (link.getNode().equals(node))
+                {
+                    it.remove();
+                }
+            }
         }
         MapData data = this.datas.remove(node);
         if (data != null)
