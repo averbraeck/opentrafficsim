@@ -160,6 +160,13 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             {
                 return true;
             }
+            
+            /** {@inheritDoc} */
+            @Override
+            public Integer getFontSize()
+            {
+                return null;
+            }
 
             /** {@inheritDoc} */
             @Override
@@ -1083,6 +1090,13 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         {
             return true;
         }
+        
+        /** {@inheritDoc} */
+        @Override
+        public Integer getFontSize()
+        {
+            return null;
+        }
 
         /** {@inheritDoc} */
         @Override
@@ -1136,6 +1150,13 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             int m = (int) (seconds - h * 3600) / 60;
             double s = v - h * 3600 - m * 60;
             this.setText(String.format("%04d:%02d:%06.3f", h, m, s));
+        }
+        
+        /** {@inheritDoc} */
+        @Override
+        public Integer getFontSize()
+        {
+            return null;
         }
 
         /** {@inheritDoc} */
