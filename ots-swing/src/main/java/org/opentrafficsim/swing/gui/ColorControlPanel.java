@@ -54,30 +54,6 @@ public class ColorControlPanel extends JPanel implements ActionListener
         {
             this.switchableGtuColorer = (SwitchableGtuColorer) gtuColorer;
 
-            /**
-             * ComboBox for AppearanceControl.
-             * @param <T> generic type of the ComboBox
-             */
-            class AppearanceControlComboBox<T> extends JComboBox<T> implements AppearanceControl
-            {
-                /** */
-                private static final long serialVersionUID = 1L;
-
-                /** {@inheritDoc} */
-                @Override
-                public boolean isFont()
-                {
-                    return true;
-                }
-
-                /** {@inheritDoc} */
-                @Override
-                public String toString()
-                {
-                    return "AppearanceControlComboBox []";
-                }
-
-            }
             this.comboBoxGTUColor = new AppearanceControlComboBox<>();
             this.add(this.comboBoxGTUColor);
             this.comboBoxGTUColor.addActionListener(this);

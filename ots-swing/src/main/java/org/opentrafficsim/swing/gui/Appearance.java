@@ -15,32 +15,32 @@ import java.awt.Color;
 public enum Appearance
 {
 
-    /** MOTUS mimic. Grid not visible. */
+    /** MOTUS mimic. Grid and nodes not visible. */
     MOTUS("Motus", new Color(236, 233, 216), Color.BLACK, Color.BLACK, "Verdana"),
 
     /** Green. */
-    FOSIM("Fosim", new Color(240, 240, 240), Color.BLACK, new Color(0, 128, 0), "Verdana"),
+    FOSIM("Fosim", new Color(240, 240, 240), Color.BLACK, new Color(0, 128, 0), "Dialog"),
 
     /** Dark. */
-    DARK("Dark", new Color(96, 96, 96), Color.WHITE, Color.DARK_GRAY, "Verdana"),
+    DARK("Dark", new Color(96, 96, 96), Color.WHITE, Color.DARK_GRAY, "Dialog"),
 
     /** Gray. */
-    GRAY("Gray", Color.LIGHT_GRAY, Color.BLACK, new Color(96, 96, 96), "Verdana"),
+    GRAY("Gray", Color.LIGHT_GRAY, Color.BLACK, new Color(96, 96, 96), "Dialog"),
 
     /** Bright. */
-    BRIGHT("Bright", Color.LIGHT_GRAY, Color.BLACK, Color.WHITE, "Verdana"),
+    BRIGHT("Bright", Color.LIGHT_GRAY, Color.BLACK, Color.WHITE, "Dialog"),
 
     /** Legacy, as the initial OTS had. */
     LEGACY("Legacy", new Color(238, 238, 238), Color.BLACK, Color.WHITE, "Dialog"),
 
     /** Red. */
-    RED("Red", new Color(208, 192, 192), Color.RED.darker().darker(), new Color(208, 192, 192).darker(), "Verdana"),
+    RED("Red", new Color(208, 192, 192), Color.RED.darker().darker(), new Color(208, 192, 192).darker(), "Dialog"),
 
     /** Green. */
-    GREEN("Green", new Color(192, 208, 192), Color.GREEN.darker().darker(), new Color(192, 208, 192).darker(), "Verdana"),
+    GREEN("Green", new Color(192, 208, 192), Color.GREEN.darker().darker(), new Color(192, 208, 192).darker(), "Dialog"),
 
     /** Blue. */
-    BLUE("Blue", new Color(192, 192, 208), Color.BLUE.darker().darker(), new Color(192, 192, 208).darker(), "Verdana");
+    BLUE("Blue", new Color(192, 192, 208), Color.BLUE.darker().darker(), new Color(192, 192, 208).darker(), "Dialog");
 
     /** Name. */
     private final String name;

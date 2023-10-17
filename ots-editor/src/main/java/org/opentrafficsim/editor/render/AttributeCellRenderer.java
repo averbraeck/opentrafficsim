@@ -83,7 +83,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
                     }
                     else
                     {
-                        this.checkBox.setBackground(UIManager.getColor("Panel.background"));
+                        this.checkBox.setBackground(table.getBackground());
                     }
                 }
                 if (value == null || value.toString().isEmpty())
@@ -135,7 +135,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
             setText("");
         }
         setFont(table.getFont());
-        table.setGridColor(UIManager.getColor("Panel.background"));
+        table.setGridColor(table.getBackground());
         setIcon(null);
         setForeground(showingDefault ? OtsEditor.INACTIVE_COLOR : UIManager.getColor("Table.foreground"));
         if (table.convertColumnIndexToModel(column) == 1)
@@ -178,7 +178,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
             }
             else
             {
-                setBackground(UIManager.getColor("Panel.background"));
+                setBackground(table.getBackground());
             }
         }
         if (table.convertColumnIndexToModel(column) > 1)

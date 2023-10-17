@@ -29,34 +29,19 @@ package org.opentrafficsim.swing.gui;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public interface AppearanceControl
+public interface AppearanceControl extends nl.tudelft.simulation.dsol.swing.gui.appearance.AppearanceControl
 {
 
-    /**
-     * Returns whether this item has a controllable background.
-     * @return whether this item has a controllable background
-     */
-    default boolean isBackground()
-    {
-        return false;
-    }
+    /** Default font size. */
+    public static int DEFAULT_FONT_SIZE = 12;
 
     /**
-     * Returns whether this item has a controllable foreground.
-     * @return whether this item has a controllable foreground
+     * Returns the font size. May be {@code null} to ignore font size.
+     * @return Integer; font size, may be {@code null} to ignore font size from appearance.
      */
-    default boolean isForeground()
+    default Integer getFontSize()
     {
-        return false;
-    }
-
-    /**
-     * Returns whether this item has a controllable font.
-     * @return whether this item has a controllable font
-     */
-    default boolean isFont()
-    {
-        return false;
+        return DEFAULT_FONT_SIZE;
     }
 
 }

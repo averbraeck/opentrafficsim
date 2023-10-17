@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FileDialog;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
@@ -54,7 +53,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -117,6 +115,9 @@ import org.opentrafficsim.editor.render.AttributesCellEditor;
 import org.opentrafficsim.editor.render.StringCellRenderer;
 import org.opentrafficsim.editor.render.XsdTreeCellRenderer;
 import org.opentrafficsim.road.network.factory.xml.CircularDependencyException;
+import org.opentrafficsim.swing.gui.Appearance;
+import org.opentrafficsim.swing.gui.AppearanceApplication;
+import org.opentrafficsim.swing.gui.AppearanceControlComboBox;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -134,7 +135,7 @@ import de.javagl.treetable.JTreeTable;
  * </p>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class OtsEditor extends JFrame implements EventProducer
+public class OtsEditor extends AppearanceApplication implements EventProducer
 {
 
     /** */
@@ -147,9 +148,6 @@ public class OtsEditor extends JFrame implements EventProducer
     /** Event when the selection in the tree is changed. */
     public static final EventType SELECTION_CHANGED = new EventType("SELECTIONCHANGED", new MetaData("Selection",
             "Selection changed", new ObjectDescriptor("Selected node", "Selected node", XsdTreeNode.class)));
-
-    /** Font. */
-    private static final Font FONT = new Font("Dialog", Font.PLAIN, 12);
 
     /** Width of the divider between parts of the screen. */
     private static final int DIVIDER_SIZE = 3;
@@ -186,6 +184,9 @@ public class OtsEditor extends JFrame implements EventProducer
 
     /** Map of listeners for {@code EventProducer}. */
     private final EventListenerMap listenerMap = new EventListenerMap();
+
+    /** Main split pane. */
+    private final JSplitPane leftRightSplitPane;
 
     /** Main tabbed pane at the left-hand side. */
     private final JTabbedPane visualizationPane;
@@ -278,17 +279,7 @@ public class OtsEditor extends JFrame implements EventProducer
      */
     public OtsEditor() throws IOException
     {
-        UIManager.put("Label.font", FONT);
-        UIManager.put("Menu.font", FONT);
-        UIManager.put("MenuItem.font", FONT);
-        UIManager.put("TabbedPane.font", FONT);
-        UIManager.put("Table.font", FONT);
-        UIManager.put("TableHeader.font", FONT);
-        UIManager.put("TextField.font", FONT);
-        UIManager.put("Button.font", FONT);
-        UIManager.put("ComboBox.font", FONT);
-        UIManager.put("CheckBox.font", FONT);
-        // for full list: https://stackoverflow.com/questions/7434845/setting-the-default-font-of-swing-program
+        super();
 
         setSize(1280, 720);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -303,10 +294,10 @@ public class OtsEditor extends JFrame implements EventProducer
         });
 
         // split panes
-        JSplitPane leftRightSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, UPDATE_SPLIT_WHILE_DRAGGING);
-        leftRightSplitPane.setDividerSize(DIVIDER_SIZE);
-        leftRightSplitPane.setResizeWeight(0.5);
-        add(leftRightSplitPane);
+        this.leftRightSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, UPDATE_SPLIT_WHILE_DRAGGING);
+        this.leftRightSplitPane.setDividerSize(DIVIDER_SIZE);
+        this.leftRightSplitPane.setResizeWeight(0.5);
+        add(this.leftRightSplitPane);
         this.rightSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, UPDATE_SPLIT_WHILE_DRAGGING);
         this.rightSplitPane.setDividerSize(DIVIDER_SIZE);
         this.rightSplitPane.setResizeWeight(0.5);
@@ -324,10 +315,10 @@ public class OtsEditor extends JFrame implements EventProducer
         controlsContainer.setMinimumSize(new Dimension(200, 28));
         controlsContainer.setPreferredSize(new Dimension(200, 28));
         JLabel scenarioLabel = new JLabel("Scenario: ");
-        //scenarioLabel.setFont(FONT);
+        // scenarioLabel.setFont(FONT);
         controlsContainer.add(scenarioLabel);
-        this.scenario = new JComboBox<>();
-        //this.scenario.setFont(FONT);
+        this.scenario = new AppearanceControlComboBox<>();
+        // this.scenario.setFont(FONT);
         this.scenario.addItem(new ScenarioWrapper(null));
         this.scenario.setMinimumSize(new Dimension(50, 22));
         this.scenario.setMaximumSize(new Dimension(250, 22));
@@ -374,9 +365,8 @@ public class OtsEditor extends JFrame implements EventProducer
 
         rightContainer.add(controlsContainer);
         rightContainer.add(this.rightSplitPane);
-        leftRightSplitPane.setRightComponent(rightContainer);
+        this.leftRightSplitPane.setRightComponent(rightContainer);
 
-        setIconImage(ImageIO.read(Resource.getResourceAsStream("./OTS_merge.png")));
         this.questionIcon = loadIcon("./Question.png", -1, -1, -1, -1);
 
         // visualization pane
@@ -384,7 +374,7 @@ public class OtsEditor extends JFrame implements EventProducer
         this.visualizationPane = new JTabbedPane(JTabbedPane.BOTTOM, JTabbedPane.SCROLL_TAB_LAYOUT);
         this.visualizationPane.setPreferredSize(new Dimension(900, 900));
         this.visualizationPane.setBorder(new LineBorder(Color.BLACK, 0));
-        leftRightSplitPane.setLeftComponent(this.visualizationPane);
+        this.leftRightSplitPane.setLeftComponent(this.visualizationPane);
 
         // There is likely a better way to do this, but setting the icons specific on the tree is impossible for collapsed and
         // expanded. Also in that case after removal of a node, the tree appearance gets reset and java default icons appear.
@@ -395,7 +385,7 @@ public class OtsEditor extends JFrame implements EventProducer
         UIManager.put("Tree.expandedIcon", new ImageIcon(ImageIO.read(Resource.getResourceAsStream("/Eclipse_expanded.png"))));
 
         // empty tree table
-        this.treeTable = new JTreeTable(new XsdTreeTableModel(null));
+        this.treeTable = new AppearanceControlTreeTable(new XsdTreeTableModel(null));
         XsdTreeTableModel.applyColumnWidth(this.treeTable);
         this.rightSplitPane.setTopComponent(new JScrollPane(this.treeTable));
 
@@ -429,17 +419,12 @@ public class OtsEditor extends JFrame implements EventProducer
 
         addMenuBar();
 
-        this.statusLabel = new JLabel();
+        this.statusLabel = new StatusLabel();
         this.statusLabel.setForeground(STATUS_COLOR);
         this.statusLabel.setHorizontalAlignment(SwingConstants.LEFT);
         this.statusLabel.setBorder(new BevelBorder(BevelBorder.LOWERED));
         add(this.statusLabel, BorderLayout.SOUTH);
         removeStatusLabel();
-
-        // appear to the user
-        setVisible(true);
-        leftRightSplitPane.setDividerLocation(0.65);
-        this.rightSplitPane.setDividerLocation(0.75);
     }
 
     /**
@@ -758,6 +743,10 @@ public class OtsEditor extends JFrame implements EventProducer
                 file.delete();
             }
         }
+        setVisible(true);
+        this.leftRightSplitPane.setDividerLocation(0.65);
+        this.rightSplitPane.setDividerLocation(0.75);
+        setAppearance(getAppearance());
     }
 
     /**
@@ -793,7 +782,7 @@ public class OtsEditor extends JFrame implements EventProducer
 
         // tree table
         XsdTreeTableModel treeModel = new XsdTreeTableModel(this.xsdDocument);
-        this.treeTable = new JTreeTable(treeModel);
+        this.treeTable = new AppearanceControlTreeTable(treeModel);
         this.nodeActions = new NodeActions(this, this.treeTable);
         this.treeTable.putClientProperty("terminateEditOnFocusLost", true);
         treeModel.setTreeTable(this.treeTable);
@@ -837,6 +826,7 @@ public class OtsEditor extends JFrame implements EventProducer
             }
         };
         new Timer().scheduleAtFixedRate(this.autosave, AUTOSAVE_PERIOD_MS, AUTOSAVE_PERIOD_MS);
+        setAppearance(getAppearance());
     }
 
     /**
@@ -1206,7 +1196,7 @@ public class OtsEditor extends JFrame implements EventProducer
     {
         JOptionPane.showMessageDialog(OtsEditor.this, "Input parameters have a circular dependency.");
     }
-    
+
     /**
      * Show unable to run.
      */
@@ -1702,6 +1692,19 @@ public class OtsEditor extends JFrame implements EventProducer
     public void removeEvalListener(final EvalListener listener)
     {
         this.evalWrapper.removeListener(listener);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setAppearance(final Appearance appearance)
+    {
+        super.setAppearance(appearance);
+        // these components are hidden from the Swing structure
+        if (this.treeTable != null)
+        {
+            changeFont((Component) this.treeTable.getTree().getCellRenderer(), appearance.getFont());
+            changeFontSize((Component) this.treeTable.getTree().getCellRenderer());
+        }
     }
 
 }
