@@ -230,6 +230,13 @@ public class Map extends JPanel implements EventListener
                     add(node);
                 }
             }
+            else if (node.getPathString().equals(XsdPaths.POLYLINE_COORDINATE))
+            {
+                for (MapLinkData linkData : this.links.keySet())
+                {
+                    linkData.addCoordinate(node);
+                }
+            }
         }
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
         {
@@ -238,6 +245,13 @@ public class Map extends JPanel implements EventListener
             if (this.datas.containsKey(node)) // node.isType does not work as parent is gone, i.e. type is just "Node"
             {
                 remove(node);
+            }
+            else if (node.getPathString().equals(XsdPaths.POLYLINE_COORDINATE))
+            {
+                for (MapLinkData linkData : this.links.keySet())
+                {
+                    linkData.removeCoordinate(node);
+                }
             }
         }
         else if (event.getType().equals(XsdTreeNode.ACTIVATION_CHANGED))

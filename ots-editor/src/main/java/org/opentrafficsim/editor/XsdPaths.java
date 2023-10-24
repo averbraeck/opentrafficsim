@@ -31,6 +31,9 @@ public final class XsdPaths
     /** Link path. */
     public static final String LINK = NETWORK + ".Link";
     
+    /** Polyline coordinate path. */
+    public static final String POLYLINE_COORDINATE = LINK + ".Polyline.Coordinate";
+    
     /** Road layout path. */
     public static final String ROADLAYOUT = LINK + ".RoadLayout";
 

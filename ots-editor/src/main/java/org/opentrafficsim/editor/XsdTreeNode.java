@@ -1992,14 +1992,21 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 Set<String> coveredTypes = new LinkedHashSet<>();
                 String separator = "";
                 assureChildren();
-                for (XsdTreeNode child : this.children)
+                if (!this.active)
                 {
-                    if (!coveredTypes.contains(child.getPathString()) || child.xsdNode.getNodeName().equals("xsd:sequence")
-                            || child.xsdNode.getNodeName().equals("xsd:choice"))
+                    stringBuilder.append("(inactive)");
+                }
+                else
+                {
+                    for (XsdTreeNode child : this.children)
                     {
-                        stringBuilder.append(separator).append(child.getShortString());
-                        separator = " | ";
-                        coveredTypes.add(child.getPathString());
+                        if (!coveredTypes.contains(child.getPathString()) || child.xsdNode.getNodeName().equals("xsd:sequence")
+                                || child.xsdNode.getNodeName().equals("xsd:choice"))
+                        {
+                            stringBuilder.append(separator).append(child.getShortString());
+                            separator = " | ";
+                            coveredTypes.add(child.getPathString());
+                        }
                     }
                 }
             }

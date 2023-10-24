@@ -59,8 +59,6 @@
           <xsd:element name="Straight" type="ots:EmptyType" />
           <xsd:element name="Bezier">
             <xsd:complexType>
-              <xsd:attribute name="StartDirection" type="ots:DirectionType" use="optional" />
-              <xsd:attribute name="EndDirection" type="ots:DirectionType" use="optional" />
               <xsd:attribute name="NumSegments" type="xsd:integer" use="optional" default="64" />
               <xsd:attribute name="Shape" type="ots:DoublePositive" use="optional" default="1.0" />
               <xsd:attribute name="Weighted" type="xsd:boolean" use="optional" default="false" />
@@ -68,11 +66,19 @@
           </xsd:element>
           <xsd:element name="Clothoid">
             <xsd:complexType>
-              <xsd:attribute name="StartDirection" type="ots:DirectionType" use="optional" />
-              <xsd:attribute name="StartCurvature" type="ots:LinearDensityType" use="required" />
-              <xsd:attribute name="EndDirection" type="ots:DirectionType" use="optional" />
-              <xsd:attribute name="EndCurvature" type="ots:LinearDensityType" use="required" />
-              <xsd:attribute name="Length" type="ots:PositiveLengthType" use="optional" />
+              <xsd:choice>
+                <xsd:element name="Interpolated" type="ots:EmptyType" />
+                <xsd:sequence>
+                  <xsd:element name="Length" type="ots:LengthType" />
+                  <xsd:element name="StartCurvature" type="ots:LinearDensityType" />
+                  <xsd:element name="EndCurvature" type="ots:LinearDensityType" />
+                </xsd:sequence>
+                <xsd:sequence>
+                  <xsd:element name="A" type="ots:LengthType" />
+                  <xsd:element name="StartCurvature" type="ots:LinearDensityType" />
+                  <xsd:element name="EndCurvature" type="ots:LinearDensityType" />
+                </xsd:sequence>
+              </xsd:choice>
               <xsd:attribute name="EndElevation" type="ots:PositiveLengthType" use="optional" />
               <xsd:attribute name="NumSegments" type="xsd:integer" use="optional" default="64" />
             </xsd:complexType>
