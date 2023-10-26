@@ -15,6 +15,7 @@ import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
+import org.djutils.draw.DrawRuntimeException;
 import org.djutils.draw.bounds.Bounds;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
@@ -730,84 +731,88 @@ public class MapLinkData extends MapData implements LinkData, EventListener
          */
         public PolyLine2d getLine(final OrientedPoint2d from, final OrientedPoint2d to)
         {
-            if (this.shapeNode == null)
+            try
             {
-                System.out.println("hmmm");
+                switch (this.shapeNode.getNodeName())
+                {
+                    case "Straight":
+                        double length = from.distance(to);
+                        double dx = Math.cos(from.dirZ) * length;
+                        double dy = Math.sin(from.dirZ) * length;
+                        return new PolyLine2d(from, from.translate(dx, dy));
+                    case "Polyline":
+                        List<Point2d> list = new ArrayList<>();
+                        list.add(from);
+                        for (Entry<XsdTreeNode, Point2d> entry : this.coordinates.entrySet())
+                        {
+                            list.add(entry.getValue());
+                        }
+                        list.add(to);
+                        if (list.contains(null))
+                        {
+                            return null;
+                        }
+                        return new PolyLine2d(list);
+                    case "Bezier":
+                        double shape = this.shape == null ? 1.0 : this.shape;
+                        boolean weighted = this.weighted == null ? false : this.weighted;
+                        Point2d[] points = Bezier.cubicControlPoints(from, to, shape, weighted);
+                        ContinuousBezierCubic bezier = new ContinuousBezierCubic(points[0], points[1], points[2], points[3]);
+                        int numSegments = this.numSegments == null ? 64 : this.numSegments;
+                        return bezier.flatten(new Flattener.NumSegments(numSegments));
+                    case "Clothoid":
+                        ContinuousClothoid clothoid;
+                        if (this.shapeNode.getChildCount() == 0 || this.shapeNode.getChild(0).getChildCount() == 0
+                                || this.shapeNode.getChild(0).getChild(0).getNodeName().equals("Interpolated"))
+                        {
+                            clothoid = new ContinuousClothoid(from, to);
+                        }
+                        else if (this.shapeNode.getChild(0).getChild(0).getNodeName().equals("Length"))
+                        {
+                            if (this.length == null || this.startCurvature == null || this.endCurvature == null)
+                            {
+                                return null;
+                            }
+                            clothoid = ContinuousClothoid.withLength(from, this.length.si, this.startCurvature.si,
+                                    this.endCurvature.si);
+                        }
+                        else
+                        {
+                            if (this.a == null || this.startCurvature == null || this.endCurvature == null)
+                            {
+                                return null;
+                            }
+                            clothoid = new ContinuousClothoid(from, this.a.si, this.startCurvature.si, this.endCurvature.si);
+                        }
+                        numSegments = this.numSegments == null ? 64 : this.numSegments;
+                        return clothoid.flatten(new Flattener.NumSegments(numSegments));
+                    case "Arc":
+                        if (this.direction == null || this.radius == null)
+                        {
+                            return null;
+                        }
+                        boolean left = this.direction.equals(ArcDirection.LEFT);
+                        double endHeading = to.dirZ;
+                        while (left && endHeading < from.dirZ)
+                        {
+                            endHeading += 2.0 * Math.PI;
+                        }
+                        while (!left && endHeading > from.dirZ)
+                        {
+                            endHeading -= 2.0 * Math.PI;
+                        }
+                        Angle angle = Angle.instantiateSI(Math.abs(endHeading) - from.dirZ);
+                        ContinuousArc arc = new ContinuousArc(from, this.radius.si, left, angle);
+                        numSegments = this.numSegments == null ? 64 : this.numSegments;
+                        return arc.flatten(new Flattener.NumSegments(numSegments));
+                    default:
+                        throw new RuntimeException("Drawing of shape node " + this.shapeNode.getNodeName() + " is not supported.");
+                }
             }
-            switch (this.shapeNode.getNodeName())
+            catch (DrawRuntimeException exception)
             {
-                case "Straight":
-                    double length = from.distance(to);
-                    double dx = Math.cos(from.dirZ) * length;
-                    double dy = Math.sin(from.dirZ) * length;
-                    return new PolyLine2d(from, from.translate(dx, dy));
-                case "Polyline":
-                    List<Point2d> list = new ArrayList<>();
-                    list.add(from);
-                    for (Entry<XsdTreeNode, Point2d> entry : this.coordinates.entrySet())
-                    {
-                        list.add(entry.getValue());
-                    }
-                    list.add(to);
-                    if (list.contains(null))
-                    {
-                        return null;
-                    }
-                    return new PolyLine2d(list);
-                case "Bezier":
-                    double shape = this.shape == null ? 1.0 : this.shape;
-                    boolean weighted = this.weighted == null ? false : this.weighted;
-                    Point2d[] points = Bezier.cubicControlPoints(from, to, shape, weighted);
-                    ContinuousBezierCubic bezier = new ContinuousBezierCubic(points[0], points[1], points[2], points[3]);
-                    int numSegments = this.numSegments == null ? 64 : this.numSegments;
-                    return bezier.flatten(new Flattener.NumSegments(numSegments));
-                case "Clothoid":
-                    ContinuousClothoid clothoid;
-                    if (this.shapeNode.getChildCount() == 0 || this.shapeNode.getChild(0).getChildCount() == 0
-                            || this.shapeNode.getChild(0).getChild(0).getNodeName().equals("Interpolated"))
-                    {
-                        clothoid = new ContinuousClothoid(from, to);
-                    }
-                    else if (this.shapeNode.getChild(0).getChild(0).getNodeName().equals("Length"))
-                    {
-                        if (this.length == null || this.startCurvature == null || this.endCurvature == null)
-                        {
-                            return null;
-                        }
-                        clothoid = ContinuousClothoid.withLength(from, this.length.si, this.startCurvature.si,
-                                this.endCurvature.si);
-                    }
-                    else
-                    {
-                        if (this.a == null || this.startCurvature == null || this.endCurvature == null)
-                        {
-                            return null;
-                        }
-                        clothoid = new ContinuousClothoid(from, this.a.si, this.startCurvature.si, this.endCurvature.si);
-                    }
-                    numSegments = this.numSegments == null ? 64 : this.numSegments;
-                    return clothoid.flatten(new Flattener.NumSegments(numSegments));
-                case "Arc":
-                    if (this.direction == null || this.radius == null)
-                    {
-                        return null;
-                    }
-                    boolean left = this.direction.equals(ArcDirection.LEFT);
-                    double endHeading = to.dirZ;
-                    while (left && endHeading < from.dirZ)
-                    {
-                        endHeading += 2.0 * Math.PI;
-                    }
-                    while (!left && endHeading > from.dirZ)
-                    {
-                        endHeading -= 2.0 * Math.PI;
-                    }
-                    Angle angle = Angle.instantiateSI(Math.abs(endHeading) - from.dirZ);
-                    ContinuousArc arc = new ContinuousArc(from, this.radius.si, left, angle);
-                    numSegments = this.numSegments == null ? 64 : this.numSegments;
-                    return arc.flatten(new Flattener.NumSegments(numSegments));
-                default:
-                    throw new RuntimeException("Drawing of shape node " + this.shapeNode.getNodeName() + " is not supported.");
+                // Probably a degenerate line as nodes are at the same location
+                return null;
             }
         }
     }
