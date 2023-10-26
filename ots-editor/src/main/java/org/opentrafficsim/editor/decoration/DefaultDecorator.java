@@ -85,7 +85,7 @@ public final class DefaultDecorator
         // string functions
         new AttributesStringFunction(editor, "Ots.Network.Link.LaneOverride", "Lane");
         new AttributesStringFunction(editor, ".SpeedLimit", "GtuType", "LegalSpeedLimit");
-        new AttributesStringFunction(editor, "Ots.Demand.Od.Cell", "Origin", "Category", "Destination").setSeparator(" > ");
+        new AttributesStringFunction(editor, "Ots.Demand.Od.Cell", "Origin", "Destination", "Category");
         new AttributesStringFunction(editor, "Ots.Demand.OdOptions.OdOptionsItem.Markov.State", "GtuType", "Parent",
                 "Correlation");
         new AttributesStringFunction(editor, "Ots.Demand.Generator", "Link", "Lane");
