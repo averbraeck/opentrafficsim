@@ -200,7 +200,6 @@ public class KeyValidator implements ValueValidator, EventListener
     public void addNode(final XsdTreeNode node)
     {
         boolean isType = false;
-        node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
         for (String path : getTypeString())
         {
             isType = node.isType(getPath().equals("Ots") ? path : getPath() + "." + path);
@@ -208,6 +207,10 @@ public class KeyValidator implements ValueValidator, EventListener
             {
                 break;
             }
+        }
+        if (isType)
+        {
+            node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
         }
         if (isType && this.refer == null)
         {
@@ -221,19 +224,16 @@ public class KeyValidator implements ValueValidator, EventListener
             {
                 node.addValueValidator(this);
                 registerValidating(node, null);
-                if (!this.listeningKeyrefValidators.isEmpty())
-                {
-                    node.addListener(this, XsdTreeNode.VALUE_CHANGED);
-                }
+                node.addListener(this, XsdTreeNode.VALUE_CHANGED);
             }
-            for (String attribute : this.attributeNames)
+            if (!this.attributeNames.isEmpty())
             {
-                node.addAttributeValidator(attribute, this);
-                registerValidating(node, attribute);
-                if (!this.listeningKeyrefValidators.isEmpty())
+                for (String attribute : this.attributeNames)
                 {
-                    node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+                    node.addAttributeValidator(attribute, this);
+                    registerValidating(node, attribute);
                 }
+                node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
             }
         }
         for (String child : this.childNames)
@@ -313,10 +313,11 @@ public class KeyValidator implements ValueValidator, EventListener
     {
         removeNodeKeepListening(node);
         node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+        node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
     }
 
     /**
-     * Remove node. It is removed from all contexts and listening keyrefs. This method is called indorectly by a listener that
+     * Remove node. It is removed from all contexts and listening keyrefs. This method is called indirectly by a listener that
      * the root node has set up, for every removed node. This method is called internally for children of deactivated nodes, in
      * which case we do not want to remove this validator as listener on the node, for when it gets activated later.
      * @param node XsdTreeNode; node to remove.
@@ -524,6 +525,13 @@ public class KeyValidator implements ValueValidator, EventListener
     @Override
     public void notify(final Event event) throws RemoteException
     {
+        for (Set<XsdTreeNode> nodes : this.nodes.values())
+        {
+            for (XsdTreeNode node : nodes)
+            {
+                node.invalidate();
+            }
+        }
         if (XsdTreeNode.ACTIVATION_CHANGED.equals(event.getType()))
         {
             Object[] content = (Object[]) event.getContent();
