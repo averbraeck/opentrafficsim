@@ -783,6 +783,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         // tree table
         XsdTreeTableModel treeModel = new XsdTreeTableModel(this.xsdDocument);
         this.treeTable = new AppearanceControlTreeTable(treeModel);
+        this.treeTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.nodeActions = new NodeActions(this, this.treeTable);
         this.treeTable.putClientProperty("terminateEditOnFocusLost", true);
         treeModel.setTreeTable(this.treeTable);
