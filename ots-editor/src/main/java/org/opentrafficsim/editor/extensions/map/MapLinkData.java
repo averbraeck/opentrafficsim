@@ -746,7 +746,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener
                     list.add(from);
                     for (Entry<XsdTreeNode, Point2d> entry : this.coordinates.entrySet())
                     {
-                        System.out.println("adding node at index " + this.shapeNode.getChildren().indexOf(entry.getKey()));
                         list.add(entry.getValue());
                     }
                     list.add(to);
