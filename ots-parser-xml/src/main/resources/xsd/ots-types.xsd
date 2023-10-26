@@ -1688,7 +1688,7 @@
   <xsd:complexType name="LengthDistType">
     <xsd:complexContent>
       <xsd:extension base="ots:ConstantDistType">
-        <xsd:attribute name="LengthUnit" type="ots:LengthUnitType" />
+        <xsd:attribute name="LengthUnit" type="ots:LengthUnitType" use="required" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -1696,7 +1696,7 @@
   <xsd:complexType name="PositionDistType">
     <xsd:complexContent>
       <xsd:extension base="ots:ConstantDistType">
-        <xsd:attribute name="PositionUnit" type="ots:PositionUnitType" />
+        <xsd:attribute name="PositionUnit" type="ots:PositionUnitType" use="required" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -1704,7 +1704,7 @@
   <xsd:complexType name="SpeedDistType">
     <xsd:complexContent>
       <xsd:extension base="ots:ConstantDistType">
-        <xsd:attribute name="SpeedUnit" type="ots:SpeedUnitType" />
+        <xsd:attribute name="SpeedUnit" type="ots:SpeedUnitType" use="required" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -1712,7 +1712,7 @@
   <xsd:complexType name="AccelerationDistType">
     <xsd:complexContent>
       <xsd:extension base="ots:ConstantDistType">
-        <xsd:attribute name="AccelerationUnit" type="ots:AccelerationUnitType" />
+        <xsd:attribute name="AccelerationUnit" type="ots:AccelerationUnitType" use="required" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -1720,7 +1720,7 @@
   <xsd:complexType name="TimeDistType">
     <xsd:complexContent>
       <xsd:extension base="ots:ConstantDistType">
-        <xsd:attribute name="TimeUnit" type="ots:TimeUnitType" />
+        <xsd:attribute name="TimeUnit" type="ots:TimeUnitType" use="required" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -1728,7 +1728,7 @@
   <xsd:complexType name="DurationDistType">
     <xsd:complexContent>
       <xsd:extension base="ots:ConstantDistType">
-        <xsd:attribute name="DurationUnit" type="ots:DurationUnitType" />
+        <xsd:attribute name="DurationUnit" type="ots:DurationUnitType" use="required" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -1736,7 +1736,7 @@
   <xsd:complexType name="LinearDensityDistType">
     <xsd:complexContent>
       <xsd:extension base="ots:ConstantDistType">
-        <xsd:attribute name="LinearDensityUnit" type="ots:LinearDensityUnitType" />
+        <xsd:attribute name="LinearDensityUnit" type="ots:LinearDensityUnitType" use="required" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -1744,7 +1744,7 @@
   <xsd:complexType name="FrequencyDistType">
     <xsd:complexContent>
       <xsd:extension base="ots:ConstantDistType">
-        <xsd:attribute name="FrequencyUnit" type="ots:FrequencyUnitType" />
+        <xsd:attribute name="FrequencyUnit" type="ots:FrequencyUnitType" use="required" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
