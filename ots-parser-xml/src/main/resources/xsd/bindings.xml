@@ -126,6 +126,9 @@
     <jaxb:bindings node="//xsd:element[@name='Network']/xsd:complexType/xsd:sequence/xsd:choice">
       <simplify:as-element-property />
     </jaxb:bindings>
+    <jaxb:bindings node="//xsd:element[@name='Clothoid']/xsd:complexType/xsd:choice/xsd:element[@name='Interpolated']">
+      <simplify:as-element-property />
+    </jaxb:bindings>
   </jaxb:bindings>
 
   <jaxb:bindings schemaLocation="ots-model.xsd">

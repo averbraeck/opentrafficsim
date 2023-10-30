@@ -15,6 +15,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
@@ -28,6 +29,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.ContinuousArc;
 import org.opentrafficsim.core.geometry.ContinuousBezierCubic;
+import org.opentrafficsim.core.geometry.ContinuousClothoid;
 import org.opentrafficsim.core.geometry.ContinuousLine;
 import org.opentrafficsim.core.geometry.ContinuousPolyLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
@@ -277,10 +279,32 @@ public final class NetworkParser
             }
             else if (xmlLink.getClothoid() != null)
             {
-                // int numSegments = xmlLink.getCLOTHOID().getNumSegments().intValue();
-
-                // TODO: Clothoid parsing
-                designLine = null;
+                if (xmlLink.getClothoid().getNumSegments() != null)
+                {
+                    numSegments = xmlLink.getClothoid().getNumSegments().intValue();
+                }
+                // fields in getClothoid() appear as lists as StartCurvature and EndCurvature appear in multiple options
+                if (!xmlLink.getClothoid().getInterpolated().isEmpty())
+                {
+                    designLine = new ContinuousClothoid(start, end);
+                }
+                else
+                {
+                    LinearDensity startCurvature = xmlLink.getClothoid().getStartCurvature().get(0).get(eval);
+                    LinearDensity endCurvature = xmlLink.getClothoid().getEndCurvature().get(0).get(eval);
+                    if (!xmlLink.getClothoid().getLength().isEmpty())
+                    {
+                        Length length = xmlLink.getClothoid().getLength().get(0).get(eval);
+                        designLine = ContinuousClothoid.withLength(start, length.si, startCurvature.si, endCurvature.si);
+                    }
+                    else
+                    {
+                        Throw.when(xmlLink.getClothoid().getA().isEmpty(), NetworkException.class,
+                                "Clothoid for link %s is not correctly specified.", xmlLink.getId());
+                        Length a = xmlLink.getClothoid().getA().get(0).get(eval);
+                        designLine = new ContinuousClothoid(start, a.si, startCurvature.si, endCurvature.si);
+                    }
+                }
             }
 
             else
@@ -405,6 +429,11 @@ public final class NetworkParser
                 NumSegments numSegments64 = new NumSegments(64);
                 PolyLine2d centerLine =
                         designLine.flattenOffset(LaneGeometryUtil.getCenterOffsets(designLine, slices), numSegments64);
+                if (designLine instanceof ContinuousClothoid && xmlLink.getId().equals("SCEC"))
+                {
+                    System.out.println("hmmm");
+                    // those that are correct are simplified to arcs, this is systemic to Clothoids
+                }
                 PolyLine2d leftEdge =
                         designLine.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(designLine, slices), numSegments64);
                 PolyLine2d rightEdge =

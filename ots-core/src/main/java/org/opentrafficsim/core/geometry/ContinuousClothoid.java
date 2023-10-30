@@ -73,9 +73,12 @@ public class ContinuousClothoid implements ContinuousLine
 
     /** Normal unit vector to t0. */
     private final double[] n0;
-
+    
     /** Whether the line needs to be flipped. */
     private final boolean opposite;
+    
+    /** Whether the line is reflected. */
+    private final boolean reflected;
 
     /** Simplification to straight when valid. */
     private final ContinuousStraight straight;
@@ -149,6 +152,7 @@ public class ContinuousClothoid implements ContinuousLine
             this.t0 = null;
             this.n0 = null;
             this.opposite = false;
+            this.reflected = false;
             return;
         }
         else if (Math.abs(phi2 - phi1) < ANGLE_TOLERANCE)
@@ -184,6 +188,7 @@ public class ContinuousClothoid implements ContinuousLine
             this.t0 = null;
             this.n0 = null;
             this.opposite = false;
+            this.reflected = false;
             return;
         }
         this.straight = null;
@@ -206,10 +211,9 @@ public class ContinuousClothoid implements ContinuousLine
         }
 
         // The algorithm assumes 0 < phi2 < pi. If this is not the case, the input and output are reflected on 'd'.
-        boolean reflect = false;
-        if (phi2 < 0 || phi2 > Math.PI)
+        this.reflected = phi2 < 0 || phi2 > Math.PI;
+        if (this.reflected)
         {
-            reflect = true;
             phi1 = -phi1;
             phi2 = -phi2;
         }
@@ -230,7 +234,7 @@ public class ContinuousClothoid implements ContinuousLine
 
         dx /= d2; // normalized
         dy /= d2;
-        if (reflect)
+        if (this.reflected)
         {
             // reflect t0 and n0 on 'd' so that the created output clothoid is reflected back after input was reflected
             this.t0 = new double[] {Math.cos(-v2) * dx + Math.sin(-v2) * dy, -Math.sin(-v2) * dx + Math.cos(-v2) * dy};
@@ -308,6 +312,7 @@ public class ContinuousClothoid implements ContinuousLine
         this.straight = null;
         this.arc = null;
         this.opposite = false;
+        this.reflected = false;
     }
 
     /**
@@ -531,7 +536,11 @@ public class ContinuousClothoid implements ContinuousLine
         double[] cs = Fresnel.fresnel(alphaToT(alpha));
         double x = this.shiftX + this.a * (cs[0] * this.t0[0] - cs[1] * this.n0[0]) + f * this.dShiftX;
         double y = this.shiftY + this.a * (cs[0] * this.t0[1] - cs[1] * this.n0[1]) + f * this.dShiftY;
-        double d = getDirection(alpha) + Math.PI / 2;
+        double d = getDirection(alpha) - Math.PI / 2;
+        if (this.reflected && !this.opposite)
+        {
+            d += Math.PI;
+        }
         return new Point2d(x + Math.cos(d) * offset, y + Math.sin(d) * offset);
     }
 
@@ -543,7 +552,11 @@ public class ContinuousClothoid implements ContinuousLine
     private double getDirection(final double alpha)
     {
         double rot = Math.atan2(this.t0[1], this.t0[0]);
-        return normalizeAngle(alpha + rot);
+        if (this.reflected)
+        {
+            return normalizeAngle(rot - alpha);
+        }
+        return normalizeAngle(rot + alpha);
     }
 
     /** {@inheritDoc} */
