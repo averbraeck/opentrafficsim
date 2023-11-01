@@ -7,6 +7,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.geometry.Flattener.NumSegments;
 
@@ -163,8 +164,8 @@ public class ContinuousClothoidTest
         assertEquals(0.0, Math.hypot(clothoid.getEndPoint().x - line.get(line.size() - 1).x,
                 clothoid.getEndPoint().y - line.get(line.size() - 1).y), DISTANCE_TOLERANCE, "End location deviates");
         assertEquals(0.0, normalizeAngle(start.dirZ - getAngle(line, 0)), ANGLE_TOLERANCE, "Start direction deviates");
-        assertEquals(0.0, normalizeAngle(clothoid.getEndPoint().dirZ - getAngle(line, line.size() - 2)),
-                ANGLE_TOLERANCE, "End direction deviates");
+        assertEquals(0.0, normalizeAngle(clothoid.getEndPoint().dirZ - getAngle(line, line.size() - 2)), ANGLE_TOLERANCE,
+                "End direction deviates");
         double lengthRatio = line.getLength() / clothoid.getLength();
         assertEquals(1.0, lengthRatio, 0.01, "Length is more than 1% shorter or longer than theoretical");
         if (startCurvature != null)
@@ -181,6 +182,40 @@ public class ContinuousClothoidTest
         {
             double aRadius = clothoid.getA() / a.si;
             assertEquals(1.0, aRadius, 0.01, "A-value is more than 1% less or more than theoretical");
+        }
+    }
+
+    /**
+     * Tests that a clothoid offset is on the right side and at the right direction, for clothoids that are reflected or not,
+     * and clothoids that are opposite or not.
+     */
+    @Test
+    public void testOffset()
+    {
+        Flattener flattener = new NumSegments(32);
+        // point A somewhere on y-axis 
+        for (double yA = -30.0; yA < 35.0; yA += 20.0)
+        {
+            // point B somewhere on x-axis
+            for (double xB = -20.0; xB < 25.0; xB += 20.0 * 2.0 / 3.0)
+            {
+                // point A pointing left/right towards B
+                OrientedPoint2d a = new OrientedPoint2d(0.0, yA, xB < 0.0 ? Math.PI : 0.0);
+                // point B pointing up/down away from A
+                OrientedPoint2d b = new OrientedPoint2d(xB, 0.0, yA < 0.0 ? Math.PI / 2 : -Math.PI / 2);
+                ContinuousClothoid clothoid = new ContinuousClothoid(a, b);
+                // offset -2.0 or 2.0
+                for (double offset = -2.0; offset < 3.0; offset += 4.0)
+                {
+                    PolyLine2d line = clothoid.flattenOffset(new FractionalLengthData(0.0, offset, 1.0, offset), flattener);
+                    Point2d start = line.get(0);
+                    Point2d end = line.get(line.size() - 1);
+                    assertEquals(0.0, start.x, 0.00001); // offset on y-axis
+                    assertEquals(yA + (xB > 0.0 ? offset : -offset), start.y, 0.00001); // offset above or below
+                    assertEquals(xB + (yA > 0.0 ? offset : -offset), end.x, 0.00001); // offset left or right
+                    assertEquals(0.0, end.y, 0.00001); // offset on x-axis
+                }
+            }
         }
     }
 

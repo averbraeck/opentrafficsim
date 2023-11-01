@@ -536,11 +536,7 @@ public class ContinuousClothoid implements ContinuousLine
         double[] cs = Fresnel.fresnel(alphaToT(alpha));
         double x = this.shiftX + this.a * (cs[0] * this.t0[0] - cs[1] * this.n0[0]) + f * this.dShiftX;
         double y = this.shiftY + this.a * (cs[0] * this.t0[1] - cs[1] * this.n0[1]) + f * this.dShiftY;
-        double d = getDirection(alpha) - Math.PI / 2;
-        if (this.reflected && !this.opposite)
-        {
-            d += Math.PI;
-        }
+        double d = getDirection(alpha) + Math.PI / 2;
         return new Point2d(x + Math.cos(d) * offset, y + Math.sin(d) * offset);
     }
 
@@ -552,11 +548,13 @@ public class ContinuousClothoid implements ContinuousLine
     private double getDirection(final double alpha)
     {
         double rot = Math.atan2(this.t0[1], this.t0[0]);
-        if (this.reflected)
+        // abs because alpha = -3deg has the same direction as alpha = 3deg in an S-curve where alpha = 0 is the middle
+        rot += this.reflected ? -Math.abs(alpha) : Math.abs(alpha);
+        if (this.opposite)
         {
-            return normalizeAngle(rot - alpha);
+            rot += Math.PI;
         }
-        return normalizeAngle(rot + alpha);
+        return normalizeAngle(rot);
     }
 
     /** {@inheritDoc} */

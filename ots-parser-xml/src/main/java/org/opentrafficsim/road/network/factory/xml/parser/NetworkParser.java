@@ -429,11 +429,6 @@ public final class NetworkParser
                 NumSegments numSegments64 = new NumSegments(64);
                 PolyLine2d centerLine =
                         designLine.flattenOffset(LaneGeometryUtil.getCenterOffsets(designLine, slices), numSegments64);
-                if (designLine instanceof ContinuousClothoid && xmlLink.getId().equals("SCEC"))
-                {
-                    System.out.println("hmmm");
-                    // those that are correct are simplified to arcs, this is systemic to Clothoids
-                }
                 PolyLine2d leftEdge =
                         designLine.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(designLine, slices), numSegments64);
                 PolyLine2d rightEdge =
