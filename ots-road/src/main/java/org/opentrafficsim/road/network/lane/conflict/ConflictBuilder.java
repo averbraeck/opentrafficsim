@@ -30,6 +30,12 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.pmw.tinylog.Level;
 
 /**
+ * Conflict builder allows automatic generation of conflicts. This happens based on the geometry of lanes. Parallel execution
+ * allows this algorithm to run faster. There are two parallel implementations:
+ * <ul>
+ * <li>Small; between two lanes.</li>
+ * <li>Big; between one particular lane, and all lanes further in a list (i.e. similar to a triangular matrix procedure).</li>
+ * </ul>
  * <p>
  * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -37,8 +43,11 @@ import org.pmw.tinylog.Level;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @see <a href="https://opentrafficsim.org/manual/99-appendices/conflict-areas/">Generation of conflics</a>
  */
 // TODO use z-coordinate for intersections of lines
+// TODO use record classes for ConflictBuilderRecordBig/ConflictBuilderRecordSmall
+// TODO use remove big parallel type, and use fibers for small tasks.
 public final class ConflictBuilder
 {
     /** number of merge onflicts. */
@@ -87,7 +96,16 @@ public final class ConflictBuilder
             final WidthGenerator widthGenerator, final LaneCombinationList ignoreList, final LaneCombinationList permittedList)
             throws OtsGeometryException
     {
-        // Create list of lanes
+        buildConflicts(getLanes(network), simulator, widthGenerator, ignoreList, permittedList, null);
+    }
+
+    /**
+     * Returns all the lanes in the network.
+     * @param network RoadNetwork; network.
+     * @return List&lt;Lane&gt;; list if all lanes.
+     */
+    private static List<Lane> getLanes(final RoadNetwork network)
+    {
         ImmutableMap<String, Link> links = network.getLinkMap();
         List<Lane> lanes = new ArrayList<>();
         for (String linkId : links.keySet())
@@ -104,7 +122,7 @@ public final class ConflictBuilder
                 }
             }
         }
-        buildConflicts(lanes, simulator, widthGenerator, ignoreList, permittedList, null);
+        return lanes;
     }
 
     /**
@@ -799,10 +817,6 @@ public final class ConflictBuilder
                 throws OtsGeometryException
         {
             SortedSet<Intersection> out = new TreeSet<>();
-            // if (!line1.getBounds().intersect(line2.getBounds()))
-            // {
-            // return out;
-            // }
             double cumul1 = 0.0;
             Point2d start1 = null;
             Point2d end1 = line1.get(0);
@@ -998,24 +1012,7 @@ public final class ConflictBuilder
             final WidthGenerator widthGenerator, final LaneCombinationList ignoreList, final LaneCombinationList permittedList)
             throws OtsGeometryException
     {
-        // Create list of lanes
-        ImmutableMap<String, Link> links = network.getLinkMap();
-        List<Lane> lanes = new ArrayList<>();
-        for (String linkId : links.keySet())
-        {
-            Link link = links.get(linkId);
-            if (link instanceof CrossSectionLink)
-            {
-                for (CrossSectionElement element : ((CrossSectionLink) link).getCrossSectionElementList())
-                {
-                    if (element instanceof Lane)
-                    {
-                        lanes.add((Lane) element);
-                    }
-                }
-            }
-        }
-        buildConflictsParallelBig(lanes, simulator, widthGenerator, ignoreList, permittedList);
+        buildConflictsParallelBig(getLanes(network), simulator, widthGenerator, ignoreList, permittedList);
     }
 
     /**
@@ -1191,9 +1188,6 @@ public final class ConflictBuilder
                                 numberSplitConflicts.get(), numberCrossConflicts.get()));
                 lastReported = combinationsDone / 100000000;
             }
-            Lane lane1 = lanes.get(i);
-            Set<Lane> down1 = lane1.nextLanes(null);
-            Set<Lane> up1 = lane1.prevLanes(null);
 
             while (numberOfJobs.get() > maxqueue) // keep max maxqueue jobs in the pool
             {
@@ -1208,8 +1202,8 @@ public final class ConflictBuilder
             }
             numberOfJobs.incrementAndGet();
 
-            ConflictBuilderRecordBig cbr = new ConflictBuilderRecordBig(i, lanes, ignoreList, permittedList, lane1, down1, up1,
-                    simulator, widthGenerator, leftEdges, rightEdges);
+            ConflictBuilderRecordBig cbr = new ConflictBuilderRecordBig(i, lanes, ignoreList, permittedList, simulator,
+                    widthGenerator, leftEdges, rightEdges);
             executor.execute(new CbrTaskBig(numberOfJobs, cbr));
 
         }
@@ -1284,18 +1278,29 @@ public final class ConflictBuilder
         }
     }
 
-    /** */
+    /**
+     * Small conflict builder task. A small task is finding all conflicts between two lanes.
+     * <p>
+     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     */
     static class CbrTaskSmall implements Runnable
     {
-        /** */
+        /** Small conflict builder record. */
         final ConflictBuilderRecordSmall cbr;
 
-        /** */
+        /** Number of jobs to do. */
         final AtomicInteger nrOfJobs;
 
         /**
-         * @param nrOfJobs nr
-         * @param cbr the record to execute
+         * Constructor.
+         * @param nrOfJobs AtomicInteger; number of jobs to do.
+         * @param cbr ConflictBuilderRecordSmall; the record to execute.
          */
         CbrTaskSmall(final AtomicInteger nrOfJobs, final ConflictBuilderRecordSmall cbr)
         {
@@ -1303,76 +1308,69 @@ public final class ConflictBuilder
             this.cbr = cbr;
         }
 
+        /** {@inheritDoc} */
         @Override
         public void run()
         {
-            // System.err.println("conflict #" + this.nr);
             try
             {
-                buildConflictsSmall(this.cbr);
+                buildConflicts(this.cbr.lane1, this.cbr.down1, this.cbr.up1, this.cbr.lane2, this.cbr.down2, this.cbr.up2,
+                        this.cbr.permitted, this.cbr.simulator, this.cbr.widthGenerator, this.cbr.leftEdges,
+                        this.cbr.rightEdges, false, null);
             }
-            catch (Exception e)
+            catch (NetworkException | OtsGeometryException ne)
             {
-                e.printStackTrace();
+                throw new RuntimeException("Conflict build with bad combination of types / rules.", ne);
             }
             this.nrOfJobs.decrementAndGet();
         }
-
     }
 
     /**
-     * Build conflicts for one record.
-     * @param cbr the lane record
+     * Small conflict builder record. Small means this holds the information to create conflicts between two lanes.
+     * <p>
+     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    static void buildConflictsSmall(final ConflictBuilderRecordSmall cbr)
-    {
-        // See if conflict needs to be build, and build if so
-        try
-        {
-            buildConflicts(cbr.lane1, cbr.down1, cbr.up1, cbr.lane2, cbr.down2, cbr.up2, cbr.permitted, cbr.simulator,
-                    cbr.widthGenerator, cbr.leftEdges, cbr.rightEdges, false, null);
-        }
-        catch (NetworkException | OtsGeometryException ne)
-        {
-            throw new RuntimeException("Conflict build with bad combination of types / rules.", ne);
-        }
-    }
-
-    /** */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     static class ConflictBuilderRecordSmall
     {
-        /** */
+        /** Lane 1. */
         final Lane lane1;
 
-        /** */
+        /** Downstream lanes of lanes 1. */
         final Set<Lane> down1;
 
-        /** */
+        /** Upstream lanes of lane 1. */
         final Set<Lane> up1;
 
-        /** */
+        /** Lane 2. */
         final Lane lane2;
 
-        /** */
+        /** Downstream lanes of lane 2. */
         final Set<Lane> down2;
 
-        /** */
+        /** Upstream lanes of lane 2. */
         final Set<Lane> up2;
 
-        /** */
+        /** Whether the conflict is permitted at a traffic light. */
         final boolean permitted;
 
-        /** */
+        /** Simulator. */
         final OtsSimulatorInterface simulator;
 
-        /** */
+        /** Width generator. */
         final WidthGenerator widthGenerator;
 
-        /** */
+        /** Cache of left edges. */
         final Map<Lane, OtsLine2d> leftEdges;
 
-        /** */
+        /** Cache of right edges. */
         final Map<Lane, OtsLine2d> rightEdges;
 
         /**
@@ -1409,18 +1407,30 @@ public final class ConflictBuilder
         }
     }
 
-    /** */
+    /**
+     * Large conflict builder task. A large task is finding all conflicts between one particular lane, and all lanes further in
+     * a list.
+     * <p>
+     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     */
     static class CbrTaskBig implements Runnable
     {
-        /** */
+        /** Big conflict builder record. */
         final ConflictBuilderRecordBig cbr;
 
-        /** */
+        /** Number of jobs to do. */
         final AtomicInteger nrOfJobs;
 
         /**
-         * @param nrOfJobs nr
-         * @param cbr the record to execute
+         * Constructor.
+         * @param nrOfJobs AtomicInteger; number of jobs to do.
+         * @param cbr ConflictBuilderRecordBig; the record to execute.
          */
         CbrTaskBig(final AtomicInteger nrOfJobs, final ConflictBuilderRecordBig cbr)
         {
@@ -1428,44 +1438,46 @@ public final class ConflictBuilder
             this.cbr = cbr;
         }
 
+        /** {@inheritDoc} */
         @Override
         public void run()
         {
-            // System.err.println("conflict #" + this.nr);
             try
             {
+                Lane lane1 = this.cbr.lanes.get(this.cbr.starti);
+                Set<Lane> up1 = lane1.prevLanes(null);
+                Set<Lane> down1 = lane1.nextLanes(null);
                 for (int j = this.cbr.starti + 1; j < this.cbr.lanes.size(); j++)
                 {
                     Lane lane2 = this.cbr.lanes.get(j);
-                    if (this.cbr.ignoreList.contains(this.cbr.lane1, lane2))
+                    if (this.cbr.ignoreList.contains(lane1, lane2))
                     {
                         continue;
                     }
                     // Quick contour check, skip if non-overlapping envelopes
                     try
                     {
-                        if (!this.cbr.lane1.getContour().intersects(lane2.getContour()))
+                        if (!lane1.getContour().intersects(lane2.getContour()))
                         {
                             continue;
                         }
                     }
                     catch (Exception e)
                     {
-                        System.err.println("Contour problem - lane1 = [" + this.cbr.lane1.getFullId() + "], lane2 = ["
+                        System.err.println("Contour problem - lane1 = [" + lane1.getFullId() + "], lane2 = ["
                                 + lane2.getFullId() + "]; skipped");
                         continue;
                     }
 
-                    boolean permitted = this.cbr.permittedList.contains(this.cbr.lane1, lane2);
+                    boolean permitted = this.cbr.permittedList.contains(lane1, lane2);
 
                     Set<Lane> down2 = lane2.nextLanes(null);
                     Set<Lane> up2 = lane2.prevLanes(null);
 
                     try
                     {
-                        buildConflicts(this.cbr.lane1, this.cbr.down1, this.cbr.up1, lane2, down2, up2, permitted,
-                                this.cbr.simulator, this.cbr.widthGenerator, this.cbr.leftEdges, this.cbr.rightEdges, false,
-                                null);
+                        buildConflicts(lane1, down1, up1, lane2, down2, up2, permitted, this.cbr.simulator,
+                                this.cbr.widthGenerator, this.cbr.leftEdges, this.cbr.rightEdges, false, null);
                     }
                     catch (NetworkException | OtsGeometryException ne)
                     {
@@ -1483,41 +1495,43 @@ public final class ConflictBuilder
         }
     }
 
-    /** */
+    /**
+     * Big conflict builder record. Big means this holds the information to create conflicts between one particular lane, and
+     * all lanes further in a list.
+     * <p>
+     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     static class ConflictBuilderRecordBig
     {
-        /** */
+        /** Start index of the particular lane. */
         final int starti;
 
-        /** */
+        /** List of all lanes. */
         final List<Lane> lanes;
 
-        /** */
+        /** Combinations to ignore. */
         final LaneCombinationList ignoreList;
 
-        /** */
+        /** Combinations of permitted conflicts. */
         final LaneCombinationList permittedList;
 
-        /** */
-        final Lane lane1;
-
-        /** */
-        final Set<Lane> down1;
-
-        /** */
-        final Set<Lane> up1;
-
-        /** */
+        /** Simulator. */
         final OtsSimulatorInterface simulator;
 
-        /** */
+        /** Width generator. */
         final WidthGenerator widthGenerator;
 
-        /** */
+        /** Cache of left edges. */
         final Map<Lane, OtsLine2d> leftEdges;
 
-        /** */
+        /** Cache of right edges. */
         final Map<Lane, OtsLine2d> rightEdges;
 
         /**
@@ -1526,9 +1540,6 @@ public final class ConflictBuilder
          * @param lanes List of lanes
          * @param ignoreList list of lane combinations to ignore
          * @param permittedList list of lane combinations to permit
-         * @param lane1 Lane; lane 1
-         * @param down1 Set&lt;Lane&gt;; downstream lanes 1
-         * @param up1 Set&lt;Lane&gt;; upstream lanes 1
          * @param simulator OtsSimulatorInterface; simulator
          * @param widthGenerator WidthGenerator; width generator
          * @param leftEdges Map&lt;Lane, OtsLine2d&gt;; cache of left edge lines
@@ -1536,17 +1547,14 @@ public final class ConflictBuilder
          */
         @SuppressWarnings("checkstyle:parameternumber")
         ConflictBuilderRecordBig(final int starti, final List<Lane> lanes, final LaneCombinationList ignoreList,
-                final LaneCombinationList permittedList, final Lane lane1, final Set<Lane> down1, final Set<Lane> up1,
-                final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator,
-                final Map<Lane, OtsLine2d> leftEdges, final Map<Lane, OtsLine2d> rightEdges)
+                final LaneCombinationList permittedList, final OtsSimulatorInterface simulator,
+                final WidthGenerator widthGenerator, final Map<Lane, OtsLine2d> leftEdges,
+                final Map<Lane, OtsLine2d> rightEdges)
         {
             this.starti = starti;
             this.lanes = lanes;
             this.ignoreList = ignoreList;
             this.permittedList = permittedList;
-            this.lane1 = lane1;
-            this.down1 = down1;
-            this.up1 = up1;
             this.simulator = simulator;
             this.widthGenerator = widthGenerator;
             this.leftEdges = leftEdges;
