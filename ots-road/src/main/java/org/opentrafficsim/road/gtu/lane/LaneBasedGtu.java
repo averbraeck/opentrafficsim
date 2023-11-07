@@ -209,24 +209,24 @@ public class LaneBasedGtu extends Gtu
         Throw.when(null == initialLongitudinalPositions, GtuException.class, "InitialLongitudinalPositions is null");
         Throw.when(0 == initialLongitudinalPositions.size(), GtuException.class, "InitialLongitudinalPositions is empty set");
 
-        for (LanePosition pos : new LinkedHashSet<LanePosition>(initialLongitudinalPositions)) // copy
-        {
-            double fracFront = (pos.getPosition().si + getFront().getDx().si) / pos.getLane().getLength().si;
-            if (fracFront > 1.0)
-            {
-                System.err.println("GTU " + toString() + " has been destroyed at init since it occupied multiple lanes");
-                this.destroy();
-                return;
-            }
-            double fracRear = (pos.getPosition().si - getRear().getDx().si) / pos.getLane().getLength().si;
-            if (fracRear < 0.0)
-            {
-                System.err.println("GTU " + toString() + " has been destroyed at init since it occupied multiple lanes");
-                this.destroy();
-                return;
-            }
-
-        }
+//        for (LanePosition pos : new LinkedHashSet<LanePosition>(initialLongitudinalPositions)) // copy
+//        {
+//            double fracFront = (pos.getPosition().si + getFront().getDx().si) / pos.getLane().getLength().si;
+//            if (fracFront > 1.0)
+//            {
+//                System.err.println("GTU " + toString() + " has been destroyed at init since it occupied multiple lanes");
+//                this.destroy();
+//                return;
+//            }
+//            double fracRear = (pos.getPosition().si - getRear().getDx().si) / pos.getLane().getLength().si;
+//            if (fracRear < 0.0)
+//            {
+//                System.err.println("GTU " + toString() + " has been destroyed at init since it occupied multiple lanes");
+//                this.destroy();
+//                return;
+//            }
+//
+//        }
 
         OrientedPoint2d lastPoint = null;
         for (LanePosition pos : initialLongitudinalPositions)

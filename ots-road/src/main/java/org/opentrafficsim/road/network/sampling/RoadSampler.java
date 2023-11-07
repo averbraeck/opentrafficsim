@@ -251,14 +251,41 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
             if (isIntervalBased())
             {
-                Duration nowOnFirstEncounterOtherwiseAtInterval = active ? this.samplingInterval : Duration.ZERO;
-                scheduleSamplingInterval(gtu, lane, nowOnFirstEncounterOtherwiseAtInterval);
+
+                double currentTime = now().getSI();
+                double nextTenth = Math.floor(currentTime*10)/10;
+                Duration d;
+                if(nextTenth!=currentTime){
+                    d = Duration.instantiateSI(nextTenth+0.1 - currentTime);
+                }else{
+                    d = Duration.ZERO;
+                }
+                System.out.println(d.getSI());
+
+                Event e = new TimedEvent<>(Lane.GTU_SCHEDULE,
+                        new Object[] {gtu.getId(), lane.getId(), lane.getLink().getId()},
+                        gtu.getSimulator().getSimulatorTime());
+
+                this.simulator.scheduleEventRel(d, this, "notify", new Object[] {e});
             }
             else
             {
                 this.activeLanesPerGtu.computeIfAbsent(gtu.getId(), (key) -> new LinkedHashSet<>()).add(lane);
                 gtu.addListener(this, LaneBasedGtu.LANEBASED_MOVE_EVENT, ReferenceType.WEAK);
             }
+        }
+        else if (event.getType().equals(Lane.GTU_SCHEDULE)){
+            Object[] payload = (Object[]) event.getContent();
+            Lane lane = (Lane) ((CrossSectionLink) this.network.getLink((String) payload[2]))
+                    .getCrossSectionElement((String) payload[1]);
+
+            LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU((String) payload[0]);
+
+            boolean active = this.activeGtus.contains(gtu.getId());
+
+           Duration nowOnFirstEncounterOtherwiseAtInterval = active ? this.samplingInterval : Duration.ZERO;
+           System.out.println("Scheduling Sampling at "+now().getSI());
+           scheduleSamplingInterval(gtu, lane, nowOnFirstEncounterOtherwiseAtInterval);
         }
         else if (event.getType().equals(Lane.GTU_REMOVE_EVENT))
         {
