@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.geometry.OtsLine2d;
@@ -157,13 +159,16 @@ public class Stripe extends CrossSectionElement
         DOUBLE(false, false),
 
         /** Block : allow to cross in both directions. */
-        BLOCK(true, true);
+        BLOCK(true, true, new Length(40.0, LengthUnit.CENTIMETER));
 
         /** Left permeable. */
         private final boolean left;
 
         /** Right permeable. */
         private final boolean right;
+        
+        /** Default width. */
+        private final Length defaultWidth;
 
         /**
          * Constructor setting permeability.
@@ -172,8 +177,20 @@ public class Stripe extends CrossSectionElement
          */
         Type(final boolean left, final boolean right)
         {
+            this(left, right, new Length(20.0, LengthUnit.CENTIMETER));
+        }
+        
+        /**
+         * Constructor setting permeability.
+         * @param left boolean; left permeability.
+         * @param right boolean; right permeability.
+         * @param defaultWidth Length; default width.
+         */
+        Type(final boolean left, final boolean right, final Length defaultWidth)
+        {
             this.left = left;
             this.right = right;
+            this.defaultWidth = defaultWidth;
         }
 
         /**
@@ -192,6 +209,15 @@ public class Stripe extends CrossSectionElement
         public boolean right()
         {
             return this.right;
+        }
+        
+        /**
+         * Returns the default width.
+         * @return Length; default width.
+         */
+        public Length defaultWidth()
+        {
+            return this.defaultWidth;
         }
     }
 
