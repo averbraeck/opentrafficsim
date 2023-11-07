@@ -102,7 +102,7 @@
 					<ots:Width>3.5m</ots:Width>
 				</ots:Lane>
 				<ots:Stripe Type="DASHED">
-					<ots:CenterOffset>2.25m</ots:CenterOffset>
+					<ots:CenterOffset>1.75m</ots:CenterOffset>
 				</ots:Stripe>
 				<ots:Lane Id="TURNLANE" LaneType="URBAN">
 					<ots:CenterOffsetStart>0.0m</ots:CenterOffsetStart>
