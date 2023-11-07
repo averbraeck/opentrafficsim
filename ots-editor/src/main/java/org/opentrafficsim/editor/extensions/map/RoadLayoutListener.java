@@ -98,9 +98,12 @@ public class RoadLayoutListener extends LocalEventProducer implements EventListe
         {
             return;
         }
-        for (XsdTreeNode child : node.getChildren())
+        if (node.getChildCount() > 0)
         {
-            removeAsListener(child);
+            for (XsdTreeNode child : node.getChildren())
+            {
+                removeAsListener(child);
+            }
         }
         node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
         node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
