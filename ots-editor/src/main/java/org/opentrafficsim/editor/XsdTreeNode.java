@@ -1780,9 +1780,9 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * @param index int; index of the attribute.
      * @return XsdTreeNode; node to which an attribute refers via a KeyValidator, or {@code null} if no such node.
      */
-    public XsdTreeNode getCoupledKeyrefNode(final int index)
+    public XsdTreeNode getCoupledKeyrefNodeAttribute(final int index)
     {
-        return getCoupledKeyrefNode(getAttributeNameByIndex(index));
+        return getCoupledKeyrefNodeAttribute(getAttributeNameByIndex(index));
     }
 
     /**
@@ -1790,18 +1790,38 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * @param attribute String; attribute name.
      * @return XsdTreeNode; node to which an attribute refers via a KeyValidator, or {@code null} if no such node.
      */
-    public XsdTreeNode getCoupledKeyrefNode(final String attribute)
+    public XsdTreeNode getCoupledKeyrefNodeAttribute(final String attribute)
     {
         if (this.attributeValidators.containsKey(attribute))
         {
-            for (ValueValidator validator : this.attributeValidators.get(attribute))
+            return getCoupledKeyrefNode(this.attributeValidators.get(attribute));
+        }
+        return null;
+    }
+    
+    /**
+     * Returns the node to which the value refers via a KeyValidator.
+     * @return XsdTreeNode; node to which the value refers via a KeyValidator, or {@code null} if no such node.
+     */
+    public XsdTreeNode getCoupledKeyrefNodeValue()
+    {
+        return getCoupledKeyrefNode(this.valueValidators);
+    }
+    
+    /**
+     * Return coupled node via a key validator.
+     * @param validators Set&lt;ValueValidator&gt;; validators.
+     * @return XsdTreeNode; coupled node via a key validator.
+     */
+    private XsdTreeNode getCoupledKeyrefNode(final Set<ValueValidator> validators)
+    {
+        for (ValueValidator validator : validators)
+        {
+            if (validator instanceof KeyValidator)
             {
-                if (validator instanceof KeyValidator)
-                {
-                    KeyValidator key = (KeyValidator) validator;
-                    key.validate(this); // to trigger finding the right node should value have changed
-                    return key.getCoupledKeyrefNode(this);
-                }
+                KeyValidator key = (KeyValidator) validator;
+                key.validate(this); // to trigger finding the right node should value have changed
+                return key.getCoupledKeyrefNode(this);
             }
         }
         return null;

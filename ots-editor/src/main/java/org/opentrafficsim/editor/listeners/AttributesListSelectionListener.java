@@ -58,7 +58,7 @@ public class AttributesListSelectionListener implements ListSelectionListener, E
         if (index >= 0)
         {
             this.attribute = node.getAttributeNameByIndex(index);
-            this.editor.setCoupledNode(node.getCoupledKeyrefNode(index), node, this.attribute);
+            this.editor.setCoupledNode(node.getCoupledKeyrefNodeAttribute(index), node, this.attribute);
         }
         if (this.listening != null)
         {
@@ -77,7 +77,7 @@ public class AttributesListSelectionListener implements ListSelectionListener, E
     {
         if (this.attribute.equals(((Object[]) event.getContent())[1]))
         {
-            XsdTreeNode coupled = this.listening.getCoupledKeyrefNode(this.listening.getAttributeIndexByName(this.attribute));
+            XsdTreeNode coupled = this.listening.getCoupledKeyrefNodeAttribute(this.listening.getAttributeIndexByName(this.attribute));
             this.editor.setCoupledNode(coupled, this.listening, this.attribute);
         }
     }

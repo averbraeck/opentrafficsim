@@ -50,7 +50,7 @@ public abstract class MapData implements EvalListener
     {
         return this.node;
     }
-
+    
     /**
      * Returns the evaluator for expressions.
      * @return Eval; evaluator for expressions.
@@ -83,6 +83,15 @@ public abstract class MapData implements EvalListener
     void setInvalid()
     {
         this.map.setInvalid(this);
+    }
+    
+    /** 
+     * Returns the map.
+     * @return Map; map.
+     */
+    public Map getMap()
+    {
+        return this.map;
     }
 
     /**

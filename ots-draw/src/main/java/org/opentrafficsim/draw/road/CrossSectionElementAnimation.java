@@ -10,6 +10,7 @@ import java.util.List;
 import javax.naming.NamingException;
 
 import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.PaintPolygons;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
 
@@ -83,5 +84,23 @@ public class CrossSectionElementAnimation extends Renderable2d<CrossSectionEleme
         /** {@inheritDoc} */
         @Override
         Point2d getLocation();
+    }
+    
+    /**
+     * ShoulderData provides the information required to draw a shoulder.
+     * <p>
+     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     */
+    public interface ShoulderData extends CrossSectionElementData
+    {
+        /** {@inheritDoc} */
+        @Override
+        default public double getZ()
+        {
+            return DrawLevel.SHOULDER.getZ();
+        }
     }
 }

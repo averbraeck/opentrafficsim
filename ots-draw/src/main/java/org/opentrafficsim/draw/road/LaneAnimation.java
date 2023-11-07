@@ -49,6 +49,9 @@ public class LaneAnimation extends Renderable2d<LaneData> implements Renderable2
 
     /** the Text object to destroy when the animation is destroyed. */
     private final Text text;
+    
+    /** Center line animation. */
+    private final CenterLineAnimation centerLineAnimation;
 
     /**
      * Animate a Lane.
@@ -64,7 +67,7 @@ public class LaneAnimation extends Renderable2d<LaneData> implements Renderable2
         super(lane, contextualized);
         this.color = color;
         this.text = new Text(lane, lane::getId, 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, contextualized);
-        new CenterLineAnimation(new CenterLine(lane.getCenterLine(), lane.getId()), contextualized);
+        this.centerLineAnimation = new CenterLineAnimation(new CenterLine(lane.getCenterLine(), lane.getId()), contextualized);
     }
 
     /**
@@ -92,6 +95,7 @@ public class LaneAnimation extends Renderable2d<LaneData> implements Renderable2
     {
         super.destroy(contextProvider);
         this.text.destroy(contextProvider);
+        this.centerLineAnimation.destroy(contextProvider);
     }
 
     /** {@inheritDoc} */

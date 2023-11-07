@@ -69,7 +69,7 @@ public class XsdTreeSelectionListener implements TreeSelectionListener, EventLis
             }
             if (node.isIdentifiable())
             {
-                this.editor.setCoupledNode(node.getCoupledKeyrefNode("Id"), node, null);
+                this.editor.setCoupledNode(node.getCoupledKeyrefNodeAttribute("Id"), node, null);
                 this.listening = node;
                 this.listening.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
             }
@@ -132,7 +132,7 @@ public class XsdTreeSelectionListener implements TreeSelectionListener, EventLis
     {
         if ("Id".equals(((Object[]) event.getContent())[1]))
         {
-            XsdTreeNode coupled = this.listening.getCoupledKeyrefNode(this.listening.getAttributeIndexByName("Id"));
+            XsdTreeNode coupled = this.listening.getCoupledKeyrefNodeAttribute(this.listening.getAttributeIndexByName("Id"));
             this.editor.setCoupledNode(coupled, this.listening, null);
         }
     }

@@ -14,10 +14,12 @@ import javax.naming.NamingException;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
+import org.djutils.event.reference.ReferenceType;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation;
@@ -74,6 +76,9 @@ public class Map extends JPanel implements EventListener
 
     /** Weak references to all created link data's. */
     private final WeakHashMap<MapLinkData, Object> links = new WeakHashMap<>();
+
+    /** Listeners to road layouts. */
+    private final LinkedHashMap<XsdTreeNode, RoadLayoutListener> roadLayoutListeners = new LinkedHashMap<>();
 
     /** Animation objects of all data's drawn. */
     private final LinkedHashMap<XsdTreeNode, Renderable2d<?>> animations = new LinkedHashMap<>();
@@ -210,9 +215,19 @@ public class Map extends JPanel implements EventListener
             {
                 remove(node);
             }
-            this.links.clear();
-            this.animations.clear();
             this.datas.clear();
+            this.links.clear();
+            for (Renderable2d<?> animation : this.animations.values())
+            {
+                animation.destroy(this.contextualized);
+                removeAnimation(animation);
+            }
+            this.animations.clear();
+            for (RoadLayoutListener roadLayoutListener : this.roadLayoutListeners.values())
+            {
+                roadLayoutListener.destroy();
+            }
+            this.roadLayoutListeners.clear();
             XsdTreeNodeRoot root = (XsdTreeNodeRoot) event.getContent();
             root.addListener(this, XsdTreeNodeRoot.NODE_CREATED);
             root.addListener(this, XsdTreeNodeRoot.NODE_REMOVED);
@@ -237,6 +252,10 @@ public class Map extends JPanel implements EventListener
                     linkData.addCoordinate(node);
                 }
             }
+            else if (node.getPathString().equals(XsdPaths.DEFINED_ROADLAYOUT))
+            {
+                addRoadLayout(node);
+            }
         }
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
         {
@@ -253,6 +272,10 @@ public class Map extends JPanel implements EventListener
                     linkData.removeCoordinate(node);
                 }
             }
+            else if (node.getPathString().equals(XsdPaths.DEFINED_ROADLAYOUT))
+            {
+                removeRoadLayout(node);
+            }
         }
         else if (event.getType().equals(XsdTreeNode.ACTIVATION_CHANGED))
         {
@@ -260,13 +283,24 @@ public class Map extends JPanel implements EventListener
             XsdTreeNode node = (XsdTreeNode) content[0];
             if (isType(node))
             {
-                if (node.isActive())
+                if ((boolean) content[1])
                 {
                     add(node);
                 }
                 else
                 {
                     remove(node);
+                }
+            }
+            else if (node.getPathString().equals(XsdPaths.DEFINED_ROADLAYOUT))
+            {
+                if ((boolean) content[1])
+                {
+                    addRoadLayout(node);
+                }
+                else
+                {
+                    removeRoadLayout(node);
                 }
             }
         }
@@ -360,6 +394,10 @@ public class Map extends JPanel implements EventListener
     private void add(final XsdTreeNode node) throws RemoteException
     {
         MapData data;
+        if (this.datas.containsKey(node))
+        {
+            return; // activated choice
+        }
         if (node.getPathString().equals(XsdPaths.NODE))
         {
             data = new MapNodeData(this, node, this.editor);
@@ -369,6 +407,10 @@ public class Map extends JPanel implements EventListener
         {
             MapLinkData linkData = new MapLinkData(this, node, this.editor);
             data = linkData;
+            for (RoadLayoutListener roadLayoutListener : this.roadLayoutListeners.values())
+            {
+                roadLayoutListener.addListener(linkData, RoadLayoutListener.LAYOUT_CHANGED, ReferenceType.WEAK);
+            }
             this.links.put(linkData, null);
         }
         else
@@ -396,6 +438,10 @@ public class Map extends JPanel implements EventListener
                 MapLinkData link = it.next();
                 if (link.getNode().equals(node))
                 {
+                    for (RoadLayoutListener roadLayoutListener : this.roadLayoutListeners.values())
+                    {
+                        roadLayoutListener.removeListener(link, RoadLayoutListener.LAYOUT_CHANGED);
+                    }
                     it.remove();
                 }
             }
@@ -405,12 +451,68 @@ public class Map extends JPanel implements EventListener
         {
             data.destroy();
         }
-        Renderable2d<?> animation = this.animations.remove(node);
+        removeAnimation(this.animations.remove(node));
+    }
+
+    /**
+     * Add defined road layout.
+     * @param node XsdTreeNode; node of the defined road layout.
+     */
+    private void addRoadLayout(final XsdTreeNode node)
+    {
+        RoadLayoutListener roadLayoutListener = new RoadLayoutListener(node, () -> this.editor.getEval());
+        for (MapLinkData linkData : this.links.keySet())
+        {
+            roadLayoutListener.addListener(linkData, RoadLayoutListener.LAYOUT_CHANGED, ReferenceType.WEAK);
+        }
+        // to draw upon loading xml
+        SwingUtilities.invokeLater(() ->
+        {
+            roadLayoutListener.fireEvent(new Event(RoadLayoutListener.LAYOUT_CHANGED, node));
+        });
+        this.roadLayoutListeners.put(node, roadLayoutListener);
+    }
+
+    /**
+     * Remove defined road layout.
+     * @param node XsdTreeNode; node of the defined road layout.
+     */
+    private void removeRoadLayout(final XsdTreeNode node)
+    {
+        RoadLayoutListener roadLayoutListener = this.roadLayoutListeners.remove(node);
+        roadLayoutListener.destroy();
+    }
+
+    /**
+     * Returns the road layout listener from which a {@code MapLinkData} can obtain offsets.
+     * @param node XsdTreeNode; node of a defined layout.
+     * @return RoadLayoutListener; listener, can be used to obtain offsets.
+     */
+    RoadLayoutListener getRoadLayoutListener(final XsdTreeNode node)
+    {
+        return this.roadLayoutListeners.get(node);
+    }
+
+    /**
+     * Remove animation.
+     * @param animation Renderable2d&lt;?&gt;; animation to remove.
+     */
+    void removeAnimation(final Renderable2d<?> animation)
+    {
         if (animation != null)
         {
             this.drawPanel.objectRemoved(animation);
             animation.destroy(this.contextualized);
         }
+    }
+
+    /**
+     * Returns the context.
+     * @return Contextualized; context.
+     */
+    Contextualized getContextualized()
+    {
+        return this.contextualized;
     }
 
 }

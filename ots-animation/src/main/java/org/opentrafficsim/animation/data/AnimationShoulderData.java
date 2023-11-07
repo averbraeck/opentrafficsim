@@ -1,6 +1,6 @@
 package org.opentrafficsim.animation.data;
 
-import org.opentrafficsim.draw.DrawLevel;
+import org.opentrafficsim.draw.road.CrossSectionElementAnimation.ShoulderData;
 import org.opentrafficsim.road.network.lane.Shoulder;
 
 /**
@@ -11,7 +11,7 @@ import org.opentrafficsim.road.network.lane.Shoulder;
  * </p>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class AnimationShoulderData extends AnimationCrossSectionElementData<Shoulder>
+public class AnimationShoulderData extends AnimationCrossSectionElementData<Shoulder> implements ShoulderData
 {
 
     /**
@@ -23,13 +23,6 @@ public class AnimationShoulderData extends AnimationCrossSectionElementData<Shou
         super(shoulder);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public double getZ()
-    {
-        return DrawLevel.SHOULDER.getZ();
-    }
-    
     /** {@inheritDoc} */
     @Override
     public String toString()
