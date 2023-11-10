@@ -138,9 +138,12 @@ public class StripeAnimation extends Renderable2d<StripeData> implements Rendera
             case DOUBLE:// ||- Draw two solid lines
             {
                 PolyLine2d centerLine = stripe.getCenterLine();
-                List<Point2d> result = new ArrayList<>(centerLine.size() * 2);
+                List<Point2d> result = new ArrayList<>(centerLine.size() * 4 + 1);
                 centerLine.offsetLine(width / 2).getPoints().forEachRemaining(result::add);
-                centerLine.offsetLine(-width / 2).reverse().getPoints().forEachRemaining(result::add);
+                centerLine.offsetLine(width / 6).reverse().getPoints().forEachRemaining(result::add);
+                result.add(PaintPolygons.NEWPATH);
+                centerLine.offsetLine(-width / 2).getPoints().forEachRemaining(result::add);
+                centerLine.offsetLine(-width / 6).reverse().getPoints().forEachRemaining(result::add);
                 return result;
             }
 
@@ -148,7 +151,9 @@ public class StripeAnimation extends Renderable2d<StripeData> implements Rendera
             {
                 PolyLine2d centerLine = stripe.getCenterLine();
                 List<Point2d> result = makeDashes(centerLine.offsetLine(-width / 3), width / 3, 0.0, new double[] {3, 9});
-                centerLine.offsetLine(width / 3).getPoints().forEachRemaining(result::add);
+                result.add(PaintPolygons.NEWPATH);
+                centerLine.offsetLine(width / 2).getPoints().forEachRemaining(result::add);
+                centerLine.offsetLine(width / 6).reverse().getPoints().forEachRemaining(result::add);
                 return result;
             }
 
@@ -156,11 +161,13 @@ public class StripeAnimation extends Renderable2d<StripeData> implements Rendera
             {
                 PolyLine2d centerLine = stripe.getCenterLine();
                 ArrayList<Point2d> result = makeDashes(centerLine.offsetLine(width / 3), width / 3, 0.0, new double[] {3, 9});
-                centerLine.offsetLine(-width / 3).getPoints().forEachRemaining(result::add);
+                result.add(PaintPolygons.NEWPATH);
+                centerLine.offsetLine(-width / 2).getPoints().forEachRemaining(result::add);
+                centerLine.offsetLine(-width / 6).reverse().getPoints().forEachRemaining(result::add);
                 return result;
             }
 
-            case SOLID:// | - Draw single solid line. This (regretfully) involves copying everything twice...
+            case SOLID: // | - Draw single solid line
                 List<Point2d> result = new ArrayList<>(stripe.getContour().size());
                 stripe.getContour().iterator().forEachRemaining(result::add);
                 return result;

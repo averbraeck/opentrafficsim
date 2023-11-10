@@ -147,16 +147,16 @@ public class Stripe extends CrossSectionElement
         SOLID(false, false),
 
         /** Line |¦ allow to go to left, but not to right. */
-        LEFT(true, false),
+        LEFT(true, false, new Length(60.0, LengthUnit.CENTIMETER)),
 
         /** Line ¦| allow to go to right, but not to left. */
-        RIGHT(false, true),
+        RIGHT(false, true, new Length(60.0, LengthUnit.CENTIMETER)),
 
         /** Dashes ¦ allow to cross in both directions. */
         DASHED(true, true),
 
         /** Double solid line ||, don't cross. */
-        DOUBLE(false, false),
+        DOUBLE(false, false, new Length(60.0, LengthUnit.CENTIMETER)),
 
         /** Block : allow to cross in both directions. */
         BLOCK(true, true, new Length(40.0, LengthUnit.CENTIMETER));
