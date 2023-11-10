@@ -15,6 +15,7 @@ import org.djutils.event.EventListener;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.event.reference.ReferenceType;
+import org.djutils.exceptions.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.editor.XsdTreeNode;
@@ -179,6 +180,18 @@ public class RoadLayoutListener extends LocalEventProducer implements EventListe
             {
                 /** Index. */
                 private int index = 0;
+                
+                /** Cached start width. */
+                private Length widthStart;
+                
+                /** Cached end width. */
+                private Length widthEnd;
+                
+                /** Cached start offset. */
+                private Length offsetStart;
+                
+                /** Cached end offset. */
+                private Length offsetEnd;
 
                 /** {@inheritDoc} */
                 @Override
@@ -197,6 +210,118 @@ public class RoadLayoutListener extends LocalEventProducer implements EventListe
                             return false;
                         }
                     }
+                    
+                    // the following performs a further check whether the next element is ready
+                    try
+                    {
+                        XsdTreeNode node = children.get(this.index);
+                        if (node.getNodeName().equals("Stripe"))
+                        {
+                            this.widthStart = Length.ZERO;
+                            this.widthEnd = Length.ZERO;
+                            if (!node.getChild(0).getNodeName().equals("xsd:sequence"))
+                            {
+                                // CenterOffset
+                                this.offsetStart = getLength(node.getChild(0));
+                                this.offsetEnd = this.offsetStart;
+                            }
+                            else if (node.getChild(0).isActive())
+                            {
+                                // CenterOffsetStart and CenterOffsetEnd
+                                this.offsetStart = getLength(node.getChild(0).getChild(0));
+                                this.offsetEnd = getLength(node.getChild(0).getChild(1));
+                            }
+                            else
+                            {
+                                this.offsetStart = null;
+                                this.offsetEnd = null;
+                            }
+                            getLength(node.getChild(1)); // test drawing width availability, or catch otherwise
+                        }
+                        else
+                        {
+                            if (!node.getChild(1).getNodeName().equals("xsd:sequence"))
+                            {
+                                // Width
+                                this.widthStart = getLength(node.getChild(1));
+                                this.widthEnd = this.widthStart;
+                            }
+                            else
+                            {
+                                // WidthStart and WidthEnd
+                                this.widthStart = getLength(node.getChild(1).getChild(0));
+                                this.widthEnd = getLength(node.getChild(1).getChild(1));
+                            }
+                            Length halfWidthStart = this.widthStart.times(0.5);
+                            Length halfWidthEnd = this.widthEnd.times(0.5);
+
+                            if (node.getChild(0).getNodeName().equals("CenterOffset"))
+                            {
+                                this.offsetStart = getLength(node.getChild(0));
+                                this.offsetEnd = this.offsetStart;
+                            }
+                            else if (node.getChild(0).getNodeName().equals("LeftOffset"))
+                            {
+                                Length leftOffset = getLength(node.getChild(0));
+                                this.offsetStart = leftOffset.minus(halfWidthStart);
+                                this.offsetEnd = leftOffset.minus(halfWidthEnd);
+                            }
+                            else if (node.getChild(0).getNodeName().equals("RightOffset"))
+                            {
+                                Length rightOffset = getLength(node.getChild(0));
+                                this.offsetStart = rightOffset.plus(halfWidthStart);
+                                this.offsetEnd = rightOffset.plus(halfWidthEnd);
+                            }
+                            else if (node.getChild(0).isActive())
+                            {
+                                if (node.getChild(0).getChild(0).getNodeName().equals("CenterOffsetStart"))
+                                {
+                                    this.offsetStart = getLength(node.getChild(0).getChild(0));
+                                }
+                                else if (node.getChild(0).getChild(0).getNodeName().equals("LeftOffsetStart"))
+                                {
+                                    this.offsetStart = getLength(node.getChild(0).getChild(0)).minus(halfWidthStart);
+                                }
+                                else if (node.getChild(0).getChild(0).getNodeName().equals("RightOffsetStart"))
+                                {
+                                    this.offsetStart = getLength(node.getChild(0).getChild(0)).plus(halfWidthStart);
+                                }
+                                else
+                                {
+                                    this.offsetStart = null;
+                                }
+
+                                if (node.getChild(0).getChild(1).getNodeName().equals("CenterOffsetEnd"))
+                                {
+                                    this.offsetEnd = getLength(node.getChild(0).getChild(1));
+                                }
+                                else if (node.getChild(0).getChild(1).getNodeName().equals("LeftOffsetEnd"))
+                                {
+                                    this.offsetEnd = getLength(node.getChild(0).getChild(1)).minus(halfWidthEnd);
+                                }
+                                else if (node.getChild(0).getChild(1).getNodeName().equals("RightOffsetEnd"))
+                                {
+                                    this.offsetEnd = getLength(node.getChild(0).getChild(1)).plus(halfWidthEnd);
+                                }
+                                else
+                                {
+                                    this.offsetEnd = null;
+                                }
+                            }
+                            else
+                            {
+                                this.offsetStart = null;
+                                this.offsetEnd = null;
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        // node is being copied, or some other intermediate state that is incomplete
+                        this.index++;
+                        return hasNext();
+                    }
+                    
                     return true;
                 }
 
@@ -204,109 +329,12 @@ public class RoadLayoutListener extends LocalEventProducer implements EventListe
                 @Override
                 public OffsetElement next()
                 {
-                    Length widthStart;
-                    Length widthEnd;
-                    Length offsetStart;
-                    Length offsetEnd;
+                    Throw.when(!hasNext(), IllegalStateException.class, "Iterator does not have a next element.");
                     XsdTreeNode node = children.get(this.index);
-                    if (node.getNodeName().equals("Stripe"))
-                    {
-                        widthStart = Length.ZERO;
-                        widthEnd = Length.ZERO;
-                        if (!node.getChild(0).getNodeName().equals("xsd:sequence"))
-                        {
-                            // CenterOffset
-                            offsetStart = getLength(node.getChild(0));
-                            offsetEnd = offsetStart;
-                        }
-                        else if (node.getChild(0).isActive())
-                        {
-                            // CenterOffsetStart and CenterOffsetEnd
-                            offsetStart = getLength(node.getChild(0).getChild(0));
-                            offsetEnd = getLength(node.getChild(0).getChild(1));
-                        }
-                        else
-                        {
-                            offsetStart = null;
-                            offsetEnd = null;
-                        }
-                    }
-                    else
-                    {
-                        if (!node.getChild(1).getNodeName().equals("xsd:sequence"))
-                        {
-                            // Width
-                            widthStart = getLength(node.getChild(1));
-                            widthEnd = widthStart;
-                        }
-                        else
-                        {
-                            // WidthStart and WidthEnd
-                            widthStart = getLength(node.getChild(1).getChild(0));
-                            widthEnd = getLength(node.getChild(1).getChild(1));
-                        }
-                        Length halfWidthStart = widthStart.times(0.5);
-                        Length halfWidthEnd = widthEnd.times(0.5);
-
-                        if (node.getChild(0).getNodeName().equals("CenterOffset"))
-                        {
-                            offsetStart = getLength(node.getChild(0));
-                            offsetEnd = offsetStart;
-                        }
-                        else if (node.getChild(0).getNodeName().equals("LeftOffset"))
-                        {
-                            Length leftOffset = getLength(node.getChild(0));
-                            offsetStart = leftOffset.minus(halfWidthStart);
-                            offsetEnd = leftOffset.minus(halfWidthEnd);
-                        }
-                        else if (node.getChild(0).getNodeName().equals("RightOffset"))
-                        {
-                            Length rightOffset = getLength(node.getChild(0));
-                            offsetStart = rightOffset.plus(halfWidthStart);
-                            offsetEnd = rightOffset.plus(halfWidthEnd);
-                        }
-                        else if (node.getChild(0).isActive())
-                        {
-                            if (node.getChild(0).getChild(0).getNodeName().equals("CenterOffsetStart"))
-                            {
-                                offsetStart = getLength(node.getChild(0).getChild(0));
-                            }
-                            else if (node.getChild(0).getChild(0).getNodeName().equals("LeftOffsetStart"))
-                            {
-                                offsetStart = getLength(node.getChild(0).getChild(0)).minus(halfWidthStart);
-                            }
-                            else if (node.getChild(0).getChild(0).getNodeName().equals("RightOffsetStart"))
-                            {
-                                offsetStart = getLength(node.getChild(0).getChild(0)).plus(halfWidthStart);
-                            }
-                            else
-                            {
-                                offsetStart = null;
-                            }
-
-                            if (node.getChild(0).getChild(1).getNodeName().equals("CenterOffsetEnd"))
-                            {
-                                offsetEnd = getLength(node.getChild(0).getChild(1));
-                            }
-                            else if (node.getChild(0).getChild(1).getNodeName().equals("LeftOffsetEnd"))
-                            {
-                                offsetEnd = getLength(node.getChild(0).getChild(1)).minus(halfWidthEnd);
-                            }
-                            else if (node.getChild(0).getChild(1).getNodeName().equals("RightOffsetEnd"))
-                            {
-                                offsetEnd = getLength(node.getChild(0).getChild(1)).plus(halfWidthEnd);
-                            }
-                            else
-                            {
-                                offsetEnd = null;
-                            }
-                        }
-                        else
-                        {
-                            offsetStart = null;
-                            offsetEnd = null;
-                        }
-                    }
+                    Length widthStart = this.widthStart == null ? null : Length.instantiateSI(this.widthStart.si);
+                    Length widthEnd = this.widthEnd == null ? null : Length.instantiateSI(this.widthEnd.si);
+                    Length offsetStart = this.offsetStart == null ? null : Length.instantiateSI(this.offsetStart.si);
+                    Length offsetEnd = this.offsetEnd == null ? null : Length.instantiateSI(this.offsetEnd.si);
                     OffsetElement offsetElement = new OffsetElement()
                     {
                         /** {@inheritDoc} */

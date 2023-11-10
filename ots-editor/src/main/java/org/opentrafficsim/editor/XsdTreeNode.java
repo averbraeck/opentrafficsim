@@ -1163,6 +1163,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         XsdTreeNode copyNode = emptyCopy(newParent);
         copyNode.active = this.active;
         copyInto(copyNode);
+        copyNode.invalidate();
         ((XsdTreeNodeRoot) copyNode.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                 new Object[] {copyNode, newParent, newParent.children.indexOf(copyNode)});
         return copyNode;
@@ -1209,17 +1210,6 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         {
             return;
         }
-        if (copyNode.children != null)
-        {
-            for (XsdTreeNode child : copyNode.getChildren())
-            {
-                int index = copyNode.children.indexOf(child);
-                copyNode.children.remove(index);
-                child.parent = null;
-                ((XsdTreeNodeRoot) copyNode.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_REMOVED,
-                        new Object[] {child, copyNode, index});
-            }
-        }
         copyNode.value = this.value;
         // copy choice
         if (this.choice != null)
@@ -1254,6 +1244,17 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             copyNode.attributeValues.set(index, this.attributeValues.get(index));
         }
         // copy children, recursive
+        if (copyNode.children != null)
+        {
+            for (XsdTreeNode child : copyNode.getChildren())
+            {
+                int index = copyNode.children.indexOf(child);
+                copyNode.children.remove(index);
+                child.parent = null;
+                ((XsdTreeNodeRoot) copyNode.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_REMOVED,
+                        new Object[] {child, copyNode, index});
+            }
+        }
         if (this.children != null)
         {
             for (int index = 0; index < this.children.size(); index++)
