@@ -52,7 +52,7 @@ public class RoadLayoutListener extends LocalEventProducer implements EventListe
 
     /** Node of the layout, under which the lanes etc. are located. */
     private final XsdTreeNode layoutNode;
-    
+
     /** Set of all elements that, when removed, change the layout. */
     private final Set<XsdTreeNode> elementNodes = new LinkedHashSet<>();
 
@@ -128,7 +128,7 @@ public class RoadLayoutListener extends LocalEventProducer implements EventListe
         {
             if (!node.getPath().contains(this.layoutNode) || node.getNodeName().equals("SpeedLimit"))
             {
-                // not the road layout node of this listener (with node created or removed event), or speed limit changed
+                // not the road layout node of this listener (with node created event), or speed limit changed
                 return;
             }
             node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED, ReferenceType.WEAK);
@@ -136,6 +136,7 @@ public class RoadLayoutListener extends LocalEventProducer implements EventListe
             node.addListener(this, XsdTreeNode.MOVED, ReferenceType.WEAK);
             node.addListener(this, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
             node.addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
+            // remember the nodes, as their paths are empty after being removed, hence .contains(this.layoutNode) does not work
             this.elementNodes.add(node);
         }
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
@@ -150,7 +151,7 @@ public class RoadLayoutListener extends LocalEventProducer implements EventListe
             node.removeListener(this, XsdTreeNode.OPTION_CHANGED);
             node.removeListener(this, XsdTreeNode.VALUE_CHANGED);
         }
-        // for all events, indicate a change
+        // for all events for which this method did not return, indicate a change
         this.cseDataDirty = true;
         fireEvent(LAYOUT_CHANGED, this.layoutNode);
     }
@@ -190,16 +191,16 @@ public class RoadLayoutListener extends LocalEventProducer implements EventListe
             {
                 /** Index. */
                 private int index = 0;
-                
+
                 /** Cached start width. */
                 private Length widthStart;
-                
+
                 /** Cached end width. */
                 private Length widthEnd;
-                
+
                 /** Cached start offset. */
                 private Length offsetStart;
-                
+
                 /** Cached end offset. */
                 private Length offsetEnd;
 
@@ -220,7 +221,7 @@ public class RoadLayoutListener extends LocalEventProducer implements EventListe
                             return false;
                         }
                     }
-                    
+
                     // the following performs a further check whether the next element is ready
                     try
                     {
@@ -331,7 +332,7 @@ public class RoadLayoutListener extends LocalEventProducer implements EventListe
                         this.index++;
                         return hasNext();
                     }
-                    
+
                     return true;
                 }
 
@@ -341,47 +342,8 @@ public class RoadLayoutListener extends LocalEventProducer implements EventListe
                 {
                     Throw.when(!hasNext(), IllegalStateException.class, "Iterator does not have a next element.");
                     XsdTreeNode node = children.get(this.index);
-                    Length widthStart = this.widthStart == null ? null : Length.instantiateSI(this.widthStart.si);
-                    Length widthEnd = this.widthEnd == null ? null : Length.instantiateSI(this.widthEnd.si);
-                    Length offsetStart = this.offsetStart == null ? null : Length.instantiateSI(this.offsetStart.si);
-                    Length offsetEnd = this.offsetEnd == null ? null : Length.instantiateSI(this.offsetEnd.si);
-                    OffsetElement offsetElement = new OffsetElement()
-                    {
-                        /** {@inheritDoc} */
-                        @Override
-                        public Length getWidthStart()
-                        {
-                            return widthStart;
-                        }
-
-                        /** {@inheritDoc} */
-                        @Override
-                        public Length getWidthEnd()
-                        {
-                            return widthEnd;
-                        }
-
-                        /** {@inheritDoc} */
-                        @Override
-                        public Length getCenterOffsetStart()
-                        {
-                            return offsetStart;
-                        }
-
-                        /** {@inheritDoc} */
-                        @Override
-                        public Length getCenterOffsetEnd()
-                        {
-                            return offsetEnd;
-                        }
-
-                        /** {@inheritDoc} */
-                        @Override
-                        public Object getObject()
-                        {
-                            return node;
-                        }
-                    };
+                    OffsetElement offsetElement =
+                            new OffsetElement(this.widthStart, this.widthEnd, this.offsetStart, this.offsetEnd, node);
                     this.index++;
                     return offsetElement;
                 }

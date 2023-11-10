@@ -241,43 +241,7 @@ public class RoadLayoutOffsets
                         }
                     }
                 }
-                return new OffsetElement()
-                {
-                    /** {@inheritDoc} */
-                    @Override
-                    public Length getWidthStart()
-                    {
-                        return widthStart;
-                    }
-
-                    /** {@inheritDoc} */
-                    @Override
-                    public Length getWidthEnd()
-                    {
-                        return widthEnd;
-                    }
-
-                    /** {@inheritDoc} */
-                    @Override
-                    public Length getCenterOffsetStart()
-                    {
-                        return offsetStart;
-                    }
-
-                    /** {@inheritDoc} */
-                    @Override
-                    public Length getCenterOffsetEnd()
-                    {
-                        return offsetEnd;
-                    }
-
-                    /** {@inheritDoc} */
-                    @Override
-                    public Object getObject()
-                    {
-                        return object;
-                    }
-                };
+                return new OffsetElement(widthStart, widthEnd, offsetStart, offsetEnd, object);
             }
         };
         calculateOffsets(elements, cseDataList, cseTagMap);
@@ -292,37 +256,85 @@ public class RoadLayoutOffsets
      * </p>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public interface OffsetElement
+    public static class OffsetElement
     {
+        /** Start width. */
+        private final Length widthStart;
+
+        /** End width. */
+        private final Length widthEnd;
+
+        /** Start offset. */
+        private final Length offsetStart;
+
+        /** End offset. */
+        private final Length offsetEnd;
+
+        /** Underlying object providing width and offset. */
+        private final Object object;
+
+        /**
+         * Constructor.
+         * @param widthStart Length; start width.
+         * @param widthEnd Length; end width.
+         * @param offsetStart Length; start offset.
+         * @param offsetEnd Length; end offset.
+         * @param object Object; underlying object providing width and offset.
+         */
+        public OffsetElement(final Length widthStart, final Length widthEnd, final Length offsetStart, final Length offsetEnd,
+                final Object object)
+        {
+            this.widthStart = widthStart;
+            this.widthEnd = widthEnd;
+            this.offsetStart = offsetStart;
+            this.offsetEnd = offsetEnd;
+            this.object = object;
+        }
+
         /**
          * Return the start width.
          * @return Length; start width.
          */
-        Length getWidthStart();
+        public Length getWidthStart()
+        {
+            return this.widthStart;
+        }
 
         /**
          * Return the end width.
          * @return Length; end width.
          */
-        Length getWidthEnd();
+        public Length getWidthEnd()
+        {
+            return this.widthEnd;
+        }
 
         /**
          * Return the start center offset.
          * @return Length; start center offset.
          */
-        Length getCenterOffsetStart();
+        public Length getCenterOffsetStart()
+        {
+            return this.offsetStart;
+        }
 
         /**
          * Return the end center offset.
          * @return Length; end center offset.
          */
-        Length getCenterOffsetEnd();
+        public Length getCenterOffsetEnd()
+        {
+            return this.offsetEnd;
+        }
 
         /**
          * Returns the underlying object providing the width and offset information.
          * @return Object; underlying object providing the width and offset information, e.g. an XML tag object or tree node.
          */
-        Object getObject();
+        public Object getObject()
+        {
+            return this.object;
+        }
     }
 
     /**
