@@ -111,6 +111,7 @@ public final class DefaultDecorator
         new AutomaticLinkId(editor);
         new AutomaticConnectorId(editor);
         new DefinitionsSaver(editor);
+        new LayoutCustomizer(editor);
 
         // new NodeCreatedRemovedPrinter(editor);
         new RoadLayoutEditor(editor);

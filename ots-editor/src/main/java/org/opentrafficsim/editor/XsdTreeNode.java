@@ -347,7 +347,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         for (int i = 1; i < path.size(); i++)
         {
             String nodeString = ((XsdTreeNode) path.get(i)).getNodeName();
-            if ((!nodeString.equals("xsd:sequence") && !nodeString.equals("xi:include")) || i == path.size() - 1)
+            if ((!nodeString.equals("xsd:choice") && !nodeString.equals("xsd:sequence") && !nodeString.equals("xi:include"))
+                    || i == path.size() - 1)
             {
                 pathStr.append(".").append(nodeString);
             }
@@ -1157,7 +1158,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * @param newParent XsdTreeNode; parent node.
      * @return XsdTreeNode; newly created node.
      */
-    private XsdTreeNode duplicate(final XsdTreeNode newParent)
+    public XsdTreeNode duplicate(final XsdTreeNode newParent)
     {
         // empty copy
         XsdTreeNode copyNode = emptyCopy(newParent);
@@ -1300,9 +1301,12 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         {
             numberOfTypeOrChoiceInParent = siblingPositions().size();
         }
-        if (this.minOccurs == 0 && numberOfTypeOrChoiceInParent == 1 && !this.isInclude && this.active)
+        if (this.minOccurs == 0 && numberOfTypeOrChoiceInParent == 1 && !this.isInclude)
         {
-            setInactive();
+            if (this.active)
+            {
+                setInactive();
+            }
             return;
         }
         if (this.choice != null && this.choice.selected.equals(this))
@@ -1799,7 +1803,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         return null;
     }
-    
+
     /**
      * Returns the node to which the value refers via a KeyValidator.
      * @return XsdTreeNode; node to which the value refers via a KeyValidator, or {@code null} if no such node.
@@ -1808,7 +1812,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     {
         return getCoupledKeyrefNode(this.valueValidators);
     }
-    
+
     /**
      * Return coupled node via a key validator.
      * @param validators Set&lt;ValueValidator&gt;; validators.

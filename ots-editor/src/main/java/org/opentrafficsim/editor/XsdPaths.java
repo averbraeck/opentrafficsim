@@ -36,7 +36,7 @@ public final class XsdPaths
     
     /** Road layout path. */
     public static final String ROADLAYOUT = LINK + ".RoadLayout";
-
+    
     /** OD options item path. */
     public static final String OD_OPTIONS_ITEM = "Ots.Demand.OdOptions.OdOptionsItem";
     

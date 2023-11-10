@@ -4,8 +4,10 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -50,6 +52,9 @@ public class RoadLayoutListener extends LocalEventProducer implements EventListe
 
     /** Node of the layout, under which the lanes etc. are located. */
     private final XsdTreeNode layoutNode;
+    
+    /** Set of all elements that, when removed, change the layout. */
+    private final Set<XsdTreeNode> elementNodes = new LinkedHashSet<>();
 
     /** Expression evaluator for length values. */
     private final Supplier<Eval> eval;
@@ -119,21 +124,26 @@ public class RoadLayoutListener extends LocalEventProducer implements EventListe
     {
         // for all events this listens to, the node is the first object in the content
         XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
-        if (!node.getPath().contains(this.layoutNode) || node.getNodeName().equals("SpeedLimit"))
-        {
-            // not the road layout node of this listener (with node created or removed event), or speed limit changed
-            return;
-        }
         if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
         {
+            if (!node.getPath().contains(this.layoutNode) || node.getNodeName().equals("SpeedLimit"))
+            {
+                // not the road layout node of this listener (with node created or removed event), or speed limit changed
+                return;
+            }
             node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED, ReferenceType.WEAK);
             node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
             node.addListener(this, XsdTreeNode.MOVED, ReferenceType.WEAK);
             node.addListener(this, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
             node.addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
+            this.elementNodes.add(node);
         }
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
         {
+            if (!this.elementNodes.contains(node))
+            {
+                return;
+            }
             node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
             node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
             node.removeListener(this, XsdTreeNode.MOVED);

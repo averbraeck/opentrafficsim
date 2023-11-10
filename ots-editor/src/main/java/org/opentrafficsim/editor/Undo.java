@@ -573,7 +573,10 @@ public class Undo implements EventListener
         REMOVE,
 
         /** Node value changed. */
-        VALUE_CHANGE;
+        VALUE_CHANGE,
+        
+        /** Action on node, by custom decoration. */
+        ACTION;
 
         /** {@inheritDoc} */
         @Override
