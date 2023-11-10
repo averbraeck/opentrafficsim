@@ -676,7 +676,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     {
         this.coupledItem.setEnabled(coupledNode != null);
         this.coupledItem.setText(coupledNode == null ? "Go to coupled item"
-                : ("Go to " + backNode.getAttributeValue(backAttribute == null ? "Id" : backAttribute)));
+                : ("Go to " + (backAttribute != null ? backNode.getAttributeValue(backAttribute)
+                        : (backNode.isIdentifiable() ? backNode.getId() : backNode.getValue()))));
         this.coupledNode = coupledNode;
         this.candidateBackNode = backNode;
         this.candidateBackAttribute = backAttribute;

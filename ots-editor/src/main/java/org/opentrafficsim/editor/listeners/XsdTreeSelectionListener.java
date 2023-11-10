@@ -73,6 +73,12 @@ public class XsdTreeSelectionListener implements TreeSelectionListener, EventLis
                 this.listening = node;
                 this.listening.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
             }
+            else if (node.isEditable())
+            {
+                this.editor.setCoupledNode(node.getCoupledKeyrefNodeValue(), node, null);
+                this.listening = node;
+                this.listening.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+            }
             else
             {
                 this.editor.setCoupledNode(null, null, null);
