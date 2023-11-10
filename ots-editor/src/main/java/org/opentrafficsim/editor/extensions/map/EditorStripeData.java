@@ -4,6 +4,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
+import org.opentrafficsim.editor.XsdTreeNode;
 
 /**
  * Stripe data for in the editor.
@@ -22,18 +23,25 @@ public class EditorStripeData extends EditorCrossSectionData implements StripeDa
     /** Width. */
     private final Length width;
 
+    /** Start offset. */
+    private final Length startOffset;
+
     /**
      * Constructor.
      * @param type Type; stripe type.
      * @param width Length; width.
+     * @param startOffset Length; start offset.
+     * @param linkNode XsdTreeNode; node representing the element.
      * @param centerLine PolyLine2d; center line.
      * @param contour PolyLine2d; contour.
      */
-    public EditorStripeData(final Type type, final Length width, final PolyLine2d centerLine, final Polygon2d contour)
+    public EditorStripeData(final Type type, final Length width, final Length startOffset, final XsdTreeNode linkNode,
+            final PolyLine2d centerLine, final Polygon2d contour)
     {
-        super(centerLine, contour);
+        super(linkNode, centerLine, contour);
         this.type = type;
         this.width = width;
+        this.startOffset = startOffset;
     }
 
     /** {@inheritDoc} */
@@ -55,6 +63,13 @@ public class EditorStripeData extends EditorCrossSectionData implements StripeDa
     public Length getWidth()
     {
         return this.width;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "Stripe " + getLinkId() + " " + this.startOffset;
     }
 
 }

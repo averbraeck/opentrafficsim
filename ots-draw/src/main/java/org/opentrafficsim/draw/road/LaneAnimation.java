@@ -49,7 +49,7 @@ public class LaneAnimation extends Renderable2d<LaneData> implements Renderable2
 
     /** the Text object to destroy when the animation is destroyed. */
     private final Text text;
-    
+
     /** Center line animation. */
     private final CenterLineAnimation centerLineAnimation;
 
@@ -67,7 +67,8 @@ public class LaneAnimation extends Renderable2d<LaneData> implements Renderable2
         super(lane, contextualized);
         this.color = color;
         this.text = new Text(lane, lane::getId, 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, contextualized);
-        this.centerLineAnimation = new CenterLineAnimation(new CenterLine(lane.getCenterLine(), lane.getId()), contextualized);
+        this.centerLineAnimation = new CenterLineAnimation(
+                new CenterLine(lane.getCenterLine(), lane.getLinkId() + "." + lane.getId()), contextualized);
     }
 
     /**
@@ -117,18 +118,18 @@ public class LaneAnimation extends Renderable2d<LaneData> implements Renderable2
         private final Bounds2d bounds;
 
         /** Lane id. */
-        private final String laneId;
+        private final String fullId;
 
         /**
          * Construct a new CenterLine.
          * @param centerLine OtsLine2d; the center line of a lane
-         * @param laneId String; lane id.
+         * @param fullId String; lane id.
          */
-        CenterLine(final PolyLine2d centerLine, final String laneId)
+        CenterLine(final PolyLine2d centerLine, final String fullId)
         {
             this.centerLine = centerLine;
             this.bounds = new Bounds2d(centerLine.getBounds().getDeltaX(), centerLine.getBounds().getDeltaY());
-            this.laneId = laneId;
+            this.fullId = fullId;
         }
 
         /** {@inheritDoc} */
@@ -165,7 +166,7 @@ public class LaneAnimation extends Renderable2d<LaneData> implements Renderable2
         @Override
         public String toString()
         {
-            return "Center line " + this.laneId;
+            return "Center line " + this.fullId;
         }
     }
 
@@ -282,6 +283,12 @@ public class LaneAnimation extends Renderable2d<LaneData> implements Renderable2
          * @return List&lt;Point2d&gt;; points.
          */
         List<Point2d> getContour();
+
+        /**
+         * Return the id of the link.
+         * @return String; link id.
+         */
+        String getLinkId();
 
         /** {@inheritDoc} */
         @Override

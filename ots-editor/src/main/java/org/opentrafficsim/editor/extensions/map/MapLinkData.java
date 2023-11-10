@@ -185,7 +185,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener
                     notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "OffsetStart", null}));
                     notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "OffsetEnd", null}));
                     XsdTreeNode shape = linkNode.getChild(1);
-                    //buildLayout();
+                    // buildLayout();
                     notify(new Event(XsdTreeNode.OPTION_CHANGED, new Object[] {shape, shape, shape}));
                 }
                 catch (RemoteException e)
@@ -556,7 +556,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener
                     if (node.getNodeName().equals("Stripe"))
                     {
                         StripeAnimation stripe = new StripeAnimation(
-                                new EditorStripeData(StripeData.Type.valueOf(type.name()), width, centerLine, contour),
+                                new EditorStripeData(StripeData.Type.valueOf(type.name()), width,
+                                        slices.get(0).getDesignLineOffset(), getNode(), centerLine, contour),
                                 getMap().getContextualized());
                         this.crossSectionElements.add(stripe);
                     }
@@ -564,20 +565,22 @@ public class MapLinkData extends MapData implements LinkData, EventListener
                     {
                         if (node.getNodeName().equals("Lane"))
                         {
-                            LaneAnimation lane = new LaneAnimation(new EditorLaneData(node.getId(), centerLine, contour),
-                                    getMap().getContextualized(), Color.GRAY.brighter());
+                            LaneAnimation lane =
+                                    new LaneAnimation(new EditorLaneData(node.getId(), getNode(), centerLine, contour),
+                                            getMap().getContextualized(), Color.GRAY.brighter());
                             this.crossSectionElements.add(lane);
                         }
                         else if (node.getNodeName().equals("Shoulder"))
                         {
                             CrossSectionElementAnimation shoulder = new CrossSectionElementAnimation(
-                                    new EditorShoulderData(centerLine, contour), getMap().getContextualized(), Color.DARK_GRAY);
+                                    new EditorShoulderData(slices.get(0).getDesignLineOffset(), getNode(), centerLine, contour),
+                                    getMap().getContextualized(), Color.DARK_GRAY);
                             this.crossSectionElements.add(shoulder);
                         }
                         else if (node.getNodeName().equals("NoTrafficLane"))
                         {
                             CrossSectionElementAnimation noTrafficLane =
-                                    new CrossSectionElementAnimation(new EditorCrossSectionData(centerLine, contour),
+                                    new CrossSectionElementAnimation(new EditorCrossSectionData(getNode(), centerLine, contour),
                                             getMap().getContextualized(), Color.DARK_GRAY);
                             this.crossSectionElements.add(noTrafficLane);
                         }
@@ -1035,6 +1038,13 @@ public class MapLinkData extends MapData implements LinkData, EventListener
                     throw new RuntimeException("Drawing of shape node " + this.shapeNode.getNodeName() + " is not supported.");
             }
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "Link " + this.id;
     }
 
 }

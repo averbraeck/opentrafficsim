@@ -9,6 +9,7 @@ import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
+import org.opentrafficsim.editor.XsdTreeNode;
 
 /**
  * Cross section element data for in the editor.
@@ -21,19 +22,24 @@ import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionEle
 public class EditorCrossSectionData implements CrossSectionElementData
 {
 
+    /** Node representing the element. */
+    private final XsdTreeNode linkNode; 
+    
     /** Center line. */
     protected final PolyLine2d centerLine;
 
     /** Contour. */
     private final Polygon2d contour;
-
+    
     /**
      * Constructor.
+     * @param linkNode XsdTreeNode; node representing the element.
      * @param centerLine PolyLine2d; center line.
      * @param contour PolyLine2d; contour.
      */
-    public EditorCrossSectionData(final PolyLine2d centerLine, final Polygon2d contour)
+    public EditorCrossSectionData(final XsdTreeNode linkNode, final PolyLine2d centerLine, final Polygon2d contour)
     {
+        this.linkNode = linkNode;
         this.centerLine = centerLine;
         this.contour = contour;
     }
@@ -59,4 +65,20 @@ public class EditorCrossSectionData implements CrossSectionElementData
         return this.contour.getPointList();
     }
 
+    /**
+     * Returns the link id.
+     * @return String; link id.
+     */
+    public String getLinkId()
+    {
+        return this.linkNode.getId();
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "Cross section element of " + getLinkId();
+    }
+    
 }

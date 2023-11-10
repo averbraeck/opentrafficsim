@@ -145,5 +145,12 @@ public class MapNodeData extends MapData implements NodeData, EventListener
         this.location = new OrientedPoint2d(this.coordinate, this.direction == null ? 0.0 : this.direction.si);
         setValid();
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "Node " + this.id;
+    }
 
 }

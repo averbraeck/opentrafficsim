@@ -28,7 +28,7 @@ public class AnimationLaneData extends AnimationCrossSectionElementData<Lane> im
     @Override
     public String getId()
     {
-        return getElement().getFullId();
+        return getElement().getId();
     }
 
     /** {@inheritDoc} */
@@ -36,6 +36,13 @@ public class AnimationLaneData extends AnimationCrossSectionElementData<Lane> im
     public PolyLine2d getCenterLine()
     {
         return getElement().getCenterLine().getLine2d();
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public String getLinkId()
+    {
+        return getElement().getLink().getId();
     }
 
     /** {@inheritDoc} */

@@ -1,8 +1,10 @@
 package org.opentrafficsim.editor.extensions.map;
 
+import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.ShoulderData;
+import org.opentrafficsim.editor.XsdTreeNode;
 
 /**
  * Shoulder data for in the editor. Implements {@code ShoulderData} additionally to extending {@code EditorCrossSectionData}.
@@ -15,14 +17,28 @@ import org.opentrafficsim.draw.road.CrossSectionElementAnimation.ShoulderData;
 public class EditorShoulderData extends EditorCrossSectionData implements ShoulderData
 {
 
+    /** Start offset. */
+    private final Length startOffset;
+
     /**
      * Constructor.
+     * @param startOffset Length; start offset.
+     * @param linkNode XsdTreeNode; node representing the element.
      * @param centerLine PolyLine2d; center line.
      * @param contour PolyLine2d; contour.
      */
-    public EditorShoulderData(final PolyLine2d centerLine, final Polygon2d contour)
+    public EditorShoulderData(final Length startOffset, final XsdTreeNode linkNode, final PolyLine2d centerLine,
+            final Polygon2d contour)
     {
-        super(centerLine, contour);
+        super(linkNode, centerLine, contour);
+        this.startOffset = startOffset;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "Shoulder " + getLinkId() + " " + this.startOffset;
     }
 
 }

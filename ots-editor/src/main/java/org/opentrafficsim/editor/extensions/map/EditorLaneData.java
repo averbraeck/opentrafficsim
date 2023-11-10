@@ -3,6 +3,7 @@ package org.opentrafficsim.editor.extensions.map;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.opentrafficsim.draw.road.LaneAnimation.LaneData;
+import org.opentrafficsim.editor.XsdTreeNode;
 
 /**
  * Lane data for in the editor.
@@ -20,12 +21,13 @@ public class EditorLaneData extends EditorCrossSectionData implements LaneData
     /**
      * Constructor.
      * @param id String; id.
+     * @param linkNode XsdTreeNode; node representing the element.
      * @param centerLine PolyLine2d; center line.
      * @param contour PolyLine2d; contour.
      */
-    public EditorLaneData(final String id, final PolyLine2d centerLine, final Polygon2d contour)
+    public EditorLaneData(final String id, final XsdTreeNode linkNode, final PolyLine2d centerLine, final Polygon2d contour)
     {
-        super(centerLine, contour);
+        super(linkNode, centerLine, contour);
         this.id = id;
     }
 
@@ -41,6 +43,13 @@ public class EditorLaneData extends EditorCrossSectionData implements LaneData
     public PolyLine2d getCenterLine()
     {
         return this.centerLine;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "Lane " + getLinkId() + "." + this.id;
     }
 
 }
