@@ -196,6 +196,7 @@ public interface Flattener
             double prevT = result.firstKey();
             Point2d prevPoint = result.get(prevT);
             Map.Entry<Double, Point2d> entry;
+            int iterationsAtSinglePoint = 0;
             while ((entry = result.higherEntry(prevT)) != null)
             {
                 double nextT = entry.getKey();
@@ -210,26 +211,33 @@ public interface Flattener
                 {
                     // We need to insert another point
                     result.put(medianT, medianPoint);
+                    directions.put(medianT, line.getDirection(medianT)); // for angle checks
                     continue;
                 }
 
                 // Check max angle
                 double angle = prevPoint.directionTo(nextPoint) - directions.get(prevT);
-                while (angle < 0.0)
+                while (angle < -Math.PI)
                 {
-                    angle += Math.PI;
+                    angle += 2 * Math.PI;
                 }
                 while (angle > Math.PI)
                 {
-                    angle -= Math.PI;
+                    angle -= 2 * Math.PI;
                 }
-                if (angle >= this.maxAngle)
+                if (Math.abs(angle) >= this.maxAngle)
                 {
                     // We need to insert another point
                     result.put(medianT, medianPoint);
                     directions.put(medianT, line.getDirection(medianT));
+                    iterationsAtSinglePoint++;
+                    Throw.when(iterationsAtSinglePoint == 50, RuntimeException.class,
+                            "Required a new point 50 times at the same point. Likely the reported direction of the point does "
+                                    + "not match further points produced. Consider using the numerical approach in the "
+                                    + "default getDirection(fraction) method of the FlattableLine.");
                     continue;
                 }
+                iterationsAtSinglePoint = 0;
 
                 // Check for an inflection point by creating additional points at one quarter and three quarters. If these
                 // are on opposite sides of the line from prevPoint to nextPoint; there must be an inflection point.

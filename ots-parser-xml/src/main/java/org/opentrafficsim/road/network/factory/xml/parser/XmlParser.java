@@ -33,6 +33,7 @@ import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.ContinuousLine;
+import org.opentrafficsim.core.geometry.Flattener;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -262,10 +263,11 @@ public final class XmlParser implements Serializable
         Map<String, Direction> nodeDirections = NetworkParser.calculateNodeAngles(otsNetwork, network, eval);
         NetworkParser.parseNodes(otsNetwork, network, nodeDirections, eval);
         Map<String, ContinuousLine> designLines = new LinkedHashMap<>();
+        Map<String, Flattener> flatteners = new LinkedHashMap<>();
         NetworkParser.parseLinks(otsNetwork, definitions, network, nodeDirections, otsNetwork.getSimulator(), designLines,
-                eval);
+                flatteners, eval);
         NetworkParser.applyRoadLayout(otsNetwork, definitions, network, otsNetwork.getSimulator(), roadLayoutMap,
-                linkTypeSpeedLimitMap, designLines, eval);
+                linkTypeSpeedLimitMap, designLines, flatteners, eval);
         NetworkParser.buildConflicts(otsNetwork, network, eval);
 
         // routes, generators and sinks

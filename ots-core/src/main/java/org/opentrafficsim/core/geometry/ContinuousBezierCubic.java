@@ -417,7 +417,14 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
             public double getDirection(final double fraction)
             {
                 Entry<Double, ContinuousBezierCubic> entry = segments.floorEntry(fraction);
-                Double nextT = segments.ceilingKey(fraction);
+                if (entry.getValue() == null)
+                {
+                    // end of line
+                    entry = segments.lowerEntry(fraction);
+                    Point2d derivative = entry.getValue().derivative().at(1.0);
+                    return Math.atan2(derivative.y, derivative.x);
+                }
+                Double nextT = segments.higherKey(fraction);
                 if (nextT == null)
                 {
                     nextT = 1.0;
