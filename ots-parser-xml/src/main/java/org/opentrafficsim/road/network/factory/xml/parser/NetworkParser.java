@@ -522,8 +522,7 @@ public final class NetworkParser
 
         PolyLine2d centerLine = designLine.flattenOffset(LaneGeometryUtil.getCenterOffsets(designLine, slices), flattener);
         PolyLine2d leftEdge = designLine.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(designLine, slices), flattener);
-        PolyLine2d rightEdge =
-                designLine.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(designLine, slices), flattener);
+        PolyLine2d rightEdge = designLine.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(designLine, slices), flattener);
         Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
 
         cseList.add(new Stripe(type, csl, new OtsLine2d(centerLine), contour, slices));
@@ -617,18 +616,39 @@ public final class NetworkParser
             {
                 if (flattenerType.getDeviationAndAngle().getMaxAngle() != null)
                 {
-                    return new MaxDeviationAndAngle(flattenerType.getDeviationAndAngle().getMaxDeviation().get(eval).si,
-                            flattenerType.getDeviationAndAngle().getMaxAngle().get(eval).si);
+                    return new MaxDeviationAndAngle(
+                            getDeviation(flattenerType.getDeviationAndAngle().getMaxDeviation().get(eval)),
+                            getAngle(flattenerType.getDeviationAndAngle().getMaxAngle().get(eval)));
                 }
-                return new MaxDeviation(flattenerType.getDeviationAndAngle().getMaxDeviation().get(eval).si);
+                return new MaxDeviation(getDeviation(flattenerType.getDeviationAndAngle().getMaxDeviation().get(eval)));
             }
             else if (flattenerType.getDeviationAndAngle().getMaxAngle() != null)
             {
-                return new MaxAngle(flattenerType.getDeviationAndAngle().getMaxAngle().get(eval).si);
+                return new MaxAngle(getAngle(flattenerType.getDeviationAndAngle().getMaxAngle().get(eval)));
             }
             throw new NetworkException("No deviation and/or angle for flattener specified.");
         }
         throw new NetworkException("No flattener specified.");
+    }
+
+    /**
+     * Returns a safe deviation value (>=0.001).
+     * @param length Length; deviation.
+     * @return double; safe deviation.
+     */
+    private static double getDeviation(final Length length)
+    {
+        return length.si < 0.001 ? 0.001 : length.si;
+    }
+
+    /**
+     * Returns a safe angle value (>=0.01).
+     * @param angle Length; angle.
+     * @return double; safe angle.
+     */
+    private static double getAngle(final Angle angle)
+    {
+        return angle.si < 0.01 ? 0.01 : angle.si;
     }
 
 }

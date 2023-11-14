@@ -14,13 +14,14 @@ import javax.naming.NamingException;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.reference.ReferenceType;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.core.geometry.Flattener;
+import org.opentrafficsim.core.geometry.Flattener.NumSegments;
 import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation;
 import org.opentrafficsim.editor.OtsEditor;
@@ -79,6 +80,9 @@ public class Map extends JPanel implements EventListener
 
     /** Listeners to road layouts. */
     private final LinkedHashMap<XsdTreeNode, RoadLayoutListener> roadLayoutListeners = new LinkedHashMap<>();
+
+    /** Listener to flattener at network level. */
+    private FlattenerListener networkFlattenerListener;
 
     /** Animation objects of all data's drawn. */
     private final LinkedHashMap<XsdTreeNode, Renderable2d<?>> animations = new LinkedHashMap<>();
@@ -228,6 +232,11 @@ public class Map extends JPanel implements EventListener
                 roadLayoutListener.destroy();
             }
             this.roadLayoutListeners.clear();
+            if (this.networkFlattenerListener != null)
+            {
+                this.networkFlattenerListener.destroy();
+                this.networkFlattenerListener = null;
+            }
             XsdTreeNodeRoot root = (XsdTreeNodeRoot) event.getContent();
             root.addListener(this, XsdTreeNodeRoot.NODE_CREATED);
             root.addListener(this, XsdTreeNodeRoot.NODE_REMOVED);
@@ -256,6 +265,10 @@ public class Map extends JPanel implements EventListener
             {
                 addRoadLayout(node);
             }
+            else if (node.getPathString().equals(XsdPaths.NETWORK + ".Flattener"))
+            {
+                setNetworkFlattener(node);
+            }
         }
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
         {
@@ -275,6 +288,10 @@ public class Map extends JPanel implements EventListener
             else if (node.getPathString().equals(XsdPaths.DEFINED_ROADLAYOUT))
             {
                 removeRoadLayout(node);
+            }
+            else if (node.getPathString().equals(XsdPaths.NETWORK + ".Flattener"))
+            {
+                removeNetworkFlattener();
             }
         }
         else if (event.getType().equals(XsdTreeNode.ACTIVATION_CHANGED))
@@ -301,6 +318,17 @@ public class Map extends JPanel implements EventListener
                 else
                 {
                     removeRoadLayout(node);
+                }
+            }
+            else if (node.getPathString().equals(XsdPaths.NETWORK + ".Flattener"))
+            {
+                if ((boolean) content[1])
+                {
+                    setNetworkFlattener(node);
+                }
+                else
+                {
+                    removeNetworkFlattener();
                 }
             }
         }
@@ -409,7 +437,11 @@ public class Map extends JPanel implements EventListener
             data = linkData;
             for (RoadLayoutListener roadLayoutListener : this.roadLayoutListeners.values())
             {
-                roadLayoutListener.addListener(linkData, RoadLayoutListener.LAYOUT_CHANGED, ReferenceType.WEAK);
+                roadLayoutListener.addListener(linkData, ChangeListener.CHANGE_EVENT, ReferenceType.WEAK);
+            }
+            if (this.networkFlattenerListener != null)
+            {
+                this.networkFlattenerListener.addListener(linkData, ChangeListener.CHANGE_EVENT, ReferenceType.WEAK);
             }
             this.links.put(linkData, null);
         }
@@ -440,7 +472,11 @@ public class Map extends JPanel implements EventListener
                 {
                     for (RoadLayoutListener roadLayoutListener : this.roadLayoutListeners.values())
                     {
-                        roadLayoutListener.removeListener(link, RoadLayoutListener.LAYOUT_CHANGED);
+                        roadLayoutListener.removeListener(link, ChangeListener.CHANGE_EVENT);
+                    }
+                    if (this.networkFlattenerListener != null)
+                    {
+                        this.networkFlattenerListener.removeListener(link, ChangeListener.CHANGE_EVENT);
                     }
                     it.remove();
                 }
@@ -463,13 +499,8 @@ public class Map extends JPanel implements EventListener
         RoadLayoutListener roadLayoutListener = new RoadLayoutListener(node, () -> this.editor.getEval());
         for (MapLinkData linkData : this.links.keySet())
         {
-            roadLayoutListener.addListener(linkData, RoadLayoutListener.LAYOUT_CHANGED, ReferenceType.WEAK);
+            roadLayoutListener.addListener(linkData, ChangeListener.CHANGE_EVENT, ReferenceType.WEAK);
         }
-        // to draw upon loading xml
-        SwingUtilities.invokeLater(() ->
-        {
-            roadLayoutListener.fireEvent(new Event(RoadLayoutListener.LAYOUT_CHANGED, node));
-        });
         this.roadLayoutListeners.put(node, roadLayoutListener);
     }
 
@@ -481,6 +512,34 @@ public class Map extends JPanel implements EventListener
     {
         RoadLayoutListener roadLayoutListener = this.roadLayoutListeners.remove(node);
         roadLayoutListener.destroy();
+    }
+
+    /**
+     * Sets the network level flattener.
+     * @param node XsdTreeNode; node of network flattener.
+     */
+    private void setNetworkFlattener(final XsdTreeNode node)
+    {
+        this.networkFlattenerListener = new FlattenerListener(node, () -> this.editor.getEval());
+        for (MapLinkData linkData : this.links.keySet())
+        {
+            this.networkFlattenerListener.addListener(linkData, ChangeListener.CHANGE_EVENT, ReferenceType.WEAK);
+        }
+        node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED, ReferenceType.WEAK);
+    }
+
+    /**
+     * Removes the network flattener.
+     */
+    private void removeNetworkFlattener()
+    {
+        this.networkFlattenerListener.destroy();
+        for (MapLinkData linkData : this.links.keySet())
+        {
+            Try.execute(() -> linkData.notify(new Event(ChangeListener.CHANGE_EVENT, this.networkFlattenerListener.getNode())),
+                    "Remove event exception.");
+        }
+        this.networkFlattenerListener = null;
     }
 
     /**
@@ -513,6 +572,23 @@ public class Map extends JPanel implements EventListener
     Contextualized getContextualized()
     {
         return this.contextualized;
+    }
+
+    /**
+     * Returns the network level flattener, or a 64 segment flattener of none specified.
+     * @return Flattener; flattener.
+     */
+    public Flattener getNetworkFlattener()
+    {
+        if (this.networkFlattenerListener != null)
+        {
+            Flattener flattener = this.networkFlattenerListener.getData();
+            if (flattener != null)
+            {
+                return flattener; // otherwise, return default
+            }
+        }
+        return new NumSegments(64);
     }
 
 }

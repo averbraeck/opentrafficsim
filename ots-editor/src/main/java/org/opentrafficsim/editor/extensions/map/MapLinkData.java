@@ -37,7 +37,6 @@ import org.opentrafficsim.core.geometry.ContinuousLine;
 import org.opentrafficsim.core.geometry.ContinuousPolyLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
 import org.opentrafficsim.core.geometry.Flattener;
-import org.opentrafficsim.core.geometry.Flattener.NumSegments;
 import org.opentrafficsim.core.geometry.OtsGeometryUtil;
 import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
@@ -58,7 +57,6 @@ import org.opentrafficsim.xml.bindings.BooleanAdapter;
 import org.opentrafficsim.xml.bindings.DirectionAdapter;
 import org.opentrafficsim.xml.bindings.DoubleAdapter;
 import org.opentrafficsim.xml.bindings.ExpressionAdapter;
-import org.opentrafficsim.xml.bindings.IntegerAdapter;
 import org.opentrafficsim.xml.bindings.LengthAdapter;
 import org.opentrafficsim.xml.bindings.LinearDensityAdapter;
 import org.opentrafficsim.xml.bindings.Point2dAdapter;
@@ -95,9 +93,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener
 
     /** Arc direction adapter. */
     private final static ArcDirectionAdapter ARC_DIRECTION_ADAPTER = new ArcDirectionAdapter();
-
-    /** Integer adapter. */
-    private final static IntegerAdapter INTEGER_ADAPTER = new IntegerAdapter();
 
     /** Double adapter. */
     private final static DoubleAdapter DOUBLE_ADAPTER = new DoubleAdapter();
@@ -156,6 +151,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener
     /** Listener to road layout, if locally defined. */
     private RoadLayoutListener roadLayoutListener;
 
+    /** Listener to flattener, if locally defined. */
+    private FlattenerListener flattenerListener;
+
     /** Set of drawable cross-section elements. */
     private Set<Renderable2d<?>> crossSectionElements = new LinkedHashSet<>();
 
@@ -179,13 +177,15 @@ public class MapLinkData extends MapData implements LinkData, EventListener
             {
                 try
                 {
+                    // this is for when delete is undone, as some children are recovered later, including the shape node
+                    this.shapeListener.shapeNode = linkNode.getChild(0);
+                    
                     notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Id", null}));
                     this.nodeStart = replaceNode(this.nodeStart, linkNode.getCoupledKeyrefNodeAttribute("NodeStart"));
                     this.nodeEnd = replaceNode(this.nodeEnd, linkNode.getCoupledKeyrefNodeAttribute("NodeEnd"));
                     notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "OffsetStart", null}));
                     notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "OffsetEnd", null}));
                     XsdTreeNode shape = linkNode.getChild(1);
-                    // buildLayout();
                     notify(new Event(XsdTreeNode.OPTION_CHANGED, new Object[] {shape, shape, shape}));
                 }
                 catch (RemoteException e)
@@ -215,6 +215,11 @@ public class MapLinkData extends MapData implements LinkData, EventListener
         {
             this.definedRoadLayoutNode.removeListener(this, XsdTreeNode.VALUE_CHANGED);
             this.definedRoadLayoutNode = null;
+        }
+        if (this.flattenerListener != null)
+        {
+            this.flattenerListener.destroy();
+            this.flattenerListener = null;
         }
     }
 
@@ -259,30 +264,43 @@ public class MapLinkData extends MapData implements LinkData, EventListener
     {
         if (event.getType().equals(XsdTreeNode.OPTION_CHANGED))
         {
-            // road layout
             Object[] content = (Object[]) event.getContent();
             XsdTreeNode selected = (XsdTreeNode) content[1];
-            if (this.roadLayoutListener != null)
+            if (selected.getNodeName().equals("RoadLayout") || (selected.getNodeName().equals("xsd:sequence")
+                    && selected.getChildCount() > 0 && selected.getChild(0).getNodeName().equals("DefinedLayout")))
             {
-                this.roadLayoutListener.destroy();
-            }
-            if (this.definedRoadLayoutNode != null)
-            {
-                this.definedRoadLayoutNode.removeListener(this, XsdTreeNode.VALUE_CHANGED);
-            }
-            if (selected.getNodeName().equals("RoadLayout"))
-            {
-                this.roadLayoutNode = selected;
-                this.definedRoadLayoutNode = null;
-                this.roadLayoutListener = new RoadLayoutListener(selected, () -> getEval());
-                this.roadLayoutListener.addListener(this, RoadLayoutListener.LAYOUT_CHANGED, ReferenceType.WEAK);
+                // road layout
+                if (this.roadLayoutListener != null)
+                {
+                    this.roadLayoutListener.destroy();
+                }
+                if (this.definedRoadLayoutNode != null)
+                {
+                    this.definedRoadLayoutNode.removeListener(this, XsdTreeNode.VALUE_CHANGED);
+                }
+                if (selected.getNodeName().equals("RoadLayout"))
+                {
+                    this.roadLayoutNode = selected;
+                    this.definedRoadLayoutNode = null;
+                    this.roadLayoutListener = new RoadLayoutListener(selected, () -> getEval());
+                    this.roadLayoutListener.addListener(this, ChangeListener.CHANGE_EVENT, ReferenceType.WEAK);
+                }
+                else
+                {
+                    this.definedRoadLayoutNode = selected.getChild(0);
+                    this.definedRoadLayoutNode.addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
+                    this.roadLayoutNode = this.definedRoadLayoutNode.getCoupledKeyrefNodeValue();
+                    this.roadLayoutListener = null;
+                }
             }
             else
             {
-                this.definedRoadLayoutNode = selected.getChild(0);
-                this.definedRoadLayoutNode.addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
-                this.roadLayoutNode = this.definedRoadLayoutNode.getCoupledKeyrefNodeValue();
-                this.roadLayoutListener = null;
+                // flattener
+                if (this.flattenerListener != null)
+                {
+                    this.flattenerListener.destroy();
+                }
+                this.flattenerListener = new FlattenerListener(selected, () -> getEval());
             }
             buildLayout();
             return;
@@ -294,16 +312,25 @@ public class MapLinkData extends MapData implements LinkData, EventListener
             buildLayout();
             return;
         }
-        else if (event.getType().equals(RoadLayoutListener.LAYOUT_CHANGED))
+        else if (event.getType().equals(ChangeListener.CHANGE_EVENT))
         {
-            XsdTreeNode layoutNode = (XsdTreeNode) event.getContent();
-            if (layoutNode.isIdentifiable() && this.definedRoadLayoutNode != null)
+            XsdTreeNode node = (XsdTreeNode) event.getContent();
+            if (node.getNodeName().equals("RoadLayout") || node.getNodeName().equals("DefinedLayout"))
             {
-                // for if the id in the road layout has changed
-                this.roadLayoutNode = this.definedRoadLayoutNode.getCoupledKeyrefNodeValue();
+                if (node.isIdentifiable() && this.definedRoadLayoutNode != null)
+                {
+                    // for if the id in the road layout has changed
+                    this.roadLayoutNode = this.definedRoadLayoutNode.getCoupledKeyrefNodeValue();
+                }
+                if (node.equals(this.roadLayoutNode))
+                {
+                    buildLayout();
+                }
             }
-            if (layoutNode.equals(this.roadLayoutNode))
+            else
             {
+                // change in flattener
+                buildDesignLine();
                 buildLayout();
             }
             return;
@@ -339,12 +366,10 @@ public class MapLinkData extends MapData implements LinkData, EventListener
         else if ("Coordinate".equals(attribute))
         {
             // this pertains to either of the nodes, to which this class also listens
-            // buildDesignLine();
         }
         else if ("Direction".equals(attribute))
         {
             // this pertains to either of the nodes, to which this class also listens
-            // buildDesignLine();
         }
         else
         {
@@ -501,9 +526,26 @@ public class MapLinkData extends MapData implements LinkData, EventListener
         {
             return;
         }
-        this.flattenedDesignLine = this.designLine.flatten(this.shapeListener.getFlattener());
+        this.flattenedDesignLine = this.designLine.flatten(getFlattener());
         buildLayout();
         setValid();
+    }
+
+    /**
+     * Returns the flattener to use, which is either a flattener defined at link level, or at network level.
+     * @return Flattener, flattener to use.
+     */
+    private Flattener getFlattener()
+    {
+        if (this.flattenerListener != null)
+        {
+            Flattener flattener = this.flattenerListener.getData();
+            if (flattener != null)
+            {
+                return flattener; // otherwise not valid, return network level flattener
+            }
+        }
+        return getMap().getNetworkFlattener();
     }
 
     /**
@@ -511,6 +553,10 @@ public class MapLinkData extends MapData implements LinkData, EventListener
      */
     private void buildLayout()
     {
+        if (this.designLine == null)
+        {
+            return;
+        }
         for (Renderable2d<?> renderable : this.crossSectionElements)
         {
             getMap().removeAnimation(renderable);
@@ -518,8 +564,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener
         this.crossSectionElements.clear();
         if (this.roadLayoutNode != null)
         {
-            java.util.Map<XsdTreeNode, CseData> cseDataMap = this.roadLayoutListener != null
-                    ? this.roadLayoutListener.getOffsets() : getMap().getRoadLayoutListener(this.roadLayoutNode).getOffsets();
+            java.util.Map<XsdTreeNode, CseData> cseDataMap = this.roadLayoutListener != null ? this.roadLayoutListener.getData()
+                    : getMap().getRoadLayoutListener(this.roadLayoutNode).getData();
             for (Entry<XsdTreeNode, CseData> entry : cseDataMap.entrySet())
             {
                 XsdTreeNode node = entry.getKey();
@@ -543,14 +589,13 @@ public class MapLinkData extends MapData implements LinkData, EventListener
                                 cseData.widthStart, cseData.widthEnd);
                     }
 
-                    // TODO: use flattening of link, or global; probably need to create a map in parseLinks(...)
-                    NumSegments numSegments64 = new NumSegments(64);
+                    Flattener flattener = getFlattener();
                     PolyLine2d centerLine = this.designLine
-                            .flattenOffset(LaneGeometryUtil.getCenterOffsets(this.designLine, slices), numSegments64);
+                            .flattenOffset(LaneGeometryUtil.getCenterOffsets(this.designLine, slices), flattener);
                     PolyLine2d leftEdge = this.designLine
-                            .flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(this.designLine, slices), numSegments64);
+                            .flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(this.designLine, slices), flattener);
                     PolyLine2d rightEdge = this.designLine
-                            .flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(this.designLine, slices), numSegments64);
+                            .flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(this.designLine, slices), flattener);
                     Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
 
                     if (node.getNodeName().equals("Stripe"))
@@ -608,6 +653,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener
         this.nodeEnd = replaceNode(this.nodeEnd, getNode().getCoupledKeyrefNodeAttribute("NodeEnd"));
         this.shapeListener.update();
         buildDesignLine();
+        buildLayout();
     }
 
     /**
@@ -650,9 +696,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener
 
         /** Node of the shape. */
         private XsdTreeNode shapeNode;
-
-        /** Number of segments of Bezier, Clothoid or Arc. */
-        private Integer numSegments;
 
         /** Bezier shape. */
         private Double shape;
@@ -736,6 +779,11 @@ public class MapLinkData extends MapData implements LinkData, EventListener
                             option.addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
                         }
                     }
+                    if (this.shapeNode.getNodeName().equals("Clothoid") || this.shapeNode.getNodeName().equals("Arc")
+                            || this.shapeNode.getNodeName().equals("Bezier"))
+                    {
+                        setFlattenerListener();
+                    }
                     // later as values/coordinates may not be loaded yet during loading
                     SwingUtilities.invokeLater(() -> update());
                 }
@@ -785,6 +833,38 @@ public class MapLinkData extends MapData implements LinkData, EventListener
                 update();
                 buildDesignLine();
             }
+            else if (event.getType().equals(XsdTreeNode.ACTIVATION_CHANGED))
+            {
+                // flattener node
+                boolean activated = (boolean) ((Object[]) event.getContent())[1];
+                if (activated)
+                {
+                    setFlattenerListener();
+                }
+                else
+                {
+                    if (MapLinkData.this.flattenerListener != null)
+                    {
+                        MapLinkData.this.flattenerListener.destroy();
+                    }
+                    MapLinkData.this.flattenerListener = null;
+                }
+                buildDesignLine();
+            }
+        }
+        
+        /**
+         * Sets the flattener listener in the link.
+         */
+        private void setFlattenerListener()
+        {
+            if (MapLinkData.this.flattenerListener != null)
+            {
+                MapLinkData.this.flattenerListener.destroy();
+            }
+            MapLinkData.this.flattenerListener = new FlattenerListener(this.shapeNode.getChild(0), () -> getEval());
+            MapLinkData.this.flattenerListener.addListener(MapLinkData.this, ChangeListener.CHANGE_EVENT, ReferenceType.WEAK);
+            this.shapeNode.getChild(0).addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
         }
 
         /**
@@ -793,7 +873,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener
          */
         private void update()
         {
-            this.numSegments = null;
             this.shape = null;
             this.weighted = null;
             this.startCurvature = null;
@@ -823,10 +902,10 @@ public class MapLinkData extends MapData implements LinkData, EventListener
                     buildDesignLine();
                     break;
                 case "Bezier":
-                    setAttribute("NumSegments");
                     setAttribute("Shape");
                     setAttribute("Weighted");
                     buildDesignLine();
+                    setFlattenerListener();
                     break;
                 case "Clothoid":
                     if (this.shapeNode.getChildCount() > 0 && this.shapeNode.getChild(0).getChildCount() > 0)
@@ -862,14 +941,14 @@ public class MapLinkData extends MapData implements LinkData, EventListener
                             }
                         }
                     }
-                    setAttribute("NumSegments");
                     buildDesignLine();
+                    setFlattenerListener();
                     break;
                 case "Arc":
                     setAttribute("Radius");
                     setAttribute("Direction");
-                    setAttribute("NumSegments");
                     buildDesignLine();
+                    setFlattenerListener();
                     break;
                 default:
                     throw new RuntimeException("Drawing of shape node " + this.shapeNode.getNodeName() + " is not supported.");
@@ -891,9 +970,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener
             {
                 switch (attribute)
                 {
-                    case "NumSegments":
-                        this.numSegments = getOrNull(attribute, INTEGER_ADAPTER);
-                        break;
                     case "Shape":
                         this.shape = getOrNull(attribute, DOUBLE_ADAPTER);
                         break;
@@ -1015,27 +1091,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener
             {
                 // Probably a degenerate line as nodes are at the same location
                 return null;
-            }
-        }
-
-        /**
-         * Return the flattener.
-         * @return Flattener; flattener.
-         */
-        public Flattener getFlattener()
-        {
-            switch (this.shapeNode.getNodeName())
-            {
-                case "Straight":
-                case "Polyline":
-                    return null;
-                case "Clothoid":
-                case "Arc":
-                case "Bezier":
-                    int numSegments = this.numSegments == null ? 64 : this.numSegments;
-                    return new Flattener.NumSegments(numSegments);
-                default:
-                    throw new RuntimeException("Drawing of shape node " + this.shapeNode.getNodeName() + " is not supported.");
             }
         }
     }

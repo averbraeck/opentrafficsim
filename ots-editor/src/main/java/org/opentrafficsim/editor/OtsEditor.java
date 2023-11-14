@@ -938,13 +938,27 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                 int row = OtsEditor.this.treeTable.rowAtPoint(e.getPoint());
                 int col = OtsEditor.this.treeTable.convertColumnIndexToView(0); // columns may have been moved in view
                 XsdTreeNode treeNode = (XsdTreeNode) OtsEditor.this.treeTable.getValueAt(row, col);
-                if (!treeNode.isSelfValid())
+                try
                 {
-                    OtsEditor.this.treeTable.getTree().setToolTipText(treeNode.reportInvalidNode());
+                    if (!treeNode.isSelfValid())
+                    {
+                        OtsEditor.this.treeTable.getTree().setToolTipText(treeNode.reportInvalidNode());
+                    }
+                    else
+                    {
+                        OtsEditor.this.treeTable.getTree().setToolTipText(null);
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    OtsEditor.this.treeTable.getTree().setToolTipText(null);
+                    if (treeNode.isIdentifiable())
+                    {
+                        System.out.println("Node " + treeNode.getId() + " no valid.");
+                    }
+                    else
+                    {
+                        System.out.println("Node " + treeNode.getNodeName() + " no valid.");
+                    }
                 }
             }
         });

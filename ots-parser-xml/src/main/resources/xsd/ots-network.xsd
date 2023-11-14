@@ -214,13 +214,13 @@
   </xsd:complexType>
 
   <xsd:complexType name="FlattenerType">
-    <xsd:choice>
+    <xsd:choice minOccurs="1">
       <xsd:element name="NumSegments" type="ots:positiveInteger" default="64" />
       <xsd:element name="DeviationAndAngle">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="MaxDeviation" type="ots:LengthType" default="0.05m" minOccurs="0" />
-            <xsd:element name="MaxAngle" type="ots:AngleType" default="0.5deg" minOccurs="0" />
+            <xsd:element name="MaxAngle" type="ots:AngleType" default="1.0deg" minOccurs="0" />
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>

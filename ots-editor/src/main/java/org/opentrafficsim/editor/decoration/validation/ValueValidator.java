@@ -355,7 +355,7 @@ public interface ValueValidator extends Comparable<ValueValidator>
                     return null;
                 case "xsd:positiveInteger": // arbitrary length
                     valueType = "integer";
-                    if (Long.valueOf(value) < 0) // might throw NumberFormatException
+                    if (Long.valueOf(value) < 1) // might throw NumberFormatException
                     {
                         return "Integer value must be a positive integer.";
                     }

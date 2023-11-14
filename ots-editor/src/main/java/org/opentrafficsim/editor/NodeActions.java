@@ -76,7 +76,7 @@ public class NodeActions
         }
         this.editor.getUndo().startAction(ActionType.REMOVE, node, null);
         XsdTreeNode parent = node.getParent();
-        int index = Math.min(parent.getChildren().indexOf(node), parent.getChildren().size() - 2);
+        int index = Math.min(parent.getChildren().indexOf(node), parent.getChildren().size() - 1);
         node.remove();
         XsdTreeNode replaced = parent.getChild(index);
         this.editor.getUndo().setPostActionShowNode(replaced);

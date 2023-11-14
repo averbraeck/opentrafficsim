@@ -2185,7 +2185,9 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         if (!candidateValue.isEmpty())
         {
+            String previous = this.value;
             this.value = candidateValue;
+            fireEvent(new Event(VALUE_CHANGED, new Object[] {this, previous}));
         }
 
         // attributes
