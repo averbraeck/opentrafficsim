@@ -34,6 +34,7 @@ public class ScenarioParser
 
     /** Last object looked up via evaluator. */
     @Deprecated
+    // TODO: delete this and make sure regular evaluation output is used where this is used
     public static Object lastLookedUp;
     
     /**

@@ -50,10 +50,11 @@ public interface Flattener
 
         /**
          * Constructor.
-         * @param numSegments int; number of segments.
+         * @param numSegments int; number of segments, must be at least 1.
          */
         public NumSegments(final int numSegments)
         {
+            Throw.when(numSegments < 1, IllegalArgumentException.class, "Number of segments must be at least 1.");
             this.numSegments = numSegments;
         }
 
@@ -89,10 +90,11 @@ public interface Flattener
 
         /**
          * Constructor.
-         * @param maxDeviation int; maximum deviation.
+         * @param maxDeviation int; maximum deviation, must be above 0.0.
          */
         public MaxDeviation(final double maxDeviation)
         {
+            Throw.when(maxDeviation <= 0.0, IllegalArgumentException.class, "Maximum deviation must be above 0.0.");
             this.maxDeviation = maxDeviation;
         }
 
@@ -172,11 +174,13 @@ public interface Flattener
 
         /**
          * Constructor.
-         * @param maxDeviation int; maximum deviation.
-         * @param maxAngle int; maximum angle.
+         * @param maxDeviation int; maximum deviation, must be above 0.0.
+         * @param maxAngle int; maximum angle, must be above 0.0.
          */
         public MaxDeviationAndAngle(final double maxDeviation, final double maxAngle)
         {
+            Throw.when(maxDeviation <= 0.0, IllegalArgumentException.class, "Maximum deviation must be above 0.0.");
+            Throw.when(maxAngle <= 0.0, IllegalArgumentException.class, "Maximum angle must be above 0.0.");
             this.maxDeviation = maxDeviation;
             this.maxAngle = maxAngle;
         }
@@ -284,6 +288,7 @@ public interface Flattener
          */
         public MaxAngle(final double maxAngle)
         {
+            Throw.when(maxAngle <= 0.0, IllegalArgumentException.class, "Maximum angle must be above 0.0.");
             this.maxAngle = maxAngle;
         }
 

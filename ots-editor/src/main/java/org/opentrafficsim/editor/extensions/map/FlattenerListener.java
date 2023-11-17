@@ -9,6 +9,7 @@ import org.opentrafficsim.core.geometry.Flattener.MaxDeviation;
 import org.opentrafficsim.core.geometry.Flattener.MaxDeviationAndAngle;
 import org.opentrafficsim.core.geometry.Flattener.NumSegments;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.road.network.factory.xml.parser.ScenarioParser;
 import org.opentrafficsim.xml.bindings.AngleAdapter;
 import org.opentrafficsim.xml.bindings.IntegerAdapter;
 import org.opentrafficsim.xml.bindings.LengthAdapter;
@@ -73,6 +74,15 @@ public class FlattenerListener extends ChangeListener<Flattener>
             if (getNode().getChild(0).getChild(1).isActive())
             {
                 return new MaxAngle(getAngle(getNode().getChild(0).getChild(1)));
+            }
+        }
+        catch (RuntimeException rte)
+        {
+            if (rte.getMessage().contains("is neither a DoubleScalar nor a Boolean")
+                    && ScenarioParser.lastLookedUp instanceof Integer)
+            {
+                // TODO: dirty trick to obtain a value that was given to Eval, which not yet supports non Boolean/DoubleScalar.
+                return new NumSegments((int) ScenarioParser.lastLookedUp);
             }
         }
         catch (Exception ex)
