@@ -15,6 +15,7 @@ import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
+import org.opentrafficsim.editor.EvalWrapper.EvalListener;
 
 /**
  * Generic implementation to listen to any changes under a node, including its own attributes and activation status. The node
@@ -27,7 +28,7 @@ import org.opentrafficsim.editor.XsdTreeNodeRoot;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <T> type of data that listeners require from what the main node represents.
  */
-public abstract class ChangeListener<T> extends LocalEventProducer implements EventListener
+public abstract class ChangeListener<T> extends LocalEventProducer implements EventListener, EvalListener
 {
 
     /** */
@@ -201,5 +202,12 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
      * @return T; calculated data based on content of the main node.
      */
     abstract T calculateData();
+    
+    /** {@inheritDoc} */
+    @Override
+    public void evalChanged()
+    {
+        this.dataIsDirty = true;
+    }
 
 }

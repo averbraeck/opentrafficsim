@@ -524,6 +524,7 @@ public class Map extends JPanel implements EventListener
         for (MapLinkData linkData : this.links.keySet())
         {
             this.networkFlattenerListener.addListener(linkData, ChangeListener.CHANGE_EVENT, ReferenceType.WEAK);
+            this.editor.addEvalListener(this.networkFlattenerListener);
         }
         node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED, ReferenceType.WEAK);
     }
@@ -533,6 +534,10 @@ public class Map extends JPanel implements EventListener
      */
     private void removeNetworkFlattener()
     {
+        if (this.networkFlattenerListener != null)
+        {
+            this.editor.removeEvalListener(this.networkFlattenerListener);
+        }
         this.networkFlattenerListener.destroy();
         for (MapLinkData linkData : this.links.keySet())
         {
