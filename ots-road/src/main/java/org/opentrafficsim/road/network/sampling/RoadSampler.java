@@ -251,7 +251,6 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
             if (isIntervalBased())
             {
-
                 double currentTime = now().getSI();
                 double nextTenth = Math.floor(currentTime*10)/10;
                 Duration d;
@@ -260,7 +259,6 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
                 }else{
                     d = Duration.ZERO;
                 }
-                System.out.println(d.getSI());
 
                 Event e = new TimedEvent<>(Lane.GTU_SCHEDULE,
                         new Object[] {gtu.getId(), lane.getId(), lane.getLink().getId()},
@@ -284,7 +282,6 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
             boolean active = this.activeGtus.contains(gtu.getId());
 
            Duration nowOnFirstEncounterOtherwiseAtInterval = active ? this.samplingInterval : Duration.ZERO;
-           System.out.println("Scheduling Sampling at "+now().getSI());
            scheduleSamplingInterval(gtu, lane, nowOnFirstEncounterOtherwiseAtInterval);
         }
         else if (event.getType().equals(Lane.GTU_REMOVE_EVENT))
