@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.lane.object.detector;
 
+import java.util.Locale;
 import java.util.function.BiPredicate;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -87,7 +88,7 @@ public class SinkDetector extends LaneDetector
     public SinkDetector(final Lane lane, final Length position, final OtsSimulatorInterface simulator,
             final DetectorType detectorType, final BiPredicate<SinkDetector, LaneBasedGtu> predicate) throws NetworkException
     {
-        super("SINK@" + lane.getFullId() + "." + position, lane, position, RelativePosition.FRONT, simulator,
+        super(String.format(Locale.US, "Sink@%.3fm", position.si), lane, position, RelativePosition.FRONT, simulator,
                 makeGeometry(lane, position, 1.0), detectorType);
         this.predicate = predicate;
     }
