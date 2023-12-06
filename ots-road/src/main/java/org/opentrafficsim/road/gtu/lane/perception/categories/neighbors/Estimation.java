@@ -5,6 +5,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -22,6 +23,10 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalA
  */
 public interface Estimation
 {
+    
+    /** Over-estimation parameter type. Negative values reflect under-estimation. */
+    ParameterTypeDouble OVER_EST = new ParameterTypeDouble("OVER_EST", "Over estimation factor.", 1.0);
+    
     /** No estimation errors. */
     Estimation NONE = new Estimation()
     {
@@ -44,38 +49,13 @@ public interface Estimation
     };
 
     /** Underestimation based on situational awareness. */
-    Estimation UNDERESTIMATION = new FactorEstimation()
+    Estimation FACTOR_ESTIMATION = new FactorEstimation()
     {
-        /** {@inheritDoc} */
-        @Override
-        boolean overEstimation()
-        {
-            return false;
-        }
-        
         /** {@inheritDoc} */
         @Override
         public String toString()
         {
-            return "UNDERESTIMATION";
-        }
-    };
-
-    /** OVerestimation based on situational awareness. */
-    Estimation OVERESTIMATION = new FactorEstimation()
-    {
-        /** {@inheritDoc} */
-        @Override
-        boolean overEstimation()
-        {
-            return true;
-        }
-        
-        /** {@inheritDoc} */
-        @Override
-        public String toString()
-        {
-            return "OVERESTIMATION";
+            return "FACTOR_ESTIMATION";
         }
     };
 
@@ -157,24 +137,13 @@ public interface Estimation
      */
     abstract class FactorEstimation implements Estimation
     {
-
-        /** Sign. */
-        private final double sign;
-
-        /**
-         * Constructor.
-         */
-        FactorEstimation()
-        {
-            this.sign = overEstimation() ? 1.0 : -1.0;
-        }
-
         /** {@inheritDoc} */
         @Override
         public NeighborTriplet estimate(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length distance, final boolean downstream, final Time when) throws ParameterException
         {
-            double factor = 1.0 + this.sign * (perceivingGtu.getParameters().getParameter(AdaptationSituationalAwareness.SA_MAX)
+            double sign = perceivingGtu.getParameters().getParameter(OVER_EST);
+            double factor = 1.0 + sign * (perceivingGtu.getParameters().getParameter(AdaptationSituationalAwareness.SA_MAX)
                     - perceivingGtu.getParameters().getParameter(AdaptationSituationalAwareness.SA));
             Length headway = getDelayedHeadway(perceivingGtu, perceivedGtu, distance, downstream, when).times(factor);
             Speed speed =
@@ -182,12 +151,6 @@ public interface Estimation
             Acceleration acceleration = perceivedGtu.getAcceleration(when);
             return new NeighborTriplet(headway, speed, acceleration);
         }
-
-        /**
-         * Returns whether this is over-estimation.
-         * @return boolean; whether this is over-estimation
-         */
-        abstract boolean overEstimation();
     }
 
 }
