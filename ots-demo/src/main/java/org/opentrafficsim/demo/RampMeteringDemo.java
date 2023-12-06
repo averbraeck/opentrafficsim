@@ -297,17 +297,18 @@ public class RampMeteringDemo extends AbstractSimulationScript
                 .setOffsetStart(laneWidth.times(1.5).neg()).setOffsetEnd(laneWidth.times(1.5).neg())
                 .leftToRight(0.5, laneWidth, freewayLane, speedLimit).addLanes().getLanes();
         // detectors
+        Time first = Time.instantiateSI(60.0);
         Duration agg = Duration.instantiateSI(60.0);
         // TODO: detector length affects occupancy, which length to use?
         Length detectorLength = Length.ZERO;
         LoopDetector det1 = new LoopDetector("1", lanesAB.get(0), Length.instantiateSI(2900), detectorLength,
-                DefaultsRoadNl.LOOP_DETECTOR, sim, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+                DefaultsRoadNl.LOOP_DETECTOR, sim, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
         LoopDetector det2 = new LoopDetector("2", lanesAB.get(1), Length.instantiateSI(2900), detectorLength,
-                DefaultsRoadNl.LOOP_DETECTOR, sim, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+                DefaultsRoadNl.LOOP_DETECTOR, sim, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
         LoopDetector det3 = new LoopDetector("3", lanesCD.get(0), Length.instantiateSI(100), detectorLength,
-                DefaultsRoadNl.LOOP_DETECTOR, sim, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+                DefaultsRoadNl.LOOP_DETECTOR, sim, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
         LoopDetector det4 = new LoopDetector("4", lanesCD.get(1), Length.instantiateSI(100), detectorLength,
-                DefaultsRoadNl.LOOP_DETECTOR, sim, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+                DefaultsRoadNl.LOOP_DETECTOR, sim, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
         List<LoopDetector> detectors12 = new ArrayList<>();
         detectors12.add(det1);
         detectors12.add(det2);

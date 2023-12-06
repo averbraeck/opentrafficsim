@@ -333,6 +333,12 @@ public class LoopDetector extends LaneDetector
     /** Aggregation time. */
     private final Duration aggregation;
 
+    /** Aggregation time of current period, may differ due to offset at start. */
+    private Duration currentAggregation;
+
+    /** First aggregation. */
+    private final Time firstAggregation;
+
     /** Flow per aggregation period. */
     private final List<Frequency> flow = new ArrayList<>();
 
@@ -367,7 +373,8 @@ public class LoopDetector extends LaneDetector
             final OtsSimulatorInterface simulator) throws NetworkException
     {
         // Note: length not important for flow and mean speed
-        this(id, lane, longitudinalPosition, Length.ZERO, detectorType, simulator, Duration.instantiateSI(60.0), MEAN_SPEED);
+        this(id, lane, longitudinalPosition, Length.ZERO, detectorType, simulator, Time.instantiateSI(60.0),
+                Duration.instantiateSI(60.0), MEAN_SPEED);
     }
 
     /**
@@ -377,20 +384,23 @@ public class LoopDetector extends LaneDetector
      * @param longitudinalPosition Length; position
      * @param length Length; length
      * @param simulator OtsSimulatorInterface; simulator
+     * @param firstAggregation Time; time of first aggregation
      * @param aggregation Duration; aggregation period
      * @param measurements DetectorMeasurement&lt;?, ?&gt;...; measurements to obtain
      * @param detectorType DetectorType; detector type.
      * @throws NetworkException on network exception
      */
     public LoopDetector(final String id, final Lane lane, final Length longitudinalPosition, final Length length,
-            final DetectorType detectorType, final OtsSimulatorInterface simulator, final Duration aggregation,
-            final LoopDetectorMeasurement<?, ?>... measurements) throws NetworkException
+            final DetectorType detectorType, final OtsSimulatorInterface simulator, final Time firstAggregation,
+            final Duration aggregation, final LoopDetectorMeasurement<?, ?>... measurements) throws NetworkException
     {
         super(id, lane, longitudinalPosition, RelativePosition.FRONT, simulator, detectorType);
         Throw.when(aggregation.si <= 0.0, IllegalArgumentException.class, "Aggregation time should be positive.");
         this.length = length;
+        this.currentAggregation = Duration.instantiateSI(firstAggregation.si);
         this.aggregation = aggregation;
-        Try.execute(() -> simulator.scheduleEventAbsTime(Time.instantiateSI(aggregation.si), this, "aggregate", null), "");
+        this.firstAggregation = firstAggregation;
+        Try.execute(() -> simulator.scheduleEventAbsTime(firstAggregation, this, "aggregate", null), "");
         for (LoopDetectorMeasurement<?, ?> measurement : measurements)
         {
             this.currentCumulativeDataMap.put(measurement, measurement.identity());
@@ -489,14 +499,15 @@ public class LoopDetector extends LaneDetector
      */
     private void aggregate()
     {
-        Frequency frequency = Frequency.instantiateSI(this.gtuCountCurrentPeriod / this.aggregation.si);
+        Frequency frequency = Frequency.instantiateSI(this.gtuCountCurrentPeriod / this.currentAggregation.si);
         this.flow.add(frequency);
         for (LoopDetectorMeasurement<?, ?> measurement : this.periodicDataMap.keySet())
         {
-            aggregate(measurement, this.gtuCountCurrentPeriod, this.aggregation);
+            aggregate(measurement, this.gtuCountCurrentPeriod, this.currentAggregation);
             this.currentCumulativeDataMap.put(measurement, measurement.identity());
         }
         this.gtuCountCurrentPeriod = 0;
+        this.currentAggregation = this.aggregation; // after first possibly irregular period, all periods regular
         if (!getListenerReferences(LOOP_DETECTOR_AGGREGATE).isEmpty())
         {
             Object[] data = new Object[this.periodicDataMap.size() + 1];
@@ -510,9 +521,7 @@ public class LoopDetector extends LaneDetector
             }
             this.fireTimedEvent(LOOP_DETECTOR_AGGREGATE, data, getSimulator().getSimulatorTime());
         }
-        this.period++;
-        double t = this.aggregation.si * this.period;
-        Time time = Time.instantiateSI(t);
+        Time time = Time.instantiateSI(this.firstAggregation.si + this.aggregation.si * this.period++);
         Try.execute(() -> getSimulator().scheduleEventAbsTime(time, this, "aggregate", null), "");
     }
 
@@ -716,8 +725,9 @@ public class LoopDetector extends LaneDetector
                         Object[] data = new Object[columns.size()];
                         int index = this.indexIterator.next();
 
+                        double t = this.loopDetector.firstAggregation.si + (index - 1) * this.loopDetector.aggregation.si;
                         data[0] = this.loopDetector.getId();
-                        data[1] = Duration.instantiateSI(index * this.loopDetector.aggregation.si);
+                        data[1] = Duration.instantiateSI(t < 0.0 ? 0.0 : t);
                         data[2] = this.loopDetector.flow.get(index);
                         int dataIndex = 3;
                         for (LoopDetectorMeasurement<?, ?> measurement : measurements)
