@@ -88,14 +88,14 @@ public class SinkDetector extends LaneDetector
     public SinkDetector(final Lane lane, final Length position, final OtsSimulatorInterface simulator,
                         final DetectorType detectorType, final BiPredicate<SinkDetector, LaneBasedGtu> predicate) throws NetworkException
     {
-        super("SINK@" + UUID.randomUUID(), lane, position, RelativePosition.FRONT, simulator,
+        super("SINK@" + UUID.randomUUID(), lane, position, RelativePosition.CENTER, simulator,
                 makeGeometry(lane, position, 1.0), detectorType);
         this.predicate = predicate;
     }
     public SinkDetector(final String gtuId, final Lane lane, final Length position, final OtsSimulatorInterface simulator,
             final DetectorType detectorType, final BiPredicate<SinkDetector, LaneBasedGtu> predicate) throws NetworkException
     {
-        super("SINK@" + gtuId, lane, position, RelativePosition.FRONT, simulator,
+        super("SINK@" + gtuId, lane, position, RelativePosition.CENTER, simulator,
                 makeGeometry(lane, position, 1.0), detectorType);
         this.predicate = predicate;
     }

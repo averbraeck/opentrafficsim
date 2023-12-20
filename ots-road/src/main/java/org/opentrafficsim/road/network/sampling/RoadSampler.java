@@ -252,10 +252,10 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
             if (isIntervalBased())
             {
                 double currentTime = now().getSI();
-                double nextTenth = Math.floor(currentTime*10)/10;
+                double nextTenth = Math.ceil(currentTime / 0.04) * 0.04;
                 Duration d;
                 if(nextTenth!=currentTime){
-                    d = Duration.instantiateSI(nextTenth+0.1 - currentTime);
+                    d = Duration.instantiateSI(nextTenth - currentTime);
                 }else{
                     d = Duration.ZERO;
                 }
