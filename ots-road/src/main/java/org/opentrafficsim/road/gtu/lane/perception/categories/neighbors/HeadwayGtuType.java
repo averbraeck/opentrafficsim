@@ -206,7 +206,7 @@ public interface HeadwayGtuType
                 this.updateTime = now;
                 this.tr = perceivingGtu.getParameters().getParameter(ParameterTypes.TR);
                 Time whenTemp = now.minus(this.tr);
-                if (this.when == null || (this.when != null && whenTemp.si > this.when.si))
+                if (this.when == null || whenTemp.si > this.when.si)
                 {
                     // never go backwards in time if the reaction time increases
                     this.when = whenTemp;
