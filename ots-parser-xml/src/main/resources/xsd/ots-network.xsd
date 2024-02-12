@@ -188,15 +188,12 @@
   <!-- LINK plus TRAFFICLIGHT.ID should be unique. -->
 
   <xsd:complexType name="TrafficLightType">
+    <xsd:sequence>
+      <xsd:element name="TurnOnRed" type="ots:string" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
     <xsd:attribute name="Id" type="ots:IdType" use="required" />
     <xsd:attribute name="Lane" type="ots:string" use="required" />
     <xsd:attribute name="Position" type="ots:LengthBeginEndType" use="required" />
-    <xsd:attribute name="Class" type="ots:ClassNameType" use="required">
-      <xsd:annotation>
-        <xsd:documentation source="description">Fully specified classname including the package.
-        </xsd:documentation>
-      </xsd:annotation>
-    </xsd:attribute>
   </xsd:complexType>
 
   <xsd:complexType name="TrafficLightDetectorType">

@@ -96,7 +96,8 @@ public final class TrafficLightUtil
         Throw.whenNull(speed, "Speed may not be null.");
         Throw.whenNull(speedLimitInfo, "Speed limit info may not be null.");
         Throw.when(!headwayTrafficLight.isAhead(), IllegalArgumentException.class, "Traffic light must be downstream.");
-        if (headwayTrafficLight.getTrafficLightColor().isRed() || headwayTrafficLight.getTrafficLightColor().isYellow())
+        if ((headwayTrafficLight.getTrafficLightColor().isRed() || headwayTrafficLight.getTrafficLightColor().isYellow())
+                && !headwayTrafficLight.canTurnOnRed())
         {
             // deceleration from car-following model
             Acceleration a = carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo,

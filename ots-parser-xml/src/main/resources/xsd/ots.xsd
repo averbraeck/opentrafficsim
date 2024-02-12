@@ -449,6 +449,13 @@
       <xsd:selector xpath=".//ots:Network/ots:Connector" />
       <xsd:field xpath="@Type" />
     </xsd:keyref>
+    
+    <!-- TrafficLight.TurnOnRed defined by Node.Id -->
+
+    <xsd:keyref name="turnOnRedIdRef" refer="ots:nodeKey">
+      <xsd:selector xpath=".//ots:TrafficLight/ots:TurnOnRed" />
+      <xsd:field xpath="." />
+    </xsd:keyref>
 
     <!-- ======================================== CHECKS IN DEMAND ======================================== -->
 

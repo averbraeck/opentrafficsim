@@ -1,6 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<ots:Ots xmlns:ots="http://www.opentrafficsim.org/ots" 
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<ots:Ots xmlns:ots="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../../ots-parser-xml/src/main/resources/xsd/ots.xsd"
   xmlns:xi="http://www.w3.org/2001/XInclude">
 
@@ -200,12 +199,9 @@
     <ots:Link Id="N2NC" NodeStart="N2" NodeEnd="NC" Type="STREET">
       <ots:Straight />
       <ots:DefinedLayout>r1</ots:DefinedLayout>
-      <ots:TrafficLight Lane="FORWARD3"
-        Class="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" Id="10" Position="END-0.00m" />
-      <ots:TrafficLight Lane="FORWARD2"
-        Class="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" Id="11" Position="END-0.00m" />
-      <ots:TrafficLight Lane="FORWARD1"
-        Class="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" Id="12" Position="END-0.00m" />
+      <ots:TrafficLight Lane="FORWARD3" Id="10" Position="END-0.00m" />
+      <ots:TrafficLight Lane="FORWARD2" Id="11" Position="END-0.00m" />
+      <ots:TrafficLight Lane="FORWARD1" Id="12" Position="END-0.00m" />
     </ots:Link>
 
     <ots:Link Id="EE1" NodeStart="E" NodeEnd="E1" Type="STREET">
@@ -221,12 +217,9 @@
     <ots:Link Id="E2EC" NodeStart="E2" NodeEnd="EC" Type="STREET">
       <ots:Straight />
       <ots:DefinedLayout>r1</ots:DefinedLayout>
-      <ots:TrafficLight Lane="FORWARD3"
-        Class="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" Id="01" Position="END-0.00m" />
-      <ots:TrafficLight Lane="FORWARD2"
-        Class="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" Id="02" Position="END-0.00m" />
-      <ots:TrafficLight Lane="FORWARD1"
-        Class="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" Id="03" Position="END-0.00m" />
+      <ots:TrafficLight Lane="FORWARD3" Id="01" Position="END-0.00m" />
+      <ots:TrafficLight Lane="FORWARD2" Id="02" Position="END-0.00m" />
+      <ots:TrafficLight Lane="FORWARD1" Id="03" Position="END-0.00m" />
     </ots:Link>
 
     <ots:Link Id="SS1" NodeStart="S" NodeEnd="S1" Type="STREET">
@@ -242,12 +235,9 @@
     <ots:Link Id="S2SC" NodeStart="S2" NodeEnd="SC" Type="STREET">
       <ots:Straight />
       <ots:DefinedLayout>r1</ots:DefinedLayout>
-      <ots:TrafficLight Lane="FORWARD3"
-        Class="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" Id="04" Position="END-0.00m" />
-      <ots:TrafficLight Lane="FORWARD2"
-        Class="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" Id="05" Position="END-0.00m" />
-      <ots:TrafficLight Lane="FORWARD1"
-        Class="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" Id="06" Position="END-0.00m" />
+      <ots:TrafficLight Lane="FORWARD3" Id="04" Position="END-0.00m" />
+      <ots:TrafficLight Lane="FORWARD2" Id="05" Position="END-0.00m" />
+      <ots:TrafficLight Lane="FORWARD1" Id="06" Position="END-0.00m" />
     </ots:Link>
 
     <ots:Link Id="WW1" NodeStart="W" NodeEnd="W1" Type="STREET">
@@ -263,12 +253,9 @@
     <ots:Link Id="W2WC" NodeStart="W2" NodeEnd="WC" Type="STREET">
       <ots:Straight />
       <ots:DefinedLayout>r1</ots:DefinedLayout>
-      <ots:TrafficLight Lane="FORWARD3"
-        Class="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" Id="07" Position="END-0.00m" />
-      <ots:TrafficLight Lane="FORWARD2"
-        Class="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" Id="08" Position="END-0.00m" />
-      <ots:TrafficLight Lane="FORWARD1"
-        Class="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" Id="09" Position="END-0.00m" />
+      <ots:TrafficLight Lane="FORWARD3" Id="07" Position="END-0.00m" />
+      <ots:TrafficLight Lane="FORWARD2" Id="08" Position="END-0.00m" />
+      <ots:TrafficLight Lane="FORWARD1" Id="09" Position="END-0.00m" />
     </ots:Link>
 
     <ots:Link Id="ECNC" NodeStart="EC" NodeEnd="NCO" Type="STREET" OffsetStart="-6.6m" OffsetEnd="0m">
@@ -353,7 +340,8 @@
 
   </ots:Network>
   <ots:Demand>
-    <ots:Od Id="Traffic Demand" GlobalInterpolation="STEPWISE" GlobalFactor="1.000" SinkType="NL.ROAD_USERS" Options="OdOptions">
+    <ots:Od Id="Traffic Demand" GlobalInterpolation="STEPWISE" GlobalFactor="1.000" SinkType="NL.ROAD_USERS"
+      Options="OdOptions">
       <ots:Category GtuType="NL.CAR" Id="CAR" />
       <ots:Category GtuType="NL.TRUCK" Id="TRUCK" />
       <ots:Cell Category="CAR" Origin="W" Destination="NO">

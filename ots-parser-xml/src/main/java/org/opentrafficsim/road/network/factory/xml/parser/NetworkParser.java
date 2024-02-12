@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.network.factory.xml.parser;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -22,7 +20,6 @@ import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
-import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
@@ -68,7 +65,9 @@ import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder.FixedWidthGenerator;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder.RelativeWidthGenerator;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder.WidthGenerator;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
+import org.opentrafficsim.xml.bindings.types.StringType;
 import org.opentrafficsim.xml.generated.BasicRoadLayout;
 import org.opentrafficsim.xml.generated.CseLane;
 import org.opentrafficsim.xml.generated.CseNoTrafficLane;
@@ -478,20 +477,10 @@ public final class NetworkParser
                         laneId);
                 Lane lane = lanes.get(laneId);
                 Length position = ParseUtil.parseLengthBeginEnd(trafficLight.getPosition().get(eval), lane.getLength());
-                try
+                TrafficLight obj = new TrafficLight(trafficLight.getId(), lane, position, simulator);
+                for (StringType nodeId : trafficLight.getTurnOnRed())
                 {
-                    @SuppressWarnings("unchecked")
-                    Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(trafficLight.getClazz().get(eval),
-                            new Class[] {String.class, Lane.class, Length.class, OtsSimulatorInterface.class});
-                    trafficLightConstructor.newInstance(new Object[] {trafficLight.getId(), lane, position, simulator});
-                }
-                catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException
-                        | InvocationTargetException exception)
-                {
-                    throw new NetworkException("TrafficLight: Class Name " + trafficLight.getClazz().get(eval).getName()
-                            + " for traffic light " + trafficLight.getId() + " on lane " + lane.toString() + " at position "
-                            + position + " -- class not found or constructor not right", exception);
-                    // TODO: this discards too much information; e.g. Network already contains an object with the name ...
+                    obj.addTurnOnRed(otsNetwork.getNode(nodeId.get(eval)));
                 }
             }
         }
