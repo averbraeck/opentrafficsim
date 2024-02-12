@@ -108,9 +108,8 @@ public class DefaultConflictRule implements ConflictRule
         else if (priority1.equals(priority2) || (priority1.isYield() && priority2.isStop())
                 || (priority2.isYield() && priority1.isStop()))
         {
-            Throw.when(priority1.isTurnOnRed() || priority1.isBusStop(), IllegalArgumentException.class,
-                    "Both priorities are either 'turn on red' or 'bus stop', which is not allowed. "
-                            + "Use BusStopConflictRule for bus stops.");
+            Throw.when(priority1.isBusStop(), IllegalArgumentException.class,
+                    "Both priorities are 'bus stop', which is not allowed. Use BusStopConflictRule for bus stops.");
             // Based on right- or left-hand traffic
             OrientedPoint2d p1;
             OrientedPoint2d p2;
@@ -156,16 +155,6 @@ public class DefaultConflictRule implements ConflictRule
         {
             conflictRules[0] = priority1.isStop() ? ConflictPriority.STOP : ConflictPriority.YIELD;
             conflictRules[1] = ConflictPriority.PRIORITY;
-        }
-        else if (priority1.isTurnOnRed() && (priority2.isYield() || priority2.isStop()))
-        {
-            conflictRules[0] = ConflictPriority.TURN_ON_RED;
-            conflictRules[1] = ConflictPriority.PRIORITY;
-        }
-        else if (priority2.isTurnOnRed() && (priority1.isYield() || priority1.isStop()))
-        {
-            conflictRules[0] = ConflictPriority.PRIORITY;
-            conflictRules[1] = ConflictPriority.TURN_ON_RED;
         }
         else
         {

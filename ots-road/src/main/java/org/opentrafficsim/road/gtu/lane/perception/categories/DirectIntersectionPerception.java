@@ -98,7 +98,8 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                 {
                     try
                     {
-                        return new HeadwayTrafficLight(trafficLight, distance);
+                        return new HeadwayTrafficLight(trafficLight, distance,
+                                trafficLight.canTurnOnRed(route, getPerception().getGtu().getType()));
                     }
                     catch (GtuException exception)
                     {

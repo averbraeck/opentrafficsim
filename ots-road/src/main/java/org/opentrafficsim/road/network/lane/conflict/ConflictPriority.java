@@ -16,9 +16,6 @@ public enum ConflictPriority
     /** Have priority. */
     PRIORITY,
 
-    /** Turn on red. */
-    TURN_ON_RED,
-
     /** Yield. */
     YIELD,
 
@@ -38,15 +35,6 @@ public enum ConflictPriority
     public final boolean isPriority()
     {
         return this.equals(PRIORITY);
-    }
-
-    /**
-     * Returns whether this is a turn on red conflict.
-     * @return whether this is a turn on red conflict
-     */
-    public final boolean isTurnOnRed()
-    {
-        return this.equals(TURN_ON_RED);
     }
 
     /**

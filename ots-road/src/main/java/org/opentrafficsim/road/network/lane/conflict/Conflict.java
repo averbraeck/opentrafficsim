@@ -389,7 +389,8 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                             protected HeadwayTrafficLight perceive(final LaneBasedGtu perceivingGtu, final TrafficLight object,
                                     final Length distance) throws GtuException, ParameterException
                             {
-                                return new HeadwayTrafficLight(object, distance);
+                                return new HeadwayTrafficLight(object, distance, object.canTurnOnRed(
+                                        perceivingGtu.getStrategicalPlanner().getRoute(), perceivingGtu.getType()));
                             }
                         };
                 if (!it.isEmpty())

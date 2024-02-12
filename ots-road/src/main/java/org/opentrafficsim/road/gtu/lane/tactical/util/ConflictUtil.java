@@ -28,7 +28,6 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
@@ -187,8 +186,7 @@ public final class ConflictUtil
             if (lane.isCurrent())
             {
                 // TODO: priority rules of busses should be handled differently, this also makes a GTU type unnecessary here
-                if (gtu.getStrategicalPlanner().getRoute() instanceof BusSchedule
-                        && gtu.getType().isOfType(DefaultsNl.BUS)
+                if (gtu.getStrategicalPlanner().getRoute() instanceof BusSchedule && gtu.getType().isOfType(DefaultsNl.BUS)
                         && conflict.getConflictRuleType().equals(BusStopConflictRule.class))
                 {
                     BusSchedule busSchedule = (BusSchedule) gtu.getStrategicalPlanner().getRoute();
@@ -225,7 +223,6 @@ public final class ConflictUtil
                     break;
                 }
                 case YIELD: // TODO depending on rules, we may need to stop and not just yield
-                case TURN_ON_RED:
                 {
                     Length prevEnd = prevEnds.isEmpty() ? null : prevEnds.get(prevEnds.size() - 1);
                     stop = stopForGiveWayConflict(conflict, leaders, speed, acceleration, vehicleLength, parameters,

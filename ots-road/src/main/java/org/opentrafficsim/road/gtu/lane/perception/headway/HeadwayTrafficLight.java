@@ -23,17 +23,23 @@ public class HeadwayTrafficLight extends AbstractHeadwayLaneBasedObject
     /** the traffic light object for further observation, can not be null. */
     private final TrafficLight trafficLight;
 
+    /** Whether we can turn on red. */
+    private final boolean turnOnRed;
+
     /**
      * Construct a new Headway information object, for a traffic light ahead of us (or behind us, although that does not seem
      * very useful).
      * @param trafficLight TrafficLight; the traffic light object for further observation, can not be null.
      * @param distance Length; the distance to the traffic light, distance cannot be null.
+     * @param turnOnRed boolean; whether the perceiving GTU may turn on red.
      * @throws GtuException when id is null, or parameters are inconsistent
      */
-    public HeadwayTrafficLight(final TrafficLight trafficLight, final Length distance) throws GtuException
+    public HeadwayTrafficLight(final TrafficLight trafficLight, final Length distance, final boolean turnOnRed)
+            throws GtuException
     {
         super(ObjectType.TRAFFICLIGHT, id(trafficLight), distance, trafficLight.getLane());
         this.trafficLight = trafficLight;
+        this.turnOnRed = turnOnRed;
     }
 
     /**
@@ -54,6 +60,15 @@ public class HeadwayTrafficLight extends AbstractHeadwayLaneBasedObject
     public final TrafficLightColor getTrafficLightColor()
     {
         return this.trafficLight.getTrafficLightColor();
+    }
+    
+    /**
+     * Whether the perceiving GTU may turn on red.
+     * @return boolean; whether the perceiving GTU may turn on red.
+     */
+    public final boolean canTurnOnRed()
+    {
+        return this.turnOnRed;
     }
 
     /** {@inheritDoc} */

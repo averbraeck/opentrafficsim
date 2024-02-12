@@ -703,13 +703,14 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
             if (lbo instanceof TrafficLight)
             {
                 TrafficLight tl = (TrafficLight) lbo;
+                boolean turnOnRed = false;
                 if (tl.getTrafficLightColor().isRed())
                 {
                     if (cumDistSI + objectDistanceSI > breakingDistance(MAX_RED_DECELERATION, getGtu().getSpeed()).si)
                     {
-                        return new HeadwayTrafficLight(tl, new Length(cumDistSI + objectDistanceSI, LengthUnit.SI));
+                        return new HeadwayTrafficLight(tl, new Length(cumDistSI + objectDistanceSI, LengthUnit.SI), turnOnRed);
                     }
-                    return new HeadwayTrafficLight(tl, new Length(cumDistSI + objectDistanceSI, LengthUnit.SI));
+                    return new HeadwayTrafficLight(tl, new Length(cumDistSI + objectDistanceSI, LengthUnit.SI), turnOnRed);
                 }
                 if (tl.getTrafficLightColor().isYellow())
                 {
@@ -719,7 +720,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
                     // getGtu().getSpeed().si * brakingTime - 0.5 * maxDecel * brakingTime * brakingTime;
                     if (cumDistSI + objectDistanceSI > breakingDistance(MAX_YELLOW_DECELERATION, getGtu().getSpeed()).si)
                     {
-                        return new HeadwayTrafficLight(tl, new Length(cumDistSI + objectDistanceSI, LengthUnit.SI));
+                        return new HeadwayTrafficLight(tl, new Length(cumDistSI + objectDistanceSI, LengthUnit.SI), turnOnRed);
                     }
                 }
                 if (tl.getTrafficLightColor().isRed())

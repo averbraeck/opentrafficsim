@@ -278,9 +278,6 @@ public class CrossSectionLink extends Link implements Serializable
         /** No priority. */
         NONE,
 
-        /** Turn on red. */
-        TURN_ON_RED,
-
         /** Yield. */
         YIELD,
 
@@ -309,15 +306,6 @@ public class CrossSectionLink extends Link implements Serializable
         public boolean isNone()
         {
             return this.equals(NONE);
-        }
-
-        /**
-         * Returns whether this is turn on red.
-         * @return whether this is turn on red
-         */
-        public boolean isTurnOnRed()
-        {
-            return this.equals(TURN_ON_RED);
         }
 
         /**
