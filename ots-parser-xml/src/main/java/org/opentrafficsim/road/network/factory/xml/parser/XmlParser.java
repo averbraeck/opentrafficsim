@@ -296,12 +296,15 @@ public final class XmlParser implements Serializable
         Map<String, LaneBasedStrategicalPlannerFactory<?>> factories =
                 ModelParser.parseModel(otsNetwork, models, eval, parameterTypes, streamInformation, parameterFactory);
         List<ScenarioType> scenarios = ots.getScenarios() == null ? new ArrayList<>() : ots.getScenarios().getScenario();
-        Map<String, String> modelIdReferrals = ScenarioParser.parseModelIdReferral(scenarios, ots.getDemand(), eval);
+        if (demand != null)
+        {
+            Map<String, String> modelIdReferrals = ScenarioParser.parseModelIdReferral(scenarios, demand, eval);
 
-        // OD generators
-        List<LaneBasedGtuGenerator> generators = OdParser.parseDemand(otsNetwork, definitions, demand, gtuTemplates, laneBiases,
-                factories, modelIdReferrals, streamInformation, eval);
-        System.out.println("Created " + generators.size() + " generators based on origin destination matrices");
+            // OD generators
+            List<LaneBasedGtuGenerator> generators = OdParser.parseDemand(otsNetwork, definitions, demand, gtuTemplates,
+                    laneBiases, factories, modelIdReferrals, streamInformation, eval);
+            System.out.println("Created " + generators.size() + " generators based on origin destination matrices");
+        }
 
         // control
         if (ots.getControl() != null)

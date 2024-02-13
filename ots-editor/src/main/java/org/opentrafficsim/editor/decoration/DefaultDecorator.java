@@ -89,6 +89,10 @@ public final class DefaultDecorator
         new AttributesStringFunction(editor, "Ots.Demand.OdOptions.OdOptionsItem.Markov.State", "GtuType", "Parent",
                 "Correlation");
         new AttributesStringFunction(editor, "Ots.Demand.Generator", "Link", "Lane");
+        new AttributesStringFunction(editor, "Ots.Control.FixedTime.SignalGroup.TrafficLight", "Link", "Lane",
+                "TrafficLightId");
+        new AttributesStringFunction(editor, "Ots.Control.FixedTime.Cycle", "SignalGroupId", "Offset", "PreGreen", "Green",
+                "Yellow");
         new AttributesStringFunction(editor, ".LaneBias", "GtuType");
         new OdOptionsItemStringFunction(editor);
         new ClassNameTypeStringFunction(editor);

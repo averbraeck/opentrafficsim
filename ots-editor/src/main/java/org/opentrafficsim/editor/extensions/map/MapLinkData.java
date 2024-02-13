@@ -455,7 +455,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         }
         return null;
     }
-
+    
     /**
      * The map was notified a new coordinate node was added. The node may or may not be part of this link.
      * @param node XsdTreeNode; added coordinate node.
@@ -551,7 +551,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         }
         return getMap().getNetworkFlattener();
     }
-
+    
     /**
      * Builds all animation objects for stripes, lanes, shoulders, no-traffic lanes, and their center lines and id's.
      */

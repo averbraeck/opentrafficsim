@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ots:Ots xmlns:ots="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ots:Definitions>
+    <ots:GtuTypes>
+      <ots:GtuType Id="CAR"/>
+    </ots:GtuTypes>
+    <ots:GtuTemplates>
+      <ots:GtuTemplate GtuType="CAR" Id="CAR">
+        <ots:LengthDist LengthUnit="m">
+          <ots:Uniform Max="5" Min="3.5"/>
+        </ots:LengthDist>
+        <ots:WidthDist LengthUnit="m">
+          <ots:Uniform Max="2.1" Min="1.7"/>
+        </ots:WidthDist>
+        <ots:MaxSpeedDist SpeedUnit="km/h">
+          <ots:Constant C="210"/>
+        </ots:MaxSpeedDist>
+      </ots:GtuTemplate>
+    </ots:GtuTemplates>
+    <ots:LinkTypes>
+      <ots:LinkType Id="URBAN">
+        <ots:Compatibility GtuType="CAR"/>
+        <ots:SpeedLimit GtuType="CAR" LegalSpeedLimit="50km/h"/>
+      </ots:LinkType>
+    </ots:LinkTypes>
+    <ots:LaneTypes>
+      <ots:LaneType Id="URBAN">
+        <ots:Compatibility GtuType="CAR"/>
+      </ots:LaneType>
+    </ots:LaneTypes>
+    <ots:DetectorTypes>
+      <ots:DetectorType Id="sink">
+        <ots:Compatibility GtuType="CAR"/>
+      </ots:DetectorType>
+    </ots:DetectorTypes>
+    <ots:RoadLayouts>
+      <ots:RoadLayout Id="turnlane" LinkType="URBAN">
+        <ots:Shoulder>
+          <ots:Width>2m</ots:Width>
+        </ots:Shoulder>
+        <ots:Lane Id="lane1" LaneType="URBAN">
+          <ots:Width>3.5m</ots:Width>
+          <ots:SpeedLimit GtuType="CAR" LegalSpeedLimit="40km/h"/>
+        </ots:Lane>
+        <ots:Shoulder>
+          <ots:Width>2m</ots:Width>
+        </ots:Shoulder>
+      </ots:RoadLayout>
+      <ots:RoadLayout Id="2lane" LinkType="URBAN">
+        <ots:Shoulder>
+          <ots:Width>2m</ots:Width>
+        </ots:Shoulder>
+        <ots:Stripe Type="SOLID"/>
+        <ots:Lane Id="lane2" LaneType="URBAN">
+          <ots:Width>3.5m</ots:Width>
+        </ots:Lane>
+        <ots:Stripe Type="DASHED"/>
+        <ots:Lane Id="lane1" LaneType="URBAN">
+          <ots:Width>3.5m</ots:Width>
+        </ots:Lane>
+        <ots:Stripe Type="SOLID"/>
+        <ots:Shoulder>
+          <ots:Width>2m</ots:Width>
+        </ots:Shoulder>
+      </ots:RoadLayout>
+      <ots:RoadLayout Id="2turnlane" LinkType="URBAN">
+        <ots:Shoulder>
+          <ots:Width>2m</ots:Width>
+        </ots:Shoulder>
+        <ots:Lane Id="lane2" LaneType="URBAN">
+          <ots:Width>3.5m</ots:Width>
+        </ots:Lane>
+        <ots:Stripe Type="DASHED"/>
+        <ots:Lane Id="lane1" LaneType="URBAN">
+          <ots:Width>3.5m</ots:Width>
+        </ots:Lane>
+        <ots:Shoulder>
+          <ots:Width>2m</ots:Width>
+        </ots:Shoulder>
+      </ots:RoadLayout>
+      <ots:RoadLayout Id="4lane" LinkType="URBAN">
+        <ots:Shoulder>
+          <ots:Width>2m</ots:Width>
+        </ots:Shoulder>
+        <ots:Stripe Type="SOLID"/>
+        <ots:Lane Id="lane4" LaneType="URBAN">
+          <ots:Width>3.5m</ots:Width>
+        </ots:Lane>
+        <ots:Stripe Type="BLOCK"/>
+        <ots:Lane Id="lane3" LaneType="URBAN">
+          <ots:Width>3.5m</ots:Width>
+        </ots:Lane>
+        <ots:Stripe Type="DASHED"/>
+        <ots:Lane Id="lane2" LaneType="URBAN">
+          <ots:Width>3.5m</ots:Width>
+        </ots:Lane>
+        <ots:Stripe Type="BLOCK"/>
+        <ots:Lane Id="lane1" LaneType="URBAN">
+          <ots:Width>3.5m</ots:Width>
+        </ots:Lane>
+        <ots:Stripe Type="SOLID"/>
+        <ots:Shoulder>
+          <ots:Width>2m</ots:Width>
+        </ots:Shoulder>
+      </ots:RoadLayout>
+    </ots:RoadLayouts>
+  </ots:Definitions>
+  <ots:Network>
+    <ots:Node Coordinate="(8,300)" Direction="90deg(E)" Id="AN"/>
+    <ots:Node Coordinate="(8,23.5)" Direction="90deg(E)" Id="ANI"/>
+    <ots:Node Coordinate="(-8,300)" Direction="270deg(E)" Id="AS"/>
+    <ots:Node Coordinate="(-8,20)" Direction="270deg(E)" Id="ASI"/>
+    <ots:Node Coordinate="(300,-8)" Direction="0deg(E)" Id="BE"/>
+    <ots:Node Coordinate="(20,-8)" Direction="0deg(E)" Id="BEI"/>
+    <ots:Node Coordinate="(300,8)" Direction="180deg(E)" Id="BW"/>
+    <ots:Node Coordinate="(90,8)" Direction="180deg(E)" Id="BWT"/>
+    <ots:Node Coordinate="(20,8)" Direction="180deg(E)" Id="BWI"/>
+    <ots:Node Coordinate="(8,-300)" Direction="90deg(E)" Id="CN"/>
+    <ots:Node Coordinate="(8,-20)" Direction="90deg(E)" Id="CNI"/>
+    <ots:Node Coordinate="(-8,-300)" Direction="270deg(E)" Id="CS"/>
+    <ots:Node Coordinate="(-8,-23.5)" Direction="270deg(E)" Id="CSI"/>
+    <ots:Node Coordinate="(-300,-8)" Direction="0deg(E)" Id="DE"/>
+    <ots:Node Coordinate="(-90,-8)" Direction="0deg(E)" Id="DET"/>
+    <ots:Node Coordinate="(-20,-8)" Direction="0deg(E)" Id="DEI"/>
+    <ots:Node Coordinate="(-300,8)" Direction="180deg(E)" Id="DW"/>
+    <ots:Node Coordinate="(-20,8)" Direction="180deg(E)" Id="DWI"/>
+    <ots:Link Id="AS-ASI" NodeEnd="ASI" NodeStart="AS" Type="URBAN">
+      <ots:Straight/>
+      <ots:DefinedLayout>2lane</ots:DefinedLayout>
+      <ots:TrafficLight Id="A1" Lane="lane1" Position="275m"/>
+      <ots:TrafficLight Id="A2" Lane="lane2" Position="275m">
+        <ots:TurnOnRed>DWI</ots:TurnOnRed>
+      </ots:TrafficLight>
+    </ots:Link>
+    <ots:Link Id="ANI-AN" NodeEnd="AN" NodeStart="ANI" Type="URBAN">
+      <ots:Straight/>
+      <ots:DefinedLayout>2lane</ots:DefinedLayout>
+    </ots:Link>
+    <ots:Link Id="BW-BWT" NodeEnd="BWT" NodeStart="BW" Type="URBAN">
+      <ots:Straight/>
+      <ots:DefinedLayout>2lane</ots:DefinedLayout>
+    </ots:Link>
+    <ots:Link Id="BEI-BE" NodeEnd="BE" NodeStart="BEI" Type="URBAN">
+      <ots:Straight/>
+      <ots:DefinedLayout>2lane</ots:DefinedLayout>
+    </ots:Link>
+    <ots:Link Id="CN-CNI" NodeEnd="CNI" NodeStart="CN" Type="URBAN">
+      <ots:Straight/>
+      <ots:DefinedLayout>2lane</ots:DefinedLayout>
+      <ots:TrafficLight Id="C1" Lane="lane1" Position="275m"/>
+      <ots:TrafficLight Id="C2" Lane="lane2" Position="275m">
+        <ots:TurnOnRed>BEI</ots:TurnOnRed>
+      </ots:TrafficLight>
+    </ots:Link>
+    <ots:Link Id="CSI-CS" NodeEnd="CS" NodeStart="CSI" Type="URBAN">
+      <ots:Straight/>
+      <ots:DefinedLayout>2lane</ots:DefinedLayout>
+    </ots:Link>
+    <ots:Link Id="DE-DET" NodeEnd="DET" NodeStart="DE" Type="URBAN">
+      <ots:Straight/>
+      <ots:DefinedLayout>2lane</ots:DefinedLayout>
+    </ots:Link>
+    <ots:Link Id="DWI-DW" NodeEnd="DW" NodeStart="DWI" Type="URBAN">
+      <ots:Straight/>
+      <ots:DefinedLayout>2lane</ots:DefinedLayout>
+    </ots:Link>
+    <ots:Link Id="BWT-BWI" NodeEnd="BWI" NodeStart="BWT" Type="URBAN">
+      <ots:Straight/>
+      <ots:DefinedLayout>4lane</ots:DefinedLayout>
+      <ots:TrafficLight Id="B1" Lane="lane1" Position="65m"/>
+      <ots:TrafficLight Id="B2" Lane="lane2" Position="65m"/>
+      <ots:TrafficLight Id="B3" Lane="lane3" Position="65m"/>
+      <ots:TrafficLight Id="B4" Lane="lane4" Position="65m">
+        <ots:TurnOnRed>ANI</ots:TurnOnRed>
+      </ots:TrafficLight>
+    </ots:Link>
+    <ots:Link Id="DET-DEI" NodeEnd="DEI" NodeStart="DET" Type="URBAN">
+      <ots:Straight/>
+      <ots:DefinedLayout>4lane</ots:DefinedLayout>
+      <ots:TrafficLight Id="D1" Lane="lane1" Position="65m"/>
+      <ots:TrafficLight Id="D2" Lane="lane2" Position="65m"/>
+      <ots:TrafficLight Id="D3" Lane="lane3" Position="65m"/>
+      <ots:TrafficLight Id="D4" Lane="lane4" Position="65m">
+        <ots:TurnOnRed>CSI</ots:TurnOnRed>
+      </ots:TrafficLight>
+    </ots:Link>
+    <ots:Link Id="ASI-DWI" NodeEnd="DWI" NodeStart="ASI" OffsetEnd="-1.75m" OffsetStart="-1.75m" Type="URBAN">
+      <ots:Bezier/>
+      <ots:DefinedLayout>turnlane</ots:DefinedLayout>
+    </ots:Link>
+    <ots:Link Id="ASI-BEI" NodeEnd="BEI" NodeStart="ASI" OffsetEnd="1.75m" OffsetStart="1.75m" Type="URBAN">
+      <ots:Bezier Shape="0.75" Weighted="false"/>
+      <ots:DefinedLayout>turnlane</ots:DefinedLayout>
+    </ots:Link>
+    <ots:Link Id="DEI-ANI" NodeEnd="ANI" NodeStart="DEI" OffsetEnd="1.75m" OffsetStart="5.25m" Type="URBAN">
+      <ots:Bezier/>
+      <ots:DefinedLayout>turnlane</ots:DefinedLayout>
+    </ots:Link>
+    <ots:Link Id="BWI-ANI" NodeEnd="ANI" NodeStart="BWI" OffsetEnd="-1.75m" OffsetStart="-5.25m" Type="URBAN">
+      <ots:Bezier/>
+      <ots:DefinedLayout>turnlane</ots:DefinedLayout>
+    </ots:Link>
+    <ots:Link Id="BWI-CSI" NodeEnd="CSI" NodeStart="BWI" OffsetEnd="1.75m" OffsetStart="5.25m" Type="URBAN">
+      <ots:Bezier/>
+      <ots:DefinedLayout>turnlane</ots:DefinedLayout>
+    </ots:Link>
+    <ots:Link Id="CNI-BEI" NodeEnd="BEI" NodeStart="CNI" OffsetEnd="-1.75m" OffsetStart="-1.75m" Type="URBAN">
+      <ots:Bezier/>
+      <ots:DefinedLayout>turnlane</ots:DefinedLayout>
+    </ots:Link>
+    <ots:Link Id="CNI-DWI" NodeEnd="DWI" NodeStart="CNI" OffsetEnd="1.75m" OffsetStart="1.75m" Type="URBAN">
+      <ots:Bezier Shape="0.75" Weighted="false"/>
+      <ots:DefinedLayout>turnlane</ots:DefinedLayout>
+    </ots:Link>
+    <ots:Link Id="DEI-CSI" NodeEnd="CSI" NodeStart="DEI" OffsetEnd="-1.75m" OffsetStart="-5.25m" Type="URBAN">
+      <ots:Bezier/>
+      <ots:DefinedLayout>turnlane</ots:DefinedLayout>
+    </ots:Link>
+    <ots:Link Id="ASI-CSI" NodeEnd="CSI" NodeStart="ASI" Type="URBAN">
+      <ots:Straight/>
+      <ots:DefinedLayout>2turnlane</ots:DefinedLayout>
+    </ots:Link>
+    <ots:Link Id="CNI-ANI" NodeEnd="ANI" NodeStart="CNI" Type="URBAN">
+      <ots:Straight/>
+      <ots:DefinedLayout>2turnlane</ots:DefinedLayout>
+    </ots:Link>
+    <ots:Link Id="BWI-DWI" NodeEnd="DWI" NodeStart="BWI" Type="URBAN">
+      <ots:Straight/>
+      <ots:DefinedLayout>2turnlane</ots:DefinedLayout>
+    </ots:Link>
+    <ots:Link Id="DEI-BEI" NodeEnd="BEI" NodeStart="DEI" Type="URBAN">
+      <ots:Straight/>
+      <ots:DefinedLayout>2turnlane</ots:DefinedLayout>
+    </ots:Link>
+    <ots:Conflicts>
+      <ots:None/>
+    </ots:Conflicts>
+  </ots:Network>
+  <ots:Demand>
+    <ots:Od Id="demand" SinkType="sink">
+      <ots:GlobalTime>
+        <ots:Time Value="0s"/>
+        <ots:Time Value="3600s"/>
+      </ots:GlobalTime>
+      <ots:Category GtuType="CAR" Id="CAR"/>
+      <ots:Cell Category="CAR" Destination="DW" Origin="AS">
+        <ots:Level>150veh/h</ots:Level>
+        <ots:Level>150veh/h</ots:Level>
+      </ots:Cell>
+      <ots:Cell Category="CAR" Destination="CS" Origin="AS">
+        <ots:Level>200veh/h</ots:Level>
+        <ots:Level>200veh/h</ots:Level>
+      </ots:Cell>
+      <ots:Cell Category="CAR" Destination="BE" Origin="AS">
+        <ots:Level>75veh/h</ots:Level>
+        <ots:Level>75veh/h</ots:Level>
+      </ots:Cell>
+      <ots:Cell Category="CAR" Destination="BE" Origin="CN">
+        <ots:Level>150veh/h</ots:Level>
+        <ots:Level>150veh/h</ots:Level>
+      </ots:Cell>
+      <ots:Cell Category="CAR" Destination="AN" Origin="CN">
+        <ots:Level>200veh/h</ots:Level>
+        <ots:Level>200veh/h</ots:Level>
+      </ots:Cell>
+      <ots:Cell Category="CAR" Destination="DW" Origin="CN">
+        <ots:Level>75veh/h</ots:Level>
+        <ots:Level>75veh/h</ots:Level>
+      </ots:Cell>
+      <ots:Cell Category="CAR" Destination="AN" Origin="BW">
+        <ots:Level>250veh/h</ots:Level>
+        <ots:Level>250veh/h</ots:Level>
+      </ots:Cell>
+      <ots:Cell Category="CAR" Destination="DW" Origin="BW">
+        <ots:Level>300veh/h</ots:Level>
+        <ots:Level>300veh/h</ots:Level>
+      </ots:Cell>
+      <ots:Cell Category="CAR" Destination="CS" Origin="BW">
+        <ots:Level>125veh/h</ots:Level>
+        <ots:Level>125veh/h</ots:Level>
+      </ots:Cell>
+      <ots:Cell Category="CAR" Destination="AN" Origin="DE">
+        <ots:Level>125veh/h</ots:Level>
+        <ots:Level>125veh/h</ots:Level>
+      </ots:Cell>
+      <ots:Cell Category="CAR" Destination="BE" Origin="DE">
+        <ots:Level>300veh/h</ots:Level>
+        <ots:Level>300veh/h</ots:Level>
+      </ots:Cell>
+      <ots:Cell Category="CAR" Destination="CS" Origin="DE">
+        <ots:Level>250veh/h</ots:Level>
+        <ots:Level>250veh/h</ots:Level>
+      </ots:Cell>
+    </ots:Od>
+  </ots:Demand>
+  <ots:Control>
+    <ots:FixedTime CycleTime="120s" Id="Control">
+      <ots:SignalGroup Id="A">
+        <ots:TrafficLight Lane="lane1" Link="AS-ASI" TrafficLightId="A1"/>
+        <ots:TrafficLight Lane="lane2" Link="AS-ASI" TrafficLightId="A2"/>
+      </ots:SignalGroup>
+      <ots:SignalGroup Id="B">
+        <ots:TrafficLight Lane="lane1" Link="BWT-BWI" TrafficLightId="B1"/>
+        <ots:TrafficLight Lane="lane2" Link="BWT-BWI" TrafficLightId="B2"/>
+        <ots:TrafficLight Lane="lane3" Link="BWT-BWI" TrafficLightId="B3"/>
+        <ots:TrafficLight Lane="lane4" Link="BWT-BWI" TrafficLightId="B4"/>
+      </ots:SignalGroup>
+      <ots:SignalGroup Id="C">
+        <ots:TrafficLight Lane="lane1" Link="CN-CNI" TrafficLightId="C1"/>
+        <ots:TrafficLight Lane="lane2" Link="CN-CNI" TrafficLightId="C2"/>
+      </ots:SignalGroup>
+      <ots:SignalGroup Id="D">
+        <ots:TrafficLight Lane="lane1" Link="DET-DEI" TrafficLightId="D1"/>
+        <ots:TrafficLight Lane="lane2" Link="DET-DEI" TrafficLightId="D2"/>
+        <ots:TrafficLight Lane="lane3" Link="DET-DEI" TrafficLightId="D3"/>
+        <ots:TrafficLight Lane="lane4" Link="DET-DEI" TrafficLightId="D4"/>
+      </ots:SignalGroup>
+      <ots:Cycle Green="27s" Offset="0s" SignalGroupId="A" Yellow="3s"/>
+      <ots:Cycle Green="27s" Offset="60s" SignalGroupId="B" Yellow="3s"/>
+      <ots:Cycle Green="27s" Offset="30s" SignalGroupId="C" Yellow="3s"/>
+      <ots:Cycle Green="27s" Offset="90s" SignalGroupId="D" Yellow="3s"/>
+    </ots:FixedTime>
+  </ots:Control>
+  <ots:Run>
+    <ots:RunLength>1h</ots:RunLength>
+  </ots:Run>
+</ots:Ots>
