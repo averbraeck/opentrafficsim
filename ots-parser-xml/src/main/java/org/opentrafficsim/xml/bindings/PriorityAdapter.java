@@ -19,7 +19,7 @@ public class PriorityAdapter extends ExpressionAdapter<Priority, PriorityType>
 
     /** {@inheritDoc} */
     @Override
-    public PriorityType unmarshal(final String value) throws Exception
+    public PriorityType unmarshal(final String value)
     {
         if (isExpression(value))
         {

@@ -5,6 +5,7 @@ import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.road.network.lane.SliceInfo;
 
 /**
  * Stripe data for in the editor.
@@ -34,11 +35,12 @@ public class EditorStripeData extends EditorCrossSectionData implements StripeDa
      * @param linkNode XsdTreeNode; node representing the element.
      * @param centerLine PolyLine2d; center line.
      * @param contour PolyLine2d; contour.
+     * @param sliceInfo SliceInfo; slice info.
      */
     public EditorStripeData(final Type type, final Length width, final Length startOffset, final XsdTreeNode linkNode,
-            final PolyLine2d centerLine, final Polygon2d contour)
+            final PolyLine2d centerLine, final Polygon2d contour, final SliceInfo sliceInfo)
     {
-        super(linkNode, centerLine, contour);
+        super(linkNode, centerLine, contour, sliceInfo);
         this.type = type;
         this.width = width;
         this.startOffset = startOffset;

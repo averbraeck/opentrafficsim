@@ -31,6 +31,9 @@ public final class XsdPaths
     /** Link path. */
     public static final String LINK = NETWORK + ".Link";
     
+    /** Traffic light path. */
+    public static final String TRAFFIC_LIGHT = LINK + ".TrafficLight";
+    
     /** Polyline coordinate path. */
     public static final String POLYLINE_COORDINATE = LINK + ".Polyline.Coordinate";
     
@@ -57,5 +60,5 @@ public final class XsdPaths
 
     /** Input parameters path. */
     public static final String INPUT_PARAMETERS = SCENARIO + ".InputParameters";
-    
+
 }

@@ -21,7 +21,7 @@ public class StaticFieldNameAdapter extends ExpressionAdapter<Field, FieldType>
 
     /** {@inheritDoc} */
     @Override
-    public FieldType unmarshal(final String field) throws Exception
+    public FieldType unmarshal(final String field)
     {
         if (isExpression(field))
         {
@@ -37,7 +37,7 @@ public class StaticFieldNameAdapter extends ExpressionAdapter<Field, FieldType>
         catch (Exception exception)
         {
             CategoryLogger.always().error(exception, "Problem parsing Static Field '" + field + "'");
-            throw exception;
+            throw new RuntimeException(exception);
         }
     }
 

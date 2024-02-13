@@ -45,6 +45,10 @@ public abstract class ExpressionAdapter<T, E extends ExpressionType<T>> extends 
         }
         return stringFunction.apply(value.getValue());
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public abstract E unmarshal(String v); // removes throws Exception
 
     /**
      * Checks whether field value is a bracketed expression.

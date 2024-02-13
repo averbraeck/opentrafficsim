@@ -14,8 +14,6 @@ import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
-import org.opentrafficsim.xml.bindings.DirectionAdapter;
-import org.opentrafficsim.xml.bindings.Point2dAdapter;
 
 /**
  * NodeData for the editor Map.
@@ -30,12 +28,6 @@ public class MapNodeData extends MapData implements NodeData, EventListener
 
     /** */
     private static final long serialVersionUID = 20231003L;
-
-    /** Point adapter. */
-    private final static Point2dAdapter POINT_ADAPTER = new Point2dAdapter();
-
-    /** Direction adapter. */
-    private final static DirectionAdapter DIRECTION_ADAPTER = new DirectionAdapter();
 
     /** String attribute. */
     private String id = "";
@@ -109,11 +101,11 @@ public class MapNodeData extends MapData implements NodeData, EventListener
         }
         else if ("Coordinate".equals(attribute))
         {
-            setValue((v) -> this.coordinate = v, POINT_ADAPTER, getNode(), "Coordinate");
+            setValue((v) -> this.coordinate = v, getAdapter(Point2d.class), getNode(), "Coordinate");
         }
         else if ("Direction".equals(attribute))
         {
-            setValue((v) -> this.direction = v, DIRECTION_ADAPTER, getNode(), "Direction");
+            setValue((v) -> this.direction = v, getAdapter(Direction.class), getNode(), "Direction");
         }
         else
         {
@@ -127,11 +119,11 @@ public class MapNodeData extends MapData implements NodeData, EventListener
     public void evalChanged()
     {
         this.id = getNode().getId() == null ? "" : getNode().getId();
-        setValue((v) -> this.coordinate = v, POINT_ADAPTER, getNode(), "Coordinate");
-        setValue((v) -> this.direction = v, DIRECTION_ADAPTER, getNode(), "Direction");
+        setValue((v) -> this.coordinate = v, getAdapter(Point2d.class), getNode(), "Coordinate");
+        setValue((v) -> this.direction = v, getAdapter(Direction.class), getNode(), "Direction");
         setLocation();
     }
-    
+
     /**
      * Set the location from the coordinate and direction. Notify when invalid or valid.
      */
@@ -145,7 +137,7 @@ public class MapNodeData extends MapData implements NodeData, EventListener
         this.location = new OrientedPoint2d(this.coordinate, this.direction == null ? 0.0 : this.direction.si);
         setValid();
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String toString()

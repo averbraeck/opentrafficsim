@@ -24,6 +24,7 @@ import org.opentrafficsim.core.geometry.Flattener;
 import org.opentrafficsim.core.geometry.Flattener.NumSegments;
 import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation;
+import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
@@ -55,7 +56,7 @@ public class Map extends JPanel implements EventListener
     private static final Color BAR_COLOR = Color.LIGHT_GRAY;
 
     /** All types that are valid to show in the map. */
-    private static final Set<String> TYPES = Set.of(XsdPaths.NODE, XsdPaths.LINK);
+    private static final Set<String> TYPES = Set.of(XsdPaths.NODE, XsdPaths.LINK, XsdPaths.TRAFFIC_LIGHT);
 
     /** Context provider. */
     private final Contextualized contextualized;
@@ -129,6 +130,7 @@ public class Map extends JPanel implements EventListener
             }
         };
         this.drawPanel.setBackground(Color.GRAY);
+        this.drawPanel.setShowToolTip(false);
         editor.addListener(this, OtsEditor.NEW_FILE);
         this.drawPanel.setRenderableScale(new RenderableScale()
         {
@@ -396,6 +398,10 @@ public class Map extends JPanel implements EventListener
         {
             animation = Try.assign(() -> new LinkAnimation((MapLinkData) data, this.contextualized, 0.5f), "");
         }
+        else if (node.getPathString().equals(XsdPaths.TRAFFIC_LIGHT))
+        {
+            animation = Try.assign(() -> new TrafficLightAnimation((MapTrafficLightData) data, this.contextualized), "");
+        }
         else
         {
             throw new UnsupportedOperationException("Node cannot be added by the map editor.");
@@ -445,6 +451,11 @@ public class Map extends JPanel implements EventListener
             }
             this.links.put(linkData, null);
         }
+        else if (node.getPathString().equals(XsdPaths.TRAFFIC_LIGHT))
+        {
+            MapTrafficLightData trafficLightData = new MapTrafficLightData(this, node, this.editor);
+            data = trafficLightData;
+        }
         else
         {
             throw new UnsupportedOperationException("Node cannot be added by the map editor.");
@@ -488,6 +499,28 @@ public class Map extends JPanel implements EventListener
             data.destroy();
         }
         removeAnimation(this.animations.remove(node));
+    }
+
+    /**
+     * Reinitialize animation on object who's animator stores static information that depends on something that was changed.
+     * This will create a new animation object. Only data objects that know their animations have static data, should call this.
+     * And only when information changed on which the static data depends.
+     * @param node XsdTreeNode; node.
+     */
+    public void reinitialize(final XsdTreeNode node)
+    {
+        remove(node);
+        Try.execute(() -> add(node), RuntimeException.class, "Unable to bind to context.");
+    }
+
+    /**
+     * Returns the map data of the given XSD node.
+     * @param node XsdTreeNode; node.
+     * @return MapData; map data of the given XSD node, {@code null} if no such data.
+     */
+    public MapData getData(final XsdTreeNode node)
+    {
+        return this.datas.get(node);
     }
 
     /**
