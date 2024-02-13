@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -141,6 +140,7 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), xmlModel, map);
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(xmlModel.getNetwork().getExtent(), new Dimension(800, 600),
                     simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
+            animationPanel.enableSimulationControlButtons();
             LoadXml loadXml = new LoadXml(xmlModel, animationPanel);
             // TODO: permabilityType (CAR above) can probably not be null, but we will move stripe type to stripe later
             // (now StripeAnimation.TYPE is figured out from permebability)
