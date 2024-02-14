@@ -200,9 +200,6 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
                 {
                     // Ignore exception that is expected to happen when the network is NOT the Barcelona test network
                 }
-                LaneCombinationList permittedList = new LaneCombinationList();
-                ConflictBuilder.buildConflicts(this.network, getSimulator(),
-                        new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)), ignoreList, permittedList);
             }
             catch (NetworkException | OtsGeometryException | JAXBException | URISyntaxException | XmlParserException
                     | SAXException | ParserConfigurationException | GtuException | IOException
