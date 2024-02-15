@@ -5,8 +5,6 @@ import java.util.NoSuchElementException;
 import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.exceptions.Throw;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -149,7 +147,6 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("synthetic-access")
     @Override
     public final <C, I> C collect(final Supplier<I> identity, final PerceptionAccumulator<? super U, I> accumulator,
             final PerceptionFinalizer<C, I> finalizer)
@@ -196,10 +193,18 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
             }
 
             /** {@inheritDoc} */
-            @SuppressWarnings("synthetic-access")
             @Override
             public U next()
             {
+                // this.next = assureNext(this.next, this.lastReturned);
+                // if (this.next == null)
+                // {
+                // throw new NoSuchElementException();
+                // }
+                // this.lastReturned = this.next;
+                // this.next = this.lastReturned.next;
+                // return this.lastReturned.object;
+
                 this.lastReturned = this.next;
                 this.next = this.lastReturned.next;
                 this.next = assureNext(this.next, this.lastReturned);
@@ -231,7 +236,6 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
             }
 
             /** {@inheritDoc} */
-            @SuppressWarnings("synthetic-access")
             @Override
             public UnderlyingDistance<U> next()
             {
@@ -266,7 +270,6 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
         private SecondaryIteratorEntry next;
 
         /** Constructor. */
-        @SuppressWarnings("synthetic-access")
         PerceptionIterator()
         {
             this.next = AbstractPerceptionReiterable.this.first;
@@ -281,7 +284,6 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
         }
 
         /** {@inheritDoc} */
-        @SuppressWarnings("synthetic-access")
         @Override
         public H next()
         {
@@ -304,22 +306,28 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
      * @param lastReturned SecondaryIteratorEntry; entry of last returned object or value
      * @return IteratorEntry; next entry
      */
-    @SuppressWarnings("synthetic-access")
     synchronized SecondaryIteratorEntry assureNext(final SecondaryIteratorEntry next, final SecondaryIteratorEntry lastReturned)
     {
-        if (next == null && getPrimaryIterator().hasNext())
+        if (next != null)
+        {
+            return next;
+        }
+        if (lastReturned != null)
+        {
+            if (lastReturned.next == null)
+            {
+                if (getPrimaryIterator().hasNext())
+                {
+                    addNext(getPrimaryIterator().next());
+                }
+            }
+            return lastReturned.next;
+        }
+        if (getPrimaryIterator().hasNext())
         {
             addNext(getPrimaryIterator().next());
-            if (lastReturned == null)
-            {
-                return AbstractPerceptionReiterable.this.first;
-            }
-            else
-            {
-                return lastReturned.next;
-            }
         }
-        return next;
+        return AbstractPerceptionReiterable.this.first;
     }
 
     /**
