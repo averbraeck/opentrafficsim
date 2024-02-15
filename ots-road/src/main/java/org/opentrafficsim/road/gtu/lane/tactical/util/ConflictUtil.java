@@ -58,6 +58,9 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @see <a href="https://rstrail.nl/wp-content/uploads/2015/02/schakel_2012.pdf">Schakel, W.J., B. van Arem (2012) “An Urban
+ *      Traffic Extension of a Freeway Driver Model for use in the OpenTraffic® Open Source Traffic Simulation”, presented at
+ *      TRAIL Congress 2012.</a>
  */
 // TODO do not ignore vehicles upstream of conflict if they have green
 // TODO conflict over multiple lanes (longitudinal in own direction)
