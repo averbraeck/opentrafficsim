@@ -19,7 +19,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
@@ -33,9 +32,6 @@ import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
-import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
@@ -187,19 +183,6 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
             {
                 new XmlParser(this.network).setStream(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)))
                         .build();
-                LaneCombinationList ignoreList = new LaneCombinationList();
-                try
-                {
-                    // TODO: These links are Aimsun Barcelona network specific.
-                    ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("928_J5"),
-                            (CrossSectionLink) this.network.getLink("928_J6"));
-                    ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("925_J1"),
-                            (CrossSectionLink) this.network.getLink("925_J2"));
-                }
-                catch (NullPointerException npe)
-                {
-                    // Ignore exception that is expected to happen when the network is NOT the Barcelona test network
-                }
             }
             catch (NetworkException | OtsGeometryException | JAXBException | URISyntaxException | XmlParserException
                     | SAXException | ParserConfigurationException | GtuException | IOException
