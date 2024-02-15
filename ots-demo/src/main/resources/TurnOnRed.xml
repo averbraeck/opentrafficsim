@@ -184,7 +184,7 @@
         <ots:TurnOnRed>CSI</ots:TurnOnRed>
       </ots:TrafficLight>
     </ots:Link>
-    <ots:Link Id="ASI-DWI" NodeEnd="DWI" NodeStart="ASI" OffsetEnd="-1.75m" OffsetStart="-1.75m" Type="URBAN">
+    <ots:Link Id="ASI-DWI" NodeEnd="DWI" NodeStart="ASI" OffsetEnd="-1.75m" OffsetStart="-1.75m" Priority="YIELD" Type="URBAN">
       <ots:Bezier/>
       <ots:DefinedLayout>turnlane</ots:DefinedLayout>
     </ots:Link>
@@ -196,7 +196,7 @@
       <ots:Bezier/>
       <ots:DefinedLayout>turnlane</ots:DefinedLayout>
     </ots:Link>
-    <ots:Link Id="BWI-ANI" NodeEnd="ANI" NodeStart="BWI" OffsetEnd="-1.75m" OffsetStart="-5.25m" Type="URBAN">
+    <ots:Link Id="BWI-ANI" NodeEnd="ANI" NodeStart="BWI" OffsetEnd="-1.75m" OffsetStart="-5.25m" Priority="YIELD" Type="URBAN">
       <ots:Bezier/>
       <ots:DefinedLayout>turnlane</ots:DefinedLayout>
     </ots:Link>
@@ -204,7 +204,7 @@
       <ots:Bezier/>
       <ots:DefinedLayout>turnlane</ots:DefinedLayout>
     </ots:Link>
-    <ots:Link Id="CNI-BEI" NodeEnd="BEI" NodeStart="CNI" OffsetEnd="-1.75m" OffsetStart="-1.75m" Type="URBAN">
+    <ots:Link Id="CNI-BEI" NodeEnd="BEI" NodeStart="CNI" OffsetEnd="-1.75m" OffsetStart="-1.75m" Priority="YIELD" Type="URBAN">
       <ots:Bezier/>
       <ots:DefinedLayout>turnlane</ots:DefinedLayout>
     </ots:Link>
@@ -212,7 +212,7 @@
       <ots:Bezier Shape="0.75" Weighted="false"/>
       <ots:DefinedLayout>turnlane</ots:DefinedLayout>
     </ots:Link>
-    <ots:Link Id="DEI-CSI" NodeEnd="CSI" NodeStart="DEI" OffsetEnd="-1.75m" OffsetStart="-5.25m" Type="URBAN">
+    <ots:Link Id="DEI-CSI" NodeEnd="CSI" NodeStart="DEI" OffsetEnd="-1.75m" OffsetStart="-5.25m" Priority="YIELD" Type="URBAN">
       <ots:Bezier/>
       <ots:DefinedLayout>turnlane</ots:DefinedLayout>
     </ots:Link>
@@ -233,7 +233,7 @@
       <ots:DefinedLayout>2turnlane</ots:DefinedLayout>
     </ots:Link>
     <ots:Conflicts>
-      <ots:None/>
+      <ots:DefaultWidth/>
     </ots:Conflicts>
   </ots:Network>
   <ots:Demand>
