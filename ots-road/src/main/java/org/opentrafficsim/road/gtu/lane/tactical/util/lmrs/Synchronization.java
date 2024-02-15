@@ -1,17 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.canBeAhead;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.gentleUrgency;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.getFollower;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.getMergeDistance;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.headwayWithLcSpace;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.removeAllUpstreamOfConflicts;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.requiredBufferSpace;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.stopForEnd;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.tagAlongAcceleration;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.SortedSet;
 
 import org.djunits.unit.AccelerationUnit;
@@ -31,8 +21,8 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectableFiltered;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.SortedSetPerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
@@ -42,7 +32,6 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
-import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
@@ -599,55 +588,38 @@ public interface Synchronization extends LmrsParameters
             final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> set, final LanePerception perception,
             final RelativeLane relativeLane) throws OperationalPlanException
     {
-        // if (true)
+        // TODO: find another solution for this, it really slows down simulations with conflicts
+        // explicitly ignore leading GTUs before the farthest crossing or merge when cooperating or synchronizing
+        // if (false)
         // {
         // return set;
         // }
-        // TODO find a better solution for this inefficient hack... when to ignore a vehicle for synchronization?
-        SortedSetPerceptionIterable<HeadwayGtu> out;
-        try
-        {
-            out = new SortedSetPerceptionIterable<HeadwayGtu>(
-                    (RoadNetwork) perception.getGtu().getReferencePosition().getLane().getLink().getNetwork());
-        }
-        catch (GtuException exception)
-        {
-            throw new OperationalPlanException(exception);
-        }
         if (set == null)
         {
-            return out;
+            return set;
         }
         IntersectionPerception intersection = perception.getPerceptionCategoryOrNull(IntersectionPerception.class);
         if (intersection == null)
         {
             return set;
         }
-        Map<String, HeadwayGtu> map = new LinkedHashMap<>();
-        for (HeadwayGtu gtu : set)
-        {
-            map.put(gtu.getId(), gtu);
-        }
         Iterable<HeadwayConflict> conflicts = intersection.getConflicts(relativeLane);
+        Set<String> gtus = new LinkedHashSet<>();
         if (conflicts != null)
         {
             for (HeadwayConflict conflict : conflicts)
             {
                 if (conflict.isCrossing() || conflict.isMerge())
                 {
-                    for (HeadwayGtu conflictGtu : conflict.getUpstreamConflictingGTUs())
+                    gtus.addAll(conflict.getUpstreamConflictingGTUs().collect(() -> new LinkedHashSet<String>(), (i, u, d) ->
                     {
-                        if (map.containsKey(conflictGtu.getId()))
-                        {
-                            map.remove(conflictGtu.getId());
-                        }
-                    }
+                        i.getObject().add(u.getId());
+                        return i;
+                    }, (i) -> i));
                 }
             }
         }
-        out.addAll(map.values());
-        return out;
-
+        return new PerceptionCollectableFiltered<>(set, (h) -> !gtus.contains(h.getId()));
     }
 
     /**

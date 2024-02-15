@@ -51,7 +51,7 @@ public class HeadwayGtuReal extends AbstractHeadway implements HeadwayGtu
 
     /** Whether the GTU is facing the same direction. */
     private final boolean facingSameDirection;
-
+    
     /**
      * Construct a new Headway information object, for a GTU ahead of us or behind us.
      * @param gtu LaneBasedGtu; the observed GTU, can not be null.
