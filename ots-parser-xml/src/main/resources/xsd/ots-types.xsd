@@ -1438,7 +1438,6 @@
         <xsd:restriction base="xsd:string">
           <xsd:enumeration value="PRIORITY" />
           <xsd:enumeration value="NONE" />
-          <xsd:enumeration value="TURN_ON_RED" />
           <xsd:enumeration value="YIELD" />
           <xsd:enumeration value="STOP" />
           <xsd:enumeration value="ALL_STOP" />
