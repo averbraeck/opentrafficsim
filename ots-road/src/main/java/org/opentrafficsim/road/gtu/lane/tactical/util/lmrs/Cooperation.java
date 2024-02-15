@@ -50,9 +50,7 @@ public interface Cooperation extends LmrsParameters
             double dCoop = params.getParameter(DCOOP);
             Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
             RelativeLane relativeLane = new RelativeLane(lat, 1);
-            for (HeadwayGtu leader : Synchronization.removeAllUpstreamOfConflicts(Synchronization.removeAllUpstreamOfConflicts(
-                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception,
-                    relativeLane), perception, RelativeLane.CURRENT))
+            for (HeadwayGtu leader : perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane))
             {
                 Parameters params2 = leader.getParameters();
                 double desire = lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)
@@ -98,9 +96,7 @@ public interface Cooperation extends LmrsParameters
             PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = neighbours.getLeaders(RelativeLane.CURRENT);
             Speed thresholdSpeed = Speed.instantiateSI(40.0 / 3.6);
             boolean leaderInCongestion = leaders.isEmpty() ? false : leaders.first().getSpeed().lt(thresholdSpeed);
-            for (HeadwayGtu leader : Synchronization.removeAllUpstreamOfConflicts(
-                    Synchronization.removeAllUpstreamOfConflicts(neighbours.getLeaders(relativeLane), perception, relativeLane),
-                    perception, RelativeLane.CURRENT))
+            for (HeadwayGtu leader : neighbours.getLeaders(relativeLane))
             {
                 Parameters params2 = leader.getParameters();
                 double desire = lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)
@@ -145,9 +141,7 @@ public interface Cooperation extends LmrsParameters
             double dCoop = params.getParameter(DCOOP);
             Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
             RelativeLane relativeLane = new RelativeLane(lat, 1);
-            for (HeadwayGtu leader : Synchronization.removeAllUpstreamOfConflicts(Synchronization.removeAllUpstreamOfConflicts(
-                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception,
-                    relativeLane), perception, RelativeLane.CURRENT))
+            for (HeadwayGtu leader : perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane))
             {
                 Parameters params2 = leader.getParameters();
                 double desire = lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)

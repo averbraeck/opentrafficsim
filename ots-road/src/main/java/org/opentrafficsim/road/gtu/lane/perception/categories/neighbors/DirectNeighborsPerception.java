@@ -1,5 +1,8 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories.neighbors;
 
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -13,6 +16,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.DownstreamNeighborsIterable;
+import org.opentrafficsim.road.gtu.lane.perception.LaneBasedObjectIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
@@ -20,7 +24,10 @@ import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.UpstreamNeighborsIterable;
 import org.opentrafficsim.road.gtu.lane.perception.categories.LaneBasedAbstractPerceptionCategory;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsUtil.DistanceGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.network.lane.conflict.Conflict;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 /**
  * Perception of surrounding traffic on the own road, i.e. without crossing traffic.
@@ -205,6 +212,81 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
             }
             LaneStructureRecord record = getPerception().getLaneStructure().getFirstRecord(lane);
             Length pos = record.getStartDistance().neg();
+
+            /*
+             * On adjacent lanes we ignore GTUs that are upstream of any conflict on our current lane. For instance on the left
+             * lane towards a turbo roundabout, the left adjacent lane is the lane that will come from the right, as it will
+             * cross our lane and become our left lane. GTUs upstream of the crossing conflict, should hence be ignored.
+             */
+            if (!lane.isCurrent())
+            {
+                // find all conflicting conflicts
+                Set<Conflict> conflicts = new LinkedHashSet<>();
+                LaneStructureRecord currentRecord = getPerception().getLaneStructure().getFirstRecord(RelativeLane.CURRENT);
+                boolean downstream = true;
+                LaneBasedObjectIterable<HeadwayConflict,
+                        Conflict> confs = new LaneBasedObjectIterable<HeadwayConflict, Conflict>(getGtu(), Conflict.class,
+                                currentRecord, currentRecord.getStartDistance().neg(), downstream,
+                                getGtu().getParameters().getParameter(ParameterTypes.LOOKAHEAD),
+                                getGtu().getRelativePositions().get(RelativePosition.REFERENCE),
+                                getGtu().getStrategicalPlanner().getRoute())
+                        {
+                            /** {@inheritDoc} */
+                            @Override
+                            protected HeadwayConflict perceive(final LaneBasedGtu perceivingGtu, final Conflict object,
+                                    final Length distance) throws GtuException, ParameterException
+                            {
+                                return null;
+                            }
+                        };
+                conflicts.addAll(confs.collect(() -> new LinkedHashSet<Conflict>(), (i, u, d) ->
+                {
+                    i.getObject().add(u.getOtherConflict());
+                    return i;
+                }, (i) -> i));
+
+                // loop downstream towards the most downstream conflicting conflict, if any
+                boolean conflictFound = false;
+                LaneStructureRecord recordToConflict = null;
+                Length posToConflict = null;
+                LaneStructureRecord recordLoop = record;
+                Length posLoop = pos;
+                Length lookBack = getGtu().getParameters().getParameter(ParameterTypes.LOOKBACK);
+                while (recordLoop != null && recordLoop.getStartDistance().lt(lookBack))
+                {
+                    List<LaneBasedObject> list = recordLoop.getLane().getLaneBasedObjects(posLoop, recordLoop.getLength());
+                    for (LaneBasedObject object : list)
+                    {
+                        if (conflicts.contains(object))
+                        {
+                            Conflict c = (Conflict) object;
+                            if ((c.getConflictType().isCrossing() || c.getConflictType().isMerge()))
+                            {
+                                conflictFound = true;
+                                recordToConflict = recordLoop;
+                                posToConflict = posLoop;
+                            }
+                        }
+                    }
+                    if (recordLoop.getNext().size() == 1)
+                    {
+                        recordLoop = recordLoop.getNext().get(0);
+                    }
+                    else
+                    {
+                        recordLoop = null;
+                    }
+                    posLoop = Length.ZERO;
+                }
+
+                // if any found, start search for downstream GTUs at that point
+                if (conflictFound)
+                {
+                    record = recordToConflict;
+                    pos = posToConflict;
+                }
+            }
+
             pos = pos.plus(getGtu().getFront().getDx());
             boolean ignoreIfUpstream = true;
             return new DownstreamNeighborsIterable(getGtu(), record, Length.max(Length.ZERO, pos),

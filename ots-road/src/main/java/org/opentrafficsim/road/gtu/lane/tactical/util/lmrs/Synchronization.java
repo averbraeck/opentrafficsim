@@ -129,12 +129,8 @@ public interface Synchronization extends LmrsParameters
             double dCoop = params.getParameter(DCOOP);
             RelativeLane relativeLane = new RelativeLane(lat, 1);
 
-            PerceptionCollectable<HeadwayGtu,
-                    LaneBasedGtu> set =
-                            removeAllUpstreamOfConflicts(
-                                    removeAllUpstreamOfConflicts(perception.getPerceptionCategory(NeighborsPerception.class)
-                                            .getLeaders(relativeLane), perception, relativeLane),
-                                    perception, RelativeLane.CURRENT);
+            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> set =
+                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane);
             HeadwayGtu leader = null;
             if (set != null)
             {
@@ -365,9 +361,7 @@ public interface Synchronization extends LmrsParameters
             // abandon the gap if the sync vehicle is no longer adjacent, in congestion within xMergeSync, or too far
             NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
             RelativeLane lane = new RelativeLane(lat, 1);
-            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders =
-                    removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(neighbors.getLeaders(lane), perception, lane),
-                            perception, RelativeLane.CURRENT);
+            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = neighbors.getLeaders(lane);
             HeadwayGtu syncVehicle = lmrsData.getSyncVehicle(leaders);
             if (syncVehicle != null && ((syncVehicle.getSpeed().lt(vCong) && syncVehicle.getDistance().lt(xMergeSync))
                     || syncVehicle.getDistance().gt(xCur)))
@@ -400,9 +394,7 @@ public interface Synchronization extends LmrsParameters
 
             // select upstream vehicle if we can safely follow that, or if we cannot stay ahead of it (infrastructure, in coop)
             HeadwayGtu up;
-            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> followers =
-                    removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(neighbors.getFollowers(lane), perception, lane),
-                            perception, RelativeLane.CURRENT);
+            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> followers = neighbors.getFollowers(lane);
             HeadwayGtu follower = followers == null || followers.isEmpty() ? null
                     : followers.first().moved(
                             followers.first().getDistance().plus(ownLength).plus(followers.first().getLength()).neg(),
@@ -574,52 +566,6 @@ public interface Synchronization extends LmrsParameters
             return headway.getDistance();
         }
         return headway.getDistance().minus(laneChange.getMinimumLaneChangeDistance());
-    }
-
-    /**
-     * Removes all GTUs from the set, that are found upstream on the conflicting lane of a conflict in the current lane.
-     * @param set PerceptionCollectable&lt;HeadwayGtu,LaneBasedGtu&gt;; set of GTUs
-     * @param perception LanePerception; perception
-     * @param relativeLane RelativeLane; relative lane
-     * @return the input set, for chained use
-     * @throws OperationalPlanException if the {@code IntersectionPerception} category is not present
-     */
-    static PerceptionCollectable<HeadwayGtu, LaneBasedGtu> removeAllUpstreamOfConflicts(
-            final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> set, final LanePerception perception,
-            final RelativeLane relativeLane) throws OperationalPlanException
-    {
-        // TODO: find another solution for this, it really slows down simulations with conflicts
-        // explicitly ignore leading GTUs before the farthest crossing or merge when cooperating or synchronizing
-        // if (false)
-        // {
-        // return set;
-        // }
-        if (set == null)
-        {
-            return set;
-        }
-        IntersectionPerception intersection = perception.getPerceptionCategoryOrNull(IntersectionPerception.class);
-        if (intersection == null)
-        {
-            return set;
-        }
-        Iterable<HeadwayConflict> conflicts = intersection.getConflicts(relativeLane);
-        Set<String> gtus = new LinkedHashSet<>();
-        if (conflicts != null)
-        {
-            for (HeadwayConflict conflict : conflicts)
-            {
-                if (conflict.isCrossing() || conflict.isMerge())
-                {
-                    gtus.addAll(conflict.getUpstreamConflictingGTUs().collect(() -> new LinkedHashSet<String>(), (i, u, d) ->
-                    {
-                        i.getObject().add(u.getId());
-                        return i;
-                    }, (i) -> i));
-                }
-            }
-        }
-        return new PerceptionCollectableFiltered<>(set, (h) -> !gtus.contains(h.getId()));
     }
 
     /**
