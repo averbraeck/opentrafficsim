@@ -344,7 +344,6 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     private void checkLateralDirectionality(final LateralDirectionality lat)
             throws ParameterException, NullPointerException, IllegalArgumentException
     {
-        // TODO not use this check when synchronizing or cooperating
         Throw.whenNull(lat, "Lateral directionality may not be null.");
         Throw.when(lat.equals(LateralDirectionality.NONE), IllegalArgumentException.class,
                 "Lateral directionality may not be NONE.");
