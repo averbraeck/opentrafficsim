@@ -70,6 +70,9 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     /** Conflict rule, i.e. priority, give way, stop or all-stop. */
     private final ConflictRule conflictRule;
 
+    /** End of conflict. */
+    private final ConflictEnd end;
+
     /** Accompanying other conflict. */
     private Conflict otherConflict;
 
@@ -157,7 +160,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             Length position = conflictType.equals(ConflictType.SPLIT) ? length : lane.getLength();
             try
             {
-                new ConflictEnd(this, lane, position);
+                this.end = new ConflictEnd(this, lane, position);
             }
             catch (OtsGeometryException exception)
             {
@@ -165,10 +168,25 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                 throw new RuntimeException("Could not create dummy geometry for ConflictEnd.", exception);
             }
         }
+        else
+        {
+            this.end = null;
+        }
 
         // Lane record for GTU provision
         this.rootPosition = longitudinalPosition;
         this.root = new LaneRecord(lane, this.rootPosition.neg(), null);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void init() throws NetworkException
+    {
+        super.init();
+        if (this.end != null)
+        {
+            this.end.init();
+        }
     }
 
     /**
@@ -486,6 +504,14 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             // FIXME: the OtsLine2d object should be shared by all ConflictEnd objects (removing OtsGeometryException)
             super(conflict.getId() + "End", lane, longitudinalPosition, new PolyLine2d(new Point2d(0, 0), new Point2d(1, 0)));
             this.conflict = conflict;
+        }
+        
+        /** {@inheritDoc} */
+        @Override
+        public void init() throws NetworkException
+        {
+            // override makes init accessible to conflict
+            super.init();
         }
 
         /**
