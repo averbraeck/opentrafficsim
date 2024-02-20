@@ -12,10 +12,10 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.extensions.Adapters;
 import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets;
 import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets.CseData;
 import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets.OffsetElement;
-import org.opentrafficsim.xml.bindings.LengthAdapter;
 
 /**
  * Listens to changes in a road layout. Notifies all listeners that need to repaint. This also provides the offsets of the road
@@ -31,9 +31,6 @@ public class RoadLayoutListener extends ChangeListener<Map<XsdTreeNode, CseData>
 
     /** */
     private static final long serialVersionUID = 20231114L;
-
-    /** Adapter for length values. */
-    private static final LengthAdapter LENGTH_ADAPTER = new LengthAdapter();
 
     /**
      * Constructor.
@@ -54,7 +51,8 @@ public class RoadLayoutListener extends ChangeListener<Map<XsdTreeNode, CseData>
     {
         try
         {
-            return valueNode.isActive() ? LENGTH_ADAPTER.unmarshal(valueNode.getValue()).get(getEval()) : null;
+            return valueNode.isActive() ? Adapters.getAdapter(Length.class).unmarshal(valueNode.getValue()).get(getEval())
+                    : null;
         }
         catch (RuntimeException exception)
         {

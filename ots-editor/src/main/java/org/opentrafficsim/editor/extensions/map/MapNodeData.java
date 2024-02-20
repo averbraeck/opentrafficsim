@@ -14,6 +14,7 @@ import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.extensions.Adapters;
 
 /**
  * NodeData for the editor Map.
@@ -101,11 +102,11 @@ public class MapNodeData extends MapData implements NodeData, EventListener
         }
         else if ("Coordinate".equals(attribute))
         {
-            setValue((v) -> this.coordinate = v, getAdapter(Point2d.class), getNode(), "Coordinate");
+            setValue((v) -> this.coordinate = v, Adapters.getAdapter(Point2d.class), getNode(), "Coordinate");
         }
         else if ("Direction".equals(attribute))
         {
-            setValue((v) -> this.direction = v, getAdapter(Direction.class), getNode(), "Direction");
+            setValue((v) -> this.direction = v, Adapters.getAdapter(Direction.class), getNode(), "Direction");
         }
         else
         {
@@ -119,8 +120,8 @@ public class MapNodeData extends MapData implements NodeData, EventListener
     public void evalChanged()
     {
         this.id = getNode().getId() == null ? "" : getNode().getId();
-        setValue((v) -> this.coordinate = v, getAdapter(Point2d.class), getNode(), "Coordinate");
-        setValue((v) -> this.direction = v, getAdapter(Direction.class), getNode(), "Direction");
+        setValue((v) -> this.coordinate = v, Adapters.getAdapter(Point2d.class), getNode(), "Coordinate");
+        setValue((v) -> this.direction = v, Adapters.getAdapter(Direction.class), getNode(), "Direction");
         setLocation();
     }
 

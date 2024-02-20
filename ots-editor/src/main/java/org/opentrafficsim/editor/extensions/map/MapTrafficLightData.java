@@ -14,6 +14,7 @@ import org.djutils.event.reference.ReferenceType;
 import org.opentrafficsim.draw.road.TrafficLightAnimation.TrafficLightData;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.extensions.Adapters;
 
 /**
  * TrafficLightData for the editor Map.
@@ -116,8 +117,8 @@ public class MapTrafficLightData extends MapData implements TrafficLightData, Ev
     public void evalChanged()
     {
         this.id = getNode().getId() == null ? "" : getNode().getId();
-        setValue((v) -> this.lane = v, getAdapter(String.class), getNode(), "Lane");
-        setValue((v) -> this.position = v, getAdapter(Length.class), getNode(), "Position");
+        setValue((v) -> this.lane = v, Adapters.getAdapter(String.class), getNode(), "Lane");
+        setValue((v) -> this.position = v, Adapters.getAdapter(Length.class), getNode(), "Position");
         setLocation();
     }
 
@@ -136,11 +137,11 @@ public class MapTrafficLightData extends MapData implements TrafficLightData, Ev
             }
             else if ("Lane".equals(attribute))
             {
-                setValue((v) -> this.lane = v, getAdapter(String.class), getNode(), "Lane");
+                setValue((v) -> this.lane = v, Adapters.getAdapter(String.class), getNode(), "Lane");
             }
             else if ("Position".equals(attribute))
             {
-                setValue((v) -> this.position = v, getAdapter(Length.class), getNode(), "Position");
+                setValue((v) -> this.position = v, Adapters.getAdapter(Length.class), getNode(), "Position");
             }
         }
         // else: MapLinkData.LAYOUT_REBUILT
