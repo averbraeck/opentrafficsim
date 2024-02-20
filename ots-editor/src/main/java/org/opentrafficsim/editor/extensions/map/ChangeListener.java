@@ -44,13 +44,13 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
     /** Set of all elements that, when removed, change the layout. */
     private final Set<XsdTreeNode> elementNodes = new LinkedHashSet<>();
 
-    /** Expression evaluator for length values. */
+    /** Expression evaluator supplier. */
     private final Supplier<Eval> eval;
 
     /** Flag when change occurred and offsets need to be recalculated. */
     private boolean dataIsDirty = true;
 
-    /** Cached offset data. */
+    /** Cached data. */
     private T data;
 
     /**

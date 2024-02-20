@@ -14,7 +14,7 @@ import org.opentrafficsim.road.network.lane.SliceInfo;
  * </p>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class EditorLaneData extends EditorCrossSectionData implements LaneData
+public class MapLaneData extends MapCrossSectionData implements LaneData
 {
     
     /** Id. */
@@ -28,7 +28,7 @@ public class EditorLaneData extends EditorCrossSectionData implements LaneData
      * @param contour PolyLine2d; contour.
      * @param sliceInfo SliceInfo; slice info.
      */
-    public EditorLaneData(final String id, final XsdTreeNode linkNode, final PolyLine2d centerLine, final Polygon2d contour,
+    public MapLaneData(final String id, final XsdTreeNode linkNode, final PolyLine2d centerLine, final Polygon2d contour,
             final SliceInfo sliceInfo)
     {
         super(linkNode, centerLine, contour, sliceInfo);

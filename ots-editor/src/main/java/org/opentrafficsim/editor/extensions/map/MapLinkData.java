@@ -142,7 +142,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     private Set<Renderable2d<?>> crossSectionElements = new LinkedHashSet<>();
 
     /** Lane data. */
-    private java.util.Map<String, EditorLaneData> laneData = new LinkedHashMap<>();
+    private java.util.Map<String, MapLaneData> laneData = new LinkedHashMap<>();
 
     /**
      * Constructor.
@@ -150,7 +150,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
      * @param linkNode XsdTreeNode; node Ots.Network.Link.
      * @param editor OtsEditor; editor.
      */
-    public MapLinkData(final Map map, final XsdTreeNode linkNode, final OtsEditor editor)
+    public MapLinkData(final EditorMap map, final XsdTreeNode linkNode, final OtsEditor editor)
     {
         super(map, linkNode, editor);
         linkNode.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
@@ -608,7 +608,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     if (node.getNodeName().equals("Stripe"))
                     {
                         StripeAnimation stripe = new StripeAnimation(
-                                new EditorStripeData(StripeData.Type.valueOf(type.name()), width,
+                                new MapStripeData(StripeData.Type.valueOf(type.name()), width,
                                         slices.get(0).getDesignLineOffset(), getNode(), centerLine, contour, sliceInfo),
                                 getMap().getContextualized());
                         this.crossSectionElements.add(stripe);
@@ -617,8 +617,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     {
                         if (node.getNodeName().equals("Lane"))
                         {
-                            EditorLaneData laneData =
-                                    new EditorLaneData(node.getId(), getNode(), centerLine, contour, sliceInfo);
+                            MapLaneData laneData =
+                                    new MapLaneData(node.getId(), getNode(), centerLine, contour, sliceInfo);
                             LaneAnimation lane =
                                     new LaneAnimation(laneData, getMap().getContextualized(), Color.GRAY.brighter());
                             this.crossSectionElements.add(lane);
@@ -627,7 +627,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                         else if (node.getNodeName().equals("Shoulder"))
                         {
                             CrossSectionElementAnimation shoulder = new CrossSectionElementAnimation(
-                                    new EditorShoulderData(slices.get(0).getDesignLineOffset(), getNode(), centerLine, contour,
+                                    new MapShoulderData(slices.get(0).getDesignLineOffset(), getNode(), centerLine, contour,
                                             sliceInfo),
                                     getMap().getContextualized(), Color.DARK_GRAY);
                             this.crossSectionElements.add(shoulder);
@@ -635,7 +635,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                         else if (node.getNodeName().equals("NoTrafficLane"))
                         {
                             CrossSectionElementAnimation noTrafficLane = new CrossSectionElementAnimation(
-                                    new EditorCrossSectionData(getNode(), centerLine, contour, sliceInfo),
+                                    new MapCrossSectionData(getNode(), centerLine, contour, sliceInfo),
                                     getMap().getContextualized(), Color.DARK_GRAY);
                             this.crossSectionElements.add(noTrafficLane);
                         }
@@ -702,7 +702,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
      * @param laneId String; id.
      * @return EditorLaneData; editor lane data for the lane of given id.
      */
-    public EditorLaneData getLaneData(final String laneId)
+    public MapLaneData getLaneData(final String laneId)
     {
         return this.laneData.get(laneId);
     }

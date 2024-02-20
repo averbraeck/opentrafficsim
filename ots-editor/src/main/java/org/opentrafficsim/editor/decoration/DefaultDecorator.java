@@ -23,7 +23,7 @@ import org.opentrafficsim.editor.extensions.OdEditor;
 import org.opentrafficsim.editor.extensions.RoadLayoutEditor;
 import org.opentrafficsim.editor.extensions.RouteEditor;
 import org.opentrafficsim.editor.extensions.TrafCodEditor;
-import org.opentrafficsim.editor.extensions.map.Map;
+import org.opentrafficsim.editor.extensions.map.EditorMap;
 
 /**
  * Decorates the editor with custom icons, tabs, string functions and custom editors.
@@ -78,7 +78,7 @@ public final class DefaultDecorator
         editor.setCustomIcon("Ots.Animation", OtsEditor.loadIcon("./Play.png", 14, 14, 16, 16));
         editor.setCustomIcon("Ots.Output", OtsEditor.loadIcon("./Report.png", 14, 14, 16, 16)); // does not exist yet
 
-        editor.addTab("Map", networkIcon, Map.build(editor), "Map editor");
+        editor.addTab("Map", networkIcon, EditorMap.build(editor), "Map editor");
         editor.addTab("Parameters", null, buildParameterPane(), null);
         editor.addTab("Text", null, buildTextPane(), null);
 
@@ -157,7 +157,7 @@ public final class DefaultDecorator
      * </p>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    // Leave this class for debugging. It can be added by a line above that is commented out.
+    @SuppressWarnings("unused") // Leave this class for debugging. It can be added by a line above that is commented out.
     private static class NodeCreatedRemovedPrinter extends AbstractNodeDecoratorRemove
     {
         /** */

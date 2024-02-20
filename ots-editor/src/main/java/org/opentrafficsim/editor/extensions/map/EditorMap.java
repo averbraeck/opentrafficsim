@@ -46,7 +46,7 @@ import nl.tudelft.simulation.naming.context.JvmContext;
  * </p>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class Map extends JPanel implements EventListener
+public class EditorMap extends JPanel implements EventListener
 {
 
     /** */
@@ -105,7 +105,7 @@ public class Map extends JPanel implements EventListener
      * @throws RemoteException context binding problem.
      * @throws NamingException context binding problem.
      */
-    private Map(final AnimationUpdaterThread animator, final Contextualized contextualized, final OtsEditor editor)
+    private EditorMap(final AnimationUpdaterThread animator, final Contextualized contextualized, final OtsEditor editor)
             throws RemoteException, NamingException
     {
         super(new BorderLayout());
@@ -120,11 +120,11 @@ public class Map extends JPanel implements EventListener
             @Override
             public void setExtent(final Bounds2d extent)
             {
-                if (Map.this.lastScreen != null)
+                if (EditorMap.this.lastScreen != null)
                 {
                     // this prevents zoom being undone when resizing the screen afterwards
-                    Map.this.lastXScale = this.getRenderableScale().getXScale(extent, Map.this.lastScreen);
-                    Map.this.lastYScale = this.getRenderableScale().getYScale(extent, Map.this.lastScreen);
+                    EditorMap.this.lastXScale = this.getRenderableScale().getXScale(extent, EditorMap.this.lastScreen);
+                    EditorMap.this.lastYScale = this.getRenderableScale().getYScale(extent, EditorMap.this.lastScreen);
                 }
                 super.setExtent(extent);
             }
@@ -142,13 +142,13 @@ public class Map extends JPanel implements EventListener
                 double xScale = getXScale(extent, screen);
                 double yScale = getYScale(extent, screen);
                 Bounds2d result;
-                if (Map.this.lastYScale != null && yScale == Map.this.lastYScale)
+                if (EditorMap.this.lastYScale != null && yScale == EditorMap.this.lastYScale)
                 {
                     result = new Bounds2d(extent.midPoint().getX() - 0.5 * screen.getWidth() * yScale,
                             extent.midPoint().getX() + 0.5 * screen.getWidth() * yScale, extent.getMinY(), extent.getMaxY());
                     xScale = yScale;
                 }
-                else if (Map.this.lastXScale != null && xScale == Map.this.lastXScale)
+                else if (EditorMap.this.lastXScale != null && xScale == EditorMap.this.lastXScale)
                 {
                     result = new Bounds2d(extent.getMinX(), extent.getMaxX(),
                             extent.midPoint().getY() - 0.5 * screen.getHeight() * xScale * getYScaleRatio(),
@@ -157,8 +157,8 @@ public class Map extends JPanel implements EventListener
                 }
                 else
                 {
-                    double scale = Map.this.lastXScale == null ? Math.min(xScale, yScale)
-                            : Map.this.lastXScale * Map.this.lastScreen.getWidth() / screen.getWidth();
+                    double scale = EditorMap.this.lastXScale == null ? Math.min(xScale, yScale)
+                            : EditorMap.this.lastXScale * EditorMap.this.lastScreen.getWidth() / screen.getWidth();
                     result = new Bounds2d(extent.midPoint().getX() - 0.5 * screen.getWidth() * scale,
                             extent.midPoint().getX() + 0.5 * screen.getWidth() * scale,
                             extent.midPoint().getY() - 0.5 * screen.getHeight() * scale * getYScaleRatio(),
@@ -166,9 +166,9 @@ public class Map extends JPanel implements EventListener
                     yScale = scale;
                     xScale = scale;
                 }
-                Map.this.lastXScale = xScale;
-                Map.this.lastYScale = yScale;
-                Map.this.lastScreen = screen;
+                EditorMap.this.lastXScale = xScale;
+                EditorMap.this.lastYScale = yScale;
+                EditorMap.this.lastScreen = screen;
                 return result;
             }
         });
@@ -194,7 +194,7 @@ public class Map extends JPanel implements EventListener
      * @throws RemoteException context binding problem.
      * @throws NamingException context binding problem.
      */
-    public static Map build(final OtsEditor editor) throws RemoteException, NamingException
+    public static EditorMap build(final OtsEditor editor) throws RemoteException, NamingException
     {
         AnimationUpdaterThread animator = new AnimationUpdaterThread();
         animator.start();
@@ -208,7 +208,7 @@ public class Map extends JPanel implements EventListener
                 return context;
             }
         };
-        return new Map(animator, contextualized, editor);
+        return new EditorMap(animator, contextualized, editor);
     }
 
     /** {@inheritDoc} */

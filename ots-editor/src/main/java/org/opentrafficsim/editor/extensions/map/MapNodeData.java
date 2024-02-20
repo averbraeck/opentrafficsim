@@ -47,7 +47,7 @@ public class MapNodeData extends MapData implements NodeData, EventListener
      * @param nodeNode XsdTreeNode; node Ots.Network.Node.
      * @param editor OtsEditor; editor.
      */
-    public MapNodeData(final Map map, final XsdTreeNode nodeNode, final OtsEditor editor)
+    public MapNodeData(final EditorMap map, final XsdTreeNode nodeNode, final OtsEditor editor)
     {
         super(map, nodeNode, editor);
         getNode().addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);

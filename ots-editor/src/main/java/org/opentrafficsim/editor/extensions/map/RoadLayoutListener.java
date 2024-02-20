@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
 
@@ -25,7 +26,7 @@ import org.opentrafficsim.xml.bindings.LengthAdapter;
  * </p>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class RoadLayoutListener extends ChangeListener<java.util.Map<XsdTreeNode, CseData>>
+public class RoadLayoutListener extends ChangeListener<Map<XsdTreeNode, CseData>>
 {
 
     /** */
@@ -82,11 +83,11 @@ public class RoadLayoutListener extends ChangeListener<java.util.Map<XsdTreeNode
      * @return Map&lt;XsdTreeNode, CseData&gt;; offsets.
      */
     @Override
-    java.util.Map<XsdTreeNode, CseData> calculateData()
+    Map<XsdTreeNode, CseData> calculateData()
     {
-        java.util.Map<XsdTreeNode, CseData> cseData = new LinkedHashMap<>();
+        Map<XsdTreeNode, CseData> cseData = new LinkedHashMap<>();
         List<CseData> cseList = new ArrayList<>();
-        java.util.Map<Object, Integer> indices = new LinkedHashMap<>();
+        Map<Object, Integer> indices = new LinkedHashMap<>();
         List<XsdTreeNode> children = getNode().getChildren();
         Iterator<OffsetElement> iterator = new Iterator<>()
         {

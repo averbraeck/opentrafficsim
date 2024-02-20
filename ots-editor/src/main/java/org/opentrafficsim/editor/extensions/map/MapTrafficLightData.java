@@ -53,7 +53,7 @@ public class MapTrafficLightData extends MapData implements TrafficLightData, Ev
      * @param node XsdTreeNode; node Ots.Network.Link.TrafficLight.
      * @param editor OtsEditor; editor.
      */
-    public MapTrafficLightData(final Map map, final XsdTreeNode node, final OtsEditor editor)
+    public MapTrafficLightData(final EditorMap map, final XsdTreeNode node, final OtsEditor editor)
     {
         super(map, node, editor);
         getNode().addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
@@ -163,7 +163,7 @@ public class MapTrafficLightData extends MapData implements TrafficLightData, Ev
             setInvalid();
             return;
         }
-        EditorLaneData laneData = linkData.getLaneData(this.lane);
+        MapLaneData laneData = linkData.getLaneData(this.lane);
         if (laneData == null)
         {
             setInvalid();

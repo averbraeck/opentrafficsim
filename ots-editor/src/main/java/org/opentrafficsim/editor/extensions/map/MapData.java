@@ -38,7 +38,7 @@ public abstract class MapData implements EvalListener
 {
 
     /** Map showing all the elements. */
-    private final Map map;
+    private final EditorMap map;
 
     /** Tree node. */
     private final XsdTreeNode node;
@@ -68,7 +68,7 @@ public abstract class MapData implements EvalListener
      * @param node XsdTreeNode; tree node.
      * @param editor OtsEditor; editor.
      */
-    public MapData(final Map map, final XsdTreeNode node, final OtsEditor editor)
+    public MapData(final EditorMap map, final XsdTreeNode node, final OtsEditor editor)
     {
         this.map = map;
         this.node = node;
@@ -123,7 +123,7 @@ public abstract class MapData implements EvalListener
      * Returns the map.
      * @return Map; map.
      */
-    public Map getMap()
+    public EditorMap getMap()
     {
         return this.map;
     }
