@@ -64,7 +64,7 @@ public final class Adapters
      * @return ExpressionAdapter&lt;T, ?&gt;; adapter.
      */
     @SuppressWarnings("unchecked")
-    public static <T, E extends ExpressionType<T>> ExpressionAdapter<T, E> getAdapter(final Class<T> clazz)
+    public static <T, E extends ExpressionType<T>> ExpressionAdapter<T, E> get(final Class<T> clazz)
     {
         Throw.when(!ADAPTERS.containsKey(clazz), RuntimeException.class,
                 "No adapter for class %s available. Add it in the static code block of MapData or create one directly.");
@@ -78,7 +78,7 @@ public final class Adapters
      * @param clazz Class&lt;T&gt;; class of the output type of the adapter.
      * @param adapter ExpressionAdapter&lt;T, ?&gt;; adapter.
      */
-    public static <T, E extends ExpressionType<T>> void setAdapter(final Class<T> clazz, final ExpressionAdapter<T, E> adapter)
+    public static <T, E extends ExpressionType<T>> void set(final Class<T> clazz, final ExpressionAdapter<T, E> adapter)
     {
         Throw.whenNull(clazz, "Class may not be null.");
         Throw.whenNull(adapter, "Adapter may not be null.");

@@ -202,7 +202,7 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
      * @return T; calculated data based on content of the main node.
      */
     abstract T calculateData();
-    
+
     /** {@inheritDoc} */
     @Override
     public void evalChanged()

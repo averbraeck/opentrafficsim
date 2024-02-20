@@ -16,7 +16,7 @@ import org.opentrafficsim.road.network.lane.SliceInfo;
  */
 public class MapLaneData extends MapCrossSectionData implements LaneData
 {
-    
+
     /** Id. */
     private final String id;
 

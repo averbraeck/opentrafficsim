@@ -102,11 +102,11 @@ public class MapNodeData extends MapData implements NodeData, EventListener
         }
         else if ("Coordinate".equals(attribute))
         {
-            setValue((v) -> this.coordinate = v, Adapters.getAdapter(Point2d.class), getNode(), "Coordinate");
+            setValue((v) -> this.coordinate = v, Adapters.get(Point2d.class), getNode(), "Coordinate");
         }
         else if ("Direction".equals(attribute))
         {
-            setValue((v) -> this.direction = v, Adapters.getAdapter(Direction.class), getNode(), "Direction");
+            setValue((v) -> this.direction = v, Adapters.get(Direction.class), getNode(), "Direction");
         }
         else
         {
@@ -120,8 +120,8 @@ public class MapNodeData extends MapData implements NodeData, EventListener
     public void evalChanged()
     {
         this.id = getNode().getId() == null ? "" : getNode().getId();
-        setValue((v) -> this.coordinate = v, Adapters.getAdapter(Point2d.class), getNode(), "Coordinate");
-        setValue((v) -> this.direction = v, Adapters.getAdapter(Direction.class), getNode(), "Direction");
+        setValue((v) -> this.coordinate = v, Adapters.get(Point2d.class), getNode(), "Coordinate");
+        setValue((v) -> this.direction = v, Adapters.get(Direction.class), getNode(), "Direction");
         setLocation();
     }
 

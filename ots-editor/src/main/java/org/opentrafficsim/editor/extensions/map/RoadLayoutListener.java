@@ -51,8 +51,7 @@ public class RoadLayoutListener extends ChangeListener<Map<XsdTreeNode, CseData>
     {
         try
         {
-            return valueNode.isActive() ? Adapters.getAdapter(Length.class).unmarshal(valueNode.getValue()).get(getEval())
-                    : null;
+            return valueNode.isActive() ? Adapters.get(Length.class).unmarshal(valueNode.getValue()).get(getEval()) : null;
         }
         catch (RuntimeException exception)
         {

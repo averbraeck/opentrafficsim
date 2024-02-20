@@ -117,8 +117,8 @@ public class MapTrafficLightData extends MapData implements TrafficLightData, Ev
     public void evalChanged()
     {
         this.id = getNode().getId() == null ? "" : getNode().getId();
-        setValue((v) -> this.lane = v, Adapters.getAdapter(String.class), getNode(), "Lane");
-        setValue((v) -> this.position = v, Adapters.getAdapter(Length.class), getNode(), "Position");
+        setValue((v) -> this.lane = v, Adapters.get(String.class), getNode(), "Lane");
+        setValue((v) -> this.position = v, Adapters.get(Length.class), getNode(), "Position");
         setLocation();
     }
 
@@ -137,11 +137,11 @@ public class MapTrafficLightData extends MapData implements TrafficLightData, Ev
             }
             else if ("Lane".equals(attribute))
             {
-                setValue((v) -> this.lane = v, Adapters.getAdapter(String.class), getNode(), "Lane");
+                setValue((v) -> this.lane = v, Adapters.get(String.class), getNode(), "Lane");
             }
             else if ("Position".equals(attribute))
             {
-                setValue((v) -> this.position = v, Adapters.getAdapter(Length.class), getNode(), "Position");
+                setValue((v) -> this.position = v, Adapters.get(Length.class), getNode(), "Position");
             }
         }
         // else: MapLinkData.LAYOUT_REBUILT

@@ -81,8 +81,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     private static final long serialVersionUID = 20231003L;
 
     /** Event when layout is rebuilt. */
-    public static final EventType LAYOUT_REBUILT = new EventType("LAYOUTREBUILT", new MetaData(
-            "LAYOUT", "Layout is rebuilt.",
+    public static final EventType LAYOUT_REBUILT = new EventType("LAYOUTREBUILT", new MetaData("LAYOUT", "Layout is rebuilt.",
             new ObjectDescriptor("LinkData", "Map link data object.", MapLinkData.class)));
 
     /** Event listeners. */
@@ -363,11 +362,11 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         }
         else if ("OffsetStart".equals(attribute))
         {
-            setValue((v) -> this.offsetStart = v, Adapters.getAdapter(Length.class), getNode(), attribute);
+            setValue((v) -> this.offsetStart = v, Adapters.get(Length.class), getNode(), attribute);
         }
         else if ("OffsetEnd".equals(attribute))
         {
-            setValue((v) -> this.offsetEnd = v, Adapters.getAdapter(Length.class), getNode(), attribute);
+            setValue((v) -> this.offsetEnd = v, Adapters.get(Length.class), getNode(), attribute);
         }
         else if ("Coordinate".equals(attribute))
         {
@@ -456,7 +455,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         }
         return null;
     }
-    
+
     /**
      * The map was notified a new coordinate node was added. The node may or may not be part of this link.
      * @param node XsdTreeNode; added coordinate node.
@@ -465,7 +464,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     {
         if (this.shapeListener.shapeNode.equals(node.getParent()))
         {
-            this.shapeListener.coordinates.put(node, orNull(node.getValue(), Adapters.getAdapter(Point2d.class)));
+            this.shapeListener.coordinates.put(node, orNull(node.getValue(), Adapters.get(Point2d.class)));
             buildDesignLine();
             node.addListener(this.shapeListener, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
             node.addListener(this.shapeListener, XsdTreeNode.MOVED, ReferenceType.WEAK);
@@ -505,17 +504,17 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             setInvalid();
             return;
         }
-        setValue((v) -> this.from = v, Adapters.getAdapter(Point2d.class), this.nodeStart, "Coordinate");
-        setValue((v) -> this.to = v, Adapters.getAdapter(Point2d.class), this.nodeEnd, "Coordinate");
+        setValue((v) -> this.from = v, Adapters.get(Point2d.class), this.nodeStart, "Coordinate");
+        setValue((v) -> this.to = v, Adapters.get(Point2d.class), this.nodeEnd, "Coordinate");
         if (this.from == null || this.to == null)
         {
             setInvalid();
             return;
         }
-        setValue((v) -> this.directionStart = v, Adapters.getAdapter(Direction.class), this.nodeStart, "Direction");
+        setValue((v) -> this.directionStart = v, Adapters.get(Direction.class), this.nodeStart, "Direction");
         double dirStart = this.directionStart == null ? 0.0 : this.directionStart.si;
         OrientedPoint2d from = new OrientedPoint2d(this.from, dirStart);
-        setValue((v) -> this.directionEnd = v, Adapters.getAdapter(Direction.class), this.nodeEnd, "Direction");
+        setValue((v) -> this.directionEnd = v, Adapters.get(Direction.class), this.nodeEnd, "Direction");
         double dirEnd = this.directionEnd == null ? 0.0 : this.directionEnd.si;
         OrientedPoint2d to = new OrientedPoint2d(this.to, dirEnd);
         if (this.offsetStart != null)
@@ -552,7 +551,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         }
         return getMap().getNetworkFlattener();
     }
-    
+
     /**
      * Builds all animation objects for stripes, lanes, shoulders, no-traffic lanes, and their center lines and id's.
      */
@@ -583,9 +582,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     Length width = null;
                     if (node.getNodeName().equals("Stripe"))
                     {
-                        type = Adapters.getAdapter(Stripe.Type.class).unmarshal(node.getAttributeValue("Type")).get(getEval());
+                        type = Adapters.get(Stripe.Type.class).unmarshal(node.getAttributeValue("Type")).get(getEval());
                         width = node.getChild(1).isActive() // child 1 is DrawingWidth
-                                ? Adapters.getAdapter(Length.class).unmarshal(node.getChild(1).getValue()).get(getEval())
+                                ? Adapters.get(Length.class).unmarshal(node.getChild(1).getValue()).get(getEval())
                                 : type.defaultWidth();
                         slices = LaneGeometryUtil.getSlices(this.designLine, cseData.centerOffsetStart, cseData.centerOffsetEnd,
                                 width, width);
@@ -618,8 +617,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     {
                         if (node.getNodeName().equals("Lane"))
                         {
-                            MapLaneData laneData =
-                                    new MapLaneData(node.getId(), getNode(), centerLine, contour, sliceInfo);
+                            MapLaneData laneData = new MapLaneData(node.getId(), getNode(), centerLine, contour, sliceInfo);
                             LaneAnimation lane =
                                     new LaneAnimation(laneData, getMap().getContextualized(), Color.GRAY.brighter());
                             this.crossSectionElements.add(lane);
@@ -832,19 +830,19 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     switch (node.getNodeName())
                     {
                         case "Coordinate":
-                            this.coordinates.put(node, orNull(node.getValue(), Adapters.getAdapter(Point2d.class)));
+                            this.coordinates.put(node, orNull(node.getValue(), Adapters.get(Point2d.class)));
                             break;
                         case "StartCurvature":
-                            this.startCurvature = orNull(node.getValue(), Adapters.getAdapter(LinearDensity.class));
+                            this.startCurvature = orNull(node.getValue(), Adapters.get(LinearDensity.class));
                             break;
                         case "EndCurvature":
-                            this.endCurvature = orNull(node.getValue(), Adapters.getAdapter(LinearDensity.class));
+                            this.endCurvature = orNull(node.getValue(), Adapters.get(LinearDensity.class));
                             break;
                         case "Length":
-                            this.length = orNull(node.getValue(), Adapters.getAdapter(Length.class));
+                            this.length = orNull(node.getValue(), Adapters.get(Length.class));
                             break;
                         case "A":
-                            this.a = orNull(node.getValue(), Adapters.getAdapter(Length.class));
+                            this.a = orNull(node.getValue(), Adapters.get(Length.class));
                             break;
                     }
                 }
@@ -920,7 +918,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     {
                         try
                         {
-                            this.coordinates.put(child, orNull(child.getValue(), Adapters.getAdapter(Point2d.class)));
+                            this.coordinates.put(child, orNull(child.getValue(), Adapters.get(Point2d.class)));
                         }
                         catch (Exception ex)
                         {
@@ -947,16 +945,16 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                                 switch (child.getNodeName())
                                 {
                                     case "StartCurvature":
-                                        this.startCurvature = orNull(child.getValue(), Adapters.getAdapter(LinearDensity.class));
+                                        this.startCurvature = orNull(child.getValue(), Adapters.get(LinearDensity.class));
                                         break;
                                     case "EndCurvature":
-                                        this.endCurvature = orNull(child.getValue(), Adapters.getAdapter(LinearDensity.class));
+                                        this.endCurvature = orNull(child.getValue(), Adapters.get(LinearDensity.class));
                                         break;
                                     case "Length":
-                                        this.length = orNull(child.getValue(), Adapters.getAdapter(Length.class));
+                                        this.length = orNull(child.getValue(), Adapters.get(Length.class));
                                         break;
                                     case "A":
-                                        this.a = orNull(child.getValue(), Adapters.getAdapter(Length.class));
+                                        this.a = orNull(child.getValue(), Adapters.get(Length.class));
                                         break;
                                     default:
                                         throw new RuntimeException("Clothoid child " + child.getNodeName() + " not supported.");
@@ -997,19 +995,19 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             switch (attribute)
             {
                 case "Shape":
-                    this.shape = getOrNull(attribute, Adapters.getAdapter(Double.class));
+                    this.shape = getOrNull(attribute, Adapters.get(Double.class));
                     break;
                 case "Weighted":
-                    this.weighted = getOrNull(attribute, Adapters.getAdapter(Boolean.class));
+                    this.weighted = getOrNull(attribute, Adapters.get(Boolean.class));
                     break;
                 case "Length":
-                    this.length = getOrNull(attribute, Adapters.getAdapter(Length.class));
+                    this.length = getOrNull(attribute, Adapters.get(Length.class));
                     break;
                 case "Radius":
-                    this.radius = getOrNull(attribute, Adapters.getAdapter(Length.class));
+                    this.radius = getOrNull(attribute, Adapters.get(Length.class));
                     break;
                 case "Direction":
-                    this.direction = getOrNull(attribute, Adapters.getAdapter(ArcDirection.class));
+                    this.direction = getOrNull(attribute, Adapters.get(ArcDirection.class));
                     break;
                 default:
                     // an attribute was changed that does not change the shape
