@@ -9,7 +9,7 @@ import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
 import org.opentrafficsim.draw.road.BusStopAnimation;
 import org.opentrafficsim.draw.road.BusStopAnimation.BusStopData;
 import org.opentrafficsim.draw.road.ConflictAnimation.ConflictData;
-import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
+import org.opentrafficsim.draw.road.CrossSectionElementAnimation.ShoulderData;
 import org.opentrafficsim.draw.road.DetectorData;
 import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation;
 import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
@@ -57,7 +57,7 @@ public final class AnimationToggles
         panel.addToggleAnimationButtonText("LaneId", LaneAnimation.Text.class, "Show/hide lane Ids", false);
         panel.addToggleAnimationButtonText("LaneCenter", LaneAnimation.CenterLine.class, "Show/hide lane center lines", false);
         panel.addToggleAnimationButtonText("Stripe", StripeData.class, "Show/hide stripes", true);
-        panel.addToggleAnimationButtonText("Shoulder", CrossSectionElementData.class, "Show/hide shoulders", true);
+        panel.addToggleAnimationButtonText("Shoulder", ShoulderData.class, "Show/hide shoulders", true);
         panel.addToggleAnimationButtonText("GTU", GtuData.class, "Show/hide GTUs", true);
         panel.addToggleAnimationButtonText("GTUId", DefaultCarAnimation.Text.class, "Show/hide GTU Ids", false);
         panel.addToggleAnimationButtonText("Detector", DetectorData.class, "Show/hide detectors", true);
@@ -86,7 +86,7 @@ public final class AnimationToggles
         panel.addToggleAnimationButtonText("LaneId", LaneAnimation.Text.class, "Show/hide lane Ids", false);
         panel.addToggleAnimationButtonText("LaneCenter", LaneAnimation.CenterLine.class, "Show/hide lane center lines", false);
         panel.addToggleAnimationButtonText("Stripe", StripeData.class, "Show/hide stripes", true);
-        panel.addToggleAnimationButtonText("Shoulder", CrossSectionElementData.class, "Show/hide shoulders", true); // Shoulder
+        panel.addToggleAnimationButtonText("Shoulder", ShoulderData.class, "Show/hide shoulders", true); // Shoulder
         panel.addToggleAnimationButtonText("GTU", GtuData.class, "Show/hide GTUs", true);
         panel.addToggleAnimationButtonText("GTUId", DefaultCarAnimation.Text.class, "Show/hide GTU Ids", false);
         panel.addToggleAnimationButtonText("Detector", DetectorData.class, "Show/hide detectors", false);
@@ -119,15 +119,15 @@ public final class AnimationToggles
         panel.addToggleAnimationButtonIcon("LaneCenter", CenterLine.class, "/icons/CenterLine24.png",
                 "Show/hide lane center lines", false, false);
         panel.addToggleAnimationButtonIcon("Stripe", StripeData.class, "/icons/Stripe24.png", "Show/hide stripes", true, false);
-        panel.addToggleAnimationButtonIcon("Shoulder", CrossSectionElementData.class, "/icons/Shoulder24.png",
-                "Show/hide shoulders", true, false); // Shoulder
+        panel.addToggleAnimationButtonIcon("Shoulder", ShoulderData.class, "/icons/Shoulder24.png", "Show/hide shoulders", true,
+                false); // Shoulder
         panel.addToggleAnimationButtonIcon("GTU", GtuData.class, "/icons/Gtu24.png", "Show/hide GTUs", true, false);
         panel.addToggleAnimationButtonIcon("GTUId", DefaultCarAnimation.Text.class, "/icons/Id24.png", "Show/hide GTU Ids",
                 false, true);
         panel.addToggleAnimationButtonIcon("Detector", DetectorData.class, "/icons/Detector24.png", "Show/hide detectors", true,
                 false);
-        panel.addToggleAnimationButtonIcon("DetectorId", DetectorData.Text.class, "/icons/Id24.png",
-                "Show/hide detector Ids", false, true);
+        panel.addToggleAnimationButtonIcon("DetectorId", DetectorData.Text.class, "/icons/Id24.png", "Show/hide detector Ids",
+                false, true);
         panel.addToggleAnimationButtonIcon("Light", TrafficLightData.class, "/icons/TrafficLight24.png",
                 "Show/hide traffic lights", true, false);
         panel.addToggleAnimationButtonIcon("LightId", TrafficLightAnimation.Text.class, "/icons/Id24.png",
@@ -162,15 +162,15 @@ public final class AnimationToggles
         panel.addToggleAnimationButtonIcon("LaneCenter", CenterLine.class, "/icons/CenterLine24.png",
                 "Show/hide lane center lines", false, false);
         panel.addToggleAnimationButtonIcon("Stripe", StripeData.class, "/icons/Stripe24.png", "Show/hide stripes", true, false);
-        panel.addToggleAnimationButtonIcon("Shoulder", CrossSectionElementData.class, "/icons/Shoulder24.png",
-                "Show/hide shoulders", true, false); // Shoulder
+        panel.addToggleAnimationButtonIcon("Shoulder", ShoulderData.class, "/icons/Shoulder24.png", "Show/hide shoulders", true,
+                false); // Shoulder
         panel.addToggleAnimationButtonIcon("GTU", GtuData.class, "/icons/Gtu24.png", "Show/hide GTUs", true, false);
         panel.addToggleAnimationButtonIcon("GTUId", DefaultCarAnimation.Text.class, "/icons/Id24.png", "Show/hide GTU Ids",
                 false, true);
         panel.addToggleAnimationButtonIcon("Detector", DetectorData.class, "/icons/Detector24.png", "Show/hide detectors",
                 false, false);
-        panel.addToggleAnimationButtonIcon("DetectorId", DetectorData.Text.class, "/icons/Id24.png",
-                "Show/hide detector Ids", false, true);
+        panel.addToggleAnimationButtonIcon("DetectorId", DetectorData.Text.class, "/icons/Id24.png", "Show/hide detector Ids",
+                false, true);
         panel.addToggleAnimationButtonIcon("Light", TrafficLightData.class, "/icons/TrafficLight24.png",
                 "Show/hide traffic lights", true, false);
         panel.addToggleAnimationButtonIcon("LightId", TrafficLightAnimation.Text.class, "/icons/Id24.png",
@@ -223,7 +223,7 @@ public final class AnimationToggles
         hideAnimationClass(panel, LaneAnimation.Text.class);
         hideAnimationClass(panel, LaneAnimation.CenterLine.class);
         showAnimationClass(panel, StripeData.class);
-        showAnimationClass(panel, CrossSectionElementData.class); // Shoulder
+        showAnimationClass(panel, ShoulderData.class);
         showAnimationClass(panel, GtuData.class);
         hideAnimationClass(panel, DefaultCarAnimation.Text.class);
         showAnimationClass(panel, DetectorData.class);
@@ -251,7 +251,7 @@ public final class AnimationToggles
         hideAnimationClass(panel, LaneAnimation.Text.class);
         hideAnimationClass(panel, LaneAnimation.CenterLine.class);
         showAnimationClass(panel, StripeData.class);
-        showAnimationClass(panel, CrossSectionElementData.class); // Shoulder
+        showAnimationClass(panel, ShoulderData.class);
         showAnimationClass(panel, GtuData.class);
         hideAnimationClass(panel, DefaultCarAnimation.Text.class);
         hideAnimationClass(panel, DetectorData.class);
