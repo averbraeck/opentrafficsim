@@ -89,7 +89,9 @@ public abstract class MapData implements EvalListener
      * Returns the map.
      * @return Map; map.
      */
-    public EditorMap getMap()
+    // If public, this will remove the map from the tabbed pane when the inspector wants a renderer for this element, which is 
+    // the panel itself. It gets 'reparented' towards the cell in the inspection window.
+    protected EditorMap getMap()
     {
         return this.map;
     }
