@@ -2,6 +2,7 @@ package org.opentrafficsim.draw.network;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -47,6 +48,24 @@ public class LinkAnimation extends Renderable2d<LinkData> implements Renderable2
     /** the Text object to destroy when the animation is destroyed. */
     private Text text;
 
+    /** Drawable path. */
+    private Path2D.Double path;
+
+    /** Drawable path for start point. */
+    private Path2D.Double startPoint;
+
+    /** Drawable path for end point. */
+    private Path2D.Double endPoint;
+
+    /** Color. */
+    private final Color color;
+
+    /** Design line, also cached in parent, this is to see if it has changed. */
+    private PolyLine2d designLine;
+
+    /** Whether animation is dynamic. */
+    private boolean dynamic = false;
+
     /**
      * @param link LinkData; link data.
      * @param contextualized Contextualized; context provider.
@@ -61,29 +80,50 @@ public class LinkAnimation extends Renderable2d<LinkData> implements Renderable2
         this.width = width;
         this.text = new Text(link, link::getId, 0.0f, 1.5f, TextAlignment.CENTER, Color.BLACK, contextualized,
                 TextAnimation.RENDERWHEN10);
+        PolyLine2d designLine = getSource().getDesignLine();
+        this.path = PaintLine.getPath(getSource().getLocation(), designLine);
+        this.startPoint = getEndPoint(designLine.getFirst(), designLine.get(1));
+        this.endPoint = getEndPoint(designLine.getLast(), designLine.get(designLine.size() - 2));
+        this.color = getSource().isConnector() ? Color.PINK.darker() : Color.BLUE;
+    }
+
+    /**
+     * Sets the animation as dynamic, obtaining geometry at each draw.
+     * @param dynamic boolean; whether it is dynamic {@code false} by default.
+     * @return LinkAnimation; for method chaining.
+     */
+    public LinkAnimation setDynamic(final boolean dynamic)
+    {
+        this.dynamic = dynamic;
+        return this;
     }
 
     /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        Color color = getSource().isConnector() ? Color.PINK.darker() : Color.BLUE;
-        PolyLine2d designLine = getSource().getDesignLine();
-        PaintLine.paintLine(graphics, color, this.width, getSource().getLocation(), designLine);
-        // Accentuate the end points
-        drawEndPoint(designLine.getFirst(), designLine.get(1), graphics);
-        drawEndPoint(designLine.getLast(), designLine.get(designLine.size() - 2), graphics);
+        if (this.dynamic)
+        {
+            PolyLine2d designLine = getSource().getDesignLine();
+            if (!designLine.equals(this.designLine))
+            {
+                this.path = PaintLine.getPath(getSource().getLocation(), designLine);
+                this.startPoint = getEndPoint(designLine.getFirst(), designLine.get(1));
+                this.endPoint = getEndPoint(designLine.getLast(), designLine.get(designLine.size() - 2));
+            }
+        }
+        PaintLine.paintLine(graphics, this.color, this.width, this.path);
+        PaintLine.paintLine(graphics, this.color, this.width / 30, this.startPoint);
+        PaintLine.paintLine(graphics, this.color, this.width / 30, this.endPoint);
     }
 
     /**
-     * Draw end point on design line.
      * @param endPoint Point2d; the end of the design line where a end point must be highlighted
      * @param nextPoint Point2d; the point nearest <code>endPoint</code> (needed to figure out the direction of the design line)
-     * @param graphics Graphics2D; graphics content
+     * @return Path2D.Double; path to draw an end point.
      */
-    private void drawEndPoint(final Point2d endPoint, final Point2d nextPoint, final Graphics2D graphics)
+    private Path2D.Double getEndPoint(final Point2d endPoint, final Point2d nextPoint)
     {
-        // End point marker is 2 times the width of the design line
         double dx = nextPoint.x - endPoint.x;
         double dy = nextPoint.y - endPoint.y;
         double length = endPoint.distance(nextPoint);
@@ -92,8 +132,7 @@ public class LinkAnimation extends Renderable2d<LinkData> implements Renderable2
         dy *= this.width / length;
         PolyLine2d line =
                 new PolyLine2d(new Point2d(endPoint.x - dy, endPoint.y + dx), new Point2d(endPoint.x + dy, endPoint.y - dx));
-        PaintLine.paintLine(graphics, getSource().isConnector() ? Color.PINK.darker() : Color.BLUE, this.width / 30,
-                getSource().getLocation(), line);
+        return PaintLine.getPath(getSource().getLocation(), line);
     }
 
     /** {@inheritDoc} */

@@ -2,10 +2,12 @@ package org.opentrafficsim.draw.road;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -35,6 +37,9 @@ public class CrossSectionElementAnimation extends Renderable2d<CrossSectionEleme
     /** The animation color. */
     private final Color color;
 
+    /** Drawable paths. */
+    private final Set<Path2D.Double> paths;
+
     /**
      * @param source CrossSectionElementData; cross section element
      * @param contextualized Contextualized; context provider
@@ -47,14 +52,14 @@ public class CrossSectionElementAnimation extends Renderable2d<CrossSectionEleme
     {
         super(source, contextualized);
         this.color = color;
+        this.paths = PaintPolygons.getPaths(getSource().getLocation(), getSource().getContour());
     }
 
     /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        CrossSectionElementData cse = getSource();
-        PaintPolygons.paintMultiPolygon(graphics, this.color, cse.getLocation(), cse.getContour(), true);
+        PaintPolygons.paintPaths(graphics, this.color, this.paths, true);
     }
 
     /** {@inheritDoc} */
@@ -85,11 +90,12 @@ public class CrossSectionElementAnimation extends Renderable2d<CrossSectionEleme
         @Override
         Point2d getLocation();
     }
-    
+
     /**
      * ShoulderData provides the information required to draw a shoulder.
      * <p>
-     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>

@@ -16,6 +16,7 @@ import org.djutils.draw.point.Point;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 public final class PaintLine
 {
@@ -26,20 +27,13 @@ public final class PaintLine
     }
 
     /**
-     * Paint line.
-     * @param graphics Graphics2D; the graphics environment
-     * @param color Color; the color to use
-     * @param width double; the width to use
+     * Returns drawable path of the line.
      * @param referencePoint DirectedPoint; the reference point
      * @param line PolyLine2d; array of points
+     * @return Path2D.Double drawable path.
      */
-    public static void paintLine(final Graphics2D graphics, final Color color, final double width,
-            final Point<?> referencePoint, final PolyLine2d line)
+    public static Path2D.Double getPath(final Point<?> referencePoint, final PolyLine2d line)
     {
-        graphics.setColor(color);
-        Stroke oldStroke = graphics.getStroke();
-        // Setting cap and join to make perfectly visible where a line begins and ends.
-        graphics.setStroke(new BasicStroke((float) width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
         Path2D.Double path = new Path2D.Double();
         Point<?> point = line.getFirst();
         path.moveTo(point.getX() - referencePoint.getX(), -point.getY() + referencePoint.getY());
@@ -47,6 +41,23 @@ public final class PaintLine
         {
             path.lineTo(line.getX(index) - referencePoint.getX(), -line.getY(index) + referencePoint.getY());
         }
+        return path;
+    }
+    
+    /**
+     * Paint line.
+     * @param graphics Graphics2D; the graphics environment
+     * @param color Color; the color to use
+     * @param width double; the width to use
+     * @param path Path2D.Double; drawable path
+     */
+    public static void paintLine(final Graphics2D graphics, final Color color, final double width,
+            final Path2D.Double path)
+    {
+        graphics.setColor(color);
+        Stroke oldStroke = graphics.getStroke();
+        // Setting cap and join to make perfectly visible where a line begins and ends.
+        graphics.setStroke(new BasicStroke((float) width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
         graphics.draw(path);
         graphics.setStroke(oldStroke);
     }

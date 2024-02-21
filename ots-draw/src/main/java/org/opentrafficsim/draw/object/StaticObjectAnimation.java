@@ -4,10 +4,12 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
+import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -42,6 +44,9 @@ public class StaticObjectAnimation extends Renderable2d<StaticObjectData> implem
     /** */
     private boolean fill;
 
+    /** Drawable paths. */
+    private final Set<Path2D.Double> paths;
+
     /**
      * @param source StaticObjectData; Static Object
      * @param contextualized Contextualized; context provider
@@ -58,6 +63,7 @@ public class StaticObjectAnimation extends Renderable2d<StaticObjectData> implem
         this.width = width;
         this.color = color;
         this.fill = fill;
+        this.paths = PaintPolygons.getPaths(getSource().getLocation(), getSource().getGeometry());
     }
 
     /** {@inheritDoc} */
@@ -68,8 +74,7 @@ public class StaticObjectAnimation extends Renderable2d<StaticObjectData> implem
         {
             Stroke oldStroke = graphics.getStroke();
             graphics.setStroke(new BasicStroke(this.width));
-            PaintPolygons.paintMultiPolygon(graphics, this.color, getSource().getLocation(), getSource().getGeometry(),
-                    this.fill);
+            PaintPolygons.paintPaths(graphics, this.color, this.paths, this.fill);
             graphics.setStroke(oldStroke);
         }
     }

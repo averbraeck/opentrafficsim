@@ -31,6 +31,9 @@ import org.djutils.exceptions.Throw;
 public class ContinuousBezierCubic extends ContinuousBezier implements ContinuousLine
 {
 
+    /** Angle below which segments are seen as straight. */
+    private static final double STRAIGHT = Math.PI / 36000; // 1/100th of a degree
+
     /** Start point with direction. */
     private final OrientedPoint2d startPoint;
 
@@ -303,6 +306,13 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
         Throw.whenNull(offsets, "Offsets may not be null.");
         Throw.whenNull(flattener, "Flattener may not be null.");
 
+        // Detect straight line
+        double ang1 = Math.atan2(this.points[1].y - this.points[0].y, this.points[1].x - this.points[0].x);
+        double ang2 = Math.atan2(this.points[3].y - this.points[1].y, this.points[3].x - this.points[1].x);
+        double ang3 = Math.atan2(this.points[3].y - this.points[2].y, this.points[3].x - this.points[2].x);
+        boolean straight =
+                Math.abs(ang1 - ang2) < STRAIGHT && Math.abs(ang2 - ang3) < STRAIGHT && Math.abs(ang3 - ang1) < STRAIGHT;
+
         /*
          * A Bezier does not have a trivial offset. Hence, we split the Bezier along points of 3 types. 1) roots, where the
          * derivative of either the x-component or y-component is 0, such that we obtain C-shaped scalable segments, 2)
@@ -314,8 +324,11 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
 
         // Gather all points to split segments, and their types (1=root, 2=inflection, or 3=offset fraction)
         NavigableMap<Double, Integer> splits0 = new TreeMap<>(); // splits0 & splits because splits0 must be effectively final
-        getRoots().forEach((t) -> splits0.put(t, 1));
-        getInflections().forEach((t) -> splits0.put(t, 2));
+        if (!straight)
+        {
+            getRoots().forEach((t) -> splits0.put(t, 1));
+            getInflections().forEach((t) -> splits0.put(t, 2));
+        }
         getOffsetT(offsets.getFractionalLengths().toSet()).forEach((t) -> splits0.put(t, 3));
         NavigableMap<Double, Integer> splits = splits0.subMap(1e-6, false, 1.0 - 1e-6, false);
 
@@ -405,7 +418,7 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
                 }
                 else
                 {
-                    entry= segments.floorEntry(fraction);
+                    entry = segments.floorEntry(fraction);
                     nextT = segments.higherKey(fraction);
                 }
                 double t = (fraction - entry.getKey()) / (nextT - entry.getKey());
@@ -457,6 +470,22 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
         Point2d p2 = new Point2d(this.points[3].x - (this.points[2].y - this.points[3].y),
                 this.points[3].y + (this.points[2].x - this.points[3].x));
         Point2d center = Point2d.intersectionOfLines(this.points[0], p1, p2, this.points[3]);
+
+        if (center == null)
+        {
+            // start and end have same direction, offset first two by same amount, and last two by same amount, to maintain dirs
+            Point2d[] newBezierPoints = new Point2d[4];
+            double ang = Math.atan2(p1.y - this.points[0].y, p1.x - this.points[0].x);
+            double dxStart = Math.cos(ang) * offsetStart;
+            double dyStart = -Math.sin(ang) * offsetStart;
+            newBezierPoints[0] = new Point2d(this.points[0].x + dxStart, this.points[0].y + dyStart);
+            newBezierPoints[1] = new Point2d(this.points[1].x + dxStart, this.points[1].y + dyStart);
+            double dxEnd = Math.cos(ang) * offsetEnd;
+            double dyEnd = -Math.sin(ang) * offsetEnd;
+            newBezierPoints[2] = new Point2d(this.points[2].x + dxEnd, this.points[2].y + dyEnd);
+            newBezierPoints[3] = new Point2d(this.points[3].x + dxEnd, this.points[3].y + dyEnd);
+            return new ContinuousBezierCubic(newBezierPoints[0], newBezierPoints[1], newBezierPoints[2], newBezierPoints[3]);
+        }
 
         // move 1st and 4th point their respective offsets away from the center
         Point2d[] newBezierPoints = new Point2d[4];

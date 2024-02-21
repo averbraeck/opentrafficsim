@@ -1098,7 +1098,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                         {
                             endHeading -= 2.0 * Math.PI;
                         }
-                        Angle angle = Angle.instantiateSI(Math.abs(endHeading) - from.dirZ);
+                        Angle angle = Angle.instantiateSI(left ? endHeading - from.dirZ : from.dirZ - endHeading);
                         return new ContinuousArc(from, this.radius.si, left, angle);
                     default:
                         throw new RuntimeException(

@@ -5,10 +5,12 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -37,6 +39,9 @@ public class ConflictAnimation extends AbstractLineAnimation<ConflictData> imple
     /** */
     private static final long serialVersionUID = 20161207L;
 
+    /** Drawable paths. */
+    private final Set<Path2D.Double> paths;
+
     /**
      * @param source ConflictData; the conflict to draw
      * @param contextualized Contextualized; context provider
@@ -47,14 +52,15 @@ public class ConflictAnimation extends AbstractLineAnimation<ConflictData> imple
             throws NamingException, RemoteException
     {
         super(source, contextualized, .9, new Length(0.5, LengthUnit.SI));
+        this.paths = this.getSource().getContour() == null ? null
+                : PaintPolygons.getPaths(getSource().getLocation(), getSource().getContour());
     }
 
     /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        ConflictData conflict = (ConflictData) this.getSource();
-        Color fillColor = conflict.getColor();
+        Color fillColor = getSource().getColor();
 
         graphics.setColor(fillColor);
         super.paint(graphics, observer);
@@ -62,8 +68,8 @@ public class ConflictAnimation extends AbstractLineAnimation<ConflictData> imple
         Stroke oldStroke = graphics.getStroke();
 
         BasicStroke stroke;
-        float factor = conflict.isPermitted() ? .5f : 1f;
-        if (conflict.isCrossing())
+        float factor = getSource().isPermitted() ? .5f : 1f;
+        if (getSource().isCrossing())
         {
             stroke = new BasicStroke(.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
                     new float[] {factor * 1.0f, factor * 2.0f}, 0.0f);
@@ -80,9 +86,9 @@ public class ConflictAnimation extends AbstractLineAnimation<ConflictData> imple
         {
             graphics.rotate(-angle);
         }
-        if (conflict.getContour() != null)
+        if (this.paths != null)
         {
-            PaintPolygons.paintMultiPolygon(graphics, fillColor, conflict.getLocation(), conflict.getContour(), false);
+            PaintPolygons.paintPaths(graphics, fillColor, this.paths, false);
 
             /*- This code may be used to visually check conflicts are correctly paired
             if (conflict.conflictPriority().isPriority())

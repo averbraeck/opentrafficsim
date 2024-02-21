@@ -396,7 +396,7 @@ public class EditorMap extends JPanel implements EventListener
         }
         else if (node.getPathString().equals(XsdPaths.LINK))
         {
-            animation = Try.assign(() -> new LinkAnimation((MapLinkData) data, this.contextualized, 0.5f), "");
+            animation = Try.assign(() -> new LinkAnimation((MapLinkData) data, this.contextualized, 0.5f).setDynamic(true), "");
         }
         else if (node.getPathString().equals(XsdPaths.TRAFFIC_LIGHT))
         {
@@ -490,6 +490,7 @@ public class EditorMap extends JPanel implements EventListener
                         this.networkFlattenerListener.removeListener(link, ChangeListener.CHANGE_EVENT);
                     }
                     it.remove();
+                    break;
                 }
             }
         }

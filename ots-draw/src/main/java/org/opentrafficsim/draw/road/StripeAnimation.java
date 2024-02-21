@@ -3,11 +3,13 @@ package org.opentrafficsim.draw.road;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -37,8 +39,8 @@ public class StripeAnimation extends Renderable2d<StripeData> implements Rendera
     /** */
     private static final long serialVersionUID = 20141017L;
 
-    /** The points for the outline of the Stripe. */
-    private final List<Point2d> line;
+    /** Drawable paths. */
+    private final Set<Path2D.Double> paths; 
 
     /**
      * @param source StripeData; stripe data
@@ -52,12 +54,12 @@ public class StripeAnimation extends Renderable2d<StripeData> implements Rendera
         List<Point2d> list = makePoints(source);
         if (!list.isEmpty())
         {
-            this.line = list;
+            this.paths = PaintPolygons.getPaths(getSource().getLocation(), list);
         }
         else
         {
             // no dash within length
-            this.line = null;
+            this.paths = null;
         }
     }
 
@@ -182,10 +184,10 @@ public class StripeAnimation extends Renderable2d<StripeData> implements Rendera
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        if (this.line != null)
+        if (this.paths != null)
         {
             graphics.setStroke(new BasicStroke(2.0f));
-            PaintPolygons.paintMultiPolygon(graphics, Color.WHITE, getSource().getLocation(), this.line, true);
+            PaintPolygons.paintPaths(graphics, Color.WHITE, this.paths, true);
         }
     }
 
@@ -193,7 +195,7 @@ public class StripeAnimation extends Renderable2d<StripeData> implements Rendera
     @Override
     public final String toString()
     {
-        return "StripeAnimation [source = " + getSource().toString() + ", line=" + this.line + "]";
+        return "StripeAnimation [source = " + getSource().toString() + ", paths=" + this.paths + "]";
     }
 
     /**

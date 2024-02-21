@@ -2,10 +2,12 @@ package org.opentrafficsim.draw.road;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import javax.naming.NamingException;
@@ -53,6 +55,9 @@ public class LaneAnimation extends Renderable2d<LaneData> implements Renderable2
     /** Center line animation. */
     private final CenterLineAnimation centerLineAnimation;
 
+    /** Drawable paths. */
+    private final Set<Path2D.Double> paths;
+
     /**
      * Animate a Lane.
      * @param lane LaneData; the lane
@@ -69,6 +74,7 @@ public class LaneAnimation extends Renderable2d<LaneData> implements Renderable2
         this.text = new Text(lane, lane::getId, 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, contextualized);
         this.centerLineAnimation = new CenterLineAnimation(
                 new CenterLine(lane.getCenterLine(), lane.getLinkId() + "." + lane.getId()), contextualized);
+        this.paths = color == null ? null : PaintPolygons.getPaths(getSource().getLocation(), getSource().getContour());
     }
 
     /**
@@ -83,10 +89,9 @@ public class LaneAnimation extends Renderable2d<LaneData> implements Renderable2
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        LaneData lane = getSource();
         if (this.color != null)
         {
-            PaintPolygons.paintMultiPolygon(graphics, this.color, lane.getLocation(), lane.getContour(), true);
+            PaintPolygons.paintPaths(graphics, this.color, this.paths, true);
         }
     }
 
@@ -182,6 +187,9 @@ public class LaneAnimation extends Renderable2d<LaneData> implements Renderable2
         /**  */
         private static final long serialVersionUID = 20180426L;
 
+        /** Drawable path. */
+        private final Path2D.Double path;
+
         /**
          * Construct a new CenterLineAnimation.
          * @param centerLine CemterLine; the center line of a lane
@@ -193,12 +201,13 @@ public class LaneAnimation extends Renderable2d<LaneData> implements Renderable2
                 throws NamingException, RemoteException
         {
             super(centerLine, contextualized);
+            this.path = PaintLine.getPath(getSource().getLocation(), getSource().getCenterLine());
         }
 
         @Override
         public final void paint(final Graphics2D graphics, final ImageObserver observer)
         {
-            PaintLine.paintLine(graphics, COLOR, 0.1, getSource().getLocation(), getSource().getCenterLine());
+            PaintLine.paintLine(graphics, COLOR, 0.1, this.path);
         }
 
     }
