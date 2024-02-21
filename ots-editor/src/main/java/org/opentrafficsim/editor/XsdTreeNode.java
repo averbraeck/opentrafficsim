@@ -1183,6 +1183,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         copyNode.invalidate();
         ((XsdTreeNodeRoot) copyNode.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                 new Object[] {copyNode, newParent, newParent.children.indexOf(copyNode)});
+        invalidate(); // due to e.g. duplicate ID, this node may also become invalid 
         return copyNode;
     }
 
