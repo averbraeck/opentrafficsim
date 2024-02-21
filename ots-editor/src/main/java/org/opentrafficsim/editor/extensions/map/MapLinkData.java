@@ -159,9 +159,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         this.shapeListener.shapeNode = linkNode.getChild(0);
 
         // as RoadLayout is the default, a setOption() never triggers this (for DefinedRoadLayout this is not required)
-        XsdTreeNode layout = linkNode.getChild(1);
         SwingUtilities.invokeLater(() ->
         {
+            XsdTreeNode layout = linkNode.getChild(1);
             if (layout.getOption().equals(layout))
             {
                 try
@@ -184,6 +184,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 {
                     // this is for when delete is undone, as some children are recovered later, including the shape node
                     this.shapeListener.shapeNode = linkNode.getChild(0);
+                    linkNode.getChild(0).addListener(this.shapeListener, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
 
                     notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Id", null}));
                     this.nodeStart = replaceNode(this.nodeStart, linkNode.getCoupledKeyrefNodeAttribute("NodeStart"));
@@ -191,7 +192,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "OffsetStart", null}));
                     notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "OffsetEnd", null}));
                     XsdTreeNode shape = linkNode.getChild(0);
-                    notify(new Event(XsdTreeNode.OPTION_CHANGED, new Object[] {shape, shape, shape}));
+                    this.shapeListener.notify(new Event(XsdTreeNode.OPTION_CHANGED, new Object[] {shape, shape, shape}));
                 }
                 catch (RemoteException e)
                 {

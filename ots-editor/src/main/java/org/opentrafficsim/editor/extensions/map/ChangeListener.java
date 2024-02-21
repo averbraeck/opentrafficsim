@@ -38,6 +38,9 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
     public static final EventType CHANGE_EVENT = new EventType("CHANGEEVENT", new MetaData("Change event",
             "When any element under a node has changed", new ObjectDescriptor("Node", "Main node", XsdTreeNode.class)));
 
+    /** Root element. */
+    private final XsdTreeNodeRoot root;
+    
     /** Main node, under which elements are located. */
     private final XsdTreeNode node;
 
@@ -64,9 +67,9 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
         this.eval = eval;
         node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
         node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED, ReferenceType.WEAK);
-        XsdTreeNodeRoot root = (XsdTreeNodeRoot) this.node.getPath().get(0);
-        root.addListener(this, XsdTreeNodeRoot.NODE_CREATED, ReferenceType.WEAK);
-        root.addListener(this, XsdTreeNodeRoot.NODE_REMOVED, ReferenceType.WEAK);
+        this.root = (XsdTreeNodeRoot) this.node.getPath().get(0);
+        this.root.addListener(this, XsdTreeNodeRoot.NODE_CREATED, ReferenceType.WEAK);
+        this.root.addListener(this, XsdTreeNodeRoot.NODE_REMOVED, ReferenceType.WEAK);
     }
 
     /**
@@ -78,9 +81,8 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
         this.node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
         this.node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
         this.elementNodes.clear();
-        XsdTreeNodeRoot root = (XsdTreeNodeRoot) this.node.getPath().get(0);
-        root.removeListener(this, XsdTreeNodeRoot.NODE_CREATED);
-        root.removeListener(this, XsdTreeNodeRoot.NODE_REMOVED);
+        this.root.removeListener(this, XsdTreeNodeRoot.NODE_CREATED);
+        this.root.removeListener(this, XsdTreeNodeRoot.NODE_REMOVED);
         removeAllListeners();
         destroyData();
     }
