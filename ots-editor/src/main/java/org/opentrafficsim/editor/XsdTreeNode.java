@@ -902,8 +902,16 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         if (!this.active)
         {
             this.active = true;
-            if (this.deactivated && !this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
+            if (this.deactivated)
             {
+                if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE) || this.isInclude)
+                {
+                    // included children
+                    for (XsdTreeNode child : this.children)
+                    {
+                        child.setActive();
+                    }
+                }
                 invalidate();
                 fireEvent(new Event(XsdTreeNodeRoot.ACTIVATION_CHANGED, new Object[] {this, true}));
                 return; // deactivated from an active state in the past; all parts below are already in place
@@ -942,6 +950,14 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             invalidate();
             this.parent.invalidate();
             fireEvent(new Event(XsdTreeNode.ACTIVATION_CHANGED, new Object[] {this, false}));
+            // included children
+            if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE) || this.isInclude)
+            {
+                for (XsdTreeNode child : this.children)
+                {
+                    child.setInactive();
+                }
+            }
         }
     }
 
@@ -1718,8 +1734,16 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
         {
-            return ValueValidator.reportInvalidInclude(this.attributeValues.get(0), this.attributeValues.get(1),
-                    ((XsdTreeNodeRoot) getPath().get(0)).getDirectory());
+            if (getPath().get(0) instanceof XsdTreeNodeRoot)
+            {
+                return ValueValidator.reportInvalidInclude(this.attributeValues.get(0), this.attributeValues.get(1),
+                        ((XsdTreeNodeRoot) getPath().get(0)).getDirectory());
+            }
+            else
+            {
+                // node is being deleted and has no parent anymore
+                return null;
+            }
         }
         String attribute = DocumentReader.getAttribute(getAttributeNode(index), "name");
         String val = this.attributeValues.get(index);
