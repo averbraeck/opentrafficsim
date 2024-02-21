@@ -56,6 +56,7 @@ public class XsdTreeKeyListener extends KeyAdapter
             {
                 this.editor.getNodeActions().add(node);
             }
+            e.consume();
         }
         else if (e.getKeyCode() == KeyEvent.VK_D && e.isControlDown())
         {
@@ -64,6 +65,7 @@ public class XsdTreeKeyListener extends KeyAdapter
             {
                 this.editor.getNodeActions().duplicate(node);
             }
+            e.consume();
         }
         else if (e.getKeyCode() == KeyEvent.VK_DELETE)
         {
@@ -75,6 +77,7 @@ public class XsdTreeKeyListener extends KeyAdapter
                     this.editor.getNodeActions().remove(node);
                 }
             }
+            e.consume();
         }
         else if (e.getKeyCode() == KeyEvent.VK_C && e.isControlDown())
         {
@@ -83,6 +86,7 @@ public class XsdTreeKeyListener extends KeyAdapter
             {
                 this.editor.getNodeActions().copy(node);
             }
+            e.consume();
         }
         else if (e.getKeyCode() == KeyEvent.VK_X && e.isControlDown())
         {
@@ -91,6 +95,7 @@ public class XsdTreeKeyListener extends KeyAdapter
             {
                 this.editor.getNodeActions().cut(node);
             }
+            e.consume();
         }
         else if (e.getKeyCode() == KeyEvent.VK_INSERT)
         {
@@ -100,6 +105,7 @@ public class XsdTreeKeyListener extends KeyAdapter
             {
                 this.editor.getNodeActions().insert(node);
             }
+            e.consume();
         }
         else if (e.getKeyCode() == KeyEvent.VK_V && e.isControlDown())
         {
@@ -109,6 +115,7 @@ public class XsdTreeKeyListener extends KeyAdapter
             {
                 this.editor.getNodeActions().paste(node);
             }
+            e.consume();
         }
         else if (e.getKeyCode() == KeyEvent.VK_R && e.isControlDown())
         {
@@ -118,6 +125,7 @@ public class XsdTreeKeyListener extends KeyAdapter
             {
                 this.editor.getNodeActions().revolveOption(node, options);
             }
+            e.consume();
         }
         else if (e.getKeyCode() == KeyEvent.VK_E && e.isControlDown())
         {
@@ -125,6 +133,7 @@ public class XsdTreeKeyListener extends KeyAdapter
             XsdTreeNode node = (XsdTreeNode) path.getLastPathComponent();
             boolean expanded = this.treeTable.getTree().isExpanded(path);
             this.editor.getNodeActions().expand(node, path, expanded);
+            e.consume();
         }
         else if (e.getKeyCode() == KeyEvent.VK_UP && e.isControlDown())
         {
@@ -133,6 +142,7 @@ public class XsdTreeKeyListener extends KeyAdapter
             {
                 this.editor.getNodeActions().move(node, -1);
             }
+            e.consume();
         }
         else if (e.getKeyCode() == KeyEvent.VK_DOWN && e.isControlDown())
         {
@@ -141,6 +151,7 @@ public class XsdTreeKeyListener extends KeyAdapter
             {
                 this.editor.getNodeActions().move(node, 1);
             }
+            e.consume();
         }
         else if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_LEFT
                 || e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_ENTER
