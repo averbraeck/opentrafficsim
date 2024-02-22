@@ -860,14 +860,6 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 return index;
             }
         }
-        for (int index = 0; index < this.attributeCount(); index++)
-        {
-            Node attr = this.attributeNodes.get(index);
-            if (DocumentReader.getAttribute(attr, "name").equals(attribute))
-            {
-                return index;
-            }
-        }
         throw new NoSuchElementException("Attribute " + attribute + " is not in node " + getNodeName() + ".");
     }
 

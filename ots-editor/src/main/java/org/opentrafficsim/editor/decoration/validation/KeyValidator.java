@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
@@ -542,12 +543,18 @@ public class KeyValidator implements ValueValidator, EventListener
         }
         else if (XsdTreeNode.VALUE_CHANGED.equals(event.getType()))
         {
+            Object[] content = (Object[]) event.getContent();
+            XsdTreeNode keyNode = (XsdTreeNode) content[0];
+            String previous = (String) content[1];
+            boolean updateKeyrefs = !duplicateKeys(keyNode, (n) -> n.getValue(), previous);// true;
             for (KeyValidator keyref : this.listeningKeyrefValidators)
             {
+                if (updateKeyrefs)
+                {
+                    updateReferringKeyrefs(keyNode, this.attributeNames.size() + this.childNames.size(), keyNode.getValue());
+                }
                 for (XsdTreeNode node : keyref.valueValidating)
                 {
-                    XsdTreeNode keyNode = (XsdTreeNode) ((Object[]) event.getContent())[0];
-                    updateReferringKeyrefs(keyNode, this.attributeNames.size() + this.childNames.size(), keyNode.getValue());
                     node.invalidate();
                 }
             }
@@ -555,22 +562,53 @@ public class KeyValidator implements ValueValidator, EventListener
         else if (XsdTreeNode.ATTRIBUTE_CHANGED.equals(event.getType()))
         {
             Object[] content = (Object[]) event.getContent();
+            XsdTreeNode keyNode = (XsdTreeNode) content[0];
             String attribute = (String) content[1];
+            String previous = (String) content[2];
+            boolean updateKeyrefs = !duplicateKeys(keyNode, (n) -> n.getAttributeValue(attribute), previous);
             for (KeyValidator keyref : this.listeningKeyrefValidators)
             {
                 if (keyref.attributeValidating.containsKey(attribute))
                 {
+                    if (updateKeyrefs)
+                    {
+                        updateReferringKeyrefs(keyNode, this.attributeNames.indexOf(attribute),
+                                keyNode.getAttributeValue(attribute));
+                    }
                     for (XsdTreeNode node : keyref.attributeValidating.get(attribute))
                     {
-                        XsdTreeNode keyNode = (XsdTreeNode) content[0];
-                        String newValue = keyNode.getAttributeValue(attribute);
-                        int fieldIndex = this.attributeNames.indexOf(attribute);
-                        updateReferringKeyrefs(keyNode, fieldIndex, newValue);
                         node.invalidate();
                     }
                 }
             }
         }
+    }
+
+    /**
+     * Returns whether there are duplicate keys such that no key change should result in a change of value at the keyrefs.
+     * @param keyNode XsdTreeNode; node where key is changed.
+     * @param valueProvider Function&lt;XsdTreeNode, String&gt;; function to provide the right value from the key nodes.
+     * @param previous String; previous value.
+     * @return boolean; whether there are duplicate keys.
+     */
+    // TODO: keyref could refer to key with multiple fields
+    private boolean duplicateKeys(final XsdTreeNode keyNode, final Function<XsdTreeNode, String> valueProvider,
+            final String previous)
+    {
+        Set<XsdTreeNode> keyNodes = this.nodes.get(getContext(keyNode));
+        boolean duplicates = false;
+        if (keyNodes != null)
+        {
+            for (XsdTreeNode node : keyNodes)
+            {
+                if (node.isActive())
+                {
+                    String value = valueProvider.apply(node);
+                    duplicates = duplicates || (value != null && value.equals(previous));
+                }
+            }
+        }
+        return duplicates;
     }
 
     /**
