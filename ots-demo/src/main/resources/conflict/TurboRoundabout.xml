@@ -185,6 +185,10 @@
 
   <ots:Network>
 
+    <ots:Conflicts>
+      <ots:DefaultWidth />
+    </ots:Conflicts>
+
     <ots:Node Id="E" Coordinate="(300,0)" Direction="180 deg(E)" />
     <ots:Node Id="N" Coordinate="(0,300)" Direction="-90 deg(E)" />
     <ots:Node Id="W" Coordinate="(-300,0)" Direction="0 deg(E)" />
@@ -326,10 +330,6 @@
       <ots:Bezier Shape="1.1" Weighted="true" />
       <ots:DefinedLayout>1LEFT</ots:DefinedLayout>
     </ots:Link>
-    
-    <ots:Conflicts>
-      <ots:DefaultWidth />
-    </ots:Conflicts>
     
   </ots:Network>
 

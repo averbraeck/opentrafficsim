@@ -119,6 +119,11 @@
 	</ots:Definitions>
 
 	<ots:Network>
+  
+        <ots:Conflicts>
+            <ots:DefaultWidth />
+        </ots:Conflicts>
+  
 		<ots:Node Id="BLE" Coordinate="(300,0)" Direction="0 deg(E)" />
 		<ots:Node Id="BLS" Coordinate="(0,-300)" Direction="270 deg(E)" />
 		<ots:Node Id="BLW" Coordinate="(-300,0)" Direction="0 deg(E)" />
@@ -205,10 +210,6 @@
 			<ots:DefinedLayout>RIGHT</ots:DefinedLayout>
 		</ots:Link>
     
-        <ots:Conflicts>
-            <ots:DefaultWidth />
-        </ots:Conflicts>
-
 	</ots:Network>
 
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ots:Ots xmlns:ots="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<ots:Ots xmlns:ots="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../ots-parser-xml/src/main/resources/xsd/ots.xsd">
   <ots:Definitions>
     <ots:GtuTypes>
       <ots:GtuType Id="CAR"/>
@@ -106,6 +106,9 @@
     </ots:RoadLayouts>
   </ots:Definitions>
   <ots:Network>
+    <ots:Conflicts>
+      <ots:DefaultWidth/>
+    </ots:Conflicts>
     <ots:Node Coordinate="(8,300)" Direction="90deg(E)" Id="AN"/>
     <ots:Node Coordinate="(8,23.5)" Direction="90deg(E)" Id="ANI"/>
     <ots:Node Coordinate="(-8,300)" Direction="270deg(E)" Id="AS"/>
@@ -189,7 +192,7 @@
       <ots:DefinedLayout>turnlane</ots:DefinedLayout>
     </ots:Link>
     <ots:Link Id="ASI-BEI" NodeEnd="BEI" NodeStart="ASI" OffsetEnd="1.75m" OffsetStart="1.75m" Type="URBAN">
-      <ots:Bezier Shape="0.75" Weighted="false"/>
+      <ots:Bezier Shape="0.75"/>
       <ots:DefinedLayout>turnlane</ots:DefinedLayout>
     </ots:Link>
     <ots:Link Id="DEI-ANI" NodeEnd="ANI" NodeStart="DEI" OffsetEnd="1.75m" OffsetStart="5.25m" Type="URBAN">
@@ -209,7 +212,7 @@
       <ots:DefinedLayout>turnlane</ots:DefinedLayout>
     </ots:Link>
     <ots:Link Id="CNI-DWI" NodeEnd="DWI" NodeStart="CNI" OffsetEnd="1.75m" OffsetStart="1.75m" Type="URBAN">
-      <ots:Bezier Shape="0.75" Weighted="false"/>
+      <ots:Bezier Shape="0.75"/>
       <ots:DefinedLayout>turnlane</ots:DefinedLayout>
     </ots:Link>
     <ots:Link Id="DEI-CSI" NodeEnd="CSI" NodeStart="DEI" OffsetEnd="-1.75m" OffsetStart="-5.25m" Priority="YIELD" Type="URBAN">
@@ -232,9 +235,6 @@
       <ots:Straight/>
       <ots:DefinedLayout>2turnlane</ots:DefinedLayout>
     </ots:Link>
-    <ots:Conflicts>
-      <ots:DefaultWidth/>
-    </ots:Conflicts>
   </ots:Network>
   <ots:Demand>
     <ots:Od Id="demand" SinkType="sink">
