@@ -504,7 +504,7 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid Direction with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad\(E\)|rad\(N\)|�\(E\)|deg\(E\)|�\(N\)|deg\(N\)))"></xsd:pattern>
+      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad|rad\(E\)|rad\(N\)|rad\(East\)|rad\(North\)|�\(E\)|�\(N\)|�\(East\)|�\(North\)|deg|deg\(E\)|deg\(N\)|deg\(East\)|deg\(North\)))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -904,7 +904,7 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveDirection with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad\(E\)|rad\(N\)|�\(E\)|deg\(E\)|�\(N\)|deg\(N\)))"></xsd:pattern>
+      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad|rad\(E\)|rad\(N\)|rad\(East\)|rad\(North\)|�\(E\)|�\(N\)|�\(East\)|�\(North\)|deg|deg\(E\)|deg\(N\)|deg\(East\)|deg\(North\)))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
