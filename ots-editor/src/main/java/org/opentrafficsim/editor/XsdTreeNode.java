@@ -785,7 +785,12 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         String previous = this.attributeValues.get(index);
         if (!XsdTreeNodeUtil.valuesAreEqual(previous, value))
         {
-            this.attributeValues.set(index, (value == null || value.isEmpty()) ? null : value);
+            boolean isDefaultBoolean = false;
+            if ("xsd:boolean".equals(DocumentReader.getAttribute(this.attributeNodes.get(index), "type")))
+            {
+                isDefaultBoolean = getDefaultAttributeValue(index).equals(value);
+            }
+            this.attributeValues.set(index, (value == null || value.isEmpty() || isDefaultBoolean) ? null : value);
             if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
             {
                 removeChildren();
