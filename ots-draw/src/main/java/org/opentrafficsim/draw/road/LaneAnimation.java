@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +27,6 @@ import org.opentrafficsim.draw.road.LaneAnimation.LaneData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
-import nl.tudelft.simulation.dsol.animation.d2.Renderable2dInterface;
 import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -41,7 +39,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LaneAnimation extends Renderable2d<LaneData> implements Renderable2dInterface<LaneData>, Serializable
+public class LaneAnimation extends Renderable2d<LaneData>
 {
     /** */
     private static final long serialVersionUID = 20141017L;
@@ -179,7 +177,6 @@ public class LaneAnimation extends Renderable2d<LaneData> implements Renderable2
      * Animation for center line of a lane.
      */
     public static class CenterLineAnimation extends Renderable2d<CenterLine>
-            implements Renderable2dInterface<CenterLine>, Serializable
     {
         /** Drawing color for the center line. */
         private static final Color COLOR = Color.MAGENTA.darker().darker();

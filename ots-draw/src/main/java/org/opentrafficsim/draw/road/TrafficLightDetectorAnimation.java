@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.function.Supplier;
 
@@ -34,7 +33,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class TrafficLightDetectorAnimation extends Renderable2d<TrafficLightDetectorData> implements Serializable
+public class TrafficLightDetectorAnimation extends Renderable2d<TrafficLightDetectorData>
 {
     /** */
     private static final long serialVersionUID = 20150130L;

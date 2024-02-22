@@ -3,7 +3,6 @@ package org.opentrafficsim.draw.road;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.ImageObserver;
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.function.Supplier;
 
@@ -18,7 +17,6 @@ import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 import org.opentrafficsim.draw.road.TrafficLightAnimation.TrafficLightData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.d2.Renderable2dInterface;
 import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -33,7 +31,6 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLightData>
-        implements Renderable2dInterface<TrafficLightData>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20160000L;
@@ -123,7 +120,7 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLightDat
         {
             super(source, text, dx, dy, textPlacement, color, contextualized, TextAnimation.RENDERALWAYS);
         }
-        
+
         /** {@inheritDoc} */
         @Override
         @SuppressWarnings("checkstyle:designforextension")

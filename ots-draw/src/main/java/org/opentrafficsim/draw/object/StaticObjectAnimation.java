@@ -6,7 +6,6 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Set;
@@ -30,7 +29,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class StaticObjectAnimation extends Renderable2d<StaticObjectData> implements Serializable
+public class StaticObjectAnimation extends Renderable2d<StaticObjectData>
 {
     /** */
     private static final long serialVersionUID = 20160400L;

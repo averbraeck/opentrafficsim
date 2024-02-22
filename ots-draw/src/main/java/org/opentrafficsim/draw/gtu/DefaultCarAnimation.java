@@ -7,7 +7,6 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 import java.awt.image.ImageObserver;
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.function.Supplier;
 
@@ -23,7 +22,6 @@ import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
-import nl.tudelft.simulation.dsol.animation.d2.Renderable2dInterface;
 import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -37,7 +35,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class DefaultCarAnimation extends Renderable2d<GtuData> implements Renderable2dInterface<GtuData>, Serializable
+public class DefaultCarAnimation extends Renderable2d<GtuData>
 {
     /** */
     private static final long serialVersionUID = 20150000L;
@@ -257,9 +255,9 @@ public class DefaultCarAnimation extends Renderable2d<GtuData> implements Render
          * @throws RemoteException - when remote context cannot be found
          */
         @SuppressWarnings("parameternumber")
-        public Text(final GtuData source, final Supplier<String> text, final float dx, final float dy, final TextAlignment textAlignment,
-                final Color color, final Contextualized contextualized, final TextAnimation.ContrastToBackground background)
-                throws RemoteException, NamingException
+        public Text(final GtuData source, final Supplier<String> text, final float dx, final float dy,
+                final TextAlignment textAlignment, final Color color, final Contextualized contextualized,
+                final TextAnimation.ContrastToBackground background) throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textAlignment, color, 1.0f, 12.0f, 50f, contextualized, background, RENDERWHEN1);
         }
@@ -361,7 +359,7 @@ public class DefaultCarAnimation extends Renderable2d<GtuData> implements Render
         /** {@inheritDoc} */
         @Override
         OrientedPoint2d getLocation();
-        
+
         /** {@inheritDoc} */
         @Override
         default double getZ()

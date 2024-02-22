@@ -6,7 +6,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
-import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
@@ -30,7 +29,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 
-public class SpeedSignAnimation extends Renderable2d<SpeedSignData> implements Serializable
+public class SpeedSignAnimation extends Renderable2d<SpeedSignData>
 {
 
     /** */

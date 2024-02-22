@@ -7,7 +7,6 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.function.Supplier;
 
@@ -22,7 +21,6 @@ import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
-import nl.tudelft.simulation.dsol.animation.d2.Renderable2dInterface;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
@@ -34,7 +32,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class NodeAnimation extends Renderable2d<NodeData> implements Renderable2dInterface<NodeData>, Serializable
+public class NodeAnimation extends Renderable2d<NodeData>
 {
     /** */
     private static final long serialVersionUID = 20140000L;

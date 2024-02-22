@@ -3,7 +3,6 @@ package org.opentrafficsim.draw.road;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.ImageObserver;
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.function.Supplier;
 
@@ -18,7 +17,6 @@ import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 import org.opentrafficsim.draw.road.LaneDetectorAnimation.LaneDetectorData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.d2.Renderable2dInterface;
 import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -34,7 +32,6 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 public class LaneDetectorAnimation extends AbstractLineAnimation<LaneDetectorData>
-        implements Renderable2dInterface<LaneDetectorData>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150130L;
@@ -58,8 +55,8 @@ public class LaneDetectorAnimation extends AbstractLineAnimation<LaneDetectorDat
     {
         super(laneDetector, contextualized, .9, new Length(0.5, LengthUnit.SI));
         this.color = color;
-        this.text = new Text(laneDetector, laneDetector::getId, 0.0f, (float) getHalfLength() + 0.2f,
-                TextAlignment.CENTER, Color.BLACK, contextualized);
+        this.text = new Text(laneDetector, laneDetector::getId, 0.0f, (float) getHalfLength() + 0.2f, TextAlignment.CENTER,
+                Color.BLACK, contextualized);
     }
 
     /**

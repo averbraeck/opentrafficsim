@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +21,6 @@ import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
-import nl.tudelft.simulation.dsol.animation.d2.Renderable2dInterface;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
@@ -34,13 +32,13 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class StripeAnimation extends Renderable2d<StripeData> implements Renderable2dInterface<StripeData>, Serializable
+public class StripeAnimation extends Renderable2d<StripeData>
 {
     /** */
     private static final long serialVersionUID = 20141017L;
 
     /** Drawable paths. */
-    private final Set<Path2D.Double> paths; 
+    private final Set<Path2D.Double> paths;
 
     /**
      * @param source StripeData; stripe data

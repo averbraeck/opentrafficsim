@@ -7,7 +7,6 @@ import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Set;
@@ -33,7 +32,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class ConflictAnimation extends AbstractLineAnimation<ConflictData> implements Serializable
+public class ConflictAnimation extends AbstractLineAnimation<ConflictData>
 {
 
     /** */

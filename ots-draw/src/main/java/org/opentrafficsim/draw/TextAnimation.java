@@ -448,7 +448,7 @@ public abstract class TextAnimation implements Locatable, Serializable
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    private static class AnimationImpl extends Renderable2d<Locatable> implements Serializable
+    private static class AnimationImpl extends Renderable2d<Locatable>
     {
         /** */
         private static final long serialVersionUID = 20170400L;
