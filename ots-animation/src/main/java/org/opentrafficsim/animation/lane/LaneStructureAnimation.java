@@ -17,12 +17,11 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.draw.road.OtsRenderable;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
 import org.opentrafficsim.road.gtu.lane.perception.RollingLaneStructure;
 import org.opentrafficsim.road.gtu.lane.perception.RollingLaneStructureRecord;
 import org.opentrafficsim.road.gtu.lane.perception.RollingLaneStructureRecord.RecordLink;
-
-import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 
 /**
  * LaneStructureAnimation.java.
@@ -32,7 +31,7 @@ import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class LaneStructureAnimation extends Renderable2d<LaneStructureLocatable>
+public class LaneStructureAnimation extends OtsRenderable<LaneStructureLocatable>
 {
     /** Destroyed. */
     private boolean isDestroyed = false;

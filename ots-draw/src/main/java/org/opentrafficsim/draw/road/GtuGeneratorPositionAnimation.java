@@ -15,7 +15,6 @@ import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -29,7 +28,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class GtuGeneratorPositionAnimation extends Renderable2d<GtuGeneratorPositionData>
+public class GtuGeneratorPositionAnimation extends OtsRenderable<GtuGeneratorPositionData>
 {
 
     /** */

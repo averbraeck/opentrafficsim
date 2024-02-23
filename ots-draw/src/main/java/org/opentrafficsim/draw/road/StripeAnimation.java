@@ -20,7 +20,6 @@ import org.opentrafficsim.draw.PaintPolygons;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
@@ -32,7 +31,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class StripeAnimation extends Renderable2d<StripeData>
+public class StripeAnimation extends OtsRenderable<StripeData>
 {
     /** */
     private static final long serialVersionUID = 20141017L;

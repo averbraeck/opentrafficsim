@@ -26,7 +26,6 @@ import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation.LaneData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -39,7 +38,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LaneAnimation extends Renderable2d<LaneData>
+public class LaneAnimation extends OtsRenderable<LaneData>
 {
     /** */
     private static final long serialVersionUID = 20141017L;
@@ -176,7 +175,7 @@ public class LaneAnimation extends Renderable2d<LaneData>
     /**
      * Animation for center line of a lane.
      */
-    public static class CenterLineAnimation extends Renderable2d<CenterLine>
+    public static class CenterLineAnimation extends OtsRenderable<CenterLine>
     {
         /** Drawing color for the center line. */
         private static final Color COLOR = Color.MAGENTA.darker().darker();

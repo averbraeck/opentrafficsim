@@ -44,6 +44,7 @@ import org.opentrafficsim.core.geometry.ContinuousPolyLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
 import org.opentrafficsim.core.geometry.Flattener;
 import org.opentrafficsim.core.geometry.OtsGeometryUtil;
+import org.opentrafficsim.draw.BoundingPolygon;
 import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation;
@@ -122,6 +123,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
     /** Flattened design line. */
     private PolyLine2d flattenedDesignLine = null;
+    
+    /** Bounds around the flattened design line. */
+    private BoundingPolygon bounds;
 
     /** Location. */
     private OrientedPoint2d location = new OrientedPoint2d(0.0, 0.0);
@@ -233,7 +237,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     @Override
     public Bounds<?, ?, ?> getBounds() throws RemoteException
     {
-        return ClickableBounds.get(this.flattenedDesignLine.getBounds());
+        return this.bounds;
     }
 
     /** {@inheritDoc} */
@@ -532,6 +536,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             return;
         }
         this.flattenedDesignLine = this.designLine.flatten(getFlattener());
+        this.bounds = ClickableBounds.get(this.flattenedDesignLine);
         buildLayout();
         setValid();
     }

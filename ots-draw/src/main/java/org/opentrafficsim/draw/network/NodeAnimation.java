@@ -18,9 +18,9 @@ import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
+import org.opentrafficsim.draw.road.OtsRenderable;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
@@ -32,7 +32,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class NodeAnimation extends Renderable2d<NodeData>
+public class NodeAnimation extends OtsRenderable<NodeData>
 {
     /** */
     private static final long serialVersionUID = 20140000L;

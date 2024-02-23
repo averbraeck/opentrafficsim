@@ -16,7 +16,6 @@ import org.opentrafficsim.draw.PaintPolygons;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
@@ -28,7 +27,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class CrossSectionElementAnimation extends Renderable2d<CrossSectionElementData>
+public class CrossSectionElementAnimation extends OtsRenderable<CrossSectionElementData>
 {
     /** */
     private static final long serialVersionUID = 20141017L;

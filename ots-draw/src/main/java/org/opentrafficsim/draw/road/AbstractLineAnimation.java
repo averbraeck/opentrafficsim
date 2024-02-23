@@ -14,7 +14,6 @@ import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
@@ -28,7 +27,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <T> the LaneBasedObject class of the source that indicates the location of the Renderable on the screen
  */
-public abstract class AbstractLineAnimation<T extends LaneBasedObjectData> extends Renderable2d<T>
+public abstract class AbstractLineAnimation<T extends LaneBasedObjectData> extends OtsRenderable<T>
 {
 
     /** */

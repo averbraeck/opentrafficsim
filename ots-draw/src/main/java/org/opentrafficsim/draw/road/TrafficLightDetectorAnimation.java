@@ -19,7 +19,6 @@ import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.road.TrafficLightDetectorAnimation.TrafficLightDetectorData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -33,7 +32,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class TrafficLightDetectorAnimation extends Renderable2d<TrafficLightDetectorData>
+public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDetectorData>
 {
     /** */
     private static final long serialVersionUID = 20150130L;

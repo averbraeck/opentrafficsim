@@ -19,9 +19,9 @@ import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData;
+import org.opentrafficsim.draw.road.OtsRenderable;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -35,7 +35,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class DefaultCarAnimation extends Renderable2d<GtuData>
+public class DefaultCarAnimation extends OtsRenderable<GtuData>
 {
     /** */
     private static final long serialVersionUID = 20150000L;

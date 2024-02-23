@@ -1,7 +1,12 @@
 package org.opentrafficsim.draw;
 
+import java.util.List;
+
 import org.djutils.draw.bounds.Bounds;
 import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.point.Point2d;
 
 /**
  * Creates bounds that are at least 2m of size in the x and y direction.
@@ -15,10 +20,10 @@ import org.djutils.draw.bounds.Bounds2d;
  */
 public class ClickableBounds
 {
-    
+
     /** Minimum distance from center to edge. */
     private static double R_MIN = 1.0;
-    
+
     /**
      * Constructor.
      */
@@ -26,7 +31,7 @@ public class ClickableBounds
     {
         // utility class
     }
-    
+
     /**
      * Creates bounds that are at least 2m of size in the x and y direction.
      * @param bounds Bounds&lt;?, ?, ?&gt;; actual object bounds.
@@ -54,6 +59,20 @@ public class ClickableBounds
             return (Bounds2d) bounds;
         }
         return new Bounds2d(bounds.getMinX(), bounds.getMaxX(), bounds.getMinY(), bounds.getMaxY());
+    }
+
+    /**
+     * Creates bounds that are clickable from a line, generating an area of 2m wide.
+     * @param flattenedDesignLine PolyLine2d; line.
+     * @return BoundingPolygon; bounding polygon.
+     */
+    public static BoundingPolygon get(final PolyLine2d flattenedDesignLine)
+    {
+        PolyLine2d left = flattenedDesignLine.offsetLine(R_MIN);
+        PolyLine2d right = flattenedDesignLine.offsetLine(-R_MIN);
+        List<Point2d> points = left.getPointList();
+        points.addAll(right.reverse().getPointList());
+        return new BoundingPolygon(new Polygon2d(points));
     }
 
 }

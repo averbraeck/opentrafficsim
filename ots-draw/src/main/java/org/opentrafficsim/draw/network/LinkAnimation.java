@@ -20,9 +20,9 @@ import org.opentrafficsim.draw.PaintLine;
 import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
+import org.opentrafficsim.draw.road.OtsRenderable;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -35,7 +35,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LinkAnimation extends Renderable2d<LinkData>
+public class LinkAnimation extends OtsRenderable<LinkData>
 {
     /** */
     private static final long serialVersionUID = 20140000L;

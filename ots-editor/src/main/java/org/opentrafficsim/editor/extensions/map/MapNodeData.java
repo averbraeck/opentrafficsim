@@ -30,6 +30,9 @@ public class MapNodeData extends MapData implements NodeData, EventListener
     /** */
     private static final long serialVersionUID = 20231003L;
 
+    /** Bounds. */
+    private static final Bounds<?, ?, ?> BOUNDS = ClickableBounds.get(new Bounds2d(0.0, 0.0)); 
+    
     /** String attribute. */
     private String id = "";
 
@@ -41,7 +44,7 @@ public class MapNodeData extends MapData implements NodeData, EventListener
 
     /** Location. */
     private OrientedPoint2d location = new OrientedPoint2d(0.0, 0.0);
-
+    
     /**
      * Constructor.
      * @param map Map; map.
@@ -72,7 +75,7 @@ public class MapNodeData extends MapData implements NodeData, EventListener
     @Override
     public Bounds<?, ?, ?> getBounds() throws RemoteException
     {
-        return ClickableBounds.get(new Bounds2d(0.0, 0.0));
+        return BOUNDS;
     }
 
     /** {@inheritDoc} */
