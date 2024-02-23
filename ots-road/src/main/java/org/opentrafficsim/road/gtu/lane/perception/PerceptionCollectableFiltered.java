@@ -12,7 +12,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 /**
  * Wraps a {@code PerceptionCollectable} and only iterates over all objects that are accepted by a predicate.
  * <p>
- * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
@@ -145,7 +145,7 @@ public class PerceptionCollectableFiltered<H extends Headway, U> implements Perc
     /**
      * Entry to hold a headway and underlying object, and a reference to possible next entry (i.e. forming a linked list).
      * <p>
-     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
@@ -180,7 +180,7 @@ public class PerceptionCollectableFiltered<H extends Headway, U> implements Perc
      * Iterator for headway objects, underlying objects, and underlying with distance objects. This class will use
      * {@code prepareNext()} in the encompassing class to find a next entry when necessary.
      * <p>
-     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
