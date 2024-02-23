@@ -230,7 +230,7 @@
       <xsd:field xpath="@Id" />
     </xsd:key>
 
-    <!-- define the Cetegory.Id key -->
+    <!-- define the Category.Id key -->
 
     <xsd:key name="categoryKey">
       <xsd:selector xpath=".//ots:Demand/ots:Od/ots:Category|.//ots:DefaultInputParameters/ots:String" />
