@@ -14,7 +14,7 @@ import org.opentrafficsim.core.math.Solver;
  * The segment of an operational plan contains a part of the speed profile of a movement in which some of the variables
  * determining movement (speed, acceleration) are constant.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
  * All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>

@@ -31,7 +31,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 /**
  * RoadNetwork adds the ability to retrieve lane change information.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
@@ -396,7 +396,7 @@ public class RoadNetwork extends Network
      * tailored to providing lane change information. The vertex type is {@code Identifiable} such that both {@code Lane}'s and
      * {@code Node}'s can be used. The latter is required to find paths towards a destination node.<br>
      * <br>
-     * Copyright (c) 2022-2023 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2022-2024 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
      * See for project information <a href="https://djutils.org" target="_blank"> https://djutils.org</a>. The DJUTILS project
      * is distributed under a three-clause BSD-style license, which can be found at
      * <a href="https://djutils.org/docs/license.html" target="_blank"> https://djutils.org/docs/license.html</a>. <br>
@@ -511,7 +511,7 @@ public class RoadNetwork extends Network
      * destination). From a list of these from a path, the lane change information along the path (distances and number of lane
      * changes) can be derived.<br>
      * <br>
-     * Copyright (c) 2022-2023 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2022-2024 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
      * See for project information <a href="https://djutils.org" target="_blank"> https://djutils.org</a>. The DJUTILS project
      * is distributed under a three-clause BSD-style license, which can be found at
      * <a href="https://djutils.org/docs/license.html" target="_blank"> https://djutils.org/docs/license.html</a>. <br>
@@ -579,7 +579,7 @@ public class RoadNetwork extends Network
     /**
      * Enum to provide information on the lane to lane movement in a path.<br>
      * <br>
-     * Copyright (c) 2022-2023 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2022-2024 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
      * See for project information <a href="https://djutils.org" target="_blank"> https://djutils.org</a>. The DJUTILS project
      * is distributed under a three-clause BSD-style license, which can be found at
      * <a href="https://djutils.org/docs/license.html" target="_blank"> https://djutils.org/docs/license.html</a>. <br>

@@ -17,7 +17,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationSpeed.
  * Collector of leaders which derives an set of anticipation speeds from a lane. This includes all GTUs on the lane (current),
  * all GTUs indicating left (left) and all GTUs indicating right (right).
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
@@ -146,7 +146,7 @@ public class AnticipationSpeed implements PerceptionCollector<SpeedSet, LaneBase
     /**
      * Class to contain info from 1 lane, regarding 3 lanes.
      * <p>
-     * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
