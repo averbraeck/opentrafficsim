@@ -5,14 +5,11 @@ import java.rmi.RemoteException;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.point.OrientedPoint2d;
-import org.djutils.draw.point.Point2d;
 import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -132,34 +129,8 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
             final RelativePosition.TYPE positionType, final OtsSimulatorInterface simulator, final DetectorType detectorType)
             throws NetworkException
     {
-        this(id, lane, longitudinalPosition, positionType, simulator, makeGeometry(lane, longitudinalPosition, 0.9),
-                detectorType);
-    }
-
-    /**
-     * Make a geometry perpendicular to the center line of the lane with a length of 90% of the width of the lane.
-     * @param lane Lane; the lane for which to make a perpendicular geometry
-     * @param longitudinalPosition Length; the position on the lane
-     * @param relativeWidth double; lane width to use
-     * @return an OtsLine2d that describes the line
-     * @throws NetworkException in case the detector point on the center line of the lane cannot be found
-     */
-    protected static PolyLine2d makeGeometry(final Lane lane, final Length longitudinalPosition, final double relativeWidth)
-            throws NetworkException
-    {
-        try
-        {
-            double w50 = lane.getWidth(longitudinalPosition).si * 0.5 * relativeWidth;
-            OrientedPoint2d c = lane.getCenterLine().getLocation(longitudinalPosition);
-            double a = c.getDirZ();
-            Point2d p1 = new Point2d(c.x + w50 * Math.cos(a + Math.PI / 2), c.y - w50 * Math.sin(a + Math.PI / 2));
-            Point2d p2 = new Point2d(c.x - w50 * Math.cos(a + Math.PI / 2), c.y + w50 * Math.sin(a + Math.PI / 2));
-            return new PolyLine2d(p1, p2);
-        }
-        catch (OtsGeometryException exception)
-        {
-            throw new NetworkException(exception);
-        }
+        this(id, lane, longitudinalPosition, positionType, simulator,
+                LaneBasedObject.makeGeometry(lane, longitudinalPosition, 0.9), detectorType);
     }
 
     /** {@inheritDoc} */

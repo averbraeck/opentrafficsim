@@ -4,7 +4,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
 import java.rmi.RemoteException;
@@ -51,6 +50,7 @@ public class ConflictAnimation extends AbstractLineAnimation<ConflictData>
             throws NamingException, RemoteException
     {
         super(source, contextualized, .9, new Length(0.5, LengthUnit.SI));
+        // geometry of area (not the line) is absolute; pre-transform geometry to fit rotation of source
         this.paths = this.getSource().getContour() == null ? null
                 : PaintPolygons.getPaths(getSource().getLocation(), getSource().getContour());
     }
@@ -59,13 +59,13 @@ public class ConflictAnimation extends AbstractLineAnimation<ConflictData>
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
+        // paint the bar that represents the line where the conflict starts, like any other AbstractLineAnimation
         Color fillColor = getSource().getColor();
-
         graphics.setColor(fillColor);
         super.paint(graphics, observer);
 
+        // paint the additional area with dashed lines
         Stroke oldStroke = graphics.getStroke();
-
         BasicStroke stroke;
         float factor = getSource().isPermitted() ? .5f : 1f;
         if (getSource().isCrossing())
@@ -79,33 +79,11 @@ public class ConflictAnimation extends AbstractLineAnimation<ConflictData>
                     new float[] {factor * 1.0f, factor * 0.95f, factor * 0.1f, factor * 0.95f}, 0.0f);
         }
         graphics.setStroke(stroke);
-        AffineTransform saveAT = graphics.getTransform();
-        double angle = -getSource().getLocation().getDirZ();
-        if (isRotate() && angle != 0.0)
-        {
-            graphics.rotate(-angle);
-        }
         if (this.paths != null)
         {
             PaintPolygons.paintPaths(graphics, fillColor, this.paths, false);
-
-            /*- This code may be used to visually check conflicts are correctly paired
-            if (conflict.conflictPriority().isPriority())
-            {
-                graphics.setColor(Color.BLACK);
-                DirectedPoint from = conflict.getLocation();
-                DirectedPoint to = conflict.getOtherConflict().getLocation();
-                graphics.setStroke(new BasicStroke(0.1f));
-                Line2D line = new Line2D.Double(0, 0, to.x - from.x, from.y - to.y);
-                graphics.draw(line);
-            }*/
-        }
-        if (isRotate() && angle != 0.0)
-        {
-            graphics.rotate(+angle);
         }
         graphics.setStroke(oldStroke);
-        graphics.setTransform(saveAT);
     }
 
     /** {@inheritDoc} */

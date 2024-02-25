@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.generator;
 
-import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -20,16 +19,16 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.draw.bounds.Bounds;
-import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.OrientedPoint2d;
-import org.djutils.draw.point.Point;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.TimeStampedObject;
+import org.opentrafficsim.base.geometry.BoundingBox;
+import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
@@ -512,16 +511,16 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
             {
                 /** {@inheritDoc} */
                 @Override
-                public Point<?> getLocation() throws RemoteException
+                public Point2d getLocation()
                 {
                     return p;
                 }
 
                 /** {@inheritDoc} */
                 @Override
-                public Bounds<?, ?, ?> getBounds() throws RemoteException
+                public OtsBounds2d getBounds()
                 {
-                    return new Bounds2d(0.0, 0.0, 0.0, 0.0);
+                    return new BoundingBox(0.0, 0.0);
                 }
 
                 /** {@inheritDoc} */

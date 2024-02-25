@@ -4,11 +4,9 @@ import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
-import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.event.EventProducer;
-
-import nl.tudelft.simulation.dsol.animation.Locatable;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 
 /**
  * Generic object that can be placed in the model. This could be implemented for a traffic light, a road sign, or an obstacle.
@@ -19,9 +17,9 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public interface LocatedObject extends Locatable, Identifiable, EventProducer, Serializable
+public interface LocatedObject extends OtsLocatable, Identifiable, EventProducer, Serializable
 {
-    
+
     /** @return the outline geometry of the object. */
     PolyLine2d getGeometry();
 
@@ -30,8 +28,5 @@ public interface LocatedObject extends Locatable, Identifiable, EventProducer, S
 
     /** @return the full id that makes the id unique in the network. */
     String getFullId();
-
-    @Override
-    Bounds2d getBounds();
 
 }

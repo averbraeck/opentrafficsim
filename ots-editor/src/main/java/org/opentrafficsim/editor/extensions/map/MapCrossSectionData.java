@@ -1,14 +1,13 @@
 package org.opentrafficsim.editor.extensions.map;
 
-import java.rmi.RemoteException;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.draw.bounds.Bounds;
-import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.base.geometry.BoundingPolygon;
+import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.road.network.lane.SliceInfo;
@@ -31,7 +30,7 @@ public class MapCrossSectionData implements CrossSectionElementData
     protected final PolyLine2d centerLine;
 
     /** Contour. */
-    private final Polygon2d contour;
+    private final BoundingPolygon contour;
 
     /** Slice info. */
     private SliceInfo sliceInfo;
@@ -48,29 +47,29 @@ public class MapCrossSectionData implements CrossSectionElementData
     {
         this.linkNode = linkNode;
         this.centerLine = centerLine;
-        this.contour = contour;
+        this.contour = new BoundingPolygon(contour);
         this.sliceInfo = sliceInfo;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Bounds<?, ?, ?> getBounds() throws RemoteException
+    public OtsBounds2d getBounds()
     {
-        return new Bounds2d(this.contour.getBounds().getDeltaX(), this.contour.getBounds().getDeltaY());
+        return this.contour;
     }
 
     /** {@inheritDoc} */
     @Override
     public Point2d getLocation()
     {
-        return this.contour.getBounds().midPoint();
+        return new Point2d(0.0, 0.0);
     }
 
     /** {@inheritDoc} */
     @Override
     public List<Point2d> getContour()
     {
-        return this.contour.getPointList();
+        return this.contour.asPolygon().getPointList();
     }
 
     /**

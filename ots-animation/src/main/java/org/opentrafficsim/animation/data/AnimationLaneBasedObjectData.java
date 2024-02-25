@@ -1,10 +1,8 @@
 package org.opentrafficsim.animation.data;
 
-import java.rmi.RemoteException;
-
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.draw.bounds.Bounds;
 import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
@@ -49,7 +47,7 @@ public abstract class AnimationLaneBasedObjectData<T extends LaneBasedObject> im
 
     /** {@inheritDoc} */
     @Override
-    public Bounds<?, ?, ?> getBounds() throws RemoteException
+    public OtsBounds2d getBounds()
     {
         return ClickableBounds.get(this.laneBasedObject.getBounds());
     }

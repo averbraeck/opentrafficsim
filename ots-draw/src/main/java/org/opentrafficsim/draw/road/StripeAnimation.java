@@ -15,11 +15,11 @@ import javax.naming.NamingException;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.PaintPolygons;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
@@ -204,17 +204,13 @@ public class StripeAnimation extends OtsRenderable<StripeData>
      * </p>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public interface StripeData extends Locatable
+    public interface StripeData extends OtsLocatable
     {
         /**
          * Returns the center line.
          * @return PolyLine2d; center line.
          */
         PolyLine2d getCenterLine();
-
-        /** {@inheritDoc} */
-        @Override
-        Point2d getLocation();
 
         /**
          * Returns the stripe type.

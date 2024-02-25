@@ -70,7 +70,7 @@ public class ParameterFactoryByType implements ParameterFactory
             }
         }
 
-        /* {@formatter:off}
+        /*-
          * Based on all given correlations we create two maps: 
          * - remainingCorrelations, keys are ParameterTypes that depend on values that this class still needs to set 
          * - allCorrelations, correlations combined from all and the specific GTU type, used to actually alter the values set
@@ -279,8 +279,8 @@ public class ParameterFactoryByType implements ParameterFactory
      * @param <U> unit type
      * @param <T> parameter value type
      */
-    public <U extends Unit<U>, T extends DoubleScalarRel<U, T>> void addParameter(
-            final ParameterTypeNumeric<T> parameterType, final ContinuousDistDoubleScalar.Rel<T, U> distribution)
+    public <U extends Unit<U>, T extends DoubleScalarRel<U, T>> void addParameter(final ParameterTypeNumeric<T> parameterType,
+            final ContinuousDistDoubleScalar.Rel<T, U> distribution)
     {
         addParameter(null, parameterType, distribution);
     }

@@ -19,7 +19,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
@@ -131,10 +130,10 @@ public class ConflictTest implements EventListener
         // System.out.println(conflictEnd);
 
         // Next statements pretend that vehicle width equals lane width.
-        PolyLine2d geometry1 =
-                new PolyLine2d(conflictStart, conflictEnd, new Point2d(conflictStart.x, conflictEnd.y), conflictStart);
+        Polygon2d geometry1 =
+                new Polygon2d(conflictStart, conflictEnd, new Point2d(conflictStart.x, conflictEnd.y), conflictStart);
         System.out.print(geometry1.toPlot());
-        PolyLine2d geometry2 = new PolyLine2d(conflictStart,
+        Polygon2d geometry2 = new Polygon2d(conflictStart,
                 new Point2d(conflictStart.x + laneB.getWidth(0).si * Math.sin(bDirection.si),
                         conflictStart.y - laneB.getWidth(0).si * Math.cos(bDirection.si)),
                 conflictEnd, new Point2d(conflictEnd.x - laneB.getWidth(0).si * Math.sin(bDirection.si),

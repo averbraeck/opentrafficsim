@@ -5,19 +5,19 @@ import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
-import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.geometry.BoundingRectangle;
+import org.opentrafficsim.base.geometry.OtsBounds2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.RoadNetwork;
-
-import nl.tudelft.simulation.dsol.animation.Locatable;
 
 /**
  * Cross section elements are used to compose a CrossSectionLink.
@@ -29,7 +29,8 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public abstract class CrossSectionElement extends LocalEventProducer implements Locatable, Serializable, Identifiable, Drawable
+public abstract class CrossSectionElement extends LocalEventProducer
+        implements OtsLocatable, Serializable, Identifiable, Drawable
 {
     /** */
     private static final long serialVersionUID = 20150826L;
@@ -54,7 +55,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
     private final Point2d location;
 
     /** Bounding box. */
-    private final Bounds2d bounds;
+    private final OtsBounds2d bounds;
 
     /**
      * Constructor.
@@ -79,7 +80,8 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
         this.centerLine = centerLine;
         this.contour = contour;
         this.location = contour.getBounds().midPoint();
-        this.bounds = new Bounds2d(contour.getBounds().getDeltaX(), contour.getBounds().getDeltaY());
+        this.bounds = new BoundingRectangle(contour.getBounds().getMinX(), contour.getBounds().getMaxX(),
+                contour.getBounds().getMinY(), contour.getBounds().getMaxY());
         this.sliceInfo = new SliceInfo(crossSectionSlices, link.getLength());
 
         link.addCrossSectionElement(this);
@@ -198,7 +200,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
     public double getZ()
     {
         // default implementation returns 0.0 in case of a null location or a 2D location
-        return Try.assign(() -> Locatable.super.getZ(), "Remote exception on calling getZ()");
+        return Try.assign(() -> OtsLocatable.super.getZ(), "Remote exception on calling getZ()");
     }
 
     /**
@@ -275,7 +277,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Bounds2d getBounds()
+    public OtsBounds2d getBounds()
     {
         return this.bounds;
     }

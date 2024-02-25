@@ -1,10 +1,8 @@
 package org.opentrafficsim.animation.data;
 
-import java.rmi.RemoteException;
-
-import org.djutils.draw.bounds.Bounds;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.draw.road.TrafficLightDetectorAnimation.TrafficLightDetectorData;
 import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector;
 
@@ -40,7 +38,7 @@ public class AnimationTrafficLightDetectorData implements TrafficLightDetectorDa
 
     /** {@inheritDoc} */
     @Override
-    public Bounds<?, ?, ?> getBounds() throws RemoteException
+    public OtsBounds2d getBounds()
     {
         return this.trafficLigthDetector.getBounds();
     }

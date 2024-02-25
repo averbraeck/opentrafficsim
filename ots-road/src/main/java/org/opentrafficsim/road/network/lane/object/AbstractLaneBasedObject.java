@@ -58,7 +58,7 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
         this.lane = lane;
         this.longitudinalPosition = longitudinalPosition;
     }
-    
+
     /**
      * Returns the oriented point of the position on a lane.
      * @param lane Lane; lane.
@@ -117,14 +117,6 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
     public final Length getLongitudinalPosition()
     {
         return this.longitudinalPosition;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public OrientedPoint2d getLocation()
-    {
-        return (OrientedPoint2d) super.getLocation();
     }
 
     /** {@inheritDoc} */

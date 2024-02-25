@@ -15,13 +15,13 @@ import javax.naming.NamingException;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData;
 import org.opentrafficsim.draw.road.OtsRenderable;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -216,7 +216,7 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public class Text extends TextAnimation
+    public class Text extends TextAnimation<GtuData>
     {
         /** */
         private static final long serialVersionUID = 20161211L;
@@ -225,7 +225,7 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
         private boolean isTextDestroyed = false;
 
         /**
-         * @param source Locatable; the object for which the text is displayed
+         * @param source GtuData; the object for which the text is displayed
          * @param text Supplier&lt;String&gr;; the text to display
          * @param dx float; the horizontal movement of the text, in meters
          * @param dy float; the vertical movement of the text, in meters
@@ -235,7 +235,7 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
-        public Text(final Locatable source, final Supplier<String> text, final float dx, final float dy,
+        public Text(final GtuData source, final Supplier<String> text, final float dx, final float dy,
                 final TextAlignment textAlignment, final Color color, final Contextualized contextualized)
                 throws RemoteException, NamingException
         {
@@ -268,7 +268,7 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
         public OrientedPoint2d getLocation()
         {
             // draw always on top, and not upside down.
-            OrientedPoint2d p = ((GtuData) getSource()).getLocation();
+            OrientedPoint2d p = getSource().getLocation();
             double a = Angle.normalizePi(p.getDirZ());
             if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
             {
@@ -297,7 +297,7 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public interface GtuData extends Locatable, Identifiable
+    public interface GtuData extends OtsLocatable, Identifiable
     {
         /**
          * Returns the GTU color.

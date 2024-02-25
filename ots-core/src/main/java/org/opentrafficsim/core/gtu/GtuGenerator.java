@@ -2,9 +2,8 @@ package org.opentrafficsim.core.gtu;
 
 import java.util.Set;
 
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.core.object.NonLocatedObject;
-
-import nl.tudelft.simulation.dsol.animation.Locatable;
 
 /**
  * Gtu generator in its most basic form, which is able to report a queue count at one or more positions.
@@ -36,7 +35,7 @@ public interface GtuGenerator extends NonLocatedObject
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    interface GtuGeneratorPosition extends Locatable
+    interface GtuGeneratorPosition extends OtsLocatable
     {
         /**
          * Returns the number of GTUs in the queue.

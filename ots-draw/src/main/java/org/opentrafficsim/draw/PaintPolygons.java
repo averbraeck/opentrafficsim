@@ -7,6 +7,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.djutils.draw.Transform2d;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 
 /**
@@ -37,6 +39,22 @@ public final class PaintPolygons
      */
     public static Set<Path2D.Double> getPaths(final Point2d referencePoint, final List<Point2d> line)
     {
+        return getPaths(new OrientedPoint2d(referencePoint, 0.0), line);
+    }
+
+    /**
+     * Returns drawable paths of a polygon.
+     * @param referencePoint Point2d; the reference point
+     * @param line List&lt;Point2d&gt;; array of points
+     * @return Set&lt;Path2D.Double&gt;; drawable paths.
+     */
+    public static Set<Path2D.Double> getPaths(final OrientedPoint2d referencePoint, final List<Point2d> line)
+    {
+
+        Transform2d transform = new Transform2d();
+        transform.rotation(-referencePoint.getDirZ());
+        transform.translate(-referencePoint.x, -referencePoint.y);
+
         Set<Path2D.Double> paths = new LinkedHashSet<>();
         Path2D.Double path = new Path2D.Double();
         paths.add(path);
@@ -56,11 +74,13 @@ public final class PaintPolygons
             else if (!withinPath)
             {
                 withinPath = true;
-                path.moveTo(point.x - referencePoint.x, -point.y + referencePoint.y);
+                Point2d p = transform.transform(point);
+                path.moveTo(p.x, -p.y);
             }
             else
             {
-                path.lineTo(point.x - referencePoint.x, -point.y + referencePoint.y);
+                Point2d p = transform.transform(point);
+                path.lineTo(p.x, -p.y);
             }
         }
         if (withinPath)

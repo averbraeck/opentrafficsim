@@ -14,13 +14,13 @@ import javax.naming.NamingException;
 
 import org.djutils.base.Identifiable;
 import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
 import org.opentrafficsim.draw.road.OtsRenderable;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
@@ -97,13 +97,13 @@ public class NodeAnimation extends OtsRenderable<NodeData>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public class Text extends TextAnimation
+    public class Text extends TextAnimation<NodeData>
     {
         /** */
         private static final long serialVersionUID = 20161211L;
 
         /**
-         * @param source Locatable; the object for which the text is displayed
+         * @param source NodeData; the object for which the text is displayed
          * @param text Supplier&lt;String&gr;; the text to display
          * @param dx float; the horizontal movement of the text, in meters
          * @param dy float; the vertical movement of the text, in meters
@@ -115,7 +115,7 @@ public class NodeAnimation extends OtsRenderable<NodeData>
          * @throws RemoteException - when remote context cannot be found
          */
         @SuppressWarnings("checkstyle:parameternumber")
-        public Text(final Locatable source, final Supplier<String> text, final float dx, final float dy,
+        public Text(final NodeData source, final Supplier<String> text, final float dx, final float dy,
                 final TextAlignment textPlacement, final Color color, final Contextualized contextualized,
                 final ScaleDependentRendering scaleDependentRendering) throws RemoteException, NamingException
         {
@@ -141,11 +141,11 @@ public class NodeAnimation extends OtsRenderable<NodeData>
      * </p>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public interface NodeData extends Locatable, Identifiable
+    public interface NodeData extends OtsLocatable, Identifiable
     {
         /** {@inheritDoc} */
         @Override
-        OrientedPoint2d getLocation();
+        public OrientedPoint2d getLocation();
 
         /** {@inheritDoc} */
         @Override

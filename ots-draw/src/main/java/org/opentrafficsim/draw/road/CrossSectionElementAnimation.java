@@ -11,11 +11,11 @@ import java.util.Set;
 import javax.naming.NamingException;
 
 import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.PaintPolygons;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
@@ -76,17 +76,13 @@ public class CrossSectionElementAnimation extends OtsRenderable<CrossSectionElem
      * </p>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public interface CrossSectionElementData extends Locatable
+    public interface CrossSectionElementData extends OtsLocatable
     {
         /**
          * Returns the contour.
          * @return List&lt;Point2d&gt;; points.
          */
         List<Point2d> getContour();
-
-        /** {@inheritDoc} */
-        @Override
-        Point2d getLocation();
     }
 
     /**

@@ -9,12 +9,12 @@ import java.rmi.RemoteException;
 import javax.naming.NamingException;
 
 import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -146,7 +146,7 @@ public class GtuGeneratorPositionAnimation extends OtsRenderable<GtuGeneratorPos
      * </p>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public interface GtuGeneratorPositionData extends Locatable
+    public interface GtuGeneratorPositionData extends OtsLocatable
     {
         /**
          * Returns the queue count.

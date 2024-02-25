@@ -17,6 +17,8 @@ import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.base.geometry.OtsBounds2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.PaintLine;
@@ -25,7 +27,6 @@ import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation.LaneData;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -111,7 +112,7 @@ public class LaneAnimation extends OtsRenderable<LaneData>
     /**
      * Draw center line of a lane.
      */
-    public static class CenterLine implements Locatable
+    public static class CenterLine implements OtsLocatable
     {
         /** The center line. */
         private final PolyLine2d centerLine;
@@ -136,14 +137,14 @@ public class LaneAnimation extends OtsRenderable<LaneData>
 
         /** {@inheritDoc} */
         @Override
-        public final Point2d getLocation()
+        public final OrientedPoint2d getLocation()
         {
-            return this.centerLine.getBounds().midPoint();
+            return new OrientedPoint2d(this.centerLine.getBounds().midPoint(), 0.0);
         }
 
         /** {@inheritDoc} */
         @Override
-        public final Bounds2d getBounds()
+        public final OtsBounds2d getBounds()
         {
             return ClickableBounds.get(this.bounds);
         }
@@ -219,13 +220,13 @@ public class LaneAnimation extends OtsRenderable<LaneData>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public class Text extends TextAnimation
+    public class Text extends TextAnimation<LaneData>
     {
         /** */
         private static final long serialVersionUID = 20161211L;
 
         /**
-         * @param source Locatable; the object for which the text is displayed
+         * @param source LaneData; the object for which the text is displayed
          * @param text Supplier&lt;String&gt;; the text to display
          * @param dx float; the horizontal movement of the text, in meters
          * @param dy float; the vertical movement of the text, in meters
@@ -235,7 +236,7 @@ public class LaneAnimation extends OtsRenderable<LaneData>
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
-        public Text(final Locatable source, final Supplier<String> text, final float dx, final float dy,
+        public Text(final LaneData source, final Supplier<String> text, final float dx, final float dy,
                 final TextAlignment textPlacement, final Color color, final Contextualized contextualized)
                 throws RemoteException, NamingException
         {
@@ -248,7 +249,7 @@ public class LaneAnimation extends OtsRenderable<LaneData>
         public OrientedPoint2d getLocation()
         {
             // draw always on top.
-            Ray2d p = ((LaneData) getSource()).getCenterLine().getLocationFractionExtended(0.5);
+            Ray2d p = getSource().getCenterLine().getLocationFractionExtended(0.5);
             double a = Angle.normalizePi(p.getPhi());
             if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
             {
@@ -275,7 +276,7 @@ public class LaneAnimation extends OtsRenderable<LaneData>
      * </p>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public interface LaneData extends Locatable, Identifiable
+    public interface LaneData extends OtsLocatable, Identifiable
     {
         /**
          * Returns the center line.
@@ -294,10 +295,6 @@ public class LaneAnimation extends OtsRenderable<LaneData>
          * @return String; link id.
          */
         String getLinkId();
-
-        /** {@inheritDoc} */
-        @Override
-        Point2d getLocation();
 
         /** {@inheritDoc} */
         @Override

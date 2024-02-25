@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableMap;
@@ -498,8 +498,8 @@ public final class ConflictBuilder
         Length length2 = lane2.getLength().times(Math.abs(f2end - f2start));
 
         // Get geometries
-        PolyLine2d geometry1 = getGeometry(lane1, f1start, f1end, widthGenerator);
-        PolyLine2d geometry2 = getGeometry(lane2, f2start, f2end, widthGenerator);
+        Polygon2d geometry1 = getGeometry(lane1, f1start, f1end, widthGenerator);
+        Polygon2d geometry2 = getGeometry(lane2, f2start, f2end, widthGenerator);
 
         // Determine conflict rule
         ConflictRule conflictRule;
@@ -550,8 +550,8 @@ public final class ConflictBuilder
         Length length2 = lane2.getLength().times(Math.abs(f2end - f2start));
 
         // Get geometries
-        PolyLine2d geometry1 = getGeometry(lane1, f1start, f1end, widthGenerator);
-        PolyLine2d geometry2 = getGeometry(lane2, f2start, f2end, widthGenerator);
+        Polygon2d geometry1 = getGeometry(lane1, f1start, f1end, widthGenerator);
+        Polygon2d geometry2 = getGeometry(lane2, f2start, f2end, widthGenerator);
 
         // Make conflict
         Conflict.generateConflictPair(ConflictType.SPLIT, new SplitConflictRule(), false, lane1, longitudinalPosition1, length1,
@@ -608,8 +608,8 @@ public final class ConflictBuilder
         Length length2 = lane2.getLength().times(Math.abs(f2end - f2start));
 
         // Get geometries
-        PolyLine2d geometry1 = getGeometry(lane1, f1start, f1end, widthGenerator);
-        PolyLine2d geometry2 = getGeometry(lane2, f2start, f2end, widthGenerator);
+        Polygon2d geometry1 = getGeometry(lane1, f1start, f1end, widthGenerator);
+        Polygon2d geometry2 = getGeometry(lane2, f2start, f2end, widthGenerator);
 
         // Determine conflict rule
         ConflictRule conflictRule;
@@ -641,7 +641,7 @@ public final class ConflictBuilder
      * @return geometry for conflict
      * @throws OtsGeometryException in case of geometry exception
      */
-    private static PolyLine2d getGeometry(final Lane lane, final double fStart, final double fEnd,
+    private static Polygon2d getGeometry(final Lane lane, final double fStart, final double fEnd,
             final WidthGenerator widthGenerator) throws OtsGeometryException
     {
         // extractFractional needs ordered fractions, irrespective of driving direction
@@ -678,7 +678,7 @@ public final class ConflictBuilder
         Point2d[] points = new Point2d[left.size() + right.size()];
         System.arraycopy(left.getPoints(), 0, points, 0, left.size());
         System.arraycopy(right.getPoints(), 0, points, left.size(), right.size());
-        return new PolyLine2d(points);
+        return new Polygon2d(points);
     }
 
     /**

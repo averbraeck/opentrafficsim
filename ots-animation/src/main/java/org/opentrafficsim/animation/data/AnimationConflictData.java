@@ -1,13 +1,12 @@
 package org.opentrafficsim.animation.data;
 
 import java.awt.Color;
-import java.rmi.RemoteException;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.draw.bounds.Bounds;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.draw.road.ConflictAnimation.ConflictData;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 
@@ -53,7 +52,7 @@ public class AnimationConflictData implements ConflictData
 
     /** {@inheritDoc} */
     @Override
-    public Bounds<?, ?, ?> getBounds() throws RemoteException
+    public OtsBounds2d getBounds()
     {
         return this.conflict.getBounds();
     }

@@ -43,7 +43,7 @@ public class BusStop extends AbstractLaneBasedObject
 
     /** Stored conflicts downstream. */
     private Set<Conflict> conflicts = null;
-    
+
     /** Bus type. */
     private final GtuType busType;
 

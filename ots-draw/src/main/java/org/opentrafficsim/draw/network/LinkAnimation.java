@@ -13,8 +13,8 @@ import org.djutils.base.Identifiable;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.OrientedPoint2d;
-import org.djutils.draw.point.Point;
 import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.PaintLine;
 import org.opentrafficsim.draw.TextAlignment;
@@ -22,7 +22,6 @@ import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
 import org.opentrafficsim.draw.road.OtsRenderable;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -159,13 +158,13 @@ public class LinkAnimation extends OtsRenderable<LinkData>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public class Text extends TextAnimation
+    public class Text extends TextAnimation<LinkData>
     {
         /** */
         private static final long serialVersionUID = 20161211L;
 
         /**
-         * @param source Locatable; the object for which the text is displayed
+         * @param source LinkData; the object for which the text is displayed
          * @param text Supplier&lt;String&gr;; the text to display
          * @param dx float; the horizontal movement of the text, in meters
          * @param dy float; the vertical movement of the text, in meters
@@ -176,7 +175,7 @@ public class LinkAnimation extends OtsRenderable<LinkData>
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
-        public Text(final Locatable source, final Supplier<String> text, final float dx, final float dy,
+        public Text(final LinkData source, final Supplier<String> text, final float dx, final float dy,
                 final TextAlignment textPlacement, final Color color, final Contextualized contextualized,
                 final ScaleDependentRendering scaleDependentRendering) throws RemoteException, NamingException
         {
@@ -189,7 +188,7 @@ public class LinkAnimation extends OtsRenderable<LinkData>
         public OrientedPoint2d getLocation()
         {
             // draw always on top, and not upside down.
-            Ray2d p = ((LinkData) getSource()).getDesignLine().getLocationFractionExtended(0.5);
+            Ray2d p = getSource().getDesignLine().getLocationFractionExtended(0.5);
             double a = Angle.normalizePi(p.getPhi());
             if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
             {
@@ -215,7 +214,7 @@ public class LinkAnimation extends OtsRenderable<LinkData>
      * </p>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public interface LinkData extends Locatable, Identifiable
+    public interface LinkData extends OtsLocatable, Identifiable
     {
         /**
          * Returns whether this is a connector.
@@ -228,10 +227,6 @@ public class LinkAnimation extends OtsRenderable<LinkData>
          * @return PolyLine2d; design line.
          */
         PolyLine2d getDesignLine();
-
-        /** {@inheritDoc} */
-        @Override
-        Point<?> getLocation();
 
         /** {@inheritDoc} */
         @Override

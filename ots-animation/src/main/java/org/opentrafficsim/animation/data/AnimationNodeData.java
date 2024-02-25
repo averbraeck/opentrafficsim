@@ -1,9 +1,7 @@
 package org.opentrafficsim.animation.data;
 
-import java.rmi.RemoteException;
-
-import org.djutils.draw.bounds.Bounds;
 import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
@@ -33,7 +31,7 @@ public class AnimationNodeData implements NodeData
 
     /** {@inheritDoc} */
     @Override
-    public Bounds<?, ?, ?> getBounds() throws RemoteException
+    public OtsBounds2d getBounds()
     {
         return ClickableBounds.get(this.node.getBounds());
     }
@@ -51,7 +49,7 @@ public class AnimationNodeData implements NodeData
     {
         return this.node.getLocation();
     }
-    
+
     /**
      * Returns the node.
      * @return Node; node.

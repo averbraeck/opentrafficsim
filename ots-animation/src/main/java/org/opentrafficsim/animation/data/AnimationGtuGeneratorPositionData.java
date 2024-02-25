@@ -1,9 +1,7 @@
 package org.opentrafficsim.animation.data;
 
-import java.rmi.RemoteException;
-
-import org.djutils.draw.bounds.Bounds;
-import org.djutils.draw.point.Point;
+import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.core.gtu.GtuGenerator.GtuGeneratorPosition;
 import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
@@ -33,14 +31,14 @@ public class AnimationGtuGeneratorPositionData implements GtuGeneratorPositionDa
 
     /** {@inheritDoc} */
     @Override
-    public Point<?> getLocation() throws RemoteException
+    public Point2d getLocation()
     {
         return this.position.getLocation();
     }
 
     /** {@inheritDoc} */
     @Override
-    public Bounds<?, ?, ?> getBounds() throws RemoteException
+    public OtsBounds2d getBounds()
     {
         return ClickableBounds.get(this.position.getBounds());
     }

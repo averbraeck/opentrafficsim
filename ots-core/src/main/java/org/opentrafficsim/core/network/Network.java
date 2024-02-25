@@ -2,7 +2,6 @@ package org.opentrafficsim.core.network;
 
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -12,7 +11,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.event.EventProducer;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
@@ -27,6 +25,7 @@ import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.AStarShortestPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
+import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -1001,39 +1000,32 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
         double maxX = -Double.MAX_VALUE;
         double maxY = -Double.MAX_VALUE;
         boolean content = false;
-        try
+        for (Node node : this.nodeMap.values())
         {
-            for (Node node : this.nodeMap.values())
-            {
-                Bounds2d b = node.getBounds();
-                minX = Math.min(minX, node.getLocation().getX() + b.getMinX());
-                minY = Math.min(minY, node.getLocation().getY() + b.getMinY());
-                maxX = Math.max(maxX, node.getLocation().getX() + b.getMaxX());
-                maxY = Math.max(maxY, node.getLocation().getY() + b.getMaxY());
-                content = true;
-            }
-            for (Link link : this.linkMap.values())
-            {
-                Bounds2d b = link.getBounds();
-                minX = Math.min(minX, link.getLocation().getX() + b.getMinX());
-                minY = Math.min(minY, link.getLocation().getY() + b.getMinY());
-                maxX = Math.max(maxX, link.getLocation().getX() + b.getMaxX());
-                maxY = Math.max(maxY, link.getLocation().getY() + b.getMaxY());
-                content = true;
-            }
-            for (LocatedObject object : this.objectMap.values())
-            {
-                Bounds2d b = object.getBounds();
-                minX = Math.min(minX, object.getLocation().getX() + b.getMinX());
-                minY = Math.min(minY, object.getLocation().getY() + b.getMinY());
-                maxX = Math.max(maxX, object.getLocation().getX() + b.getMaxX());
-                maxY = Math.max(maxY, object.getLocation().getY() + b.getMaxY());
-                content = true;
-            }
+            OtsBounds2d b = node.getBounds();
+            minX = Math.min(minX, node.getLocation().getX() + b.getMinX());
+            minY = Math.min(minY, node.getLocation().getY() + b.getMinY());
+            maxX = Math.max(maxX, node.getLocation().getX() + b.getMaxX());
+            maxY = Math.max(maxY, node.getLocation().getY() + b.getMaxY());
+            content = true;
         }
-        catch (RemoteException exception)
+        for (Link link : this.linkMap.values())
         {
-            CategoryLogger.always().error(exception);
+            OtsBounds2d b = link.getBounds();
+            minX = Math.min(minX, link.getLocation().getX() + b.getMinX());
+            minY = Math.min(minY, link.getLocation().getY() + b.getMinY());
+            maxX = Math.max(maxX, link.getLocation().getX() + b.getMaxX());
+            maxY = Math.max(maxY, link.getLocation().getY() + b.getMaxY());
+            content = true;
+        }
+        for (LocatedObject object : this.objectMap.values())
+        {
+            OtsBounds2d b = object.getBounds();
+            minX = Math.min(minX, object.getLocation().getX() + b.getMinX());
+            minY = Math.min(minY, object.getLocation().getY() + b.getMinY());
+            maxX = Math.max(maxX, object.getLocation().getX() + b.getMaxX());
+            maxY = Math.max(maxY, object.getLocation().getY() + b.getMaxY());
+            content = true;
         }
         if (content)
         {

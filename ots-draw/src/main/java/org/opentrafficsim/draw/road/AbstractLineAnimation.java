@@ -10,10 +10,10 @@ import javax.naming.NamingException;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
@@ -82,7 +82,7 @@ public abstract class AbstractLineAnimation<T extends LaneBasedObjectData> exten
      * </p>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public interface LaneBasedObjectData extends Locatable, Identifiable
+    public interface LaneBasedObjectData extends OtsLocatable, Identifiable
     {
         /**
          * Returns the width of the lane.

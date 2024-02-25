@@ -1,10 +1,9 @@
 package org.opentrafficsim.animation.data;
 
-import java.rmi.RemoteException;
 import java.util.List;
 
-import org.djutils.draw.bounds.Bounds;
 import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
@@ -38,7 +37,7 @@ public class AnimationCrossSectionElementData<T extends CrossSectionElement> imp
 
     /** {@inheritDoc} */
     @Override
-    public Bounds<?, ?, ?> getBounds() throws RemoteException
+    public OtsBounds2d getBounds()
     {
         return ClickableBounds.get(this.element.getBounds());
     }
@@ -59,7 +58,7 @@ public class AnimationCrossSectionElementData<T extends CrossSectionElement> imp
     @Override
     public Point2d getLocation()
     {
-        return this.element.getLocation();
+        return new Point2d(0.0, 0.0);
     }
 
     /**

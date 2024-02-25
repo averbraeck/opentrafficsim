@@ -21,7 +21,6 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djutils.draw.DrawRuntimeException;
-import org.djutils.draw.bounds.Bounds;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
@@ -35,6 +34,8 @@ import org.djutils.event.reference.ReferenceType;
 import org.djutils.exceptions.Try;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.opentrafficsim.base.geometry.BoundingPolygon;
+import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.ContinuousArc;
 import org.opentrafficsim.core.geometry.ContinuousBezierCubic;
@@ -44,7 +45,6 @@ import org.opentrafficsim.core.geometry.ContinuousPolyLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
 import org.opentrafficsim.core.geometry.Flattener;
 import org.opentrafficsim.core.geometry.OtsGeometryUtil;
-import org.opentrafficsim.draw.BoundingPolygon;
 import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation;
@@ -123,7 +123,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
     /** Flattened design line. */
     private PolyLine2d flattenedDesignLine = null;
-    
+
     /** Bounds around the flattened design line. */
     private BoundingPolygon bounds;
 
@@ -235,7 +235,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
     /** {@inheritDoc} */
     @Override
-    public Bounds<?, ?, ?> getBounds() throws RemoteException
+    public OtsBounds2d getBounds()
     {
         return this.bounds;
     }

@@ -21,7 +21,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.PositionVector;
 import org.djutils.base.Identifiable;
-import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
@@ -37,6 +36,9 @@ import org.djutils.immutablecollections.ImmutableSet;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.HierarchicallyTyped;
+import org.opentrafficsim.base.geometry.BoundingBox;
+import org.opentrafficsim.base.geometry.OtsBounds2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.DynamicSpatialObject;
@@ -56,7 +58,6 @@ import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.PerceivableContext;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 
 /**
@@ -69,7 +70,7 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
 public class Gtu extends LocalEventProducer
-        implements HierarchicallyTyped<GtuType, Gtu>, DynamicSpatialObject, Locatable, Serializable, Identifiable, Drawable
+        implements HierarchicallyTyped<GtuType, Gtu>, DynamicSpatialObject, OtsLocatable, Serializable, Identifiable, Drawable
 {
     /** */
     private static final long serialVersionUID = 20140822L;
@@ -179,6 +180,9 @@ public class Gtu extends LocalEventProducer
     /** Tags of the GTU, these are used for specific use cases of any sort. */
     private final Map<String, String> tags = new LinkedHashMap<>();
 
+    /** Bounds. */
+    private OtsBounds2d bounds;
+
     /**
      * @param id String; the id of the GTU
      * @param gtuType GtuType; the type of GTU, e.g. TruckType, CarType, BusType
@@ -205,6 +209,7 @@ public class Gtu extends LocalEventProducer
 
         this.length = length;
         this.width = width;
+        this.bounds = new BoundingBox(getLength().doubleValue(), getWidth().doubleValue());
         if (null == maximumSpeed)
         {
             throw new GtuException("maximumSpeed may not be null");
@@ -329,11 +334,10 @@ public class Gtu extends LocalEventProducer
 
     /** {@inheritDoc} */
     @Override
-    public final Bounds2d getBounds()
+    public final OtsBounds2d getBounds()
     {
-        double dx = 0.5 * getLength().doubleValue();
-        double dy = 0.5 * getWidth().doubleValue();
-        return new Bounds2d(-dx, dx, -dy, dy);
+        // TODO: inconsistent with reference point, this is just half width/length
+        return this.bounds;
     }
 
     /**

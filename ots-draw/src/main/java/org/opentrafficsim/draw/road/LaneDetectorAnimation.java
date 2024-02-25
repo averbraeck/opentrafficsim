@@ -16,7 +16,6 @@ import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 import org.opentrafficsim.draw.road.LaneDetectorAnimation.LaneDetectorData;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -101,13 +100,13 @@ public class LaneDetectorAnimation extends AbstractLineAnimation<LaneDetectorDat
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public class Text extends TextAnimation implements DetectorData.Text
+    public class Text extends TextAnimation<LaneDetectorData> implements DetectorData.Text
     {
         /** */
         private static final long serialVersionUID = 20161211L;
 
         /**
-         * @param source Locatable; the object for which the text is displayed
+         * @param source LaneDetectorData; the object for which the text is displayed
          * @param text Supplier&lt;String&gt;; the text to display
          * @param dx float; the horizontal movement of the text, in meters
          * @param dy float; the vertical movement of the text, in meters
@@ -117,7 +116,7 @@ public class LaneDetectorAnimation extends AbstractLineAnimation<LaneDetectorDat
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
-        public Text(final Locatable source, final Supplier<String> text, final float dx, final float dy,
+        public Text(final LaneDetectorData source, final Supplier<String> text, final float dx, final float dy,
                 final TextAlignment textPlacement, final Color color, final Contextualized contextualized)
                 throws RemoteException, NamingException
         {
@@ -130,7 +129,7 @@ public class LaneDetectorAnimation extends AbstractLineAnimation<LaneDetectorDat
         public OrientedPoint2d getLocation()
         {
             // draw always on top, and not upside down.
-            OrientedPoint2d p = ((LaneDetectorData) getSource()).getLocation();
+            OrientedPoint2d p = getSource().getLocation();
             double a = Angle.normalizePi(p.getDirZ());
             if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
             {

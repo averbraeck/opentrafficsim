@@ -1,16 +1,11 @@
 package org.opentrafficsim.draw.road;
 
-import java.rmi.RemoteException;
-
 import org.djutils.draw.Oriented;
 import org.djutils.draw.Transform2d;
 import org.djutils.draw.bounds.Bounds2d;
-import org.djutils.draw.point.Point;
 import org.djutils.draw.point.Point2d;
-import org.djutils.logger.CategoryLogger;
-import org.opentrafficsim.draw.TransformableBounds;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -23,7 +18,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <L> locatable type
  */
-public abstract class OtsRenderable<L extends Locatable> extends Renderable2d<L>
+public abstract class OtsRenderable<L extends OtsLocatable> extends Renderable2d<L>
 {
 
     /** */
@@ -43,30 +38,20 @@ public abstract class OtsRenderable<L extends Locatable> extends Renderable2d<L>
     @Override
     public boolean contains(final Point2d pointWorldCoordinates, final Bounds2d extent)
     {
-        try
+        if (getSource().getLocation() instanceof Oriented)
         {
-            if (getSource().getBounds() instanceof TransformableBounds<?> && getSource().getLocation() instanceof Oriented)
+            Oriented<?> oriented = (Oriented<?>) getSource().getLocation();
+            Point2d center = getSource().getLocation();
+            Transform2d transformation = new Transform2d();
+            transformation.translate(-center.getX(), -center.getY());
+            if (!getSource().toString().contains("Conflict"))
             {
-                Point<?> center = getSource().getLocation();
-                TransformableBounds<?> bounds = (TransformableBounds<?>) getSource().getBounds();
-
-                Point2d c = new Point2d(center.getX(), center.getY());
-                Oriented<?> o = (Oriented<?>) center;
-                Transform2d transformation = new Transform2d();
-                transformation.translate(c);
-                transformation.rotation(o.getDirZ());
-                return bounds.transform(transformation).contains(pointWorldCoordinates);
+                transformation.rotation(-oriented.getDirZ());
             }
-            else
-            {
-                return super.contains(pointWorldCoordinates, extent);
-            }
+            Point2d pointObjectCoordinates = transformation.transform(pointWorldCoordinates);
+            return getSource().getBounds().contains(pointObjectCoordinates);
         }
-        catch (RemoteException ex)
-        {
-            CategoryLogger.always().warn(ex, "contains");
-            return false;
-        }
+        return super.contains(pointWorldCoordinates, extent);
     }
 
 }

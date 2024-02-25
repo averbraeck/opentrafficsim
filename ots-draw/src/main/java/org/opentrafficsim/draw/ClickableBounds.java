@@ -3,10 +3,12 @@ package org.opentrafficsim.draw;
 import java.util.List;
 
 import org.djutils.draw.bounds.Bounds;
-import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.base.geometry.BoundingPolygon;
+import org.opentrafficsim.base.geometry.BoundingRectangle;
+import org.opentrafficsim.base.geometry.OtsBounds2d;
 
 /**
  * Creates bounds that are at least 2m of size in the x and y direction.
@@ -37,7 +39,7 @@ public class ClickableBounds
      * @param bounds Bounds&lt;?, ?, ?&gt;; actual object bounds.
      * @return Bounds&lt;?, ?, ?&gt;; bounds that are at least 2m of size in the x and y direction.
      */
-    public static Bounds2d get(final Bounds<?, ?, ?> bounds)
+    public static OtsBounds2d get(final Bounds<?, ?, ?> bounds)
     {
         if (bounds.getDeltaX() < 2 * R_MIN)
         {
@@ -45,20 +47,16 @@ public class ClickableBounds
             if (bounds.getDeltaY() < 2 * R_MIN)
             {
                 double y = (bounds.getMinY() + bounds.getMaxY()) / 2.0;
-                return new Bounds2d(x - R_MIN, x + R_MIN, y - R_MIN, y + R_MIN);
+                return new BoundingRectangle(x - R_MIN, x + R_MIN, y - R_MIN, y + R_MIN);
             }
-            return new Bounds2d(x - R_MIN, x + R_MIN, bounds.getMinY(), bounds.getMaxY());
+            return new BoundingRectangle(x - R_MIN, x + R_MIN, bounds.getMinY(), bounds.getMaxY());
         }
         if (bounds.getDeltaY() < 2 * R_MIN)
         {
             double y = (bounds.getMinY() + bounds.getMaxY()) / 2.0;
-            return new Bounds2d(bounds.getMinX(), bounds.getMaxX(), y - R_MIN, y + R_MIN);
+            return new BoundingRectangle(bounds.getMinX(), bounds.getMaxX(), y - R_MIN, y + R_MIN);
         }
-        if (bounds instanceof Bounds2d)
-        {
-            return (Bounds2d) bounds;
-        }
-        return new Bounds2d(bounds.getMinX(), bounds.getMaxX(), bounds.getMinY(), bounds.getMaxY());
+        return new BoundingRectangle(bounds.getMinX(), bounds.getMaxX(), bounds.getMinY(), bounds.getMaxY());
     }
 
     /**

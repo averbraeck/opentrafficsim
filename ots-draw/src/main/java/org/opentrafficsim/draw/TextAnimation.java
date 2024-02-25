@@ -17,9 +17,10 @@ import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point;
 import org.djutils.draw.point.Point2d;
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.geometry.BoundingCircle;
+import org.opentrafficsim.base.geometry.OtsBounds2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -32,14 +33,15 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @param <L> locatable type
  */
-public abstract class TextAnimation implements Locatable, Serializable
+public abstract class TextAnimation<L extends OtsLocatable> implements OtsLocatable, Serializable
 {
     /** */
     private static final long serialVersionUID = 20161211L;
 
     /** The object for which the text is displayed. */
-    private final Locatable source;
+    private final L source;
 
     /** The text to display. */
     private Supplier<String> text;
@@ -79,7 +81,7 @@ public abstract class TextAnimation implements Locatable, Serializable
 
     /**
      * Construct a new TextAnimation.
-     * @param source Locatable; the object for which the text is displayed
+     * @param source L; the object for which the text is displayed
      * @param text Supplier&lt;String&gt;; the text to display
      * @param dx float; the horizontal movement of the text, in meters
      * @param dy float; the vertical movement of the text, in meters
@@ -96,7 +98,7 @@ public abstract class TextAnimation implements Locatable, Serializable
      * @throws RemoteException when remote context cannot be found
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public TextAnimation(final Locatable source, final Supplier<String> text, final float dx, final float dy,
+    public TextAnimation(final L source, final Supplier<String> text, final float dx, final float dy,
             final TextAlignment textAlignment, final Color color, final float fontSize, final float minFontSize,
             final float maxFontSize, final Contextualized contextualized, final ContrastToBackground background,
             final ScaleDependentRendering scaleDependentRendering) throws RemoteException, NamingException
@@ -124,7 +126,7 @@ public abstract class TextAnimation implements Locatable, Serializable
 
     /**
      * Construct a new TextAnimation without contrast to background protection and no minimum font scale.
-     * @param source Locatable; the object for which the text is displayed
+     * @param source L; the object for which the text is displayed
      * @param text Supplier&lt;String&gt;; the text to display
      * @param dx float; the horizontal movement of the text, in meters
      * @param dy float; the vertical movement of the text, in meters
@@ -139,7 +141,7 @@ public abstract class TextAnimation implements Locatable, Serializable
      * @throws RemoteException when remote context cannot be found
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public TextAnimation(final Locatable source, final Supplier<String> text, final float dx, final float dy,
+    public TextAnimation(final L source, final Supplier<String> text, final float dx, final float dy,
             final TextAlignment textAlignment, final Color color, final float fontSize, final float minFontSize,
             final float maxFontSize, final Contextualized contextualized, final ScaleDependentRendering scaleDependentRendering)
             throws RemoteException, NamingException
@@ -149,7 +151,7 @@ public abstract class TextAnimation implements Locatable, Serializable
     }
 
     /**
-     * @param source Locatable; the object for which the text is displayed
+     * @param source L; the object for which the text is displayed
      * @param text Supplier&lt;String&gt;; the text to display
      * @param dx float; the horizontal movement of the text, in meters
      * @param dy float; the vertical movement of the text, in meters
@@ -160,7 +162,7 @@ public abstract class TextAnimation implements Locatable, Serializable
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException when remote context cannot be found
      */
-    public TextAnimation(final Locatable source, final Supplier<String> text, final float dx, final float dy,
+    public TextAnimation(final L source, final Supplier<String> text, final float dx, final float dy,
             final TextAlignment textAlignment, final Color color, final Contextualized contextualized,
             final ScaleDependentRendering scaleDependentRendering) throws RemoteException, NamingException
     {
@@ -172,23 +174,15 @@ public abstract class TextAnimation implements Locatable, Serializable
     public OrientedPoint2d getLocation()
     {
         // draw always on top.
-        try
-        {
-            Point<?> p = this.source.getLocation();
-            return new OrientedPoint2d(p.getX(), p.getY(), p instanceof Oriented ? ((Oriented<?>) p).getDirZ() : 0.0);
-        }
-        catch (RemoteException exception)
-        {
-            CategoryLogger.always().warn(exception);
-            return new OrientedPoint2d(0, 0, 0);
-        }
+        Point<?> p = this.source.getLocation();
+        return new OrientedPoint2d(p.getX(), p.getY(), p instanceof Oriented ? ((Oriented<?>) p).getDirZ() : 0.0);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Bounds2d getBounds() throws RemoteException
+    public final OtsBounds2d getBounds()
     {
-        return new Bounds2d(0.0, 0.0, 0.0, 0.0);
+        return new BoundingCircle(0.0);
     }
 
     /**
@@ -258,9 +252,9 @@ public abstract class TextAnimation implements Locatable, Serializable
 
     /**
      * Retrieve the source.
-     * @return Locatable; the source
+     * @return L; the source
      */
-    protected final Locatable getSource()
+    protected final L getSource()
     {
         return this.source;
     }
@@ -448,19 +442,20 @@ public abstract class TextAnimation implements Locatable, Serializable
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    private static class AnimationImpl extends Renderable2d<Locatable>
+    private static class AnimationImpl extends Renderable2d<TextAnimation<?>>
     {
         /** */
         private static final long serialVersionUID = 20170400L;
 
         /**
          * Construct a new AnimationImpl.
-         * @param source Locatable; the source
+         * @param source TextAnimation; the source
          * @param contextualized Contextualized; context provider.
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException when remote context cannot be found
          */
-        AnimationImpl(final Locatable source, final Contextualized contextualized) throws NamingException, RemoteException
+        AnimationImpl(final TextAnimation<?> source, final Contextualized contextualized)
+                throws NamingException, RemoteException
         {
             super(source, contextualized);
         }
@@ -469,8 +464,7 @@ public abstract class TextAnimation implements Locatable, Serializable
         @Override
         public final void paint(final Graphics2D graphics, final ImageObserver observer)
         {
-            TextAnimation ta = ((TextAnimation) getSource());
-            ta.paint(graphics, observer);
+            getSource().paint(graphics, observer);
         }
 
         /** {@inheritDoc} */

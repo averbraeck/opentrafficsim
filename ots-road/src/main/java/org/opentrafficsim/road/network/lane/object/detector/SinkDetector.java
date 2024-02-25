@@ -13,6 +13,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 /**
  * A SinkDetector is a detector that deletes GTUs that hit it, if they comply to a predicate.
@@ -89,7 +90,7 @@ public class SinkDetector extends LaneDetector
             final DetectorType detectorType, final BiPredicate<SinkDetector, LaneBasedGtu> predicate) throws NetworkException
     {
         super(String.format(Locale.US, "Sink@%.3fm", position.si), lane, position, RelativePosition.FRONT, simulator,
-                makeGeometry(lane, position, 1.0), detectorType);
+                LaneBasedObject.makeGeometry(lane, position, 1.0), detectorType);
         this.predicate = predicate;
     }
 

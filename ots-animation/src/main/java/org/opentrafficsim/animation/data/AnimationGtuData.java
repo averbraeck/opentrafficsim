@@ -4,12 +4,11 @@ import java.awt.Color;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
-import java.rmi.RemoteException;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.draw.bounds.Bounds;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
+import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
@@ -50,7 +49,7 @@ public class AnimationGtuData implements GtuData
 
     /** {@inheritDoc} */
     @Override
-    public Bounds<?, ?, ?> getBounds() throws RemoteException
+    public OtsBounds2d getBounds()
     {
         return this.gtu.getBounds();
     }
