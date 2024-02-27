@@ -36,7 +36,7 @@ import org.djutils.immutablecollections.ImmutableSet;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.HierarchicallyTyped;
-import org.opentrafficsim.base.geometry.BoundingBox;
+import org.opentrafficsim.base.geometry.BoundingRectangle;
 import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -209,7 +209,6 @@ public class Gtu extends LocalEventProducer
 
         this.length = length;
         this.width = width;
-        this.bounds = new BoundingBox(getLength().doubleValue(), getWidth().doubleValue());
         if (null == maximumSpeed)
         {
             throw new GtuException("maximumSpeed may not be null");
@@ -237,6 +236,7 @@ public class Gtu extends LocalEventProducer
         this.relativePositions.put(RelativePosition.REFERENCE, RelativePosition.REFERENCE_POSITION);
         this.relativePositions.put(RelativePosition.CENTER,
                 new RelativePosition(Length.ZERO, Length.ZERO, Length.ZERO, RelativePosition.CENTER));
+        this.bounds = new BoundingRectangle(getRear().getDx().si, getFront().getDx().si, -dy2.si, dy2.si);
 
         // Contour positions. For now, a rectangle with the four corners.
         for (int i = -1; i <= 1; i += 2)
