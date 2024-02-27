@@ -2,18 +2,25 @@ package org.opentrafficsim.editor.extensions.map;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
 import javax.naming.NamingException;
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JToggleButton;
 
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.event.Event;
@@ -23,13 +30,26 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.geometry.Flattener;
 import org.opentrafficsim.core.geometry.Flattener.NumSegments;
 import org.opentrafficsim.draw.network.LinkAnimation;
+import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
 import org.opentrafficsim.draw.network.NodeAnimation;
+import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
+import org.opentrafficsim.draw.road.BusStopAnimation;
+import org.opentrafficsim.draw.road.BusStopAnimation.BusStopData;
+import org.opentrafficsim.draw.road.CrossSectionElementAnimation.ShoulderData;
+import org.opentrafficsim.draw.road.DetectorData;
+import org.opentrafficsim.draw.road.LaneAnimation;
+import org.opentrafficsim.draw.road.LaneAnimation.CenterLine;
+import org.opentrafficsim.draw.road.LaneAnimation.LaneData;
+import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
+import org.opentrafficsim.draw.road.TrafficLightAnimation.TrafficLightData;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
+import org.opentrafficsim.swing.gui.OtsControlPanel;
 
+import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 import nl.tudelft.simulation.dsol.animation.d2.RenderableScale;
 import nl.tudelft.simulation.dsol.swing.animation.d2.AnimationUpdaterThread;
@@ -65,7 +85,7 @@ public class EditorMap extends JPanel implements EventListener
     private final OtsEditor editor;
 
     /** Panel to draw in. */
-    private final VisualizationPanel drawPanel;
+    private final VisualizationPanel animationPanel;
 
     /** Panel with tools. */
     private final JPanel toolPanel;
@@ -97,6 +117,9 @@ public class EditorMap extends JPanel implements EventListener
     /** Last screen size. */
     private Dimension lastScreen = null;
 
+    /** Map of toggle names to toggle animation classes. */
+    private Map<String, Class<? extends Locatable>> toggleLocatableMap = new LinkedHashMap<>();
+
     /**
      * Constructor.
      * @param animator AnimationUpdaterThread; thread for frequent painting.
@@ -111,7 +134,7 @@ public class EditorMap extends JPanel implements EventListener
         super(new BorderLayout());
         this.contextualized = contextualized;
         this.editor = editor;
-        this.drawPanel = new VisualizationPanel(new Bounds2d(500, 500), animator, contextualized.getContext())
+        this.animationPanel = new VisualizationPanel(new Bounds2d(500, 500), animator, contextualized.getContext())
         {
             /** */
             private static final long serialVersionUID = 20231016L;
@@ -129,10 +152,10 @@ public class EditorMap extends JPanel implements EventListener
                 super.setExtent(extent);
             }
         };
-        this.drawPanel.setBackground(Color.GRAY);
-        this.drawPanel.setShowToolTip(false);
+        this.animationPanel.setBackground(Color.GRAY);
+        this.animationPanel.setShowToolTip(false);
         editor.addListener(this, OtsEditor.NEW_FILE);
-        this.drawPanel.setRenderableScale(new RenderableScale()
+        this.animationPanel.setRenderableScale(new RenderableScale()
         {
             /** {@inheritDoc} */
             @Override
@@ -172,7 +195,7 @@ public class EditorMap extends JPanel implements EventListener
                 return result;
             }
         });
-        add(this.drawPanel, BorderLayout.CENTER);
+        add(this.animationPanel, BorderLayout.CENTER);
 
         this.toolPanel = new JPanel();
         this.toolPanel.setBackground(BAR_COLOR);
@@ -182,9 +205,106 @@ public class EditorMap extends JPanel implements EventListener
 
         this.togglePanel = new JPanel();
         this.togglePanel.setBackground(BAR_COLOR);
-        this.togglePanel.add(new JLabel("toggles")); // TODO: temporary while empty
+        setAnimationToggles();
         this.togglePanel.setLayout(new BoxLayout(this.togglePanel, BoxLayout.Y_AXIS));
         add(this.togglePanel, BorderLayout.WEST);
+    }
+
+    /**
+     * Sets the animation toggles as useful for in the editor.
+     */
+    private void setAnimationToggles()
+    {
+        addToggleAnimationButtonIcon("Node", NodeData.class, "/icons/Node24.png", "Show/hide nodes", true, false);
+        addToggleAnimationButtonIcon("NodeId", NodeAnimation.Text.class, "/icons/Id24.png", "Show/hide node Ids", false, true);
+        addToggleAnimationButtonIcon("Link", LinkData.class, "/icons/Link24.png", "Show/hide links", true, false);
+        addToggleAnimationButtonIcon("LinkId", LinkAnimation.Text.class, "/icons/Id24.png", "Show/hide link Ids", false, true);
+        addToggleAnimationButtonIcon("Lane", LaneData.class, "/icons/Lane24.png", "Show/hide lanes", true, false);
+        addToggleAnimationButtonIcon("LaneId", LaneAnimation.Text.class, "/icons/Id24.png", "Show/hide lane Ids", false, true);
+        addToggleAnimationButtonIcon("LaneCenter", CenterLine.class, "/icons/CenterLine24.png", "Show/hide lane center lines",
+                false, false);
+        addToggleAnimationButtonIcon("Stripe", StripeData.class, "/icons/Stripe24.png", "Show/hide stripes", true, false);
+        addToggleAnimationButtonIcon("Shoulder", ShoulderData.class, "/icons/Shoulder24.png", "Show/hide shoulders", true,
+                false); // Shoulder
+        addToggleAnimationButtonIcon("Detector", DetectorData.class, "/icons/Detector24.png", "Show/hide detectors", true,
+                false);
+        addToggleAnimationButtonIcon("DetectorId", DetectorData.Text.class, "/icons/Id24.png", "Show/hide detector Ids", false,
+                true);
+        addToggleAnimationButtonIcon("Light", TrafficLightData.class, "/icons/TrafficLight24.png", "Show/hide traffic lights",
+                true, false);
+        addToggleAnimationButtonIcon("LightId", TrafficLightAnimation.Text.class, "/icons/Id24.png",
+                "Show/hide traffic light Ids", false, true);
+        addToggleAnimationButtonIcon("Bus", BusStopData.class, "/icons/BusStop24.png", "Show/hide bus stops", true, false);
+        addToggleAnimationButtonIcon("BusId", BusStopAnimation.Text.class, "/icons/Id24.png", "Show/hide bus stops Ids", false,
+                true);
+    }
+
+    /**
+     * Add a button for toggling an animatable class on or off. Button icons for which 'idButton' is true will be placed to the
+     * right of the previous button, which should be the corresponding button without the id. An example is an icon for
+     * showing/hiding the class 'Lane' followed by the button to show/hide the Lane ids.
+     * @param name String; the name of the button
+     * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the button holds (e.g., GTU.class)
+     * @param iconPath String; the path to the 24x24 icon to display
+     * @param toolTipText String; the tool tip text to show when hovering over the button
+     * @param initiallyVisible boolean; whether the class is initially shown or not
+     * @param idButton boolean; id button that needs to be placed next to the previous button
+     */
+    public final void addToggleAnimationButtonIcon(final String name, final Class<? extends Locatable> locatableClass,
+            final String iconPath, final String toolTipText, final boolean initiallyVisible, final boolean idButton)
+    {
+        JToggleButton button;
+        Icon icon = OtsControlPanel.loadIcon(iconPath);
+        Icon unIcon = OtsControlPanel.loadGrayscaleIcon(iconPath);
+        button = new JCheckBox();
+        button.setSelectedIcon(icon);
+        button.setIcon(unIcon);
+        button.setPreferredSize(new Dimension(32, 28));
+        button.setName(name);
+        button.setEnabled(true);
+        button.setSelected(initiallyVisible);
+        button.setActionCommand(name);
+        button.setToolTipText(toolTipText);
+        button.addActionListener(new ActionListener()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public void actionPerformed(final ActionEvent e)
+            {
+                String actionCommand = e.getActionCommand();
+                if (EditorMap.this.toggleLocatableMap.containsKey(actionCommand))
+                {
+                    Class<? extends Locatable> locatableClass = EditorMap.this.toggleLocatableMap.get(actionCommand);
+                    EditorMap.this.animationPanel.toggleClass(locatableClass);
+                    EditorMap.this.togglePanel.repaint();
+                }
+            }
+        });
+
+        // place an Id button to the right of the corresponding content button
+        if (idButton && this.togglePanel.getComponentCount() > 0)
+        {
+            JPanel lastToggleBox = (JPanel) this.togglePanel.getComponent(this.togglePanel.getComponentCount() - 1);
+            lastToggleBox.add(button);
+        }
+        else
+        {
+            JPanel toggleBox = new JPanel();
+            toggleBox.setLayout(new BoxLayout(toggleBox, BoxLayout.X_AXIS));
+            toggleBox.add(button);
+            this.togglePanel.add(toggleBox);
+            toggleBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+        }
+
+        if (initiallyVisible)
+        {
+            this.animationPanel.showClass(locatableClass);
+        }
+        else
+        {
+            this.animationPanel.hideClass(locatableClass);
+        }
+        this.toggleLocatableMap.put(name, locatableClass);
     }
 
     /**
@@ -599,7 +719,7 @@ public class EditorMap extends JPanel implements EventListener
     {
         if (animation != null)
         {
-            this.drawPanel.objectRemoved(animation);
+            this.animationPanel.objectRemoved(animation);
             animation.destroy(this.contextualized);
         }
     }
