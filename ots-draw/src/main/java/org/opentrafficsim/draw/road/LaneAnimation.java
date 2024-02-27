@@ -126,7 +126,7 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
 
         /** {@inheritDoc} */
         @Override
-        public final OtsBounds2d getOtsBounds()
+        public final OtsBounds2d getBounds()
         {
             return ClickableBounds.get(this.bounds);
         }

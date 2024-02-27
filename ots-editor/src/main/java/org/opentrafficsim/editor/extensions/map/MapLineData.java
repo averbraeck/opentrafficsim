@@ -111,7 +111,7 @@ public abstract class MapLineData extends MapData implements LaneBasedObjectData
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getOtsBounds()
+    public OtsBounds2d getBounds()
     {
         return this.bounds;
     }

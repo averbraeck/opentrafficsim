@@ -215,7 +215,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /** {@inheritDoc} */
     @Override
-    public final OtsBounds2d getOtsBounds()
+    public final OtsBounds2d getBounds()
     {
         return new BoundingCircle(1.0);
     }

@@ -38,7 +38,7 @@ public class AnimationGtuGeneratorPositionData implements GtuGeneratorPositionDa
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getOtsBounds()
+    public OtsBounds2d getBounds()
     {
         return ClickableBounds.get(this.position.getBounds());
     }

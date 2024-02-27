@@ -53,7 +53,7 @@ public class CrossSectionElementAnimation<L extends CrossSectionElementData> ext
     {
         super(source, contextualized);
         this.color = color;
-        this.paths = PaintPolygons.getPaths(getSource().getOtsBounds().asPolygon().getPointList());
+        this.paths = PaintPolygons.getPaths(getSource().getBounds().asPolygon().getPointList());
     }
 
     /** {@inheritDoc} */

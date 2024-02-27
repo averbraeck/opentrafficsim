@@ -49,9 +49,9 @@ public class AnimationGtuData implements GtuData
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getOtsBounds()
+    public OtsBounds2d getBounds()
     {
-        return this.gtu.getOtsBounds();
+        return this.gtu.getBounds();
     }
 
     /** {@inheritDoc} */

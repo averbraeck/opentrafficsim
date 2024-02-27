@@ -31,9 +31,9 @@ public class AnimationNodeData implements NodeData
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getOtsBounds()
+    public OtsBounds2d getBounds()
     {
-        return ClickableBounds.get(this.node.getOtsBounds());
+        return ClickableBounds.get(this.node.getBounds());
     }
 
     /** {@inheritDoc} */

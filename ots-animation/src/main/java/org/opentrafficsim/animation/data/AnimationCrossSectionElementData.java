@@ -37,9 +37,9 @@ public class AnimationCrossSectionElementData<T extends CrossSectionElement> imp
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getOtsBounds()
+    public OtsBounds2d getBounds()
     {
-        return this.element.getOtsBounds();
+        return this.element.getBounds();
     }
 
     /** {@inheritDoc} */

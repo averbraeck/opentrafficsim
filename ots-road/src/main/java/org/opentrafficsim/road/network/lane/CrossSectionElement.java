@@ -277,7 +277,7 @@ public abstract class CrossSectionElement extends LocalEventProducer
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public OtsBounds2d getOtsBounds()
+    public OtsBounds2d getBounds()
     {
         return this.bounds;
     }

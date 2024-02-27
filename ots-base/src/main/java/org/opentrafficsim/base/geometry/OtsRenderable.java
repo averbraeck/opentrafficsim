@@ -39,7 +39,7 @@ public abstract class OtsRenderable<L extends OtsLocatable> extends Renderable2d
     {
         Transform2d transformation = toBoundsTransform(getSource().getLocation());
         Point2d pointObjectCoordinates = transformation.transform(pointWorldCoordinates);
-        return getSource().getOtsBounds().contains(pointObjectCoordinates);
+        return getSource().getBounds().contains(pointObjectCoordinates);
     }
 
     /**

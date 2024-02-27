@@ -59,7 +59,7 @@ public class LaneStructureLocatable implements OtsLocatable
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getOtsBounds()
+    public OtsBounds2d getBounds()
     {
         return new BoundingBox(1000000, 1000000);
     }

@@ -334,7 +334,7 @@ public class Gtu extends LocalEventProducer
 
     /** {@inheritDoc} */
     @Override
-    public final OtsBounds2d getOtsBounds()
+    public final OtsBounds2d getBounds()
     {
         // TODO: inconsistent with reference point, this is just half width/length
         return this.bounds;

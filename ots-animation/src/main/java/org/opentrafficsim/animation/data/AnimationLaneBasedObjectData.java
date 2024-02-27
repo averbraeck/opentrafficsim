@@ -47,7 +47,7 @@ public abstract class AnimationLaneBasedObjectData<T extends LaneBasedObject> im
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getOtsBounds()
+    public OtsBounds2d getBounds()
     {
         return ClickableBounds.get(this.laneBasedObject.getBounds());
     }

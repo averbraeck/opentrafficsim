@@ -38,9 +38,9 @@ public class AnimationSpeedSignData implements SpeedSignData
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getOtsBounds()
+    public OtsBounds2d getBounds()
     {
-        return this.speedSign.getOtsBounds();
+        return this.speedSign.getBounds();
     }
 
     /** {@inheritDoc} */

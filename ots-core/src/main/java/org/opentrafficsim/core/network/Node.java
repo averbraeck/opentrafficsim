@@ -404,7 +404,7 @@ public class Node
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public OtsBounds2d getOtsBounds()
+    public OtsBounds2d getBounds()
     {
         return new BoundingCircle(1.0);
     }

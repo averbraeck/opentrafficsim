@@ -54,7 +54,7 @@ public class MapCrossSectionData implements CrossSectionElementData
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getOtsBounds()
+    public OtsBounds2d getBounds()
     {
         return this.contour;
     }
