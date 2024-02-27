@@ -5,7 +5,9 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -257,7 +259,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
                 scaledFontRectangle = fm.getStringBounds(str, graphics);
             }
             Color useColor = this.color;
-            if (null != this.background && useColor.equals(this.background.getBackgroundColor()))
+            if (null != this.background && isSimilar(useColor, this.background.getBackgroundColor()))
             {
                 // Construct an alternative color
                 if (Color.BLACK.equals(useColor))
@@ -269,15 +271,46 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
                     useColor = Color.BLACK;
                 }
             }
-            graphics.setColor(useColor);
+
             float dxText =
                     this.textAlignment.equals(TextAlignment.LEFT) ? 0.0f : this.textAlignment.equals(TextAlignment.CENTER)
                             ? (float) -scaledFontRectangle.getWidth() / 2.0f : (float) -scaledFontRectangle.getWidth();
             Object antialias = graphics.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
             graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            if (null != this.background)
+            {
+                // Draw transparent rectangle with background color to makes sure all of the text is visible, even when it is
+                // drawn outside of the bounds of the object that supplies the background color, or on parts of the object that
+                // have a different color (e.g. driver dot, brake lights, etc.).
+                double r = scaledFontRectangle.getHeight() / 2.0; // rounding
+                double dh = scaledFontRectangle.getHeight() / 5.0; // baseline shift
+                Shape s = new RoundRectangle2D.Double(this.dx - scaledFontRectangle.getWidth() - dxText,
+                        this.dy + dh - scaledFontRectangle.getHeight(), scaledFontRectangle.getWidth(),
+                        scaledFontRectangle.getHeight(), r, r);
+                Color bg = this.background.getBackgroundColor();
+                graphics.setColor(new Color(bg.getRed(), bg.getGreen(), bg.getBlue(), 92));
+                graphics.fill(s);
+            }
+            graphics.setColor(useColor);
             graphics.drawString(str, dxText + this.dx, -this.dy);
+
             graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antialias);
         }
+    }
+
+    /**
+     * Returns whether two colors are similar.
+     * @param color1 Color; color 1.
+     * @param color2 Color; color 2.
+     * @return boolean; whether two colors are similar.
+     */
+    private boolean isSimilar(final Color color1, final Color color2)
+    {
+        int r = color1.getRed() - color2.getRed();
+        int g = color1.getGreen() - color2.getGreen();
+        int b = color1.getBlue() - color2.getBlue();
+        return r * r + g * g + b * b < 2000;
+        // this threshold may need to be tweaked, it used to be color.equals(color) which is too narrow
     }
 
     /**
