@@ -142,7 +142,7 @@ public final class IconWriter
     {
         if (saveFile != null)
         {
-            File f = new File("..\\ots-core\\src\\main\\resources\\" + saveFile);
+            File f = new File("..\\ots-swing\\src\\main\\resources\\" + saveFile);
             ImageIO.write(image, "png", f);
         }
         BufferedImage imageOut = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);

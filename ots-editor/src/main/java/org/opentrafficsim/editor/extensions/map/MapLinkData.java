@@ -539,7 +539,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         this.flattenedDesignLine = this.designLine.flatten(getFlattener());
         Ray2d ray = this.flattenedDesignLine.getLocationFractionExtended(0.5);
         this.location = new OrientedPoint2d(ray.x, ray.y, ray.phi);
-        this.bounds = BoundingPolygon.geometryToBounds(this.location, ClickableBounds.get(this.flattenedDesignLine).asPolygon());
+        this.bounds =
+                BoundingPolygon.geometryToBounds(this.location, ClickableBounds.get(this.flattenedDesignLine).asPolygon());
         buildLayout();
         setValid();
     }
@@ -704,7 +705,15 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
      */
     private <T> T orNull(final String value, final ExpressionAdapter<T, ?> adapter)
     {
-        return value == null ? null : adapter.unmarshal(value).get(getEval());
+        try
+        {
+            return value == null ? null : adapter.unmarshal(value).get(getEval());
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // illegal value for adapter
+            return null;
+        }
     }
 
     /**

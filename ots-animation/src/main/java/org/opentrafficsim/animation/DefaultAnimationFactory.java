@@ -161,12 +161,12 @@ public class DefaultAnimationFactory implements EventListener
                             else if (element instanceof Shoulder)
                             {
                                 Shoulder shoulder = (Shoulder) element;
-                                new CrossSectionElementAnimation(new AnimationShoulderData(shoulder), this.simulator,
+                                new CrossSectionElementAnimation<>(new AnimationShoulderData(shoulder), this.simulator,
                                         Color.DARK_GRAY);
                             }
                             else
                             {
-                                new CrossSectionElementAnimation(new AnimationCrossSectionElementData<>(element),
+                                new CrossSectionElementAnimation<>(new AnimationCrossSectionElementData<>(element),
                                         this.simulator, Color.DARK_GRAY);
                             }
                         }

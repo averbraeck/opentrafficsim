@@ -49,10 +49,6 @@ public class FlattenerListener extends ChangeListener<Flattener>
             {
                 return null;
             }
-            if (getNode().getChild(0).getNodeName().equals("NumSegments"))
-            {
-                return new NumSegments(Adapters.get(Integer.class).unmarshal(getNode().getChild(0).getValue()).get(getEval()));
-            }
             if (getNode().getChild(0).getChild(0).isActive())
             {
                 if (getNode().getChild(0).getChild(1).isActive())
