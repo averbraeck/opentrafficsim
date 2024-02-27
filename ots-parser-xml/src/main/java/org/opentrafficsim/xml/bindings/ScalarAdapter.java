@@ -11,7 +11,7 @@ import org.opentrafficsim.xml.bindings.types.ExpressionType;
  * BSD-style license. See <a href="https://djunits.org/docs/license.html">DJUNITS License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <S> unit type
  * @param <E> expression type
  */

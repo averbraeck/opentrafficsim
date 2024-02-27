@@ -9,7 +9,7 @@ import java.io.Serializable;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class ParameterTypeBoolean extends ParameterType<Boolean> implements Serializable
 {

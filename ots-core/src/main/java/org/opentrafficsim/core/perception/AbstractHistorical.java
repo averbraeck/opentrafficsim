@@ -38,7 +38,7 @@ import org.opentrafficsim.core.perception.HistoryManager.HistoricalElement;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <T> value type
  * @param <E> event type
  */
@@ -171,7 +171,7 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     interface Event
     {
@@ -193,7 +193,7 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      * @param <T> value type
      */
     public static class EventValue<T> implements Event

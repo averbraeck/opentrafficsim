@@ -42,7 +42,7 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class ContourDataSource
 {
@@ -968,7 +968,7 @@ public class ContourDataSource
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public enum Dimension
     {
@@ -1011,7 +1011,7 @@ public class ContourDataSource
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     static class Axis
     {
@@ -1182,7 +1182,7 @@ public class ContourDataSource
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      * @param <Z> value type
      * @param <I> intermediate data type
      */

@@ -45,7 +45,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * for project information <a href="https://djutils.org" target="_blank"> https://djutils.org</a>. The DJUTILS project is
  * distributed under a three-clause BSD-style license, which can be found at
  * <a href="https://djutils.org/docs/license.html" target="_blank"> https://djutils.org/docs/license.html</a>. <br>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class LaneChangeInfoTest
 {

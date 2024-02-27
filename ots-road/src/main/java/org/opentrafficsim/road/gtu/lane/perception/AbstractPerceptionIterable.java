@@ -27,7 +27,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <H> headway type
  * @param <U> underlying object type
  * @param <C> counter type
@@ -135,7 +135,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private class PrimaryIterator implements Iterator<PrimaryIteratorEntry>
     {
@@ -366,7 +366,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     protected class Entry
     {

@@ -24,7 +24,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class AccPerception extends LaneBasedAbstractPerceptionCategory implements LongitudinalControllerPerception
 {
@@ -101,7 +101,7 @@ public class AccPerception extends LaneBasedAbstractPerceptionCategory implement
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private static class DownstreamNeighboursIterableACC extends DownstreamNeighborsIterable
     {

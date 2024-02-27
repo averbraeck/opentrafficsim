@@ -10,7 +10,7 @@ import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
  * <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class AnimationLaneDetectorData extends AnimationLaneBasedObjectData<LaneDetector> implements LaneDetectorData
 {

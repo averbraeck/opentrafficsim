@@ -46,7 +46,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <T> type of demand category, typically a Category in an OdMatrix or a GtuType
  */
 public abstract class Platoons<T>
@@ -367,7 +367,7 @@ public abstract class Platoons<T>
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      * @param <K> type of demand category, typically a Category in an OdMatrix or a GtuType
      */
     private static class PlatoonGtu<K> implements Comparable<PlatoonGtu<K>>

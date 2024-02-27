@@ -12,7 +12,7 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class PositiveLengthAdapter extends ScalarAdapter<Length, LengthType>
 {

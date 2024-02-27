@@ -13,7 +13,7 @@ import org.djutils.base.Identifiable;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <L> lane data type
  */
 public interface LinkData<L extends LaneData<L>> extends Identifiable

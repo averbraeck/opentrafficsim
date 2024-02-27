@@ -14,7 +14,7 @@ import org.opentrafficsim.base.parameters.constraint.Constraint;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <T> Type of the value.
  */
 public class ParameterType<T> implements Serializable, Identifiable, Type<ParameterType<T>>

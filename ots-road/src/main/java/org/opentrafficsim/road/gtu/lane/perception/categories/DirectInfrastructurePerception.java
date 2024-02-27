@@ -40,7 +40,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 // TODO: more than the lane speed limit and maximum vehicle speed in the speed limit prospect
 public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionCategory implements InfrastructurePerception
@@ -616,7 +616,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private class LaneChangePossibility
     {

@@ -27,7 +27,7 @@ import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <S> underlying type of path sections
  */
 public class GraphPath<S> extends AbstractGraphSpace<S>
@@ -226,7 +226,7 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      * @param <L> underlying type
      */
     public static class Section<L> implements Iterable<L>

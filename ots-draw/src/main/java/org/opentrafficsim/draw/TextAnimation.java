@@ -35,7 +35,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <L> locatable type
  * @param <T> text animation type
  */
@@ -512,7 +512,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private static class AnimationImpl extends Renderable2d<TextAnimation<?, ?>>
     {

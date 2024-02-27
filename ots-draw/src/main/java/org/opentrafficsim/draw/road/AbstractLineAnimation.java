@@ -25,7 +25,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <T> the LaneBasedObject class of the source that indicates the location of the Renderable on the screen
  */
 public abstract class AbstractLineAnimation<T extends LaneBasedObjectData> extends OtsRenderable<T>
@@ -83,7 +83,7 @@ public abstract class AbstractLineAnimation<T extends LaneBasedObjectData> exten
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public interface LaneBasedObjectData extends OtsLocatable, Identifiable
     {

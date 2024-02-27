@@ -43,7 +43,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class LaneChange implements Serializable
 {
@@ -527,7 +527,7 @@ public class LaneChange implements Serializable
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public interface LaneChangePath
     {
@@ -630,7 +630,7 @@ public class LaneChange implements Serializable
          * <p>
          * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
          * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-         * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+         * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
          */
         abstract class SequentialLaneChangePath implements LaneChangePath
         {
@@ -718,7 +718,7 @@ public class LaneChange implements Serializable
          * <p>
          * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
          * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-         * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+         * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
          */
         abstract class InterpolatedLaneChangePath implements LaneChangePath
         {

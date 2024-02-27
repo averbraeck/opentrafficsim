@@ -33,7 +33,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
 {
@@ -202,7 +202,7 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public class Text extends TextAnimation<LaneData, Text>
     {
@@ -243,7 +243,7 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public interface LaneData extends CrossSectionElementData, Identifiable
     {

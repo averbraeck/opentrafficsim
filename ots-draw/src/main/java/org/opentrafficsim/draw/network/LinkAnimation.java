@@ -30,7 +30,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class LinkAnimation extends OtsRenderable<LinkData>
 {
@@ -162,7 +162,7 @@ public class LinkAnimation extends OtsRenderable<LinkData>
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public class Text extends TextAnimation<LinkData, Text>
     {
@@ -203,7 +203,7 @@ public class LinkAnimation extends OtsRenderable<LinkData>
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public interface LinkData extends OtsLocatable, Identifiable
     {

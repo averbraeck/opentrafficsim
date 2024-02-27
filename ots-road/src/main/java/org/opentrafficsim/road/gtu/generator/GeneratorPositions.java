@@ -40,7 +40,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public interface GeneratorPositions
 {
@@ -201,7 +201,7 @@ public interface GeneratorPositions
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     final class GeneratorLanePosition
     {
@@ -319,7 +319,7 @@ public interface GeneratorPositions
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     final class GeneratorLinkPosition
     {
@@ -523,7 +523,7 @@ public interface GeneratorPositions
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     final class GeneratorZonePosition
     {
@@ -613,7 +613,7 @@ public interface GeneratorPositions
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     final class LaneBiases
     {
@@ -673,7 +673,7 @@ public interface GeneratorPositions
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     final class LaneBias
     {
@@ -875,7 +875,7 @@ public interface GeneratorPositions
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public interface RoadPosition
     {
@@ -896,7 +896,7 @@ public interface GeneratorPositions
          * <p>
          * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
          * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-         * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+         * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
          */
         class ByValue implements RoadPosition
         {
@@ -969,7 +969,7 @@ public interface GeneratorPositions
          * <p>
          * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
          * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-         * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+         * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
          */
         class BySpeed implements RoadPosition
         {

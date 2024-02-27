@@ -13,7 +13,7 @@ import org.opentrafficsim.base.Type;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <T> Class of speed info that is linked to the speed limit type.
  */
 public class SpeedLimitType<T> implements Serializable, Identifiable, Type<SpeedLimitType<T>>

@@ -8,7 +8,7 @@ package org.opentrafficsim.core.distributions;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <O> type of the object returned by the draw method
  */
 public class ConstantGenerator<O> implements Generator<O>

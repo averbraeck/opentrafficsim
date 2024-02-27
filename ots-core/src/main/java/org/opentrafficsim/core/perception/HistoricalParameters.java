@@ -16,7 +16,7 @@ import org.opentrafficsim.core.perception.HistoricalParameters.ParameterValueSet
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, ParameterEvent> implements Parameters
 {
@@ -120,7 +120,7 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public static class ParameterValueSet
     {
@@ -176,7 +176,7 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public static class ParameterEvent extends AbstractHistorical.EventValue<ParameterValueSet> // import is removed
     {

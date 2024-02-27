@@ -49,7 +49,7 @@ import picocli.CommandLine.Option;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 @Command(description = "Test program for CLI", name = "Program", mixinStandardHelpOptions = true, showDefaultValues = true)
 public abstract class AbstractSimulationScript implements EventListener, Checkable
@@ -363,7 +363,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private class ScriptModel extends AbstractOtsModel
     {

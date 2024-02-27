@@ -12,7 +12,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class LaneChangeInfo implements Comparable<LaneChangeInfo>
 {

@@ -56,7 +56,7 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public final class Conflict extends AbstractLaneBasedObject implements EventListener
 {
@@ -487,7 +487,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public class ConflictEnd extends AbstractLaneBasedObject
     {
@@ -552,7 +552,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private class ConflictGtu extends HeadwayGtuReal
     {
@@ -600,7 +600,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private class ConflictGtuType implements HeadwayGtuType
     {
@@ -654,7 +654,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private class OverlapHeadway implements HeadwayGtuType
     {
@@ -733,7 +733,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private class ConflictGtuIterable extends AbstractPerceptionReiterable<HeadwayGtu, LaneBasedGtu>
     {

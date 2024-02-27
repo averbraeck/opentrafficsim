@@ -15,7 +15,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Incentive;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class IncentiveColorer extends DesireColorer
 {
