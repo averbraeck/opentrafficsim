@@ -249,7 +249,8 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         this.autoPanTrack = newAutoPanTrack;
         this.autoPanOnNextPaintComponent = true;
         // System.out.println("AutoPan id=" + newAutoPanId + ", kind=" + newAutoPanKind + ", track=" + newAutoPanTrack);
-        if (null != this.autoPanId && this.autoPanId.length() > 0 && null != this.autoPanKind)
+        if (null != this.autoPanId && null != OtsAnimationPanel.this.animationPanel && this.autoPanId.length() > 0
+                && null != this.autoPanKind)
         {
             OtsAnimationPanel.this.animationPanel.repaint();
         }

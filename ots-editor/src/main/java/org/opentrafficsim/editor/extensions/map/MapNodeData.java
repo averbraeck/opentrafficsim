@@ -3,13 +3,12 @@ package org.opentrafficsim.editor.extensions.map;
 import java.rmi.RemoteException;
 
 import org.djunits.value.vdouble.scalar.Direction;
-import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.reference.ReferenceType;
-import org.opentrafficsim.base.geometry.ClickableBounds;
+import org.opentrafficsim.base.geometry.BoundingCircle;
 import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
 import org.opentrafficsim.editor.OtsEditor;
@@ -31,7 +30,7 @@ public class MapNodeData extends MapData implements NodeData, EventListener
     private static final long serialVersionUID = 20231003L;
 
     /** Bounds. */
-    private static final OtsBounds2d BOUNDS = ClickableBounds.get(new Bounds2d(0.0, 0.0));
+    private static final OtsBounds2d BOUNDS = new BoundingCircle(1.0);
 
     /** String attribute. */
     private String id = "";

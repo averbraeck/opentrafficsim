@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -15,11 +16,18 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import javax.naming.NamingException;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.ButtonModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 
 import org.djutils.draw.bounds.Bounds2d;
@@ -47,6 +55,9 @@ import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
+import org.opentrafficsim.swing.gui.AppearanceControlComboBox;
+import org.opentrafficsim.swing.gui.AppearanceControlTextField;
+import org.opentrafficsim.swing.gui.GhostText;
 import org.opentrafficsim.swing.gui.OtsControlPanel;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -108,6 +119,9 @@ public class EditorMap extends JPanel implements EventListener
     /** Animation objects of all data's drawn. */
     private final LinkedHashMap<XsdTreeNode, Renderable2d<?>> animations = new LinkedHashMap<>();
 
+    /** Whether we can ignore maintaining the scale. */
+    private boolean ignoreKeepScale = false;
+
     /** Last x-scale. */
     private Double lastXScale = null;
 
@@ -151,6 +165,19 @@ public class EditorMap extends JPanel implements EventListener
                 }
                 super.setExtent(extent);
             }
+
+            /** {@inheritDoc} */
+            @Override
+            public synchronized void zoomAll()
+            {
+                Bounds2d extent = EditorMap.this.animationPanel.fullExtent();
+                if (Double.isFinite(extent.getMaxX())) // else there are no objects
+                {
+                    EditorMap.this.ignoreKeepScale = true;
+                    super.zoomAll();
+                    EditorMap.this.ignoreKeepScale = false;
+                }
+            }
         };
         this.animationPanel.setBackground(Color.GRAY);
         this.animationPanel.setShowToolTip(false);
@@ -161,6 +188,10 @@ public class EditorMap extends JPanel implements EventListener
             @Override
             public Bounds2d computeVisibleExtent(final Bounds2d extent, final Dimension screen)
             {
+                if (EditorMap.this.ignoreKeepScale)
+                {
+                    return super.computeVisibleExtent(extent, screen);
+                }
                 // overridden to preserve zoom scale, otherwise dragging the split screen may pump up the zoom factor
                 double xScale = getXScale(extent, screen);
                 double yScale = getYScale(extent, screen);
@@ -198,16 +229,163 @@ public class EditorMap extends JPanel implements EventListener
         add(this.animationPanel, BorderLayout.CENTER);
 
         this.toolPanel = new JPanel();
-        this.toolPanel.setBackground(BAR_COLOR);
-        this.toolPanel.add(new JLabel("tools")); // TODO: temporary while empty
-        this.toolPanel.setLayout(new BoxLayout(this.toolPanel, BoxLayout.X_AXIS));
-        add(this.toolPanel, BorderLayout.NORTH);
+        setupTools();
 
         this.togglePanel = new JPanel();
         this.togglePanel.setBackground(BAR_COLOR);
         setAnimationToggles();
         this.togglePanel.setLayout(new BoxLayout(this.togglePanel, BoxLayout.Y_AXIS));
         add(this.togglePanel, BorderLayout.WEST);
+    }
+
+    /**
+     * Sets up all the tool in the tool panel on top.
+     */
+    private void setupTools()
+    {
+        this.toolPanel.setBackground(BAR_COLOR);
+        this.toolPanel.setMinimumSize(new Dimension(350, 28));
+        this.toolPanel.setPreferredSize(new Dimension(350, 28));
+
+        this.toolPanel.add(Box.createHorizontalStrut(5));
+        this.toolPanel.add(new JLabel("Add tools:"));
+
+        this.toolPanel.add(Box.createHorizontalStrut(5));
+        // button group that allows no selection when toggling the currently selected
+        ButtonGroup group = new ButtonGroup()
+        {
+            /** */
+            private static final long serialVersionUID = 20240227L;
+
+            /** {@inheritDoc} */
+            @Override
+            public void setSelected(final ButtonModel model, final boolean selected)
+            {
+                if (selected)
+                {
+                    super.setSelected(model, selected);
+                }
+                else
+                {
+                    clearSelection();
+                }
+            }
+        };
+
+        JToggleButton nodeButton = new JToggleButton(loadIcon("./OTS_node.png"));
+        nodeButton.setPreferredSize(new Dimension(24, 24));
+        nodeButton.setMinimumSize(new Dimension(24, 24));
+        nodeButton.setMaximumSize(new Dimension(24, 24));
+        nodeButton.setToolTipText("Add node");
+        group.add(nodeButton);
+        this.toolPanel.add(nodeButton);
+
+        JToggleButton linkButton = new JToggleButton(loadIcon("./OTS_link.png"));
+        linkButton.setPreferredSize(new Dimension(24, 24));
+        linkButton.setMinimumSize(new Dimension(24, 24));
+        linkButton.setMaximumSize(new Dimension(24, 24));
+        linkButton.setToolTipText("Add link");
+        group.add(linkButton);
+        this.toolPanel.add(linkButton);
+
+        JToggleButton centroidButton = new JToggleButton(loadIcon("./OTS_centroid.png"));
+        centroidButton.setPreferredSize(new Dimension(24, 24));
+        centroidButton.setMinimumSize(new Dimension(24, 24));
+        centroidButton.setMaximumSize(new Dimension(24, 24));
+        centroidButton.setToolTipText("Add centroid");
+        group.add(centroidButton);
+        this.toolPanel.add(centroidButton);
+
+        JToggleButton connectorButton = new JToggleButton(loadIcon("./OTS_connector.png"));
+        connectorButton.setPreferredSize(new Dimension(24, 24));
+        connectorButton.setMinimumSize(new Dimension(24, 24));
+        connectorButton.setMaximumSize(new Dimension(24, 24));
+        connectorButton.setToolTipText("Add connector");
+        group.add(connectorButton);
+        this.toolPanel.add(connectorButton);
+
+        this.toolPanel.add(Box.createHorizontalStrut(5));
+        JComboBox<String> shape = new AppearanceControlComboBox<>();
+        shape.setModel(new DefaultComboBoxModel<>(new String[] {"Straight", "Bezier", "Clothoid", "Arc", "PolyLine"}));
+        shape.setMinimumSize(new Dimension(50, 22));
+        shape.setMaximumSize(new Dimension(90, 22));
+        shape.setPreferredSize(new Dimension(90, 22));
+        shape.setToolTipText("Standard shape for new links");
+        this.toolPanel.add(shape);
+
+        this.toolPanel.add(Box.createHorizontalStrut(5));
+        JComboBox<String> roadLayout = new AppearanceControlComboBox<>();
+        roadLayout.setModel(new DefaultComboBoxModel<>(new String[] {}));
+        roadLayout.setMinimumSize(new Dimension(50, 22));
+        roadLayout.setMaximumSize(new Dimension(125, 22));
+        roadLayout.setPreferredSize(new Dimension(125, 22));
+        roadLayout.setToolTipText("Standard defined road layout for new links");
+        roadLayout.setEnabled(false);
+        this.toolPanel.add(roadLayout);
+
+        this.toolPanel.add(Box.createHorizontalStrut(5));
+        JComboBox<String> linkType = new AppearanceControlComboBox<>();
+        linkType.setModel(new DefaultComboBoxModel<>(new String[] {}));
+        linkType.setMinimumSize(new Dimension(50, 22));
+        linkType.setMaximumSize(new Dimension(125, 22));
+        linkType.setPreferredSize(new Dimension(125, 22));
+        linkType.setToolTipText("Standard link type for new links and connectors");
+        linkType.setEnabled(false);
+        this.toolPanel.add(linkType);
+
+        this.toolPanel.add(Box.createHorizontalStrut(5));
+        this.toolPanel.add(new JLabel("Show:"));
+
+        this.toolPanel.add(Box.createHorizontalStrut(5));
+        JButton extent = new JButton(loadIcon("./Expand.png"));
+        extent.setMinimumSize(new Dimension(24, 24));
+        extent.setMaximumSize(new Dimension(24, 24));
+        extent.setPreferredSize(new Dimension(24, 24));
+        extent.setToolTipText("Zoom whole network");
+        extent.addActionListener((e) -> this.animationPanel.zoomAll());
+        this.toolPanel.add(extent);
+
+        JButton grid = new JButton(loadIcon("./Grid.png"));
+        grid.setMinimumSize(new Dimension(24, 24));
+        grid.setMaximumSize(new Dimension(24, 24));
+        grid.setPreferredSize(new Dimension(24, 24));
+        grid.setToolTipText("Toggle grid on/off");
+        grid.addActionListener((e) -> this.animationPanel.setShowGrid(!this.animationPanel.isShowGrid()));
+        this.toolPanel.add(grid);
+
+        this.toolPanel.add(Box.createHorizontalStrut(5));
+
+        JTextField id = new AppearanceControlTextField();
+        id.setMinimumSize(new Dimension(50, 22));
+        id.setMaximumSize(new Dimension(75, 22));
+        id.setPreferredSize(new Dimension(75, 22));
+        id.setToolTipText("Go to item with id");
+        new GhostText(id, "Id...").setGhostColor(Color.GRAY);
+        this.toolPanel.add(id);
+
+        this.toolPanel.add(Box.createHorizontalStrut(5));
+
+        this.toolPanel.setLayout(new BoxLayout(this.toolPanel, BoxLayout.X_AXIS));
+
+        add(this.toolPanel, BorderLayout.NORTH);
+    }
+
+    /**
+     * Loads an icon from the given file. Returns {@code null} if the file can not be found.
+     * @param file String; file.
+     * @return Icon; icon.
+     */
+    private Icon loadIcon(final String file)
+    {
+        try
+        {
+            return OtsEditor.loadIcon(file, 16, 16, -1, -1);
+        }
+        catch (IOException ioe)
+        {
+            // skip loading icon
+            return null;
+        }
     }
 
     /**

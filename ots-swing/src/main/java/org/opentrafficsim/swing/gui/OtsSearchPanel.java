@@ -1,5 +1,6 @@
 package org.opentrafficsim.swing.gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -87,33 +88,6 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
         this.add(this.typeToSearch);
 
         /** Text field with appearance control. */
-        class AppearanceControlTextField extends JTextField implements AppearanceControl
-        {
-            /** */
-            private static final long serialVersionUID = 20180207L;
-
-            /** {@inheritDoc} */
-            @Override
-            public boolean isForeground()
-            {
-                return false;
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public boolean isBackground()
-            {
-                return false;
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public String toString()
-            {
-                return "AppearanceControlLabel []";
-            }
-        }
-
         this.idTextField = new AppearanceControlTextField();
         this.idTextField.setPreferredSize(new Dimension(100, 0));
         this.add(this.idTextField);
@@ -127,6 +101,7 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
         this.typeToSearch.addActionListener(this);
         this.idTextField.addFocusListener(this);
         this.idTextField.getDocument().addDocumentListener(this);
+        new GhostText(this.idTextField, "Id...").setGhostColor(Color.GRAY);
     }
 
     /**
