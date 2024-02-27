@@ -42,7 +42,7 @@ public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDet
     private final TrafficLightDetectorData detector;
 
     /** Path of the detector. */
-    private final Set<Path2D.Double> paths;
+    private final Set<Path2D.Float> paths;
 
     /** the Text object to destroy when the animation is destroyed. */
     private final Text text;

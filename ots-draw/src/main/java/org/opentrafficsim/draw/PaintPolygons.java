@@ -36,9 +36,9 @@ public final class PaintPolygons
      * Returns drawable paths of a polygon.
      * @param referencePoint Point2d; the reference point
      * @param line List&lt;Point2d&gt;; array of points
-     * @return Set&lt;Path2D.Double&gt;; drawable paths.
+     * @return Set&lt;Path2D.Float&gt;; drawable paths.
      */
-    public static Set<Path2D.Double> getPaths(final Point2d referencePoint, final List<Point2d> line)
+    public static Set<Path2D.Float> getPaths(final Point2d referencePoint, final List<Point2d> line)
     {
         return getPaths(new OrientedPoint2d(referencePoint, 0.0), line);
     }
@@ -47,13 +47,13 @@ public final class PaintPolygons
      * Returns drawable paths of a polygon.
      * @param referencePoint Point2d; the reference point
      * @param line List&lt;Point2d&gt;; array of points
-     * @return Set&lt;Path2D.Double&gt;; drawable paths.
+     * @return Set&lt;Path2D.Float&gt;; drawable paths.
      */
-    public static Set<Path2D.Double> getPaths(final OrientedPoint2d referencePoint, final List<Point2d> line)
+    public static Set<Path2D.Float> getPaths(final OrientedPoint2d referencePoint, final List<Point2d> line)
     {
         Transform2d transform = OtsRenderable.toBoundsTransform(referencePoint);
-        Set<Path2D.Double> paths = new LinkedHashSet<>();
-        Path2D.Double path = new Path2D.Double();
+        Set<Path2D.Float> paths = new LinkedHashSet<>();
+        Path2D.Float path = new Path2D.Float();
         paths.add(path);
         boolean withinPath = false;
         for (Point2d point : line)
@@ -64,7 +64,7 @@ public final class PaintPolygons
                 {
                     path.closePath();
                 }
-                path = new Path2D.Double();
+                path = new Path2D.Float();
                 paths.add(path);
                 withinPath = false;
             }
@@ -90,9 +90,9 @@ public final class PaintPolygons
     /**
      * Returns drawable paths of a polygon.
      * @param line List&lt;Point2d&gt;; array of points
-     * @return Set&lt;Path2D.Double&gt;; drawable paths.
+     * @return Set&lt;Path2D.Float&gt;; drawable paths.
      */
-    public static Set<Path2D.Double> getPaths(final List<Point2d> line)
+    public static Set<Path2D.Float> getPaths(final List<Point2d> line)
     {
         return getPaths(new OrientedPoint2d(0.0, 0.0), line);
     }
@@ -101,14 +101,14 @@ public final class PaintPolygons
      * Paint (fill) a polygon or a series of polygons.
      * @param graphics Graphics2D; the graphics environment
      * @param color Color; the color to use
-     * @param paths Set&lt;Path2D.Double&gt;; drawable paths.
+     * @param paths Set&lt;Path2D.Float&gt;; drawable paths.
      * @param fill boolean; fill or just contour
      */
-    public static void paintPaths(final Graphics2D graphics, final Color color, final Set<Path2D.Double> paths,
+    public static void paintPaths(final Graphics2D graphics, final Color color, final Set<Path2D.Float> paths,
             final boolean fill)
     {
         graphics.setColor(color);
-        for (Path2D.Double path : paths)
+        for (Path2D.Float path : paths)
         {
             if (fill)
             {

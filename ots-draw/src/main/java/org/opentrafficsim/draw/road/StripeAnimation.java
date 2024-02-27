@@ -40,7 +40,7 @@ public class StripeAnimation extends OtsRenderable<StripeData>
     private static final long serialVersionUID = 20141017L;
 
     /** Drawable paths. */
-    private final Set<Path2D.Double> paths;
+    private final Set<Path2D.Float> paths;
 
     /**
      * @param source StripeData; stripe data

@@ -38,7 +38,7 @@ public class ConflictAnimation extends AbstractLineAnimation<ConflictData>
     private static final long serialVersionUID = 20161207L;
 
     /** Drawable paths. */
-    private final Set<Path2D.Double> paths;
+    private final Set<Path2D.Float> paths;
 
     /**
      * @param source ConflictData; the conflict to draw

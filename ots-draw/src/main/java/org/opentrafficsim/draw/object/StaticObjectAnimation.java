@@ -44,7 +44,7 @@ public class StaticObjectAnimation extends OtsRenderable<StaticObjectData>
     private boolean fill;
 
     /** Drawable paths. */
-    private final Set<Path2D.Double> paths;
+    private final Set<Path2D.Float> paths;
 
     /**
      * @param source StaticObjectData; Static Object

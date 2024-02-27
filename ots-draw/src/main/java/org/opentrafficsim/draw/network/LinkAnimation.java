@@ -44,13 +44,13 @@ public class LinkAnimation extends OtsRenderable<LinkData>
     private Text text;
 
     /** Drawable path. */
-    private Path2D.Double path;
+    private Path2D.Float path;
 
     /** Drawable path for start point. */
-    private Path2D.Double startPoint;
+    private Path2D.Float startPoint;
 
     /** Drawable path for end point. */
-    private Path2D.Double endPoint;
+    private Path2D.Float endPoint;
 
     /** Color. */
     private final Color color;
@@ -123,9 +123,9 @@ public class LinkAnimation extends OtsRenderable<LinkData>
     /**
      * @param endPoint Point2d; the end of the design line where a end point must be highlighted
      * @param nextPoint Point2d; the point nearest <code>endPoint</code> (needed to figure out the direction of the design line)
-     * @return Path2D.Double; path to draw an end point.
+     * @return Path2D.Float; path to draw an end point.
      */
-    private Path2D.Double getEndPoint(final Point2d endPoint, final Point2d nextPoint)
+    private Path2D.Float getEndPoint(final Point2d endPoint, final Point2d nextPoint)
     {
         double dx = nextPoint.x - endPoint.x;
         double dy = nextPoint.y - endPoint.y;

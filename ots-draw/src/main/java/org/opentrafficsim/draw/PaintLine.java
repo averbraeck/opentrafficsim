@@ -32,9 +32,9 @@ public final class PaintLine
     /**
      * Returns drawable path of the line.
      * @param line PolyLine2d; array of points
-     * @return Path2D.Double drawable path.
+     * @return Path2D.Float drawable path.
      */
-    public static Path2D.Double getPath(final PolyLine2d line)
+    public static Path2D.Float getPath(final PolyLine2d line)
     {
         return getPath(new OrientedPoint2d(0.0, 0.0), line);
     }
@@ -43,9 +43,9 @@ public final class PaintLine
      * Returns drawable path of the line.
      * @param referencePoint Point2d; the reference point
      * @param line PolyLine2d; array of points
-     * @return Path2D.Double drawable path.
+     * @return Path2D.Float drawable path.
      */
-    public static Path2D.Double getPath(final Point2d referencePoint, final PolyLine2d line)
+    public static Path2D.Float getPath(final Point2d referencePoint, final PolyLine2d line)
     {
         return getPath(new OrientedPoint2d(referencePoint, 0.0), line);
     }
@@ -54,12 +54,12 @@ public final class PaintLine
      * Returns drawable path of the line.
      * @param referencePoint OrientedPoint2d; the reference point
      * @param line PolyLine2d; array of points
-     * @return Path2D.Double drawable path.
+     * @return Path2D.Float drawable path.
      */
-    public static Path2D.Double getPath(final OrientedPoint2d referencePoint, final PolyLine2d line)
+    public static Path2D.Float getPath(final OrientedPoint2d referencePoint, final PolyLine2d line)
     {
         Transform2d transform = OtsRenderable.toBoundsTransform(referencePoint);
-        Path2D.Double path = new Path2D.Double();
+        Path2D.Float path = new Path2D.Float();
         Point2d p = transform.transform(line.getFirst());
         path.moveTo(p.x, -p.y);
         for (int index = 1; index < line.size(); index++)
@@ -75,9 +75,9 @@ public final class PaintLine
      * @param graphics Graphics2D; the graphics environment
      * @param color Color; the color to use
      * @param width double; the width to use
-     * @param path Path2D.Double; drawable path
+     * @param path Path2D.Float; drawable path
      */
-    public static void paintLine(final Graphics2D graphics, final Color color, final double width, final Path2D.Double path)
+    public static void paintLine(final Graphics2D graphics, final Color color, final double width, final Path2D.Float path)
     {
         graphics.setColor(color);
         Stroke oldStroke = graphics.getStroke();

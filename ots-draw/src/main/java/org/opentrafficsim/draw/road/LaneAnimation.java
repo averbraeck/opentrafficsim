@@ -167,7 +167,7 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         private static final long serialVersionUID = 20180426L;
 
         /** Drawable path. */
-        private final Path2D.Double path;
+        private final Path2D.Float path;
 
         /**
          * Construct a new CenterLineAnimation.

@@ -38,7 +38,7 @@ public class CrossSectionElementAnimation<L extends CrossSectionElementData> ext
     private final Color color;
 
     /** Drawable paths. */
-    private final Set<Path2D.Double> paths;
+    private final Set<Path2D.Float> paths;
 
     /**
      * @param source L; cross section element
