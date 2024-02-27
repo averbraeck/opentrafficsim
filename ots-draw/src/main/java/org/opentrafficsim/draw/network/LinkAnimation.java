@@ -102,9 +102,11 @@ public class LinkAnimation extends OtsRenderable<LinkData>
                 setPath();
             }
         }
+        setRendering(graphics);
         PaintLine.paintLine(graphics, this.color, this.width, this.path);
         PaintLine.paintLine(graphics, this.color, this.width / 30, this.startPoint);
         PaintLine.paintLine(graphics, this.color, this.width / 30, this.endPoint);
+        resetRendering(graphics);
     }
 
     /**

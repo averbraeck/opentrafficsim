@@ -58,6 +58,7 @@ public class SpeedSignAnimation extends OtsRenderable<SpeedSignData>
     @Override
     public final void paint(final Graphics2D g, final ImageObserver arg1)
     {
+        setRendering(g);
         Ellipse2D ellipse = new Ellipse2D.Double(-RADIUS, -RADIUS, 2 * RADIUS, 2 * RADIUS);
         g.setColor(Color.RED);
         g.fill(ellipse);
@@ -77,6 +78,7 @@ public class SpeedSignAnimation extends OtsRenderable<SpeedSignData>
         String str = Integer.toString(speed);
         Rectangle2D stringBounds = g.getFontMetrics().getStringBounds(str, g);
         g.drawString(str, (float) -stringBounds.getCenterX(), (float) -stringBounds.getCenterY());
+        resetRendering(g);
     }
 
     /** {@inheritDoc} */

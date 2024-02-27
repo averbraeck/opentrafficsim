@@ -74,7 +74,9 @@ public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDet
     {
         graphics.setColor(this.detector.getOccupancy() ? Color.BLUE : Color.BLACK);
         graphics.setStroke(new BasicStroke(0.2f));
+        setRendering(graphics);
         graphics.draw(this.polygon);
+        resetRendering(graphics);
     }
 
     /** {@inheritDoc} */

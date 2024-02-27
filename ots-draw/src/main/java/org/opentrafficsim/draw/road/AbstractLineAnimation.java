@@ -71,7 +71,9 @@ public abstract class AbstractLineAnimation<T extends LaneBasedObjectData> exten
     @SuppressWarnings("checkstyle:designforextension")
     public void paint(final Graphics2D graphics, final ImageObserver observer)
     {
+        setRendering(graphics);
         graphics.fill(this.rectangle);
+        resetRendering(graphics);
     }
 
     /**

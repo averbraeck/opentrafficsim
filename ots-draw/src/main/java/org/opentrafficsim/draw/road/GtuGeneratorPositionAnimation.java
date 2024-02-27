@@ -80,7 +80,9 @@ public class GtuGeneratorPositionAnimation extends OtsRenderable<GtuGeneratorPos
     public void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         graphics.setColor(Color.BLUE);
+        setRendering(graphics);
         graphics.fill(PATH);
+        resetRendering(graphics);
     }
 
     /**

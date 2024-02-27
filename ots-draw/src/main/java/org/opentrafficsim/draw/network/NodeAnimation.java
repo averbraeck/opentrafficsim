@@ -57,6 +57,7 @@ public class NodeAnimation extends OtsRenderable<NodeData>
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
+        setRendering(graphics);
         graphics.setColor(Color.BLACK);
         graphics.setStroke(new BasicStroke(0.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
         graphics.draw(new Ellipse2D.Double(-0.5, -0.5, 1.0, 1.0));
@@ -69,6 +70,7 @@ public class NodeAnimation extends OtsRenderable<NodeData>
             arrow.lineTo(0.5, 0.5);
             graphics.draw(arrow);
         }
+        resetRendering(graphics);
     }
 
     /** {@inheritDoc} */

@@ -72,9 +72,11 @@ public class StaticObjectAnimation extends OtsRenderable<StaticObjectData>
         if (this.width > 0.0f)
         {
             Stroke oldStroke = graphics.getStroke();
+            setRendering(graphics);
             graphics.setStroke(new BasicStroke(this.width));
             PaintPolygons.paintPaths(graphics, this.color, this.paths, this.fill);
             graphics.setStroke(oldStroke);
+            resetRendering(graphics);
         }
     }
 

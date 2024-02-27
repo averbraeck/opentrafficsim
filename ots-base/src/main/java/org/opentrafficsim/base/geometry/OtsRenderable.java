@@ -1,9 +1,16 @@
 package org.opentrafficsim.base.geometry;
 
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.RenderingHints.Key;
+import java.util.Map;
+import java.util.WeakHashMap;
+
 import org.djutils.draw.Oriented;
 import org.djutils.draw.Transform2d;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.Point2d;
+import org.djutils.exceptions.Throw;
 
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 import nl.tudelft.simulation.naming.context.Contextualized;
@@ -23,6 +30,15 @@ public abstract class OtsRenderable<L extends OtsLocatable> extends Renderable2d
     /** */
     private static final long serialVersionUID = 20240223L;
 
+    /** Standard rendering keys. */
+    public static Key[] RENDERING_KEYS = new Key[] {RenderingHints.KEY_ANTIALIASING};
+
+    /** Standard rendering values. */
+    public static Object[] RENDERING_VALUES = new Object[] {RenderingHints.VALUE_ANTIALIAS_ON};
+
+    /** Stored hints to reset. */
+    private static Map<Object, Object[]> OLD_RENDERING_HINTS = new WeakHashMap<>();
+
     /**
      * Constructs a new Renderable2d.
      * @param source T; the source
@@ -31,6 +47,41 @@ public abstract class OtsRenderable<L extends OtsLocatable> extends Renderable2d
     public OtsRenderable(final L source, final Contextualized contextProvider)
     {
         super(source, contextProvider);
+    }
+
+    /**
+     * Set standard rendering hints for this renderable to paint. The graphics should be reset using {@code resetRendering()}
+     * after painting.
+     * @param graphics Graphics2D; graphics.
+     */
+    protected void setRendering(final Graphics2D graphics)
+    {
+        Object[] old = OLD_RENDERING_HINTS.computeIfAbsent(this, (o) -> new Object[RENDERING_KEYS.length]);
+        for (int i = 0; i < RENDERING_KEYS.length; i++)
+        {
+            old[i] = graphics.getRenderingHint(RENDERING_KEYS[i]);
+            graphics.setRenderingHint(RENDERING_KEYS[i], RENDERING_VALUES[i]);
+        }
+    }
+
+    /**
+     * Resets rendering hints that this renderable changed through {@code setRendering()}.
+     * @param graphics Graphics2D; graphics.
+     */
+    protected void resetRendering(final Graphics2D graphics)
+    {
+        Object[] old = OLD_RENDERING_HINTS.computeIfAbsent(this, (o) -> new Object[RENDERING_KEYS.length]);
+        Throw.when(old == null, IllegalStateException.class,
+                "Renderable %s resets rendering hints, but it never changed rendering hints with setRendering().", this);
+        for (int i = 0; i < RENDERING_KEYS.length; i++)
+        {
+            // If ever a null valued hint is used, just check for null values and do not reset the value in that case.
+            // For now the check is not implemented as no such hint is used.
+            // if (old[i] != null)
+            // {
+            graphics.setRenderingHint(RENDERING_KEYS[i], old[i]);
+            // }
+        }
     }
 
     /** {@inheritDoc} */

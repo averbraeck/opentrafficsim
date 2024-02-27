@@ -81,7 +81,9 @@ public class ConflictAnimation extends AbstractLineAnimation<ConflictData>
         graphics.setStroke(stroke);
         if (this.paths != null)
         {
+            setRendering(graphics);
             PaintPolygons.paintPaths(graphics, fillColor, this.paths, false);
+            resetRendering(graphics);
         }
         graphics.setStroke(oldStroke);
     }

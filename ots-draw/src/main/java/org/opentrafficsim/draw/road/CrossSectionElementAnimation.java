@@ -1,5 +1,6 @@
 package org.opentrafficsim.draw.road;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
@@ -58,7 +59,13 @@ public class CrossSectionElementAnimation<L extends CrossSectionElementData> ext
     @Override
     public void paint(final Graphics2D graphics, final ImageObserver observer)
     {
+        setRendering(graphics);
         PaintPolygons.paintPaths(graphics, this.color, this.paths, true);
+        // drawing some extra width by painting the edge (i.e. fill = false) prevents anti-alias lines between adjacent elements
+        double scale = Math.min(Math.max(3.0 / graphics.getTransform().getDeterminant(), 0.1), 0.5);
+        graphics.setStroke(new BasicStroke((float) scale, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        PaintPolygons.paintPaths(graphics, this.color, this.paths, false);
+        resetRendering(graphics);
     }
 
     /** {@inheritDoc} */

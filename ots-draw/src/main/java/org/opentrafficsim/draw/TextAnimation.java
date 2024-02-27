@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
@@ -272,7 +273,10 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
             float dxText =
                     this.textAlignment.equals(TextAlignment.LEFT) ? 0.0f : this.textAlignment.equals(TextAlignment.CENTER)
                             ? (float) -scaledFontRectangle.getWidth() / 2.0f : (float) -scaledFontRectangle.getWidth();
+            Object antialias = graphics.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
+            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             graphics.drawString(str, dxText + this.dx, -this.dy);
+            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antialias);
         }
     }
 

@@ -93,6 +93,7 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
+        setRendering(graphics);
         final GtuData gtu = getSource();
         if (this.rectangle == null)
         {
@@ -179,6 +180,7 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
             this.marker.setFrame(x, x, w, w);
             graphics.fill(this.marker);
         }
+        resetRendering(graphics);
     }
 
     /** {@inheritDoc} */

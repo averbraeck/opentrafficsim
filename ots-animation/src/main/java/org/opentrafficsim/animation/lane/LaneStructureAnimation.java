@@ -54,6 +54,7 @@ public class LaneStructureAnimation extends OtsRenderable<LaneStructureLocatable
     {
         if (!this.isDestroyed)
         {
+            setRendering(graphics);
             if (getSource().getGtu().isDestroyed())
             {
                 this.isDestroyed = true;
@@ -69,6 +70,7 @@ public class LaneStructureAnimation extends OtsRenderable<LaneStructureLocatable
                     paintRecord(rt, graphics);
                 }
             }
+            resetRendering(graphics);
         }
     }
 

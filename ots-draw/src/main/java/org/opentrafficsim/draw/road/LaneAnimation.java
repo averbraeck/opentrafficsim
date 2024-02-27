@@ -186,7 +186,9 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         @Override
         public final void paint(final Graphics2D graphics, final ImageObserver observer)
         {
+            setRendering(graphics);
             PaintLine.paintLine(graphics, COLOR, 0.1, this.path);
+            resetRendering(graphics);
         }
 
     }

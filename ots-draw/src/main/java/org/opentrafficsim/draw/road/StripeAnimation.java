@@ -190,8 +190,10 @@ public class StripeAnimation extends OtsRenderable<StripeData>
     {
         if (this.paths != null)
         {
+            setRendering(graphics);
             graphics.setStroke(new BasicStroke(2.0f));
             PaintPolygons.paintPaths(graphics, Color.WHITE, this.paths, true);
+            resetRendering(graphics);
         }
     }
 
