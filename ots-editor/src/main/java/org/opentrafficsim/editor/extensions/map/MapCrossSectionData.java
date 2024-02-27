@@ -1,12 +1,10 @@
 package org.opentrafficsim.editor.extensions.map;
 
-import java.util.List;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.OrientedPoint2d;
-import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.geometry.BoundingPolygon;
 import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
@@ -27,11 +25,14 @@ public class MapCrossSectionData implements CrossSectionElementData
     /** Node representing the element. */
     private final XsdTreeNode linkNode;
 
+    /** Location. */
+    private final OrientedPoint2d location;
+    
     /** Center line. */
     protected final PolyLine2d centerLine;
 
-    /** Contour. */
-    private final BoundingPolygon contour;
+    /** Bounds. */
+    private final OtsBounds2d bounds;
 
     /** Slice info. */
     private SliceInfo sliceInfo;
@@ -47,8 +48,10 @@ public class MapCrossSectionData implements CrossSectionElementData
             final SliceInfo sliceInfo)
     {
         this.linkNode = linkNode;
+        Ray2d ray = centerLine.getLocationFractionExtended(0.5);
+        this.location = new OrientedPoint2d(ray.x, ray.y, ray.phi);
         this.centerLine = centerLine;
-        this.contour = new BoundingPolygon(contour);
+        this.bounds = BoundingPolygon.geometryToBounds(this.location, contour);
         this.sliceInfo = sliceInfo;
     }
 
@@ -56,14 +59,14 @@ public class MapCrossSectionData implements CrossSectionElementData
     @Override
     public OtsBounds2d getBounds()
     {
-        return this.contour;
+        return this.bounds;
     }
 
     /** {@inheritDoc} */
     @Override
     public OrientedPoint2d getLocation()
     {
-        return new OrientedPoint2d(0.0, 0.0);
+        return this.location;
     }
 
     /** {@inheritDoc} */
@@ -71,13 +74,6 @@ public class MapCrossSectionData implements CrossSectionElementData
     public PolyLine2d getCenterLine()
     {
         return this.centerLine;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public List<Point2d> getContour()
-    {
-        return this.contour.asPolygon().getPointList();
     }
 
     /**

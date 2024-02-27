@@ -23,6 +23,7 @@ import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djutils.draw.DrawRuntimeException;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
@@ -128,7 +129,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     private BoundingPolygon bounds;
 
     /** Location. */
-    private OrientedPoint2d location = new OrientedPoint2d(0.0, 0.0);
+    private OrientedPoint2d location;
 
     /** Node describing the road layout. */
     private XsdTreeNode roadLayoutNode;
@@ -536,7 +537,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             return;
         }
         this.flattenedDesignLine = this.designLine.flatten(getFlattener());
-        this.bounds = ClickableBounds.get(this.flattenedDesignLine);
+        Ray2d ray = this.flattenedDesignLine.getLocationFractionExtended(0.5);
+        this.location = new OrientedPoint2d(ray.x, ray.y, ray.phi);
+        this.bounds = BoundingPolygon.geometryToBounds(this.location, ClickableBounds.get(this.flattenedDesignLine).asPolygon());
         buildLayout();
         setValid();
     }
@@ -631,15 +634,17 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                         }
                         else if (node.getNodeName().equals("Shoulder"))
                         {
-                            CrossSectionElementAnimation shoulder = new CrossSectionElementAnimation(
-                                    new MapShoulderData(slices.get(0).getDesignLineOffset(), getNode(), centerLine, contour,
-                                            sliceInfo),
-                                    getMap().getContextualized(), Color.DARK_GRAY);
+                            CrossSectionElementAnimation<
+                                    ?> shoulder =
+                                            new CrossSectionElementAnimation<>(
+                                                    new MapShoulderData(slices.get(0).getDesignLineOffset(), getNode(),
+                                                            centerLine, contour, sliceInfo),
+                                                    getMap().getContextualized(), Color.DARK_GRAY);
                             this.crossSectionElements.add(shoulder);
                         }
                         else if (node.getNodeName().equals("NoTrafficLane"))
                         {
-                            CrossSectionElementAnimation noTrafficLane = new CrossSectionElementAnimation(
+                            CrossSectionElementAnimation<?> noTrafficLane = new CrossSectionElementAnimation<>(
                                     new MapCrossSectionData(getNode(), centerLine, contour, sliceInfo),
                                     getMap().getContextualized(), Color.DARK_GRAY);
                             this.crossSectionElements.add(noTrafficLane);

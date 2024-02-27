@@ -5,13 +5,11 @@ import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
 import java.rmi.RemoteException;
-import java.util.List;
 import java.util.Set;
 
 import javax.naming.NamingException;
 
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsRenderable;
 import org.opentrafficsim.draw.DrawLevel;
@@ -86,12 +84,6 @@ public class CrossSectionElementAnimation<L extends CrossSectionElementData> ext
          * @return PolyLine2d; center line.
          */
         PolyLine2d getCenterLine();
-
-        /**
-         * Returns the contour.
-         * @return List&lt;Point2d&gt;; points.
-         */
-        List<Point2d> getContour();
 
         /**
          * Return the id of the link.

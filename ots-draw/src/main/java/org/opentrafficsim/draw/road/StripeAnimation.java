@@ -14,6 +14,7 @@ import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
@@ -169,8 +170,12 @@ public class StripeAnimation extends OtsRenderable<StripeData>
             }
 
             case SOLID: // | - Draw single solid line
-                List<Point2d> result = new ArrayList<>(stripe.getContour().size());
-                stripe.getContour().iterator().forEachRemaining(result::add);
+                PolyLine2d centerLine = stripe.getCenterLine();
+                PolyLine2d leftEdge = centerLine.offsetLine(stripe.getWidth().si / 2.0);
+                PolyLine2d rightEdge = centerLine.offsetLine(-stripe.getWidth().si / 2.0);
+                List<Point2d> list = leftEdge.getPointList();
+                list.addAll(rightEdge.reverse().getPointList());
+                List<Point2d> result = new Polygon2d(list).getPointList();
                 return result;
 
             default:
@@ -229,12 +234,6 @@ public class StripeAnimation extends OtsRenderable<StripeData>
          * @return Length; line width.
          */
         Length getWidth();
-
-        /**
-         * Returns the contour.
-         * @return PolyLine2d; contour.
-         */
-        List<Point2d> getContour();
 
         /** {@inheritDoc} */
         @Override
