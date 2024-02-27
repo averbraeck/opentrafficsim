@@ -11,6 +11,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsRenderable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 

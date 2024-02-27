@@ -52,9 +52,9 @@ public class AnimationConflictData implements ConflictData
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getBounds()
+    public OtsBounds2d getOtsBounds()
     {
-        return this.conflict.getBounds();
+        return this.conflict.getOtsBounds();
     }
 
     /** {@inheritDoc} */

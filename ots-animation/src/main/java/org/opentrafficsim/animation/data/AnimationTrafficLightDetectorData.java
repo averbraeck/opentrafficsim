@@ -38,9 +38,9 @@ public class AnimationTrafficLightDetectorData implements TrafficLightDetectorDa
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getBounds()
+    public OtsBounds2d getOtsBounds()
     {
-        return this.trafficLigthDetector.getBounds();
+        return this.trafficLigthDetector.getOtsBounds();
     }
 
     /** {@inheritDoc} */

@@ -142,7 +142,7 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, D
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public OtsBounds2d getBounds()
+    public OtsBounds2d getOtsBounds()
     {
         return this.bounds;
     }

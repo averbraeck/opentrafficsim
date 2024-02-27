@@ -15,8 +15,8 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.reference.ReferenceType;
 import org.opentrafficsim.base.geometry.BoundingBox;
+import org.opentrafficsim.base.geometry.ClickableBounds;
 import org.opentrafficsim.base.geometry.OtsBounds2d;
-import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
@@ -111,7 +111,7 @@ public abstract class MapLineData extends MapData implements LaneBasedObjectData
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getBounds()
+    public OtsBounds2d getOtsBounds()
     {
         return this.bounds;
     }

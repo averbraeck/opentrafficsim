@@ -5,6 +5,7 @@ import java.util.List;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.geometry.BoundingPolygon;
 import org.opentrafficsim.base.geometry.OtsBounds2d;
@@ -53,16 +54,23 @@ public class MapCrossSectionData implements CrossSectionElementData
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getBounds()
+    public OtsBounds2d getOtsBounds()
     {
         return this.contour;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Point2d getLocation()
+    public OrientedPoint2d getLocation()
     {
-        return new Point2d(0.0, 0.0);
+        return new OrientedPoint2d(0.0, 0.0);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public PolyLine2d getCenterLine()
+    {
+        return this.centerLine;
     }
 
     /** {@inheritDoc} */
@@ -76,6 +84,7 @@ public class MapCrossSectionData implements CrossSectionElementData
      * Returns the link id.
      * @return String; link id.
      */
+    @Override
     public String getLinkId()
     {
         return this.linkNode.getId();

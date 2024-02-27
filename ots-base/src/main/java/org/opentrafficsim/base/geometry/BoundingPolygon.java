@@ -46,9 +46,7 @@ public class BoundingPolygon implements OtsBounds2d
      */
     public static BoundingPolygon geometryToBounds(final OrientedPoint2d location, final PolyLine2d geometry)
     {
-        Transform2d transformation = new Transform2d();
-        transformation.rotation(-location.getDirZ());
-        transformation.translate(-location.getX(), -location.getY());
+        Transform2d transformation = OtsRenderable.toBoundsTransform(location);
         Iterator<Point2d> itSource = geometry.getPoints();
         Iterator<Point2d> itTarget = new Iterator<>()
         {
@@ -65,7 +63,6 @@ public class BoundingPolygon implements OtsBounds2d
             {
                 return transformation.transform(itSource.next());
             }
-
         };
         BoundingPolygon b = new BoundingPolygon(new Polygon2d(itTarget));
         return b;

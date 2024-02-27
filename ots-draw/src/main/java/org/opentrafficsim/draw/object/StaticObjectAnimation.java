@@ -14,9 +14,9 @@ import javax.naming.NamingException;
 
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsRenderable;
 import org.opentrafficsim.draw.PaintPolygons;
 import org.opentrafficsim.draw.object.StaticObjectAnimation.StaticObjectData;
-import org.opentrafficsim.draw.road.OtsRenderable;
 
 import nl.tudelft.simulation.naming.context.Contextualized;
 

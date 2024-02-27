@@ -412,7 +412,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
 
     /** {@inheritDoc} */
     @Override
-    public final OtsBounds2d getBounds()
+    public final OtsBounds2d getOtsBounds()
     {
         return this.geometry;
     }

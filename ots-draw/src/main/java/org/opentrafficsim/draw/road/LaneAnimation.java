@@ -5,8 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
 import java.rmi.RemoteException;
-import java.util.List;
-import java.util.Set;
 import java.util.function.Supplier;
 
 import javax.naming.NamingException;
@@ -14,20 +12,18 @@ import javax.naming.NamingException;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.OrientedPoint2d;
-import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.base.geometry.ClickableBounds;
 import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
-import org.opentrafficsim.draw.ClickableBounds;
+import org.opentrafficsim.base.geometry.OtsRenderable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.PaintLine;
-import org.opentrafficsim.draw.PaintPolygons;
 import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.TextAnimation;
+import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
 import org.opentrafficsim.draw.road.LaneAnimation.LaneData;
 
-import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
@@ -39,7 +35,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LaneAnimation extends OtsRenderable<LaneData>
+public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
 {
     /** */
     private static final long serialVersionUID = 20141017L;
@@ -53,9 +49,6 @@ public class LaneAnimation extends OtsRenderable<LaneData>
     /** Center line animation. */
     private final CenterLineAnimation centerLineAnimation;
 
-    /** Drawable paths. */
-    private final Set<Path2D.Double> paths;
-
     /**
      * Animate a Lane.
      * @param lane LaneData; the lane
@@ -67,12 +60,11 @@ public class LaneAnimation extends OtsRenderable<LaneData>
     public LaneAnimation(final LaneData lane, final Contextualized contextualized, final Color color)
             throws NamingException, RemoteException
     {
-        super(lane, contextualized);
+        super(lane, contextualized, color);
         this.color = color;
         this.text = new Text(lane, lane::getId, 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, contextualized);
         this.centerLineAnimation = new CenterLineAnimation(
                 new CenterLine(lane.getCenterLine(), lane.getLinkId() + "." + lane.getId()), contextualized);
-        this.paths = color == null ? null : PaintPolygons.getPaths(getSource().getLocation(), getSource().getContour());
     }
 
     /**
@@ -81,16 +73,6 @@ public class LaneAnimation extends OtsRenderable<LaneData>
     public final Text getText()
     {
         return this.text;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void paint(final Graphics2D graphics, final ImageObserver observer)
-    {
-        if (this.color != null)
-        {
-            PaintPolygons.paintPaths(graphics, this.color, this.paths, true);
-        }
     }
 
     /** {@inheritDoc} */
@@ -144,7 +126,7 @@ public class LaneAnimation extends OtsRenderable<LaneData>
 
         /** {@inheritDoc} */
         @Override
-        public final OtsBounds2d getBounds()
+        public final OtsBounds2d getOtsBounds()
         {
             return ClickableBounds.get(this.bounds);
         }
@@ -220,7 +202,7 @@ public class LaneAnimation extends OtsRenderable<LaneData>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public class Text extends TextAnimation<LaneData>
+    public class Text extends TextAnimation<LaneData, Text>
     {
         /** */
         private static final long serialVersionUID = 20161211L;
@@ -245,21 +227,6 @@ public class LaneAnimation extends OtsRenderable<LaneData>
 
         /** {@inheritDoc} */
         @Override
-        @SuppressWarnings("checkstyle:designforextension")
-        public OrientedPoint2d getLocation()
-        {
-            // draw always on top.
-            Ray2d p = getSource().getCenterLine().getLocationFractionExtended(0.5);
-            double a = Angle.normalizePi(p.getPhi());
-            if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
-            {
-                a += Math.PI;
-            }
-            return new OrientedPoint2d(p.x, p.y, a);
-        }
-
-        /** {@inheritDoc} */
-        @Override
         public final String toString()
         {
             return "Text []";
@@ -276,26 +243,8 @@ public class LaneAnimation extends OtsRenderable<LaneData>
      * </p>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public interface LaneData extends OtsLocatable, Identifiable
+    public interface LaneData extends CrossSectionElementData, Identifiable
     {
-        /**
-         * Returns the center line.
-         * @return PolyLine2d; center line.
-         */
-        PolyLine2d getCenterLine();
-
-        /**
-         * Returns the contour.
-         * @return List&lt;Point2d&gt;; points.
-         */
-        List<Point2d> getContour();
-
-        /**
-         * Return the id of the link.
-         * @return String; link id.
-         */
-        String getLinkId();
-
         /** {@inheritDoc} */
         @Override
         default double getZ()

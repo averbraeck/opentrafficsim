@@ -35,6 +35,7 @@ import org.djutils.exceptions.Try;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.geometry.BoundingPolygon;
+import org.opentrafficsim.base.geometry.ClickableBounds;
 import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.ContinuousArc;
@@ -45,7 +46,6 @@ import org.opentrafficsim.core.geometry.ContinuousPolyLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
 import org.opentrafficsim.core.geometry.Flattener;
 import org.opentrafficsim.core.geometry.OtsGeometryUtil;
-import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation;
@@ -235,7 +235,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getBounds()
+    public OtsBounds2d getOtsBounds()
     {
         return this.bounds;
     }

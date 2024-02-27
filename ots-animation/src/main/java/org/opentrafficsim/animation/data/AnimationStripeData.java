@@ -2,6 +2,7 @@ package org.opentrafficsim.animation.data;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
 import org.opentrafficsim.road.network.lane.Stripe;
 
@@ -37,6 +38,13 @@ public class AnimationStripeData extends AnimationCrossSectionElementData<Stripe
     public Type getType()
     {
         return Type.valueOf(getElement().getType().name());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public OrientedPoint2d getLocation()
+    {
+        return getElement().getLocation();
     }
 
     /** {@inheritDoc} */

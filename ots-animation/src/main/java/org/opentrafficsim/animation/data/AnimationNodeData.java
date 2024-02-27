@@ -1,9 +1,9 @@
 package org.opentrafficsim.animation.data;
 
 import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.base.geometry.ClickableBounds;
 import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
 
 /**
@@ -31,9 +31,9 @@ public class AnimationNodeData implements NodeData
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getBounds()
+    public OtsBounds2d getOtsBounds()
     {
-        return ClickableBounds.get(this.node.getBounds());
+        return ClickableBounds.get(this.node.getOtsBounds());
     }
 
     /** {@inheritDoc} */

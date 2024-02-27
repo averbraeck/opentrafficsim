@@ -6,8 +6,11 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.Path2D;
 
+import org.djutils.draw.Transform2d;
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.point.Point;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.base.geometry.OtsRenderable;
 
 /**
  * Paint a line as a Path2D.Double
@@ -28,22 +31,45 @@ public final class PaintLine
 
     /**
      * Returns drawable path of the line.
-     * @param referencePoint DirectedPoint; the reference point
      * @param line PolyLine2d; array of points
      * @return Path2D.Double drawable path.
      */
-    public static Path2D.Double getPath(final Point<?> referencePoint, final PolyLine2d line)
+    public static Path2D.Double getPath(final PolyLine2d line)
     {
+        return getPath(new OrientedPoint2d(0.0, 0.0), line);
+    }
+
+    /**
+     * Returns drawable path of the line.
+     * @param referencePoint Point2d; the reference point
+     * @param line PolyLine2d; array of points
+     * @return Path2D.Double drawable path.
+     */
+    public static Path2D.Double getPath(final Point2d referencePoint, final PolyLine2d line)
+    {
+        return getPath(new OrientedPoint2d(referencePoint, 0.0), line);
+    }
+
+    /**
+     * Returns drawable path of the line.
+     * @param referencePoint OrientedPoint2d; the reference point
+     * @param line PolyLine2d; array of points
+     * @return Path2D.Double drawable path.
+     */
+    public static Path2D.Double getPath(final OrientedPoint2d referencePoint, final PolyLine2d line)
+    {
+        Transform2d transform = OtsRenderable.toBoundsTransform(referencePoint);
         Path2D.Double path = new Path2D.Double();
-        Point<?> point = line.getFirst();
-        path.moveTo(point.getX() - referencePoint.getX(), -point.getY() + referencePoint.getY());
+        Point2d p = transform.transform(line.getFirst());
+        path.moveTo(p.x, -p.y);
         for (int index = 1; index < line.size(); index++)
         {
-            path.lineTo(line.getX(index) - referencePoint.getX(), -line.getY(index) + referencePoint.getY());
+            p = transform.transform(line.get(index));
+            path.lineTo(p.x, -p.y);
         }
         return path;
     }
-    
+
     /**
      * Paint line.
      * @param graphics Graphics2D; the graphics environment
@@ -51,8 +77,7 @@ public final class PaintLine
      * @param width double; the width to use
      * @param path Path2D.Double; drawable path
      */
-    public static void paintLine(final Graphics2D graphics, final Color color, final double width,
-            final Path2D.Double path)
+    public static void paintLine(final Graphics2D graphics, final Color color, final double width, final Path2D.Double path)
     {
         graphics.setColor(color);
         Stroke oldStroke = graphics.getStroke();

@@ -8,14 +8,13 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsRenderable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
 
-import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
@@ -95,7 +94,7 @@ public class GtuGeneratorPositionAnimation extends OtsRenderable<GtuGeneratorPos
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public class Queue extends TextAnimation
+    public class Queue extends TextAnimation<GtuGeneratorPositionData, Queue>
     {
         /** */
         private static final long serialVersionUID = 20230204L;
@@ -112,21 +111,6 @@ public class GtuGeneratorPositionAnimation extends OtsRenderable<GtuGeneratorPos
         {
             super(source, () -> Integer.toString(source.getQueueCount()), 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, 3.0f,
                     12.0f, 50f, contextualized, null, TextAnimation.RENDERALWAYS);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        @SuppressWarnings("checkstyle:designforextension")
-        public OrientedPoint2d getLocation()
-        {
-            // draw always on top, and not upside down.
-            OrientedPoint2d p = super.getLocation();
-            double a = Angle.normalizePi(p.getDirZ());
-            if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
-            {
-                a += Math.PI;
-            }
-            return new OrientedPoint2d(p.x, p.y, a);
         }
 
         /** {@inheritDoc} */

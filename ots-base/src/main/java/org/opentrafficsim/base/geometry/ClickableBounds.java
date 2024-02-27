@@ -1,4 +1,4 @@
-package org.opentrafficsim.draw;
+package org.opentrafficsim.base.geometry;
 
 import java.util.List;
 
@@ -6,12 +6,9 @@ import org.djutils.draw.bounds.Bounds;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.base.geometry.BoundingPolygon;
-import org.opentrafficsim.base.geometry.BoundingRectangle;
-import org.opentrafficsim.base.geometry.OtsBounds2d;
 
 /**
- * Creates bounds that are at least 2m of size in the x and y direction.
+ * Creates bounds that are at least 2m of size in the x and y direction, useful for animation objects a user may click on.
  * <p>
  * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.

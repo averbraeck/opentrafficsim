@@ -2,9 +2,9 @@ package org.opentrafficsim.animation.data;
 
 import java.util.List;
 
+import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.geometry.OtsBounds2d;
-import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 
@@ -37,9 +37,23 @@ public class AnimationCrossSectionElementData<T extends CrossSectionElement> imp
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getBounds()
+    public OtsBounds2d getOtsBounds()
     {
-        return ClickableBounds.get(this.element.getBounds());
+        return this.element.getOtsBounds();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public PolyLine2d getCenterLine()
+    {
+        return this.element.getCenterLine().getLine2d();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getLinkId()
+    {
+        return this.element.getId();
     }
 
     /** {@inheritDoc} */
@@ -58,7 +72,7 @@ public class AnimationCrossSectionElementData<T extends CrossSectionElement> imp
     @Override
     public Point2d getLocation()
     {
-        return new Point2d(0.0, 0.0);
+        return this.element.getLocation();
     }
 
     /**

@@ -11,18 +11,16 @@ import javax.naming.NamingException;
 
 import org.djutils.base.Identifiable;
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsRenderable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.PaintLine;
 import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
-import org.opentrafficsim.draw.road.OtsRenderable;
 
-import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
@@ -77,10 +75,7 @@ public class LinkAnimation extends OtsRenderable<LinkData>
         this.width = width;
         this.text = new Text(link, link::getId, 0.0f, 1.5f, TextAlignment.CENTER, Color.BLACK, contextualized,
                 TextAnimation.RENDERWHEN10);
-        PolyLine2d designLine = getSource().getDesignLine();
-        this.path = PaintLine.getPath(getSource().getLocation(), designLine);
-        this.startPoint = getEndPoint(designLine.getFirst(), designLine.get(1));
-        this.endPoint = getEndPoint(designLine.getLast(), designLine.get(designLine.size() - 2));
+        setPath();
         this.color = getSource().isConnector() ? Color.PINK.darker() : Color.BLUE;
     }
 
@@ -104,14 +99,23 @@ public class LinkAnimation extends OtsRenderable<LinkData>
             PolyLine2d designLine = getSource().getDesignLine();
             if (!designLine.equals(this.designLine))
             {
-                this.path = PaintLine.getPath(getSource().getLocation(), designLine);
-                this.startPoint = getEndPoint(designLine.getFirst(), designLine.get(1));
-                this.endPoint = getEndPoint(designLine.getLast(), designLine.get(designLine.size() - 2));
+                setPath();
             }
         }
         PaintLine.paintLine(graphics, this.color, this.width, this.path);
         PaintLine.paintLine(graphics, this.color, this.width / 30, this.startPoint);
         PaintLine.paintLine(graphics, this.color, this.width / 30, this.endPoint);
+    }
+
+    /**
+     * Sets drawable paths.
+     */
+    private void setPath()
+    {
+        this.designLine = getSource().getDesignLine();
+        this.path = PaintLine.getPath(getSource().getLocation(), this.designLine);
+        this.startPoint = getEndPoint(this.designLine.getFirst(), this.designLine.get(1));
+        this.endPoint = getEndPoint(this.designLine.getLast(), this.designLine.get(this.designLine.size() - 2));
     }
 
     /**
@@ -158,7 +162,7 @@ public class LinkAnimation extends OtsRenderable<LinkData>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public class Text extends TextAnimation<LinkData>
+    public class Text extends TextAnimation<LinkData, Text>
     {
         /** */
         private static final long serialVersionUID = 20161211L;
@@ -184,21 +188,6 @@ public class LinkAnimation extends OtsRenderable<LinkData>
 
         /** {@inheritDoc} */
         @Override
-        @SuppressWarnings("checkstyle:designforextension")
-        public OrientedPoint2d getLocation()
-        {
-            // draw always on top, and not upside down.
-            Ray2d p = getSource().getDesignLine().getLocationFractionExtended(0.5);
-            double a = Angle.normalizePi(p.getPhi());
-            if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
-            {
-                a += Math.PI;
-            }
-            return new OrientedPoint2d(p.x, p.y, a);
-        }
-
-        /** {@inheritDoc} */
-        @Override
         public final String toString()
         {
             return "LinkAnimation.Text []";
@@ -216,6 +205,10 @@ public class LinkAnimation extends OtsRenderable<LinkData>
      */
     public interface LinkData extends OtsLocatable, Identifiable
     {
+        /** {@inheritDoc} */
+        @Override
+        OrientedPoint2d getLocation();
+
         /**
          * Returns whether this is a connector.
          * @return boolean; whether this is a connector.

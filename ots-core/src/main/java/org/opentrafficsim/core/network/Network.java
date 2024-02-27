@@ -1002,7 +1002,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
         boolean content = false;
         for (Node node : this.nodeMap.values())
         {
-            OtsBounds2d b = node.getBounds();
+            OtsBounds2d b = node.getOtsBounds();
             minX = Math.min(minX, node.getLocation().getX() + b.getMinX());
             minY = Math.min(minY, node.getLocation().getY() + b.getMinY());
             maxX = Math.max(maxX, node.getLocation().getX() + b.getMaxX());
@@ -1011,7 +1011,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
         }
         for (Link link : this.linkMap.values())
         {
-            OtsBounds2d b = link.getBounds();
+            OtsBounds2d b = link.getOtsBounds();
             minX = Math.min(minX, link.getLocation().getX() + b.getMinX());
             minY = Math.min(minY, link.getLocation().getY() + b.getMinY());
             maxX = Math.max(maxX, link.getLocation().getX() + b.getMaxX());
@@ -1020,7 +1020,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
         }
         for (LocatedObject object : this.objectMap.values())
         {
-            OtsBounds2d b = object.getBounds();
+            OtsBounds2d b = object.getOtsBounds();
             minX = Math.min(minX, object.getLocation().getX() + b.getMinX());
             minY = Math.min(minY, object.getLocation().getY() + b.getMinY());
             maxX = Math.max(maxX, object.getLocation().getX() + b.getMaxX());

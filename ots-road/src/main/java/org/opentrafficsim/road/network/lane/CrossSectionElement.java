@@ -6,11 +6,11 @@ import java.util.List;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.Point2d;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.base.geometry.BoundingRectangle;
+import org.opentrafficsim.base.geometry.BoundingPolygon;
 import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.core.animation.Drawable;
@@ -52,7 +52,7 @@ public abstract class CrossSectionElement extends LocalEventProducer
     private final Polygon2d contour;
 
     /** Location, center of contour. */
-    private final Point2d location;
+    private final OrientedPoint2d location;
 
     /** Bounding box. */
     private final OtsBounds2d bounds;
@@ -62,7 +62,7 @@ public abstract class CrossSectionElement extends LocalEventProducer
      * @param link CrossSectionLink; link.
      * @param id String; id.
      * @param centerLine PolyLine2d; center line.
-     * @param contour OtsLine2d; contour shape.
+     * @param contour Polygon2d; contour shape.
      * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
      * @throws NetworkException when no cross-section slice is defined.
      */
@@ -78,10 +78,10 @@ public abstract class CrossSectionElement extends LocalEventProducer
         this.link = link;
         this.id = id;
         this.centerLine = centerLine;
+        this.location = centerLine.getLocationFractionExtended(0.5);
         this.contour = contour;
-        this.location = contour.getBounds().midPoint();
-        this.bounds = new BoundingRectangle(contour.getBounds().getMinX(), contour.getBounds().getMaxX(),
-                contour.getBounds().getMinY(), contour.getBounds().getMaxY());
+        this.bounds = BoundingPolygon.geometryToBounds(this.location, contour);
+
         this.sliceInfo = new SliceInfo(crossSectionSlices, link.getLength());
 
         link.addCrossSectionElement(this);
@@ -269,7 +269,7 @@ public abstract class CrossSectionElement extends LocalEventProducer
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Point2d getLocation()
+    public OrientedPoint2d getLocation()
     {
         return this.location;
     }
@@ -277,7 +277,7 @@ public abstract class CrossSectionElement extends LocalEventProducer
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public OtsBounds2d getBounds()
+    public OtsBounds2d getOtsBounds()
     {
         return this.bounds;
     }

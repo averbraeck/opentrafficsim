@@ -55,4 +55,12 @@ public class BoundingRectangle implements OtsBounds2d
         return this.polygon;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "BoundingRectangle [minX=" + this.minX + ", maxX=" + this.maxX + ", minY=" + this.minY + ", maxY=" + this.maxY
+                + "]";
+    }
+
 }

@@ -10,8 +10,10 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
+import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsRenderable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.PaintPolygons;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
@@ -26,8 +28,9 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @param <L> cross section element data type
  */
-public class CrossSectionElementAnimation extends OtsRenderable<CrossSectionElementData>
+public class CrossSectionElementAnimation<L extends CrossSectionElementData> extends OtsRenderable<L>
 {
     /** */
     private static final long serialVersionUID = 20141017L;
@@ -39,30 +42,30 @@ public class CrossSectionElementAnimation extends OtsRenderable<CrossSectionElem
     private final Set<Path2D.Double> paths;
 
     /**
-     * @param source CrossSectionElementData; cross section element
+     * @param source L; cross section element
      * @param contextualized Contextualized; context provider
      * @param color Color; the color to draw the shoulder with
      * @throws NamingException ne
      * @throws RemoteException on communication failure
      */
-    public CrossSectionElementAnimation(final CrossSectionElementData source, final Contextualized contextualized,
-            final Color color) throws NamingException, RemoteException
+    public CrossSectionElementAnimation(final L source, final Contextualized contextualized, final Color color)
+            throws NamingException, RemoteException
     {
         super(source, contextualized);
         this.color = color;
-        this.paths = PaintPolygons.getPaths(getSource().getLocation(), getSource().getContour());
+        this.paths = PaintPolygons.getPaths(getSource().getOtsBounds().asPolygon().getPointList());
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void paint(final Graphics2D graphics, final ImageObserver observer)
+    public void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         PaintPolygons.paintPaths(graphics, this.color, this.paths, true);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final String toString()
+    public String toString()
     {
         return "CrossSectionElementAnimation [source = " + getSource().toString() + ", color=" + this.color + "]";
     }
@@ -79,10 +82,22 @@ public class CrossSectionElementAnimation extends OtsRenderable<CrossSectionElem
     public interface CrossSectionElementData extends OtsLocatable
     {
         /**
+         * Returns the center line.
+         * @return PolyLine2d; center line.
+         */
+        PolyLine2d getCenterLine();
+
+        /**
          * Returns the contour.
          * @return List&lt;Point2d&gt;; points.
          */
         List<Point2d> getContour();
+
+        /**
+         * Return the id of the link.
+         * @return String; link id.
+         */
+        String getLinkId();
     }
 
     /**

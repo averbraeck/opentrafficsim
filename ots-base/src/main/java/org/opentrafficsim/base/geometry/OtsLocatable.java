@@ -1,5 +1,6 @@
 package org.opentrafficsim.base.geometry;
 
+import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.Point2d;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -19,8 +20,20 @@ public interface OtsLocatable extends Locatable
     @Override
     Point2d getLocation();
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    OtsBounds2d getBounds();
+    default Bounds2d getBounds()
+    {
+        OtsBounds2d b = getOtsBounds();
+        return new Bounds2d(b.getMinX(), b.getMaxX(), b.getMinY(), b.getMaxY());
+    }
+
+    /**
+     * Returns the bounds relative to the location.
+     * @return OtsBounds2d; bounds relative to the location.
+     */
+    OtsBounds2d getOtsBounds();
 
 }

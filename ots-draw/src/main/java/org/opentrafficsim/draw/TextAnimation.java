@@ -15,13 +15,13 @@ import javax.naming.NamingException;
 import org.djutils.draw.Oriented;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.OrientedPoint2d;
-import org.djutils.draw.point.Point;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.geometry.BoundingCircle;
 import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
+import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
@@ -34,8 +34,9 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <L> locatable type
+ * @param <T> text animation type
  */
-public abstract class TextAnimation<L extends OtsLocatable> implements OtsLocatable, Serializable
+public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimation<L, T>> implements OtsLocatable, Serializable
 {
     /** */
     private static final long serialVersionUID = 20161211L;
@@ -78,6 +79,12 @@ public abstract class TextAnimation<L extends OtsLocatable> implements OtsLocata
 
     /** Render dependent on font scale. */
     private final ScaleDependentRendering scaleDependentRendering;
+
+    /** Whether the location is dynamic. */
+    private boolean dynamic = false;
+
+    /** Location of this text. */
+    private OrientedPoint2d location;
 
     /**
      * Construct a new TextAnimation.
@@ -169,20 +176,48 @@ public abstract class TextAnimation<L extends OtsLocatable> implements OtsLocata
         this(source, text, dx, dy, textAlignment, color, 2.0f, 12.0f, 50f, contextualized, scaleDependentRendering);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public OrientedPoint2d getLocation()
+    /**
+     * Sets whether the location of this text is dynamic.
+     * @param dynamic boolean; whether the location of this text is dynamic.
+     * @return T; for method chaining.
+     */
+    @SuppressWarnings("unchecked")
+    public T setDynamic(final boolean dynamic)
     {
-        // draw always on top.
-        Point<?> p = this.source.getLocation();
-        return new OrientedPoint2d(p.getX(), p.getY(), p instanceof Oriented ? ((Oriented<?>) p).getDirZ() : 0.0);
+        this.dynamic = dynamic;
+        return (T) this;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final OtsBounds2d getBounds()
+    public OrientedPoint2d getLocation()
     {
-        return new BoundingCircle(0.0);
+        if (this.location == null || this.dynamic)
+        {
+            Point2d p = this.source.getLocation();
+            if (p instanceof Oriented)
+            {
+                // draw not upside down.
+                double a = Angle.normalizePi(((Oriented<?>) p).getDirZ());
+                if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
+                {
+                    a += Math.PI;
+                }
+                this.location = new OrientedPoint2d(p, a);
+            }
+            else
+            {
+                this.location = new OrientedPoint2d(p, 0.0);
+            }
+        }
+        return this.location;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final OtsBounds2d getOtsBounds()
+    {
+        return new BoundingCircle(1.0);
     }
 
     /**
@@ -442,7 +477,7 @@ public abstract class TextAnimation<L extends OtsLocatable> implements OtsLocata
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    private static class AnimationImpl extends Renderable2d<TextAnimation<?>>
+    private static class AnimationImpl extends Renderable2d<TextAnimation<?, ?>>
     {
         /** */
         private static final long serialVersionUID = 20170400L;
@@ -454,7 +489,7 @@ public abstract class TextAnimation<L extends OtsLocatable> implements OtsLocata
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException when remote context cannot be found
          */
-        AnimationImpl(final TextAnimation<?> source, final Contextualized contextualized)
+        AnimationImpl(final TextAnimation<?, ?> source, final Contextualized contextualized)
                 throws NamingException, RemoteException
         {
             super(source, contextualized);

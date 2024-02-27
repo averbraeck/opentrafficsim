@@ -1,9 +1,9 @@
 package org.opentrafficsim.animation.data;
 
 import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.base.geometry.ClickableBounds;
 import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.core.gtu.GtuGenerator.GtuGeneratorPosition;
-import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
 
 /**
@@ -38,7 +38,7 @@ public class AnimationGtuGeneratorPositionData implements GtuGeneratorPositionDa
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getBounds()
+    public OtsBounds2d getOtsBounds()
     {
         return ClickableBounds.get(this.position.getBounds());
     }

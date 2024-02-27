@@ -15,11 +15,11 @@ import javax.naming.NamingException;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsRenderable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
-import org.opentrafficsim.draw.road.OtsRenderable;
 
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -97,7 +97,7 @@ public class NodeAnimation extends OtsRenderable<NodeData>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public class Text extends TextAnimation<NodeData>
+    public class Text extends TextAnimation<NodeData, Text>
     {
         /** */
         private static final long serialVersionUID = 20161211L;

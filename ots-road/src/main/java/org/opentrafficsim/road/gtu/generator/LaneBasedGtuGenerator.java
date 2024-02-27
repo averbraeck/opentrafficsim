@@ -518,7 +518,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
 
                 /** {@inheritDoc} */
                 @Override
-                public OtsBounds2d getBounds()
+                public OtsBounds2d getOtsBounds()
                 {
                     return new BoundingBox(0.0, 0.0);
                 }

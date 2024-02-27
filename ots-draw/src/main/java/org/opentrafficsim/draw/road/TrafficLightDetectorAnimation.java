@@ -13,12 +13,12 @@ import javax.naming.NamingException;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.base.geometry.OtsRenderable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.road.TrafficLightDetectorAnimation.TrafficLightDetectorData;
 
-import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
@@ -103,7 +103,7 @@ public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDet
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public class Text extends TextAnimation<TrafficLightDetectorData> implements DetectorData.Text
+    public class Text extends TextAnimation<TrafficLightDetectorData, Text> implements DetectorData.Text
     {
         /** */
         private static final long serialVersionUID = 20161211L;
@@ -124,21 +124,6 @@ public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDet
                 throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textPlacement, color, contextualized, TextAnimation.RENDERALWAYS);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        @SuppressWarnings("checkstyle:designforextension")
-        public OrientedPoint2d getLocation()
-        {
-            // draw always on top, and not upside down.
-            OrientedPoint2d p = getSource().getLocation();
-            double a = Angle.normalizePi(p.getDirZ());
-            if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
-            {
-                a += Math.PI;
-            }
-            return new OrientedPoint2d(p.x, p.y, a);
         }
 
         /** {@inheritDoc} */

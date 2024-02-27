@@ -9,8 +9,8 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.reference.ReferenceType;
+import org.opentrafficsim.base.geometry.ClickableBounds;
 import org.opentrafficsim.base.geometry.OtsBounds2d;
-import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
@@ -73,7 +73,7 @@ public class MapNodeData extends MapData implements NodeData, EventListener
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getBounds()
+    public OtsBounds2d getOtsBounds()
     {
         return BOUNDS;
     }

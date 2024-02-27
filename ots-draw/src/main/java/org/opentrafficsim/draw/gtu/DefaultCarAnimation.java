@@ -16,13 +16,12 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsRenderable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData;
-import org.opentrafficsim.draw.road.OtsRenderable;
 
-import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
@@ -87,7 +86,7 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
                     {
                         return gtu.getColor();
                     }
-                });
+                }).setDynamic(true);
     }
 
     /** {@inheritDoc} */
@@ -216,7 +215,7 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    public class Text extends TextAnimation<GtuData>
+    public class Text extends TextAnimation<GtuData, Text>
     {
         /** */
         private static final long serialVersionUID = 20161211L;
@@ -260,21 +259,6 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
                 final TextAnimation.ContrastToBackground background) throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textAlignment, color, 1.0f, 12.0f, 50f, contextualized, background, RENDERWHEN1);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        @SuppressWarnings("checkstyle:designforextension")
-        public OrientedPoint2d getLocation()
-        {
-            // draw always on top, and not upside down.
-            OrientedPoint2d p = getSource().getLocation();
-            double a = Angle.normalizePi(p.getDirZ());
-            if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
-            {
-                a += Math.PI;
-            }
-            return new OrientedPoint2d(p.x, p.y, a);
         }
 
         /** {@inheritDoc} */

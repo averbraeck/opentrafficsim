@@ -14,7 +14,8 @@ import org.djutils.exceptions.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.HierarchicallyTyped;
-import org.opentrafficsim.base.geometry.BoundingBox;
+import org.opentrafficsim.base.geometry.BoundingPolygon;
+import org.opentrafficsim.base.geometry.ClickableBounds;
 import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.core.SpatialObject;
@@ -84,10 +85,13 @@ public class Link extends LocalEventProducer
     private final Polygon2d shape;
 
     /** Bounds. */
-    private final BoundingBox bounds;
+    private final OtsBounds2d bounds;
 
     /** The GTUs on this Link. */
     private final Set<Gtu> gtus = new LinkedHashSet<>();
+
+    /** Location. */
+    private OrientedPoint2d location;
 
     /**
      * Construct a new link.
@@ -121,7 +125,9 @@ public class Link extends LocalEventProducer
         this.designLine = designLine;
         this.elevation = elevation;
         this.shape = new Polygon2d(this.designLine.offsetLine(0.5).getPoints());
-        this.bounds = new BoundingBox(this.shape.getBounds().getDeltaX(), this.shape.getBounds().getDeltaY());
+        this.location = this.designLine.getLocationFractionExtended(0.5);
+        this.bounds =
+                BoundingPolygon.geometryToBounds(this.location, ClickableBounds.get(this.designLine.getLine2d()).asPolygon());
         this.network.addLink(this);
     }
 
@@ -264,13 +270,13 @@ public class Link extends LocalEventProducer
     @SuppressWarnings("checkstyle:designforextension")
     public OrientedPoint2d getLocation()
     {
-        return new OrientedPoint2d(this.designLine.getLocation(), 0.0);
+        return this.location;
     }
 
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public OtsBounds2d getBounds()
+    public OtsBounds2d getOtsBounds()
     {
         return this.bounds;
     }

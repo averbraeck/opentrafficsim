@@ -1,10 +1,9 @@
-package org.opentrafficsim.draw.road;
+package org.opentrafficsim.base.geometry;
 
 import org.djutils.draw.Oriented;
 import org.djutils.draw.Transform2d;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.base.geometry.OtsLocatable;
 
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 import nl.tudelft.simulation.naming.context.Contextualized;
@@ -38,20 +37,26 @@ public abstract class OtsRenderable<L extends OtsLocatable> extends Renderable2d
     @Override
     public boolean contains(final Point2d pointWorldCoordinates, final Bounds2d extent)
     {
-        if (getSource().getLocation() instanceof Oriented)
+        Transform2d transformation = toBoundsTransform(getSource().getLocation());
+        Point2d pointObjectCoordinates = transformation.transform(pointWorldCoordinates);
+        return getSource().getOtsBounds().contains(pointObjectCoordinates);
+    }
+
+    /**
+     * Returns a transformation by which absolute coordinates can be translated and rotated to the frame of the possibly
+     * oriented location around which bounds are defined.
+     * @param location Point2d; location (can be an {@code Oriented}).
+     * @return Transform2d; transformation.
+     */
+    public static Transform2d toBoundsTransform(final Point2d location)
+    {
+        Transform2d transformation = new Transform2d();
+        if (location instanceof Oriented<?>)
         {
-            Oriented<?> oriented = (Oriented<?>) getSource().getLocation();
-            Point2d center = getSource().getLocation();
-            Transform2d transformation = new Transform2d();
-            transformation.translate(-center.getX(), -center.getY());
-            if (!getSource().toString().contains("Conflict"))
-            {
-                transformation.rotation(-oriented.getDirZ());
-            }
-            Point2d pointObjectCoordinates = transformation.transform(pointWorldCoordinates);
-            return getSource().getBounds().contains(pointObjectCoordinates);
+            transformation.rotation(-((Oriented<?>) location).getDirZ());
         }
-        return super.contains(pointWorldCoordinates, extent);
+        transformation.translate(-location.getX(), -location.getY());
+        return transformation;
     }
 
 }

@@ -2,8 +2,8 @@ package org.opentrafficsim.animation.data;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.base.geometry.ClickableBounds;
 import org.opentrafficsim.base.geometry.OtsBounds2d;
-import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
@@ -47,7 +47,7 @@ public abstract class AnimationLaneBasedObjectData<T extends LaneBasedObject> im
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getBounds()
+    public OtsBounds2d getOtsBounds()
     {
         return ClickableBounds.get(this.laneBasedObject.getBounds());
     }
