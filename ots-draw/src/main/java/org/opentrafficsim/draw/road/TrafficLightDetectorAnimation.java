@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
 import java.rmi.RemoteException;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import javax.naming.NamingException;
@@ -15,6 +16,7 @@ import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.base.geometry.OtsRenderable;
 import org.opentrafficsim.draw.DrawLevel;
+import org.opentrafficsim.draw.PaintPolygons;
 import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.road.TrafficLightDetectorAnimation.TrafficLightDetectorData;
@@ -40,7 +42,7 @@ public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDet
     private final TrafficLightDetectorData detector;
 
     /** Path of the detector. */
-    private final Path2D.Float polygon;
+    private final Set<Path2D.Double> paths;
 
     /** the Text object to destroy when the animation is destroyed. */
     private final Text text;
@@ -57,25 +59,17 @@ public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDet
     {
         super(detector, contextualized);
         this.detector = detector;
-        PolyLine2d coordinates = this.detector.getGeometry();
-        this.polygon = new Path2D.Float();
-        this.polygon.moveTo(coordinates.get(0).x, coordinates.get(0).y);
-        for (int i = 1; i < coordinates.size(); i++)
-        {
-            this.polygon.lineTo(coordinates.get(i).x, coordinates.get(i).y);
-        }
-        this.text = new Text(detector, detector::getId, 0.0f, 0.5f + 0.2f, TextAlignment.CENTER, // getHalfLength() + 0.2f
-                Color.BLACK, contextualized);
+        this.paths = PaintPolygons.getPaths(this.detector.getGeometry().getPointList());
+        this.text = new Text(detector, detector::getId, 0.0f, 0.5f + 0.2f, TextAlignment.CENTER, Color.BLACK, contextualized);
     }
 
     /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        graphics.setColor(this.detector.getOccupancy() ? Color.BLUE : Color.BLACK);
         graphics.setStroke(new BasicStroke(0.2f));
         setRendering(graphics);
-        graphics.draw(this.polygon);
+        PaintPolygons.paintPaths(graphics, this.detector.getOccupancy() ? Color.BLUE : Color.BLACK, this.paths, false);
         resetRendering(graphics);
     }
 
