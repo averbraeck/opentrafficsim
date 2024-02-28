@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.lane.object.detector;
 
+import java.util.UUID;
 import java.util.function.BiPredicate;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -72,7 +73,7 @@ public class SinkDetector extends LaneDetector
     public SinkDetector(final Lane lane, final Length position, final OtsSimulatorInterface simulator,
             final DetectorType detectorType) throws NetworkException
     {
-        this(lane, position, simulator, detectorType, (sink, gtu) -> true);
+        this(""+ UUID.randomUUID(), lane, position, simulator, detectorType, (sink, gtu) -> true);
     }
 
     /**
@@ -85,9 +86,16 @@ public class SinkDetector extends LaneDetector
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
     public SinkDetector(final Lane lane, final Length position, final OtsSimulatorInterface simulator,
+                        final DetectorType detectorType, final BiPredicate<SinkDetector, LaneBasedGtu> predicate) throws NetworkException
+    {
+        super("SINK@" + UUID.randomUUID(), lane, position, RelativePosition.CENTER, simulator,
+                makeGeometry(lane, position, 1.0), detectorType);
+        this.predicate = predicate;
+    }
+    public SinkDetector(final String gtuId, final Lane lane, final Length position, final OtsSimulatorInterface simulator,
             final DetectorType detectorType, final BiPredicate<SinkDetector, LaneBasedGtu> predicate) throws NetworkException
     {
-        super("SINK@" + lane.getFullId() + "." + position, lane, position, RelativePosition.FRONT, simulator,
+        super("SINK@" + gtuId, lane, position, RelativePosition.CENTER, simulator,
                 makeGeometry(lane, position, 1.0), detectorType);
         this.predicate = predicate;
     }

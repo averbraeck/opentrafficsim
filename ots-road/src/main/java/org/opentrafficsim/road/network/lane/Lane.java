@@ -142,6 +142,11 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                     new ObjectDescriptor("Lane id", "Id of the lane", String.class),
                     new ObjectDescriptor("Link id", "Id of the link", String.class)));
 
+    public static final EventType GTU_SCHEDULE = new EventType("LANE.GTU.SCHEDULE",
+            new MetaData("Lane GTU SCHEDULE", "GTU id, number of GTUs after addition, lane id, link id",
+                    new ObjectDescriptor("GTU id", "Id of GTU", String.class),
+                    new ObjectDescriptor("Lane id", "Id of the lane", String.class),
+                    new ObjectDescriptor("Link id", "Id of the link", String.class)));
     /**
      * The <b>timed</b> event type for pub/sub indicating the removal of a GTU from the lane. <br>
      * Payload: Object[] {String gtuId, LaneBasedGtu gtu, int count_after_removal, Length position, String laneId, String

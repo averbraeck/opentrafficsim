@@ -251,14 +251,38 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
             if (isIntervalBased())
             {
-                Duration nowOnFirstEncounterOtherwiseAtInterval = active ? this.samplingInterval : Duration.ZERO;
-                scheduleSamplingInterval(gtu, lane, nowOnFirstEncounterOtherwiseAtInterval);
+                double currentTime = now().getSI();
+                double nextTenth = Math.ceil(currentTime / 0.04) * 0.04;
+                Duration d;
+                if(nextTenth!=currentTime){
+                    d = Duration.instantiateSI(nextTenth - currentTime);
+                }else{
+                    d = Duration.ZERO;
+                }
+
+                Event e = new TimedEvent<>(Lane.GTU_SCHEDULE,
+                        new Object[] {gtu.getId(), lane.getId(), lane.getLink().getId()},
+                        gtu.getSimulator().getSimulatorTime());
+
+                this.simulator.scheduleEventRel(d, this, "notify", new Object[] {e});
             }
             else
             {
                 this.activeLanesPerGtu.computeIfAbsent(gtu.getId(), (key) -> new LinkedHashSet<>()).add(lane);
                 gtu.addListener(this, LaneBasedGtu.LANEBASED_MOVE_EVENT, ReferenceType.WEAK);
             }
+        }
+        else if (event.getType().equals(Lane.GTU_SCHEDULE)){
+            Object[] payload = (Object[]) event.getContent();
+            Lane lane = (Lane) ((CrossSectionLink) this.network.getLink((String) payload[2]))
+                    .getCrossSectionElement((String) payload[1]);
+
+            LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU((String) payload[0]);
+
+            boolean active = this.activeGtus.contains(gtu.getId());
+
+           Duration nowOnFirstEncounterOtherwiseAtInterval = active ? this.samplingInterval : Duration.ZERO;
+           scheduleSamplingInterval(gtu, lane, nowOnFirstEncounterOtherwiseAtInterval);
         }
         else if (event.getType().equals(Lane.GTU_REMOVE_EVENT))
         {
