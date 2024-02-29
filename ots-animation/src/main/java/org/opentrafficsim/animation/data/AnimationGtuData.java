@@ -145,7 +145,7 @@ public class AnimationGtuData implements GtuData
     @Override
     public String toString()
     {
-        return "LaneBasedGtu " + this.gtu.getId();
+        return "Gtu " + this.gtu.getId();
     }
 
 }

@@ -63,7 +63,7 @@ public class AnimationGtuGeneratorPositionData implements GtuGeneratorPositionDa
     @Override
     public String toString()
     {
-        return "Generator position";
+        return "Generator position " + this.position.getLocation();
     }
 
 }

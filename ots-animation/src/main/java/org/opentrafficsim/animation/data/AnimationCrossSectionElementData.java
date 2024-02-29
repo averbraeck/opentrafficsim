@@ -67,4 +67,11 @@ public class AnimationCrossSectionElementData<T extends CrossSectionElement> imp
         return this.element;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "Cross section element " + getElement().getId();
+    }
+
 }

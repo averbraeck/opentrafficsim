@@ -56,7 +56,7 @@ public class AnimationTrafficLightData extends AnimationLaneBasedObjectData<Traf
     @Override
     public String toString()
     {
-        return "TrafficLight " + getObject().getFullId();
+        return "Traffic light " + getObject().getFullId();
     }
     
 }

@@ -63,7 +63,7 @@ public class AnimationSpeedSignData implements SpeedSignData
     @Override
     public String toString()
     {
-        return "SpeedSign " + this.speedSign.getId();
+        return "Speed sign " + this.speedSign.getId();
     }
 
 }

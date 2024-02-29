@@ -49,7 +49,7 @@ public class MapTrafficLightData extends MapLineData implements TrafficLightData
     @Override
     public String toString()
     {
-        return "TrafficLight " + getId();
+        return "Traffic light " + getId();
     }
 
 }

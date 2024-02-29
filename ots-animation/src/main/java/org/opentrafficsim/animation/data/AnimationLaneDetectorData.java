@@ -28,7 +28,7 @@ public class AnimationLaneDetectorData extends AnimationLaneBasedObjectData<Lane
     @Override
     public String toString()
     {
-        return "LaneDetector " + getObject().getFullId();
+        return "Lane detector " + getObject().getFullId();
     }
     
 }

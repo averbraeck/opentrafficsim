@@ -85,7 +85,7 @@ public class AnimationPriorityData implements PriorityData
     @Override
     public String toString()
     {
-        return "PriorityData " + this.link.getId();
+        return "Priority " + this.link.getId();
     }
 
 }
