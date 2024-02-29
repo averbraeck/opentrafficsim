@@ -29,6 +29,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
+import javax.swing.SwingUtilities;
 
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.event.Event;
@@ -169,13 +170,13 @@ public class EditorMap extends JPanel implements EventListener
             @Override
             public synchronized void zoomAll()
             {
-                Bounds2d extent = EditorMap.this.animationPanel.fullExtent();
                 EditorMap.this.ignoreKeepScale = true;
+                Bounds2d extent = EditorMap.this.animationPanel.fullExtent();
                 if (Double.isFinite(extent.getMaxX()))
                 {
                     super.zoomAll();
                 }
-                else
+                else if (getSize().height != 0)
                 {
                     // there are no objects
                     super.home();
@@ -371,7 +372,7 @@ public class EditorMap extends JPanel implements EventListener
         grid.setToolTipText("Toggle grid on/off");
         grid.addActionListener((e) -> this.animationPanel.setShowGrid(!this.animationPanel.isShowGrid()));
         this.toolPanel.add(grid);
-        
+
         this.toolPanel.add(Box.createHorizontalStrut(5));
 
         add(this.toolPanel, BorderLayout.NORTH);
@@ -549,6 +550,7 @@ public class EditorMap extends JPanel implements EventListener
             XsdTreeNodeRoot root = (XsdTreeNodeRoot) event.getContent();
             root.addListener(this, XsdTreeNodeRoot.NODE_CREATED);
             root.addListener(this, XsdTreeNodeRoot.NODE_REMOVED);
+            SwingUtilities.invokeLater(() -> this.animationPanel.zoomAll());
         }
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
         {
