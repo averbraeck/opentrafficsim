@@ -20,6 +20,7 @@ import org.opentrafficsim.animation.data.AnimationLaneData;
 import org.opentrafficsim.animation.data.AnimationLaneDetectorData;
 import org.opentrafficsim.animation.data.AnimationLinkData;
 import org.opentrafficsim.animation.data.AnimationNodeData;
+import org.opentrafficsim.animation.data.AnimationPriorityData;
 import org.opentrafficsim.animation.data.AnimationShoulderData;
 import org.opentrafficsim.animation.data.AnimationSpeedSignData;
 import org.opentrafficsim.animation.data.AnimationStripeData;
@@ -49,6 +50,7 @@ import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation.GtuGeneratorPo
 import org.opentrafficsim.draw.road.LaneAnimation;
 import org.opentrafficsim.draw.road.LaneDetectorAnimation;
 import org.opentrafficsim.draw.road.LaneDetectorAnimation.LaneDetectorData;
+import org.opentrafficsim.draw.road.PriorityAnimation;
 import org.opentrafficsim.draw.road.SpeedSignAnimation;
 import org.opentrafficsim.draw.road.SpeedSignAnimation.SpeedSignData;
 import org.opentrafficsim.draw.road.StripeAnimation;
@@ -146,7 +148,8 @@ public class DefaultAnimationFactory implements EventListener
                     new LinkAnimation(new AnimationLinkData(link), this.simulator, 0.5f);
                     if (link instanceof CrossSectionLink)
                     {
-                        for (CrossSectionElement element : ((CrossSectionLink) link).getCrossSectionElementList())
+                        CrossSectionLink cLink = (CrossSectionLink) link;
+                        for (CrossSectionElement element : cLink.getCrossSectionElementList())
                         {
                             if (element instanceof Lane)
                             {
@@ -169,6 +172,10 @@ public class DefaultAnimationFactory implements EventListener
                                 new CrossSectionElementAnimation<>(new AnimationCrossSectionElementData<>(element),
                                         this.simulator, Color.DARK_GRAY);
                             }
+                        }
+                        if (!cLink.getPriority().isNone())
+                        {
+                            new PriorityAnimation(new AnimationPriorityData(cLink), this.simulator);
                         }
                     }
                 }

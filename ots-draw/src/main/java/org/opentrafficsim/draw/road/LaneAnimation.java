@@ -183,6 +183,7 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
             this.path = PaintLine.getPath(getSource().getLocation(), getSource().getCenterLine());
         }
 
+        /** {@inheritDoc} */
         @Override
         public final void paint(final Graphics2D graphics, final ImageObserver observer)
         {

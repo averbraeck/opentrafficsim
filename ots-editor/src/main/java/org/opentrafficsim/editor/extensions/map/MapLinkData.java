@@ -50,6 +50,7 @@ import org.opentrafficsim.core.geometry.OtsGeometryUtil;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation;
+import org.opentrafficsim.draw.road.PriorityAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
 import org.opentrafficsim.editor.OtsEditor;
@@ -69,7 +70,8 @@ import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 
 /**
- * LinkData for the editor Map. This class will also listen to any changes that may affect the link shape.
+ * LinkData for the editor Map. This class will also listen to any changes that may affect the link shape, maintain the drawn
+ * layout, and maintain the priority animation.
  * <p>
  * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -148,6 +150,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
     /** Lane data. */
     private java.util.Map<String, MapLaneData> laneData = new LinkedHashMap<>();
+
+    /** Priority animation. */
+    private PriorityAnimation priorityAnimation;
 
     /**
      * Constructor.
@@ -231,6 +236,10 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         {
             this.flattenerListener.destroy();
             this.flattenerListener = null;
+        }
+        if (this.priorityAnimation != null)
+        {
+            this.priorityAnimation.destroy(getMap().getContextualized());
         }
     }
 
@@ -342,7 +351,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             {
                 // change in flattener
                 buildDesignLine();
-                buildLayout();
             }
             return;
         }
@@ -541,6 +549,11 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         this.location = new OrientedPoint2d(ray.x, ray.y, ray.phi);
         this.bounds =
                 BoundingPolygon.geometryToBounds(this.location, ClickableBounds.get(this.flattenedDesignLine).asPolygon());
+        if (this.priorityAnimation != null)
+        {
+            getMap().removeAnimation(this.priorityAnimation);
+        }
+        this.priorityAnimation = new PriorityAnimation(new MapPriorityData(this), getMap().getContextualized());
         buildLayout();
         setValid();
     }
@@ -682,7 +695,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         this.nodeEnd = replaceNode(this.nodeEnd, getNode().getCoupledKeyrefNodeAttribute("NodeEnd"));
         this.shapeListener.update();
         buildDesignLine();
-        buildLayout();
     }
 
     /**

@@ -48,6 +48,7 @@ import org.opentrafficsim.draw.road.DetectorData;
 import org.opentrafficsim.draw.road.LaneAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation.CenterLine;
 import org.opentrafficsim.draw.road.LaneAnimation.LaneData;
+import org.opentrafficsim.draw.road.PriorityAnimation.PriorityData;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.draw.road.TrafficLightAnimation.TrafficLightData;
@@ -171,12 +172,26 @@ public class EditorMap extends JPanel implements EventListener
             public synchronized void zoomAll()
             {
                 Bounds2d extent = EditorMap.this.animationPanel.fullExtent();
-                if (Double.isFinite(extent.getMaxX())) // else there are no objects
+                EditorMap.this.ignoreKeepScale = true;
+                if (Double.isFinite(extent.getMaxX()))
                 {
-                    EditorMap.this.ignoreKeepScale = true;
                     super.zoomAll();
-                    EditorMap.this.ignoreKeepScale = false;
                 }
+                else
+                {
+                    // there are no objects
+                    super.home();
+                }
+                EditorMap.this.ignoreKeepScale = false;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public synchronized void home()
+            {
+                EditorMap.this.ignoreKeepScale = true;
+                super.home();
+                EditorMap.this.ignoreKeepScale = false;
             }
         };
         this.animationPanel.setBackground(Color.GRAY);
@@ -394,11 +409,13 @@ public class EditorMap extends JPanel implements EventListener
     private void setAnimationToggles()
     {
         addToggleAnimationButtonIcon("Node", NodeData.class, "/icons/Node24.png", "Show/hide nodes", true, false);
-        addToggleAnimationButtonIcon("NodeId", NodeAnimation.Text.class, "/icons/Id24.png", "Show/hide node Ids", false, true);
+        addToggleAnimationButtonIcon("NodeId", NodeAnimation.Text.class, "/icons/Id24.png", "Show/hide node ids", false, true);
         addToggleAnimationButtonIcon("Link", LinkData.class, "/icons/Link24.png", "Show/hide links", true, false);
-        addToggleAnimationButtonIcon("LinkId", LinkAnimation.Text.class, "/icons/Id24.png", "Show/hide link Ids", false, true);
+        addToggleAnimationButtonIcon("LinkId", LinkAnimation.Text.class, "/icons/Id24.png", "Show/hide link ids", false, true);
+        addToggleAnimationButtonIcon("Priority", PriorityData.class, "/icons/Priority24.png", "Show/hide link priority", true,
+                false);
         addToggleAnimationButtonIcon("Lane", LaneData.class, "/icons/Lane24.png", "Show/hide lanes", true, false);
-        addToggleAnimationButtonIcon("LaneId", LaneAnimation.Text.class, "/icons/Id24.png", "Show/hide lane Ids", false, true);
+        addToggleAnimationButtonIcon("LaneId", LaneAnimation.Text.class, "/icons/Id24.png", "Show/hide lane ids", false, true);
         addToggleAnimationButtonIcon("LaneCenter", CenterLine.class, "/icons/CenterLine24.png", "Show/hide lane center lines",
                 false, false);
         addToggleAnimationButtonIcon("Stripe", StripeData.class, "/icons/Stripe24.png", "Show/hide stripes", true, false);
@@ -406,14 +423,14 @@ public class EditorMap extends JPanel implements EventListener
                 false); // Shoulder
         addToggleAnimationButtonIcon("Detector", DetectorData.class, "/icons/Detector24.png", "Show/hide detectors", true,
                 false);
-        addToggleAnimationButtonIcon("DetectorId", DetectorData.Text.class, "/icons/Id24.png", "Show/hide detector Ids", false,
+        addToggleAnimationButtonIcon("DetectorId", DetectorData.Text.class, "/icons/Id24.png", "Show/hide detector ids", false,
                 true);
         addToggleAnimationButtonIcon("Light", TrafficLightData.class, "/icons/TrafficLight24.png", "Show/hide traffic lights",
                 true, false);
         addToggleAnimationButtonIcon("LightId", TrafficLightAnimation.Text.class, "/icons/Id24.png",
-                "Show/hide traffic light Ids", false, true);
+                "Show/hide traffic light ids", false, true);
         addToggleAnimationButtonIcon("Bus", BusStopData.class, "/icons/BusStop24.png", "Show/hide bus stops", true, false);
-        addToggleAnimationButtonIcon("BusId", BusStopAnimation.Text.class, "/icons/Id24.png", "Show/hide bus stops Ids", false,
+        addToggleAnimationButtonIcon("BusId", BusStopAnimation.Text.class, "/icons/Id24.png", "Show/hide bus stops ids", false,
                 true);
     }
 
