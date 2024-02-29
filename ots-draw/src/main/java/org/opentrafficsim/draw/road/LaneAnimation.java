@@ -10,9 +10,9 @@ import java.util.function.Supplier;
 import javax.naming.NamingException;
 
 import org.djutils.base.Identifiable;
-import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.base.geometry.BoundingPolygon;
 import org.opentrafficsim.base.geometry.ClickableBounds;
 import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
@@ -99,8 +99,11 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         /** The center line. */
         private final PolyLine2d centerLine;
 
+        /** Location. */
+        private final OrientedPoint2d location;
+
         /** Bounds. */
-        private final Bounds2d bounds;
+        private final OtsBounds2d bounds;
 
         /** Lane id. */
         private final String fullId;
@@ -113,7 +116,8 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         CenterLine(final PolyLine2d centerLine, final String fullId)
         {
             this.centerLine = centerLine;
-            this.bounds = new Bounds2d(centerLine.getBounds().getDeltaX(), centerLine.getBounds().getDeltaY());
+            this.location = new OrientedPoint2d(this.centerLine.getBounds().midPoint(), 0.0);
+            this.bounds = ClickableBounds.get(BoundingPolygon.geometryToBounds(this.location, centerLine).asPolygon());
             this.fullId = fullId;
         }
 
@@ -121,14 +125,14 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         @Override
         public final OrientedPoint2d getLocation()
         {
-            return new OrientedPoint2d(this.centerLine.getBounds().midPoint(), 0.0);
+            return this.location;
         }
 
         /** {@inheritDoc} */
         @Override
         public final OtsBounds2d getBounds()
         {
-            return ClickableBounds.get(this.bounds);
+            return this.bounds;
         }
 
         /**
