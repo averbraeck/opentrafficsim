@@ -716,14 +716,35 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         this.undo.clear();
         setStatusLabel("Schema " + xsdDocument.getBaseURI() + " loaded");
 
-        // check autosave
+        setVisible(true);
+        this.leftRightSplitPane.setDividerLocation(0.65);
+        this.rightSplitPane.setDividerLocation(0.75);
+        setAppearance(getAppearance());
+        
+        SwingUtilities.invokeLater(() -> checkAutosave());
+    }
+
+    /**
+     * Checks for "autosave*.xml" files in the temporary directory.
+     */
+    private void checkAutosave()
+    {
         Path tmpPath = Paths.get(System.getProperty("java.io.tmpdir") + "ots" + File.separator);
         File tmpDir = tmpPath.toFile();
         if (!tmpDir.exists())
         {
             tmpDir.mkdir();
         }
-        Iterator<Path> it = Files.newDirectoryStream(tmpPath, "autosave*.xml").iterator();
+        Iterator<Path> it;
+        try
+        {
+            it = Files.newDirectoryStream(tmpPath, "autosave*.xml").iterator();
+        }
+        catch (IOException ioe)
+        {
+            // skip presenting user with autosave, but also do not delete file
+            return;
+        }
         if (it.hasNext())
         {
             File file = it.next().toFile();
@@ -744,10 +765,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                 file.delete();
             }
         }
-        setVisible(true);
-        this.leftRightSplitPane.setDividerLocation(0.65);
-        this.rightSplitPane.setDividerLocation(0.75);
-        setAppearance(getAppearance());
     }
 
     /**

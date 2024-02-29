@@ -17,6 +17,7 @@ import java.util.WeakHashMap;
 
 import javax.naming.NamingException;
 import javax.swing.Box;
+import javax.swing.Box.Filler;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
@@ -27,7 +28,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 
 import org.djutils.draw.bounds.Bounds2d;
@@ -57,8 +57,6 @@ import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
 import org.opentrafficsim.swing.gui.AppearanceControlComboBox;
-import org.opentrafficsim.swing.gui.AppearanceControlTextField;
-import org.opentrafficsim.swing.gui.GhostText;
 import org.opentrafficsim.swing.gui.OtsControlPanel;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -261,6 +259,7 @@ public class EditorMap extends JPanel implements EventListener
         this.toolPanel.setBackground(BAR_COLOR);
         this.toolPanel.setMinimumSize(new Dimension(350, 28));
         this.toolPanel.setPreferredSize(new Dimension(350, 28));
+        this.toolPanel.setLayout(new BoxLayout(this.toolPanel, BoxLayout.X_AXIS));
 
         this.toolPanel.add(Box.createHorizontalStrut(5));
         this.toolPanel.add(new JLabel("Add tools:"));
@@ -349,6 +348,11 @@ public class EditorMap extends JPanel implements EventListener
         this.toolPanel.add(linkType);
 
         this.toolPanel.add(Box.createHorizontalStrut(5));
+        Dimension minDim = new Dimension(0, 1);
+        Dimension prefDim = new Dimension(0, 1);
+        Dimension maxDim = new Dimension(5000, 1);
+        this.toolPanel.add(new Filler(minDim, prefDim, maxDim)); // pushes further elements right aligned
+
         this.toolPanel.add(new JLabel("Show:"));
 
         this.toolPanel.add(Box.createHorizontalStrut(5));
@@ -367,20 +371,8 @@ public class EditorMap extends JPanel implements EventListener
         grid.setToolTipText("Toggle grid on/off");
         grid.addActionListener((e) -> this.animationPanel.setShowGrid(!this.animationPanel.isShowGrid()));
         this.toolPanel.add(grid);
-
+        
         this.toolPanel.add(Box.createHorizontalStrut(5));
-
-        JTextField id = new AppearanceControlTextField();
-        id.setMinimumSize(new Dimension(50, 22));
-        id.setMaximumSize(new Dimension(75, 22));
-        id.setPreferredSize(new Dimension(75, 22));
-        id.setToolTipText("Go to item with id");
-        new GhostText(id, "Id...").setGhostColor(Color.GRAY);
-        this.toolPanel.add(id);
-
-        this.toolPanel.add(Box.createHorizontalStrut(5));
-
-        this.toolPanel.setLayout(new BoxLayout(this.toolPanel, BoxLayout.X_AXIS));
 
         add(this.toolPanel, BorderLayout.NORTH);
     }
