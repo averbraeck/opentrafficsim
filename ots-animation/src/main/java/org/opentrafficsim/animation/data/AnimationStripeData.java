@@ -58,7 +58,7 @@ public class AnimationStripeData extends AnimationCrossSectionElementData<Stripe
     @Override
     public String toString()
     {
-        return "Stripe " + getElement().getLink().getId() + " " + getElement().getDesignLineOffsetAtBegin();
+        return "Stripe " + getElement().getLink().getId() + " " + getElement().getOffsetAtBegin();
     }
 
 }

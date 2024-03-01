@@ -632,7 +632,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     {
                         StripeAnimation stripe = new StripeAnimation(
                                 new MapStripeData(StripeData.Type.valueOf(type.name()), width,
-                                        slices.get(0).getDesignLineOffset(), getNode(), centerLine, contour, sliceInfo),
+                                        slices.get(0).getOffset(), getNode(), centerLine, contour, sliceInfo),
                                 getMap().getContextualized());
                         this.crossSectionElements.add(stripe);
                     }
@@ -651,7 +651,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                             CrossSectionElementAnimation<
                                     ?> shoulder =
                                             new CrossSectionElementAnimation<>(
-                                                    new MapShoulderData(slices.get(0).getDesignLineOffset(), getNode(),
+                                                    new MapShoulderData(slices.get(0).getOffset(), getNode(),
                                                             centerLine, contour, sliceInfo),
                                                     getMap().getContextualized(), Color.DARK_GRAY);
                             this.crossSectionElements.add(shoulder);

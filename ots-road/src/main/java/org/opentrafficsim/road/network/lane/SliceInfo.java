@@ -23,7 +23,7 @@ public class SliceInfo
 
     /** Length of element for which slices are defined. */
     private final Length length;
-    
+
     /**
      * Constructor.
      * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; slices.
@@ -44,18 +44,18 @@ public class SliceInfo
     {
         if (this.crossSectionSlices.size() == 1)
         {
-            return this.getDesignLineOffsetAtBegin();
+            return this.getOffsetAtBegin();
         }
         if (this.crossSectionSlices.size() == 2)
         {
-            return Length.interpolate(this.getDesignLineOffsetAtBegin(), this.getDesignLineOffsetAtEnd(), fractionalPosition);
+            return Length.interpolate(this.getOffsetAtBegin(), this.getOffsetAtEnd(), fractionalPosition);
         }
         int sliceNr = calculateSliceNumber(fractionalPosition);
         double segmentPosition = fractionalPositionSegment(fractionalPosition, sliceNr);
-        return Length.interpolate(this.crossSectionSlices.get(sliceNr).getDesignLineOffset(),
-                this.crossSectionSlices.get(sliceNr + 1).getDesignLineOffset(), segmentPosition);
+        return Length.interpolate(this.crossSectionSlices.get(sliceNr).getOffset(),
+                this.crossSectionSlices.get(sliceNr + 1).getOffset(), segmentPosition);
     }
-    
+
     /**
      * Return the width of this CrossSectionElement at a specified fractional longitudinal position.
      * @param fractionalPosition double; the fractional longitudinal position
@@ -76,7 +76,7 @@ public class SliceInfo
         return Length.interpolate(this.crossSectionSlices.get(sliceNr).getWidth(),
                 this.crossSectionSlices.get(sliceNr + 1).getWidth(), segmentPosition);
     }
-    
+
     /**
      * Calculate the slice the fractional position is in.
      * @param fractionalPosition double; the fractional position between 0 and 1 compared to the design line
@@ -107,23 +107,23 @@ public class SliceInfo
         double endPos = this.crossSectionSlices.get(sliceNumber + 1).getRelativeLength().si / this.length.si;
         return (fractionalPosition - startPos) / (endPos - startPos);
     }
-    
+
     /**
      * Retrieve the offset from the design line at the begin of the parent link.
      * @return Length; the offset of this CrossSectionElement at the begin of the parent link
      */
-    public final Length getDesignLineOffsetAtBegin()
+    public final Length getOffsetAtBegin()
     {
-        return this.crossSectionSlices.get(0).getDesignLineOffset();
+        return this.crossSectionSlices.get(0).getOffset();
     }
 
     /**
      * Retrieve the offset from the design line at the end of the parent link.
      * @return Length; the offset of this CrossSectionElement at the end of the parent link
      */
-    public final Length getDesignLineOffsetAtEnd()
+    public final Length getOffsetAtEnd()
     {
-        return this.crossSectionSlices.get(this.crossSectionSlices.size() - 1).getDesignLineOffset();
+        return this.crossSectionSlices.get(this.crossSectionSlices.size() - 1).getOffset();
     }
 
     /**
@@ -154,20 +154,19 @@ public class SliceInfo
     public final Length getLateralBoundaryPosition(final LateralDirectionality lateralDirection,
             final double fractionalLongitudinalPosition)
     {
-        Length designLineOffset;
+        Length offset;
         Length halfWidth;
         if (this.crossSectionSlices.size() <= 2)
         {
-            designLineOffset = Length.interpolate(getDesignLineOffsetAtBegin(), getDesignLineOffsetAtEnd(),
-                    fractionalLongitudinalPosition);
+            offset = Length.interpolate(getOffsetAtBegin(), getOffsetAtEnd(), fractionalLongitudinalPosition);
             halfWidth = Length.interpolate(getBeginWidth(), getEndWidth(), fractionalLongitudinalPosition).times(0.5);
         }
         else
         {
             int sliceNr = calculateSliceNumber(fractionalLongitudinalPosition);
             double segmentPosition = fractionalPositionSegment(fractionalLongitudinalPosition, sliceNr);
-            designLineOffset = Length.interpolate(this.crossSectionSlices.get(sliceNr).getDesignLineOffset(),
-                    this.crossSectionSlices.get(sliceNr + 1).getDesignLineOffset(), segmentPosition);
+            offset = Length.interpolate(this.crossSectionSlices.get(sliceNr).getOffset(),
+                    this.crossSectionSlices.get(sliceNr + 1).getOffset(), segmentPosition);
             halfWidth = Length.interpolate(this.crossSectionSlices.get(sliceNr).getWidth(),
                     this.crossSectionSlices.get(sliceNr + 1).getWidth(), segmentPosition).times(0.5);
         }
@@ -175,12 +174,12 @@ public class SliceInfo
         switch (lateralDirection)
         {
             case LEFT:
-                return designLineOffset.minus(halfWidth);
+                return offset.minus(halfWidth);
             case RIGHT:
-                return designLineOffset.plus(halfWidth);
+                return offset.plus(halfWidth);
             default:
                 throw new Error("Bad switch on LateralDirectionality " + lateralDirection);
         }
     }
-    
+
 }

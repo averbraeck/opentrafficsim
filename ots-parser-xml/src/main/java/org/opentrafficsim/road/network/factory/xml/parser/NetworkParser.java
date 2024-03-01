@@ -179,7 +179,7 @@ public final class NetworkParser
      * @param network Network; the Network tag
      * @param nodeDirections Map&lt;String,Direction&gt;; a map of the node ids and their default directions
      * @param simulator OtsSimulatorInterface; the simulator
-     * @param designLines Map&lt;String, ContinuousLine&gt;; map t store created design lines.
+     * @param designLines Map&lt;String, ContinuousLine&gt;; map to store created design lines.
      * @param flatteners Map&lt;String, Flattener&gt;; flattener per link id.
      * @param eval Eval; expression evaluator.
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies

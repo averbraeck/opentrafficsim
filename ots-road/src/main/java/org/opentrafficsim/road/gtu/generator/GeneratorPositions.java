@@ -137,8 +137,8 @@ public interface GeneratorPositions
                 @Override
                 public int compare(final Lane lane1, final Lane lane2)
                 {
-                    Length lat1 = lane1.getDesignLineOffsetAtBegin();
-                    Length lat2 = lane2.getDesignLineOffsetAtBegin();
+                    Length lat1 = lane1.getOffsetAtBegin();
+                    Length lat2 = lane2.getOffsetAtBegin();
                     return lat1.compareTo(lat2);
                 }
             });

@@ -315,7 +315,7 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
                     @Override
                     public int compare(final Lane o1, final Lane o2)
                     {
-                        return o1.getDesignLineOffsetAtBegin().compareTo(o2.getDesignLineOffsetAtBegin());
+                        return o1.getOffsetAtBegin().compareTo(o2.getOffsetAtBegin());
                     }
                 });
                 int laneNumber = 0;
