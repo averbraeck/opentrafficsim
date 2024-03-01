@@ -227,7 +227,7 @@ public class LinkAnimation extends OtsRenderable<LinkData>
         @Override
         default double getZ()
         {
-            return DrawLevel.LINE.getZ();
+            return DrawLevel.LINK.getZ();
         }
     }
 

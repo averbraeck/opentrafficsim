@@ -148,7 +148,7 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         @Override
         public double getZ()
         {
-            return DrawLevel.LINE.getZ();
+            return DrawLevel.CENTER_LINE.getZ();
         }
 
         /** {@inheritDoc} */
