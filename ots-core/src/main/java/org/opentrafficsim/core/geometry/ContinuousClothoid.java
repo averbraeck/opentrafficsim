@@ -73,10 +73,10 @@ public class ContinuousClothoid implements ContinuousLine
 
     /** Normal unit vector to t0. */
     private final double[] n0;
-    
+
     /** Whether the line needs to be flipped. */
     private final boolean opposite;
-    
+
     /** Whether the line is reflected. */
     private final boolean reflected;
 
@@ -248,8 +248,11 @@ public class ContinuousClothoid implements ContinuousLine
 
         this.alphaMin = thetaSign * theta;
         this.alphaMax = v1; // alphaMax = theta + phi1 + phi2, which is v1
-        this.startCurvature = Math.PI * alphaToT(this.alphaMin) / this.a;
-        this.endCurvature = Math.PI * alphaToT(v1) / this.a;
+        double sign = (this.reflected ? -1.0 : 1.0);
+        double curveMin = Math.PI * alphaToT(this.alphaMin) / this.a;
+        double curveMax = Math.PI * alphaToT(v1) / this.a;
+        this.startCurvature = sign * (this.opposite ? -curveMax : curveMin);
+        this.endCurvature = sign * (this.opposite ? -curveMin : curveMax);
         this.length = this.a * (alphaToT(v1) - alphaToT(this.alphaMin));
     }
 
@@ -629,6 +632,16 @@ public class ContinuousClothoid implements ContinuousLine
     public double getLength()
     {
         return this.length;
+    }
+
+    /**
+     * Returns whether the shape was applied as a Clothoid, an Arc, or as a Straight, depending on start and end position and
+     * direction.
+     * @return String; "Clothoid", "Arc" or "Straight".
+     */
+    public String getAppliedShape()
+    {
+        return this.straight == null ? (this.arc == null ? "Clothoid" : "Arc") : "Straight";
     }
 
     /** {@inheritDoc} */

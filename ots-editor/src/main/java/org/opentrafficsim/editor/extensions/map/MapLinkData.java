@@ -630,10 +630,11 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
                     if (node.getNodeName().equals("Stripe"))
                     {
-                        StripeAnimation stripe = new StripeAnimation(
-                                new MapStripeData(StripeData.Type.valueOf(type.name()), width,
-                                        slices.get(0).getOffset(), getNode(), centerLine, contour, sliceInfo),
-                                getMap().getContextualized());
+                        StripeAnimation stripe =
+                                new StripeAnimation(
+                                        new MapStripeData(StripeData.Type.valueOf(type.name()), width,
+                                                slices.get(0).getOffset(), getNode(), centerLine, contour, sliceInfo),
+                                        getMap().getContextualized());
                         this.crossSectionElements.add(stripe);
                     }
                     else
@@ -648,12 +649,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                         }
                         else if (node.getNodeName().equals("Shoulder"))
                         {
-                            CrossSectionElementAnimation<
-                                    ?> shoulder =
-                                            new CrossSectionElementAnimation<>(
-                                                    new MapShoulderData(slices.get(0).getOffset(), getNode(),
-                                                            centerLine, contour, sliceInfo),
-                                                    getMap().getContextualized(), Color.DARK_GRAY);
+                            CrossSectionElementAnimation<?> shoulder = new CrossSectionElementAnimation<>(
+                                    new MapShoulderData(slices.get(0).getOffset(), getNode(), centerLine, contour, sliceInfo),
+                                    getMap().getContextualized(), Color.DARK_GRAY);
                             this.crossSectionElements.add(shoulder);
                         }
                         else if (node.getNodeName().equals("NoTrafficLane"))
@@ -1143,6 +1141,72 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 return null;
             }
         }
+    }
+
+    /**
+     * Returns the start curvature from the clothoid.
+     * @return Length; start curvature from the clothoid.
+     */
+    public LinearDensity getClothoidStartCurvature()
+    {
+        if (this.designLine != null && this.designLine instanceof ContinuousClothoid)
+        {
+            return LinearDensity.instantiateSI(((ContinuousClothoid) this.designLine).getStartCurvature());
+        }
+        return null;
+    }
+
+    /**
+     * Returns the end curvature from the clothoid.
+     * @return Length; end curvature from the clothoid.
+     */
+    public LinearDensity getClothoidEndCurvature()
+    {
+        if (this.designLine != null && this.designLine instanceof ContinuousClothoid)
+        {
+            return LinearDensity.instantiateSI(((ContinuousClothoid) this.designLine).getEndCurvature());
+        }
+        return null;
+    }
+
+    /**
+     * Returns the length from the clothoid.
+     * @return Length; length from the clothoid.
+     */
+    public Length getClothoidLength()
+    {
+        if (this.designLine != null && this.designLine instanceof ContinuousClothoid)
+        {
+            return Length.instantiateSI(((ContinuousClothoid) this.designLine).getLength());
+        }
+        return null;
+    }
+
+    /**
+     * Returns the A value from the clothoid.
+     * @return Length; A value from the clothoid.
+     */
+    public Length getClothoidA()
+    {
+        if (this.designLine != null && this.designLine instanceof ContinuousClothoid)
+        {
+            return Length.instantiateSI(((ContinuousClothoid) this.designLine).getA());
+        }
+        return null;
+    }
+
+    /**
+     * Returns whether the shape was applied as a Clothoid, an Arc, or as a Straight, depending on start and end position and
+     * direction.
+     * @return String; "Clothoid", "Arc" or "Straight".
+     */
+    public String getClothoidAppliedShape()
+    {
+        if (this.designLine != null && this.designLine instanceof ContinuousClothoid)
+        {
+            return ((ContinuousClothoid) this.designLine).getAppliedShape();
+        }
+        return null;
     }
 
     /** {@inheritDoc} */
