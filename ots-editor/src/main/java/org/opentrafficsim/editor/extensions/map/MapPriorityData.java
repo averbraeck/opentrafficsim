@@ -26,14 +26,7 @@ public class MapPriorityData implements PriorityData
      */
     public MapPriorityData(final MapLinkData linkData)
     {
-        if (linkData.getDesignLine().getLength() > 10.0)
-        {
-            this.location = linkData.getDesignLine().getLocationExtended(5.0);
-        }
-        else
-        {
-            this.location = linkData.getDesignLine().getLocationFractionExtended(0.5);
-        }
+        this.location = linkData.getDesignLine().getLocationFractionExtended(0.5);
         this.linkData = linkData;
     }
 

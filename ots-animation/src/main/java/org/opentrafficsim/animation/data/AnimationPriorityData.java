@@ -1,6 +1,5 @@
 package org.opentrafficsim.animation.data;
 
-import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.draw.road.PriorityAnimation.PriorityData;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -15,7 +14,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
  */
 public class AnimationPriorityData implements PriorityData
 {
-    
+
     /** Link. */
     final private CrossSectionLink link;
 
@@ -32,10 +31,6 @@ public class AnimationPriorityData implements PriorityData
     @Override
     public Point2d getLocation()
     {
-        if (this.link.getLength().si > 10.0)
-        {
-            return this.link.getDesignLine().getLocationExtended(Length.instantiateSI(5.0));
-        }
         return this.link.getDesignLine().getLocationFractionExtended(0.5);
     }
 
