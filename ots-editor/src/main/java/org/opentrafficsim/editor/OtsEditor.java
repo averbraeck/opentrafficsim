@@ -273,6 +273,12 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     /** Node actions. */
     private NodeActions nodeActions;
 
+    /** Application store for preferences and recent files. */
+    private ApplicationStore applicationStore = new ApplicationStore("ots", "editor");
+
+    /** Menu with recent files. */
+    private JMenu recentFilesMenu;
+
     /**
      * Constructor.
      * @throws IOException when a resource could not be loaded.
@@ -447,7 +453,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             showUnableToRun();
             return;
         }
-        save(file, (XsdTreeNodeRoot) this.treeTable.getTree().getModel().getRoot());
+        save(file, (XsdTreeNodeRoot) this.treeTable.getTree().getModel().getRoot(), false);
         int index = this.scenario.getSelectedIndex();
         if (index == 0)
         {
@@ -597,6 +603,9 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         open.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
         fileMenu.add(open);
         open.addActionListener((a) -> openFile());
+        this.recentFilesMenu = new JMenu("Recent files");
+        updateRecentFileMenu();
+        fileMenu.add(this.recentFilesMenu);
         JMenuItem save = new JMenuItem("Save");
         save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
         fileMenu.add(save);
@@ -666,6 +675,59 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     }
 
     /**
+     * Updates the recent file menu.
+     */
+    private void updateRecentFileMenu()
+    {
+        this.recentFilesMenu.removeAll();
+        List<String> files = this.applicationStore.getRecentFiles("recent_files");
+        if (!files.isEmpty())
+        {
+            for (String file : files)
+            {
+                JMenuItem item = new JMenuItem(file);
+                item.addActionListener((i) ->
+                {
+                    if (confirmDiscardChanges())
+                    {
+                        File f = new File(file);
+                        this.lastDirectory = f.getParent() + File.separator;
+                        this.lastFile = f.getName();
+                        if (!loadFile(f, "File loaded"))
+                        {
+                            boolean remove = JOptionPane.showConfirmDialog(OtsEditor.this,
+                                    "File could not be loaded. Do you want ro remove it from recent files?",
+                                    "Remove from recent files?", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+                                    this.questionIcon) == JOptionPane.OK_OPTION;
+                            if (remove)
+                            {
+                                this.applicationStore.removeRecentFile("recent_files", file);
+                                updateRecentFileMenu();
+                            }
+                        }
+                    }
+                });
+                this.recentFilesMenu.add(item);
+            }
+            this.recentFilesMenu.add(new JSeparator());
+        }
+        JMenuItem item = new JMenuItem("Clear history");
+        item.setEnabled(!files.isEmpty());
+        item.addActionListener((i) ->
+        {
+            boolean clear = JOptionPane.showConfirmDialog(OtsEditor.this, "Are you sure you want to clear the recent files?",
+                    "Clear recent files?", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+                    this.questionIcon) == JOptionPane.OK_OPTION;
+            if (clear)
+            {
+                this.applicationStore.clearProperty("recent_files");
+                updateRecentFileMenu();
+            }
+        });
+        this.recentFilesMenu.add(item);
+    }
+
+    /**
      * Sets coupled node from user action, i.e. the node that contains the key value to which a user selected node with keyref
      * refers to.
      * @param coupledNode XsdTreeNode; key node that is coupled to from a keyref node, may be {@code null}.
@@ -720,7 +782,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         this.leftRightSplitPane.setDividerLocation(0.65);
         this.rightSplitPane.setDividerLocation(0.75);
         setAppearance(getAppearance());
-        
+
         SwingUtilities.invokeLater(() -> checkAutosave());
     }
 
@@ -755,7 +817,18 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                     this.questionIcon);
             if (userInput == JOptionPane.OK_OPTION)
             {
-                loadFile(file, "Autosave file loaded");
+                boolean loaded = loadFile(file, "Autosave file loaded");
+                if (!loaded)
+                {
+                    boolean remove = JOptionPane.showConfirmDialog(OtsEditor.this,
+                            "File could not be loaded. Do you want ro remove it from recent files?",
+                            "Remove from recent files?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+                            this.questionIcon) == JOptionPane.YES_OPTION;
+                    if (remove)
+                    {
+                        file.delete();
+                    }
+                }
                 setUnsavedChanges(true);
                 this.treeTable.updateUI();
                 file.delete();
@@ -838,7 +911,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                     setStatusLabel("Autosaving...");
                     File file = new File(System.getProperty("java.io.tmpdir") + "ots" + File.separator
                             + (OtsEditor.this.lastFile == null ? "autosave.xml" : "autosave_" + OtsEditor.this.lastFile));
-                    save(file, root);
+                    save(file, root, false);
                     file.deleteOnExit();
                     setStatusLabel("Autosaved");
                 }
@@ -1451,15 +1524,20 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         this.lastDirectory = fileDialog.getDirectory();
         this.lastFile = fileName;
         File file = new File(this.lastDirectory + this.lastFile);
-        loadFile(file, "File loaded");
+        boolean loaded = loadFile(file, "File loaded");
+        if (!loaded)
+        {
+            JOptionPane.showMessageDialog(this, "Unable to read file.", "Unable to read file.", JOptionPane.WARNING_MESSAGE);
+        }
     }
 
     /**
      * Load file.
      * @param file File; file to load.
      * @param status String; status message in status bar to show upon loading.
+     * @return boolean; whether the file was successfully loaded.
      */
-    private void loadFile(final File file, final String status)
+    private boolean loadFile(final File file, final String status)
     {
         try
         {
@@ -1477,10 +1555,13 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             this.coupledItem.setEnabled(false);
             this.coupledItem.setText("Go to coupled item");
             this.treeTable.updateUI(); // knowing/changing the directory may change validation status
+            this.applicationStore.addRecentFile("recent_files", file.getAbsolutePath());
+            updateRecentFileMenu();
+            return true;
         }
         catch (SAXException | IOException | ParserConfigurationException exception)
         {
-            JOptionPane.showMessageDialog(this, "Unable to read file.", "Unable to read file.", JOptionPane.WARNING_MESSAGE);
+            return false;
         }
     }
 
@@ -1495,7 +1576,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             saveFileAs(root);
             return;
         }
-        save(new File(this.lastDirectory + this.lastFile), root);
+        save(new File(this.lastDirectory + this.lastFile), root, true);
         setUnsavedChanges(false);
         setStatusLabel("Saved");
     }
@@ -1523,7 +1604,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             this.lastDirectory = fileDialog.getDirectory();
             this.lastFile = fileName;
         }
-        save(new File(fileDialog.getDirectory() + fileName), root);
+        save(new File(fileDialog.getDirectory() + fileName), root, true);
         if (root instanceof XsdTreeNodeRoot)
         {
             ((XsdTreeNodeRoot) root).setDirectory(this.lastDirectory);
@@ -1538,8 +1619,9 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
      * Performs the actual saving, either from {@code saveFile()} or {@code saveFileAs()}.
      * @param file File; file to save.
      * @param root XsdTreeNode; root node of tree to save, can be a sub-tree of the full tree.
+     * @param storeAsRecent boolean; whether to store the file under recent files.
      */
-    private void save(final File file, final XsdTreeNode root)
+    private void save(final File file, final XsdTreeNode root, final boolean storeAsRecent)
     {
         try
         {
@@ -1581,6 +1663,11 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + System.lineSeparator());
             Files.write(file.toPath(), content.getBytes(StandardCharsets.UTF_8));
             // end of fix
+            if (storeAsRecent)
+            {
+                this.applicationStore.addRecentFile("recent_files", file.getAbsolutePath());
+                updateRecentFileMenu();
+            }
         }
         catch (ParserConfigurationException | TransformerException | IOException exception)
         {
