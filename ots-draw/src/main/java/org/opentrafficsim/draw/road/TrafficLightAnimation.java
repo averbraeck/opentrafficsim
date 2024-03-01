@@ -115,7 +115,7 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLightDat
                 final TextAlignment textPlacement, final Color color, final Contextualized contextualized)
                 throws RemoteException, NamingException
         {
-            super(source, text, dx, dy, textPlacement, color, contextualized, TextAnimation.RENDERALWAYS);
+            super(source, text, dx, dy, textPlacement, color, contextualized, TextAnimation.RENDERWHEN10);
         }
 
         /** {@inheritDoc} */

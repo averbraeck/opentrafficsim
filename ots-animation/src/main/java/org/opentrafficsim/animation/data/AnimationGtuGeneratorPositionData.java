@@ -1,7 +1,7 @@
 package org.opentrafficsim.animation.data;
 
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.base.geometry.ClickableBounds;
+import org.opentrafficsim.base.geometry.BoundingRectangle;
 import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.core.gtu.GtuGenerator.GtuGeneratorPosition;
 import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
@@ -40,7 +40,8 @@ public class AnimationGtuGeneratorPositionData implements GtuGeneratorPositionDa
     @Override
     public OtsBounds2d getBounds()
     {
-        return ClickableBounds.get(this.position.getBounds());
+        // this correlates to how generators are drawn as three chevrons
+        return new BoundingRectangle(0.0, 4.75, -1.0, 1.0);
     }
 
     /** {@inheritDoc} */
@@ -63,7 +64,7 @@ public class AnimationGtuGeneratorPositionData implements GtuGeneratorPositionDa
     @Override
     public String toString()
     {
-        return "Generator position " + this.position.getLocation();
+        return "Generator position " + this.position.getId();
     }
 
 }

@@ -316,8 +316,8 @@ public class DefaultAnimationFactory implements EventListener
             {
                 SinkDetector detector = (SinkDetector) object;
                 // Renderable2d<SinkSensor> objectAnimation = new SinkAnimation(detector, this.simulator);
-                Renderable2d<LaneDetectorData> objectAnimation =
-                        new LaneDetectorAnimation(new AnimationLaneDetectorData(detector), this.simulator, Color.ORANGE);
+                Renderable2d<LaneDetectorData> objectAnimation = LaneDetectorAnimation
+                        .ofGenericType(new AnimationLaneDetectorData(detector), this.simulator, Color.ORANGE);
                 this.animatedLocatedObjects.put(object, objectAnimation);
             }
             else if (object instanceof TrafficLightDetector)
@@ -335,8 +335,8 @@ public class DefaultAnimationFactory implements EventListener
             else if (object instanceof LaneDetector)
             {
                 LaneDetector detector = (LaneDetector) object;
-                Renderable2d<LaneDetectorData> objectAnimation =
-                        new LaneDetectorAnimation(new AnimationLaneDetectorData(detector), this.simulator, Color.BLACK);
+                Renderable2d<LaneDetectorData> objectAnimation = LaneDetectorAnimation
+                        .ofGenericType(new AnimationLaneDetectorData(detector), this.simulator, Color.BLACK);
                 this.animatedLocatedObjects.put(object, objectAnimation);
             }
             else if (object instanceof Conflict)

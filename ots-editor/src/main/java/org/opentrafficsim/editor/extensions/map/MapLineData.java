@@ -4,6 +4,7 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
+import java.util.Locale;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.bounds.Bounds2d;
@@ -21,6 +22,8 @@ import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.extensions.Adapters;
+import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
+import org.opentrafficsim.xml.bindings.types.LengthBeginEndType.LengthBeginEnd;
 
 /**
  * Data classes for objects that are drawn as a lateral line on the lane.
@@ -40,19 +43,25 @@ public abstract class MapLineData extends MapData implements LaneBasedObjectData
     private String id = "";
 
     /** Lane. */
-    private String lane = null;
+    private String lane;
 
-    /** Position. */
-    private Length position = null;
+    /** Position as entered, e.g. END-20m. */
+    private LengthBeginEnd position;
+
+    /** Position from start. */
+    private Length positionFromStart;
 
     /** Lane width. */
-    private Length laneWidth = null;
+    private Length laneWidth;
 
     /** Location. */
-    private OrientedPoint2d location = null;
+    private OrientedPoint2d location;
 
     /** Bounds. */
     private OtsBounds2d bounds = new BoundingBox(1.0, 0.25);
+
+    /** Node of link. */
+    private XsdTreeNode lastLinkNode;
 
     /**
      * Constructor.
@@ -66,10 +75,16 @@ public abstract class MapLineData extends MapData implements LaneBasedObjectData
         getNode().addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
         try
         {
-            ((MapLinkData) map.getData(getLinkNode())).addListener(this, MapLinkData.LAYOUT_REBUILT, ReferenceType.WEAK);
             if (getNode().isActive())
             {
-                notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Id", null}));
+                if (getNode().isIdentifiable())
+                {
+                    notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Id", null}));
+                }
+                if (getNode().hasAttribute("Link"))
+                {
+                    notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Link", null}));
+                }
                 notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Lane", null}));
                 notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Position", null}));
             }
@@ -81,10 +96,34 @@ public abstract class MapLineData extends MapData implements LaneBasedObjectData
     }
 
     /**
-     * Returns the {@code XsdTreeNode} of the link that contains this object.
-     * @return XsdTreeNode; node of the link that contains this object.
+     * Sets a node as link. Sub-classes may call this in their constructor if it is a fixed node. This class will listen to
+     * changes in the Link attribute, and set a coupled node as link node if it exists.
+     * @param linkNode XsdTreeNode; link node.
      */
-    abstract protected XsdTreeNode getLinkNode();
+    protected void setLinkNode(final XsdTreeNode linkNode)
+    {
+        try
+        {
+            if (this.lastLinkNode != null)
+            {
+                MapLinkData data = (MapLinkData) getMap().getData(linkNode);
+                if (data != null)
+                {
+                    data.removeListener(this, MapLinkData.LAYOUT_REBUILT);
+                }
+            }
+            this.lastLinkNode = linkNode;
+            MapLinkData data = (MapLinkData) getMap().getData(linkNode);
+            if (data != null)
+            {
+                data.addListener(this, MapLinkData.LAYOUT_REBUILT, ReferenceType.WEAK);
+            }
+        }
+        catch (RemoteException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -92,7 +131,10 @@ public abstract class MapLineData extends MapData implements LaneBasedObjectData
     {
         super.destroy();
         getNode().removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
-        getLinkNode().removeListener(this, MapLinkData.LAYOUT_REBUILT);
+        if (this.lastLinkNode != null)
+        {
+            this.lastLinkNode.removeListener(this, MapLinkData.LAYOUT_REBUILT);
+        }
     }
 
     /** {@inheritDoc} */
@@ -123,13 +165,45 @@ public abstract class MapLineData extends MapData implements LaneBasedObjectData
         return this.id;
     }
 
+    /**
+     * Returns an id in the form {linkId}.{laneId}.{id} or {linkId}.{laneId}@{position} if the id is empty.
+     * @return String; id in link/lane/position form.
+     */
+    protected String getLinkLanePositionId()
+    {
+        StringBuilder str = new StringBuilder();
+        String sep = "";
+        if (this.lastLinkNode != null)
+        {
+            str.append(this.lastLinkNode.getId());
+            sep = ".";
+        }
+        if (this.lane != null)
+        {
+            str.append(sep).append(this.lane);
+        }
+        if (this.positionFromStart != null)
+        {
+            str.append(String.format(Locale.US, "@%.3fm", this.positionFromStart.si));
+        }
+        return str.toString();
+    }
+
     /** {@inheritDoc} */
     @Override
     public void evalChanged()
     {
-        this.id = getNode().getId() == null ? "" : getNode().getId();
+        if (getNode().isIdentifiable())
+        {
+            this.id = getNode().getId() == null ? "" : getNode().getId();
+        }
+        if (getNode().hasAttribute("Link"))
+        {
+            XsdTreeNode linkNode = getNode().getCoupledKeyrefNodeAttribute("Link");
+            setLinkNode(linkNode);
+        }
         setValue((v) -> this.lane = v, Adapters.get(String.class), getNode(), "Lane");
-        setValue((v) -> this.position = v, Adapters.get(Length.class), getNode(), "Position");
+        setValue((v) -> this.position = v, Adapters.get(LengthBeginEnd.class), getNode(), "Position");
         setLocation();
     }
 
@@ -146,13 +220,18 @@ public abstract class MapLineData extends MapData implements LaneBasedObjectData
                 this.id = value == null ? "" : value;
                 return;
             }
+            else if ("Link".equals(attribute))
+            {
+                XsdTreeNode linkNode = getNode().getCoupledKeyrefNodeAttribute("Link");
+                setLinkNode(linkNode);
+            }
             else if ("Lane".equals(attribute))
             {
                 setValue((v) -> this.lane = v, Adapters.get(String.class), getNode(), "Lane");
             }
             else if ("Position".equals(attribute))
             {
-                setValue((v) -> this.position = v, Adapters.get(Length.class), getNode(), "Position");
+                setValue((v) -> this.position = v, Adapters.get(LengthBeginEnd.class), getNode(), "Position");
             }
         }
         // else: MapLinkData.LAYOUT_REBUILT
@@ -164,12 +243,12 @@ public abstract class MapLineData extends MapData implements LaneBasedObjectData
      */
     private void setLocation()
     {
-        if (this.lane == null || this.position == null)
+        if (this.lane == null || this.position == null || this.lastLinkNode == null)
         {
             setInvalid();
             return;
         }
-        MapLinkData linkData = (MapLinkData) getMap().getData(getLinkNode());
+        MapLinkData linkData = (MapLinkData) getMap().getData(this.lastLinkNode);
         if (linkData == null)
         {
             setInvalid();
@@ -181,8 +260,10 @@ public abstract class MapLineData extends MapData implements LaneBasedObjectData
             setInvalid();
             return;
         }
-        Ray2d ray = laneData.getCenterLine().getLocationExtended(this.position.si);
-        Length w = laneData.getWidth(this.position);
+        this.positionFromStart =
+                ParseUtil.parseLengthBeginEnd(this.position, Length.instantiateSI(linkData.getDesignLine().getLength()));
+        Ray2d ray = laneData.getCenterLine().getLocationExtended(this.positionFromStart.si);
+        Length w = laneData.getWidth(this.positionFromStart);
 
         // bounds
         double w45 = 0.45 * w.si;

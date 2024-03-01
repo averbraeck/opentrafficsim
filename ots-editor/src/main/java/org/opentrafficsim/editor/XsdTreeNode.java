@@ -873,6 +873,24 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         String name = DocumentReader.getAttribute(this.attributeNodes.get(index), "name");
         return name;
     }
+    
+    /**
+     * Returns whether this node has an attribute with given name.
+     * @param attribute String; attribute name.
+     * @return boolean; whether this node has an attribute with given name.
+     */
+    public boolean hasAttribute(final String attribute)
+    {
+        for (int index = 0; index < this.attributeCount(); index++)
+        {
+            Node attr = this.attributeNodes.get(index);
+            if (DocumentReader.getAttribute(attr, "name").equals(attribute))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
     // ====== Methods to expose to the GUI ======
 

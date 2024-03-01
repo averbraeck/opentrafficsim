@@ -14,6 +14,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.function.Function;
 
 import javax.naming.NamingException;
 import javax.swing.Box;
@@ -45,10 +46,14 @@ import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
 import org.opentrafficsim.draw.road.BusStopAnimation;
 import org.opentrafficsim.draw.road.BusStopAnimation.BusStopData;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.ShoulderData;
-import org.opentrafficsim.draw.road.DetectorData;
+import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
 import org.opentrafficsim.draw.road.LaneAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation.CenterLine;
 import org.opentrafficsim.draw.road.LaneAnimation.LaneData;
+import org.opentrafficsim.draw.road.LaneDetectorAnimation;
+import org.opentrafficsim.draw.road.LaneDetectorAnimation.LoopDetectorData;
+import org.opentrafficsim.draw.road.LaneDetectorAnimation.SinkData;
+import org.opentrafficsim.draw.road.LaneDetectorAnimation.SinkData.SinkText;
 import org.opentrafficsim.draw.road.PriorityAnimation.PriorityData;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
@@ -87,7 +92,7 @@ public class EditorMap extends JPanel implements EventListener
     private static final Color BAR_COLOR = Color.LIGHT_GRAY;
 
     /** All types that are valid to show in the map. */
-    private static final Set<String> TYPES = Set.of(XsdPaths.NODE, XsdPaths.LINK, XsdPaths.TRAFFIC_LIGHT);
+    private static final Set<String> TYPES = Set.of(XsdPaths.NODE, XsdPaths.LINK, XsdPaths.TRAFFIC_LIGHT, XsdPaths.SINK);
 
     /** Context provider. */
     private final Contextualized contextualized;
@@ -401,30 +406,25 @@ public class EditorMap extends JPanel implements EventListener
      */
     private void setAnimationToggles()
     {
-        addToggleAnimationButtonIcon("Node", NodeData.class, "/icons/Node24.png", "Show/hide nodes", true, false);
-        addToggleAnimationButtonIcon("NodeId", NodeAnimation.Text.class, "/icons/Id24.png", "Show/hide node ids", false, true);
-        addToggleAnimationButtonIcon("Link", LinkData.class, "/icons/Link24.png", "Show/hide links", true, false);
-        addToggleAnimationButtonIcon("LinkId", LinkAnimation.Text.class, "/icons/Id24.png", "Show/hide link ids", false, true);
-        addToggleAnimationButtonIcon("Priority", PriorityData.class, "/icons/Priority24.png", "Show/hide link priority", true,
-                false);
-        addToggleAnimationButtonIcon("Lane", LaneData.class, "/icons/Lane24.png", "Show/hide lanes", true, false);
-        addToggleAnimationButtonIcon("LaneId", LaneAnimation.Text.class, "/icons/Id24.png", "Show/hide lane ids", false, true);
-        addToggleAnimationButtonIcon("LaneCenter", CenterLine.class, "/icons/CenterLine24.png", "Show/hide lane center lines",
-                false, false);
-        addToggleAnimationButtonIcon("Stripe", StripeData.class, "/icons/Stripe24.png", "Show/hide stripes", true, false);
-        addToggleAnimationButtonIcon("Shoulder", ShoulderData.class, "/icons/Shoulder24.png", "Show/hide shoulders", true,
-                false); // Shoulder
-        addToggleAnimationButtonIcon("Detector", DetectorData.class, "/icons/Detector24.png", "Show/hide detectors", true,
-                false);
-        addToggleAnimationButtonIcon("DetectorId", DetectorData.Text.class, "/icons/Id24.png", "Show/hide detector ids", false,
-                true);
-        addToggleAnimationButtonIcon("Light", TrafficLightData.class, "/icons/TrafficLight24.png", "Show/hide traffic lights",
-                true, false);
-        addToggleAnimationButtonIcon("LightId", TrafficLightAnimation.Text.class, "/icons/Id24.png",
-                "Show/hide traffic light ids", false, true);
-        addToggleAnimationButtonIcon("Bus", BusStopData.class, "/icons/BusStop24.png", "Show/hide bus stops", true, false);
-        addToggleAnimationButtonIcon("BusId", BusStopAnimation.Text.class, "/icons/Id24.png", "Show/hide bus stops ids", false,
-                true);
+        addToggle("Node", NodeData.class, "/icons/Node24.png", "Show/hide nodes", true, false);
+        addToggle("NodeId", NodeAnimation.Text.class, "/icons/Id24.png", "Show/hide node ids", false, true);
+        addToggle("Link", LinkData.class, "/icons/Link24.png", "Show/hide links", true, false);
+        addToggle("LinkId", LinkAnimation.Text.class, "/icons/Id24.png", "Show/hide link ids", false, true);
+        addToggle("Priority", PriorityData.class, "/icons/Priority24.png", "Show/hide link priority", true, false);
+        addToggle("Lane", LaneData.class, "/icons/Lane24.png", "Show/hide lanes", true, false);
+        addToggle("LaneId", LaneAnimation.Text.class, "/icons/Id24.png", "Show/hide lane ids", false, true);
+        addToggle("LaneCenter", CenterLine.class, "/icons/CenterLine24.png", "Show/hide lane center lines", false, false);
+        addToggle("Stripe", StripeData.class, "/icons/Stripe24.png", "Show/hide stripes", true, false);
+        addToggle("Shoulder", ShoulderData.class, "/icons/Shoulder24.png", "Show/hide shoulders", true, false);
+        // TODO: perhaps a specific data type for generators?
+        addToggle("Generator", GtuGeneratorPositionData.class, "/icons/Generator24.png", "Show/hide generators", true, false);
+        addToggle("Sink", SinkData.class, "/icons/Sink24.png", "Show/hide sinks", true, true);
+        addToggle("Detector", LoopDetectorData.class, "/icons/Detector24.png", "Show/hide loop detectors", true, false);
+        addToggle("DetectorId", LoopDetectorData.Text.class, "/icons/Id24.png", "Show/hide loop detector ids", false, true);
+        addToggle("Light", TrafficLightData.class, "/icons/TrafficLight24.png", "Show/hide traffic lights", true, false);
+        addToggle("LightId", TrafficLightAnimation.Text.class, "/icons/Id24.png", "Show/hide traffic light ids", false, true);
+        addToggle("Bus", BusStopData.class, "/icons/BusStop24.png", "Show/hide bus stops", true, false);
+        addToggle("BusId", BusStopAnimation.Text.class, "/icons/Id24.png", "Show/hide bus stop ids", false, true);
     }
 
     /**
@@ -438,8 +438,8 @@ public class EditorMap extends JPanel implements EventListener
      * @param initiallyVisible boolean; whether the class is initially shown or not
      * @param idButton boolean; id button that needs to be placed next to the previous button
      */
-    public final void addToggleAnimationButtonIcon(final String name, final Class<? extends Locatable> locatableClass,
-            final String iconPath, final String toolTipText, final boolean initiallyVisible, final boolean idButton)
+    public final void addToggle(final String name, final Class<? extends Locatable> locatableClass, final String iconPath,
+            final String toolTipText, final boolean initiallyVisible, final boolean idButton)
     {
         JToggleButton button;
         Icon icon = OtsControlPanel.loadIcon(iconPath);
@@ -711,9 +711,16 @@ public class EditorMap extends JPanel implements EventListener
         {
             animation = Try.assign(() -> new TrafficLightAnimation((MapTrafficLightData) data, this.contextualized), "");
         }
+        else if (node.getPathString().equals(XsdPaths.SINK))
+        {
+            Function<LaneDetectorAnimation<SinkData, SinkText>, SinkText> textSupplier = (s) -> Try
+                    .assign(() -> new SinkText(s.getSource(), (float) s.getHalfLength() + 0.2f, this.contextualized), "");
+            animation = Try.assign(() -> new LaneDetectorAnimation<SinkData, SinkText>((SinkData) data, this.contextualized,
+                    Color.ORANGE, textSupplier), "");
+        }
         else
         {
-            throw new UnsupportedOperationException("Node cannot be added by the map editor.");
+            throw new UnsupportedOperationException("Data cannot be added by the map editor.");
         }
         this.animations.put(node, animation);
     }
@@ -764,6 +771,11 @@ public class EditorMap extends JPanel implements EventListener
         {
             MapTrafficLightData trafficLightData = new MapTrafficLightData(this, node, this.editor);
             data = trafficLightData;
+        }
+        else if (node.getPathString().equals(XsdPaths.SINK))
+        {
+            MapSinkData sinkData = new MapSinkData(this, node, this.editor);
+            data = sinkData;
         }
         else
         {

@@ -682,6 +682,13 @@
       <xsd:selector xpath=".//ots:Demand/ots:Sink" />
       <xsd:field xpath="@Type" />
     </xsd:keyref>
+    
+    <!-- Sink.Link defined by Link.Id -->
+    
+    <xsd:keyref name="sinkLinkIdRef" refer="ots:linkKey">
+      <xsd:selector xpath=".//ots:Demand/ots:Sink" />
+      <xsd:field xpath="@Link" />
+    </xsd:keyref>
 
     <!-- Demand.OdOptions.OdOptionsItem.LaneBiases.DefinedLaneBias.GtuType defined by LaneBias.GtuType -->
 
