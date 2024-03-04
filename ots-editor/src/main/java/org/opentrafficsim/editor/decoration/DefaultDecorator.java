@@ -52,31 +52,31 @@ public final class DefaultDecorator
      */
     public static void decorate(final OtsEditor editor) throws IOException, NamingException
     {
-        ImageIcon roadIcon = OtsEditor.loadIcon("./OTS_road.png", -1, -1, -1, -1);
-        ImageIcon networkIcon = OtsEditor.loadIcon("./OTS_network.png", -1, -1, -1, -1);
-        ImageIcon nodeIcon = OtsEditor.loadIcon("./OTS_node.png", -1, -1, -1, -1);
+        ImageIcon roadIcon = OtsEditor.loadIcon("/OTS_road.png", -1, -1, -1, -1);
+        ImageIcon networkIcon = OtsEditor.loadIcon("/OTS_network.png", -1, -1, -1, -1);
+        ImageIcon nodeIcon = OtsEditor.loadIcon("/OTS_node.png", -1, -1, -1, -1);
 
-        editor.setCustomIcon("Ots", OtsEditor.loadIcon("./OTS_merge.png", 14, 14, 16, 16));
-        editor.setCustomIcon("Ots.Definitions", OtsEditor.loadIcon("./Database.png", 14, 14, 16, 16));
+        editor.setCustomIcon("Ots", OtsEditor.loadIcon("/OTS_merge.png", 14, 14, 16, 16));
+        editor.setCustomIcon("Ots.Definitions", OtsEditor.loadIcon("/Database.png", 14, 14, 16, 16));
         editor.setCustomIcon(".RoadLayout", roadIcon);
         editor.setCustomIcon("Ots.Network.Link.DefinedLayout", roadIcon);
         editor.setCustomIcon("Ots.Network", networkIcon);
         editor.setCustomIcon(".Node", nodeIcon);
-        editor.setCustomIcon(".Centroid", OtsEditor.loadIcon("./OTS_centroid.png", -1, -1, -1, -1));
-        editor.setCustomIcon("Ots.Network.Connector", OtsEditor.loadIcon("./OTS_connector.png", -1, -1, -1, -1));
-        editor.setCustomIcon(".Link", OtsEditor.loadIcon("./OTS_link.png", -1, -1, -1, -1));
-        editor.setCustomIcon("Ots.Demand", OtsEditor.loadIcon("./Calendar.png", 16, 16, -1, -1));
+        editor.setCustomIcon(".Centroid", OtsEditor.loadIcon("/OTS_centroid.png", -1, -1, -1, -1));
+        editor.setCustomIcon("Ots.Network.Connector", OtsEditor.loadIcon("/OTS_connector.png", -1, -1, -1, -1));
+        editor.setCustomIcon(".Link", OtsEditor.loadIcon("/OTS_link.png", -1, -1, -1, -1));
+        editor.setCustomIcon("Ots.Demand", OtsEditor.loadIcon("/Calendar.png", 16, 16, -1, -1));
         editor.setCustomIcon("Ots.Demand.ShortestRoute.From", nodeIcon);
         editor.setCustomIcon("Ots.Demand.ShortestRoute.To", nodeIcon);
         editor.setCustomIcon("Ots.Demand.ShortestRoute.Via", nodeIcon);
         editor.setCustomIcon("Ots.Demand.OdOptions.OdOptionsItem.Origin", nodeIcon);
-        editor.setCustomIcon("Ots.Demand.Od", OtsEditor.loadIcon("./Table_blue.png", 16, 16, -1, -1));
-        editor.setCustomIcon("Ots.Models", OtsEditor.loadIcon("./Component_blue.png", 16, 16, -1, -1));
-        editor.setCustomIcon("Ots.Scenarios", OtsEditor.loadIcon("./Film.png", 14, 14, 16, 16));
-        editor.setCustomIcon("Ots.Control", OtsEditor.loadIcon("./OTS_control.png", -1, -1, -1, -1));
-        editor.setCustomIcon("Ots.Run", OtsEditor.loadIcon("./Stopwatch.png", 16, 16, -1, -1));
-        editor.setCustomIcon("Ots.Animation", OtsEditor.loadIcon("./Play.png", 14, 14, 16, 16));
-        editor.setCustomIcon("Ots.Output", OtsEditor.loadIcon("./Report.png", 14, 14, 16, 16)); // does not exist yet
+        editor.setCustomIcon("Ots.Demand.Od", OtsEditor.loadIcon("/Table_blue.png", 16, 16, -1, -1));
+        editor.setCustomIcon("Ots.Models", OtsEditor.loadIcon("/Component_blue.png", 16, 16, -1, -1));
+        editor.setCustomIcon("Ots.Scenarios", OtsEditor.loadIcon("/Film.png", 14, 14, 16, 16));
+        editor.setCustomIcon("Ots.Control", OtsEditor.loadIcon("/OTS_control.png", -1, -1, -1, -1));
+        editor.setCustomIcon("Ots.Run", OtsEditor.loadIcon("/Stopwatch.png", 16, 16, -1, -1));
+        editor.setCustomIcon("Ots.Animation", OtsEditor.loadIcon("/Play.png", 14, 14, 16, 16));
+        editor.setCustomIcon("Ots.Output", OtsEditor.loadIcon("/Report.png", 14, 14, 16, 16)); // does not exist yet
 
         editor.addTab("Map", networkIcon, EditorMap.build(editor), "Map editor");
         editor.addTab("Parameters", null, buildParameterPane(), null);

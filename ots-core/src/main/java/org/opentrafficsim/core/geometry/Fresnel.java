@@ -2,7 +2,7 @@ package org.opentrafficsim.core.geometry;
 
 /**
  * Utility class to create clothoid lines, in particular the Fresnel integral based on:
- * <li>W.J. Cody (1968) Chebyshev approximations for the Fresnel integrals. Mathematics of Computation, Vol. 22, Issue 102, pp.
+ * <ul><li>W.J. Cody (1968) Chebyshev approximations for the Fresnel integrals. Mathematics of Computation, Vol. 22, Issue 102, pp.
  * 450–453.</li>
  * </ul>
  * <p>

@@ -53,6 +53,8 @@ public final class ParseDistribution
 
     /**
      * Parse a relative unit distribution, e.g. <code>UNIFORM(1, 3) m</code>.
+     * @param <T> the type of the values in the distribution, extending DoubleScalarRel
+     * @param <U> the unit of the values in the distribution
      * @param streamMap StreamInformation; the map with streams from the RUN tag
      * @param distribution ConstantDistType; the tag to parse, a sub type of ConstantDistType
      * @param unit U; unit

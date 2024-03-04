@@ -345,7 +345,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         controlsContainer.add(Box.createHorizontalStrut(2));
         JButton playRun = new JButton();
         playRun.setToolTipText("Run single run");
-        playRun.setIcon(loadIcon("./Play.png", 18, 18, -1, -1));
+        playRun.setIcon(loadIcon("/Play.png", 18, 18, -1, -1));
         playRun.setMinimumSize(new Dimension(24, 24));
         playRun.setMaximumSize(new Dimension(24, 24));
         playRun.setPreferredSize(new Dimension(24, 24));
@@ -353,7 +353,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         controlsContainer.add(playRun);
         JButton playScenario = new JButton();
         playScenario.setToolTipText("Run scenario (batch)");
-        playScenario.setIcon(loadIcon("./NextTrack.png", 18, 18, -1, -1));
+        playScenario.setIcon(loadIcon("/NextTrack.png", 18, 18, -1, -1));
         playScenario.setMinimumSize(new Dimension(24, 24));
         playScenario.setMaximumSize(new Dimension(24, 24));
         playScenario.setPreferredSize(new Dimension(24, 24));
@@ -361,7 +361,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         controlsContainer.add(playScenario);
         JButton playAll = new JButton();
         playAll.setToolTipText("Run all (batch)");
-        playAll.setIcon(loadIcon("./Last_recor.png", 18, 18, -1, -1));
+        playAll.setIcon(loadIcon("/Last_recor.png", 18, 18, -1, -1));
         playAll.setMinimumSize(new Dimension(24, 24));
         playAll.setMaximumSize(new Dimension(24, 24));
         playAll.setPreferredSize(new Dimension(24, 24));
@@ -373,7 +373,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         rightContainer.add(this.rightSplitPane);
         this.leftRightSplitPane.setRightComponent(rightContainer);
 
-        this.questionIcon = loadIcon("./Question.png", -1, -1, -1, -1);
+        this.questionIcon = loadIcon("/Question.png", -1, -1, -1, -1);
 
         // visualization pane
         UIManager.getInsets("TabbedPane.contentBorderInsets").set(-1, -1, 1, -1);
@@ -414,7 +414,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         this.attributesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.attributesTable.putClientProperty("terminateEditOnFocusLost", true);
         this.attributesTable.setDefaultRenderer(String.class,
-                new AttributeCellRenderer(loadIcon("./Info.png", 12, 12, 16, 16)));
+                new AttributeCellRenderer(loadIcon("/Info.png", 12, 12, 16, 16)));
         AttributesCellEditor editor = new AttributesCellEditor(this.attributesTable, this);
         this.attributesTable.setDefaultEditor(String.class, editor);
         this.attributesTable.addMouseListener(new AttributesMouseListener(this, this.attributesTable));
