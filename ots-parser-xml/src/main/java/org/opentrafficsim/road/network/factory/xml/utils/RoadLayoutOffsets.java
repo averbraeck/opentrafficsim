@@ -26,7 +26,7 @@ public class RoadLayoutOffsets
      * Calculate the offsets for the RoadLayout. Note that offsets can be different for begin and end, and that they can be
      * specified from the right, left or center of the lane/stripe.
      * @param elements Iterable&lt;OffsetElement&gt;; offset element
-     * @param cseDataList List&ltCseData&gt;; the list of offsets and widths for each tag, in order of definition in the
+     * @param cseDataList List&lt;CseData&gt;; the list of offsets and widths for each tag, in order of definition in the
      *            RoadLayout tag
      * @param cseObjectMap Map&lt;Object, Integer&gt;; the map of the tags to the index in the list, to be able to find them
      *            quickly
@@ -132,7 +132,7 @@ public class RoadLayoutOffsets
      * specified from the right, left or center of the lane/stripe. The overall Link can have an additional start offset and end
      * offset that has to be added to the already calculated offsets.
      * @param roadLayoutTag BasicRoadLayout; the tag for the road layout containing all lanes and stripes
-     * @param cseDataList List&ltCseData&gt;; the list of offsets and widths for each tag, in order of definition in the
+     * @param cseDataList List&lt;CseData&gt;; the list of offsets and widths for each tag, in order of definition in the
      *            RoadLayout tag
      * @param cseTagMap Map&lt;Object, Integer&gt;; the map of the tags to the index in the list, to be able to find them
      *            quickly

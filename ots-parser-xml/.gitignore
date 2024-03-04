@@ -1,4 +1,4 @@
 /target/
-/src/main/java/org/opentrafficsim/xml/generated/*.java
-/src/main/java/META-INF/sun-jaxb.episode
+/src/main/java/org/opentrafficsim/xml/generated/
+/src/main/java/META-INF/
 /.flattened-pom.xml
