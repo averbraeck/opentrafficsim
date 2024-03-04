@@ -292,7 +292,7 @@ public class EditorMap extends JPanel implements EventListener
             }
         };
 
-        JToggleButton nodeButton = new JToggleButton(loadIcon("./OTS_node.png"));
+        JToggleButton nodeButton = new JToggleButton(loadIcon("/OTS_node.png"));
         nodeButton.setPreferredSize(new Dimension(24, 24));
         nodeButton.setMinimumSize(new Dimension(24, 24));
         nodeButton.setMaximumSize(new Dimension(24, 24));
@@ -300,7 +300,7 @@ public class EditorMap extends JPanel implements EventListener
         group.add(nodeButton);
         this.toolPanel.add(nodeButton);
 
-        JToggleButton linkButton = new JToggleButton(loadIcon("./OTS_link.png"));
+        JToggleButton linkButton = new JToggleButton(loadIcon("/OTS_link.png"));
         linkButton.setPreferredSize(new Dimension(24, 24));
         linkButton.setMinimumSize(new Dimension(24, 24));
         linkButton.setMaximumSize(new Dimension(24, 24));
@@ -308,7 +308,7 @@ public class EditorMap extends JPanel implements EventListener
         group.add(linkButton);
         this.toolPanel.add(linkButton);
 
-        JToggleButton centroidButton = new JToggleButton(loadIcon("./OTS_centroid.png"));
+        JToggleButton centroidButton = new JToggleButton(loadIcon("/OTS_centroid.png"));
         centroidButton.setPreferredSize(new Dimension(24, 24));
         centroidButton.setMinimumSize(new Dimension(24, 24));
         centroidButton.setMaximumSize(new Dimension(24, 24));
@@ -316,7 +316,7 @@ public class EditorMap extends JPanel implements EventListener
         group.add(centroidButton);
         this.toolPanel.add(centroidButton);
 
-        JToggleButton connectorButton = new JToggleButton(loadIcon("./OTS_connector.png"));
+        JToggleButton connectorButton = new JToggleButton(loadIcon("/OTS_connector.png"));
         connectorButton.setPreferredSize(new Dimension(24, 24));
         connectorButton.setMinimumSize(new Dimension(24, 24));
         connectorButton.setMaximumSize(new Dimension(24, 24));
@@ -362,7 +362,7 @@ public class EditorMap extends JPanel implements EventListener
         this.toolPanel.add(new JLabel("Show:"));
 
         this.toolPanel.add(Box.createHorizontalStrut(5));
-        JButton extent = new JButton(loadIcon("./Expand.png"));
+        JButton extent = new JButton(loadIcon("/Expand.png"));
         extent.setMinimumSize(new Dimension(24, 24));
         extent.setMaximumSize(new Dimension(24, 24));
         extent.setPreferredSize(new Dimension(24, 24));
@@ -370,7 +370,7 @@ public class EditorMap extends JPanel implements EventListener
         extent.addActionListener((e) -> this.animationPanel.zoomAll());
         this.toolPanel.add(extent);
 
-        JButton grid = new JButton(loadIcon("./Grid.png"));
+        JButton grid = new JButton(loadIcon("/Grid.png"));
         grid.setMinimumSize(new Dimension(24, 24));
         grid.setMaximumSize(new Dimension(24, 24));
         grid.setPreferredSize(new Dimension(24, 24));

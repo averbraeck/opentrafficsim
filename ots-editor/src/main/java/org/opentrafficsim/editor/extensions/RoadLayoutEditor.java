@@ -40,7 +40,7 @@ public class RoadLayoutEditor implements EventListener, Consumer<XsdTreeNode>
      */
     public RoadLayoutEditor(final OtsEditor editor) throws IOException
     {
-        ImageIcon roadIcon = OtsEditor.loadIcon("./OTS_road.png", -1, -1, -1, -1);
+        ImageIcon roadIcon = OtsEditor.loadIcon("/OTS_road.png", -1, -1, -1, -1);
         editor.addTab("Road layout", roadIcon, buildRoadLayoutPane(), null);
         editor.addListener(this, OtsEditor.NEW_FILE);
         this.editor = editor;

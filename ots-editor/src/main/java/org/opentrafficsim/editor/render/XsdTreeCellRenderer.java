@@ -57,11 +57,11 @@ public class XsdTreeCellRenderer extends DefaultTreeCellRenderer
     public XsdTreeCellRenderer(final OtsEditor editor) throws IOException
     {
         this.editor = editor;
-        this.consumer = ImageIO.read(Resource.getResourceAsStream("./Application.png")).getScaledInstance(12, 12,
+        this.consumer = ImageIO.read(Resource.getResourceAsStream("/Application.png")).getScaledInstance(12, 12,
                 Image.SCALE_SMOOTH);
         this.description =
-                ImageIO.read(Resource.getResourceAsStream("./Info.png")).getScaledInstance(10, 10, Image.SCALE_SMOOTH);
-        this.dropdown = ImageIO.read(Resource.getResourceAsStream("./dropdown.png"));
+                ImageIO.read(Resource.getResourceAsStream("/Info.png")).getScaledInstance(10, 10, Image.SCALE_SMOOTH);
+        this.dropdown = ImageIO.read(Resource.getResourceAsStream("/dropdown.png"));
 
         this.leafIcon = new ImageIcon(ImageIO.read(Resource.getResourceAsStream("/Eclipse_file.png")));
         this.openIcon = new ImageIcon(ImageIO.read(Resource.getResourceAsStream("/Eclipse_folder_open.png")));

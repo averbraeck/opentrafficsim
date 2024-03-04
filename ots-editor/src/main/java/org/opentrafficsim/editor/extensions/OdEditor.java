@@ -36,7 +36,7 @@ public class OdEditor implements EventListener
      */
     public OdEditor(final OtsEditor editor) throws IOException
     {
-        ImageIcon odIcon = OtsEditor.loadIcon("./Table_blue.png", 16, 16, -1, -1);
+        ImageIcon odIcon = OtsEditor.loadIcon("/Table_blue.png", 16, 16, -1, -1);
         editor.addTab("OD", odIcon, buildOdPane(), null);
         editor.addListener(this, OtsEditor.SELECTION_CHANGED);
         this.editor = editor;
