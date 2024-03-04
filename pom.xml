@@ -23,14 +23,14 @@
     <module>ots-kpi</module>
     <module>ots-road</module>
     <module>ots-trafficcontrol</module>
-    <module>ots-animation</module>
     <module>ots-draw</module>
+    <module>ots-animation</module>
     <module>ots-swing</module>
+    <module>ots-parser-xml</module>
     <module>ots-web</module>
     <module>ots-sim0mq</module>
     <module>ots-sim0mq-kpi</module>
     <module>ots-sim0mq-swing</module>
-    <module>ots-parser-xml</module>
     <module>ots-demo</module>
     <module>ots-editor</module>
   </modules>
