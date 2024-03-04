@@ -26,7 +26,10 @@ import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
 import org.opentrafficsim.xml.bindings.types.LengthBeginEndType.LengthBeginEnd;
 
 /**
- * Data classes for objects that are drawn as a lateral line on the lane.
+ * Data classes for objects that are drawn as a lateral line on the lane. Implementations must call {@setLinkNode()} in their
+ * constructor or by some other dynamic means, or the XSD node must have a Link attribute that points to the XSD node of a link
+ * by a keyref. This class will listen to attributes Id, Link, Lane and Position, and update visualization as needed. Attributes
+ * Id and Link are optional.
  * <p>
  * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
