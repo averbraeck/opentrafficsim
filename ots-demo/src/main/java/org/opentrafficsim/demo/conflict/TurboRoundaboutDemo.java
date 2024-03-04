@@ -1,32 +1,22 @@
 package org.opentrafficsim.demo.conflict;
 
 import java.awt.Dimension;
-import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.DurationUnit;
-import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.animation.gtu.colorer.DefaultSwitchableGtuColorer;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.demo.conflict.TurboRoundaboutDemo.TurboRoundaboutModel;
 import org.opentrafficsim.draw.OtsDrawingException;
-import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 
@@ -121,75 +111,10 @@ public class TurboRoundaboutDemo extends OtsSimulationApplication<TurboRoundabou
                 URL xmlURL = URLResource.getResource("/resources/conflict/TurboRoundabout.xml");
                 this.network = new RoadNetwork("TurboRoundabout", getSimulator());
                 new XmlParser(this.network).setUrl(xmlURL).build();
-
-                // add trafficlights
-                for (Lane lane : ((CrossSectionLink) this.network.getLink("SEXITS2")).getLanes())
-                {
-                    TrafficLight trafficLight = new TrafficLight("light" + lane.getId(), lane,
-                            new Length(150.0, LengthUnit.SI), this.simulator);
-                    trafficLight.setTrafficLightColor(TrafficLightColor.RED);
-                    changePhase(trafficLight);
-                }
-
-                // test for ignoring conflicting GTU's upstream of traffic light
-                // for (Lane lane : ((CrossSectionLink) this.network.getLink("SBEA")).getLanes())
-                // {
-                // SimpleTrafficLight trafficLight = new SimpleTrafficLight("light" + lane.getId(), lane,
-                // new Length(10.0, LengthUnit.SI), this.simulator);
-                //
-                // try
-                // {
-                // new TrafficLightAnimation(trafficLight, simulator);
-                // }
-                // catch (RemoteException | NamingException exception)
-                // {
-                // throw new NetworkException(exception);
-                // }
-                //
-                // trafficLight.setTrafficLightColor(TrafficLightColor.GREEN);
-                // }
-
             }
             catch (Exception exception)
             {
                 exception.printStackTrace();
-            }
-        }
-
-        /**
-         * Changes color of traffic light.
-         * @param trafficLight SimpleTrafficLight; traffic light
-         * @throws SimRuntimeException scheduling error
-         */
-        private void changePhase(final TrafficLight trafficLight) throws SimRuntimeException
-        {
-            switch (trafficLight.getTrafficLightColor())
-            {
-                case RED:
-                {
-                    trafficLight.setTrafficLightColor(TrafficLightColor.GREEN);
-                    this.simulator.scheduleEventRel(new Duration(15.0, DurationUnit.SECOND), this, "changePhase",
-                            new Object[] {trafficLight});
-                    break;
-                }
-                case YELLOW:
-                {
-                    trafficLight.setTrafficLightColor(TrafficLightColor.RED);
-                    this.simulator.scheduleEventRel(new Duration(56.0, DurationUnit.SECOND), this, "changePhase",
-                            new Object[] {trafficLight});
-                    break;
-                }
-                case GREEN:
-                {
-                    trafficLight.setTrafficLightColor(TrafficLightColor.YELLOW);
-                    this.simulator.scheduleEventRel(new Duration(4.0, DurationUnit.SECOND), this, "changePhase",
-                            new Object[] {trafficLight});
-                    break;
-                }
-                default:
-                {
-                    //
-                }
             }
         }
 
