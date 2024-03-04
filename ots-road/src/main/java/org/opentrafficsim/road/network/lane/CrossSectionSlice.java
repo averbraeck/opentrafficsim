@@ -22,7 +22,7 @@ public class CrossSectionSlice implements Serializable
     private final Length relativeLength;
 
     /** The lateral offset from the design line of the parentLink at the relative length. */
-    private final Length designLineOffset;
+    private final Length offset;
 
     /** The width, positioned <i>symmetrically around</i> the position at the relative length. */
     private final Length width;
@@ -30,13 +30,13 @@ public class CrossSectionSlice implements Serializable
     /**
      * Construct a new CrossSectionSlice.
      * @param relativeLength Length; the relative position from the start, measured along the design line of the parent link
-     * @param designLineOffset Length; the lateral offset from the design line of the parentLink at the relative length
+     * @param offset Length; the lateral offset from the design line of the parentLink at the relative length
      * @param width Length; the width, positioned <i>symmetrically around</i> the position at the relative length
      */
-    public CrossSectionSlice(final Length relativeLength, final Length designLineOffset, final Length width)
+    public CrossSectionSlice(final Length relativeLength, final Length offset, final Length width)
     {
         this.relativeLength = relativeLength;
-        this.designLineOffset = designLineOffset;
+        this.offset = offset;
         this.width = width;
     }
 
@@ -51,11 +51,11 @@ public class CrossSectionSlice implements Serializable
 
     /**
      * Retrieve the design line offset.
-     * @return Length; designLineOffset
+     * @return Length; offset
      */
-    public final Length getDesignLineOffset()
+    public final Length getOffset()
     {
-        return this.designLineOffset;
+        return this.offset;
     }
 
     /**
@@ -71,7 +71,7 @@ public class CrossSectionSlice implements Serializable
     @Override
     public final String toString()
     {
-        return "CrossSectionSlice [relativeLength=" + this.relativeLength + ", designLineOffset=" + this.designLineOffset
-                + ", width=" + this.width + "]";
+        return "CrossSectionSlice [relativeLength=" + this.relativeLength + ", offset=" + this.offset + ", width=" + this.width
+                + "]";
     }
 }

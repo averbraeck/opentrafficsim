@@ -82,7 +82,7 @@ public class CrossSectionElementTransceiver extends AbstractTransceiver
         }
         CrossSectionElement cse = cseList.get(rank);
         return new Object[] {cse.getId(), cse.getClass().getName(), cse.getLength(), cse.getWidth(0),
-                cse.getDesignLineOffsetAtBegin(), cse.getWidth(1.0), cse.getDesignLineOffsetAtEnd()};
+                cse.getOffsetAtBegin(), cse.getWidth(1.0), cse.getOffsetAtEnd()};
     }
 
     /** {@inheritDoc} */

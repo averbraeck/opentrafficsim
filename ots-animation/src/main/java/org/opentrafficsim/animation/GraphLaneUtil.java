@@ -245,7 +245,7 @@ public final class GraphLaneUtil
             @Override
             public int compare(final Lane o1, final Lane o2)
             {
-                return o1.getDesignLineOffsetAtBegin().compareTo(o2.getDesignLineOffsetAtEnd());
+                return o1.getOffsetAtBegin().compareTo(o2.getOffsetAtEnd());
             }
 
         });

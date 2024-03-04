@@ -11,6 +11,15 @@ package org.opentrafficsim.draw;
  */
 public enum DrawLevel
 {
+    /** Annotation level (e.g. draggable for editing). */
+    ANNOTATION(0.0004),
+    
+    /** Snap level (e.g. line indicating where draggable can be). */
+    SNAP(0.0003),
+    
+    /** Selection indicator level. */
+    SELECTION(0.0002),
+    
     /** Label level. */
     LABEL(0.0001),
 
@@ -20,20 +29,23 @@ public enum DrawLevel
     /** Node level. */
     NODE(-0.0001),
 
-    /** Line level (link, lane center line). */
-    LINE(-0.0002),
+    /** Center line level. */
+    CENTER_LINE(-0.0002),
+    
+    /** Line level. */
+    LINK(-0.0003),
 
     /** Object level (detectors, traffic lights, etc.). */
-    OBJECT(-0.0003),
+    OBJECT(-0.0004),
 
     /** Lane marking level. */
-    MARKING(-0.0004),
+    MARKING(-0.0005),
 
     /** Lane level. */
-    LANE(-0.0005),
+    LANE(-0.0006),
 
     /** Shoulder level. */
-    SHOULDER(-0.0006);
+    SHOULDER(-0.0007);
 
     /** Z-level. */
     private final double z;

@@ -506,9 +506,9 @@ public class TransceiverTest
         assertEquals(lane.getClass().getName(), result[1], "class name");
         assertEquals(lane.getLength(), result[2], "length");
         assertEquals(lane.getWidth(0.0), result[3], "width at begin");
-        assertEquals(lane.getDesignLineOffsetAtBegin(), result[4], "design line offset at begin");
+        assertEquals(lane.getOffsetAtBegin(), result[4], "design line offset at begin");
         assertEquals(lane.getWidth(1.0), result[5], "width at end");
-        assertEquals(lane.getDesignLineOffsetAtEnd(), result[6], "design line offset at end");
+        assertEquals(lane.getOffsetAtEnd(), result[6], "design line offset at end");
 
     }
 

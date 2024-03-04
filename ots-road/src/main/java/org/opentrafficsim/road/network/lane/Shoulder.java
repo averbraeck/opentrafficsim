@@ -42,8 +42,8 @@ public class Shoulder extends CrossSectionElement
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return String.format("Shoulder offset %.2fm..%.2fm, width %.2fm..%.2fm", getDesignLineOffsetAtBegin().getSI(),
-                getDesignLineOffsetAtEnd().getSI(), getBeginWidth().getSI(), getEndWidth().getSI());
+        return String.format("Shoulder offset %.2fm..%.2fm, width %.2fm..%.2fm", getOffsetAtBegin().getSI(),
+                getOffsetAtEnd().getSI(), getBeginWidth().getSI(), getEndWidth().getSI());
     }
 
 }

@@ -77,7 +77,7 @@ public class AnimationTrafficLightDetectorData implements TrafficLightDetectorDa
     @Override
     public String toString()
     {
-        return "TrafficLightDetector " + this.trafficLigthDetector.getId();
+        return "Traffic light detector " + this.trafficLigthDetector.getId();
     }
 
 }

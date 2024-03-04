@@ -14,9 +14,11 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.function.Function;
 
 import javax.naming.NamingException;
 import javax.swing.Box;
+import javax.swing.Box.Filler;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
@@ -27,8 +29,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import javax.swing.SwingUtilities;
 
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.event.Event;
@@ -44,10 +46,15 @@ import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
 import org.opentrafficsim.draw.road.BusStopAnimation;
 import org.opentrafficsim.draw.road.BusStopAnimation.BusStopData;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.ShoulderData;
-import org.opentrafficsim.draw.road.DetectorData;
+import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
 import org.opentrafficsim.draw.road.LaneAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation.CenterLine;
 import org.opentrafficsim.draw.road.LaneAnimation.LaneData;
+import org.opentrafficsim.draw.road.LaneDetectorAnimation;
+import org.opentrafficsim.draw.road.LaneDetectorAnimation.LoopDetectorData;
+import org.opentrafficsim.draw.road.LaneDetectorAnimation.SinkData;
+import org.opentrafficsim.draw.road.LaneDetectorAnimation.SinkData.SinkText;
+import org.opentrafficsim.draw.road.PriorityAnimation.PriorityData;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.draw.road.TrafficLightAnimation.TrafficLightData;
@@ -56,8 +63,6 @@ import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
 import org.opentrafficsim.swing.gui.AppearanceControlComboBox;
-import org.opentrafficsim.swing.gui.AppearanceControlTextField;
-import org.opentrafficsim.swing.gui.GhostText;
 import org.opentrafficsim.swing.gui.OtsControlPanel;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -87,7 +92,7 @@ public class EditorMap extends JPanel implements EventListener
     private static final Color BAR_COLOR = Color.LIGHT_GRAY;
 
     /** All types that are valid to show in the map. */
-    private static final Set<String> TYPES = Set.of(XsdPaths.NODE, XsdPaths.LINK, XsdPaths.TRAFFIC_LIGHT);
+    private static final Set<String> TYPES = Set.of(XsdPaths.NODE, XsdPaths.LINK, XsdPaths.TRAFFIC_LIGHT, XsdPaths.SINK);
 
     /** Context provider. */
     private final Contextualized contextualized;
@@ -170,13 +175,27 @@ public class EditorMap extends JPanel implements EventListener
             @Override
             public synchronized void zoomAll()
             {
+                EditorMap.this.ignoreKeepScale = true;
                 Bounds2d extent = EditorMap.this.animationPanel.fullExtent();
-                if (Double.isFinite(extent.getMaxX())) // else there are no objects
+                if (Double.isFinite(extent.getMaxX()))
                 {
-                    EditorMap.this.ignoreKeepScale = true;
                     super.zoomAll();
-                    EditorMap.this.ignoreKeepScale = false;
                 }
+                else if (getSize().height != 0)
+                {
+                    // there are no objects
+                    super.home();
+                }
+                EditorMap.this.ignoreKeepScale = false;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public synchronized void home()
+            {
+                EditorMap.this.ignoreKeepScale = true;
+                super.home();
+                EditorMap.this.ignoreKeepScale = false;
             }
         };
         this.animationPanel.setBackground(Color.GRAY);
@@ -246,6 +265,7 @@ public class EditorMap extends JPanel implements EventListener
         this.toolPanel.setBackground(BAR_COLOR);
         this.toolPanel.setMinimumSize(new Dimension(350, 28));
         this.toolPanel.setPreferredSize(new Dimension(350, 28));
+        this.toolPanel.setLayout(new BoxLayout(this.toolPanel, BoxLayout.X_AXIS));
 
         this.toolPanel.add(Box.createHorizontalStrut(5));
         this.toolPanel.add(new JLabel("Add tools:"));
@@ -334,6 +354,11 @@ public class EditorMap extends JPanel implements EventListener
         this.toolPanel.add(linkType);
 
         this.toolPanel.add(Box.createHorizontalStrut(5));
+        Dimension minDim = new Dimension(0, 1);
+        Dimension prefDim = new Dimension(0, 1);
+        Dimension maxDim = new Dimension(5000, 1);
+        this.toolPanel.add(new Filler(minDim, prefDim, maxDim)); // pushes further elements right aligned
+
         this.toolPanel.add(new JLabel("Show:"));
 
         this.toolPanel.add(Box.createHorizontalStrut(5));
@@ -354,18 +379,6 @@ public class EditorMap extends JPanel implements EventListener
         this.toolPanel.add(grid);
 
         this.toolPanel.add(Box.createHorizontalStrut(5));
-
-        JTextField id = new AppearanceControlTextField();
-        id.setMinimumSize(new Dimension(50, 22));
-        id.setMaximumSize(new Dimension(75, 22));
-        id.setPreferredSize(new Dimension(75, 22));
-        id.setToolTipText("Go to item with id");
-        new GhostText(id, "Id...").setGhostColor(Color.GRAY);
-        this.toolPanel.add(id);
-
-        this.toolPanel.add(Box.createHorizontalStrut(5));
-
-        this.toolPanel.setLayout(new BoxLayout(this.toolPanel, BoxLayout.X_AXIS));
 
         add(this.toolPanel, BorderLayout.NORTH);
     }
@@ -393,28 +406,25 @@ public class EditorMap extends JPanel implements EventListener
      */
     private void setAnimationToggles()
     {
-        addToggleAnimationButtonIcon("Node", NodeData.class, "/icons/Node24.png", "Show/hide nodes", true, false);
-        addToggleAnimationButtonIcon("NodeId", NodeAnimation.Text.class, "/icons/Id24.png", "Show/hide node Ids", false, true);
-        addToggleAnimationButtonIcon("Link", LinkData.class, "/icons/Link24.png", "Show/hide links", true, false);
-        addToggleAnimationButtonIcon("LinkId", LinkAnimation.Text.class, "/icons/Id24.png", "Show/hide link Ids", false, true);
-        addToggleAnimationButtonIcon("Lane", LaneData.class, "/icons/Lane24.png", "Show/hide lanes", true, false);
-        addToggleAnimationButtonIcon("LaneId", LaneAnimation.Text.class, "/icons/Id24.png", "Show/hide lane Ids", false, true);
-        addToggleAnimationButtonIcon("LaneCenter", CenterLine.class, "/icons/CenterLine24.png", "Show/hide lane center lines",
-                false, false);
-        addToggleAnimationButtonIcon("Stripe", StripeData.class, "/icons/Stripe24.png", "Show/hide stripes", true, false);
-        addToggleAnimationButtonIcon("Shoulder", ShoulderData.class, "/icons/Shoulder24.png", "Show/hide shoulders", true,
-                false); // Shoulder
-        addToggleAnimationButtonIcon("Detector", DetectorData.class, "/icons/Detector24.png", "Show/hide detectors", true,
-                false);
-        addToggleAnimationButtonIcon("DetectorId", DetectorData.Text.class, "/icons/Id24.png", "Show/hide detector Ids", false,
-                true);
-        addToggleAnimationButtonIcon("Light", TrafficLightData.class, "/icons/TrafficLight24.png", "Show/hide traffic lights",
-                true, false);
-        addToggleAnimationButtonIcon("LightId", TrafficLightAnimation.Text.class, "/icons/Id24.png",
-                "Show/hide traffic light Ids", false, true);
-        addToggleAnimationButtonIcon("Bus", BusStopData.class, "/icons/BusStop24.png", "Show/hide bus stops", true, false);
-        addToggleAnimationButtonIcon("BusId", BusStopAnimation.Text.class, "/icons/Id24.png", "Show/hide bus stops Ids", false,
-                true);
+        addToggle("Node", NodeData.class, "/icons/Node24.png", "Show/hide nodes", true, false);
+        addToggle("NodeId", NodeAnimation.Text.class, "/icons/Id24.png", "Show/hide node ids", false, true);
+        addToggle("Link", LinkData.class, "/icons/Link24.png", "Show/hide links", true, false);
+        addToggle("LinkId", LinkAnimation.Text.class, "/icons/Id24.png", "Show/hide link ids", false, true);
+        addToggle("Priority", PriorityData.class, "/icons/Priority24.png", "Show/hide link priority", true, false);
+        addToggle("Lane", LaneData.class, "/icons/Lane24.png", "Show/hide lanes", true, false);
+        addToggle("LaneId", LaneAnimation.Text.class, "/icons/Id24.png", "Show/hide lane ids", false, true);
+        addToggle("LaneCenter", CenterLine.class, "/icons/CenterLine24.png", "Show/hide lane center lines", false, false);
+        addToggle("Stripe", StripeData.class, "/icons/Stripe24.png", "Show/hide stripes", true, false);
+        addToggle("Shoulder", ShoulderData.class, "/icons/Shoulder24.png", "Show/hide shoulders", true, false);
+        // TODO: perhaps a specific data type for generators?
+        addToggle("Generator", GtuGeneratorPositionData.class, "/icons/Generator24.png", "Show/hide generators", true, false);
+        addToggle("Sink", SinkData.class, "/icons/Sink24.png", "Show/hide sinks", true, true);
+        addToggle("Detector", LoopDetectorData.class, "/icons/Detector24.png", "Show/hide loop detectors", true, false);
+        addToggle("DetectorId", LoopDetectorData.Text.class, "/icons/Id24.png", "Show/hide loop detector ids", false, true);
+        addToggle("Light", TrafficLightData.class, "/icons/TrafficLight24.png", "Show/hide traffic lights", true, false);
+        addToggle("LightId", TrafficLightAnimation.Text.class, "/icons/Id24.png", "Show/hide traffic light ids", false, true);
+        addToggle("Bus", BusStopData.class, "/icons/BusStop24.png", "Show/hide bus stops", true, false);
+        addToggle("BusId", BusStopAnimation.Text.class, "/icons/Id24.png", "Show/hide bus stop ids", false, true);
     }
 
     /**
@@ -428,8 +438,8 @@ public class EditorMap extends JPanel implements EventListener
      * @param initiallyVisible boolean; whether the class is initially shown or not
      * @param idButton boolean; id button that needs to be placed next to the previous button
      */
-    public final void addToggleAnimationButtonIcon(final String name, final Class<? extends Locatable> locatableClass,
-            final String iconPath, final String toolTipText, final boolean initiallyVisible, final boolean idButton)
+    public final void addToggle(final String name, final Class<? extends Locatable> locatableClass, final String iconPath,
+            final String toolTipText, final boolean initiallyVisible, final boolean idButton)
     {
         JToggleButton button;
         Icon icon = OtsControlPanel.loadIcon(iconPath);
@@ -540,6 +550,7 @@ public class EditorMap extends JPanel implements EventListener
             XsdTreeNodeRoot root = (XsdTreeNodeRoot) event.getContent();
             root.addListener(this, XsdTreeNodeRoot.NODE_CREATED);
             root.addListener(this, XsdTreeNodeRoot.NODE_REMOVED);
+            SwingUtilities.invokeLater(() -> this.animationPanel.zoomAll());
         }
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
         {
@@ -700,9 +711,16 @@ public class EditorMap extends JPanel implements EventListener
         {
             animation = Try.assign(() -> new TrafficLightAnimation((MapTrafficLightData) data, this.contextualized), "");
         }
+        else if (node.getPathString().equals(XsdPaths.SINK))
+        {
+            Function<LaneDetectorAnimation<SinkData, SinkText>, SinkText> textSupplier = (s) -> Try
+                    .assign(() -> new SinkText(s.getSource(), (float) s.getHalfLength() + 0.2f, this.contextualized), "");
+            animation = Try.assign(() -> new LaneDetectorAnimation<SinkData, SinkText>((SinkData) data, this.contextualized,
+                    Color.ORANGE, textSupplier), "");
+        }
         else
         {
-            throw new UnsupportedOperationException("Node cannot be added by the map editor.");
+            throw new UnsupportedOperationException("Data cannot be added by the map editor.");
         }
         this.animations.put(node, animation);
     }
@@ -753,6 +771,11 @@ public class EditorMap extends JPanel implements EventListener
         {
             MapTrafficLightData trafficLightData = new MapTrafficLightData(this, node, this.editor);
             data = trafficLightData;
+        }
+        else if (node.getPathString().equals(XsdPaths.SINK))
+        {
+            MapSinkData sinkData = new MapSinkData(this, node, this.editor);
+            data = sinkData;
         }
         else
         {

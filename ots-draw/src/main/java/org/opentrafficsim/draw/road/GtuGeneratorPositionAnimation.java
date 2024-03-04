@@ -112,14 +112,7 @@ public class GtuGeneratorPositionAnimation extends OtsRenderable<GtuGeneratorPos
                 throws RemoteException, NamingException
         {
             super(source, () -> Integer.toString(source.getQueueCount()), 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, 3.0f,
-                    12.0f, 50f, contextualized, null, TextAnimation.RENDERALWAYS);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void paint(final Graphics2D graphics, final ImageObserver observer)
-        {
-            super.paint(graphics, observer);
+                    12.0f, 50f, contextualized, null, TextAnimation.RENDERWHEN10);
         }
     }
 

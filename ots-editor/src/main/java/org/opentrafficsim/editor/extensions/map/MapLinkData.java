@@ -50,6 +50,7 @@ import org.opentrafficsim.core.geometry.OtsGeometryUtil;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation;
+import org.opentrafficsim.draw.road.PriorityAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
 import org.opentrafficsim.editor.OtsEditor;
@@ -69,7 +70,8 @@ import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 
 /**
- * LinkData for the editor Map. This class will also listen to any changes that may affect the link shape.
+ * LinkData for the editor Map. This class will also listen to any changes that may affect the link shape, maintain the drawn
+ * layout, and maintain the priority animation.
  * <p>
  * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -148,6 +150,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
     /** Lane data. */
     private java.util.Map<String, MapLaneData> laneData = new LinkedHashMap<>();
+
+    /** Priority animation. */
+    private PriorityAnimation priorityAnimation;
 
     /**
      * Constructor.
@@ -231,6 +236,10 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         {
             this.flattenerListener.destroy();
             this.flattenerListener = null;
+        }
+        if (this.priorityAnimation != null)
+        {
+            this.priorityAnimation.destroy(getMap().getContextualized());
         }
     }
 
@@ -342,7 +351,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             {
                 // change in flattener
                 buildDesignLine();
-                buildLayout();
             }
             return;
         }
@@ -541,6 +549,11 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         this.location = new OrientedPoint2d(ray.x, ray.y, ray.phi);
         this.bounds =
                 BoundingPolygon.geometryToBounds(this.location, ClickableBounds.get(this.flattenedDesignLine).asPolygon());
+        if (this.priorityAnimation != null)
+        {
+            getMap().removeAnimation(this.priorityAnimation);
+        }
+        this.priorityAnimation = new PriorityAnimation(new MapPriorityData(this), getMap().getContextualized());
         buildLayout();
         setValid();
     }
@@ -617,10 +630,11 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
                     if (node.getNodeName().equals("Stripe"))
                     {
-                        StripeAnimation stripe = new StripeAnimation(
-                                new MapStripeData(StripeData.Type.valueOf(type.name()), width,
-                                        slices.get(0).getDesignLineOffset(), getNode(), centerLine, contour, sliceInfo),
-                                getMap().getContextualized());
+                        StripeAnimation stripe =
+                                new StripeAnimation(
+                                        new MapStripeData(StripeData.Type.valueOf(type.name()), width,
+                                                slices.get(0).getOffset(), getNode(), centerLine, contour, sliceInfo),
+                                        getMap().getContextualized());
                         this.crossSectionElements.add(stripe);
                     }
                     else
@@ -635,12 +649,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                         }
                         else if (node.getNodeName().equals("Shoulder"))
                         {
-                            CrossSectionElementAnimation<
-                                    ?> shoulder =
-                                            new CrossSectionElementAnimation<>(
-                                                    new MapShoulderData(slices.get(0).getDesignLineOffset(), getNode(),
-                                                            centerLine, contour, sliceInfo),
-                                                    getMap().getContextualized(), Color.DARK_GRAY);
+                            CrossSectionElementAnimation<?> shoulder = new CrossSectionElementAnimation<>(
+                                    new MapShoulderData(slices.get(0).getOffset(), getNode(), centerLine, contour, sliceInfo),
+                                    getMap().getContextualized(), Color.DARK_GRAY);
                             this.crossSectionElements.add(shoulder);
                         }
                         else if (node.getNodeName().equals("NoTrafficLane"))
@@ -682,7 +693,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         this.nodeEnd = replaceNode(this.nodeEnd, getNode().getCoupledKeyrefNodeAttribute("NodeEnd"));
         this.shapeListener.update();
         buildDesignLine();
-        buildLayout();
     }
 
     /**
@@ -1131,6 +1141,72 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 return null;
             }
         }
+    }
+
+    /**
+     * Returns the start curvature from the clothoid.
+     * @return Length; start curvature from the clothoid.
+     */
+    public LinearDensity getClothoidStartCurvature()
+    {
+        if (this.designLine != null && this.designLine instanceof ContinuousClothoid)
+        {
+            return LinearDensity.instantiateSI(((ContinuousClothoid) this.designLine).getStartCurvature());
+        }
+        return null;
+    }
+
+    /**
+     * Returns the end curvature from the clothoid.
+     * @return Length; end curvature from the clothoid.
+     */
+    public LinearDensity getClothoidEndCurvature()
+    {
+        if (this.designLine != null && this.designLine instanceof ContinuousClothoid)
+        {
+            return LinearDensity.instantiateSI(((ContinuousClothoid) this.designLine).getEndCurvature());
+        }
+        return null;
+    }
+
+    /**
+     * Returns the length from the clothoid.
+     * @return Length; length from the clothoid.
+     */
+    public Length getClothoidLength()
+    {
+        if (this.designLine != null && this.designLine instanceof ContinuousClothoid)
+        {
+            return Length.instantiateSI(((ContinuousClothoid) this.designLine).getLength());
+        }
+        return null;
+    }
+
+    /**
+     * Returns the A value from the clothoid.
+     * @return Length; A value from the clothoid.
+     */
+    public Length getClothoidA()
+    {
+        if (this.designLine != null && this.designLine instanceof ContinuousClothoid)
+        {
+            return Length.instantiateSI(((ContinuousClothoid) this.designLine).getA());
+        }
+        return null;
+    }
+
+    /**
+     * Returns whether the shape was applied as a Clothoid, an Arc, or as a Straight, depending on start and end position and
+     * direction.
+     * @return String; "Clothoid", "Arc" or "Straight".
+     */
+    public String getClothoidAppliedShape()
+    {
+        if (this.designLine != null && this.designLine instanceof ContinuousClothoid)
+        {
+            return ((ContinuousClothoid) this.designLine).getAppliedShape();
+        }
+        return null;
     }
 
     /** {@inheritDoc} */

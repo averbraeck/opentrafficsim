@@ -17,12 +17,14 @@ import org.opentrafficsim.xml.bindings.DoubleAdapter;
 import org.opentrafficsim.xml.bindings.ExpressionAdapter;
 import org.opentrafficsim.xml.bindings.IntegerAdapter;
 import org.opentrafficsim.xml.bindings.LengthAdapter;
+import org.opentrafficsim.xml.bindings.LengthBeginEndAdapter;
 import org.opentrafficsim.xml.bindings.LinearDensityAdapter;
 import org.opentrafficsim.xml.bindings.Point2dAdapter;
 import org.opentrafficsim.xml.bindings.StringAdapter;
 import org.opentrafficsim.xml.bindings.StripeTypeAdapter;
 import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
 import org.opentrafficsim.xml.bindings.types.ExpressionType;
+import org.opentrafficsim.xml.bindings.types.LengthBeginEndType.LengthBeginEnd;
 
 /**
  * Class that houses static instances of adapters, for common usage within the editor.
@@ -48,6 +50,7 @@ public final class Adapters
         ADAPTERS.put(Double.class, new DoubleAdapter());
         ADAPTERS.put(Integer.class, new IntegerAdapter());
         ADAPTERS.put(Length.class, new LengthAdapter());
+        ADAPTERS.put(LengthBeginEnd.class, new LengthBeginEndAdapter());
         ADAPTERS.put(LinearDensity.class, new LinearDensityAdapter());
         ADAPTERS.put(Point2d.class, new Point2dAdapter());
         ADAPTERS.put(String.class, new StringAdapter());

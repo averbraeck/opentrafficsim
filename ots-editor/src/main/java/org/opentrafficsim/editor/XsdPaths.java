@@ -43,6 +43,9 @@ public final class XsdPaths
     /** OD options item path. */
     public static final String OD_OPTIONS_ITEM = "Ots.Demand.OdOptions.OdOptionsItem";
     
+    /** Sink path. */
+    public static final String SINK = "Ots.Demand.Sink";
+    
     /** Correlation path. */
     public static final String CORRELATION = "Ots.Models.Model.ModelParameters.Correlation";
 

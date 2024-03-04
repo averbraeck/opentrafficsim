@@ -2,6 +2,7 @@ package org.opentrafficsim.core.gtu;
 
 import java.util.Set;
 
+import org.djutils.base.Identifiable;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.core.object.NonLocatedObject;
 
@@ -35,7 +36,7 @@ public interface GtuGenerator extends NonLocatedObject
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    interface GtuGeneratorPosition extends OtsLocatable
+    interface GtuGeneratorPosition extends OtsLocatable, Identifiable
     {
         /**
          * Returns the number of GTUs in the queue.

@@ -195,13 +195,13 @@ public class CrossSectionLink extends Link implements Serializable
                 double half = lane.getBeginWidth().si * .5;
                 if (!Double.isNaN(left))
                 {
-                    left = Math.max(left, lane.getDesignLineOffsetAtBegin().si + half);
-                    right = Math.min(right, lane.getDesignLineOffsetAtBegin().si - half);
+                    left = Math.max(left, lane.getOffsetAtBegin().si + half);
+                    right = Math.min(right, lane.getOffsetAtBegin().si - half);
                 }
                 else
                 {
-                    left = lane.getDesignLineOffsetAtBegin().si + half;
-                    right = lane.getDesignLineOffsetAtBegin().si - half;
+                    left = lane.getOffsetAtBegin().si + half;
+                    right = lane.getOffsetAtBegin().si - half;
                 }
             }
             Point2d start = getDesignLine().getFirst();
@@ -230,13 +230,13 @@ public class CrossSectionLink extends Link implements Serializable
                 double half = lane.getEndWidth().si * .5;
                 if (!Double.isNaN(left))
                 {
-                    left = Math.max(left, lane.getDesignLineOffsetAtEnd().si + half);
-                    right = Math.min(right, lane.getDesignLineOffsetAtEnd().si - half);
+                    left = Math.max(left, lane.getOffsetAtEnd().si + half);
+                    right = Math.min(right, lane.getOffsetAtEnd().si - half);
                 }
                 else
                 {
-                    left = lane.getDesignLineOffsetAtEnd().si + half;
-                    right = lane.getDesignLineOffsetAtEnd().si - half;
+                    left = lane.getOffsetAtEnd().si + half;
+                    right = lane.getOffsetAtEnd().si - half;
                 }
             }
             Point2d start = getDesignLine().getLast();

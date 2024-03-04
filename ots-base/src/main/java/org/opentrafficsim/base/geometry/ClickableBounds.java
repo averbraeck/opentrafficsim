@@ -58,13 +58,13 @@ public class ClickableBounds
 
     /**
      * Creates bounds that are clickable from a line, generating an area of 2m wide.
-     * @param flattenedDesignLine PolyLine2d; line.
+     * @param flattenedLine PolyLine2d; line.
      * @return BoundingPolygon; bounding polygon.
      */
-    public static BoundingPolygon get(final PolyLine2d flattenedDesignLine)
+    public static BoundingPolygon get(final PolyLine2d flattenedLine)
     {
-        PolyLine2d left = flattenedDesignLine.offsetLine(R_MIN);
-        PolyLine2d right = flattenedDesignLine.offsetLine(-R_MIN);
+        PolyLine2d left = flattenedLine.offsetLine(R_MIN);
+        PolyLine2d right = flattenedLine.offsetLine(-R_MIN);
         List<Point2d> points = left.getPointList();
         points.addAll(right.reverse().getPointList());
         return new BoundingPolygon(new Polygon2d(points));

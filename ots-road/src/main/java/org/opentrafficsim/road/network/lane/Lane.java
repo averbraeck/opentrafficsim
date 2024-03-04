@@ -278,12 +278,12 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         if (direction.equals(LateralDirectionality.LEFT))
         {
             // TODO take the cross section slices into account...
-            if (lane.getDesignLineOffsetAtBegin().si + ADJACENT_MARGIN.si > getDesignLineOffsetAtBegin().si
-                    && lane.getDesignLineOffsetAtEnd().si + ADJACENT_MARGIN.si > getDesignLineOffsetAtEnd().si
-                    && (lane.getDesignLineOffsetAtBegin().si - lane.getBeginWidth().si / 2.0)
-                            - (getDesignLineOffsetAtBegin().si + getBeginWidth().si / 2.0) < ADJACENT_MARGIN.si
-                    && (lane.getDesignLineOffsetAtEnd().si - lane.getEndWidth().si / 2.0)
-                            - (getDesignLineOffsetAtEnd().si + getEndWidth().si / 2.0) < ADJACENT_MARGIN.si)
+            if (lane.getOffsetAtBegin().si + ADJACENT_MARGIN.si > getOffsetAtBegin().si
+                    && lane.getOffsetAtEnd().si + ADJACENT_MARGIN.si > getOffsetAtEnd().si
+                    && (lane.getOffsetAtBegin().si - lane.getBeginWidth().si / 2.0)
+                            - (getOffsetAtBegin().si + getBeginWidth().si / 2.0) < ADJACENT_MARGIN.si
+                    && (lane.getOffsetAtEnd().si - lane.getEndWidth().si / 2.0)
+                            - (getOffsetAtEnd().si + getEndWidth().si / 2.0) < ADJACENT_MARGIN.si)
             {
                 // look at stripes between the two lanes
                 if (legal)
@@ -294,10 +294,10 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                         {
                             Stripe stripe = (Stripe) cse;
                             // TODO take the cross section slices into account...
-                            if ((getDesignLineOffsetAtBegin().si < stripe.getDesignLineOffsetAtBegin().si
-                                    && stripe.getDesignLineOffsetAtBegin().si < lane.getDesignLineOffsetAtBegin().si)
-                                    || (getDesignLineOffsetAtEnd().si < stripe.getDesignLineOffsetAtEnd().si
-                                            && stripe.getDesignLineOffsetAtEnd().si < lane.getDesignLineOffsetAtEnd().si))
+                            if ((getOffsetAtBegin().si < stripe.getOffsetAtBegin().si
+                                    && stripe.getOffsetAtBegin().si < lane.getOffsetAtBegin().si)
+                                    || (getOffsetAtEnd().si < stripe.getOffsetAtEnd().si
+                                            && stripe.getOffsetAtEnd().si < lane.getOffsetAtEnd().si))
                             {
                                 if (!stripe.isPermeable(gtuType, LateralDirectionality.LEFT))
                                 {
@@ -318,12 +318,12 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         // direction.equals(LateralDirectionality.RIGHT)
         {
             // TODO take the cross section slices into account...
-            if (lane.getDesignLineOffsetAtBegin().si < getDesignLineOffsetAtBegin().si + ADJACENT_MARGIN.si
-                    && lane.getDesignLineOffsetAtEnd().si < getDesignLineOffsetAtEnd().si + ADJACENT_MARGIN.si
-                    && (getDesignLineOffsetAtBegin().si - getBeginWidth().si / 2.0)
-                            - (lane.getDesignLineOffsetAtBegin().si + lane.getBeginWidth().si / 2.0) < ADJACENT_MARGIN.si
-                    && (getDesignLineOffsetAtEnd().si - getEndWidth().si / 2.0)
-                            - (lane.getDesignLineOffsetAtEnd().si + lane.getEndWidth().si / 2.0) < ADJACENT_MARGIN.si)
+            if (lane.getOffsetAtBegin().si < getOffsetAtBegin().si + ADJACENT_MARGIN.si
+                    && lane.getOffsetAtEnd().si < getOffsetAtEnd().si + ADJACENT_MARGIN.si
+                    && (getOffsetAtBegin().si - getBeginWidth().si / 2.0)
+                            - (lane.getOffsetAtBegin().si + lane.getBeginWidth().si / 2.0) < ADJACENT_MARGIN.si
+                    && (getOffsetAtEnd().si - getEndWidth().si / 2.0)
+                            - (lane.getOffsetAtEnd().si + lane.getEndWidth().si / 2.0) < ADJACENT_MARGIN.si)
             {
                 // look at stripes between the two lanes
                 if (legal)
@@ -334,10 +334,10 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                         {
                             Stripe stripe = (Stripe) cse;
                             // TODO take the cross section slices into account...
-                            if ((getDesignLineOffsetAtBegin().si > stripe.getDesignLineOffsetAtBegin().si
-                                    && stripe.getDesignLineOffsetAtBegin().si > lane.getDesignLineOffsetAtBegin().si)
-                                    || (getDesignLineOffsetAtEnd().si > stripe.getDesignLineOffsetAtEnd().si
-                                            && stripe.getDesignLineOffsetAtEnd().si > lane.getDesignLineOffsetAtEnd().si))
+                            if ((getOffsetAtBegin().si > stripe.getOffsetAtBegin().si
+                                    && stripe.getOffsetAtBegin().si > lane.getOffsetAtBegin().si)
+                                    || (getOffsetAtEnd().si > stripe.getOffsetAtEnd().si
+                                            && stripe.getOffsetAtEnd().si > lane.getOffsetAtEnd().si))
                             {
                                 if (!stripe.isPermeable(gtuType, LateralDirectionality.RIGHT))
                                 {

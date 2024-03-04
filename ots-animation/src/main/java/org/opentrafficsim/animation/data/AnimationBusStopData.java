@@ -27,7 +27,7 @@ public class AnimationBusStopData extends AnimationLaneBasedObjectData<BusStop> 
     @Override
     public String toString()
     {
-        return "BusStop " + getObject().getFullId();
+        return "Bus stop " + getObject().getFullId();
     }
     
 }

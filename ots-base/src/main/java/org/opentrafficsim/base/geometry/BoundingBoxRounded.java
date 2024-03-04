@@ -122,7 +122,7 @@ public class BoundingBoxRounded implements OtsBounds2d
     @Override
     public double signedDistance(final Point2d point)
     {
-        double qx = Math.abs(point.x) - this.dx + this.r; // note: at time of writing site by Inigo Quilez omits the +r
+        double qx = Math.abs(point.x) - this.dx + this.r;
         double qy = Math.abs(point.y) - this.dy + this.r;
         return Math.hypot(Math.max(qx, 0.0), Math.max(qy, 0.0)) + Math.min(Math.max(qx, qy), 0.0) - this.r;
     }

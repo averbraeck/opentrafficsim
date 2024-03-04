@@ -160,18 +160,18 @@ public abstract class CrossSectionElement extends LocalEventProducer
      * Retrieve the offset from the design line at the begin of the parent link.
      * @return Length; the offset of this CrossSectionElement at the begin of the parent link
      */
-    public final Length getDesignLineOffsetAtBegin()
+    public final Length getOffsetAtBegin()
     {
-        return this.sliceInfo.getDesignLineOffsetAtBegin();
+        return this.sliceInfo.getOffsetAtBegin();
     }
 
     /**
      * Retrieve the offset from the design line at the end of the parent link.
      * @return Length; the offset of this CrossSectionElement at the end of the parent link
      */
-    public final Length getDesignLineOffsetAtEnd()
+    public final Length getOffsetAtEnd()
     {
-        return this.sliceInfo.getDesignLineOffsetAtEnd();
+        return this.sliceInfo.getOffsetAtEnd();
     }
 
     /**
@@ -327,8 +327,8 @@ public abstract class CrossSectionElement extends LocalEventProducer
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return String.format("CSE offset %.2fm..%.2fm, width %.2fm..%.2fm", getDesignLineOffsetAtBegin().getSI(),
-                getDesignLineOffsetAtEnd().getSI(), getBeginWidth().getSI(), getEndWidth().getSI());
+        return String.format("CSE offset %.2fm..%.2fm, width %.2fm..%.2fm", getOffsetAtBegin().getSI(),
+                getOffsetAtEnd().getSI(), getBeginWidth().getSI(), getEndWidth().getSI());
     }
 
     /** {@inheritDoc} */

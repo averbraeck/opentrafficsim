@@ -117,7 +117,7 @@ public class LaneGeometryUtil
     {
         NavigableMap<Double, Double> map = new TreeMap<>();
         crossSectionSlices.forEach((slice) -> map.put(slice.getRelativeLength().si / length,
-                slice.getDesignLineOffset().si + widthFactor * slice.getWidth().si));
+                slice.getOffset().si + widthFactor * slice.getWidth().si));
         return new FractionalLengthData(map);
     }
 

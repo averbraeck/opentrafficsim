@@ -506,7 +506,8 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
         Set<GtuGeneratorPosition> set = new LinkedHashSet<>();
         for (GeneratorLanePosition lanePosition : this.generatorPositions.getAllPositions())
         {
-            OrientedPoint2d p = lanePosition.getPosition().iterator().next().getLocation();
+            LanePosition pos = lanePosition.getPosition().iterator().next();
+            OrientedPoint2d p = pos.getLocation();
             set.add(new GtuGeneratorPosition()
             {
                 /** {@inheritDoc} */
@@ -528,6 +529,13 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
                 public int getQueueCount()
                 {
                     return getQueueLength(lanePosition);
+                }
+
+                /** {@inheritDoc} */
+                @Override
+                public String getId()
+                {
+                    return LaneBasedGtuGenerator.this.id + "@" + lanePosition.getLink().getId() + "." + pos.getLane().getId();
                 }
             });
         }

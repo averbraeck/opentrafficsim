@@ -167,8 +167,8 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGtu, 
      */
     static Lane mostOnSide(final Lane lane1, final Lane lane2, final LateralDirectionality lat)
     {
-        Length offset1 = lane1.getDesignLineOffsetAtBegin().plus(lane1.getDesignLineOffsetAtEnd());
-        Length offset2 = lane2.getDesignLineOffsetAtBegin().plus(lane2.getDesignLineOffsetAtEnd());
+        Length offset1 = lane1.getOffsetAtBegin().plus(lane1.getOffsetAtEnd());
+        Length offset2 = lane2.getOffsetAtBegin().plus(lane2.getOffsetAtEnd());
         if (lat.isLeft())
         {
             return offset1.gt(offset2) ? lane1 : lane2;
