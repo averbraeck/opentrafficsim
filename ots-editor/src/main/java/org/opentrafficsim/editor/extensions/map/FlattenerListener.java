@@ -45,7 +45,7 @@ public class FlattenerListener extends ChangeListener<Flattener>
     {
         try
         {
-            if (!getNode().isValid())
+            if (!getNode().isValid() || !getNode().isActive())
             {
                 return null;
             }
