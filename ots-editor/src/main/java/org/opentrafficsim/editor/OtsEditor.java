@@ -693,7 +693,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                         File f = new File(file);
                         this.lastDirectory = f.getParent() + File.separator;
                         this.lastFile = f.getName();
-                        if (!loadFile(f, "File loaded"))
+                        if (!loadFile(f, "File loaded", true))
                         {
                             boolean remove = JOptionPane.showConfirmDialog(OtsEditor.this,
                                     "File could not be loaded. Do you want ro remove it from recent files?",
@@ -817,7 +817,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                     this.questionIcon);
             if (userInput == JOptionPane.OK_OPTION)
             {
-                boolean loaded = loadFile(file, "Autosave file loaded");
+                boolean loaded = loadFile(file, "Autosave file loaded", false);
                 if (!loaded)
                 {
                     boolean remove = JOptionPane.showConfirmDialog(OtsEditor.this,
@@ -1524,7 +1524,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         this.lastDirectory = fileDialog.getDirectory();
         this.lastFile = fileName;
         File file = new File(this.lastDirectory + this.lastFile);
-        boolean loaded = loadFile(file, "File loaded");
+        boolean loaded = loadFile(file, "File loaded", true);
         if (!loaded)
         {
             JOptionPane.showMessageDialog(this, "Unable to read file.", "Unable to read file.", JOptionPane.WARNING_MESSAGE);
@@ -1535,9 +1535,10 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
      * Load file.
      * @param file File; file to load.
      * @param status String; status message in status bar to show upon loading.
+     * @param updateRecentFiles boolean; whether to include the opened file in recent files.
      * @return boolean; whether the file was successfully loaded.
      */
-    private boolean loadFile(final File file, final String status)
+    private boolean loadFile(final File file, final String status, final boolean updateRecentFiles)
     {
         try
         {
@@ -1555,8 +1556,11 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             this.coupledItem.setEnabled(false);
             this.coupledItem.setText("Go to coupled item");
             this.treeTable.updateUI(); // knowing/changing the directory may change validation status
-            this.applicationStore.addRecentFile("recent_files", file.getAbsolutePath());
-            updateRecentFileMenu();
+            if (updateRecentFiles)
+            {
+                this.applicationStore.addRecentFile("recent_files", file.getAbsolutePath());
+                updateRecentFileMenu();
+            }
             return true;
         }
         catch (SAXException | IOException | ParserConfigurationException exception)
