@@ -18,6 +18,8 @@ import org.opentrafficsim.editor.decoration.string.XiIncludeStringFunction;
 import org.opentrafficsim.editor.decoration.validation.AttributesNotEqualValidator;
 import org.opentrafficsim.editor.decoration.validation.NoDuplicateChildrenValidator;
 import org.opentrafficsim.editor.decoration.validation.ParentValidator;
+import org.opentrafficsim.editor.decoration.validation.RoadLayoutElementValidator;
+import org.opentrafficsim.editor.decoration.validation.RoadLayoutElementValidator.LayoutCoupling;
 import org.opentrafficsim.editor.extensions.DefinitionsSaver;
 import org.opentrafficsim.editor.extensions.OdEditor;
 import org.opentrafficsim.editor.extensions.RoadLayoutEditor;
@@ -111,6 +113,22 @@ public final class DefaultDecorator
         new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.MandatoryIncentives");
         new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.VoluntaryIncentives");
         new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.AccelerationIncentives");
+        new RoadLayoutElementValidator(editor, "Ots.Network.Link.TrafficLight", LayoutCoupling.PARENT_IS_LINK, "Lane");
+        new RoadLayoutElementValidator(editor, "Ots.Demand.Od.Category.Lane", LayoutCoupling.LINK_ATTRIBUTE, "Lane");
+        new RoadLayoutElementValidator(editor, "Ots.Demand.OdOptions.OdOptionsItem.Lane", LayoutCoupling.LINK_ATTRIBUTE,
+                "Lane");
+        new RoadLayoutElementValidator(editor, "Ots.Demand.Generator", LayoutCoupling.LINK_ATTRIBUTE, "Lane");
+        new RoadLayoutElementValidator(editor, "Ots.Demand.ListGenerator", LayoutCoupling.LINK_ATTRIBUTE, "Lane");
+        new RoadLayoutElementValidator(editor, "Ots.Demand.Sink", LayoutCoupling.LINK_ATTRIBUTE, "Lane");
+        new RoadLayoutElementValidator(editor, "Ots.Animation.RoadLayout.Lane", LayoutCoupling.LAYOUT_BY_PARENT_ID, "Id");
+        new RoadLayoutElementValidator(editor, "Ots.Animation.RoadLayout.Stripe", LayoutCoupling.LAYOUT_BY_PARENT_ID, "Id");
+        new RoadLayoutElementValidator(editor, "Ots.Animation.RoadLayout.Shoulder", LayoutCoupling.LAYOUT_BY_PARENT_ID, "Id");
+        new RoadLayoutElementValidator(editor, "Ots.Animation.RoadLayout.NoTrafficLane", LayoutCoupling.LAYOUT_BY_PARENT_ID,
+                "Id");
+        new RoadLayoutElementValidator(editor, "Ots.Animation.Link.Lane", LayoutCoupling.LINK_BY_PARENT_ID, "Id");
+        new RoadLayoutElementValidator(editor, "Ots.Animation.Link.Stripe", LayoutCoupling.LINK_BY_PARENT_ID, "Id");
+        new RoadLayoutElementValidator(editor, "Ots.Animation.Link.Shoulder", LayoutCoupling.LINK_BY_PARENT_ID, "Id");
+        new RoadLayoutElementValidator(editor, "Ots.Animation.Link.NoTrafficLane", LayoutCoupling.LINK_BY_PARENT_ID, "Id");
 
         new AutomaticLinkId(editor);
         new AutomaticConnectorId(editor);

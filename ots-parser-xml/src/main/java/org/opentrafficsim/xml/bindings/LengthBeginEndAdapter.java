@@ -2,7 +2,6 @@ package org.opentrafficsim.xml.bindings;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
-import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.xml.bindings.types.LengthBeginEndType;
 import org.opentrafficsim.xml.bindings.types.LengthBeginEndType.LengthBeginEnd;
 
@@ -17,7 +16,7 @@ import org.opentrafficsim.xml.bindings.types.LengthBeginEndType.LengthBeginEnd;
  */
 public class LengthBeginEndAdapter extends ExpressionAdapter<LengthBeginEnd, LengthBeginEndType>
 {
-    
+
     /** {@inheritDoc} */
     @Override
     public LengthBeginEndType unmarshal(final String field) throws IllegalArgumentException
@@ -26,7 +25,7 @@ public class LengthBeginEndAdapter extends ExpressionAdapter<LengthBeginEnd, Len
         {
             return new LengthBeginEndType(trimBrackets(field));
         }
-        
+
         String clean = field.replaceAll("\\s", "").trim();
 
         try
@@ -67,7 +66,6 @@ public class LengthBeginEndAdapter extends ExpressionAdapter<LengthBeginEnd, Len
         }
         catch (Exception exception)
         {
-            CategoryLogger.always().error(exception, "Problem parsing LengthBeginEnd '" + field + "'");
             throw new IllegalArgumentException("Error parsing LengthBeginEnd " + field, exception);
         }
     }
@@ -78,9 +76,9 @@ public class LengthBeginEndAdapter extends ExpressionAdapter<LengthBeginEnd, Len
     {
         return marshal(value, this::marshalValue);
     }
-    
+
     /**
-     * Marshal value (not an expression). 
+     * Marshal value (not an expression).
      * @param lbe LengthBeginEnd; value.
      * @return marshaled value.
      * @throws IllegalArgumentException when the fraction is out of bounds

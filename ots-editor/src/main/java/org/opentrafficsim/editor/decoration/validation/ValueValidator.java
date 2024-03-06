@@ -106,7 +106,7 @@ public interface ValueValidator extends Comparable<ValueValidator>
         }
         return null;
     }
-    
+
     /**
      * Report first encountered problem in validating the attribute value.
      * @param xsdNode Node; node, should be an xsd:attribute.
@@ -117,13 +117,9 @@ public interface ValueValidator extends Comparable<ValueValidator>
     static String reportInvalidAttributeValue(final Node xsdNode, final String value, final Schema schema)
     {
         String use = DocumentReader.getAttribute(xsdNode, "use");
-        if ("required".equals(use) && (value == null || value.isEmpty()))
-        {
-            return "Required value is empty.";
-        }
         if (value == null || value.isEmpty())
         {
-            return null;
+            return "required".equals(use) ? "Required value is empty." : null;
         }
         return reportTypeNonCompliance(xsdNode, xsdNode, "type", value, schema, null, null);
     }

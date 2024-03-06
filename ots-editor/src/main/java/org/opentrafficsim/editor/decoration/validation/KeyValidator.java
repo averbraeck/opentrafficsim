@@ -379,15 +379,17 @@ public class KeyValidator implements ValueValidator, EventListener
             nodeList.add(node.getAttributeValue(attribute));
         }
         // a child calls this method to validate its value, need to gather all children's values via parent
-        List<XsdTreeNode> path = node.getPath();
-        XsdTreeNode parent = path.get(path.size() - 2);
-        for (String child : this.childNames)
+        XsdTreeNode parent = node.getParent();
+        if (parent != null)
         {
-            for (XsdTreeNode treeChild : parent.getChildren())
+            for (String child : this.childNames)
             {
-                if (treeChild.getNodeName().equals(child))
+                for (XsdTreeNode treeChild : parent.getChildren())
                 {
-                    nodeList.add(treeChild.getValue());
+                    if (treeChild.getNodeName().equals(child))
+                    {
+                        nodeList.add(treeChild.getValue());
+                    }
                 }
             }
         }

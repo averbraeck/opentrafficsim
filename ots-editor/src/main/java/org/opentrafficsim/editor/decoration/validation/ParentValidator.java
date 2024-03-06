@@ -92,7 +92,7 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
     @Override
     public String validate(final XsdTreeNode node)
     {
-        String value = node.getAttributeValue("Parent");
+        String value = node.getAttributeValue(this.parentAttribute);
         if (value == null || value.isEmpty() || !node.isActive())
         {
             return null;
@@ -150,7 +150,7 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
     {
         if (node.isType(ParentValidator.this.path))
         {
-            node.addAttributeValidator("Parent", ParentValidator.this);
+            node.addAttributeValidator(this.parentAttribute, ParentValidator.this);
             getContext(node).add(node);
         }
     }
