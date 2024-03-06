@@ -77,7 +77,8 @@ public class AttributesListSelectionListener implements ListSelectionListener, E
     {
         if (this.attribute.equals(((Object[]) event.getContent())[1]))
         {
-            XsdTreeNode coupled = this.listening.getCoupledKeyrefNodeAttribute(this.listening.getAttributeIndexByName(this.attribute));
+            XsdTreeNode coupled =
+                    this.listening.getCoupledKeyrefNodeAttribute(this.listening.getAttributeIndexByName(this.attribute));
             this.editor.setCoupledNode(coupled, this.listening, this.attribute);
         }
     }

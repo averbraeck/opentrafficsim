@@ -29,7 +29,7 @@ import org.opentrafficsim.editor.decoration.AbstractNodeDecoratorRemove;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove implements ValueValidator
+public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove implements CoupledValidator
 {
 
     /** */
@@ -41,8 +41,8 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
     /** Defines how the layout is coupled to each node this validator will validate. */
     private final LayoutCoupling layoutCoupling;
 
-    /** Attributes that are validated. */
-    private final String[] attributes;
+    /** Attribute that is validated. */
+    private final String attribute;
 
     /** Map of link node to all validated nodes that depend on a specific link node. */
     private final Map<XsdTreeNode, Set<XsdTreeNode>> coupledLinks = new LinkedHashMap<>();
@@ -64,23 +64,26 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
 
     /** Map of layout node to their respective elements id listener. */
     private final Map<XsdTreeNode, IdListener> layoutListeners = new LinkedHashMap<>();
+    
+    /** Coupled layout element nodes that are successfully validated to. */
+    private final Map<XsdTreeNode, XsdTreeNode> coupledNode = new LinkedHashMap<>();
 
     /**
      * Constructor.
      * @param editor OtsEditor; editor.
      * @param path String; path of nodes to validate.
      * @param layoutCoupling LayoutCoupling; defines how the layout is coupled.
-     * @param attributes String...; attributes that are validated.
+     * @param attribute String; attribute that is validated.
      */
     public RoadLayoutElementValidator(final OtsEditor editor, final String path, final LayoutCoupling layoutCoupling,
-            final String... attributes)
+            final String attribute)
     {
         super(editor);
         Throw.whenNull(path, "Path may not be null.");
         Throw.whenNull(layoutCoupling, "LayoutCoupling may not be null.");
         this.path = path;
         this.layoutCoupling = layoutCoupling;
-        this.attributes = attributes;
+        this.attribute = attribute;
     }
 
     /** {@inheritDoc} */
@@ -89,10 +92,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
     {
         if (this.path.equals(node.getPathString()))
         {
-            for (String attribute : this.attributes)
-            {
-                node.addAttributeValidator(attribute, this);
-            }
+            node.addAttributeValidator(this.attribute, this);
             node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
             switch (this.layoutCoupling)
             {
@@ -323,30 +323,27 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
     @Override
     public String validate(final XsdTreeNode node)
     {
-        for (String attribute : this.attributes)
+        String value = node.getAttributeValue(this.attribute);
+        String layoutElement = "Id".equals(this.attribute) ? node.getNodeName() : this.attribute;
+        XsdTreeNode layoutNode = this.layoutNodes.get(node);
+        XsdTreeNode coupled = null;
+        if (layoutNode != null)
         {
-            if ("Id".equals(attribute))
+            for (XsdTreeNode child : layoutNode.getChildren())
             {
-                // Id attribute of a node named Stripe/Lane/Shoulder/NoTrafficLane
-                String field = node.getNodeName();
-                List<String> options = getOptions(node, field);
-                String id = node.getId();
-                if (options != null && !options.contains(id))
+                if (child.getNodeName().equals(layoutElement) && child.getId() != null && !child.getId().isEmpty() && child.getId().equals(value))
                 {
-                    return "Id " + id + " does not refer to a valid " + field + " in the road layout.";
-                }
-            }
-            else
-            {
-                // Stripe/Lane/Shoulder/NoTrafficLane attribute
-                List<String> options = getOptions(node, attribute);
-                String value = node.getAttributeValue(attribute);
-                if (options != null && !options.contains(value))
-                {
-                    return attribute + " " + value + " does not refer to a valid " + attribute + " in the road layout.";
+                    coupled = child;
+                    break;
                 }
             }
         }
+        if (coupled == null)
+        {
+            this.coupledNode.remove(node);
+            return this.attribute + " " + value + " does not refer to a valid " + layoutElement + " in the road layout."; 
+        }
+        this.coupledNode.put(node, coupled);
         return null;
     }
 
@@ -389,6 +386,13 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         }
         return layout.getChild(0).getCoupledKeyrefNodeValue(); // sequence of which DefinedLayout is the first node
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public XsdTreeNode getCoupledKeyrefNode(final XsdTreeNode node)
+    {
+        return this.coupledNode.get(node);
+    };
 
     /**
      * Defines how the node is coupled to a road layout.
@@ -480,6 +484,6 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
                 }
             }
         }
-    };
+    }
 
 }

@@ -31,6 +31,7 @@ import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.opentrafficsim.editor.decoration.validation.CoupledValidator;
 import org.opentrafficsim.editor.decoration.validation.KeyValidator;
 import org.opentrafficsim.editor.decoration.validation.ValueValidator;
 import org.w3c.dom.Document;
@@ -1862,9 +1863,9 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     {
         for (ValueValidator validator : validators)
         {
-            if (validator instanceof KeyValidator)
+            if (validator instanceof CoupledValidator)
             {
-                KeyValidator key = (KeyValidator) validator;
+                CoupledValidator key = (CoupledValidator) validator;
                 key.validate(this); // to trigger finding the right node should value have changed
                 return key.getCoupledKeyrefNode(this);
             }

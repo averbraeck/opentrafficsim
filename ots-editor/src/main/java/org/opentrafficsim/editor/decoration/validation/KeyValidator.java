@@ -31,7 +31,7 @@ import org.w3c.dom.Node;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class KeyValidator implements ValueValidator, EventListener
+public class KeyValidator implements CoupledValidator, EventListener
 {
 
     /** */
@@ -688,11 +688,8 @@ public class KeyValidator implements ValueValidator, EventListener
         }
     }
 
-    /**
-     * Returns the key node to which the given keyref node is coupled.
-     * @param node XsdTreeNode; node with attribute or value that is bounded by a keyref, represented by this key validator.
-     * @return XsdTreeNode; key node to which the given keyref node is coupled.
-     */
+    /** {@inheritDoc} */
+    @Override
     public XsdTreeNode getCoupledKeyrefNode(final XsdTreeNode node)
     {
         return this.coupledKeyrefNodes.get(node);

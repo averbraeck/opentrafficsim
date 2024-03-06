@@ -20,6 +20,7 @@ import org.opentrafficsim.editor.decoration.validation.NoDuplicateChildrenValida
 import org.opentrafficsim.editor.decoration.validation.ParentValidator;
 import org.opentrafficsim.editor.decoration.validation.RoadLayoutElementValidator;
 import org.opentrafficsim.editor.decoration.validation.RoadLayoutElementValidator.LayoutCoupling;
+import org.opentrafficsim.editor.decoration.validation.TrafficLightValidator;
 import org.opentrafficsim.editor.extensions.DefinitionsSaver;
 import org.opentrafficsim.editor.extensions.OdEditor;
 import org.opentrafficsim.editor.extensions.RoadLayoutEditor;
@@ -129,6 +130,7 @@ public final class DefaultDecorator
         new RoadLayoutElementValidator(editor, "Ots.Animation.Link.Stripe", LayoutCoupling.LINK_BY_PARENT_ID, "Id");
         new RoadLayoutElementValidator(editor, "Ots.Animation.Link.Shoulder", LayoutCoupling.LINK_BY_PARENT_ID, "Id");
         new RoadLayoutElementValidator(editor, "Ots.Animation.Link.NoTrafficLane", LayoutCoupling.LINK_BY_PARENT_ID, "Id");
+        new TrafficLightValidator(editor, "Ots.Control.FixedTime.SignalGroup.TrafficLight");
 
         new AutomaticLinkId(editor);
         new AutomaticConnectorId(editor);
