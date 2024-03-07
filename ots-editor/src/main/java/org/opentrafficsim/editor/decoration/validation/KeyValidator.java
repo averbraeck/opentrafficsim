@@ -120,7 +120,7 @@ public class KeyValidator extends XPathValidator implements EventListener
             invalidateAllDependent();
             if (this.includeSelfValue)
             {
-                node.addValueValidator(this);
+                node.addValueValidator(this, XPathFieldType.VALUE);
                 node.addListener(this, XsdTreeNode.VALUE_CHANGED);
             }
             if (!this.attributeNames.isEmpty())
@@ -139,7 +139,7 @@ public class KeyValidator extends XPathValidator implements EventListener
                 String fullPath = path + "." + child;
                 if (node.getPathString().endsWith(fullPath))
                 {
-                    node.addValueValidator(this);
+                    node.addValueValidator(this, XPathFieldType.CHILD);
                     if (!this.listeningKeyrefValidators.isEmpty())
                     {
                         node.addListener(this, XsdTreeNode.VALUE_CHANGED);

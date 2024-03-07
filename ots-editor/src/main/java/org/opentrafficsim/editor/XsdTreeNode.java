@@ -12,7 +12,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -34,6 +36,7 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.editor.decoration.validation.CoupledValidator;
 import org.opentrafficsim.editor.decoration.validation.KeyValidator;
 import org.opentrafficsim.editor.decoration.validation.ValueValidator;
+import org.opentrafficsim.editor.decoration.validation.XPathFieldType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -202,10 +205,12 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /** Validators for the node itself, e.g. duplicate in parent check. */
     private Set<Function<XsdTreeNode, String>> nodeValidators = new LinkedHashSet<>();
 
-    /** Validators for the value, sorted so KeyValidators are first and couple to keys even for otherwise invalid nodes. */
-    private SortedSet<ValueValidator> valueValidators = new TreeSet<>();
+    /** Validators for the value, sorted so CoupledValidators are first and couple to keys even for otherwise invalid nodes. */
+    private SortedMap<ValueValidator, XPathFieldType> valueValidators = new TreeMap<>();
 
-    /** Validators for each attribute, sorted so KeyValidators are first and couple to keys even for otherwise invalid nodes. */
+    /**
+     * Validators for each attribute, sorted so CoupledValidators are first and couple to keys even for otherwise invalid nodes.
+     */
     private Map<String, SortedSet<ValueValidator>> attributeValidators = new LinkedHashMap<>();
 
     /** Stored valid status, excluding children. {@code null} means unknown and that it needs to be derived. */
@@ -874,7 +879,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         String name = DocumentReader.getAttribute(this.attributeNodes.get(index), "name");
         return name;
     }
-    
+
     /**
      * Returns whether this node has an attribute with given name.
      * @param attribute String; attribute name.
@@ -1199,7 +1204,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         copyNode.invalidate();
         ((XsdTreeNodeRoot) copyNode.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                 new Object[] {copyNode, newParent, newParent.children.indexOf(copyNode)});
-        invalidate(); // due to e.g. duplicate ID, this node may also become invalid 
+        invalidate(); // due to e.g. duplicate ID, this node may also become invalid
         return copyNode;
     }
 
@@ -1666,10 +1671,11 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * Adds a validator for the value.
      * @param validator ValueValidator; validator.
+     * @param fieldType XPathFieldType; field type.
      */
-    public void addValueValidator(final ValueValidator validator)
+    public void addValueValidator(final ValueValidator validator, final XPathFieldType fieldType)
     {
-        this.valueValidators.add(validator);
+        this.valueValidators.put(validator, fieldType);
     }
 
     /**
@@ -1726,7 +1732,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         if (this.value != null && !this.value.isEmpty())
         {
-            for (ValueValidator validator : this.valueValidators)
+            for (ValueValidator validator : this.valueValidators.keySet())
             {
                 String message = validator.validate(this);
                 if (message != null)
@@ -1790,7 +1796,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         {
             return List.of("true", "false");
         }
-        List<String> valueOptions = getOptionsFromValidators(this.valueValidators, getNodeName()); // TODO: add "." or "ots:"
+        List<String> valueOptions = getOptionsFromValidators(this.valueValidators, getNodeName());
         if (!valueOptions.isEmpty())
         {
             return valueOptions;
@@ -1810,9 +1816,10 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             return List.of("true", "false");
         }
         String field = getAttributeNameByIndex(index);
-        // TODO: add "@" with field
-        List<String> valueOptions =
-                getOptionsFromValidators(this.attributeValidators.computeIfAbsent(field, (key) -> new TreeSet<>()), field);
+        Map<ValueValidator, XPathFieldType> map = new LinkedHashMap<>();
+        this.attributeValidators.computeIfAbsent(field, (key) -> new TreeSet<>())
+                .forEach((v) -> map.put(v, XPathFieldType.ATTRIBUTE));
+        List<String> valueOptions = getOptionsFromValidators(map, field);
         if (!valueOptions.isEmpty() || this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
         {
             return valueOptions;
@@ -1851,7 +1858,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public XsdTreeNode getCoupledKeyrefNodeValue()
     {
-        return getCoupledKeyrefNode(this.valueValidators);
+        return getCoupledKeyrefNode(this.valueValidators.keySet());
     }
 
     /**
@@ -1885,16 +1892,17 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns options based on a set of validators.
-     * @param validators Set&lt;ValueValidator&gt;; validators.
+     * @param validators Map&lt;ValueValidator, XPathFieldType&gt;; validators.
      * @param field String; field, attribute or child element, for which to obtain the options.
      * @return List&lt;String&gt;; list of options.
      */
-    private List<String> getOptionsFromValidators(final Set<ValueValidator> validators, final String field)
+    private List<String> getOptionsFromValidators(final Map<ValueValidator, XPathFieldType> validators, final String field)
     {
         List<String> combined = null;
-        for (ValueValidator validator : validators)
+        for (Entry<ValueValidator, XPathFieldType> entry : validators.entrySet())
         {
-            List<String> valueOptions = validator.getOptions(this, field);
+            ValueValidator validator = entry.getKey();
+            List<String> valueOptions = validator.getOptions(this, field, entry.getValue());
             if (valueOptions != null && combined != null)
             {
                 combined = combined.stream().filter(valueOptions::contains).collect(Collectors.toList());

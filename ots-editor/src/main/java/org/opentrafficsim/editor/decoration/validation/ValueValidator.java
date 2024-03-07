@@ -41,9 +41,10 @@ public interface ValueValidator extends Comparable<ValueValidator>
      * Returns the options that a validator leaves, typically an xsd:keyref returning defined values under the reference.
      * @param node XsdTreeNode; node that is in the appropriate context.
      * @param field String; field, attribute or child element, for which to obtain the options.
+     * @param fieldType XPathFieldType; field type.
      * @return List&lt;String&gt;; options, {@code null} if this is not an xsd:keyref restriction.
      */
-    default List<String> getOptions(final XsdTreeNode node, final String field)
+    default List<String> getOptions(final XsdTreeNode node, final String field, final XPathFieldType fieldType)
     {
         return null;
     }
@@ -481,20 +482,20 @@ public interface ValueValidator extends Comparable<ValueValidator>
     default int compareTo(final ValueValidator o)
     {
         /*
-         * KeyValidators are sorted first in a SortedSet. This is to prevent the following: i) another validator finds an
-         * attribute not valid, ii) the key validator is never called, if it would have been it would have matched a key and
+         * CoupledValidators are sorted first in a SortedSet. This is to prevent the following: i) another validator finds an
+         * attribute not valid, ii) the coupled validator is never called, if it would have been it would have matched a key and
          * registered itself to the relevant key node, iii) the relevant key node value is changed, but the value pointing to it
          * is not updated as the registration of the matched id was never done.
          */
-        if (this instanceof KeyValidator)
+        if (this instanceof CoupledValidator)
         {
-            if (o != null && o instanceof KeyValidator)
+            if (o != null && o instanceof CoupledValidator)
             {
                 return 1; // no matter
             }
             return -1;
         }
-        if (o instanceof KeyValidator)
+        if (o instanceof CoupledValidator)
         {
             return 1;
         }

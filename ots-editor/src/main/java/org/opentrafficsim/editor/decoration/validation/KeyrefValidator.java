@@ -68,7 +68,7 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
         {
             if (this.includeSelfValue)
             {
-                node.addValueValidator(this);
+                node.addValueValidator(this, XPathFieldType.VALUE);
             }
             if (!this.attributeNames.isEmpty())
             {
@@ -85,7 +85,7 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
                 String fullPath = path + "." + child;
                 if (node.getPathString().endsWith(fullPath))
                 {
-                    node.addValueValidator(this);
+                    node.addValueValidator(this, XPathFieldType.CHILD);
                 }
             }
         }
@@ -139,7 +139,7 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
 
     /** {@inheritDoc} */
     @Override
-    public List<String> getOptions(final XsdTreeNode node, final String field)
+    public List<String> getOptions(final XsdTreeNode node, final String field, final XPathFieldType fieldType)
     {
         /*
          * We gather values from the referred xsd:key, drawing the appropriate context from the node relevant somewhere in the
@@ -167,7 +167,7 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
         }
         Map<XsdTreeNode, List<String>> values = this.refer.getValues(node);
         List<String> result = new ArrayList<>(values.size());
-        int index = getIndex(field);
+        int index = getIndex(field, fieldType);
         values.forEach((n, list) -> result.add(list.get(index)));
         result.removeIf((v) -> v == null || v.isEmpty());
         return result;
@@ -197,34 +197,30 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
             }
         }
     }
-    
+
     /**
      * Returns the index of the given field. Indices are based on [attribute field names, children field names, self] in order.
      * @param field String; field name.
+     * @param fieldType XPathFieldType; type of the field.
      * @return index of the field.
      */
-    private int getIndex(final String field)
+    private int getIndex(final String field, final XPathFieldType fieldType)
     {
-        /*
-         * The following is not robust. The field index might be wrong if 'field', which is the xsd-node name, is equal among
-         * attributes, child nodes, and the node itself. E.g. when we are at Route.Node.Node and field = "Node", do we need the
-         * value of Route.Node (the node itself), or either a child node or attribute named "Node", which may also both exist?
-         */
-        // TODO: remember ".", "@", "ots:" to distinguish node value, attribute, or child value
-        int index = this.attributeNames.indexOf(field);
-        if (index < 0)
+        switch (fieldType)
         {
-            int deltaIndex = this.childNames.indexOf(field);
-            if (deltaIndex < 0)
+            case ATTRIBUTE:
             {
-                index = this.attributeNames.size() + this.childNames.size(); // value of node itself appended
+                return this.attributeNames.indexOf(field);
             }
-            else
+            case CHILD:
             {
-                index = this.attributeNames.size() + deltaIndex;
+                return this.attributeNames.size() + this.childNames.indexOf(field);
+            }
+            default:
+            {
+                return this.attributeNames.size() + this.childNames.size();
             }
         }
-        return index;
     }
 
     /** {@inheritDoc} */

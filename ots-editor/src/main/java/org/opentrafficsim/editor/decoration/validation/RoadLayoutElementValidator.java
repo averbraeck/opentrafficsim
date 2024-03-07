@@ -350,7 +350,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
 
     /** {@inheritDoc} */
     @Override
-    public List<String> getOptions(final XsdTreeNode node, final String field)
+    public List<String> getOptions(final XsdTreeNode node, final String field, final XPathFieldType fieldType)
     {
         XsdTreeNode layoutNode = this.layoutNodes.get(node);
         String layoutElement = "Id".equals(field) ? node.getNodeName() : field;
