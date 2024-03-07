@@ -64,7 +64,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
 
     /** Map of layout node to their respective elements id listener. */
     private final Map<XsdTreeNode, IdListener> layoutListeners = new LinkedHashMap<>();
-    
+
     /** Coupled layout element nodes that are successfully validated to. */
     private final Map<XsdTreeNode, XsdTreeNode> coupledNode = new LinkedHashMap<>();
 
@@ -331,7 +331,8 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         {
             for (XsdTreeNode child : layoutNode.getChildren())
             {
-                if (child.getNodeName().equals(layoutElement) && child.getId() != null && !child.getId().isEmpty() && child.getId().equals(value))
+                if (child.getNodeName().equals(layoutElement) && child.getId() != null && !child.getId().isEmpty()
+                        && child.getId().equals(value))
                 {
                     coupled = child;
                     break;
@@ -341,7 +342,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         if (coupled == null)
         {
             this.coupledNode.remove(node);
-            return this.attribute + " " + value + " does not refer to a valid " + layoutElement + " in the road layout."; 
+            return this.attribute + " " + value + " does not refer to a valid " + layoutElement + " in the road layout.";
         }
         this.coupledNode.put(node, coupled);
         return null;
@@ -435,12 +436,12 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         /** Node that needs to update when the id changes. */
         private final Set<XsdTreeNode> nodes = new LinkedHashSet<>();
 
-        /** Whether to update, or only invalidate. */
+        /** Whether to update, or only change coupled id's and invalidate. */
         private final boolean update;
 
         /**
          * Constructor.
-         * @param update boolean; whether to update, or only invalidate.
+         * @param update boolean; whether to update, or only change coupled id's and invalidate.
          */
         public IdListener(final boolean update)
         {
@@ -471,7 +472,8 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         @Override
         public void notify(final Event event) throws RemoteException
         {
-            String attribute = (String) ((Object[]) event.getContent())[1];
+            Object[] content = (Object[]) event.getContent();
+            String attribute = (String) content[1];
             if (attribute.equals("Id"))
             {
                 if (this.update)
@@ -480,6 +482,16 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
                 }
                 else
                 {
+                    XsdTreeNode changedNode = (XsdTreeNode) content[0];
+                    String element = changedNode.getNodeName();
+                    String previous = (String) content[2];
+                    for (XsdTreeNode node : this.nodes)
+                    {
+                        if (node.hasAttribute(element) && node.getAttributeValue(element).equals(previous))
+                        {
+                            node.setAttributeValue(element, changedNode.getAttributeValue(attribute));
+                        }
+                    }
                     this.nodes.forEach((n) -> n.invalidate());
                 }
             }

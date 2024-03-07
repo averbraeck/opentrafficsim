@@ -4,7 +4,7 @@ import org.opentrafficsim.editor.XsdTreeNode;
 
 /**
  * Coupled validators can return the node to which a node attribute or value is coupled. This is e.g. a LinkType node for the
- * LinkType attribute of a Link node.
+ * LinkType attribute of a Link node. As such, the user can navigate towards the coupled node.
  * <p>
  * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
