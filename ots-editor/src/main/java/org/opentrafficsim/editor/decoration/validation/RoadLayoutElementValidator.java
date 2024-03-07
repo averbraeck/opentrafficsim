@@ -295,7 +295,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         if (formerLinkNode != null && !formerLinkNode.equals(linkNode))
         {
             this.coupledLinks.computeIfAbsent(formerLinkNode, (n) -> new LinkedHashSet<>()).remove(node);
-            for (XsdOption option : linkNode.getChild(1).getOptions())
+            for (XsdOption option : formerLinkNode.getChild(1).getOptions())
             {
                 option.getOptionNode().removeListener(this, XsdTreeNode.OPTION_CHANGED);
                 if (option.getOptionNode().getNodeName().equals("xsd:sequence"))

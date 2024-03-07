@@ -3,6 +3,7 @@ package org.opentrafficsim.editor;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -60,20 +61,11 @@ public class Schema
     /** Nodes xsd:key. */
     private final Map<String, Node> keys = new LinkedHashMap<>();
 
-    /** Paths where xsd:key are defined, same order as {@code keys}. */
-    private final Map<String, String> keysPath = new LinkedHashMap<>();
-
     /** Nodes xsd:keyref. */
     private final Map<String, Node> keyrefs = new LinkedHashMap<>();
 
-    /** Paths where xsd:keyref are defined, same order as {@code keyrefs}. */
-    private final Map<String, String> keyrefsPath = new LinkedHashMap<>();
-
     /** Nodes xsd:unique. */
     private final Map<String, Node> uniques = new LinkedHashMap<>();
-
-    /** Paths where xsd:unique are defined, same order as {@code uniques}. */
-    private final Map<String, String> uniquesPath = new LinkedHashMap<>();
 
     /** Reading queue. */
     private final Queue<RecursionElement> queue = new LinkedList<>();
@@ -295,16 +287,13 @@ public class Schema
                     documentation(nextPath, child);
                     break;
                 case "xsd:key":
-                    this.keys.put(DocumentReader.getAttribute(child, "name"), child);
-                    this.keysPath.put(DocumentReader.getAttribute(child, "name"), nextPath);
+                    this.keys.put(nextPath + "." + DocumentReader.getAttribute(child, "name"), child);
                     break;
                 case "xsd:keyref":
-                    this.keyrefs.put(DocumentReader.getAttribute(child, "name"), child);
-                    this.keyrefsPath.put(DocumentReader.getAttribute(child, "name"), nextPath);
+                    this.keyrefs.put(nextPath + "." + DocumentReader.getAttribute(child, "name"), child);
                     break;
                 case "xsd:unique":
-                    this.uniques.put(DocumentReader.getAttribute(child, "name"), child);
-                    this.uniquesPath.put(DocumentReader.getAttribute(child, "name"), nextPath);
+                    this.uniques.put(nextPath + "." + DocumentReader.getAttribute(child, "name"), child);
                     break;
                 default:
                     read(nextPath, child, true);
@@ -549,7 +538,7 @@ public class Schema
      */
     private void checkKeys()
     {
-        checkKeyOrUniques("Key", this.keys, null);
+        checkKeyOrUniques("Key", this.keys);
     }
 
     /**
@@ -558,10 +547,18 @@ public class Schema
      */
     private void checkKeyrefs()
     {
-        for (String keyref : this.keyrefs.keySet())
+        for (String fullPath : this.keyrefs.keySet())
         {
-            Node node = this.keyrefs.get(keyref);
-            if (!this.keys.containsKey(DocumentReader.getAttribute(node, "refer").replace("ots:", "")))
+            Node node = this.keyrefs.get(fullPath);
+            String keyref = DocumentReader.getAttribute(node, "name");
+            String keyName = DocumentReader.getAttribute(node, "refer").replace("ots:", "");
+            boolean keyFound = false;
+            Iterator<Node> iterator = this.keys.values().iterator();
+            while (!keyFound && iterator.hasNext())
+            {
+                keyFound = keyName.equals(DocumentReader.getAttribute(iterator.next(), "name"));
+            }
+            if (!keyFound)
             {
                 System.out.println(
                         "Keyref " + keyref + " refers to non existing key " + DocumentReader.getAttribute(node, "refer") + ".");
@@ -612,31 +609,25 @@ public class Schema
      */
     private void checkUniques()
     {
-        checkKeyOrUniques("Unique", this.uniques, this.uniquesPath);
+        checkKeyOrUniques("Unique", this.uniques);
     }
 
     /**
      * Checks that all xsd:key or xsd:unique refer to a loaded type with their xsd:selector node. And that all xsd:field nodes
      * point to existing attributes in loaded types. This method assumes only attributes (@) and no elements (ots:) are checked.
      * @param label String; "Key" or "Unique" for command line messaging.
-     * @param map Map&lt;String, Node&gt;; map of nodes, either xsd:key or xsd:unique.
-     * @param paths Map&lt;String, String&gt;; map of paths where xsd:key or xsd:unique was defined. May be {@code null}, which
-     *            means all are defined at root level.
+     * @param map Map&lt;Node, String&gt;; map of nodes, either xsd:key or xsd:unique.
      */
-    private void checkKeyOrUniques(final String label, final Map<String, Node> map, final Map<String, String> paths)
+    private void checkKeyOrUniques(final String label, final Map<String, Node> map)
     {
-        for (String element : map.keySet())
+        for (String fullPath : map.keySet())
         {
-            Node node = map.get(element);
-            String path;
-            if (paths == null)
+            Node node = map.get(fullPath);
+            String path = fullPath.substring(0, fullPath.lastIndexOf("."));
+            String element = DocumentReader.getAttribute(node, "name");
+            if (path == null)
             {
                 path = getXpath(node);
-            }
-            else
-            {
-                path = paths.get(element);
-                path = path.isEmpty() ? getXpath(node) : path + "." + getXpath(node);
             }
             Node selected = getElement(path);
             if (selected == null)
@@ -794,35 +785,29 @@ public class Schema
 
     /**
      * Returns the xsd:key and the paths where they are defined.
-     * @return Map&lt;Node, String&gt;; xsd:key and the paths where they are defined.
+     * @return Map&lt;String, Node&gt;; xsd:key and the paths where they are defined.
      */
-    public Map<Node, String> keys()
+    public Map<String, Node> keys()
     {
-        Map<Node, String> map = new LinkedHashMap<>();
-        this.keys.forEach((key, value) -> map.put(value, this.keysPath.get(key)));
-        return map;
+        return new LinkedHashMap<>(this.keys);
     }
 
     /**
      * Returns the xsd:keyref and the paths where they are defined.
-     * @return Map&lt;Node, String&gt;; xsd:keyref and the paths where they are defined.
+     * @return Map&lt;String, Node&gt;; xsd:keyref and the paths where they are defined.
      */
-    public Map<Node, String> keyrefs()
+    public Map<String, Node> keyrefs()
     {
-        Map<Node, String> map = new LinkedHashMap<>();
-        this.keyrefs.forEach((key, value) -> map.put(value, this.keyrefsPath.get(key)));
-        return map;
+        return new LinkedHashMap<>(this.keyrefs);
     }
 
     /**
-     * /** Returns the xsd:unique and the paths where they are defined.
-     * @return Map&lt;Node, String&gt;; xsd:unique and the paths where they are defined.
+     * Returns the xsd:unique and the paths where they are defined.
+     * @return Map&lt;String, Node&gt;; xsd:unique and the paths where they are defined.
      */
-    public Map<Node, String> uniques()
+    public Map<String, Node> uniques()
     {
-        Map<Node, String> map = new LinkedHashMap<>();
-        this.uniques.forEach((key, value) -> map.put(value, this.uniquesPath.get(key)));
-        return map;
+        return new LinkedHashMap<>(this.uniques);
     }
 
     /**
