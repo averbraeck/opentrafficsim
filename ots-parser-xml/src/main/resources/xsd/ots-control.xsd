@@ -26,6 +26,15 @@
           </xsd:sequence>
           <xsd:attribute name="Id" type="ots:IdType" use="required" />
         </xsd:complexType>
+        
+        <!-- SignalGroup.TrafficLight.Link&Lane&TrafficLightId unique -->
+        <xsd:unique name="signalGroupTrafficLightUnique">
+          <xsd:selector xpath=".//ots:TrafficLight" />
+          <xsd:field xpath="@Link" />
+          <xsd:field xpath="@Lane" />
+          <xsd:field xpath="@TrafficLightId" />
+        </xsd:unique>
+        
       </xsd:element>
     </xsd:sequence>
     <xsd:attribute name="Id" type="ots:IdType" use="required" />

@@ -147,6 +147,14 @@
       <xsd:attribute name="ConflictId" type="ots:string" use="optional" />
       <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
+    
+    <!-- Link.TrafficLight.Id&Lane unique -->
+    <xsd:unique name="linkTrafficLightUnique">
+      <xsd:selector xpath=".//ots:TrafficLight" />
+      <xsd:field xpath="@Id" />
+      <xsd:field xpath="@Lane" />
+    </xsd:unique>
+    
   </xsd:element>
 
   <xsd:element name="Network">
