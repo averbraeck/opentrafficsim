@@ -12,7 +12,6 @@ import java.util.function.Function;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
-import org.opentrafficsim.editor.DocumentReader;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.w3c.dom.Node;
 
@@ -204,15 +203,6 @@ public class KeyValidator extends XPathValidator implements EventListener
             }
         }
         return map;
-    }
-
-    /**
-     * Returns the name of the key, i.e. {@code <xsd:keyref name="NAME">}.
-     * @return String; name of the key.
-     */
-    public String getKeyName()
-    {
-        return DocumentReader.getAttribute(this.keyNode, "name");
     }
 
     /** {@inheritDoc} */

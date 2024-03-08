@@ -3,6 +3,7 @@ package org.opentrafficsim.editor.decoration.validation;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.editor.DocumentReader;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.w3c.dom.Node;
@@ -67,6 +68,15 @@ public abstract class XPathValidator implements ValueValidator
     }
 
     /**
+     * Returns the name of the key, i.e. {@code <xsd:keyref name="Name">}.
+     * @return String; name of the key.
+     */
+    public String getKeyName()
+    {
+        return DocumentReader.getAttribute(this.keyNode, "name");
+    }
+
+    /**
      * Returns the type {@code String} for which the xsd:key, xsd:unique or xsd:keyref applies, i.e. "GtuTypes.GtuType" for
      * {@code <xsd:selector xpath=".//ots:GtuTypes/ots:GtuType" />}. Note that multiple paths may be defined separated by "|".
      * @return String[]; type for which the xsd:key or xsd:keyref applies.
@@ -87,28 +97,38 @@ public abstract class XPathValidator implements ValueValidator
     protected List<String> gatherFields(final XsdTreeNode node)
     {
         List<String> nodeList = new ArrayList<>();
-        for (String attribute : this.attributeNames)
+        if (node.getPathString().endsWith("DefaultInputParameters.String"))
         {
-            nodeList.add(node.getAttributeValue(attribute));
+            Throw.when(this.attributeNames.size() + this.childNames.size() + (this.includeSelfValue ? 1 : 0) != 1,
+                    IllegalStateException.class,
+                    "Key %s is defined as possibly being a default input parameter, but it has multiple fields.", getKeyName());
+            nodeList.add(node.getId());
         }
-        // a child calls this method to validate its value, need to gather all children's values via parent
-        XsdTreeNode parent = node.getParent();
-        if (parent != null)
+        else
         {
-            for (String child : this.childNames)
+            for (String attribute : this.attributeNames)
             {
-                for (XsdTreeNode treeChild : parent.getChildren())
+                nodeList.add(node.getAttributeValue(attribute));
+            }
+            // a child calls this method to validate its value, need to gather all children's values via parent
+            XsdTreeNode parent = node.getParent();
+            if (parent != null)
+            {
+                for (String child : this.childNames)
                 {
-                    if (treeChild.getNodeName().equals(child))
+                    for (XsdTreeNode treeChild : parent.getChildren())
                     {
-                        nodeList.add(treeChild.getValue());
+                        if (treeChild.getNodeName().equals(child))
+                        {
+                            nodeList.add(treeChild.getValue());
+                        }
                     }
                 }
             }
-        }
-        if (this.includeSelfValue)
-        {
-            nodeList.add(node.getValue());
+            if (this.includeSelfValue)
+            {
+                nodeList.add(node.getValue());
+            }
         }
         nodeList.replaceAll((v) -> "".equals(v) ? null : v);
         return nodeList;
