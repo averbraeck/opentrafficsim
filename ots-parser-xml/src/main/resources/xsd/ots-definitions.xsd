@@ -44,7 +44,6 @@
       <xsd:sequence>
         <xsd:element ref="ots:GtuType" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
-      <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
 
@@ -60,7 +59,6 @@
       <xsd:attribute name="Id" type="ots:IdType" use="required" />
       <xsd:attribute name="GtuType" type="ots:string" use="required" />
       <xsd:attribute name="Default" type="xsd:boolean" use="optional" default="false" />
-      <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
 
@@ -69,7 +67,6 @@
       <xsd:sequence>
         <xsd:element ref="ots:GtuTemplate" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
-      <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
 
@@ -91,7 +88,6 @@
       <xsd:complexContent>
         <xsd:extension base="ots:GtuCompatibleInfraType" />
       </xsd:complexContent>
-      <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
 
@@ -100,7 +96,6 @@
       <xsd:sequence>
         <xsd:element ref="ots:LaneType" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
-      <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
   
@@ -143,7 +138,6 @@
           </xsd:sequence>
         </xsd:extension>
       </xsd:complexContent>
-      <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
 
@@ -152,7 +146,6 @@
       <xsd:sequence>
         <xsd:element ref="ots:LinkType" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
-      <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
   
@@ -169,7 +162,6 @@
       <xsd:sequence>
         <xsd:element ref="ots:DetectorType" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
-      <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
 
@@ -257,7 +249,6 @@
       <xsd:sequence>
         <xsd:element ref="ots:RoadLayout" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
-      <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
 
@@ -272,7 +263,6 @@
       <xsd:element ref="ots:SpeedLimit" minOccurs="0" maxOccurs="unbounded" />
     </xsd:sequence>
     <xsd:attribute name="LaneKeeping" type="ots:LaneKeepingType" use="optional" />
-    <!-- xsd:attribute ref="xml:base" / -->
   </xsd:complexType>
 
   <xsd:element name="RoadLayout">
@@ -291,11 +281,13 @@
         </xsd:extension>
       </xsd:complexContent>
     </xsd:complexType>
-    <!-- the LANE.ID should be unique within one RoadLayout -->
-    <xsd:unique name="uniqueRoadLayoutLaneId">
-      <xsd:selector xpath="ots:Lane" />
+    
+    <!-- RoadLayout.Lane.Id key -->
+    <xsd:key name="roadLayoutLaneId">
+      <xsd:selector xpath="ots:Lane|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
-    </xsd:unique>
+    </xsd:key>
+    
   </xsd:element>
 
   <xsd:element name="ParameterTypes">
@@ -336,7 +328,6 @@
         <xsd:element ref="ots:RoadLayouts" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:ParameterTypes" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
-      <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
 

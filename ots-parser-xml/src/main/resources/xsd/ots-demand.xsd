@@ -26,7 +26,6 @@
             <xsd:attribute name="Category" type="ots:string" use="optional" />
             <xsd:attribute name="Interpolation" type="ots:InterpolationType" use="optional" />
             <xsd:attribute name="Factor" type="ots:PositiveFactor" use="optional" />
-            <!-- xsd:attribute ref="xml:base" / -->
           </xsd:complexType>
         </xsd:element>
         <xsd:element name="RandomStream" type="ots:RandomStreamSource" minOccurs="0" />
@@ -36,8 +35,16 @@
       <xsd:attribute name="GlobalInterpolation" type="ots:InterpolationType" use="optional" default="LINEAR" />
       <xsd:attribute name="GlobalFactor" type="ots:PositiveFactor" use="optional" default="1.0" />
       <xsd:attribute name="Options" type="ots:string" use="optional" />
-      <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
+    
+    <!-- Od.Cell.{Origin|Destination|Category} key -->
+    <xsd:key name="odCellKey">
+      <xsd:selector xpath=".//ots:Cell" />
+      <xsd:field xpath="@Origin" />
+      <xsd:field xpath="@Destination" />
+      <xsd:field xpath="@Category" />
+    </xsd:key>
+    
   </xsd:element>
 
   <xsd:element name="OdOptions">
@@ -138,14 +145,19 @@
               </xsd:element>
             </xsd:sequence>
           </xsd:complexType>
-          <xsd:unique name="odOptionsItemMarkovStateGtuTypeKey">
-            <xsd:selector xpath=".//ots:Markov/ots:State" />
+
+          <!-- Markov.State.GtuType key -->
+          <xsd:key name="odOptionsItemMarkovStateGtuTypeKey">
+            <xsd:selector xpath=".//ots:Markov/ots:State|.//ots:DefaultInputParameters/ots:String" />
             <xsd:field xpath="@GtuType" />
-          </xsd:unique>
-          <xsd:unique name="odOptionsItemLaneBiasGtuTypeKey">
-            <xsd:selector xpath=".//ots:LaneBiases/ots:LaneBias" />
+          </xsd:key>
+
+          <!-- LaneBiases.LaneBias.GtuType key -->
+          <xsd:key name="odOptionsItemLaneBiasGtuTypeKey">
+            <xsd:selector xpath=".//ots:LaneBiases/ots:LaneBias|.//ots:DefaultInputParameters/ots:String" />
             <xsd:field xpath="@GtuType" />
-          </xsd:unique>
+          </xsd:key>
+
         </xsd:element>
       </xsd:sequence>
       <xsd:attribute name="Id" type="ots:IdType" />
@@ -164,7 +176,6 @@
         <xsd:element name="RandomStream" type="ots:RandomStreamSource" minOccurs="0" />
       </xsd:sequence>
       <xsd:attribute name="Id" type="ots:IdType" use="required" />
-      <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
 
@@ -175,7 +186,6 @@
       </xsd:sequence>
       <xsd:attribute name="Id" type="ots:IdType" use="required" />
       <xsd:attribute name="GtuType" type="ots:string" use="required" />
-      <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
 
@@ -202,7 +212,6 @@
       </xsd:sequence>
       <xsd:attribute name="Id" type="ots:IdType" use="required" />
       <xsd:attribute name="GtuType" type="ots:string" use="required" />
-      <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
 
@@ -219,7 +228,6 @@
       </xsd:sequence>
       <xsd:attribute name="Id" type="ots:IdType" use="required" />
       <xsd:attribute name="GtuType" type="ots:string" use="required" />
-      <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
 
@@ -236,7 +244,6 @@
       </xsd:sequence>
       <xsd:attribute name="Id" type="ots:IdType" use="required" />
       <xsd:attribute name="GtuType" type="ots:string" use="required" />
-      <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
 
@@ -319,6 +326,14 @@
         <xsd:element ref="ots:Sink" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
     </xsd:complexType>
+
+    <!-- Demand.Generator.{Link|Lane} key -->
+    <xsd:key name="generatorLinkLaneKey">
+      <xsd:selector xpath=".//ots:Generator|.//ots:ListGenerator" />
+      <xsd:field xpath="@Link" />
+      <xsd:field xpath="@Lane" />
+    </xsd:key>
+
   </xsd:element>
 
   <!-- ================================================================================================== -->
@@ -358,7 +373,6 @@
     <xsd:attribute name="GtuType" type="ots:string" use="optional" />
     <xsd:attribute name="Route" type="ots:string" use="optional" />
     <xsd:attribute name="Factor" type="ots:PositiveFactor" use="optional" default="1.0" />
-    <!-- xsd:attribute ref="xml:base" / -->
   </xsd:complexType>
 
   <!-- Either a factor, or veh per time unit. -->

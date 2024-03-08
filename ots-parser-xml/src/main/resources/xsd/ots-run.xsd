@@ -30,7 +30,6 @@
       <xsd:sequence>
         <xsd:element ref="ots:RandomStream" minOccurs="1" maxOccurs="unbounded" />
       </xsd:sequence>
-      <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
 
@@ -43,7 +42,6 @@
         <xsd:element name="NumberReplications" type="ots:positiveInteger" minOccurs="0" default="1" />
         <xsd:element ref="ots:RandomStreams" minOccurs="0" maxOccurs="1" />
       </xsd:sequence>
-      <!-- xsd:attribute ref="xml:base" / -->
     </xsd:complexType>
   </xsd:element>
 
