@@ -53,7 +53,7 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
     @Override
     public void notifyCreated(final XsdTreeNode node)
     {
-        if (this.path.equals(node.getPathString()))
+        if (node.getPathString().endsWith(this.path))
         {
             node.addAttributeValidator("TrafficLightId", this);
             node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);

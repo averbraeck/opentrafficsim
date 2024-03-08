@@ -165,7 +165,7 @@ public class Schema
      * defined additional to the extended type. To prevent that this is read again later, this is captured in the later read,
      * which will then be ignored.<br>
      * <br>
-     * Extends the path for xsd:element's with either a name={name} or ref={ref} attribute. If the name is "OTS", this element
+     * Extends the path for xsd:element's with either a name={name} or ref={ref} attribute. If the name is "Ots", this element
      * is stored as the root for the whole schema. If there is a ref={ref} attribute, rather than reading the given node, the
      * referred node is read at its place in the path.<br>
      * <br>
@@ -173,7 +173,7 @@ public class Schema
      * <br>
      * Finally, loops all the children of the node to read and processes them in the following manner:
      * <ul>
-     * <li>#text nodes are ignored</li>
+     * <li>#text nodes are ignored.</li>
      * <li>xsd:include, xsd:attribute, xsd:element and xsd:documentation nodes are forwarded to dedicated methods.</li>
      * <li>xsd:key, xsd:keyref and xsd:unique nodes are stored for later checks.</li>
      * <li>All other child nodes are recursively read.</li>
@@ -241,9 +241,9 @@ public class Schema
                 ref = ref.replace("ots:", "");
                 nextNode = getElement(ref);
                 /*
-                 * There might be more exotic referring situations than this one. Here, we have an <xsd:element ref="MODEL">
-                 * pointing to a <xsd:element name="MODEL" type="MODELTYPE" /> being typed by an <xsd:complexType
-                 * name="MODELTYPE">.
+                 * There might be more exotic referring situations than this one. Here, we have an <xsd:element ref="Model">
+                 * pointing to a <xsd:element name="Model" type="ModelType" /> being typed by an <xsd:complexType
+                 * name="ModelType">.
                  */
                 if (DocumentReader.getAttribute(nextNode, "type") != null)
                 {
@@ -287,13 +287,22 @@ public class Schema
                     documentation(nextPath, child);
                     break;
                 case "xsd:key":
-                    this.keys.put(nextPath + "." + DocumentReader.getAttribute(child, "name"), child);
+                    if (nextPath.startsWith("Ots"))
+                    {
+                        this.keys.put(nextPath + "." + DocumentReader.getAttribute(child, "name"), child);
+                    }
                     break;
                 case "xsd:keyref":
-                    this.keyrefs.put(nextPath + "." + DocumentReader.getAttribute(child, "name"), child);
+                    if (nextPath.startsWith("Ots"))
+                    {
+                        this.keyrefs.put(nextPath + "." + DocumentReader.getAttribute(child, "name"), child);
+                    }
                     break;
                 case "xsd:unique":
-                    this.uniques.put(nextPath + "." + DocumentReader.getAttribute(child, "name"), child);
+                    if (nextPath.startsWith("Ots"))
+                    {
+                        this.uniques.put(nextPath + "." + DocumentReader.getAttribute(child, "name"), child);
+                    }
                     break;
                 default:
                     read(nextPath, child, true);
@@ -302,7 +311,7 @@ public class Schema
     }
 
     /**
-     * Checks for recursion. This is recognized as the some end of the path, is duplicated in an equal sub-path before that end.
+     * Checks for recursion. This is recognized as the same end of the path, is duplicated in an equal sub-path before that end.
      * For example CarFollowingModel{.Socio}{.Socio} or CarFollowingModel{.Socio.Parent}{.Socio.Parent}.
      * @param path String; node path.
      * @return boolean; true if the path contains recursion.

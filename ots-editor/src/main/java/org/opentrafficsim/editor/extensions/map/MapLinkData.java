@@ -342,7 +342,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     // for if the id in the road layout has changed
                     this.roadLayoutNode = this.definedRoadLayoutNode.getCoupledKeyrefNodeValue();
                 }
-                if (node.equals(this.roadLayoutNode))
+                if (node.equals(this.roadLayoutNode) && node.reportInvalidId() == null)
                 {
                     buildLayout();
                 }

@@ -239,36 +239,35 @@ public class KeyValidator extends XPathValidator implements EventListener
             Object[] content = (Object[]) event.getContent();
             XsdTreeNode keyNode = (XsdTreeNode) content[0];
             String previous = (String) content[1];
-            boolean updateKeyrefs = !duplicateKeys(keyNode, (n) -> n.getValue(), previous);// true;
-            for (KeyrefValidator keyref : this.listeningKeyrefValidators)
+            boolean updateKeyrefs = !duplicateKeys(keyNode, (n) -> n.getValue(), previous);
+            if (updateKeyrefs)
             {
-                if (updateKeyrefs)
-                {
-                    updateReferringKeyrefs(keyNode, this.attributeNames.size() + this.childNames.size(), keyNode.getValue());
-                }
-                keyref.invalidateValue();
+                updateReferringKeyrefs(keyNode, this.attributeNames.size() + this.childNames.size(), keyNode.getValue());
             }
+            invalidateAllDependent();
         }
         else if (XsdTreeNode.ATTRIBUTE_CHANGED.equals(event.getType()))
         {
             Object[] content = (Object[]) event.getContent();
-            XsdTreeNode keyNode = (XsdTreeNode) content[0];
             String attribute = (String) content[1];
+            if (!this.attributeNames.contains(attribute))
+            {
+                return;
+            }
+            XsdTreeNode keyNode = (XsdTreeNode) content[0];
             String previous = (String) content[2];
             boolean updateKeyrefs = !duplicateKeys(keyNode, (n) -> n.getAttributeValue(attribute), previous);
             if (updateKeyrefs)
             {
                 updateReferringKeyrefs(keyNode, this.attributeNames.indexOf(attribute), keyNode.getAttributeValue(attribute));
             }
-            for (KeyrefValidator keyref : this.listeningKeyrefValidators)
-            {
-                keyref.invalidateAttribute(attribute);
-            }
+            invalidateAllDependent();
         }
     }
 
     /**
-     * Returns whether there are duplicate keys such that no key change should result in a change of value at the keyrefs.
+     * Returns whether there are or were duplicate keys such that no key change should result in a change of value at the
+     * keyrefs.
      * @param keyNode XsdTreeNode; node where key is changed.
      * @param valueProvider Function&lt;XsdTreeNode, String&gt;; function to provide the right value from the key nodes.
      * @param previous String; previous value.
@@ -282,12 +281,16 @@ public class KeyValidator extends XPathValidator implements EventListener
         boolean duplicates = false;
         if (keyNodes != null)
         {
+            Set<String> values = new LinkedHashSet<>();
             for (XsdTreeNode node : keyNodes)
             {
                 if (node.isActive())
                 {
                     String value = valueProvider.apply(node);
-                    duplicates = duplicates || (value != null && value.equals(previous));
+                    if (value != null)
+                    {
+                        duplicates = duplicates || !values.add(value) || value.equals(previous);
+                    }
                 }
             }
         }

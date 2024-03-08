@@ -130,7 +130,7 @@ public final class DefaultDecorator
         new RoadLayoutElementValidator(editor, "Ots.Animation.Link.Stripe", LayoutCoupling.LINK_BY_PARENT_ID, "Id");
         new RoadLayoutElementValidator(editor, "Ots.Animation.Link.Shoulder", LayoutCoupling.LINK_BY_PARENT_ID, "Id");
         new RoadLayoutElementValidator(editor, "Ots.Animation.Link.NoTrafficLane", LayoutCoupling.LINK_BY_PARENT_ID, "Id");
-        new TrafficLightValidator(editor, "Ots.Control.FixedTime.SignalGroup.TrafficLight");
+        new TrafficLightValidator(editor, ".SignalGroup.TrafficLight");
 
         new AutomaticLinkId(editor);
         new AutomaticConnectorId(editor);

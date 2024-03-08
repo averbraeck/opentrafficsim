@@ -69,12 +69,14 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
             if (this.includeSelfValue)
             {
                 node.addValueValidator(this, XPathFieldType.VALUE);
+                this.valueValidating.add(node);
             }
             if (!this.attributeNames.isEmpty())
             {
                 for (String attribute : this.attributeNames)
                 {
                     node.addAttributeValidator(attribute, this);
+                    this.attributeValidating.computeIfAbsent(attribute, (n) -> new LinkedHashSet<>()).add(node);
                 }
             }
         }
@@ -86,6 +88,7 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
                 if (node.getPathString().endsWith(fullPath))
                 {
                     node.addValueValidator(this, XPathFieldType.CHILD);
+                    this.valueValidating.add(node);
                 }
             }
         }
