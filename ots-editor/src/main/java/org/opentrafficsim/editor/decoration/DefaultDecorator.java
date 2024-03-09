@@ -79,6 +79,7 @@ public final class DefaultDecorator
         editor.setCustomIcon("Ots.Control", OtsEditor.loadIcon("./OTS_control.png", -1, -1, -1, -1));
         editor.setCustomIcon("Ots.Run", OtsEditor.loadIcon("./Stopwatch.png", 16, 16, -1, -1));
         editor.setCustomIcon("Ots.Animation", OtsEditor.loadIcon("./Play.png", 14, 14, 16, 16));
+        editor.setCustomIcon("Ots.Animation.Connector", OtsEditor.loadIcon("./OTS_connector.png", -1, -1, -1, -1));
         editor.setCustomIcon("Ots.Output", OtsEditor.loadIcon("./Report.png", 14, 14, 16, 16)); // does not exist yet
 
         editor.addTab("Map", networkIcon, EditorMap.build(editor), "Map editor");

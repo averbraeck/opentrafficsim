@@ -872,6 +872,12 @@
       <xsd:field xpath="@Id" />
     </xsd:keyref>
 
+    <!-- Animation.Connector = Connector.Id -->
+    <xsd:keyref name="animationConnectorRef" refer="ots:connectorKey">
+      <xsd:selector xpath=".//ots:Animation/ots:Connector" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+
     <!-- Animation.Link = Link.Id -->
     <xsd:keyref name="animationLinkRef" refer="ots:linkKey">
       <xsd:selector xpath=".//ots:Animation/ots:Link" />
