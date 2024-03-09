@@ -43,6 +43,12 @@ public final class XsdPaths
     /** OD options item path. */
     public static final String OD_OPTIONS_ITEM = "Ots.Demand.OdOptions.OdOptionsItem";
     
+    /** Generator path. */
+    public static final String GENERATOR = "Ots.Demand.Generator";
+    
+    /** List generator path. */
+    public static final String LIST_GENERATOR = "Ots.Demand.ListGenerator";
+    
     /** Sink path. */
     public static final String SINK = "Ots.Demand.Sink";
     

@@ -304,7 +304,7 @@
       </xsd:sequence>
       <xsd:attribute name="Link" type="ots:string" use="required" />
       <xsd:attribute name="Lane" type="ots:string" use="required" />
-      <xsd:attribute name="Position" type="ots:LengthBeginEndType" use="optional" />
+      <xsd:attribute name="Position" type="ots:LengthBeginEndType" use="required" />
       <xsd:attribute name="Uri" type="ots:anyURI" use="required" />
       <!-- TODO: Add inline list. -->
     </xsd:complexType>

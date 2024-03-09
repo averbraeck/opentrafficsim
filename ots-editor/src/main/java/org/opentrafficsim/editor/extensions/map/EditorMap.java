@@ -46,6 +46,7 @@ import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
 import org.opentrafficsim.draw.road.BusStopAnimation;
 import org.opentrafficsim.draw.road.BusStopAnimation.BusStopData;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.ShoulderData;
+import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation;
 import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
 import org.opentrafficsim.draw.road.LaneAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation.CenterLine;
@@ -92,7 +93,8 @@ public class EditorMap extends JPanel implements EventListener
     private static final Color BAR_COLOR = Color.LIGHT_GRAY;
 
     /** All types that are valid to show in the map. */
-    private static final Set<String> TYPES = Set.of(XsdPaths.NODE, XsdPaths.LINK, XsdPaths.TRAFFIC_LIGHT, XsdPaths.SINK);
+    private static final Set<String> TYPES = Set.of(XsdPaths.NODE, XsdPaths.LINK, XsdPaths.TRAFFIC_LIGHT, XsdPaths.SINK,
+            XsdPaths.GENERATOR, XsdPaths.LIST_GENERATOR);
 
     /** Context provider. */
     private final Contextualized contextualized;
@@ -718,6 +720,11 @@ public class EditorMap extends JPanel implements EventListener
             animation = Try.assign(() -> new LaneDetectorAnimation<SinkData, SinkText>((SinkData) data, this.contextualized,
                     Color.ORANGE, textSupplier), "");
         }
+        else if (node.getPathString().equals(XsdPaths.GENERATOR) || node.getPathString().equals(XsdPaths.LIST_GENERATOR))
+        {
+            animation = Try
+                    .assign(() -> new GtuGeneratorPositionAnimation((GtuGeneratorPositionData) data, this.contextualized), "");
+        }
         else
         {
             throw new UnsupportedOperationException("Data cannot be added by the map editor.");
@@ -776,6 +783,11 @@ public class EditorMap extends JPanel implements EventListener
         {
             MapSinkData sinkData = new MapSinkData(this, node, this.editor);
             data = sinkData;
+        }
+        else if (node.getPathString().equals(XsdPaths.GENERATOR) || node.getPathString().equals(XsdPaths.LIST_GENERATOR))
+        {
+            MapGeneratorData generatorData = new MapGeneratorData(this, node, this.editor);
+            data = generatorData;
         }
         else
         {
