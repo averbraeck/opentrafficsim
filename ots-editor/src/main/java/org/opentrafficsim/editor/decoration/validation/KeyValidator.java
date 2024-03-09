@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
@@ -57,36 +58,46 @@ public class KeyValidator extends XPathValidator implements EventListener
             return null; // Node was deleted, but is still visible in the GUI tree for a moment
         }
         List<String> values = gatherFields(node);
-        // xsd:key; all must be present
-        if (this.keyNode.getNodeName().equals("xsd:key") && values.contains(null))
+        if (values.contains(null))
         {
-            List<String> missing = new ArrayList<>();
-            for (int i = 0; i < values.size(); i++)
+            if (this.keyNode.getNodeName().equals("xsd:key"))
             {
-                if (values.get(i) == null)
+                // xsd:key; all must be present
+                List<String> missing = new ArrayList<>();
+                for (int i = 0; i < values.size(); i++)
                 {
-                    if (i < this.attributeNames.size())
+                    if (values.get(i) == null)
                     {
-                        missing.add(this.attributeNames.get(i));
-                    }
-                    else if (i < this.attributeNames.size() + this.childNames.size())
-                    {
-                        missing.add(this.childNames.get(i - this.attributeNames.size()));
-                    }
-                    else
-                    {
-                        missing.add("Value");
+                        if (i < this.attributeNames.size())
+                        {
+                            missing.add(this.attributeNames.get(i));
+                        }
+                        else if (i < this.attributeNames.size() + this.childNames.size())
+                        {
+                            missing.add(this.childNames.get(i - this.attributeNames.size()));
+                        }
+                        else
+                        {
+                            missing.add("Value");
+                        }
                     }
                 }
+                if (missing.size() == 1)
+                {
+                    return "Insufficient number of values, missing " + missing.get(0) + ".";
+                }
+                return "Insufficient number of values, missing " + missing + ".";
             }
-            if (missing.size() == 1)
+            else
             {
-                return "Insufficient number of values, missing " + missing.get(0) + ".";
+                // xsd:unique with null value means this set of values is excluded from comparison
+                return null;
             }
-            return "Insufficient number of values, missing " + missing + ".";
         }
-        // xsd:key or xsd:unique; all must be present allowing null==null on xsd:unique as was captured above for xsd:key.
-        if (Collections.frequency(getValues(node).values(), values) > 1)
+        // compare only with other value sets not containing null
+        List<List<String>> set =
+                getValues(node).values().stream().filter((c) -> !c.contains(null)).collect(Collectors.toList());
+        if (Collections.frequency(set, values) > 1)
         {
             if (this.childNames.size() + this.attributeNames.size() == 1)
             {
