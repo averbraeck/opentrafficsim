@@ -25,10 +25,10 @@ public abstract class XPathValidator implements ValueValidator
     /** Path where the key was defined. */
     protected final String keyPath;
 
-    /** Name of the attribute the key points to, {@code null} if it points to a child element. */
+    /** Name of the attributes the key points to (i.e. field reference starting with "@"). */
     protected final List<String> attributeNames = new ArrayList<>();
 
-    /** Name of the child element the key points to, {@code null} if it points to an argument. */
+    /** Name of the child elements the key points to (i.e. field reference starting with "ots:"). */
     protected final List<String> childNames = new ArrayList<>();
 
     /** Whether to include the value of the node itself (i.e. field reference "."). */
@@ -62,8 +62,8 @@ public abstract class XPathValidator implements ValueValidator
                 this.includeSelfValue = true;
                 continue;
             }
-            throw new UnsupportedOperationException(
-                    "Unable to validate keyref that does not point to an attribute (@) or OTS type (ots:).");
+            throw new UnsupportedOperationException("Unable to validate keyref that does not point to "
+                    + "an attribute (@), the node value (.), or a child (ots:).");
         }
     }
 
