@@ -179,7 +179,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED))
         {
             XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
-            if (node.getPathString().equals("Ots.Definitions.RoadLayouts.RoadLayout"))
+            if (node.getPathString().equals(XsdPaths.DEFINED_ROADLAYOUT))
             {
                 // Id change on defined layout, update all nodes that use this validator
                 updateAllActive(this.allLayoutByParentId.keySet());
