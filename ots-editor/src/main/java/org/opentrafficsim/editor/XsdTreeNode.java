@@ -219,6 +219,24 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /** Stored valid status, including children. {@code null} means unknown and that it needs to be derived. */
     private Boolean isValid = null;
 
+    /** Stored value valid status. {@code null} means unknown and that it needs to be derived. */
+    private Boolean valueValid = null;
+
+    /** Value invalid message. */ 
+    private String valueInvalidMessage = null;
+
+    /** Stored node valid status. {@code null} means unknown and that it needs to be derived. */
+    private Boolean nodeValid = null;
+
+    /** Node invalid message (applies only to node itself, e.g. no duplicate nodes in parent). */ 
+    private String nodeInvalidMessage = null;
+
+    /** Stored attribute valid status. {@code null} means unknown and that it needs to be derived. */
+    private List<Boolean> attributeValid;
+
+    /** Attribute invalid message. */ 
+    private List<String> attributeInvalidMessage;
+
     /**
      * Constructor for root node, based on an {@code XsdSchema}. Note: {@code XsdTreeNodeRoot} should be used for the root. The
      * {@code XsdSchema} that will be available to all nodes in the tree.
@@ -676,6 +694,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         this.attributeNodes = new ArrayList<>();
         this.attributeValues = new ArrayList<>();
+        this.attributeValid = new ArrayList<>();
+        this.attributeInvalidMessage = new ArrayList<>();
         if (this.referringXsdNode != null)
         {
             this.description = DocumentReader.getAnnotation(this.referringXsdNode, "xsd:documentation", "description");
@@ -714,6 +734,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             {
                 this.attributeNodes.add(child);
                 this.attributeValues.add(null);
+                this.attributeValid.add(null);
+                this.attributeInvalidMessage.add(null);
             }
             if (child.getNodeName().equals("xsd:complexContent") || child.getNodeName().equals("xsd:simpleContent"))
             {
@@ -1572,6 +1594,13 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         {
             this.parent.invalidate();
         }
+        this.valueValid = null;
+        this.valueInvalidMessage = null;
+        this.nodeValid = null;
+        this.nodeInvalidMessage = null;
+        assureAttributesAndDescription();
+        Collections.fill(this.attributeValid, null);
+        Collections.fill(this.attributeInvalidMessage, null);
     }
 
     /**
@@ -1709,15 +1738,21 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public String reportInvalidNode()
     {
-        for (Function<XsdTreeNode, String> validator : this.nodeValidators)
+        if (this.nodeValid == null)
         {
-            String message = validator.apply(this);
-            if (message != null)
+            for (Function<XsdTreeNode, String> validator : this.nodeValidators)
             {
-                return message;
+                String message = validator.apply(this);
+                if (message != null)
+                {
+                    this.nodeInvalidMessage = message;
+                    this.nodeValid = false;
+                    return message;
+                }
             }
+            this.nodeValid = true;
         }
-        return null;
+        return this.nodeInvalidMessage;
     }
 
     /**
@@ -1726,22 +1761,31 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public String reportInvalidValue()
     {
-        if (!isEditable() || !isActive())
+        if (this.valueValid == null)
         {
-            return null;
-        }
-        if (this.value != null && !this.value.isEmpty())
-        {
-            for (ValueValidator validator : this.valueValidators.keySet())
+            if (!isEditable() || !isActive())
             {
-                String message = validator.validate(this);
-                if (message != null)
+                this.valueInvalidMessage = null;
+                this.valueValid = true;
+                return null;
+            }
+            if (this.value != null && !this.value.isEmpty())
+            {
+                for (ValueValidator validator : this.valueValidators.keySet())
                 {
-                    return message;
+                    String message = validator.validate(this);
+                    if (message != null)
+                    {
+                        this.valueInvalidMessage = message;
+                        this.valueValid = false;
+                        return message;
+                    }
                 }
             }
+            this.valueInvalidMessage = ValueValidator.reportInvalidValue(this.xsdNode, this.value, this.schema);
+            this.valueValid = this.valueInvalidMessage == null;
         }
-        return ValueValidator.reportInvalidValue(this.xsdNode, this.value, this.schema);
+        return this.valueInvalidMessage;
     }
 
     /**
@@ -1751,37 +1795,54 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public String reportInvalidAttributeValue(final int index)
     {
-        if (!isActive())
+        if (this.attributeValid.get(index) == null)
         {
-            return null;
-        }
-        if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
-        {
-            if (getPath().get(0) instanceof XsdTreeNodeRoot)
+            if (!isActive())
             {
-                return ValueValidator.reportInvalidInclude(this.attributeValues.get(0), this.attributeValues.get(1),
-                        ((XsdTreeNodeRoot) getPath().get(0)).getDirectory());
-            }
-            else
-            {
-                // node is being deleted and has no parent anymore
+                this.attributeInvalidMessage.set(index, null);
+                this.attributeValid.set(index, true);
                 return null;
             }
-        }
-        String attribute = DocumentReader.getAttribute(getAttributeNode(index), "name");
-        String val = this.attributeValues.get(index);
-        if (val != null && !val.isEmpty())
-        {
-            for (ValueValidator validator : this.attributeValidators.computeIfAbsent(attribute, (key) -> new TreeSet<>()))
+            if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
             {
-                String message = validator.validate(this);
-                if (message != null)
+                if (getPath().get(0) instanceof XsdTreeNodeRoot)
                 {
+                    String message = ValueValidator.reportInvalidInclude(this.attributeValues.get(0),
+                            this.attributeValues.get(1), ((XsdTreeNodeRoot) getPath().get(0)).getDirectory());
+                    this.attributeInvalidMessage.set(index, message);
+                    this.attributeValid.set(index, message == null);
                     return message;
                 }
+                else
+                {
+                    // node is being deleted and has no parent anymore
+                    this.attributeInvalidMessage.set(index, null);
+                    this.attributeValid.set(index, true);
+                    return null;
+                }
             }
+            String attribute = DocumentReader.getAttribute(getAttributeNode(index), "name");
+            String val = this.attributeValues.get(index);
+            if (val != null && !val.isEmpty())
+            {
+                for (ValueValidator validator : this.attributeValidators.computeIfAbsent(attribute, (key) -> new TreeSet<>()))
+                {
+                    String message = validator.validate(this);
+                    if (message != null)
+                    {
+                        this.attributeInvalidMessage.set(index, message);
+                        this.attributeValid.set(index, false);
+                        return message;
+                    }
+                }
+            }
+            String message =
+                    ValueValidator.reportInvalidAttributeValue(getAttributeNode(index), getAttributeValue(index), this.schema);
+            this.attributeInvalidMessage.set(index, message);
+            this.attributeValid.set(index, message == null);
+            return message;
         }
-        return ValueValidator.reportInvalidAttributeValue(getAttributeNode(index), getAttributeValue(index), this.schema);
+        return this.attributeInvalidMessage.get(index);
     }
 
     /**
