@@ -1,17 +1,12 @@
 package org.opentrafficsim.editor.extensions.map;
 
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.Locale;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.bounds.Bounds2d;
-import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.OrientedPoint2d;
-import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.reference.ReferenceType;
@@ -26,21 +21,21 @@ import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
 import org.opentrafficsim.xml.bindings.types.LengthBeginEndType.LengthBeginEnd;
 
 /**
- * Data classes for objects that are drawn as a lateral line on the lane. Implementations must call {@setLinkNode()} in their
- * constructor or by some other dynamic means, or the XSD node must have a Link attribute that points to the XSD node of a link
- * by a keyref. This class will listen to attributes Id, Link, Lane and Position, and update visualization as needed. Attributes
- * Id and Link are optional.
+ * Data class for objects that are drawn at a lane position. Implementations must call {@setLinkNode()} in their constructor or
+ * by some other dynamic means, or the XSD node must have a Link attribute that points to the XSD node of a link by a keyref.
+ * This class will listen to attributes Id, Link, Lane and Position, and update visualization as needed. Attributes Id and Link
+ * are optional.
  * <p>
  * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public abstract class MapLineData extends MapData implements LaneBasedObjectData, EventListener
+public abstract class MapLaneBasedObjectData extends MapData implements LaneBasedObjectData, EventListener
 {
 
     /** */
-    private static final long serialVersionUID = 20240220L;
+    private static final long serialVersionUID = 20240310L;
 
     /** Id. */
     private String id = "";
@@ -69,10 +64,10 @@ public abstract class MapLineData extends MapData implements LaneBasedObjectData
     /**
      * Constructor.
      * @param map Map; map.
-     * @param node XsdTreeNode; node Ots.Network.Link.TrafficLight.
+     * @param node XsdTreeNode; node.
      * @param editor OtsEditor; editor.
      */
-    public MapLineData(final EditorMap map, final XsdTreeNode node, final OtsEditor editor)
+    public MapLaneBasedObjectData(final EditorMap map, final XsdTreeNode node, final OtsEditor editor)
     {
         super(map, node, editor);
         getNode().addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
@@ -265,30 +260,29 @@ public abstract class MapLineData extends MapData implements LaneBasedObjectData
         }
         this.positionFromStart =
                 ParseUtil.parseLengthBeginEnd(this.position, Length.instantiateSI(linkData.getDesignLine().getLength()));
-        Ray2d ray = laneData.getCenterLine().getLocationExtended(this.positionFromStart.si);
-        Length w = laneData.getWidth(this.positionFromStart);
 
-        // bounds
-        double w45 = 0.45 * w.si;
-        double a = ray.phi + Math.PI / 2.0;
-        Point2d p1 = new Point2d(ray.x + w45 * Math.cos(a), ray.y - w45 * Math.sin(a));
-        Point2d p2 = new Point2d(ray.x - w45 * Math.cos(a), ray.y + w45 * Math.sin(a));
-        PolyLine2d geometry = new PolyLine2d(p1, p2);
-        AffineTransform transform = AffineTransform.getRotateInstance(-ray.phi, 0.0, 0.0);
-        transform.concatenate(AffineTransform.getTranslateInstance(-ray.x, -ray.y));
-        Shape path = transform.createTransformedShape(geometry.toPath2D());
-        Rectangle2D rect = path.getBounds2D();
-        this.bounds = ClickableBounds.get(new Bounds2d(rect.getMinX(), rect.getMaxX(), rect.getMinY(), rect.getMaxY()));
+        Length w = laneData.getWidth(this.positionFromStart);
         if (this.laneWidth != null && !this.laneWidth.equals(w))
         {
             // animation (see EditorMap.setValid) stores static data that depends on the lane width
             getMap().reinitialize(getNode());
             return;
         }
-        this.location = new OrientedPoint2d(ray.x, ray.y, ray.phi);
         this.laneWidth = w;
-
+        this.bounds = calculateBounds();
+        Ray2d ray = laneData.getCenterLine().getLocationExtended(this.positionFromStart.si);
+        this.location = new OrientedPoint2d(ray.x, ray.y, ray.phi);
         setValid();
+    }
+
+    /**
+     * Calculates the bounds. Can be overridden for objects with non-line shapes.
+     * @return OtsBounds2d; bounds of the object.
+     */
+    protected OtsBounds2d calculateBounds()
+    {
+        double w45 = 0.45 * getLaneWidth().si;
+        return ClickableBounds.get(new Bounds2d(0.0, 0.0, -w45, w45));
     }
 
 }

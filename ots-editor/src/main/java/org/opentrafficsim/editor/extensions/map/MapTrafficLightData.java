@@ -14,7 +14,7 @@ import org.opentrafficsim.editor.XsdTreeNode;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class MapTrafficLightData extends MapLineData implements TrafficLightData
+public class MapTrafficLightData extends MapLaneBasedObjectData implements TrafficLightData
 {
 
     /** */

@@ -12,7 +12,7 @@ import org.opentrafficsim.editor.XsdTreeNode;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class MapSinkData extends MapLineData implements SinkData
+public class MapSinkData extends MapLaneBasedObjectData implements SinkData
 {
 
     /** */
