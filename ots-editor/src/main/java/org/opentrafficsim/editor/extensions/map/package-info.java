@@ -6,7 +6,8 @@
  * <li>Add the XML node path to {@code EditorMap.TYPES}.</li>
  * <li>Create class for data object that extends {@code MapData}. Under its destroy implementation (which should call
  * {@code super.destroy()}, remove all listeners it creates.</li>
- * <li>Create instance of animation and data object under {@code EditorMap.setValid()}.</li>
+ * <li>Create instance of data object under {@code EditorMap.add(node)}.</li>
+ * <li>Create instance of animation object under {@code EditorMap.setValid(data)}.</li>
  * <li>Add visualization toggle under {@code EditorMap.setAnimationToggles()}.</li>
  * </ul>
  * <p>
