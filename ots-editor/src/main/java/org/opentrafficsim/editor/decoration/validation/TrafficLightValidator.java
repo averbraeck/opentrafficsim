@@ -87,12 +87,7 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
                     {
                         if (entry.getValue().equals(node))
                         {
-                            String oldValue = entry.getKey().getAttributeValue("TrafficLightId");
-                            if (oldValue != null && !oldValue.isEmpty())
-                            {
-                                entry.getKey().setAttributeValue("TrafficLightId", newId);
-                                entry.getKey().invalidate();
-                            }
+                            CoupledValidator.setAttributeIfNotNull(entry.getKey(), "TrafficLightId", newId);
                         }
                     }
                 }

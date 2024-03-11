@@ -138,10 +138,10 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
         values.removeIf((value) -> value != null && value.startsWith("{") && value.endsWith("}")); // expressions
         return "Values " + values + " do not refer to a known " + typeString + " within " + this.keyPath + ".";
     }
-    
+
     /**
      * Checks that a set of values in a key, matches the values in a keyref node. Note, in dealing with null values the two sets
-     * should <b>not</b> be given in the wrong order. It does not matter whether the keyref refers to a key or unique. In both 
+     * should <b>not</b> be given in the wrong order. It does not matter whether the keyref refers to a key or unique. In both
      * cases the values from a keyref are a match of all its non-null values match respective values in the key.
      * @param keyValues List&lt;String&gt;; set of values from a key node.
      * @param keyrefValues List&lt;String&gt;; set of values from a keyref node.
@@ -267,19 +267,11 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
                 if (fieldIndex < this.attributeNames.size())
                 {
                     String attribute = this.attributeNames.get(fieldIndex);
-                    String oldValue = entry.getKey().getAttributeValue(attribute);
-                    if (oldValue != null && !oldValue.isEmpty())
-                    {
-                        entry.getKey().setAttributeValue(attribute, newValue);
-                    }
+                    CoupledValidator.setAttributeIfNotNull(entry.getKey(), attribute, newValue);
                 }
                 else
                 {
-                    String oldValue = entry.getKey().getValue();
-                    if (oldValue != null && !oldValue.isEmpty())
-                    {
-                        entry.getKey().setValue(newValue);
-                    }
+                    CoupledValidator.setValueIfNotNull(entry.getKey(), newValue);
                 }
             }
         }

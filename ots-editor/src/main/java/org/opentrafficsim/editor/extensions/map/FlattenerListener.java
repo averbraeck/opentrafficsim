@@ -65,7 +65,8 @@ public class FlattenerListener extends ChangeListener<Flattener>
         }
         catch (RuntimeException rte)
         {
-            if (rte.getMessage().contains("is neither a DoubleScalar nor a Boolean")
+            String message = rte.getMessage();
+            if (message != null && message.contains("is neither a DoubleScalar nor a Boolean")
                     && ScenarioParser.lastLookedUp instanceof Integer)
             {
                 // TODO: dirty trick to obtain a value that was given to Eval, which not yet supports non Boolean/DoubleScalar.

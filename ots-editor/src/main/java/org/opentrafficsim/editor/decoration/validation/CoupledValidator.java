@@ -25,6 +25,38 @@ public interface CoupledValidator extends ValueValidator
      * @param node XsdTreeNode; node with attribute or value that is bounded by this validator.
      * @return XsdTreeNode; node to which the given node is coupled.
      */
-    public XsdTreeNode getCoupledKeyrefNode(final XsdTreeNode node);
+    XsdTreeNode getCoupledKeyrefNode(final XsdTreeNode node);
+
+    /**
+     * Sets the given value on the attribute of the node, if the current value is not {@code null}. The node is invalidated
+     * afterwards.
+     * @param node XsdTreeNode; node.
+     * @param attribute String; attribute.
+     * @param value String; value.
+     */
+    static void setAttributeIfNotNull(final XsdTreeNode node, final String attribute, final String value)
+    {
+        String oldValue = node.getAttributeValue(attribute);
+        if (oldValue != null && !oldValue.isEmpty())
+        {
+            node.setAttributeValue(attribute, value);
+            node.invalidate();
+        }
+    }
+
+    /**
+     * Sets the given value on the node, if the current value is not {@code null}. The node is invalidated afterwards.
+     * @param node XsdTreeNode; node.
+     * @param value String; value.
+     */
+    static void setValueIfNotNull(final XsdTreeNode node, final String value)
+    {
+        String oldValue = node.getValue();
+        if (oldValue != null && !oldValue.isEmpty())
+        {
+            node.setValue(value);
+            node.invalidate();
+        }
+    }
 
 }
