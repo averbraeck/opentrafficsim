@@ -1,6 +1,6 @@
 # Appendix A - Automatic derivation of conflict areas
 
-The following algorithm is applied on two lanes after a quick contour check has determined that the two lanes may overlap.
+The following algorithm is applied on two lanes after a quick bounds check has determined that the two lanes may overlap.
 
 1. Derive downstream and upstream lanes of both lanes, accounting for the direction of travel considered.
 2. Derive left and right edges of lanes; called A and B for lane 1, C and D for lane 2.

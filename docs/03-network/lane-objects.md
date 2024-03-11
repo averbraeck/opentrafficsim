@@ -41,7 +41,7 @@ A final type of sensor that occurs often is the `SinkSensor`. It has the simple 
 
 ## Traffic lights and control
 
-Traffic lights are simple lane-based objects of which the light color can be set or retrieved. The traffic light color can also be black, meaning that the traffic light is inactive. A fixed-time controller for traffic lights is available under `TrafficLightControllerFixedDuration`. Control can be much more complex and in OTS there is even a separate java project for traffic control (ots-trafficcontrol). This contains classes for CCOL and TrafCOD traffic light controllers.
+Traffic lights are simple lane-based objects of which the light color can be set or retrieved. The traffic light color can also be black, meaning that the traffic light is inactive. A fixed-time controller for traffic lights is available under `TrafficLightControllerFixedDuration`. Control can be much more complex and in OTS there is even a separate java project for traffic control (ots-trafficcontrol). This contains classes for CCOL and TrafCOD traffic light controllers. Traffic lights can be assigned a turn-on-red node, in which case GTUs will pass the traffic light if their route will turn to the turn-on-red node.
 
 
 ## Conflicts
@@ -61,14 +61,13 @@ Conflicts are areas where two lanes, usually from different links, overlap, and 
 &lfloor; Other conflict
 </pre>
 
-There are different conflict rules that can be used. Conflict rules provide a priority to a GTU such that it can perform the correct behavior. There are six kinds of priority, where ‘priority’, ‘yield’ and ‘stop’ are self-explanatory. Priorities ‘turn on red’ and ‘all stop’ are used in some countries. Turn on red means that drivers are allowed to make a turn while a traffic light shows red. All stop means that everyone has to stop and the first person to arrive has right of way, etc. Finally, priority ‘split’ is a placeholder for split conflicts where priority is not an issue, but where GTUs on another lane may influence GTU movement.
+There are different conflict rules that can be used. Conflict rules provide a priority to a GTU such that it can perform the correct behavior. There are five kinds of priority, where ‘priority’, ‘yield’ and ‘stop’ are self-explanatory. Priority ‘all stop’ is used in some countries. All stop means that everyone has to stop and the first person to arrive has right of way, etc. Finally, priority ‘split’ is a placeholder for split conflicts where priority is not an issue, but where GTUs on another lane may influence GTU movement.
 
 <pre>
 Conflict
 &lfloor; Conflict rule
   &lfloor; <b>Conflict priority</b>
     &lfloor; Priority
-    &lfloor; Turn on red
     &lfloor; Yield
     &lfloor; Stop
     &lfloor; All stop
@@ -82,7 +81,6 @@ Cross-section link
 &lfloor; <b>Priority</b>
   &lfloor; Priority
   &lfloor; None
-  &lfloor; Turn on red
   &lfloor; Yield
   &lfloor; Stop
   &lfloor; All stop
@@ -101,10 +99,9 @@ In OTS there are three types of conflict rules: split, bus stop and default. The
 The default conflict rule implements all ‘regular’ priority rules using the link priority. In particular the following conflict rules apply from the discussed link priorities:
 
 * _All stop_; if both conflicts have priority all stop.
-* _Right-hand has priority_; if both conflicts have the same priority (excluding ‘bus stop’ and ‘turn on red’), or they are a pair of ‘stop’ and ‘yield’ priorities.
+* _Right-hand has priority_; if both conflicts have the same priority (excluding ‘bus stop’), or they are a pair of ‘stop’ and ‘yield’ priorities.
 * _Priority and yield_; if one has ‘priority’ or ‘none’, and the other has ‘none’ or ‘yield’ (the case with both ‘none’ is already captured above).
 * _Priority and stop_; if one has ‘priority’ or ‘none’, and the other has ‘stop’.
-* _Priority and turn on red_; remaining cases.
 
 With the link priorities defined, OTS allows automated generation of conflict areas, preventing much manual labor. The utility `ConflictBuilder` provides the tools to do this. It has several methods named `buildConflicts(…)` which do so with various input. The network elements that can be provided is either the entire network, a set of lanes, or two particular lanes. Overlap between all lanes contained in the input is automatically determined, except for any lane combination determined in the ignore list. The permitted list contains lane combinations for which the conflict is a permitted conflict during a traffic light cycle, a property that will be stored with the generated conflict between the lanes.
 
