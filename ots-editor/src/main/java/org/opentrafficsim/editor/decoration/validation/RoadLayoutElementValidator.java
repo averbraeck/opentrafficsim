@@ -529,14 +529,18 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
                 {
                     XsdTreeNode changedNode = (XsdTreeNode) content[0];
                     String element = changedNode.getNodeName();
-                    String previous = (String) content[2];
                     if (!"RoadLayout".equals(element))
                     {
+                        String previous = (String) content[2];
                         for (XsdTreeNode node : this.nodes)
                         {
-                            if (node.hasAttribute(element) && node.getAttributeValue(element).equals(previous))
+                            if (node.hasAttribute(element))
                             {
-                                node.setAttributeValue(element, changedNode.getAttributeValue(attribute));
+                                String oldValue = node.getAttributeValue(element);
+                                if (oldValue != null && !oldValue.isEmpty() && oldValue.equals(previous))
+                                {
+                                    node.setAttributeValue(element, changedNode.getAttributeValue(attribute));
+                                }
                             }
                         }
                         this.nodes.forEach((n) -> n.invalidate());
@@ -547,7 +551,6 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
                         Set<XsdTreeNode> set = new LinkedHashSet<>(this.nodes); // copy due to concurrent modification
                         set.forEach((n) -> update(n));
                     }
-                    
                 }
             }
         }

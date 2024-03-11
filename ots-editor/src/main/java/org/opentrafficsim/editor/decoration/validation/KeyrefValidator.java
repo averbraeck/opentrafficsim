@@ -110,34 +110,53 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
             return null; // Node was deleted, but is still visible in the GUI tree for a moment
         }
         List<String> values = gatherFields(node);
-        // xsd:keyref referred value is present ?
-        Map<XsdTreeNode, List<String>> valueMap = this.refer.getValues(node);
-        boolean matched = false;
-        for (Entry<XsdTreeNode, List<String>> entry : valueMap.entrySet())
-        {
-            if (values.equals(entry.getValue()) && !values.contains(null))
-            {
-                matched = true;
-                this.coupledKeyrefNodes.put(node, entry.getKey());
-            }
-        }
-        if (matched)
+        if (values.stream().allMatch((v) -> v == null))
         {
             return null;
         }
+        // xsd:keyref referred value is present ?
+        Map<XsdTreeNode, List<String>> valueMap = this.refer.getValues(node);
+        for (Entry<XsdTreeNode, List<String>> entry : valueMap.entrySet())
+        {
+            if (matchingKeyref(entry.getValue(), values))
+            {
+                this.coupledKeyrefNodes.put(node, entry.getKey());
+                return null;
+            }
+        }
         this.coupledKeyrefNodes.remove(node);
+        String[] types = this.refer.getTypeString();
+        String typeString = types.length == 1 ? types[0] : Arrays.asList(types).toString();
         if (values.size() == 1)
         {
             String value = values.get(0);
             String name = this.attributeNames.isEmpty() ? (this.childNames.isEmpty() ? "node" : this.childNames.get(0))
                     : this.attributeNames.get(0);
-            String[] types = this.refer.getTypeString();
-            String typeString = types.length == 1 ? types[0] : Arrays.asList(types).toString();
             return "Value " + value + " for " + name + " does not refer to a known " + typeString + " within " + this.keyPath
                     + ".";
         }
-        values.removeIf((value) -> value.startsWith("{") && value.endsWith("}")); // expressions
-        return "Values " + values + " do not refer to a known " + this.refer.getTypeString() + " within " + this.keyPath + ".";
+        values.removeIf((value) -> value != null && value.startsWith("{") && value.endsWith("}")); // expressions
+        return "Values " + values + " do not refer to a known " + typeString + " within " + this.keyPath + ".";
+    }
+    
+    /**
+     * Checks that a set of values in a key, matches the values in a keyref node. Note, in dealing with null values the two sets
+     * should <b>not</b> be given in the wrong order. It does not matter whether the keyref refers to a key or unique. In both 
+     * cases the values from a keyref are a match of all its non-null values match respective values in the key.
+     * @param keyValues List&lt;String&gt;; set of values from a key node.
+     * @param keyrefValues List&lt;String&gt;; set of values from a keyref node.
+     * @return boolean; whether the key values match the keyref values.
+     */
+    private boolean matchingKeyref(final List<String> keyValues, final List<String> keyrefValues)
+    {
+        for (int i = 0; i < keyValues.size(); i++)
+        {
+            if (keyrefValues.get(i) != null && !keyrefValues.get(i).equals(keyValues.get(i)))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     /** {@inheritDoc} */
@@ -247,11 +266,20 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
             {
                 if (fieldIndex < this.attributeNames.size())
                 {
-                    entry.getKey().setAttributeValue(this.attributeNames.get(fieldIndex), newValue);
+                    String attribute = this.attributeNames.get(fieldIndex);
+                    String oldValue = entry.getKey().getAttributeValue(attribute);
+                    if (oldValue != null && !oldValue.isEmpty())
+                    {
+                        entry.getKey().setAttributeValue(attribute, newValue);
+                    }
                 }
                 else
                 {
-                    entry.getKey().setValue(newValue);
+                    String oldValue = entry.getKey().getValue();
+                    if (oldValue != null && !oldValue.isEmpty())
+                    {
+                        entry.getKey().setValue(newValue);
+                    }
                 }
             }
         }

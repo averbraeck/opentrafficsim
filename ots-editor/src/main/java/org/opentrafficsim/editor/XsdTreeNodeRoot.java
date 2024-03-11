@@ -135,6 +135,12 @@ public class XsdTreeNodeRoot extends XsdTreeNode
             String path = entry.getKey().substring(0, entry.getKey().lastIndexOf("."));
             keys.add(new KeyValidator(entry.getValue(), path));
         }
+        Set<KeyValidator> uniques = new LinkedHashSet<>();
+        for (Entry<String, Node> entry : schema.uniques().entrySet())
+        {
+            String path = entry.getKey().substring(0, entry.getKey().lastIndexOf("."));
+            uniques.add(new KeyValidator(entry.getValue(), path));
+        }
         Set<KeyrefValidator> keyrefs = new LinkedHashSet<>();
         for (Entry<String, Node> entry : schema.keyrefs().entrySet())
         {
@@ -148,13 +154,17 @@ public class XsdTreeNodeRoot extends XsdTreeNode
                     break;
                 }
             }
+            for (KeyValidator unique : uniques)
+            {
+                if (unique.getKeyName().equals(keyName))
+                {
+                    String path = entry.getKey().substring(0, entry.getKey().lastIndexOf("."));
+                    keyrefs.add(new KeyrefValidator(entry.getValue(), path, unique));
+                    break;
+                }
+            }
         }
-        Set<KeyValidator> uniques = new LinkedHashSet<>();
-        for (Entry<String, Node> entry : schema.uniques().entrySet())
-        {
-            String path = entry.getKey().substring(0, entry.getKey().lastIndexOf("."));
-            uniques.add(new KeyValidator(entry.getValue(), path));
-        }
+        
 
         EventListener listener = new EventListener()
         {

@@ -80,16 +80,19 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
             XsdTreeNode node = (XsdTreeNode) content[0];
             if (this.coupledNodes.containsValue(node))
             {
-                String attribute = (String) content[1];
-                if ("Id".equals(attribute))
+                if ("Id".equals(content[1]))
                 {
                     String newId = node.getId();
                     for (Entry<XsdTreeNode, XsdTreeNode> entry : this.coupledNodes.entrySet())
                     {
                         if (entry.getValue().equals(node))
                         {
-                            entry.getKey().setAttributeValue("TrafficLightId", newId);
-                            entry.getKey().invalidate();
+                            String oldValue = entry.getKey().getAttributeValue("TrafficLightId");
+                            if (oldValue != null && !oldValue.isEmpty())
+                            {
+                                entry.getKey().setAttributeValue("TrafficLightId", newId);
+                                entry.getKey().invalidate();
+                            }
                         }
                     }
                 }

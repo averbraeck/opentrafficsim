@@ -222,19 +222,19 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /** Stored value valid status. {@code null} means unknown and that it needs to be derived. */
     private Boolean valueValid = null;
 
-    /** Value invalid message. */ 
+    /** Value invalid message. */
     private String valueInvalidMessage = null;
 
     /** Stored node valid status. {@code null} means unknown and that it needs to be derived. */
     private Boolean nodeValid = null;
 
-    /** Node invalid message (applies only to node itself, e.g. no duplicate nodes in parent). */ 
+    /** Node invalid message (applies only to node itself, e.g. no duplicate nodes in parent). */
     private String nodeInvalidMessage = null;
 
     /** Stored attribute valid status. {@code null} means unknown and that it needs to be derived. */
     private List<Boolean> attributeValid;
 
-    /** Attribute invalid message. */ 
+    /** Attribute invalid message. */
     private List<String> attributeInvalidMessage;
 
     /**
@@ -1822,18 +1822,14 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 }
             }
             String attribute = DocumentReader.getAttribute(getAttributeNode(index), "name");
-            String val = this.attributeValues.get(index);
-            if (val != null && !val.isEmpty())
+            for (ValueValidator validator : this.attributeValidators.computeIfAbsent(attribute, (key) -> new TreeSet<>()))
             {
-                for (ValueValidator validator : this.attributeValidators.computeIfAbsent(attribute, (key) -> new TreeSet<>()))
+                String message = validator.validate(this);
+                if (message != null)
                 {
-                    String message = validator.validate(this);
-                    if (message != null)
-                    {
-                        this.attributeInvalidMessage.set(index, message);
-                        this.attributeValid.set(index, false);
-                        return message;
-                    }
+                    this.attributeInvalidMessage.set(index, message);
+                    this.attributeValid.set(index, false);
+                    return message;
                 }
             }
             String message =

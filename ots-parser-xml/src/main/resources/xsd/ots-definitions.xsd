@@ -282,11 +282,11 @@
       </xsd:complexContent>
     </xsd:complexType>
     
-    <!-- RoadLayout.Stripe.Id key -->
-    <xsd:key name="roadLayoutStripeId">
+    <!-- RoadLayout.Stripe.Id unique -->
+    <xsd:unique name="roadLayoutStripeId">
       <xsd:selector xpath="ots:Stripe|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
-    </xsd:key>
+    </xsd:unique>
     
     <!-- RoadLayout.Lane.Id key -->
     <xsd:key name="roadLayoutLaneId">
@@ -294,17 +294,17 @@
       <xsd:field xpath="@Id" />
     </xsd:key>
     
-    <!-- RoadLayout.Shoulder.Id key -->
-    <xsd:key name="roadLayoutShoulderId">
+    <!-- RoadLayout.Shoulder.Id unique -->
+    <xsd:unique name="roadLayoutShoulderId">
       <xsd:selector xpath="ots:Shoulder|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
-    </xsd:key>
+    </xsd:unique>
     
-    <!-- RoadLayout.NoTrafficLane.Id key -->
-    <xsd:key name="roadLayoutNoTrafficLaneId">
+    <!-- RoadLayout.NoTrafficLane.Id unique -->
+    <xsd:unique name="roadLayoutNoTrafficLaneId">
       <xsd:selector xpath="ots:NoTrafficLane|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
-    </xsd:key>
+    </xsd:unique>
     
   </xsd:element>
 
