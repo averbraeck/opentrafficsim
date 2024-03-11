@@ -165,6 +165,24 @@ public abstract class XPathValidator implements ValueValidator
     }
 
     /**
+     * Returns whether the given node is of the correct type and in the correct context for this validator.
+     * @param node XsdTreeNode; node.
+     * @return boolean; whether the given node is of the correct type and in the correct context for this validator.
+     */
+    protected boolean isTypeInContext(final XsdTreeNode node)
+    {
+        for (String selectorPath : getTypeString())
+        {
+            String nodePath = node.getPathString();
+            if (nodePath.startsWith(getPath()) && nodePath.endsWith(selectorPath))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
      * Adds node to this key, if applicable. Nodes are stored per parent instance that defines the context at the level of the
      * path at which the key was defined. This method is called by a listener that the root node has set up, for every created
      * node.

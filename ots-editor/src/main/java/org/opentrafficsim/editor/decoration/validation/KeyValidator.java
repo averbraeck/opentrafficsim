@@ -113,16 +113,7 @@ public class KeyValidator extends XPathValidator implements EventListener
     @Override
     public void addNode(final XsdTreeNode node)
     {
-        boolean isType = false;
-        for (String path : getTypeString())
-        {
-            isType = node.isType(getPath().equals("Ots") ? path : getPath() + "." + path);
-            if (isType)
-            {
-                break;
-            }
-        }
-        if (isType)
+        if (isTypeInContext(node))
         {
             node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
             XsdTreeNode context = getContext(node);

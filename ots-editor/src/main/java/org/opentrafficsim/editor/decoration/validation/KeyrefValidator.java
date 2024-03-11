@@ -55,16 +55,7 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
     @Override
     public void addNode(final XsdTreeNode node)
     {
-        boolean isType = false;
-        for (String path : getTypeString())
-        {
-            isType = node.isType(getPath().equals("Ots") ? path : getPath() + "." + path);
-            if (isType)
-            {
-                break;
-            }
-        }
-        if (isType)
+        if (isTypeInContext(node))
         {
             if (this.includeSelfValue)
             {
