@@ -146,7 +146,7 @@
     </xsd:complexType>
     
     <!-- Link.TrafficLight.{Id|Lane} key -->
-    <xsd:key name="linkTrafficLightUnique">
+    <xsd:key name="linkTrafficLightKey">
       <xsd:selector xpath=".//ots:TrafficLight" />
       <xsd:field xpath="@Id" />
       <xsd:field xpath="@Lane" />

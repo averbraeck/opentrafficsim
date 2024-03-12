@@ -1360,15 +1360,6 @@
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="VehicleIntensityType">
-    <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a value as decimal number [0 .. 1] or percentage [0% .. 100%].</xsd:appinfo>
-    </xsd:annotation>
-    <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|(\d+\.?\d*\s*veh)"></xsd:pattern>
-    </xsd:restriction>
-  </xsd:simpleType>
-
   <xsd:simpleType name="VehicleFrequencyType">
     <xsd:annotation>
       <xsd:appinfo source="pattern">Provide an expression { }, or a value as X.Xveh/{time unit}.</xsd:appinfo>
@@ -1384,17 +1375,6 @@
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\{[^{}]+\}|(\(\s*[+-]?\d+\.?\d*\s*,\s*[+-]?\d+\.?\d*\s*\))">
-      </xsd:pattern>
-      <xsd:whiteSpace value="collapse" />
-    </xsd:restriction>
-  </xsd:simpleType>
-
-  <xsd:simpleType name="CoordinateNoSpaceType">
-    <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a value as (X.X,X.X).</xsd:appinfo>
-    </xsd:annotation>
-    <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|(\([+-]?\d+\.?\d*,[+-]?\d+\.?\d*\))">
       </xsd:pattern>
       <xsd:whiteSpace value="collapse" />
     </xsd:restriction>
@@ -1474,30 +1454,6 @@
           <xsd:enumeration value="|:" />
           <xsd:enumeration value="RIGHT" />
           <xsd:enumeration value=":|" />
-        </xsd:restriction>
-      </xsd:simpleType>
-    </xsd:union>
-  </xsd:simpleType>
-
-  <xsd:simpleType name="DrivingDirectionType">
-    <xsd:union memberTypes="ots:Expression">
-      <xsd:simpleType>
-        <xsd:restriction base="xsd:string">
-          <xsd:enumeration value="FORWARD" />
-          <xsd:enumeration value="BACKWARD" />
-          <xsd:enumeration value="BOTH" />
-          <xsd:enumeration value="NONE" />
-        </xsd:restriction>
-      </xsd:simpleType>
-    </xsd:union>
-  </xsd:simpleType>
-
-  <xsd:simpleType name="GtuDirectionType">
-    <xsd:union memberTypes="ots:Expression">
-      <xsd:simpleType>
-        <xsd:restriction base="xsd:string">
-          <xsd:enumeration value="DIR_PLUS" />
-          <xsd:enumeration value="DIR_MINUS" />
         </xsd:restriction>
       </xsd:simpleType>
     </xsd:union>

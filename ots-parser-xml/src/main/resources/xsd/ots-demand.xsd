@@ -148,13 +148,13 @@
 
           <!-- Markov.State.GtuType key -->
           <xsd:key name="odOptionsItemMarkovStateGtuTypeKey">
-            <xsd:selector xpath=".//ots:Markov/ots:State|.//ots:DefaultInputParameters/ots:String" />
+            <xsd:selector xpath=".//ots:Markov/ots:State" />
             <xsd:field xpath="@GtuType" />
           </xsd:key>
 
           <!-- LaneBiases.LaneBias.GtuType key -->
           <xsd:key name="odOptionsItemLaneBiasGtuTypeKey">
-            <xsd:selector xpath=".//ots:LaneBiases/ots:LaneBias|.//ots:DefaultInputParameters/ots:String" />
+            <xsd:selector xpath=".//ots:LaneBiases/ots:LaneBias" />
             <xsd:field xpath="@GtuType" />
           </xsd:key>
 

@@ -109,19 +109,19 @@
           </xsd:complexType>
           
           <!-- FixedTime.SignalGroup.Id key -->
-          <xsd:key name="signalGroupKey">
-            <xsd:selector xpath=".//ots:SignalGroup|.//ots:DefaultInputParameters/ots:String" />
+          <xsd:key name="fixedTimeSignalGroupKey">
+            <xsd:selector xpath=".//ots:SignalGroup" />
             <xsd:field xpath="@Id" />
           </xsd:key>
           
           <!-- FixedTime.Cycle.SingalGroupId unique -->
           <xsd:key name="cycleSignalGroupKey">
-            <xsd:selector xpath=".//ots:Cycle|.//ots:DefaultInputParameters/ots:String" />
+            <xsd:selector xpath=".//ots:Cycle" />
             <xsd:field xpath="@SignalGroupId" />
           </xsd:key>
           
           <!-- FixedTime.Cycle.SingalGroupId = FixedTime.SignalGroup.Id -->
-          <xsd:keyref name="cycleSignalGroupIdRef" refer="ots:signalGroupKey">
+          <xsd:keyref name="cycleSignalGroupIdRef" refer="ots:fixedTimeSignalGroupKey">
             <xsd:selector xpath=".//ots:Cycle" />
             <xsd:field xpath="@SignalGroupId" />
           </xsd:keyref>
@@ -173,6 +173,13 @@
               </xsd:extension>
             </xsd:complexContent>
           </xsd:complexType>
+          
+          <!-- FixedTime.SignalGroup.Id key -->
+          <xsd:key name="trafCodTimeSignalGroupKey">
+            <xsd:selector xpath=".//ots:SignalGroup" />
+            <xsd:field xpath="@Id" />
+          </xsd:key>
+          
         </xsd:element>
 
       </xsd:choice>

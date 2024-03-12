@@ -34,7 +34,8 @@
     <!-- ================================================================================================== -->
 
     <!-- Keys can be with DefaultInputParameters.String, as elements referring to the key may do so by an input parameter. -->
-    <!-- Note that such keys may only have a single field, as an input parameter should be able to define it. -->
+    <!-- Note that such keys may only have a single Id field, as an input parameter should be able to define it. -->
+    <!-- Such keys can only be used at the root level. Other levels are not aware of the default parameters context. -->
 
     <!-- ======================================== DEFINITIONS KEYS ======================================== -->
 
@@ -76,7 +77,7 @@
 
     <!-- Definitions.LaneBiases.LaneBias.GtuType key -->
     <xsd:key name="definitionsLaneBiasGtuTypeKey">
-      <xsd:selector xpath=".//ots:Definitions/ots:LaneBiases/ots:LaneBias|.//ots:DefaultInputParameters/ots:String" />
+      <xsd:selector xpath=".//ots:Definitions/ots:LaneBiases/ots:LaneBias" />
       <xsd:field xpath="@GtuType" />
     </xsd:key>
 
@@ -608,7 +609,7 @@
 
     <!-- DefinedLaneBias.GtuType is Definitions.LaneBiases.LaneBias.GtuType -->
     <xsd:keyref name="definedLaneBiasGtuTypeRef" refer="ots:definitionsLaneBiasGtuTypeKey">
-      <xsd:selector xpath=".//ots:DefinedLaneBias" />
+      <xsd:selector xpath=".//ots:LaneBiases/ots:LaneBias" />
       <xsd:field xpath="@GtuType" />
     </xsd:keyref>
 
