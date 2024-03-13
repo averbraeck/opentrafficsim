@@ -21,6 +21,7 @@ import org.opentrafficsim.editor.DocumentReader;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.Undo.ActionType;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.swing.gui.AppearanceControlTextField;
 
 /**
  * Editor for attribute table cells. Extends the default cell editor with checkboxes for boolean attributes (those that cannot
@@ -55,7 +56,7 @@ public class AttributesCellEditor extends DefaultCellEditor
      */
     public AttributesCellEditor(final JTable table, final OtsEditor editor)
     {
-        super(new JTextField());
+        super(new AppearanceControlTextField());
         getComponent().addKeyListener(new KeyAdapter()
         {
             /** {@inheritDoc} */
