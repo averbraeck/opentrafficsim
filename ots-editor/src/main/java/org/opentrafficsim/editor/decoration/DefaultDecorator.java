@@ -112,6 +112,7 @@ public final class DefaultDecorator
         new ParentValidator(editor, "Ots.Demand.OdOptions.OdOptionsItem.Markov.State")
                 .setContext("Ots.Demand.OdOptions.OdOptionsItem").setIdAttribute("GtuType");
         new AttributesNotEqualValidator(editor, "Ots.Network.Link", "NodeStart", "NodeEnd");
+        new AttributesNotEqualValidator(editor, "Ots.Demand.Cell", "Origin", "Destination");
         new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.MandatoryIncentives");
         new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.VoluntaryIncentives");
         new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.AccelerationIncentives");
