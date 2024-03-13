@@ -852,6 +852,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                 XsdTreeNode node = (XsdTreeNode) this.treeTable.getTree().getModel().getRoot();
                 this.undo.startAction(ActionType.ADD, node, null);
                 initializeTree();
+                this.attributesTable.setModel(new AttributesTableModel(null, this.treeTable));
                 this.undo.clear();
             }
             catch (IOException exception)
