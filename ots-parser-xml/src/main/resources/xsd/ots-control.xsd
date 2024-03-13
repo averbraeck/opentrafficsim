@@ -29,7 +29,7 @@
         
         <!-- SignalGroup.TrafficLight.{Link|Lane|TrafficLightId} key -->
         <xsd:key name="signalGroupTrafficLightId">
-          <xsd:selector xpath=".//ots:TrafficLight" />
+          <xsd:selector xpath="ots:TrafficLight" />
           <xsd:field xpath="@Link" />
           <xsd:field xpath="@Lane" />
           <xsd:field xpath="@TrafficLightId" />
@@ -110,19 +110,19 @@
           
           <!-- FixedTime.SignalGroup.Id key -->
           <xsd:key name="fixedTimeSignalGroupKey">
-            <xsd:selector xpath=".//ots:SignalGroup" />
+            <xsd:selector xpath="ots:SignalGroup" />
             <xsd:field xpath="@Id" />
           </xsd:key>
           
           <!-- FixedTime.Cycle.SingalGroupId unique -->
           <xsd:key name="cycleSignalGroupKey">
-            <xsd:selector xpath=".//ots:Cycle" />
+            <xsd:selector xpath="ots:Cycle" />
             <xsd:field xpath="@SignalGroupId" />
           </xsd:key>
           
           <!-- FixedTime.Cycle.SingalGroupId = FixedTime.SignalGroup.Id -->
           <xsd:keyref name="cycleSignalGroupIdRef" refer="ots:fixedTimeSignalGroupKey">
-            <xsd:selector xpath=".//ots:Cycle" />
+            <xsd:selector xpath="ots:Cycle" />
             <xsd:field xpath="@SignalGroupId" />
           </xsd:keyref>
           

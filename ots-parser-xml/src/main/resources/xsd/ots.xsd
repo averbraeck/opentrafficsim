@@ -77,8 +77,8 @@
 
     <!-- Definitions.LaneBiases.LaneBias.GtuType key -->
     <xsd:key name="definitionsLaneBiasGtuTypeKey">
-      <xsd:selector xpath=".//ots:Definitions/ots:LaneBiases/ots:LaneBias" />
-      <xsd:field xpath="@GtuType" />
+      <xsd:selector xpath=".//ots:Definitions/ots:LaneBiases/ots:LaneBias|.//ots:DefaultInputParameters/ots:String" />
+      <xsd:field xpath="@GtuType|@Id" />
     </xsd:key>
 
     <!-- ParameterTypes.Duration.Id key -->
@@ -157,32 +157,31 @@
 
     <!-- Network.Node.Id key -->
     <xsd:key name="nodeKey">
-      <xsd:selector xpath=".//ots:Network/ots:Node|.//ots:DefaultInputParameters/ots:String" />
+      <xsd:selector xpath="ots:Network/ots:Node|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
     <!-- Network.Centroid.Id key -->
     <xsd:key name="centroidKey">
-      <xsd:selector xpath=".//ots:Network/ots:Centroid|.//ots:DefaultInputParameters/ots:String" />
+      <xsd:selector xpath="ots:Network/ots:Centroid|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
     <!-- Network.{Node.Id|Centroid.Id} key -->
     <xsd:key name="nodeOrCentroidKey">
-      <xsd:selector
-        xpath=".//ots:Network/ots:Node|.//ots:Network/ots:Centroid|.//ots:DefaultInputParameters/ots:String" />
+      <xsd:selector xpath="ots:Network/ots:Node|ots:Network/ots:Centroid|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
     <!-- Network.Connector.Id key -->
     <xsd:key name="connectorKey">
-      <xsd:selector xpath=".//ots:Network/ots:Connector|.//ots:DefaultInputParameters/ots:String" />
+      <xsd:selector xpath="ots:Network/ots:Connector|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
     <!-- Network.Link.Id key -->
     <xsd:key name="linkKey">
-      <xsd:selector xpath=".//ots:Network/ots:Link|.//ots:DefaultInputParameters/ots:String" />
+      <xsd:selector xpath="ots:Network/ots:Link|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -190,56 +189,56 @@
 
     <!-- Demand.Od.Id key -->
     <xsd:key name="odKey">
-      <xsd:selector xpath=".//ots:Demand/ots:Od|.//ots:DefaultInputParameters/ots:String" />
+      <xsd:selector xpath="ots:Demand/ots:Od|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
     <!-- Demand.OdOptons.Id key -->
     <xsd:key name="odOptionsKey">
-      <xsd:selector xpath=".//ots:Demand/ots:OdOptions|.//ots:DefaultInputParameters/ots:String" />
+      <xsd:selector xpath="ots:Demand/ots:OdOptions|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
     <!-- Demand.Category.Id key -->
     <xsd:key name="categoryKey">
-      <xsd:selector xpath=".//ots:Demand/ots:Od/ots:Category|.//ots:DefaultInputParameters/ots:String" />
+      <xsd:selector xpath="ots:Demand/ots:Od/ots:Category|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
     <!-- Demand.Route.Id key -->
     <xsd:key name="routeKey">
-      <xsd:selector xpath=".//ots:Demand/ots:Route|.//ots:DefaultInputParameters/ots:String" />
+      <xsd:selector xpath="ots:Demand/ots:Route|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
     <!-- Demand.ShortestRoute.Id key -->
     <xsd:key name="shortestRouteKey">
-      <xsd:selector xpath=".//ots:Demand/ots:ShortestRoute|.//ots:DefaultInputParameters/ots:String" />
+      <xsd:selector xpath="ots:Demand/ots:ShortestRoute|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
     <!-- Demand.{Route.Id|ShortestRoute.Id} key -->
     <xsd:key name="routeOrShortestRouteKey">
       <xsd:selector
-        xpath=".//ots:Demand/ots:Route|.//ots:Demand/ots:ShortestRoute|.//ots:DefaultInputParameters/ots:String" />
+        xpath="ots:Demand/ots:Route|ots:Demand/ots:ShortestRoute|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
     <!-- Demand.RouteMix.Id key -->
     <xsd:key name="routeMixKey">
-      <xsd:selector xpath=".//ots:Demand/ots:RouteMix|.//ots:DefaultInputParameters/ots:String" />
+      <xsd:selector xpath="ots:Demand/ots:RouteMix|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
     <!-- Demand.ShortestRouteMix.Id key -->
     <xsd:key name="shortestRouteMixKey">
-      <xsd:selector xpath=".//ots:Demand/ots:ShortestRouteMix|.//ots:DefaultInputParameters/ots:String" />
+      <xsd:selector xpath="ots:Demand/ots:ShortestRouteMix|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
     <!-- Demand.GtuTemplateMix.Id key -->
     <xsd:key name="gtuTemplateMixKey">
-      <xsd:selector xpath=".//ots:Demand/ots:GtuTemplateMix|.//ots:DefaultInputParameters/ots:String" />
+      <xsd:selector xpath="ots:Demand/ots:GtuTemplateMix|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -247,7 +246,7 @@
 
     <!-- Control.FixedTime.Id key -->
     <xsd:key name="controlFixedTimeKey">
-      <xsd:selector xpath=".//ots:Control/ots:FixedTime|.//ots:DefaultInputParameters/ots:String" />
+      <xsd:selector xpath="ots:Control/ots:FixedTime|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -255,7 +254,7 @@
 
     <!-- Scenarios.Scenario.Id key -->
     <xsd:key name="scenarioKey">
-      <xsd:selector xpath=".//ots:Scenarios/ots:Scenario" />
+      <xsd:selector xpath="ots:Scenarios/ots:Scenario" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -263,7 +262,7 @@
 
     <!-- Run.RandomStream.Id key -->
     <xsd:key name="randomStreamKey">
-      <xsd:selector xpath=".//ots:Run/ots:RandomStreams/ots:RandomStream|.//ots:DefaultInputParameters/ots:String" />
+      <xsd:selector xpath="ots:Run/ots:RandomStreams/ots:RandomStream|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -348,43 +347,43 @@
 
     <!-- Network.Link.NodeStart = Node.Id -->
     <xsd:keyref name="linkNodeStartIdRef" refer="ots:nodeKey">
-      <xsd:selector xpath=".//ots:Network/ots:Link" />
+      <xsd:selector xpath="ots:Network/ots:Link" />
       <xsd:field xpath="@NodeStart" />
     </xsd:keyref>
 
     <!-- Network.Link.NodeEnd = Node.Id -->
     <xsd:keyref name="linkNodeEndIdRef" refer="ots:nodeKey">
-      <xsd:selector xpath=".//ots:Network/ots:Link" />
+      <xsd:selector xpath="ots:Network/ots:Link" />
       <xsd:field xpath="@NodeEnd" />
     </xsd:keyref>
 
     <!-- Network.Connector.Centroid = Centroid.Id -->
     <xsd:keyref name="connectorCentroidIdRef" refer="ots:centroidKey">
-      <xsd:selector xpath=".//ots:Network/ots:Connector" />
+      <xsd:selector xpath="ots:Network/ots:Connector" />
       <xsd:field xpath="@Centroid" />
     </xsd:keyref>
 
     <!-- Network.Connector.Node = Node.Id -->
     <xsd:keyref name="connectorNodeIdRef" refer="ots:nodeKey">
-      <xsd:selector xpath=".//ots:Network/ots:Connector" />
+      <xsd:selector xpath="ots:Network/ots:Connector" />
       <xsd:field xpath="@Node" />
     </xsd:keyref>
 
     <!-- Network.Link.DefinedRoadLayout = RoadLayout.Id -->
     <xsd:keyref name="definedRoadLayoutIdRef" refer="ots:roadLayoutKey">
-      <xsd:selector xpath=".//ots:Network/ots:Link/ots:DefinedLayout" />
+      <xsd:selector xpath="ots:Network/ots:Link/ots:DefinedLayout" />
       <xsd:field xpath="." />
     </xsd:keyref>
 
     <!-- Network.Link.Type = LinkType.Id -->
     <xsd:keyref name="linkTypeIdRef" refer="ots:linkTypeKey">
-      <xsd:selector xpath=".//ots:Network/ots:Link" />
+      <xsd:selector xpath="ots:Network/ots:Link" />
       <xsd:field xpath="@Type" />
     </xsd:keyref>
 
     <!-- Network.Connector.Type = LinkType.Id -->
     <xsd:keyref name="connectorTypeIdRef" refer="ots:linkTypeKey">
-      <xsd:selector xpath=".//ots:Network/ots:Connector" />
+      <xsd:selector xpath="ots:Network/ots:Connector" />
       <xsd:field xpath="@Type" />
     </xsd:keyref>
 
@@ -398,254 +397,254 @@
 
     <!-- Demand.Route.Node = Node.Id -->
     <xsd:keyref name="routeNodeIdRef" refer="ots:nodeOrCentroidKey">
-      <xsd:selector xpath=".//ots:Demand/ots:Route/ots:Node" />
+      <xsd:selector xpath="ots:Demand/ots:Route/ots:Node" />
       <xsd:field xpath="." />
     </xsd:keyref>
 
     <!-- Demand.Route.GtuType = GtuType.Id -->
     <xsd:keyref name="routeGtuTypeIdRef" refer="ots:gtuTypeKey">
-      <xsd:selector xpath=".//ots:Demand/ots:Route" />
+      <xsd:selector xpath="ots:Demand/ots:Route" />
       <xsd:field xpath="@GtuType" />
     </xsd:keyref>
 
     <!-- Demand.ShortestRoute.From = Node.Id -->
     <xsd:keyref name="shortestRouteFromIdRef" refer="ots:nodeOrCentroidKey">
-      <xsd:selector xpath=".//ots:Demand/ots:ShortestRoute/ots:From" />
+      <xsd:selector xpath="ots:Demand/ots:ShortestRoute/ots:From" />
       <xsd:field xpath="." />
     </xsd:keyref>
 
     <!-- Demand.ShortestRoute.To = Node.Id -->
     <xsd:keyref name="shortestRouteToIdRef" refer="ots:nodeOrCentroidKey">
-      <xsd:selector xpath=".//ots:Demand/ots:ShortestRoute/ots:To" />
+      <xsd:selector xpath="ots:Demand/ots:ShortestRoute/ots:To" />
       <xsd:field xpath="." />
     </xsd:keyref>
 
     <!-- Demand.ShortestRoute.Via = Node.Id -->
     <xsd:keyref name="shortestRouteViaIdRef" refer="ots:nodeKey">
-      <xsd:selector xpath=".//ots:Demand/ots:ShortestRoute/ots:Via" />
+      <xsd:selector xpath="ots:Demand/ots:ShortestRoute/ots:Via" />
       <xsd:field xpath="." />
     </xsd:keyref>
 
     <!-- Demand.ShortestRoute.GtuType = GtuType.Id -->
 
     <xsd:keyref name="shortestRouteGtuTypeIdRef" refer="ots:gtuTypeKey">
-      <xsd:selector xpath=".//ots:Demand/ots:ShortestRoute" />
+      <xsd:selector xpath="ots:Demand/ots:ShortestRoute" />
       <xsd:field xpath="@GtuType" />
     </xsd:keyref>
 
     <!-- Demand.RouteMix.Route.Id = Route.Id -->
     <xsd:keyref name="routeMixRouteIdRef" refer="ots:routeKey">
-      <xsd:selector xpath=".//ots:Demand/ots:RouteMix/ots:Route" />
+      <xsd:selector xpath="ots:Demand/ots:RouteMix/ots:Route" />
       <xsd:field xpath="@Id" />
     </xsd:keyref>
 
     <!-- Demand.RouteMix.GtuType = GtuType.Id -->
     <xsd:keyref name="routeMixGtuTypeIdRef" refer="ots:gtuTypeKey">
-      <xsd:selector xpath=".//ots:Demand/ots:RouteMix" />
+      <xsd:selector xpath="ots:Demand/ots:RouteMix" />
       <xsd:field xpath="@GtuType" />
     </xsd:keyref>
 
     <!-- Demand.ShortestRouteMix.ShortestRoute.Id = ShortestRoute.Id -->
     <xsd:keyref name="shortestRouteMixShortestRouteIdRef" refer="ots:shortestRouteKey">
-      <xsd:selector xpath=".//ots:Demand/ots:ShortestRouteMix/ots:ShortestRoute" />
+      <xsd:selector xpath="ots:Demand/ots:ShortestRouteMix/ots:ShortestRoute" />
       <xsd:field xpath="@Id" />
     </xsd:keyref>
 
     <!-- Demand.ShortestRouteMix.GtuType = GtuType.Id -->
     <xsd:keyref name="shortestRouteMixGtuTypeIdRef" refer="ots:gtuTypeKey">
-      <xsd:selector xpath=".//ots:Demand/ots:ShortestRouteMix" />
+      <xsd:selector xpath="ots:Demand/ots:ShortestRouteMix" />
       <xsd:field xpath="@GtuType" />
     </xsd:keyref>
 
     <!-- Demand.GtuTemplateMix.GtuTemplate.Id = GtuTemplate.Id -->
     <xsd:keyref name="gtuMixGtuTemplateIdRef" refer="ots:gtuTemplateKey">
-      <xsd:selector xpath=".//ots:Demand/ots:GtuTemplateMix/ots:GtuTemplate" />
+      <xsd:selector xpath="ots:Demand/ots:GtuTemplateMix/ots:GtuTemplate" />
       <xsd:field xpath="@Id" />
     </xsd:keyref>
 
     <!-- Demand.Generator.Link = Link.Id -->
     <xsd:keyref name="generatorLinkIdRef" refer="ots:linkKey">
-      <xsd:selector xpath=".//ots:Demand/ots:Generator" />
+      <xsd:selector xpath="ots:Demand/ots:Generator" />
       <xsd:field xpath="@Link" />
     </xsd:keyref>
 
     <!-- Demand.Generator.GtuTemplate = GtuTemplate.Id -->
     <xsd:keyref name="generatorGtuTemplateIdRef" refer="ots:gtuTemplateKey">
-      <xsd:selector xpath=".//ots:Demand/ots:Generator" />
+      <xsd:selector xpath="ots:Demand/ots:Generator" />
       <xsd:field xpath="ots:GtuTemplate" />
     </xsd:keyref>
 
     <!-- Demand.Generator.GtuTemplateMix = GtuTemplateMix.Id -->
     <xsd:keyref name="generatorGtuTemplateMixIdRef" refer="ots:gtuTemplateMixKey">
-      <xsd:selector xpath=".//ots:Demand/ots:Generator" />
+      <xsd:selector xpath="ots:Demand/ots:Generator" />
       <xsd:field xpath="ots:GtuTemplateMix" />
     </xsd:keyref>
 
     <!-- Demand.Generator.Route = Route.Id -->
     <xsd:keyref name="generatorRouteIdRef" refer="ots:routeKey">
-      <xsd:selector xpath=".//ots:Demand/ots:Generator" />
+      <xsd:selector xpath="ots:Demand/ots:Generator" />
       <xsd:field xpath="ots:Route" />
     </xsd:keyref>
 
     <!-- Demand.Generator.RouteMix = RouteMix.Id -->
     <xsd:keyref name="generatorRouteMixIdRef" refer="ots:routeMixKey">
-      <xsd:selector xpath=".//ots:Demand/ots:Generator" />
+      <xsd:selector xpath="ots:Demand/ots:Generator" />
       <xsd:field xpath="ots:RouteMix" />
     </xsd:keyref>
 
     <!-- Demand.Generator.ShortestRoute = ShortestRoute.Id -->
     <xsd:keyref name="generatorShortestRouteouteIdRef" refer="ots:shortestRouteKey">
-      <xsd:selector xpath=".//ots:Demand/ots:Generator" />
+      <xsd:selector xpath="ots:Demand/ots:Generator" />
       <xsd:field xpath="ots:ShortestRoute" />
     </xsd:keyref>
 
     <!-- Demand.Generator.ShortestRouteMix = ShortestRouteMix.Id -->
     <xsd:keyref name="generatorShortestRouteMixIdRef" refer="ots:shortestRouteMixKey">
-      <xsd:selector xpath=".//ots:Demand/ots:Generator" />
+      <xsd:selector xpath="ots:Demand/ots:Generator" />
       <xsd:field xpath="ots:ShortestRouteMix" />
     </xsd:keyref>
 
     <!-- Demand.ListGenerator.Link = Link.Id -->
     <xsd:keyref name="listGeneratorLinkIdRef" refer="ots:linkKey">
-      <xsd:selector xpath=".//ots:Demand/ots:ListGenerator" />
+      <xsd:selector xpath="ots:Demand/ots:ListGenerator" />
       <xsd:field xpath="@Link" />
     </xsd:keyref>
 
     <!-- Demand.ListGenerator.GtuTemplate = GtuTemplate.Id -->
     <xsd:keyref name="listGeneratorGtuTemplateIdRef" refer="ots:gtuTemplateKey">
-      <xsd:selector xpath=".//ots:Demand/ots:ListGenerator" />
+      <xsd:selector xpath="ots:Demand/ots:ListGenerator" />
       <xsd:field xpath="ots:GtuTemplate" />
     </xsd:keyref>
 
     <!-- Demand.ListGenerator.GtuTemplateMix = GtuTemplateMix.Id -->
     <xsd:keyref name="listGeneratorGtuTemplateMixIdRef" refer="ots:gtuTemplateMixKey">
-      <xsd:selector xpath=".//ots:Demand/ots:ListGenerator" />
+      <xsd:selector xpath="ots:Demand/ots:ListGenerator" />
       <xsd:field xpath="ots:GtuTemplateMix" />
     </xsd:keyref>
 
     <!-- Demand.ListGenerator.Route = Route.Id -->
     <xsd:keyref name="listGeneratorRouteIdRef" refer="ots:routeKey">
-      <xsd:selector xpath=".//ots:Demand/ots:ListGenerator" />
+      <xsd:selector xpath="ots:Demand/ots:ListGenerator" />
       <xsd:field xpath="ots:Route" />
     </xsd:keyref>
 
     <!-- Demand.ListGenerator.RouteMix = RouteMix.Id -->
     <xsd:keyref name="listGeneratorRouteMixIdRef" refer="ots:routeMixKey">
-      <xsd:selector xpath=".//ots:Demand/ots:ListGenerator" />
+      <xsd:selector xpath="ots:Demand/ots:ListGenerator" />
       <xsd:field xpath="ots:RouteMix" />
     </xsd:keyref>
 
     <!-- Demand.ListGenerator.ShortestRoute = ShortestRoute.Id -->
     <xsd:keyref name="listGeneratorShortestRouteouteIdRef" refer="ots:shortestRouteKey">
-      <xsd:selector xpath=".//ots:Demand/ots:ListGenerator" />
+      <xsd:selector xpath="ots:Demand/ots:ListGenerator" />
       <xsd:field xpath="ots:ShortestRoute" />
     </xsd:keyref>
 
     <!-- Demand.ListGenerator.ShortestRouteMix = ShortestRouteMix.Id -->
     <xsd:keyref name="listGeneratorShortestRouteMixIdRef" refer="ots:shortestRouteMixKey">
-      <xsd:selector xpath=".//ots:Demand/ots:ListGenerator" />
+      <xsd:selector xpath="ots:Demand/ots:ListGenerator" />
       <xsd:field xpath="ots:ShortestRouteMix" />
     </xsd:keyref>
 
     <!-- Demand.Od.Cell.Origin = {Node|Centroid}.Id -->
     <xsd:keyref name="cellOriginIdRef" refer="ots:nodeOrCentroidKey">
-      <xsd:selector xpath=".//ots:Demand/ots:Od/ots:Cell" />
+      <xsd:selector xpath="ots:Demand/ots:Od/ots:Cell" />
       <xsd:field xpath="@Origin" />
     </xsd:keyref>
 
     <!-- Demand.Od.Cell.Destination = {Node|Centroid}.Id -->
     <xsd:keyref name="cellDestinationIdRef" refer="ots:nodeOrCentroidKey">
-      <xsd:selector xpath=".//ots:Demand/ots:Od/ots:Cell" />
+      <xsd:selector xpath="ots:Demand/ots:Od/ots:Cell" />
       <xsd:field xpath="@Destination" />
     </xsd:keyref>
 
     <!-- Demand.Od.Cell.Category = Cagtegory.Id -->
     <xsd:keyref name="cellCategoryIdRef" refer="ots:categoryKey">
-      <xsd:selector xpath=".//ots:Demand/ots:Od/ots:Cell" />
+      <xsd:selector xpath="ots:Demand/ots:Od/ots:Cell" />
       <xsd:field xpath="@Category" />
     </xsd:keyref>
 
     <!-- Demand.Od.Category.GtuType = GtuType.Od -->
     <xsd:keyref name="categoryGtuTypeIdRef" refer="ots:gtuTypeKey">
-      <xsd:selector xpath=".//ots:Demand/ots:Od/ots:Category" />
+      <xsd:selector xpath="ots:Demand/ots:Od/ots:Category" />
       <xsd:field xpath="@GtuType" />
     </xsd:keyref>
 
     <!-- Demand.Od.Category.Lane.Link = Link.Id -->
     <xsd:keyref name="categoryLinkIdRef" refer="ots:linkKey">
-      <xsd:selector xpath=".//ots:Demand/ots:Od/ots:Category/ots:Lane" />
+      <xsd:selector xpath="ots:Demand/ots:Od/ots:Category/ots:Lane" />
       <xsd:field xpath="@Link" />
     </xsd:keyref>
 
     <!-- Demand.Od.Category.Route = {Route|ShortestRoute}.Id -->
     <xsd:keyref name="categoryRouteIdRef" refer="ots:routeOrShortestRouteKey">
-      <xsd:selector xpath=".//ots:Demand/ots:Od/ots:Category" />
+      <xsd:selector xpath="ots:Demand/ots:Od/ots:Category" />
       <xsd:field xpath="@Route" />
     </xsd:keyref>
 
     <!-- Demand.Od.SinkType = DetectorType.Id -->
     <xsd:keyref name="odSinkTypeIdRef" refer="ots:detectorTypeKey">
-      <xsd:selector xpath=".//ots:Demand/ots:Od" />
+      <xsd:selector xpath="ots:Demand/ots:Od" />
       <xsd:field xpath="@SinkType" />
     </xsd:keyref>
 
     <!-- Demand.OdOptions.OdOptionsItem.Lane.Link = Link.Id -->
     <xsd:keyref name="odOptionsItemLaneLinkIdRef" refer="ots:linkKey">
-      <xsd:selector xpath=".//ots:Demand/ots:OdOptions/ots:OdOptionsItem/ots:Lane" />
+      <xsd:selector xpath="ots:Demand/ots:OdOptions/ots:OdOptionsItem/ots:Lane" />
       <xsd:field xpath="@Link" />
     </xsd:keyref>
 
     <!-- Demand.Sink.Type = DetectorType.Id -->
     <xsd:keyref name="sinkTypeIdRef" refer="ots:detectorTypeKey">
-      <xsd:selector xpath=".//ots:Demand/ots:Sink" />
+      <xsd:selector xpath="ots:Demand/ots:Sink" />
       <xsd:field xpath="@Type" />
     </xsd:keyref>
 
     <!-- Demand.Sink.Link = Link.Id -->
     <xsd:keyref name="sinkLinkIdRef" refer="ots:linkKey">
-      <xsd:selector xpath=".//ots:Demand/ots:Sink" />
+      <xsd:selector xpath="ots:Demand/ots:Sink" />
       <xsd:field xpath="@Link" />
     </xsd:keyref>
 
     <!-- DefinedLaneBias.GtuType is Definitions.LaneBiases.LaneBias.GtuType -->
     <xsd:keyref name="definedLaneBiasGtuTypeRef" refer="ots:definitionsLaneBiasGtuTypeKey">
-      <xsd:selector xpath=".//ots:LaneBiases/ots:LaneBias" />
+      <xsd:selector xpath="ots:LaneBiases/ots:LaneBias" />
       <xsd:field xpath="@GtuType" />
     </xsd:keyref>
 
     <!-- Demand.OdOptions.OdOptionsItem.Markov.State.GtuType = GtuType.Id -->
     <xsd:keyref name="markovStateGtuTypeRef" refer="ots:gtuTypeKey">
-      <xsd:selector xpath=".//ots:Demand/ots:OdOptions/ots:OdOptionsItem/ots:Markov/ots:State" />
+      <xsd:selector xpath="ots:Demand/ots:OdOptions/ots:OdOptionsItem/ots:Markov/ots:State" />
       <xsd:field xpath="@GtuType" />
     </xsd:keyref>
 
     <!-- Demand.OdOptions.OdOptionsItem.Markov.State.Parent = GtuType.Id -->
     <xsd:keyref name="markovStateParentGtuTypeRef" refer="ots:gtuTypeKey">
-      <xsd:selector xpath=".//ots:Demand/ots:OdOptions/ots:OdOptionsItem/ots:Markov/ots:State" />
+      <xsd:selector xpath="ots:Demand/ots:OdOptions/ots:OdOptionsItem/ots:Markov/ots:State" />
       <xsd:field xpath="@Parent" />
     </xsd:keyref>
 
     <!-- Demand.OdOptions.OdOptionsItem.LinkType = LinkType.Id -->
     <xsd:keyref name="linkTypeValueLinkTypeRef" refer="ots:linkTypeKey">
-      <xsd:selector xpath=".//ots:Demand/ots:OdOptions/ots:OdOptionsItem" />
+      <xsd:selector xpath="ots:Demand/ots:OdOptions/ots:OdOptionsItem" />
       <xsd:field xpath="ots:LinkType" />
     </xsd:keyref>
 
     <!-- Demand.OdOptions.OdOptionsItem.Origin = {Node|Centroid}.Id -->
     <xsd:keyref name="originNodeValueNodeRef" refer="ots:nodeOrCentroidKey">
-      <xsd:selector xpath=".//ots:Demand/ots:OdOptions/ots:OdOptionsItem/ots:Origin" />
+      <xsd:selector xpath="ots:Demand/ots:OdOptions/ots:OdOptionsItem/ots:Origin" />
       <xsd:field xpath="." />
     </xsd:keyref>
 
     <!-- Demand.OdOptions.OdOptionsItem.Lane.Link = Link.Id -->
     <xsd:keyref name="laneLinkRef" refer="ots:linkKey">
-      <xsd:selector xpath=".//ots:Demand/ots:OdOptions/ots:OdOptionsItem/ots:Lane" />
+      <xsd:selector xpath="ots:Demand/ots:OdOptions/ots:OdOptionsItem/ots:Lane" />
       <xsd:field xpath="@Link" />
     </xsd:keyref>
 
     <!-- Demand.Od.Options = OdOptions.Id -->
     <xsd:keyref name="odOdOptionsRef" refer="ots:odOptionsKey">
-      <xsd:selector xpath=".//ots:Demand/ots:Od" />
+      <xsd:selector xpath="ots:Demand/ots:Od" />
       <xsd:field xpath="@Options" />
     </xsd:keyref>
 
@@ -659,7 +658,7 @@
 
     <!-- TrafCod.Detector.Type = DetectorType.Id -->
     <xsd:keyref name="trafCodDetectorTypeIdRef" refer="ots:detectorTypeKey">
-      <xsd:selector xpath=".//ots:Control/ots:TrafCod/ots:Detector" />
+      <xsd:selector xpath="ots:Control/ots:TrafCod/ots:Detector" />
       <xsd:field xpath="@Type" />
     </xsd:keyref>
 
@@ -667,7 +666,7 @@
 
     <!-- Models.Model.GtuType = GtuType.Id -->
     <xsd:keyref name="modelGtuTypeRef" refer="ots:gtuTypeKey">
-      <xsd:selector xpath=".//ots:Models/ots:Model" />
+      <xsd:selector xpath="ots:Models/ots:Model" />
       <xsd:field xpath="@GtuType" />
     </xsd:keyref>
 
@@ -857,31 +856,31 @@
 
     <!-- Animation.LinkType = LinkType.Id -->
     <xsd:keyref name="animationLinkTypeRef" refer="ots:linkTypeKey">
-      <xsd:selector xpath=".//ots:Animation/ots:LinkType" />
+      <xsd:selector xpath="ots:Animation/ots:LinkType" />
       <xsd:field xpath="@Id" />
     </xsd:keyref>
 
     <!-- Animation.LaneType = LaneType.Id -->
     <xsd:keyref name="animationLaneTypeRef" refer="ots:laneTypeKey">
-      <xsd:selector xpath=".//ots:Animation/ots:LaneType" />
+      <xsd:selector xpath="ots:Animation/ots:LaneType" />
       <xsd:field xpath="@Id" />
     </xsd:keyref>
 
     <!-- Animation.RoadLayout = RoadLayout.Id -->
     <xsd:keyref name="animationRoadLayoutRef" refer="ots:roadLayoutKey">
-      <xsd:selector xpath=".//ots:Animation/ots:RoadLayout" />
+      <xsd:selector xpath="ots:Animation/ots:RoadLayout" />
       <xsd:field xpath="@Id" />
     </xsd:keyref>
 
     <!-- Animation.Connector = Connector.Id -->
     <xsd:keyref name="animationConnectorRef" refer="ots:connectorKey">
-      <xsd:selector xpath=".//ots:Animation/ots:Connector" />
+      <xsd:selector xpath="ots:Animation/ots:Connector" />
       <xsd:field xpath="@Id" />
     </xsd:keyref>
 
     <!-- Animation.Link = Link.Id -->
     <xsd:keyref name="animationLinkRef" refer="ots:linkKey">
-      <xsd:selector xpath=".//ots:Animation/ots:Link" />
+      <xsd:selector xpath="ots:Animation/ots:Link" />
       <xsd:field xpath="@Id" />
     </xsd:keyref>
 

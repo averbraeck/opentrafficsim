@@ -39,7 +39,7 @@
     
     <!-- Od.Cell.{Origin|Destination|Category} key -->
     <xsd:key name="odCellKey">
-      <xsd:selector xpath=".//ots:Cell" />
+      <xsd:selector xpath="ots:Cell" />
       <xsd:field xpath="@Origin" />
       <xsd:field xpath="@Destination" />
       <xsd:field xpath="@Category" />
@@ -148,13 +148,13 @@
 
           <!-- Markov.State.GtuType key -->
           <xsd:key name="odOptionsItemMarkovStateGtuTypeKey">
-            <xsd:selector xpath=".//ots:Markov/ots:State" />
+            <xsd:selector xpath="ots:Markov/ots:State" />
             <xsd:field xpath="@GtuType" />
           </xsd:key>
 
           <!-- LaneBiases.LaneBias.GtuType key -->
           <xsd:key name="odOptionsItemLaneBiasGtuTypeKey">
-            <xsd:selector xpath=".//ots:LaneBiases/ots:LaneBias" />
+            <xsd:selector xpath="ots:LaneBiases/ots:LaneBias" />
             <xsd:field xpath="@GtuType" />
           </xsd:key>
 
@@ -329,7 +329,7 @@
 
     <!-- Demand.Generator.{Link|Lane} key -->
     <xsd:key name="generatorLinkLaneKey">
-      <xsd:selector xpath=".//ots:Generator|.//ots:ListGenerator" />
+      <xsd:selector xpath="ots:Generator|ots:ListGenerator" />
       <xsd:field xpath="@Link" />
       <xsd:field xpath="@Lane" />
     </xsd:key>
