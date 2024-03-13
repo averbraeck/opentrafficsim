@@ -146,7 +146,7 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
 
     /** {@inheritDoc} */
     @Override
-    public List<String> getOptions(final XsdTreeNode node, final String field, final XPathFieldType fieldType)
+    public List<String> getOptions(final XsdTreeNode node, final Object field)
     {
         XsdTreeNode linkNode = node.getCoupledKeyrefNodeAttribute("Link");
         if (linkNode != null)

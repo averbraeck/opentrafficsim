@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.editor.DocumentReader;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.w3c.dom.Node;
 
@@ -34,7 +35,7 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
     /** Nodes who's attribute has to match some field in this validator, grouped per attribute name. */
     private final Map<String, Set<XsdTreeNode>> attributeValidating = new LinkedHashMap<>();
 
-    /** Mapping of keyref node in this key validator to the key node its coupled with in some other key validator. */
+    /** Mapping of node coupled by this keyref validator, to the key node its coupled with in some other key validator. */
     private final Map<XsdTreeNode, XsdTreeNode> coupledKeyrefNodes = new LinkedHashMap<>();
 
     /**
@@ -46,7 +47,13 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
     public KeyrefValidator(final Node keyNode, final String keyPath, final KeyValidator refer)
     {
         super(keyNode, keyPath);
+        Throw.when(!keyNode.getNodeName().equals("xsd:keyref"), IllegalArgumentException.class,
+                "The given node is not an xsd:keyref node.");
         Throw.whenNull(refer, "Refer validator may not be null.");
+        String referName = DocumentReader.getAttribute(keyNode, "refer").replace("ots:", "");
+        Throw.when(!referName.equals(refer.getKeyName()), IllegalArgumentException.class,
+                "The key node refers to key/unique %s, but the provided refer validator has name %s.", referName,
+                refer.getKeyName());
         this.refer = refer;
         refer.addListeningKeyrefValidator(this);
     }
@@ -55,31 +62,24 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
     @Override
     public void addNode(final XsdTreeNode node)
     {
-        if (isTypeInContext(node))
+        for (int fieldIndex = 0; fieldIndex < this.fields.size(); fieldIndex++)
         {
-            if (this.includeSelfValue)
+            Field field = this.fields.get(fieldIndex);
+            int pathIndex = field.getValidPathIndex(node);
+            if (pathIndex >= 0)
             {
-                node.addValueValidator(this, XPathFieldType.VALUE);
-                this.valueValidating.add(node);
-            }
-            if (!this.attributeNames.isEmpty())
-            {
-                for (String attribute : this.attributeNames)
+                String path = field.getFieldPath(pathIndex);
+                int attr = path.indexOf("@");
+                if (attr < 0)
                 {
-                    node.addAttributeValidator(attribute, this);
-                    this.attributeValidating.computeIfAbsent(attribute, (n) -> new LinkedHashSet<>()).add(node);
-                }
-            }
-        }
-        for (String child : this.childNames)
-        {
-            for (String path : getTypeString())
-            {
-                String fullPath = path + "." + child;
-                if (node.getPathString().endsWith(fullPath))
-                {
-                    node.addValueValidator(this, XPathFieldType.CHILD);
+                    node.addValueValidator(this, field);
                     this.valueValidating.add(node);
+                }
+                else
+                {
+                    String attribute = path.substring(attr + 1);
+                    node.addAttributeValidator(attribute, this, field);
+                    this.attributeValidating.computeIfAbsent(attribute, (n) -> new LinkedHashSet<>()).add(node);
                 }
             }
         }
@@ -89,7 +89,9 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
     @Override
     public void removeNode(final XsdTreeNode node)
     {
-        //
+        this.valueValidating.remove(node);
+        this.attributeValidating.values().forEach((s) -> s.remove(node));
+        this.coupledKeyrefNodes.remove(node);
     }
 
     /** {@inheritDoc} */
@@ -100,34 +102,45 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
         {
             return null; // Node was deleted, but is still visible in the GUI tree for a moment
         }
-        List<String> values = gatherFields(node);
+        List<String> values = gatherFieldValues(node);
         if (values.stream().allMatch((v) -> v == null))
         {
             return null;
         }
         // xsd:keyref referred value is present ?
-        Map<XsdTreeNode, List<String>> valueMap = this.refer.getValues(node);
+        Map<XsdTreeNode, List<String>> valueMap = this.refer.getAllValueSets(node);
+        XsdTreeNode matched = null;
         for (Entry<XsdTreeNode, List<String>> entry : valueMap.entrySet())
         {
             if (matchingKeyref(entry.getValue(), values))
             {
-                this.coupledKeyrefNodes.put(node, entry.getKey());
-                return null;
+                if (matched != null)
+                {
+                    // duplicate match based on subset of values (there are null's), do not couple but also do not invalidate
+                    this.coupledKeyrefNodes.remove(node);
+                    return null;
+                }
+                matched = entry.getKey();
             }
         }
+        if (matched != null)
+        {
+            this.coupledKeyrefNodes.put(node, matched);
+            return null;
+        }
+        // not matched
         this.coupledKeyrefNodes.remove(node);
-        String[] types = this.refer.getTypeString();
-        String typeString = types.length == 1 ? types[0] : Arrays.asList(types).toString();
+        String[] types = this.refer.getSelectorTypeString();
+        String typeString = user(types.length == 1 ? types[0] : Arrays.asList(types).toString());
         if (values.size() == 1)
         {
             String value = values.get(0);
-            String name = this.attributeNames.isEmpty() ? (this.childNames.isEmpty() ? "node" : this.childNames.get(0))
-                    : this.attributeNames.get(0);
-            return "Value " + value + " for " + name + " does not refer to a known " + typeString + " within " + this.keyPath
-                    + ".";
+            String name = user(this.fields.get(0).getFullFieldName());
+            return "Value " + value + " for " + name + " does not refer to a known and unique " + typeString + " within "
+                    + this.keyPath + ".";
         }
         values.removeIf((value) -> value != null && value.startsWith("{") && value.endsWith("}")); // expressions
-        return "Values " + values + " do not refer to a known " + typeString + " within " + this.keyPath + ".";
+        return "Values " + values + " do not refer to a known and unique " + typeString + " within " + this.keyPath + ".";
     }
 
     /**
@@ -152,7 +165,7 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
 
     /** {@inheritDoc} */
     @Override
-    public List<String> getOptions(final XsdTreeNode node, final String field, final XPathFieldType fieldType)
+    public List<String> getOptions(final XsdTreeNode node, final Object field)
     {
         /*
          * We gather values from the referred xsd:key, drawing the appropriate context from the node relevant somewhere in the
@@ -178,9 +191,9 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
         {
             return null;
         }
-        Map<XsdTreeNode, List<String>> values = this.refer.getValues(node);
+        Map<XsdTreeNode, List<String>> values = this.refer.getAllValueSets(node);
         List<String> result = new ArrayList<>(values.size());
-        int index = getIndex(field, fieldType);
+        int index = this.fields.indexOf(field);
         values.forEach((n, list) -> result.add(list.get(index)));
         result.removeIf((v) -> v == null || v.isEmpty());
         return result;
@@ -211,31 +224,6 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
         }
     }
 
-    /**
-     * Returns the index of the given field. Indices are based on [attribute field names, children field names, self] in order.
-     * @param field String; field name.
-     * @param fieldType XPathFieldType; type of the field.
-     * @return index of the field.
-     */
-    private int getIndex(final String field, final XPathFieldType fieldType)
-    {
-        switch (fieldType)
-        {
-            case ATTRIBUTE:
-            {
-                return this.attributeNames.indexOf(field);
-            }
-            case CHILD:
-            {
-                return this.attributeNames.size() + this.childNames.indexOf(field);
-            }
-            default:
-            {
-                return this.attributeNames.size() + this.childNames.size();
-            }
-        }
-    }
-
     /** {@inheritDoc} */
     @Override
     public XsdTreeNode getCoupledKeyrefNode(final XsdTreeNode node)
@@ -255,25 +243,41 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
         {
             if (entry.getValue().equals(node))
             {
-                if (fieldIndex < this.attributeNames.size())
+                if (this.valueValidating.contains(entry.getKey()))
                 {
-                    String attribute = this.attributeNames.get(fieldIndex);
-                    CoupledValidator.setAttributeIfNotNull(entry.getKey(), attribute, newValue);
+                    CoupledValidator.setValueIfNotNull(entry.getKey(), newValue);
                 }
                 else
                 {
-                    CoupledValidator.setValueIfNotNull(entry.getKey(), newValue);
+                    for (Entry<String, Set<XsdTreeNode>> attrEntry : this.attributeValidating.entrySet())
+                    {
+                        if (attrEntry.getValue().contains(entry.getKey()))
+                        {
+                            int index = this.fields.get(fieldIndex).getValidPathIndex(entry.getKey());
+                            if (index >= 0)
+                            {
+                                String field = this.fields.get(fieldIndex).getFieldPath(index);
+                                int attr = field.indexOf("@");
+                                String attribute = field.substring(attr + 1);
+                                CoupledValidator.setAttributeIfNotNull(entry.getKey(), attribute, newValue);
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 
     /**
-     * Invalidates all nodes that are validating through this keyref.
+     * Invalidates all nodes that are validating through this keyref. Used by a key validator to notify when nodes are added or
+     * removed, activated or deactivated, or an attribute or value is changed, possibly making any keyref valid or invalid.
      */
     public void invalidateNodes()
     {
-        invalidateValue();
+        for (XsdTreeNode node : this.valueValidating)
+        {
+            node.invalidate();
+        }
         for (Set<XsdTreeNode> set : this.attributeValidating.values())
         {
             for (XsdTreeNode node : set)
@@ -281,42 +285,6 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
                 node.invalidate();
             }
         }
-    }
-
-    /**
-     * Invalidates all nodes that are validating their value.
-     */
-    public void invalidateValue()
-    {
-        for (XsdTreeNode node : this.valueValidating)
-        {
-            node.invalidate();
-        }
-    }
-
-    /**
-     * Invalidates all nodes that are validating the given attribute.
-     * @param attribute String; attribute.
-     */
-    public void invalidateAttribute(final String attribute)
-    {
-        if (this.attributeValidating.containsKey(attribute))
-        {
-            for (XsdTreeNode node : this.attributeValidating.get(attribute))
-            {
-                node.invalidate();
-            }
-        }
-    }
-
-    /**
-     * Removes the given node as validating from this keyref.
-     * @param node XsdTreeNode; node.
-     */
-    public void removeNodeAsValidating(final XsdTreeNode node)
-    {
-        this.valueValidating.remove(node);
-        this.attributeValidating.values().forEach((s) -> s.remove(node));
     }
 
 }

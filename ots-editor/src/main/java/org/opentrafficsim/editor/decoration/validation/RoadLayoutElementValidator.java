@@ -93,7 +93,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
     {
         if (node.getPathString().endsWith(this.path))
         {
-            node.addAttributeValidator(this.attribute, this);
+            node.addAttributeValidator(this.attribute, this, this.attribute);
             node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
             switch (this.layoutCoupling)
             {
@@ -374,10 +374,11 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
 
     /** {@inheritDoc} */
     @Override
-    public List<String> getOptions(final XsdTreeNode node, final String field, final XPathFieldType fieldType)
+    public List<String> getOptions(final XsdTreeNode node, final Object field)
     {
         XsdTreeNode layoutNode = this.nodeToLayout.get(node);
-        String layoutElement = "Id".equals(field) ? node.getNodeName() : field;
+        String attribute = (String) field;
+        String layoutElement = "Id".equals(attribute) ? node.getNodeName() : attribute;
         if (layoutNode != null)
         {
             List<String> options = new ArrayList<>();

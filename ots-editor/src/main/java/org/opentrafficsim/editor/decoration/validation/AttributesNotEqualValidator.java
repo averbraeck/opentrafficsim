@@ -64,8 +64,8 @@ public class AttributesNotEqualValidator extends AbstractNodeDecoratorAttribute 
     @Override
     public void notifyCreated(final XsdTreeNode node)
     {
-        node.addAttributeValidator(this.attribute1, AttributesNotEqualValidator.this);
-        node.addAttributeValidator(this.attribute2, AttributesNotEqualValidator.this);
+        node.addAttributeValidator(this.attribute1, AttributesNotEqualValidator.this, null);
+        node.addAttributeValidator(this.attribute2, AttributesNotEqualValidator.this, null);
     }
 
     /** {@inheritDoc} */

@@ -16,8 +16,7 @@ import org.opentrafficsim.editor.XsdTreeNode;
 import org.w3c.dom.Node;
 
 /**
- * Interface for validation for xsd:key, xsd:keyRef and xsd:unique, and utility class to validate values using XSD nodes and an
- * XSD schema.
+ * Interface for validators of element attributes and values.
  * <p>
  * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -38,13 +37,16 @@ public interface ValueValidator extends Comparable<ValueValidator>
     String validate(XsdTreeNode node);
 
     /**
-     * Returns the options that a validator leaves, typically an xsd:keyref returning defined values under the reference.
+     * Returns the options that a validator allows, typically an xsd:keyref returning defined values under the referred xsd:key
+     * or xsd:unique. The field object is any object that a validator uses to know what particular information from the node is
+     * required. The field object is stored in an {@code XsdTreeNode} when the validator is assigned to a particular attribute
+     * or the node value. Note that only the field name is usually insufficient, as the node itself, an attribute, or any child,
+     * may have the same name.
      * @param node XsdTreeNode; node that is in the appropriate context.
-     * @param field String; field, attribute or child element, for which to obtain the options.
-     * @param fieldType XPathFieldType; field type.
+     * @param field Object; field for which to obtain the options.
      * @return List&lt;String&gt;; options, {@code null} if this is not an xsd:keyref restriction.
      */
-    default List<String> getOptions(final XsdTreeNode node, final String field, final XPathFieldType fieldType)
+    default List<String> getOptions(final XsdTreeNode node, final Object field)
     {
         return null;
     }
@@ -483,9 +485,9 @@ public interface ValueValidator extends Comparable<ValueValidator>
     {
         /*
          * CoupledValidators are sorted first in a SortedSet. This is to prevent the following: i) another validator finds an
-         * attribute not valid, ii) the coupled validator is never called, if it would have been it would have matched a key and
+         * attribute not valid, ii) the coupled validator is never called, if it would have been it would have coupled a key and
          * registered itself to the relevant key node, iii) the relevant key node value is changed, but the value pointing to it
-         * is not updated as the registration of the matched id was never done.
+         * is not updated as the registration of the coupled id was never done.
          */
         if (this instanceof CoupledValidator)
         {

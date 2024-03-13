@@ -36,7 +36,6 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.editor.decoration.validation.CoupledValidator;
 import org.opentrafficsim.editor.decoration.validation.KeyValidator;
 import org.opentrafficsim.editor.decoration.validation.ValueValidator;
-import org.opentrafficsim.editor.decoration.validation.XPathFieldType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -206,12 +205,15 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     private Set<Function<XsdTreeNode, String>> nodeValidators = new LinkedHashSet<>();
 
     /** Validators for the value, sorted so CoupledValidators are first and couple to keys even for otherwise invalid nodes. */
-    private SortedMap<ValueValidator, XPathFieldType> valueValidators = new TreeMap<>();
+    private SortedMap<ValueValidator, Object> valueValidators = new TreeMap<>();
 
     /**
      * Validators for each attribute, sorted so CoupledValidators are first and couple to keys even for otherwise invalid nodes.
      */
     private Map<String, SortedSet<ValueValidator>> attributeValidators = new LinkedHashMap<>();
+
+    /** Field objects for each value validator and the attribute it validates. */
+    private Map<String, Map<ValueValidator, Object>> attributeValidatorFields = new LinkedHashMap<>();
 
     /** Stored valid status, excluding children. {@code null} means unknown and that it needs to be derived. */
     private Boolean isSelfValid = null;
@@ -567,6 +569,36 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
+     * Returns the first child with given name. The node may be within a series of xsd:sequence and xsd:choice intermediate
+     * nodes.
+     * @param name String; child name.
+     * @return XsdTreeNode; child.
+     */
+    public XsdTreeNode getFirstChild(final String name)
+    {
+        assureChildren();
+        for (XsdTreeNode child : this.children)
+        {
+            if (child.getNodeName().equals("xsd:sequence") || child.getNodeName().equals("xsd:choice"))
+            {
+                try
+                {
+                    return child.getFirstChild(name);
+                }
+                catch (NoSuchElementException ex)
+                {
+                    // continue search at other children
+                }
+            }
+            if (child.getNodeName().equals(name))
+            {
+                return child;
+            }
+        }
+        throw new NoSuchElementException("Node does not have a child named " + name);
+    }
+
+    /**
      * Returns a list of the child nodes.
      * @return List&lt;XsdTreeNode&gt;; list of the child nodes; safe copy.
      */
@@ -874,13 +906,14 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public int getAttributeIndexByName(final String attribute)
     {
+        assureAttributesAndDescription();
         if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
         {
             // this is a bit dirty, at loading attribute 'href' and later attribute 'File' are mapped to 0
             // attribute 'Fallback' is explicitly set from child nodes (that are otherwise skipped) during loading
             return "Fallback".equals(attribute) ? 1 : 0;
         }
-        for (int index = 0; index < this.attributeCount(); index++)
+        for (int index = 0; index < this.attributeNodes.size(); index++)
         {
             Node attr = this.attributeNodes.get(index);
             if (DocumentReader.getAttribute(attr, "name").equals(attribute))
@@ -909,7 +942,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public boolean hasAttribute(final String attribute)
     {
-        for (int index = 0; index < this.attributeCount(); index++)
+        assureAttributesAndDescription();
+        for (int index = 0; index < this.attributeNodes.size(); index++)
         {
             Node attr = this.attributeNodes.get(index);
             if (DocumentReader.getAttribute(attr, "name").equals(attribute))
@@ -1700,11 +1734,11 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * Adds a validator for the value.
      * @param validator ValueValidator; validator.
-     * @param fieldType XPathFieldType; field type.
+     * @param field Object; field.
      */
-    public void addValueValidator(final ValueValidator validator, final XPathFieldType fieldType)
+    public void addValueValidator(final ValueValidator validator, final Object field)
     {
-        this.valueValidators.put(validator, fieldType);
+        this.valueValidators.put(validator, field);
     }
 
     /**
@@ -1714,7 +1748,20 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public void addAttributeValidator(final String attribute, final ValueValidator validator)
     {
+        addAttributeValidator(attribute, validator, null);
+    }
+
+    /**
+     * Adds a validator for the value of an attribute. The field object is any object that is returned to the validator in its
+     * {@code getOptions()} method, such that it can know for which field option values should be given.
+     * @param attribute String; attribute name.
+     * @param validator ValueValidator; validator.
+     * @param field Object; field.
+     */
+    public void addAttributeValidator(final String attribute, final ValueValidator validator, final Object field)
+    {
         this.attributeValidators.computeIfAbsent(attribute, (key) -> new TreeSet<>()).add(validator);
+        this.attributeValidatorFields.computeIfAbsent(attribute, (key) -> new LinkedHashMap<>()).put(validator, field);
     }
 
     /**
@@ -1873,9 +1920,9 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             return List.of("true", "false");
         }
         String field = getAttributeNameByIndex(index);
-        Map<ValueValidator, XPathFieldType> map = new LinkedHashMap<>();
-        this.attributeValidators.computeIfAbsent(field, (key) -> new TreeSet<>())
-                .forEach((v) -> map.put(v, XPathFieldType.ATTRIBUTE));
+        Map<ValueValidator, Object> map = new LinkedHashMap<>();
+        this.attributeValidators.computeIfAbsent(field, (f) -> new TreeSet<>())
+                .forEach((v) -> map.put(v, this.attributeValidatorFields.get(field).get(v)));
         List<String> valueOptions = getOptionsFromValidators(map, field);
         if (!valueOptions.isEmpty() || this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
         {
@@ -1949,17 +1996,17 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns options based on a set of validators.
-     * @param validators Map&lt;ValueValidator, XPathFieldType&gt;; validators.
+     * @param validators Map&lt;ValueValidator, Object&gt;; validators.
      * @param field String; field, attribute or child element, for which to obtain the options.
      * @return List&lt;String&gt;; list of options.
      */
-    private List<String> getOptionsFromValidators(final Map<ValueValidator, XPathFieldType> validators, final String field)
+    private List<String> getOptionsFromValidators(final Map<ValueValidator, Object> validators, final String field)
     {
         List<String> combined = null;
-        for (Entry<ValueValidator, XPathFieldType> entry : validators.entrySet())
+        for (Entry<ValueValidator, Object> entry : validators.entrySet())
         {
             ValueValidator validator = entry.getKey();
-            List<String> valueOptions = validator.getOptions(this, field, entry.getValue());
+            List<String> valueOptions = validator.getOptions(this, entry.getValue());
             if (valueOptions != null && combined != null)
             {
                 combined = combined.stream().filter(valueOptions::contains).collect(Collectors.toList());

@@ -29,7 +29,7 @@ public interface CoupledValidator extends ValueValidator
 
     /**
      * Sets the given value on the attribute of the node, if the current value is not {@code null}. The node is invalidated
-     * afterwards.
+     * afterwards. This is used to not change values in keyrefs that match including null values.
      * @param node XsdTreeNode; node.
      * @param attribute String; attribute.
      * @param value String; value.
@@ -46,7 +46,7 @@ public interface CoupledValidator extends ValueValidator
 
     /**
      * Sets the given value on the node, if the current value is not {@code null}. The node is invalidated afterwards.
-     * @param node XsdTreeNode; node.
+     * @param node XsdTreeNode; node. This is used to not change values in keyrefs that match including null values.
      * @param value String; value.
      */
     static void setValueIfNotNull(final XsdTreeNode node, final String value)
