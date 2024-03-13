@@ -140,7 +140,7 @@ public class Schema
         // allElements = new LinkedHashSet<>(this.elements.keySet());
         // allElements.removeIf((key) -> !key.startsWith("Ots."));
         // allElements.forEach((key) -> System.out.println(key));
-
+        
         System.out.println("Root found as '" + DocumentReader.getAttribute(this.getRoot(), "name") + "'.");
         System.out.println("Read " + this.readFiles.size() + " files.");
         System.out.println("Read " + this.elements.size() + " elements.");
@@ -481,9 +481,9 @@ public class Schema
     private void documentation(final String path, final Node node)
     {
         this.documentation.put(path, DocumentReader.getChild(node, "#text").getNodeValue().trim().replaceAll("\r\n", " ")
-                .replaceAll("\n", " ").replaceAll("\r", " ").replaceAll("  ", ""));
+                .replaceAll("\n", " ").replaceAll("\r", " ").replace("  ", ""));
     }
-    
+
     /**
      * Read union node.
      * @param path String; node path.
@@ -597,6 +597,7 @@ public class Schema
             List<Node> elements = getSelectedElements(context, node);
             if (elements.isEmpty())
             {
+                elements = getSelectedElements(context, node);
                 System.out.println("Keyref " + keyref + " (" + getXpath(node) + ") not found among elements.");
             }
             else
@@ -605,22 +606,29 @@ public class Schema
                 {
                     for (Node field : DocumentReader.getChildren(node, "xsd:field"))
                     {
-
-                        String xpathField = DocumentReader.getAttribute(field, "xpath");
-                        if (xpathField.startsWith("@"))
+                        String xpathFieldString = DocumentReader.getAttribute(field, "xpath");
+                        boolean found = false;
+                        for (String xpathField : xpathFieldString.split("\\|"))
                         {
-                            xpathField = xpathField.substring(1); // removes '@'
-                            if (!hasElementAttribute(selected, xpathField))
+                            if (xpathField.startsWith("@"))
                             {
-                                System.out.println("Keyref " + keyref + " (" + getXpath(node)
-                                        + ") points to non existing field '" + xpathField + "'.");
+                                xpathField = xpathField.substring(1); // removes '@'
+                                if (hasElementAttribute(selected, xpathField))
+                                {
+                                    found = true;
+
+                                }
+                            }
+                            else if (selected.getNodeName().equals("xsd:simpleType") // value is assumed given in element
+                                    || selected.getNodeName().equals("xsd:element"))
+                            {
+                                found = true;
                             }
                         }
-                        else if (!selected.getNodeName().equals("xsd:simpleType") // value is assumed given in selected element
-                                && !selected.getNodeName().equals("xsd:element"))
+                        if (!found)
                         {
                             System.out.println("Keyref " + keyref + " (" + getXpath(node) + ") points to non existing field '"
-                                    + xpathField + "'.");
+                                    + xpathFieldString + "'.");
                         }
                     }
                 }
@@ -652,21 +660,26 @@ public class Schema
             String element = DocumentReader.getAttribute(node, "name");
             for (String selector : getXpath(node).split("\\|"))
             {
-                String path = context + "." + selector;
-                Node selected = getElement(path);
-                if (selected == null)
+                String path;
+                Node selected = null;
+                if (!selector.startsWith(".//"))
+                {
+                    path = context + "." + selector.replace("/", ".");
+                    selected = getElement(path);
+                }
+                else
                 {
                     // do it the hard way for if there are intermediate layers, e.g. Ots.{...}.GtuTypes.GtuType
+                    path = context + selector.replace(".//", ".{...}").replace("/", ".");
                     for (Entry<String, Node> entry : this.elements.entrySet())
                     {
                         String elementPath = entry.getKey();
-                        if (elementPath.startsWith(context) && elementPath.endsWith(selector))
+                        if (elementPath.startsWith(context) && elementPath.endsWith(selector.substring(3).replace("/", ".")))
                         {
                             selected = entry.getValue();
                             break;
                         }
                     }
-                    path = context + ".{...}." + selector;
                 }
                 if (selected == null)
                 {
@@ -676,15 +689,23 @@ public class Schema
                 {
                     for (Node field : DocumentReader.getChildren(node, "xsd:field"))
                     {
-                        String xpathField = DocumentReader.getAttribute(field, "xpath");
-                        if (xpathField.startsWith("@"))
+                        String xpathFieldString = DocumentReader.getAttribute(field, "xpath");
+                        boolean found = false;
+                        for (String xpathField : xpathFieldString.split("\\|"))
                         {
-                            xpathField = xpathField.substring(1); // removes '@'
-                            if (!hasElementAttribute(selected, xpathField))
+                            if (xpathField.startsWith("@"))
                             {
-                                System.out.println(label + " " + element + " (" + path + ") points to non existing field "
-                                        + xpathField + ".");
+                                xpathField = xpathField.substring(1); // removes '@'
+                                if (hasElementAttribute(selected, xpathField))
+                                {
+                                    found = true;
+                                }
                             }
+                        }
+                        if (!found)
+                        {
+                            System.out.println(label + " " + element + " (" + path + ") points to non existing field "
+                                    + xpathFieldString + ".");
                         }
                     }
                 }
@@ -703,14 +724,18 @@ public class Schema
         List<Node> nodes = new ArrayList<>();
         for (String selector : getXpath(node).split("\\|"))
         {
-            Node selected = getElement(selector);
-            if (selected == null)
+            Node selected = null;
+            if (!selector.startsWith(".//"))
+            {
+                selected = getElement(context + "." + selector.replace("/", "."));
+            }
+            else
             {
                 // do it the hard way for if there are intermediate layers, e.g. Ots.{...}.GtuTypes.GtuType
                 for (Entry<String, Node> entry : this.elements.entrySet())
                 {
                     String elementPath = entry.getKey();
-                    if (elementPath.startsWith(context) && elementPath.endsWith(selector))
+                    if (elementPath.startsWith(context) && elementPath.endsWith(selector.replace(".//", "").replace("/", ".")))
                     {
                         selected = entry.getValue();
                         break;
@@ -725,11 +750,11 @@ public class Schema
             {
                 for (Entry<String, Node> entry : this.elements.entrySet())
                 {
-                    if (entry.getKey().endsWith("." + selector))
+                    if (!entry.getKey().startsWith("Ots.") && entry.getKey().endsWith(selector.replace(".//", "").replace("/", ".")))
                     {
                         nodes.add(entry.getValue());
                     }
-                    else if (isType(entry.getValue(), selector))
+                    else if (isType(entry.getValue(), selector.replace(".//", "").replace("/", ".")))
                     {
                         nodes.add(entry.getValue());
                     }
@@ -748,7 +773,7 @@ public class Schema
     {
         Node child = DocumentReader.getChild(node, "xsd:selector");
         String xpath = DocumentReader.getAttribute(child, "xpath");
-        xpath = xpath.replace(".//ots:", "").replace("/ots:", ".").replace("ots:", "");
+        xpath = xpath.replace("ots:", "");
         return xpath;
     }
 
