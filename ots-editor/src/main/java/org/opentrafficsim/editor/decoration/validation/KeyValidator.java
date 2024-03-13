@@ -9,7 +9,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
@@ -100,7 +99,7 @@ public class KeyValidator extends XPathValidator implements EventListener
             invalidateAllDependent(); // new node may contain value set that a keyref want to couple to
         }
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public void removeNode(final XsdTreeNode node)
@@ -110,7 +109,7 @@ public class KeyValidator extends XPathValidator implements EventListener
         node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
         node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String validate(final XsdTreeNode node)
@@ -182,7 +181,7 @@ public class KeyValidator extends XPathValidator implements EventListener
             Object[] content = (Object[]) event.getContent();
             XsdTreeNode node = (XsdTreeNode) content[0];
             String previous = (String) content[1];
-            boolean updateKeyrefs = !duplicateKeys(node, (n) -> n.getValue(), previous);
+            boolean updateKeyrefs = !duplicateKeys(node, this.dependentValues.get(node), previous);
             if (updateKeyrefs)
             {
                 updateReferringKeyrefs(node, this.dependentValues.get(node), node.getValue());
@@ -204,7 +203,7 @@ public class KeyValidator extends XPathValidator implements EventListener
                 return;
             }
             String previous = (String) content[2];
-            boolean updateKeyrefs = !duplicateKeys(node, (n) -> n.getAttributeValue(attribute), previous);
+            boolean updateKeyrefs = !duplicateKeys(node, attributeFields.get(attribute), previous);
             if (updateKeyrefs)
             {
                 updateReferringKeyrefs(node, attributeFields.get(attribute), node.getAttributeValue(attribute));
@@ -212,7 +211,7 @@ public class KeyValidator extends XPathValidator implements EventListener
             invalidateAllDependent();
         }
     }
-    
+
     /**
      * Remove node. It is removed from all contexts and listening keyrefs. This method is called indirectly by a listener that
      * the root node has set up, for every removed node. This method is called internally for children of deactivated nodes, in
@@ -269,44 +268,28 @@ public class KeyValidator extends XPathValidator implements EventListener
      * Returns whether there are or were duplicate keys such that no key change should result in a change of value at the
      * keyrefs.
      * @param keyNode XsdTreeNode; node where key is changed.
-     * @param valueProvider Function&lt;XsdTreeNode, String&gt;; function to provide the right value from the key nodes.
+     * @param fieldIndex int; index of the field.
      * @param previous String; previous value.
      * @return boolean; whether there are duplicate keys.
      */
-    private boolean duplicateKeys(final XsdTreeNode keyNode, final Function<XsdTreeNode, String> valueProvider,
-            final String previous)
+    private boolean duplicateKeys(final XsdTreeNode keyNode, final int fieldIndex, final String previous)
     {
-        if (this.fields.size() > 1)
+        Map<XsdTreeNode, List<String>> allValues = getAllValueSets(keyNode);
+        List<String> values = allValues.remove(keyNode);
+        if (values == null)
         {
-            // TODO: keyref could refer to key with multiple fields
-            return true; // prevent any change on coupled nodes with multiple fields
+            return false;
         }
-        Set<XsdTreeNode> keyNodes = this.nodes.get(getContext(keyNode));
-        boolean duplicates = false;
-        if (keyNodes != null)
+        if (allValues.containsValue(values))
         {
-            Set<String> values = new LinkedHashSet<>();
-            for (XsdTreeNode node : keyNodes)
-            {
-                if (node.isActive())
-                {
-                    String value;
-                    try
-                    {
-                        value = valueProvider.apply(node);
-                    }
-                    catch (Exception ex)
-                    {
-                        value = null;
-                    }
-                    if (value != null)
-                    {
-                        duplicates = duplicates || !values.add(value) || value.equals(previous);
-                    }
-                }
-            }
+            return true; // there are duplicates
         }
-        return duplicates;
+        values.set(fieldIndex, previous); // get values from state previous to latest value change
+        if (allValues.containsValue(values))
+        {
+            return true; // there were duplicates
+        }
+        return false;
     }
 
     /**
