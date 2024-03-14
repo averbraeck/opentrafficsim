@@ -30,7 +30,7 @@ public class Undo implements EventListener
     private static final long serialVersionUID = 20230921L;
 
     /** Maximum number of undo actions stored. */
-    private static int MAX_UNDO = 50;
+    private static final int MAX_UNDO = 50;
 
     /** Queue of actions. */
     private LinkedList<Action> queue = new LinkedList<>();

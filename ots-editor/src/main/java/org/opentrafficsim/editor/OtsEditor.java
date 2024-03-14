@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -175,6 +176,9 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /** Maximum number of items to show in a dropdown menu. */
     private static final int MAX_DROPDOWN_ITEMS = 20;
+    
+    /** Maximum number of back navigation steps stored. */
+    private static final int MAX_NAVIGATE = 50;
 
     /** Indent for first item shown in dropdown. */
     private int dropdownIndent = 0;
@@ -248,13 +252,13 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     private XsdTreeNode candidateBackNode;
 
     /** Keyref node that was coupled from to a key node, may be {@code null}. */
-    private XsdTreeNode backNode;
+    private final LinkedList<XsdTreeNode> backNode = new LinkedList<>();
 
     /** Candidate atrribute of back node referring to coupled node, may be {@code null}. */
     private String candidateBackAttribute;
 
     /** Atrribute of back node referring to coupled node, may be {@code null}. */
-    private String backAttribute;
+    private final LinkedList<String> backAttribute = new LinkedList<>();
 
     /** Menu item for jumping to coupled node. */
     private JMenuItem coupledItem;
@@ -652,10 +656,18 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         navigateMenu.add(this.backItem);
         this.backItem.addActionListener((a) ->
         {
-            if (OtsEditor.this.backNode != null)
+            show(this.backNode.pollLast(), this.backAttribute.pollLast());
+            if (this.backNode.isEmpty())
             {
-                OtsEditor.this.backItem.setEnabled(false);
-                show(OtsEditor.this.backNode, OtsEditor.this.backAttribute);
+                this.backItem.setText("Go back");
+                this.backItem.setEnabled(false);
+            }
+            else
+            {
+                XsdTreeNode back = this.backNode.peekLast();
+                this.backItem
+                        .setText("Go back to " + back.getNodeName() + (back.isIdentifiable() ? " " + back.getId() : ""));
+                this.backItem.setEnabled(true);
             }
         });
         this.coupledItem = new JMenuItem("Go to coupled item");
@@ -664,11 +676,18 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         navigateMenu.add(this.coupledItem);
         this.coupledItem.addActionListener((a) ->
         {
-            if (OtsEditor.this.coupledNode != null)
+            if (this.coupledNode != null)
             {
-                OtsEditor.this.backNode = OtsEditor.this.candidateBackNode;
-                OtsEditor.this.backAttribute = OtsEditor.this.candidateBackAttribute;
-                OtsEditor.this.backItem.setEnabled(OtsEditor.this.backNode != null);
+                this.backNode.add(this.candidateBackNode);
+                this.backAttribute.add(this.candidateBackAttribute);
+                while (this.backNode.size() > MAX_NAVIGATE)
+                {
+                    this.backNode.remove();
+                    this.backAttribute.remove();
+                }
+                XsdTreeNode back = OtsEditor.this.backNode.peekLast();
+                this.backItem.setText("Go back to " + back.getNodeName() + (back.isIdentifiable() ? " " + back.getId() : ""));
+                this.backItem.setEnabled(this.backNode.peekLast() != null);
                 show(OtsEditor.this.coupledNode, null);
             }
         });
@@ -736,10 +755,17 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
      */
     public void setCoupledNode(final XsdTreeNode coupledNode, final XsdTreeNode backNode, final String backAttribute)
     {
-        this.coupledItem.setEnabled(coupledNode != null);
-        this.coupledItem.setText(coupledNode == null ? "Go to coupled item"
-                : ("Go to " + (backAttribute != null ? backNode.getAttributeValue(backAttribute)
-                        : (backNode.isIdentifiable() ? backNode.getId() : backNode.getValue()))));
+        if (coupledNode == null)
+        {
+            this.coupledItem.setEnabled(false);
+            this.coupledItem.setText("Go to coupled item");
+        }
+        else
+        {
+            this.coupledItem.setEnabled(true);
+            this.coupledItem.setText("Go to " + (backAttribute != null ? backNode.getAttributeValue(backAttribute)
+                    : (backNode.isIdentifiable() ? backNode.getId() : backNode.getValue())));
+        }
         this.coupledNode = coupledNode;
         this.candidateBackNode = backNode;
         this.candidateBackAttribute = backAttribute;
