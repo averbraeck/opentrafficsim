@@ -13,6 +13,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
+import org.opentrafficsim.editor.decoration.validation.XsdAllValidator;
 import org.w3c.dom.Node;
 
 /**
@@ -29,12 +30,28 @@ public final class XsdTreeNodeUtil
     /** Pattern for regular expression to split string by upper case without disregarding the upper case itself. */
     private static final Pattern UPPER_PATTERN = Pattern.compile("(?=\\p{Lu})");
 
+    /** Validators for xsd:all nodes and their children. */
+    private final static Map<String, XsdAllValidator> XSD_ALL_VALIDATORS = new LinkedHashMap<>();
+
     /**
      * Private constructor.
      */
     private XsdTreeNodeUtil()
     {
 
+    }
+
+    /**
+     * Add xsd all validator to the given node.
+     * @param shared XsdTreeNode; shared xsd:all node.
+     * @param node XsdTreeNode; xsd:all node, or one of its children.
+     */
+    public static void addXsdAllValidator(final XsdTreeNode shared, final XsdTreeNode node)
+    {
+        String path = shared.getPathString();
+        XsdAllValidator validator = XSD_ALL_VALIDATORS.computeIfAbsent(path, (p) -> new XsdAllValidator(node.getRoot()));
+        node.addNodeValidator(validator);
+        validator.addNode(node);
     }
 
     /**
@@ -135,6 +152,7 @@ public final class XsdTreeNodeUtil
                     }
                     break;
                 case "xsd:choice":
+                case "xsd:all":
                     if (children.size() == skipIndex)
                     {
                         skipIndex = -1;

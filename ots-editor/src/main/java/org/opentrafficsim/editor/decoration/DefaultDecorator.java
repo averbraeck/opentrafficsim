@@ -16,7 +16,6 @@ import org.opentrafficsim.editor.decoration.string.CorrelationStringFunction;
 import org.opentrafficsim.editor.decoration.string.OdOptionsItemStringFunction;
 import org.opentrafficsim.editor.decoration.string.XiIncludeStringFunction;
 import org.opentrafficsim.editor.decoration.validation.AttributesNotEqualValidator;
-import org.opentrafficsim.editor.decoration.validation.NoDuplicateChildrenValidator;
 import org.opentrafficsim.editor.decoration.validation.ParentValidator;
 import org.opentrafficsim.editor.decoration.validation.RoadLayoutElementValidator;
 import org.opentrafficsim.editor.decoration.validation.RoadLayoutElementValidator.LayoutCoupling;
@@ -113,9 +112,9 @@ public final class DefaultDecorator
                 .setContext("Ots.Demand.OdOptions.OdOptionsItem").setIdAttribute("GtuType");
         new AttributesNotEqualValidator(editor, "Ots.Network.Link", "NodeStart", "NodeEnd");
         new AttributesNotEqualValidator(editor, "Ots.Demand.Cell", "Origin", "Destination");
-        new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.MandatoryIncentives");
-        new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.VoluntaryIncentives");
-        new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.AccelerationIncentives");
+        // new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.MandatoryIncentives");
+        // new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.VoluntaryIncentives");
+        // new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.AccelerationIncentives");
         new RoadLayoutElementValidator(editor, "Ots.Network.Link.TrafficLight", LayoutCoupling.PARENT_IS_LINK, "Lane");
         new RoadLayoutElementValidator(editor, "Ots.Demand.Od.Category.Lane", LayoutCoupling.LINK_ATTRIBUTE, "Lane");
         new RoadLayoutElementValidator(editor, "Ots.Demand.OdOptions.OdOptionsItem.Lane", LayoutCoupling.LINK_ATTRIBUTE,

@@ -48,10 +48,11 @@ import org.xml.sax.SAXException;
  * tree. From this information it can be derived what the child nodes should be, and which attributes are contained.<br>
  * <br>
  * This class is mostly straightforward in the sense that there are direct parent-child relations, and that changing an option
- * replaces a node. When an xsd:sequence is part of an xsd:choice, things become complex as the xsd:sequence is a single option.
- * Therefore the xsd:sequence becomes a node visible in the tree, when it's an option under a choice. Furthermore, for each
- * xsd:choice node an {@code XsdTreeNode} is created that is not visible in the tree. It stores all options
- * {@code XsdTreeNode}'s and knows what option is selected. Only one options is ever in the list of children of the parent node.
+ * replaces a node. When an xsd:sequence is part of an xsd:choice or xsd:all, things become complex as the xsd:sequence is a
+ * single option. Therefore the xsd:sequence becomes a node visible in the tree, when it's an option under a choice.
+ * Furthermore, for each xsd:choice or xsd:all node an {@code XsdTreeNode} is created that is not visible in the tree. It stores
+ * all options {@code XsdTreeNode}'s and knows what option is selected. Only one options is ever in the list of children of the
+ * parent node.
  * <p>
  * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -270,10 +271,11 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
-     * Constructor with referring node for extended types. If the node is xsd:choice, this node will represent the choice. All
-     * options are then created as separate {@code XsdTreeNode}'s by this constructor. For each option that is an xsd:sequence,
-     * this constructor will also create the nodes in that sequence, as those nodes function on the child-level of this node.
-     * They are coupled to this choice by their {@code parentChoice}, allowing them to delete and add on this level.<br>
+     * Constructor with referring node for extended types. If the node is xsd:choice or xsd:all, this node will represent the
+     * choice. All options are then created as separate {@code XsdTreeNode}'s by this constructor. For each option that is an
+     * xsd:sequence, this constructor will also create the nodes in that sequence, as those nodes function on the child-level of
+     * this node. They are coupled to this choice by their {@code parentChoice}, allowing them to delete and add on this
+     * level.<br>
      * <br>
      * The hidden nodes are all elements between the parent element and this element. For example {xsd:complexType, xsd:choice}
      * between the following child element and its containing object:
@@ -346,10 +348,25 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 : (this.referringXsdNode == null ? this.xsdNode : this.referringXsdNode);
         this.minOccurs = XsdTreeNodeUtil.getOccurs(node, "minOccurs");
         this.maxOccurs = XsdTreeNodeUtil.getOccurs(node, "maxOccurs");
+        if (getNodeName().equals("xsd:all"))
+        {
+            NodeList children = this.xsdNode.getChildNodes();
+            int childCount = 0;
+            for (int i = 0; i < children.getLength(); i++)
+            {
+                Node child = children.item(i);
+                if (!child.getNodeName().equals("#text"))
+                {
+                    childCount++;
+                }
+            }
+            this.maxOccurs *= childCount;
+        }
         for (int index = this.hiddenNodes.size() - 1; index >= 0; index--)
         {
             Node hiddenNode = this.hiddenNodes.get(index);
-            if (hiddenNode.getNodeName().equals("xsd:sequence") || hiddenNode.getNodeName().equals("xsd:choice"))
+            if (hiddenNode.getNodeName().equals("xsd:sequence") || hiddenNode.getNodeName().equals("xsd:choice")
+                    || hiddenNode.getNodeName().equals("xsd:all"))
             {
                 this.minOccurs *= XsdTreeNodeUtil.getOccurs(hiddenNode, "minOccurs");
                 int max = XsdTreeNodeUtil.getOccurs(hiddenNode, "maxOccurs");
@@ -373,8 +390,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         for (int i = 1; i < path.size(); i++)
         {
             String nodeString = ((XsdTreeNode) path.get(i)).getNodeName();
-            if ((!nodeString.equals("xsd:choice") && !nodeString.equals("xsd:sequence") && !nodeString.equals("xi:include"))
-                    || i == path.size() - 1)
+            if ((!nodeString.equals("xsd:choice") && !nodeString.equals("xsd:all") && !nodeString.equals("xsd:sequence")
+                    && !nodeString.equals("xi:include")) || i == path.size() - 1)
             {
                 pathStr.append(".").append(nodeString);
             }
@@ -529,12 +546,12 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
-     * Creates the option nodes as part of an xsd:choice node.
+     * Creates the option nodes as part of an xsd:choice or xsd:all node.
      */
     void createOptions()
     {
-        Throw.when(!this.xsdNode.getNodeName().equals("xsd:choice"), IllegalStateException.class,
-                "Can only add options for a node of type xsd:choice.");
+        Throw.when(!this.xsdNode.getNodeName().equals("xsd:choice") && !this.xsdNode.getNodeName().equals("xsd:all"),
+                IllegalStateException.class, "Can only add options for a node of type xsd:choice or xsd:all.");
         this.options = new ArrayList<>();
         XsdTreeNodeUtil.addChildren(this.xsdNode, this.parent, this.options, this.hiddenNodes, this.schema, false, -1);
         this.choice = this;
@@ -547,6 +564,14 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 option.setActive();
             }
             option.choice = this;
+        }
+        if (this.choice.xsdNode.getNodeName().equals("xsd:all"))
+        {
+            XsdTreeNodeUtil.addXsdAllValidator(this.choice, this.choice);
+            for (XsdTreeNode option : this.options)
+            {
+                XsdTreeNodeUtil.addXsdAllValidator(this.choice, option);
+            }
         }
     }
 
@@ -578,8 +603,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
-     * Returns the first child with given name. The node may be within a series of xsd:sequence and xsd:choice intermediate
-     * nodes.
+     * Returns the first child with given name. The node may be within a series of xsd:sequence and xsd:choice/xsd:all
+     * intermediate nodes.
      * @param name String; child name.
      * @return XsdTreeNode; child.
      */
@@ -588,7 +613,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         assureChildren();
         for (XsdTreeNode child : this.children)
         {
-            if (child.getNodeName().equals("xsd:sequence") || child.getNodeName().equals("xsd:choice"))
+            if (child.getNodeName().equals("xsd:sequence") || child.getNodeName().equals("xsd:choice")
+                    || child.getNodeName().equals("xsd:all"))
             {
                 try
                 {
@@ -1328,9 +1354,17 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                     this.schema, false, selectedIndex);
             choiceNode.options.add(selectedIndex, copyNode);
             choiceNode.selected = choiceNode.options.get(selectedIndex);
+            if (this.choice.getNodeName().equals("xsd:all"))
+            {
+                XsdTreeNodeUtil.addXsdAllValidator(this.choice, this);
+            }
             for (int index = 0; index < choiceNode.options.size(); index++)
             {
                 XsdTreeNode option = choiceNode.options.get(index);
+                if (this.choice.getNodeName().equals("xsd:all"))
+                {
+                    XsdTreeNodeUtil.addXsdAllValidator(this.choice, option);
+                }
                 option.minOccurs = choiceNode.minOccurs;
                 option.maxOccurs = choiceNode.maxOccurs;
                 if (choiceNode.minOccurs > 0)
@@ -2160,12 +2194,12 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     {
         if (this.options != null)
         {
-            // this name may appear as part of a sequence which is an option for an xsd:choice
+            // this name may appear as part of a sequence which is an option for an xsd:choice or xsd:all
             return this.options.toString().toLowerCase();
         }
         if (this.xsdNode.getNodeName().equals("xsd:sequence"))
         {
-            // this name may appear as an option for an xsd:choice
+            // this name may appear as an option for an xsd:choice or xsd:all
             StringBuilder stringBuilder = new StringBuilder();
             Node relevantNode = this.referringXsdNode == null ? this.xsdNode : this.referringXsdNode;
             String annotation = DocumentReader.getAnnotation(relevantNode, "xsd:appinfo", "name");
@@ -2188,7 +2222,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                     for (XsdTreeNode child : this.children)
                     {
                         if (!coveredTypes.contains(child.getPathString()) || child.xsdNode.getNodeName().equals("xsd:sequence")
-                                || child.xsdNode.getNodeName().equals("xsd:choice"))
+                                || child.xsdNode.getNodeName().equals("xsd:choice")
+                                || child.xsdNode.getNodeName().equals("xsd:all"))
                         {
                             stringBuilder.append(separator).append(child.getShortString());
                             separator = " | ";

@@ -218,8 +218,8 @@
                 </xsd:sequence>
                 <xsd:attribute name="Expression">
                   <xsd:annotation>
-                    <xsd:documentation source="description">Expression with a local context. Use 'first' and 'then' to
-                      refer to the two base parameter values. The expression result will become the value for 'then'.
+                    <xsd:documentation source="description">Expression with a local context. Use 'first' and 'then' to refer
+                      to the two base parameter values. The expression result will become the value for 'then'.
                     </xsd:documentation>
                   </xsd:annotation>
                   <xsd:simpleType>
@@ -353,12 +353,11 @@
                           empty constructor.
                         </xsd:documentation>
                       </xsd:annotation>
-                      <xsd:choice maxOccurs="unbounded">
-                        <xsd:element name="Route" type="ots:EmptyType" />
-                        <xsd:element name="GetInLane" type="ots:EmptyType" />
-                        <xsd:element name="BusStop" type="ots:EmptyType" />
-                        <xsd:element name="Class" type="ots:ClassNameType" />
-                      </xsd:choice>
+                      <xsd:all>
+                        <xsd:element name="Route" type="ots:EmptyType" minOccurs="0" />
+                        <xsd:element name="GetInLane" type="ots:EmptyType" minOccurs="0" />
+                        <xsd:element name="BusStop" type="ots:EmptyType" minOccurs="0" />
+                      </xsd:all>
                     </xsd:complexType>
                   </xsd:element>
                   <xsd:element name="VoluntaryIncentives" minOccurs="0">
@@ -371,14 +370,13 @@
                           with empty constructor.
                         </xsd:documentation>
                       </xsd:annotation>
-                      <xsd:choice maxOccurs="unbounded">
-                        <xsd:element name="Keep" type="ots:EmptyType" />
-                        <xsd:element name="SpeedWithCourtesy" type="ots:EmptyType" />
-                        <xsd:element name="Courtesy" type="ots:EmptyType" />
-                        <xsd:element name="SocioSpeed" type="ots:EmptyType" />
-                        <xsd:element name="StayRight" type="ots:EmptyType" />
-                        <xsd:element name="Class" type="ots:ClassNameType" />
-                      </xsd:choice>
+                      <xsd:all>
+                        <xsd:element name="Keep" type="ots:EmptyType" minOccurs="0" />
+                        <xsd:element name="SpeedWithCourtesy" type="ots:EmptyType" minOccurs="0" />
+                        <xsd:element name="Courtesy" type="ots:EmptyType" minOccurs="0" />
+                        <xsd:element name="SocioSpeed" type="ots:EmptyType" minOccurs="0" />
+                        <xsd:element name="StayRight" type="ots:EmptyType" minOccurs="0" />
+                      </xsd:all>
                     </xsd:complexType>
                   </xsd:element>
 
@@ -392,14 +390,13 @@
                           Class: from a class with empty constructor.
                         </xsd:documentation>
                       </xsd:annotation>
-                      <xsd:choice maxOccurs="unbounded">
-                        <xsd:element name="TrafficLights" type="ots:EmptyType" />
-                        <xsd:element name="Conflicts" type="ots:EmptyType" />
-                        <xsd:element name="SpeedLimitTransitions" type="ots:EmptyType" />
-                        <xsd:element name="NoRightOvertake" type="ots:EmptyType" />
-                        <xsd:element name="BusStop" type="ots:EmptyType" />
-                        <xsd:element name="Class" type="ots:ClassNameType" />
-                      </xsd:choice>
+                      <xsd:all>
+                        <xsd:element name="TrafficLights" type="ots:EmptyType" minOccurs="0" />
+                        <xsd:element name="Conflicts" type="ots:EmptyType" minOccurs="0" />
+                        <xsd:element name="SpeedLimitTransitions" type="ots:EmptyType" minOccurs="0" />
+                        <xsd:element name="NoRightOvertake" type="ots:EmptyType" minOccurs="0" />
+                        <xsd:element name="BusStop" type="ots:EmptyType" minOccurs="0" />
+                      </xsd:all>
                     </xsd:complexType>
                   </xsd:element>
 
