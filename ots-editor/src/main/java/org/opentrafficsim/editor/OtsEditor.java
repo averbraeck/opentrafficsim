@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FileDialog;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
@@ -35,10 +36,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Consumer;
@@ -54,6 +57,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -73,6 +77,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
@@ -80,8 +85,13 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeWillExpandListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
 import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreePath;
 import javax.xml.parsers.DocumentBuilder;
@@ -121,6 +131,7 @@ import org.opentrafficsim.swing.gui.AppearanceApplication;
 import org.opentrafficsim.swing.gui.AppearanceControlComboBox;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.SAXException;
 
 import de.javagl.treetable.JTreeTable;
@@ -282,6 +293,12 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /** Menu with recent files. */
     private JMenu recentFilesMenu;
+
+    /**
+     * List of root properties, such as xmlns:ots="http://www.opentrafficsim.org/ots". Keys at uneven indices and values at even
+     * indices.
+     */
+    private final List<String> properties = new ArrayList<>();
 
     /**
      * Constructor.
@@ -618,6 +635,10 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         fileMenu.add(saveAs);
         saveAs.addActionListener((a) -> saveFileAs((XsdTreeNodeRoot) OtsEditor.this.treeTable.getTree().getModel().getRoot()));
         fileMenu.add(new JSeparator());
+        JMenuItem properties = new JMenuItem("Properties...");
+        fileMenu.add(properties);
+        properties.addActionListener((a) -> showProperties());
+        fileMenu.add(new JSeparator());
         JMenuItem exit = new JMenuItem("Exit");
         fileMenu.add(exit);
         exit.addActionListener((a) -> exit());
@@ -896,6 +917,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     {
         this.scenario.removeAllItems();
         this.scenario.addItem(new ScenarioWrapper(null));
+        setDefaultProperties();
 
         // tree table
         XsdTreeTableModel treeModel = new XsdTreeTableModel(this.xsdDocument);
@@ -945,6 +967,22 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         };
         new Timer().scheduleAtFixedRate(this.autosave, AUTOSAVE_PERIOD_MS, AUTOSAVE_PERIOD_MS);
         setAppearance(getAppearance());
+    }
+
+    /**
+     * Sets the default properties.
+     */
+    private void setDefaultProperties()
+    {
+        this.properties.clear();
+        this.properties.add("xmlns:ots");
+        this.properties.add("http://www.opentrafficsim.org/ots");
+        this.properties.add("xmlns:xi");
+        this.properties.add("http://www.w3.org/2001/XInclude");
+        this.properties.add("xmlns:xsi");
+        this.properties.add("http://www.w3.org/2001/XMLSchema-instance");
+        this.properties.add("xsi:schemaLocation");
+        this.properties.add(null);
     }
 
     /**
@@ -1571,6 +1609,21 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             Document document = DocumentReader.open(file.toURI());
             this.undo.setIgnoreChanges();
             initializeTree();
+            NamedNodeMap attributes = document.getFirstChild().getAttributes();
+            for (int i = 0; i < attributes.getLength(); i++)
+            {
+                if (this.properties.contains(attributes.item(i).getNodeName()))
+                {
+                    int index = this.properties.indexOf(attributes.item(i).getNodeName());
+                    this.properties.set(index, attributes.item(i).getNodeName());
+                    this.properties.set(index + 1, attributes.item(i).getNodeValue());
+                }
+                else
+                {
+                    this.properties.add(attributes.item(i).getNodeName());
+                    this.properties.add(attributes.item(i).getNodeValue());
+                }
+            }
             XsdTreeNodeRoot root = (XsdTreeNodeRoot) OtsEditor.this.treeTable.getTree().getModel().getRoot();
             root.setDirectory(this.lastDirectory);
             root.loadXmlNodes(document.getFirstChild());
@@ -1653,7 +1706,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
      */
     private void save(final File file, final XsdTreeNode root, final boolean storeAsRecent)
     {
-        try
+        try (FileOutputStream fileOutputStream = new FileOutputStream(file))
         {
             DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Document document = docBuilder.newDocument();
@@ -1666,19 +1719,34 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             document.setXmlStandalone(true);
             root.saveXmlNodes(document, document);
             Element xmlRoot = (Element) document.getChildNodes().item(0);
-            xmlRoot.setAttribute("xmlns:ots", "http://www.opentrafficsim.org/ots");
-            xmlRoot.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            if (root instanceof XsdTreeNodeRoot)
+            Set<String> nameSpaces = new LinkedHashSet<>();
+            nameSpaces.add("xmlns");
+            for (int i = 0; i < this.properties.size(); i = i + 2)
             {
-                XsdTreeNodeRoot otsRoot = (XsdTreeNodeRoot) root;
-                if (otsRoot.getSchemaLocation() != null)
+                String prop = this.properties.get(i);
+                String value = this.properties.get(i + 1);
+                if (prop.startsWith("xmlns") && value != null && !value.isBlank())
                 {
-                    xmlRoot.setAttribute("xsi:schemaLocation", otsRoot.getSchemaLocation());
+                    nameSpaces.add(prop.substring(6));
                 }
             }
-            xmlRoot.setAttribute("xmlns:xi", "http://www.w3.org/2001/XInclude");
-
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            for (int i = 0; i < this.properties.size(); i = i + 2)
+            {
+                String prop = this.properties.get(i);
+                String value = this.properties.get(i + 1);
+                int semi = prop.indexOf(":");
+                String nameSpace = semi < 0 ? null : prop.substring(0, semi);
+                if (!nameSpaces.contains(nameSpace) && value != null && !value.isBlank())
+                {
+                    JOptionPane.showMessageDialog(this,
+                            "Unable to save property " + prop + " as its namespace xmlns:" + nameSpace + " is not provided.",
+                            "Unable to save property.", JOptionPane.WARNING_MESSAGE);
+                }
+                else if (value != null && !value.isBlank())
+                {
+                    xmlRoot.setAttribute(prop, value);
+                }
+            }
             StreamResult result = new StreamResult(fileOutputStream);
 
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -1703,6 +1771,128 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         {
             JOptionPane.showMessageDialog(this, "Unable to save file.", "Unable to save file.", JOptionPane.WARNING_MESSAGE);
         }
+    }
+
+    /**
+     * Shows the properties in a modal window.
+     */
+    private void showProperties()
+    {
+        // main panel
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+        // columns
+        TableColumnModel columns = new DefaultTableColumnModel();
+        TableColumn column1 = new TableColumn(0, 200);
+        column1.setHeaderValue("Property");
+        columns.addColumn(column1);
+        TableColumn column2 = new TableColumn(1, 600);
+        column2.setHeaderValue("Value");
+        columns.addColumn(column2);
+        // model
+        TableModel model = new AbstractTableModel()
+        {
+            /** */
+            private static final long serialVersionUID = 20240314L;
+
+            /** {@inheritDoc} */
+            @Override
+            public int getRowCount()
+            {
+                return OtsEditor.this.properties.size() / 2;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public int getColumnCount()
+            {
+                return 2;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public Object getValueAt(final int rowIndex, final int columnIndex)
+            {
+                return OtsEditor.this.properties.get(rowIndex * 2 + columnIndex);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public boolean isCellEditable(final int rowIndex, final int columnIndex)
+            {
+                return columnIndex == 1;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex)
+            {
+                OtsEditor.this.properties.set(rowIndex * 2 + columnIndex, aValue.toString());
+                OtsEditor.this.setUnsavedChanges(true);
+            }
+        };
+        // table
+        JTable table = new JTable(model, columns);
+        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer()
+        {
+            /** */
+            private static final long serialVersionUID = 20240314L;
+
+            /** {@inheritDoc} */
+            @Override
+            public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected,
+                    final boolean hasFocus, final int row, final int column)
+            {
+                Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (table.convertColumnIndexToModel(column) == 0)
+                {
+                    this.setOpaque(true);
+                }
+                else
+                {
+                    this.setOpaque(false);
+                }
+                return component;
+            }
+        };
+        renderer.setBackground(panel.getBackground()); // for editable cells
+        table.setDefaultRenderer(Object.class, renderer);
+        JScrollPane scroll = new JScrollPane(table); // put table in scroll window, also makes the header visible
+        scroll.setBorder(new EmptyBorder(0, 0, 0, 0));
+        panel.add(scroll, BorderLayout.CENTER);
+        // dialog
+        final JDialog propertyWindow = new JDialog(this, "Properties", true);
+        propertyWindow.setMinimumSize(new Dimension(250, 150));
+        propertyWindow.setPreferredSize(new Dimension(800, 200));
+        // buttons
+        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton defaults = new JButton("Set defaults...");
+        defaults.addActionListener((a) ->
+        {
+            boolean set = JOptionPane.showConfirmDialog(propertyWindow, "Are you sure? This will reset all properties.",
+                    "Are you sure?", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+                    this.questionIcon) == JOptionPane.OK_OPTION;
+            if (set)
+            {
+                setDefaultProperties();
+                table.updateUI();
+                OtsEditor.this.setUnsavedChanges(true);
+            }
+        });
+        buttons.add(defaults);
+        JButton ok = new JButton("Ok");
+        ok.addActionListener((a) ->
+        {
+            table.getDefaultEditor(Object.class).stopCellEditing();
+            propertyWindow.dispose();
+        });
+        buttons.add(ok);
+        panel.add(buttons, BorderLayout.PAGE_END);
+        // pack and visualize
+        propertyWindow.getContentPane().add(panel);
+        propertyWindow.pack();
+        propertyWindow.setLocationRelativeTo(this);
+        propertyWindow.setVisible(true);
     }
 
     /**
