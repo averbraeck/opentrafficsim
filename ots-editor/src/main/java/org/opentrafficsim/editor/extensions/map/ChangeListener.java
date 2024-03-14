@@ -67,7 +67,7 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
         this.eval = eval;
         node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
         node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED, ReferenceType.WEAK);
-        this.root = (XsdTreeNodeRoot) this.node.getPath().get(0);
+        this.root = this.node.getRoot();
         this.root.addListener(this, XsdTreeNodeRoot.NODE_CREATED, ReferenceType.WEAK);
         this.root.addListener(this, XsdTreeNodeRoot.NODE_REMOVED, ReferenceType.WEAK);
     }

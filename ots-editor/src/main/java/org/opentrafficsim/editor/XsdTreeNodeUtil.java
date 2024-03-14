@@ -73,6 +73,7 @@ public final class XsdTreeNodeUtil
             final ImmutableList<Node> hiddenNodes, final Schema schema, final boolean flattenSequence, final int skip)
     {
         int skipIndex = skip;
+        XsdTreeNode root = parentNode.getRoot();
         for (int childIndex = 0; childIndex < node.getChildNodes().getLength(); childIndex++)
         {
             Node child = node.getChildNodes().item(childIndex);
@@ -110,7 +111,7 @@ public final class XsdTreeNodeUtil
                         element = new XsdTreeNode(parentNode, child, XsdTreeNodeUtil.append(hiddenNodes, node));
                     }
                     children.add(element);
-                    ((XsdTreeNodeRoot) element.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                    root.fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                             new Object[] {element, parentNode, parentNode.children.indexOf(element)});
                     break;
                 case "xsd:sequence":
@@ -129,7 +130,7 @@ public final class XsdTreeNodeUtil
                         // add sequence as option, 'children' is a list of options for a choice
                         XsdTreeNode sequence = new XsdTreeNode(parentNode, child, XsdTreeNodeUtil.append(hiddenNodes, node));
                         children.add(sequence);
-                        ((XsdTreeNodeRoot) sequence.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                        root.fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                                 new Object[] {sequence, parentNode, parentNode.children.indexOf(sequence)});
                     }
                     break;
@@ -140,7 +141,7 @@ public final class XsdTreeNodeUtil
                         break;
                     }
                     XsdTreeNode choice = new XsdTreeNode(parentNode, child, XsdTreeNodeUtil.append(hiddenNodes, node));
-                    ((XsdTreeNodeRoot) choice.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                    root.fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                             new Object[] {choice, parentNode, parentNode.children.indexOf(choice)});
                     choice.createOptions();
                     /*
@@ -159,7 +160,7 @@ public final class XsdTreeNodeUtil
                         break;
                     }
                     XsdTreeNode extension = new XsdTreeNode(parentNode, child, XsdTreeNodeUtil.append(hiddenNodes, node));
-                    ((XsdTreeNodeRoot) extension.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                    root.fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                             new Object[] {extension, parentNode, parentNode.children.indexOf(extension)});
                     children.add(extension);
                     break;
@@ -232,8 +233,7 @@ public final class XsdTreeNodeUtil
         {
             fireCreatedEventOnExistingNodes(child, listener);
         }
-        Event event = new Event(XsdTreeNodeRoot.NODE_CREATED,
-                new Object[] {node, node.getParent(), subNodes.indexOf(node)});
+        Event event = new Event(XsdTreeNodeRoot.NODE_CREATED, new Object[] {node, node.getParent(), subNodes.indexOf(node)});
         listener.notify(event);
     }
 

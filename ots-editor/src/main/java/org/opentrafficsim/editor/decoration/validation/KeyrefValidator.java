@@ -98,7 +98,7 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
     @Override
     public String validate(final XsdTreeNode node)
     {
-        if (node.getPath().size() == 1)
+        if (node.getParent() == null)
         {
             return null; // Node was deleted, but is still visible in the GUI tree for a moment
         }

@@ -44,14 +44,14 @@ public class XiIncludeStringFunction extends AbstractStringFunction
             File file = new File(node.getAttributeValue(0));
             if (!file.isAbsolute())
             {
-                file = new File(((XsdTreeNodeRoot) node.getPath().get(0)).getDirectory() + node.getAttributeValue(0));
+                file = new File(node.getRoot().getDirectory() + node.getAttributeValue(0));
             }
             if (!file.exists() && node.getAttributeValue(1) != null)
             {
                 File file2 = new File(node.getAttributeValue(1));
                 if (!file2.isAbsolute())
                 {
-                    file2 = new File(((XsdTreeNodeRoot) node.getPath().get(0)).getDirectory() + node.getAttributeValue(1));
+                    file2 = new File(node.getRoot().getDirectory() + node.getAttributeValue(1));
                 }
                 if (file2.exists())
                 {

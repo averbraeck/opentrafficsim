@@ -176,7 +176,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /** Maximum number of items to show in a dropdown menu. */
     private static final int MAX_DROPDOWN_ITEMS = 20;
-    
+
     /** Maximum number of back navigation steps stored. */
     private static final int MAX_NAVIGATE = 50;
 
@@ -538,9 +538,9 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             }
         }
         List<XsdTreeNode> nodePath = node.getPath();
+        TreePath path = new TreePath(nodePath.toArray());
         TreePath partialPath = new TreePath(nodePath.subList(0, nodePath.size() - 1).toArray());
         this.treeTable.getTree().expandPath(partialPath);
-        TreePath path = new TreePath(node.getPath().toArray());
         this.treeTable.getTree().setSelectionPath(path);
         this.treeTable.getTree().scrollPathToVisible(path);
         this.treeTable.updateUI();
@@ -665,8 +665,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             else
             {
                 XsdTreeNode back = this.backNode.peekLast();
-                this.backItem
-                        .setText("Go back to " + back.getNodeName() + (back.isIdentifiable() ? " " + back.getId() : ""));
+                this.backItem.setText("Go back to " + back.getNodeName() + (back.isIdentifiable() ? " " + back.getId() : ""));
                 this.backItem.setEnabled(true);
             }
         });

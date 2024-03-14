@@ -98,6 +98,13 @@ public class XsdTreeNodeRoot extends XsdTreeNode
         // invalidate entire tree, as saving may trigger relative paths to includes to become ok, causing types to be found
         invalidateAll(this);
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public XsdTreeNodeRoot getRoot()
+    {
+        return this;
+    }
 
     /**
      * {@inheritDoc} Overridden to throw events on existing nodes to the listener.

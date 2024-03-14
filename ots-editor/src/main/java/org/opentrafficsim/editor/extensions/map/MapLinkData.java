@@ -453,7 +453,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             // TODO: dirty trick to obtain a value that was given to Eval, which not yet supports non Boolean/DoubleScalar.
             nodeId = (String) ScenarioParser.lastLookedUp;
         }
-        XsdTreeNode ots = inputParameter.getPath().get(0);
+        XsdTreeNode ots = inputParameter.getRoot();
         for (XsdTreeNode child : ots.getChildren())
         {
             if (child.getPathString().equals(XsdPaths.NETWORK))

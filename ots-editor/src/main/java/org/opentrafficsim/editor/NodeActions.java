@@ -113,7 +113,7 @@ public class NodeActions
     {
         this.editor.getUndo().startAction(ActionType.INSERT, node, null);
         XsdTreeNode newNode = node.emptyCopy();
-        ((XsdTreeNodeRoot) newNode.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+        newNode.getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                 new Object[] {newNode, newNode.getParent(), newNode.getParent().getChildren().indexOf(newNode)});
         newNode.move(-1);
         this.editor.getClipboard().copyInto(newNode);
@@ -138,7 +138,7 @@ public class NodeActions
         else
         {
             newNode = node.emptyCopy();
-            ((XsdTreeNodeRoot) newNode.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+            newNode.getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                     new Object[] {newNode, newNode.getParent(), newNode.getParent().getChildren().indexOf(newNode)});
         }
         this.editor.getClipboard().copyInto(newNode);
@@ -180,7 +180,7 @@ public class NodeActions
         node.setOption(next);
         this.editor.show(next, null);
     }
-    
+
     /**
      * Expand, or collapse, node.
      * @param node XsdTreeNode; node.
@@ -216,5 +216,5 @@ public class NodeActions
         node.move(down);
         this.editor.show(node, null);
     }
-    
+
 }

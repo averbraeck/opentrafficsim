@@ -394,6 +394,15 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
+     * Returns the root node.
+     * @return XsdTreeNodeRoot; root node.
+     */
+    public XsdTreeNodeRoot getRoot()
+    {
+        return this.parent.getRoot();
+    }
+
+    /**
      * Returns the name of this node, as appropriate in XML. Examples are Node, RoadLayout, and TacticalPlanner. Most typically
      * this is the "name" attribute of an xsd:element. In other cases it is the ref={ref} attribute of the referring
      * {@code Node}. In rare cases it is "xi:include".
@@ -631,14 +640,14 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             File file = new File(this.attributeValues.get(0));
             if (!file.isAbsolute())
             {
-                file = new File(((XsdTreeNodeRoot) getPath().get(0)).getDirectory() + this.attributeValues.get(0));
+                file = new File(getRoot().getDirectory() + this.attributeValues.get(0));
             }
             if (!file.exists() && this.attributeValues.get(1) != null)
             {
                 file = new File(this.attributeValues.get(1));
                 if (!file.isAbsolute())
                 {
-                    file = new File(((XsdTreeNodeRoot) getPath().get(0)).getDirectory() + this.attributeValues.get(1));
+                    file = new File(getRoot().getDirectory() + this.attributeValues.get(1));
                 }
             }
             if (file.exists())
@@ -662,7 +671,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                                 new XsdTreeNode(this, sibling.xsdNode, sibling.hiddenNodes, sibling.referringXsdNode);
                         child.isInclude = true;
                         this.children.add(child);
-                        ((XsdTreeNodeRoot) child.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                        getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                                 new Object[] {child, child.parent, child.parent.children.indexOf(child)});
                         child.loadXmlNodes(xsdIncludeNode);
                         return;
@@ -1214,7 +1223,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             int index = this.parent.children.indexOf(this) + 1;
             XsdTreeNode node = new XsdTreeNode(this.choice.parent, this.choice.xsdNode, this.choice.hiddenNodes,
                     this.choice.referringXsdNode);
-            ((XsdTreeNodeRoot) node.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+            getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                     new Object[] {node, node.parent, node.parent.children.indexOf(this) + 1});
             node.createOptions();
             int indexSelected = this.choice.options.indexOf(this.choice.selected);
@@ -1231,7 +1240,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             XsdTreeNode node = new XsdTreeNode(this.parent, this.xsdNode, this.hiddenNodes, this.referringXsdNode);
             this.parent.children.add(index, node);
             node.active = true;
-            ((XsdTreeNodeRoot) node.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+            getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                     new Object[] {node, node.parent, node.parent.children.indexOf(node)});
             return node;
         }
@@ -1258,7 +1267,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         copyNode.active = this.active;
         copyInto(copyNode);
         copyNode.invalidate();
-        ((XsdTreeNodeRoot) copyNode.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+        getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                 new Object[] {copyNode, newParent, newParent.children.indexOf(copyNode)});
         invalidate(); // due to e.g. duplicate ID, this node may also become invalid
         return copyNode;
@@ -1346,8 +1355,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 int index = copyNode.children.indexOf(child);
                 copyNode.children.remove(index);
                 child.parent = null;
-                ((XsdTreeNodeRoot) copyNode.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_REMOVED,
-                        new Object[] {child, copyNode, index});
+                getRoot().fireEvent(XsdTreeNodeRoot.NODE_REMOVED, new Object[] {child, copyNode, index});
             }
         }
         if (this.children != null)
@@ -1417,7 +1425,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         XsdTreeNode parent = this.parent;
         int index = this.parent.children.indexOf(this);
         this.parent.children.remove(this);
-        XsdTreeNodeRoot root = (XsdTreeNodeRoot) getPath().get(0); // can't get path later as we set parent to null
+        XsdTreeNodeRoot root = getRoot(); // can't get it later as we set parent to null
         this.parent = null;
         parent.children.forEach((c) -> c.invalidate());
         parent.invalidate();
@@ -1852,10 +1860,11 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             }
             if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
             {
-                if (getPath().get(0) instanceof XsdTreeNodeRoot)
+                XsdTreeNode root = getPath().get(0);
+                if (root instanceof XsdTreeNodeRoot)
                 {
                     String message = ValueValidator.reportInvalidInclude(this.attributeValues.get(0),
-                            this.attributeValues.get(1), ((XsdTreeNodeRoot) getPath().get(0)).getDirectory());
+                            this.attributeValues.get(1), ((XsdTreeNodeRoot) root).getDirectory());
                     this.attributeInvalidMessage.set(index, message);
                     this.attributeValid.set(index, message == null);
                     return message;

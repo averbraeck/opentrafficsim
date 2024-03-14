@@ -262,7 +262,7 @@ public class Undo implements EventListener
             XsdTreeNode node = (XsdTreeNode) content[0];
             XsdTreeNode parent = (XsdTreeNode) content[1];
             int index = (int) content[2];
-            XsdTreeNode root = node.getPath().get(0);
+            XsdTreeNode root = node.getRoot();
             add(new SubActionRunnable(() ->
             {
                 parent.children.remove(node);
@@ -284,7 +284,7 @@ public class Undo implements EventListener
             XsdTreeNode node = (XsdTreeNode) content[0];
             XsdTreeNode parent = (XsdTreeNode) content[1];
             int index = (int) content[2];
-            XsdTreeNode root = parent.getPath().get(0);
+            XsdTreeNode root = parent.getRoot();
             add(new SubActionRunnable(() ->
             {
                 if (index < 0)
@@ -574,7 +574,7 @@ public class Undo implements EventListener
 
         /** Node value changed. */
         VALUE_CHANGE,
-        
+
         /** Action on node, by custom decoration. */
         ACTION;
 

@@ -114,7 +114,7 @@ public class KeyValidator extends XPathValidator implements EventListener
     @Override
     public String validate(final XsdTreeNode node)
     {
-        if (node.getPath().size() == 1)
+        if (node.getParent() == null)
         {
             return null; // Node was deleted, but is still visible in the GUI tree for a moment
         }
