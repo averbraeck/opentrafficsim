@@ -10,7 +10,7 @@ package org.opentrafficsim.road.network.factory.xml;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class CircularDependencyException extends XmlParserException
+public class CircularDependencyException extends RuntimeException
 {
 
     /** */

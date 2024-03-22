@@ -88,7 +88,6 @@ import javax.swing.event.TreeWillExpandListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
@@ -354,12 +353,17 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         {
             try
             {
+                OtsEditor.this.evalWrapper.setDirty();
                 OtsEditor.this.evalWrapper
                         .getEval(OtsEditor.this.scenario.getItemAt(OtsEditor.this.scenario.getSelectedIndex()));
             }
             catch (CircularDependencyException exception)
             {
                 showCircularInputParameters();
+            }
+            catch (RuntimeException exception)
+            {
+                // invalid parameter, should be shown in the tree as red cell
             }
         });
         controlsContainer.add(this.scenario);
@@ -464,6 +468,17 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             showInvalidMessage();
             return;
         }
+        int index = this.scenario.getSelectedIndex();
+        try
+        {
+            OtsEditor.this.evalWrapper.setDirty();
+            OtsEditor.this.evalWrapper.getEval(OtsEditor.this.scenario.getItemAt(index));
+        }
+        catch (CircularDependencyException ex)
+        {
+            showCircularInputParameters();
+            return;
+        }
         File file;
         try
         {
@@ -475,7 +490,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             return;
         }
         save(file, (XsdTreeNodeRoot) this.treeTable.getTree().getModel().getRoot(), false);
-        int index = this.scenario.getSelectedIndex();
+
         if (index == 0)
         {
             OtsRunner.runSingle(file, null);
@@ -1356,7 +1371,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
      */
     public void showInvalidMessage()
     {
-        JOptionPane.showMessageDialog(OtsEditor.this, "The tree is not valid. Make sure no red nodes remain.");
+        JOptionPane.showMessageDialog(OtsEditor.this, "The setup is not valid. Make sure no red nodes remain.",
+                "Setup is not valid", JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**
@@ -1364,7 +1380,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
      */
     public void showCircularInputParameters()
     {
-        JOptionPane.showMessageDialog(OtsEditor.this, "Input parameters have a circular dependency.");
+        JOptionPane.showMessageDialog(OtsEditor.this, "Input parameters have a circular dependency.",
+                "Circular input parameter", JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**
@@ -1372,7 +1389,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
      */
     public void showUnableToRun()
     {
-        JOptionPane.showMessageDialog(OtsEditor.this, "Unable to run, temporary file could not be saved.");
+        JOptionPane.showMessageDialog(OtsEditor.this, "Unable to run, temporary file could not be saved.", "Unable to run",
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**
@@ -2012,6 +2030,11 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         catch (CircularDependencyException ex)
         {
             showCircularInputParameters();
+            return this.evalWrapper.getLastValidEval();
+        }
+        catch (RuntimeException ex)
+        {
+            // some parameters are not valid
             return this.evalWrapper.getLastValidEval();
         }
     }

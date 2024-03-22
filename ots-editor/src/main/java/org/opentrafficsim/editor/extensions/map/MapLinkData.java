@@ -451,6 +451,10 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         catch (RuntimeException ex)
         {
             // TODO: dirty trick to obtain a value that was given to Eval, which not yet supports non Boolean/DoubleScalar.
+            if (!(ScenarioParser.lastLookedUp instanceof String))
+            {
+                return null;
+            }
             nodeId = (String) ScenarioParser.lastLookedUp;
         }
         XsdTreeNode ots = inputParameter.getRoot();
@@ -688,11 +692,16 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     @Override
     public void evalChanged()
     {
-        this.id = getNode().getId() == null ? "" : getNode().getId();
-        this.nodeStart = replaceNode(this.nodeStart, getNode().getCoupledKeyrefNodeAttribute("NodeStart"));
-        this.nodeEnd = replaceNode(this.nodeEnd, getNode().getCoupledKeyrefNodeAttribute("NodeEnd"));
-        this.shapeListener.update();
-        buildDesignLine();
+        if (getNode().isActive())
+        {
+            this.id = getNode().getId() == null ? "" : getNode().getId();
+            this.nodeStart = replaceNode(this.nodeStart, getNode().getCoupledKeyrefNodeAttribute("NodeStart"));
+            this.nodeEnd = replaceNode(this.nodeEnd, getNode().getCoupledKeyrefNodeAttribute("NodeEnd"));
+            setValue((v) -> this.offsetStart = v, Adapters.get(Length.class), getNode(), "OffsetStart");
+            setValue((v) -> this.offsetEnd = v, Adapters.get(Length.class), getNode(), "OffsetEnd");
+            this.shapeListener.update();
+            buildDesignLine();
+        }
     }
 
     /**

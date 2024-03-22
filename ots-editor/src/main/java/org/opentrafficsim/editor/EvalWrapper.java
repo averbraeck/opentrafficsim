@@ -14,7 +14,6 @@ import org.djutils.eval.Eval;
 import org.djutils.event.Event;
 import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.editor.decoration.AbstractNodeDecoratorRemove;
-import org.opentrafficsim.road.network.factory.xml.CircularDependencyException;
 import org.opentrafficsim.road.network.factory.xml.parser.ScenarioParser;
 import org.opentrafficsim.road.network.factory.xml.parser.ScenarioParser.ParameterWrapper;
 import org.opentrafficsim.road.network.factory.xml.parser.ScenarioParser.ScenariosWrapper;
@@ -73,19 +72,14 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
      * Returns expression evaluator.
      * @param scenario ScenarioWrapper; selected scenario (of type as listed in dropdown menu).
      * @return Eval; expression evaluator.
-     * @throws CircularDependencyException when input parameters have a circular dependency.
      */
-    public Eval getEval(final ScenarioWrapper scenario) throws CircularDependencyException
+    public Eval getEval(final ScenarioWrapper scenario)
     {
         boolean becomesDirty = this.dirty || !Objects.equals(this.lastScenario, scenario);
         if (becomesDirty)
         {
             this.lastScenario = scenario;
-            if (scenario == null)
-            {
-                this.eval = new Eval();
-            }
-            else
+            try
             {
                 this.eval = ScenarioParser.parseInputParameters(new ScenariosWrapper()
                 {
@@ -100,14 +94,17 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
                     @Override
                     public Iterable<ParameterWrapper> getScenarioInputParameters()
                     {
-                        return EvalWrapper.this.scenarioParameters.get(scenario.getScenarioNode());
+                        return scenario == null ? null : EvalWrapper.this.scenarioParameters.get(scenario.getScenarioNode());
                     }
                 });
             }
+            catch (RuntimeException ex)
+            {
+                this.dirty = false;
+                this.listeners.forEach((listener) -> listener.evalChanged());
+                throw ex;
+            }
             this.dirty = false;
-        }
-        if (becomesDirty)
-        {
             this.listeners.forEach((listener) -> listener.evalChanged());
         }
         return this.eval;
@@ -264,7 +261,7 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
     /**
      * Sets the evaluator as being dirty, i.e. some input parameter was added, removed or changed. All listeners are notified.
      */
-    private void setDirty()
+    public void setDirty()
     {
         this.dirty = true;
         this.listeners.forEach((listener) -> listener.evalChanged());

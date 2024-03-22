@@ -3,8 +3,10 @@ package org.opentrafficsim.road.network.factory.xml.parser;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Dimensionless;
@@ -36,15 +38,14 @@ public class ScenarioParser
     @Deprecated
     // TODO: delete this and make sure regular evaluation output is used where this is used
     public static Object lastLookedUp;
-    
+
     /**
      * Parse input parameters for scenario.
      * @param scenarios Scenarios; scenarios tag.
      * @param scenario String; name of scenario tp parse.
      * @return Eval; expression evaluator for all expression in XML.
-     * @throws CircularDependencyException when there is circular dependency between parameters.
      */
-    public static Eval parseInputParameters(final Scenarios scenarios, final String scenario) throws CircularDependencyException
+    public static Eval parseInputParameters(final Scenarios scenarios, final String scenario)
     {
         if (scenarios == null)
         {
@@ -80,21 +81,33 @@ public class ScenarioParser
      * Parse input parameters for scenario.
      * @param scenariosWrapper ScenariosWrapper; scenarios wrapper, from XML or Xsd Tree nodes in editor.
      * @return Eval; expression evaluator for all expression in XML.
-     * @throws CircularDependencyException when there is circular dependency between parameters.
      */
-    public static Eval parseInputParameters(final ScenariosWrapper scenariosWrapper) throws CircularDependencyException
+    public static Eval parseInputParameters(final ScenariosWrapper scenariosWrapper)
     {
         Map<String, Supplier<?>> defaultsMap = new LinkedHashMap<>();
         ParameterMap defaults = new ParameterMap(defaultsMap);
         Eval eval = new Eval().setRetrieveValue(defaults);
         parseInputParameters(scenariosWrapper.getDefaultInputParameters(), defaultsMap, defaults);
-        ParameterMap inputParameters = defaults;
         if (scenariosWrapper.getScenarioInputParameters() != null)
         {
             Map<String, Supplier<?>> inputParametersMap = new LinkedHashMap<>();
-            inputParameters = new ParameterMap(inputParametersMap);
+            ParameterMap inputParameters = new ParameterMap(inputParametersMap);
             defaults.setScenarioMap(inputParameters);
             parseInputParameters(scenariosWrapper.getScenarioInputParameters(), inputParametersMap, defaults);
+        }
+        // test whether values can be obtained successfully (might throw CircularDependencyException)
+        for (ParameterWrapper parameter : scenariosWrapper.getDefaultInputParameters())
+        {
+            String id = parameter.getId();
+            eval.evaluate(id.substring(1, id.length() - 1));
+        }
+        if (scenariosWrapper.getScenarioInputParameters() != null)
+        {
+            for (ParameterWrapper parameter : scenariosWrapper.getScenarioInputParameters())
+            {
+                String id = parameter.getId();
+                eval.evaluate(id.substring(1, id.length() - 1));
+            }
         }
         return eval;
     }
@@ -194,38 +207,17 @@ public class ScenarioParser
      * @param inputParameters Iterable&lt;ParameterWrapper&gt;; xml tag.
      * @param map Map&lt;String, Supplier&lt;?&gt;&gt;; map that underlines inputParameters.
      * @param retrieve ParameterMap; value retrieval.
-     * @throws CircularDependencyException when there is circular dependency between parameters.
      */
     private static void parseInputParameters(final Iterable<ParameterWrapper> inputParameters,
-            final Map<String, Supplier<?>> map, final ParameterMap retrieve) throws CircularDependencyException
+            final Map<String, Supplier<?>> map, final ParameterMap retrieve)
     {
-        boolean failed = true;
-        int pass = 1;
-        while (failed)
+        Eval eval = new Eval().setRetrieveValue(retrieve);
+        for (ParameterWrapper parameter : inputParameters)
         {
-            failed = false;
-            int size = map.size();
-            boolean empty = true;
-            for (ParameterWrapper parameter : inputParameters)
-            {
-                empty = false;
-                try
-                {
-                    // need to create a new Eval each time, as input parameters may depend on others
-                    // NOTE: if Eval has additional user defined functions or unit parsers, that't not included here
-                    String id = parameter.getId();
-                    map.put(id.substring(1, id.length() - 1), () -> parameter.get().get(new Eval().setRetrieveValue(retrieve)));
-                }
-                catch (RuntimeException e)
-                {
-                    failed = true;
-                }
-            }
-            if ((map.size() == size && !empty) || pass == 50)
-            {
-                throw new CircularDependencyException("Could not parse input parameters due to circular dependency.");
-            }
-            pass++;
+            // need to create a new Eval each time, as input parameters may depend on others
+            // NOTE: if Eval has additional user defined functions or unit parsers, that's not included here
+            String id = parameter.getId();
+            map.put(id.substring(1, id.length() - 1), () -> parameter.get().get(eval));
         }
     }
 
@@ -337,6 +329,9 @@ public class ScenarioParser
         /** Map of name to suppliers (constant or distribution). */
         private final Map<String, Supplier<?>> map;
 
+        /** Set of currently looked up values, to detect circular dependency. */
+        private final Set<String> lookingUp = new LinkedHashSet<>();
+
         /** More scenario input parameters. */
         private ParameterMap scenario;
 
@@ -362,6 +357,10 @@ public class ScenarioParser
         @Override
         public Object lookup(final String name)
         {
+            if (!this.lookingUp.add(name))
+            {
+                throw new CircularDependencyException("Parameter " + name + " is part of a circular dependency.");
+            }
             Object value;
             if (this.scenario != null && this.scenario.map.containsKey(name))
             {
@@ -373,8 +372,10 @@ public class ScenarioParser
             }
             else
             {
+                this.lookingUp.remove(name);
                 throw new RuntimeException("Parameter " + name + " not available.");
             }
+            this.lookingUp.remove(name);
             if (value instanceof Double)
             {
                 return Dimensionless.instantiateSI((Double) value);
