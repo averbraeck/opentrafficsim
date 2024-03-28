@@ -18,12 +18,6 @@ public class AttributesNotEqualValidator extends AbstractNodeDecoratorAttribute 
     /** */
     private static final long serialVersionUID = 20230910L;
 
-    /** First attribute to compare. */
-    private final String attribute1;
-
-    /** Second attribute to compare. */
-    private final String attribute2;
-
     /**
      * Constructor.
      * @param editor OtsEditor; editor.
@@ -35,8 +29,6 @@ public class AttributesNotEqualValidator extends AbstractNodeDecoratorAttribute 
             final String attribute2)
     {
         super(editor, (n) -> n.isType(path), attribute1, attribute2);
-        this.attribute1 = attribute1;
-        this.attribute2 = attribute2;
     }
 
     /** {@inheritDoc} */
@@ -47,25 +39,28 @@ public class AttributesNotEqualValidator extends AbstractNodeDecoratorAttribute 
         {
             return null;
         }
-        String attribute1 = node.getAttributeValue(this.attribute1);
+        String attribute1 = node.getAttributeValue(this.attributes.get(0));
         if (attribute1 == null)
         {
             return null;
         }
-        String attribute2 = node.getAttributeValue(this.attribute2);
+        String attribute2 = node.getAttributeValue(this.attributes.get(1));
         if (attribute2 == null || !attribute2.equals(attribute1))
         {
             return null;
         }
-        return this.attribute1 + " and " + this.attribute2 + " may not be equal.";
+        return this.attributes.get(0) + " and " + this.attributes.get(1) + " may not be equal.";
     }
 
     /** {@inheritDoc} */
     @Override
     public void notifyCreated(final XsdTreeNode node)
     {
-        node.addAttributeValidator(this.attribute1, AttributesNotEqualValidator.this, null);
-        node.addAttributeValidator(this.attribute2, AttributesNotEqualValidator.this, null);
+        if (this.predicate.test(node))
+        {
+            node.addAttributeValidator(this.attributes.get(0), AttributesNotEqualValidator.this, null);
+            node.addAttributeValidator(this.attributes.get(1), AttributesNotEqualValidator.this, null);
+        }
     }
 
     /** {@inheritDoc} */

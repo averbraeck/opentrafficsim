@@ -25,10 +25,10 @@ public abstract class AbstractNodeDecoratorAttribute extends AbstractNodeDecorat
     private static final long serialVersionUID = 20230910L;
 
     /** Predicate to accept nodes that should have this attribute decorator. */
-    private final Predicate<XsdTreeNode> predicate;
+    protected final Predicate<XsdTreeNode> predicate;
 
     /** Attributes to trigger on. */
-    private final List<String> attributes;
+    protected final List<String> attributes;
 
     /**
      * Constructor.
