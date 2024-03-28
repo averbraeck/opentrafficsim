@@ -2,6 +2,7 @@ package org.opentrafficsim.kpi.sampling;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -154,10 +155,22 @@ public class SamplerData<G extends GtuData> extends Table
             {
                 Class<?> unitClass = Class.forName(
                         "org.djunits.unit." + extendedDataType.getType().getSimpleName().replace("Float", "") + "Unit");
-                return ((Unit<?>) unitClass.getDeclaredField("SI").get(unitClass)).getId();
+                Field field = null;
+                for (Field f : unitClass.getFields())
+                {
+                    if (f.getName().equals("SI"))
+                    {
+                        field = f;
+                        break;
+                    }
+                    else if (f.getName().equals("DEFAULT"))
+                    {
+                        field = f;
+                    }
+                }
+                return field == null ? null : ((Unit<?>) field.get(unitClass)).getId();
             }
-            catch (ClassNotFoundException | IllegalArgumentException | IllegalAccessException | NoSuchFieldException
-                    | SecurityException exception)
+            catch (ClassNotFoundException | IllegalArgumentException | IllegalAccessException | SecurityException exception)
             {
                 return null;
             }
