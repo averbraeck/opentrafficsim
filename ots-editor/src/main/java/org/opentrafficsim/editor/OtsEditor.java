@@ -834,7 +834,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     public void setSchema(final Document xsdDocument) throws IOException
     {
         this.xsdDocument = xsdDocument;
-        this.undo.setIgnoreChanges();
+        this.undo.setIgnoreChanges(true);
         initializeTree();
         this.undo.clear();
         setStatusLabel("Schema " + xsdDocument.getBaseURI() + " loaded");
@@ -1625,7 +1625,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         try
         {
             Document document = DocumentReader.open(file.toURI());
-            this.undo.setIgnoreChanges();
+            this.undo.setIgnoreChanges(true);
             initializeTree();
             NamedNodeMap attributes = document.getFirstChild().getAttributes();
             for (int i = 0; i < attributes.getLength(); i++)
@@ -1708,10 +1708,12 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         save(new File(fileDialog.getDirectory() + fileName), root, true);
         if (root instanceof XsdTreeNodeRoot)
         {
+            this.undo.setIgnoreChanges(true);
             ((XsdTreeNodeRoot) root).setDirectory(this.lastDirectory);
             this.treeTable.updateUI();
             this.attributesTable.updateUI();
             setUnsavedChanges(false);
+            this.undo.setIgnoreChanges(false);
         }
         setStatusLabel("Saved");
     }

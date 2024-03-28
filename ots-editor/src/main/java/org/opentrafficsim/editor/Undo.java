@@ -70,7 +70,7 @@ public class Undo implements EventListener
     }
 
     /**
-     * Clears the entire queue, suitable for when a new tree is loaded.
+     * Clears the entire queue, suitable for when a new tree is loaded. Also set ignore changes to false.
      */
     public void clear()
     {
@@ -82,10 +82,11 @@ public class Undo implements EventListener
 
     /**
      * Tells the undo unit to ignore all changes. Reset this by calling {@code clear()}. Useful during file loading.
+     * @param ignore boolean; ignore changes.
      */
-    public void setIgnoreChanges()
+    public void setIgnoreChanges(final boolean ignore)
     {
-        this.ignoreChanges = true;
+        this.ignoreChanges = ignore;
     }
 
     /**
@@ -131,6 +132,10 @@ public class Undo implements EventListener
      */
     private void add(final SubAction subAction)
     {
+        if (this.ignoreChanges)
+        {
+            return;
+        }
         Throw.when(this.currentSet == null, IllegalStateException.class,
                 "Adding undo action without having called startUndoAction()");
         if (this.currentSet.isEmpty())
