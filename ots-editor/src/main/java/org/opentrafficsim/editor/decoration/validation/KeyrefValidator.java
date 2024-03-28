@@ -146,7 +146,7 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
     /**
      * Checks that a set of values in a key, matches the values in a keyref node. Note, in dealing with null values the two sets
      * should <b>not</b> be given in the wrong order. It does not matter whether the keyref refers to a key or unique. In both
-     * cases the values from a keyref are a match of all its non-null values match respective values in the key.
+     * cases the values from a keyref are a match if all its non-null values match respective values in the key.
      * @param keyValues List&lt;String&gt;; set of values from a key node.
      * @param keyrefValues List&lt;String&gt;; set of values from a keyref node.
      * @return boolean; whether the key values match the keyref values.

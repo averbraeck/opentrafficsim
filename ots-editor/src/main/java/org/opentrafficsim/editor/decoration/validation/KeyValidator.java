@@ -213,8 +213,7 @@ public class KeyValidator extends XPathValidator implements EventListener
     }
 
     /**
-     * Remove node. It is removed from all contexts and listening keyrefs. This method is called indirectly by a listener that
-     * the root node has set up, for every removed node. This method is called internally for children of deactivated nodes, in
+     * Remove node. This method is called internally for children of deactivated nodes, in
      * which case we do not want to remove this validator as listener on the node, for when it gets activated later.
      * @param node XsdTreeNode; node to remove.
      */
