@@ -37,13 +37,13 @@
       <xsd:attribute name="Options" type="ots:string" use="optional" />
     </xsd:complexType>
     
-    <!-- Od.Cell.{Origin|Destination|Category} key -->
-    <xsd:key name="odCellKey">
+    <!-- Od.Cell.{Origin|Destination|Category} unique -->
+    <xsd:unique name="odCellKey">
       <xsd:selector xpath="ots:Cell" />
       <xsd:field xpath="@Origin" />
       <xsd:field xpath="@Destination" />
-      <xsd:field xpath="@Category" />
-    </xsd:key>
+      <xsd:field xpath="@Category" /> <!-- optional field, so this can't be a xsd:key -->
+    </xsd:unique>
     
   </xsd:element>
 
