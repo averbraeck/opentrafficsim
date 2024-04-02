@@ -196,25 +196,6 @@
         </jaxb:baseType>
       </jaxb:property>
     </jaxb:bindings>
-    <jaxb:bindings
-      node="//xsd:element[@name='MandatoryIncentives']/xsd:complexType/xsd:choice/xsd:element[@name='Route']">
-      <simplify:as-element-property />
-    </jaxb:bindings>
-    <jaxb:bindings
-      node="//xsd:element[@name='VoluntaryIncentives']/xsd:complexType/xsd:choice/xsd:element[@name='Keep']">
-      <simplify:as-element-property />
-    </jaxb:bindings>
-    <jaxb:bindings
-      node="//xsd:element[@name='AccelerationIncentives']/xsd:complexType/xsd:choice/xsd:element[@name='TrafficLights']">
-      <simplify:as-element-property />
-    </jaxb:bindings>
-    <jaxb:bindings node="//xsd:element[@name='Categories']/xsd:complexType/xsd:choice/xsd:element[@name='Ego']">
-      <simplify:as-element-property />
-    </jaxb:bindings>
-    <jaxb:bindings
-      node="//xsd:element[@name='BehavioralAdaptations']/xsd:complexType/xsd:choice/xsd:element[@name='SituationalAwareness']">
-      <simplify:as-element-property />
-    </jaxb:bindings>
   </jaxb:bindings>
 
   <jaxb:bindings schemaLocation="ots-demand.xsd">

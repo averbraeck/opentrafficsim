@@ -490,15 +490,14 @@
           </xsd:documentation>
         </xsd:annotation>
         <xsd:complexType>
-          <xsd:choice minOccurs="0" maxOccurs="unbounded">
-            <xsd:element name="Ego" type="ots:EmptyType" />
-            <xsd:element name="Infrastructure" type="ots:EmptyType" />
-            <xsd:element name="Neighbors" type="ots:EmptyType" />
-            <xsd:element name="Intersection" type="ots:EmptyType" />
-            <xsd:element name="BusStop" type="ots:EmptyType" />
-            <xsd:element name="Traffic" type="ots:EmptyType" />
-            <xsd:element name="Class" type="ots:ClassNameType" />
-          </xsd:choice>
+          <xsd:all minOccurs="0">
+            <xsd:element name="Ego" type="ots:EmptyType" minOccurs="0" />
+            <xsd:element name="Infrastructure" type="ots:EmptyType" minOccurs="0" />
+            <xsd:element name="Neighbors" type="ots:EmptyType" minOccurs="0" />
+            <xsd:element name="Intersection" type="ots:EmptyType" minOccurs="0" />
+            <xsd:element name="BusStop" type="ots:EmptyType" minOccurs="0" />
+            <xsd:element name="Traffic" type="ots:EmptyType" minOccurs="0" />
+          </xsd:all>
         </xsd:complexType>
       </xsd:element>
 
@@ -580,12 +579,11 @@
                       </xsd:documentation>
                     </xsd:annotation>
                     <xsd:complexType>
-                      <xsd:choice minOccurs="0" maxOccurs="unbounded">
-                        <xsd:element name="SituationalAwareness" type="ots:EmptyType" />
-                        <xsd:element name="Headway" type="ots:EmptyType" />
-                        <xsd:element name="Speed" type="ots:EmptyType" />
-                        <xsd:element name="Class" type="ots:ClassNameType" />
-                      </xsd:choice>
+                      <xsd:all minOccurs="0">
+                        <xsd:element name="SituationalAwareness" type="ots:EmptyType" minOccurs="0" />
+                        <xsd:element name="Headway" type="ots:EmptyType" minOccurs="0" />
+                        <xsd:element name="Speed" type="ots:EmptyType" minOccurs="0" />
+                      </xsd:all>
                     </xsd:complexType>
                   </xsd:element>
                   <xsd:element name="TaskManager" minOccurs="0">
